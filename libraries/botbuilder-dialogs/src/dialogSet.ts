@@ -31,25 +31,25 @@ import { DialogContext, DialogState } from './dialogContext';
  * const userProfile = userState.createProperty('profile');
  * 
  * dialogs.add(new WaterfallDialog('fillProfile', [
- *     async (dc, step) => {
+ *     async (step) => {
  *         step.values.profile = {};
- *         return await dc.prompt('textPrompt', `What's your name?`);
+ *         return await step.prompt('textPrompt', `What's your name?`);
  *     },
- *     async (dc, step) => {
+ *     async (step) => {
  *         step.values.profile.name = step.result;
- *         return await dc.prompt('textPrompt', `What's your phone number?`);
+ *         return await step.prompt('textPrompt', `What's your phone number?`);
  *     },
- *     async (dc, step) => {
+ *     async (step) => {
  *         step.values.profile.phone = step.result;
  *
  *         // Save completed profile to user state
- *         const user = await userProfile.get(context);
+ *         const user = await userProfile.get(step.context);
  *         user.profile = step.values.profile;
- *         await userProfile.set(context, user);
+ *         await userProfile.set(step.context, user);
  *
  *         // Notify user and end
- *         await dc.context.sendActivity(`Your profile was updated.`);
- *         return await dc.end();
+ *         await step.context.sendActivity(`Your profile was updated.`);
+ *         return await step.end();
  *     }
  * ]));
  *
@@ -175,9 +175,9 @@ export class DialogSet {
      *
      * ```JavaScript
      * dialogs.add(new Waterfall('greeting', [
-     *      async function (dc) {
-     *          await dc.context.sendActivity(`Hello world!`);
-     *          await dc.end();
+     *      async function (step) {
+     *          await step.context.sendActivity(`Hello world!`);
+     *          await step.end();
      *      }
      * ]));
      * ```
