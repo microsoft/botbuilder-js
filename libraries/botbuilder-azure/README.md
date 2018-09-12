@@ -29,7 +29,10 @@ While this package is in preview it's possible for updates to include build brea
 
 ## What's Included
 
-This module contains interfaces to use common Azure services to back Botbuilder's state storage.
+This module contains interfaces to use common Azure services to back Bot Builder's state storage.
+When used with `UserState`, `ConversationState` and `BotState`, these storage interfaces will automatically
+read and write values to the associated Azure service.
+
 It currently supports Cosmos DB ([`CosmosDbStorage()`](https://docs.microsoft.com/en-us/javascript/api/botbuilder-azure/cosmosdbstorage)) and Azure Blob Storage ([`BlobStorage()`](https://docs.microsoft.com/en-us/javascript/api/botbuilder-azure/blobstorage)).
 
 Also included is an interface to store and retrieve chat transcripts in blog storage called [AzureBlobTranscriptStore()](https://docs.microsoft.com/en-us/javascript/api/botbuilder-azure/azureblobtranscriptstore)
