@@ -1,13 +1,13 @@
 {
-  "text": "[sayWelcome:{user}]",
-  "resolutions": [["sayWelcome:{user}", "welcome John"]],
-  "resolvedText": "welcome John",
+  "text": "[sayWelcome]",
+  "resolutions": [["sayWelcome", "Welcome John"]],
+  "resolvedText": "Welcome John",
   "apiResponses": {
-    "sayWelcome:{user}": {
-      "outputs": {
-        "sayWelcome:{user}": {
-          "valueType": 0,
-          "stringValues": ["welcome John"]
+    "sayWelcome": {
+      "Outputs": {
+        "DisplayText": {
+          "ValueType": 0,
+          "StringValues": ["Welcome John"]
         }
       }
     }
