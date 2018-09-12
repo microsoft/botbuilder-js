@@ -97,8 +97,15 @@ adapter.processActivity(req, res, async (turnContext) => {
 
     // ...evaluate message and do other bot logic...
 
-    // invoke the dialog we created above
-    dc.begin(DIALOG_ONE);
+    // If the bot hasn't yet responded, try to continue any active dialog
+    if (!turnContext.responded) {
+        const status = await dc.continue();
+    }
+
+    // Invoke the dialog we created above.
+    if (!turnContext.responded) {
+        await dc.begin(DIALOG_ONE);
+    }
 });
 ```
 
