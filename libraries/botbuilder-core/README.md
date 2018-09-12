@@ -1,7 +1,7 @@
 This library contains most of the core functionality for [Bot Builder](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder),
 but without any dependency on Node. As a result, this version can be used to build bots that run complete in a browser.
 
-Unless you are building a bot _without Node_, we recommend that you `botbuilder` your app
+Unless you are building a bot or component _without Node_, we recommend that you `botbuilder` your app
 instead of `botbuilder-core`. [Learn more here.](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder/README.md)
 
 - [Installing](#installing)
