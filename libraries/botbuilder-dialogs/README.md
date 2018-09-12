@@ -109,6 +109,15 @@ adapter.processActivity(req, res, async (turnContext) => {
 });
 ```
 
+## Examples
+
+See this module in action in these example apps:
+
+* [Simple Prompts](https://github.com/Microsoft/BotBuilder-Samples/tree/v4/javascript_nodejs/4.simple-prompt-bot)
+* [Multiple Prompts](https://github.com/Microsoft/BotBuilder-Samples/tree/v4/javascript_nodejs/5.multiturn-prompts-bot)
+* [Prompt Validation](https://github.com/Microsoft/BotBuilder-Samples/tree/v4/javascript_nodejs/10.prompt-validations)
+* [Custom Dialog Class](https://github.com/Microsoft/BotBuilder-Samples/tree/v4/javascript_nodejs/21.custom-dialogs)
+
 # Learn More
 
 [Prompts](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-prompts?view=azure-bot-service-4.0&tabs=javascript) This module contains several types of built-in prompt that can be used to create dialogs that capture and validate specific data types like dates, numbers and multiple-choice answers.
