@@ -1,6 +1,9 @@
+# Bot Builder Azure
+
 Azure extensions for Microsoft BotBuilder.
 
 - [Installing](#installing)
+- [Basic Use](#use)
 - [Documentation](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-overview-introduction?view=azure-bot-service-4.0)
 - [Class Reference](https://docs.microsoft.com/en-us/javascript/api/botbuilder-azure/)
 - [GitHub Repo](https://github.com/Microsoft/botbuilder-js)
