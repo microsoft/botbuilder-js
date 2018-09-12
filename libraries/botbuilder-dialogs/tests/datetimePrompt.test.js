@@ -80,10 +80,9 @@ describe('DatetimePrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new DateTimePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new DateTimePrompt('prompt', async (prompt) => {
             assert(prompt);
-            prompt.end(prompt.recognized.value);
+            return prompt.recognized.succeeded;
         }));
 
         await adapter.send('Hello')
@@ -110,12 +109,9 @@ describe('DatetimePrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new DateTimePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new DateTimePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            }
+            return prompt.recognized.succeeded;
         }));
 
         await adapter.send('Hello')
@@ -144,14 +140,12 @@ describe('DatetimePrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new DateTimePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new DateTimePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            } else {
-                await context.sendActivity('That was a bad date.');
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('That was a bad date.');
             }
+            return prompt.recognized.succeeded;
         }));
 
         await adapter.send('Hello')
@@ -180,12 +174,9 @@ describe('DatetimePrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new DateTimePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new DateTimePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            }
+            return prompt.recognized.succeeded;
         }));
 
         await adapter.send('Hello')
