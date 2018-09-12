@@ -83,8 +83,7 @@ describe(`BotStatePropertyAccessor`, function () {
             done();
         });
         tAdapter.use(middleware);
-        tAdapter.receiveActivity(`Hello world!`)
-            .then(() => done());
+        tAdapter.receiveActivity(`Hello world!`);
     });
 
     it(`should not delete anything if property not found in current state.`, function (done) {
@@ -98,8 +97,7 @@ describe(`BotStatePropertyAccessor`, function () {
             done();
         });
         tAdapter.use(middleware);
-        tAdapter.receiveActivity(`Hello world!`)
-            .then(() => done());
+        tAdapter.receiveActivity(`Hello world!`);
     });
 
     it(`should successfully set default value if default value is an Array.`, function (done) {
@@ -111,11 +109,11 @@ describe(`BotStatePropertyAccessor`, function () {
             assert(Array.isArray(numbersValue), `default value for PropertyAccessor was not properly set.`);
             assert(numbersValue.length === 1, `numbersValue.length should be 1, not ${numbersValue.length}.`);
             assert(numbersValue[0] === 1, `numbersValue[0] should be 1, not ${numbersValue[0]}.`);
+            done();
         });
         tAdapter.use(middleware);
 
-        tAdapter.receiveActivity(`Hello world!`)
-            .then(() => done());
+        tAdapter.receiveActivity(`Hello world!`);
     });
 
     it(`should successfully set default value if default value is an Object.`, function (done) {
@@ -132,10 +130,10 @@ describe(`BotStatePropertyAccessor`, function () {
             assert(addressValue.street === '1 Microsoft Way', `default value for PropertyAccessor was not properly set.`);
             assert(addressValue.zipCode === 98052, `default value for PropertyAccessor was not properly set.`);
             assert(addressValue.state === 'WA', `default value for PropertyAccessor was not properly set.`);
+            done();
         });
         tAdapter.use(middleware);
 
-        tAdapter.receiveActivity(`Hello world!`)
-            .then(() => done());
+        tAdapter.receiveActivity(`Hello world!`);
     });
 });
