@@ -1,7 +1,11 @@
-Preview of the v4 version of the Bot Builder toolkit.  
+# Bot Builder for Node.js
+[Bot Builder for Node.js](http://docs.botframework.com/builder/node/overview/) is a powerful framework for constructing bots that can handle both freeform interactions and more guided ones where the possibilities are explicitly shown to the user. It is easy to use and models frameworks like Express & Restify to provide developers with a familiar way to write Bots.
 
 - [Installing](#installing)
+- [Basic Use](#build-a-bot)
+- [Learn More](#learn-more)
 - [Documentation](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-overview-introduction?view=azure-bot-service-4.0)
+- [Class Reference](https://docs.microsoft.com/en-us/javascript/api/botbuilder/)
 - [GitHub Repo](https://github.com/Microsoft/botbuilder-js)
 - [Report Issues](https://github.com/Microsoft/botbuilder-js/issues)
 
@@ -21,3 +25,79 @@ While this package is in preview it's possible for updates to include build brea
     }
 }
 ```
+
+# What's included?
+* Powerful dialog system with dialogs that are isolated and composable.
+* Built-in prompts for simple things like Yes/No, strings, numbers, enumerations.
+* Built-in dialogs that utilize powerful AI frameworks like [LUIS](http://luis.ai).
+* Bots can run on almost any bot platform like the [Microsoft Bot Framework](http://botframework.com), [Skype](http://skype.com), and [Slack](http://slack.com).
+
+## Build a bot
+[Read the quickstart guide](https://docs.microsoft.com/en-us/azure/bot-service/javascript/bot-builder-javascript-quickstart?view=azure-bot-service-4.0) 
+that will walk you through setting up your Bot Builder app so that you've got a well structured project and
+all of the tools necessary to develop and extend your bot.
+ 
+### Start from scratch
+Create a folder for your bot, cd into it, and run npm init.
+
+```
+npm init
+```
+    
+Get the BotBuilder and Restify modules using npm.
+
+```
+npm install --save botbuilder
+npm install --save restify
+```
+    
+Create a file named app.js and say hello in a few lines of code.
+ 
+```
+const restify = require('restify');
+const botbuilder = require('botbuilder');
+
+// Create bot adapter, which defines how the bot sends and receives messages.
+var adapter = new botbuilder.BotFrameworkAdapter({
+    appId: process.env.MicrosoftAppId,
+    appPassword: process.env.MicrosoftAppPassword
+});
+
+// Create HTTP server.
+let server = restify.createServer();
+server.listen(process.env.port || process.env.PORT || 3978, function () {
+    console.log(`\n${server.name} listening to ${server.url}`);
+    console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
+});
+
+// Listen for incoming requests at /api/messages.
+server.post('/api/messages', (req, res) => {
+    // Use the adapter to process the incoming web request into a TurnContext object.
+    adapter.processActivity(req, res, async (turnContext) => {
+        // Do something with this incoming activity!
+        if (turnContext.activity.type === 'message') {            
+            // Get the user's text
+            const utterance = turnContext.activity.text;
+
+            // send a reply
+            await turnContext.sendActivity(`I heard you say ${ utterance }`);
+        }
+    });
+});
+```
+
+## Test your bot
+Use the [Bot Framework Emulator](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-debug-emulator?view=azure-bot-service-4.0) to test your bot on localhost. 
+
+Install the emulator from [here](https://aka.ms/botframework-emulator) and then start your bot in a console window.
+    
+Start the emulator and say "hello" to your bot.
+
+## Publish your bot
+Deploy your bot to the cloud and then [register it](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-quickstart?view=azure-bot-service-4.0) with the Azure Bot Service.
+
+## Learn More
+Learn how to build great bots.
+
+* [Core Concepts Guide](http://docs.botframework.com/builder/node/guides/core-concepts/)
+* [Bot Builder for Node.js Reference](https://docs.microsoft.com/en-us/javascript/api/botbuilder/)
