@@ -7,6 +7,7 @@
  */
 
 export * from 'botframework-schema';
+export * from './autoSaveStateMiddleware';
 export * from './botAdapter';
 export * from './botState';
 export * from './botStatePropertyAccessor';
