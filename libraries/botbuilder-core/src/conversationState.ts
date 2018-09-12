@@ -53,7 +53,7 @@ export class ConversationState extends BotState {
             // Calculate storage key
             const key: string = this.getStorageKey(context);
 
-            return key ? Promise.resolve(key) :  Promise.reject(new Error(NO_KEY));
+            return key ? Promise.resolve(key) : Promise.reject(new Error(NO_KEY));
         });
     }
 
@@ -61,11 +61,19 @@ export class ConversationState extends BotState {
      * Returns the storage key for the current conversation state.
      * @param context Context for current turn of conversation with the user.
      */
-    public getStorageKey(context: TurnContext): string|undefined {
+    public getStorageKey(context: TurnContext): string | undefined {
         const activity: Activity = context.activity;
         const channelId: string = activity.channelId;
         const conversationId: string = activity && activity.conversation && activity.conversation.id ? activity.conversation.id : undefined;
 
-        return channelId && conversationId ? `${channelId}/conversations/${conversationId}/${this.namespace}` : undefined;
+        if (!channelId) {
+            throw new Error('missing activity.channelId');
+        }
+
+        if (!conversationId) {
+            throw new Error('missing activity.conversation.id');
+        }
+
+        return `${channelId}/conversations/${conversationId}/${this.namespace}`;
     }
 }

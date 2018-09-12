@@ -66,6 +66,17 @@ export class PrivateConversationState extends BotState {
         const conversationId: string = activity && activity.conversation && activity.conversation.id ? activity.conversation.id : undefined;
         const userId: string = activity && activity.from && activity.from.id ? activity.from.id : undefined;
 
-        return channelId && conversationId && userId ? `${channelId}/conversations/${conversationId}/users/${userId}/${this.namespace}` : undefined;
+        if (!channelId) {
+            throw new Error('missing activity.channelId');
+        }
+
+        if (!conversationId) {
+            throw new Error('missing activity.conversation.id');
+        }
+
+        if (!userId) {
+            throw new Error('missing activity.from.id');
+        }
+        return `${channelId}/conversations/${conversationId}/users/${userId}/${this.namespace}`;
     }
 }
