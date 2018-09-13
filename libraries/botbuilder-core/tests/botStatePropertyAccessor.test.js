@@ -22,8 +22,8 @@ describe(`BotStatePropertyAccessor`, function () {
         const tAdapter = new TestAdapter(async (context) => {
             let userCount = await userProperty.get(context, 100);
             assert(userCount === 100, `default value for PropertyAccessor was not used.`);
+            await middleware.saveChanges(context);
         });
-        tAdapter.use(middleware);
 
         tAdapter.receiveActivity(`Hello world!`)
             .then(() => done());
@@ -36,8 +36,8 @@ describe(`BotStatePropertyAccessor`, function () {
         const tAdapter = new TestAdapter(async (context) => {
             let testValue = await testProperty.get(context);
             assert(testValue === undefined, `PropertyAccessor's value was not undefined.`);
+            await middleware.saveChanges(context);
         });
-        tAdapter.use(middleware);
 
         tAdapter.receiveActivity(`Hello world!`)
             .then(() => done());
@@ -53,8 +53,8 @@ describe(`BotStatePropertyAccessor`, function () {
             messageCount++;
             await messageProperty.set(context, messageCount);
             await context.sendActivity(messageCount.toString());
+            await middleware.saveChanges(context);
         });
-        tAdapter.use(middleware);
 
         tAdapter.test(`Hello world!`, `1`, `messageCount was not incremented.`)
             .test(`Hello world!`, `2`, `messageCount was not properly saved.`)
@@ -80,9 +80,10 @@ describe(`BotStatePropertyAccessor`, function () {
             await booleanProperty.delete(context);
             let noPropertyValue = await booleanProperty.get(context);
             assert(noPropertyValue === undefined, `value for PropertyAccessor was not properly deleted.`);
+            await middleware.saveChanges(context);
             done();
         });
-        tAdapter.use(middleware);
+
         tAdapter.receiveActivity(`Hello world!`);
     });
 
@@ -94,9 +95,10 @@ describe(`BotStatePropertyAccessor`, function () {
             // Call delete on the doesNotExistProperty which has not been registered to the state on staticContext.
             // This should not blow up.
             await doesNotExistProperty.delete(staticContext);
+            await middleware.saveChanges(context);
             done();
         });
-        tAdapter.use(middleware);
+
         tAdapter.receiveActivity(`Hello world!`);
     });
 
@@ -109,9 +111,9 @@ describe(`BotStatePropertyAccessor`, function () {
             assert(Array.isArray(numbersValue), `default value for PropertyAccessor was not properly set.`);
             assert(numbersValue.length === 1, `numbersValue.length should be 1, not ${numbersValue.length}.`);
             assert(numbersValue[0] === 1, `numbersValue[0] should be 1, not ${numbersValue[0]}.`);
+            await middleware.saveChanges(context);
             done();
         });
-        tAdapter.use(middleware);
 
         tAdapter.receiveActivity(`Hello world!`);
     });
@@ -130,9 +132,9 @@ describe(`BotStatePropertyAccessor`, function () {
             assert(addressValue.street === '1 Microsoft Way', `default value for PropertyAccessor was not properly set.`);
             assert(addressValue.zipCode === 98052, `default value for PropertyAccessor was not properly set.`);
             assert(addressValue.state === 'WA', `default value for PropertyAccessor was not properly set.`);
+            await middleware.saveChanges(context);
             done();
         });
-        tAdapter.use(middleware);
 
         tAdapter.receiveActivity(`Hello world!`);
     });

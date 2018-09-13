@@ -87,10 +87,10 @@ describe('DialogSet', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.begin('a');
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);

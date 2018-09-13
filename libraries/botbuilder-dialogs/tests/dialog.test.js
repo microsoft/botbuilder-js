@@ -34,10 +34,10 @@ describe('Dialog', function () {
             const dc = await dialogs.createContext(turnContext);
 
             await dc.begin('testDialog');
+            await convoState.saveChanges(turnContext);
         });
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         // Create a DialogState property, DialogSet and register TestDialog.
         const dialogState = convoState.createProperty('dialogState');
@@ -53,10 +53,10 @@ describe('Dialog', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
             await dc.begin('testDialog', { test: 'test1' });
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -82,10 +82,10 @@ describe('Dialog', function () {
                     await turnContext.sendActivity(finalResult.toString());
                     break;
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);

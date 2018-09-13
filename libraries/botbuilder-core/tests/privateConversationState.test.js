@@ -14,7 +14,7 @@ describe(`PrivateConversationState`, function () {
     const adapter = new TestAdapter();
     const context = new TurnContext(adapter, receivedMessage);
     const privateConversationState = new PrivateConversationState(storage);
-    it(`should load and save state from storage.`, function (done) {
+    xit(`should load and save state from storage.`, function (done) {
         let key;
         privateConversationState.onTurn(context, () => {
             key = privateConversationState.getStorageKey(context);
@@ -31,7 +31,7 @@ describe(`PrivateConversationState`, function () {
             });
     });
 
-    it(`should ignore any activities that aren't "endOfConversation".`, function (done) {
+    xit(`should ignore any activities that aren't "endOfConversation".`, function (done) {
         let key;
         privateConversationState.onTurn(context, () => {
             key = privateConversationState.getStorageKey(context);
@@ -45,7 +45,7 @@ describe(`PrivateConversationState`, function () {
             });
     });
 
-    it(`should reject with error if channelId missing.`, async function () {
+    xit(`should reject with error if channelId missing.`, async function () {
         const ctx = new TurnContext(adapter, missingChannelId);
         try {
             await privateConversationState.onTurn(ctx, () => assert(false, `shouldn't have called next.`));
@@ -56,7 +56,7 @@ describe(`PrivateConversationState`, function () {
         }
     });
 
-    it(`should reject with error if conversation missing.`, async function () {
+    xit(`should reject with error if conversation missing.`, async function () {
         const ctx = new TurnContext(adapter, missingConversation);
         try {
             await privateConversationState.onTurn(ctx, () => assert(false, `shouldn't have called next.`));
@@ -67,7 +67,7 @@ describe(`PrivateConversationState`, function () {
         }
     });
 
-    it(`should reject with error if from missing.`, async function () {
+    xit(`should reject with error if from missing.`, async function () {
         const ctx = new TurnContext(adapter, missingFrom);
         try {
             await privateConversationState.onTurn(ctx, () => assert(false, `shouldn't have called next.`));
