@@ -490,3 +490,5 @@ export class BotConfiguration extends BotConfigurationBase {
     }
 }
 
+// Make sure the internal field is not included in JSON representation.
+Object.defineProperty(BotConfiguration.prototype, 'internal', {enumerable: false, writable: true});

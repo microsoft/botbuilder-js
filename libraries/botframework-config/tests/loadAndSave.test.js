@@ -20,6 +20,15 @@ describe("LoadAndSaveTests", () => {
         assert.ok(config.services[0].appId, 'appId should be migrated from endpoint');
     });
 
+    it("InternalIsNotEnumerable", async () => {
+        var config = await bf.BotConfiguration.loadBotFromFolder(path.dirname(testBotPath));
+        assert.ok(config.internal, "Internal field does not exist on configuration. It should exist!");
+
+        var json = JSON.stringify(config);
+        var parsed = JSON.parse(json);
+        assert.equal(parsed.internal, null, 'Internal field should not exist on stringified config.');
+    });
+
     it("LoadFromFolder", async () => {
         var config = await bf.BotConfiguration.loadBotFromFolder(path.dirname(testBotPath));
         assert.equal(config.name, "a", "loaded wrong file");
