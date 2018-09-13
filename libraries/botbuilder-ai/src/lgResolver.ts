@@ -13,27 +13,47 @@ import * as request from 'request-promise-native';
 
 export type PrimitiveType = string | number | boolean | Date;
 
+/**
+ * Description of a language generation application used for initializing a LanguageGenerationResolver.
+ */
 export interface LanguageGenerationApplication {
+  /* Language generation application id */
   applicationId: string;
 
   /** (Optional) Azure region */
   azureRegion?: string;
 
+  /* Congnetive service authorization key */
   endpointKey: string;
 }
 
+/**
+ * Options for LanguageGenerationResolver.
+ */
 export interface LanguageGenerationOptions {}
 
+/**
+ * Component used to extract template references from the activity object, resolve them using the language generation service
+ * and inject them back in the activity.
+ */
 export class LanguageGenerationResolver {
   private lgApi: LGAPI;
   constructor(
     private application: LanguageGenerationApplication,
-    private options: LanguageGenerationOptions,
+    private options: LanguageGenerationOptions
   ) {
     this.validateApplicationInputs();
     this.lgApi = new LGAPI(application, options);
   }
 
+  /**
+   * Extracts template references from the activity object, resolves them using the language generation service
+   * and injects them back in the activity
+   *
+   * @param activity botbuilder activity
+   * @param [entities] map object that contains slots accepted by the LG service
+   * @returns
+   */
   public async resolve(activity: Activity, entities?: Map<string, PrimitiveType>): Promise<void> {
     if (isNil(activity)) {
       throw new Error("Activity can't be null or undefined");
@@ -53,12 +73,12 @@ export class LanguageGenerationResolver {
           .setLocale(activity.locale)
           .setSlots(entitiesSlots)
           .setTemplateId(templateReference)
-          .build(),
+          .build()
       )
       .map(this.lgApi.fetch);
 
     const responses = await Promise.all(requestsPromises);
-    
+
     const templateResolutions = Utilities.transformLGResponsestoMap(responses);
 
     this.validateResponses(templateReferences, templateResolutions);
@@ -68,25 +88,22 @@ export class LanguageGenerationResolver {
 
   private validateResponses(
     templateReferences: string[],
-    templateResolutions: Map<string, string>,
+    templateResolutions: Map<string, string>
   ): void {
     templateReferences.forEach(templateReference => {
       if (!templateResolutions.has(templateReference)) {
-        //@TODO
-        throw new Error();
+        throw new Error('Internal Error');
       }
     });
   }
 
   private validateApplicationInputs(): void {
     if (isEmpty(this.application.applicationId)) {
-      //@TODO
-      throw new Error(``);
+      throw new Error(`Application Id can't be null or empty`);
     }
 
     if (isEmpty(this.application.endpointKey)) {
-      //@TODO
-      throw new Error(``);
+      throw new Error(`Endpoint key can't be null or empty`);
     }
   }
 }
@@ -98,11 +115,13 @@ type IActivityInspector = (activity: Activity) => string[];
 
 const textInspector: IActivityInspector = (activity: Activity): string[] => {
   const text = activity.text || '';
+
   return PatternRecognizer.extractPatterns(text);
 };
 
 const speakInspector: IActivityInspector = (activity: Activity): string[] => {
   const text = activity.speak || '';
+
   return PatternRecognizer.extractPatterns(text);
 };
 
@@ -132,9 +151,12 @@ export class ActivityInspector {
 
   constructor(private readonly activity: Activity) {}
 
-  // Searches for template references inside the activity and constructs slots
+  /**
+   * Utilizes activity inspectors to extract the template references
+   *
+   * @returns all template references found in the activity
+   */
   public extractTemplateReferences(): string[] {
-    // Utilize activity inspectors to extract the template references
     const stateNames = this.inspectors
       .map(inspector => inspector(this.activity))
       .reduce((acc, current) => [...acc, ...current], []);
@@ -148,7 +170,7 @@ type IActivityInjector = (activity: Activity, templateResolutions: Map<string, s
 
 const textInjector: IActivityInjector = (
   activity: Activity,
-  templateResolutions: Map<string, string>,
+  templateResolutions: Map<string, string>
 ): void => {
   const text = activity.text;
   if (text) {
@@ -158,7 +180,7 @@ const textInjector: IActivityInjector = (
 
 const speakInjector: IActivityInjector = (
   activity: Activity,
-  templateResolutions: Map<string, string>,
+  templateResolutions: Map<string, string>
 ): void => {
   const speak = activity.speak;
   if (speak) {
@@ -168,7 +190,7 @@ const speakInjector: IActivityInjector = (
 
 const suggestedActionsInjector: IActivityInjector = (
   activity: Activity,
-  templateResolutions: Map<string, string>,
+  templateResolutions: Map<string, string>
 ): void => {
   if (activity.suggestedActions && activity.suggestedActions.actions) {
     activity.suggestedActions.actions.forEach(action => {
@@ -179,7 +201,7 @@ const suggestedActionsInjector: IActivityInjector = (
       if (action.displayText) {
         action.displayText = PatternRecognizer.replacePatterns(
           action.displayText,
-          templateResolutions,
+          templateResolutions
         );
       }
     });
@@ -196,7 +218,12 @@ export class ActivityInjector {
     suggestedActionsInjector,
   ];
   constructor(private readonly activity: Activity) {}
-  // Searches for template references inside the activity and replaces them with the actual text coming from the LG backend
+
+  /**
+   * Searches for template references inside the activity and replaces them with the actual text coming from the LG backend
+   *
+   * @param templateReferences takes in template references map and injects their resolution in the activity
+   */
   public injectTemplateReferences(templateReferences: Map<string, string>): void {
     this.injectors.forEach(injector => injector(this.activity, templateReferences));
   }
@@ -211,7 +238,7 @@ export class PatternRecognizer {
   public static readonly regex = /[^[\]]+(?=])/g;
 
   public static extractPatterns(text: string): string[] {
-    const templateReferences = [];
+    const templateReferences: string[] = [];
     let regexExecArr: RegExpExecArray;
 
     while ((regexExecArr = this.regex.exec(text)) !== null) {
@@ -222,7 +249,7 @@ export class PatternRecognizer {
       regexExecArr.forEach(match => templateReferences.push(match));
     }
 
-    return templateReferences;
+    return templateReferences.filter(text => !text.includes('\\'));
   }
 
   public static replacePatterns(
@@ -231,17 +258,11 @@ export class PatternRecognizer {
   ): string {
     let modifiedText = originalText;
     templateResolutions.forEach((stateResolution, templateReference) => {
-      modifiedText = replace(
-        modifiedText,
-        PatternRecognizer.constructTemplateReference(templateReference),
-        stateResolution
-      );
+      modifiedText = replace(modifiedText, `[${templateReference}]`, stateResolution);
     });
 
     return modifiedText;
   }
-
-  private static constructTemplateReference = (text: string) => `[${text}]`;
 }
 
 /**
@@ -253,6 +274,12 @@ export class SlotsBuilder {
     private readonly entities?: Map<string, PrimitiveType>
   ) {}
 
+  /**
+   * Uses the given activity and entities to construct a tuple of template references and slots
+   *
+   * @returns A tuple of template references and entity slots
+   * @memberof SlotsBuilder
+   */
   public build(): [string[], Slot[]] {
     const activityInspector = new ActivityInspector(this.activity);
 
@@ -265,7 +292,7 @@ export class SlotsBuilder {
 
   private convertEntitiesToSlots(entities: Map<string, PrimitiveType>): Slot[] {
     const slots: Slot[] = [];
-    entities.forEach((value, key) => slots.push(new Slot(key, value)));
+    entities.forEach((value, key) => slots.push({ key, value }));
 
     return slots;
   }
@@ -274,9 +301,9 @@ export class SlotsBuilder {
 /**
  * @private
  */
-export class Slot {
-  public static readonly STATE_NAME_KEY = 'GetStateName';
-  constructor(public readonly key: string, public value: PrimitiveType) {}
+export interface Slot {
+  key: string;
+  value: PrimitiveType;
 }
 
 //  ----------------------------------------- LG API -----------------------------------------
@@ -288,7 +315,6 @@ export class Utilities {
     switch (value.ValueType) {
       case 0:
         return value.StringValues[0];
-      // @TODO The return type should be strings only
       case 1:
         return value.IntValues[0].toString();
       case 2:
@@ -298,8 +324,7 @@ export class Utilities {
       case 4:
         return value.DateTimeValues[0].toString();
       default:
-        //@TODO
-        throw new Error('Internal Error');
+        return null;
     }
   }
 
@@ -309,35 +334,35 @@ export class Utilities {
     if (isString(value)) {
       return {
         StringValues: [value],
-        ValueType: 0
+        ValueType: 0,
       };
     } else if (isNumber(value)) {
       if (isInteger(value)) {
         return {
           IntValues: [value],
-          ValueType: 1
+          ValueType: 1,
         };
       } else {
         return {
           FloatValues: [value],
-          ValueType: 2
+          ValueType: 2,
         };
       }
     } else if (isBoolean(value)) {
       return {
         BooleanValues: [value],
-        ValueType: 3
+        ValueType: 3,
       };
     } else if (isDate(value)) {
       return {
         DateTimeValues: [value.toISOString()],
-        ValueType: 4
+        ValueType: 4,
       };
     }
   }
 
   public static extractTemplateReferenceAndResolution(res: LGResponse): [string, string] {
-    if (isNil(res.Outputs) || isNil(Object.keys(res.Outputs)[0])) {
+    if (isNil(res.Outputs) || isNil(res.Outputs.DisplayText)) {
       return [null, null];
     }
 
@@ -356,7 +381,7 @@ export class Utilities {
       .map(Utilities.extractTemplateReferenceAndResolution)
       .filter(
         ([templateReference, templateResolution]) =>
-          !isNil(templateReference) && !isNil(templateResolution),
+          !isNil(templateReference) && !isNil(templateResolution)
       )
       .forEach(([templateReference, templateResolution]) =>
         templateResolutions.set(templateReference, templateResolution)
@@ -424,13 +449,13 @@ class LGRequestBuilder {
       const lgValue = Utilities.convertSlotToLGValue(slot);
       acc[slot.key] = lgValue;
       return acc;
-    },                                                              {});
+    }, {});
 
     return {
       locale: this.locale,
       scenario: this.scenario,
       slots: slotsJSON,
-      templateId: this.templateId
+      templateId: this.templateId,
     };
   }
 }
@@ -453,7 +478,7 @@ export class LGAPI {
   public static readonly ISSUE_TOKEN_URL =
     'https://wuppe.api.cognitive.microsoft.com/sts/v1.0/issueToken';
 
-  private token = null;
+  private token: string = null;
 
   constructor(
     private readonly application: LanguageGenerationApplication,
@@ -466,9 +491,9 @@ export class LGAPI {
         url: LGAPI.ISSUE_TOKEN_URL,
         method: 'POST',
         headers: {
-          'OCP-APIM-SUBSCRIPTION-KEY': this.application.endpointKey
+          'OCP-APIM-SUBSCRIPTION-KEY': this.application.endpointKey,
         },
-        json: true
+        json: true,
       });
     } catch (e) {
       throw new Error(e.error.message);
@@ -480,25 +505,21 @@ export class LGAPI {
       const response = await request({
         url: LGAPI.BASE_URL + LGAPI.RESOURCE_URL,
         method: 'POST',
-        //@todo
         headers: {
           Authorization: `Bearer - ${this.token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(lgRequest)
+        body: JSON.stringify(lgRequest),
       });
 
       return { ...JSON.parse(response), templateId: lgRequest.templateId };
     } catch (e) {
-      console.log(e);
       switch (e.statusCode) {
         case 401:
-        case 501:
-          throw new Error(e.error);
+          throw new Error('Cognitive Authentication Failed');
         default:
-          //@TODO
           throw new Error('Internal Error');
       }
     }
-  }
+  };
 }
