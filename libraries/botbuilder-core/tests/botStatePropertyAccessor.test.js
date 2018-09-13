@@ -9,7 +9,7 @@ describe(`BotStatePropertyAccessor`, function () {
     const receivedActivity = { text: 'received', type: 'message' };
     const storage = new MemoryStorage();
     const adapter = new TestAdapter();
-    const middleware = new BotState(storage, (context) => {
+    const botState = new BotState(storage, (context) => {
         assert(context, `context not passed into storage stateKey factory.`);
         return storageKey;
     });
@@ -17,12 +17,12 @@ describe(`BotStatePropertyAccessor`, function () {
 
     it(`should use default value when a default value is assigned.`, function (done) {
         const USER_COUNT = 'userCount';
-        const userProperty = middleware.createProperty(USER_COUNT);
+        const userProperty = botState.createProperty(USER_COUNT);
 
         const tAdapter = new TestAdapter(async (context) => {
             let userCount = await userProperty.get(context, 100);
             assert(userCount === 100, `default value for PropertyAccessor was not used.`);
-            await middleware.saveChanges(context);
+            await botState.saveChanges(context);
         });
 
         tAdapter.receiveActivity(`Hello world!`)
@@ -31,12 +31,12 @@ describe(`BotStatePropertyAccessor`, function () {
 
     it(`should return undefined when default value is not assigned.`, function (done) {
         const NO_DEFAULT_VALUE = 'noValue';
-        const testProperty = middleware.createProperty(NO_DEFAULT_VALUE);
+        const testProperty = botState.createProperty(NO_DEFAULT_VALUE);
 
         const tAdapter = new TestAdapter(async (context) => {
             let testValue = await testProperty.get(context);
             assert(testValue === undefined, `PropertyAccessor's value was not undefined.`);
-            await middleware.saveChanges(context);
+            await botState.saveChanges(context);
         });
 
         tAdapter.receiveActivity(`Hello world!`)
@@ -46,14 +46,14 @@ describe(`BotStatePropertyAccessor`, function () {
 
     it(`should save changes to registered Property multiple times.`, function (done) {
         const MESSAGE_COUNT = 'messageCount';
-        const messageProperty = middleware.createProperty(MESSAGE_COUNT);
+        const messageProperty = botState.createProperty(MESSAGE_COUNT);
 
         const tAdapter = new TestAdapter(async (context) => {
             let messageCount = await messageProperty.get(context, 0);
             messageCount++;
             await messageProperty.set(context, messageCount);
             await context.sendActivity(messageCount.toString());
-            await middleware.saveChanges(context);
+            await botState.saveChanges(context);
         });
 
         tAdapter.test(`Hello world!`, `1`, `messageCount was not incremented.`)
@@ -64,7 +64,7 @@ describe(`BotStatePropertyAccessor`, function () {
 
     it(`should delete property value on state.`, function (done) {
         const BOOLEAN_PROPERTY = 'booleanProperty';
-        const booleanProperty = middleware.createProperty(BOOLEAN_PROPERTY);
+        const booleanProperty = botState.createProperty(BOOLEAN_PROPERTY);
 
         const tAdapter = new TestAdapter(async (context) => {
             // Retrieve the property value, change it to true, then set it in state.
@@ -80,7 +80,7 @@ describe(`BotStatePropertyAccessor`, function () {
             await booleanProperty.delete(context);
             let noPropertyValue = await booleanProperty.get(context);
             assert(noPropertyValue === undefined, `value for PropertyAccessor was not properly deleted.`);
-            await middleware.saveChanges(context);
+            await botState.saveChanges(context);
             done();
         });
 
@@ -89,13 +89,13 @@ describe(`BotStatePropertyAccessor`, function () {
 
     it(`should not delete anything if property not found in current state.`, function (done) {
         const DOES_NOT_EXIST = 'doesNotExist';
-        const doesNotExistProperty = middleware.createProperty(DOES_NOT_EXIST);
+        const doesNotExistProperty = botState.createProperty(DOES_NOT_EXIST);
 
         const tAdapter = new TestAdapter(async (context) => {
             // Call delete on the doesNotExistProperty which has not been registered to the state on staticContext.
             // This should not blow up.
             await doesNotExistProperty.delete(staticContext);
-            await middleware.saveChanges(context);
+            await botState.saveChanges(context);
             done();
         });
 
@@ -104,14 +104,14 @@ describe(`BotStatePropertyAccessor`, function () {
 
     it(`should successfully set default value if default value is an Array.`, function (done) {
         const NUMBERS_PROPERTY = 'numbersProperty';
-        const numbersProperty = middleware.createProperty(NUMBERS_PROPERTY);
+        const numbersProperty = botState.createProperty(NUMBERS_PROPERTY);
 
         const tAdapter = new TestAdapter(async (context) => {
             let numbersValue = await numbersProperty.get(context, [1]);
             assert(Array.isArray(numbersValue), `default value for PropertyAccessor was not properly set.`);
             assert(numbersValue.length === 1, `numbersValue.length should be 1, not ${numbersValue.length}.`);
             assert(numbersValue[0] === 1, `numbersValue[0] should be 1, not ${numbersValue[0]}.`);
-            await middleware.saveChanges(context);
+            await botState.saveChanges(context);
             done();
         });
 
@@ -120,7 +120,7 @@ describe(`BotStatePropertyAccessor`, function () {
 
     it(`should successfully set default value if default value is an Object.`, function (done) {
         const ADDRESS_PROPERTY = 'addressProperty';
-        const addressProperty = middleware.createProperty(ADDRESS_PROPERTY);
+        const addressProperty = botState.createProperty(ADDRESS_PROPERTY);
 
         const tAdapter = new TestAdapter(async (context) => {
             let addressValue = await addressProperty.get(context, {
@@ -132,7 +132,7 @@ describe(`BotStatePropertyAccessor`, function () {
             assert(addressValue.street === '1 Microsoft Way', `default value for PropertyAccessor was not properly set.`);
             assert(addressValue.zipCode === 98052, `default value for PropertyAccessor was not properly set.`);
             assert(addressValue.state === 'WA', `default value for PropertyAccessor was not properly set.`);
-            await middleware.saveChanges(context);
+            await botState.saveChanges(context);
             done();
         });
 
