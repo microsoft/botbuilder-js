@@ -151,26 +151,21 @@ export class OAuthPrompt extends Dialog {
             return await dc.end(undefined);
         } else {
             // Validate the return value
-            let end: boolean = false;
-            let endResult: any;
+            let isValid: boolean = false;
             if (this.validator) {
-                await this.validator(dc.context, {
+                isValid = await this.validator({
+                    context: dc.context,
                     recognized: recognized,
                     state: state.state,
-                    options: state.options,
-                    end: (output: any): void => {
-                        end = true;
-                        endResult = output;
-                    }
+                    options: state.options
                 });
             } else if (recognized.succeeded) {
-                end = true;
-                endResult = recognized.value;
+                isValid = true;
             }
 
             // Return recognized value or re-prompt
-            if (end) {
-                return await dc.end(endResult);
+            if (isValid) {
+                return await dc.end(recognized.value);
             } else {
                 // Send retry prompt
                 if (!dc.context.responded && isMessage && state.options.retryPrompt) {
