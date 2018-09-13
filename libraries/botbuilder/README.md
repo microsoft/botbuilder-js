@@ -17,7 +17,7 @@ To add the latest version of this package to your bot:
 npm install --save botbuilder
 ```
 
-### Use the Daily Build
+#### Use the Daily Build
 
 To get access to the daily builds of this library, configure npm to use the MyGet feed before installing.
 
