@@ -16,10 +16,9 @@ import { WaterfallStepContext } from './waterfallStepContext';
  * @remarks
  *
  * ```TypeScript
- * type WaterfallStep = (dc: DialogContext, args?: any, next?: SkipStepFunction) => Promise<DialogTurnResult>;
+ * type WaterfallStep = (step: WaterfallStepContext<O>) => Promise<DialogTurnResult>;
  * ```
- * @param WaterfallStep.context The dialog context for the current turn of conversation.
- * @param WaterfallStep.step Contextual information for the current step being executed.
+ * @param WaterfallStepContext Contextual information for the current step being executed.
  */
 export type WaterfallStep<O extends object = {}> = (step: WaterfallStepContext<O>) => Promise<DialogTurnResult>;
 

@@ -23,33 +23,37 @@ import { DialogContext, DialogState } from './dialogContext';
  * for their name and phone number:
  *
  * ```JavaScript
- * const { DialogSet, TextPrompt } = require('botbuilder-dialogs');
+ * const { DialogSet, TextPrompt, WaterfallDialog, UserState, MemoryStorage } = require('botbuilder-dialogs');
  *
+ * const memoryStorage = new MemoryStorage();
+ * const userState = new UserState(memoryStorage);
  * const dialogs = new DialogSet();
- *
- * dialogs.add('fillProfile', [
- *     async function (dc, options) {
- *         dc.activeDialog.state.profile = {};
- *         await dc.prompt('textPrompt', `What's your name?`);
+ * const userProfile = userState.createProperty('profile');
+ * 
+ * dialogs.add(new WaterfallDialog('fillProfile', [
+ *     async (step) => {
+ *         step.values.profile = {};
+ *         return await step.prompt('textPrompt', `What's your name?`);
  *     },
- *     async function (dc, name) {
- *         dc.activeDialog.state.profile.name = name;
- *         await dc.prompt('textPrompt', `What's your phone number?`);
+ *     async (step) => {
+ *         step.values.profile.name = step.result;
+ *         return await step.prompt('textPrompt', `What's your phone number?`);
  *     },
- *     async function (dc, phone) {
- *         dc.activeDialog.state.profile.phone = phone;
+ *     async (step) => {
+ *         step.values.profile.phone = step.result;
  *
  *         // Save completed profile to user state
- *         const user = userState.get(context);
- *         user.profile = dc.activeDialog.state.profile;
+ *         const user = await userProfile.get(step.context);
+ *         user.profile = step.values.profile;
+ *         await userProfile.set(step.context, user);
  *
  *         // Notify user and end
- *         await dc.context.sendActivity(`Your profile was updated.`);
- *         await dc.end();
+ *         await step.context.sendActivity(`Your profile was updated.`);
+ *         return await step.end();
  *     }
- * ]);
+ * ]));
  *
- * dialogs.add('textPrompt', new TextPrompt());
+ * dialogs.add(new TextPrompt('textPrompt'));
  * ```
  *
  * At first glance it probably looks like we're making this simple task of asking the user two
@@ -74,11 +78,11 @@ import { DialogContext, DialogState } from './dialogContext';
  * server.post('/api/messages', (req, res) => {
  *     adapter.processActivity(req, res, async (context) => {
  *         // Get conversation state and create DialogContext object
- *         const conversation = conversationState.get(context);
- *         const dc = dialogs.createContext(context, conversation);
+ *         const dc = await dialogs.createContext(context);
  *
  *         // Continue execution if there's an "active" dialog
  *         await dc.continue();
+ *
  *         if (!context.responded && context.activity.type === ActivityType.Message) {
  *             // No active dialogs so start 'fillProfile' dialog
  *             await dc.begin('fillProfile');
@@ -115,32 +119,30 @@ import { DialogContext, DialogState } from './dialogContext';
  * server.post('/api/messages', (req, res) => {
  *     adapter.processActivity(req, res, async (context) => {
  *         // Get conversation state and create DialogContext object
- *         const conversation = conversationState.get(context);
- *         const dc = dialogs.createContext(context, conversation);
+ *         const dc = await dialogs.createContext(context);
  *
  *         // Check for any interruptions
  *         const isMessage = context.activity.type === ActivityType.Message;
  *         if (isMessage) {
  *             const utterance = context.activity.text.trim().toLowerCase();
  *             if (utterance.startsWith('edit profile')) {
- *                 await dc.endAll().begin('fillProfile');
- *                 return;
+ *                 return await dc.cancelAll().begin('fillProfile');
  *             } else if (utterance.startsWith('cancel')) {
  *                 if (dc.activeDialog) {
- *                     dc.endAll();
- *                     await context.sendActivity(`Task canceled`);
+ *                     await dc.cancelAll();
+ *                     return await context.sendActivity(`Task canceled`);
  *                 } else {
- *                     await context.sendActivity(`Nothing to cancel`);
+ *                     return await context.sendActivity(`Nothing to cancel`);
  *                 }
- *                 return;
  *             }
  *         }
  *
  *         // Continue execution if there's an "active" dialog
  *         await dc.continue();
+ * 
  *         if (!context.responded && isMessage) {
  *             // Greet user and fill in profile if missing
- *             const user = userState.get(context);
+ *             const user = await userState.get(context);
  *             if (!user.profile) {
  *                 await context.sendActivity(`Hello... Lets fill out your profile to get started.`);
  *                 await dc.begin('fillProfile');
@@ -173,9 +175,9 @@ export class DialogSet {
      *
      * ```JavaScript
      * dialogs.add(new Waterfall('greeting', [
-     *      async function (dc) {
-     *          await dc.context.sendActivity(`Hello world!`);
-     *          await dc.end();
+     *      async function (step) {
+     *          await step.context.sendActivity(`Hello world!`);
+     *          await step.end();
      *      }
      * ]));
      * ```
@@ -203,8 +205,7 @@ export class DialogSet {
      * that state.
      *
      * ```JavaScript
-     * const conversation = conversationState.get(context);
-     * const dc = dialogs.createContext(context, conversation);
+     * const dc = await dialogs.createContext(context);
      * ```
      * @param context Context for the current turn of conversation with the user.
      */

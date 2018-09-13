@@ -27,8 +27,8 @@ import { TurnContext } from './turnContext';
  * server.post('/api/messages', (req, res) => {
  *    adapter.processActivity(req, res, async (context) => {
  *       // Get state
- *       const convo = conversationState.get(context);
- *       const user = userState.get(context);
+ *       const convo = await conversationState.get(context);
+ *       const user = await userState.get(context);
  *
  *       // ... route activity ...
  *

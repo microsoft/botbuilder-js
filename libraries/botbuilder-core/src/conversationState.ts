@@ -34,7 +34,7 @@ const NO_KEY: string = `ConversationState: channelId and/or conversation missing
  * server.post('/api/messages', (req, res) => {
  *    adapter.processActivity(req, res, async (context) => {
  *       // Get loaded conversation state
- *       const convo = conversationState.get(context);
+ *       const convo = await conversationState.get(context);
  *
  *       // ... route activity ...
  *

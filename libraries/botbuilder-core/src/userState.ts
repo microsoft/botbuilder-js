@@ -32,7 +32,7 @@ const NO_KEY: string = `UserState: channelId and/or conversation missing from co
  * server.post('/api/messages', (req, res) => {
  *    adapter.processActivity(req, res, async (context) => {
  *       // Get loaded user state
- *       const user = userState.get(context);
+ *       const user = await userState.get(context);
  *
  *       // ... route activity ...
  *
