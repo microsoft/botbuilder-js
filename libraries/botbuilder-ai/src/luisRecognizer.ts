@@ -47,11 +47,6 @@ export interface LuisApplication {
     applicationId: string;
 
     /**
-     * (Optional) Azure region
-     */
-    azureRegion?: string;
-
-    /**
      *  (Optional) LUIS endpoint with a default of https://westus.api.cognitive.microsoft.com
      */
     endpoint?: string;
