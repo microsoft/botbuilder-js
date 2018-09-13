@@ -24,7 +24,7 @@
     "@types/node": "^9.3.0",
     "azure-storage": "^2.3.0",
     "botbuilder": "4.0.0-preview1.2",
-    "documentdb": "^1.14.2",
+    "documentdb": "1.14.5",
     "flat": "^4.0.0"
   },
   "devDependencies": {

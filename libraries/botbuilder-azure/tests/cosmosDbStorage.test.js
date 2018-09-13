@@ -242,8 +242,7 @@ testStorage = function () {
     });
 }
 
-console.warn(`Disabling CosmosDBStorage tests.`);
-describe.skip('CosmosDbStorage', function () {
+describe('CosmosDbStorage', function () {
     this.timeout(20000);
     before('cleanup', reset);
     testStorage();
