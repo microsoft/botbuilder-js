@@ -24,7 +24,7 @@ describe('AttachmentPrompt', function() {
             await convoState.saveChanges(turnContext);
         });
 
-        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        // Create new ConversationState with MemoryStorage 
         const convoState = new ConversationState(new MemoryStorage());
         // adapter.use(convoState);
 
