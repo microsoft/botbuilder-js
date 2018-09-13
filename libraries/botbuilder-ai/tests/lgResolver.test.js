@@ -13,6 +13,8 @@ const {
 
 const { isEmpty } = require('lodash');
 
+const ENABLE_MOCKING = true;
+
 const expect = val => ({
   toBe: comparedVal => assert(val === comparedVal),
   toEqual: comparedVal => assert(val == comparedVal),
@@ -93,7 +95,7 @@ describe('PatternRecognizer', () => {
     expect(templateReferences[0]).toEqual('sayGoodMorning');
 
     const templateReferences1 = PatternRecognizer.extractPatterns(
-      '[sayHello], John! [welcomePhrase] to the {new} office.',
+      '[sayHello], John! [welcomePhrase] to the {new} office.'
     );
 
     expect(templateReferences1[0]).toEqual('sayHello');
@@ -101,7 +103,7 @@ describe('PatternRecognizer', () => {
     expect(templateReferences1.length).toEqual(2);
 
     const templateReferences2 = PatternRecognizer.extractPatterns(
-      '[sayGoodBye], John! [thankingPhrase] for your time, [scheduleMeeting].',
+      '[sayGoodBye], John! [thankingPhrase] for your time, [scheduleMeeting].'
     );
     expect(templateReferences2[0]).toEqual('sayGoodBye');
     expect(templateReferences2[1]).toEqual('thankingPhrase');
@@ -120,9 +122,8 @@ describe('PatternRecognizer', () => {
   });
 
   it('should ignore invalid template references', () => {
-    const templateReferences = PatternRecognizer.extractPatterns('[welcome]');
-    expect(templateReferences[0]).toEqual('welcome\\');
-    throw new Error('This should throw');
+    const templateReferences = PatternRecognizer.extractPatterns('[welcome\\]');
+    expect(templateReferences[0]).toBeUndefined();
   });
 
   it('should replace all template references with their corresponding resolutions', () => {
@@ -136,7 +137,7 @@ describe('PatternRecognizer', () => {
 
     const newUtterance1 = PatternRecognizer.replacePatterns(
       '[sayHello], John! [welcomePhrase] to the {new} office.',
-      templateReferences1,
+      templateReferences1
     );
 
     expect(newUtterance1).toEqual('hello, John! welcome to the {new} office.');
@@ -148,7 +149,7 @@ describe('PatternRecognizer', () => {
 
     const newUtterance2 = PatternRecognizer.replacePatterns(
       '[sayGoodBye], John! [thankingPhrase] for your time, [scheduleMeeting].',
-      templateReferences2,
+      templateReferences2
     );
 
     expect(newUtterance2).toEqual(`Bye, John! thanks for your time, let's have a meeting.`);
@@ -159,7 +160,7 @@ describe('PatternRecognizer', () => {
 
     const newUtterance = PatternRecognizer.replacePatterns(
       'Hello John, welcome to BF!',
-      templateReferences,
+      templateReferences
     );
 
     expect(newUtterance).toEqual('Hello John, welcome to BF!');
@@ -212,10 +213,10 @@ describe('ActivityUtilities', () => {
     expect(activity.text).toEqual(examplesPool.multipleReferences1.resolvedText);
     expect(activity.speak).toEqual(examplesPool.multipleReferences2.resolvedText);
     expect(activity.suggestedActions.actions[0].text).toEqual(
-      examplesPool.singleReference1.resolvedText,
+      examplesPool.singleReference1.resolvedText
     );
     expect(activity.suggestedActions.actions[0].displayText).toEqual(
-      examplesPool.singleReference2.resolvedText,
+      examplesPool.singleReference2.resolvedText
     );
   });
 });
@@ -270,7 +271,7 @@ describe('Utilities.convertLGValueToString', () => {
 describe('Utilities.convertSlotToLGValue', () => {
   it('should convert from string to lgVal', () => {
     const val = 'val';
-    const lgVal = Utilities.convertSlotToLGValue(new Slot('key', val));
+    const lgVal = Utilities.convertSlotToLGValue({ key: 'key', value: val });
     expect(lgVal.ValueType).toEqual(0);
     expect(lgVal.StringValues[0]).toEqual(val);
     expect(lgVal.IntValues).toBeUndefined();
@@ -281,7 +282,7 @@ describe('Utilities.convertSlotToLGValue', () => {
 
   it('should convert from integer to lgVal', () => {
     const val = 10;
-    const lgVal = Utilities.convertSlotToLGValue(new Slot('key', val));
+    const lgVal = Utilities.convertSlotToLGValue({ key: 'key', value: val });
     expect(lgVal.ValueType).toEqual(1);
     expect(lgVal.IntValues[0]).toEqual(val);
     expect(lgVal.StringValues).toBeUndefined();
@@ -292,7 +293,7 @@ describe('Utilities.convertSlotToLGValue', () => {
 
   it('should convert from float to lgVal', () => {
     const val = 10.2;
-    const lgVal = Utilities.convertSlotToLGValue(new Slot('key', val));
+    const lgVal = Utilities.convertSlotToLGValue({ key: 'key', value: val });
     expect(lgVal.ValueType).toEqual(2);
     expect(lgVal.FloatValues[0]).toEqual(val);
     expect(lgVal.StringValues).toBeUndefined();
@@ -303,7 +304,7 @@ describe('Utilities.convertSlotToLGValue', () => {
 
   it('should convert from boolean to lgVal', () => {
     const val = false;
-    const lgVal = Utilities.convertSlotToLGValue(new Slot('key', val));
+    const lgVal = Utilities.convertSlotToLGValue({ key: 'key', value: val });
     expect(lgVal.ValueType).toEqual(3);
     expect(lgVal.BooleanValues[0]).toEqual(val);
     expect(lgVal.StringValues).toBeUndefined();
@@ -314,7 +315,7 @@ describe('Utilities.convertSlotToLGValue', () => {
 
   it('should convert from Date to lgVal', () => {
     const val = new Date();
-    const lgVal = Utilities.convertSlotToLGValue(new Slot('key', val));
+    const lgVal = Utilities.convertSlotToLGValue({ key: 'key', value: val });
     expect(lgVal.ValueType).toEqual(4);
     expect(lgVal.DateTimeValues[0]).toEqual(val.toISOString());
     expect(lgVal.StringValues).toBeUndefined();
@@ -354,7 +355,7 @@ describe('SlotsBuilder', () => {
 
     expect(templateReferences.length).toBe(
       examplesPool.multipleReferences1.resolutions.length +
-        examplesPool.multipleReferences2.resolutions.length,
+        examplesPool.multipleReferences2.resolutions.length
     );
 
     expect(templateReferences[0]).toBe(examplesPool.multipleReferences1.resolutions[0][0]);
@@ -367,7 +368,7 @@ describe('SlotsBuilder', () => {
 
     const slotsBuilder = new SlotsBuilder(
       activity,
-      new Map().set('firstName', 'John').set('lastName', 'Doe'),
+      new Map().set('firstName', 'John').set('lastName', 'Doe')
     );
     const [_, entitiesSlots] = slotsBuilder.build();
 
@@ -388,7 +389,7 @@ describe('SlotsBuilder', () => {
 
     const slotsBuilder = new SlotsBuilder(
       activity,
-      new Map().set('firstName', 'John').set('lastName', 'Doe'),
+      new Map().set('firstName', 'John').set('lastName', 'Doe')
     );
     const [_, entitiesSlots] = slotsBuilder.build();
 
@@ -403,6 +404,11 @@ describe('SlotsBuilder', () => {
 });
 
 describe('LanguageGenerationResolver', () => {
+  const application = {
+    applicationId: 'lgmodelfortesting',
+    endpointKey: '4262b7b8accc4fceaa6da4174f9c2a67',
+  };
+
   const findTemplateReferenceAPIRes = templateReference =>
     Object.keys(examplesPool)
       .map(key => examplesPool[key].apiResponses)
@@ -418,16 +424,19 @@ describe('LanguageGenerationResolver', () => {
 
   beforeEach(() => {
     nock.cleanAll();
-    mockAuthentication();
 
-    nock(LGAPI.BASE_URL + LGAPI.RESOURCE_URL)
-      .persist()
-      .post('')
-      .reply((uri, requestBody, cb) => {
-        const templateReference = requestBody.templateId;
+    if (ENABLE_MOCKING) {
+      mockAuthentication();
 
-        cb(null, [200, JSON.stringify(findTemplateReferenceAPIRes(templateReference))]);
-      });
+      nock(LGAPI.BASE_URL + LGAPI.RESOURCE_URL)
+        .persist()
+        .post('')
+        .reply((uri, requestBody, cb) => {
+          const templateReference = requestBody.templateId;
+
+          cb(null, [200, JSON.stringify(findTemplateReferenceAPIRes(templateReference))]);
+        });
+    }
   });
 
   it('should throw an error if an invalid key or application id are given', async () => {
@@ -438,7 +447,7 @@ describe('LanguageGenerationResolver', () => {
           applicationId: '',
           endpointKey: '',
         },
-        {},
+        {}
       );
 
       const activity = new ActivityBuilder().setText(examplesPool.multipleReferences1.text).build();
@@ -454,13 +463,7 @@ describe('LanguageGenerationResolver', () => {
   it('should throw an error if the activity or entities given are null', async () => {
     let err = null;
     try {
-      const resolver = new LanguageGenerationResolver(
-        {
-          applicationId: 'lgmodelfortesting',
-          endpointKey: '4262b7b8accc4fceaa6da4174f9c2a67',
-        },
-        {},
-      );
+      const resolver = new LanguageGenerationResolver(application, {});
 
       await resolver.resolve(null, undefined);
     } catch (e) {
@@ -470,13 +473,7 @@ describe('LanguageGenerationResolver', () => {
   });
 
   it('should extract template references from all the possible fields', () => {
-    const resolver = new LanguageGenerationResolver(
-      {
-        applicationId: 'lgmodelfortesting',
-        endpointKey: '4262b7b8accc4fceaa6da4174f9c2a67',
-      },
-      {},
-    );
+    const resolver = new LanguageGenerationResolver(application, {});
 
     // All fields supplied
 
@@ -495,10 +492,10 @@ describe('LanguageGenerationResolver', () => {
       expect(activity.text).toEqual(examplesPool.multipleReferences1.resolvedText);
       expect(activity.speak).toEqual(examplesPool.singleReference1.resolvedText);
       expect(activity.suggestedActions.actions[0].text).toEqual(
-        examplesPool.multipleReferences2.resolvedText,
+        examplesPool.multipleReferences2.resolvedText
       );
       expect(activity.suggestedActions.actions[0].displayText).toEqual(
-        examplesPool.singleReference2.resolvedText,
+        examplesPool.singleReference2.resolvedText
       );
 
       // Some fields supplied
@@ -515,7 +512,7 @@ describe('LanguageGenerationResolver', () => {
       return resolver.resolve(activity1, new Map()).then(() => {
         expect(activity1.speak).toEqual(examplesPool.singleReference1.resolvedText);
         expect(activity1.suggestedActions.actions[0].displayText).toEqual(
-          examplesPool.multipleReferences2.resolvedText,
+          examplesPool.multipleReferences2.resolvedText
         );
       });
     });
@@ -524,13 +521,7 @@ describe('LanguageGenerationResolver', () => {
   it(`should throw an error if there are missing resolutions from the api`, async () => {
     let err = null;
     try {
-      const resolver = new LanguageGenerationResolver(
-        {
-          applicationId: 'lgmodelfortesting',
-          endpointKey: '4262b7b8accc4fceaa6da4174f9c2a67',
-        },
-        {},
-      );
+      const resolver = new LanguageGenerationResolver(application, {});
 
       // All fields supplied
 
@@ -545,13 +536,7 @@ describe('LanguageGenerationResolver', () => {
   }).timeout(600000);
 
   it(`should send entities to the api for proccesing`, async () => {
-    const resolver = new LanguageGenerationResolver(
-      {
-        applicationId: 'lgmodelfortesting',
-        endpointKey: '4262b7b8accc4fceaa6da4174f9c2a67',
-      },
-      {},
-    );
+    const resolver = new LanguageGenerationResolver(application, {});
 
     const activity = new ActivityBuilder().setSpeak(examplesPool.withEntities.text).build();
 
@@ -560,115 +545,80 @@ describe('LanguageGenerationResolver', () => {
     expect(activity.speak).toEqual(examplesPool.withEntities.resolvedText);
   }).timeout(600000);
 
-  // it('should throw a custom error coming from the backend if the API sends 401 or 501', async () => {
-  //   let err = null;
-  //   const error401 = 'Cognitive Authentication Failed';
+  it('should throw a custom error coming from the backend if the API sends 401', async () => {
+    let err = null;
 
-  //   nock.cleanAll();
-  //   mockAuthentication();
+    nock.cleanAll();
+    mockAuthentication();
 
-  //   nock(LGAPI.BASE_URL + LGAPI.RESOURCE_URL)
-  //     .post('')
-  //     .reply((uri, requestBody, cb) => {
-  //       cb(null, [401, error401]);
-  //     });
+    if (ENABLE_MOCKING) {
+      nock(LGAPI.BASE_URL + LGAPI.RESOURCE_URL)
+        .post('')
+        .reply((uri, requestBody, cb) => {
+          cb(null, [401, '']);
+        });
+    }
 
-  //   try {
-  //     const resolver = new LanguageGenerationResolver(
-  //       { applicationId: '32432', endpointKey: '43234' },
-  //       {},
-  //     );
+    try {
+      const resolver = new LanguageGenerationResolver(application, {});
 
-  //     const activity = new ActivityBuilder().setSpeak(examplesPool.withEntities.text).build();
+      const activity = new ActivityBuilder().setSpeak(examplesPool.withEntities.text).build();
 
-  //     await resolver.resolve(activity, new Map());
-  //   } catch (e) {
-  //     err = e;
-  //   } finally {
-  //     expect(err.message).toEqual(error401);
-  //   }
+      await resolver.resolve(activity, new Map());
+    } catch (e) {
+      err = e;
+    } finally {
+      expect(err.message).toEqual('Cognitive Authentication Failed');
+    }
+  });
 
-  //   let err1 = null;
-  //   const error501 = 'Not found any engine instance for this request';
+  it('should throw a internal error if the response status code is anything but 200, 401', async () => {
+    if (ENABLE_MOCKING) {
+      let err = null;
 
-  //   nock.cleanAll();
-  //   mockAuthentication();
+      nock.cleanAll();
+      mockAuthentication();
 
-  //   nock(LGAPI.BASE_URL + LGAPI.RESOURCE_URL)
-  //     .post('')
-  //     .reply((uri, requestBody, cb) => {
-  //       cb(null, [501, error501]);
-  //     });
+      nock(LGAPI.BASE_URL + LGAPI.RESOURCE_URL)
+        .post('')
+        .reply((uri, requestBody, cb) => {
+          cb(null, [500, null]);
+        });
 
-  //   try {
-  //     const resolver = new LanguageGenerationResolver(
-  //       { applicationId: '32432', endpointKey: '43234' },
-  //       {},
-  //     );
+      try {
+        const resolver = new LanguageGenerationResolver(application, {});
 
-  //     const activity = new ActivityBuilder().setSpeak(examplesPool.withEntities.text).build();
+        const activity = new ActivityBuilder().setSpeak(examplesPool.withEntities.text).build();
 
-  //     await resolver.resolve(activity, new Map());
-  //   } catch (e) {
-  //     err1 = e;
-  //   } finally {
-  //     expect(err1.message).toEqual(error501);
-  //   }
-  // });
+        await resolver.resolve(activity, new Map());
+      } catch (e) {
+        err = e;
+      } finally {
+        expect(err.message).toEqual('Internal Error');
+      }
 
-  // it('should throw a internal error if the response status code is anything but 200, 401 or 501', async () => {
-  //   let err = null;
+      let err1 = null;
 
-  //   nock.cleanAll();
-  //   mockAuthentication();
+      nock.cleanAll();
+      mockAuthentication();
 
-  //   nock(LGAPI.BASE_URL + LGAPI.RESOURCE_URL)
-  //     .post('')
-  //     .reply((uri, requestBody, cb) => {
-  //       cb(null, [500, null]);
-  //     });
+      nock(LGAPI.BASE_URL + LGAPI.RESOURCE_URL)
+        .post('')
+        .reply((uri, requestBody, cb) => {
+          cb(null, [400, null]);
+        });
 
-  //   try {
-  //     const resolver = new LanguageGenerationResolver(
-  //       { applicationId: '32432', endpointKey: '43234' },
-  //       {},
-  //     );
+      try {
+        const resolver = new LanguageGenerationResolver(application, {});
 
-  //     const activity = new ActivityBuilder().setSpeak(examplesPool.withEntities.text).build();
+        const activity = new ActivityBuilder().setSpeak(examplesPool.withEntities.text).build();
 
-  //     await resolver.resolve(activity, new Map());
-  //   } catch (e) {
-  //     err = e;
-  //   } finally {
-  //     expect(err.message).toEqual('Internal Error');
-  //   }
-
-  //   let err1 = null;
-
-  //   nock.cleanAll();
-  //   mockAuthentication();
-
-  //   nock(LGAPI.BASE_URL + LGAPI.RESOURCE_URL)
-  //     .post('')
-  //     .reply((uri, requestBody, cb) => {
-  //       cb(null, [400, null]);
-  //     });
-
-  //   try {
-  //     const resolver = new LanguageGenerationResolver(
-  //       { applicationId: '32432', endpointKey: '43234' },
-  //       {},
-  //     );
-
-  //     const activity = new ActivityBuilder().setSpeak(examplesPool.withEntities.text).build();
-
-  //     await resolver.resolve(activity, new Map());
-  //   } catch (e) {
-  //     err1 = e;
-  //   } finally {
-  //     expect(err1.message).toEqual('Internal Error');
-  //   }
-  // });
-
-  
+        await resolver.resolve(activity, new Map());
+      } catch (e) {
+        err1 = e;
+      } finally {
+        expect(err1.message).toEqual('Internal Error');
+      }
+    }
+  });
 });
