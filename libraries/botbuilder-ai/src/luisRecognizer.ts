@@ -52,6 +52,11 @@ export interface LuisApplication {
     azureRegion?: string;
 
     /**
+     *  (Optional) LUIS endpoint with a default of https://westus.api.cognitive.microsoft.com
+     */
+    endpoint?: string;
+
+    /**
      * Endpoint key for talking to LUIS
      */
     endpointKey: string;
