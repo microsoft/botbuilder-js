@@ -18,7 +18,7 @@ export class LuisService extends ConnectedService implements ILuisService {
 
     // get endpoint for the luis service
     public getEndpoint() { 
-        return `https://${this.region}.api.cognitive.microsoft.com/luis/v2.0/`;
+        return `https://${this.region}.api.cognitive.microsoft.com`;
     }
 
     // encrypt keys in service
