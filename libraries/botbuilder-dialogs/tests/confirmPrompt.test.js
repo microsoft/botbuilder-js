@@ -1,15 +1,15 @@
 const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { ConfirmPrompt, DialogSet, DialogTurnStatus, ListStyle } =  require('../');
+const { ConfirmPrompt, DialogSet, DialogTurnStatus, ListStyle } = require('../');
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
 const answerMessage = { text: `yes`, type: 'message' };
 const invalidMessage = { text: `what?`, type: 'message' };
 
-describe('ConfirmPrompt', function() {
+describe('ConfirmPrompt', function () {
     this.timeout(5000);
 
-    it('should call ConfirmPrompt using dc.prompt().', function (done) {
+    it('should call ConfirmPrompt using dc.prompt().', async function () {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -31,14 +31,13 @@ describe('ConfirmPrompt', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new ConfirmPrompt('prompt'));
 
-        adapter.send('Hello')
-        .assertReply('Please confirm. (1) Yes or (2) No')
-        .send('yes')
-        .assertReply(`The result found is 'true'.`);
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please confirm. (1) Yes or (2) No')
+            .send('yes')
+            .assertReply(`The result found is 'true'.`);
     });
-    
-    it('should call ConfirmPrompt with custom validator.', function (done) {
+
+    it('should call ConfirmPrompt with custom validator.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -55,22 +54,20 @@ describe('ConfirmPrompt', function() {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const confirmPrompt = new ConfirmPrompt('prompt', async (context, prompt) => {
-            assert(context, `TurnContext not found.`);
+        const confirmPrompt = new ConfirmPrompt('prompt', async (prompt) => {
             assert(prompt, `PromptValidatorContext not found.`);
-            prompt.end(prompt.recognized.value);
+            return prompt.recognized.succeeded;
         });
         confirmPrompt.style = ListStyle.none;
         dialogs.add(confirmPrompt);
 
-        adapter.send('Hello')
-        .assertReply('Please confirm. Yes or No')
-        .send('no')
-        .assertReply(`The result found is 'false'.`)
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please confirm. Yes or No')
+            .send('no')
+            .assertReply(`The result found is 'false'.`)
     });
 
-    it('should send custom retryPrompt.', function (done) {
+    it('should send custom retryPrompt.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -95,16 +92,15 @@ describe('ConfirmPrompt', function() {
         dialogs.add(confirmPrompt);
 
 
-        adapter.send('Hello')
-        .assertReply('Please confirm. Yes or No')
-        .send('what?')
-        .assertReply(`Please reply with 'Yes' or 'No'.`)
-        .send('no')
-        .assertReply(`The result found is 'false'.`)
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please confirm. Yes or No')
+            .send('what?')
+            .assertReply(`Please reply with 'Yes' or 'No'.`)
+            .send('no')
+            .assertReply(`The result found is 'false'.`)
     });
 
-    it('should send custom retryPrompt if validator does not reply.', function (done) {
+    it('should send custom retryPrompt if validator does not reply.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -124,27 +120,22 @@ describe('ConfirmPrompt', function() {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const confirmPrompt = new ConfirmPrompt('prompt', async (context, prompt) => {
-            assert(context, `TurnContext not found.`);
+        const confirmPrompt = new ConfirmPrompt('prompt', async (prompt) => {
             assert(prompt, `PromptValidatorContext not found.`);
-            if (prompt.recognized.value !== undefined) {
-                prompt.end(prompt.recognized.value);
-            }
+            return prompt.recognized.succeeded;
         });
         confirmPrompt.style = ListStyle.none;
         dialogs.add(confirmPrompt);
 
-
-        adapter.send('Hello')
-        .assertReply('Please confirm. Yes or No')
-        .send('what?')
-        .assertReply(`Please reply with 'Yes' or 'No'.`)
-        .send('no')
-        .assertReply(`The result found is 'false'.`)
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please confirm. Yes or No')
+            .send('what?')
+            .assertReply(`Please reply with 'Yes' or 'No'.`)
+            .send('no')
+            .assertReply(`The result found is 'false'.`)
     });
 
-    it('should ignore retryPrompt if validator replies.', function (done) {
+    it('should ignore retryPrompt if validator replies.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -164,29 +155,26 @@ describe('ConfirmPrompt', function() {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const confirmPrompt = new ConfirmPrompt('prompt', async (context, prompt) => {
-            assert(context, `TurnContext not found.`);
+        const confirmPrompt = new ConfirmPrompt('prompt', async (prompt) => {
             assert(prompt, `PromptValidatorContext not found.`);
-            if (prompt.recognized.value === undefined) {
-                await context.sendActivity('The correct response is either yes or no. Please choose one.')
-            } else {
-                prompt.end(prompt.recognized.value);
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('The correct response is either yes or no. Please choose one.')
             }
+            return prompt.recognized.succeeded;
         });
         confirmPrompt.style = ListStyle.none;
         dialogs.add(confirmPrompt);
 
 
-        adapter.send('Hello')
-        .assertReply('Please confirm. Yes or No')
-        .send('what?')
-        .assertReply('The correct response is either yes or no. Please choose one.')
-        .send('no')
-        .assertReply(`The result found is 'false'.`)
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please confirm. Yes or No')
+            .send('what?')
+            .assertReply('The correct response is either yes or no. Please choose one.')
+            .send('no')
+            .assertReply(`The result found is 'false'.`)
     });
 
-    it('should not send any retryPrompt if no prompt is specified.', function (done) {
+    it('should not send any retryPrompt if no prompt is specified.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -208,16 +196,15 @@ describe('ConfirmPrompt', function() {
         dialogs.add(confirmPrompt);
 
 
-        adapter.send('Hello')
-        .assertReply('')
-        .send('what?')
-        .assertReply('')
-        .send('no')
-        .assertReply(`The result found is 'false'.`)
-        done();
+        await adapter.send('Hello')
+            .assertReply('')
+            .send('what?')
+            .assertReply('')
+            .send('no')
+            .assertReply(`The result found is 'false'.`)
     });
 
-    it('should use defaultLocale when rendering choices', function (done) {
+    it('should use defaultLocale when rendering choices', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -238,27 +225,24 @@ describe('ConfirmPrompt', function() {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ConfirmPrompt('prompt', async (context, prompt) => {
-            assert(context);
+        const choicePrompt = new ConfirmPrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            } else {
-                await context.sendActivity('bad input.');
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('bad input.');
             }
+            return prompt.recognized.succeeded;
         }, 'ja-jp');
         dialogs.add(choicePrompt);
 
-        adapter.send({ text: 'Hello', type: ActivityTypes.Message })
-        .assertReply('Please confirm. (1) はい または (2) いいえ')
-        .send(invalidMessage)
-        .assertReply('bad input.')
-        .send({ text: 'はい', type: ActivityTypes.Message })
-        .assertReply('true');
-        done();
+        await adapter.send({ text: 'Hello', type: ActivityTypes.Message })
+            .assertReply('Please confirm. (1) はい または (2) いいえ')
+            .send(invalidMessage)
+            .assertReply('bad input.')
+            .send({ text: 'はい', type: ActivityTypes.Message })
+            .assertReply('true');
     });
 
-    it('should use context.activity.locale when rendering choices', function (done) {
+    it('should use context.activity.locale when rendering choices', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -279,25 +263,22 @@ describe('ConfirmPrompt', function() {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ConfirmPrompt('prompt', async (context, prompt) => {
-            assert(context);
+        const choicePrompt = new ConfirmPrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            } else {
-                await context.sendActivity('bad input.');
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('bad input.');
             }
+            return prompt.recognized.succeeded;
         });
         dialogs.add(choicePrompt);
 
-        adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'ja-jp' })
-        .assertReply('Please confirm. (1) はい または (2) いいえ')
-        .send({ text: 'いいえ', type: ActivityTypes.Message, locale: 'ja-jp' })
-        .assertReply('false');
-        done();
+        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'ja-jp' })
+            .assertReply('Please confirm. (1) はい または (2) いいえ')
+            .send({ text: 'いいえ', type: ActivityTypes.Message, locale: 'ja-jp' })
+            .assertReply('false');
     });
 
-    it('should use context.activity.locale over defaultLocale when rendering choices', function (done) {
+    it('should use context.activity.locale over defaultLocale when rendering choices', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -318,21 +299,18 @@ describe('ConfirmPrompt', function() {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ConfirmPrompt('prompt', async (context, prompt) => {
-            assert(context);
+        const choicePrompt = new ConfirmPrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            } else {
-                await context.sendActivity('bad input.');
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('bad input.');
             }
+            return prompt.recognized.succeeded;
         }, 'es-es');
         dialogs.add(choicePrompt);
 
-        adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'ja-jp' })
-        .assertReply('Please confirm. (1) はい または (2) いいえ')
-        .send({ text: 'いいえ', type: ActivityTypes.Message, locale: 'ja-jp' })
-        .assertReply('false');
-        done();
+        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'ja-jp' })
+            .assertReply('Please confirm. (1) はい または (2) いいえ')
+            .send({ text: 'いいえ', type: ActivityTypes.Message, locale: 'ja-jp' })
+            .assertReply('false');
     });
 });

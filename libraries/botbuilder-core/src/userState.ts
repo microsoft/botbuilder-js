@@ -32,7 +32,7 @@ const NO_KEY: string = `UserState: channelId and/or conversation missing from co
  * server.post('/api/messages', (req, res) => {
  *    adapter.processActivity(req, res, async (context) => {
  *       // Get loaded user state
- *       const user = userState.get(context);
+ *       const user = await userState.get(context);
  *
  *       // ... route activity ...
  *
@@ -59,11 +59,19 @@ export class UserState extends BotState {
      * Returns the storage key for the current user state.
      * @param context Context for current turn of conversation with the user.
      */
-    public getStorageKey(context: TurnContext): string|undefined {
+    public getStorageKey(context: TurnContext): string | undefined {
         const activity: Activity = context.activity;
         const channelId: string = activity.channelId;
         const userId: string = activity && activity.from && activity.from.id ? activity.from.id : undefined;
 
-        return channelId && userId ? `user/${channelId}/${userId}/${this.namespace}` : undefined;
+        if (!channelId) {
+            throw new Error('missing activity.channelId');
+        }
+
+        if (!userId) {
+            throw new Error('missing activity.from.id');
+        }
+
+        return `${channelId}/users/${userId}/${this.namespace}`;
     }
 }

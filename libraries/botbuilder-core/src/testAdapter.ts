@@ -388,7 +388,11 @@ export class TestFlow {
                         } else if (adapter.activityBuffer.length > 0) {
                             // Activity received
                             const reply: Partial<Activity> = adapter.activityBuffer.shift() as Activity;
-                            inspector(reply, description as string);
+                            try {
+                                inspector(reply, description as string);
+                            } catch (err) {
+                                reject(err);
+                            }
                             resolve();
                         } else {
                             setTimeout(waitForActivity, 5);
@@ -448,6 +452,13 @@ export class TestFlow {
      */
     public catch(onRejected?: (reason: any) => void): TestFlow {
         return new TestFlow(this.previous.catch(onRejected), this.adapter);
+    }
+
+    /**
+     * start the test sequence, returning a promise to await
+     */
+    public startTest() : Promise<void> {
+        return this.previous;
     }
 }
 
