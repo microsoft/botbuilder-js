@@ -19,10 +19,10 @@ describe('TextPrompt', function () {
                 const reply = results.result;
                 await turnContext.sendActivity(reply);
             }
+            await convoState.saveChanges(turnContext);
         });
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         // Create a DialogState property, DialogSet and TextPrompt.
         const dialogState = convoState.createProperty('dialogState');
@@ -46,10 +46,10 @@ describe('TextPrompt', function () {
                 const reply = results.result;
                 await turnContext.sendActivity(reply);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -77,10 +77,10 @@ describe('TextPrompt', function () {
                 const reply = results.result;
                 await turnContext.sendActivity(reply);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -105,10 +105,10 @@ describe('TextPrompt', function () {
                 const reply = results.result;
                 await turnContext.sendActivity(reply);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -140,10 +140,10 @@ describe('TextPrompt', function () {
                 const reply = results.result;
                 await turnContext.sendActivity(reply);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);

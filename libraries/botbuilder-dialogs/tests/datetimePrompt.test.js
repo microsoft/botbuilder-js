@@ -21,10 +21,10 @@ describe('DatetimePrompt', function () {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
+            await convoState.saveChanges(turnContext);
         });
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         // Create a DialogState property, DialogSet and DateTimePrompt.
         const dialogState = convoState.createProperty('dialogState');
@@ -48,9 +48,9 @@ describe('DatetimePrompt', function () {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
+            await convoState.saveChanges(turnContext);
         });
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -73,10 +73,10 @@ describe('DatetimePrompt', function () {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -102,10 +102,10 @@ describe('DatetimePrompt', function () {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -133,10 +133,10 @@ describe('DatetimePrompt', function () {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -167,10 +167,10 @@ describe('DatetimePrompt', function () {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);

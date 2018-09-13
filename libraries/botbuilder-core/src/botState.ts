@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import { BotStatePropertyAccessor, StatePropertyAccessor } from './botStatePropertyAccessor';
-import { Middleware } from './middlewareSet';
 import { PropertyManager } from './propertyManager';
 import { calculateChangeHash, Storage, StorageKeyFactory, StoreItems } from './storage';
 import { TurnContext } from './turnContext';
@@ -50,7 +49,7 @@ export interface CachedBotState {
  * });
  * ```
  */
-export class BotState implements PropertyManager, Middleware {
+export class BotState implements PropertyManager {
     // NEW
     public readonly properties: Map<string, StatePropertyAccessor> = new Map();
 
@@ -73,16 +72,6 @@ export class BotState implements PropertyManager, Middleware {
         this.properties.set(name, prop);
 
         return prop;
-    }
-
-    /**
-     * @private
-     */
-    public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
-        // Read in state, continue execution, and then flush changes on completion of turn.
-        return this.load(context, true)
-            .then(next)
-            .then(() => this.saveChanges(context));
     }
 
     /**

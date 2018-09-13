@@ -18,11 +18,11 @@ describe('DialogContext', function() {
                 assert(results.result === true, `End result from WaterfallDialog was not expected value.`);
                 done();
             }
+            await convoState.saveChanges(turnContext);
         });
 
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
         
         // Create a DialogState property, DialogSet and register the WaterfallDialog.
         const dialogState = convoState.createProperty('dialogState');
@@ -46,10 +46,10 @@ describe('DialogContext', function() {
                 assert(results.result === true, `End result from WaterfallDialog was not expected value.`);
                 done();
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
         
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -70,6 +70,7 @@ describe('DialogContext', function() {
         
             try {
                 let results = await dc.begin('b');
+                await convoState.saveChanges(turnContext);
             }
             catch (err) {
                 assert(err);
@@ -80,7 +81,6 @@ describe('DialogContext', function() {
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
 
@@ -98,11 +98,11 @@ describe('DialogContext', function() {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.prompt('a', 'test');
+            await convoState.saveChanges(turnContext);
             done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
         const dialogState = convoState.createProperty('dialogState');
 
         const dialogs = new DialogSet(dialogState);
@@ -122,11 +122,11 @@ describe('DialogContext', function() {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.prompt('a');
+            await convoState.saveChanges(turnContext);
             done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
         const dialogState = convoState.createProperty('dialogState');
 
         const dialogs = new DialogSet(dialogState);
@@ -145,11 +145,11 @@ describe('DialogContext', function() {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.prompt('a', 'test', ['red', 'green', 'blue']);
+            await convoState.saveChanges(turnContext);
             done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
         const dialogState = convoState.createProperty('dialogState');
 
         const dialogs = new DialogSet(dialogState);
@@ -170,12 +170,12 @@ describe('DialogContext', function() {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.begin('a');
+            await convoState.saveChanges(turnContext);
             assert.strictEqual(results.result, 119, `unexpected results.result value received from 'a' dialog.`);
             done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
         const dialogState = convoState.createProperty('dialogState');
 
         const dialogs = new DialogSet(dialogState);
@@ -216,10 +216,10 @@ describe('DialogContext', function() {
                     done();
                     break;
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
         const dialogState = convoState.createProperty('dialogState');
 
         const dialogs = new DialogSet(dialogState);
@@ -255,10 +255,10 @@ describe('DialogContext', function() {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.begin('a');
             }
+            await convoState.saveChanges(turnContext);
         });
         
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
         const dialogState = convoState.createProperty('dialogState');
 
         const dialogs = new DialogSet(dialogState);
@@ -284,11 +284,11 @@ describe('DialogContext', function() {
             const results = await dc.continue();
             assert.strictEqual(typeof results, 'object', `results is not the expected object`);
             assert.strictEqual(results.status, DialogTurnStatus.empty, `results.status is not 'empty'.`);
+            await convoState.saveChanges(turnContext);
             done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
         const dialogState = convoState.createProperty('dialogState');
 
         const dialogs = new DialogSet(dialogState);        
@@ -302,11 +302,12 @@ describe('DialogContext', function() {
         
             const results = await dc.begin('a');
             assert.strictEqual(results.result, true, `received unexpected final result from dialog.`);
+            await convoState.saveChanges(turnContext);
             done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
+        
         const dialogState = convoState.createProperty('dialogState');
 
         const dialogs = new DialogSet(dialogState);
@@ -338,13 +339,14 @@ describe('DialogContext', function() {
             const dc = await dialogs.createContext(turnContext);
             
             const results = await dc.end();
+            await convoState.saveChanges(turnContext);
             assert.strictEqual(results.status, DialogTurnStatus.complete, `results.status not equal 'complete'.`);
             assert.strictEqual(results.result, undefined, `received unexpected value for results.result (expected undefined).`);
             done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
+        
         const dialogState = convoState.createProperty('dialogState');
 
         const dialogs = new DialogSet(dialogState);
@@ -363,12 +365,13 @@ describe('DialogContext', function() {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.begin('a', { z: 'z' });
+            await convoState.saveChanges(turnContext);
             assert.strictEqual(results.result, 'z', `received unexpected final result from dialog.`);
             done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
+        
         const dialogState = convoState.createProperty('dialogState');
 
         const dialogs = new DialogSet(dialogState);
@@ -396,10 +399,11 @@ describe('DialogContext', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.replace('b');
+            await convoState.saveChanges(turnContext);
             done();
         });
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
+        
         const dialogState = convoState.createProperty('dialogState');
 
         const dialogs = new DialogSet(dialogState);
