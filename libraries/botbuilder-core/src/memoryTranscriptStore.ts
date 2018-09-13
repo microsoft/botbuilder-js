@@ -7,7 +7,7 @@
  */
 
 import { Activity } from 'botframework-schema';
-import { PagedResult, Transcript, TranscriptStore } from './transcriptLogger';
+import { PagedResult, TranscriptInfo, TranscriptStore } from './transcriptLogger';
 
 /**
  * The memory transcript store stores transcripts in volatile memory in a Map.
@@ -100,10 +100,10 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param channelId Channel Id.
      * @param continuationToken Continuatuation token to page through results.
      */
-    public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>> {
+    public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
-        const pagedResult: PagedResult<Transcript> = new PagedResult<Transcript>();
+        const pagedResult: PagedResult<TranscriptInfo> = new PagedResult<TranscriptInfo>();
         if (this.channels.has(channelId)) {
             const channel: Map<string, Activity[]> = this.channels.get(channelId);
 
@@ -158,7 +158,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
  * @param a
  * @param b
  */
-const createdSorter: (a: Transcript, b: Transcript) => number = (a: Transcript, b: Transcript): number =>
+const createdSorter: (a: TranscriptInfo, b: TranscriptInfo) => number = (a: TranscriptInfo, b: TranscriptInfo): number =>
     a.created.getTime() - b.created.getTime();
 
 /**
