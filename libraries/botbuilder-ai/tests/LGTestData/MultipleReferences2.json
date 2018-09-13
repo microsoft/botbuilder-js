@@ -1,0 +1,23 @@
+{
+  "text": "[sayHello], John! [welcomePhrase] to the new office.",
+  "resolutions": [["sayHello", "Hello"], ["welcomePhrase", "Welcome"]],
+  "resolvedText": "Hello, John! Welcome to the new office.",
+  "apiResponses": {
+    "sayHello": {
+      "Outputs": {
+        "DisplayText": {
+          "ValueType": 0,
+          "StringValues": ["Hello"]
+        }
+      }
+    },
+    "welcomePhrase": {
+      "Outputs": {
+        "DisplayText": {
+          "ValueType": 0,
+          "StringValues": ["Welcome"]
+        }
+      }
+    }
+  }
+}
