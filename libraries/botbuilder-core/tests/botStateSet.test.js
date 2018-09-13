@@ -30,7 +30,7 @@ class BotStateMock {
     }
 }
 
-xdescribe(`BotStateSet`, function () {
+describe(`BotStateSet`, function () {
     this.timeout(5000);
 
     const adapter = new TestAdapter();
