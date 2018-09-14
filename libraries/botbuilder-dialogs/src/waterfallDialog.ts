@@ -65,7 +65,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         return this;
     }
 
-    public async dialogBegin(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Initialize waterfall state
         const state: WaterfallDialogState = dc.activeDialog.state as WaterfallDialogState;
         state.options = options || {};
@@ -75,17 +75,17 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         return await this.runStep(dc, 0, DialogReason.beginCalled);
     }
 
-    public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
+    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Don't do anything for non-message activities
         if (dc.context.activity.type !== ActivityTypes.Message) {
             return Dialog.EndOfTurn;
         }
 
         // Run next step with the message text as the result.
-        return await this.dialogResume(dc, DialogReason.continueCalled, dc.context.activity.text);
+        return await this.resumeDialog(dc, DialogReason.continueCalled, dc.context.activity.text);
     }
 
-    public async dialogResume(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // Increment step index and run step
         const state: WaterfallDialogState = dc.activeDialog.state as WaterfallDialogState;
 
@@ -115,7 +115,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
                         throw new Error(`WaterfallStepContext.next(): method already called for dialog and step '${this.id}[${index}]'.`);
                     }
 
-                    return await this.dialogResume(dc, DialogReason.nextCalled, stepResult);
+                    return await this.resumeDialog(dc, DialogReason.nextCalled, stepResult);
                 }
             });
 
@@ -123,7 +123,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
             return await this.onStep(step);
         } else {
             // End of waterfall so just return to parent
-            return await dc.end(result);
+            return await dc.endDialog(result);
         }
     }
 }

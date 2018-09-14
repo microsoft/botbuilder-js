@@ -78,7 +78,7 @@ dialogs.add(new WaterfallDialog(DIALOG_ONE, [
         return await step.next();
 
         // OR end
-        // return await step.end();
+        // return await step.endDialog();
     },
     step2fn,
     step3fn,
@@ -99,12 +99,12 @@ adapter.processActivity(req, res, async (turnContext) => {
 
     // If the bot hasn't yet responded, try to continue any active dialog
     if (!turnContext.responded) {
-        const status = await dc.continue();
+        const status = await dc.continueDialog();
     }
 
     // Invoke the dialog we created above.
     if (!turnContext.responded) {
-        await dc.begin(DIALOG_ONE);
+        await dc.beginDialog(DIALOG_ONE);
     }
 });
 ```

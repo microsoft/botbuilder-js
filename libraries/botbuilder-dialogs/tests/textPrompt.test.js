@@ -12,7 +12,7 @@ describe('TextPrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please say something.');
             } else if (results.status === DialogTurnStatus.complete) {
@@ -39,7 +39,7 @@ describe('TextPrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please say something.');
             } else if (results.status === DialogTurnStatus.complete) {
@@ -70,7 +70,7 @@ describe('TextPrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please say something.', retryPrompt: 'Text is required.' });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -98,7 +98,7 @@ describe('TextPrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please say something.', retryPrompt: 'Text is required.' });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -133,9 +133,9 @@ describe('TextPrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.begin('prompt');
+                await dc.beginDialog('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result;
                 await turnContext.sendActivity(reply);

@@ -35,18 +35,18 @@ export class DeleteAlarmDialog extends ComponentDialog {
     // if you don't do this, the this pointer will be incorrect for waterfall steps.
 
     // decide which of two waterfall flows to use
-    protected async onDialogBegin(dc: DialogContext): Promise<DialogTurnResult> {
+    protected async onBeginDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Divert to appropriate dialog
         const list = await this.alarmsProperty.get(dc.context, []);
         if (list.length > 1) {
-            return await dc.begin(DELETE_MULTI_DIALOG);
+            return await dc.beginDialog(DELETE_MULTI_DIALOG);
         }
         else if (list.length === 1) {
-            return await dc.begin(DELETE_SINGLE_DIALOG);
+            return await dc.beginDialog(DELETE_SINGLE_DIALOG);
         }
         else {
             await dc.context.sendActivity(`No alarms set to delete.`);
-            return await dc.end();
+            return await dc.endDialog();
         }
     }
 
@@ -67,7 +67,7 @@ export class DeleteAlarmDialog extends ComponentDialog {
 
         // Notify user of delete
         await dc.context.sendActivity(`Deleted "${choice.value}" alarm.`);
-        return await dc.end();
+        return await dc.endDialog();
     }
 
     private confirmDeleteSingleStep = async (dc: DialogContext, step: WaterfallStepContext): Promise<DialogTurnResult> => {
@@ -82,6 +82,6 @@ export class DeleteAlarmDialog extends ComponentDialog {
         } else {
             await dc.context.sendActivity(`ok...`);
         }
-        return await dc.end();
+        return await dc.endDialog();
     }
 }

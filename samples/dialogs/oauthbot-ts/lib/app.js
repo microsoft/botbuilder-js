@@ -42,10 +42,10 @@ server.post('/api/messages', (req, res) => {
                 // Create dialog context and continue executing the "current" dialog, if any.
                 const state = conversationState.get(context);
                 const dc = dialogs.createContext(context, state);
-                yield dc.continue();
+                yield dc.continueDialog();
                 // Check to see if anyone replied. If not then start dialog
                 if (!context.responded) {
-                    yield dc.begin('displayToken');
+                    yield dc.beginDialog('displayToken');
                 }
             }
         }
@@ -54,7 +54,7 @@ server.post('/api/messages', (req, res) => {
             // This is important for OAuthCards because tokens can be received via TokenResponse events
             const state = conversationState.get(context);
             const dc = dialogs.createContext(context, state);
-            yield dc.continue();
+            yield dc.continueDialog();
         }
     }));
 });
@@ -69,7 +69,7 @@ dialogs.add('loginPrompt', new botbuilder_dialogs_1.OAuthPrompt({
 dialogs.add('displayToken', [
     function (dc) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield dc.begin('loginPrompt');
+            yield dc.beginDialog('loginPrompt');
         });
     },
     function (dc, token) {
@@ -80,7 +80,7 @@ dialogs.add('displayToken', [
             }
             else {
                 yield dc.context.sendActivity(`Sorry... We couldn't log you in. Try again later.`);
-                yield dc.end();
+                yield dc.endDialog();
             }
         });
     }

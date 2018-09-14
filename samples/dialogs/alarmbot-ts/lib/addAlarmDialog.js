@@ -39,7 +39,7 @@ class AddAlarmDialog extends botbuilder_dialogs_1.DialogContainer {
                     user.alarms.push(alarm);
                     // Confirm to user
                     yield dc.context.sendActivity(`Your alarm named "${alarm.title}" is set for "${moment(alarm.time).format("ddd, MMM Do, h:mm a")}".`);
-                    yield dc.end();
+                    yield dc.endDialog();
                 });
             }
         ]);

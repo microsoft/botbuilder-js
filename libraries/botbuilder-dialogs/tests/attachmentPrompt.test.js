@@ -13,7 +13,7 @@ describe('AttachmentPrompt', function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send an attachment.' });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -43,7 +43,7 @@ describe('AttachmentPrompt', function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send an attachment.' });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -74,7 +74,7 @@ describe('AttachmentPrompt', function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send an attachment.', retryPrompt: 'Please try again.' });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -107,7 +107,7 @@ describe('AttachmentPrompt', function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send an attachment.', retryPrompt: 'Please try again.' });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -144,9 +144,9 @@ describe('AttachmentPrompt', function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.begin('prompt');
+                await dc.beginDialog('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
                 assert(Array.isArray(results.result) && results.result.length > 0);
                 const attachment = results.result[0];

@@ -45,9 +45,9 @@ function createBotLogic(conversationState) {
         const dc = dialogs.createContext(context, state);
         const isMessage = context.activity.type === 'message';
         if (!context.responded) {
-            await dc.continue();
+            await dc.continueDialog();
             if (!context.responded && isMessage) {
-                await dc.begin('gatherInfo');
+                await dc.beginDialog('gatherInfo');
             }
         }
     }

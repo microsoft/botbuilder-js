@@ -42,17 +42,17 @@ class Bot {
                     // Check for add, 
                     if (utterance.includes('add alarm')) {
                         yield dc.cancelAll();
-                        yield dc.begin(ADD_ALARM_DIALOG);
+                        yield dc.beginDialog(ADD_ALARM_DIALOG);
                         // Check for delete
                     }
                     else if (utterance.includes('delete alarm')) {
                         yield dc.cancelAll();
-                        yield dc.begin(DELETE_ALARM_DIALOG);
+                        yield dc.beginDialog(DELETE_ALARM_DIALOG);
                         // Check for show
                     }
                     else if (utterance.includes('show alarms')) {
                         yield dc.cancelAll();
-                        yield dc.begin(SHOW_ALARMS_DIALOG);
+                        yield dc.beginDialog(SHOW_ALARMS_DIALOG);
                         // Check for cancel
                     }
                     else if (utterance === 'cancel') {
@@ -66,7 +66,7 @@ class Bot {
                     }
                     // Route activity to current dialog if not interrupted
                     if (!context.responded) {
-                        yield dc.continue();
+                        yield dc.continueDialog();
                     }
                     // Perform fallback logic if no active dialog or interruption
                     if (!context.responded) {

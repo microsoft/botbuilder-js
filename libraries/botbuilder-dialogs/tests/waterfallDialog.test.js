@@ -25,7 +25,7 @@ class MyWaterfall extends WaterfallDialog {
     async secondStep(step) {
         assert(step);
         assert.equal(this.value, 1, 'this pointer is bogus in secondStep');
-        return await step.end('ending WaterfallDialog.');
+        return await step.endDialog('ending WaterfallDialog.');
     }
 }
 
@@ -38,10 +38,10 @@ describe('WaterfallDialog', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             switch (results.status) {
                 case DialogTurnStatus.empty:
-                    await dc.begin('a');
+                    await dc.beginDialog('a');
                     break;
 
                 case DialogTurnStatus.complete:
@@ -65,7 +65,7 @@ describe('WaterfallDialog', function () {
             },
             async function (step) {
                 assert(step);
-                return await step.end('ending WaterfallDialog.');
+                return await step.endDialog('ending WaterfallDialog.');
             }
         ]));
 
@@ -81,10 +81,10 @@ describe('WaterfallDialog', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             switch (results.status) {
                 case DialogTurnStatus.empty:
-                    await dc.begin('a');
+                    await dc.beginDialog('a');
                     break;
 
                 case DialogTurnStatus.complete:
@@ -109,7 +109,7 @@ describe('WaterfallDialog', function () {
             .addStep(
                 async function (step) {
                     assert(step);
-                    return await step.end('ending WaterfallDialog.');
+                    return await step.endDialog('ending WaterfallDialog.');
                 }
             );
         dialogs.add(waterfall);
@@ -126,11 +126,11 @@ describe('WaterfallDialog', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             switch (results.status) {
                 case DialogTurnStatus.empty:
                     try {
-                        await dc.begin('a');
+                        await dc.beginDialog('a');
                     } catch (err) {
                         assert.fail(err);
                     }
@@ -163,10 +163,10 @@ describe('WaterfallDialog', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             switch (results.status) {
                 case DialogTurnStatus.empty:
-                    await dc.begin('a', { test: 'test' });
+                    await dc.beginDialog('a', { test: 'test' });
                     break;
 
                 case DialogTurnStatus.complete:
@@ -188,7 +188,7 @@ describe('WaterfallDialog', function () {
             },
             async function (step) {
                 assert(step);
-                return await step.end(step.result);
+                return await step.endDialog(step.result);
             }
         ]));
 
@@ -203,10 +203,10 @@ describe('WaterfallDialog', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             switch (results.status) {
                 case (DialogTurnStatus.empty):
-                    await dc.begin('a', { test: 'test' });
+                    await dc.beginDialog('a', { test: 'test' });
                     break;
                 case (DialogTurnStatus.complete):
                     await turnContext.sendActivity(results.result);
@@ -231,7 +231,7 @@ describe('WaterfallDialog', function () {
             },
             async function (step) {
                 assert(step);
-                return await step.end('ending WaterfallDialog.');
+                return await step.endDialog('ending WaterfallDialog.');
             }
         ]));
 
@@ -246,10 +246,10 @@ describe('WaterfallDialog', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             switch (results.status) {
                 case (DialogTurnStatus.empty):
-                    await dc.begin('a', { test: 'test1' });
+                    await dc.beginDialog('a', { test: 'test1' });
                     break;
                 case (DialogTurnStatus.complete):
                     await turnContext.sendActivity(results.result);
@@ -288,7 +288,7 @@ describe('WaterfallDialog', function () {
                 assert.strictEqual(step.options.test,
                     'test3',
                     `step.options.test "${step.options.test}", was not expected value of "test3".`);
-                return await step.end('ending WaterfallDialog.');
+                return await step.endDialog('ending WaterfallDialog.');
             }
         ]));
 
@@ -305,10 +305,10 @@ describe('WaterfallDialog', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             switch (results.status) {
                 case (DialogTurnStatus.empty):
-                    await dc.begin('a');
+                    await dc.beginDialog('a');
                     break;
                 case (DialogTurnStatus.complete):
                     await turnContext.sendActivity(results.result);
@@ -348,7 +348,7 @@ describe('WaterfallDialog', function () {
                 assert.strictEqual(step.values.test2,
                     'test2',
                     `step.values.test2 ["${step.values.test2}"] was not expected value "test2".`);
-                return await step.end('ending WaterfallDialog.');
+                return await step.endDialog('ending WaterfallDialog.');
             }
         ]));
 
@@ -365,10 +365,10 @@ describe('WaterfallDialog', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             switch (results.status) {
                 case (DialogTurnStatus.empty):
-                    await dc.begin('a');
+                    await dc.beginDialog('a');
                     break;
                 case (DialogTurnStatus.complete):
                     await turnContext.sendActivity(results.result);
@@ -387,7 +387,7 @@ describe('WaterfallDialog', function () {
                 assert.equal(typeof step.values, 'object', `initial step.values should be an object.`);
                 step.values.test = 'test1';
                 await step.context.sendActivity('bot responding.');
-                return await step.begin('b');
+                return await step.beginDialog('b');
             },
             async function (step) {
                 assert(step, `step not found.`);
@@ -398,7 +398,7 @@ describe('WaterfallDialog', function () {
                 assert.strictEqual(step.values.test_b,
                     undefined,
                     `step.values.test_b should not be available in WaterfallDialog('a').`);
-                return await step.end('ending WaterfallDialog.');
+                return await step.endDialog('ending WaterfallDialog.');
             }
         ]));
 
@@ -421,7 +421,7 @@ describe('WaterfallDialog', function () {
                     'test_b',
                     `step.values.test_b should not be available in WaterfallDialog 'a'.`);
 
-                return await step.end();
+                return await step.endDialog();
             }
         ]))
 
@@ -436,10 +436,10 @@ describe('WaterfallDialog', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             switch (results.status) {
                 case (DialogTurnStatus.empty):
-                    await dc.begin('a', { test_a: 'test_a' });
+                    await dc.beginDialog('a', { test_a: 'test_a' });
                     break;
                 case (DialogTurnStatus.complete):
                     await turnContext.sendActivity(results.result);
@@ -460,7 +460,7 @@ describe('WaterfallDialog', function () {
                     'test_a',
                     `step.options.test_a "${step.options.test_a}", was not expected value of "test_a".`);
                 await step.context.sendActivity('bot responding.');
-                return await step.begin('b');
+                return await step.beginDialog('b');
             },
             async function (step) {
                 assert(step, `step not found.`);
@@ -468,7 +468,7 @@ describe('WaterfallDialog', function () {
                 assert.strictEqual(step.options.test_a,
                     'test_a',
                     `step.options.test_a "${step.options.test_a}", was not expected value of "test_a".`);
-                return await step.end('ending WaterfallDialog.');
+                return await step.endDialog('ending WaterfallDialog.');
             }
         ]));
 
@@ -488,7 +488,7 @@ describe('WaterfallDialog', function () {
                 assert.strictEqual(step.options.test_b,
                     'test_b',
                     `step.options.test_b "${step.options.test_b}", was not expected value of "test_b".`)
-                return await step.end();
+                return await step.endDialog();
             }
         ]))
 

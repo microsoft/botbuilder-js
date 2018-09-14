@@ -32,7 +32,7 @@ export class LanguagePicker extends DialogContainer<string> {
             async function (dc, choice: FoundChoice) {
                 // Map choice to locale and return
                 const locale = choiceToLocale[choice.value];
-                return await dc.end(locale);
+                return await dc.endDialog(locale);
             }
         ]);
         

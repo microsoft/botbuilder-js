@@ -28,12 +28,12 @@ export class ListControl<C extends TurnContext> extends Dialog<C, ListControlRes
         this.actions = actions || [{ type: 'imBack', title: 'Show More', value: 'more' }];
     }
 
-    public dialogBegin(dc: DialogContext<C>, args?: ListControlOptions): Promise<any> {
+    public beginDialog(dc: DialogContext<C>, args?: ListControlOptions): Promise<any> {
         dc.activeDialog.state = Object.assign({}, args);
         return this.showMore(dc);
     }
 
-    public dialogContinue(dc: DialogContext<C>): Promise<any> {
+    public continueDialog(dc: DialogContext<C>): Promise<any> {
         // Recognize selected action
         const utterance = (dc.context.activity.text || '').trim();
         const choices = this.actions.map((a) => {
@@ -47,7 +47,7 @@ export class ListControl<C extends TurnContext> extends Dialog<C, ListControlRes
             return this.showMore(dc);
         } else {
             const state = dc.activeDialog.state as ListControlOptions;
-            return dc.end({ action: action, continueToken: state.continueToken });
+            return dc.endDialog({ action: action, continueToken: state.continueToken });
         }
     }
 
@@ -67,10 +67,10 @@ export class ListControl<C extends TurnContext> extends Dialog<C, ListControlRes
                 } else if (result.results) {
                     // Send user the results and end dialog.
                     return dc.context.sendActivity(result.results)
-                                     .then(() => dc.end({}));
+                                     .then(() => dc.endDialog({}));
                 } else {
                     // Just end the dialog
-                    return dc.end({});
+                    return dc.endDialog({});
                 }
             });
         } catch(err) {

@@ -15,7 +15,7 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please choose a color.', stringChoices);
             } else if (results.status === DialogTurnStatus.complete) {
@@ -46,7 +46,7 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -74,7 +74,7 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please choose a color.', stringChoices);
             } else if (results.status === DialogTurnStatus.complete) {
@@ -106,7 +106,7 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', retryPrompt: 'Please choose red, blue, or green.', choices: stringChoices });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -135,7 +135,7 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', retryPrompt: 'Please choose red, blue, or green.', choices: stringChoices });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -170,7 +170,7 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -204,7 +204,7 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -236,7 +236,7 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
             } else if (results.status === DialogTurnStatus.complete) {

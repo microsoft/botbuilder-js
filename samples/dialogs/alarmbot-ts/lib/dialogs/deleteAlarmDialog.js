@@ -34,7 +34,7 @@ class DeleteAlarmDialog extends botbuilder_dialogs_1.ComponentDialog {
             }
             // Notify user of delete
             yield dc.context.sendActivity(`Deleted "${choice.value}" alarm.`);
-            return yield dc.end();
+            return yield dc.endDialog();
         });
         this.confirmDeleteSingleStep = (dc, step) => __awaiter(this, void 0, void 0, function* () {
             const alarms = yield this.alarmsProperty.get(dc.context);
@@ -48,7 +48,7 @@ class DeleteAlarmDialog extends botbuilder_dialogs_1.ComponentDialog {
             else {
                 yield dc.context.sendActivity(`ok...`);
             }
-            return yield dc.end();
+            return yield dc.endDialog();
         });
         // waterfall dialog for dealing with multiple dialogs
         this.addDialog(new botbuilder_dialogs_1.WaterfallDialog(DELETE_MULTI_DIALOG, [
@@ -69,19 +69,19 @@ class DeleteAlarmDialog extends botbuilder_dialogs_1.ComponentDialog {
     // you need to write this function as using the lambda syntax so that it captures the context of the this pointer
     // if you don't do this, the this pointer will be incorrect for waterfall steps.
     // decide which of two waterfall flows to use
-    onDialogBegin(dc) {
+    onBeginDialog(dc) {
         return __awaiter(this, void 0, void 0, function* () {
             // Divert to appropriate dialog
             const list = yield this.alarmsProperty.get(dc.context, []);
             if (list.length > 1) {
-                return yield dc.begin(DELETE_MULTI_DIALOG);
+                return yield dc.beginDialog(DELETE_MULTI_DIALOG);
             }
             else if (list.length === 1) {
-                return yield dc.begin(DELETE_SINGLE_DIALOG);
+                return yield dc.beginDialog(DELETE_SINGLE_DIALOG);
             }
             else {
                 yield dc.context.sendActivity(`No alarms set to delete.`);
-                return yield dc.end();
+                return yield dc.endDialog();
             }
         });
     }
