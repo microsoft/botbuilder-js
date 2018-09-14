@@ -8,5 +8,6 @@ export * from './dialog';
 export * from './componentDialog';
 export * from './dialogContext';
 export * from './dialogSet';
+export * from './mainDialog';
 export * from './waterfallDialog';
 export * from './waterfallStepContext';
