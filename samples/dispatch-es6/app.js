@@ -175,23 +175,23 @@ server.post('/api/messages', (req, res) => {
                     case 'l_homeautomation':
                         const homeAutoResults = await homeAutomation.recognize(context);
                         const topHomeAutoIntent = LuisRecognizer.topIntent(homeAutoResults);
-                        await dc.begin(topHomeAutoIntent, homeAutoResults);
+                        await dc.beginDialog(topHomeAutoIntent, homeAutoResults);
                         break;
                     case 'l_weather':
                         const weatherResults = await weather.recognize(context);
                         const topWeatherIntent = LuisRecognizer.topIntent(weatherResults);
-                        await dc.begin(topWeatherIntent, weatherResults);
+                        await dc.beginDialog(topWeatherIntent, weatherResults);
                         break;
                     case 'q_faq':
                         await faq.answer(context);
                         break;
                     default:
-                        await dc.begin('None');
+                        await dc.beginDialog('None');
                 }
             }
 
             if (!context.responded) {
-                await dc.continue();
+                await dc.continueDialog();
                 if (!context.responded && isMessage) {
                     await dc.context.sendActivity(`Hi! I'm the LUIS dispatch bot. Say something and LUIS will decide how the message should be routed.`);
                 }

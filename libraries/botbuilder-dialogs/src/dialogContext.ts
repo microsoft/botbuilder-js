@@ -87,15 +87,15 @@ export class DialogContext {
      * This example starts a 'greeting' dialog and passes it the current user object:
      *
      * ```JavaScript
-     * await dc.begin('greeting', user);
+     * await dc.beginDialog('greeting', user);
      * ```
      * @param dialogId ID of the dialog to start.
      * @param options (Optional) additional argument(s) to pass to the dialog being started.
      */
-    public async begin(dialogId: string, options?: object): Promise<DialogTurnResult> {
+    public async beginDialog(dialogId: string, options?: object): Promise<DialogTurnResult> {
         // Lookup dialog
         const dialog: Dialog<{}> = this.dialogs.find(dialogId);
-        if (!dialog) { throw new Error(`DialogContext.begin(): A dialog with an id of '${dialogId}' wasn't found.`); }
+        if (!dialog) { throw new Error(`DialogContext.beginDialog(): A dialog with an id of '${dialogId}' wasn't found.`); }
 
         // Push new instance onto stack.
         const instance: DialogInstance<any> = {
@@ -105,13 +105,13 @@ export class DialogContext {
         this.stack.push(instance);
 
         // Call dialogs begin() method.
-        return await dialog.dialogBegin(this, options);
+        return await dialog.beginDialog(this, options);
     }
 
     /**
      * Cancels all dialogs on the stack resulting in an empty stack.
      */
-    public async cancelAll(): Promise<DialogTurnResult> {
+    public async cancelAllDialogs(): Promise<DialogTurnResult> {
         if (this.stack.length > 0) {
             while (this.stack.length > 0) {
                 await this.endActiveDialog(DialogReason.cancelCalled);
@@ -128,7 +128,7 @@ export class DialogContext {
      *
      * @remarks
      * This is a lightweight wrapper abound [begin()](#begin). It fills in a `PromptOptions`
-     * structure and then passes it through to `dc.begin(dialogId, options)`.
+     * structure and then passes it through to `dc.beginDialog(dialogId, options)`.
      *
      * ```JavaScript
      * await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
@@ -154,7 +154,7 @@ export class DialogContext {
             options = {...promptOrOptions as PromptOptions};
         }
 
-        return this.begin(dialogId, options);
+        return this.beginDialog(dialogId, options);
     }
 
     /**
@@ -172,13 +172,13 @@ export class DialogContext {
      * > within a dialog.
      *
      * ```JavaScript
-     * await dc.continue();
+     * await dc.continueDialog();
      * if (!context.responded) {
      *     await dc.context.sendActivity(`I'm sorry. I didn't understand.`);
      * }
      * ```
      */
-    public async continue(): Promise<DialogTurnResult> {
+    public async continueDialog(): Promise<DialogTurnResult> {
         // Check for a dialog on the stack
         const instance: DialogInstance<any> = this.activeDialog;
         if (instance) {
@@ -189,7 +189,7 @@ export class DialogContext {
             }
 
             // Continue execution of dialog
-            return await dialog.dialogContinue(this);
+            return await dialog.continueDialog(this);
         } else {
             return { status: DialogTurnStatus.empty };
         }
@@ -209,7 +209,7 @@ export class DialogContext {
      * the stack then processing of the turn will end.
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
-    public async end(result?: any): Promise<DialogTurnResult> {
+    public async endDialog(result?: any): Promise<DialogTurnResult> {
         // End the active dialog
         await this.endActiveDialog(DialogReason.endCalled);
 
@@ -223,7 +223,7 @@ export class DialogContext {
             }
 
             // Return result to previous dialog
-            return await dialog.dialogResume(this, DialogReason.endCalled, result);
+            return await dialog.resumeDialog(this, DialogReason.endCalled, result);
         } else {
             // Signal completion
             return { status: DialogTurnStatus.complete, result: result };
@@ -238,22 +238,22 @@ export class DialogContext {
      * @param dialogId ID of the new dialog to start.
      * @param options (Optional) additional argument(s) to pass to the new dialog.
      */
-    public async replace(dialogId: string, options?: object): Promise<DialogTurnResult> {
+    public async replaceDialog(dialogId: string, options?: object): Promise<DialogTurnResult> {
         // End the active dialog
         await this.endActiveDialog(DialogReason.replaceCalled);
 
         // Start replacement dialog
-        return await this.begin(dialogId, options);
+        return await this.beginDialog(dialogId, options);
     }
 
     /**
      * Requests the [activeDialog](#activeDialog) to re-prompt the user for input.
      *
      * @remarks
-     * The `Dialog.dialogReprompt()` method is optional for dialogs so if there's no active dialog
+     * The `Dialog.repromptDialog()` method is optional for dialogs so if there's no active dialog
      * or the active dialog doesn't support re-prompting, this method will effectively be a no-op.
      */
-    public async reprompt(): Promise<void> {
+    public async repromptDialog(): Promise<void> {
         // Check for a dialog on the stack
         const instance: DialogInstance<any> = this.activeDialog;
         if (instance) {
@@ -264,7 +264,7 @@ export class DialogContext {
              }
 
             // Ask dialog to re-prompt if supported
-            await dialog.dialogReprompt(this.context, instance);
+            await dialog.repromptDialog(this.context, instance);
         }
     }
 
@@ -275,7 +275,7 @@ export class DialogContext {
             const dialog: Dialog<{}> = this.dialogs.find(instance.id);
             if (dialog) {
                 // Notify dialog of end
-                await dialog.dialogEnd(this.context, instance, reason);
+                await dialog.endDialog(this.context, instance, reason);
             }
 
             // Pop dialog off stack

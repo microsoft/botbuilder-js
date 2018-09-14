@@ -30,7 +30,7 @@ class GoodbyeMiddleware {
                     else {
                         yield dc.context.sendActivity(`Ok...`);
                     }
-                    return dc.end();
+                    return dc.endDialog();
                 });
             }
         ]);
@@ -46,7 +46,7 @@ class GoodbyeMiddleware {
                 }
                 const dc = this.dialogs.createContext(context, state['goodbyeMiddlewareState']);
                 // Intercept the message if we're prompting the user
-                yield dc.continue();
+                yield dc.continueDialog();
                 if (context.responded) {
                     return;
                 }
@@ -54,7 +54,7 @@ class GoodbyeMiddleware {
                 const utterance = (context.activity.text || '').trim().toLowerCase();
                 if (utterance === 'goodbye') {
                     // Start confirmation dialog
-                    yield dc.begin('confirmGoodbye');
+                    yield dc.beginDialog('confirmGoodbye');
                 }
                 else {
                     // Let bot process request

@@ -87,6 +87,6 @@ export class AddAlarmDialog extends ComponentDialog {
 
         // Notify user of add and end dialog
         await dc.context.sendActivity(`Your alarm named "${alarm.title}" is set for "${moment(alarm.time).format("ddd, MMM Do, h:mm a")}".`);
-        return await dc.end();
+        return await dc.endDialog();
     }
 }

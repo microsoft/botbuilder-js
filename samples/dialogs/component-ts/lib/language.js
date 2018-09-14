@@ -25,7 +25,7 @@ class LanguagePicker extends botbuilder_dialogs_1.DialogContainer {
             async function (dc, choice) {
                 // Map choice to locale and return
                 const locale = choiceToLocale[choice.value];
-                return await dc.end(locale);
+                return await dc.endDialog(locale);
             }
         ]);
         this.dialogs.add('choicePrompt', new botbuilder_dialogs_1.ChoicePrompt());

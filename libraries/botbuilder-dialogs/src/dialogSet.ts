@@ -49,7 +49,7 @@ import { DialogContext, DialogState } from './dialogContext';
  *
  *         // Notify user and end
  *         await step.context.sendActivity(`Your profile was updated.`);
- *         return await step.end();
+ *         return await step.endDialog();
  *     }
  * ]));
  *
@@ -81,11 +81,11 @@ import { DialogContext, DialogState } from './dialogContext';
  *         const dc = await dialogs.createContext(context);
  *
  *         // Continue execution if there's an "active" dialog
- *         await dc.continue();
+ *         await dc.continueDialog();
  *
  *         if (!context.responded && context.activity.type === ActivityType.Message) {
  *             // No active dialogs so start 'fillProfile' dialog
- *             await dc.begin('fillProfile');
+ *             await dc.beginDialog('fillProfile');
  *         }
  *     });
  * });
@@ -96,14 +96,14 @@ import { DialogContext, DialogState } from './dialogContext';
  * request to your bots dialogs.
  *
  * The code first retrieves the bots conversation state and then creates a `DialogContext` for
- * managing the dialog stack. It then calls `dc.continue()` which will route the request to the
+ * managing the dialog stack. It then calls `dc.continueDialog()` which will route the request to the
  * "active" dialog if there is one. The active dialog is the dialog on the top of the stack.
  *
  * Upon completion of the call to continue() we use `context.responded` to determine if anything
  * processed the request. This is a reasonable approach for determining if a dialog is active given
  * that as a best practice your bot should always reply to any message received from the user. So
  * if nothing has responded and we've received a `message` activity we'll start the 'fillProfile'
- * by calling `dc.begin()`.
+ * by calling `dc.beginDialog()`.
  *
  * #### Detecting Interruptions
  *
@@ -126,10 +126,10 @@ import { DialogContext, DialogState } from './dialogContext';
  *         if (isMessage) {
  *             const utterance = context.activity.text.trim().toLowerCase();
  *             if (utterance.startsWith('edit profile')) {
- *                 return await dc.cancelAll().begin('fillProfile');
+ *                 return await dc.cancelAlDialogs().beginDialog('fillProfile');
  *             } else if (utterance.startsWith('cancel')) {
  *                 if (dc.activeDialog) {
- *                     await dc.cancelAll();
+ *                     await dc.cancelAllDialogs();
  *                     return await context.sendActivity(`Task canceled`);
  *                 } else {
  *                     return await context.sendActivity(`Nothing to cancel`);
@@ -138,14 +138,14 @@ import { DialogContext, DialogState } from './dialogContext';
  *         }
  *
  *         // Continue execution if there's an "active" dialog
- *         await dc.continue();
+ *         await dc.continueDialog();
  * 
  *         if (!context.responded && isMessage) {
  *             // Greet user and fill in profile if missing
  *             const user = await userState.get(context);
  *             if (!user.profile) {
  *                 await context.sendActivity(`Hello... Lets fill out your profile to get started.`);
- *                 await dc.begin('fillProfile');
+ *                 await dc.beginDialog('fillProfile');
  *             } else {
  *                 await context.sendActivity(`I'm sorry I didn't understand. Try saying "edit profile".`);
  *             }
@@ -177,7 +177,7 @@ export class DialogSet {
      * dialogs.add(new Waterfall('greeting', [
      *      async function (step) {
      *          await step.context.sendActivity(`Hello world!`);
-     *          await step.end();
+     *          await step.endDialog();
      *      }
      * ]));
      * ```

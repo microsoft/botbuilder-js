@@ -98,15 +98,15 @@ server.post('/api/messages', (req, res) => {
                             time: state.time ? state.time : null
                         });
 
-                        return dc.begin('addReminder');
+                        return dc.beginDialog('addReminder');
 
                         // Start deleteReminder dialog
                     } else if (topIntent === 'Calendar_Delete') {
-                        return dc.begin('deleteReminder');
+                        return dc.beginDialog('deleteReminder');
 
                         // Start showReminders
                     } else if (topIntent === 'Calendar_Find') {
-                        return dc.begin('showReminders');
+                        return dc.beginDialog('showReminders');
 
                         // Check for cancel
                     } else if (utterance === 'cancel') {
@@ -120,7 +120,7 @@ server.post('/api/messages', (req, res) => {
 
                         // Continue current dialog
                     } else {
-                        return dc.continue().then(async res => {
+                        return dc.continueDialog().then(async res => {
                             // Return default message if nothing replied.
                             if (!context.responded) {
                                 await context.sendActivity(
@@ -152,7 +152,7 @@ dialogs.add('addReminder', [
             time: state.time
         };
         if (dc.instance.state.title) {
-            await dc.continue();
+            await dc.continueDialog();
         } else {
             await dc.prompt('titlePrompt', `What would you like to call your reminder?`);
         }
@@ -165,7 +165,7 @@ dialogs.add('addReminder', [
         }
         
         if (reminder.time) {
-            await dc.continue();
+            await dc.continueDialog();
         } else {
             await dc.prompt('timePrompt', `What time would you like to set the "${reminder.title}" reminder for?`);
         }
@@ -189,7 +189,7 @@ dialogs.add('addReminder', [
         state.date = null;
         state.time = null;
         state.title = null;
-        await dc.end();
+        await dc.endDialog();
     }
 ]);
 
@@ -234,12 +234,12 @@ dialogs.add('deleteReminder', [
         // Divert to appropriate dialog
         const user = state.user(dc.context);
         if (user.reminders.length > 1) {
-            await dc.begin('deleteReminderMulti');
+            await dc.beginDialog('deleteReminderMulti');
         } else if (user.reminders.length === 1) {
-            await dc.begin('deleteReminderSingle');
+            await dc.beginDialog('deleteReminderSingle');
         } else {
             await dc.context.sendActivity(`No reminders set to delete.`);
-            await dc.end();
+            await dc.endDialog();
         }
     }
 ]);
@@ -263,7 +263,7 @@ dialogs.add('deleteReminderMulti', [
 
         // Notify user of delete
         await dc.context.sendActivity(`Deleted "${choice.value}" reminder.`);
-        await dc.end();
+        await dc.endDialog();
     }
 ]);
 
@@ -304,6 +304,6 @@ dialogs.add('showReminders', [
             });
         }
         await dc.context.sendActivity(msg);
-        await dc.end();
+        await dc.endDialog();
     }
 ]);

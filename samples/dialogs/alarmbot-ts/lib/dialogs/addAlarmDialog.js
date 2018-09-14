@@ -69,7 +69,7 @@ class AddAlarmDialog extends botbuilder_dialogs_1.ComponentDialog {
             alarms.push(alarm);
             // Notify user of add and end dialog
             yield dc.context.sendActivity(`Your alarm named "${alarm.title}" is set for "${moment(alarm.time).format("ddd, MMM Do, h:mm a")}".`);
-            return yield dc.end();
+            return yield dc.endDialog();
         });
         // Add control flow dialogs
         this.addDialog(new botbuilder_dialogs_1.WaterfallDialog(START_DIALOG, [

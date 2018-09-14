@@ -9,17 +9,17 @@ describe('NumberPrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please send a number.');
             } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result.toString();
                 await turnContext.sendActivity(reply);
             }
+            await convoState.saveChanges(turnContext);
         });
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         // Create a DialogState property, DialogSet and NumberPrompt.
         const dialogState = convoState.createProperty('dialogState');
@@ -37,17 +37,17 @@ describe('NumberPrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please send a number.');
             } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result.toString();
                 await turnContext.sendActivity(reply);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -70,17 +70,17 @@ describe('NumberPrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send a number.', retryPrompt: 'Please send a number between 1 and 100.' });
             } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result.toString();
                 await turnContext.sendActivity(reply);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -103,17 +103,17 @@ describe('NumberPrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send a number.', retryPrompt: 'Please send a number between 1 and 100.' });
             } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result.toString();
                 await turnContext.sendActivity(reply);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -140,17 +140,17 @@ describe('NumberPrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.begin('prompt');
+                await dc.beginDialog('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result.toString();
                 await turnContext.sendActivity(reply);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);

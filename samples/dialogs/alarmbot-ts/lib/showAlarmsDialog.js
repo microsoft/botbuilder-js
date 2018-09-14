@@ -27,7 +27,7 @@ class ShowAlarmsDialog extends botbuilder_dialogs_1.DialogContainer {
                         });
                     }
                     yield dc.context.sendActivity(msg);
-                    yield dc.end();
+                    yield dc.endDialog();
                 });
             }
         ]);

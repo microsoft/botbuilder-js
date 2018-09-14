@@ -65,12 +65,12 @@ async function beginDialogDemo(context: TurnContext, state: DemoState) {
     state.demo = 'dialog';
     state.demoState = {};
     const dc = dialogs.createContext(context, state.demoState);
-    await dc.begin('demo');
+    await dc.beginDialog('demo');
 }
 
 async function continueDialogDemo(context: TurnContext, state: DemoState) {
     const dc = dialogs.createContext(context, state.demoState);
-    await dc.continue();
+    await dc.continueDialog();
     if (!dc.activeDialog) {
         state.demo = undefined;
         state.demoState = undefined;
@@ -81,7 +81,7 @@ const dialogs = new DialogSet();
 
 dialogs.add('demo', [
     async function (dc) {
-        return await dc.begin('localePicker');
+        return await dc.beginDialog('localePicker');
     },
     async function (dc, locale: string) {
         await dc.context.sendActivity(`Switching locale to "${locale}".`);
@@ -89,7 +89,7 @@ dialogs.add('demo', [
         const state = conversationState.get(dc.context);
         state.currentLocale = locale; 
 
-        return await dc.end();
+        return await dc.endDialog();
     }
 ]);
 

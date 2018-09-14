@@ -83,14 +83,14 @@ describe('DialogSet', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.begin('a');
+                await dc.beginDialog('a');
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -102,7 +102,7 @@ describe('DialogSet', function () {
             },
             async function (step) {
                 await step.context.sendActivity('Good bye!');
-                return await step.end();
+                return await step.endDialog();
             }
         ]));
 

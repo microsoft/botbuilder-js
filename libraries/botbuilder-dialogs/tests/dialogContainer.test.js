@@ -37,14 +37,14 @@ describe.skip('DialogContainer', function () {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        await dc.begin('composite', { foo: 'bar' });
+        await dc.beginDialog('composite', { foo: 'bar' });
     });
 
-    it('should return result from DialogContext.begin() when composite ends immediately.', async function () {
+    it('should return result from DialogContext.beginDialog() when composite ends immediately.', async function () {
         const cDialogs = new DialogSet();
         cDialogs.add('start', [
             function (dc) {
-                return dc.end(120);
+                return dc.endDialog(120);
             }
         ]);
         const composite = new DialogContainer('start', cDialogs);
@@ -53,7 +53,7 @@ describe.skip('DialogContainer', function () {
         dialogs.add('composite', composite);
         dialogs.add('test', [
             function (dc) {
-                return dc.begin('composite');
+                return dc.beginDialog('composite');
             },
             function (dc, result) {
                 assert(result === 120);
@@ -64,7 +64,7 @@ describe.skip('DialogContainer', function () {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        await dc.begin('test');
+        await dc.beginDialog('test');
     });
 
     it('should DialogContext.continue() execution of a multi-turn composite.', function (done) {
@@ -79,7 +79,7 @@ describe.skip('DialogContainer', function () {
             },
             function (dc) {
                 finished = true;
-                return dc.end();
+                return dc.endDialog();
             }
         ]);
         const composite = new DialogContainer('start', cDialogs);
@@ -90,11 +90,11 @@ describe.skip('DialogContainer', function () {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('composite').then(() => {
+        dc.beginDialog('composite').then(() => {
             assert(dc.activeDialog);
-            dc.continue().then(() => {
+            dc.continueDialog().then(() => {
                 assert(dc.activeDialog);
-                dc.continue().then(() => {
+                dc.continueDialog().then(() => {
                     assert(dc.activeDialog === undefined);
                     assert(finished);
                     done();
@@ -130,7 +130,7 @@ describe.skip('DialogContainer', function () {
                 return dc.context.sendActivity('bar');
             },
             function (dc) {
-                return dc.end(120);
+                return dc.endDialog(120);
             }
         ]);
         const composite = new DialogContainer('start', cDialogs);
