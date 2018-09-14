@@ -7,7 +7,7 @@
  */
 import { Activity, ConversationReference, ResourceResponse } from 'botframework-schema';
 import { makeRevocable } from './internal';
-import {  Middleware, MiddlewareHandler, MiddlewareSet } from './middlewareSet';
+import { Middleware, MiddlewareHandler, MiddlewareSet } from './middlewareSet';
 import { TurnContext } from './turnContext';
 
 /**
