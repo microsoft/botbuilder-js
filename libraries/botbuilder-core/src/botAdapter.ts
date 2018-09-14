@@ -55,7 +55,7 @@ export abstract class BotAdapter {
     }
 
     public set onTurnError(value: (context: TurnContext, error: Error) => Promise<void>) {
-        this.onTurnError = value;
+        this.turnError = value;
     }
 
     /**

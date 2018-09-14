@@ -38,4 +38,17 @@ describe(`BotAdapter`, function () {
             assert(calls === 5, `only "${calls} of 5" middleware called.`);
         }).then(() => done());
     });
+    
+    it(`should reach onTurnError when error is thrown.`, function (done) {
+        adapter.onTurnError = async (turnContext, error) => {
+            assert(turnContext, `turnContext not found.`);
+            assert(error, `error not found.`);
+            assert.equal(error, 1, `unexpected error thrown.`);
+            done();
+        }
+
+        adapter.processRequest(testMessage, (turnContext) => {
+            throw 1;
+        });
+    });
 });
