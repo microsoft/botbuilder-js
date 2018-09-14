@@ -7,7 +7,7 @@
  */
 import { Activity, ConversationReference, ResourceResponse } from 'botframework-schema';
 import { makeRevocable } from './internal';
-import {  Middleware, MiddlewareHandler, MiddlewareSet } from './middlewareSet';
+import { Middleware, MiddlewareHandler, MiddlewareSet } from './middlewareSet';
 import { TurnContext } from './turnContext';
 
 /**
@@ -55,7 +55,7 @@ export abstract class BotAdapter {
     }
 
     public set onTurnError(value: (context: TurnContext, error: Error) => Promise<void>) {
-        this.onTurnError = value;
+        this.turnError = value;
     }
 
     /**

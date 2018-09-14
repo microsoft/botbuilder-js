@@ -8,7 +8,9 @@ class SimpleAdapter extends BotAdapter {
         const context = new TurnContext(this, activity);
         return this.runMiddleware(context, handler);
     }
+
 }
+
 
 describe(`BotAdapter`, function () {
     this.timeout(5000);
@@ -22,6 +24,10 @@ describe(`BotAdapter`, function () {
     }
 
     const adapter = new SimpleAdapter();
+    adapter.onTurnError = async (turnContext, error) => {
+        assert.equal(error.message, 'uhoh');
+    };
+    
     it(`should use() middleware individually.`, function (done) {
         adapter.use(middleware).use(middleware);
         done();
@@ -38,4 +44,12 @@ describe(`BotAdapter`, function () {
             assert(calls === 5, `only "${calls} of 5" middleware called.`);
         }).then(() => done());
     });
+
+    it(`onError should be called on exceptions when derived.`, function (done) {
+        adapter.processRequest(testMessage, (context) => {
+            throw new Error('uhoh');
+        })
+        .then(() => done());
+    });
+
 });
