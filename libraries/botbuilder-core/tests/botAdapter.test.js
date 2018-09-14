@@ -24,9 +24,6 @@ describe(`BotAdapter`, function () {
     }
 
     const adapter = new SimpleAdapter();
-    adapter.onTurnError = async (turnContext, error) => {
-        assert.equal(error.message, 'uhoh');
-    };
     
     it(`should use() middleware individually.`, function (done) {
         adapter.use(middleware).use(middleware);
@@ -44,12 +41,17 @@ describe(`BotAdapter`, function () {
             assert(calls === 5, `only "${calls} of 5" middleware called.`);
         }).then(() => done());
     });
+   
+    it(`should reach onTurnError when error is thrown.`, function (done) {
+        adapter.onTurnError = async (turnContext, error) => {
+            assert(turnContext, `turnContext not found.`);
+            assert(error, `error not found.`);
+            assert.equal(error, 1, `unexpected error thrown.`);
+            done();
+        }
 
-    it(`onError should be called on exceptions when derived.`, function (done) {
-        adapter.processRequest(testMessage, (context) => {
-            throw new Error('uhoh');
-        })
-        .then(() => done());
+        adapter.processRequest(testMessage, (turnContext) => {
+            throw 1;
+        });
     });
-
 });
