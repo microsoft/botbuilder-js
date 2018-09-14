@@ -170,7 +170,7 @@ export interface IBotConfiguration {
 
     // encrypted guid used to validate password is the same,
     // you need to be able to decrypt this key with passed in secret before we will use the secret to encrypt new values
-    secretKey: string;
+    padlock: string;
 
     // version of the schema of this file
     version: string;

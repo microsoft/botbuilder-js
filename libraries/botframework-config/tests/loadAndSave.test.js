@@ -14,7 +14,7 @@ describe("LoadAndSaveTests", () => {
 
         assert.equal(config.name, "test", 'config name should be set');
         assert.equal(config.description, "test description", 'test description is not set');
-        assert.equal(config.secretKey, '', 'secretkey should not be set');
+        assert.equal(config.padlock, '', 'secretkey should not be set');
         assert.equal(config.services.length, 11, 'service count is wrong');
         assert.equal(config.getPath(), testBotPath, "bot doesn't remember where it was loaded from");
         assert.ok(config.services[0].appId, 'appId should be migrated from endpoint');
@@ -121,16 +121,16 @@ describe("LoadAndSaveTests", () => {
     it("LoadAndSaveEncrypted", async () => {
         let secret = bf.BotConfiguration.generateKey();
         var config = await bf.BotConfiguration.load(testBotPath);
-        assert.ok(config.secretKey === "", "There should be no secretKey");
+        assert.ok(config.padlock === "", "There should be no padlock");
 
         // save with secret
         await config.saveAs(saveBotPath, secret);
-        assert.ok(config.secretKey.length > 0, "There should be a secretKey");
+        assert.ok(config.padlock.length > 0, "There should be a padlock");
 
         // load with secret
         var config2 = await bf.BotConfiguration.load(saveBotPath, secret);
-        assert.ok(config2.secretKey.length > 0, "There should be a secretKey");
-        assert.ok(config.secretKey === config2.secretKey, "SecretKeys should be the same");
+        assert.ok(config2.padlock.length > 0, "There should be a padlock");
+        assert.ok(config.padlock === config2.padlock, "padlocks should be the same");
 
         // make sure these were decrypted
         for (let i = 0; i < config.services.length; i++) {
@@ -325,11 +325,16 @@ describe("LoadAndSaveTests", () => {
     it("LegacyEncryption", async () => {
         var config = await bf.BotConfiguration.load(legacyBotPath, "password");
         assert.equal(config.services[0].appPassword, "xyzpdq", "value should be unencrypted");
+        assert.ok(config.hasOwnProperty("padlock"),"padlock should exist");
+        assert.ok(!config.hasOwnProperty("secretKey"),"secretKey should not exist");
 
         let secret = bf.BotConfiguration.generateKey();
         await config.saveAs(saveBotPath, secret);
         var config = await bf.BotConfiguration.load(saveBotPath, secret);
         fs.unlinkSync(saveBotPath);
+        assert.ok(config.hasOwnProperty("padlock"),"padlock should exist");
+        assert.ok(config.padlock.length > 0,"padlock should not be empty");
+        assert.ok(!config.secretKey,"secretKey should not exist");
     });
 
 });

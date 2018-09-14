@@ -30,6 +30,12 @@ export class BotConfiguration extends BotConfigurationBase {
         const services: IConnectedService[] = (source.services) ? source.services.slice().map(BotConfigurationBase.serviceFromJSON) : [];
         const botConfig: BotConfiguration = new BotConfiguration();
         Object.assign(botConfig, source);
+        
+        // back compat for secretKey rename 
+        if (!botConfig.padlock && (<any>botConfig).secretKey) {
+            botConfig.padlock = (<any>botConfig).secretKey;
+            delete (<any>botConfig).secretKey;
+        }
         botConfig.services = services;
         botConfig.migrateData();
         return botConfig;
@@ -89,7 +95,7 @@ export class BotConfiguration extends BotConfigurationBase {
 
         this.savePrep(secret);
 
-        const hasSecret: boolean = !!this.secretKey;
+        const hasSecret: boolean = !!this.padlock;
 
         if (hasSecret) {
             this.encrypt(secret);
@@ -110,7 +116,7 @@ export class BotConfiguration extends BotConfigurationBase {
 
         this.savePrep(secret);
 
-        const hasSecret: boolean = !!this.secretKey;
+        const hasSecret: boolean = !!this.padlock;
 
         if (hasSecret) {
             this.encrypt(secret);
@@ -135,7 +141,7 @@ export class BotConfiguration extends BotConfigurationBase {
 
     private savePrep(secret?: string): void {
         if (!!secret) {
-            this.validateSecretKey(secret);
+            this.validateSecret(secret);
         }
 
         // make sure that all dispatch serviceIds still match services that are in the bot
@@ -158,7 +164,7 @@ export class BotConfiguration extends BotConfigurationBase {
     private static internalLoad(json: string, secret?: string): BotConfiguration {
         const bot: BotConfiguration = BotConfiguration.fromJSON(JSON.parse(json));
 
-        const hasSecret: boolean = !!bot.secretKey;
+        const hasSecret: boolean = !!bot.padlock;
         if (hasSecret) {
             bot.decrypt(secret);
         }
@@ -172,12 +178,12 @@ export class BotConfiguration extends BotConfigurationBase {
     }
 
     public clearSecret(): void {
-        this.secretKey = '';
+        this.padlock = '';
     }
 
     // encrypt all values in the config
     public encrypt(secret: string): void {
-        this.validateSecretKey(secret);
+        this.validateSecret(secret);
 
         for (const service of this.services) {
             (<ConnectedService>service).encrypt(secret, encrypt.encryptString);
@@ -187,7 +193,7 @@ export class BotConfiguration extends BotConfigurationBase {
     // decrypt all values in the config
     public decrypt(secret?: string): void {
         try {
-            this.validateSecretKey(secret);
+            this.validateSecret(secret);
 
             for (const connected_service of this.services) {
                 (<ConnectedService>connected_service).decrypt(secret, encrypt.decryptString);
@@ -196,7 +202,7 @@ export class BotConfiguration extends BotConfigurationBase {
             try {
 
                 // legacy decryption
-                this.secretKey = encrypt.legacyDecrypt(this.secretKey, secret);
+                this.padlock = encrypt.legacyDecrypt(this.padlock, secret);
                 this.clearSecret();
                 this.version = '2.0';
 
@@ -250,19 +256,19 @@ export class BotConfiguration extends BotConfigurationBase {
         return this.internal.location;
     }
 
-    // make sure secret is correct by decrypting the secretKey with it
-    public validateSecretKey(secret: string): void {
+    // make sure secret is correct by decrypting the padlock with it
+    public validateSecret(secret: string): void {
         if (!secret) {
             throw new Error('You are attempting to perform an operation which needs access to the secret and --secret is missing');
         }
 
         try {
-            if (!this.secretKey || this.secretKey.length === 0) {
+            if (!this.padlock || this.padlock.length === 0) {
                 // if no key, create a guid and enrypt that to use as secret validator
-                this.secretKey = encrypt.encryptString(uuid(), secret);
+                this.padlock = encrypt.encryptString(uuid(), secret);
             } else {
-                // validate we can decrypt the secretKey, this tells us we have the correct secret for the rest of the file.
-                encrypt.decryptString(this.secretKey, secret);
+                // validate we can decrypt the padlock, this tells us we have the correct secret for the rest of the file.
+                encrypt.decryptString(this.padlock, secret);
             }
         } catch (ex) {
             throw new Error('You are attempting to perform an operation which needs access to the secret and --secret is incorrect.');
@@ -491,4 +497,4 @@ export class BotConfiguration extends BotConfigurationBase {
 }
 
 // Make sure the internal field is not included in JSON representation.
-Object.defineProperty(BotConfiguration.prototype, 'internal', {enumerable: false, writable: true});
+Object.defineProperty(BotConfiguration.prototype, 'internal', { enumerable: false, writable: true });
