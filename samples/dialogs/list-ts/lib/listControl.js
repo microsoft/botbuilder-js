@@ -9,11 +9,11 @@ class ListControl extends botbuilder_dialogs_1.Dialog {
         this.pager = pager;
         this.actions = actions || [{ type: 'imBack', title: 'Show More', value: 'more' }];
     }
-    dialogBegin(dc, args) {
+    beginDialog(dc, args) {
         dc.activeDialog.state = Object.assign({}, args);
         return this.showMore(dc);
     }
-    dialogContinue(dc) {
+    continueDialog(dc) {
         // Recognize selected action
         const utterance = (dc.context.activity.text || '').trim();
         const choices = this.actions.map((a) => {
@@ -27,7 +27,7 @@ class ListControl extends botbuilder_dialogs_1.Dialog {
         }
         else {
             const state = dc.activeDialog.state;
-            return dc.end({ action: action, continueToken: state.continueToken });
+            return dc.endDialog({ action: action, continueToken: state.continueToken });
         }
     }
     showMore(dc) {
@@ -45,11 +45,11 @@ class ListControl extends botbuilder_dialogs_1.Dialog {
                 else if (result.results) {
                     // Send user the results and end dialog.
                     return dc.context.sendActivity(result.results)
-                        .then(() => dc.end({}));
+                        .then(() => dc.endDialog({}));
                 }
                 else {
                     // Just end the dialog
-                    return dc.end({});
+                    return dc.endDialog({});
                 }
             });
         }

@@ -14,7 +14,7 @@ describe('DatetimePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please say something.');
             } else if (results.status === DialogTurnStatus.complete) {
@@ -41,7 +41,7 @@ describe('DatetimePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please say something.' });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -66,7 +66,7 @@ describe('DatetimePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please say something.');
             } else if (results.status === DialogTurnStatus.complete) {
@@ -95,7 +95,7 @@ describe('DatetimePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please say something.', retryPrompt: 'Please provide a valid datetime.' });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -126,7 +126,7 @@ describe('DatetimePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please say something.', retryPrompt: 'Please provide a valid datetime.' });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -160,9 +160,9 @@ describe('DatetimePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.begin('prompt');
+                await dc.beginDialog('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);

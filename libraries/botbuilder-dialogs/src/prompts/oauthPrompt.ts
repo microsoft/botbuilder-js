@@ -62,7 +62,7 @@ export interface OAuthPromptSettings {
  *
  * When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named
  * dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either
- * `DialogContext.begin()` or `DialogContext.prompt()`. The user will be prompted to signin as
+ * `DialogContext.beginDialog()` or `DialogContext.prompt()`. The user will be prompted to signin as
  * needed and their access token will be passed as an argument to the callers next waterfall step:
  *
  * ```JavaScript
@@ -78,14 +78,14 @@ export interface OAuthPromptSettings {
  *
  * dialogs.add('taskNeedingLogin', [
  *      async function (dc) {
- *          await dc.begin('loginPrompt');
+ *          await dc.beginDialog('loginPrompt');
  *      },
  *      async function (dc, token) {
  *          if (token) {
  *              // Continue with task needing access token
  *          } else {
  *              await dc.context.sendActivity(`Sorry... We couldn't log you in. Try again later.`);
- *              await dc.end();
+ *              await dc.endDialog();
  *          }
  *      }
  * ]);
@@ -103,7 +103,7 @@ export class OAuthPrompt extends Dialog {
         super(dialogId);
     }
 
-    public async dialogBegin(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
         // Ensure prompts have input hint set
         const o: Partial<PromptOptions> = {...options};
         if (o.prompt && typeof o.prompt === 'object' && typeof o.prompt.inputHint !== 'string') {
@@ -124,7 +124,7 @@ export class OAuthPrompt extends Dialog {
         const output: TokenResponse = await this.getUserToken(dc.context);
         if (output !== undefined) {
             // Return token
-            return await dc.end(output);
+            return await dc.endDialog(output);
         } else {
             // Prompt user to login
             await this.sendOAuthCardAsync(dc.context, state.options.prompt);
@@ -133,7 +133,7 @@ export class OAuthPrompt extends Dialog {
         }
     }
 
-    public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
+    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Recognize token
         const recognized: PromptRecognizerResult<TokenResponse> = await this.recognizeToken(dc.context);
 
@@ -142,7 +142,7 @@ export class OAuthPrompt extends Dialog {
         const isMessage: boolean = dc.context.activity.type === ActivityTypes.Message;
         const hasTimedOut: boolean = isMessage && (new Date().getTime() > state.expires);
         if (hasTimedOut) {
-            return await dc.end(undefined);
+            return await dc.endDialog(undefined);
         } else {
             // Validate the return value
             let isValid: boolean = false;
@@ -159,7 +159,7 @@ export class OAuthPrompt extends Dialog {
 
             // Return recognized value or re-prompt
             if (isValid) {
-                return await dc.end(recognized.value);
+                return await dc.endDialog(recognized.value);
             } else {
                 // Send retry prompt
                 if (!dc.context.responded && isMessage && state.options.retryPrompt) {

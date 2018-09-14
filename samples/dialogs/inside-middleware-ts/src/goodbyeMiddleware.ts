@@ -18,7 +18,7 @@ export class GoodbyeMiddleware implements Middleware {
                 } else {
                     await dc.context.sendActivity(`Ok...`);
                 }
-                return dc.end();
+                return dc.endDialog();
             }
         ]);
         
@@ -33,7 +33,7 @@ export class GoodbyeMiddleware implements Middleware {
             const dc = this.dialogs.createContext(context, state['goodbyeMiddlewareState']);
 
             // Intercept the message if we're prompting the user
-            await dc.continue();
+            await dc.continueDialog();
             if (context.responded) {
                 return;
             }
@@ -42,7 +42,7 @@ export class GoodbyeMiddleware implements Middleware {
             const utterance = (context.activity.text || '').trim().toLowerCase();
             if (utterance === 'goodbye') {
                 // Start confirmation dialog
-                await dc.begin('confirmGoodbye');
+                await dc.beginDialog('confirmGoodbye');
             } else {
                 // Let bot process request
                 await next();

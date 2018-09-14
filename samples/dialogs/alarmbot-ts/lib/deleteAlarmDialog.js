@@ -18,14 +18,14 @@ class DeleteAlarmDialog extends botbuilder_dialogs_1.DialogContainer {
                     // Divert to appropriate dialog
                     const user = userState.get(dc.context);
                     if (user.alarms.length > 1) {
-                        yield dc.begin('deleteAlarmMulti');
+                        yield dc.beginDialog('deleteAlarmMulti');
                     }
                     else if (user.alarms.length === 1) {
-                        yield dc.begin('deleteAlarmSingle');
+                        yield dc.beginDialog('deleteAlarmSingle');
                     }
                     else {
                         yield dc.context.sendActivity(`No alarms set to delete.`);
-                        yield dc.end();
+                        yield dc.endDialog();
                     }
                 });
             }
@@ -50,7 +50,7 @@ class DeleteAlarmDialog extends botbuilder_dialogs_1.DialogContainer {
                     }
                     // Notify user of delete
                     yield dc.context.sendActivity(`Deleted "${choice.value}" alarm.`);
-                    yield dc.end();
+                    yield dc.endDialog();
                 });
             }
         ]);

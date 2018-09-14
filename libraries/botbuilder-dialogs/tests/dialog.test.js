@@ -11,7 +11,7 @@ class TestDialog extends Dialog {
         this.continueCalled = false;
     }
 
-    async dialogBegin(dc, options) {
+    async beginDialog(dc, options) {
         assert(dc);
         if (options) {
             assert(options.test === 'test1', `received options and options.test ("${options.test}") was not "test1".`);
@@ -20,20 +20,20 @@ class TestDialog extends Dialog {
         return Dialog.EndOfTurn;
     }
 
-    async dialogContinue(dc, options) {
-        return await dc.end(120);
+    async continueDialog(dc, options) {
+        return await dc.endDialog(120);
     }
 }
 
 describe('Dialog', function () {
     this.timeout(5000);
 
-    it('should call dialog from a dialog set using dc.begin().', async function () {
+    it('should call dialog from a dialog set using dc.beginDialog().', async function () {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            await dc.begin('testDialog');
+            await dc.beginDialog('testDialog');
             await convoState.saveChanges(turnContext);
         });
         // Create new ConversationState with MemoryStorage and register the state as middleware.
@@ -52,7 +52,7 @@ describe('Dialog', function () {
     it('should receive dialog options when beginning a dialog from a dialog set.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
-            await dc.begin('testDialog', { test: 'test1' });
+            await dc.beginDialog('testDialog', { test: 'test1' });
             await convoState.saveChanges(turnContext);
         });
 
@@ -71,10 +71,10 @@ describe('Dialog', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             switch (results.status) {
                 case DialogTurnStatus.empty:
-                    await dc.begin('testDialog');
+                    await dc.beginDialog('testDialog');
                     break;
 
                 case DialogTurnStatus.complete:

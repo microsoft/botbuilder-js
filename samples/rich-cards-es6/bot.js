@@ -108,9 +108,9 @@ module.exports = function createBotLogic(conversationState) {
         const dc = dialogs.createContext(context, state);
 
         if (context.activity.type === 'message') {
-            await dc.continue();
+            await dc.continueDialog();
             if (!context.responded) {
-                await dc.begin('cardSelector');
+                await dc.beginDialog('cardSelector');
             }
         }
     }

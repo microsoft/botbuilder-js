@@ -38,7 +38,7 @@ server.post('/api/messages', (req, res) => {
                 const startImage = Math.floor(Math.random() * 100);
                 await dc.endAll().begin('imageList', { filter: { start: startImage }});
             } else {
-                await dc.continue();
+                await dc.continueDialog();
 
                 // Check to see if anyone replied.
                 if (!context.responded) {

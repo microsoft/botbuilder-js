@@ -29,7 +29,7 @@ server.post('/api/messages', (req, res) => {
                 await dc.endAll().begin('imageList', { filter: { start: startImage } });
             }
             else {
-                await dc.continue();
+                await dc.continueDialog();
                 // Check to see if anyone replied.
                 if (!context.responded) {
                     await context.sendActivity(`To show a list send a reply with "images".`);

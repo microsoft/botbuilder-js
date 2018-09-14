@@ -38,10 +38,10 @@ server.post('/api/messages', (req, res) => {
                 yield dc.endAll();
             }
             // Continue the current dialog
-            yield dc.continue();
+            yield dc.continueDialog();
             // Show menu if no response sent
             if (!context.responded) {
-                yield dc.begin('mainMenu');
+                yield dc.beginDialog('mainMenu');
             }
         }
     }));
@@ -93,7 +93,7 @@ dialogs.add('loop', [
     function (dc, args) {
         return __awaiter(this, void 0, void 0, function* () {
             dc.activeDialog.state = args;
-            yield dc.begin(args.dialogId);
+            yield dc.beginDialog(args.dialogId);
         });
     },
     function (dc) {
@@ -104,12 +104,12 @@ dialogs.add('loop', [
     }
 ]);
 dialogs.add('runAll', [
-    (dc) => dc.begin('choiceDemo'),
-    (dc) => dc.begin('confirmDemo'),
-    (dc) => dc.begin('datetimeDemo'),
-    (dc) => dc.begin('numberDemo'),
-    (dc) => dc.begin('textDemo'),
-    (dc) => dc.begin('attachmentDemo'),
+    (dc) => dc.beginDialog('choiceDemo'),
+    (dc) => dc.beginDialog('confirmDemo'),
+    (dc) => dc.beginDialog('datetimeDemo'),
+    (dc) => dc.beginDialog('numberDemo'),
+    (dc) => dc.beginDialog('textDemo'),
+    (dc) => dc.beginDialog('attachmentDemo'),
     (dc) => dc.replace('mainMenu')
 ]);
 //-----------------------------------------------
@@ -124,7 +124,7 @@ dialogs.add('choiceDemo', [
     function (dc, choice) {
         return __awaiter(this, void 0, void 0, function* () {
             yield dc.context.sendActivity(`Recognized choice: ${JSON.stringify(choice)}`);
-            yield dc.end();
+            yield dc.endDialog();
         });
     }
 ]);
@@ -140,7 +140,7 @@ dialogs.add('confirmDemo', [
     function (dc, value) {
         return __awaiter(this, void 0, void 0, function* () {
             yield dc.context.sendActivity(`Recognized value: ${value}`);
-            yield dc.end();
+            yield dc.endDialog();
         });
     }
 ]);
@@ -156,7 +156,7 @@ dialogs.add('datetimeDemo', [
     function (dc, values) {
         return __awaiter(this, void 0, void 0, function* () {
             yield dc.context.sendActivity(`Recognized values: ${JSON.stringify(values)}`);
-            yield dc.end();
+            yield dc.endDialog();
         });
     }
 ]);
@@ -172,7 +172,7 @@ dialogs.add('numberDemo', [
     function (dc, value) {
         return __awaiter(this, void 0, void 0, function* () {
             yield dc.context.sendActivity(`Recognized value: ${value}`);
-            yield dc.end();
+            yield dc.endDialog();
         });
     }
 ]);
@@ -188,7 +188,7 @@ dialogs.add('textDemo', [
     function (dc, value) {
         return __awaiter(this, void 0, void 0, function* () {
             yield dc.context.sendActivity(`Recognized value: ${value}`);
-            yield dc.end();
+            yield dc.endDialog();
         });
     }
 ]);
@@ -204,7 +204,7 @@ dialogs.add('attachmentDemo', [
     function (dc, values) {
         return __awaiter(this, void 0, void 0, function* () {
             yield dc.context.sendActivity(botbuilder_1.MessageFactory.carousel(values, `Uploaded ${values.length} Attachment(s)`));
-            yield dc.end();
+            yield dc.endDialog();
         });
     }
 ]);

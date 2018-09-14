@@ -78,7 +78,7 @@ export abstract class Prompt<T> extends Dialog {
         super(dialogId);
     }
 
-    public async dialogBegin(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
         // Ensure prompts have input hint set
         const opt: Partial<PromptOptions> = {...options};
         if (opt.prompt && typeof opt.prompt === 'object' && typeof opt.prompt.inputHint !== 'string') {
@@ -99,7 +99,7 @@ export abstract class Prompt<T> extends Dialog {
         return Dialog.EndOfTurn;
     }
 
-    public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
+    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Don't do anything for non-message activities
         if (dc.context.activity.type !== ActivityTypes.Message) {
             return Dialog.EndOfTurn;
@@ -124,7 +124,7 @@ export abstract class Prompt<T> extends Dialog {
 
         // Return recognized value or re-prompt
         if (isValid) {
-            return await dc.end(recognized.value);
+            return await dc.endDialog(recognized.value);
         } else {
             if (!dc.context.responded) {
                 await this.onPrompt(dc.context, state.state, state.options, true);
@@ -134,18 +134,18 @@ export abstract class Prompt<T> extends Dialog {
         }
     }
 
-    public async dialogResume(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // Prompts are typically leaf nodes on the stack but the dev is free to push other dialogs
         // on top of the stack which will result in the prompt receiving an unexpected call to
-        // dialogResume() when the pushed on dialog ends.
+        // resumeDialog() when the pushed on dialog ends.
         // To avoid the prompt prematurely ending we need to implement this method and
         // simply re-prompt the user.
-        await this.dialogReprompt(dc.context, dc.activeDialog);
+        await this.repromptDialog(dc.context, dc.activeDialog);
 
         return Dialog.EndOfTurn;
     }
 
-    public async dialogReprompt(context: TurnContext, instance: DialogInstance): Promise<void> {
+    public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         const state: PromptState = instance.state as PromptState;
         await this.onPrompt(context, state.state, state.options, false);
     }

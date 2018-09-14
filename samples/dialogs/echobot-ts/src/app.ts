@@ -33,11 +33,11 @@ server.post('/api/messages', (req, res) => {
             // Create dialog context and continue executing the "current" dialog, if any.
             const state = conversationState.get(context);
             const dc = dialogs.createContext(context, state);
-            await dc.continue();
+            await dc.continueDialog();
 
             // Check to see if anyone replied. If not then start echo dialog
             if (!context.responded) {
-                await dc.begin('echo');
+                await dc.beginDialog('echo');
             }
         } else {
             await context.sendActivity(`[${context.activity.type} event detected]`);
@@ -51,6 +51,6 @@ dialogs.add('echo', [
         const state = conversationState.get(dc.context);
         const count = state.count === undefined ? state.count = 0 : ++state.count;
         await dc.context.sendActivity(`${count}: You said "${dc.context.activity.text}"`);
-        await dc.end();
+        await dc.endDialog();
     }
 ]);

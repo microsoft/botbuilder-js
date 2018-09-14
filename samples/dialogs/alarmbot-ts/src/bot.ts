@@ -44,19 +44,19 @@ export class Bot {
                 if (utterance.includes('add alarm')) {
                     // cancel any running dialogs
                     await dc.cancelAll();
-                    await dc.begin(ADD_ALARM_DIALOG);
+                    await dc.beginDialog(ADD_ALARM_DIALOG);
 
                     // Check for delete
                 } else if (utterance.includes('delete alarm')) {
                     // cancel any running dialogs
                     await dc.cancelAll();
-                    await dc.begin(DELETE_ALARM_DIALOG);
+                    await dc.beginDialog(DELETE_ALARM_DIALOG);
 
                     // Check for show
                 } else if (utterance.includes('show alarms')) {
                     // cancel any running dialogs
                     await dc.cancelAll();
-                    await dc.begin(SHOW_ALARMS_DIALOG);
+                    await dc.beginDialog(SHOW_ALARMS_DIALOG);
 
                     // Check for cancel
                 } else if (utterance === 'cancel') {
@@ -70,7 +70,7 @@ export class Bot {
 
                 // Route activity to current dialog if not interrupted
                 if (!context.responded) {
-                    await dc.continue();
+                    await dc.continueDialog();
                 }
 
                 // Perform fallback logic if no active dialog or interruption
