@@ -82,18 +82,34 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
             const dialogState: any = instance.state[PERSISTED_DIALOG_STATE];
             const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
             await innerDC.cancelAllDialogs();
-        } 
+        }
 
         // Notify component
         await this.onEndDialog(context, instance, reason);
     }
 
-    protected addDialog<T extends Dialog>(dialog: T): T {
+    public addDialog<T extends Dialog>(dialog: T): ComponentDialog<O> {
         this.dialogs.add(dialog);
         if (this.initialDialogId === undefined) { this.initialDialogId = dialog.id; }
 
-        return dialog;
+        return this;
     }
+
+    /**
+     * Finds a dialog that was previously added to the set using [add()](#add).
+     *
+     * @remarks
+     * This example finds a dialog named "greeting":
+     *
+     * ```JavaScript
+     * const dialog = dialogs.find('greeting');
+     * ```
+     * @param dialogId ID of the dialog/prompt to lookup.
+     */
+    public findDialog(dialogId: string): Dialog | undefined {
+        return this.dialogs.find(dialogId);
+    }
+
 
     protected onBeginDialog(innerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         return innerDC.beginDialog(this.initialDialogId, options);
