@@ -11,7 +11,7 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
     public name: string = '';
     public description: string = '';
     public services: IConnectedService[] = [];
-    public secretKey: string = '';
+    public padlock: string = '';
     public version: string = '2.0';
 
     constructor() {
