@@ -37,6 +37,9 @@ export class MainDialog extends ComponentDialog {
      */
     constructor(dialogState: StatePropertyAccessor<DialogState>, dialogId = MAIN_DIALOG_ID) {
         super(dialogId);
+        if (!dialogState) {
+            throw new Error('dialogState is null');
+        }
         this.mainDialogSet = new DialogSet(dialogState).add(this);
         this.dialogState = dialogState;
     }
@@ -50,9 +53,15 @@ export class MainDialog extends ComponentDialog {
      * @param context Turn context containing the activity that was received.
      */
     public async run(context: TurnContext): Promise<DialogTurnResult> {
+        if (!context) {
+            throw new Error('context is undefinfed or null');
+        }
+
         // Create a dialog context and try to continue running the current dialog
+
         const dc = await this.mainDialogSet.createContext(context);
         let result = await dc.continueDialog();
+
 
         // Start the main dialog if there wasn't a running one
         if (result.status === DialogTurnStatus.empty) {

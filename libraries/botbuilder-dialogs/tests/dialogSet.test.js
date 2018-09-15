@@ -8,6 +8,16 @@ const continueMessage = { text: `continue`, type: 'message' };
 describe('DialogSet', function () {
     this.timeout(5000);
 
+    it('should throw on createContext(null)', async function () {
+        const convoState = new ConversationState(new MemoryStorage());
+        const dialogSet = new DialogSet(convoState.createProperty('dialogState'));
+        try {
+            await dialogSet.createContext(null);
+            assert.fail('should have thrown error on null');
+        } catch (err) {
+        }
+    });
+
     it('should add a waterfall to the dialog set.', function (done) {
         // Create new ConversationState with MemoryStorage and instantiate DialogSet with PropertyAccessor.
         const convoState = new ConversationState(new MemoryStorage());
