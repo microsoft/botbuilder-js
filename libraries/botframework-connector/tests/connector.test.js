@@ -21,6 +21,7 @@ function base64_encode(file) {
 const BotConnector = require('../lib');
 
 const ConnectorClient = BotConnector.ConnectorClient;
+const OAuthApiClient = BotConnector.OAuthApiClient;
 const Credentials = BotConnector.MicrosoftAppCredentials;
 
 var SuiteBase = require('../../../tools/framework/suite-base');
@@ -401,6 +402,21 @@ xdescribe('Bot Framework Connector SDK', function() {
           result.toString().should.be.exactly(attachment.originalBase64.toString());
         })
         .then(done, done);
+      });
+    });
+  });
+
+  describe('OAuthClient', function() {
+    describe('GetAadTokens', function() {
+      it('should return no tokens', function(done) {
+        var oauthClient = new OAuthApiClient(client);
+        oauthClient.getAadTokens('user', 'conn', {resourceUrls: ['abc']}).then(tokens => {
+          if(!tokens) {
+            done();
+          } else {
+            done('should not have retrieved tokens');
+          }
+        }).catch(reason => done('failed to get null tokens'));
       });
     });
   });
