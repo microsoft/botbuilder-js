@@ -310,6 +310,111 @@ export class OAuthApiClient {
   }
 
   /**
+   * @summary GetAadTokens
+   *
+   * Gets Azure Active Directory tokens for specific resource URLs
+   * once the user has looged into a particure AAD connection.
+   *
+   * @param {string} userId Id of the user.
+   *
+   * @param {string} connectionName Name of the auth connection to use.
+   *
+   * @param {string[]} resourceUrls The resource URLs for which to get tokens.
+   *
+   * @param {RequestOptionsBase} [options] Optional Parameters.
+   *
+   * @returns {Promise} A promise is returned
+   *
+   * @resolve {HttpOperationResponse} - The deserialized result object.
+   *
+   * @reject {Error|ServiceError} - The error object.
+   */
+  public async getAadTokensWithHttpOperationResponse(
+    userId: string,
+    connectionName: string,
+    resourceUrls: Models.AadResourceUrls,
+    options?: msRest.RequestOptionsBase
+  ): Promise<msRest.HttpOperationResponse> {
+    const client: ConnectorClient = this.client;
+
+    // Construct URL
+    const baseUrl: string = this.client.baseUri;
+    // tslint:disable-next-line:prefer-template
+    let requestUrl: string = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + `api/usertoken/GetAadTokens`;
+    const queryParamsArray: any[] = [];
+    queryParamsArray.push(`userId=${encodeURIComponent(userId)}`);
+    queryParamsArray.push(`connectionName=${encodeURIComponent(connectionName)}`);
+    requestUrl += `?${queryParamsArray.join('&')}`;
+
+    // Create HTTP transport objects
+    const httpRequest: msRest.WebResource = new WebResource();
+    httpRequest.method = 'POST';
+    httpRequest.url = requestUrl;
+    httpRequest.headers = {};
+    // Set Headers
+    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    if (options && options.customHeaders) {
+        Object.keys(options.customHeaders).forEach((headerName: string) => {
+          if (options.customHeaders.hasOwnProperty(headerName)) {
+            httpRequest.headers[headerName] = options.customHeaders[headerName];
+          }
+        });
+      }
+
+    // Serialize Request
+    let requestContent = null;
+    try {
+      if (resourceUrls !== null && resourceUrls !== undefined) {
+        requestContent = JSON.stringify(resourceUrls);
+      }
+    } catch (error) {
+      let serializationError = new Error(`Error "${error.message}" occurred in serializing the ` +
+          `payload - ${JSON.stringify(resourceUrls, null, 2)}.`);
+      return Promise.reject(serializationError);
+    }
+    httpRequest.body = requestContent;
+
+    // Send Request
+    let operationRes: msRest.HttpOperationResponse;
+    try {
+      operationRes = await client.pipeline(httpRequest);
+      const response: Response = operationRes.response;
+      const statusCode: number = response.status;
+      if (statusCode !== 200 && statusCode !== 404) {
+        const error: msRest.RestError = new msRest.RestError(operationRes.bodyAsText as string);
+        error.statusCode = response.status;
+        error.request = msRest.stripRequest(httpRequest);
+        error.response = msRest.stripResponse(response);
+        const parsedErrorResponse: any = operationRes.bodyAsJson as { [key: string]: any };
+        try {
+          if (parsedErrorResponse) {
+            let internalError: any = null;
+            if (parsedErrorResponse.error) { internalError = parsedErrorResponse.error; }
+            error.code = internalError ? internalError.code : parsedErrorResponse.code;
+            error.message = internalError ? internalError.message : parsedErrorResponse.message;
+          }
+          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
+            const resultMapper: any = Mappers.ErrorResponse;
+            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
+          }
+        } catch (defaultError) {
+          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
+                           `- "${operationRes.bodyAsText}" for the default response.`;
+
+          return Promise.reject(error);
+        }
+
+        return Promise.reject(error);
+      }
+
+    } catch (err) {
+      return Promise.reject(err);
+    }
+
+    return Promise.resolve(operationRes);
+  }
+
+  /**
    * @summary EmulateOAuthCards
    *
    * Tells the token service to emulate the sending of OAuthCards.
@@ -464,6 +569,29 @@ export class OAuthApiClient {
       options
     ).then((operationRes: msRest.HttpOperationResponse) => {
       return Promise.resolve(operationRes.bodyAsText);
+    }).catch((err: Error) => {
+      return Promise.reject(err);
+    });
+  }
+
+    /**
+   * @summary GetAadTokens
+   * Gets Azure Active Directory tokens for specific resource URLs
+   * once the user has looged into a particure AAD connection.
+   *
+   * @param {string} userId Id of the user.
+   *
+   * @param {string} connectionName Name of the auth connection to use.
+   *
+   * @param {string[]} resourceUrls The resource URLs for which to get tokens.
+   *
+   * @param {RequestOptionsBase} [options] Optional Parameters.
+   *
+   * @returns {Promise} A promise is returned
+   */
+  public async getAadTokens(userId: string, connectionName: string, resourceUrls: Models.AadResourceUrls, options?: msRest.RequestOptionsBase): Promise<Models.TokenResponseMap> {
+    return this.getAadTokensWithHttpOperationResponse(userId, connectionName, resourceUrls, options).then((operationRes: msRest.HttpOperationResponse) => {
+      return Promise.resolve(operationRes.bodyAsJson as Models.TokenResponseMap);
     }).catch((err: Error) => {
       return Promise.reject(err);
     });

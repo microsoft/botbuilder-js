@@ -28,6 +28,7 @@ import {
     ConversationsResult,
     ResourceResponse,
     TokenResponse,
+    TokenResponseMap,
     TurnContext
 } from 'botbuilder-core';
 
@@ -395,6 +396,27 @@ export class BotFrameworkAdapter extends BotAdapter {
         const client: OAuthApiClient = this.createOAuthApiClient(url);
 
         return client.getSignInLink(conversation as ConversationReference, connectionName);
+    }
+
+        /**
+     * Signs the user out with the token server.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     */
+    public getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<TokenResponseMap> {
+        try {
+            if (!context.activity.from || !context.activity.from.id) {
+                throw new Error(`BotFrameworkAdapter.getAadTokens(): missing from or from.id`);
+            }
+            this.checkEmulatingOAuthCards(context);
+            const userId: string = context.activity.from.id;
+            const url: string = this.oauthApiUrl(context);
+            const client: OAuthApiClient = this.createOAuthApiClient(url);
+
+            return client.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls });
+        } catch (err) {
+            return Promise.reject(err);
+        }
     }
 
     /**
