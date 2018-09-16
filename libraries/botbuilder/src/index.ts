@@ -7,6 +7,5 @@
  */
 
 export * from './botFrameworkAdapter';
-export * from './consoleAdapter';
 export * from './fileTranscriptStore';
 export * from 'botbuilder-core';
