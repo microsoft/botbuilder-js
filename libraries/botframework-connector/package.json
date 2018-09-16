@@ -24,6 +24,7 @@
     "@types/request": "^2.47.0",
     "base64url": "^2.0.0",
     "botframework-schema": "^4.0.0-preview1.2",
+    "cryptiles": "^4.1.2",
     "jsonwebtoken": "8.0.1",
     "ms-rest-js": "0.2.8",
     "request": "^2.88.0",

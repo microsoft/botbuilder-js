@@ -26,6 +26,7 @@
     "@types/request-promise-native": "^1.0.10",
     "azure-cognitiveservices-luis-runtime": "^1.0.0",
     "botbuilder": "^4.0.0-preview1.2",
+    "cryptiles": "^4.1.2",
     "html-entities": "^1.2.1",
     "moment": "^2.20.1",
     "ms-rest": "^2.3.6",
