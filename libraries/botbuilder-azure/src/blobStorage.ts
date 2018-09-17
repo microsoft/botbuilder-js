@@ -6,15 +6,19 @@
  * Licensed under the MIT License.
  */
 import * as azure from 'azure-storage';
-import { Storage, StoreItem, StoreItems } from 'botbuilder';
+import { Storage, StoreItems } from 'botbuilder';
 import { escape } from 'querystring';
 
 // A host address.
 export interface Host {
-    // Primary host address.
+    /**
+     * Primary host address.
+     */
     primaryHost: string;
 
-    // Secondary host address.
+    /**
+     * Secondary host address.
+     */
     secondaryHost: string;
 }
 
@@ -22,17 +26,25 @@ export interface Host {
  * Settings for configuring an instance of `BlobStorage`.
  */
 export interface BlobStorageSettings {
-    // Root container name to use.
+    /**
+     * Root container name to use.
+     */
     containerName: string;
 
-    // The storage account or the connection string. If this is the storage account, the storage access key must be provided.
+    /**
+     * The storage account or the connection string. If this is the storage account, the storage access key must be provided.
+     */
     storageAccountOrConnectionString: string;
 
-    // The storage access key.
+    /** 
+     * The storage access key.
+     */
     storageAccessKey?: string;
 
-    // (Optional) azure storage host.
-    host?: string | Host;
+    /**
+     * (Optional) azure storage host.
+     */
+     host?: string | Host;
 }
 
 /**
@@ -40,12 +52,18 @@ export interface BlobStorageSettings {
  * Internal data structure for storing items in BlobStorage.
  */
 interface DocumentStoreItem {
-    // Represents the Sanitized Key and used as name of blob
-    id: string;
-    // Represents the original Id/Key
-    realId: string;
-    // The item itself + eTag information
-    document: any;
+    /**
+     * Represents the Sanitized Key and used as name of blob
+     */
+     id: string;
+    /**
+     * Represents the original Id/Key
+     */
+     realId: string;
+    /**
+     * The item itself + eTag information
+     */
+     document: any;
 }
 
 /**
@@ -77,8 +95,8 @@ const checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerRe
  *
  * @remarks
  * The BlobStorage implements its storage using a single Azure Storage Blob Container. Each entity
- * or StoreItem is serialized into a JSON string and stored in an individual text blob. Each blob
- * is named after the StoreItem key which is encoded and ensure it conforms a valid blob name.
+ * is serialized into a JSON string and stored in an individual text blob. Each blob
+ * is named after the key which is encoded and ensure it conforms a valid blob name.
  */
 export class BlobStorage implements Storage {
     private settings: BlobStorageSettings;

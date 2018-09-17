@@ -103,9 +103,12 @@ class MockResponse {
         this.body = undefined;
     }
 
-    send(status, body) {
-        assert(!this.ended, `response.send() called after response.end().`);
+    status(status) {
         this.statusCode = status;
+    }
+
+    send(body) {
+        assert(!this.ended, `response.send() called after response.end().`);
         this.body = body;
     }
 

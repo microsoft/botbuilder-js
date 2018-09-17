@@ -15,13 +15,19 @@ import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './promp
  * Settings used to configure an `OAuthPrompt` instance.
  */
 export interface OAuthPromptSettings {
-    // Name of the OAuth connection being used.
+    /**
+     * Name of the OAuth connection being used.
+     */
     connectionName: string;
 
-    // Title of the cards signin button.
+    /**
+     * Title of the cards signin button.
+     */
     title: string;
 
-    // (Optional) additional text to include on the signin card.
+    /**
+     * (Optional) additional text to include on the signin card.
+     */
     text?: string;
 
     /**

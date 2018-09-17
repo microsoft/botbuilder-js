@@ -8,9 +8,13 @@
 
 // A number together with units returned by a recognizer.
 export interface NumberWithUnits {
-    // A recognized number if any.
+    /**
+     * A recognized number if any.
+     */
     number?: number;
 
-    // Units for the number.
+    /**
+     * Units for the number.
+     */
     units: string;
 }

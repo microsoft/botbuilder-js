@@ -41,13 +41,19 @@ interface LuisTraceInfo {
  * Description of a LUIS application used for initializing a LuisRecognizer.
  */
 export interface LuisApplication {
-    // Your models application Id from LUIS
+    /**
+     * Your models application Id from LUIS
+     */
     applicationId: string;
 
-    // (Optional) LUIS endpoint with a default of https://westus.api.cognitive.microsoft.com
+    /**
+     *  (Optional) LUIS endpoint with a default of https://westus.api.cognitive.microsoft.com
+     */
     endpoint?: string;
 
-    // Endpoint key for talking to LUIS
+    /**
+     * Endpoint key for talking to LUIS
+     */
     endpointKey: string;
 }
 
@@ -55,25 +61,39 @@ export interface LuisApplication {
  * Options per LUIS prediction.
  */
 export interface LuisPredictionOptions {
-    // (Optional) Bing Spell Check subscription key.
+    /**
+     * (Optional) Bing Spell Check subscription key.
+     */
     bingSpellCheckSubscriptionKey?: string;
 
-    // (Optional) Determine if all intents come back or only the top one.
+    /**
+     * (Optional) Determine if all intents come back or only the top one.
+     */
     includeAllIntents?: boolean;
 
-    // (Optional) A value indicating whether or not instance data should be included in response.
+    /**
+     * (Optional) A value indicating whether or not instance data should be included in response.
+     */
     includeInstanceData?: boolean;
 
-    // (Optional) If queries should be logged in LUIS.
+    /**
+     * (Optional) If queries should be logged in LUIS.
+     */
     log?: boolean;
 
-    // (Optional) Whether to spell check query.
+    /**
+     * (Optional) Whether to spell check query.
+     */
     spellCheck?: boolean;
 
-    // (Optional) Whether to use the staging endpoint.
+    /**
+     * (Optional) Whether to use the staging endpoint.
+     */
     staging?: boolean;
 
-    // (Optional) The time zone offset for resolving datetimes.
+    /**
+     * (Optional) The time zone offset for resolving datetimes.
+     */
     timezoneOffset?: number;
 }
 
@@ -103,7 +123,8 @@ export class LuisRecognizer {
             includeInstanceData: true,
             log: true,
             spellCheck: false,
-            staging: false, ...options};
+            staging: false, ...options
+        };
         this.includeApiResults = !!includeApiResults;
 
         // Create client
@@ -154,7 +175,7 @@ export class LuisRecognizer {
                     timezoneOffset: this.options.timezoneOffset,
                     verbose: this.options.includeAllIntents,
                     log: this.options.log,
-                    customHeaders: { 'Ocp-Apim-Subscription-Key': this.application.endpointKey}
+                    customHeaders: { 'Ocp-Apim-Subscription-Key': this.application.endpointKey }
                 }
             )
                 .then((luisResult: LuisModels.LuisResult) => {
@@ -178,6 +199,10 @@ export class LuisRecognizer {
                     return this.emitTraceInfo(context, luisResult, recognizerResult).then(() => {
                         return recognizerResult;
                     });
+                })
+                .catch(error => {
+                    this.prepareErrorMessage(error);
+                    throw error;
                 });
         }
 
@@ -203,6 +228,35 @@ export class LuisRecognizer {
             label: LUIS_TRACE_LABEL,
             value: traceInfo
         });
+    }
+
+    private prepareErrorMessage(error: Error): Error {
+        switch ((error as any).response.statusCode) {
+            case 400:
+                error.message = `Response 400: The request's body or parameters are incorrect, meaning they are missing, malformed, or too large.`;
+                break;
+            case 401:
+                error.message = `Response 401: The key used is invalid, malformed, empty, or doesn't match the region.`;
+                break;
+            case 403:
+                error.message = `Response 403: Total monthly key quota limit exceeded.`;
+                break;
+            case 409:
+                error.message = `Response 409: Application loading in progress, please try again.`;
+                break;
+            case 410:
+                error.message = `Response 410: Please retrain and republish your application.`;
+                break;
+            case 414:
+                error.message = `Response 414: The query is too long. Please reduce the query length to 500 or less characters.`;
+                break;
+            case 429:
+                error.message = `Response 429: Too many requests.`;
+                break;
+            default:
+                error.message = `Response ${(error as any).response.statusCode}: Unexpected status code received. Please verify that your LUIS application is properly setup.`;
+        }
+        return error;
     }
 
     private normalizeName(name: string): string {

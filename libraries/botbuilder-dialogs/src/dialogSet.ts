@@ -77,7 +77,7 @@ import { DialogContext, DialogState } from './dialogContext';
  * ```JavaScript
  * server.post('/api/messages', (req, res) => {
  *     adapter.processActivity(req, res, async (context) => {
- *         // Get conversation state and create DialogContext object
+ *         // Create DialogContext object
  *         const dc = await dialogs.createContext(context);
  *
  *         // Continue execution if there's an "active" dialog
@@ -118,7 +118,7 @@ import { DialogContext, DialogState } from './dialogContext';
  * ```JavaScript
  * server.post('/api/messages', (req, res) => {
  *     adapter.processActivity(req, res, async (context) => {
- *         // Get conversation state and create DialogContext object
+ *         // Create DialogContext object
  *         const dc = await dialogs.createContext(context);
  *
  *         // Check for any interruptions
