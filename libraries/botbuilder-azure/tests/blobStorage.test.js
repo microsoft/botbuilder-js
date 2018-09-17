@@ -66,6 +66,7 @@ testStorage = function () {
                     .then(() => storage.read(['keyUpdate']))
                     .then((updated) => {
                         assert(updated.keyUpdate.count == 2, 'object should be updated');
+                        assert(updated.keyUpdate.eTag != result.keyUpdate.eTag, 'Etag should be updated on write');
                     });
             }).catch(reason => {
                 if (reason.code == 'ECONNREFUSED') {
@@ -166,6 +167,9 @@ testStorage = function () {
                 assert(result.batch1.count > 0, 'batch1 should have count and doesnt');
                 assert(result.batch2.count > 0, 'batch2 should have count and doesnt');
                 assert(result.batch3.count > 0, 'batch3 should have count  and doesnt');
+                assert(result.batch1.eTag != null, 'batch1 should have etag and doesnt');	
+                assert(result.batch2.eTag != null, 'batch2 should have etag and doesnt');	
+                assert(result.batch3.eTag != null, 'batch3 should have etag  and doesnt');
             })
             .then(() => storage.delete(['batch1', 'batch2', 'batch3']))
             .then(() => storage.read(['batch1', 'batch2', 'batch3']))
@@ -194,6 +198,7 @@ testStorage = function () {
                 assert(result != null, 'result should be object');
                 assert(result[crazyKey], 'keyCreate should be defined');
                 assert(result[crazyKey].count == 1, 'object should have count of 1');
+                assert(result[crazyKey].eTag, 'ETag should be defined');
             })
             .catch(reason => {
                 if (reason.code == 'ECONNREFUSED') {
