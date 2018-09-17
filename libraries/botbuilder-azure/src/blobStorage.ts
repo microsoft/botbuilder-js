@@ -11,10 +11,14 @@ import { escape } from 'querystring';
 
 // A host address.
 export interface Host {
-    // Primary host address.
+    /**
+     * Primary host address.
+     */
     primaryHost: string;
 
-    // Secondary host address.
+    /**
+     * Secondary host address.
+     */
     secondaryHost: string;
 }
 
@@ -22,17 +26,25 @@ export interface Host {
  * Settings for configuring an instance of `BlobStorage`.
  */
 export interface BlobStorageSettings {
-    // Root container name to use.
+    /**
+     * Root container name to use.
+     */
     containerName: string;
 
-    // The storage account or the connection string.
+    /**
+     * The storage account or the connection string.
+     */
     storageAccountOrConnectionString: string;
 
-    // The storage access key.
+    /**
+     * The storage access key.
+     */
     storageAccessKey: string;
 
-    // (Optional) azure storage host.
-    host?: string | Host;
+    /**
+     * (Optional) azure storage host.
+     */
+     host?: string | Host;
 }
 
 /**
@@ -40,12 +52,18 @@ export interface BlobStorageSettings {
  * Internal data structure for storing items in BlobStorage.
  */
 interface DocumentStoreItem {
-    // Represents the Sanitized Key and used as name of blob
-    id: string;
-    // Represents the original Id/Key
-    realId: string;
-    // The item itself + eTag information
-    document: any;
+    /**
+     * Represents the Sanitized Key and used as name of blob
+     */
+     id: string;
+    /**
+     * Represents the original Id/Key
+     */
+     realId: string;
+    /**
+     * The item itself + eTag information
+     */
+     document: any;
 }
 
 /**
