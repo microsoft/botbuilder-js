@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
-const bot_1 = require("./bot");
 const restify = require("restify");
+const bot_1 = require("./bot");
 // Create server
 let server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
@@ -33,7 +33,7 @@ server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
     adapter.processActivity(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
         // Dispatch to bot
-        yield bot.dispatchActivity(context);
+        yield bot.onActivity(context);
     }));
 });
 //# sourceMappingURL=app.js.map

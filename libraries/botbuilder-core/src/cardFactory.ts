@@ -6,8 +6,19 @@
  * Licensed under the MIT License.
  */
 import {
-    Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, AudioCard,
-    ReceiptCard, SigninCard, ThumbnailCard, VideoCard, ActionTypes, OAuthCard
+    ActionTypes,
+    AnimationCard,
+    Attachment,
+    AudioCard,
+    CardAction,
+    CardImage,
+    HeroCard,
+    MediaUrl,
+    OAuthCard,
+    ReceiptCard,
+    SigninCard,
+    ThumbnailCard,
+    VideoCard
 } from 'botframework-schema';
 
 /**
@@ -27,8 +38,8 @@ import {
  * ```
  */
 export class CardFactory {
-    /** List of content types for each card style. */
-    static contentTypes = {
+    // List of content types for each card style.
+    public static contentTypes: any = {
         adaptiveCard: 'application/vnd.microsoft.card.adaptive',
         animationCard: 'application/vnd.microsoft.card.animation',
         audioCard: 'application/vnd.microsoft.card.audio',
@@ -75,7 +86,7 @@ export class CardFactory {
      * ```
      * @param card The adaptive card to return as an attachment.
      */
-    static adaptiveCard(card: any): Attachment {
+    public static adaptiveCard(card: any): Attachment {
         return { contentType: CardFactory.contentTypes.adaptiveCard, content: card };
     }
 
@@ -87,10 +98,12 @@ export class CardFactory {
      * @param buttons (Optional) set of buttons to include on the card.
      * @param other (Optional) additional properties to include on the card.
      */
-    static animationCard(title: string,
-                         media: (MediaUrl|string)[],
-                         buttons?: (CardAction|string)[],
-                         other?: Partial<AnimationCard>): Attachment {
+    public static animationCard(
+            title: string,
+            media: (MediaUrl|string)[],
+            buttons?: (CardAction|string)[],
+            other?: Partial<AnimationCard>
+    ): Attachment {
         return mediaCard(CardFactory.contentTypes.animationCard, title, media, buttons, other);
     }
 
@@ -102,10 +115,12 @@ export class CardFactory {
      * @param buttons (Optional) set of buttons to include on the card.
      * @param other (Optional) additional properties to include on the card.
      */
-    static audioCard(title: string,
-                     media: (MediaUrl|string)[],
-                     buttons?: (CardAction|string)[],
-                     other?: Partial<AudioCard>): Attachment {
+    public static audioCard(
+        title: string,
+        media: (MediaUrl|string)[],
+        buttons?: (CardAction|string)[],
+        other?: Partial<AudioCard>
+    ): Attachment {
         return mediaCard(CardFactory.contentTypes.audioCard, title, media, buttons, other);
     }
 
@@ -129,11 +144,29 @@ export class CardFactory {
      * @param buttons (Optional) set of buttons to include on the card.
      * @param other (Optional) additional properties to include on the card.
      */
-    static heroCard(title: string, images?: (CardImage|string)[], buttons?: (CardAction|string)[], other?: Partial<HeroCard>): Attachment;
-    static heroCard(title: string, text: string, images?: (CardImage|string)[], buttons?: (CardAction|string)[], other?: Partial<HeroCard>): Attachment;
-    static heroCard(title: string, text?: any, images?: any, buttons?: any, other?: Partial<HeroCard>): Attachment {
-        const a = CardFactory.thumbnailCard(title, text, images, buttons, other);
+    public static heroCard(
+        title: string,
+        images?: (CardImage|string)[],
+        buttons?: (CardAction|string)[],
+        other?: Partial<HeroCard>
+    ): Attachment;
+    public static heroCard(
+        title: string,
+        text: string,
+        images?: (CardImage|string)[],
+        buttons?: (CardAction|string)[],
+        other?: Partial<HeroCard>
+    ): Attachment;
+    public static heroCard(
+        title: string,
+        text?: any,
+        images?: any,
+        buttons?: any,
+        other?: Partial<HeroCard>
+    ): Attachment {
+        const a: Attachment = CardFactory.thumbnailCard(title, text, images, buttons, other);
         a.contentType = CardFactory.contentTypes.heroCard;
+
         return a;
     }
 
@@ -144,9 +177,15 @@ export class CardFactory {
      * @param title Title of the cards signin button.
      * @param text (Optional) additional text to include on the card.
      */
-    static oauthCard(connectionName: string, title: string, text?: string): Attachment {
-        const card: Partial<OAuthCard> = { buttons: [{ type: ActionTypes.Signin, title: title, value: undefined }], connectionName: connectionName };
+    public static oauthCard(connectionName: string, title: string, text?: string): Attachment {
+        const card: Partial<OAuthCard> = {
+            buttons: [
+                { type: ActionTypes.Signin, title: title, value: undefined }
+            ],
+            connectionName: connectionName
+        };
         if (text) { card.text = text; }
+
         return { contentType: CardFactory.contentTypes.oauthCard, content: card };
     }
 
@@ -156,7 +195,7 @@ export class CardFactory {
      *
      * @param card The adaptive card to return as an attachment.
      */
-    static receiptCard(card: ReceiptCard): Attachment {
+    public static receiptCard(card: ReceiptCard): Attachment {
         return { contentType: CardFactory.contentTypes.receiptCard, content: card };
     }
 
@@ -168,9 +207,10 @@ export class CardFactory {
      * @param url The link to the signin page the user needs to visit.
      * @param text (Optional) additional text to include on the card.
      */
-    static signinCard(title: string, url: string, text?: string): Attachment {
+    public static signinCard(title: string, url: string, text?: string): Attachment {
         const card: SigninCard = { buttons: [{ type: ActionTypes.Signin, title: title, value: url }] };
         if (text) { card.text = text; }
+
         return { contentType: CardFactory.contentTypes.signinCard, content: card };
     }
 
@@ -186,20 +226,38 @@ export class CardFactory {
      * @param buttons (Optional) set of buttons to include on the card.
      * @param other (Optional) additional properties to include on the card.
      */
-    static thumbnailCard(title: string, images?: (CardImage|string)[], buttons?: (CardAction|string)[], other?: Partial<ThumbnailCard>): Attachment;
-    static thumbnailCard(title: string, text: string, images?: (CardImage|string)[], buttons?: (CardAction|string)[], other?: Partial<ThumbnailCard>): Attachment;
-    static thumbnailCard(title: string, text?: any, images?: any, buttons?: any, other?: Partial<ThumbnailCard>): Attachment {
+    public static thumbnailCard(
+        title: string,
+        images?: (CardImage|string)[],
+        buttons?: (CardAction|string)[],
+        other?: Partial<ThumbnailCard>
+    ): Attachment;
+    public static thumbnailCard(
+        title: string,
+        text: string,
+        images?: (CardImage|string)[],
+        buttons?: (CardAction|string)[],
+        other?: Partial<ThumbnailCard>
+    ): Attachment;
+    public static thumbnailCard(
+        title: string,
+        text?: any,
+        images?: any,
+        buttons?: any,
+        other?: Partial<ThumbnailCard>
+    ): Attachment {
         if (typeof text !== 'string') {
             other = buttons;
             buttons = images;
             images = text;
             text = undefined;
         }
-        const card: Partial<ThumbnailCard> = Object.assign({}, other);
+        const card: Partial<ThumbnailCard> = {...other};
         if (title) { card.title = title; }
         if (text) { card.text = text; }
         if (images) { card.images = CardFactory.images(images); }
         if (buttons) { card.buttons = CardFactory.actions(buttons); }
+
         return { contentType: CardFactory.contentTypes.thumbnailCard, content: card };
     }
 
@@ -211,10 +269,12 @@ export class CardFactory {
      * @param buttons (Optional) set of buttons to include on the card.
      * @param other (Optional) additional properties to include on the card.
      */
-    static videoCard(title: string,
-                     media: (MediaUrl|string)[],
-                     buttons?: (CardAction|string)[],
-                     other?: Partial<VideoCard>): Attachment {
+    public static videoCard(
+        title: string,
+        media: (MediaUrl|string)[],
+        buttons?: (CardAction|string)[],
+        other?: Partial<VideoCard>
+    ): Attachment {
         return mediaCard(CardFactory.contentTypes.videoCard, title, media, buttons, other);
     }
 
@@ -224,15 +284,16 @@ export class CardFactory {
      *
      * @param actions Array of card actions or strings. Strings will be converted to `messageBack` actions.
      */
-    static actions(actions: (CardAction|string)[]|undefined): CardAction[] {
+    public static actions(actions: (CardAction|string)[]|undefined): CardAction[] {
         const list: CardAction[] = [];
-        (actions || []).forEach((a) => {
+        (actions || []).forEach((a: (CardAction|string)) => {
             if (typeof a === 'object') {
                 list.push(a);
             } else {
                 list.push({ type: ActionTypes.ImBack, value: a.toString(), title: a.toString() });
             }
         });
+
         return list;
     }
 
@@ -241,15 +302,16 @@ export class CardFactory {
      *
      * @param images Array of card images or strings. Strings will be converted to card images.
      */
-    static images(images: (CardImage|string)[]|undefined): CardImage[] {
+    public static images(images: (CardImage|string)[]|undefined): CardImage[] {
         const list: CardImage[] = [];
-        (images || []).forEach((img) => {
+        (images || []).forEach((img: (CardImage|string)) => {
             if (typeof img === 'object') {
                 list.push(img);
             } else {
                 list.push({ url: img });
             }
         });
+
         return list;
     }
 
@@ -258,15 +320,16 @@ export class CardFactory {
      *
      * @param links Array of media url objects or strings. Strings will be converted to a media url object.
      */
-    static media(links: (MediaUrl|string)[]|undefined): MediaUrl[] {
+    public static media(links: (MediaUrl|string)[]|undefined): MediaUrl[] {
         const list: MediaUrl[] = [];
-        (links || []).forEach((lnk) => {
+        (links || []).forEach((lnk: (MediaUrl|string)) => {
             if (typeof lnk === 'object') {
                 list.push(lnk);
             } else {
                 list.push({ url: lnk });
             }
         });
+
         return list;
     }
 }
@@ -279,9 +342,10 @@ function mediaCard(contentType: string,
                    media: (MediaUrl|string)[],
                    buttons?: (CardAction|string)[],
                    other?: any): Attachment {
-    const card: VideoCard = Object.assign({}, other);
+    const card: VideoCard = {...other};
     if (title) { card.title = title; }
     card.media = CardFactory.media(media);
     if (buttons) { card.buttons = CardFactory.actions(buttons); }
+
     return { contentType: contentType, content: card };
 }

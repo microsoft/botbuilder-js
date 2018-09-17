@@ -5,11 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from './turnContext';
+import { Activity } from 'botframework-schema';
 import { BotState } from './botState';
 import { Storage } from './storage';
+import { TurnContext } from './turnContext';
 
-const NO_KEY = `UserState: channelId and/or conversation missing from context.request.`;
+const NO_KEY: string = `UserState: channelId and/or conversation missing from context.request.`;
 
 /**
  * Reads and writes user state for your bot to storage.
@@ -31,7 +32,7 @@ const NO_KEY = `UserState: channelId and/or conversation missing from context.re
  * server.post('/api/messages', (req, res) => {
  *    adapter.processActivity(req, res, async (context) => {
  *       // Get loaded user state
- *       const user = userState.get(context);
+ *       const user = await userState.get(context);
  *
  *       // ... route activity ...
  *
@@ -45,10 +46,11 @@ export class UserState extends BotState {
      * @param storage Storage provider to persist user state to.
      * @param namespace (Optional) namespace to append to storage keys. Defaults to an empty string.
      */
-    constructor(storage: Storage, private namespace = '') {
-        super(storage, (context) => {
+    constructor(storage: Storage, private namespace: string = '') {
+        super(storage, (context: TurnContext) => {
             // Calculate storage key
-            const key = this.getStorageKey(context);
+            const key: string = this.getStorageKey(context);
+
             return key ? Promise.resolve(key) : Promise.reject(new Error(NO_KEY));
         });
     }
@@ -57,10 +59,19 @@ export class UserState extends BotState {
      * Returns the storage key for the current user state.
      * @param context Context for current turn of conversation with the user.
      */
-    public getStorageKey(context: TurnContext): string|undefined {
-        const activity = context.activity;
-        const channelId = activity.channelId;
-        const userId = activity && activity.from && activity.from.id ? activity.from.id : undefined;
-        return channelId && userId ? `user/${channelId}/${userId}/${this.namespace}` : undefined;
+    public getStorageKey(context: TurnContext): string | undefined {
+        const activity: Activity = context.activity;
+        const channelId: string = activity.channelId;
+        const userId: string = activity && activity.from && activity.from.id ? activity.from.id : undefined;
+
+        if (!channelId) {
+            throw new Error('missing activity.channelId');
+        }
+
+        if (!userId) {
+            throw new Error('missing activity.from.id');
+        }
+
+        return `${channelId}/users/${userId}/${this.namespace}`;
     }
 }

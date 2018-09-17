@@ -40,11 +40,11 @@ server.post('/api/messages', (req, res) => {
             }
             
             // Continue the current dialog
-            await dc.continue();
+            await dc.continueDialog();
 
             // Show menu if no response sent
             if (!context.responded) {
-                await dc.begin('mainMenu');
+                await dc.beginDialog('mainMenu');
             }
         }
     });
@@ -96,7 +96,7 @@ dialogs.add('mainMenu', [
 dialogs.add('loop', [
     async function(dc, args: { dialogId: string; }) {
         dc.activeDialog.state = args;
-        await dc.begin(args.dialogId);
+        await dc.beginDialog(args.dialogId);
     },
     async function(dc) {
         const args = dc.activeDialog.state;
@@ -105,12 +105,12 @@ dialogs.add('loop', [
 ]);
 
 dialogs.add('runAll', [
-    (dc) => dc.begin('choiceDemo'),
-    (dc) => dc.begin('confirmDemo'),
-    (dc) => dc.begin('datetimeDemo'),
-    (dc) => dc.begin('numberDemo'),
-    (dc) => dc.begin('textDemo'),
-    (dc) => dc.begin('attachmentDemo'),
+    (dc) => dc.beginDialog('choiceDemo'),
+    (dc) => dc.beginDialog('confirmDemo'),
+    (dc) => dc.beginDialog('datetimeDemo'),
+    (dc) => dc.beginDialog('numberDemo'),
+    (dc) => dc.beginDialog('textDemo'),
+    (dc) => dc.beginDialog('attachmentDemo'),
     (dc) => dc.replace('mainMenu')
 ]);
 
@@ -125,7 +125,7 @@ dialogs.add('choiceDemo', [
     },
     async function(dc, choice: FoundChoice) {
         await dc.context.sendActivity(`Recognized choice: ${JSON.stringify(choice)}`);
-        await dc.end();
+        await dc.endDialog();
     }
 ]);
 
@@ -140,7 +140,7 @@ dialogs.add('confirmDemo', [
     },
     async function(dc, value: boolean) {
         await dc.context.sendActivity(`Recognized value: ${value}`);
-        await dc.end();
+        await dc.endDialog();
     }
 ]);
 
@@ -155,7 +155,7 @@ dialogs.add('datetimeDemo', [
     },
     async function(dc, values: FoundDatetime[]) {
         await dc.context.sendActivity(`Recognized values: ${JSON.stringify(values)}`);
-        await dc.end();
+        await dc.endDialog();
     }
 ]);
 
@@ -170,7 +170,7 @@ dialogs.add('numberDemo', [
     },
     async function(dc, value: number) {
         await dc.context.sendActivity(`Recognized value: ${value}`);
-        await dc.end();
+        await dc.endDialog();
     }
 ]);
 
@@ -185,7 +185,7 @@ dialogs.add('textDemo', [
     },
     async function(dc, value: string) {
         await dc.context.sendActivity(`Recognized value: ${value}`);
-        await dc.end();
+        await dc.endDialog();
     }
 ]);
 
@@ -200,6 +200,6 @@ dialogs.add('attachmentDemo', [
     },
     async function(dc, values: Attachment[]) {
         await dc.context.sendActivity(MessageFactory.carousel(values, `Uploaded ${values.length} Attachment(s)`));
-        await dc.end();
+        await dc.endDialog();
     }
 ]);

@@ -9,33 +9,39 @@ export module Constants {
     /**
      * TO CHANNEL FROM BOT: Login URL
      */
-    export const ToChannelFromBotLoginUrl: string = "https://login.microsoftonline.com/botframework.com/oauth2/v2.0/token";
+    export const ToChannelFromBotLoginUrl: string = 'https://login.microsoftonline.com/botframework.com/oauth2/v2.0/token';
 
     /**
      * TO CHANNEL FROM BOT: OAuth scope to request
      */
-    export const ToChannelFromBotOAuthScope: string = "https://api.botframework.com/.default";
+    export const ToChannelFromBotOAuthScope: string = 'https://api.botframework.com/.default';
 
     /**
      * TO BOT FROM CHANNEL: Token issuer
-     */    
-    export const ToBotFromChannelTokenIssuer : string = "https://api.botframework.com";
+     */
+    export const ToBotFromChannelTokenIssuer : string = 'https://api.botframework.com';
 
     /**
      * TO BOT FROM CHANNEL: OpenID metadata document for tokens coming from MSA
      */
-    export const ToBotFromChannelOpenIdMetadataUrl: string = "https://login.botframework.com/v1/.well-known/openidconfiguration";
+    export const ToBotFromChannelOpenIdMetadataUrl: string = 'https://login.botframework.com/v1/.well-known/openidconfiguration';
+
+    /**
+     * TO BOT FROM ENTERPRISE CHANNEL: OpenID metadata document for tokens coming from MSA
+     */
+    export const ToBotFromEnterpriseChannelOpenIdMetadataUrlFormat = 'https://{channelService}.enterprisechannel.botframework.com/v1/.well-known/openidconfiguration';
 
     /**
      * TO BOT FROM EMULATOR: OpenID metadata document for tokens coming from MSA
      */
-    export const ToBotFromEmulatorOpenIdMetadataUrl: string = "https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration";
+    export const ToBotFromEmulatorOpenIdMetadataUrl: string =
+        'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration';
 
     /**
      * Allowed token signing algorithms. Tokens come from channels to the bot. The code
      * that uses this also supports tokens coming from the emulator.
      */
-    export const AllowedSigningAlgorithms: string[] = [ "RS256", "RS384", "RS512" ];
+    export const AllowedSigningAlgorithms: string[] = [ 'RS256', 'RS384', 'RS512' ];
 
     /**
      * "azp" Claim.
@@ -43,7 +49,7 @@ export module Constants {
      * This claim follows the general format set forth in the OpenID Spec.
      *     http://openid.net/specs/openid-connect-core-1_0.html#IDToken
      */
-    export const AuthorizedParty: string = "azp";
+    export const AuthorizedParty: string = 'azp';
 
     /**
      * Audience Claim. From RFC 7519.
@@ -60,7 +66,7 @@ export module Constants {
      * interpretation of audience values is generally application specific.
      * Use of this claim is OPTIONAL.
      */
-    export const AudienceClaim: string = "aud";
+    export const AudienceClaim: string = 'aud';
 
     /**
      * Issuer Claim. From RFC 7519.
@@ -70,7 +76,7 @@ export module Constants {
      * The "iss" value is a case-sensitive string containing a StringOrURI
      * value.  Use of this claim is OPTIONAL.
      */
-    export const IssuerClaim: string = "iss";
+    export const IssuerClaim: string = 'iss';
 
     /**
      * From RFC 7515
@@ -83,20 +89,20 @@ export module Constants {
      * When used with a JWK, the "kid" value is used to match a JWK "kid"
      * parameter value.
      */
-    export const KeyIdHeader: string = "kid";
+    export const KeyIdHeader: string = 'kid';
 
     /**
      * Token version claim name. As used in Microsoft AAD tokens.
      */
-    export const VersionClaim : string = "ver";
+    export const VersionClaim : string = 'ver';
 
     /**
      * App ID claim name. As used in Microsoft AAD 1.0 tokens.
      */
-    export const AppIdClaim : string = "appid";
+    export const AppIdClaim : string = 'appid';
 
     /**
      * Service URL claim name. As used in Microsoft Bot Framework v3.1 auth.
      */
-    export const ServiceUrlClaim : string = "serviceurl";
+    export const ServiceUrlClaim : string = 'serviceurl';
 }

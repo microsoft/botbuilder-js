@@ -58,11 +58,11 @@ async function beginDialogDemo(context, state) {
     state.demo = 'dialog';
     state.demoState = {};
     const dc = dialogs.createContext(context, state.demoState);
-    await dc.begin('demo');
+    await dc.beginDialog('demo');
 }
 async function continueDialogDemo(context, state) {
     const dc = dialogs.createContext(context, state.demoState);
-    await dc.continue();
+    await dc.continueDialog();
     if (!dc.activeDialog) {
         state.demo = undefined;
         state.demoState = undefined;
@@ -71,13 +71,13 @@ async function continueDialogDemo(context, state) {
 const dialogs = new botbuilder_dialogs_1.DialogSet();
 dialogs.add('demo', [
     async function (dc) {
-        return await dc.begin('localePicker');
+        return await dc.beginDialog('localePicker');
     },
     async function (dc, locale) {
         await dc.context.sendActivity(`Switching locale to "${locale}".`);
         const state = conversationState.get(dc.context);
         state.currentLocale = locale;
-        return await dc.end();
+        return await dc.endDialog();
     }
 ]);
 dialogs.add('localePicker', new language_1.LanguagePicker({ defaultLocale: 'en' }));

@@ -6,10 +6,10 @@
  * Licensed under the MIT License.
  */
 import * as jwt from 'jsonwebtoken';
+import { Claim,  ClaimsIdentity } from './claimsIdentity';
 import { Constants } from './constants';
-import { ClaimsIdentity, Claim } from "./claimsIdentity";
-import { OpenIdMetadata } from './openIdMetadata';
 import { EndorsementsValidator } from './endorsementsValidator';
+import { OpenIdMetadata } from './openIdMetadata';
 
 export class JwtTokenExtractor {
 
@@ -17,10 +17,10 @@ export class JwtTokenExtractor {
     private static openIdMetadataCache: Map<string, OpenIdMetadata> = new Map<string, OpenIdMetadata>();
 
     // Token validation parameters for this instance
-    readonly tokenValidationParameters: jwt.VerifyOptions;
+    public readonly tokenValidationParameters: jwt.VerifyOptions;
 
     // OpenIdMetadata for this instance
-    readonly openIdMetadata: OpenIdMetadata;
+    public readonly openIdMetadata: OpenIdMetadata;
 
     constructor(tokenValidationParameters: jwt.VerifyOptions, metadataUrl: string, allowedSigningAlgorithms: string[]) {
         this.tokenValidationParameters = { ...tokenValidationParameters };
@@ -28,13 +28,23 @@ export class JwtTokenExtractor {
         this.openIdMetadata = JwtTokenExtractor.getOrAddOpenIdMetadata(metadataUrl);
     }
 
+    private static getOrAddOpenIdMetadata(metadataUrl: string): OpenIdMetadata {
+        let metadata: OpenIdMetadata = JwtTokenExtractor.openIdMetadataCache.get(metadataUrl);
+        if (!metadata) {
+            metadata = new OpenIdMetadata(metadataUrl);
+            JwtTokenExtractor.openIdMetadataCache.set(metadataUrl, metadata);
+        }
+
+        return metadata;
+    }
+
     public async getIdentityFromAuthHeader(authorizationHeader: string, channelId: string): Promise<ClaimsIdentity | null> {
         if (!authorizationHeader) {
             return null;
         }
 
-        let parts = authorizationHeader.split(' ');
-        if (parts.length == 2) {
+        const parts: string[] = authorizationHeader.split(' ');
+        if (parts.length === 2) {
             return await this.getIdentity(parts[0], parts[1], channelId);
         }
 
@@ -43,7 +53,7 @@ export class JwtTokenExtractor {
 
     public async getIdentity(scheme: string, parameter: string, channelId: string): Promise<ClaimsIdentity | null> {
         // No header in correct scheme or no token
-        if (scheme !== "Bearer" || !parameter) {
+        if (scheme !== 'Bearer' || !parameter) {
             return null;
         }
 
@@ -54,22 +64,21 @@ export class JwtTokenExtractor {
 
         try {
             return await this.validateToken(parameter, channelId);
-        }
-        catch (err) {
+        } catch (err) {
             console.log('JwtTokenExtractor.getIdentity:err!', err);
             throw err;
         }
     }
 
     private hasAllowedIssuer(jwtToken: string): boolean {
-        let decoded = <any>jwt.decode(jwtToken, { complete: true });
-        let issuer: string = decoded.payload.iss;
+        const decoded: any = <any>jwt.decode(jwtToken, { complete: true });
+        const issuer: string = decoded.payload.iss;
 
         if (Array.isArray(this.tokenValidationParameters.issuer)) {
-            return this.tokenValidationParameters.issuer.indexOf(issuer) != -1;
+            return this.tokenValidationParameters.issuer.indexOf(issuer) !== -1;
         }
 
-        if (typeof this.tokenValidationParameters.issuer === "string") {
+        if (typeof this.tokenValidationParameters.issuer === 'string') {
             return this.tokenValidationParameters.issuer === issuer;
         }
 
@@ -78,23 +87,23 @@ export class JwtTokenExtractor {
 
     private async validateToken(jwtToken: string, channelId: string): Promise<ClaimsIdentity> {
 
-        let decodedToken = <any>jwt.decode(jwtToken, { complete: true });
+        const decodedToken: any = <any>jwt.decode(jwtToken, { complete: true });
 
         // Update the signing tokens from the last refresh
-        let keyId = decodedToken.header.kid;
-        let metadata = await this.openIdMetadata.getKey(keyId);
+        const keyId: string = decodedToken.header.kid;
+        const metadata: any = await this.openIdMetadata.getKey(keyId);
         if (!metadata) {
             throw new Error('Signing Key could not be retrieved.');
         }
 
         try {
-            let decodedPayload = <any>jwt.verify(jwtToken, metadata.key, this.tokenValidationParameters);
+            const decodedPayload: any = <any>jwt.verify(jwtToken, metadata.key, this.tokenValidationParameters);
 
             // enforce endorsements in openIdMetadadata if there is any endorsements associated with the key
-            let endorsements = metadata.endorsements;
-            
+            const endorsements: any = metadata.endorsements;
+
             if (Array.isArray(endorsements) && endorsements.length !== 0) {
-                let isEndorsed = EndorsementsValidator.validate(channelId, endorsements);
+                const isEndorsed: boolean = EndorsementsValidator.validate(channelId, endorsements);
                 if (!isEndorsed) {
                     throw new Error(`Could not validate endorsement for key: ${keyId} with endorsements: ${endorsements.join(',')}`);
                 }
@@ -106,26 +115,20 @@ export class JwtTokenExtractor {
                 }
             }
 
-            let claims: Claim[] = Object.keys(decodedPayload).reduce(function (acc, key) {
-                acc.push({ type: key, value: decodedPayload[key] });
-                return acc;
-            }, <Claim[]>[]);
+            const claims: Claim[] = Object.keys(decodedPayload).reduce(
+                (acc: any, key: any) => {
+                    acc.push({ type: key, value: decodedPayload[key] });
+
+                    return acc;
+                },
+                <Claim[]>[]
+            );
 
             return new ClaimsIdentity(claims, true);
 
         } catch (err) {
-            console.log("Error finding key for token. Available keys: " + metadata.key);
+            console.log(`Error finding key for token. Available keys: ${metadata.key}`);
             throw err;
         }
-    }
-
-    private static getOrAddOpenIdMetadata(metadataUrl: string): OpenIdMetadata {
-        let metadata = JwtTokenExtractor.openIdMetadataCache.get(metadataUrl);
-        if (!metadata) {
-            metadata = new OpenIdMetadata(metadataUrl);
-            JwtTokenExtractor.openIdMetadataCache.set(metadataUrl, metadata);
-        }
-
-        return metadata;
     }
 }

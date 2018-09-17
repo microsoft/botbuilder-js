@@ -40,11 +40,11 @@ server.post('/api/messages', (req, res) => {
                 // Create dialog context and continue executing the "current" dialog, if any.
                 const state = conversationState.get(context);
                 const dc = dialogs.createContext(context, state);
-                await dc.continue();
+                await dc.continueDialog();
 
                 // Check to see if anyone replied. If not then start dialog
                 if (!context.responded) {
-                    await dc.begin('displayToken');
+                    await dc.beginDialog('displayToken');
                 }
             }
         } else if (context.activity.type === 'event' || context.activity.type === 'invoke') {
@@ -52,7 +52,7 @@ server.post('/api/messages', (req, res) => {
             // This is important for OAuthCards because tokens can be received via TokenResponse events
             const state = conversationState.get(context);
             const dc = dialogs.createContext(context, state);
-            await dc.continue();
+            await dc.continueDialog();
         }
     });
 });
@@ -68,7 +68,7 @@ dialogs.add('loginPrompt', new OAuthPrompt({
 // Add a dialog to display the token once the user has logged in
  dialogs.add('displayToken', [
       async function (dc) {
-          await dc.begin('loginPrompt');
+          await dc.beginDialog('loginPrompt');
       },
       async function (dc, token) {
           if (token) {
@@ -76,7 +76,7 @@ dialogs.add('loginPrompt', new OAuthPrompt({
               await dc.context.sendActivity(`Your token is: ` + token.token);
           } else {
               await dc.context.sendActivity(`Sorry... We couldn't log you in. Try again later.`);
-              await dc.end();
+              await dc.endDialog();
           }
       }
  ]);

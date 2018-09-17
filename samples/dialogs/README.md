@@ -17,7 +17,7 @@ cd botbuilder-js
 Install [Lerna](https://lernajs.io/) and then bootstrap all dependencies:
 
 ```bash
-npm install --global lerna
+npm install --global lerna@3.2.1
 lerna bootstrap --hoist
 ```
 

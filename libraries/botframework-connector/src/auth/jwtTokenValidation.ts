@@ -6,11 +6,14 @@
  * Licensed under the MIT License.
  */
 import { Activity } from 'botframework-schema';
+import { ChannelValidation } from './channelValidation';
+import { GovernmentChannelValidation } from './governmentChannelValidation';
+import { EnterpriseChannelValidation } from './enterpriseChannelValidation';
+import { GovernmentConstants } from './governmentConstants';
+import { ClaimsIdentity } from './claimsIdentity';
 import { ICredentialProvider } from './credentialProvider';
 import { EmulatorValidation } from './emulatorValidation';
-import { ChannelValidation } from './channelValidation';
 import { MicrosoftAppCredentials } from './microsoftAppCredentials';
-import { ClaimsIdentity } from './claimsIdentity';
 
 export module JwtTokenValidation {
 
@@ -21,9 +24,14 @@ export module JwtTokenValidation {
      * @param  {ICredentialProvider} credentials The set of valid credentials, such as the Bot Application ID
      * @returns {Promise<ClaimsIdentity>} Promise with ClaimsIdentity for the request.
      */
-    export async function authenticateRequest(activity: Activity, authHeader: string, credentials: ICredentialProvider): Promise<ClaimsIdentity> {
+    export async function authenticateRequest(
+        activity: Activity,
+        authHeader: string,
+        credentials: ICredentialProvider,
+        channelService: string
+    ): Promise<ClaimsIdentity> {
         if (!authHeader.trim()) {
-            let isAuthDisabled = await credentials.isAuthenticationDisabled();
+            const isAuthDisabled: boolean = await credentials.isAuthenticationDisabled();
 
             if (isAuthDisabled) {
                 return new ClaimsIdentity([], true);
@@ -32,26 +40,57 @@ export module JwtTokenValidation {
             throw new Error('Unauthorized Access. Request is not authorized');
         }
 
-        let claimsIdentity = await this.validateAuthHeader(authHeader, credentials, activity.channelId, activity.serviceUrl);
+        const claimsIdentity: ClaimsIdentity = await validateAuthHeader(authHeader, credentials, channelService, activity.channelId, activity.serviceUrl);
 
         MicrosoftAppCredentials.trustServiceUrl(activity.serviceUrl);
 
         return claimsIdentity;
     }
 
-    export async function validateAuthHeader(authHeader: string, credentials: ICredentialProvider, channelId: string, serviceUrl: string = ''): Promise<ClaimsIdentity> {
-        if (!authHeader.trim()) throw new Error('\'authHeader\' required.');
+    export async function validateAuthHeader(
+        authHeader: string,
+        credentials: ICredentialProvider,
+        channelService: string,
+        channelId: string,
+        serviceUrl: string = ''
+    ): Promise<ClaimsIdentity> {
+        if (!authHeader.trim()) { throw new Error('\'authHeader\' required.'); }
 
-        let usingEmulator = EmulatorValidation.isTokenFromEmulator(authHeader);
+        const usingEmulator: boolean = EmulatorValidation.isTokenFromEmulator(authHeader);
 
         if (usingEmulator) {
-            return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelId);//, channelId)
+            return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelId);
         }
-        
+
+        if (isPublicAzure(channelService)) {
+            if (serviceUrl.trim()) {
+                return await ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId);
+            }
+
+            return await ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
+        }
+
+        if (isGovernment(channelService)) {
+            if (serviceUrl.trim()) {
+                return await GovernmentChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId);
+            }
+
+            return await GovernmentChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
+        }
+
+        // Otherwise use Enterprise Channel Validation
         if (serviceUrl.trim()) {
-            return await ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId)//, channelId)
+            return await EnterpriseChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId, channelService);
         }
-        
-        return await ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId)//, channelId)
+
+        return await EnterpriseChannelValidation.authenticateChannelToken(authHeader, credentials, channelId, channelService);
+    }
+
+    function isPublicAzure(channelService: string) {
+        return !channelService || channelService.length === 0;
+    }
+
+    function isGovernment(channelService: string) {
+        return channelService && channelService.toLowerCase() === GovernmentConstants.ChannelService;
     }
 }

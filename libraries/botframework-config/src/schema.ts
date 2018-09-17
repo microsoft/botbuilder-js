@@ -22,10 +22,9 @@ export interface IConnectedService {
     // Friendly name for the service
     name: string;
 
-    // unique Id for the service 
+    // unique Id for the service
     id?: string;
 }
-
 
 export interface IEndpointService extends IConnectedService {
     // type = ServiceTypes.Endpoint
@@ -34,7 +33,7 @@ export interface IEndpointService extends IConnectedService {
     // MSA Appid
     appId: string;
 
-    // MSA app password for the bot 
+    // MSA app password for the bot
     appPassword: string;
 
     // endpoint of localhost service
@@ -49,7 +48,7 @@ export interface IAzureService extends IConnectedService {
     // subscriptionId for azure
     subscriptionId: string;
 
-    // resourceGroup for azure 
+    // resourceGroup for azure
     resourceGroup: string;
 
     // name of the service
@@ -58,6 +57,9 @@ export interface IAzureService extends IConnectedService {
 
 export interface IBotService extends IAzureService {
     // type = ServiceTypes.AzureBotService
+
+    // MSA Appid for the bot
+    appId: string;
 }
 
 export interface IAppInsightsService extends IAzureService {
@@ -66,7 +68,7 @@ export interface IAppInsightsService extends IAzureService {
     // instrumentationKey for logging data to appInsights
     instrumentationKey: string;
 
-    // (OPTIONAL) applicationId is used for programmatic acccess to AppInsights 
+    // (OPTIONAL) applicationId is used for programmatic acccess to AppInsights
     applicationId?: string;
 
     // (OPTIONAL) named apiKeys for programatic access to AppInsights
@@ -79,15 +81,18 @@ export interface IBlobStorageService extends IAzureService {
     // connectionstring for blob storage
     connectionString: string;
 
-    // container name
-    container: string;
+    // (OPTIONAL) container name
+    container?: string | null;
 }
 
 export interface ICosmosDBService extends IAzureService {
     // type = ServiceTypes.CosmosDB
 
-    // connectionstring for CosmosDB
-    connectionString: string;
+    // endpoint/uri for CosmosDB
+    endpoint: string;
+    
+    // key for accessing CosmosDB
+    key: string;
 
     // database name
     database: string;
@@ -145,7 +150,7 @@ export interface IQnAService extends IConnectedService {
     // hostname for private service endpoint Example: https://myqna.azurewebsites.net
     hostname: string;
 
-    // endpointKey for querying the kb 
+    // endpointKey for querying the kb
     endpointKey: string;
 }
 
@@ -165,10 +170,10 @@ export interface IBotConfiguration {
 
     // encrypted guid used to validate password is the same,
     // you need to be able to decrypt this key with passed in secret before we will use the secret to encrypt new values
-    secretKey: string;
+    padlock: string;
 
     // version of the schema of this file
-    version:string;
+    version: string;
 
     // connected services for the bot
     services: IConnectedService[];

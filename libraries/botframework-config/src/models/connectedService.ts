@@ -4,21 +4,29 @@
  */
 import { IConnectedService, ServiceTypes } from '../schema';
 
-export abstract class ConnectedService implements IConnectedService {
-    public id = '';
-    public name = '';
+export class ConnectedService implements IConnectedService {
+    public id: string;
+    public name: string;
 
-    protected constructor(source: IConnectedService = {} as IConnectedService, public type: ServiceTypes) {
-        const { id = '', name = '' } = source;
-        Object.assign(this, { type, id, name });
+    public constructor(source: IConnectedService = {} as IConnectedService, public type?: ServiceTypes) {
+        Object.assign(this, source);
+        if (type) {
+            this.type = type;
+        }
     }
 
-    public abstract toJSON(): IConnectedService;
+    public toJSON(): IConnectedService {
+        return <IConnectedService>Object.assign({}, this);
+    }
 
     // encrypt keys in service
-    public abstract encrypt(secret: string): void;
+    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
+
+    }
 
     // decrypt keys in service
-    public abstract decrypt(secret: string): void;
+    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
+
+    }
 
 }
