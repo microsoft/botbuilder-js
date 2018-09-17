@@ -212,9 +212,11 @@ export class LuisRecognizer {
 
     private prepareErrorMessage(error: Error): Error {
         switch ((error as any).response.statusCode) {
+            case 400:
+                error.message = `Response 400: The request's body or parameters are incorrect, meaning they are missing, malformed, or too large.`;
+                break;
             case 401:
-                error.message = `Response 401: Access denied due to invalid subscription key. Make sure to provide a valid key for an active subscription.` + 
-                    ` Your subscription key should also match the region where the LUIS Application is hosted.`;
+                error.message = `Response 401: The key used is invalid, malformed, empty, or doesn't match the region.`;
                 break;
             case 403:
                 error.message = `Response 403: Total monthly key quota limit exceeded.`;

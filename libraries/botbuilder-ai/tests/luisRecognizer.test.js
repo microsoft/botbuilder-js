@@ -349,12 +349,24 @@ describe('LuisRecognizer', function () {
 
     it('should call prepareErrorMessage when a non-200 status code is received.', done => {
         nock.cleanAll();
+        ReturnErrorStatusCode(400);
+        var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
+        var context = new TestContext({ text: 'Hello world!' });
+        recognizer.recognize(context).catch((error) => {
+            expectedError = `Response 400: The request's body or parameters are incorrect, meaning they are missing, malformed, or too large.`;
+            assert(error.message === expectedError, `unexpected error message thrown.`);
+            nock.cleanAll();
+            done();
+        });
+    });
+
+    it('should throw expected 401 error message.', done => {
+        nock.cleanAll();
         ReturnErrorStatusCode(401);
         var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         var context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch((error) => {
-            expectedError = `Response 401: Access denied due to invalid subscription key. Make sure to provide a valid key for an active subscription.` +
-                ` Your subscription key should also match the region where the LUIS Application is hosted.`;
+            expectedError = `Response 401: The key used is invalid, malformed, empty, or doesn't match the region.`;
             assert(error.message === expectedError, `unexpected error message thrown.`);
             nock.cleanAll();
             done();
