@@ -129,17 +129,8 @@ export class BlobStorage implements Storage {
                                 });
                             });
                         } else {
-                            const createBlobOptions = {
-                                accessConditions: azure.AccessCondition.generateEmptyCondition(),
-                                parallelOperationThreadCount: 4
-                            } as azure.BlobService.CreateBlobRequestOptions;
-                            return this.client.createBlockBlobFromTextAsync(container.name, blobResult.name, '{}', createBlobOptions).then((creationResult) => {
-                                return this.client.getBlobToTextAsync(creationResult.container, creationResult.name).then((result) => {
-                                    const document: DocumentStoreItem = JSON.parse(result as any);
-                                    document.document = { eTag: '*' };
-                                    return document;
-                                });
-                            });
+                            // If blob does not exist, return an empty DocumentStoreItem.
+                            return { document: {} } as DocumentStoreItem;
                         }
                     });
                 })).then((items: DocumentStoreItem[]) => {
@@ -150,9 +141,9 @@ export class BlobStorage implements Storage {
                         });
                         resolve(storeItems);
                     }
-                });
+                }).catch(error => reject(error));
             });
-        });
+        }).catch(error => { throw error; });
     }
 
     public write(changes: StoreItems): Promise<void> {
@@ -190,8 +181,8 @@ export class BlobStorage implements Storage {
             // depending on the payload's size. The default maximum size for a single blob upload is 128MB.
             // An 'InvalidBlockList' error is commonly caused due to concurrently uploading an object larger than 128MB in size.
             const promise: (b: any) => Promise<azure.BlobService.BlobResult> =
-                (blob: any): Promise<azure.BlobService.BlobResult> =>
-                    this.client.createBlockBlobFromTextAsync(container.name, blob.id, blob.data, blob.options);
+            (blob: any): Promise<azure.BlobService.BlobResult> => 
+                this.client.createBlockBlobFromTextAsync(container.name, blob.id, blob.data, blob.options);
 
             // if the blob service client is using the storage emulator, all write operations must be performed in a sequential mode
             // because of the storage emulator internal implementation, that includes a SQL LocalDb
@@ -201,7 +192,9 @@ export class BlobStorage implements Storage {
 
             return results.then(() => {
                 return;
-            }); //void
+            }).catch(error => {
+                throw error;
+            });
         });
     }
 
