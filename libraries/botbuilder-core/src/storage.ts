@@ -79,7 +79,7 @@ export interface StoreItem {
  */
 export interface StoreItems {
     // List of store items indexed by key.
-    [key: string]: StoreItem;
+    [key: string]: any;
 }
 
 /**

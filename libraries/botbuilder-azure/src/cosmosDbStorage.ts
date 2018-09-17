@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Storage, StoreItem, StoreItems } from 'botbuilder';
+import { Storage, StoreItems } from 'botbuilder';
 import { DocumentBase, DocumentClient, UriFactory } from 'documentdb';
 
 /**

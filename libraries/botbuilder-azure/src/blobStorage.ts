@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import * as azure from 'azure-storage';
-import { Storage, StoreItem, StoreItems } from 'botbuilder';
+import { Storage, StoreItems } from 'botbuilder';
 import { escape } from 'querystring';
 
 // A host address.
@@ -77,8 +77,8 @@ const checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerRe
  *
  * @remarks
  * The BlobStorage implements its storage using a single Azure Storage Blob Container. Each entity
- * or StoreItem is serialized into a JSON string and stored in an individual text blob. Each blob
- * is named after the StoreItem key which is encoded and ensure it conforms a valid blob name.
+ * is serialized into a JSON string and stored in an individual text blob. Each blob
+ * is named after the key which is encoded and ensure it conforms a valid blob name.
  */
 export class BlobStorage implements Storage {
     private settings: BlobStorageSettings;
