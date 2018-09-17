@@ -48,7 +48,8 @@ export interface WebRequest {
  */
 export interface WebResponse {
     end(...args: any[]): any;
-    send(status: number, body?: any): any;
+    send(body: any): any;
+    status(status: number): any;
 }
 
 /**
@@ -498,13 +499,14 @@ export class BotFrameworkAdapter extends BotAdapter {
                             const invokeResponse: any = context.turnState.get(INVOKE_RESPONSE_KEY);
                             if (invokeResponse && invokeResponse.value) {
                                 const value: InvokeResponse = invokeResponse.value as InvokeResponse;
-                                res.send(value.status, value.body);
+                                res.status(value.status);
+                                res.send(value.body);
                                 res.end();
                             } else {
                                 throw new Error(`Bot failed to return a valid 'invokeResponse' activity.`);
                             }
                         } else {
-                            res.send(202);
+                            res.status(202);
                             res.end();
                         }
                     });
@@ -512,7 +514,8 @@ export class BotFrameworkAdapter extends BotAdapter {
         }).catch((err: Error) => {
             // Reject response with error code
             console.warn(`BotFrameworkAdapter.processActivity(): ${errorCode} ERROR - ${err.toString()}`);
-            res.send(errorCode, err.toString());
+            res.status(errorCode);
+            res.send(err.toString());
             res.end();
             throw err;
         });
