@@ -5,12 +5,22 @@ const assert = require('assert');
 const beginMessage = { text: `begin`, type: 'message' };
 const continueMessage = { text: `continue`, type: 'message' };
 
+class TestMainDialog extends MainDialog {
+    async onRunTurn(dc) {
+        let result = await dc.continueDialog();
+        if (result.status === DialogTurnStatus.empty) {
+            result = await dc.beginDialog(this.initialDialogId);
+        }
+        return result;
+    }
+}
+
 describe('MainDialog', function () {
     this.timeout(5000);
 
     it('should throw on null property accessor', function (done) {
         try {
-            new MainDialog(null);
+            new TestMainDialog(null);
             assert.fail('should have thrown error on null');
         } catch (err) {
         }
@@ -19,7 +29,7 @@ describe('MainDialog', function () {
 
     it('should throw on createContext(null)', async function () {
         const convoState = new ConversationState(new MemoryStorage());
-        const mainDialog = new MainDialog(convoState.createProperty('mainDialog'));
+        const mainDialog = new TestMainDialog(convoState.createProperty('mainDialog'));
         try {
             await mainDialog.run(null);
             assert.fail('should have thrown error on null turn context');
@@ -30,7 +40,7 @@ describe('MainDialog', function () {
     it('should add a waterfall to the dialog set.', function (done) {
         // Create new ConversationState with MemoryStorage and instantiate MainDialog with PropertyAccessor.
         const convoState = new ConversationState(new MemoryStorage());
-        const mainDialog = new MainDialog(convoState.createProperty('maindialog'));
+        const mainDialog = new TestMainDialog(convoState.createProperty('maindialog'));
         mainDialog.addDialog(new WaterfallDialog('a', [
             function (step) {
                 assert(step);
@@ -42,7 +52,7 @@ describe('MainDialog', function () {
     it('should add add fluent mainDialog to the dialog set.', function (done) {
         // Create new ConversationState with MemoryStorage and instantiate MainDialog with PropertyAccessor.
         const convoState = new ConversationState(new MemoryStorage());
-        const mainDialog = new MainDialog(convoState.createProperty('maindialog'));
+        const mainDialog = new TestMainDialog(convoState.createProperty('maindialog'));
         mainDialog
             .addDialog(new WaterfallDialog('A', [
                 function (dc) {
@@ -63,7 +73,7 @@ describe('MainDialog', function () {
 
     it('should throw an exception when trying to add the same dialog twice.', function (done) {
         const convoState = new ConversationState(new MemoryStorage());
-        const mainDialog = new MainDialog(convoState.createProperty('maindialog'));
+        const mainDialog = new TestMainDialog(convoState.createProperty('maindialog'));
         mainDialog.addDialog(new WaterfallDialog('a', [
             function (step) { }
         ]));
@@ -80,7 +90,7 @@ describe('MainDialog', function () {
 
     it('should find a dialog that was added.', function (done) {
         const convoState = new ConversationState(new MemoryStorage());
-        const mainDialog = new MainDialog(convoState.createProperty('maindialog'));
+        const mainDialog = new TestMainDialog(convoState.createProperty('maindialog'));
         mainDialog.addDialog(new WaterfallDialog('a', [
             function (step) { }
         ]));
@@ -93,7 +103,7 @@ describe('MainDialog', function () {
     it('should save dialog stack state between turns.', function (done) {
 
         const convoState = new ConversationState(new MemoryStorage());
-        const mainDialog = new MainDialog(convoState.createProperty('mainDialog'));
+        const mainDialog = new TestMainDialog(convoState.createProperty('mainDialog'));
         mainDialog.addDialog(new WaterfallDialog('a', [
             async function (step) {
                 assert(step);
