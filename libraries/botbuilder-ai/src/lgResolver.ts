@@ -5,8 +5,28 @@
  * Licensed under the MIT License.
  */
 
-import { Activity } from 'botbuilder';
-import { isBoolean, isDate, isEmpty, isInteger, isNil, isNumber, isString, replace } from 'lodash';
+import {
+  Activity,
+  CardAction,
+  CardFactory,
+  MediaCard,
+  OAuthCard,
+  ReceiptCard,
+  ReceiptItem,
+  SigninCard,
+  ThumbnailCard,
+} from 'botbuilder';
+import {
+  flatten,
+  isBoolean,
+  isDate,
+  isEmpty,
+  isInteger,
+  isNil,
+  isNumber,
+  isString,
+  replace,
+} from 'lodash';
 import * as request from 'request-promise-native';
 
 //  ######################################### EXPORTED API #########################################
@@ -110,7 +130,7 @@ export class LanguageGenerationResolver {
 
 //  ######################################### INTERNAL API #########################################
 
-//  ----------------------------------------- Activity Inspectors -----------------------------------------
+//#region  Activity Inspectors
 type IActivityInspector = (activity: Activity) => string[];
 
 const textInspector: IActivityInspector = (activity: Activity): string[] => {
@@ -125,29 +145,218 @@ const speakInspector: IActivityInspector = (activity: Activity): string[] => {
   return PatternRecognizer.extractPatterns(text);
 };
 
+const cardActionInspector = (cardAction: CardAction): string[] => {
+  let res: string[] = [];
+
+  if (cardAction.text) {
+    res = res.concat(PatternRecognizer.extractPatterns(cardAction.text));
+  }
+
+  if (cardAction.displayText) {
+    res = res.concat(PatternRecognizer.extractPatterns(cardAction.displayText));
+  }
+
+  if (cardAction.title) {
+    res = res.concat(PatternRecognizer.extractPatterns(cardAction.title));
+  }
+
+  if (isString(cardAction.value)) {
+    res = res.concat(PatternRecognizer.extractPatterns(cardAction.value));
+  }
+
+  return res;
+};
+
+const buttonsInspector = (buttons: CardAction[]): string[] => {
+  return flatten(buttons.map(cardActionInspector));
+};
+
 const suggestedActionsInspector: IActivityInspector = (activity: Activity): string[] => {
   if (activity.suggestedActions && activity.suggestedActions.actions) {
-    return activity.suggestedActions.actions.reduce((acc, action) => {
-      if (action.text) {
-        acc = [...acc, ...acc.concat(PatternRecognizer.extractPatterns(action.text))];
-      }
-
-      if (action.displayText) {
-        acc = [...acc, ...acc.concat(PatternRecognizer.extractPatterns(action.displayText))];
-      }
-
-      return acc;
-    }, []);
+    return flatten(activity.suggestedActions.actions.map(cardActionInspector));
   }
 
   return [];
 };
 
+const oauthOrSigninCardInspector = (card: OAuthCard | SigninCard): string[] => {
+  let res: string[] = [];
+
+  if (card.text) {
+    res = res.concat(PatternRecognizer.extractPatterns(card.text));
+  }
+
+  if (card.buttons) {
+    res = res.concat(buttonsInspector(card.buttons));
+  }
+
+  return res;
+};
+
+const receiptItemInpector = (item: ReceiptItem): string[] => {
+  let res: string[] = [];
+
+  if (item.title) {
+    res = res.concat(PatternRecognizer.extractPatterns(item.title));
+  }
+
+  if (item.subtitle) {
+    res = res.concat(PatternRecognizer.extractPatterns(item.subtitle));
+  }
+
+  if (item.text) {
+    res = res.concat(PatternRecognizer.extractPatterns(item.text));
+  }
+
+  if (item.tap) {
+    res = res.concat(cardActionInspector(item.tap));
+  }
+
+  if (item.image && item.image.tap) {
+    res = res.concat(cardActionInspector(item.image.tap));
+  }
+
+  return res;
+};
+
+const receiptCardInspector = (card: ReceiptCard): string[] => {
+  let res: string[] = [];
+
+  if (card.title) {
+    res = res.concat(PatternRecognizer.extractPatterns(card.title));
+  }
+
+  if (card.facts) {
+    const factsValues = flatten(
+      card.facts.map(fact => PatternRecognizer.extractPatterns(fact.value))
+    );
+
+    res = res.concat(factsValues);
+  }
+
+  if (card.items) {
+    const items = flatten(card.items.map(receiptItemInpector));
+    res = res.concat(items);
+  }
+
+  if (card.tap) {
+    res = res.concat(cardActionInspector(card.tap));
+  }
+
+  if (card.buttons) {
+    res = res.concat(buttonsInspector(card.buttons));
+  }
+
+  return res;
+};
+
+const thumbnailCardInspector = (card: ThumbnailCard): string[] => {
+  let res: string[] = [];
+
+  if (card.text) {
+    res = res.concat(PatternRecognizer.extractPatterns(card.text));
+  }
+
+  if (card.title) {
+    res = res.concat(PatternRecognizer.extractPatterns(card.title));
+  }
+
+  if (card.subtitle) {
+    res = res.concat(PatternRecognizer.extractPatterns(card.subtitle));
+  }
+
+  if (card.images) {
+    const imageActionsText = flatten(
+      card.images.filter(image => !isNil(image.tap)).map(image => cardActionInspector(image.tap))
+    );
+
+    res = res.concat(imageActionsText);
+  }
+
+  if (card.tap) {
+    res = res.concat(cardActionInspector(card.tap));
+  }
+
+  if (card.buttons) {
+    res = res.concat(buttonsInspector(card.buttons));
+  }
+
+  return res;
+};
+
+const mediaCardInspector = (card: MediaCard): string[] => {
+  let res: string[] = [];
+
+  if (card.text) {
+    res = res.concat(PatternRecognizer.extractPatterns(card.text));
+  }
+
+  if (card.title) {
+    res = res.concat(PatternRecognizer.extractPatterns(card.title));
+  }
+
+  if (card.subtitle) {
+    res = res.concat(PatternRecognizer.extractPatterns(card.subtitle));
+  }
+
+  if (card.buttons) {
+    res = res.concat(buttonsInspector(card.buttons));
+  }
+
+  return res;
+};
+
+const attachmentsInspector: IActivityInspector = (activity: Activity): string[] => {
+  return !isNil(activity.attachments)
+    ? flatten(
+        activity.attachments.filter(({ content }) => !isNil(content)).map(attachment => {
+          switch (attachment.contentType) {
+            case CardFactory.contentTypes.adaptiveCard: {
+              //TODO
+              return [];
+            }
+            case CardFactory.contentTypes.animationCard: {
+              return mediaCardInspector(attachment.content);
+            }
+            case CardFactory.contentTypes.audioCard: {
+              return mediaCardInspector(attachment.content);
+            }
+            case CardFactory.contentTypes.heroCard: {
+              return thumbnailCardInspector(attachment.content);
+            }
+            case CardFactory.contentTypes.receiptCard: {
+              return receiptCardInspector(attachment.content);
+            }
+            case CardFactory.contentTypes.oauthCard: {
+              return oauthOrSigninCardInspector(attachment.content);
+            }
+            case CardFactory.contentTypes.signinCard: {
+              return oauthOrSigninCardInspector(attachment.content);
+            }
+            case CardFactory.contentTypes.thumbnailCard: {
+              return thumbnailCardInspector(attachment.content);
+            }
+            case CardFactory.contentTypes.videoCard: {
+              return mediaCardInspector(attachment.content);
+            }
+          }
+        })
+      )
+    : [];
+};
+
+//#endregion
+
 /**
  * @private
  */
 export class ActivityInspector {
-  private readonly inspectors = [textInspector, speakInspector, suggestedActionsInspector];
+  private readonly inspectors = [
+    textInspector,
+    speakInspector,
+    suggestedActionsInspector,
+    attachmentsInspector,
+  ];
 
   constructor(private readonly activity: Activity) {}
 
@@ -165,7 +374,7 @@ export class ActivityInspector {
   }
 }
 
-//  ----------------------------------------- Activity Injectors -----------------------------------------
+//#region Activity Injectors
 type IActivityInjector = (activity: Activity, templateResolutions: Map<string, string>) => void;
 
 const textInjector: IActivityInjector = (
@@ -193,20 +402,177 @@ const suggestedActionsInjector: IActivityInjector = (
   templateResolutions: Map<string, string>
 ): void => {
   if (activity.suggestedActions && activity.suggestedActions.actions) {
-    activity.suggestedActions.actions.forEach(action => {
-      if (action.text) {
-        action.text = PatternRecognizer.replacePatterns(action.text, templateResolutions);
-      }
+    activity.suggestedActions.actions.forEach(action =>
+      cardActionInjector(action, templateResolutions)
+    );
+  }
+};
 
-      if (action.displayText) {
-        action.displayText = PatternRecognizer.replacePatterns(
-          action.displayText,
-          templateResolutions
-        );
+const cardActionInjector = (action: CardAction, templateResolutions: Map<string, string>): void => {
+  if (action.text) {
+    action.text = PatternRecognizer.replacePatterns(action.text, templateResolutions);
+  }
+
+  if (action.displayText) {
+    action.displayText = PatternRecognizer.replacePatterns(action.displayText, templateResolutions);
+  }
+};
+
+const mediaCardInjector = (card: MediaCard, templateResolutions: Map<string, string>): void => {
+  if (card.text) {
+    card.text = PatternRecognizer.replacePatterns(card.text, templateResolutions);
+  }
+
+  if (card.title) {
+    card.title = PatternRecognizer.replacePatterns(card.title, templateResolutions);
+  }
+
+  if (card.subtitle) {
+    card.subtitle = PatternRecognizer.replacePatterns(card.subtitle, templateResolutions);
+  }
+
+  if (card.buttons) {
+    card.buttons.forEach(action => cardActionInjector(action, templateResolutions));
+  }
+};
+
+const oauthOrSigninCardInjector = (
+  card: OAuthCard | SigninCard,
+  templateResolutions: Map<string, string>
+): void => {
+  if (card.text) {
+    card.text = PatternRecognizer.replacePatterns(card.text, templateResolutions);
+  }
+
+  if (card.buttons) {
+    card.buttons.forEach(action => cardActionInjector(action, templateResolutions));
+  }
+};
+
+const receiptItemInjector = (item: ReceiptItem, templateResolutions: Map<string, string>): void => {
+  if (item.title) {
+    item.title = PatternRecognizer.replacePatterns(item.title, templateResolutions);
+  }
+  if (item.subtitle) {
+    item.subtitle = PatternRecognizer.replacePatterns(item.subtitle, templateResolutions);
+  }
+
+  if (item.text) {
+    item.text = PatternRecognizer.replacePatterns(item.text, templateResolutions);
+  }
+
+  if (item.tap) {
+    cardActionInjector(item.tap, templateResolutions);
+  }
+
+  if (item.image && item.image.tap) {
+    cardActionInjector(item.image.tap, templateResolutions);
+  }
+};
+
+const receiptCardInjector = (card: ReceiptCard, templateResolutions: Map<string, string>): void => {
+  if (card.title) {
+    card.title = PatternRecognizer.replacePatterns(card.title, templateResolutions);
+  }
+
+  if (card.facts) {
+    card.facts.forEach(fact => {
+      fact.value = PatternRecognizer.replacePatterns(fact.value, templateResolutions);
+    });
+  }
+
+  if (card.items) {
+    card.items.forEach(item => receiptItemInjector(item, templateResolutions));
+  }
+
+  if (card.tap) {
+    cardActionInjector(card.tap, templateResolutions);
+  }
+
+  if (card.buttons) {
+    card.buttons.forEach(action => cardActionInjector(action, templateResolutions));
+  }
+};
+
+const thumbnailCardInjector = (
+  card: ThumbnailCard,
+  templateResolutions: Map<string, string>
+): void => {
+  if (card.title) {
+    card.title = PatternRecognizer.replacePatterns(card.title, templateResolutions);
+  }
+
+  if (card.text) {
+    card.text = PatternRecognizer.replacePatterns(card.text, templateResolutions);
+  }
+
+  if (card.subtitle) {
+    card.subtitle = PatternRecognizer.replacePatterns(card.subtitle, templateResolutions);
+  }
+
+  if (card.images) {
+    card.images
+      .filter(image => !isNil(image.tap))
+      .forEach(image => cardActionInjector(image.tap, templateResolutions));
+  }
+
+  if (card.tap) {
+    cardActionInjector(card.tap, templateResolutions);
+  }
+
+  if (card.buttons) {
+    card.buttons.forEach(action => cardActionInjector(action, templateResolutions));
+  }
+};
+
+const attachmentsInjector = (
+  activity: Activity,
+  templateResolutions: Map<string, string>
+): void => {
+  if (activity.attachments) {
+    activity.attachments.filter(({ content }) => !isNil(content)).forEach(attachment => {
+      switch (attachment.contentType) {
+        case CardFactory.contentTypes.adaptiveCard: {
+          //TODO
+          break;
+        }
+        case CardFactory.contentTypes.animationCard: {
+          mediaCardInjector(attachment.content, templateResolutions);
+          break;
+        }
+        case CardFactory.contentTypes.audioCard: {
+          mediaCardInjector(attachment.content, templateResolutions);
+          break;
+        }
+        case CardFactory.contentTypes.heroCard: {
+          thumbnailCardInjector(attachment.content, templateResolutions);
+          break;
+        }
+        case CardFactory.contentTypes.receiptCard: {
+          receiptCardInjector(attachment.content, templateResolutions);
+          break;
+        }
+        case CardFactory.contentTypes.oauthCard: {
+          oauthOrSigninCardInjector(attachment.content, templateResolutions);
+          break;
+        }
+        case CardFactory.contentTypes.signinCard: {
+          oauthOrSigninCardInjector(attachment.content, templateResolutions);
+          break;
+        }
+        case CardFactory.contentTypes.thumbnailCard: {
+          thumbnailCardInjector(attachment.content, templateResolutions);
+          break;
+        }
+        case CardFactory.contentTypes.videoCard: {
+          mediaCardInjector(attachment.content, templateResolutions);
+          break;
+        }
       }
     });
   }
 };
+//#endregion
 
 /**
  * @private
@@ -216,6 +582,7 @@ export class ActivityInjector {
     textInjector,
     speakInjector,
     suggestedActionsInjector,
+    attachmentsInjector,
   ];
   constructor(private readonly activity: Activity) {}
 
