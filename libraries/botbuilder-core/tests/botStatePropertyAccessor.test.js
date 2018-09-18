@@ -138,4 +138,25 @@ describe(`BotStatePropertyAccessor`, function () {
 
         tAdapter.receiveActivity(`Hello world!`);
     });
+
+    it(`should get() initial default value when a second get() with a second default value is called.`,
+        function (done) {
+            const testState = new BotState(storage, (context => {
+                assert(context, `context was not passed into storage stateKey factory.`);
+                return 'testState';
+            }));
+            const WORD_PROPERTY = 'word';
+            const wordProperty = testState.createProperty(WORD_PROPERTY);
+
+            const tAdapter = new TestAdapter(async (turnContext) => {
+                let word = await wordProperty.get(turnContext, 'word');
+                assert(word === 'word', `default value for "wordProperty" was not properly set.`);
+
+                word = await wordProperty.get(turnContext, 'second');
+                assert(word === 'word', `expected value of "word" for word, received "${word}".`);
+                done();
+            });
+
+            tAdapter.receiveActivity(`Hello world!`);
+        });
 });
