@@ -8,7 +8,7 @@
 import { StatePropertyAccessor, TurnContext } from 'botbuilder-core';
 import { ComponentDialog } from './componentDialog';
 import { DialogTurnResult, DialogTurnStatus } from './dialog';
-import { DialogState } from './dialogContext';
+import { DialogState, DialogContext } from './dialogContext';
 import { DialogSet } from './dialogSet';
 
 
@@ -22,7 +22,7 @@ const MAIN_DIALOG_ID: string = 'main';
  * incoming activity to the bots dialog system. Developers should extend this class and then add
  * all of their bots child dialogs using the `addDialog()` method.
  */
-export class MainDialog extends ComponentDialog {
+export abstract class MainDialog extends ComponentDialog {
     private readonly mainDialogSet: DialogSet;
 
     /**
@@ -45,6 +45,13 @@ export class MainDialog extends ComponentDialog {
     }
 
     /**
+     * Method called to route the received activity.
+     * @param dc The dialog context for the current turn of conversation.
+     */
+    public abstract onRunTurn(dc: DialogContext): Promise<DialogTurnResult>;
+
+
+    /**
      * Processes an incoming activity.
      * 
      * @remarks
@@ -54,7 +61,7 @@ export class MainDialog extends ComponentDialog {
      */
     public async run(context: TurnContext): Promise<DialogTurnResult> {
         if (!context) {
-            throw new Error('context is undefinfed or null');
+            throw new Error('MainDialog.run(): context is undefined or null');
         }
 
         // Create a dialog context and try to continue running the current dialog
@@ -68,5 +75,20 @@ export class MainDialog extends ComponentDialog {
             result = await dc.beginDialog(this.id);
         }
         return result;
+    }
+
+    protected onBeginDialog(innerDC: DialogContext, options?: any): Promise<DialogTurnResult> {
+        // Just call onContinueDialog()
+        // - We're overriding the components built in logic that wants to start the initial dialog.
+        //   We want the bots onRunTurn() implementation to always decide which dialog (if any) 
+        //   gets started.
+        return this.onContinueDialog(innerDC);
+    }
+
+    protected onContinueDialog(innerDC: DialogContext): Promise<DialogTurnResult> {
+        // Just call onRunTurn()
+        // - We're overriding the components built in logic that calls innerDC.continueDialog().
+        //   We want the bots onRunTurn() implementation to decide what should happen for a turn.
+        return this.onRunTurn(innerDC);
     }
 }
