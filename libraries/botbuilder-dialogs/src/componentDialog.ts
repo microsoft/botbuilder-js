@@ -5,12 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from 'botbuilder-core';
+import { TurnContext, StatePropertyAccessor, ActivityTypes } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 import { DialogSet } from './dialogSet';
 
 const PERSISTED_DIALOG_STATE: string = 'dialogs';
+const MAIN_DIALOG_ID: string = 'main';
 
 /**
  * The `ComponentDialog` class lets you break your bots logic up into components that can be added
@@ -20,13 +21,25 @@ const PERSISTED_DIALOG_STATE: string = 'dialogs';
  */
 export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     protected initialDialogId: string;
-    private dialogs: DialogSet = new DialogSet(null);
+    private childDialogs: DialogSet = new DialogSet(null);
+    
+    // Main dialog mode
+    private readonly mainDialogSet: DialogSet|undefined;
+
+    constructor(dialogId: string);
+    constructor(dialogState: StatePropertyAccessor<DialogState>, dialogId?: string);
+    constructor(dialogStateOrId: StatePropertyAccessor<DialogState>|string, dialogId = MAIN_DIALOG_ID) {
+        super(typeof dialogStateOrId === 'string' ? dialogStateOrId : dialogId);
+        if (typeof dialogStateOrId === 'object') {
+            this.mainDialogSet = new DialogSet(dialogStateOrId);
+        }
+    }
 
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Start the inner dialog.
         const dialogState: DialogState = { dialogStack: [] };
         outerDC.activeDialog.state[PERSISTED_DIALOG_STATE] = dialogState;
-        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState);
+        const innerDC: DialogContext = new DialogContext(this.childDialogs, outerDC.context, dialogState);
         const turnResult: DialogTurnResult<any> = await this.onBeginDialog(innerDC, options);
 
         // Check for end of inner dialog
@@ -42,7 +55,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     public async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
         // Continue execution of inner dialog.
         const dialogState: any = outerDC.activeDialog.state[PERSISTED_DIALOG_STATE];
-        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState);
+        const innerDC: DialogContext = new DialogContext(this.childDialogs, outerDC.context, dialogState);
         const turnResult: DialogTurnResult<any> = await this.onContinueDialog(innerDC);
 
         // Check for end of inner dialog
@@ -69,7 +82,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Forward to inner dialogs
         const dialogState: any = instance.state[PERSISTED_DIALOG_STATE];
-        const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
+        const innerDC: DialogContext = new DialogContext(this.childDialogs, context, dialogState);
         await innerDC.repromptDialog();
 
         // Notify component.
@@ -80,7 +93,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
         // Forward cancel to inner dialogs
         if (reason === DialogReason.cancelCalled) {
             const dialogState: any = instance.state[PERSISTED_DIALOG_STATE];
-            const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
+            const innerDC: DialogContext = new DialogContext(this.childDialogs, context, dialogState);
             await innerDC.cancelAllDialogs();
         }
 
@@ -89,10 +102,38 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     }
 
     public addDialog<T extends Dialog>(dialog: T): ComponentDialog<O> {
-        this.dialogs.add(dialog);
+        this.childDialogs.add(dialog);
         if (this.initialDialogId === undefined) { this.initialDialogId = dialog.id; }
 
         return this;
+    }
+
+        /**
+     * Processes an incoming activity.
+     * 
+     * @remarks
+     * The activity will simply be dispatched to the main dialog for processing. If current dialog 
+     * stack doesn't contain a main dialog, a new instance of the main dialog will be started. 
+     * @param context Turn context containing the activity that was received.
+     */
+    public async run(context: TurnContext): Promise<DialogTurnResult> {
+        if (!context) {
+            throw new Error(`ComponentDialog.run(): context is undefined or null`);
+        }
+        if (!this.mainDialogSet) {
+            throw new Error(`ComponentDialog.run(): component was not created in 'main dialog' mode.`)
+        }
+
+        // Create a dialog context and try to continue running the current dialog
+        const dc = await this.mainDialogSet.createContext(context);
+        let result = await dc.continueDialog();
+
+
+        // Start the main dialog if there wasn't a running one
+        if (result.status === DialogTurnStatus.empty) {
+            result = await dc.beginDialog(this.id);
+        }
+        return result;
     }
 
     /**
@@ -102,21 +143,20 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
      * This example finds a dialog named "greeting":
      *
      * ```JavaScript
-     * const dialog = dialogs.find('greeting');
+     * const dialog = dialogs.findDialog('greeting');
      * ```
      * @param dialogId ID of the dialog/prompt to lookup.
      */
     public findDialog(dialogId: string): Dialog | undefined {
-        return this.dialogs.find(dialogId);
+        return this.childDialogs.find(dialogId);
     }
 
-
     protected onBeginDialog(innerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
-        return innerDC.beginDialog(this.initialDialogId, options);
+        return this.onRunTurn(innerDC, options);
     }
 
     protected onContinueDialog(innerDC: DialogContext): Promise<DialogTurnResult> {
-        return innerDC.continueDialog();
+        return this.onRunTurn(innerDC);
     }
 
     protected onEndDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
@@ -125,6 +165,17 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
 
     protected onRepromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         return Promise.resolve();
+    }
+
+    protected async onRunTurn(innerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
+        // Attempt to continue the current dialog
+        let result = await innerDC.continueDialog();
+
+        // Start initial dialog if not running
+        if (result.status === DialogTurnStatus.empty && innerDC.context.activity.type === ActivityTypes.Message) {
+            result = await innerDC.beginDialog(this.initialDialogId, options);
+        }
+        return result;
     }
 
     protected endComponent(outerDC: DialogContext, result: any): Promise<DialogTurnResult> {
