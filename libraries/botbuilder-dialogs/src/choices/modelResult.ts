@@ -16,18 +16,28 @@
  * @param T The type of entity/resolution being returned.
  */
 export interface ModelResult<T extends Object = {}> {
-    // Substring of the utterance that was recognized.
+    /**
+     * Substring of the utterance that was recognized.
+     */
     text: string;
 
-    // Start character position of the recognized substring.
+    /**
+     * Start character position of the recognized substring.
+     */
     start: number;
 
-    // End character position of the recognized substring.
+    /**
+     * End character position of the recognized substring.
+     */
     end: number;
 
-    // Type of entity that was recognized.
+    /**
+     * Type of entity that was recognized.
+     */
     typeName: string;
 
-    // The recognized entity.
-    resolution: T;
+    /**
+     * The recognized entity.
+     */
+     resolution: T;
 }

@@ -18,7 +18,7 @@ export abstract class ActivityPrompt extends Dialog {
         super(dialogId);
     }
 
-    public async dialogBegin(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
         // Ensure prompts have input hint set
         const opt: Partial<PromptOptions> = {...options};
         if (opt.prompt && typeof opt.prompt === 'object' && typeof opt.prompt.inputHint !== 'string') {
@@ -39,45 +39,41 @@ export abstract class ActivityPrompt extends Dialog {
         return Dialog.EndOfTurn;
     }
 
-    public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
+    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Perform base recognition
         const state: any = dc.activeDialog.state as ActivityPromptState;
         const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(dc.context, state.state, state.options);
 
         // Validate the return value
-        let end: boolean = false;
-        let endResult: any;
-        await this.validator(dc.context, {
+        // - Unlike the other prompts a validator is required for an ActivityPrompt so we don't
+        //   need to check for its existence before calling it. 
+        const isValid = await this.validator({
+            context: dc.context,
             recognized: recognized,
             state: state.state,
-            options: state.options,
-            end: (output: any): void => {
-                if (end) { throw new Error(`PromptValidatorContext.end(): method already called for the turn.`); }
-                end = true;
-                endResult = output;
-            }
+            options: state.options
         });
 
         // Return recognized value or re-prompt
-        if (end) {
-            return await dc.end(endResult);
+        if (isValid) {
+            return await dc.endDialog(recognized.value);
         } else {
             return Dialog.EndOfTurn;
         }
     }
 
-    public async dialogResume(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // Prompts are typically leaf nodes on the stack but the dev is free to push other dialogs
         // on top of the stack which will result in the prompt receiving an unexpected call to
-        // dialogResume() when the pushed on dialog ends.
+        // resumeDialog() when the pushed on dialog ends.
         // To avoid the prompt prematurely ending we need to implement this method and
         // simply re-prompt the user.
-        await this.dialogReprompt(dc.context, dc.activeDialog);
+        await this.repromptDialog(dc.context, dc.activeDialog);
 
         return Dialog.EndOfTurn;
     }
 
-    public async dialogReprompt(context: TurnContext, instance: DialogInstance): Promise<void> {
+    public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         const state: ActivityPromptState = instance.state as ActivityPromptState;
         await this.onPrompt(context, state.state, state.options);
     }

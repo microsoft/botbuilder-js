@@ -18,10 +18,10 @@ export function generateKey(): string {
  */
 export function encryptString(plainText: string, secret: string): string {
     if (!plainText || plainText.length === 0) {
-        throw new Error('you must pass a value');
+        return plainText;
     }
 
-    if (!secret || plainText.length === 0) {
+    if (!secret || secret.length === 0) {
         throw new Error('you must pass a secret');
     }
 
@@ -48,7 +48,7 @@ export function encryptString(plainText: string, secret: string): string {
  */
 export function decryptString(encryptedValue: string, secret: string): string {
     if (!encryptedValue || encryptedValue.length === 0) {
-        throw new Error('you must pass a encryptedValue');
+        return encryptedValue;
     }
 
     if (!secret || secret.length === 0) {

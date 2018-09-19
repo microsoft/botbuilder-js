@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import { BotStatePropertyAccessor, StatePropertyAccessor } from './botStatePropertyAccessor';
-import { Middleware } from './middlewareSet';
 import { PropertyManager } from './propertyManager';
 import { calculateChangeHash, Storage, StorageKeyFactory, StoreItems } from './storage';
 import { TurnContext } from './turnContext';
@@ -40,7 +39,7 @@ export interface CachedBotState {
  * server.post('/api/messages', (req, res) => {
  *    adapter.processActivity(req, res, async (context) => {
  *       // Track up time
- *       const state = botState.get(context);
+ *       const state = await botState.get(context);
  *       if (!('startTime' in state)) { state.startTime = new Date().getTime() }
  *       state.upTime = new Date().getTime() - state.stateTime;
  *
@@ -50,7 +49,7 @@ export interface CachedBotState {
  * });
  * ```
  */
-export class BotState implements PropertyManager, Middleware {
+export class BotState implements PropertyManager {
     // NEW
     public readonly properties: Map<string, StatePropertyAccessor> = new Map();
 
@@ -76,16 +75,6 @@ export class BotState implements PropertyManager, Middleware {
     }
 
     /**
-     * @private
-     */
-    public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
-        // Read in state, continue execution, and then flush changes on completion of turn.
-        return this.read(context, true)
-            .then(next)
-            .then(() => this.write(context));
-    }
-
-    /**
      * Reads in and caches the current state object for a turn.
      *
      * @remarks
@@ -93,12 +82,12 @@ export class BotState implements PropertyManager, Middleware {
      * will force the state object to be re-read.
      *
      * ```JavaScript
-     * const state = await botState.read(context);
+     * const state = await botState.load(context);
      * ```
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
      */
-    public read(context: TurnContext, force: boolean = false): Promise<any> {
+    public load(context: TurnContext, force: boolean = false): Promise<any> {
         const cached: any = context.turnState.get(this.stateKey) as CachedBotState;
         if (force || !cached || !cached.state) {
             return Promise.resolve(this.storageKey(context)).then((key: string) => {
@@ -124,12 +113,12 @@ export class BotState implements PropertyManager, Middleware {
      * created and then saved.
      *
      * ```JavaScript
-     * await botState.write(context);
+     * await botState.saveChanges(context);
      * ```
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
      */
-    public write(context: TurnContext, force: boolean = false): Promise<void> {
+    public saveChanges(context: TurnContext, force: boolean = false): Promise<void> {
         let cached: any = context.turnState.get(this.stateKey) as CachedBotState;
         if (force || (cached && cached.hash !== calculateChangeHash(cached.state))) {
             return Promise.resolve(this.storageKey(context)).then((key: string) => {
@@ -176,7 +165,7 @@ export class BotState implements PropertyManager, Middleware {
      * This example shows how to synchronously get an already loaded and cached state object:
      *
      * ```JavaScript
-     * const state botState.get(context);
+     * const state = await botState.get(context);
      * ```
      * @param context Context for current turn of conversation with the user.
      */

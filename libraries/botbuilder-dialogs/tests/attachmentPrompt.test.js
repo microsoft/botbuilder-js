@@ -13,7 +13,7 @@ describe('AttachmentPrompt', function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send an attachment.' });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -21,11 +21,12 @@ describe('AttachmentPrompt', function() {
                 const attachment = results.result[0];
                 await turnContext.sendActivity(`${attachment.content}`);
             }
+            await convoState.saveChanges(turnContext);
         });
 
-        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        // Create new ConversationState with MemoryStorage 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
+        // adapter.use(convoState);
 
         // Create a DialogState property, DialogSet and AttachmentPrompt.
         const dialogState = convoState.createProperty('dialogState');
@@ -42,7 +43,7 @@ describe('AttachmentPrompt', function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send an attachment.' });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -50,17 +51,16 @@ describe('AttachmentPrompt', function() {
                 const attachment = results.result[0];
                 await turnContext.sendActivity(`${attachment.content}`);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new AttachmentPrompt('prompt', (context, prompt) => {
-            assert(context);
+        dialogs.add(new AttachmentPrompt('prompt', async (prompt) => {
             assert(prompt);
-            prompt.end(prompt.recognized.value);
+            return prompt.recognized.succeeded;
         }));
         
         adapter.send('Hello')
@@ -74,7 +74,7 @@ describe('AttachmentPrompt', function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send an attachment.', retryPrompt: 'Please try again.' });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -82,21 +82,16 @@ describe('AttachmentPrompt', function() {
                 const attachment = results.result[0];
                 await turnContext.sendActivity(`${attachment.content}`);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new AttachmentPrompt('prompt', (context, prompt) => {
-            assert(context);
+        dialogs.add(new AttachmentPrompt('prompt', async (prompt) => {
             assert(prompt);
-
-            // If the base recognition logic found an attachment, end the prompt with the recognized value.
-            if (prompt.recognized.succeeded && prompt.recognized.value) {
-                prompt.end(prompt.recognized.value);
-            }
+            return prompt.recognized.succeeded;
         }));
         
         adapter.send('Hello')
@@ -112,7 +107,7 @@ describe('AttachmentPrompt', function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send an attachment.', retryPrompt: 'Please try again.' });
             } else if (results.status === DialogTurnStatus.complete) {
@@ -120,22 +115,20 @@ describe('AttachmentPrompt', function() {
                 const attachment = results.result[0];
                 await turnContext.sendActivity(`${attachment.content}`);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new AttachmentPrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new AttachmentPrompt('prompt', async (prompt) => {
             assert(prompt);
             
-            if (!prompt.recognized.value) {
-                await context.sendActivity('Bad input.');
-            } else {
-                prompt.end(prompt.recognized.value);
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('Bad input.');
             }
+            return prompt.recognized.succeeded;
         }));
         
         adapter.send('Hello')
@@ -151,18 +144,18 @@ describe('AttachmentPrompt', function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.begin('prompt');
+                await dc.beginDialog('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
                 assert(Array.isArray(results.result) && results.result.length > 0);
                 const attachment = results.result[0];
                 await turnContext.sendActivity(`${attachment.content}`);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);

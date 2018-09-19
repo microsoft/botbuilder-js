@@ -10,17 +10,25 @@
  * Individual token returned by a `TokenizerFunction`.
  */
 export interface Token {
-    // Start character position of the token within the outer string.
-    start: number;
+    /**
+     * Start character position of the token within the outer string.
+     */
+     start: number;
 
-    // End character position of the token within the outer string.
-    end: number;
+    /**
+     * End character position of the token within the outer string.
+     */
+     end: number;
 
-    // Original text of the token.
+    /**
+     * Original text of the token.
+     */
     text: string;
 
-    // Normalized form of the token. This can include things like lower casing or stemming.
-    normalized: string;
+    /**
+     * Normalized form of the token. This can include things like lower casing or stemming.
+     */
+     normalized: string;
 }
 
 /**

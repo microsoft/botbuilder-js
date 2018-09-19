@@ -28,6 +28,7 @@ import {
     ConversationsResult,
     ResourceResponse,
     TokenResponse,
+    TokenResponseMap,
     TurnContext
 } from 'botbuilder-core';
 
@@ -47,7 +48,8 @@ export interface WebRequest {
  */
 export interface WebResponse {
     end(...args: any[]): any;
-    send(status: number, body?: any): any;
+    send(body: any): any;
+    status(status: number): any;
 }
 
 /**
@@ -397,6 +399,27 @@ export class BotFrameworkAdapter extends BotAdapter {
         return client.getSignInLink(conversation as ConversationReference, connectionName);
     }
 
+        /**
+     * Signs the user out with the token server.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     */
+    public getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<TokenResponseMap> {
+        try {
+            if (!context.activity.from || !context.activity.from.id) {
+                throw new Error(`BotFrameworkAdapter.getAadTokens(): missing from or from.id`);
+            }
+            this.checkEmulatingOAuthCards(context);
+            const userId: string = context.activity.from.id;
+            const url: string = this.oauthApiUrl(context);
+            const client: OAuthApiClient = this.createOAuthApiClient(url);
+
+            return client.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls });
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    }
+
     /**
      * Tells the token service to emulate the sending of OAuthCards for a channel.
      * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
@@ -476,13 +499,14 @@ export class BotFrameworkAdapter extends BotAdapter {
                             const invokeResponse: any = context.turnState.get(INVOKE_RESPONSE_KEY);
                             if (invokeResponse && invokeResponse.value) {
                                 const value: InvokeResponse = invokeResponse.value as InvokeResponse;
-                                res.send(value.status, value.body);
+                                res.status(value.status);
+                                res.send(value.body);
                                 res.end();
                             } else {
                                 throw new Error(`Bot failed to return a valid 'invokeResponse' activity.`);
                             }
                         } else {
-                            res.send(202);
+                            res.status(202);
                             res.end();
                         }
                     });
@@ -490,7 +514,8 @@ export class BotFrameworkAdapter extends BotAdapter {
         }).catch((err: Error) => {
             // Reject response with error code
             console.warn(`BotFrameworkAdapter.processActivity(): ${errorCode} ERROR - ${err.toString()}`);
-            res.send(errorCode, err.toString());
+            res.status(errorCode);
+            res.send(err.toString());
             res.end();
             throw err;
         });

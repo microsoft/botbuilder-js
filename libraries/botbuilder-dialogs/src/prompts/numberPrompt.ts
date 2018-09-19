@@ -47,7 +47,14 @@ export class NumberPrompt extends Prompt<number> {
         if (results.length > 0 && results[0].resolution) {
             result.succeeded = true;
             result.value = parseFloat(results[0].resolution.value);
-        }
+			// This check is a temporary fix for a bug in the number recognizer.
+			// This can be removed once the underlying issue is fully resolved.
+			// https://github.com/Microsoft/botbuilder-js/issues/420
+			if (isNaN(result.value)) {
+				result.value = 0;
+			}
+			// End of temporary fix.
+		}
 
         return result;
     }

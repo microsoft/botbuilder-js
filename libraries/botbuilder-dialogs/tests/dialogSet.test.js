@@ -8,6 +8,16 @@ const continueMessage = { text: `continue`, type: 'message' };
 describe('DialogSet', function () {
     this.timeout(5000);
 
+    it('should throw on createContext(null)', async function () {
+        const convoState = new ConversationState(new MemoryStorage());
+        const dialogSet = new DialogSet(convoState.createProperty('dialogState'));
+        try {
+            await dialogSet.createContext(null);
+            assert.fail('should have thrown error on null');
+        } catch (err) {
+        }
+    });
+
     it('should add a waterfall to the dialog set.', function (done) {
         // Create new ConversationState with MemoryStorage and instantiate DialogSet with PropertyAccessor.
         const convoState = new ConversationState(new MemoryStorage());
@@ -15,12 +25,36 @@ describe('DialogSet', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            function (dc) {
-                assert(dc);
+            function (step) {
+                assert(step);
             }
         ]));
         done();
     });
+
+    it('should add add fluent dialogs to the dialog set.', function (done) {
+        // Create new ConversationState with MemoryStorage and instantiate DialogSet with PropertyAccessor.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs
+            .add(new WaterfallDialog('A', [
+                function (dc) {
+                    assert(dc);
+                }
+            ]))
+            .add(new WaterfallDialog('B', [
+                function (dc) {
+                    assert(dc);
+                }
+            ]));
+        assert(dialogs.find('A'), `dialog A not found.`);
+        assert(dialogs.find('B'), `dialog B not found.`);
+
+        done();
+    });
+
 
     it('should throw an exception when trying to add the same dialog twice.', function (done) {
         const convoState = new ConversationState(new MemoryStorage());
@@ -28,12 +62,12 @@ describe('DialogSet', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            function (dc) { }
+            function (step) { }
         ]));
 
         try {
             dialogs.add('a', [
-                function (dc) { }
+                function (step) { }
             ]);
         } catch (err) {
             return done();
@@ -47,7 +81,7 @@ describe('DialogSet', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            function (dc) { }
+            function (step) { }
         ]));
 
         assert(dialogs.find('a'), `dialog not found.`);
@@ -59,28 +93,26 @@ describe('DialogSet', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.begin('a');
+                await dc.beginDialog('a');
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (dc, step) {
-                assert(dc);
+            async function (step) {
                 assert(step);
-                await dc.context.sendActivity(`Greetings`);
+                await step.context.sendActivity(`Greetings`);
                 return Dialog.EndOfTurn;
             },
-            async function (dc, step) {
-                assert(dc);
-                await dc.context.sendActivity('Good bye!');
-                return await dc.end();
+            async function (step) {
+                await step.context.sendActivity('Good bye!');
+                return await step.endDialog();
             }
         ]));
 

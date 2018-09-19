@@ -6,15 +6,19 @@
  * Licensed under the MIT License.
  */
 import * as azure from 'azure-storage';
-import { Storage, StoreItem, StoreItems } from 'botbuilder';
+import { Storage, StoreItems } from 'botbuilder';
 import { escape } from 'querystring';
 
 // A host address.
 export interface Host {
-    // Primary host address.
+    /**
+     * Primary host address.
+     */
     primaryHost: string;
 
-    // Secondary host address.
+    /**
+     * Secondary host address.
+     */
     secondaryHost: string;
 }
 
@@ -22,17 +26,25 @@ export interface Host {
  * Settings for configuring an instance of `BlobStorage`.
  */
 export interface BlobStorageSettings {
-    // Root container name to use.
+    /**
+     * Root container name to use.
+     */
     containerName: string;
 
-    // The storage account or the connection string.
+    /**
+     * The storage account or the connection string. If this is the storage account, the storage access key must be provided.
+     */
     storageAccountOrConnectionString: string;
 
-    // The storage access key.
-    storageAccessKey: string;
+    /** 
+     * The storage access key.
+     */
+    storageAccessKey?: string;
 
-    // (Optional) azure storage host.
-    host?: string | Host;
+    /**
+     * (Optional) azure storage host.
+     */
+     host?: string | Host;
 }
 
 /**
@@ -40,12 +52,18 @@ export interface BlobStorageSettings {
  * Internal data structure for storing items in BlobStorage.
  */
 interface DocumentStoreItem {
-    // Represents the Sanitized Key and used as name of blob
-    id: string;
-    // Represents the original Id/Key
-    realId: string;
-    // The item itself + eTag information
-    document: any;
+    /**
+     * Represents the Sanitized Key and used as name of blob
+     */
+     id: string;
+    /**
+     * Represents the original Id/Key
+     */
+     realId: string;
+    /**
+     * The item itself + eTag information
+     */
+     document: any;
 }
 
 /**
@@ -57,14 +75,14 @@ const ContainerNameCheck: RegExp = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[
  * @private
  */
 
- // tslint:disable-next-line:max-line-length typedef align no-shadowed-variable
- const ResolvePromisesSerial = (values, promise) => values.map(value => () => promise(value)).reduce((promise, func) => promise.then(result => func().then(Array.prototype.concat.bind(result))), Promise.resolve([]));
+// tslint:disable-next-line:max-line-length typedef align no-shadowed-variable
+const ResolvePromisesSerial = (values, promise) => values.map(value => () => promise(value)).reduce((promise, func) => promise.then(result => func().then(Array.prototype.concat.bind(result))), Promise.resolve([]));
 
 /**
  * @private
  */
- // tslint:disable-next-line: typedef align
- const ResolvePromisesParallel = (values, promise) => Promise.all(values.map(promise));
+// tslint:disable-next-line: typedef align
+const ResolvePromisesParallel = (values, promise) => Promise.all(values.map(promise));
 
 /**
  * @private
@@ -77,8 +95,8 @@ const checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerRe
  *
  * @remarks
  * The BlobStorage implements its storage using a single Azure Storage Blob Container. Each entity
- * or StoreItem is serialized into a JSON string and stored in an individual text blob. Each blob
- * is named after the StoreItem key which is encoded and ensure it conforms a valid blob name.
+ * is serialized into a JSON string and stored in an individual text blob. Each blob
+ * is named after the key which is encoded and ensure it conforms a valid blob name.
  */
 export class BlobStorage implements Storage {
     private settings: BlobStorageSettings;
@@ -102,7 +120,7 @@ export class BlobStorage implements Storage {
             throw new Error('Invalid container name.');
         }
 
-        this.settings = {...settings};
+        this.settings = { ...settings };
         this.client = this.createBlobService(
             this.settings.storageAccountOrConnectionString,
             this.settings.storageAccessKey,
@@ -121,19 +139,22 @@ export class BlobStorage implements Storage {
         return this.ensureContainerExists().then((container: azure.BlobService.ContainerResult) => {
             return new Promise<StoreItems>((resolve: any, reject: any): void => {
                 Promise.all<DocumentStoreItem>(sanitizedKeys.map((key: string) => {
-                    return new Promise((internal_resolve: any, internal_reject: any): void => {
-                        this.client.getBlobMetadataAsync(container.name, key).then(
-                            (blobMetadata: azure.BlobService.BlobResult) => {
-                                this.client.getBlobToTextAsync(blobMetadata.container, blobMetadata.name).then(
-                                    (result: azure.BlobService.BlobToText) => {
-                                        const document: DocumentStoreItem = JSON.parse(result as any);
-                                        document.document.eTag = blobMetadata.etag;
-                                        internal_resolve(document);
-                                    },
-                                    (err: Error) => internal_resolve(null));
-                            },
-                            (err: Error) => internal_resolve(null)
-                        );
+                    return this.client.doesBlobExistAsync(container.name, key).then((blobResult: azure.BlobService.BlobResult) => {
+                        if (blobResult.exists) {
+                            return this.client.getBlobMetadataAsync(container.name, key)
+                                .then((blobMetadata: azure.BlobService.BlobResult) => {
+                                    return this.client.getBlobToTextAsync(blobMetadata.container, blobMetadata.name)
+                                        .then((result: azure.BlobService.BlobToText) => {
+                                            const document: DocumentStoreItem = JSON.parse(result as any);
+                                            document.document.eTag = blobMetadata.etag;
+
+                                            return document;
+                                        });
+                                });
+                        } else {
+                            // If blob does not exist, return an empty DocumentStoreItem.
+                            return { document: {} } as DocumentStoreItem;
+                        }
                     });
                 })).then((items: DocumentStoreItem[]) => {
                     if (items !== null && items.length > 0) {
@@ -143,9 +164,9 @@ export class BlobStorage implements Storage {
                         });
                         resolve(storeItems);
                     }
-                });
+                }).catch((error: Error) => { reject(error); });
             });
-        });
+        }).catch((error: Error) => { throw error; });
     }
 
     public write(changes: StoreItems): Promise<void> {
@@ -194,7 +215,9 @@ export class BlobStorage implements Storage {
 
             return results.then(() => {
                 return;
-            }); //void
+            }).catch((error: Error) => {
+                throw error;
+            });
         });
     }
 
@@ -211,7 +234,9 @@ export class BlobStorage implements Storage {
             }));
         }).then(() => {
             return;
-        }); //void
+        }).catch((error: Error) => {
+            throw error;
+        });
     }
 
     /**
@@ -258,12 +283,13 @@ export class BlobStorage implements Storage {
 
         // create BlobServiceAsync by using denodeify to create promise wrappers around cb functions
         return {
+            createBlockBlobFromTextAsync: this.denodeify(blobService, blobService.createBlockBlobFromText),
             createContainerIfNotExistsAsync: this.denodeify(blobService, blobService.createContainerIfNotExists),
+            deleteBlobIfExistsAsync: this.denodeify(blobService, blobService.deleteBlobIfExists),
             deleteContainerIfExistsAsync: this.denodeify(blobService, blobService.deleteContainerIfExists),
-            createBlockBlobFromTextAsync : this.denodeify(blobService, blobService.createBlockBlobFromText),
+            doesBlobExistAsync: this.denodeify(blobService, blobService.doesBlobExist),
             getBlobMetadataAsync: this.denodeify(blobService, blobService.getBlobMetadata),
-            getBlobToTextAsync: this.denodeify(blobService, blobService.getBlobToText),
-            deleteBlobIfExistsAsync: this.denodeify(blobService, blobService.deleteBlobIfExists)
+            getBlobToTextAsync: this.denodeify(blobService, blobService.getBlobToText)
         } as any;
     }
 
@@ -283,16 +309,14 @@ export class BlobStorage implements Storage {
  * Promise based methods created using denodeify function
  */
 interface BlobServiceAsync extends azure.BlobService {
+    createBlockBlobFromTextAsync(container: string,
+                                 blob: string,
+                                 text: string | Buffer,
+                                 options: azure.BlobService.CreateBlobRequestOptions): Promise<azure.BlobService.BlobResult>;
     createContainerIfNotExistsAsync(container: string): Promise<azure.BlobService.ContainerResult>;
+    deleteBlobIfExistsAsync(container: string, blob: string): Promise<boolean>;
     deleteContainerIfExistsAsync(container: string): Promise<boolean>;
-
-    createBlockBlobFromTextAsync(
-        container: string,
-        blob: string,
-        text: string | Buffer,
-        options: azure.BlobService.CreateBlobRequestOptions
-    ): Promise<azure.BlobService.BlobResult>;
+    doesBlobExistAsync(container: string, blob: string): Promise<azure.BlobService.BlobResult>;
     getBlobMetadataAsync(container: string, blob: string): Promise<azure.BlobService.BlobResult>;
     getBlobToTextAsync(container: string, blob: string): Promise<azure.BlobService.BlobToText>;
-    deleteBlobIfExistsAsync(container: string, blob: string): Promise<boolean>;
 }

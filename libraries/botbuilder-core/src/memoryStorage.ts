@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Storage, StoreItem, StoreItems } from './storage';
+import { Storage, StoreItems } from './storage';
 
 /**
  * Memory based storage provider for a bot.
@@ -52,7 +52,7 @@ export class MemoryStorage  implements Storage {
 
     public write(changes: StoreItems): Promise<void> {
         const that: MemoryStorage = this;
-        function saveItem(key: string, item: StoreItem): void {
+        function saveItem(key: string, item: any): void {
             const clone: any = {...item};
             clone.eTag = (that.etag++).toString();
             that.memory[key] = JSON.stringify(clone);
@@ -65,7 +65,7 @@ export class MemoryStorage  implements Storage {
                 if (!old || newItem.eTag === '*') {
                     saveItem(key, newItem);
                 } else {
-                    const oldItem: StoreItem = <StoreItem>JSON.parse(old);
+                    const oldItem: any = <any>JSON.parse(old);
                     if (newItem.eTag === oldItem.eTag) {
                         saveItem(key, newItem);
                     } else {

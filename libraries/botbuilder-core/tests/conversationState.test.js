@@ -12,70 +12,63 @@ describe(`ConversationState`, function () {
     const storage = new MemoryStorage();
     const adapter = new TestAdapter();
     const context = new TurnContext(adapter, receivedMessage);
-    const middleware = new ConversationState(storage);
-    it(`should load and save state from storage.`, function (done) {
+    const conversationState = new ConversationState(storage);
+    it(`should load and save state from storage.`, async function () {
         let key;
-        middleware.onTurn(context, () => {
-            key = middleware.getStorageKey(context);
-            const state = middleware.get(context);
-            assert(state, `State not loaded`);
-            assert(key, `Key not found`);
-            state.test = 'foo';
-        })
-        .then(() => storage.read([key]))
-        .then((items) => {
-            assert(items.hasOwnProperty(key), `Saved state not found in storage.`);
-            assert(items[key].test === 'foo', `Missing test value in stored state.`);
-            done();
-        });
+
+        // Simulate a "Turn" in a conversation by loading the state,
+        // changing it and then saving the changes to state.
+        await conversationState.load(context);
+        key = conversationState.getStorageKey(context);
+        const state = conversationState.get(context);
+        assert(state, `State not loaded`);
+        assert(key, `Key not found`);
+        state.test = 'foo';
+        await conversationState.saveChanges(context);
+
+        // Check the storage to see if the changes to state were saved.
+        const items = await storage.read([key]);
+        assert(items.hasOwnProperty(key), `Saved state not found in storage.`);
+        assert(items[key].test === 'foo', `Missing test value in stored state.`);
     });
 
-    it(`should ignore any activities that aren't "endOfConversation".`, function (done) {
+    it(`should ignore any activities that aren't "endOfConversation".`, async function () {
         let key;
-        middleware.onTurn(context, () => {
-            key = middleware.getStorageKey(context);
-            assert(middleware.get(context).test === 'foo', `invalid initial state`);
-            return context.sendActivity({ type: ActivityTypes.Message, text: 'foo' });
-        })
-        .then(() => storage.read([key]))
-        .then((items) => {
-            assert(items[key].hasOwnProperty('test'), `state cleared and shouldn't have been.`);
-            done();
-        });
+        await conversationState.load(context);
+        key = conversationState.getStorageKey(context);
+        assert(conversationState.get(context).test === 'foo', `invalid initial state`);
+        await context.sendActivity({ type: ActivityTypes.Message, text: 'foo' });
+
+        const items = await storage.read([key]);
+        assert(items[key].hasOwnProperty('test'), `state cleared and shouldn't have been.`);
     });
 
-    it(`should reject with error if channelId missing.`, function (done) {
+    it(`should reject with error if channelId missing.`, async function () {
         const ctx = new TurnContext(adapter, missingChannelId);
-        middleware.onTurn(ctx, () => {
-            assert(false, `shouldn't have called next.`);
-        })
-        .then(() => {
+        try {
+            await conversationState.load(ctx);
             assert(false, `shouldn't have completed.`);
-        })
-        .catch((err) => {
+        } catch (err) {
             assert(err, `error object missing.`);
-            done();
-        });
+            assert.equal(err.message, "missing activity.channelId");
+        }
     });
 
-    it(`should reject with error if conversation missing.`, function (done) {
+    it(`should reject with error if conversation missing.`, async function () {
         const ctx = new TurnContext(adapter, missingConversation);
-        middleware.onTurn(ctx, () => {
-            assert(false, `shouldn't have called next.`);
-        })
-        .then(() => {
+        try {
+            await conversationState.load(ctx);
             assert(false, `shouldn't have completed.`);
-        })
-        .catch((err) => {
+        } catch (err) {
             assert(err, `error object missing.`);
-            done();
-        });
+            assert.equal(err.message, "missing activity.conversation.id");
+        }
     });
 
     it(`should throw install exception if get() called without a cached entry.`, function (done) {
         context.turnState.set('conversationState', undefined);
         try {
-            middleware.get(context);
+            conversationState.get(context);
             assert(false, `exception not thrown.`);
         } catch (err) {
             done();

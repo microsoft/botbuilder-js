@@ -23,23 +23,35 @@ const htmlentities: entities.AllHtmlEntities = new entities.AllHtmlEntities();
  * An individual answer returned by `QnAMaker.generateAnswer()`.
  */
 export interface QnAMakerResult {
-    // The list of questions indexed in the QnA Service for the given answer.
+    /**
+     * The list of questions indexed in the QnA Service for the given answer.
+     */
     questions?: string[];
 
-    // Answer from the knowledge base.
+    /**
+     * Answer from the knowledge base.
+     */
     answer: string;
 
-    // Confidence on a scale from 0.0 to 1.0 that the answer matches the users intent.
+    /**
+     * Confidence on a scale from 0.0 to 1.0 that the answer matches the users intent.
+     */
     score: number;
 
-    // Metadata associated with the answer
+    /**
+     * Metadata associated with the answer
+     */
     metadata?: any;
 
-    // The source from which the QnA was extracted
+    /**
+     * The source from which the QnA was extracted
+     */
     source?: string;
 
-    // The index of the answer in the knowledge base. V3 uses 'qnaId', V4 uses 'id'.
-    id?: number;
+    /**
+     * The index of the answer in the knowledge base. V3 uses 'qnaId', V4 uses 'id'.
+     */
+     id?: number;
 }
 
 /**

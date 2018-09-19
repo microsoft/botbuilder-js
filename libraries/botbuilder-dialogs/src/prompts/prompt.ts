@@ -15,19 +15,29 @@ import { DialogContext } from '../dialogContext';
  * presented to a user.
  */
 export enum ListStyle {
-    // Don't include any choices for prompt.
+    /**
+     * Don't include any choices for prompt.
+     */
     none,
 
-    // Automatically select the appropriate style for the current channel.
+    /**
+     * Automatically select the appropriate style for the current channel.
+     */
     auto,
 
-    // Add choices to prompt as an inline list.
+    /**
+     * Add choices to prompt as an inline list.
+     */
     inline,
 
-    // Add choices to prompt as a numbered list.
+    /**
+     * Add choices to prompt as a numbered list.
+     */
     list,
 
-    // Add choices to prompt as suggested actions.
+    /**
+     * Add choices to prompt as suggested actions.
+     */
     suggestedAction
 }
 
@@ -61,13 +71,13 @@ export interface PromptRecognizerResult<T> {
     value?: T;
 }
 
-export type PromptValidator<T> = (context: TurnContext, prompt: PromptValidatorContext<T>) => Promise<void>;
+export type PromptValidator<T> = (prompt: PromptValidatorContext<T>) => Promise<boolean>;
 
 export interface PromptValidatorContext<T> {
-    recognized: PromptRecognizerResult<T>;
-    state: object;
-    options: PromptOptions;
-    end(result: any): void;
+    readonly context: TurnContext;
+    readonly recognized: PromptRecognizerResult<T>;
+    readonly state: object;
+    readonly options: PromptOptions;
 }
 
 /**
@@ -78,7 +88,7 @@ export abstract class Prompt<T> extends Dialog {
         super(dialogId);
     }
 
-    public async dialogBegin(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
         // Ensure prompts have input hint set
         const opt: Partial<PromptOptions> = {...options};
         if (opt.prompt && typeof opt.prompt === 'object' && typeof opt.prompt.inputHint !== 'string') {
@@ -99,7 +109,7 @@ export abstract class Prompt<T> extends Dialog {
         return Dialog.EndOfTurn;
     }
 
-    public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
+    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Don't do anything for non-message activities
         if (dc.context.activity.type !== ActivityTypes.Message) {
             return Dialog.EndOfTurn;
@@ -110,27 +120,21 @@ export abstract class Prompt<T> extends Dialog {
         const recognized: PromptRecognizerResult<T> = await this.onRecognize(dc.context, state.state, state.options);
 
         // Validate the return value
-        let end: boolean = false;
-        let endResult: any;
+        let isValid: boolean = false;
         if (this.validator) {
-            await this.validator(dc.context, {
+            isValid = await this.validator({
+                context: dc.context,
                 recognized: recognized,
                 state: state.state,
-                options: state.options,
-                end: (output: any): void => {
-                    if (end) { throw new Error(`PromptValidatorContext.end(): method already called for the turn.`); }
-                    end = true;
-                    endResult = output;
-                }
+                options: state.options
             });
         } else if (recognized.succeeded) {
-            end = true;
-            endResult = recognized.value;
+            isValid = true;
         }
 
         // Return recognized value or re-prompt
-        if (end) {
-            return await dc.end(endResult);
+        if (isValid) {
+            return await dc.endDialog(recognized.value);
         } else {
             if (!dc.context.responded) {
                 await this.onPrompt(dc.context, state.state, state.options, true);
@@ -140,18 +144,18 @@ export abstract class Prompt<T> extends Dialog {
         }
     }
 
-    public async dialogResume(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // Prompts are typically leaf nodes on the stack but the dev is free to push other dialogs
         // on top of the stack which will result in the prompt receiving an unexpected call to
-        // dialogResume() when the pushed on dialog ends.
+        // resumeDialog() when the pushed on dialog ends.
         // To avoid the prompt prematurely ending we need to implement this method and
         // simply re-prompt the user.
-        await this.dialogReprompt(dc.context, dc.activeDialog);
+        await this.repromptDialog(dc.context, dc.activeDialog);
 
         return Dialog.EndOfTurn;
     }
 
-    public async dialogReprompt(context: TurnContext, instance: DialogInstance): Promise<void> {
+    public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         const state: PromptState = instance.state as PromptState;
         await this.onPrompt(context, state.state, state.options, false);
     }

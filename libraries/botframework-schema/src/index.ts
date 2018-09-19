@@ -1987,3 +1987,23 @@ export enum ActivityImportance {
   Normal = 'normal',
   High = 'high',
 }
+
+/**
+ * @interface
+ * An interface representing a collection of
+ * Azure Active Directory resource URLs
+ */
+export interface AadResourceUrls {
+  /**
+   * @member {string[]} [resourceUrls] A collection of resource URLs
+   */
+  resourceUrls: string[];
+}
+
+/**
+ * @interface
+ * An interface representing a mapping of names to TokenResponses.
+ */
+export interface TokenResponseMap {
+  [resourceUrl: string]: TokenResponse;
+}

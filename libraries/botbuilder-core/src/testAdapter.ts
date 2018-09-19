@@ -453,6 +453,13 @@ export class TestFlow {
     public catch(onRejected?: (reason: any) => void): TestFlow {
         return new TestFlow(this.previous.catch(onRejected), this.adapter);
     }
+
+    /**
+     * start the test sequence, returning a promise to await
+     */
+    public startTest() : Promise<void> {
+        return this.previous;
+    }
 }
 
 /**

@@ -14,17 +14,17 @@ describe('DatetimePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please say something.');
             } else if (results.status === DialogTurnStatus.complete) {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
+            await convoState.saveChanges(turnContext);
         });
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         // Create a DialogState property, DialogSet and DateTimePrompt.
         const dialogState = convoState.createProperty('dialogState');
@@ -41,16 +41,16 @@ describe('DatetimePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please say something.' });
             } else if (results.status === DialogTurnStatus.complete) {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
+            await convoState.saveChanges(turnContext);
         });
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -66,24 +66,23 @@ describe('DatetimePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please say something.');
             } else if (results.status === DialogTurnStatus.complete) {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new DateTimePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new DateTimePrompt('prompt', async (prompt) => {
             assert(prompt);
-            prompt.end(prompt.recognized.value);
+            return prompt.recognized.succeeded;
         }));
 
         await adapter.send('Hello')
@@ -96,26 +95,23 @@ describe('DatetimePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please say something.', retryPrompt: 'Please provide a valid datetime.' });
             } else if (results.status === DialogTurnStatus.complete) {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new DateTimePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new DateTimePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            }
+            return prompt.recognized.succeeded;
         }));
 
         await adapter.send('Hello')
@@ -130,28 +126,26 @@ describe('DatetimePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please say something.', retryPrompt: 'Please provide a valid datetime.' });
             } else if (results.status === DialogTurnStatus.complete) {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new DateTimePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new DateTimePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            } else {
-                await context.sendActivity('That was a bad date.');
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('That was a bad date.');
             }
+            return prompt.recognized.succeeded;
         }));
 
         await adapter.send('Hello')
@@ -166,26 +160,23 @@ describe('DatetimePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.begin('prompt');
+                await dc.beginDialog('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new DateTimePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new DateTimePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            }
+            return prompt.recognized.succeeded;
         }));
 
         await adapter.send('Hello')

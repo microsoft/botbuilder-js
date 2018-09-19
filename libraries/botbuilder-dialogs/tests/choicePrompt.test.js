@@ -15,17 +15,17 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please choose a color.', stringChoices);
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }
+            await convoState.saveChanges(turnContext);
         });
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         // Create a DialogState property, DialogSet and ChoicePrompt.
         const dialogState = convoState.createProperty('dialogState');
@@ -46,16 +46,16 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }
+            await convoState.saveChanges(turnContext);
         });
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -74,25 +74,22 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please choose a color.', stringChoices);
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }
+            await convoState.saveChanges(turnContext);
         });
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ChoicePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            }
+            return prompt.recognized.succeeded;
         });
         choicePrompt.style = ListStyle.none;
         dialogs.add(choicePrompt);
@@ -109,16 +106,16 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', retryPrompt: 'Please choose red, blue, or green.', choices: stringChoices });
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }
+            await convoState.saveChanges(turnContext);
         });
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
@@ -138,27 +135,25 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', retryPrompt: 'Please choose red, blue, or green.', choices: stringChoices });
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }
+            await convoState.saveChanges(turnContext);
         });
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ChoicePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            } else {
-                await context.sendActivity('bad input.');
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('bad input.');
             }
+            return prompt.recognized.succeeded;
         });
         choicePrompt.style = ListStyle.none;
         dialogs.add(choicePrompt);
@@ -175,27 +170,25 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }
+            await convoState.saveChanges(turnContext);
         });
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ChoicePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            } else {
-                await context.sendActivity('bad input.');
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('bad input.');
             }
+            return prompt.recognized.succeeded;
         }, 'es-es');
         dialogs.add(choicePrompt);
 
@@ -211,27 +204,25 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }
+            await convoState.saveChanges(turnContext);
         });
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ChoicePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            } else {
-                await context.sendActivity('bad input.');
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('bad input.');
             }
+            return prompt.recognized.succeeded;
         });
         dialogs.add(choicePrompt);
 
@@ -245,27 +236,25 @@ describe('ChoicePrompt', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            const results = await dc.continue();
+            const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }
+            await convoState.saveChanges(turnContext);
         });
         const convoState = new ConversationState(new MemoryStorage());
-        adapter.use(convoState);
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ChoicePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            } else {
-                await context.sendActivity('bad input.');
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('bad input.');
             }
+            return prompt.recognized.succeeded;
         }, 'es-es');
         dialogs.add(choicePrompt);
 
