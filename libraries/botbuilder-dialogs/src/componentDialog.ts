@@ -32,6 +32,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
         super(typeof dialogStateOrId === 'string' ? dialogStateOrId : dialogId);
         if (typeof dialogStateOrId === 'object') {
             this.mainDialogSet = new DialogSet(dialogStateOrId);
+            this.mainDialogSet.add(this);
         }
     }
 
