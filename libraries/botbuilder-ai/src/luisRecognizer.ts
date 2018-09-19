@@ -1,4 +1,3 @@
-// tslint:disable
 /**
  * @module botbuilder-ai
  */
@@ -233,8 +232,7 @@ export class LuisRecognizer {
 
     private prepareErrorMessage(error: Error): void {
         // If the `error` received is a azure-cognitiveservices-luis-runtime error, it may have a `response` property and `response.statusCode`.
-        // If these properties exist, we should populate the error with a correct and informative 
-        // error message.
+        // If these properties exist, we should populate the error with a correct and informative error message.
         if ((error as any).response && (error as any).response.statusCode) {
             switch ((error as any).response.statusCode) {
                 case 400:
