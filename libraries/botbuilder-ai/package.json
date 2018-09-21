@@ -2,7 +2,7 @@
   "name": "botbuilder-ai",
   "author": "Microsoft Corp.",
   "description": "Cognitive services extensions for Microsoft BotBuilder.",
-  "version": "4.0.0-preview1.2",
+  "version": "4.0.0",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -25,7 +25,7 @@
     "@types/node": "^9.3.0",
     "@types/request-promise-native": "^1.0.10",
     "azure-cognitiveservices-luis-runtime": "^1.0.0",
-    "botbuilder": "^4.0.0-preview1.2",
+    "botbuilder": "^4.0.0",
     "html-entities": "^1.2.1",
     "moment": "^2.20.1",
     "ms-rest": "^2.3.6",
