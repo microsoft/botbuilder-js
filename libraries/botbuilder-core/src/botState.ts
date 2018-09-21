@@ -1,3 +1,4 @@
+// tslint:disable:linebreak-style
 /**
  * @module botbuilder
  */
@@ -145,17 +146,23 @@ export class BotState implements PropertyManager {
      * This example shows how to clear a state object:
      *
      * ```JavaScript
-     * botState.clear(context);
+     * await botState.clear(context);
      * ```
      * @param context Context for current turn of conversation with the user.
      */
-    public clear(context: TurnContext): void {
+    public clear(context: TurnContext): Promise<void> {
         // We leave the change hash un-touched which will force the cleared state changes to get persisted.
         const cached: any = context.turnState.get(this.stateKey) as CachedBotState;
-        if (cached) {
-            cached.state = {};
-            context.turnState.set(this.stateKey, cached);
+
+        if (!cached || !cached.state) {
+            return this.load(context).then((state: any): void => {
+                context.turnState.set(this.stateKey, { state: {} });
+            });
         }
+        cached.state = {};
+        context.turnState.set(this.stateKey, cached);
+
+        return Promise.resolve();
     }
 
     /**

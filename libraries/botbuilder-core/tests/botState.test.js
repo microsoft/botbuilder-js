@@ -31,10 +31,10 @@ describe(`BotState`, function () {
         assert(state, `State not loaded`);
         state.test = 'foo';
         await botState.saveChanges(context);
-        
+
         const items = await storage.read([storageKey]);
         assert(items.hasOwnProperty(storageKey), `Saved state not found in storage.`);
-        assert(items[storageKey].test === 'foo', `Missing test value in stored state.`);        
+        assert(items[storageKey].test === 'foo', `Missing test value in stored state.`);
     });
 
     it(`should force load() of state from storage.`, function (done) {
@@ -56,7 +56,7 @@ describe(`BotState`, function () {
         assert(!cachedState(context, botState.stateKey).hasOwnProperty('test'), `state not cleared on context.`);
 
         const items = await storage.read([storageKey]);
-        assert(!items[storageKey].hasOwnProperty('test'), `state not cleared from storage.`);        
+        assert(!items[storageKey].hasOwnProperty('test'), `state not cleared from storage.`);
     });
 
     it(`should force immediate saveChanges() of state to storage.`, function (done) {
@@ -124,6 +124,27 @@ describe(`BotState`, function () {
             done();
         }
         throw new Error(`Should have raised a duplicate property name error.`);
-        done();
+    });
+
+    it('should load state and clear it if botState.load has not been called', async function () {
+        let clearState = false;
+        const tAdapter = new TestAdapter(async (turnContext) => {
+            if (!clearState) {
+                clearState = true;
+                const state = await botState.load(turnContext);
+                state.test1 = 'test1';
+                await botState.saveChanges(turnContext);
+
+            } else if (clearState) {
+                assert(!cachedState(turnContext, botState.stateKey), `state should not have loaded yet.`);
+                await botState.clear(turnContext);
+
+                const state = await botState.load(turnContext);
+                assert(!state.test1, 'state.test1 should not exist');
+            }
+        });
+        
+        tAdapter.send('Hi')
+            .send('Hi Again!');
     });
 });
