@@ -31,7 +31,7 @@ npm config set registry https://registry.npmjs.org/
 
 ## What's included?
 
-This module contains interfaces for using [Microsoft LUIS](https://luis.ai) and [Microsoft QnA Maker](https://qnamaker.ai) in your Botbuilder application.
+This module contains interfaces for using [Microsoft LUIS](https://www.luis.ai) and [Microsoft QnA Maker](https://www.qnamaker.ai) in your Botbuilder application.
 
 ## Use
 
