@@ -1,4 +1,3 @@
-// tslint:disable:linebreak-style
 /**
  * @module botbuilder
  */
@@ -40,7 +39,7 @@ export interface CachedBotState {
  * server.post('/api/messages', (req, res) => {
  *    adapter.processActivity(req, res, async (context) => {
  *       // Track up time
- *       const state = await botState.get(context);
+ *       const state = await botState.load(context);
  *       if (!('startTime' in state)) { state.startTime = new Date().getTime() }
  *       state.upTime = new Date().getTime() - state.stateTime;
  *
