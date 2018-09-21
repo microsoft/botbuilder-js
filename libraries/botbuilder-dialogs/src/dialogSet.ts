@@ -222,7 +222,7 @@ export class DialogSet {
      * Finds a dialog that was previously added to the set using [add()](#add).
      *
      * @remarks
-     * This example finds a dialog named "greeting":
+     * This example finds a dialog named 'greeting':
      *
      * ```JavaScript
      * const dialog = dialogs.find('greeting');
