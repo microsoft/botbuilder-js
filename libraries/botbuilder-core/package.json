@@ -2,7 +2,7 @@
   "name": "botbuilder-core",
   "author": "Microsoft Corp.",
   "description": "Core components for Microsoft Bot Builder. Components in this library can run either in a browser or on the server.",
-  "version": "4.0.0-preview1.2",
+  "version": "4.0.0",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -21,7 +21,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "assert": "^1.4.1",
-    "botframework-schema": "4.0.0-preview1.2"
+    "botframework-schema": "^4.0.0"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
