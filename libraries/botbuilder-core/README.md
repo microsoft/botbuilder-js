@@ -1,4 +1,8 @@
-Preview of the v4 version of the Bot Builder toolkit.  
+This library contains most of the core functionality for [Bot Builder](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder),
+but without any dependency on Node. As a result, this version can be used to build bots that run complete in a browser.
+
+Unless you are building a bot or component _without Node_, we recommend that you `botbuilder` your app
+instead of `botbuilder-core`. [Learn more here.](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder/README.md)
 
 - [Installing](#installing)
 - [Documentation](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-overview-introduction?view=azure-bot-service-4.0)
@@ -6,18 +10,21 @@ Preview of the v4 version of the Bot Builder toolkit.
 - [Report Issues](https://github.com/Microsoft/botbuilder-js/issues)
 
 ## Installing
-To add the preview version of this package to your bot be sure include the @preview tag:
+To add the latset published version of this package to your bot:
 
 ```bash
-npm install --save botbuilder@preview
+npm install --save botbuilder-core
 ```
 
-While this package is in preview it's possible for updates to include build breaks. To avoid having any updates break your bot it's recommended that you update the dependency table of your bots `package.json` file to lock down the specific version of the package you're using:
+#### Use the Daily Build
 
-```JSON
-{
-    "dependencies": {
-        "botbuilder": "4.0.0-preview1.2"
-    }
-}
+To get access to the daily builds of this library, configure npm to use the MyGet feed before installing.
+
+```bash
+npm config set registry https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+```
+
+To reset the registry in order to get the latest published version, run:
+```bash
+npm config set registry https://registry.npmjs.org/
 ```
