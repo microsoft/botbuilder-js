@@ -14,7 +14,7 @@ import { TurnContext } from './turnContext';
  * Middleware that will automatically save any state changes at the end of the turn.
  *
  * @remarks
- * The `AutoSaveStateMiddleware` class should be added towards the top of your bots middleware 
+ * The `AutoSaveStateMiddleware` class should be added towards the top of your bot's middleware 
  * stack, before any other components that use state.  Any `BotState` plugins passed to the 
  * constructor will have their `BotState.saveChanges()` method called upon successful completion
  * of the turn.  
@@ -23,7 +23,7 @@ import { TurnContext } from './turnContext';
  * a bot:
  *
  * ```JavaScript
- * const {AutoSaveStateMiddleware, ConversationState, UserState, MemoryStorage } = require('botbuilder');
+ * const { AutoSaveStateMiddleware, ConversationState, UserState, MemoryStorage } = require('botbuilder');
  *
  * const storage = new MemoryStorage();
  * const conversationState = new ConversationState(storage);
@@ -37,7 +37,8 @@ import { TurnContext } from './turnContext';
  *       const user = userState.get(context);
  *
  *       // ... route activity ...
- *
+ *		 // ...make changes to state objects...
+ * 		 // ... no need to call userState.saveChanges() or conversationState.saveChanges() anymore!
  *    });
  * });
  * ```
