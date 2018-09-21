@@ -48,7 +48,7 @@ export class MiddlewareSet implements Middleware {
 
     /**
      * Creates a new MiddlewareSet instance.
-     * @param middleware Zero or more middleware handlers(s) to register.
+     * @param middleware One or more middleware handlers(s) to register.
      */
     constructor(...middleware: (MiddlewareHandler|Middleware)[]) {
         MiddlewareSet.prototype.use.apply(this, middleware);
