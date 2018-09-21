@@ -120,17 +120,17 @@ adapter.processActivity(req, res, async (turnContext) => {
 
 See this module in action in these example apps:
 
-* [Simple Prompts](https://github.com/Microsoft/BotBuilder-Samples/tree/master/javascript_nodejs/4.simple-prompt-bot)
-* [Multiple Prompts](https://github.com/Microsoft/BotBuilder-Samples/tree/master/javascript_nodejs/05.multiturn-prompts-bot)
-* [Prompt Validation](https://github.com/Microsoft/BotBuilder-Samples/tree/master/javascript_nodejs/10.prompt-validations)
-* [Custom Dialog Class](https://github.com/Microsoft/BotBuilder-Samples/tree/master/javascript_nodejs/21.custom-dialogs)
+* [Simple Prompts](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/4.simple-prompt)
+* [Multiple Prompts](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/05.multi-turn-prompt)
+* [Prompt Validation](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/10.prompt-validations)
+* [Custom Dialog Class](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/19.custom-dialogs)
 
 # Learn More
 
 [Prompts](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-prompts?view=azure-bot-service-4.0&tabs=javascript) This module contains several types of built-in prompt that can be used to create dialogs that capture and validate specific data types like dates, numbers and multiple-choice answers.
 
-[DialogSet]() DialogSet is a container for multiple dialogs. Once added to a DialogSet, dialogs can be called and interlinked.
+[DialogSet](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/dialogset) DialogSet is a container for multiple dialogs. Once added to a DialogSet, dialogs can be called and interlinked.
 
-[WaterfallDialog](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/waterfall) WaterfallDialogs execute a series of step functions in order, passing the resulting user input from each steo into the next step's function.
+[WaterfallDialog](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/waterfalldialog) WaterfallDialogs execute a series of step functions in order, passing the resulting user input from each steo into the next step's function.
 
-[ComponentDialog]() ComponentDialogs are containers that encapsulate multiple sub-dialogs, but can be invoked like normal dialogs. This is useful for re-usable dialogs, or creating multiple dialogs with similarly named sub-dialogs that would otherwise collide.
+[ComponentDialog](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/componentdialog) ComponentDialogs are containers that encapsulate multiple sub-dialogs, but can be invoked like normal dialogs. This is useful for re-usable dialogs, or creating multiple dialogs with similarly named sub-dialogs that would otherwise collide.
