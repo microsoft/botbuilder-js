@@ -11,7 +11,7 @@ import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
 
 /**
- * When added, this middleware will log incoming and outgoing activities to a ITranscriptStore.
+ * Logs incoming and outgoing activities to a TranscriptStore.
  */
 export class TranscriptLoggerMiddleware implements Middleware {
     private logger: TranscriptLogger;

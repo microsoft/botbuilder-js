@@ -54,6 +54,7 @@ export class BotState implements PropertyManager {
     /**
      * Creates a new property accessor for reading and writing an individual property to the bot 
      * states storage object.
+     * @param T (Optional) type of property to create. Defaults to `any` type.
      * @param name Name of the property to add. Must be unique within the set.
      */
     public createProperty<T = any>(name: string): StatePropertyAccessor<T> {
