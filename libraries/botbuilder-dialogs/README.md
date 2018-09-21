@@ -120,7 +120,7 @@ adapter.processActivity(req, res, async (turnContext) => {
 
 See this module in action in these example apps:
 
-* [Simple Prompts](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/4.simple-prompt)
+* [Simple Prompts](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/04.simple-prompt)
 * [Multiple Prompts](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/05.multi-turn-prompt)
 * [Prompt Validation](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/10.prompt-validations)
 * [Custom Dialog Class](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/19.custom-dialogs)
