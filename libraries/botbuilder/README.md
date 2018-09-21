@@ -4,7 +4,7 @@
 - [Installing](#installing)
 - [Basic Use](#build-a-bot)
 - [Learn More](#learn-more)
-- [Sample Apps](https://github.com/Microsoft/BotBuilder-Samples/tree/master/javascript_nodejs)
+- [Sample Apps](https://github.com/Microsoft/BotBuilder-Samples)
 - [Documentation](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-overview-introduction?view=azure-bot-service-4.0)
 - [Class Reference](https://docs.microsoft.com/en-us/javascript/api/botbuilder/)
 - [GitHub Repo](https://github.com/Microsoft/botbuilder-js)
