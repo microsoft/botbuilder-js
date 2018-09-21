@@ -38,7 +38,7 @@ Then, extend and connect your Bot Builder app with these plugins:
 | Plugin | Description
 |--- |---
 | [botbuilder-dialogs](https://github.com/microsoft/botbuilder-js/tree/master/libraries/botbuilder-dialogs/README.md) | Powerful dialog system with dialogs that are isolated and composable, and built-in prompts for simple things like Yes/No, strings, numbers, enumerations.
-| [botbuilder-ai](https://github.com/microsoft/botbuilder-js/tree/master/libraries/botbuilder-dialogs/README.md) | Utilize powerful AI frameworks like [LUIS](https://luis.ai) and [QnA Maker](https://qnamaker.ai).
+| [botbuilder-ai](https://github.com/microsoft/botbuilder-js/tree/master/libraries/botbuilder-dialogs/README.md) | Utilize powerful AI frameworks like [LUIS](https://www.luis.ai) and [QnA Maker](https://www.qnamaker.ai).
 | [botbuilder-azure](https://github.com/microsoft/botbuilder-js/tree/master/libraries/botbuilder-azure/README.md) | Incorporate Azure services like Cosmos DB and Blob Storage into your bot.
 
 ## Build a bot
