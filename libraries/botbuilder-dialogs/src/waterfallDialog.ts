@@ -13,8 +13,6 @@ import { WaterfallStepContext } from './waterfallStepContext';
 /**
  * Function signature of an individual waterfall step.
  *
- * @remarks
- *
  * ```TypeScript
  * type WaterfallStep<O extends object = {}> = (step: WaterfallStepContext<O>) => Promise<DialogTurnResult>;
  * ```
@@ -22,18 +20,6 @@ import { WaterfallStepContext } from './waterfallStepContext';
  * @param WaterfallStep.step Contextual information for the current step being executed.
  */
 export type WaterfallStep<O extends object = {}> = (step: WaterfallStepContext<O>) => Promise<DialogTurnResult>;
-
-/**
- * When called within a waterfall step the dialog will skip to the next waterfall step.
- *
- * @remarks
- * 
- * ```TypeScript
- * type SkipStepFunction = (args?: any) => Promise<DialogTurnResult>;
- * ```
- * @param SkipStepFunction.args (Optional) additional argument(s) to pass into the next step.
- */
-export type SkipStepFunction = (args?: any) => Promise<DialogTurnResult>;
 
 /**
  * A waterfall is a dialog that's optimized for prompting a user with a series of questions.
