@@ -10,6 +10,13 @@ import * as util from 'util';
 import * as uuid from 'uuid';
 import { BotConfigurationBase } from './botConfigurationBase';
 import * as encrypt from './encrypt';
+/**
+ * @module botframework-config
+ */
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { ConnectedService } from './models';
 import { IBotConfiguration, IConnectedService, IDispatchService, ServiceTypes } from './schema';
 let exec = util.promisify(require('child_process').exec);
