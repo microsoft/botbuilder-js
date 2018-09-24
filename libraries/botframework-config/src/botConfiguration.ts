@@ -35,7 +35,7 @@ interface InternalBotConfig {
  * 
  * @remarks
  * It is typically loaded from a .bot file on disk. This class implements methods for encrypting
- * and manipulating the in memory representation of the configuration.
+ * and manipulating the in-memory representation of the configuration.
  */
 export class BotConfiguration extends BotConfigurationBase {
 
