@@ -26,7 +26,7 @@ export type WaterfallStep<O extends object = {}> = (step: WaterfallStepContext<O
  *
  * @remarks
  * Waterfalls accept a stack of functions which will be executed in sequence. Each waterfall step
- * can ask a question of the user and the users response will be passed to the next step in the 
+ * can ask a question of the user and the user's response will be passed to the next step in the 
  * waterfall via `step.result`. A special `step.value` object can be used to persist values between
  * steps:
  * 
