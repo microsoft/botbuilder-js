@@ -10,6 +10,7 @@ import { TurnContext } from './turnContext';
 
 /**
  * A collection of `BotState` plugins that should be loaded or saved in parallel as a single unit.
+ * See `AutoSaveStateMiddleware` for an implementation of this class.
  */
 export class BotStateSet {
 
