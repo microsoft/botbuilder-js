@@ -21,7 +21,7 @@ import * as rimraf from 'rimraf';
  *
  * Below is the boilerplate code needed to use this in your app:
  * ```javascript
- * { FileTranscriptStore, TranscriptLoggerMiddleware } = require('botbuilder');
+ * const { FileTranscriptStore, TranscriptLoggerMiddleware } = require('botbuilder');
  *
  * adapter.use(new TranscriptLoggerMiddleware(new FileTranscriptStore(__dirname + '/transcripts/')));
  * ```
