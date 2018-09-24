@@ -7,6 +7,9 @@
  */
 import { ServiceTypes } from './schema';
 
+/**
+ * @private
+ */
 export interface IResource {
     // ServiceType of the service (LUIS, QnA, etc.)
     readonly type: ServiceTypes;
@@ -18,38 +21,71 @@ export interface IResource {
     name: string;
 }
 
+/**
+ * @private
+ */
 export interface IUrlResource extends IResource {
     url: string;
 }
 
+/**
+ * @private
+ */
 export interface IDispatchResource extends IResource {
     serviceIds: string[];
 }
 
+/**
+ * @private
+ */
 export interface IBlobResource extends IResource {
     container: string;
 }
 
+/**
+ * @private
+ */
 export interface ICosmosDBResource extends IResource {
     database: string;
     collection: string;
 }
 
+/**
+ * @private
+ */
 export interface IFileResource extends IResource {
     path: string;
 }
 
+/**
+ * @private
+ */
 export interface IGenericResource extends IUrlResource {
     configuration: { [key: string]: string };
 }
 
-// This is class which allows you to manipulate in memory representations of bot configuration with no nodejs depedencies
+/**
+ * @private
+ * This is class which allows you to manipulate in memory representations of bot configuration
+ * with no nodejs depedencies.
+ */
 export class BotRecipe {
+    /**
+     * Version of the recipe.
+     */
     public version = '1.0';
+
+    /**
+     * 
+     */
     public resources: IResource[] = [];
 
+    /**
+     * Creates a new BotRecipe instance.
+     */
     constructor() {
     }
+
 
     public static fromJSON(source: Partial<BotRecipe> = {}): BotRecipe {
         const botRecipe = new BotRecipe();

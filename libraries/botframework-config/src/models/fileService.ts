@@ -8,19 +8,27 @@
 import { IFileService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
+/**
+ * Defines an file service connection.
+ */
 export class FileService extends ConnectedService implements IFileService {
+    /**
+     * File path.
+     */
     public path: string;
 
+    /**
+     * Creates a new FileService instance.
+     * @param source (Optional) JSON based service definition.
+     */
     constructor(source: IFileService = {} as IFileService) {
         super(source, ServiceTypes.File);
     }
 
-    // encrypt keys in service
     public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         return;
     }
 
-    // decrypt keys in service
     public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         return;
     }
