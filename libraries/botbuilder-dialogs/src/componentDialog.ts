@@ -16,7 +16,7 @@ const PERSISTED_DIALOG_STATE: string = 'dialogs';
  * Base class for a dialog that contains other child dialogs.
  * 
  * @remarks
- * Component dialogs let you break your bots logic up into components that can themselves be added
+ * Component dialogs let you break your bot's logic up into components that can themselves be added
  * as a dialog to another `ComponentDialog` or `DialogSet`. Components can also be exported as part
  * of a node package and used within other bots. 
  * 
