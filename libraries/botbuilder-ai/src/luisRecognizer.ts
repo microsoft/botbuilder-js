@@ -102,7 +102,8 @@ export interface LuisPredictionOptions {
  *
  * @remarks
  * This class is used to recognize intents and extract entities from incoming messages.
- *
+ * See this class in action [in this sample application](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/12.nlp-with-luis).
+
  * This component can be used within your bots logic by calling [recognize()](#recognize).
  */
 export class LuisRecognizer {
@@ -115,8 +116,8 @@ export class LuisRecognizer {
 
     /**
      * Creates a new LuisRecognizer instance.
-     * @param application LUIS application to use.
-     * @param options Options used to control predictions.
+     * @param application An object conforming to the [LuisApplication](#luisapplication) definition.
+     * @param options Options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
      */
     constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean) {
         this.application = application;
@@ -162,8 +163,22 @@ export class LuisRecognizer {
      * Calls LUIS to recognize intents and entities in a users utterance.
      *
      * @remarks
+     * Returns a [RecognizerResult](../botbuilder-core/recognizerresult) containing any intents and entities recognized by LUIS.
+     *
      * In addition to returning the results from LUIS, [recognize()](#recognize) will also
      * emit a trace activity that contains the LUIS results.
+     *
+     * Here is an example of recognize being used within a bot's turn handler: to interpret an incoming message:
+     *
+     * ```javascript
+     * async onTurn(context) {
+     * if (turnContext.activity.type === ActivityTypes.Message) {
+     *  const results = luisRecognizer.recognize(turnContext);
+     *  const topIntent = results.luisResult.topScorintIntent;
+     *
+     *  // ...do something based on topIntent...
+     * }
+     * ```
      * @param context Context for the current turn of conversation with the use.
      */
     public recognize(context: TurnContext): Promise<RecognizerResult> {
