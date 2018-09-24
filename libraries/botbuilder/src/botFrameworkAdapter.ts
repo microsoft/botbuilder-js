@@ -66,15 +66,15 @@ export interface BotFrameworkAdapterSettings {
      */
     appPassword: string;
     /**
-     * The OAuth API Endpoint for your bot to use.
+     * (Optional) The OAuth API Endpoint for your bot to use.
      */
     oAuthEndpoint?: string;
     /**
-     * The Open ID Metadata Endpoint for your bot to use.
+     * (Optional) The Open ID Metadata Endpoint for your bot to use.
      */
     openIdMetadata?: string;
     /**
-     * The optional channel service option for this bot to validate connections from Azure or other channel locations
+     * (Optional) The channel service option for this bot to validate connections from Azure or other channel locations
      */
     channelService?: string;
 }
@@ -144,7 +144,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      *      "appPassword": "Password assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).",
      *      "openIdMetadata": "The Open ID Metadata Endpoint for your bot to use.",
      *      "oAuthEndpoint": "The OAuth API Endpoint for your bot to use.",
-     *      "channelService": "The optional channel service option for this bot to validate connections from Azure or other channel locations"
+     *      "channelService": "(Optional) The channel service option for this bot to validate connections from Azure or other channel locations"
      *  }
      * ```
      * @param settings (optional) configuration settings for the adapter.

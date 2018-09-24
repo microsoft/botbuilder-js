@@ -63,8 +63,8 @@ export class FileTranscriptStore implements TranscriptStore {
      * Get all activities associated with a conversation id (aka get the transcript).
      * @param channelId Channel Id.
      * @param conversationId Conversation Id.
-     * @param continuationToken Continuation token to page through results.
-     * @param startDate Earliest time to include.
+     * @param continuationToken (Optional) Continuation token to page through results.
+     * @param startDate (Optional) Earliest time to include.
      */
     public getTranscriptActivities(
         channelId: string,
@@ -114,7 +114,7 @@ export class FileTranscriptStore implements TranscriptStore {
     /**
      * List all the logged conversations for a given channelId.
      * @param channelId Channel Id.
-     * @param continuationToken Continuation token to page through results.
+     * @param continuationToken (Optional) Continuation token to page through results.
      */
     public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) { throw new Error('Missing channelId'); }
