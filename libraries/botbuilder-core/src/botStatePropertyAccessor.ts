@@ -9,7 +9,7 @@ import { BotState } from './botState';
 import { TurnContext } from './turnContext';
 
 /**
- * A interface components can use to read and write individual properties to the bots state 
+ * An interface components can use to read and write individual properties to the bot's state 
  * management system.
  * @param T (Optional) type of property being persisted. Defaults to `any` type.
  */
