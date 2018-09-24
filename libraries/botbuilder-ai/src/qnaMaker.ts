@@ -24,7 +24,7 @@ const htmlentities: entities.AllHtmlEntities = new entities.AllHtmlEntities();
  */
 export interface QnAMakerResult {
     /**
-     * The list of questions indexed in the QnA Service for the given answer.
+     * The list of questions indexed in the QnA Service for the given answer. (If any)
      */
     questions?: string[];
 
@@ -39,17 +39,17 @@ export interface QnAMakerResult {
     score: number;
 
     /**
-     * Metadata associated with the answer
+     * Metadata associated with the answer (If any)
      */
     metadata?: any;
 
     /**
-     * The source from which the QnA was extracted
+     * The source from which the QnA was extracted (If any)
      */
     source?: string;
 
     /**
-     * The index of the answer in the knowledge base. V3 uses 'qnaId', V4 uses 'id'.
+     * The index of the answer in the knowledge base. V3 uses 'qnaId', V4 uses 'id'. (If any)
      */
      id?: number;
 }
@@ -100,24 +100,50 @@ export interface QnAMakerOptions {
  * Trace info that we collect and emit from a QnA Maker query
  */
 export interface QnAMakerTraceInfo {
-    // Message which instigated the query to QnA Maker
+    /**
+     *  Message which instigated the query to QnA Maker.
+     */
     message: Activity;
-    // Results that QnA Maker returned
+
+    /**
+     *  Results that QnA Maker returned.
+     */
     queryResults: QnAMakerResult[];
-    // ID of the knowledge base that is being queried
+
+    /**
+     *  ID of the knowledge base that is being queried.
+     */
     knowledgeBaseId: string;
-    // The minimum score threshold, used to filter returned results
+
+    /**
+     * The minimum score threshold, used to filter returned results.
+     */
     scoreThreshold: number;
-    // Number of ranked results that are asked to be returned
+
+    /**
+     *  Number of ranked results that are asked to be returned.
+     */
     top: number;
-    // Filters used on query. Not used in JavaScript SDK v4 yet
+
+    /**
+     * Filters used on query. Not used in JavaScript SDK v4 yet.
+     */
     strictFilters: any[];
-    // Metadata related to query. Not used in JavaScript SDK v4 yet
+
+    /**
+     * Metadata related to query. Not used in JavaScript SDK v4 yet.
+     */
     metadataBoost: any[];
 }
 
 /**
- * Manages querying an individual QnA Maker knowledge base for answers.
+ * Query a QnA Maker knowledge base for answers.
+ *
+ * @remarks
+ * This class is used to make queries to a single QnA Maker knowledge base and return the result.
+ *
+ * Use this to process incoming messages with the [generateAnswer()](#generateanswer) and [answer()](#answer) methods.
+ * See this class in action [in this sample application](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/11.qnamaker).
  */
 export class QnAMaker {
     private readonly options: QnAMakerOptions;
@@ -137,7 +163,7 @@ export class QnAMaker {
     }
 
     /**
-     * Calls [generateAnswer()](#generateanswer) and sends the answer as a message to the user.
+     * Calls [generateAnswer()](#generateanswer) and sends the resulting answer as a reply to the user.
      *
      * @remarks
      * Returns a value of `true` if an answer was found and sent. If multiple answers are
@@ -162,7 +188,7 @@ export class QnAMaker {
      * Calls the QnA Maker service to generate answer(s) for a question.
      *
      * @remarks
-     * The returned answers will be sorted by score with the top scoring answer returned first.
+     * Returns an array of answers sorted by score with the top scoring answer returned first.
      * @param question The question to answer.
      * @param top (Optional) number of answers to return. Defaults to a value of `1`.
      * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
