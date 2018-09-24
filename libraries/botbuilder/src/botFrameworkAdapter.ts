@@ -275,7 +275,8 @@ export class BotFrameworkAdapter extends BotAdapter {
      * Calling `TurnContext.deleteActivity()` is the preferred way of deleting activities (rather than calling it directly from the adapter), as that
      * will ensure that any interested middleware will be notified.
      *
-     * Note: Not all chat channels support this method. Calling it on an unsupported channel may result in an error.
+     * > [!TIP]
+     * > Note: Not all chat channels support this method. Calling it on an unsupported channel may result in an error.
      * @param context Context for the current turn of conversation with the user.
      * @param reference Conversation reference information for the activity being deleted.
      */
@@ -520,9 +521,10 @@ export class BotFrameworkAdapter extends BotAdapter {
      *   `revoked()` and any future calls to the context will result in a `TypeError: Cannot perform
      *   'set' on a proxy that has been revoked` being thrown.
      *
-     * Note: If you see the error `TypeError: Cannot perform 'set' on a proxy that has been revoked`
-     * appearing in your bot's console output, the likely cause is that an async function was used
-     * without using the `await` keyword. Make sure all async functions use await!
+     * > [!TIP]
+     * > Note: If you see the error `TypeError: Cannot perform 'set' on a proxy that has been revoked`
+     * > appearing in your bot's console output, the likely cause is that an async function was used
+     * > without using the `await` keyword. Make sure all async functions use await!
      *
      * ```JavaScript
      * server.post('/api/messages', (req, res) => {
