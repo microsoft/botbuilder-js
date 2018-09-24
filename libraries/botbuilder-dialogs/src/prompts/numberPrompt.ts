@@ -42,19 +42,12 @@ export class NumberPrompt extends Prompt<number> {
         const result: PromptRecognizerResult<number> = { succeeded: false };
         const activity: Activity = context.activity;
         const utterance: string = activity.text;
-        const locale: string =  activity.locale || this.defaultLocale || 'en-us';
+        const locale: string = activity.locale || this.defaultLocale || 'en-us';
         const results: any = Recognizers.recognizeNumber(utterance, locale);
         if (results.length > 0 && results[0].resolution) {
             result.succeeded = true;
             result.value = parseFloat(results[0].resolution.value);
-			// This check is a temporary fix for a bug in the number recognizer.
-			// This can be removed once the underlying issue is fully resolved.
-			// https://github.com/Microsoft/botbuilder-js/issues/420
-			if (isNaN(result.value)) {
-				result.value = 0;
-			}
-			// End of temporary fix.
-		}
+        }
 
         return result;
     }
