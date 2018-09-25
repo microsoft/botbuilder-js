@@ -117,7 +117,8 @@ export class LuisRecognizer {
     /**
      * Creates a new LuisRecognizer instance.
      * @param application An object conforming to the [LuisApplication](#luisapplication) definition.
-     * @param options Options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
+     * @param options (Optional) options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
+     * @param includeApiResults (Optional) flag that if set to `true` will force the inclusion of LUIS Api call in results returned by [recognize()](#recognize). Defaults to a value of `false`.
      */
     constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean) {
         this.application = application;
@@ -172,11 +173,18 @@ export class LuisRecognizer {
      *
      * ```javascript
      * async onTurn(context) {
-     * if (turnContext.activity.type === ActivityTypes.Message) {
-     *  const results = luisRecognizer.recognize(turnContext);
-     *  const topIntent = results.luisResult.topScorintIntent;
-     *
-     *  // ...do something based on topIntent...
+     *     if (turnContext.activity.type === ActivityTypes.Message) {
+     *         const results = await luisRecognizer.recognize(turnContext);
+     *         const topIntent = LuisRecognizer.topIntent(results);
+     *         switch (topIntent) {
+     *             case 'MyIntent':
+     *                 // ... handle intent ...
+     *                 break;
+     *             case 'None':
+     *                 // ... handle intent ...
+     *                 break;
+     *         }
+     *     }
      * }
      * ```
      * @param context Context for the current turn of conversation with the use.
