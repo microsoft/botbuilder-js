@@ -7,13 +7,13 @@
  */
 
 import {
+    ChannelValidation,
     ClaimsIdentity,
     ConnectorClient,
     JwtTokenValidation,
     MicrosoftAppCredentials,
     OAuthApiClient,
-    SimpleCredentialProvider,
-    ChannelValidation
+    SimpleCredentialProvider
 } from 'botframework-connector';
 
 import {
@@ -66,15 +66,15 @@ export interface BotFrameworkAdapterSettings {
      */
     appPassword: string;
     /**
-     * The OAuth API Endpoint for your bot to use.
+     * (Optional) The OAuth API Endpoint for your bot to use.
      */
     oAuthEndpoint?: string;
     /**
-     * The Open ID Metadata Endpoint for your bot to use.
+     * (Optional) The Open ID Metadata Endpoint for your bot to use.
      */
     openIdMetadata?: string;
     /**
-     * The optional channel service option for this bot to validate connections from Azure or other channel locations
+     * (Optional) The channel service option for this bot to validate connections from Azure or other channel locations
      */
     channelService?: string;
 }
@@ -108,9 +108,14 @@ const OAUTH_ENDPOINT: string = 'https://api.botframework.com';
 const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 
 /**
- * BotAdapter class needed to communicate with a Bot Framework channel or the Emulator.
+ * A BotAdapter class that connects your bot to Bot Framework channels and the Emulator.
  *
  * @remarks
+ * Use this adapter to connect your bot to the Bot Framework service, through which
+ * your bot can reach many chat channels like Skype, Slack, and Teams. This adapter
+ * also allows your bot to work with the Bot Framework Emulator, which simulates
+ * the Bot Framework service and provides a chat interface for testing and debugging.
+ *
  * The following example shows the typical adapter setup:
  *
  * ```JavaScript
@@ -130,6 +135,18 @@ export class BotFrameworkAdapter extends BotAdapter {
 
     /**
      * Creates a new BotFrameworkAdapter instance.
+     *
+     * @remarks
+     * Settings for this adapter include:
+     * ```javascript
+     * {
+     *      "appId": "ID assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).",
+     *      "appPassword": "Password assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).",
+     *      "openIdMetadata": "The Open ID Metadata Endpoint for your bot to use.",
+     *      "oAuthEndpoint": "The OAuth API Endpoint for your bot to use.",
+     *      "channelService": "(Optional) The channel service option for this bot to validate connections from Azure or other channel locations"
+     *  }
+     * ```
      * @param settings (optional) configuration settings for the adapter.
      */
     constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
@@ -144,16 +161,21 @@ export class BotFrameworkAdapter extends BotAdapter {
     }
 
     /**
-     * Continues a conversation with a user. This is often referred to as the bots "Proactive Messaging"
-     * flow as its lets the bot proactively send messages to a conversation or user that its already
-     * communicated with. Scenarios like sending notifications or coupons to a user are enabled by this
-     * method.
+     * Resume a conversation with a user, possibly after some time has gone by.
      *
      * @remarks
+     * This is often referred to as the bot's "Proactive Messaging" flow as it lets the bot proactively
+     * send messages to a conversation or user without having to reply directly to an incoming message.
+     * Scenarios like sending notifications or coupons to a user are enabled by this method.
+     *
+     * In order to use this method, a ConversationReference must first be extracted from an incoming
+     * activity. This reference can be stored in a database and used to resume the conversation at a later time.
+     * The reference can be created from any incoming activity using `TurnContext.getConversationReference(context.activity)`.
+     *
      * The processing steps for this method are very similar to [processActivity()](#processactivity)
      * in that a `TurnContext` will be created which is then routed through the adapters middleware
-     * before calling the passed in logic handler. The key difference being that since an activity
-     * wasn't actually received it has to be created.  The created activity will have its address
+     * before calling the passed in logic handler. The key difference is that since an activity
+     * wasn't actually received from outside, it has to be created by the bot.  The created activity will have its address
      * related fields populated but will have a `context.activity.type === undefined`.
      *
      * ```JavaScript
@@ -172,7 +194,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      *    }
      * });
      * ```
-     * @param reference A `ConversationReference` saved during a previous message from a user.  This can be calculated for any incoming activity using `TurnContext.getConversationReference(context.activity)`.
+     * @param reference A `ConversationReference` saved during a previous incoming activity.
      * @param logic A function handler that will be called to perform the bots logic after the the adapters middleware has been run.
      */
     public continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void> {
@@ -191,11 +213,20 @@ export class BotFrameworkAdapter extends BotAdapter {
      * of a group.
      *
      * @remarks
+     * This function creates a new conversation between the bot and a single user, as specified by
+     * the ConversationReference passed in. In multi-user chat environments, this typically means
+     * starting a 1:1 direct message conversation with a single user. If called on a reference
+     * already representing a 1:1 conversation, the new conversation will continue to be 1:1.
+     *
+     * * In order to use this method, a ConversationReference must first be extracted from an incoming
+     * activity. This reference can be stored in a database and used to resume the conversation at a later time.
+     * The reference can be created from any incoming activity using `TurnContext.getConversationReference(context.activity)`.
+     *
      * The processing steps for this method are very similar to [processActivity()](#processactivity)
      * in that a `TurnContext` will be created which is then routed through the adapters middleware
-     * before calling the passed in logic handler. The key difference being that since an activity
-     * wasn't actually received it has to be created.  The created activity will have its address
-     * related fields populated but will have a `context.activity.type === undefined`.
+     * before calling the passed in logic handler. The key difference is that since an activity
+     * wasn't actually received from outside, it has to be created by the bot.  The created activity will have its address
+     * related fields populated but will have a `context.activity.type === undefined`..
      *
      * ```JavaScript
      * // Get group members conversation reference
@@ -206,8 +237,8 @@ export class BotFrameworkAdapter extends BotAdapter {
      *    await ctx.sendActivity(`Hi (in private)`);
      * });
      * ```
-     * @param reference A `ConversationReference` of the user to start a new conversation with.  This can be calculated for any incoming activity using `TurnContext.getConversationReference(context.activity)`.
-     * @param logic A function handler that will be called to perform the bots logic after the the adapters middleware has been run.
+     * @param reference A `ConversationReference` of the user to start a new conversation with.
+     * @param logic A function handler that will be called to perform the bot's logic after the the adapters middleware has been run.
      */
     public createConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void> {
         try {
@@ -238,12 +269,14 @@ export class BotFrameworkAdapter extends BotAdapter {
     }
 
     /**
-     * Deletes an activity that was previously sent to a channel. It should be noted that not all
-     * channels support this feature.
+     * Deletes an activity that was previously sent to a channel.
      *
      * @remarks
-     * Calling `TurnContext.deleteActivity()` is the preferred way of deleting activities as that
-     * will ensure that any interested middleware has been notified.
+     * Calling `TurnContext.deleteActivity()` is the preferred way of deleting activities (rather than calling it directly from the adapter), as that
+     * will ensure that any interested middleware will be notified.
+     *
+     * > [!TIP]
+     * > Note: Not all chat channels support this method. Calling it on an unsupported channel may result in an error.
      * @param context Context for the current turn of conversation with the user.
      * @param reference Conversation reference information for the activity being deleted.
      */
@@ -264,6 +297,11 @@ export class BotFrameworkAdapter extends BotAdapter {
 
     /**
      * Deletes a member from the current conversation.
+     *
+     * @remarks
+     * Remove a member's identity information from the conversation.
+     *
+     * Note that this method does not apply to all channels.
      * @param context Context for the current turn of conversation with the user.
      * @param memberId ID of the member to delete from the conversation.
      */
@@ -284,7 +322,13 @@ export class BotFrameworkAdapter extends BotAdapter {
     }
 
     /**
-     * Lists the members of a given activity.
+     * Lists the members of a given activity as specified in a TurnContext.
+     *
+     * @remarks
+     * Returns an array of ChannelAccount objects representing the users involved in a given activity.
+     *
+     * This is different from `getConversationMembers()` in that it will return only those users
+     * directly involved in the activity, not all members of the conversation.
      * @param context Context for the current turn of conversation with the user.
      * @param activityId (Optional) activity ID to enumerate. If not specified the current activities ID will be used.
      */
@@ -309,7 +353,14 @@ export class BotFrameworkAdapter extends BotAdapter {
     }
 
     /**
-     * Lists the members of the current conversation.
+     * Lists the members of the current conversation as specified in a TurnContext.
+     *
+     * @remarks
+     * Returns an array of ChannelAccount objects representing the users currently involved in the conversation
+     * in which an activity occured.
+     *
+     * This is different from `getActivityMembers()` in that it will return all
+     * members of the conversation, not just those directly involved in the activity.
      * @param context Context for the current turn of conversation with the user.
      */
     public getConversationMembers(context: TurnContext): Promise<ChannelAccount[]> {
@@ -329,8 +380,10 @@ export class BotFrameworkAdapter extends BotAdapter {
     }
 
     /**
-     * Lists the Conversations in which this bot has participated for a given channel server. The
-     * channel server returns results in pages and each page will include a `continuationToken`
+     * Lists the Conversations in which this bot has participated for a given channel server.
+     *
+     * @remarks
+     * The channel server returns results in pages and each page will include a `continuationToken`
      * that can be used to fetch the next page of results from the server.
      * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
      * @param continuationToken (Optional) token used to fetch the next page of results from the channel server. This should be left as `undefined` to retrieve the first page of results.
@@ -343,7 +396,7 @@ export class BotFrameworkAdapter extends BotAdapter {
     }
 
     /**
-     * Attempts to retrieve the token for a user that's in a signin flow.
+     * Retrieves the OAuth token for a user that is in a sign-in flow.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
@@ -399,7 +452,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         return client.getSignInLink(conversation as ConversationReference, connectionName);
     }
 
-        /**
+    /**
      * Signs the user out with the token server.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
@@ -434,11 +487,16 @@ export class BotFrameworkAdapter extends BotAdapter {
     }
 
     /**
-     * Processes an activity received by the bots web server. This includes any messages sent from a
-     * user and is the method that drives what's often referred to as the bots "Reactive Messaging"
-     * flow.
+     * Processes an incoming request received by the bots web server into a TurnContext.
      *
      * @remarks
+     * This method is the main way a bot receives incoming messages.
+     *
+     * This method takes a raw incoming request object from a webserver and processes it into a
+     * normalized TurnContext that can be used by the bot. This includes any messages sent from a
+     * user and is the method that drives what is often referred to as the bot's "Reactive Messaging"
+     * flow.
+     *
      * The following steps will be taken to process the activity:
      *
      * - The identity of the sender will be verified to be either the Emulator or a valid Microsoft
@@ -451,24 +509,29 @@ export class BotFrameworkAdapter extends BotAdapter {
      * - The context will be routed through any middleware registered with the adapter using
      *   [use()](#use).  Middleware is executed in the order in which it's added and any middleware
      *   can intercept or prevent further routing of the context by simply not calling the passed
-     *   in `next()` function. This is called the "Leading Edge" of the request and middleware will
+     *   in `next()` function. This is called the "Leading Edge" of the request; middleware will
      *   get a second chance to run on the "Trailing Edge" of the request after the bots logic has run.
      * - Assuming the context hasn't been intercepted by a piece of middleware, the context will be
-     *   passed to the logic handler passed in.  The bot may perform an additional routing or
+     *   passed to the logic handler passed in.  The bot may perform additional routing or
      *   processing at this time. Returning a promise (or providing an `async` handler) will cause the
      *   adapter to wait for any asynchronous operations to complete.
-     * - Once the bots logic completes the promise chain setup by the middleware stack will be resolved
+     * - Once the bot's logic completes, the promise chain set up by the middleware stack will be resolved,
      *   giving middleware a second chance to run on the "Trailing Edge" of the request.
-     * - After the middleware stacks promise chain has been fully resolved the context object will be
+     * - After the middleware stack's promise chain has been fully resolved the context object will be
      *   `revoked()` and any future calls to the context will result in a `TypeError: Cannot perform
      *   'set' on a proxy that has been revoked` being thrown.
+     *
+     * > [!TIP]
+     * > Note: If you see the error `TypeError: Cannot perform 'set' on a proxy that has been revoked`
+     * > appearing in your bot's console output, the likely cause is that an async function was used
+     * > without using the `await` keyword. Make sure all async functions use await!
      *
      * ```JavaScript
      * server.post('/api/messages', (req, res) => {
      *    // Route received request to adapter for processing
      *    adapter.processActivity(req, res, async (context) => {
      *        // Process any messages received
-     *        if (context.activity.type === 'message') {
+     *        if (context.activity.type === ActivityTypes.Message) {
      *            await context.sendActivity(`Hello World`);
      *        }
      *    });
@@ -522,19 +585,20 @@ export class BotFrameworkAdapter extends BotAdapter {
     }
 
     /**
-     * Sends a set of activities to a channels server(s). The activities will be sent one after
-     * another in the order in which they're received.  A response object will be returned for each
-     * sent activity. For `message` activities this will contain the ID of the delivered message.
+     * Sends a set of outgoing activities to the appropriate channel server.
      *
      * @remarks
-     * Calling `TurnContext.sendActivities()` or `TurnContext.sendActivity()` is the preferred way of
-     * sending activities as that will ensure that outgoing activities have been properly addressed
+     * The activities will be sent one after another in the order in which they're received. A response object will be returned for each
+     * sent activity. For `message` activities this will contain the id of the delivered message.
+     *
+     * Instead of calling these methods directly on the adapter, calling `TurnContext.sendActivities()` or `TurnContext.sendActivity()` 
+     * is the preferred way of sending activities as that will ensure that outgoing activities have been properly addressed
      * and that any interested middleware has been notified.
      *
      * The primary scenario for calling this method directly is when you want to explicitly bypass
-     * going through any middleware. For instance, periodically sending a `typing` activity might
-     * be a good reason to call this method directly as it would avoid any false signals from being
-     * logged.
+     * going through any middleware. For instance, sending the `typing` activity might
+     * be a good reason to call this method directly as those activities are unlikely to require
+     * handling by middleware.
      * @param context Context for the current turn of conversation with the user.
      * @param activities List of activities to send.
      */
@@ -605,12 +669,13 @@ export class BotFrameworkAdapter extends BotAdapter {
     }
 
     /**
-     * Replaces an activity that was previously sent to a channel. It should be noted that not all
-     * channels support this feature.
+     * Replaces an activity that was previously sent to a channel with an updated version.
      *
      * @remarks
-     * Calling `TurnContext.updateActivity()` is the preferred way of updating activities as that
+     * Calling `TurnContext.updateActivity()` is the preferred way of updating activities (rather than calling it directly from the adapter) as that
      * will ensure that any interested middleware has been notified.
+     *
+     * It should be noted that not all channels support this feature.
      * @param context Context for the current turn of conversation with the user.
      * @param activity New activity to replace a current activity with.
      */

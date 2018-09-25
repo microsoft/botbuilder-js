@@ -13,16 +13,27 @@ import * as rimraf from 'rimraf';
 
 /**
  * The file transcript store stores transcripts in file system with each activity as a file.
+ *
+ * @remarks
+ * This class provides an interface to log all incoming and outgoing activities to the filesystem.
+ * It implements the features necessary to work alongside the TranscriptLoggerMiddleware plugin.
+ * When used in concert, your bot will automatically log all conversations.
+ *
+ * Below is the boilerplate code needed to use this in your app:
+ * ```javascript
+ * const { FileTranscriptStore, TranscriptLoggerMiddleware } = require('botbuilder');
+ *
+ * adapter.use(new TranscriptLoggerMiddleware(new FileTranscriptStore(__dirname + '/transcripts/')));
+ * ```
  */
 export class FileTranscriptStore implements TranscriptStore {
 
-    // tslint:disable-next-line:variable-name
     private static readonly PageSize: number = 20;
 
     private rootFolder: string;
 
     /**
-     * Creates an instance of FileTranscriptStore
+     * Creates an instance of FileTranscriptStore.
      * @param folder Root folder where transcript will be stored.
      */
     constructor(folder: string) {
@@ -49,11 +60,11 @@ export class FileTranscriptStore implements TranscriptStore {
     }
 
     /**
-     * Get activities for a conversation (Aka the transcript)
+     * Get all activities associated with a conversation id (aka get the transcript).
      * @param channelId Channel Id.
      * @param conversationId Conversation Id.
-     * @param continuationToken Continuatuation token to page through results.
-     * @param startDate Earliest time to include.
+     * @param continuationToken (Optional) Continuation token to page through results.
+     * @param startDate (Optional) Earliest time to include.
      */
     public getTranscriptActivities(
         channelId: string,
@@ -101,9 +112,9 @@ export class FileTranscriptStore implements TranscriptStore {
     }
 
     /**
-     * List conversations in the channelId.
+     * List all the logged conversations for a given channelId.
      * @param channelId Channel Id.
-     * @param continuationToken Continuatuation token to page through results.
+     * @param continuationToken (Optional) Continuation token to page through results.
      */
     public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) { throw new Error('Missing channelId'); }
@@ -141,7 +152,7 @@ export class FileTranscriptStore implements TranscriptStore {
     }
 
     /**
-     * Delete a specific conversation and all of it's activities.
+     * Delete a conversation and all of it's activities.
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      */
@@ -202,7 +213,7 @@ const ticksPerMillisecond: number = 10000;
 
 /**
  * @private
- * @param timestamp a date used to calculate future ticks
+ * @param timestamp A date used to calculate future ticks.
  */
 function getTicks(timestamp: Date): string {
     const ticks: number = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
@@ -212,7 +223,7 @@ function getTicks(timestamp: Date): string {
 
 /**
  * @private
- * @param ticks a string containing ticks
+ * @param ticks A string containing ticks.
  */
 function readDate(ticks: string): Date {
     const t: number = Math.round((parseInt(ticks, 16) - epochTicks) / ticksPerMillisecond);
@@ -222,7 +233,7 @@ function readDate(ticks: string): Date {
 
 /**
  * @private
- * @param date a date used to create a filter
+ * @param date A date used to create a filter.
  */
 function withDateFilter(date: Date): any {
     if (!date) { return (): boolean => true; }
@@ -236,7 +247,7 @@ function withDateFilter(date: Date): any {
 
 /**
  * @private
- * @param continuationToken a continuation token
+ * @param continuationToken A continuation token.
  */
 function withContinuationToken(continuationToken: string): any {
     if (!continuationToken) { return (): boolean => true; }
@@ -250,7 +261,7 @@ function withContinuationToken(continuationToken: string): any {
 
 /**
  * @private
- * @param expression a function that will be used to test items
+ * @param expression A function that will be used to test items.
  */
 function skipWhileExpression(expression: any): any {
     let skipping: boolean = true;
@@ -267,7 +278,7 @@ function skipWhileExpression(expression: any): any {
 
 /**
  * @private
- * @param json a json string to be parsed into an activity
+ * @param json A JSON string to be parsed into an activity.
  */
 function parseActivity(json: string): Activity {
     const activity: Activity = JSON.parse(json);
