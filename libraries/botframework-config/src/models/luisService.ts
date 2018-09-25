@@ -1,17 +1,47 @@
 /**
+ * @module botframework-config
+ */
+/**
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
 import { ILuisService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
+/**
+ * Defines a LUIS service connection.
+ */
 export class LuisService extends ConnectedService implements ILuisService {
+    /**
+     * Luis app ID.
+     */
     public appId: string;
+
+    /**
+     * Authoring key for using authoring api.
+     */
     public authoringKey: string;
+
+    /**
+     * Subscription key for using calling model api for predictions.
+     */
     public subscriptionKey: string;
+
+    /**
+     * Version of the application.
+     */
     public version: string ;
+
+    /**
+     * Region for luis.
+     */
     public region: string ;
 
+    /**
+     * Creates a new LuisService instance.
+     * @param source (Optional) JSON based service definition.
+     * @param type (Optional) type of service being defined.
+     */
     constructor(source: ILuisService = {} as ILuisService, serviceType?: ServiceTypes) {
         super(source, serviceType || ServiceTypes.Luis);
     }

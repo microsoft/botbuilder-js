@@ -10,19 +10,41 @@ import * as util from 'util';
 import * as uuid from 'uuid';
 import { BotConfigurationBase } from './botConfigurationBase';
 import * as encrypt from './encrypt';
+/**
+ * @module botframework-config
+ */
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { ConnectedService } from './models';
 import { IBotConfiguration, IConnectedService, IDispatchService, ServiceTypes } from './schema';
 let exec = util.promisify(require('child_process').exec);
 
+/**
+ * @private
+ */
 interface InternalBotConfig {
     location?: string;
 }
 
-// This class adds loading and saving from disk and encryption/decryption semantics on top of BotConfigurationBase
+
+
+/**
+ * BotConfiguration represents configuration information for a bot.
+ * 
+ * @remarks
+ * It is typically loaded from a .bot file on disk. This class implements methods for encrypting
+ * and manipulating the in-memory representation of the configuration.
+ */
 export class BotConfiguration extends BotConfigurationBase {
 
     private internal: InternalBotConfig = {};
 
+    /**
+     * Returns a new BotConfiguration instance given a JSON based configuration.
+     * @param source JSON based configuration.
+     */
     public static fromJSON(source: Partial<IBotConfiguration> = {}): BotConfiguration {
         // tslint:disable-next-line:prefer-const
         const services: IConnectedService[] = (source.services) ? source.services.slice().map(BotConfigurationBase.serviceFromJSON) : [];
@@ -39,7 +61,12 @@ export class BotConfiguration extends BotConfigurationBase {
         return botConfig;
     }
 
-    // load first bot in a folder
+    /**
+     * Load the bot configuration by looking in a folder and loading the first .bot file in the
+     * folder.
+     * @param folder (Optional) folder to look for bot files. If not specified the current working directory is used.
+     * @param secret (Optional) secret used to decrypt the bot file.
+     */
     public static async loadBotFromFolder(folder?: string, secret?: string): Promise<BotConfiguration> {
         folder = folder || process.cwd();
         let files: string[] = await fsx.readdir(folder);
@@ -52,7 +79,12 @@ export class BotConfiguration extends BotConfigurationBase {
         throw new Error(`Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`);
     }
 
-    // load first bot in a folder (blocking)
+    /**
+     * Load the bot configuration by looking in a folder and loading the first .bot file in the 
+     * folder. (blocking)
+     * @param folder (Optional) folder to look for bot files. If not specified the current working directory is used.
+     * @param secret (Optional) secret used to decrypt the bot file.
+     */
     public static loadBotFromFolderSync(folder?: string, secret?: string): BotConfiguration {
         folder = folder || process.cwd();
         let files: string[] = fsx.readdirSync(folder);
@@ -65,7 +97,11 @@ export class BotConfiguration extends BotConfigurationBase {
         throw new Error(`Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`);
     }
 
-    // load the config from a file
+    /**
+     * Load the configuration from a .bot file.
+     * @param botpath Path to bot file.
+     * @param secret (Optional) secret used to decrypt the bot file.
+     */
     public static async load(botpath: string, secret?: string): Promise<BotConfiguration> {
         const json: string = await txtfile.read(botpath);
         const bot: BotConfiguration = BotConfiguration.internalLoad(json, secret);
@@ -74,7 +110,11 @@ export class BotConfiguration extends BotConfigurationBase {
         return bot;
     }
 
-    // load the config from a file (blocking)
+    /**
+     * Load the configuration from a .bot file. (blocking)
+     * @param botpath Path to bot file.
+     * @param secret (Optional) secret used to decrypt the bot file.
+     */
     public static loadSync(botpath: string, secret?: string): BotConfiguration {
         const json: string = txtfile.readSync(botpath);
         const bot: BotConfiguration = BotConfiguration.internalLoad(json, secret);
@@ -83,7 +123,11 @@ export class BotConfiguration extends BotConfigurationBase {
         return bot;
     }
 
-    // save the config file to specificed botpath
+    /**
+     * Save the configuration to a .bot file.
+     * @param botpath Path to bot file.
+     * @param secret (Optional) secret used to encrypt the bot file.
+     */
     public async saveAs(botpath: string, secret?: string): Promise<void> {
         if (!botpath) {
             throw new Error(`missing path`);
@@ -105,7 +149,11 @@ export class BotConfiguration extends BotConfigurationBase {
         }
     }
 
-    // save the config file to specificed botpath
+    /**
+     * Save the configuration to a .bot file. (blocking)
+     * @param botpath Path to bot file.
+     * @param secret (Optional) secret used to encrypt the bot file.
+     */
     public saveAsSync(botpath: string, secret?: string): void {
         if (!botpath) {
             throw new Error(`missing path`);
@@ -127,12 +175,18 @@ export class BotConfiguration extends BotConfigurationBase {
         }
     }
 
-    // save the config file back over original
+    /**
+     * Save the file with secret.
+     * @param secret (Optional) secret used to encrypt the bot file.
+     */
     public async save(secret?: string): Promise<void> {
         return this.saveAs(this.internal.location, secret);
     }
 
-    // save the config file back over original (blocking)
+    /**
+     * Save the file with secret. (blocking)
+     * @param secret (Optional) secret used to encrypt the bot file.
+     */
     public saveSync(secret?: string): void {
         return this.saveAsSync(this.internal.location, secret);
     }
@@ -170,16 +224,24 @@ export class BotConfiguration extends BotConfigurationBase {
         return bot;
     }
 
-    // Generate a key for encryption
+    /**
+     * Generate a new key suitable for encrypting.
+     */
     public static generateKey(): string {
         return encrypt.generateKey();
     }
 
+    /**
+     * Clear secret.
+     */
     public clearSecret(): void {
         this.padlock = '';
     }
 
-    // encrypt all values in the config
+    /**
+     * Encrypt all values in the in memory config.
+     * @param secret Secret to encrypt.
+     */
     public encrypt(secret: string): void {
         this.validateSecret(secret);
 
@@ -188,7 +250,10 @@ export class BotConfiguration extends BotConfigurationBase {
         }
     }
 
-    // decrypt all values in the config
+    /**
+     * Decrypt all values in the in memory config.
+     * @param secret Secret to decrypt.
+     */
     public decrypt(secret?: string): void {
         try {
             this.validateSecret(secret);
@@ -249,12 +314,17 @@ export class BotConfiguration extends BotConfigurationBase {
         }
     }
 
-    // return the path that this config was loaded from.  .save() will save to this path
+    /**
+     * Return the path that this config was loaded from.  .save() will save to this path.
+     */
     public getPath(): string {
         return this.internal.location;
     }
 
-    // make sure secret is correct by decrypting the padlock with it
+    /**
+     * Make sure secret is correct by decrypting the secretKey with it.
+     * @param secret Secret to use.
+     */
     public validateSecret(secret: string): void {
         if (!secret) {
             throw new Error('You are attempting to perform an operation which needs access to the secret and --secret is missing');

@@ -1,4 +1,7 @@
 /**
+ * @module botframework-config
+ */
+/**
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
@@ -6,12 +9,34 @@ import { URL } from 'url';
 import { IQnAService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
+/**
+ * Defines a QnA Maker service connection.
+ */
 export class QnaMakerService extends ConnectedService implements IQnAService {
+    /**
+     * Knowledge base id.
+     */
     public kbId: string;
+
+    /**
+     * Subscription key for calling admin api.
+     */
     public subscriptionKey: string;
+
+    /**
+     * hostname for private service endpoint Example: https://myqna.azurewebsites.net.
+     */
     public hostname: string;
+
+    /**
+     * Endpoint Key for querying the kb.
+     */
     public endpointKey: string;
 
+    /**
+     * Creates a new QnaMakerService instance.
+     * @param source (Optional) JSON based service definition.
+     */
     constructor(source: IQnAService = {} as IQnAService) {
         super(source, ServiceTypes.QnA);
 
