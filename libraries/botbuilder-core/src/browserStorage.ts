@@ -43,7 +43,7 @@ export class BrowserLocalStorage extends MemoryStorage {
  * ```
  */
 export class BrowserSessionStorage extends MemoryStorage {
-    // Creates a new BroserSessionStorage instance.
+    // Creates a new BrowserSessionStorage instance.
     public constructor() {
         super(sessionStorage as any);
     }

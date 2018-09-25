@@ -28,17 +28,25 @@ import {
  * @remarks
  * All of these functions return an `Attachment` which can be added to an `Activity` directly or
  * passed as input to a `MessageFactory` method.
- *
+ * 
+ * The following example shows sending a message containing a single hero card:
+ * 
  * ```javascript
+ * const { MessageFactory, CardFactory } = require('botbuilder');
+ * 
  * const card = CardFactory.heroCard(
  *      'White T-Shirt',
  *      ['https://example.com/whiteShirt.jpg'],
  *      ['buy']
  * );
+ * const message = MessageFactory.attachment(card);
+ * await context.sendActivity(message);
  * ```
  */
 export class CardFactory {
-    // List of content types for each card style.
+    /**
+     * List of content types for each card style.
+     */
     public static contentTypes: any = {
         adaptiveCard: 'application/vnd.microsoft.card.adaptive',
         animationCard: 'application/vnd.microsoft.card.animation',
@@ -52,8 +60,7 @@ export class CardFactory {
     };
 
     /**
-     * Returns an attachment for an adaptive card. The attachment will contain the card and the
-     * appropriate `contentType`.
+     * Returns an attachment for an adaptive card. 
      *
      * @remarks
      * Adaptive Cards are a new way for bots to send interactive and immersive card content to
@@ -92,7 +99,6 @@ export class CardFactory {
 
     /**
      * Returns an attachment for an animation card.
-     *
      * @param title The cards title.
      * @param media Media URL's for the card.
      * @param buttons (Optional) set of buttons to include on the card.
@@ -109,7 +115,6 @@ export class CardFactory {
 
     /**
      * Returns an attachment for an audio card.
-     *
      * @param title The cards title.
      * @param media Media URL's for the card.
      * @param buttons (Optional) set of buttons to include on the card.
@@ -171,8 +176,8 @@ export class CardFactory {
     }
 
     /**
-     * Returns an attachment for an OAuth card used by the Bot Frameworks Single Sign On (SSO) service.
-     *
+     * Returns an attachment for an OAuth card used by the Bot Frameworks Single Sign On (SSO)
+     * service.
      * @param connectionName The name of the OAuth connection to use.
      * @param title Title of the cards signin button.
      * @param text (Optional) additional text to include on the card.
@@ -190,9 +195,7 @@ export class CardFactory {
     }
 
     /**
-     * Returns an attachment for a receipt card. The attachment will contain the card and the
-     * appropriate `contentType`.
-     *
+     * Returns an attachment for a receipt card.
      * @param card The adaptive card to return as an attachment.
      */
     public static receiptCard(card: ReceiptCard): Attachment {
@@ -200,9 +203,11 @@ export class CardFactory {
     }
 
     /**
-     * Returns an attachment for a signin card. For channels that don't natively support signin
-     * cards an alternative message will be rendered.
-     *
+     * Returns an attachment for a signin card.
+     * 
+     * @remarks
+     * For channels that don't natively support signin cards an alternative message will be 
+     * rendered.
      * @param title Title of the cards signin button.
      * @param url The link to the signin page the user needs to visit.
      * @param text (Optional) additional text to include on the card.
@@ -215,11 +220,13 @@ export class CardFactory {
     }
 
     /**
-     * Returns an attachment for a thumbnail card. Thumbnail cards are similar to [hero cards](#herocard)
-     * but instead of a full width image, they're typically rendered with a smaller thumbnail version of
-     * the image on either side and the text will be rendered in column next to the image. Any buttons
-     * will typically show up under the card.
-     *
+     * Returns an attachment for a thumbnail card. 
+     * 
+     * @remarks
+     * Thumbnail cards are similar to [hero cards](#herocard) but instead of a full width image,
+     * they're typically rendered with a smaller thumbnail version of the image on either side 
+     * and the text will be rendered in column next to the image. Any buttons will typically 
+     * show up under the card.
      * @param title The cards title.
      * @param text (Optional) text field for the card.
      * @param images (Optional) set of images to include on the card.
@@ -263,7 +270,6 @@ export class CardFactory {
 
     /**
      * Returns an attachment for a video card.
-     *
      * @param title The cards title.
      * @param media Media URLs for the card.
      * @param buttons (Optional) set of buttons to include on the card.
@@ -279,9 +285,11 @@ export class CardFactory {
     }
 
     /**
-     * Returns a properly formatted array of actions. Supports converting strings to `messageBack`
-     * actions (note: using 'imBack' for now as 'messageBack' doesn't work properly in emulator.)
-     *
+     * Returns a properly formatted array of actions.
+     * 
+     * @remarks
+     * Supports converting strings to `messageBack` actions (note: using 'imBack' for now as 
+     * 'messageBack' doesn't work properly in emulator.)
      * @param actions Array of card actions or strings. Strings will be converted to `messageBack` actions.
      */
     public static actions(actions: (CardAction|string)[]|undefined): CardAction[] {
@@ -299,7 +307,6 @@ export class CardFactory {
 
     /**
      * Returns a properly formatted array of card images.
-     *
      * @param images Array of card images or strings. Strings will be converted to card images.
      */
     public static images(images: (CardImage|string)[]|undefined): CardImage[] {
@@ -317,7 +324,6 @@ export class CardFactory {
 
     /**
      * Returns a properly formatted array of media url objects.
-     *
      * @param links Array of media url objects or strings. Strings will be converted to a media url object.
      */
     public static media(links: (MediaUrl|string)[]|undefined): MediaUrl[] {
