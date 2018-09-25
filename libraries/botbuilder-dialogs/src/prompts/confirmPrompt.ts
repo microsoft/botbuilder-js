@@ -11,7 +11,7 @@ import { Choice, ChoiceFactoryOptions } from '../choices';
 import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
 /**
- * Prompts a user to confirm something with a yes/no response.
+ * Prompts a user to confirm something with a "yes" or "no" response.
  *
  * @remarks
  * By default the prompt will return to the calling dialog a `boolean` representing the users
@@ -19,6 +19,9 @@ import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidat
  */
 export class ConfirmPrompt extends Prompt<boolean> {
 
+    /**
+     * Default confirm choices for a range of locales.
+     */
     public static defaultConfirmChoices: { [locale: string]: (string|Choice)[] } = {
         'es-es': ['Sí', 'No'],
         'nl-nl': ['Ja', 'Niet'],
@@ -30,6 +33,9 @@ export class ConfirmPrompt extends Prompt<boolean> {
         'zh-cn': ['是的', '不']
     };
 
+    /**
+     * Default options for rendering the choices to the user based on locale.
+     */
     public static defaultChoiceOptions: { [locale: string]: ChoiceFactoryOptions } = {
         'es-es': { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true },
         'nl-nl': { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true },
@@ -41,10 +47,25 @@ export class ConfirmPrompt extends Prompt<boolean> {
         'zh-cn': { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true }
     };
 
+
+    /**
+     * Creates a new ConfirmPrompt instance.
+     * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
+     */
+    constructor(dialogId: string, validator?: PromptValidator<boolean>, defaultLocale?: string) {
+        super(dialogId, validator);
+        this.style = ListStyle.auto;
+        this.defaultLocale = defaultLocale;
+    }
+    /**
+     * The prompts default locale that should be recognized. 
+     */
     public defaultLocale: string|undefined;
 
     /**
-     * Gets or sets the style of the yes/no choices rendered to the user when prompting.
+     * Style of the "yes" and "no" choices rendered to the user when prompting.
      *
      * @remarks
      * Defaults to `ListStyle.auto`.
@@ -52,24 +73,15 @@ export class ConfirmPrompt extends Prompt<boolean> {
     public style: ListStyle;
 
     /**
-     * Gets or sets additional options passed to the `ChoiceFactory` and used to tweak the style of
-     * choices rendered to the user.
+     * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices 
+     * rendered to the user.
      */
     public choiceOptions: ChoiceFactoryOptions|undefined;
 
-    public confirmChoices: (string|Choice)[]|undefined;
-
     /**
-     * Creates a new `ConfirmPrompt` instance.
-     * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
-     * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
+     * Custom list of choices to send for the prompt.  
      */
-    constructor(dialogId: string, validator?: PromptValidator<boolean>, defaultLocale?: string) {
-        super(dialogId, validator);
-        this.style = ListStyle.auto;
-        this.defaultLocale = defaultLocale;
-    }
+    public confirmChoices: (string|Choice)[]|undefined;
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         // Determine locale

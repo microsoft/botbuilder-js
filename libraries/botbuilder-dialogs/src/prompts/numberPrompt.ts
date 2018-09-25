@@ -17,18 +17,21 @@ import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from '
  */
 export class NumberPrompt extends Prompt<number> {
 
-    public defaultLocale: string|undefined;
-
     /**
-     * Creates a new `NumberPrompt` instance.
-     * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
-     * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
+     * Creates a new NumberPrompt instance.
+     * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
      */
     constructor(dialogId: string, validator?: PromptValidator<number>, defaultLocale?: string) {
         super(dialogId, validator);
         this.defaultLocale = defaultLocale;
     }
+
+    /**
+     * The prompts default locale that should be recognized. 
+     */
+    public defaultLocale: string|undefined;
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         if (isRetry && options.retryPrompt) {

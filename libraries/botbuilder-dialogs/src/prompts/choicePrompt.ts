@@ -10,14 +10,17 @@ import { ChoiceFactoryOptions, FindChoicesOptions, FoundChoice, recognizeChoices
 import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
 /**
- * Prompts a user to confirm something with a yes/no response.
+ * Prompts a user to select from a list of choices.
  *
  * @remarks
- * By default the prompt will return to the calling dialog a `boolean` representing the users
- * selection.
+ * By default the prompt will return to the calling dialog a `FoundChoice` object containing the
+ * choice that was selected.
  */
 export class ChoicePrompt extends Prompt<FoundChoice> {
 
+    /**
+     * Default options for rendering the choices to the user based on locale.
+     */
     public static defaultChoiceOptions: { [locale: string]: ChoiceFactoryOptions } = {
         'es-es': { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true },
         'nl-nl': { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true },
@@ -28,27 +31,6 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         'pt-br': { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true },
         'zh-cn': { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true }
     };
-
-    public defaultLocale: string|undefined;
-
-    /**
-     * Gets or sets the style of the choice list rendered to the user when prompting.
-     *
-     * @remarks
-     * Defaults to `ListStyle.auto`.
-     */
-    public style: ListStyle;
-
-    /**
-     * Gets or sets additional options passed to the `ChoiceFactory` and used to tweak the style of
-     * choices rendered to the user.
-     */
-    public choiceOptions: ChoiceFactoryOptions|undefined;
-
-    /**
-     * Gets or sets additional options passed to the `recognizeChoices()` function.
-     */
-    public recognizerOptions: FindChoicesOptions|undefined;
 
     /**
      * Creates a new `ChoicePrompt` instance.
@@ -61,6 +43,30 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         this.style = ListStyle.auto;
         this.defaultLocale = defaultLocale;
     }
+
+    /**
+     * The prompts default locale that should be recognized. 
+     */
+    public defaultLocale: string|undefined;
+
+    /**
+     * Style of the "yes" and "no" choices rendered to the user when prompting.
+     *
+     * @remarks
+     * Defaults to `ListStyle.auto`.
+     */
+    public style: ListStyle;
+
+    /**
+     * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices 
+     * rendered to the user.
+     */
+    public choiceOptions: ChoiceFactoryOptions|undefined;
+
+    /**
+     * Additional options passed to the underlying `recognizeChoices()` function.
+     */
+    public recognizerOptions: FindChoicesOptions|undefined;
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         // Determine locale
