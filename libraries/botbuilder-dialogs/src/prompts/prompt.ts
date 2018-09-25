@@ -209,7 +209,7 @@ export abstract class Prompt<T> extends Dialog {
     }
 }
 
-interface PromptState {
+export interface PromptState {
     state: object;
     options: PromptOptions;
 }
