@@ -31,7 +31,7 @@
     "ms-rest": "^2.3.6",
     "mstranslator": "^3.0.0",
     "nock": "^9.6.1",
-    "request": "2.83.0",
+    "request": "^2.87.0",
     "request-promise-native": "1.0.5"
   },
   "devDependencies": {
