@@ -27,7 +27,7 @@
     "jsonwebtoken": "8.0.1",
     "ms-rest-azure": "^2.5.0",
     "ms-rest-js": "0.2.8",
-    "request": "2.83.0",
+    "request": "^2.87.0",
     "rsa-pem-from-mod-exp": "^0.8.4"
   },
   "devDependencies": {
