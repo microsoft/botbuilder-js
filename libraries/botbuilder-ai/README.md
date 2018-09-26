@@ -102,7 +102,7 @@ entities.put('username', 'John');
 
 await languageGenerationResolver.resolve(activity, entities);
 
-entities.text // this value will contain the resolved value from the language generation service
+activity.text // this value will contain the resolved value from the language generation service
 ```
 ## Examples
 
