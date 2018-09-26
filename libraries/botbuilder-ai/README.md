@@ -38,7 +38,7 @@ This module contains interfaces for using [Microsoft LUIS](https://www.luis.ai) 
 
 First, import the nessary functionality into your app.
 ```javascript
-const { LuisRecognizer, QnAMaker } = require('botbuilder-ai');
+const { LuisRecognizer, QnAMaker, LanguageGenerationResolver } = require('botbuilder-ai');
 ```
 
 Configure and instantiate a LuisRecognizer. You will need to acquire values for appId, subscriptionKey and region from the LUIS website.
@@ -81,6 +81,29 @@ server.post('/api/messages', (req, res) => {
 });
 ```
 
+Configure and instantiate a LanguageGenerationResolver. 
+
+```js
+// Map the contents to the required format for `LanguageGenerationResolver`.
+const languageGenerationApplication = {
+	applicationId: process.env.appId,
+	endpointKey: process.env.subscriptionKey,
+	azureRegion: process.env.region
+}
+
+const languageGenerationResolver = new LanguageGenerationResolver(languageGenerationApplication)
+```
+
+Then, you can call the languageGenerationResolver with any type of activity and get the result back on the same activity reference  
+```js
+const activity = { text: '[welcomeUser]', locale: 'en-us' };
+const entities = new Map();
+entities.put('username', 'John');
+
+await languageGenerationResolver.resolve(activity, entities);
+
+entities.text // this value will contain the resolved value from the language generation service
+```
 ## Examples
 
 See this module in action in these example apps:
