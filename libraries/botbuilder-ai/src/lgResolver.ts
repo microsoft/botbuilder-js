@@ -888,7 +888,7 @@ export class LGAPI {
 				url: LGAPI.BASE_URL + LGAPI.RESOURCE_URL,
 				method: 'POST',
 				headers: {
-					Authorization: `Bearer - ${this.token}`,
+					Authorization: `Bearer ${this.token}`,
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify(lgRequest),
