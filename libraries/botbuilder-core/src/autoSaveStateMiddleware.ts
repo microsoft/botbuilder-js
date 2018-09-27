@@ -31,10 +31,10 @@ import { TurnContext } from './turnContext';
  * adapter.use(new AutoSaveStateMiddleware(conversationState, userState));
  *
  * server.post('/api/messages', (req, res) => {
- *    adapter.processActivity(req, res, async (context) => {
+ *    adapter.processActivity(req, res, async (turnContext) => {
  *       // Get state
- *       const convo = conversationState.get(context);
- *       const user = userState.get(context);
+ *       const convo = await conversationState.load(turnContext);
+ *       const user = await userState.load(turnContext);
  *
  *       // ... route activity ...
  *		 // ...make changes to state objects...
@@ -50,11 +50,7 @@ export class AutoSaveStateMiddleware implements Middleware {
      */
     constructor(...botStates: BotState[]) {
         this.botStateSet = new BotStateSet();
-        if (botStates) {
-            for (let botState of botStates) {
-                this.botStateSet.add(botState);
-            }
-        }
+        BotStateSet.prototype.add.apply(this.botStateSet, botStates);
     }
 
     /** 
@@ -72,9 +68,7 @@ export class AutoSaveStateMiddleware implements Middleware {
      * @param botStates One or more BotState plugins to add.
      */
     public add(...botStates: BotState[]): this {
-        botStates.forEach((botstate: BotState) => {
-            this.botStateSet.add(botstate);
-        });
+        BotStateSet.prototype.add.apply(this.botStateSet, botStates);
         return this;
     }
 
