@@ -7,7 +7,7 @@
  */
 import { Activity, ActivityTypes, InputHints, MessageFactory, TurnContext } from 'botbuilder-core';
 import { Choice, ChoiceFactory, ChoiceFactoryOptions } from '../choices';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult } from '../dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogConsultResult, DialogTurnStatus } from '../dialog';
 import { DialogContext } from '../dialogContext';
 
 /**
@@ -177,6 +177,17 @@ export abstract class Prompt<T> extends Dialog {
         return Dialog.EndOfTurn;
     }
 
+    public async consultDialog(dc: DialogContext): Promise<DialogConsultResult> {
+        // Don't do anything for non-message activities
+        let score = 0.0;
+        if (dc.context.activity.type === ActivityTypes.Message) {
+            // Delegate to derived prompt
+            const state: PromptState = dc.activeDialog.state as PromptState;
+            score = await this.onConsult(dc.context, state.state, state.options);
+        }
+        return { status: DialogTurnStatus.waiting, score: score };
+    }
+
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Don't do anything for non-message activities
         if (dc.context.activity.type !== ActivityTypes.Message) {
@@ -236,6 +247,20 @@ export abstract class Prompt<T> extends Dialog {
      * @param isRetry If `true` the users response wasn't recognized and the re-prompt should be sent.
      */
     protected abstract onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void>;
+
+    /**
+     * (Optionally) called by a parent dialog to determine if the prompt recognizes the utterance.
+     * 
+     * @remarks
+     * A confidence score ranging from 0.0 to 1.0 should be returned.
+     *  
+     * The Prompt class filters out non-message activities so its safe to assume that the users
+     * utterance can be retrieved from `context.activity.text`. 
+     * @param context Context for the current turn of conversation with the user.
+     * @param state Additional state being persisted for the prompt.
+     * @param options Options that the prompt was started with in the call to `DialogContext.prompt()`.
+     */
+    protected abstract onConsult(context: TurnContext, state: object, options: PromptOptions): Promise<number>;
 
     /**
      * Called to recognize an utterance received from the user.

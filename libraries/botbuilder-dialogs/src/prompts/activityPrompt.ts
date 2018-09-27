@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Activity, InputHints, TurnContext } from 'botbuilder-core';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult } from '../dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogConsultResult, DialogTurnStatus } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
@@ -19,6 +19,16 @@ import { PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt
  * expected activity is received.
  */
 export abstract class ActivityPrompt extends Dialog {
+    /**
+     * The score that will be returned anytime `DialogContext.consultDialog()` is called for the
+     * prompt.
+     * 
+     * @remarks
+     * By default the activity prompt returns a score of `0.5` but this can be raised to `1.0` for 
+     * prompts that you don't want to be interruptable or lowered to `0.0` for prompts that you
+     * always want to favor interruptions.
+     */
+    public consultScore: number = 0.5;
 
     /**
      * Creates a new ActivityPrompt instance.
@@ -48,6 +58,10 @@ export abstract class ActivityPrompt extends Dialog {
         await this.onPrompt(dc.context, state.state, state.options);
 
         return Dialog.EndOfTurn;
+    }
+
+    public consultDialog(dc: DialogContext): Promise<DialogConsultResult> {
+        return Promise.resolve({ status: DialogTurnStatus.waiting, score: this.consultScore });
     }
 
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {

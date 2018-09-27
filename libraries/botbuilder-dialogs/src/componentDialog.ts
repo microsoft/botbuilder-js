@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder-core';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogConsultResult } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 import { DialogSet } from './dialogSet';
 
@@ -96,6 +96,13 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
         }
     }
 
+    public async consultDialog(outerDC: DialogContext): Promise<DialogConsultResult> {
+        // Consult with inner dialog.
+        const dialogState: any = outerDC.activeDialog.state[PERSISTED_DIALOG_STATE];
+        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState);
+        return await this.onConsultDialog(innerDC);
+    }
+
     public async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
         // Continue execution of inner dialog.
         const dialogState: any = outerDC.activeDialog.state[PERSISTED_DIALOG_STATE];
@@ -181,6 +188,19 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
      */
     protected onBeginDialog(innerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         return innerDC.beginDialog(this.initialDialogId, options);
+    }
+
+    /**
+     * Called anytime an instance of the component has been asked for its confidence that its 
+     * active child dialog understands the current activity.
+     * 
+     * @remarks
+     * SHOULD be overridden by components that wish to perform custom consultation. The 
+     * default implementation calls `innerDC.consultDialog()`. 
+     * @param innerDC Dialog context for the components internal `DialogSet`.
+     */
+    protected onConsultDialog(innerDC: DialogContext): Promise<DialogConsultResult> {
+        return innerDC.consultDialog();
     }
 
     /**

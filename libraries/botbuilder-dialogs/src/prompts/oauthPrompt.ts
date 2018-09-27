@@ -5,9 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Token } from '@microsoft/recognizers-text-date-time';
-import {  Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, TokenResponse, TurnContext } from 'botbuilder-core';
-import { Dialog, DialogTurnResult } from '../dialog';
+import { Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, TokenResponse, TurnContext } from 'botbuilder-core';
+import { Dialog, DialogTurnResult, DialogConsultResult, DialogTurnStatus } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
 
@@ -104,6 +103,16 @@ export interface OAuthPromptSettings {
  * ```
  */
 export class OAuthPrompt extends Dialog {
+    /**
+     * The score that will be returned anytime `DialogContext.consultDialog()` is called for the
+     * prompt.
+     * 
+     * @remarks
+     * By default the oauth prompt returns a score of `0.5` but this can be raised to `1.0` for 
+     * prompts that you don't want to be interruptable or lowered to `0.0` for prompts that you
+     * always want to favor interruptions.
+     */
+    public consultScore: number = 0.5;
 
     /**
      * Creates a new OAuthPrompt instance.
@@ -143,6 +152,10 @@ export class OAuthPrompt extends Dialog {
 
             return Dialog.EndOfTurn;
         }
+    }
+
+    public consultDialog(dc: DialogContext): Promise<DialogConsultResult> {
+        return Promise.resolve({ status: DialogTurnStatus.waiting, score: this.consultScore });
     }
 
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {

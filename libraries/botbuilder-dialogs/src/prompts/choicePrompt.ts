@@ -89,9 +89,21 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         // Send prompt
         await context.sendActivity(prompt);
     }
+    
+    protected async onConsult(context: TurnContext, state: any, options: PromptOptions): Promise<number> {
+        const activity: Activity = context.activity;
+        const utterance: string = activity.text;
+        const choices: any[] = options.choices || [];
+        const opt: FindChoicesOptions = this.recognizerOptions || {} as FindChoicesOptions;
+        opt.locale = activity.locale || opt.locale || this.defaultLocale || 'en-us';
+        const results: any[]  = recognizeChoices(utterance, choices, opt);
+        if (Array.isArray(results) && results.length > 0) {
+            return results[0].resolution.score || 1.0;
+        }
+        return 0;
+    }
 
     protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<FoundChoice>> {
-
         const result: PromptRecognizerResult<FoundChoice> = { succeeded: false };
         const activity: Activity = context.activity;
         const utterance: string = activity.text;

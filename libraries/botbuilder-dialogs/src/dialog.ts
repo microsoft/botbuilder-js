@@ -127,6 +127,21 @@ export interface DialogTurnResult<T = any> {
     result?: T;
 }
 
+export interface DialogConsultResult {
+    /**
+     * Gets or sets the current status of the stack.
+     */
+    status: DialogTurnStatus;
+
+    /**
+     * Gets or sets a score for how confident the active dialog is that it understands the current activity.
+     * 
+     * @remarks
+     * The score should be a value between 0.0 and 1.0.
+     */
+    score: number;
+}
+
 /**
  * Base class for all dialogs.
  */
@@ -160,6 +175,20 @@ export abstract class Dialog<O extends object = {}> {
      * @param options (Optional) arguments that were passed to the dialog in the call to `DialogContext.beginDialog()`.
      */
     public abstract beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+
+    /**
+     * Called when a parent dialog would like to ask the active dialog how confident it is that
+     * it understands the current activity.
+     * 
+     * @remarks
+     * MAY be overridden by dialogs that support multi-turn conversations and have specific set of
+     * activities that they're listening for. The default implementation returns a confidence score
+     * of `0.5`.
+     * @param dc The dialog context for the current turn of conversation.
+     */
+    public consultDialog(dc: DialogContext): Promise<DialogConsultResult> {
+        return Promise.resolve({ status: DialogTurnStatus.waiting, score: 0.5 });
+    }
 
     /**
      * Called when an instance of the dialog is the active dialog and a new activity is received. 

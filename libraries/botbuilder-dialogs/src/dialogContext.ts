@@ -7,7 +7,7 @@
  */
 import { Activity, TurnContext } from 'botbuilder-core';
 import { Choice } from './choices';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogConsultResult } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
 
@@ -169,6 +169,23 @@ export class DialogContext {
         }
 
         return this.beginDialog(dialogId, options);
+    }
+
+    public async consultDialog(): Promise<DialogConsultResult> {
+        // Check for a dialog on the stack
+        const instance: DialogInstance<any> = this.activeDialog;
+        if (instance) {
+            // Lookup dialog
+            const dialog: Dialog<{}> = this.dialogs.find(instance.id);
+            if (!dialog) {
+                throw new Error(`DialogContext.continue(): Can't continue dialog. A dialog with an id of '${instance.id}' wasn't found.`);
+            }
+
+            // Consult with active dialog
+            return await dialog.consultDialog(this);
+        } else {
+            return { status: DialogTurnStatus.empty, score: 0.0 };
+        }
     }
 
     /**

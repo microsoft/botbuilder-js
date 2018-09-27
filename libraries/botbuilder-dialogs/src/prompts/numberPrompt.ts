@@ -41,6 +41,17 @@ export class NumberPrompt extends Prompt<number> {
         }
     }
 
+    protected async onConsult(context: TurnContext, state: any, options: PromptOptions): Promise<number> {
+        const activity: Activity = context.activity;
+        const utterance: string = activity.text;
+        const locale: string = activity.locale || this.defaultLocale || 'en-us';
+        const results: any = Recognizers.recognizeNumber(utterance, locale);
+        if (results.length > 0 && results[0].resolution) {
+            return results[0].resolution.score || 1.0;
+        }
+        return 0;
+    }
+
     protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<number>> {
         const result: PromptRecognizerResult<number> = { succeeded: false };
         const activity: Activity = context.activity;

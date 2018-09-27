@@ -32,6 +32,11 @@ export class AttachmentPrompt extends Prompt<Attachment[]> {
             await context.sendActivity(options.prompt, undefined, InputHints.ExpectingInput);
         }
     }
+    
+    protected async onConsult(context: TurnContext, state: any, options: PromptOptions): Promise<number> {
+        const value: Attachment[] = context.activity.attachments;
+        return Array.isArray(value) && value.length > 0 ? 1.0 : 0.0;
+    }
 
     protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<Attachment[]>> {
         const value: Attachment[] = context.activity.attachments;
