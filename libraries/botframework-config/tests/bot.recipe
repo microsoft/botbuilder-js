@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "resources": [
+    {
+      "type": "endpoint",
+      "id": "176",
+      "name": "a",
+      "url": "http://localhost:3978/api/messages"
+    }
+  ]
+}
