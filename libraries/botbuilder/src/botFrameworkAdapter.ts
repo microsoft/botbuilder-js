@@ -777,6 +777,7 @@ function parseRequest(req: WebRequest): Promise<Activity> {
             if (typeof activity.type !== 'string') { throw new Error(`BotFrameworkAdapter.parseRequest(): missing activity type.`); }
             if (activity.timestamp && typeof activity.timestamp === 'string') { activity.timestamp = new Date(activity.timestamp); }
             if (activity.localTimestamp && typeof activity.localTimestamp === 'string') { activity.localTimestamp = new Date(activity.localTimestamp); }
+            if (activity.expiration && typeof activity.expiration === 'string') { activity.expiration = new Date(activity.expiration); }
             resolve(activity);
         }
 
