@@ -89,8 +89,9 @@ export class BotRecipe {
 
     public static fromJSON(source: Partial<BotRecipe> = {}): BotRecipe {
         const botRecipe = new BotRecipe();
-        let { version, resources  } = source;
-        Object.assign(botRecipe, { resources, version });
+        let { version, resources } = source;
+        botRecipe.resources = resources ? resources : botRecipe.resources;
+        botRecipe.version = version ? version : botRecipe.version;
         return botRecipe;
     }
 
