@@ -31,7 +31,6 @@ export class ShowTypingMiddleware implements Middleware {
          * @param period {number} Number of milliseconds to wait before sending each following indicator.
          */
         constructor(delay: number = 500, period: number = 2000) {
-            // noop
             if (delay < 0) {
                 throw new Error('Delay must be greater than or equal to zero');
             }
