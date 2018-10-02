@@ -11,12 +11,25 @@ import { TurnContext } from './turnContext';
 
  /**
   * Middleware that will send a typing indicator autmatically for each message.
+  * 
+  * @remarks
+  * When added, this middleware will send typing activities back to the user when a Message activity
+  * is receieved to let them know that the bot has received the message and is working on the response.
+  * You can specify a delay in milliseconds before the first typing activity is sent and then a frequency,
+  * also in milliseconds which determines how often another typing activity is sent. Typing activities
+  * will continue to be sent until your bot sends another message back to the user
   */
 export class ShowTypingMiddleware implements Middleware {
-        private readonly _delay: number;
-        private readonly _period: number;
-        private _interval: number;
+        private readonly delay: number;
+        private readonly period: number;
+        private interval: any;
+        private finished: boolean;
 
+        /**
+         * Create the SendTypingIndicator middleware
+         * @param delay {number} Number of milliseconds to wait before sending the first typing indicator.
+         * @param period {number} Number of milliseconds to wait before sending each following indicator.
+         */
         constructor(delay: number = 500, period: number = 2000) {
             // noop
             if (delay < 0) {
@@ -27,31 +40,53 @@ export class ShowTypingMiddleware implements Middleware {
                 throw new Error('Repeat period must be greater than zero');
             }
 
-            this._delay = delay;
-            this._period = period;
+            this.delay = delay;
+            this.period = period;
         }
 
+        /** Implement middleware signature
+         * @param context {TurnContext} An incoming TurnContext object.
+         * @param next {function} The next delegate function.
+         */
         public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
             if (context.activity.type === ActivityTypes.Message) {
-                 await this.sleep(this._delay);
+                 await this.sleep(this.delay);
                  await this.sendTypingActivity(context);
-                // how do we continue to send while waiting for response
 
+                 this.startInterval(context);
             }
 
-            // let the rest of the process run.
-            // while it is running, continue to send typing indicators.
-            await next();
-
+            // Let the rest of the process run.
             // After everything has run, stop the indicator!
-            if (this._interval) {
-                clearInterval(this._interval);
-            }
+            return await next().then(
+                () => { this.stopInterval(); },
+                () => { this.stopInterval(); }
+            );
 
         }
 
-        private async sleep(ms) {
-            return new Promise((resolve: any): Promise<any> => setTimeout(resolve, ms));
+        private async sleep(ms: number): Promise<{}> {
+            return new Promise((resolve: any): void => { setTimeout(resolve, ms); });
+        }
+
+        private startInterval(context: TurnContext): void {
+            this.finished = false;
+
+            this.interval = setInterval(
+                () => {
+                    if (!this.finished) {
+                        this.sendTypingActivity(context);
+                    }
+                },
+                this.period
+            );
+        }
+
+        private stopInterval(): void {
+            this.finished = true;
+            if (this.interval) {
+                clearInterval(this.interval);
+            }
         }
 
         private async sendTypingActivity(context: TurnContext): Promise<void> {
