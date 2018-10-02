@@ -11,7 +11,7 @@ import { TurnContext } from './turnContext';
 
  /**
   * Middleware that will send a typing indicator autmatically for each message.
-  * 
+  *
   * @remarks
   * When added, this middleware will send typing activities back to the user when a Message activity
   * is receieved to let them know that the bot has received the message and is working on the response.
@@ -49,10 +49,10 @@ export class ShowTypingMiddleware implements Middleware {
          */
         public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
             if (context.activity.type === ActivityTypes.Message) {
-                 await this.sleep(this.delay);
-                 await this.sendTypingActivity(context);
-
-                 this.startInterval(context);
+                // Set a property to track whether or not the turn is finished.
+                // When it flips to true, we won't send anymore typing indicators.
+                this.finished = false;
+                this.startInterval(context, this.delay);
             }
 
             // Let the rest of the process run.
@@ -68,24 +68,23 @@ export class ShowTypingMiddleware implements Middleware {
             return new Promise((resolve: any): void => { setTimeout(resolve, ms); });
         }
 
-        private startInterval(context: TurnContext): void {
-            this.finished = false;
-
-            this.interval = setInterval(
+        private startInterval(context: TurnContext, delay: number): void {
+            setTimeout(
                 () => {
                     if (!this.finished) {
                         this.sendTypingActivity(context);
+                        // Pass in this.period as the delay to repeat at an interval.
+                        this.startInterval(context, this.period);
+                    } else {
+                        // Do nothing! This turn is done and we don't want to continue sending typing indicators.
                     }
                 },
-                this.period
+                delay
             );
         }
 
         private stopInterval(): void {
             this.finished = true;
-            if (this.interval) {
-                clearInterval(this.interval);
-            }
         }
 
         private async sendTypingActivity(context: TurnContext): Promise<void> {

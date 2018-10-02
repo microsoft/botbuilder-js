@@ -3,11 +3,16 @@ const { ActivityTypes, ShowTypingMiddleware, TestAdapter } = require('../lib');
 
 const receivedMessage = { text: 'received', type: 'message' };
 
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 
 describe(`ShowTypingMiddleware`, function () {
-    this.timeout(5000);
+    this.timeout(10000);
 
     var adapter = new TestAdapter(async (context) => {
+        await sleep(600);
         await context.sendActivity(`echo:${context.activity.text}`);
     }).use(new ShowTypingMiddleware());
 
