@@ -59,6 +59,7 @@ export class BotStateSet {
         const promises: Promise<any>[] = this.botStates.map((botstate: BotState) => botstate.load(context, force));
 
         await Promise.all(promises);
+
         return;
     }
 
@@ -78,6 +79,7 @@ export class BotStateSet {
         const promises: Promise<void>[] = this.botStates.map((botstate: BotState) => botstate.saveChanges(context, force));
 
         await Promise.all(promises);
+
         return;
     }
 }

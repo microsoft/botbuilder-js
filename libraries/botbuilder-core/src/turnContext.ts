@@ -44,6 +44,7 @@ export type DeleteActivityHandler = (
     next: () => Promise<void>
 ) => Promise<void>;
 
+// tslint:disable-next-line:no-empty-interface
 export interface TurnContext {}
 
 /**

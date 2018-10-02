@@ -37,8 +37,8 @@ import { TurnContext } from './turnContext';
  *       const user = await userState.load(turnContext);
  *
  *       // ... route activity ...
- *		 // ...make changes to state objects...
- * 		 // ... no need to call userState.saveChanges() or conversationState.saveChanges() anymore!
+ *       // ...make changes to state objects...
+ *       // ... no need to call userState.saveChanges() or conversationState.saveChanges() anymore!
  *    });
  * });
  * ```
@@ -69,6 +69,7 @@ export class AutoSaveStateMiddleware implements Middleware {
      */
     public add(...botStates: BotState[]): this {
         BotStateSet.prototype.add.apply(this.botStateSet, botStates);
+
         return this;
     }
 

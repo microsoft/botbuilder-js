@@ -362,14 +362,15 @@ export class OAuthApiClient {
       }
 
     // Serialize Request
-    let requestContent = null;
+    let requestContent: any = null;
     try {
       if (resourceUrls !== null && resourceUrls !== undefined) {
         requestContent = JSON.stringify(resourceUrls);
       }
     } catch (error) {
-      const serializationError = new Error(`Error "${error.message}" occurred in serializing the ` +
+      const serializationError: Error = new Error(`Error "${error.message}" occurred in serializing the ` +
           `payload - ${JSON.stringify(resourceUrls, null, 2)}.`);
+
       return Promise.reject(serializationError);
     }
     httpRequest.body = requestContent;
@@ -575,26 +576,32 @@ export class OAuthApiClient {
   }
 
     /**
-   * @summary GetAadTokens
-   * Gets Azure Active Directory tokens for specific resource URLs
-   * once the user has looged into a particure AAD connection.
-   *
-   * @param {string} userId Id of the user.
-   *
-   * @param {string} connectionName Name of the auth connection to use.
-   *
-   * @param {string[]} resourceUrls The resource URLs for which to get tokens.
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   */
-  public async getAadTokens(userId: string, connectionName: string, resourceUrls: Models.AadResourceUrls, options?: msRest.RequestOptionsBase): Promise<Models.TokenResponseMap> {
-    return this.getAadTokensWithHttpOperationResponse(userId, connectionName, resourceUrls, options).then((operationRes: msRest.HttpOperationResponse) => {
-      return Promise.resolve(operationRes.bodyAsJson as Models.TokenResponseMap);
-    }).catch((err: Error) => {
-      return Promise.reject(err);
-    });
+     * @summary GetAadTokens
+     * Gets Azure Active Directory tokens for specific resource URLs
+     * once the user has looged into a particure AAD connection.
+     *
+     * @param {string} userId Id of the user.
+     *
+     * @param {string} connectionName Name of the auth connection to use.
+     *
+     * @param {string[]} resourceUrls The resource URLs for which to get tokens.
+     *
+     * @param {RequestOptionsBase} [options] Optional Parameters.
+     *
+     * @returns {Promise} A promise is returned
+     */
+  public async getAadTokens(
+    userId: string,
+    connectionName: string,
+    resourceUrls: Models.AadResourceUrls,
+    options?: msRest.RequestOptionsBase
+  ): Promise<Models.TokenResponseMap> {
+    return this.getAadTokensWithHttpOperationResponse(userId, connectionName, resourceUrls, options)
+      .then((operationRes: msRest.HttpOperationResponse) => {
+        return Promise.resolve(operationRes.bodyAsJson as Models.TokenResponseMap);
+      }).catch((err: Error) => {
+        return Promise.reject(err);
+      });
   }
 
   /**

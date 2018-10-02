@@ -46,7 +46,7 @@ export class ConnectedService implements IConnectedService {
      * @param encryptString Function called to encrypt an individual value.
      */
     public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
-
+        // noop
     }
 
     /**
@@ -55,6 +55,6 @@ export class ConnectedService implements IConnectedService {
      * @param decryptString Function called to decrypt an individual value.
      */
     public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
-
+        // noop
     }
 }

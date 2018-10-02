@@ -66,7 +66,8 @@ export module GovernmentChannelValidation {
 
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromGovernmentChannelTokenValidationParameters,
-            ChannelValidation.OpenIdMetadataEndpoint ? ChannelValidation.OpenIdMetadataEndpoint : GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl,
+            ChannelValidation.OpenIdMetadataEndpoint ?
+                ChannelValidation.OpenIdMetadataEndpoint : GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl,
             Constants.AllowedSigningAlgorithms);
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
@@ -75,11 +76,11 @@ export module GovernmentChannelValidation {
     }
 
      /**
-     * Validate the ClaimsIdentity to ensure it came from the channel service.
-     * @param  {ClaimsIdentity} identity The identity to validate
-     * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
-     * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
-     */
+      * Validate the ClaimsIdentity to ensure it came from the channel service.
+      * @param  {ClaimsIdentity} identity The identity to validate
+      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
+      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
+      */
     export async function validateIdentity(
         identity: ClaimsIdentity,
         credentials: ICredentialProvider

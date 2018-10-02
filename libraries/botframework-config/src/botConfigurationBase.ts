@@ -5,8 +5,12 @@
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
-import { AppInsightsService, BlobStorageService, BotService, ConnectedService, CosmosDbService, DispatchService, EndpointService, FileService, GenericService, LuisService, QnaMakerService } from './models';
-import { IAppInsightsService, IBlobStorageService, IBotConfiguration, IBotService, IConnectedService, ICosmosDBService, IDispatchService, IEndpointService, IFileService, IGenericService, ILuisService, IQnAService, ServiceTypes } from './schema';
+import {
+    AppInsightsService, BlobStorageService, BotService, ConnectedService, CosmosDbService, DispatchService,
+    EndpointService, FileService, GenericService, LuisService, QnaMakerService } from './models';
+import { IAppInsightsService, IBlobStorageService, IBotConfiguration, IBotService, IConnectedService,
+    ICosmosDBService, IDispatchService, IEndpointService, IFileService, IGenericService, ILuisService,
+    IQnAService, ServiceTypes } from './schema';
 
 /**
  * This is class which allows you to manipulate in memory representations of bot configuration with
@@ -79,6 +83,7 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
         Object.assign(botConfig, source);
         botConfig.services = services;
         botConfig.migrateData();
+
         return botConfig;
     }
 
@@ -86,10 +91,11 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
      * Returns a JSON based version of the current bot.
      */
     public toJSON(): IBotConfiguration {
-        const newConfig = <IBotConfiguration>{};
+        const newConfig: IBotConfiguration = <IBotConfiguration>{};
         Object.assign(newConfig, this);
         delete (<any>newConfig).internal;
-        newConfig.services = this.services.slice().map((service) => (<ConnectedService>service).toJSON());
+        newConfig.services = this.services.slice().map((service: IConnectedService) => (<ConnectedService>service).toJSON());
+
         return newConfig;
     }
 
@@ -194,13 +200,13 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
             switch (service.type) {
                 case ServiceTypes.Bot:
                     {
-                        const botService = <IBotService>service;
+                        const botService: IBotService = <IBotService>service;
 
                         // old bot service records may not have the appId on the bot, but we probably have it already on an endpoint
                         if (!botService.appId) {
                             for (const s of this.services) {
-                                if (s.type == ServiceTypes.Endpoint) {
-                                    const endpoint = <IEndpointService>s;
+                                if (s.type === ServiceTypes.Endpoint) {
+                                    const endpoint: IEndpointService = <IEndpointService>s;
                                     if (endpoint.appId) {
                                         botService.appId = endpoint.appId;
                                         break;

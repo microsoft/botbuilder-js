@@ -19,7 +19,8 @@ import * as encrypt from './encrypt';
  */
 import { ConnectedService } from './models';
 import { IBotConfiguration, IConnectedService, IDispatchService, ServiceTypes } from './schema';
-const exec = util.promisify(require('child_process').exec);
+// tslint:disable-next-line:no-var-requires no-require-imports
+const exec: Function = util.promisify(require('child_process').exec);
 
 /**
  * @private
@@ -56,6 +57,7 @@ export class BotConfiguration extends BotConfigurationBase {
         }
         botConfig.services = services;
         botConfig.migrateData();
+
         return botConfig;
     }
 

@@ -73,7 +73,7 @@ export class BotRecipe {
     /**
      * Version of the recipe.
      */
-    public version = '1.0';
+    public version: string = '1.0';
 
     /**
      *
@@ -84,18 +84,21 @@ export class BotRecipe {
      * Creates a new BotRecipe instance.
      */
     constructor() {
+        // noop
     }
 
     public static fromJSON(source: Partial<BotRecipe> = {}): BotRecipe {
-        const botRecipe = new BotRecipe();
+        const botRecipe: BotRecipe = new BotRecipe();
         const { version, resources } = source;
         botRecipe.resources = resources ? resources : botRecipe.resources;
         botRecipe.version = version ? version : botRecipe.version;
+
         return botRecipe;
     }
 
     public toJSON(): Partial<BotRecipe> {
         const { version, resources } = this;
+
         return { version, resources };
     }
 }

@@ -40,7 +40,8 @@ export module JwtTokenValidation {
             throw new Error('Unauthorized Access. Request is not authorized');
         }
 
-        const claimsIdentity: ClaimsIdentity = await validateAuthHeader(authHeader, credentials, channelService, activity.channelId, activity.serviceUrl);
+        const claimsIdentity: ClaimsIdentity =
+            await validateAuthHeader(authHeader, credentials, channelService, activity.channelId, activity.serviceUrl);
 
         MicrosoftAppCredentials.trustServiceUrl(activity.serviceUrl);
 
@@ -72,7 +73,12 @@ export module JwtTokenValidation {
 
         if (isGovernment(channelService)) {
             if (serviceUrl.trim()) {
-                return await GovernmentChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId);
+                return await GovernmentChannelValidation.authenticateChannelTokenWithServiceUrl(
+                    authHeader,
+                    credentials,
+                    serviceUrl,
+                    channelId
+                );
             }
 
             return await GovernmentChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
@@ -80,17 +86,23 @@ export module JwtTokenValidation {
 
         // Otherwise use Enterprise Channel Validation
         if (serviceUrl.trim()) {
-            return await EnterpriseChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId, channelService);
+            return await EnterpriseChannelValidation.authenticateChannelTokenWithServiceUrl(
+                authHeader,
+                credentials,
+                serviceUrl,
+                channelId,
+                channelService
+            );
         }
 
         return await EnterpriseChannelValidation.authenticateChannelToken(authHeader, credentials, channelId, channelService);
     }
 
-    function isPublicAzure(channelService: string) {
+    function isPublicAzure(channelService: string): boolean {
         return !channelService || channelService.length === 0;
     }
 
-    function isGovernment(channelService: string) {
+    function isGovernment(channelService: string): boolean {
         return channelService && channelService.toLowerCase() === GovernmentConstants.ChannelService;
     }
 }

@@ -58,7 +58,7 @@ export abstract class ActivityPrompt extends Dialog {
         // Validate the return value
         // - Unlike the other prompts a validator is required for an ActivityPrompt so we don't
         //   need to check for its existence before calling it.
-        const isValid = await this.validator({
+        const isValid: boolean = await this.validator({
             context: dc.context,
             recognized: recognized,
             state: state.state,

@@ -93,6 +93,7 @@ export class DialogSet {
         }
 
         this.dialogs[dialog.id] = dialog;
+
         return this;
     }
 
