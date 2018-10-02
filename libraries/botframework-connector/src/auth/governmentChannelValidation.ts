@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 import { VerifyOptions } from 'jsonwebtoken';
+import { ChannelValidation } from './channelValidation';
 import { ClaimsIdentity } from './claimsIdentity';
 import { Constants } from './constants';
-import { GovernmentConstants } from './governmentConstants';
-import { ChannelValidation } from './channelValidation';
 import { ICredentialProvider } from './credentialProvider';
+import { GovernmentConstants } from './governmentConstants';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 
 export module GovernmentChannelValidation {
@@ -82,7 +82,7 @@ export module GovernmentChannelValidation {
      */
     export async function validateIdentity(
         identity: ClaimsIdentity,
-        credentials: ICredentialProvider,
+        credentials: ICredentialProvider
     ): Promise<ClaimsIdentity> {
         if (!identity) {
             // No valid identity. Not Authorized.

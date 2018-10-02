@@ -33,19 +33,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
     };
 
     /**
-     * Creates a new `ChoicePrompt` instance.
-     * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
-     * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
-     */
-    constructor(dialogId: string, validator?: PromptValidator<FoundChoice>, defaultLocale?: string) {
-        super(dialogId, validator);
-        this.style = ListStyle.auto;
-        this.defaultLocale = defaultLocale;
-    }
-
-    /**
-     * The prompts default locale that should be recognized. 
+     * The prompts default locale that should be recognized.
      */
     public defaultLocale: string|undefined;
 
@@ -58,7 +46,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
     public style: ListStyle;
 
     /**
-     * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices 
+     * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
      */
     public choiceOptions: ChoiceFactoryOptions|undefined;
@@ -67,6 +55,18 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
      * Additional options passed to the underlying `recognizeChoices()` function.
      */
     public recognizerOptions: FindChoicesOptions|undefined;
+
+    /**
+     * Creates a new `ChoicePrompt` instance.
+     * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
+     * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
+     */
+    constructor(dialogId: string, validator?: PromptValidator<FoundChoice>, defaultLocale?: string) {
+        super(dialogId, validator);
+        this.style = ListStyle.auto;
+        this.defaultLocale = defaultLocale;
+    }
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         // Determine locale

@@ -590,7 +590,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * The activities will be sent one after another in the order in which they're received. A response object will be returned for each
      * sent activity. For `message` activities this will contain the id of the delivered message.
      *
-     * Instead of calling these methods directly on the adapter, calling `TurnContext.sendActivities()` or `TurnContext.sendActivity()` 
+     * Instead of calling these methods directly on the adapter, calling `TurnContext.sendActivities()` or `TurnContext.sendActivity()`
      * is the preferred way of sending activities as that will ensure that outgoing activities have been properly addressed
      * and that any interested middleware has been notified.
      *

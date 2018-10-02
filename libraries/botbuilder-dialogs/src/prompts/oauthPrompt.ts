@@ -90,11 +90,11 @@ export interface OAuthPromptSettings {
  *          return await step.beginDialog('loginPrompt');
  *      },
  *      async (step) => {
- *          const token = step.result; 
+ *          const token = step.result;
  *          if (token) {
- * 
+ *
  *              // ... continue with task needing access token ...
- * 
+ *
  *          } else {
  *              await step.context.sendActivity(`Sorry... We couldn't log you in. Try again later.`);
  *              return await step.endDialog();

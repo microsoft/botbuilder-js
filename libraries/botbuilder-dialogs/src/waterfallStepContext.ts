@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogContext } from './dialogContext';
 import { DialogReason, DialogTurnResult } from './dialog';
+import { DialogContext } from './dialogContext';
 
 /**
  * Values passed to the `WaterfallStepContext` constructor.
@@ -18,7 +18,7 @@ export interface WaterfallStepInfo<O extends object> {
     index: number;
 
     /**
-     * Any options passed to the steps waterfall dialog when it was started with 
+     * Any options passed to the steps waterfall dialog when it was started with
      * `DialogContext.beginDialog()`.
      */
     options: O;
@@ -42,7 +42,7 @@ export interface WaterfallStepInfo<O extends object> {
      * Called to skip to the next waterfall step.
      * @param result (Optional) result to pass to the next step.
      */
-    onNext: (result?: any) => Promise<DialogTurnResult>;
+    onNext(result?: any): Promise<DialogTurnResult>;
 
 }
 
@@ -71,7 +71,7 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
     }
 
     /**
-     * Any options passed to the steps waterfall dialog when it was started with 
+     * Any options passed to the steps waterfall dialog when it was started with
      * `DialogContext.beginDialog()`.
      */
     public get options(): O {
@@ -101,9 +101,9 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
 
     /**
      * Skips to the next waterfall step.
-     * 
+     *
      * @remarks
-     * 
+     *
      * ```JavaScript
      * return await step.skip();
      * ```

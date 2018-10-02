@@ -7,12 +7,12 @@
  */
 import { Activity } from 'botframework-schema';
 import { ChannelValidation } from './channelValidation';
-import { GovernmentChannelValidation } from './governmentChannelValidation';
-import { EnterpriseChannelValidation } from './enterpriseChannelValidation';
-import { GovernmentConstants } from './governmentConstants';
 import { ClaimsIdentity } from './claimsIdentity';
 import { ICredentialProvider } from './credentialProvider';
 import { EmulatorValidation } from './emulatorValidation';
+import { EnterpriseChannelValidation } from './enterpriseChannelValidation';
+import { GovernmentChannelValidation } from './governmentChannelValidation';
+import { GovernmentConstants } from './governmentConstants';
 import { MicrosoftAppCredentials } from './microsoftAppCredentials';
 
 export module JwtTokenValidation {

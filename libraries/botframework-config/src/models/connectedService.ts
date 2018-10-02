@@ -15,7 +15,7 @@ export class ConnectedService implements IConnectedService {
      * Unique Id for the service.
      */
     public id: string;
-    
+
     /**
      * Friendly name for the service.
      */

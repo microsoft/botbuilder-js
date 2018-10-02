@@ -368,7 +368,7 @@ export class OAuthApiClient {
         requestContent = JSON.stringify(resourceUrls);
       }
     } catch (error) {
-      let serializationError = new Error(`Error "${error.message}" occurred in serializing the ` +
+      const serializationError = new Error(`Error "${error.message}" occurred in serializing the ` +
           `payload - ${JSON.stringify(resourceUrls, null, 2)}.`);
       return Promise.reject(serializationError);
     }

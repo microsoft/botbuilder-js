@@ -14,7 +14,7 @@ import { PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt
  * Waits for an activity to be received.
  *
  * @remarks
- * This prompt requires a validator be passed in and is useful when waiting for non-message 
+ * This prompt requires a validator be passed in and is useful when waiting for non-message
  * activities like an event to be received. The validator can ignore received events until the
  * expected activity is received.
  */
@@ -57,7 +57,7 @@ export abstract class ActivityPrompt extends Dialog {
 
         // Validate the return value
         // - Unlike the other prompts a validator is required for an ActivityPrompt so we don't
-        //   need to check for its existence before calling it. 
+        //   need to check for its existence before calling it.
         const isValid = await this.validator({
             context: dc.context,
             recognized: recognized,

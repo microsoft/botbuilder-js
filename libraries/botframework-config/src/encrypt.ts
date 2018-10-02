@@ -93,8 +93,8 @@ export function decryptString(encryptedValue: string, secret: string): string {
 
 /**
  * @private
- * @param encryptedValue 
- * @param secret 
+ * @param encryptedValue
+ * @param secret
  */
 export function legacyDecrypt(encryptedValue: string, secret: string): string {
     // LEGACY for pre standardized SHA256 encryption, this uses some undocumented nodejs MD5 hash internally and is deprecated

@@ -186,7 +186,6 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
         }
     }
 
-
     /**
      * Migrate old formated data into new format.
      */
@@ -195,11 +194,11 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
             switch (service.type) {
                 case ServiceTypes.Bot:
                     {
-                        let botService = <IBotService>service;
+                        const botService = <IBotService>service;
 
                         // old bot service records may not have the appId on the bot, but we probably have it already on an endpoint
                         if (!botService.appId) {
-                            for(const s of this.services){
+                            for (const s of this.services) {
                                 if (s.type == ServiceTypes.Endpoint) {
                                     const endpoint = <IEndpointService>s;
                                     if (endpoint.appId) {
@@ -219,6 +218,6 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
         }
 
         // this is now a 2.0 version of the schema
-        this.version = "2.0";
+        this.version = '2.0';
     }
 }

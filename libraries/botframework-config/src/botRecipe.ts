@@ -14,7 +14,7 @@ export interface IResource {
     // ServiceType of the service (LUIS, QnA, etc.)
     readonly type: ServiceTypes;
 
-    // unique Id for the service in the bot 
+    // unique Id for the service in the bot
     id?: string;
 
     // Friendly name for the service
@@ -76,7 +76,7 @@ export class BotRecipe {
     public version = '1.0';
 
     /**
-     * 
+     *
      */
     public resources: IResource[] = [];
 
@@ -86,10 +86,9 @@ export class BotRecipe {
     constructor() {
     }
 
-
     public static fromJSON(source: Partial<BotRecipe> = {}): BotRecipe {
         const botRecipe = new BotRecipe();
-        let { version, resources } = source;
+        const { version, resources } = source;
         botRecipe.resources = resources ? resources : botRecipe.resources;
         botRecipe.version = version ? version : botRecipe.version;
         return botRecipe;
@@ -100,4 +99,3 @@ export class BotRecipe {
         return { version, resources };
     }
 }
-
