@@ -1,20 +1,6 @@
-const { ConversationState, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
+const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
 const { Dialog, DialogReason, DialogSet, DialogTurnStatus, ComponentDialog, WaterfallDialog } = require('../');
 const assert = require('assert');
-
-const beginMessage = { text: `begin`, type: 'message' };
-const continueMessage = { text: `continue`, type: 'message' };
-
-class TestContext extends TurnContext {
-    constructor(request) {
-        super(new TestAdapter(), request);
-        this.sent = undefined;
-        this.onSendActivities((context, activities, next) => {
-            this.sent = activities;
-            context.responded = true;
-        });
-    }
-}
 
 function simpleStepContextCheck(step) {
     assert(step, `step not found.`);
@@ -214,8 +200,49 @@ describe('ComponentDialog', function () {
             .assertReply('Done.')
     });
 
-    xit('should cancel all Dialogs inside of ComponentDialog namespace.', () => {
-        // TODOs
+    it('should cancel all Dialogs inside of ComponentDialog namespace.', () => {
+        const conversationState = new ConversationState(new MemoryStorage());
+        const dialogState = conversationState.createProperty('dialog');
+
+        const firstChildDialog = new WaterfallDialog('first', [
+            async step => {
+                simpleStepContextCheck(step);
+                assert(step.stack.length === 1, `dialogStack should only have one dialog, not ${ step.stack.length }`);
+                await step.context.sendActivity('Reached first component dialog child.');
+                return await step.beginDialog('second');
+            },
+            async step => {
+                simpleStepContextCheck(step);
+                await step.context.send('Should not have sent this message.');
+                return await step.endDialog();
+            }
+        ]);
+        const secondChildDialog = new WaterfallDialog('second', [
+            async step => {
+                simpleStepContextCheck(step);
+                assert(step.stack.length === 2, `dialog stack should have two dialogs, not ${ step.stack.length }`);
+                await step.context.sendActivity('Cancelling all component dialog dialogs.');
+                return await step.cancelAllDialogs();
+            }
+        ]);
+
+        const component = new ComponentDialog('component');
+        component.addDialog(firstChildDialog);
+        component.addDialog(secondChildDialog);
+
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(component)
+
+        const adapter = new TestAdapter(async turnContext => {
+            const dc = await dialogs.createContext(turnContext);
+            const results = await dc.beginDialog('component');
+            assert(results.status === DialogTurnStatus.complete, `should have returned ${ DialogTurnStatus.complete } not ${ results.status }`);
+            assert(dc.stack.length === 0, `should have a dialogStack without 0 dialogs, not ${ dc.stack.length } dialogs`);
+        });
+
+        adapter.send('Hi')
+            .assertReply('Reached first component dialog child.')
+            .assertReply('Cancelling all component dialog dialogs.');
     });
 
     it('should not cancel any Dialogs outside of ComponentDialog namespace.', () => {
@@ -266,116 +293,6 @@ describe('ComponentDialog', function () {
             .assertReply('Reached first component dialog child.')
             .assertReply('Cancelling all component dialog dialogs.')
             .assertReply('Cancelled successfully.');
-    });
-
-    xit('should return result from DialogContext.beginDialog() when composite ends immediately.', async function () {
-        const cDialogs = new DialogSet();
-        cDialogs.add(new WaterfallDialog('start', [
-            async (dc) => {
-                return await dc.endDialog(120);
-            }
-        ]));
-        const composite = new ComponentDialog('composite', cDialogs);
-
-        const dialogs = new DialogSet();
-        dialogs.add(composite);
-        dialogs.add(new WaterfallDialog('test', [
-            async (dc) => {
-                return await dc.beginDialog('composite');
-            },
-            async (step) => {
-                assert(step.result === 120);
-                done();
-            }
-        ]));
-
-        const state = {};
-        const context = new TestContext(beginMessage);
-        const dc = await dialogs.createContext(context, state);
-        await dc.beginDialog('test');
-    });
-
-    xit('should DialogContext.continue() execution of a multi-turn composite.', function (done) {
-        let finished = false;
-        const cDialogs = new DialogSet();
-        cDialogs.add(new WaterfallDialog('start', [
-            function (dc) {
-                return dc.context.sendActivity('foo');
-            },
-            function (dc) {
-                return dc.context.sendActivity('bar');
-            },
-            function (dc) {
-                finished = true;
-                return dc.endDialog();
-            }
-        ]));
-        const composite = new ComponentDialog('start', cDialogs);
-
-        const dialogs = new DialogSet();
-        dialogs.add('composite', composite);
-
-        const state = {};
-        const context = new TestContext(beginMessage);
-        const dc = dialogs.createContext(context, state);
-        dc.beginDialog('composite').then(() => {
-            assert(dc.activeDialog);
-            dc.continueDialog().then(() => {
-                assert(dc.activeDialog);
-                dc.continueDialog().then(() => {
-                    assert(dc.activeDialog === undefined);
-                    assert(finished);
-                    done();
-                });
-            });
-        });
-    });
-
-    xit('should call composite composite using begin().', async function () {
-        const cDialogs = new DialogSet();
-        cDialogs.add(new WaterfallDialog('start', [
-            function (dc, args) {
-                assert(dc);
-                assert(typeof args === 'object');
-                assert(args.foo === 'bar');
-                done();
-            }
-        ]));
-        const composite = new ComponentDialog('start', cDialogs);
-
-        const state = {};
-        const context = new TestContext(beginMessage);
-        await composite.begin(context, state, { foo: 'bar' });
-    });
-
-    xit('should continue() execution of a multi-turn composite.', function (done) {
-        const cDialogs = new DialogSet();
-        cDialogs.add(new WaterfallDialog('start', [
-            function (dc) {
-                return dc.context.sendActivity('foo');
-            },
-            function (dc) {
-                return dc.context.sendActivity('bar');
-            },
-            function (dc) {
-                return dc.endDialog(120);
-            }
-        ]));
-        const composite = new ComponentDialog('start', cDialogs);
-
-        const state = {};
-        const context = new TestContext(beginMessage);
-        composite.begin(context, state).then((completion) => {
-            assert(completion && completion.isActive);
-            composite.continue(context, state).then((completion) => {
-                assert(completion && completion.isActive);
-                composite.continue(context, state).then((completion) => {
-                    assert(completion && !completion.isActive && completion.isCompleted);
-                    assert(completion.result === 120);
-                    done();
-                });
-            });
-        });
     });
 });
 
