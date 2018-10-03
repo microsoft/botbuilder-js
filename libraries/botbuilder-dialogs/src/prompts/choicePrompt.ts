@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Activity, TurnContext } from 'botbuilder-core';
-import { ChoiceFactoryOptions, FindChoicesOptions, FoundChoice, recognizeChoices } from '../choices';
+import { ChoiceFactory, ChoiceFactoryOptions, FindChoicesOptions, FoundChoice, recognizeChoices } from '../choices';
 import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
 /**
@@ -77,7 +77,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
 
         // Format prompt to send
         let prompt: Partial<Activity>;
-        const choices: any[] = options.choices || [];
+        const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices) || [];
         const channelId: string = context.activity.channelId;
         const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ChoicePrompt.defaultChoiceOptions[locale];
         if (isRetry && options.retryPrompt) {
@@ -95,7 +95,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         const result: PromptRecognizerResult<FoundChoice> = { succeeded: false };
         const activity: Activity = context.activity;
         const utterance: string = activity.text;
-        const choices: any[] = options.choices || [];
+        const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices)|| [];
         const opt: FindChoicesOptions = this.recognizerOptions || {} as FindChoicesOptions;
         opt.locale = activity.locale || opt.locale || this.defaultLocale || 'en-us';
         const results: any[]  = recognizeChoices(utterance, choices, opt);
