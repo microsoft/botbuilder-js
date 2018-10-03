@@ -16,17 +16,17 @@ export class AzureService extends ConnectedService implements IAzureService {
      * Tenant ID for azure.
      */
     public tenantId: string;
-    
+
     /**
      * Subscription ID for azure.
      */
     public subscriptionId: string;
-    
+
     /**
      * Resource group for azure.
      */
     public resourceGroup: string;
-    
+
     /**
      * Name of the service.
      */

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Activity, TurnContext } from 'botbuilder-core';
-import { ChoiceFactoryOptions, FindChoicesOptions, FoundChoice, recognizeChoices } from '../choices';
+import { ChoiceFactory, ChoiceFactoryOptions, FindChoicesOptions, FoundChoice, recognizeChoices } from '../choices';
 import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
 /**
@@ -33,19 +33,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
     };
 
     /**
-     * Creates a new `ChoicePrompt` instance.
-     * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
-     * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
-     */
-    constructor(dialogId: string, validator?: PromptValidator<FoundChoice>, defaultLocale?: string) {
-        super(dialogId, validator);
-        this.style = ListStyle.auto;
-        this.defaultLocale = defaultLocale;
-    }
-
-    /**
-     * The prompts default locale that should be recognized. 
+     * The prompts default locale that should be recognized.
      */
     public defaultLocale: string|undefined;
 
@@ -58,7 +46,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
     public style: ListStyle;
 
     /**
-     * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices 
+     * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
      */
     public choiceOptions: ChoiceFactoryOptions|undefined;
@@ -67,6 +55,18 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
      * Additional options passed to the underlying `recognizeChoices()` function.
      */
     public recognizerOptions: FindChoicesOptions|undefined;
+
+    /**
+     * Creates a new `ChoicePrompt` instance.
+     * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
+     * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
+     */
+    constructor(dialogId: string, validator?: PromptValidator<FoundChoice>, defaultLocale?: string) {
+        super(dialogId, validator);
+        this.style = ListStyle.auto;
+        this.defaultLocale = defaultLocale;
+    }
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         // Determine locale
@@ -77,7 +77,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
 
         // Format prompt to send
         let prompt: Partial<Activity>;
-        const choices: any[] = options.choices || [];
+        const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices) || [];
         const channelId: string = context.activity.channelId;
         const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ChoicePrompt.defaultChoiceOptions[locale];
         if (isRetry && options.retryPrompt) {
@@ -95,7 +95,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         const result: PromptRecognizerResult<FoundChoice> = { succeeded: false };
         const activity: Activity = context.activity;
         const utterance: string = activity.text;
-        const choices: any[] = options.choices || [];
+        const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices)|| [];
         const opt: FindChoicesOptions = this.recognizerOptions || {} as FindChoicesOptions;
         opt.locale = activity.locale || opt.locale || this.defaultLocale || 'en-us';
         const results: any[]  = recognizeChoices(utterance, choices, opt);

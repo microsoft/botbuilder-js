@@ -40,6 +40,11 @@ export interface DateTimeResolution {
 export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
 
     /**
+     * The prompts default locale that should be recognized.
+     */
+    public defaultLocale: string|undefined;
+
+    /**
      * Creates a new DateTimePrompt instance.
      * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
@@ -49,11 +54,6 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
         super(dialogId, validator);
         this.defaultLocale = defaultLocale;
     }
-
-    /**
-     * The prompts default locale that should be recognized. 
-     */
-    public defaultLocale: string|undefined;
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         if (isRetry && options.retryPrompt) {

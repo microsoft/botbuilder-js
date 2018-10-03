@@ -36,7 +36,7 @@ export interface BlobStorageSettings {
      */
     storageAccountOrConnectionString: string;
 
-    /** 
+    /**
      * The storage access key.
      */
     storageAccessKey?: string;

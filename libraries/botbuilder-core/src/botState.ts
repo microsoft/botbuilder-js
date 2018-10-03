@@ -29,14 +29,19 @@ export interface CachedBotState {
  * Base class for the frameworks state persistance scopes.
  *
  * @remarks
- * This class will read and write state, to a provided storage provider, for each turn of 
- * conversation with a user. Derived classes, like `ConversationState` and `UserState`, provide a 
+ * This class will read and write state, to a provided storage provider, for each turn of
+ * conversation with a user. Derived classes, like `ConversationState` and `UserState`, provide a
  * `StorageKeyFactory` which is used to determine the key used to persist a given storage object.
- *  
- * The state object thats loaded will be automatically cached on the context object for the 
+ *
+ * The state object thats loaded will be automatically cached on the context object for the
  * lifetime of the turn and will only be written to storage if it has been modified.
  */
 export class BotState implements PropertyManager {
+
+    /**
+     * Collection of state property accessors added through [createProperty()](#createproperty).
+     */
+    public readonly properties: Map<string, StatePropertyAccessor> = new Map();
     private stateKey: symbol = Symbol('state');
 
     /**
@@ -47,12 +52,7 @@ export class BotState implements PropertyManager {
     constructor(protected storage: Storage, protected storageKey: StorageKeyFactory) { }
 
     /**
-     * Collection of state property accessors added through [createProperty()](#createproperty).
-     */
-    public readonly properties: Map<string, StatePropertyAccessor> = new Map();
-
-    /**
-     * Creates a new property accessor for reading and writing an individual property to the bot 
+     * Creates a new property accessor for reading and writing an individual property to the bot
      * states storage object.
      * @param T (Optional) type of property to create. Defaults to `any` type.
      * @param name Name of the property to add. Must be unique within the set.
@@ -71,7 +71,7 @@ export class BotState implements PropertyManager {
      * @remarks
      * Subsequent reads will return the cached object unless the `force` flag is passed in which
      * will force the state object to be re-read.
-     * 
+     *
      * This method is automatically called on first access of any of created property accessors.
      *
      * ```JavaScript
@@ -135,7 +135,7 @@ export class BotState implements PropertyManager {
      * Clears the current state object for a turn.
      *
      * @remarks
-     * The cleared state object will not be persisted until [saveChanges()](#savechanges) has 
+     * The cleared state object will not be persisted until [saveChanges()](#savechanges) has
      * been called.
      *
      * ```JavaScript

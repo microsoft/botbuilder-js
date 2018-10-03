@@ -13,16 +13,16 @@ import { TurnContext } from './turnContext';
 export interface Middleware {
     /**
      * Called each time the bot receives a new request.
-     * 
+     *
      * @remarks
-     * Calling `await next();` will cause execution to continue to either the next piece of 
+     * Calling `await next();` will cause execution to continue to either the next piece of
      * middleware in the chain or the bots main logic if you are the last piece of middleware.
-     * 
+     *
      * Your middleware should perform its business logic before and/or after the call to `next()`.
      * You can short-circuit further execution of the turn by omitting the call to `next()`.
-     * 
+     *
      * The following example shows a simple piece of logging middleware:
-     * 
+     *
      * ```JavaScript
      * class MyLogger {
      *     async onTurn(context, next) {
