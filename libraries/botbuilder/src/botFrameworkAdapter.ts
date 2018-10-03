@@ -775,9 +775,9 @@ function parseRequest(req: WebRequest): Promise<Activity> {
         function returnActivity(activity: Activity): void {
             if (typeof activity !== 'object') { throw new Error(`BotFrameworkAdapter.parseRequest(): invalid request body.`); }
             if (typeof activity.type !== 'string') { throw new Error(`BotFrameworkAdapter.parseRequest(): missing activity type.`); }
-            if (activity.timestamp && typeof activity.timestamp === 'string') { activity.timestamp = new Date(activity.timestamp); }
-            if (activity.localTimestamp && typeof activity.localTimestamp === 'string') { activity.localTimestamp = new Date(activity.localTimestamp); }
-            if (activity.expiration && typeof activity.expiration === 'string') { activity.expiration = new Date(activity.expiration); }
+            if (typeof activity.timestamp === 'string') { activity.timestamp = new Date(activity.timestamp); }
+            if (typeof activity.localTimestamp === 'string') { activity.localTimestamp = new Date(activity.localTimestamp); }
+            if (typeof activity.expiration === 'string') { activity.expiration = new Date(activity.expiration); }
             resolve(activity);
         }
 
