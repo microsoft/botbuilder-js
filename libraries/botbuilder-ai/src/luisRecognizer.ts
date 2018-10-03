@@ -103,7 +103,7 @@ export interface LuisPredictionOptions {
  * @remarks
  * This class is used to recognize intents and extract entities from incoming messages.
  * See this class in action [in this sample application](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/12.nlp-with-luis).
-
+ *
  * This component can be used within your bots logic by calling [recognize()](#recognize).
  */
 export class LuisRecognizer {

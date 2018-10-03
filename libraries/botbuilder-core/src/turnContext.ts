@@ -44,6 +44,7 @@ export type DeleteActivityHandler = (
     next: () => Promise<void>
 ) => Promise<void>;
 
+// tslint:disable-next-line:no-empty-interface
 export interface TurnContext {}
 
 /**
@@ -326,8 +327,8 @@ export class TurnContext {
 
     /**
      * Called when this TurnContext instance is passed into the constructor of a new TurnContext
-     * instance. 
-     * 
+     * instance.
+     *
      * @remarks
      * Can be overridden in derived classes to add additional fields that should be cloned.
      * @param context The context object to copy private members to. Everything should be copied by reference.

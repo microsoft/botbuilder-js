@@ -19,7 +19,8 @@ import * as encrypt from './encrypt';
  */
 import { ConnectedService } from './models';
 import { IBotConfiguration, IConnectedService, IDispatchService, ServiceTypes } from './schema';
-let exec = util.promisify(require('child_process').exec);
+// tslint:disable-next-line:no-var-requires no-require-imports
+const exec: Function = util.promisify(require('child_process').exec);
 
 /**
  * @private
@@ -28,11 +29,9 @@ interface InternalBotConfig {
     location?: string;
 }
 
-
-
 /**
  * BotConfiguration represents configuration information for a bot.
- * 
+ *
  * @remarks
  * It is typically loaded from a .bot file on disk. This class implements methods for encrypting
  * and manipulating the in-memory representation of the configuration.
@@ -51,13 +50,14 @@ export class BotConfiguration extends BotConfigurationBase {
         const botConfig: BotConfiguration = new BotConfiguration();
         Object.assign(botConfig, source);
 
-        // back compat for secretKey rename 
+        // back compat for secretKey rename
         if (!botConfig.padlock && (<any>botConfig).secretKey) {
             botConfig.padlock = (<any>botConfig).secretKey;
             delete (<any>botConfig).secretKey;
         }
         botConfig.services = services;
         botConfig.migrateData();
+
         return botConfig;
     }
 
@@ -80,7 +80,7 @@ export class BotConfiguration extends BotConfigurationBase {
     }
 
     /**
-     * Load the bot configuration by looking in a folder and loading the first .bot file in the 
+     * Load the bot configuration by looking in a folder and loading the first .bot file in the
      * folder. (blocking)
      * @param folder (Optional) folder to look for bot files. If not specified the current working directory is used.
      * @param secret (Optional) secret used to decrypt the bot file.
@@ -119,6 +119,24 @@ export class BotConfiguration extends BotConfigurationBase {
         const json: string = txtfile.readSync(botpath);
         const bot: BotConfiguration = BotConfiguration.internalLoad(json, secret);
         bot.internal.location = botpath;
+
+        return bot;
+    }
+
+    /**
+     * Generate a new key suitable for encrypting.
+     */
+    public static generateKey(): string {
+        return encrypt.generateKey();
+    }
+
+    private static internalLoad(json: string, secret?: string): BotConfiguration {
+        const bot: BotConfiguration = BotConfiguration.fromJSON(JSON.parse(json));
+
+        const hasSecret: boolean = !!bot.padlock;
+        if (hasSecret) {
+            bot.decrypt(secret);
+        }
 
         return bot;
     }
@@ -189,46 +207,6 @@ export class BotConfiguration extends BotConfigurationBase {
      */
     public saveSync(secret?: string): void {
         return this.saveAsSync(this.internal.location, secret);
-    }
-
-    private savePrep(secret?: string): void {
-        if (!!secret) {
-            this.validateSecret(secret);
-        }
-
-        // make sure that all dispatch serviceIds still match services that are in the bot
-        for (const service of this.services) {
-            if (service.type === ServiceTypes.Dispatch) {
-                const dispatchService: IDispatchService = <IDispatchService>service;
-                const validServices: string[] = [];
-                for (const dispatchServiceId of dispatchService.serviceIds) {
-                    for (const this_service of this.services) {
-                        if (this_service.id === dispatchServiceId) {
-                            validServices.push(dispatchServiceId);
-                        }
-                    }
-                }
-                dispatchService.serviceIds = validServices;
-            }
-        }
-    }
-
-    private static internalLoad(json: string, secret?: string): BotConfiguration {
-        const bot: BotConfiguration = BotConfiguration.fromJSON(JSON.parse(json));
-
-        const hasSecret: boolean = !!bot.padlock;
-        if (hasSecret) {
-            bot.decrypt(secret);
-        }
-
-        return bot;
-    }
-
-    /**
-     * Generate a new key suitable for encrypting.
-     */
-    public static generateKey(): string {
-        return encrypt.generateKey();
     }
 
     /**
@@ -340,6 +318,28 @@ export class BotConfiguration extends BotConfigurationBase {
             }
         } catch (ex) {
             throw new Error('You are attempting to perform an operation which needs access to the secret and --secret is incorrect.');
+        }
+    }
+
+    private savePrep(secret?: string): void {
+        if (!!secret) {
+            this.validateSecret(secret);
+        }
+
+        // make sure that all dispatch serviceIds still match services that are in the bot
+        for (const service of this.services) {
+            if (service.type === ServiceTypes.Dispatch) {
+                const dispatchService: IDispatchService = <IDispatchService>service;
+                const validServices: string[] = [];
+                for (const dispatchServiceId of dispatchService.serviceIds) {
+                    for (const this_service of this.services) {
+                        if (this_service.id === dispatchServiceId) {
+                            validServices.push(dispatchServiceId);
+                        }
+                    }
+                }
+                dispatchService.serviceIds = validServices;
+            }
         }
     }
 }

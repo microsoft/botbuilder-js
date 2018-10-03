@@ -12,9 +12,9 @@ import { TurnContext } from './turnContext';
 
 /**
  * Abstract base class for all adapter plugins.
- * 
+ *
  * @remarks
- * Adapters manage the communication between the bot and a user over a specific channel, or set 
+ * Adapters manage the communication between the bot and a user over a specific channel, or set
  * of channels.
  */
 export abstract class BotAdapter {
@@ -22,8 +22,8 @@ export abstract class BotAdapter {
     private turnError: (context: TurnContext, error: Error) => Promise<void>;
 
     /**
-     * Sends a set of activities to the user. 
-     * 
+     * Sends a set of activities to the user.
+     *
      * @remarks
      * An array of responses from the server will be returned.
      * @param context Context for the current turn of conversation with the user.
@@ -79,14 +79,14 @@ export abstract class BotAdapter {
 
     /**
      * Executes the adapters middleware chain.
-     * 
+     *
      * @remarks
-     * This should be be called by the parent class to run the adapters middleware chain. The 
+     * This should be be called by the parent class to run the adapters middleware chain. The
      * `next()` handler passed to the method will be called at the end of the chain.
-     * 
-     * While the context object is passed in from the caller is created by the caller, what gets 
-     * passed to the `next()` handler is a wrapped version of the context which will automatically 
-     * be revoked upon completion of the turn.  This causes the bots logic to throw an error if it 
+     *
+     * While the context object is passed in from the caller is created by the caller, what gets
+     * passed to the `next()` handler is a wrapped version of the context which will automatically
+     * be revoked upon completion of the turn.  This causes the bots logic to throw an error if it
      * tries to use the context object after the turn completes.
      * @param context Context for the current turn of conversation with the user.
      * @param next Function to call at the end of the middleware chain.

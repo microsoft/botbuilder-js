@@ -18,6 +18,11 @@ import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from '
 export class NumberPrompt extends Prompt<number> {
 
     /**
+     * The prompts default locale that should be recognized.
+     */
+    public defaultLocale: string|undefined;
+
+    /**
      * Creates a new NumberPrompt instance.
      * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
@@ -27,11 +32,6 @@ export class NumberPrompt extends Prompt<number> {
         super(dialogId, validator);
         this.defaultLocale = defaultLocale;
     }
-
-    /**
-     * The prompts default locale that should be recognized. 
-     */
-    public defaultLocale: string|undefined;
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         if (isRetry && options.retryPrompt) {

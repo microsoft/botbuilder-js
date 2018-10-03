@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 import { VerifyOptions } from 'jsonwebtoken';
-import { ClaimsIdentity } from './claimsIdentity';
 import { ChannelValidation } from './channelValidation';
+import { ClaimsIdentity } from './claimsIdentity';
 import { Constants } from './constants';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';

@@ -65,6 +65,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
                 return MicrosoftAppCredentials.isTrustedUrl(uri.host);
             }
         } catch (e) {
+            // tslint:disable-next-line:no-console
             console.error('Error in isTrustedServiceUrl', e);
         }
 
