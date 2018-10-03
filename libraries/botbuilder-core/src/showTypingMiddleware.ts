@@ -48,45 +48,59 @@ export class ShowTypingMiddleware implements Middleware {
          * @param next {function} The next delegate function.
          */
         public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+
+            let finished: boolean = false;
+            let hTimeout: any = undefined;
+
+            /**
+             * @param context TurnContext object representing incoming message.
+             * @param delay The initial delay before sending the first indicator.
+             * @param period How often to send the indicator after the first.
+             */
+            function startInterval(context: TurnContext, delay: number, period: number): void {
+                hTimeout = setTimeout(
+                    () => {
+                        if (!finished) {
+                            let typingActivity: Partial<Activity> = {
+                                type: ActivityTypes.Typing,
+                                relatesTo: context.activity.relatesTo
+                            };
+
+                            // Sending the Activity directly via the Adapter avoids other middleware and avoids setting the
+                            // responded flag. However this also requires tha tthe conversation reference details are explicitly added.
+                            const conversationReference: Partial<ConversationReference> =
+                                TurnContext.getConversationReference(context.activity);
+                            typingActivity = TurnContext.applyConversationReference(typingActivity, conversationReference);
+
+                            context.adapter.sendActivities(context, [typingActivity]);
+
+                            // Pass in period as the delay to repeat at an interval.
+                            startInterval(context, period, period);
+                        } else {
+                            // Do nothing! This turn is done and we don't want to continue sending typing indicators.
+                        }
+                    },
+                    delay
+                );
+            }
+
+            function stopInterval(): void {
+                finished = true;
+                if (hTimeout) { clearTimeout(hTimeout); }
+            }
+
             if (context.activity.type === ActivityTypes.Message) {
                 // Set a property to track whether or not the turn is finished.
                 // When it flips to true, we won't send anymore typing indicators.
-                this.finished = false;
-                this.startInterval(context, this.delay);
+                finished = false;
+                startInterval(context, this.delay, this.period);
             }
 
             // Let the rest of the process run.
             // After everything has run, stop the indicator!
-            return await next().then(
-                () => { this.stopInterval(); },
-                () => { this.stopInterval(); }
-            );
+            return await next().then(stopInterval, stopInterval);
 
         }
-
-        private async sleep(ms: number): Promise<{}> {
-            return new Promise((resolve: any): void => { setTimeout(resolve, ms); });
-        }
-
-        private startInterval(context: TurnContext, delay: number): void {
-            setTimeout(
-                () => {
-                    if (!this.finished) {
-                        this.sendTypingActivity(context);
-                        // Pass in this.period as the delay to repeat at an interval.
-                        this.startInterval(context, this.period);
-                    } else {
-                        // Do nothing! This turn is done and we don't want to continue sending typing indicators.
-                    }
-                },
-                delay
-            );
-        }
-
-        private stopInterval(): void {
-            this.finished = true;
-        }
-
         private async sendTypingActivity(context: TurnContext): Promise<void> {
 
             let typingActivity: Partial<Activity> = {
