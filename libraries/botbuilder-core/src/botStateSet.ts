@@ -15,17 +15,17 @@ import { TurnContext } from './turnContext';
 export class BotStateSet {
 
     /**
+     * Array of the sets `BotState` plugins.
+     */
+    public readonly botStates: BotState[] = [];
+
+    /**
      * Creates a new BotStateSet instance.
      * @param botStates One or more BotState plugins to register.
      */
     public constructor(...botStates: BotState[]) {
         BotStateSet.prototype.add.apply(this, botStates);
     }
-
-    /**
-     * Array of the sets `BotState` plugins.
-     */
-    public readonly botStates: BotState[] = [];
 
     /**
      * Registers One or more `BotState` plugins with the set.
@@ -59,6 +59,7 @@ export class BotStateSet {
         const promises: Promise<any>[] = this.botStates.map((botstate: BotState) => botstate.load(context, force));
 
         await Promise.all(promises);
+
         return;
     }
 
@@ -78,6 +79,7 @@ export class BotStateSet {
         const promises: Promise<void>[] = this.botStates.map((botstate: BotState) => botstate.saveChanges(context, force));
 
         await Promise.all(promises);
+
         return;
     }
 }

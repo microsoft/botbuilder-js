@@ -13,20 +13,20 @@ import { DialogContext, DialogState } from './dialogContext';
  * A related set of dialogs that can all call each other.
  *
  * @remarks
- * The constructor for the dialog set should be passed a state property that will be used to 
+ * The constructor for the dialog set should be passed a state property that will be used to
  * persist the dialog stack for the set:
- * 
+ *
  * ```JavaScript
  * const { ConversationState, MemoryStorage, ActivityTypes } = require('botbuilder');
  * const { DialogSet, Dialog, DialogTurnStatus } = require('botbuilder-dialogs');
- * 
+ *
  * const convoState = new ConversationState(new MemoryStorage());
  * const dialogState = convoState.createProperty('dialogState');
  * const dialogs = new DialogSet(dialogState);
  * ```
- * 
+ *
  * The bot can add dialogs or prompts to the set using the [add()](#add) method:
- * 
+ *
  * ```JavaScript
  * class GreetingDialog extends Dialog {
  *     async beginDialog(dc, options) {
@@ -34,25 +34,25 @@ import { DialogContext, DialogState } from './dialogContext';
  *         return await dc.endDialog();
  *     }
  * }
- * 
+ *
  * dialogs.add(new GreetingDialog('greeting'));
  * ```
- * 
- * To interact with the sets dialogs you can call [createContext()](#createcontext) with the 
+ *
+ * To interact with the sets dialogs you can call [createContext()](#createcontext) with the
  * current `TurnContext`. That will create a `DialogContext` that can be used to start or continue
  * execution of the sets dialogs:
- * 
+ *
  * ```JavaScript
  * // Create DialogContext for the current turn
  * const dc = await dialogs.createContext(turnContext);
- * 
+ *
  * // Try to continue executing an active multi-turn dialog
  * const result = await dc.continueDialog();
- * 
+ *
  * // Send greeting if no other dialogs active
  * if (result.status == DialogTurnStatus.empty && dc.context.activity.type == ActivityTypes.Message) {
  *     await dc.beginDialog('greeting');
- * } 
+ * }
  * ```
  */
 export class DialogSet {
@@ -61,24 +61,24 @@ export class DialogSet {
 
     /**
      * Creates a new DialogSet instance.
-     * 
+     *
      * @remarks
      * If the `dialogState` property is not passed in, calls to [createContext()](#createcontext)
-     * will return an error.  You will need to create a `DialogContext` for the set manually and 
+     * will return an error.  You will need to create a `DialogContext` for the set manually and
      * pass in your own state object for persisting the sets dialog stack:
-     * 
+     *
      * ```JavaScript
      * const dc = new DialogContext(dialogs, turnContext, state);
      * ```
      * @param dialogState (Optional) state property used to persist the sets dialog stack.
      */
-    constructor(dialogState?: StatePropertyAccessor<DialogState>) { 
+    constructor(dialogState?: StatePropertyAccessor<DialogState>) {
         this.dialogState = dialogState;
     }
 
     /**
      * Adds a new dialog or prompt to the set.
-     * 
+     *
      * @remarks
      * The `Dialog.id` of all dialogs or prompts added to the set need to be unique within the set.
      * @param dialog The dialog or prompt to add.
@@ -92,8 +92,9 @@ export class DialogSet {
             throw new Error(`DialogSet.add(): A dialog with an id of '${dialog.id}' already added.`);
         }
 
-         this.dialogs[dialog.id] = dialog;
-         return this;
+        this.dialogs[dialog.id] = dialog;
+
+        return this;
     }
 
     /**

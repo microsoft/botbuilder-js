@@ -7,7 +7,15 @@
  */
 export { BotConfiguration } from './botConfiguration';
 export { BotConfigurationBase } from './botConfigurationBase';
-export { BotRecipe, IBlobResource, ICosmosDBResource, IDispatchResource, IFileResource, IGenericResource, IResource, IUrlResource } from './botRecipe';
+export {
+    BotRecipe,
+    IBlobResource,
+    ICosmosDBResource,
+    IDispatchResource,
+    IFileResource,
+    IGenericResource,
+    IResource,
+    IUrlResource
+} from './botRecipe';
 export * from './models';
 export * from './schema';
-

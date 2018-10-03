@@ -18,7 +18,7 @@ import { Storage, StoreItems } from './storage';
  * - Anything written to the store will be forgotten when the process exits.
  * - Objects that are read and written to the store are cloned to properly simulate network based
  *   storage providers.
- * - Cloned objects are serialized using `JSON.stringify()` to catch any possible serialization 
+ * - Cloned objects are serialized using `JSON.stringify()` to catch any possible serialization
  *   related issues that might occur when using a network based storage provider.
  *
  * ```JavaScript
