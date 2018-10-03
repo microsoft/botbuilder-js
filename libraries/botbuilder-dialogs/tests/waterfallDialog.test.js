@@ -1,4 +1,4 @@
-const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
 const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus } = require('../');
 
 const assert = require('assert');
@@ -487,6 +487,131 @@ describe('WaterfallDialog', function () {
             .assertReply('bot responding.')
             .send('continue')
             .assertReply('ending WaterfallDialog.')
+            .startTest();
+    });
+
+    it('should end if no additional steps exist.', async function() {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            switch (results.status) {
+                case (DialogTurnStatus.empty):
+                    await dc.beginDialog('a');
+                    break;
+                case (DialogTurnStatus.complete):
+                    await turnContext.sendActivity(results.result);
+                    break;
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new WaterfallDialog('a', [
+            async function (step) {
+                assert(step, `step not found.`);
+                await step.context.sendActivity('bot responding.');
+                return Dialog.EndOfTurn;
+            },
+            async function (step) {
+                assert(step, `step not found.`);
+                return Dialog.EndOfTurn;
+            }
+        ]));
+
+        await adapter.send(beginMessage)
+            .assertReply('bot responding.')
+            .send('continue')
+            .send('continue one last time.')
+            .assertReply('continue one last time.')
+            .startTest();
+    });
+
+    it('should throw error if step.next() is called multiple times on a WaterfallStep.', async function() {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            switch (results.status) {
+                case (DialogTurnStatus.empty):
+                    await dc.beginDialog('a');
+                    break;
+                case (DialogTurnStatus.complete):
+                    await turnContext.sendActivity(results.result);
+                    break;
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new WaterfallDialog('a', [
+            async function (step) {
+                assert(step, `step not found.`);
+                await step.context.sendActivity('bot responding.');
+                try {
+                    await step.next();
+                    await step.next();
+                } catch (err) {
+                    assert(err.message === `WaterfallStepContext.next(): method already called for dialog and step 'a[0]'.`, err.message);
+                }
+                return Dialog.EndOfTurn;
+            },
+            async function (step) {
+                assert(step, `step not found.`);
+            },
+            async function (step) {
+                assert(step, `step not found.`);
+            }
+        ]));
+
+        await adapter.send(beginMessage)
+            .assertReply('bot responding.')
+            .startTest();
+    });
+
+    it('should support return EndOfTurn for non-message-type activities on continueDialog().', async function() {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+            const results = await dc.continueDialog();
+            switch (results.status) {
+                case (DialogTurnStatus.empty):
+                    await dc.beginDialog('a');
+                    break;
+                case (DialogTurnStatus.complete):
+                    await turnContext.sendActivity(results.result);
+                    break;
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new WaterfallDialog('a', [
+            async function (step) {
+                assert(step, `step not found.`);
+                await step.context.sendActivity('bot responding.');
+                return Dialog.EndOfTurn;
+            },
+            async function (step) {
+                assert(step, `step not found.`);
+                assert(step.context.activity.text === 'continue.', `expected "continue." not ${ step.context.activity.text }`);
+                return await step.endDialog('done.')
+            }
+        ]));
+
+        await adapter.send(beginMessage)
+            .assertReply('bot responding.')
+            .send({ type: ActivityTypes.Event })
+            .send('continue.')
+            .assertReply('done.')
             .startTest();
     });
 });

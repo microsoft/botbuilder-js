@@ -183,7 +183,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
             state.stepIndex = index;
 
             // Create step context
-            const nextCalled: boolean = false;
+            let nextCalled: boolean = false;
             const step = new WaterfallStepContext<O>(dc, {
                 index: index,
                 options: <O>state.options,
@@ -194,7 +194,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
                     if (nextCalled) {
                         throw new Error(`WaterfallStepContext.next(): method already called for dialog and step '${this.id}[${index}]'.`);
                     }
-
+                    nextCalled = true;
                     return await this.resumeDialog(dc, DialogReason.nextCalled, stepResult);
                 }
             });
