@@ -188,6 +188,28 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
+    it(`should check timestamp in processActivity() sent as body.`, function (done) {
+        let called = false;
+        let message = incomingMessage;
+        message.timestamp = '2018-10-01T14:14:54.790Z';
+        message.localTimestamp = '2018-10-01T14:14:54.790Z';
+        const req = new MockBodyRequest(message);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        adapter.processActivity(req, res, (context) => {
+            assert(context, `context not passed.`);
+            assert.equal(typeof context.activity.timestamp, 'object', `'context.activity.timestamp' is not a date`);
+            assert(context.activity.timestamp instanceof Date, `'context.activity.timestamp' is not a date`);
+            assert.equal(typeof context.activity.localTimestamp, 'object', `'context.activity.localTimestamp' is not a date`);
+            assert(context.activity.localTimestamp instanceof Date, `'context.activity.localTimestamp' is not a date`);
+            called = true;
+        }).then(() => {
+            assert(called, `bot logic not called.`);
+            assertResponse(res, 202);
+            done();
+        });
+    });
+
     it(`should reject a bogus request sent to processActivity().`, function (done) {
         const req = new MockRequest('bogus');
         const res = new MockResponse();
