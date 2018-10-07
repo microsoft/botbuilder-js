@@ -74,7 +74,10 @@ export class LanguageGenerationResolver {
 	 * @param [entities] map object that contains slots accepted by the LG service
 	 * @returns
 	 */
-	public async resolve(activity: Activity, entities?: Map<string, PrimitiveType>): Promise<void> {
+	public async resolve(
+		activity: Partial<Activity>,
+		entities?: { [key: string]: PrimitiveType }
+	): Promise<void> {
 		if (isNil(activity)) {
 			throw new Error("Activity can't be null or undefined");
 		}
@@ -131,15 +134,15 @@ export class LanguageGenerationResolver {
 //  ######################################### INTERNAL API #########################################
 
 //#region  Activity Inspectors
-type IActivityInspector = (activity: Activity) => string[];
+type IActivityInspector = (activity: Partial<Activity>) => string[];
 
-const textInspector: IActivityInspector = (activity: Activity): string[] => {
+const textInspector: IActivityInspector = (activity: Partial<Activity>): string[] => {
 	const text = activity.text || '';
 
 	return PatternRecognizer.extractPatterns(text);
 };
 
-const speakInspector: IActivityInspector = (activity: Activity): string[] => {
+const speakInspector: IActivityInspector = (activity: Partial<Activity>): string[] => {
 	const text = activity.speak || '';
 
 	return PatternRecognizer.extractPatterns(text);
@@ -171,7 +174,7 @@ const buttonsInspector = (buttons: CardAction[]): string[] => {
 	return flatten(buttons.map(cardActionInspector));
 };
 
-const suggestedActionsInspector: IActivityInspector = (activity: Activity): string[] => {
+const suggestedActionsInspector: IActivityInspector = (activity: Partial<Activity>): string[] => {
 	if (activity.suggestedActions && activity.suggestedActions.actions) {
 		return flatten(activity.suggestedActions.actions.map(cardActionInspector));
 	}
@@ -308,7 +311,7 @@ const mediaCardInspector = (card: MediaCard): string[] => {
 	return res;
 };
 
-const attachmentsInspector: IActivityInspector = (activity: Activity): string[] => {
+const attachmentsInspector: IActivityInspector = (activity: Partial<Activity>): string[] => {
 	return !isNil(activity.attachments)
 		? flatten(
 				activity.attachments.filter(({ content }) => !isNil(content)).map(attachment => {
@@ -360,7 +363,7 @@ export class ActivityInspector {
 		attachmentsInspector,
 	];
 
-	constructor(private readonly activity: Activity) {}
+	constructor(private readonly activity: Partial<Activity>) {}
 
 	/**
 	 * Utilizes activity inspectors to extract the template references
@@ -377,10 +380,13 @@ export class ActivityInspector {
 }
 
 //#region Activity Injectors
-type IActivityInjector = (activity: Activity, templateResolutions: Map<string, string>) => void;
+type IActivityInjector = (
+	activity: Partial<Activity>,
+	templateResolutions: Map<string, string>
+) => void;
 
 const textInjector: IActivityInjector = (
-	activity: Activity,
+	activity: Partial<Activity>,
 	templateResolutions: Map<string, string>
 ): void => {
 	const text = activity.text;
@@ -390,7 +396,7 @@ const textInjector: IActivityInjector = (
 };
 
 const speakInjector: IActivityInjector = (
-	activity: Activity,
+	activity: Partial<Activity>,
 	templateResolutions: Map<string, string>
 ): void => {
 	const speak = activity.speak;
@@ -400,7 +406,7 @@ const speakInjector: IActivityInjector = (
 };
 
 const suggestedActionsInjector: IActivityInjector = (
-	activity: Activity,
+	activity: Partial<Activity>,
 	templateResolutions: Map<string, string>
 ): void => {
 	if (activity.suggestedActions && activity.suggestedActions.actions) {
@@ -539,7 +545,7 @@ const thumbnailCardInjector = (
 };
 
 const attachmentsInjector = (
-	activity: Activity,
+	activity: Partial<Activity>,
 	templateResolutions: Map<string, string>
 ): void => {
 	if (activity.attachments) {
@@ -597,7 +603,7 @@ export class ActivityInjector {
 		suggestedActionsInjector,
 		attachmentsInjector,
 	];
-	constructor(private readonly activity: Activity) {}
+	constructor(private readonly activity: Partial<Activity>) {}
 
 	/**
 	 * Searches for template references inside the activity and replaces them with the actual text coming from the LG backend
@@ -650,8 +656,8 @@ export class PatternRecognizer {
  */
 export class SlotsBuilder {
 	constructor(
-		private readonly activity: Activity,
-		private readonly entities?: Map<string, PrimitiveType>
+		private readonly activity: Partial<Activity>,
+		private readonly entities?: { [key: string]: PrimitiveType }
 	) {}
 
 	/**
@@ -672,9 +678,9 @@ export class SlotsBuilder {
 		return [templateReferences, entitiesSlots];
 	}
 
-	private convertEntitiesToSlots(entities: Map<string, PrimitiveType>): Slot[] {
+	private convertEntitiesToSlots(entities: { [key: string]: PrimitiveType }): Slot[] {
 		const slots: Slot[] = [];
-		entities.forEach((value, key) => slots.push({ key, value }));
+		Object.keys(entities).forEach(key => slots.push({ key, value: entities[key] }));
 
 		return slots;
 	}
@@ -796,6 +802,9 @@ export interface LGRequest {
 	templateId: string;
 }
 
+/**
+ * @private
+ */
 class LGRequestBuilder {
 	private locale: string;
 	private scenario: string;

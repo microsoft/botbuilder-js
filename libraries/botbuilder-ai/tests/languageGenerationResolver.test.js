@@ -230,7 +230,7 @@ describe('LanguageGenerationResolver', () => {
 		});
 
 		// Activity Attachments
-		// --> Hero Card
+		// --> HeroCard, ThumbnailCard
 
 		it('should extract template references from hero card', () => {
 			const activity = MessageFactory.attachment(
@@ -295,6 +295,407 @@ describe('LanguageGenerationResolver', () => {
 			);
 			expect(activity.attachments[0].content.buttons[0].title).toEqual(
 				examplesPool.singleReference2.resolvedText
+			);
+		});
+
+		it('should extract template references from thumbnail card', () => {
+			const activity = MessageFactory.attachment(
+				CardFactory.thumbnailCard(
+					// title
+					examplesPool.multipleReferences1.text,
+					// text
+					examplesPool.multipleReferences2.text,
+					// images
+					[{ tap: { title: examplesPool.singleReference1.text } }],
+					// buttons
+					[{ title: examplesPool.singleReference2.text }]
+				)
+			);
+
+			const activityInspector = new ActivityInspector(activity);
+			const templateReferences = activityInspector.extractTemplateReferences();
+
+			expect(templateReferences.length).toBe(
+				examplesPool.multipleReferences1.resolutions.length +
+					examplesPool.multipleReferences2.resolutions.length +
+					examplesPool.singleReference1.resolutions.length +
+					examplesPool.singleReference2.resolutions.length
+			);
+		});
+
+		it('should inject the template resolutions in thumbnail card activity', () => {
+			const activity = MessageFactory.attachment(
+				CardFactory.thumbnailCard(
+					// title
+					examplesPool.multipleReferences1.text,
+					// text
+					examplesPool.multipleReferences2.text,
+					// images
+					[{ tap: { title: examplesPool.singleReference1.text } }],
+					// buttons
+					[{ title: examplesPool.singleReference2.text }]
+				)
+			);
+
+			const arr = [
+				...examplesPool.singleReference1.resolutions,
+				...examplesPool.singleReference2.resolutions,
+				...examplesPool.multipleReferences1.resolutions,
+				...examplesPool.multipleReferences2.resolutions,
+			];
+
+			const responsesMap = new Map(arr);
+
+			const activityInjector = new ActivityInjector(activity);
+
+			activityInjector.injectTemplateReferences(responsesMap);
+
+			expect(activity.attachments[0].content.title).toEqual(
+				examplesPool.multipleReferences1.resolvedText
+			);
+			expect(activity.attachments[0].content.text).toEqual(
+				examplesPool.multipleReferences2.resolvedText
+			);
+			expect(activity.attachments[0].content.images[0].tap.title).toEqual(
+				examplesPool.singleReference1.resolvedText
+			);
+			expect(activity.attachments[0].content.buttons[0].title).toEqual(
+				examplesPool.singleReference2.resolvedText
+			);
+		});
+
+		// --> AnimationCard, AudioCard, VideoCard
+
+		it('should extract template references from animation card', () => {
+			const activity = MessageFactory.attachment(
+				CardFactory.animationCard(
+					// title
+					examplesPool.multipleReferences1.text,
+					// urls
+					[],
+					// buttons
+					[{ title: examplesPool.singleReference2.text }]
+				)
+			);
+
+			const activityInspector = new ActivityInspector(activity);
+			const templateReferences = activityInspector.extractTemplateReferences();
+
+			expect(templateReferences.length).toBe(
+				examplesPool.multipleReferences1.resolutions.length +
+					examplesPool.singleReference2.resolutions.length
+			);
+		});
+
+		it('should inject the template resolutions in animation card activity', () => {
+			const activity = MessageFactory.attachment(
+				CardFactory.animationCard(
+					// title
+					examplesPool.multipleReferences1.text,
+					// urls
+					[],
+					// buttons
+					[{ title: examplesPool.singleReference2.text }]
+				)
+			);
+
+			const arr = [
+				...examplesPool.singleReference2.resolutions,
+				...examplesPool.multipleReferences1.resolutions,
+			];
+
+			const responsesMap = new Map(arr);
+
+			const activityInjector = new ActivityInjector(activity);
+
+			activityInjector.injectTemplateReferences(responsesMap);
+
+			expect(activity.attachments[0].content.title).toEqual(
+				examplesPool.multipleReferences1.resolvedText
+			);
+			expect(activity.attachments[0].content.buttons[0].title).toEqual(
+				examplesPool.singleReference2.resolvedText
+			);
+		});
+
+		it('should extract template references from audio card', () => {
+			const activity = MessageFactory.attachment(
+				CardFactory.audioCard(
+					// title
+					examplesPool.multipleReferences1.text,
+					// urls
+					[],
+					// buttons
+					[{ title: examplesPool.singleReference2.text }]
+				)
+			);
+
+			const activityInspector = new ActivityInspector(activity);
+			const templateReferences = activityInspector.extractTemplateReferences();
+
+			expect(templateReferences.length).toBe(
+				examplesPool.multipleReferences1.resolutions.length +
+					examplesPool.singleReference2.resolutions.length
+			);
+		});
+
+		it('should inject the template resolutions in audio card activity', () => {
+			const activity = MessageFactory.attachment(
+				CardFactory.audioCard(
+					// title
+					examplesPool.multipleReferences1.text,
+					// urls
+					[],
+					// buttons
+					[{ title: examplesPool.singleReference2.text }]
+				)
+			);
+
+			const arr = [
+				...examplesPool.singleReference2.resolutions,
+				...examplesPool.multipleReferences1.resolutions,
+			];
+
+			const responsesMap = new Map(arr);
+
+			const activityInjector = new ActivityInjector(activity);
+
+			activityInjector.injectTemplateReferences(responsesMap);
+
+			expect(activity.attachments[0].content.title).toEqual(
+				examplesPool.multipleReferences1.resolvedText
+			);
+			expect(activity.attachments[0].content.buttons[0].title).toEqual(
+				examplesPool.singleReference2.resolvedText
+			);
+		});
+
+		it('should extract template references from video card', () => {
+			const activity = MessageFactory.attachment(
+				CardFactory.videoCard(
+					// title
+					examplesPool.multipleReferences1.text,
+					// urls
+					[],
+					// buttons
+					[{ title: examplesPool.singleReference2.text }]
+				)
+			);
+
+			const activityInspector = new ActivityInspector(activity);
+			const templateReferences = activityInspector.extractTemplateReferences();
+
+			expect(templateReferences.length).toBe(
+				examplesPool.multipleReferences1.resolutions.length +
+					examplesPool.singleReference2.resolutions.length
+			);
+		});
+
+		it('should inject the template resolutions in video card activity', () => {
+			const activity = MessageFactory.attachment(
+				CardFactory.videoCard(
+					// title
+					examplesPool.multipleReferences2.text,
+					// urls
+					[],
+					// buttons
+					[{ title: examplesPool.singleReference1.text }]
+				)
+			);
+
+			const arr = [
+				...examplesPool.singleReference1.resolutions,
+				...examplesPool.multipleReferences2.resolutions,
+			];
+
+			const responsesMap = new Map(arr);
+
+			const activityInjector = new ActivityInjector(activity);
+
+			activityInjector.injectTemplateReferences(responsesMap);
+
+			expect(activity.attachments[0].content.title).toEqual(
+				examplesPool.multipleReferences2.resolvedText
+			);
+			expect(activity.attachments[0].content.buttons[0].title).toEqual(
+				examplesPool.singleReference1.resolvedText
+			);
+		});
+
+		it('should extract template references from OAuth card', () => {
+			const activity = MessageFactory.attachment(
+				CardFactory.oauthCard(
+					'',
+					// title
+					examplesPool.multipleReferences1.text,
+					// text
+					examplesPool.singleReference2.text
+				)
+			);
+
+			const activityInspector = new ActivityInspector(activity);
+			const templateReferences = activityInspector.extractTemplateReferences();
+
+			expect(templateReferences.length).toBe(
+				examplesPool.multipleReferences1.resolutions.length +
+					examplesPool.singleReference2.resolutions.length
+			);
+		});
+
+		it('should inject the template resolutions in OAuth card activity', () => {
+			const activity = MessageFactory.attachment(
+				CardFactory.oauthCard(
+					'',
+					// title
+					examplesPool.multipleReferences2.text,
+					// text
+					examplesPool.singleReference1.text
+				)
+			);
+
+			const arr = [
+				...examplesPool.singleReference1.resolutions,
+				...examplesPool.multipleReferences2.resolutions,
+			];
+
+			const responsesMap = new Map(arr);
+
+			const activityInjector = new ActivityInjector(activity);
+
+			activityInjector.injectTemplateReferences(responsesMap);
+
+			expect(activity.attachments[0].content.text).toEqual(
+				examplesPool.singleReference1.resolvedText
+			);
+			expect(activity.attachments[0].content.buttons[0].title).toEqual(
+				examplesPool.multipleReferences2.resolvedText
+			);
+		});
+
+		it('should extract template references from Signin card', () => {
+			const activity = MessageFactory.attachment(
+				CardFactory.signinCard(
+					// title
+					examplesPool.multipleReferences1.text,
+					'',
+					// text
+					examplesPool.singleReference2.text
+				)
+			);
+
+			const activityInspector = new ActivityInspector(activity);
+			const templateReferences = activityInspector.extractTemplateReferences();
+
+			expect(templateReferences.length).toBe(
+				examplesPool.multipleReferences1.resolutions.length +
+					examplesPool.singleReference2.resolutions.length
+			);
+		});
+
+		it('should inject the template resolutions in Signin card activity', () => {
+			const activity = MessageFactory.attachment(
+				CardFactory.signinCard(
+					// title
+					examplesPool.multipleReferences2.text,
+					'',
+					// text
+					examplesPool.singleReference1.text
+				)
+			);
+
+			const arr = [
+				...examplesPool.singleReference1.resolutions,
+				...examplesPool.multipleReferences2.resolutions,
+			];
+
+			const responsesMap = new Map(arr);
+
+			const activityInjector = new ActivityInjector(activity);
+
+			activityInjector.injectTemplateReferences(responsesMap);
+
+			expect(activity.attachments[0].content.text).toEqual(
+				examplesPool.singleReference1.resolvedText
+			);
+
+			expect(activity.attachments[0].content.buttons[0].title).toEqual(
+				examplesPool.multipleReferences2.resolvedText
+			);
+		});
+
+		it('should extract template references from Receipt card', () => {
+			const activity = MessageFactory.attachment(
+				CardFactory.receiptCard({
+					title: '[1]',
+					facts: [{ key: '', value: '[2]' }],
+					items: [
+						{
+							title: '[3]',
+							subtitle: '[4]',
+							text: '[5]',
+							tap: { title: '[6]' },
+						},
+					],
+					tap: { title: '[7]' },
+					buttons: [{ title: '[8]', text: '[9]' }, { title: '[10]' }],
+				})
+			);
+
+			const activityInspector = new ActivityInspector(activity);
+			const templateReferences = activityInspector.extractTemplateReferences();
+
+			expect(templateReferences.length).toBe(10);
+		});
+
+		it('should inject the template resolutions in Receipt card activity', () => {
+			const activity = MessageFactory.attachment(
+				CardFactory.receiptCard({
+					title: examplesPool.singleReference1.text,
+					facts: [{ key: '', value: examplesPool.singleReference2.text }],
+					items: [
+						{
+							title: examplesPool.multipleReferences1.text,
+							subtitle: examplesPool.multipleReferences2.text,
+							text: examplesPool.singleReference1.text,
+						},
+					],
+					tap: { title: examplesPool.singleReference2.text },
+					buttons: [{ title: examplesPool.multipleReferences1.text }],
+				})
+			);
+
+			const arr = [
+				...examplesPool.singleReference1.resolutions,
+				...examplesPool.singleReference2.resolutions,
+				...examplesPool.multipleReferences1.resolutions,
+				...examplesPool.multipleReferences2.resolutions,
+			];
+
+			const responsesMap = new Map(arr);
+
+			const activityInjector = new ActivityInjector(activity);
+
+			activityInjector.injectTemplateReferences(responsesMap);
+
+			expect(activity.attachments[0].content.title).toEqual(
+				examplesPool.singleReference1.resolvedText
+			);
+
+			expect(activity.attachments[0].content.facts[0].value).toEqual(
+				examplesPool.singleReference2.resolvedText
+			);
+			expect(activity.attachments[0].content.items[0].title).toEqual(
+				examplesPool.multipleReferences1.resolvedText
+			);
+			expect(activity.attachments[0].content.items[0].subtitle).toEqual(
+				examplesPool.multipleReferences2.resolvedText
+			);
+
+			expect(activity.attachments[0].content.tap.title).toEqual(
+				examplesPool.singleReference2.resolvedText
+			);
+			expect(activity.attachments[0].content.buttons[0].title).toEqual(
+				examplesPool.multipleReferences1.resolvedText
 			);
 		});
 	});
@@ -428,7 +829,7 @@ describe('LanguageGenerationResolver', () => {
 				.setSpeak(examplesPool.multipleReferences2.text)
 				.build();
 
-			const slotsBuilder = new SlotsBuilder(activity, new Map());
+			const slotsBuilder = new SlotsBuilder(activity, {});
 			const [templateReferences] = slotsBuilder.build();
 
 			expect(templateReferences.length).toBe(
@@ -444,10 +845,7 @@ describe('LanguageGenerationResolver', () => {
 		it('should build slots from given entities', () => {
 			const activity = new ActivityBuilder().build();
 
-			const slotsBuilder = new SlotsBuilder(
-				activity,
-				new Map().set('firstName', 'John').set('lastName', 'Doe')
-			);
+			const slotsBuilder = new SlotsBuilder(activity, { firstName: 'John', lastName: 'Doe' });
 			const [_, entitiesSlots] = slotsBuilder.build();
 
 			expect(entitiesSlots.length).toBe(2);
@@ -465,10 +863,7 @@ describe('LanguageGenerationResolver', () => {
 				.setSpeak(examplesPool.multipleReferences2.text)
 				.build();
 
-			const slotsBuilder = new SlotsBuilder(
-				activity,
-				new Map().set('firstName', 'John').set('lastName', 'Doe')
-			);
+			const slotsBuilder = new SlotsBuilder(activity, { firstName: 'John', lastName: 'Doe' });
 			const [_, entitiesSlots] = slotsBuilder.build();
 
 			expect(entitiesSlots.length).toBe(2);
@@ -535,7 +930,7 @@ describe('LanguageGenerationResolver', () => {
 					.setText(examplesPool.multipleReferences1.text)
 					.build();
 
-				const entities = new Map();
+				const entities = {};
 				await resolver.resolve(activity, entities);
 			} catch (e) {
 				err = e;
@@ -571,7 +966,7 @@ describe('LanguageGenerationResolver', () => {
 				.addCardAction(cardAction)
 				.build();
 
-			return resolver.resolve(activity, new Map()).then(() => {
+			return resolver.resolve(activity, {}).then(() => {
 				expect(activity.text).toEqual(examplesPool.multipleReferences1.resolvedText);
 				expect(activity.speak).toEqual(examplesPool.singleReference1.resolvedText);
 				expect(activity.suggestedActions.actions[0].text).toEqual(
@@ -592,7 +987,7 @@ describe('LanguageGenerationResolver', () => {
 					.addCardAction(cardAction1)
 					.build();
 
-				return resolver.resolve(activity1, new Map()).then(() => {
+				return resolver.resolve(activity1, {}).then(() => {
 					expect(activity1.speak).toEqual(examplesPool.singleReference1.resolvedText);
 					expect(activity1.suggestedActions.actions[0].displayText).toEqual(
 						examplesPool.multipleReferences2.resolvedText
@@ -610,7 +1005,7 @@ describe('LanguageGenerationResolver', () => {
 
 				const activity = new ActivityBuilder().setText('[missingTemplate]').build();
 
-				await resolver.resolve(activity, new Map());
+				await resolver.resolve(activity, {});
 			} catch (e) {
 				err = e;
 			}
@@ -623,7 +1018,7 @@ describe('LanguageGenerationResolver', () => {
 
 			const activity = new ActivityBuilder().setSpeak(examplesPool.withEntities.text).build();
 
-			await resolver.resolve(activity, new Map([['user', 'John']]));
+			await resolver.resolve(activity, { user: 'John' });
 
 			expect(activity.speak).toEqual(examplesPool.withEntities.resolvedText);
 		}).timeout(600000);
@@ -649,7 +1044,7 @@ describe('LanguageGenerationResolver', () => {
 					.setSpeak(examplesPool.withEntities.text)
 					.build();
 
-				await resolver.resolve(activity, new Map());
+				await resolver.resolve(activity, {});
 			} catch (e) {
 				err = e;
 			} finally {
@@ -677,7 +1072,7 @@ describe('LanguageGenerationResolver', () => {
 						.setSpeak(examplesPool.withEntities.text)
 						.build();
 
-					await resolver.resolve(activity, new Map());
+					await resolver.resolve(activity, {});
 				} catch (e) {
 					err = e;
 				} finally {
@@ -702,7 +1097,7 @@ describe('LanguageGenerationResolver', () => {
 						.setSpeak(examplesPool.withEntities.text)
 						.build();
 
-					await resolver.resolve(activity, new Map());
+					await resolver.resolve(activity, {});
 				} catch (e) {
 					err1 = e;
 				} finally {
