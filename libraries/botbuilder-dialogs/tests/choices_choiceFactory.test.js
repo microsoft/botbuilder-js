@@ -190,4 +190,13 @@ describe('ChoiceFactory', function() {
         assertChoices(preparedChoices, ['red', 'green', 'blue'], ActionTypes.PostBack);
         done();
     });
+
+    it('should return a stylized list.', done => {
+        const listActivity = ChoiceFactory.forChannel('emulator',
+            ['choiceTitleOverTwentyChars'],
+            'Test'
+        );
+        assert(listActivity.text === 'Test\n\n   1. choiceTitleOverTwentyChars');
+        done();
+    });
 });
