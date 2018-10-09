@@ -85,7 +85,7 @@ export interface PromptRecognizerResult<T> {
 
 /**
  * Function signature for providing a custom prompt validator.
- * 
+ *
  * ```TypeScript
  * type PromptValidator<T> = (prompt: PromptValidatorContext<T>) => Promise<boolean>;
  * ```
@@ -93,7 +93,7 @@ export interface PromptRecognizerResult<T> {
  * @remarks
  * The validator should be an asynchronous function that returns `true` if
  * `prompt.recognized.value` is valid and the prompt should end.
- * 
+ *
  * > [!NOTE]
  * > If the validator returns `false` the prompts default re-prompt logic will be run unless the
  * > validator sends a custom re-prompt to the user using `prompt.context.sendActivity()`. In that
@@ -110,7 +110,7 @@ export type PromptValidator<T> = (prompt: PromptValidatorContext<T>) => Promise<
 export interface PromptValidatorContext<T> {
     /**
      * The context for the current turn of conversation with the user.
-     * 
+     *
      * @remarks
      * The validator can use this to re-prompt the user.
      */
@@ -118,7 +118,7 @@ export interface PromptValidatorContext<T> {
 
     /**
      * Result returned from the prompts recognizer function.
-     * 
+     *
      * @remarks
      * The `prompt.recognized.succeeded` field can be checked to determine of the recognizer found
      * anything and then the value can be retrieved from `prompt.recognized.value`.
@@ -127,7 +127,7 @@ export interface PromptValidatorContext<T> {
 
     /**
      * A dictionary of values persisted for each conversational turn while the prompt is active.
-     * 
+     *
      * @remarks
      * The validator can use this to persist things like turn counts or other state information.
      */
@@ -135,9 +135,9 @@ export interface PromptValidatorContext<T> {
 
     /**
      * Original set of options passed to the prompt by the calling dialog.
-     * 
+     *
      * @remarks
-     * The validator can extend this interface to support additional prompt options. 
+     * The validator can extend this interface to support additional prompt options.
      */
     readonly options: PromptOptions;
 }
@@ -229,7 +229,7 @@ export abstract class Prompt<T> extends Dialog {
     }
 
     /**
-     * Called anytime the derived class should send the user a prompt. 
+     * Called anytime the derived class should send the user a prompt.
      * @param context Context for the current turn of conversation with the user.
      * @param state Additional state being persisted for the prompt.
      * @param options Options that the prompt was started with in the call to `DialogContext.prompt()`.
@@ -239,10 +239,10 @@ export abstract class Prompt<T> extends Dialog {
 
     /**
      * Called to recognize an utterance received from the user.
-     * 
+     *
      * @remarks
      * The Prompt class filters out non-message activities so its safe to assume that the users
-     * utterance can be retrieved from `context.activity.text`. 
+     * utterance can be retrieved from `context.activity.text`.
      * @param context Context for the current turn of conversation with the user.
      * @param state Additional state being persisted for the prompt.
      * @param options Options that the prompt was started with in the call to `DialogContext.prompt()`.

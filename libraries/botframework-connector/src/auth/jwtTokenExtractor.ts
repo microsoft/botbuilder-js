@@ -65,7 +65,8 @@ export class JwtTokenExtractor {
         try {
             return await this.validateToken(parameter, channelId);
         } catch (err) {
-            console.log('JwtTokenExtractor.getIdentity:err!', err);
+            // tslint:disable-next-line:no-console
+            console.error('JwtTokenExtractor.getIdentity:err!', err);
             throw err;
         }
     }
@@ -127,7 +128,8 @@ export class JwtTokenExtractor {
             return new ClaimsIdentity(claims, true);
 
         } catch (err) {
-            console.log(`Error finding key for token. Available keys: ${metadata.key}`);
+            // tslint:disable-next-line:no-console
+            console.error(`Error finding key for token. Available keys: ${metadata.key}`);
             throw err;
         }
     }

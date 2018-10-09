@@ -102,6 +102,40 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
+    it('should convert incomplete Choices with `action` when using ListStyle.suggestedAction styling.', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', 'Please choose a color.', stringChoices.map(choice => {
+                    return { value: choice, action: {} }
+                }));
+            } else if (results.status === DialogTurnStatus.complete) {
+                const selectedChoice = results.result;
+                await turnContext.sendActivity(selectedChoice.value);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
+            assert(prompt);
+            return prompt.recognized.succeeded;
+        });
+        choicePrompt.style = ListStyle.suggestedAction;
+        dialogs.add(choicePrompt);
+
+        await adapter.send('Hello')
+            .assertReply('Please choose a color.')
+            .send(invalidMessage)
+            .assertReply('Please choose a color.')
+            .send(answerMessage)
+            .assertReply('red');
+    });
+
     it('should send custom retryPrompt.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -316,5 +350,101 @@ describe('ChoicePrompt', function () {
             .assertReply('Please choose a color.')
             .send('hello')
             .assertReply('Please choose a color.');
+    });
+
+    it('should use a Partial Activity when calculating message text during appendChoices.', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt',
+                    {
+                        prompt: { text: 'Please choose a color.', type: ActivityTypes.Message },
+                        choices: stringChoices
+                    });
+            } else if (results.status === DialogTurnStatus.complete) {
+                const selectedChoice = results.result;
+                await turnContext.sendActivity(selectedChoice.value);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const choicePrompt = new ChoicePrompt('prompt');
+        choicePrompt.style = ListStyle.none;
+
+        dialogs.add(choicePrompt);
+
+        await adapter.send('Hello')
+            .assertReply('Please choose a color.')
+            .send(answerMessage)
+            .assertReply('red');
+    });
+
+    it('should create prompt with inline choices when specified.', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt',
+                    {
+                        prompt: { text: 'Please choose a color.', type: ActivityTypes.Message },
+                        choices: stringChoices
+                    });
+            } else if (results.status === DialogTurnStatus.complete) {
+                const selectedChoice = results.result;
+                await turnContext.sendActivity(selectedChoice.value);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const choicePrompt = new ChoicePrompt('prompt');
+        choicePrompt.style = ListStyle.inline;
+
+        dialogs.add(choicePrompt);
+
+        await adapter.send('Hello')
+            .assertReply('Please choose a color. (1) red, (2) green, or (3) blue')
+            .send(answerMessage)
+            .assertReply('red');
+    });
+
+    it('should create prompt with list choices when specified.', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt',
+                    {
+                        prompt: { text: 'Please choose a color.', type: ActivityTypes.Message },
+                        choices: stringChoices
+                    });
+            } else if (results.status === DialogTurnStatus.complete) {
+                const selectedChoice = results.result;
+                await turnContext.sendActivity(selectedChoice.value);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const choicePrompt = new ChoicePrompt('prompt');
+        choicePrompt.style = ListStyle.list;
+
+        dialogs.add(choicePrompt);
+
+        await adapter.send('Hello')
+            .assertReply('Please choose a color.\n\n   1. red\n   2. green\n   3. blue')
+            .send(answerMessage)
+            .assertReply('red');
     });
 });

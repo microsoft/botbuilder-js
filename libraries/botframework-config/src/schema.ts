@@ -44,7 +44,7 @@ export interface IConnectedService {
 
 /**
  * JSON description of an endpoint service.
- * 
+ *
  * @remarks
  * - [type](#type) SHOULD be set to `ServiceTypes.Endpoint`.
  * - [id](#id) SHOULD be set to the bots ID.
@@ -93,7 +93,7 @@ export interface IAzureService extends IConnectedService {
 
 /**
  * JSON description of an Azure Bot Service.
- * 
+ *
  * @remarks
  * - [type](#type) SHOULD be set to `ServiceTypes.Bot`.
  */
@@ -106,7 +106,7 @@ export interface IBotService extends IAzureService {
 
 /**
  * JSON description of an App Insights service.
- * 
+ *
  * @remarks
  * - [type](#type) SHOULD be set to `ServiceTypes.AppInsights`.
  */
@@ -129,7 +129,7 @@ export interface IAppInsightsService extends IAzureService {
 
 /**
  * JSON description of a blob storage service.
- * 
+ *
  * @remarks
  * - [type](#type) SHOULD be set to `ServiceTypes.BlobStorage`.
  */
@@ -147,7 +147,7 @@ export interface IBlobStorageService extends IAzureService {
 
 /**
  * JSON description of a CosmosDB service.
- * 
+ *
  * @remarks
  * - [type](#type) SHOULD be set to `ServiceTypes.CosmosDB`.
  */
@@ -156,7 +156,7 @@ export interface ICosmosDBService extends IAzureService {
      * Endpoint/uri for CosmosDB.
      */
     endpoint: string;
-    
+
     /**
      * Key for accessing CosmosDB.
      */
@@ -175,7 +175,7 @@ export interface ICosmosDBService extends IAzureService {
 
 /**
  * JSON description of a LUIS service.
- * 
+ *
  * @remarks
  * - [type](#type) SHOULD be set to `ServiceTypes.Luis`.
  * - [id](#id) SHOULD be set to the LUIS appid.
@@ -209,7 +209,7 @@ export interface ILuisService extends IConnectedService {
 
 /**
  * JSON description of a dispatch service.
- * 
+ *
  * @remarks
  * - [type](#type) SHOULD be set to `ServiceTypes.Dispatch`.
  */
@@ -222,7 +222,7 @@ export interface IDispatchService extends ILuisService {
 
 /**
  * JSON description of a generic service.
- * 
+ *
  * @remarks
  * - [type](#type) SHOULD be set to `ServiceTypes.Generic`.
  */
@@ -240,7 +240,7 @@ export interface IGenericService extends IConnectedService {
 
 /**
  * JSON description of a QnA Maker service.
- * 
+ *
  * @remarks
  * - [type](#type) SHOULD be set to `ServiceTypes.QnA`.
  */
@@ -268,7 +268,7 @@ export interface IQnAService extends IConnectedService {
 
 /**
  * JSON description of a file.
- * 
+ *
  * @remarks
  * - [type](#type) SHOULD be set to `ServiceTypes.File`.
  */
@@ -295,7 +295,7 @@ export interface IBotConfiguration {
 
     /**
      * Encrypted GUID used to validate password is the same.
-     * 
+     *
      * @remarks
      * You need to be able to decrypt this key with a passed in secret before we will use the
      * secret to encrypt new values.
