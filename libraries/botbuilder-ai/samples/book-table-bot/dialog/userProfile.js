@@ -6,11 +6,11 @@
  * Used to store the user state.
  */
 class UserProfile {
-	constructor(location, time, partySize) {
-		this.location = location;
-		this.time = time;
-		this.partySize = partySize;
-	}
+    constructor(location, time, partySize) {
+        this.location = location;
+        this.time = time;
+        this.partySize = partySize;
+    }
 }
 
 module.exports.UserProfile = UserProfile;

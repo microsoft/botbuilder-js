@@ -1,12 +1,12 @@
 {
-    "name": "cafe-bot",
+    "name": "basic-bot",
     "version": "0.1.0",
     "description": "A basic bot that demonstrates core AI capabilities",
     "author": "Microsoft Bot Framework Team",
     "license": "MIT",
     "main": "index.js",
     "scripts": {
-        "postinstall": "npm link ../",
+        "postinstall": "npm link ../../",
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node ./index.js NODE_ENV=development",
         "watch": "nodemon ./index.js NODE_ENV=development"
