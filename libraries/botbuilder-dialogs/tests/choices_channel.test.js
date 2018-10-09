@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { supportsSuggestedActions, supportsCardActions, hasMessageFeed } = require('../lib/choices/channel');
+const { supportsSuggestedActions, supportsCardActions, hasMessageFeed, getChannelId } = require('../lib/choices/channel');
 
 describe('channel methods', function() {
     this.timeout(5000);
@@ -57,5 +57,15 @@ describe('channel methods', function() {
     it(`should return false for hasMessageFeed() with cortana`, function () {
         const hasFeed = hasMessageFeed('cortana');
         assert(hasFeed === false, `returned true.`);
+    });
+
+    it(`should return the channelId from context.activity.`, function () {
+        const channel = getChannelId({ activity: { channelId: 'facebook' } });
+        assert(channel === 'facebook', `expected "facebook", instead received ${ channel }`);
+    });
+
+    it(`should return an empty string if context.activity.channelId is falsey.`, function () {
+        const channel = getChannelId({ activity: { } });
+        assert(channel === '', `expected "", instead received ${ channel }`);
     });
 });

@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 import { VerifyOptions } from 'jsonwebtoken';
+import { ChannelValidation } from './channelValidation';
 import { ClaimsIdentity } from './claimsIdentity';
 import { Constants } from './constants';
-import { GovernmentConstants } from './governmentConstants';
-import { ChannelValidation } from './channelValidation';
 import { ICredentialProvider } from './credentialProvider';
+import { GovernmentConstants } from './governmentConstants';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 
 export module GovernmentChannelValidation {
@@ -66,7 +66,8 @@ export module GovernmentChannelValidation {
 
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromGovernmentChannelTokenValidationParameters,
-            ChannelValidation.OpenIdMetadataEndpoint ? ChannelValidation.OpenIdMetadataEndpoint : GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl,
+            ChannelValidation.OpenIdMetadataEndpoint ?
+                ChannelValidation.OpenIdMetadataEndpoint : GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl,
             Constants.AllowedSigningAlgorithms);
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
@@ -75,14 +76,14 @@ export module GovernmentChannelValidation {
     }
 
      /**
-     * Validate the ClaimsIdentity to ensure it came from the channel service.
-     * @param  {ClaimsIdentity} identity The identity to validate
-     * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
-     * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
-     */
+      * Validate the ClaimsIdentity to ensure it came from the channel service.
+      * @param  {ClaimsIdentity} identity The identity to validate
+      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
+      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
+      */
     export async function validateIdentity(
         identity: ClaimsIdentity,
-        credentials: ICredentialProvider,
+        credentials: ICredentialProvider
     ): Promise<ClaimsIdentity> {
         if (!identity) {
             // No valid identity. Not Authorized.

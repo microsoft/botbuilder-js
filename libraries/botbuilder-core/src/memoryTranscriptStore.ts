@@ -11,9 +11,9 @@ import { PagedResult, TranscriptInfo, TranscriptStore } from './transcriptLogger
 
 /**
  * The memory transcript store stores transcripts in volatile memory in a Map.
- * 
+ *
  * @remarks
- * Because this uses an unbounded volatile dictionary this should only be used for unit tests or 
+ * Because this uses an unbounded volatile dictionary this should only be used for unit tests or
  * non-production environments.
  */
 export class MemoryTranscriptStore implements TranscriptStore {

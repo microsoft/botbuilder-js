@@ -29,7 +29,8 @@ export module Constants {
     /**
      * TO BOT FROM ENTERPRISE CHANNEL: OpenID metadata document for tokens coming from MSA
      */
-    export const ToBotFromEnterpriseChannelOpenIdMetadataUrlFormat = 'https://{channelService}.enterprisechannel.botframework.com/v1/.well-known/openidconfiguration';
+    export const ToBotFromEnterpriseChannelOpenIdMetadataUrlFormat: string =
+        'https://{channelService}.enterprisechannel.botframework.com/v1/.well-known/openidconfiguration';
 
     /**
      * TO BOT FROM EMULATOR: OpenID metadata document for tokens coming from MSA

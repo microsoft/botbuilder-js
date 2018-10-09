@@ -14,11 +14,11 @@ import { TurnContext } from './turnContext';
  * Middleware that will automatically save any state changes at the end of the turn.
  *
  * @remarks
- * The `AutoSaveStateMiddleware` class should be added towards the top of your bot's middleware 
- * stack, before any other components that use state.  Any `BotState` plugins passed to the 
+ * The `AutoSaveStateMiddleware` class should be added towards the top of your bot's middleware
+ * stack, before any other components that use state.  Any `BotState` plugins passed to the
  * constructor will have their `BotState.saveChanges()` method called upon successful completion
- * of the turn.  
- * 
+ * of the turn.
+ *
  * This example shows boilerplate code for reading and writing conversation and user state within
  * a bot:
  *
@@ -37,13 +37,18 @@ import { TurnContext } from './turnContext';
  *       const user = await userState.load(turnContext);
  *
  *       // ... route activity ...
- *		 // ...make changes to state objects...
- * 		 // ... no need to call userState.saveChanges() or conversationState.saveChanges() anymore!
+ *       // ...make changes to state objects...
+ *       // ... no need to call userState.saveChanges() or conversationState.saveChanges() anymore!
  *    });
  * });
  * ```
  */
 export class AutoSaveStateMiddleware implements Middleware {
+
+    /**
+     * Set of `BotState` plugins being automatically saved.
+     */
+    public botStateSet: BotStateSet;
     /**
      * Creates a new AutoSaveStateiMiddleware instance.
      * @param botStates One or more BotState plugins to automatically save at the end of the turn.
@@ -52,11 +57,6 @@ export class AutoSaveStateMiddleware implements Middleware {
         this.botStateSet = new BotStateSet();
         BotStateSet.prototype.add.apply(this.botStateSet, botStates);
     }
-
-    /** 
-     * Set of `BotState` plugins being automatically saved. 
-     */
-    public botStateSet: BotStateSet;
 
     public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         await next();
@@ -69,6 +69,7 @@ export class AutoSaveStateMiddleware implements Middleware {
      */
     public add(...botStates: BotState[]): this {
         BotStateSet.prototype.add.apply(this.botStateSet, botStates);
+
         return this;
     }
 

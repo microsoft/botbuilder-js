@@ -28,12 +28,12 @@ import {
  * @remarks
  * All of these functions return an `Attachment` which can be added to an `Activity` directly or
  * passed as input to a `MessageFactory` method.
- * 
+ *
  * The following example shows sending a message containing a single hero card:
- * 
+ *
  * ```javascript
  * const { MessageFactory, CardFactory } = require('botbuilder');
- * 
+ *
  * const card = CardFactory.heroCard(
  *      'White T-Shirt',
  *      ['https://example.com/whiteShirt.jpg'],
@@ -60,7 +60,7 @@ export class CardFactory {
     };
 
     /**
-     * Returns an attachment for an adaptive card. 
+     * Returns an attachment for an adaptive card.
      *
      * @remarks
      * Adaptive Cards are a new way for bots to send interactive and immersive card content to
@@ -204,9 +204,9 @@ export class CardFactory {
 
     /**
      * Returns an attachment for a signin card.
-     * 
+     *
      * @remarks
-     * For channels that don't natively support signin cards an alternative message will be 
+     * For channels that don't natively support signin cards an alternative message will be
      * rendered.
      * @param title Title of the cards signin button.
      * @param url The link to the signin page the user needs to visit.
@@ -220,12 +220,12 @@ export class CardFactory {
     }
 
     /**
-     * Returns an attachment for a thumbnail card. 
-     * 
+     * Returns an attachment for a thumbnail card.
+     *
      * @remarks
      * Thumbnail cards are similar to [hero cards](#herocard) but instead of a full width image,
-     * they're typically rendered with a smaller thumbnail version of the image on either side 
-     * and the text will be rendered in column next to the image. Any buttons will typically 
+     * they're typically rendered with a smaller thumbnail version of the image on either side
+     * and the text will be rendered in column next to the image. Any buttons will typically
      * show up under the card.
      * @param title The cards title.
      * @param text (Optional) text field for the card.
@@ -286,9 +286,9 @@ export class CardFactory {
 
     /**
      * Returns a properly formatted array of actions.
-     * 
+     *
      * @remarks
-     * Supports converting strings to `messageBack` actions (note: using 'imBack' for now as 
+     * Supports converting strings to `messageBack` actions (note: using 'imBack' for now as
      * 'messageBack' doesn't work properly in emulator.)
      * @param actions Array of card actions or strings. Strings will be converted to `messageBack` actions.
      */
