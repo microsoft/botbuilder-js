@@ -1,5 +1,6 @@
 const assert = require('assert');
 const { ChoiceFactory } = require('../');
+const { ActionTypes } = require('botbuilder-core');
 
 function assertActivity(received, expected) {
     assert(received, `Activity not returned.`);
@@ -21,10 +22,106 @@ function assertActivity(received, expected) {
 
 const colorChoices = ['red', 'green', 'blue'];
 
+const choicesWithActionTitle = [
+    {
+        value: 'red',
+        action: {
+            type: ActionTypes.ImBack,
+            title: 'Red Color'
+        }
+    },
+    {
+        value: 'green',
+        action: {
+            type: ActionTypes.ImBack,
+            title: 'Green Color'
+        }
+    },
+    {
+        value: 'blue',
+        action: {
+            type: ActionTypes.ImBack,
+            title: 'Blue Color'
+        }
+    }
+];
+
+const choicesWithActionValue = [
+    {
+        value: 'red',
+        action: {
+            type: ActionTypes.ImBack,
+            value: 'Red Color'
+        }
+    },
+    {
+        value: 'green',
+        action: {
+            type: ActionTypes.ImBack,
+            value: 'Green Color'
+        }
+    },
+    {
+        value: 'blue',
+        action: {
+            type: ActionTypes.ImBack,
+            value: 'Blue Color'
+        }
+    }
+];
+
+const choicesWithEmptyActions = [
+    {
+        value: 'red',
+        action: { }
+    },
+    {
+        value: 'green',
+        action: { }
+    },
+    {
+        value: 'blue',
+        action: { }
+    }
+];
+
+const choicesWithPostBacks = [
+    {
+        value: 'red',
+        action: {
+            type: ActionTypes.PostBack
+        }
+    },
+    {
+        value: 'green',
+        action: {
+            type: ActionTypes.PostBack
+        }
+    },
+    {
+        value: 'blue',
+        action: {
+            type: ActionTypes.PostBack
+        }
+    }
+];
+
+function assertChoices(choices, actionValues, actionType = 'imBack') {
+    assert(choices.length === actionValues.length, 'test data prepared incorrectly.');
+    for (let i = 0; i < choices.length; i++) {
+        const choice = choices[i];
+        const val = actionValues[i];
+        assert(choice.action.type === actionType, `Expected action.type === ${ actionType }, received ${ choice.action.type }`);
+        assert(choice.action.value === val, `Expected action.value === ${ val }, received ${ choice.action.value }`);
+        assert(choice.action.title === val, `Expected action.title === ${ val }, received ${ choice.action.title }`);
+        
+    }
+}
+
 describe('ChoiceFactory', function() {
     this.timeout(5000);
    
-    it('should render choices inline.', function (done) {
+    it('should render choices inline.', done => {
         const activity = ChoiceFactory.inline(colorChoices, 'select from:');
         assertActivity(activity, {
             text: `select from: (1) red, (2) green, or (3) blue`
@@ -32,7 +129,7 @@ describe('ChoiceFactory', function() {
         done();
     });
 
-    it('should render choices as a list.', function (done) {
+    it('should render choices as a list.', done => {
         const activity = ChoiceFactory.list(colorChoices, 'select from:');
         assertActivity(activity, {
             text: `select from:\n\n   1. red\n   2. green\n   3. blue`
@@ -40,7 +137,7 @@ describe('ChoiceFactory', function() {
         done();
     });
 
-    it('should render choices as suggested actions.', function (done) {
+    it('should render choices as suggested actions.', done => {
         const activity = ChoiceFactory.suggestedAction(colorChoices, 'select from:');
         assertActivity(activity, {
             text: `select from:`,
@@ -55,7 +152,7 @@ describe('ChoiceFactory', function() {
         done();
     });
 
-    it('should automatically choose render style based on channel type.', function (done) {
+    it('should automatically choose render style based on channel type.', done => {
         const activity = ChoiceFactory.forChannel('emulator', colorChoices, 'select from:');
         assertActivity(activity, {
             text: `select from:`,
@@ -67,6 +164,39 @@ describe('ChoiceFactory', function() {
                 ]
             }
         });
+        done();
+    });
+
+    it('should use action.title to populate action.value if action.value is falsey.', done => {
+        const preparedChoices = ChoiceFactory.toChoices(choicesWithActionTitle);
+        assertChoices(preparedChoices, ['Red Color', 'Green Color', 'Blue Color']);
+        done();
+    });
+
+    it('should use action.value to populate action.title if action.title is falsey.', done => {
+        const preparedChoices = ChoiceFactory.toChoices(choicesWithActionValue);
+        assertChoices(preparedChoices, ['Red Color', 'Green Color', 'Blue Color']);
+        done();
+    });
+    
+    it('should use choice.value to populate action.title and action.value if both are missing.', done => {
+        const preparedChoices = ChoiceFactory.toChoices(choicesWithEmptyActions);
+        assertChoices(preparedChoices, ['red', 'green', 'blue']);
+        done();
+    });
+
+    it('should use provided ActionType.', done => {
+        const preparedChoices = ChoiceFactory.toChoices(choicesWithPostBacks);
+        assertChoices(preparedChoices, ['red', 'green', 'blue'], ActionTypes.PostBack);
+        done();
+    });
+
+    it('should return a stylized list.', done => {
+        const listActivity = ChoiceFactory.forChannel('emulator',
+            ['choiceTitleOverTwentyChars'],
+            'Test'
+        );
+        assert(listActivity.text === 'Test\n\n   1. choiceTitleOverTwentyChars');
         done();
     });
 });

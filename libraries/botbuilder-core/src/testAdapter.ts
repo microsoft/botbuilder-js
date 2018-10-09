@@ -235,9 +235,9 @@ export class TestAdapter extends BotAdapter {
 
     /**
      * Test a list of activities.
-     * 
+     *
      * @remarks
-     * Each activity with the "bot" role will be processed with assertReply() and every other 
+     * Each activity with the "bot" role will be processed with assertReply() and every other
      * activity will be processed as a user message with send().
      * @param activities Array of activities.
      * @param description (Optional) Description of the test case. If not provided one will be generated.

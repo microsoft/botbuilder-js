@@ -16,7 +16,7 @@ export class CosmosDbService extends AzureService implements ICosmosDBService {
      * Endpoint/uri for CosmosDB.
      */
     public endpoint: string;
-    
+
     /**
      * Key for accessing CosmosDB.
      */

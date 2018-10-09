@@ -17,7 +17,7 @@ import { CardFactory } from './cardFactory';
  *
  * ```javascript
  * const { MessageFactory, CardFactory } = require('botbuilder');
- * 
+ *
  * const card = CardFactory.heroCard(
  *      'White T-Shirt',
  *      ['https://example.com/whiteShirt.jpg'],
