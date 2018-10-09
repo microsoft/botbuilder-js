@@ -90,7 +90,7 @@ export module JwtTokenValidation {
         return !channelService || channelService.length === 0;
     }
 
-    function isGovernment(channelService: string) {
+    export function isGovernment(channelService: string): boolean {
         return channelService && channelService.toLowerCase() === GovernmentConstants.ChannelService;
     }
 }
