@@ -1,6 +1,6 @@
 const { LanguageGenerationResolver } = require('botbuilder-ai');
 
-class LGMiddleware {
+class LanguageGenerationMiddleware {
     /**
      * Creates a translation middleware.
      * @param {BotStatePropertyAccessor} entitiesStateAccessor Accessor for LG entities property in the user state.
@@ -16,9 +16,9 @@ class LGMiddleware {
             const { entities } = await this.entitiesStateAccessor.get(context, {});
             await Promise.all(
                 activities.map(activity => {
-                    activity.locale = activity.locale || context.activity.locale;
+                    activity.locale = activity.locale || context.activity.locale || 'en-US';
                     return this.lgResolver.resolve(activity, entities || {});
-                }),
+                })
             );
             await next();
         });
@@ -26,4 +26,4 @@ class LGMiddleware {
     }
 }
 
-module.exports = LGMiddleware;
+module.exports = LanguageGenerationMiddleware;

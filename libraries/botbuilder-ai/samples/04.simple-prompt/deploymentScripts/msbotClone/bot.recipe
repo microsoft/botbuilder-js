@@ -8,11 +8,6 @@
       "url": "http://localhost:3978/api/messages"
     },
     {
-      "type": "luis",
-      "id": "34",
-      "name": "basic-bot-LUIS"
-    },
-    {
       "type": "endpoint",
       "id": "2",
       "name": "production",
@@ -21,17 +16,17 @@
     {
       "type": "abs",
       "id": "3",
-      "name": "basic-Bot"
+      "name": "prompt-Bot"
     },
     {
       "type": "appInsights",
       "id": "4",
-      "name": "basic-Insights"
+      "name": "prompt-Insights"
     },
     {
       "type": "blob",
       "id": "5",
-      "name": "basic-Blob",
+      "name": "prompt-Blob",
       "container": "botstatestore"
     }
   ]
