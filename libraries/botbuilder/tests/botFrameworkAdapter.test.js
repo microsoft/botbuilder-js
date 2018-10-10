@@ -4,13 +4,13 @@ const { ChannelValidation } = require('botframework-connector');
 const { BotFrameworkAdapter } = require('../');
 const os = require('os');
 
-const reference = { 
-    activityId: '1234', 
-    channelId: 'test', 
+const reference = {
+    activityId: '1234',
+    channelId: 'test',
     serviceUrl: 'https://example.org/channel',
     user: { id: 'user', name: 'User Name' },
     bot: { id: 'bot', name: 'Bot Name' },
-    conversation: { id: 'convo1' }   
+    conversation: { id: 'convo1' }
 };
 const incomingMessage = TurnContext.applyConversationReference({ text: 'test', type: 'message' }, reference, true);
 const outgoingMessage = TurnContext.applyConversationReference({ text: 'test', type: 'message' }, reference);
@@ -36,34 +36,36 @@ class AdapterUnderTest extends BotFrameworkAdapter {
 
     createConnectorClient(serviceUrl) {
         assert(serviceUrl, `createConnectorClient() not passed serviceUrl.`);
-        return { conversations: {
-            replyToActivity: (conversationId, activityId, activity) => {
-                assert(conversationId, `replyToActivity() not passed conversationId.`);
-                assert(activityId, `replyToActivity() not passed activityId.`);
-                assert(activity, `replyToActivity() not passed activity.`);
-                return this.failOperation ? Promise.reject(new Error(`failed`)) : Promise.resolve({ id: '5678' });
-            },
-            sendToConversation: (conversationId, activity) => {
-                assert(conversationId, `sendToConversation() not passed conversationId.`);
-                assert(activity, `sendToConversation() not passed activity.`);
-                return this.failOperation ? Promise.reject(new Error(`failed`)) : Promise.resolve({ id: '5678' });
-            },
-            updateActivity: (conversationId, activityId, activity) => {
-                assert(conversationId, `updateActivity() not passed conversationId.`);
-                assert(activityId, `updateActivity() not passed activityId.`);
-                assert(activity, `updateActivity() not passed activity.`);
-                return this.failOperation ? Promise.reject(new Error(`failed`)) : Promise.resolve({ id: '5678' });
-            },
-            deleteActivity: (conversationId, activityId) => {
-                assert(conversationId, `deleteActivity() not passed conversationId.`);
-                assert(activityId, `deleteActivity() not passed activityId.`);
-                return this.failOperation ? Promise.reject(new Error(`failed`)) : Promise.resolve();
-            },
-            createConversation: (parameters) => {
-                assert(parameters, `createConversation() not passed parameters.`);
-                return this.failOperation ? Promise.reject(new Error(`failed`)) : Promise.resolve({ id: 'convo2', serviceUrl: this.newServiceUrl });
+        return {
+            conversations: {
+                replyToActivity: (conversationId, activityId, activity) => {
+                    assert(conversationId, `replyToActivity() not passed conversationId.`);
+                    assert(activityId, `replyToActivity() not passed activityId.`);
+                    assert(activity, `replyToActivity() not passed activity.`);
+                    return this.failOperation ? Promise.reject(new Error(`failed`)) : Promise.resolve({ id: '5678' });
+                },
+                sendToConversation: (conversationId, activity) => {
+                    assert(conversationId, `sendToConversation() not passed conversationId.`);
+                    assert(activity, `sendToConversation() not passed activity.`);
+                    return this.failOperation ? Promise.reject(new Error(`failed`)) : Promise.resolve({ id: '5678' });
+                },
+                updateActivity: (conversationId, activityId, activity) => {
+                    assert(conversationId, `updateActivity() not passed conversationId.`);
+                    assert(activityId, `updateActivity() not passed activityId.`);
+                    assert(activity, `updateActivity() not passed activity.`);
+                    return this.failOperation ? Promise.reject(new Error(`failed`)) : Promise.resolve({ id: '5678' });
+                },
+                deleteActivity: (conversationId, activityId) => {
+                    assert(conversationId, `deleteActivity() not passed conversationId.`);
+                    assert(activityId, `deleteActivity() not passed activityId.`);
+                    return this.failOperation ? Promise.reject(new Error(`failed`)) : Promise.resolve();
+                },
+                createConversation: (parameters) => {
+                    assert(parameters, `createConversation() not passed parameters.`);
+                    return this.failOperation ? Promise.reject(new Error(`failed`)) : Promise.resolve({ id: 'convo2', serviceUrl: this.newServiceUrl });
+                }
             }
-        }};
+        };
     }
 }
 
@@ -78,7 +80,7 @@ class MockRequest {
             case 'data':
                 handler(this.data);
                 break;
-            case 'end': 
+            case 'end':
                 handler();
                 break;
         }
@@ -115,7 +117,7 @@ class MockResponse {
     end() {
         assert(!this.ended, `response.end() called twice.`);
         assert(this.statusCode !== undefined, `response.end() called before response.send().`);
-        this.ended = true;        
+        this.ended = true;
     }
 }
 
@@ -124,7 +126,7 @@ function assertResponse(res, statusCode, hasBody) {
     assert(res.statusCode === statusCode, `response has invalid statusCode.`);
     if (hasBody) {
         assert(res.body, `response missing body.`);
-   } else {
+    } else {
         assert(res.body === undefined, `response has unexpected body.`);
     }
 }
@@ -157,7 +159,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(client.conversations, `invalid client returned.`);
         done();
     });
-    
+
     it(`should processActivity().`, function (done) {
         let called = false;
         const req = new MockRequest(incomingMessage);
@@ -270,7 +272,7 @@ describe(`BotFrameworkAdapter`, function () {
             done();
         });
     });
-    
+
     it(`should continueConversation().`, function (done) {
         let called = false;
         const adapter = new AdapterUnderTest();
@@ -316,7 +318,7 @@ describe(`BotFrameworkAdapter`, function () {
             done();
         });
     });
-    
+
     it(`should fail to createConversation() if serviceUrl missing.`, function (done) {
         const adapter = new AdapterUnderTest();
         const bogus = Object.assign({}, reference);
@@ -563,5 +565,197 @@ describe(`BotFrameworkAdapter`, function () {
         const url = adapter.oauthApiUrl();
         assert(testEndpoint === url, `adapter.oauthApiUrl is incorrect.`);
         done();
+    });
+
+    it(`should throw error if missing serviceUrl in deleteConversationMember()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.deleteConversationMember({ activity: {} });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.deleteConversationMember(): missing serviceUrl',
+                `expected "BotFrameworkAdapter.deleteConversationMember(): missing serviceUrl" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing conversation in deleteConversationMember()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.deleteConversationMember({ activity: { serviceUrl: 'https://test.com' } });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id',
+                `expected "BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing conversation.id in deleteConversationMember()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.deleteConversationMember({ activity: { serviceUrl: 'https://test.com', conversation: {} } });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id',
+                `expected "BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing serviceUrl in getActivityMembers()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getActivityMembers({ activity: {} });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getActivityMembers(): missing serviceUrl',
+                `expected "BotFrameworkAdapter.getActivityMembers(): missing serviceUrl" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing conversation in getActivityMembers()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getActivityMembers({ activity: { serviceUrl: 'https://test.com' } });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id',
+                `expected "BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing conversation.id in getActivityMembers()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getActivityMembers({ activity: { serviceUrl: 'https://test.com', conversation: {} } });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id',
+                `expected "BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing activityId in getActivityMembers()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getActivityMembers({ activity: { serviceUrl: 'https://test.com', conversation: { id: '1' } } });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getActivityMembers(): missing both activityId and context.activity.id',
+                `expected "BotFrameworkAdapter.getActivityMembers(): missing both activityId and context.activity.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing serviceUrl in getConversationMembers()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getConversationMembers({ activity: {} });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getConversationMembers(): missing serviceUrl',
+                `expected "BotFrameworkAdapter.getConversationMembers(): missing serviceUrl" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing conversation in getConversationMembers()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getConversationMembers({ activity: { serviceUrl: 'https://test.com' } });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id',
+                `expected "BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing conversation.id in getConversationMembers()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getConversationMembers({ activity: { serviceUrl: 'https://test.com', conversation: {} } });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id',
+                `expected "BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+    
+    it(`should throw error if missing from in getUserToken()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getUserToken({ activity: {} });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getUserToken(): missing from or from.id',
+                `expected "BotFrameworkAdapter.getUserToken(): missing from or from.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing from.id in getUserToken()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getUserToken({ activity: { from: {} } });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getUserToken(): missing from or from.id',
+                `expected "BotFrameworkAdapter.getUserToken(): missing from or from.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing from in signOutUser()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.signOutUser({ activity: {} });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.signOutUser(): missing from or from.id',
+                `expected "BotFrameworkAdapter.signOutUser(): missing from or from.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing from.id in signOutUser()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.signOutUser({ activity: { from: {} } });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.signOutUser(): missing from or from.id',
+                `expected "BotFrameworkAdapter.signOutUser(): missing from or from.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing from in signOutUser()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getAadTokens({ activity: {} });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getAadTokens(): missing from or from.id',
+                `expected "BotFrameworkAdapter.getAadTokens(): missing from or from.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing from.id in getAadTokens()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getAadTokens({ activity: { from: {} } });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getAadTokens(): missing from or from.id',
+                `expected "BotFrameworkAdapter.getAadTokens(): missing from or from.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
     });
 });
