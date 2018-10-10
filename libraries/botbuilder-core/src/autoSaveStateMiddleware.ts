@@ -60,7 +60,7 @@ export class AutoSaveStateMiddleware implements Middleware {
 
     public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         await next();
-        await this.botStateSet.saveAllChanges(context, true);
+        await this.botStateSet.saveAllChanges(context, false);
     }
 
     /**
