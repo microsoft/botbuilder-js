@@ -13,13 +13,18 @@ class LanguageGenerationMiddleware {
 
     async onTurn(turnContext, next) {
         turnContext.onSendActivities(async (context, activities, next) => {
-            const { entities } = await this.entitiesStateAccessor.get(context, {});
-            await Promise.all(
-                activities.map(activity => {
-                    activity.locale = activity.locale || context.activity.locale;
-                    return this.lgResolver.resolve(activity, entities || {});
-                })
-            );
+            const entities = await this.entitiesStateAccessor.get(context, {});
+            try {
+                await Promise.all(
+                    activities.map(activity => {
+                        activity.locale = activity.locale || context.activity.locale || 'en-US';
+                        return this.lgResolver.resolve(activity, entities);
+                    })
+                );
+            } catch (e) {
+                console.error('Language generation resolution failed');
+                console.error(e);
+            }
             await next();
         });
         await next();

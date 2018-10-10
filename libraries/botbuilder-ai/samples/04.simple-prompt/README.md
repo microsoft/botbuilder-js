@@ -1,14 +1,11 @@
-This sample shows how to use the prompts classes included in `botbuilder-dialogs`. This bot will ask for the user's name, then store the response. It demonstrates a 2-step dialog flow using a prompt, as well as using the state accessors to store and retrieve values.
+This sample shows how to use the prompts classes included in `botbuilder-dialogs` together with language generation service. This bot will ask for the user's name, then store the response. It demonstrates a 2-step dialog flow using a prompt, as well as using the state accessors to store and retrieve values.
 
 # To try this sample
-- Clone the repository
-    ```bash
-    git clone https://github.com/microsoft/botbuilder-samples.git
-    ```
-- In a terminal, navigate to samples/javascript_nodejs/04.simple-prompt
-    ```bash
-    cd samples/javascript_nodejs/04.simple-prompt
-    ```
+- Update the .env with your language generation app id and endpointKey
+	```
+	lgAppId=lgshowcases
+	lgEndpointKey=<YOUR_KEY_HERE>
+	```
 - Install modules and start the bot
     ```bash
     npm i & npm start
@@ -25,9 +22,9 @@ This sample shows how to use the prompts classes included in `botbuilder-dialogs
 - Select simple-prompt-bot.bot file
 
 # Deploy this bot to Azure
-You can use the [MSBot](https://github.com/microsoft/botbuilder-tools) Bot Builder CLI tool to clone and configure any services this sample depends on. 
+You can use the [MSBot](https://github.com/microsoft/botbuilder-tools) Bot Builder CLI tool to clone and configure any services this sample depends on.
 
-To install all Bot Builder tools - 
+To install all Bot Builder tools -
 
 Ensure you have [Node.js](https://nodejs.org/) version 8.5 or higher
 

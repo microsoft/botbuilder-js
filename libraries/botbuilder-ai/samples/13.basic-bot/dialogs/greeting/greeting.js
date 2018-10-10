@@ -48,12 +48,14 @@ class Greeting extends ComponentDialog {
         // Add a water fall dialog with 4 steps.
         // The order of step function registration is importent
         // as a water fall dialog executes steps registered in order
-        this.addDialog(new WaterfallDialog(PROFILE_DIALOG, [
-            this.initializeStateStep.bind(this),
-            this.promptForNameStep.bind(this),
-            this.promptForCityStep.bind(this),
-            this.displayGreetingStep.bind(this)
-        ]));
+        this.addDialog(
+            new WaterfallDialog(PROFILE_DIALOG, [
+                this.initializeStateStep.bind(this),
+                this.promptForNameStep.bind(this),
+                this.promptForCityStep.bind(this),
+                this.displayGreetingStep.bind(this)
+            ])
+        );
 
         // Add text prompts for name and city
         this.addDialog(new TextPrompt(NAME_PROMPT, this.validateName));
@@ -121,7 +123,7 @@ class Greeting extends ComponentDialog {
             await this.userProfileAccessor.set(step.context, userProfile);
         }
         if (!userProfile.city) {
-            this._updateLGEntities(step.context, 'username', userProfile.name);
+            await this._updateLGEntities(step.context, 'username', userProfile.name);
             return await step.prompt(CITY_PROMPT, `${ templateReferences.welcomeUser }, ${ templateReferences.cityQuestion }`);
         } else {
             return await step.next();
@@ -183,8 +185,11 @@ class Greeting extends ComponentDialog {
     async greetUser(step) {
         const userProfile = await this.userProfileAccessor.get(step.context);
         // Display to the user their profile information and end dialog
-        const activity = { text: `${ templateReferences.welcomeUser }, from ${ userProfile.city }, ${ templateReferences.showAppreciation }`, locale: step.context.activity.locale };
-        this._updateLGEntities(step.context, 'username', userProfile.name);
+        const activity = {
+            text: `${ templateReferences.welcomeUser }, from ${ userProfile.city }, ${ templateReferences.showAppreciation }`,
+            locale: step.context.activity.locale
+        };
+        await this._updateLGEntities(step.context, 'username', userProfile.name);
         await step.context.sendActivity(activity);
         await step.context.sendActivity(`You can always say 'My name is <your name> to reintroduce yourself to me.`);
         return await step.endDialog();
@@ -198,9 +203,8 @@ class Greeting extends ComponentDialog {
      * @param value
      */
     async _updateLGEntities(context, key, value) {
-        const obj = await this.lgEntitiesState.get(context);
-        obj.entities = { ...obj.entities, [key]: value };
-        await this.lgEntitiesState.set(context, obj);
+        const entities = await this.lgEntitiesState.get(context, {});
+        await this.lgEntitiesState.set(context, { ...entities, [key]: value });
     }
 }
 

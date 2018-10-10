@@ -102,8 +102,8 @@ const lgEntitiesState = userState.createProperty(LG_ENTITIES_PROPERTY);
 // Wire language generation middleware with the bot
 adapter.use(
     new LanguageGenerationMiddleware(lgEntitiesState, {
-        applicationId: 'lgshowcases',
-        endpointKey: 'aaac97cafb0844d78b3727018cf8985c'
+        applicationId: process.env.lgAppId,
+        endpointKey: process.env.lgEndpointKey
     })
 );
 

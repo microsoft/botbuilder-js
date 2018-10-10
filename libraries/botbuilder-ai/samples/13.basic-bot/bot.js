@@ -66,7 +66,7 @@ class BasicBot {
         // Add the LUIS recognizer.
         const luisConfig = botConfig.findServiceByNameOrId(LUIS_CONFIGURATION);
         if (!luisConfig || !luisConfig.appId) throw new Error('Missing LUIS configuration. Please follow README.MD to create required LUIS applications.\n\n');
-        // TODO
+
         this.luisRecognizer = new LuisRecognizer({
             applicationId: luisConfig.appId,
             // CAUTION: Its better to assign and use a subscription key instead of authoring key here.
@@ -84,7 +84,6 @@ class BasicBot {
 
         this.conversationState = conversationState;
         this.userState = userState;
-        this.lgEntitiesState = lgEntitiesState;
     }
 
     /**

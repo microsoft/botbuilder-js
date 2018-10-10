@@ -51,7 +51,7 @@ class BookTableDialog extends ComponentDialog {
             ])
         );
 
-        // Add text prompts for name
+        this.addDialog(new TextPrompt(WELCOME_PROMPT));
         this.addDialog(new TextPrompt(LOCATION_PROMPT));
         this.addDialog(new NumberPrompt(PARTY_SIZE_PROMPT));
         this.addDialog(new TextPrompt(TIME_PROMPT));
@@ -78,13 +78,12 @@ class BookTableDialog extends ComponentDialog {
             }
         }
 
-        // prompt for name, if missing
         await step.context.sendActivity(templateReferences.welcomeUserTemplate);
         return await step.prompt(CONFIRM_PROMPT, 'Please confirm');
     }
 
     /**
-     * Waterfall Dialog step function.
+	 * Waterfall Dialog step function.
      *
      * @param {WaterfallStepContext} step contextual information for the current step being executed
      */
@@ -94,14 +93,13 @@ class BookTableDialog extends ComponentDialog {
             return this._resetDialog(step);
         }
 
-        this._updateLGEntities(step.context, {
+        await this._updateLGEntities(step.context, {
             knowCurUserLocation: true,
             curUserLocation: 'Cairo'
         });
 
         const newUserProfileState = await this.userProfileStateAccessor.get(step.context);
         if (!newUserProfileState.location) {
-            // prompt for name, if missing
             await step.context.sendActivity(templateReferences.askForLocationTemplate);
             return await step.prompt(CONFIRM_PROMPT, 'Please confirm');
         } else {
@@ -124,7 +122,6 @@ class BookTableDialog extends ComponentDialog {
 
         const userProfileState = await this.userProfileStateAccessor.get(step.context);
         if (!userProfileState.partSize) {
-            // prompt for name, if missing
             return await step.prompt(PARTY_SIZE_PROMPT, templateReferences.askForPartySizeTemplate);
         } else {
             return await step.next();
@@ -142,11 +139,10 @@ class BookTableDialog extends ComponentDialog {
         const userProfileState = await this.userProfileStateAccessor.get(step.context);
 
         if (!userProfileState.time) {
-            this._updateLGEntities(step.context, {
+            await this._updateLGEntities(step.context, {
                 haveDate: true
             });
 
-            // prompt for name, if missing
             return await step.prompt(TIME_PROMPT, templateReferences.askForDateTimeTemplate);
         } else {
             return await step.next();
@@ -163,7 +159,7 @@ class BookTableDialog extends ComponentDialog {
 
         const userProfileState = await this.userProfileStateAccessor.get(step.context);
 
-        this._updateLGEntities(step.context, {
+        await this._updateLGEntities(step.context, {
             partySize: userProfileState.partySize,
             userLocation: userProfileState.location,
             dateTimeReadout: userProfileState.time
@@ -179,7 +175,7 @@ class BookTableDialog extends ComponentDialog {
      */
     async confirmReadoutPrompt(step) {
         if (step.result) {
-            this._updateLGEntities(step.context, {
+            await this._updateLGEntities(step.context, {
                 confNumber: '#1230'
             });
 
@@ -203,9 +199,8 @@ class BookTableDialog extends ComponentDialog {
      * @param obj {Object}
      */
     async _updateLGEntities(context, newObj) {
-        const obj = await this.lgEntitiesStateAccessor.get(context, {});
-        obj.entities = { ...obj.entities, ...newObj };
-        await this.lgEntitiesStateAccessor.set(context, obj);
+        const entities = await this.lgEntitiesStateAccessor.get(context, {});
+        await this.lgEntitiesStateAccessor.set(context, { ...entities, ...newObj });
     }
 
     /**

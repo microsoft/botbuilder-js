@@ -34,15 +34,10 @@ class SimplePromptBot {
         this.dialogs.add(new TextPrompt(NAME_PROMPT));
 
         // Create a dialog that asks the user for their name.
-        this.dialogs.add(new WaterfallDialog(WHO_ARE_YOU, [
-            this.askForName.bind(this),
-            this.collectAndDisplayName.bind(this)
-        ]));
+        this.dialogs.add(new WaterfallDialog(WHO_ARE_YOU, [this.askForName.bind(this), this.collectAndDisplayName.bind(this)]));
 
         // Create a dialog that displays a user name after it has been collceted.
-        this.dialogs.add(new WaterfallDialog(HELLO_USER, [
-            this.displayName.bind(this)
-        ]));
+        this.dialogs.add(new WaterfallDialog(HELLO_USER, [this.displayName.bind(this)]));
 
         this.lgEntitiesState = lgEntitiesState;
     }
@@ -101,9 +96,7 @@ class SimplePromptBot {
                     await dc.beginDialog(WHO_ARE_YOU);
                 }
             }
-        } else if (
-            turnContext.activity.type === ActivityTypes.ConversationUpdate
-        ) {
+        } else if (turnContext.activity.type === ActivityTypes.ConversationUpdate) {
             // Do we have any new members added to the conversation?
             if (turnContext.activity.membersAdded.length !== 0) {
                 // Iterate over all new members added to the conversation
@@ -115,7 +108,9 @@ class SimplePromptBot {
                     if (turnContext.activity.membersAdded[idx].id !== turnContext.activity.recipient.id) {
                         // Send a "this is what the bot does" message to this user.
                         this._updateLGEntities(turnContext, 'username', 'human');
-                        await turnContext.sendActivity('I am a bot that demonstrates the TextPrompt class to collect your name, store it in UserState, and display it. Say anything to continue.');
+                        await turnContext.sendActivity(
+                            'I am a bot that demonstrates the TextPrompt class to collect your name, store it in UserState, and display it. Say anything to continue.'
+                        );
                         await turnContext.sendActivity(lgTemplateReferences.welcomeUser);
                     }
                 }
@@ -137,9 +132,8 @@ class SimplePromptBot {
      * @param value
      */
     async _updateLGEntities(context, key, value) {
-        const obj = await this.lgEntitiesState.get(context, {});
-        obj.entities = { ...obj.entities, [key]: value };
-        await this.lgEntitiesState.set(context, obj);
+        const entities = await this.lgEntitiesState.get(context, {});
+        await this.lgEntitiesState.set(context, { ...entities, [key]: value });
     }
 }
 
