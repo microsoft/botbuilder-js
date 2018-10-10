@@ -42,6 +42,8 @@ export function supportsSuggestedActions(channelId: string, buttonCnt: number = 
         case channels.slack:
         case channels.telegram:
         case channels.emulator:
+        case channels.directline:
+        case channels.webchat:
             return (buttonCnt <= 100);
         default:
             return false;
