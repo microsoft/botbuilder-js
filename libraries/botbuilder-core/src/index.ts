@@ -22,6 +22,7 @@ export * from './middlewareSet';
 export * from './privateConversationState';
 export * from './propertyManager';
 export * from './recognizerResult';
+export * from './showTypingMiddleware';
 export * from './storage';
 export * from './testAdapter';
 export * from './transcriptLogger';
