@@ -24,7 +24,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
      */
     public static defaultConfirmChoices: { [locale: string]: (string|Choice)[] } = {
         'es-es': ['Sí', 'No'],
-        'nl-nl': ['Ja', 'Niet'],
+        'nl-nl': ['Ja', 'Nee'],
         'en-us': ['Yes', 'No'],
         'fr-fr': ['Oui', 'Non'],
         'de-de': ['Ja', 'Nein'],
