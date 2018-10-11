@@ -197,6 +197,7 @@ export class LuisRecognizer {
             return this.luisClient.prediction.resolve(
                 this.application.applicationId, utterance,
                 {
+                    verbose: this.options.includeAllIntents,
                     customHeaders: { 'Ocp-Apim-Subscription-Key': this.application.endpointKey },
                     ...this.options
                 }
