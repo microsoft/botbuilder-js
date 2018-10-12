@@ -245,7 +245,7 @@ export class BotFrameworkAdapter extends BotAdapter {
             if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`); }
 
             // Create conversation
-            const parameters: ConversationParameters = { bot: reference.bot } as ConversationParameters;
+            const parameters: ConversationParameters = { bot: reference.bot, members: [reference.user] } as ConversationParameters;
             const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
 
             return client.conversations.createConversation(parameters).then((response: ConversationResourceResponse) => {
