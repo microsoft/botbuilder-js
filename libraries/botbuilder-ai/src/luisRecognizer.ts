@@ -197,10 +197,9 @@ export class LuisRecognizer {
             return this.luisClient.prediction.resolve(
                 this.application.applicationId, utterance,
                 {
-                    timezoneOffset: this.options.timezoneOffset,
                     verbose: this.options.includeAllIntents,
-                    log: this.options.log,
-                    customHeaders: { 'Ocp-Apim-Subscription-Key': this.application.endpointKey }
+                    customHeaders: { 'Ocp-Apim-Subscription-Key': this.application.endpointKey },
+                    ...this.options
                 }
             )
                 .then((luisResult: LuisModels.LuisResult) => {
