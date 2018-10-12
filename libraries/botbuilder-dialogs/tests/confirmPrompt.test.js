@@ -18,7 +18,7 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please confirm.' });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${results.result}'.`);
+                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -45,7 +45,7 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please confirm. Yes or No' });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${results.result}'.`);
+                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -78,7 +78,7 @@ describe('ConfirmPrompt', function () {
                     retryPrompt: `Please reply with 'Yes' or 'No'.`
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${results.result}'.`);
+                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -111,7 +111,7 @@ describe('ConfirmPrompt', function () {
                     retryPrompt: `Please reply with 'Yes' or 'No'.`
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${results.result}'.`);
+                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -146,7 +146,7 @@ describe('ConfirmPrompt', function () {
                     retryPrompt: `Please reply with 'Yes' or 'No'.`
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${results.result}'.`);
+                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -182,7 +182,7 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.beginDialog('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${results.result}'.`);
+                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -312,5 +312,162 @@ describe('ConfirmPrompt', function () {
             .assertReply('Please confirm. (1) はい または (2) いいえ')
             .send({ text: 'いいえ', type: ActivityTypes.Message, locale: 'ja-jp' })
             .assertReply('false');
+    });
+
+    it('should recognize yes with no PromptOptions.', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt');
+            } else if (results.status === DialogTurnStatus.complete) {
+                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const prompt = new ConfirmPrompt('prompt');
+        prompt.choiceOptions = { includeNumbers: true };
+        dialogs.add(prompt);
+
+        await adapter.send('Hello')
+            .assertReply(' (1) Yes or (2) No')
+            .send('lala')
+            .assertReply(' (1) Yes or (2) No')
+            .send('yes')
+            .assertReply(`The result found is 'true'.`);
+    });
+
+    it('should recognize valid number when choiceOptions.includeNumbers is true.', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', {
+                    prompt: { text: 'Please confirm.', type: ActivityTypes.Message },
+                    retryPrompt: { text: 'Please confirm, say "yes" or "no" or something like that.', type: ActivityTypes.Message }
+                });
+            } else if (results.status === DialogTurnStatus.complete) {
+                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const prompt = new ConfirmPrompt('prompt');
+        prompt.choiceOptions = { includeNumbers: true };
+        dialogs.add(prompt);
+
+        await adapter.send('Hello')
+            .assertReply('Please confirm. (1) Yes or (2) No')
+            .send('lala')
+            .assertReply('Please confirm, say "yes" or "no" or something like that. (1) Yes or (2) No')
+            .send('1')
+            .assertReply(`The result found is 'true'.`);
+    });
+
+    it('should not recognize invalid number when choiceOptions.includeNumbers is true.', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', {
+                    prompt: { text: 'Please confirm.', type: ActivityTypes.Message },
+                    retryPrompt: { text: 'Please confirm, say "yes" or "no" or something like that.', type: ActivityTypes.Message }
+                });
+            } else if (results.status === DialogTurnStatus.complete) {
+                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const prompt = new ConfirmPrompt('prompt');
+        prompt.choiceOptions = { includeNumbers: true };
+        dialogs.add(prompt);
+
+        await adapter.send('Hello')
+            .assertReply('Please confirm. (1) Yes or (2) No')
+            .send('400')
+            .assertReply('Please confirm, say "yes" or "no" or something like that. (1) Yes or (2) No')
+            .send('1')
+            .assertReply(`The result found is 'true'.`);
+    });
+
+    it('should not recognize valid number choice when choiceOptions.includeNumbers is false.', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', {
+                    prompt: { text: 'Please confirm.', type: ActivityTypes.Message },
+                    retryPrompt: { text: 'Please confirm, say "yes" or "no" or something like that.', type: ActivityTypes.Message }
+                });
+            } else if (results.status === DialogTurnStatus.complete) {
+                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const prompt = new ConfirmPrompt('prompt');
+        prompt.choiceOptions = { includeNumbers: false, inlineSeparator: '~' };
+        dialogs.add(prompt);
+
+        await adapter.send('Hello')
+            .assertReply('Please confirm. Yes or No')
+            .send('1')
+            .assertReply('Please confirm, say "yes" or "no" or something like that. Yes or No')
+            .send('no')
+            .assertReply(`The result found is 'false'.`);
+    });
+
+    it('should recognize valid number when choiceOptions.includeNumbers is undefined.', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', {
+                    prompt: { text: 'Please confirm.', type: ActivityTypes.Message },
+                    retryPrompt: { text: 'Please confirm, say "yes" or "no" or something like that.', type: ActivityTypes.Message }
+                });
+            } else if (results.status === DialogTurnStatus.complete) {
+                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const prompt = new ConfirmPrompt('prompt');
+        prompt.choiceOptions = { includeNumbers: undefined };
+        dialogs.add(prompt);
+
+        await adapter.send('Hello')
+            .assertReply('Please confirm. Yes or No')
+            .send('lala')
+            .assertReply('Please confirm, say "yes" or "no" or something like that. Yes or No')
+            .send('1')
+            .assertReply(`The result found is 'true'.`);
     });
 });
