@@ -147,7 +147,10 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         }
 
         // Run next step with the message text as the result.
-        return await this.resumeDialog(dc, DialogReason.continueCalled, dc.context.activity.text);
+		// If dc.context.activity.text is undefined and we have dc.context.activity.value (like in
+		// adaptive-card fields submit), pass the value as the result
+		const result = dc.context.activity.text || dc.context.activity.value;
+        return await this.resumeDialog(dc, DialogReason.continueCalled, result);
     }
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
