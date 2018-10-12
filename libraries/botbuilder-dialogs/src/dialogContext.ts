@@ -11,7 +11,13 @@ import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatu
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
 
+/**
+ * State information persisted by a `DialogSet`.
+ */
 export interface DialogState {
+    /**
+     * The dialog stack being persisted.
+     */
     dialogStack: DialogInstance[];
 }
 
@@ -56,24 +62,14 @@ export class DialogContext {
     }
 
     /**
-     * Returns the cached instance of the active dialog on the top of the stack or `undefined` if
+     * Returns the persisted instance of the active dialog on the top of the stack or `undefined` if
      * the stack is empty.
      *
      * @remarks
-     * Within a dialog or waterfall step this can be used to access the active dialogs state object:
+     * Dialogs can use this to persist custom state in between conversation turns:
      *
      * ```JavaScript
-     * dc.activeDialog.state.profile = {};
-     * ```
-     *
-     * Within the bots routing logic this can be used to determine if there's an active dialog on
-     * the stack:
-     *
-     * ```JavaScript
-     * if (!dc.activeDialog) {
-     *     await dc.context.sendActivity(`No dialog is active`);
-     *     return;
-     * }
+     * dc.activeDialog.state = { someFlag: true };
      * ```
      */
     public get activeDialog(): DialogInstance|undefined {
@@ -84,11 +80,16 @@ export class DialogContext {
      * Pushes a new dialog onto the dialog stack.
      *
      * @remarks
-     * This example starts a 'greeting' dialog and passes it the current user object:
+     * If there's already an active dialog on the stack, that dialog will be paused until the new
+     * dialog calls [endDialog()](#enddialog).
      *
      * ```JavaScript
-     * await dc.beginDialog('greeting', user);
+     * return await dc.beginDialog('greeting', { name: user.name });
      * ```
+     *
+     * The `DialogTurnResult.status` returned can be:
+     * - `DialogTurnStatus.active` if the dialog started was a multi-turn dialog.
+     * - `DialogTurnStatus.completed` if the dialog started was a single-turn dialog.
      * @param dialogId ID of the dialog to start.
      * @param options (Optional) additional argument(s) to pass to the dialog being started.
      */
@@ -109,7 +110,20 @@ export class DialogContext {
     }
 
     /**
-     * Cancels all dialogs on the stack resulting in an empty stack.
+     * Cancels any dialogs on the stack resulting in an empty stack.
+     *
+     * @remarks
+     * The dialogs being cancelled will have their `Dialog.endDialog()` method called before being
+     * removed from the stack.
+     *
+     * ```JavaScript
+     * await dc.cancelAllDialogs();
+     * return await dc.beginDialog('bookFlight');
+     * ```
+     *
+     * The `DialogTurnResult.status` returned can be:
+     * - `DialogTurnStatus.cancelled` if one or more dialogs were cancelled.
+     * - `DialogTurnStatus.empty` if the stack was empty.
      */
     public async cancelAllDialogs(): Promise<DialogTurnResult> {
         if (this.stack.length > 0) {
@@ -124,14 +138,14 @@ export class DialogContext {
     }
 
     /**
-     * Helper function to simplify formatting the options for calling a prompt dialog.
+     * Helper function to simplify formatting the options for calling a `Prompt` based dialog.
      *
      * @remarks
-     * This is a lightweight wrapper abound [begin()](#begin). It fills in a `PromptOptions`
-     * structure and then passes it through to `dc.beginDialog(dialogId, options)`.
+     * This is a lightweight wrapper abound [beginDialog()](#begindialog). It fills in a
+     * `PromptOptions` structure and then passes it through to `dc.beginDialog(dialogId, options)`.
      *
      * ```JavaScript
-     * await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
+     * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
      * @param dialogId ID of the prompt to start.
      * @param promptOrOptions Initial prompt to send the user or a set of options to configure the prompt with..
@@ -158,25 +172,24 @@ export class DialogContext {
     }
 
     /**
-     * Continues execution of the active dialog, if there is one.
+     * Continues execution of the active multi-turn dialog, if there is one.
      *
      * @remarks
      * The stack will be inspected and the active dialog will be retrieved using `DialogSet.find()`.
-     * The dialog will then have its optional `continueDialog()` method executed. You can check
-     * `context.responded` after the call completes to determine if a dialog was run and a reply
-     * was sent to the user.
-     *
-     * > [!NOTE]
-     * > If the active dialog fails to implement `continueDialog()` the [end()](#end) method will
-     * > be automatically called. This is done as a safety mechanism to avoid users getting trapped
-     * > within a dialog.
+     * The dialog will then have its `Dialog.continueDialog()` method called.
      *
      * ```JavaScript
-     * await dc.continueDialog();
-     * if (!context.responded) {
+     * const result = await dc.continueDialog();
+     * if (result.status == DialogTurnStatus.empty && dc.context.activity.type == ActivityTypes.message) {
+     *     // Send fallback message
      *     await dc.context.sendActivity(`I'm sorry. I didn't understand.`);
      * }
      * ```
+     *
+     * The `DialogTurnResult.status` returned can be:
+     * - `DialogTurnStatus.active` if there's still one or more dialogs on the stack.
+     * - `DialogTurnStatus.completed` if the last dialog on the stack just ended.
+     * - `DialogTurnStatus.empty` if the stack was empty.
      */
     public async continueDialog(): Promise<DialogTurnResult> {
         // Check for a dialog on the stack
@@ -201,12 +214,18 @@ export class DialogContext {
      *
      * @remarks
      * The parent dialog is the dialog the started the one being ended via a call to either
-     * [begin()](#begin) or [prompt()](#prompt).
+     * [beginDialog()](#begindialog) or [prompt()](#prompt). The parent dialog will have its
+     * `Dialog.resumeDialog()` method called with any returned `result`. If there is no parent
+     * dialog then turn will end and the result will be passed to the bot via
+     * `DialogTurnResult.result`.
      *
-     * The parent dialog will have its `resumeDialog()` method invoked with any returned result.
-     * If the parent dialog hasn't implemented resumeDialog() then it will be popped off the stack
-     * as well and any result will be passed it its parent. If there are no more parent dialogs on
-     * the stack then processing of the turn will end.
+     * ```JavaScript
+     * return await dc.endDialog();
+     * ```
+     *
+     * The `DialogTurnResult.status` returned can be:
+     * - `DialogTurnStatus.active` the parent dialog was resumed and is still active.
+     * - `DialogTurnStatus.completed` the parent dialog completed or there was no parent dialog to resume.
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
     public async endDialog(result?: any): Promise<DialogTurnResult> {
@@ -234,7 +253,30 @@ export class DialogContext {
      * Ends the active dialog and starts a new dialog in its place.
      *
      * @remarks
+     * This method is conceptually equivalent to calling [endDialog()](#enddialog) and then
+     * immediately calling [beginDialog()](#begindialog). The difference is that the parent
+     * dialog is not resumed or otherwise notified that the dialog it started has been replaced.
+     *
      * This method is particularly useful for creating conversational loops within your bot:
+     *
+     * ```JavaScript
+     * this.addDialog(new WaterfallDialog('randomNumber', [
+     *     async (step) => {
+     *         const { min, max } = step.options;
+     *         const num = min + Math.floor((max - min) * Math.random());
+     *         return await step.prompt('continuePrompt', `Here's a number between ${min} and ${max}: ${num}. Should I pick another one?`);
+     *     },
+     *     async (step) {
+     *         if (step.result) {
+     *             return await step.replaceDialog(this.id, step.options);
+     *         } else {
+     *             return await step.endDialog();
+     *         }
+     *     }
+     * ]));
+     *
+     * this.addDialog(new ConfirmPrompt('continuePrompt'));
+     * ```
      * @param dialogId ID of the new dialog to start.
      * @param options (Optional) additional argument(s) to pass to the new dialog.
      */
@@ -250,8 +292,11 @@ export class DialogContext {
      * Requests the [activeDialog](#activeDialog) to re-prompt the user for input.
      *
      * @remarks
-     * The `Dialog.repromptDialog()` method is optional for dialogs so if there's no active dialog
-     * or the active dialog doesn't support re-prompting, this method will effectively be a no-op.
+     * The active dialogs `Dialog.repromptDialog()` method will be called.
+     *
+     * ```JavaScript
+     * await dc.repromptDialog();
+     * ```
      */
     public async repromptDialog(): Promise<void> {
         // Check for a dialog on the stack

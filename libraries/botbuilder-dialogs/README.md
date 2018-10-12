@@ -1,29 +1,33 @@
+# Bot Builder Dialogs
+
 A dialog stack based conversation manager for Microsoft BotBuilder.
 
 - [Installing](#installing)
 - [Basic Use](#use)
-- [Advanced Topics](#advanced-topics)
+- [Learn More](#learn-more)
 - [Documentation](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-overview-introduction?view=azure-bot-service-4.0)
 - [Class Reference](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/)
 - [GitHub Repo](https://github.com/Microsoft/botbuilder-js)
 - [Report Issues](https://github.com/Microsoft/botbuilder-js/issues)
 
 ## Installing
-To add the preview version of this package to your bot be sure include the @preview tag:
+To add the latest version of this package to your bot:
 
 ```bash
-npm install --save botbuilder-dialogs@preview
+npm install --save botbuilder-dialogs
 ```
 
-While this package is in preview it's possible for updates to include build breaks. To avoid having any updates break your bot it's recommended that you update the dependency table of your bots `package.json` file to lock down the specific version of the package you're using:
+#### Use the Daily Build
 
-```JSON
-{
-    "dependencies": {
-        "botbuilder": "4.0.0-preview1.2",
-        "botbuilder-dialogs": "4.0.0-preview1.2"
-    }
-}
+To get access to the daily builds of this library, configure npm to use the MyGet feed before installing.
+
+```bash
+npm config set registry https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+```
+
+To reset the registry in order to get the latest published version, run:
+```bash
+npm config set registry https://registry.npmjs.org/
 ```
 
 ## What's included?
@@ -36,7 +40,7 @@ of useful prompts that provide type checking and validation of input.
 
 After adding the module to your application, modify your app's code to import the multi-turn dialog management capabilities. Near your other `import` and `require` statements, add:
 
-```
+```javascript
 // Import some of the capabities from the module. 
 const { DialogSet, WaterfallDialog } = require("botbuilder-dialogs");
 ```
@@ -47,10 +51,13 @@ DialogSet, which can be used to group dialogs logically and avoid name collision
 
 Then, create one or more dialogs and add them to the DialogSet. Use the WaterfallDialog
 class to construct dialogs defined by a series of functions for sending and receiving input
-that will be executed in order. More sophisticated multi-dialog sets can be created using the `ComponentDialog` class, which
-has many of the capabilities of a DialogSet, but behaves and can be called like a single dialog.
+that will be executed in order.
 
-```
+More sophisticated multi-dialog sets can be created using the `ComponentDialog` class, which
+contains a DialogSet, is itself also a dialog that can be triggered like any other. By building on top ComponentDialog,
+developer can bundle multiple dialogs into a single unit which can then be packaged, distributed and reused.
+
+```javascript
 // Set up a storage system that will capture the conversation state.
 const storage = new MemoryStorage();
 const convoState = new ConversationState(storage);
@@ -89,7 +96,7 @@ dialogs.add(new WaterfallDialog(DIALOG_ONE, [
 
 Finally, from somewhere in your bot's code, invoke your dialog by name:
 
-```
+```javascript
 // Receive and process incoming events into TurnContext objects in the normal way
 adapter.processActivity(req, res, async (turnContext) => {
     // Create a DialogContext object from the incoming TurnContext
@@ -109,12 +116,21 @@ adapter.processActivity(req, res, async (turnContext) => {
 });
 ```
 
+## Examples
+
+See this module in action in these example apps:
+
+* [Simple Prompts](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/04.simple-prompt)
+* [Multiple Prompts](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/05.multi-turn-prompt)
+* [Prompt Validation](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/10.prompt-validations)
+* [Custom Dialog Class](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/19.custom-dialogs)
+
 # Learn More
 
 [Prompts](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-prompts?view=azure-bot-service-4.0&tabs=javascript) This module contains several types of built-in prompt that can be used to create dialogs that capture and validate specific data types like dates, numbers and multiple-choice answers.
 
-[DialogSet]() DialogSet is a container for multiple dialogs. Once added to a DialogSet, dialogs can be called and interlinked.
+[DialogSet](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/dialogset) DialogSet is a container for multiple dialogs. Once added to a DialogSet, dialogs can be called and interlinked.
 
-[WaterfallDialog](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/waterfall) WaterfallDialogs execute a series of step functions in order, passing the resulting user input from each steo into the next step's function.
+[WaterfallDialog](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/waterfalldialog) WaterfallDialogs execute a series of step functions in order, passing the resulting user input from each steo into the next step's function.
 
-[ComponentDialog]() ComponentDialogs are containers that encapsulate multiple sub-dialogs, but can be invoked like normal dialogs. This is useful for re-usable dialogs, or creating multiple dialogs with similarly named sub-dialogs that would otherwise collide.
+[ComponentDialog](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/componentdialog) ComponentDialogs are containers that encapsulate multiple sub-dialogs, but can be invoked like normal dialogs. This is useful for re-usable dialogs, or creating multiple dialogs with similarly named sub-dialogs that would otherwise collide.

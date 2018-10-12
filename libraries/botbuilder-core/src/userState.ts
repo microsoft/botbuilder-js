@@ -19,25 +19,10 @@ const NO_KEY: string = `UserState: channelId and/or conversation missing from co
  * Each user your bot communicates with will have its own isolated storage object that can be used
  * to persist information about the user across all of the conversation you have with that user.
  *
- * Since the `UserState` class derives from `BotState` it can be used as middleware to automatically
- * read and write the bots user state for each turn. And it also means it can be passed to a
- * `BotStateSet` middleware instance to be managed in parallel with other state providers.
- *
  * ```JavaScript
  * const { UserState, MemoryStorage } = require('botbuilder');
  *
  * const userState = new UserState(new MemoryStorage());
- * adapter.use(userState);
- *
- * server.post('/api/messages', (req, res) => {
- *    adapter.processActivity(req, res, async (context) => {
- *       // Get loaded user state
- *       const user = await userState.get(context);
- *
- *       // ... route activity ...
- *
- *    });
- * });
  * ```
  */
 export class UserState extends BotState {

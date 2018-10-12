@@ -1,10 +1,16 @@
 /**
+ * @module botframework-config
+ */
+/**
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
 
 import * as crypto from 'crypto';
 
+/**
+ * @private
+ */
 export function generateKey(): string {
     // Generates 32 byte cryptographically strong pseudo-random data as a base64 encoded string
     // https://nodejs.org/api/crypto.html#crypto_crypto_randombytes_size_callback
@@ -12,6 +18,7 @@ export function generateKey(): string {
 }
 
 /**
+ * @private
  * Encrypt a string using standardized encyryption of AES256
  * @param plainText value to encrypt
  * @param secret secret to use
@@ -42,7 +49,8 @@ export function encryptString(plainText: string, secret: string): string {
 }
 
 /**
- *  Decrypt a string using standardized encyryption of AES256
+ * @private
+ * Decrypt a string using standardized encyryption of AES256
  * @param enryptedValue value to decrypt
  * @param secret secret to use
  */
@@ -83,6 +91,11 @@ export function decryptString(encryptedValue: string, secret: string): string {
     return value;
 }
 
+/**
+ * @private
+ * @param encryptedValue
+ * @param secret
+ */
 export function legacyDecrypt(encryptedValue: string, secret: string): string {
     // LEGACY for pre standardized SHA256 encryption, this uses some undocumented nodejs MD5 hash internally and is deprecated
     const decipher: crypto.Decipher = crypto.createDecipher('aes192', secret);

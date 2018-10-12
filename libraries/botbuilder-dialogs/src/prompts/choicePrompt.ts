@@ -6,18 +6,21 @@
  * Licensed under the MIT License.
  */
 import { Activity, TurnContext } from 'botbuilder-core';
-import { ChoiceFactoryOptions, FindChoicesOptions, FoundChoice, recognizeChoices } from '../choices';
+import { ChoiceFactory, ChoiceFactoryOptions, FindChoicesOptions, FoundChoice, recognizeChoices } from '../choices';
 import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
 /**
- * Prompts a user to confirm something with a yes/no response.
+ * Prompts a user to select from a list of choices.
  *
  * @remarks
- * By default the prompt will return to the calling dialog a `boolean` representing the users
- * selection.
+ * By default the prompt will return to the calling dialog a `FoundChoice` object containing the
+ * choice that was selected.
  */
 export class ChoicePrompt extends Prompt<FoundChoice> {
 
+    /**
+     * Default options for rendering the choices to the user based on locale.
+     */
     public static defaultChoiceOptions: { [locale: string]: ChoiceFactoryOptions } = {
         'es-es': { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true },
         'nl-nl': { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true },
@@ -29,10 +32,13 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         'zh-cn': { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true }
     };
 
+    /**
+     * The prompts default locale that should be recognized.
+     */
     public defaultLocale: string|undefined;
 
     /**
-     * Gets or sets the style of the choice list rendered to the user when prompting.
+     * Style of the "yes" and "no" choices rendered to the user when prompting.
      *
      * @remarks
      * Defaults to `ListStyle.auto`.
@@ -40,13 +46,13 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
     public style: ListStyle;
 
     /**
-     * Gets or sets additional options passed to the `ChoiceFactory` and used to tweak the style of
-     * choices rendered to the user.
+     * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
+     * rendered to the user.
      */
     public choiceOptions: ChoiceFactoryOptions|undefined;
 
     /**
-     * Gets or sets additional options passed to the `recognizeChoices()` function.
+     * Additional options passed to the underlying `recognizeChoices()` function.
      */
     public recognizerOptions: FindChoicesOptions|undefined;
 
@@ -71,7 +77,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
 
         // Format prompt to send
         let prompt: Partial<Activity>;
-        const choices: any[] = options.choices || [];
+        const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices) || [];
         const channelId: string = context.activity.channelId;
         const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ChoicePrompt.defaultChoiceOptions[locale];
         if (isRetry && options.retryPrompt) {
@@ -89,7 +95,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         const result: PromptRecognizerResult<FoundChoice> = { succeeded: false };
         const activity: Activity = context.activity;
         const utterance: string = activity.text;
-        const choices: any[] = options.choices || [];
+        const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices)|| [];
         const opt: FindChoicesOptions = this.recognizerOptions || {} as FindChoicesOptions;
         opt.locale = activity.locale || opt.locale || this.defaultLocale || 'en-us';
         const results: any[]  = recognizeChoices(utterance, choices, opt);

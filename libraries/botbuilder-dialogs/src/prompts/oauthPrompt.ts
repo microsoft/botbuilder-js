@@ -72,38 +72,44 @@ export interface OAuthPromptSettings {
  * needed and their access token will be passed as an argument to the callers next waterfall step:
  *
  * ```JavaScript
- * const { DialogSet, OAuthPrompt } = require('botbuilder-dialogs');
+ * const { ConversationState, MemoryStorage } = require('botbuilder');
+ * const { DialogSet, OAuthPrompt, WaterfallDialog } = require('botbuilder-dialogs');
  *
- * const dialogs = new DialogSet();
+ * const convoState = new ConversationState(new MemoryStorage());
+ * const dialogState = convoState.createProperty('dialogState');
+ * const dialogs = new DialogSet(dialogState);
  *
- * dialogs.add('loginPrompt', new OAuthPrompt({
+ * dialogs.add(new OAuthPrompt('loginPrompt', {
  *    connectionName: 'GitConnection',
  *    title: 'Login To GitHub',
  *    timeout: 300000   // User has 5 minutes to login
  * }));
  *
- * dialogs.add('taskNeedingLogin', [
- *      async function (dc) {
- *          await dc.beginDialog('loginPrompt');
+ * dialogs.add(new WaterfallDialog('taskNeedingLogin', [
+ *      async (step) => {
+ *          return await step.beginDialog('loginPrompt');
  *      },
- *      async function (dc, token) {
+ *      async (step) => {
+ *          const token = step.result;
  *          if (token) {
- *              // Continue with task needing access token
+ *
+ *              // ... continue with task needing access token ...
+ *
  *          } else {
- *              await dc.context.sendActivity(`Sorry... We couldn't log you in. Try again later.`);
- *              await dc.endDialog();
+ *              await step.context.sendActivity(`Sorry... We couldn't log you in. Try again later.`);
+ *              return await step.endDialog();
  *          }
  *      }
- * ]);
+ * ]));
  * ```
  */
 export class OAuthPrompt extends Dialog {
 
     /**
-     * Creates a new `OAuthPrompt` instance.
-     * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
+     * Creates a new OAuthPrompt instance.
+     * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param settings Settings used to configure the prompt.
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
     constructor(dialogId: string, private settings: OAuthPromptSettings, private validator?: PromptValidator<TokenResponse>) {
         super(dialogId);
@@ -177,6 +183,11 @@ export class OAuthPrompt extends Dialog {
         }
     }
 
+    /**
+     * Attempts to retrieve the stored token for the current user.
+     * @param context Context reference the user that's being looked up.
+     * @param code (Optional) login code received from the user.
+     */
     public async getUserToken(context: TurnContext, code?: string): Promise<TokenResponse|undefined> {
         // Validate adapter type
         if (!('getUserToken' in context.adapter)) {
@@ -202,7 +213,7 @@ export class OAuthPrompt extends Dialog {
      * });
      * await prompt.signOutUser(context);
      * ```
-     * @param context a TurnContext representing latest activity
+     * @param context Context referencing the user that's being signed out.
      */
     public async signOutUser(context: TurnContext): Promise<void> {
         // Validate adapter type
@@ -299,6 +310,9 @@ export class OAuthPrompt extends Dialog {
     }
 }
 
+/**
+ * @private
+ */
 interface OAuthPromptState  {
     state: object;
     options: PromptOptions;

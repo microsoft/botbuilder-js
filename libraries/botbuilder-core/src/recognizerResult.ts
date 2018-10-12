@@ -6,7 +6,9 @@
  * Licensed under the MIT License.
  */
 
-// Return result from a recognizer.
+/**
+ * Value returned from a recognizer.
+ */
 export interface RecognizerResult {
     /**
      * Utterance sent to recognizer
@@ -19,17 +21,20 @@ export interface RecognizerResult {
     readonly alteredText?: string;
 
     /**
-     * Intents recognized for the utterance. A map of intent names to an object with score is returned.
+     * Intents recognized for the utterance.
+     *
+     * @remarks
+     * A map of intent names to an object with score is returned.
      */
     readonly intents: { [name: string]: {score: number} };
 
     /**
-     * Entities
+     * (Optional) entities recognized.
      */
     readonly entities?: any;
 
     /**
-     * Other properties
+     * (Optional) other properties
      */
      [propName: string]: any;
 }

@@ -7,15 +7,16 @@
  */
 
 /**
- * LUIS recognizes time expressions like "next monday" and converts those to a type and set of
- * timex expressions.
+ * The date time recognizer can recognize a wide variety of time expressions.
  *
  * @remarks
+ * The LUIS recognizer handles time expressions like "next monday" and extracts them into objects with a
+ * type and an array of timex expressions.
+ *
  * More information on timex can be found here: http://www.timeml.org/publications/timeMLdocs/timeml_1.2.1.html#timex3
  *
  * More information on the library which does the recognition can be found here: https://github.com/Microsoft/Recognizers-Text
  */
-
 export interface DateTimeSpec {
     /**
      * Type of expression.

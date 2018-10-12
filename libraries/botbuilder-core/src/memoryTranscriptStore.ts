@@ -11,7 +11,10 @@ import { PagedResult, TranscriptInfo, TranscriptStore } from './transcriptLogger
 
 /**
  * The memory transcript store stores transcripts in volatile memory in a Map.
- * Because this uses an unbounded volitile dictionary this should only be used for unit tests or non-production environments.
+ *
+ * @remarks
+ * Because this uses an unbounded volatile dictionary this should only be used for unit tests or
+ * non-production environments.
  */
 export class MemoryTranscriptStore implements TranscriptStore {
 
@@ -55,7 +58,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * Get activities from the memory transcript store
      * @param channelId Channel Id.
      * @param conversationId Conversation Id.
-     * @param continuationToken Continuatuation token to page through results.
+     * @param continuationToken Continuation token to page through results.
      * @param startDate Earliest time to include.
      */
     public getTranscriptActivities(
@@ -98,7 +101,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
     /**
      * List conversations in the channelId.
      * @param channelId Channel Id.
-     * @param continuationToken Continuatuation token to page through results.
+     * @param continuationToken Continuation token to page through results.
      */
     public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) { throw new Error('Missing channelId'); }
@@ -155,23 +158,18 @@ export class MemoryTranscriptStore implements TranscriptStore {
 
 /**
  * @private
- * @param a
- * @param b
  */
 const createdSorter: (a: TranscriptInfo, b: TranscriptInfo) => number = (a: TranscriptInfo, b: TranscriptInfo): number =>
     a.created.getTime() - b.created.getTime();
 
 /**
  * @private
- * @param a
- * @param b
  */
 const timestampSorter: (a: Activity, b: Activity) => number = (a: Activity, b: Activity): number =>
     a.timestamp.getTime() - b.timestamp.getTime();
 
 /**
  * @private
- * @param expression
  */
 const skipWhileExpression: (expression: any) => (item: any) => boolean = (expression: any): (item: any) => boolean => {
     let skipping: boolean = true;
@@ -188,7 +186,6 @@ const skipWhileExpression: (expression: any) => (item: any) => boolean = (expres
 
 /**
  * @private
- * @param activities
  */
 const getDate: (activities: Activity[]) => Date = (activities: Activity[]): Date => {
     if (activities && activities.length > 0) {

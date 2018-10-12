@@ -9,47 +9,26 @@ import { BotState } from './botState';
 import { TurnContext } from './turnContext';
 
 /**
- * Middleware that will call `read()` and `write()` in parallel on multiple `BotState`
- * instances.
- *
- * @remarks
- * This example shows boilerplate code for reading and writing conversation and user state within
- * a bot:
- *
- * ```JavaScript
- * const {AutoSaveStateMiddleware, ConversationState, UserState, MemoryStorage } = require('botbuilder');
- *
- * const storage = new MemoryStorage();
- * const conversationState = new ConversationState(storage);
- * const userState = new UserState(storage);
- * adapter.use(new AutoSaveStateMiddleware(conversationState, userState));
- *
- * server.post('/api/messages', (req, res) => {
- *    adapter.processActivity(req, res, async (context) => {
- *       // Get state
- *       const convo = await conversationState.get(context);
- *       const user = await userState.get(context);
- *
- *       // ... route activity ...
- *
- *    });
- * });
- * ```
+ * A collection of `BotState` plugins that should be loaded or saved in parallel as a single unit.
+ * See `AutoSaveStateMiddleware` for an implementation of this class.
  */
 export class BotStateSet {
 
     /**
-     * Creates a new AutoSaveStateiMiddleware instance.
-     * @param botStates Zero or more BotState plugins to register.
+     * Array of the sets `BotState` plugins.
+     */
+    public readonly botStates: BotState[] = [];
+
+    /**
+     * Creates a new BotStateSet instance.
+     * @param botStates One or more BotState plugins to register.
      */
     public constructor(...botStates: BotState[]) {
         BotStateSet.prototype.add.apply(this, botStates);
     }
 
-    public botStates: BotState[] = [];
-
     /**
-     * Registers `BotState` plugins with the set.
+     * Registers One or more `BotState` plugins with the set.
      * @param botStates One or more BotState plugins to register.
      */
     public add(...botStates: BotState[]): this {
@@ -80,6 +59,7 @@ export class BotStateSet {
         const promises: Promise<any>[] = this.botStates.map((botstate: BotState) => botstate.load(context, force));
 
         await Promise.all(promises);
+
         return;
     }
 
@@ -99,6 +79,7 @@ export class BotStateSet {
         const promises: Promise<void>[] = this.botStates.map((botstate: BotState) => botstate.saveChanges(context, force));
 
         await Promise.all(promises);
+
         return;
     }
 }

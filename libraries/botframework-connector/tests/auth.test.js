@@ -5,7 +5,7 @@ describe('Bot Framework Connector - Auth Tests', function () {
 
     describe('Connector Tokens', function () {
         this.timeout(20000);
-        describe('AuthHeader', function () {
+        xdescribe('AuthHeader', function () {
 
             it('with correct ChannelId should validate', function(done) {
                 Connector.ChannelValidation.ToBotFromChannelTokenValidationParameters.ignoreExpiration = true;

@@ -11,7 +11,7 @@ import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
 
 /**
- * When added, this middleware will log incoming and outgoing activities to a ITranscriptStore.
+ * Logs incoming and outgoing activities to a TranscriptStore.
  */
 export class TranscriptLoggerMiddleware implements Middleware {
     private logger: TranscriptLogger;
@@ -117,7 +117,8 @@ export class TranscriptLoggerMiddleware implements Middleware {
      * @param activity Activity to clone.
      */
     private cloneActivity(activity: Partial<Activity>): Activity {
-        return JSON.parse(JSON.stringify(activity));
+        const emptyActivity: Activity = {type: '', serviceUrl: '', channelId: '', from: undefined, conversation: undefined, recipient: undefined, text: '', label: '', valueType: ''};
+        return Object.assign(emptyActivity, activity);
     }
 }
 

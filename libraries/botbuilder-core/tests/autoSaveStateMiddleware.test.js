@@ -108,4 +108,10 @@ describe(`AutoSaveStateMiddleware`, function () {
             done();
         }
     });
+
+    it(`should not add any BotState on construction if none are passed in.`, function (done) {
+        const middleware = new AutoSaveStateMiddleware();
+        assert(middleware.botStateSet.botStates.length === 0, `should not have added any BotState.`);
+        done();
+    });
 });
