@@ -8,6 +8,7 @@
 import { Activity, ActivityTypes, ConversationReference, InputHints, ResourceResponse } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
 import { shallowCopy } from './internal';
+import { type } from 'os';
 
 /**
  * Signature implemented by functions registered with `context.onSendActivity()`.
@@ -44,6 +45,19 @@ export type DeleteActivityHandler = (
     next: () => Promise<void>
 ) => Promise<void>;
 
+/**
+ * Signature implemented by functions registered with `context.onProcessActivity()`.
+ *
+ * ```TypeScript
+ * type ProcessActivityHandler = (context: TurnContext, reference: Partial<Activity>, next: () => Promise<void>) => Promise<void>;
+ * ```
+ */
+export type ProcessActivityHandler = (
+    context: TurnContext, 
+    activity: Partial<Activity>, 
+    next: () => Promise<void>
+) => Promise<void>;
+
 // tslint:disable-next-line:no-empty-interface
 export interface TurnContext {}
 
@@ -62,6 +76,7 @@ export class TurnContext {
     private _onSendActivities: SendActivitiesHandler[] = [];
     private _onUpdateActivity: UpdateActivityHandler[] = [];
     private _onDeleteActivity: DeleteActivityHandler[] = [];
+    private _onProcessActivity: ProcessActivityHandler[] = [];
 
     /**
      * Creates a new TurnContext instance.
@@ -138,6 +153,23 @@ export class TurnContext {
         }
 
         return activity;
+    }
+
+    /**
+     * Sends a new activity through the adapters middleware stack and bot logic as if it was just
+     * received.
+     * 
+     * @remarks
+     * By default the activity will be addressed as if it was sent from the current user for the
+     * current conversation.
+     * @param activity New activity to process.
+     */
+    public processActivity(activity: Partial<Activity>): Promise<void> {
+        const ref: Partial<ConversationReference> = TurnContext.getConversationReference(this.activity);
+        const incoming: Partial<Activity> = TurnContext.applyConversationReference({...activity}, ref, true);
+        if (!incoming.type) { incoming.type = ActivityTypes.Message; }
+
+        return this.emit(this._onProcessActivity, incoming, () => Promise.resolve());
     }
 
     /**
@@ -254,6 +286,20 @@ export class TurnContext {
         }
 
         return this.emit(this._onDeleteActivity, reference, () => this.adapter.deleteActivity(this, reference));
+    }
+
+    /**
+     * Registers a handler to be notified of, and potentially intercept, the processing of an activity.
+     * 
+     * @remarks
+     * Adapters should register for this notification to detect and process calls to 
+     * [processActivity()](#processactivity).
+     * @param handler A function that will be called anytime [processActivity()](#processactivity) is called. The handler should call `next()` to continue processing of the activity.
+     */
+    public onProcessActivity(handler: ProcessActivityHandler): this {
+        this._onProcessActivity.push(handler);
+
+        return this;
     }
 
     /**

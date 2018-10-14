@@ -202,8 +202,7 @@ export class BotFrameworkAdapter extends BotAdapter {
             reference,
             true
         );
-        const context: TurnContext = this.createContext(activity);
-        await this.onIncomingActivity(context, logic);
+        await this.dispatchActivity(activity, logic);
     }
 
     /**
@@ -265,9 +264,8 @@ export class BotFrameworkAdapter extends BotAdapter {
         activity.conversation = { id: response.id } as ConversationAccount;
         if (response.serviceUrl) { activity.serviceUrl = response.serviceUrl; }
 
-        // Create context and run middleware
-        const context: TurnContext = this.createContext(activity);
-        await this.onIncomingActivity(context, logic);
+        // Dispatch activity
+        await this.dispatchActivity(activity, logic);
     }
 
     /**
@@ -524,10 +522,9 @@ export class BotFrameworkAdapter extends BotAdapter {
             const authHeader: string = req.headers.authorization || req.headers.Authorization || '';
             await this.authenticateRequest(activity, authHeader);
 
-            // Process received activity
+            // Dispatch activity
             status = 500;
-            const context: TurnContext = this.createContext(activity);
-            await this.onIncomingActivity(context, logic)
+            const context = await this.dispatchActivity(activity, logic);
 
             // Retrieve cached invoke response.
             if (activity.type === ActivityTypes.Invoke) {
@@ -737,10 +734,20 @@ export class BotFrameworkAdapter extends BotAdapter {
 
     /**
      * Allows for the overriding of the context object in unit tests and derived adapters.
-     * @param request Received request.
+     * @param activity Received request.
      */
-    protected createContext(request: Partial<Activity>): TurnContext {
-        return new TurnContext(this as any, request);
+    protected createContext(activity: Partial<Activity>): TurnContext {
+        return new TurnContext(this as any, activity);
+    }
+
+    private async dispatchActivity(activity: Partial<Activity>, logic: (context: TurnContext) => Promise<void>): Promise<TurnContext> {
+        const context: TurnContext = this.createContext(activity);
+        context.onProcessActivity(async (ctx, a, next) => {
+            await next();
+            await this.dispatchActivity(a, logic);
+        });
+        await this.onIncomingActivity(context, logic);
+        return context;
     }
 }
 
