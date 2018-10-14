@@ -170,7 +170,7 @@ describe(`BotFrameworkAdapter`, function () {
             called = true;
         }).then(() => {
             assert(called, `bot logic not called.`);
-            assertResponse(res, 202);
+            assertResponse(res, 200);
             done();
         });
     });
@@ -185,7 +185,7 @@ describe(`BotFrameworkAdapter`, function () {
             called = true;
         }).then(() => {
             assert(called, `bot logic not called.`);
-            assertResponse(res, 202);
+            assertResponse(res, 200);
             done();
         });
     });
@@ -207,7 +207,7 @@ describe(`BotFrameworkAdapter`, function () {
             called = true;
         }).then(() => {
             assert(called, `bot logic not called.`);
-            assertResponse(res, 202);
+            assertResponse(res, 200);
             done();
         });
     });
@@ -222,7 +222,7 @@ describe(`BotFrameworkAdapter`, function () {
             assert(false, `shouldn't have passed.`);
         }, (err) => {
             assert(err, `error not returned.`);
-            assertResponse(res, 500, true);
+            assertResponse(res, 400, true);
             done();
         });
     });
@@ -237,7 +237,7 @@ describe(`BotFrameworkAdapter`, function () {
             assert(false, `shouldn't have passed.`);
         }, (err) => {
             assert(err, `error not returned.`);
-            assertResponse(res, 500, true);
+            assertResponse(res, 400, true);
             done();
         });
     });
