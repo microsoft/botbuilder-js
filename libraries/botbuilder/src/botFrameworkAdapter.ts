@@ -197,14 +197,13 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param logic A function handler that will be called to perform the bots logic after the the adapters middleware has been run.
      */
     public async continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void> {
-        const request: Partial<Activity> = TurnContext.applyConversationReference(
+        const activity: Partial<Activity> = TurnContext.applyConversationReference(
             {type: 'event',  name: 'continueConversation' },
             reference,
             true
         );
-        const context: TurnContext = this.createContext(request);
-
-        await this.runMiddleware(context, logic as any);
+        const context: TurnContext = this.createContext(activity);
+        await this.onIncomingActivity(context, logic);
     }
 
     /**
@@ -258,17 +257,17 @@ export class BotFrameworkAdapter extends BotAdapter {
         const response = await client.conversations.createConversation(params); 
 
         // Initialize request and copy over new conversation ID and updated serviceUrl.
-        const request: Partial<Activity> = TurnContext.applyConversationReference(
+        const activity: Partial<Activity> = TurnContext.applyConversationReference(
             {type: 'event', name: 'createConversation' },
             reference,
             true
         );
-        request.conversation = { id: response.id } as ConversationAccount;
-        if (response.serviceUrl) { request.serviceUrl = response.serviceUrl; }
+        activity.conversation = { id: response.id } as ConversationAccount;
+        if (response.serviceUrl) { activity.serviceUrl = response.serviceUrl; }
 
         // Create context and run middleware
-        const context: TurnContext = this.createContext(request);
-        await this.runMiddleware(context, logic as any);
+        const context: TurnContext = this.createContext(activity);
+        await this.onIncomingActivity(context, logic);
     }
 
     /**
@@ -518,20 +517,20 @@ export class BotFrameworkAdapter extends BotAdapter {
         try {
             // Parse body of request
             status = 400;
-            const request = await parseRequest(req);
+            const activity = await parseRequest(req);
 
             // Authenticate the incoming request
             status = 401;
             const authHeader: string = req.headers.authorization || req.headers.Authorization || '';
-            await this.authenticateRequest(request, authHeader);
+            await this.authenticateRequest(activity, authHeader);
 
             // Process received activity
             status = 500;
-            const context: TurnContext = this.createContext(request);
-            await this.runMiddleware(context, logic);
+            const context: TurnContext = this.createContext(activity);
+            await this.onIncomingActivity(context, logic)
 
             // Retrieve cached invoke response.
-            if (request.type === ActivityTypes.Invoke) {
+            if (activity.type === ActivityTypes.Invoke) {
                 const invokeResponse: any = context.turnState.get(INVOKE_RESPONSE_KEY);
                 if (invokeResponse && invokeResponse.value) {
                     const value: InvokeResponse = invokeResponse.value;
@@ -596,21 +595,12 @@ export class BotFrameworkAdapter extends BotAdapter {
                     if (!activity.conversation || !activity.conversation.id) {
                         throw new Error(`BotFrameworkAdapter.sendActivity(): missing conversation id.`);
                     }
-                    const client: ConnectorClient = this.createConnectorClient(activity.serviceUrl);
                     if (activity.type === 'trace' && activity.channelId !== 'emulator') {
                         // Just eat activity
                         responses.push({} as ResourceResponse);
-                    } else if (activity.replyToId) {
-                        responses.push(await client.conversations.replyToActivity(
-                            activity.conversation.id,
-                            activity.replyToId,
-                            activity as Activity
-                        ));
                     } else {
-                        responses.push(await client.conversations.sendToConversation(
-                            activity.conversation.id,
-                            activity as Activity
-                        ));
+                        const response = await this.onOutgoingActivity(context, activity);
+                        responses.push(response);
                     }
                     break;
             }
@@ -641,6 +631,53 @@ export class BotFrameworkAdapter extends BotAdapter {
             activity.id,
             activity as Activity
         );
+    }
+
+    /**
+     * Called anytime the adapter receives an incoming activity.
+     * 
+     * @remarks
+     * The default implementation calls `this.runMiddleware()`.
+     * @param context Context for the current turn of conversation with the user.
+     * @param logic A function handler that will be called to perform the bots logic after the received activity has been pre-processed by the adapter and routed through any middleware for processing.
+     */
+    protected async onIncomingActivity(context: TurnContext, logic: (context: TurnContext) => Promise<any>): Promise<void> {
+        await this.runMiddleware(context, logic);
+    }
+
+    /**
+     * Called anytime the adapter is about to send an activity to a channel server.
+     * 
+     * @remarks
+     * The default implementation calls `this.sendActivity()`.
+     * @param context Context for the current turn of conversation with the user.
+     * @param activity The activity being sent.
+     */
+    protected async onOutgoingActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse> {
+        return await this.sendActivity(activity);
+    }
+
+    /**
+     * Sends an activity to the channel server.
+     * @param activity The activity to send.
+     */
+    protected async sendActivity(activity: Partial<Activity>): Promise<ResourceResponse> {
+        let response: ResourceResponse;
+        const client: ConnectorClient = this.createConnectorClient(activity.serviceUrl);
+        if (activity.replyToId) {
+            response = await client.conversations.replyToActivity(
+                activity.conversation.id,
+                activity.replyToId,
+                activity as Activity
+            );
+        } else {
+            response = await client.conversations.sendToConversation(
+                activity.conversation.id,
+                activity as Activity
+            );
+        }
+
+        return response;
     }
 
     /**
