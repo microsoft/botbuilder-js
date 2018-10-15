@@ -298,6 +298,8 @@ export abstract class Prompt<T> extends Dialog {
 
         // Update prompt with text and actions
         if (typeof prompt === 'object') {
+            // Clone the prompt Activity as to not modify the original prompt.
+            prompt = JSON.parse(JSON.stringify(prompt)) as Activity;
             prompt.text = msg.text;
             if (msg.suggestedActions && Array.isArray(msg.suggestedActions.actions) && msg.suggestedActions.actions.length > 0) {
                 prompt.suggestedActions = msg.suggestedActions;

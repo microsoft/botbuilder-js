@@ -7,7 +7,7 @@
  */
 import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { Activity, TurnContext } from 'botbuilder-core';
-import { Choice, ChoiceFactoryOptions } from '../choices';
+import { Choice, ChoiceFactoryOptions, recognizeChoices } from '../choices';
 import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
 /**
@@ -22,7 +22,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
     /**
      * Default confirm choices for a range of locales.
      */
-    public static defaultConfirmChoices: { [locale: string]: (string|Choice)[] } = {
+    public static defaultConfirmChoices: { [locale: string]: (string | Choice)[] } = {
         'es-es': ['Sí', 'No'],
         'nl-nl': ['Ja', 'Nee'],
         'en-us': ['Yes', 'No'],
@@ -49,7 +49,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
     /**
      * The prompts default locale that should be recognized.
      */
-    public defaultLocale: string|undefined;
+    public defaultLocale: string | undefined;
 
     /**
      * Style of the "yes" and "no" choices rendered to the user when prompting.
@@ -63,12 +63,12 @@ export class ConfirmPrompt extends Prompt<boolean> {
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
      */
-    public choiceOptions: ChoiceFactoryOptions|undefined;
+    public choiceOptions: ChoiceFactoryOptions | undefined;
 
     /**
      * Custom list of choices to send for the prompt.
      */
-    public confirmChoices: (string|Choice)[]|undefined;
+    public confirmChoices: (string | Choice)[] | undefined;
 
     /**
      * Creates a new ConfirmPrompt instance.
@@ -113,6 +113,19 @@ export class ConfirmPrompt extends Prompt<boolean> {
         if (results.length > 0 && results[0].resolution) {
             result.succeeded = true;
             result.value = results[0].resolution.value;
+        } else {
+            // If the prompt text was sent to the user with numbers, the prompt should recognize number choices.
+            const choiceOptions = this.choiceOptions || ConfirmPrompt.defaultChoiceOptions[locale];
+
+            if (typeof choiceOptions.includeNumbers !== 'boolean' || choiceOptions.includeNumbers) {
+                const confirmChoices = this.confirmChoices || ConfirmPrompt.defaultConfirmChoices[locale];
+                const choices = [confirmChoices[0], confirmChoices[1]];
+                const secondOrMoreAttemptResults = recognizeChoices(utterance, choices);
+                if (secondOrMoreAttemptResults.length > 0) {
+                    result.succeeded = true;
+                    result.value = secondOrMoreAttemptResults[0].resolution.index === 0;
+                }
+            }
         }
 
         return result;
