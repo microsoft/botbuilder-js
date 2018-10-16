@@ -631,6 +631,17 @@ export class BotFrameworkAdapter extends BotAdapter {
     }
 
     /**
+     * Called when a context object for an activity is being created.
+     * 
+     * @remarks
+     * Derived classes can override this to create their own extended context object.
+     * @param activity Received request.
+     */
+    protected onCreateContext(activity: Partial<Activity>): TurnContext {
+        return new TurnContext(this as any, activity);
+    }
+
+    /**
      * Called anytime the adapter receives an incoming activity.
      * 
      * @remarks
@@ -732,16 +743,8 @@ export class BotFrameworkAdapter extends BotAdapter {
         }
     }
 
-    /**
-     * Allows for the overriding of the context object in unit tests and derived adapters.
-     * @param activity Received request.
-     */
-    protected createContext(activity: Partial<Activity>): TurnContext {
-        return new TurnContext(this as any, activity);
-    }
-
     private async dispatchActivity(activity: Partial<Activity>, logic: (context: TurnContext) => Promise<void>): Promise<TurnContext> {
-        const context: TurnContext = this.createContext(activity);
+        const context: TurnContext = this.onCreateContext(activity);
         context.onProcessActivity(async (ctx, a, next) => {
             await next();
             await this.dispatchActivity(a, logic);
