@@ -8,7 +8,6 @@
 
 import {
     ChannelValidation,
-    ClaimsIdentity,
     ConnectorClient,
     JwtTokenValidation,
     MicrosoftAppCredentials,
@@ -237,25 +236,15 @@ export class BotFrameworkAdapter extends BotAdapter {
      * });
      * ```
      * @param reference A `ConversationReference` of the user to start a new conversation with.
-     * @param params (Optional) parameters to start the conversation with.
      * @param logic A function handler that will be called to perform the bot's logic after the the adapters middleware has been run.
      */
-    public createConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
-    public createConversation(reference: Partial<ConversationReference>, params: ConversationParameters, logic: (context: TurnContext) => Promise<void>): Promise<void>;
-    public async createConversation(reference: Partial<ConversationReference>, params: ((context: TurnContext) => Promise<void>)|ConversationParameters, logic?: (context: TurnContext) => Promise<void>): Promise<void> {
+    public async createConversation(reference: Partial<ConversationReference>, logic?: (context: TurnContext) => Promise<void>): Promise<void> {
         if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`); }
-        if (typeof params === 'function') {
-            logic = params;
-            params = {} as ConversationParameters;
-        }
-
-        // Initialize params
-        params.bot = reference.bot;
-        if (!params.members) { params.members = [reference.user] }
 
         // Create conversation
+        const parameters: ConversationParameters = { bot: reference.bot, members: [reference.user] } as ConversationParameters;
         const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
-        const response = await client.conversations.createConversation(params); 
+        const response = await client.conversations.createConversation(parameters); 
 
         // Initialize request and copy over new conversation ID and updated serviceUrl.
         const request: Partial<Activity> = TurnContext.applyConversationReference(
