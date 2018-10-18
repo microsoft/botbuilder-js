@@ -527,7 +527,7 @@ export class BotFrameworkAdapter extends BotAdapter {
                     status = value.status;
                     body = value.body;
                 } else {
-                    throw new Error(`Bot failed to return a valid 'invokeResponse' activity.`);
+                    status = 501;
                 }
             } else {
                 status = 200;
