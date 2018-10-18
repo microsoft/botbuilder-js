@@ -205,6 +205,11 @@ export interface ILuisService extends IConnectedService {
      * Region for luis.
      */
     region: string;
+
+    /**
+     * getEndpoint() Returns the full region endpoint for the LUIS service.
+     */
+    getEndpoint(): string;
 }
 
 /**
