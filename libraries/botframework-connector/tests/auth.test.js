@@ -79,20 +79,20 @@ describe('Bot Framework Connector - Auth Tests', function () {
                 });
             });
         });
-        /*
-                describe('EmptyHeader', function () {
-        
-                    it('Bot with noCredentials should throw', function(done) {
-                        var credentials = new Connector.SimpleCredentialProvider('', '');
-                        Connector.JwtTokenValidation.validateAuthHeader('', credentials, undefined, '', '')
-                            .then(claims => done(new Error('Expected validation to fail.')))
-                            .catch(err => {
-                                assert(!!err);
-                                done();
-                            });
-                    });
-                });
-        */
+
+        describe('EmptyHeader', function () {
+
+            it('Bot with noCredentials should throw', async () => {
+                var credentials = new Connector.SimpleCredentialProvider('', '');
+                try {
+                    const claims = await JwtTokenValidation.validateAuthHeader('', credentials, undefined, '', '')
+                    throw new Error('Expected validation to fail.');
+                } catch (err) {
+                    assert(!!err);
+                }
+            });
+        });
+
         describe('Emulator', function () {
             it('MsaHeader correct AppId and ServiceUrl should validate', async () => {
                 const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
@@ -120,7 +120,6 @@ describe('Bot Framework Connector - Auth Tests', function () {
                 const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 const header = `Bearer ${ await tokenGenerator.getToken(true) }`;
                 const credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '');
-
                 const claims = await JwtTokenValidation.authenticateRequest({ serviceUrl: 'https://smba.trafficmanager.net/amer-client-ss.msg/' }, header, credentials, undefined);
                 assert(MicrosoftAppCredentials.isTrustedServiceUrl('https://smba.trafficmanager.net/amer-client-ss.msg/'));
             });
@@ -227,7 +226,7 @@ describe('Bot Framework Connector - Auth Tests', function () {
             it('validateIdentity should fail if wrong issuer', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await ChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'peanut' }], true), credentials)
+                    const claims = await ChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'peanut' }], true), credentials);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(!!err);
@@ -237,7 +236,7 @@ describe('Bot Framework Connector - Auth Tests', function () {
             it('validateIdentity should fail if no audience', async () => {
                 const credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    await ChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'https://api.botframework.com' }], true), credentials)
+                    await ChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'https://api.botframework.com' }], true), credentials);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(!!err);
@@ -288,7 +287,7 @@ describe('Bot Framework Connector - Auth Tests', function () {
             it('validateIdentity should fail if no issuer', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'peanut', value: 'peanut' }], true), credentials)
+                    const claims = await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'peanut', value: 'peanut' }], true), credentials);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(!!err);
