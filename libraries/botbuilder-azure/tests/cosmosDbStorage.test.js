@@ -223,16 +223,15 @@ testStorage = function () {
         let storage = new CosmosDbStorage(getSettings(), (policyInstance) => policy = policyInstance);
 
         assert(policy != null, 'connectionPolicyConfigurator should have been called.')
-    });
+    });    
 
-    it('missing settings should throw', function() {
-        assert.throws(() => new CosmosDbStorage(), Error, 'constructor should have thrown error about missing settings.');
-    });
-
-    it('read with no key should throw', function() {
+    it('read with no key should return no values', function() {
         let storage = new CosmosDbStorage(getSettings(), policyConfigurator);
-        assert.throws(() => storage.read(), Error, 'read() should have thrown error about missing keys.');
-        assert.throws(() => storage.read([]), Error, 'read() should have thrown error about missing keys.');
+        return storage.read([])
+            .then((result) => {
+                assert(result !== null, 'read method should returns an object');
+                assert.deepEqual(result, {}, 'read method should returns an empty object');
+            });
     });
 
     it('write with null/undefined StoreItems should throw', function() {
@@ -241,6 +240,144 @@ testStorage = function () {
         assert.throws(() => storage.write(null), Error, 'write() should have thrown error about missing changes.');
     });
 }
+
+describe('CosmosDbStorage Constructor', function() {
+    it('missing settings should throw', function() {
+        assert.throws(() => new CosmosDbStorage(), Error, 'constructor should have thrown error about missing settings.');
+    });
+
+    it('missing settings endpoint should be thrown - null value', function() {
+        let testSettings = {
+            serviceEndpoint: null,
+            authKey: 'testKey',
+            databaseId: 'testDataBaseID',
+            collectionId: 'testCollectionID'            
+        };
+
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing service Endpoint.')
+    });
+
+    it('missing settings endpoint should be thrown - empty value', function() {
+        let testSettings = {
+            serviceEndpoint: '',
+            authKey: 'testKey',
+            databaseId: 'testDataBaseID',
+            collectionId: 'testCollectionID'            
+        };
+
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing service Endpoint.')
+    });
+
+    it('missing settings endpoint should be thrown - white spaces', function() {
+        let testSettings = {
+            serviceEndpoint: '   ',
+            authKey: 'testKey',
+            databaseId: 'testDataBaseID',
+            collectionId: 'testCollectionID'            
+        };
+
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing service Endpoint.')
+    });
+
+    it('missing settings authKey should be thrown - null value', function() {
+        let testSettings = {
+            serviceEndpoint: 'testEndpoint',
+            authKey: null,
+            databaseId: 'testDataBaseID',
+            collectionId: 'testCollectionID'            
+        };
+
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing authKey.')
+    });
+
+    it('missing settings authKey should be thrown - empty value', function() {
+        let testSettings = {
+            serviceEndpoint: 'testEndpoint',
+            authKey: '',
+            databaseId: 'testDataBaseID',
+            collectionId: 'testCollectionID'            
+        };
+
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing authKey.')
+    });
+
+    it('missing settings authKey should be thrown - white spaces', function() {
+        let testSettings = {
+            serviceEndpoint: 'testEndpoint',
+            authKey: '   ',
+            databaseId: 'testDataBaseID',
+            collectionId: 'testCollectionID'            
+        };
+
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing authKey.')
+    });
+
+    it('missing settings databaseId should be thrown - null value', function() {
+        let testSettings = {
+            serviceEndpoint: 'testEndpoint',
+            authKey: 'testKey',
+            databaseId: null,
+            collectionId: 'testCollectionID'            
+        };
+
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing database ID.')
+    });
+
+    it('missing settings databaseId should be thrown - empty value', function() {
+        let testSettings = {
+            serviceEndpoint: 'testEndpoint',
+            authKey: 'testKey',
+            databaseId: '',
+            collectionId: 'testCollectionID'            
+        };
+
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing database ID.')
+    });
+
+    it('missing settings databaseId should be thrown - white spaces', function() {
+        let testSettings = {
+            serviceEndpoint: 'testEndpoint',
+            authKey: 'testKey',
+            databaseId: '    ',
+            collectionId: 'testCollectionID'            
+        };
+
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing database ID.')
+    });
+
+    it('missing settings collectionId should be thrown - null value', function() {
+        let testSettings = {
+            serviceEndpoint: 'testEndpoint',
+            authKey: 'testKey',
+            databaseId: 'testDataBaseID',
+            collectionId: null            
+        };
+
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing collection ID.')
+    });
+
+    it('missing settings collectionId should be thrown - empty value', function() {
+        let testSettings = {
+            serviceEndpoint: 'testEndpoint',
+            authKey: 'testKey',
+            databaseId: 'testDataBaseID',
+            collectionId: ''            
+        };
+
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing collection ID.')
+    });
+
+    it('missing settings collectionId should be thrown - white spaces', function() {
+        let testSettings = {
+            serviceEndpoint: 'testEndpoint',
+            authKey: 'testKey',
+            databaseId: 'testDataBaseID',
+            collectionId: '    '            
+        };
+
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing collection ID.')
+    });
+});
 
 console.warn(`Disabling CosmosDBStorage tests.`);
 describe.skip('CosmosDbStorage', function () {
