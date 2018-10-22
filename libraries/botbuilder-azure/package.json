@@ -25,10 +25,13 @@
     "azure-storage": "^2.3.0",
     "botbuilder": "^4.0.0",
     "documentdb": "1.14.5",
-    "flat": "^4.0.0"
+    "flat": "^4.0.0",
+    "semaphore": "^1.1.0"
   },
   "devDependencies": {
+    "@types/documentdb": "^1.10.5",
     "@types/mocha": "^2.2.47",
+    "@types/semaphore": "^1.1.0",
     "codelyzer": "^4.1.0",
     "mocha": "^5.2.0",
     "nyc": "^11.4.1",

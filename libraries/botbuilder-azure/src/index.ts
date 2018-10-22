@@ -8,3 +8,4 @@
 export * from './cosmosDbStorage';
 export * from './blobStorage';
 export * from './azureBlobTranscriptStore';
+export * from './cosmosDbKeyEscape';
