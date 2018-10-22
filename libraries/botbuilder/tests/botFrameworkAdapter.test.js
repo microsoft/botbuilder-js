@@ -392,7 +392,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should return 500 error if bot fails to return an 'invokeResponse'.`, function (done) {
+    it(`should return 501 error if bot fails to return an 'invokeResponse'.`, function (done) {
         const req = new MockRequest(incomingInvoke);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
@@ -402,7 +402,7 @@ describe(`BotFrameworkAdapter`, function () {
             assert(false, `shouldn't have passed.`);
         }, (err) => {
             assert(err, `error not returned.`);
-            assertResponse(res, 500, true);
+            assertResponse(res, 501, true);
             done();
         });
     });
