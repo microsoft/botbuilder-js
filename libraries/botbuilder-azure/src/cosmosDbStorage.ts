@@ -232,7 +232,7 @@ function getOrCreateDatabase(client: DocumentClient, databaseId: string): Promis
             value: string;
         }[];
     } = {
-        query: 'SELECT * FROM root r WHERE r.id = @id',
+        query: 'SELECT r._self FROM root r WHERE r.id = @id',
         parameters: [{ name: '@id', value: databaseId }]
     };
 
@@ -261,7 +261,7 @@ function getOrCreateCollection(client: DocumentClient, databaseLink: string, col
             value: string;
         }[];
     } = {
-        query: 'SELECT * FROM root r WHERE r.id=@id',
+        query: 'SELECT r._self FROM root r WHERE r.id=@id',
         parameters: [{ name: '@id', value: collectionId }]
     };
 
