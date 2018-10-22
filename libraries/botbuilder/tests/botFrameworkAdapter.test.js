@@ -402,7 +402,7 @@ describe(`BotFrameworkAdapter`, function () {
             assert(false, `shouldn't have passed.`);
         }, (err) => {
             assert(err, `error not returned.`);
-            assertResponse(res, 501, true);
+            assertResponse(res, 501, false);
             done();
         });
     });
