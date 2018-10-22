@@ -82,7 +82,7 @@ describe('Bot Framework Connector - Auth Tests', function () {
 
         describe('EmptyHeader', function () {
             it('Bot with noCredentials should throw', async () => {
-                var credentials = new Connector.SimpleCredentialProvider('', '');
+                var credentials = new SimpleCredentialProvider('', '');
                 try {
                     const claims = await JwtTokenValidation.validateAuthHeader('', credentials, undefined, '', '');
                     throw new Error('Expected validation to fail.');
