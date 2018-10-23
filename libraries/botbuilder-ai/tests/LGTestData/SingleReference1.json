@@ -1,0 +1,15 @@
+{
+  "text": "[sayGoodAfternoon]",
+  "resolutions": [["sayGoodAfternoon", "Good afternoon"]],
+  "resolvedText": "Good afternoon",
+  "apiResponses": {
+    "sayGoodAfternoon": {
+      "Outputs": {
+        "DisplayText": {
+          "ValueType": 0,
+          "StringValues": ["Good afternoon"]
+        }
+      }
+    }
+  }
+}

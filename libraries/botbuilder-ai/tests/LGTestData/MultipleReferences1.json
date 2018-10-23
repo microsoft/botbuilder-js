@@ -1,0 +1,35 @@
+{
+  "text": "[sayGoodBye], John! [thankingPhrase] for your time, [scheduleMeeting].",
+  "resolutions": [
+    ["sayGoodBye", "Bye"],
+    ["thankingPhrase", "Thanks"],
+    ["scheduleMeeting", "Let's have a meeting"]
+  ],
+  "resolvedText": "Bye, John! Thanks for your time, Let's have a meeting.",
+  "apiResponses": {
+    "sayGoodBye": {
+      "Outputs": {
+        "DisplayText": {
+          "ValueType": 0,
+          "StringValues": ["Bye"]
+        }
+      }
+    },
+    "scheduleMeeting": {
+      "Outputs": {
+        "DisplayText": {
+          "ValueType": 0,
+          "StringValues": ["Let's have a meeting"]
+        }
+      }
+    },
+    "thankingPhrase": {
+      "Outputs": {
+        "DisplayText": {
+          "ValueType": 0,
+          "StringValues": ["Thanks"]
+        }
+      }
+    }
+  }
+}

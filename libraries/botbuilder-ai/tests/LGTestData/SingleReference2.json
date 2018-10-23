@@ -1,0 +1,15 @@
+{
+  "text": "[sayGoodNight]",
+  "resolutions": [["sayGoodNight", "Good night"]],
+  "resolvedText": "Good night",
+  "apiResponses": {
+    "sayGoodNight": {
+      "Outputs": {
+        "DisplayText": {
+          "ValueType": 0,
+          "StringValues": ["Good night"]
+        }
+      }
+    }
+  }
+}
