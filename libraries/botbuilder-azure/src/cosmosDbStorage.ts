@@ -9,7 +9,7 @@
 import { Storage, StoreItems } from 'botbuilder';
 import { ConnectionPolicy, DocumentClient, RequestOptions, UriFactory } from 'documentdb';
 import * as semaphore from 'semaphore';
-import { CosmosDBKeyEscape } from './cosmosDbKeyEscape';
+import { CosmosDbKeyEscape } from './cosmosDbKeyEscape';
 
 const _semaphore: semaphore.Semaphore = semaphore(1);
 
@@ -138,7 +138,7 @@ export class CosmosDbStorage implements Storage {
             value: string;
         }[] = keys.map((key: string, ix: number) => ({
             name: `@id${ix}`,
-            value: CosmosDBKeyEscape.escapeKey(key)
+            value: CosmosDbKeyEscape.escapeKey(key)
         }));
 
         const querySpec: {
@@ -195,7 +195,7 @@ export class CosmosDbStorage implements Storage {
                 // The ETag information is updated as an _etag attribute in the document metadata.
                 delete changesCopy.eTag;
                 const documentChange: DocumentStoreItem = {
-                    id: CosmosDBKeyEscape.escapeKey(k),
+                    id: CosmosDbKeyEscape.escapeKey(k),
                     realId: k,
                     document: changesCopy
                 };
@@ -236,7 +236,7 @@ export class CosmosDbStorage implements Storage {
             Promise.all(keys.map((k: string) =>
                 new Promise((resolve: any, reject: any): void =>
                     this.client.deleteDocument(
-                        UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, CosmosDBKeyEscape.escapeKey(k)),
+                        UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, CosmosDbKeyEscape.escapeKey(k)),
                         (err: any, data: any): void =>
                             err && err.code !== 404 ? reject(err) : resolve()
                         )

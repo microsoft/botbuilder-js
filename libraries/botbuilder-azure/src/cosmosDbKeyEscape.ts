@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-export module CosmosDBKeyEscape {
+export module CosmosDbKeyEscape {
     const illegalKeys: string[] = ['\\', '?', '/', '#', '\t', '\n', '\r', '*'];
     const illegalKeyCharacterReplacementMap: Map<string, string> =
         illegalKeys.reduce<Map<string, string>>(
