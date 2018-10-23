@@ -223,21 +223,6 @@ testStorage = function () {
         let storage = new CosmosDbStorage(getSettings(), (policyInstance) => policy = policyInstance);
 
         assert(policy != null, 'connectionPolicyConfigurator should have been called.')
-    });    
-
-    it('read with no key should return no values', function() {
-        let storage = new CosmosDbStorage(getSettings(), policyConfigurator);
-        return storage.read([])
-            .then((result) => {
-                assert(result !== null, 'read method should returns an object');
-                assert.deepEqual(result, {}, 'read method should returns an empty object');
-            });
-    });
-
-    it('write with null/undefined StoreItems should throw', function() {
-        let storage = new CosmosDbStorage(getSettings(), policyConfigurator);
-        assert.throws(() => storage.write(), Error, 'write() should have thrown error about missing changes.');
-        assert.throws(() => storage.write(null), Error, 'write() should have thrown error about missing changes.');
     });
 }
 
@@ -385,5 +370,40 @@ describe.skip('CosmosDbStorage', function () {
     before('cleanup', reset);
     testStorage();
     after('cleanup', reset);
+});
+
+// These tests use the same Cosmos DB configuration, but are not expected to call the Cosmos DB Emulator.
+describe('CosmosDbStorage - Offline tests', function () {
+    it('should return empty object when null is passed in to read()', async function () {
+        const storage = new CosmosDbStorage(getSettings(), policyConfigurator);
+        const storeItems = await storage.read(null);
+        assert.deepEqual(storeItems, {}, `did not receive empty object, instead received ${ JSON.stringify(storeItems) }`);
+    });
+
+    it('should return empty object when no keys are passed in to read()', async function () {
+        const storage = new CosmosDbStorage(getSettings(), policyConfigurator);
+        const storeItems = await storage.read([]);
+        assert.deepEqual(storeItems, {}, `did not receive empty object, instead received ${ JSON.stringify(storeItems) }`);
+    });
+
+    it('should not blow up when no changes are passed in to write()', async function () {
+        const storage = new CosmosDbStorage(getSettings(), policyConfigurator);
+        const storeItems = await storage.write({});
+    });
+
+    it('should not blow up when null is passed in to write()', async function () {
+        const storage = new CosmosDbStorage(getSettings(), policyConfigurator);
+        const storeItems = await storage.write(null);
+    });
+
+    it('should not blow up when no keys are passed in to delete()', async function () {
+        const storage = new CosmosDbStorage(getSettings(), policyConfigurator);
+        const storeItems = await storage.delete([]);
+    });
+
+    it('should not blow up when null is passed in to delete()', async function () {
+        const storage = new CosmosDbStorage(getSettings(), policyConfigurator);
+        const storeItems = await storage.delete(null);
+    });
 });
 
