@@ -1,0 +1,13 @@
+{
+	"welcomeUserTemplate": "[welcomeMessage]",
+
+	"askForLocationTemplate": "[AskForLocation]",
+
+	"askForDateTimeTemplate": "[AskForDateTime]",
+
+	"askForPartySizeTemplate": "[AskForPartySize]",
+
+	"confirmBookingReadoutTemplate": "[ConfirmBookingReadout]",
+
+	"bookingConfirmationReadoutTemplate": "[BookingConfirmationReadout]"
+}

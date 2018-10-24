@@ -721,29 +721,29 @@ export class Utilities {
 
 		if (isString(value)) {
 			return {
-				StringValues: [value],
+				StringValues: <string[]>[value],
 				ValueType: 0,
 			};
 		} else if (isNumber(value)) {
 			if (isInteger(value)) {
 				return {
-					IntValues: [value],
+					IntValues: <number[]>[value],
 					ValueType: 1,
 				};
 			} else {
 				return {
-					FloatValues: [value],
+					FloatValues: <number[]>[value],
 					ValueType: 2,
 				};
 			}
 		} else if (isBoolean(value)) {
 			return {
-				BooleanValues: [value],
+				BooleanValues: <boolean[]>[value],
 				ValueType: 3,
 			};
 		} else if (isDate(value)) {
 			return {
-				DateTimeValues: [value.toISOString()],
+				DateTimeValues: [(<any>value).toISOString()],
 				ValueType: 4,
 			};
 		}
