@@ -1,6 +1,16 @@
-# Bot Builder SDK v4 [![Build Status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=master)](https://travis-ci.org/Microsoft/botbuilder-js) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=master)
+# Bot Builder SDK v4
+ | Branch | Description        | Build Status | Coverage Status |
+ |----|---------------|--------------|-----------------|
+ |Master | 4.2.* Preview Builds |[![Build Status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=master)](https://travis-ci.org/Microsoft/botbuilder-js?branch=master) |[![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=master)
+ |4.1 | 4.1.* Patch Builds |[![Build Status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=4.1)](https://travis-ci.org/Microsoft/botbuilder-js?branch=4.1) |[![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=4.1)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=4.1)
+  |4.0 | 4.0.* Patch Builds |[![Build Status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=4.0)](https://travis-ci.org/Microsoft/botbuilder-js?branch=4.0) |[![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=4.0)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=4.0)
 
-This repository contains code for the JavaScript version of the [Microsoft Bot Builder SDK](https://github.com/Microsoft/botbuilder). The Bot Builder SDK v4 is the latest SDK for building bot applications. 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Microsoft/botbuilder-dotnet/blob/master/LICENSE)
+[![Gitter](https://img.shields.io/gitter/room/Microsoft/BotBuilder.svg)](https://gitter.im/Microsoft/BotBuilder)
+
+[![StackExchange](https://img.shields.io/stackexchange/stackoverflow/t/botframework.svg)](https://stackoverflow.com/questions/tagged/botframework)
+
+This repository contains code for the JavaScript version of the [Microsoft Bot Builder SDK](https://github.com/Microsoft/botbuilder). The Bot Builder SDK v4 is the latest SDK for building bot applications.
 
 In addition to the JavaScript SDK, Bot Builder supports creating bots in other popular programming languages like [.NET](https://github.com/Microsoft/botbuilder-dotnet), [Python](https://github.com/Microsoft/botbuilder-python), and [Java](https://github.com/Microsoft/botbuilder-java).
 
