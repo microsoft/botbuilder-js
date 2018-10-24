@@ -18,6 +18,15 @@ To get started see the [Azure Bot Service Documentation](https://docs.microsoft.
 
 A rich set of samples are available at [BotBuilder-Samples](https://github.com/microsoft/botbuilder-samples) repository.
 
+## Packages
+| Name                                  | Released Package | Downloads                                                                                                                                                                            |
+|---------------------------------------|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|botbuilder        |[![npm version](https://badge.fury.io/js/botbuilder.svg)](https://badge.fury.io/js/botbuilder)                |[![npm](https://img.shields.io/npm/dt/botbuilder.svg)](https://www.npmjs.com/package/botbuilder)
+|botbuilder-ai     |[![npm version](https://badge.fury.io/js/botbuilder-ai.svg)](https://badge.fury.io/js/botbuilder-ai)          |[![npm](https://img.shields.io/npm/dt/botbuilder-ai.svg)](https://www.npmjs.com/package/botbuilder-ai)
+|botbuilder-azure  |[![npm version](https://badge.fury.io/js/botbuilder-azure.svg)](https://badge.fury.io/js/botbuilder-azure)    |[![npm](https://img.shields.io/npm/dt/botbuilder-azure.svg)](https://www.npmjs.com/package/botbuilder-azure)
+|botbuilder-dialogs|[![npm version](https://badge.fury.io/js/botbuilder-dialogs.svg)](https://badge.fury.io/js/botbuilder-dialogs)|[![npm](https://img.shields.io/npm/dt/botbuilder-dialogs.svg)](https://www.npmjs.com/package/botbuilder-dialogs)
+|botbuilder-logging|[![npm version](https://badge.fury.io/js/botbuilder-logging.svg)](https://badge.fury.io/js/botbuilder-logging)|[![npm](https://img.shields.io/npm/dt/botbuilder-logging.svg)](https://www.npmjs.com/package/botbuilder-logging)
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
