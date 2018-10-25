@@ -1,11 +1,11 @@
 # Bot Builder SDK v4
  | Branch | Description        | Build Status | Coverage Status |
  |----|---------------|--------------|-----------------|
- |Master | 4.1.* Preview Builds |[![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=master)](https://travis-ci.org/Microsoft/botbuilder-js) |[![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=master)
+ |Master | 4.2.* Preview Builds |[![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=master)](https://travis-ci.org/Microsoft/botbuilder-js) |[![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=master)
  |4.1 | 4.1.* Patch Builds |[![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=4.1)](https://travis-ci.org/Microsoft/botbuilder-js) | N/A
  |4.0 | 4.0.* Patch Builds | [![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=4.0)](https://travis-ci.org/Microsoft/botbuilder-js) | N/A |
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Microsoft/botbuilder-dotnet/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Microsoft/botbuilder-js/blob/master/LICENSE)
 [![Gitter](https://img.shields.io/gitter/room/Microsoft/BotBuilder.svg)](https://gitter.im/Microsoft/BotBuilder)
 
 [![StackExchange](https://img.shields.io/stackexchange/stackoverflow/t/botframework.svg)](https://stackoverflow.com/questions/tagged/botframework)
