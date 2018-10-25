@@ -22,14 +22,14 @@ A rich set of samples are available at [BotBuilder-Samples](https://github.com/m
 ## Packages
 | Name                                  | Released Package | Daily Build                                                                                                                                                                  |
 |---------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|--|
-| botbuilder                 | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder.svg?logo=npm&label=npm)](https://www.npmjs.com/package/botbuilder/)                                 | TBD |
-| botbuilder-ai        | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder-ai.svg?logo=npm&label=npm)](https://www.npmjs.com/package/botbuilder-ai/)                 | TBD |
-| botbuilder-azure          | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder-azure.svg?logo=npm&label=npm)](https://www.npmjs.com/package/botbuilder-azure/)                   | TBD |
-| botbuilder-core          | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder-core.svg?logo=npm&label=npm)](https://www.npmjs.com/package/botbuilder-core/)                     | TBD |
-| botbuilder-dialogs        | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder-dialogs.svg?logo=npm&label=npm)](https://www.npmjs.com/package/botbuilder-dialogs/)                 | TBD |
-| botframework-config | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder-config.svg?logo=npm&label=npm)](https://www.npmjs.com/package/botframework-config/) | TBD |
-| botframework-connector           | [![BotBuilder Badge](https://img.shields.io/npm/dt/botframework-connector.svg?logo=npm&label=npm)](https://www.npmjs.com/package/botframework-connector/)                     | TBD |
-| botframework-schema             | [![BotBuilder Badge](https://img.shields.io/npm/dt/botframework-schema.svg?logo=npm&label=npm)](https://www.npmjs.com/package/botframework-schema/)                             | TBD |
+| botbuilder                 | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder.svg?logo=npm&label=botbuilder)](https://www.npmjs.com/package/botbuilder/)                                 | TBD |
+| botbuilder-ai        | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder-ai.svg?logo=npm&label=botbuilder-ai)](https://www.npmjs.com/package/botbuilder-ai/)                 | TBD |
+| botbuilder-azure          | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder-azure.svg?logo=npm&label=botbuilder-azure)](https://www.npmjs.com/package/botbuilder-azure/)                   | TBD |
+| botbuilder-core          | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder-core.svg?logo=npm&label=botbuilder-core)](https://www.npmjs.com/package/botbuilder-core/)                     | TBD |
+| botbuilder-dialogs        | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder-dialogs.svg?logo=npm&label=botbuilder-dialogs)](https://www.npmjs.com/package/botbuilder-dialogs/)                 | TBD |
+| botframework-config | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder-config.svg?logo=npm&label=botframework-config)](https://www.npmjs.com/package/botframework-config/) | TBD |
+| botframework-connector           | [![BotBuilder Badge](https://img.shields.io/npm/dt/botframework-connector.svg?logo=npm&label=botframework-connector)](https://www.npmjs.com/package/botframework-connector/)                     | TBD |
+| botframework-schema             | [![BotBuilder Badge](https://img.shields.io/npm/dt/botframework-schema.svg?logo=npm&label=botframework-schema)](https://www.npmjs.com/package/botframework-schema/)                             | TBD |
 
 
 To use the daily builds, which are published to MyGet, please follow the instructions [here](UsingMyGet.md).
