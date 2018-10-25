@@ -2,6 +2,7 @@ const assert = require('assert');
 const { CosmosDbStorage } = require('../');
 const { DocumentClient, UriFactory } = require('documentdb');
 const { MockMode, usingNock } = require('./mockHelper');
+const nock = require('nock');
 
 const mode = process.env.MOCK_MODE ? process.env.MOCK_MODE : MockMode.lockdown;
 
@@ -15,6 +16,8 @@ const getSettings = () => ({
 
 // called before each test
 const reset = (done) => {
+    nock.cleanAll();
+    nock.enableNetConnect();
     if (mode!== MockMode.lockdown) {
         let settings = getSettings();
         let client = new DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey });
