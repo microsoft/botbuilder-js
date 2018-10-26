@@ -1,0 +1,64 @@
+{
+    "name": "cafebot",
+    "description": "",
+    "services": [
+        {
+            "type": "endpoint",
+            "name": "development",
+            "endpoint": "http://localhost:3978/api/messages",
+            "appId": "",
+            "appPassword": "",
+            "id": "61"
+        },
+        {
+            "type": "luis",
+            "name": "cafeDispatchModel",
+            "appId": "79e9b52b-8ae3-4a58-b07f-7480a42c9dc2",
+            "version": "0.1",
+            "authoringKey": "a95d07785b374f0a9d7d40700e28a285",
+            "subscriptionKey": "a95d07785b374f0a9d7d40700e28a285",
+            "region": "westus",
+            "id": "209"
+        },
+        {
+            "type": "luis",
+            "name": "cafeBotBookTableTurnN",
+            "appId": "4f4cd93f-4e53-4ed2-a1e8-93d60b070954",
+            "version": "0.1",
+            "authoringKey": "a95d07785b374f0a9d7d40700e28a285",
+            "subscriptionKey": "a95d07785b374f0a9d7d40700e28a285",
+            "region": "westus",
+            "id": "68"
+        },
+        {
+            "type": "luis",
+            "name": "getUserProfile",
+            "appId": "2f40655a-13c3-4b84-8a73-bb347617a85a",
+            "version": "0.1",
+            "authoringKey": "a95d07785b374f0a9d7d40700e28a285",
+            "subscriptionKey": "a95d07785b374f0a9d7d40700e28a285",
+            "region": "westus",
+            "id": "21"
+        },
+        {
+            "type": "qna",
+            "name": "cafeFaqChitChat",
+            "kbId": "169d7579-9bea-4a5b-afb5-6aead6f9e5b3",
+            "subscriptionKey": "82ec5a77c5af4b8eaabf9ce550bf06f6",
+            "endpointKey": "0120c782-55eb-4d6a-a6bb-66e0b545119e",
+            "hostname": "https://vk-test-qnamaker.azurewebsites.net/qnamaker",
+            "id": "150"
+        },
+        {
+            "type": "generic",
+            "name": "CafeBotLG",
+            "url": "none",
+            "configuration": {
+                "authoringKey": "00315f9f87554fcb8936f4af9abb3c6c"
+            },
+            "id": "146"
+        }
+    ],
+    "padlock": "",
+    "version": "2.0"
+}

@@ -1,21 +1,20 @@
 {
-  "name": "book-table-bot",
+  "name": "basic-bot",
   "version": "0.1.0",
-  "description": "Book table bot",
+  "description": "A basic bot that demonstrates core AI capabilities",
   "author": "Microsoft Bot Framework Team",
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "postinstall": "cd ../../ && npm i && npm run build && cd samples/53.book-table-bot && npm link ../../",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./index.js",
     "watch": "nodemon ./index.js"
   },
   "dependencies": {
-    "botbuilder": "^4.0.6",
-    "botbuilder-ai": "^4.0.6",
-    "botbuilder-dialogs": "^4.0.6",
-    "botframework-config": "^4.0.6",
+    "botbuilder": "^4.0.0",
+    "botbuilder-ai": "^4.0.0",
+    "botbuilder-dialogs": "^4.0.0",
+    "botframework-config": "^4.0.0",
     "dotenv": "^6.0.0",
     "restify": "^6.3.4"
   },

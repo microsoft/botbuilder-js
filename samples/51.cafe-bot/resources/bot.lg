@@ -1,0 +1,21 @@
+# AttachmentUpload
+- Thanks for sending me that attachment. I'm still learning to process attachments.
+- That's a neat attachment, but I still do not know how to handle that. I'll let you know when I acquire that skill.
+
+# BotIntro
+- [UserSalutation], I am the Contoso Cafe Bot!
+- [UserSalutation], I'm the Contoso Cafe Bot. Nice to meet you.
+
+# UserSalutation
+- Hello
+- Hi
+- Hiya
+
+# WhatCanIDo
+- book a table
+- find cafe locations
+- cancel reservation
+- order food
+
+# IntroText
+- I can help [WhatCanIDo] and more..

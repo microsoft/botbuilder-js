@@ -8,6 +8,32 @@ To get started see the [Azure Bot Service Documentation](https://docs.microsoft.
 
 A rich set of samples are available at [BotBuilder-Samples](https://github.com/microsoft/botbuilder-samples) repository.
 
+## Building 
+Install [Lerna](https://lernajs.io/) and dev dependencies:
+```bash
+npm install --global lerna@3.2.1 nyc mocha typescript@2.7.2
+cd tools
+npm install
+cd ..
+```
+
+Run lerna bootstrap, this will link all the SDK packages locally so you can easily debug:
+
+```bash
+lerna bootstrap --hoist
+lerna run build
+```
+
+You can also use lerna to run the various scripts across all the SDK packages:
+
+```
+lerna run build       # Build all of the SDK packages.
+lerna run clean       # Delete all built files for SDK packages.
+lerna run test        # Execute all unit tests for SDK packages.
+lerna run build-docs  # Generate all documentation for SDK packages.    
+```
+
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
