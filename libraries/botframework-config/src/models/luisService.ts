@@ -30,12 +30,12 @@ export class LuisService extends ConnectedService implements ILuisService {
     /**
      * Version of the application.
      */
-    public version: string ;
+    public version: string;
 
     /**
      * Region for luis.
      */
-    public region: string ;
+    public region: string;
 
     /**
      * Creates a new LuisService instance.
@@ -48,7 +48,18 @@ export class LuisService extends ConnectedService implements ILuisService {
 
     // get endpoint for the luis service
     public getEndpoint(): string {
-        return `https://${this.region}.api.cognitive.microsoft.com`;
+        switch (this.region.toLowerCase()) {
+            case "usgovvirginia":
+            case "usgoviowa":
+            case "usdodeast":
+            case "usdodcentral":
+            case "usgovtexas":
+            case "usgovarizona":
+                return `https://virginia.api.cognitive.microsoft.us`;
+
+            default:
+                return `https://${this.region}.api.cognitive.microsoft.com`;
+        }
     }
 
     // encrypt keys in service
