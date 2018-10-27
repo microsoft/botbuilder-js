@@ -11,6 +11,9 @@ describe("Service Tests", () => {
 
         luis = new bf.LuisService({ region: "usgovvirginia" });
         assert.equal(luis.getEndpoint(),  `https://virginia.api.cognitive.microsoft.us`);
+
+        luis = new bf.LuisService({ region: "usgoviowa" });
+        assert.equal(luis.getEndpoint(),  `https://usgoviowa.api.cognitive.microsoft.us`);
     });
 
     it("QNAMaker corretly adds suffix", () => {

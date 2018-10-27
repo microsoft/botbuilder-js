@@ -49,13 +49,15 @@ export class LuisService extends ConnectedService implements ILuisService {
     // get endpoint for the luis service
     public getEndpoint(): string {
         switch (this.region.toLowerCase()) {
+            case "virginia":
             case "usgovvirginia":
+                return `https://virginia.api.cognitive.microsoft.us`;
+
             case "usgoviowa":
             case "usdodeast":
             case "usdodcentral":
             case "usgovtexas":
-            case "usgovarizona":
-                return `https://virginia.api.cognitive.microsoft.us`;
+                return `https://${this.region}.api.cognitive.microsoft.us`;
 
             default:
                 return `https://${this.region}.api.cognitive.microsoft.com`;
