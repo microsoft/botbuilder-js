@@ -20,8 +20,8 @@
 // setup.js script in this folder.
 //
 
-var npm = require('npm');
-var eachService = require('./each-service');
+const npm = require('npm');
+const eachService = require('./each-service');
 
 npm.load({global: true}, function (err, npm) {
   if (err) {
