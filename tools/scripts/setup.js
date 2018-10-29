@@ -15,9 +15,9 @@
 
 'use strict';
 
-var path = require('path');
-var eachService = require('./each-service');
-var executeCmds = require('./executeCmds.js');
+const path = require('path');
+const eachService = require('./each-service');
+const executeCmds = require('./executeCmds.js');
 
 var cmds = [];
 var sdkRootPath = path.join(__dirname, '..');
