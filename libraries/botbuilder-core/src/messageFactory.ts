@@ -5,11 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { Activity, ActivityTypes, Attachment, AttachmentLayoutTypes, CardAction, InputHints, SuggestedActions } from 'botframework-schema';
 import { CardFactory } from './cardFactory';
-import {
-    ActivityTypes, AttachmentLayoutTypes, Activity, CardAction,
-    SuggestedActions, Attachment, InputHints
-} from 'botframework-schema';
 
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can
@@ -18,14 +15,15 @@ import {
  * @remarks
  * The following example shows sending a message containing a single hero card:
  *
- * ```JavaScript
- * const message = MessageFactory.attachment(
- *     CardFactory.heroCard(
- *         'White T-Shirt',
- *         ['https://example.com/whiteShirt.jpg'],
- *         ['buy']
- *      )
+ * ```javascript
+ * const { MessageFactory, CardFactory } = require('botbuilder');
+ *
+ * const card = CardFactory.heroCard(
+ *      'White T-Shirt',
+ *      ['https://example.com/whiteShirt.jpg'],
+ *      ['buy']
  * );
+ * const message = MessageFactory.attachment(card);
  * await context.sendActivity(message);
  * ```
  */
@@ -38,20 +36,19 @@ export class MessageFactory {
      *
      * ```JavaScript
      * const message = MessageFactory.text('Greetings from example message');
-     * await context.sendActivity(message);
      * ```
-     *
      * @param text Text to include in the message.
      * @param speak (Optional) SSML to include in the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
-    static text(text: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static text(text: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         const msg: Partial<Activity> = {
             type: ActivityTypes.Message,
             text: text,
             inputHint: inputHint || InputHints.AcceptingInput
         };
         if (speak) { msg.speak = speak; }
+
         return msg;
     }
 
@@ -59,18 +56,21 @@ export class MessageFactory {
      * Returns a message that includes a set of suggested actions and optional text.
      *
      * @remarks
-     * This example shows sending a message with suggested actions:
+     * This example shows creating a message with suggested actions:
      *
      * ```JavaScript
      * const message = MessageFactory.suggestedActions(['red', 'green', 'blue'], `Choose a color`);
-     * await context.sendActivity(message);
      * ```
      * @param actions Array of card actions or strings to include. Strings will be converted to `messageBack` actions.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
-    static suggestedActions(actions: (CardAction|string)[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static suggestedActions(
+        actions: (CardAction|string)[],
+        text?: string, speak?: string,
+        inputHint?: InputHints|string
+    ): Partial<Activity> {
         const msg: Partial<Activity> = {
             type: ActivityTypes.Message,
             inputHint: inputHint || InputHints.AcceptingInput,
@@ -80,6 +80,7 @@ export class MessageFactory {
         };
         if (text) { msg.text = text; }
         if (speak) { msg.speak = speak; }
+
         return msg;
     }
 
@@ -87,7 +88,7 @@ export class MessageFactory {
      * Returns a single message activity containing an attachment.
      *
      * @remarks
-     * This example shows sending a message with a hero card attachment:
+     * This example shows creating a message with a hero card attachment:
      *
      * ```JavaScript
      * const message = MessageFactory.attachment(
@@ -97,15 +98,13 @@ export class MessageFactory {
      *         ['buy']
      *      )
      * );
-     * await context.sendActivity(message);
      * ```
-     *
      * @param attachment Adaptive card to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
-    static attachment(attachment: Attachment, text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static attachment(attachment: Attachment, text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         return attachmentActivity(AttachmentLayoutTypes.List, [attachment], text, speak, inputHint);
     }
 
@@ -113,7 +112,7 @@ export class MessageFactory {
      * Returns a message that will display a set of attachments in list form.
      *
      * @remarks
-     * This example shows sending a message with a list of hero cards:
+     * This example shows creating a message with a list of hero cards:
      *
      * ```JavaScript
      * const message = MessageFactory.list([
@@ -121,14 +120,13 @@ export class MessageFactory {
      *    CardFactory.heroCard('title2', ['imageUrl2'], ['button2']),
      *    CardFactory.heroCard('title3', ['imageUrl3'], ['button3'])
      * ]);
-     * await context.sendActivity(message);
      * ```
      * @param attachments Array of attachments to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
      */
-    static list(attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static list(attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         return attachmentActivity(AttachmentLayoutTypes.List, attachments, text, speak, inputHint);
     }
 
@@ -136,7 +134,7 @@ export class MessageFactory {
      * Returns a message that will display a set of attachments using a carousel layout.
      *
      * @remarks
-     * This example shows sending a message with a carousel of hero cards:
+     * This example shows creating a message with a carousel of hero cards:
      *
      * ```JavaScript
      * const message = MessageFactory.carousel([
@@ -144,15 +142,13 @@ export class MessageFactory {
      *    CardFactory.heroCard('title2', ['imageUrl2'], ['button2']),
      *    CardFactory.heroCard('title3', ['imageUrl3'], ['button3'])
      * ]);
-     * await context.sendActivity(message);
      * ```
-     *
      * @param attachments Array of attachments to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
      */
-    static carousel(attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static carousel(attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         return attachmentActivity(AttachmentLayoutTypes.Carousel, attachments, text, speak, inputHint);
     }
 
@@ -164,9 +160,7 @@ export class MessageFactory {
      *
      * ```JavaScript
      * const message = MessageFactory.contentUrl('https://example.com/hawaii.jpg', 'image/jpeg', 'Hawaii Trip', 'A photo from our family vacation.');
-     * await context.sendActivity(message);
      * ```
-     *
      * @param url Url of the image/video to send.
      * @param contentType The MIME type of the image/video.
      * @param name (Optional) Name of the image/video file.
@@ -174,23 +168,36 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
      */
-    static contentUrl(url: string, contentType: string, name?: string, text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static contentUrl(
+        url: string,
+        contentType: string,
+        name?: string,
+        text?: string,
+        speak?: string,
+        inputHint?: InputHints|string
+    ): Partial<Activity> {
         const a: Attachment = { contentType: contentType, contentUrl: url };
         if (name) { a.name = name; }
+
         return attachmentActivity(AttachmentLayoutTypes.List, [a], text, speak, inputHint);
     }
 }
 
-
 /**
  * @private
- * @param attachmentLayout
- * @param attachments
- * @param text
- * @param speak
- * @param inputHint
+ * @param attachmentLayout the direction in which attachments will be laid out
+ * @param attachments an array of attachments
+ * @param text the text to include
+ * @param speak spoken text
+ * @param inputHint input hint
  */
-function attachmentActivity(attachmentLayout: AttachmentLayoutTypes, attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+function attachmentActivity(
+    attachmentLayout: AttachmentLayoutTypes,
+    attachments: Attachment[],
+    text?: string,
+    speak?: string,
+    inputHint?: InputHints|string
+): Partial<Activity> {
     const msg: Partial<Activity> = {
         type: ActivityTypes.Message,
         attachmentLayout: attachmentLayout,
@@ -199,5 +206,6 @@ function attachmentActivity(attachmentLayout: AttachmentLayoutTypes, attachments
     };
     if (text) { msg.text = text; }
     if (speak) { msg.speak = speak; }
+
     return msg;
 }

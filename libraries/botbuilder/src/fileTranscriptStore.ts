@@ -5,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-
 import * as fs from 'async-file';
 import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
 import * as filenamify from 'filenamify';
@@ -14,6 +13,18 @@ import * as rimraf from 'rimraf';
 
 /**
  * The file transcript store stores transcripts in file system with each activity as a file.
+ *
+ * @remarks
+ * This class provides an interface to log all incoming and outgoing activities to the filesystem.
+ * It implements the features necessary to work alongside the TranscriptLoggerMiddleware plugin.
+ * When used in concert, your bot will automatically log all conversations.
+ *
+ * Below is the boilerplate code needed to use this in your app:
+ * ```javascript
+ * const { FileTranscriptStore, TranscriptLoggerMiddleware } = require('botbuilder');
+ *
+ * adapter.use(new TranscriptLoggerMiddleware(new FileTranscriptStore(__dirname + '/transcripts/')));
+ * ```
  */
 export class FileTranscriptStore implements TranscriptStore {
 
@@ -22,7 +33,7 @@ export class FileTranscriptStore implements TranscriptStore {
     private rootFolder: string;
 
     /**
-     * Creates an instance of FileTranscriptStore
+     * Creates an instance of FileTranscriptStore.
      * @param folder Root folder where transcript will be stored.
      */
     constructor(folder: string) {
@@ -37,40 +48,46 @@ export class FileTranscriptStore implements TranscriptStore {
      * Log an activity to the transcript.
      * @param activity Activity being logged.
      */
-    logActivity(activity: Activity): void | Promise<void> {
+    public logActivity(activity: Activity): void | Promise<void> {
         if (!activity) {
             throw new Error('activity cannot be null for logActivity()');
         }
 
-        let conversationFolder = this.getTranscriptFolder(activity.channelId, activity.conversation.id);
-        let activityFileName = this.getActivityFilename(activity);
+        const conversationFolder: string = this.getTranscriptFolder(activity.channelId, activity.conversation.id);
+        const activityFileName: string = this.getActivityFilename(activity);
+
         return this.saveActivity(activity, conversationFolder, activityFileName);
     }
 
     /**
-     * Get activities for a conversation (Aka the transcript)
+     * Get all activities associated with a conversation id (aka get the transcript).
      * @param channelId Channel Id.
      * @param conversationId Conversation Id.
-     * @param continuationToken Continuatuation token to page through results.
-     * @param startDate Earliest time to include.
+     * @param continuationToken (Optional) Continuation token to page through results.
+     * @param startDate (Optional) Earliest time to include.
      */
-    getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>> {
+    public getTranscriptActivities(
+        channelId: string,
+        conversationId: string,
+        continuationToken?: string,
+        startDate?: Date
+    ): Promise<PagedResult<Activity>> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
         if (!conversationId) { throw new Error('Missing conversationId'); }
 
-        let pagedResult = new PagedResult<Activity>();
-        let transcriptFolder = this.getTranscriptFolder(channelId, conversationId);
-        return fs.exists(transcriptFolder).then(exists => {
+        const pagedResult: PagedResult<Activity> = new PagedResult<Activity>();
+        const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
+
+        return fs.exists(transcriptFolder).then((exists: boolean) => {
             if (!exists) { return pagedResult; }
 
             return fs.readdir(transcriptFolder)
-                .then(files => files
-                    .filter(f => f.endsWith('.json'))               // .json only
+                .then((files: string[]) => files
+                    .filter((f: string) => f.endsWith('.json'))     // .json only
                     .sort()                                         // sorted
                     .filter(withDateFilter(startDate)))             // >= startDate
-                .then(files => {
-                    // get proper page
+                .then((files: string[]) => {                        // get proper page
                     if (continuationToken) {
                         return files
                             .filter(withContinuationToken(continuationToken))
@@ -79,11 +96,11 @@ export class FileTranscriptStore implements TranscriptStore {
                         return files.slice(0, FileTranscriptStore.PageSize);
                     }
                 })
-                .then(files => files.map(activityFilename =>
+                .then((files: string[]) => files.map((activityFilename: string) =>
                     fs.readFile(path.join(transcriptFolder, activityFilename), 'utf8')))
-                .then(reads => Promise.all(reads))
-                .then(jsons => {
-                    let items = jsons.map(parseActivity);
+                .then((reads: any[]) => Promise.all(reads))
+                .then((jsons: string[]) => {
+                    const items: Activity[] = jsons.map(parseActivity);
                     pagedResult.items = items;
                     if (pagedResult.items.length === FileTranscriptStore.PageSize) {
                         pagedResult.continuationToken = pagedResult.items[pagedResult.items.length - 1].id;
@@ -95,29 +112,31 @@ export class FileTranscriptStore implements TranscriptStore {
     }
 
     /**
-     * List conversations in the channelId.
+     * List all the logged conversations for a given channelId.
      * @param channelId Channel Id.
-     * @param continuationToken Continuatuation token to page through results.
+     * @param continuationToken (Optional) Continuation token to page through results.
      */
-    listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
+    public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
-        let pagedResult = new PagedResult<TranscriptInfo>();
-        let channelFolder = this.getChannelFolder(channelId);
-        return fs.exists(channelFolder).then(exists => {
+        const pagedResult: PagedResult<TranscriptInfo> = new PagedResult<TranscriptInfo>();
+        const channelFolder: string = this.getChannelFolder(channelId);
+
+        return fs.exists(channelFolder).then((exists: boolean) => {
             if (!exists) { return pagedResult; }
+
             return fs.readdir(channelFolder)
-                .then(dirs => {
-                    let items = [];
+                .then((dirs: string[]) => {
+                    let items: string[] = [];
                     if (continuationToken) {
                         items = dirs
-                            .filter(skipWhileExpression(di => di !== continuationToken))
+                            .filter(skipWhileExpression((di: string) => di !== continuationToken))
                             .slice(1, FileTranscriptStore.PageSize + 1);
                     } else {
                         items = dirs.slice(0, FileTranscriptStore.PageSize);
                     }
 
-                    pagedResult.items = items.map(i => ({
+                    pagedResult.items = items.map((i: string) => ({
                         channelId: channelId,
                         id: i,
                         created: null
@@ -133,29 +152,32 @@ export class FileTranscriptStore implements TranscriptStore {
     }
 
     /**
-     * Delete a specific conversation and all of it's activities.
+     * Delete a conversation and all of it's activities.
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      */
-    deleteTranscript(channelId: string, conversationId: string): Promise<void> {
+    public deleteTranscript(channelId: string, conversationId: string): Promise<void> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
         if (!conversationId) { throw new Error('Missing conversationId'); }
 
-        let transcriptFolder = this.getTranscriptFolder(channelId, conversationId);
-        return new Promise((resolve) =>
-            rimraf(transcriptFolder, () => resolve()));
+        const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
+
+        return new Promise((resolve: any): void =>
+            rimraf(transcriptFolder, resolve));
     }
 
     private saveActivity(activity: Activity, transcriptPath: string, activityFilename: string): Promise<void> {
-        let json = JSON.stringify(activity, null, '\t');
+        const json: string = JSON.stringify(activity, null, '\t');
+
         return this.ensureFolder(transcriptPath).then(() => {
             return fs.writeFile(path.join(transcriptPath, activityFilename), json, 'utf8');
         });
     }
 
+    // tslint:disable-next-line:no-shadowed-variable
     private ensureFolder(path: string): Promise<void> {
-        return fs.exists(path).then(exists => {
+        return fs.exists(path).then((exists: boolean) => {
             if (!exists) { return fs.mkdirp(path); }
         });
     }
@@ -172,7 +194,7 @@ export class FileTranscriptStore implements TranscriptStore {
         return path.join(this.rootFolder, this.sanitizeKey(channelId), this.sanitizeKey(conversationId));
     }
 
-    private sanitizeKey(key: string) {
+    private sanitizeKey(key: string): string {
         return filenamify(key);
     }
 }
@@ -181,78 +203,86 @@ export class FileTranscriptStore implements TranscriptStore {
  * @private
  * The number of .net ticks at the unix epoch.
  */
-const epochTicks = 621355968000000000;
+const epochTicks: number = 621355968000000000;
 
 /**
  * @private
  * There are 10000 .net ticks per millisecond.
  */
-const ticksPerMillisecond = 10000;
+const ticksPerMillisecond: number = 10000;
 
 /**
  * @private
- * @param timestamp
+ * @param timestamp A date used to calculate future ticks.
  */
-const getTicks = (timestamp: Date): string => {
-    let ticks = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
+function getTicks(timestamp: Date): string {
+    const ticks: number = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
+
     return ticks.toString(16);
-};
+}
 
 /**
  * @private
- * @param ticks
+ * @param ticks A string containing ticks.
  */
-const readDate = (ticks) => {
-    let t = Math.round((parseInt(ticks, 16) - epochTicks) / ticksPerMillisecond);
+function readDate(ticks: string): Date {
+    const t: number = Math.round((parseInt(ticks, 16) - epochTicks) / ticksPerMillisecond);
+
     return new Date(t);
-};
+}
 
 /**
  * @private
- * @param date
+ * @param date A date used to create a filter.
  */
-const withDateFilter = (date: Date) => {
-    if (!date) { return () => true; }
-    return (filename) => {
-        let ticks = filename.split('-')[0];
+function withDateFilter(date: Date): any {
+    if (!date) { return (): boolean => true; }
+
+    return (filename: string): boolean => {
+        const ticks: string = filename.split('-')[0];
+
         return readDate(ticks) >= date;
     };
-};
+}
 
 /**
  * @private
- * @param continuationToken
+ * @param continuationToken A continuation token.
  */
-const withContinuationToken = (continuationToken: string) => {
-    if (!continuationToken) { return () => true; }
+function withContinuationToken(continuationToken: string): any {
+    if (!continuationToken) { return (): boolean => true; }
 
-    return skipWhileExpression(fileName => {
-        let id = fileName.substring(fileName.indexOf('-') + 1, fileName.indexOf('.'));
+    return skipWhileExpression((fileName: string): boolean => {
+        const id: string = fileName.substring(fileName.indexOf('-') + 1, fileName.indexOf('.'));
+
         return id !== continuationToken;
     });
-};
+}
 
 /**
  * @private
- * @param expression
+ * @param expression A function that will be used to test items.
  */
-const skipWhileExpression = (expression) => {
-    let skipping = true;
-    return (item) => {
+function skipWhileExpression(expression: any): any {
+    let skipping: boolean = true;
+
+    return (item: any): boolean => {
         if (!skipping) { return true; }
         if (!expression(item)) {
             skipping = false;
         }
+
         return !skipping;
     };
-};
+}
 
 /**
  * @private
- * @param json
+ * @param json A JSON string to be parsed into an activity.
  */
-const parseActivity = (json: string): Activity => {
-    let activity: Activity = JSON.parse(json);
+function parseActivity(json: string): Activity {
+    const activity: Activity = JSON.parse(json);
     activity.timestamp = new Date(activity.timestamp);
+
     return activity;
-};
+}

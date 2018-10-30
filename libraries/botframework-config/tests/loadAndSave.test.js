@@ -12,11 +12,21 @@ describe("LoadAndSaveTests", () => {
     it("DeserializeBotFile", async () => {
         var config = await bf.BotConfiguration.load(testBotPath);
 
-        assert.ok("test" == config.name);
-        assert.ok("test description" == config.description);
-        assert.ok("" == config.secretKey);
-        assert.ok(9 == config.services.length);
+        assert.equal(config.name, "test", 'config name should be set');
+        assert.equal(config.description, "test description", 'test description is not set');
+        assert.equal(config.padlock, '', 'secretkey should not be set');
+        assert.equal(config.services.length, 11, 'service count is wrong');
         assert.equal(config.getPath(), testBotPath, "bot doesn't remember where it was loaded from");
+        assert.ok(config.services[0].appId, 'appId should be migrated from endpoint');
+    });
+
+    it("InternalIsNotEnumerable", async () => {
+        var config = await bf.BotConfiguration.loadBotFromFolder(path.dirname(testBotPath));
+        assert.ok(config.internal, "Internal field does not exist on configuration. It should exist!");
+
+        var json = JSON.stringify(config);
+        var parsed = JSON.parse(json);
+        assert.equal(parsed.internal, null, 'Internal field should not exist on stringified config.');
     });
 
     it("LoadFromFolder", async () => {
@@ -38,7 +48,7 @@ describe("LoadAndSaveTests", () => {
         assert.deepEqual(config, config2, "configs should be same");
     });
 
-    it("LoadAndSaveBotFileSync", () => {
+    it("LoadAndSaveBotFileSync", async () => {
         var secret = bf.BotConfiguration.generateKey();
         var config = bf.BotConfiguration.loadSync(testBotPath);
 
@@ -55,6 +65,28 @@ describe("LoadAndSaveTests", () => {
         var config3 = bf.BotConfiguration.loadSync(saveBotPath, secret);
         fs.unlinkSync(saveBotPath);
         assert.equal(config3.name, config2.name, "didn't save");
+
+        // save
+        config2.name = 'save';
+        await config2.save(secret);
+        var config3 = bf.BotConfiguration.loadSync(saveBotPath, secret);
+        fs.unlinkSync(saveBotPath);
+        assert.equal(config3.name, config2.name, "didn't save");
+    });
+
+    it("SaveWithNullThros", async () => {
+        var secret = bf.BotConfiguration.generateKey();
+        var config = bf.BotConfiguration.loadSync(testBotPath);
+
+        try {
+            config.saveAsSync(null, secret);
+            assert.fail("SaveAsAsync with null should throw");
+        } catch (err) { }
+
+        try {
+            await config.saveAs(null, secret);
+            assert.fail("SaveAsAsync with null should throw");
+        } catch (err) { }
     });
 
     it("CantLoadWithoutSecret", async () => {
@@ -89,16 +121,16 @@ describe("LoadAndSaveTests", () => {
     it("LoadAndSaveEncrypted", async () => {
         let secret = bf.BotConfiguration.generateKey();
         var config = await bf.BotConfiguration.load(testBotPath);
-        assert.ok(config.secretKey === "", "There should be no secretKey");
+        assert.ok(config.padlock === "", "There should be no padlock");
 
         // save with secret
         await config.saveAs(saveBotPath, secret);
-        assert.ok(config.secretKey.length > 0, "There should be a secretKey");
+        assert.ok(config.padlock.length > 0, "There should be a padlock");
 
         // load with secret
         var config2 = await bf.BotConfiguration.load(saveBotPath, secret);
-        assert.ok(config2.secretKey.length > 0, "There should be a secretKey");
-        assert.ok(config.secretKey === config2.secretKey, "SecretKeys should be the same");
+        assert.ok(config2.padlock.length > 0, "There should be a padlock");
+        assert.ok(config.padlock === config2.padlock, "padlocks should be the same");
 
         // make sure these were decrypted
         for (let i = 0; i < config.services.length; i++) {
@@ -129,7 +161,8 @@ describe("LoadAndSaveTests", () => {
                 case bf.ServiceTypes.CosmosDB:
                     {
                         var storage = config2.services[i];
-                        assert.ok(storage.connectionString.includes('UseDevelopmentStorage'), "failed to decrypt connectionString");
+                        assert.equal(storage.endpoint, 'https://localhost:8081', "failed to decrypt endpoint");
+                        assert.equal(storage.key, 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==', "failed to decrypt key");
                         assert.equal(storage.database, 'testDatabase', "failed to decrypt database");
                         assert.equal(storage.collection, 'testCollection', "failed to decrypt collection");
                     }
@@ -179,6 +212,10 @@ describe("LoadAndSaveTests", () => {
                     }
                     break;
 
+                case 'unknown':
+                    // this is known unknown for unit test
+                    break;
+
                 default:
                     throw new Error(`Unknown service type ${config.services[i].type}`);
             }
@@ -217,7 +254,8 @@ describe("LoadAndSaveTests", () => {
                 case bf.ServiceTypes.CosmosDB:
                     {
                         var storage = config2.services[i];
-                        assert.ok(!storage.connectionString.includes('UseDevelopmentStorage'), "failed to encrypt connectionString");
+                        assert.equal(storage.endpoint, 'https://localhost:8081', "should not have encrypted  endpoint");
+                        assert.notEqual(storage.key, 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==', "failed to encrypt key");
                         assert.equal(storage.database, "testDatabase", "should not have encrypted database");
                         assert.equal(storage.collection, "testCollection", "should not have encrypted collection");
                     }
@@ -274,6 +312,10 @@ describe("LoadAndSaveTests", () => {
                     }
                     break;
 
+                case 'unknown':
+                    // this is known unknown for unit test
+                    break;
+
                 default:
                     throw new Error(`Unknown service type ${config.services[i].type}`);
             }
@@ -283,11 +325,16 @@ describe("LoadAndSaveTests", () => {
     it("LegacyEncryption", async () => {
         var config = await bf.BotConfiguration.load(legacyBotPath, "password");
         assert.equal(config.services[0].appPassword, "xyzpdq", "value should be unencrypted");
+        assert.ok(config.hasOwnProperty("padlock"),"padlock should exist");
+        assert.ok(!config.hasOwnProperty("secretKey"),"secretKey should not exist");
 
         let secret = bf.BotConfiguration.generateKey();
         await config.saveAs(saveBotPath, secret);
         var config = await bf.BotConfiguration.load(saveBotPath, secret);
         fs.unlinkSync(saveBotPath);
+        assert.ok(config.hasOwnProperty("padlock"),"padlock should exist");
+        assert.ok(config.padlock.length > 0,"padlock should not be empty");
+        assert.ok(!config.secretKey,"secretKey should not exist");
     });
 
 });

@@ -12,6 +12,36 @@ describe("EncryptionTests", () => {
         assert.ok(value === decrypted, "decryption failed");
     });
 
+    it("EncryptDecryptEmptyDoesNothing", () => {
+        let secret = "lgCbJPXnfOlatjbBDKMbh0ie6bc8PD/cjqA/2tPgMS0=";
+        let value = "";
+        let encrypted = encrypt.encryptString(value, secret);
+        assert.ok(value == encrypted, "encryption failed");
+
+        let decrypted = encrypt.decryptString(encrypted, secret);
+        assert.ok(value === decrypted, "decryption failed");
+    });
+
+    it("EncryptDecryptNullDoesNothing", () => {
+        let secret = "lgCbJPXnfOlatjbBDKMbh0ie6bc8PD/cjqA/2tPgMS0=";
+        let value = null;
+        let encrypted = encrypt.encryptString(value, secret);
+        assert.ok(value == encrypted, "encryption failed");
+
+        let decrypted = encrypt.decryptString(encrypted, secret);
+        assert.ok(value === decrypted, "decryption failed");
+    });
+
+    it("EncryptDecryptUndefinedDoesNothing", () => {
+        let secret = "lgCbJPXnfOlatjbBDKMbh0ie6bc8PD/cjqA/2tPgMS0=";
+        let value = undefined;
+        let encrypted = encrypt.encryptString(value, secret);
+        assert.ok(value == encrypted, "encryption failed");
+
+        let decrypted = encrypt.decryptString(encrypted, secret);
+        assert.ok(value === decrypted, "decryption failed");
+    });
+
     it("GenerateKeyWorks", () => {
         let secret = encrypt.generateKey();
         let value = "1234567890";

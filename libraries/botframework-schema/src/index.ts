@@ -2096,3 +2096,40 @@ export enum InstallationUpdateActionTypes {
   Add = 'add',
   Remove = 'remove',
 }
+
+/**
+ * Defines values for ActivityImportance.
+ * Possible values include: 'low', 'normal', 'high'
+ * There could be more values for this enum apart from the ones defined here.If
+ * you want to set a value that is not from the known values then you can do
+ * the following:
+ * let param: ActivityImportance =
+ * <ActivityImportance>"someUnknownValueThatWillStillBeValid";
+ * @readonly
+ * @enum {string}
+ */
+export enum ActivityImportance {
+  Low = 'low',
+  Normal = 'normal',
+  High = 'high',
+}
+
+/**
+ * @interface
+ * An interface representing a collection of
+ * Azure Active Directory resource URLs
+ */
+export interface AadResourceUrls {
+  /**
+   * @member {string[]} [resourceUrls] A collection of resource URLs
+   */
+  resourceUrls: string[];
+}
+
+/**
+ * @interface
+ * An interface representing a mapping of names to TokenResponses.
+ */
+export interface TokenResponseMap {
+  [resourceUrl: string]: TokenResponse;
+}

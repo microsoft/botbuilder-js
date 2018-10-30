@@ -1,7 +1,7 @@
 // replace.js
 
-var fs = require('fs');
-var replace = require('replace-in-file');
+const fs = require('fs');
+const replace = require('replace-in-file');
 
 var modelsPaths = './connectorApi/models/index.ts';
 var optionalModelProperties = {

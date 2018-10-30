@@ -1,6 +1,6 @@
 {
   "name": "botframework-schema",
-  "version": "4.0.0-preview1.2",
+  "version": "4.0.0",
   "description": "Activity schema for the Microsoft Bot Framework.",
   "keywords": [
     "botconnector",

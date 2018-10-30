@@ -1,34 +1,43 @@
 /**
+ * @module botframework-config
+ */
+/**
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
 import { IAzureService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
+/**
+ * Base class for all azure service definitions.
+ */
 export class AzureService extends ConnectedService implements IAzureService {
-    public tenantId = '';
-    public subscriptionId = '';
-    public resourceGroup = '';
-    public serviceName = '';
+    /**
+     * Tenant ID for azure.
+     */
+    public tenantId: string;
 
+    /**
+     * Subscription ID for azure.
+     */
+    public subscriptionId: string;
+
+    /**
+     * Resource group for azure.
+     */
+    public resourceGroup: string;
+
+    /**
+     * Name of the service.
+     */
+    public serviceName: string;
+
+    /**
+     * Creates a new AzureService instance.
+     * @param source (Optional) JSON based service definition.
+     * @param type Type of service being defined.
+     */
     constructor(source: IAzureService = {} as IAzureService, type: ServiceTypes) {
         super(source, type);
-        const { tenantId = '', subscriptionId = '', resourceGroup = '', serviceName = '' } = source;
-        Object.assign(this, { tenantId, subscriptionId, resourceGroup, serviceName });
-    }
-
-    public toJSON(): IAzureService {
-        let { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName } = this;
-        return { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName };
-    }
-
-    // encrypt keys in service
-    public encrypt(secret: string, encryptString: (value: string, secret:string) => string): void {
-
-    }
-
-    // decrypt keys in service
-    public decrypt(secret: string, decryptString: (value: string, secret:string) => string): void {
-
     }
 }

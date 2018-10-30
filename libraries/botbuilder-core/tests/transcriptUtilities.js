@@ -15,7 +15,7 @@ const rimraf = require('rimraf');
 
 const chatdown = require('chatdown');
 
-const { TestAdapter, MemoryStorage, UserState, ConversationState, BotStateSet } = require('../');
+const { TestAdapter, MemoryStorage, UserState, ConversationState, AutoSaveStateMiddleware } = require('../');
 
 // Exports
 module.exports = {
@@ -92,7 +92,7 @@ function assertBotLogicWithTranscript(transcriptPath, botLogicFactoryFun, middle
             const storage = new MemoryStorage();
             const conversationState = new ConversationState(storage);
             const userState = new UserState(storage);
-            const state = new BotStateSet(conversationState, userState);
+            const state = new AutoSaveStateMiddleware(conversationState, userState);
 
             // Bot logic + adapter
             var botLogic = botLogicFactoryFun(conversationState, userState)

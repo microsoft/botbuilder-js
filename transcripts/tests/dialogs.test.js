@@ -37,17 +37,17 @@ function AttachmentPromptLogic(state) {
         },
         async function (dc, attachment) {
             await dc.context.sendActivity(attachment[0].content);
-            await dc.end();
+            await dc.endDialog();
         }
     ]);
 
     return async (context) => {
         const dc = dialogs.createContext(context, state);
-        await dc.continue();
+        await dc.continueDialog();
 
         // Check to see if anyone replied. If not then start echo dialog
         if (!context.responded) {
-            await dc.begin('start');
+            await dc.beginDialog('start');
         }
     }
 };
@@ -67,17 +67,17 @@ function ChoicePromptLogic(state) {
         async function (dc, choice) {
             const color = choice.value;
             await dc.context.sendActivity(`Bot received the choice '${color}'.`);
-            await dc.end();
+            await dc.endDialog();
         }
     ]);
 
     return async (context) => {
         const dc = dialogs.createContext(context, state);
-        await dc.continue();
+        await dc.continueDialog();
 
         // Check to see if anyone replied. If not then start echo dialog
         if (!context.responded) {
-            await dc.begin('start');
+            await dc.beginDialog('start');
         }
     }
 };
@@ -94,17 +94,17 @@ function DateTimePromptLogic(state) {
         async function (dc, dateTimeResult) {
             var resolution = dateTimeResult[0];
             await dc.context.sendActivity(`Timex:'${resolution.timex}' Value:'${resolution.value}'`);
-            await dc.end();
+            await dc.endDialog();
         }
     ]);
 
     return async (context) => {
         const dc = dialogs.createContext(context, state);
-        await dc.continue();
+        await dc.continueDialog();
 
         // Check to see if anyone replied. If not then start echo dialog
         if (!context.responded) {
-            await dc.begin('start');
+            await dc.beginDialog('start');
         }
     }
 }
@@ -128,17 +128,17 @@ function NumberPromptCustomValidatorLogic(state) {
         async function (dc, numberResult
         ) {
             await dc.context.sendActivity(`Bot received the number '${numberResult}'.`);
-            await dc.end();
+            await dc.endDialog();
         }
     ]);
 
     return async (context) => {
         const dc = dialogs.createContext(context, state);
-        await dc.continue();
+        await dc.continueDialog();
 
         // Check to see if anyone replied. If not then start echo dialog
         if (!context.responded) {
-            await dc.begin('start');
+            await dc.beginDialog('start');
         }
     }
 }
@@ -161,17 +161,17 @@ function TextPromptCustomValidatorLogic(state) {
         async function (dc, text
         ) {
             await dc.context.sendActivity(`Bot received the text '${text}'.`);
-            await dc.end();
+            await dc.endDialog();
         }
     ]);
 
     return async (context) => {
         const dc = dialogs.createContext(context, state);
-        await dc.continue();
+        await dc.continueDialog();
 
         // Check to see if anyone replied. If not then start echo dialog
         if (!context.responded) {
-            await dc.begin('start');
+            await dc.beginDialog('start');
         }
     }
 }
@@ -189,17 +189,17 @@ function ConfirmPromptLogic(state) {
         },
         async function (dc, confirmed) {
             await dc.context.sendActivity(confirmed ? 'Confirmed.' : 'Not confirmed.');
-            await dc.end();
+            await dc.endDialog();
         }
     ]);
 
     return async (context) => {
         const dc = dialogs.createContext(context, state);
-        await dc.continue();
+        await dc.continueDialog();
 
         // Check to see if anyone replied. If not then start echo dialog
         if (!context.responded) {
-            await dc.begin('start');
+            await dc.beginDialog('start');
         }
     }
 };
@@ -214,11 +214,11 @@ function WaterfallLogic(state) {
 
     return async (context) => {
         const dc = dialogs.createContext(context, state);
-        await dc.continue();
+        await dc.continueDialog();
 
         // Check to see if anyone replied. If not then start echo dialog
         if (!context.responded) {
-            await dc.begin('start');
+            await dc.beginDialog('start');
         }
     }
 }
@@ -247,18 +247,18 @@ function WaterfallPromptLogic(state) {
             }
 
             await dc.context.sendActivity('step3');
-            await dc.end({ value: 'All Done!' });
+            await dc.endDialog({ value: 'All Done!' });
         }
 
     ]);
 
     return async (context) => {
         const dc = dialogs.createContext(context, state);
-        await dc.continue();
+        await dc.continueDialog();
 
         // Check to see if anyone replied. If not then start echo dialog
         if (!context.responded) {
-            await dc.begin('test-waterfall');
+            await dc.beginDialog('test-waterfall');
         }
     }
 }
@@ -271,11 +271,11 @@ function WaterfallNestedLogic(state) {
 
     return async (context) => {
         const dc = dialogs.createContext(context, state);
-        await dc.continue();
+        await dc.continueDialog();
 
         // Check to see if anyone replied. If not then start echo dialog
         if (!context.responded) {
-            await dc.begin('test-waterfall-a');
+            await dc.beginDialog('test-waterfall-a');
         }
     }
 }
@@ -283,11 +283,11 @@ function WaterfallNestedLogic(state) {
 const WaterfallNestedA = [
     async (dc) => {
         dc.context.sendActivity('step1');
-        await dc.begin('test-waterfall-b');
+        await dc.beginDialog('test-waterfall-b');
     },
     async (dc) => {
         await dc.context.sendActivity("step2");
-        await dc.begin("test-waterfall-c");
+        await dc.beginDialog("test-waterfall-c");
     }
 ];
 

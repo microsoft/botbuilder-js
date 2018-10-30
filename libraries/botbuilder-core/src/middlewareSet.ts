@@ -5,13 +5,36 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ResourceResponse } from 'botframework-schema';
 import { TurnContext } from './turnContext';
 
 /**
  * Interface implemented by object based middleware.
  */
 export interface Middleware {
+    /**
+     * Called each time the bot receives a new request.
+     *
+     * @remarks
+     * Calling `await next();` will cause execution to continue to either the next piece of
+     * middleware in the chain or the bots main logic if you are the last piece of middleware.
+     *
+     * Your middleware should perform its business logic before and/or after the call to `next()`.
+     * You can short-circuit further execution of the turn by omitting the call to `next()`.
+     *
+     * The following example shows a simple piece of logging middleware:
+     *
+     * ```JavaScript
+     * class MyLogger {
+     *     async onTurn(context, next) {
+     *         console.log(`Leading Edge`);
+     *         await next();
+     *         console.log(`Trailing Edge`);
+     *     }
+     * }
+     * ```
+     * @param context Context for current turn of conversation with the user.
+     * @param next Function to call to continue execution to the next step in the middleware chain.
+     */
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
 }
 
@@ -48,7 +71,7 @@ export class MiddlewareSet implements Middleware {
 
     /**
      * Creates a new MiddlewareSet instance.
-     * @param middleware Zero or more middleware handlers(s) to register.
+     * @param middleware One or more middleware handlers(s) to register.
      */
     constructor(...middleware: (MiddlewareHandler|Middleware)[]) {
         MiddlewareSet.prototype.use.apply(this, middleware);
@@ -74,15 +97,16 @@ export class MiddlewareSet implements Middleware {
      * @param middleware One or more middleware handlers(s) to register.
      */
     public use(...middleware: (MiddlewareHandler|Middleware)[]): this {
-        middleware.forEach((plugin) => {
+        middleware.forEach((plugin: any) => {
             if (typeof plugin === 'function') {
                 this.middleware.push(plugin);
             } else if (typeof plugin === 'object' && plugin.onTurn) {
-                this.middleware.push((context, next) => plugin.onTurn(context, next));
+                this.middleware.push((context: TurnContext, next: Function) => plugin.onTurn(context, next));
             } else {
                 throw new Error(`MiddlewareSet.use(): invalid plugin type being added.`);
             }
         });
+
         return this;
     }
 
@@ -92,7 +116,7 @@ export class MiddlewareSet implements Middleware {
      * @param next Function to invoke at the end of the middleware chain.
      */
     public run(context: TurnContext, next: () => Promise<void>): Promise<void> {
-        const handlers = this.middleware.slice();
+        const handlers: MiddlewareHandler[] = this.middleware.slice();
         function runNext(i: number): Promise<void> {
             try {
                 if (i < handlers.length) {
@@ -104,6 +128,7 @@ export class MiddlewareSet implements Middleware {
                 return Promise.reject(err);
             }
         }
+
         return runNext(0);
     }
 }

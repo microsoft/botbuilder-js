@@ -15,60 +15,56 @@ describe(`BotState`, function () {
     const storage = new MemoryStorage();
     const adapter = new TestAdapter();
     const context = new TurnContext(adapter, receivedMessage);
-    const middleware = new BotState(storage, (context) => {
+    const botState = new BotState(storage, (context) => {
         assert(context, `context not passed into storage stateKey factory.`);
         return storageKey;
     });
     it(`should return undefined from get() if nothing cached.`, function (done) {
-        const state = middleware.get(context);
+        const state = botState.get(context);
         assert(state === undefined, `state returned.`);
         done();
     });
 
-    it(`should load and save state from storage.`, function (done) {
-        middleware.onTurn(context, () => {
-            const state = cachedState(context, middleware.stateKey);
-            assert(state, `State not loaded`);
-            state.test = 'foo';
-        })
-        .then(() => storage.read([storageKey]))
-        .then((items) => {
-            assert(items.hasOwnProperty(storageKey), `Saved state not found in storage.`);
-            assert(items[storageKey].test === 'foo', `Missing test value in stored state.`);
-            done();
-        });
+    it(`should load and save state from storage.`, async function () {
+        await botState.load(context);
+        let state = cachedState(context, botState.stateKey);
+        assert(state, `State not loaded`);
+        state.test = 'foo';
+        await botState.saveChanges(context);
+        
+        const items = await storage.read([storageKey]);
+        assert(items.hasOwnProperty(storageKey), `Saved state not found in storage.`);
+        assert(items[storageKey].test === 'foo', `Missing test value in stored state.`);        
     });
 
-    it(`should force read() of state from storage.`, function (done) {
-        middleware.onTurn(context, () => {
-            const state = cachedState(context, middleware.stateKey);
+    it(`should force load() of state from storage.`, function (done) {
+        botState.load(context, () => {
+            const state = cachedState(context, botState.stateKey);
             assert(state.test === 'foo', `invalid initial state`);
             delete state.test === 'foo';
-            return middleware.read(context, true).then(() => {
-                assert(cachedState(context, middleware.stateKey).test === 'foo', `state not reloaded`);
+            return botState.load(context, true).then(() => {
+                assert(cachedState(context, botState.stateKey).test === 'foo', `state not reloaded`);
             });
         }).then(() => done());
     });
-    
-    it(`should clear() state storage.`, function (done) {
-        middleware.onTurn(context, () => {
-            assert(cachedState(context, middleware.stateKey).test === 'foo', `invalid initial state`);
-            middleware.clear(context);
-            assert(!cachedState(context, middleware.stateKey).hasOwnProperty('test'), `state not cleared on context.`);
-        })
-        .then(() => storage.read([storageKey]))
-        .then((items) => {
-            assert(!items[storageKey].hasOwnProperty('test'), `state not cleared from storage.`);
-            done();
-        });
+
+    it(`should clear() state storage.`, async function () {
+        await botState.load(context);
+        assert(cachedState(context, botState.stateKey).test === 'foo', `invalid initial state`);
+        await botState.clear(context);
+        await botState.saveChanges(context);
+        assert(!cachedState(context, botState.stateKey).hasOwnProperty('test'), `state not cleared on context.`);
+
+        const items = await storage.read([storageKey]);
+        assert(!items[storageKey].hasOwnProperty('test'), `state not cleared from storage.`);        
     });
 
-    it(`should force immediate write() of state to storage.`, function (done) {
-        middleware.onTurn(context, () => {
-            const state = cachedState(context, middleware.stateKey);
+    it(`should force immediate saveChanges() of state to storage.`, function (done) {
+        botState.load(context).then(() => {
+            const state = cachedState(context, botState.stateKey);
             assert(!state.hasOwnProperty('foo'), `invalid initial state`);
             state.test = 'foo';
-            return middleware.write(context, true)
+            return botState.saveChanges(context, true)
                 .then(() => storage.read([storageKey]))
                 .then((items) => {
                     assert(items[storageKey].test === 'foo', `state not immediately flushed.`);
@@ -76,51 +72,51 @@ describe(`BotState`, function () {
         }).then(() => done());
     });
 
-    it(`should read() from storage if cached state missing.`, function (done) {
-        context.turnState.set(middleware.stateKey, undefined);
-        middleware.read(context).then((state) => {
+    it(`should load() from storage if cached state missing.`, function (done) {
+        context.turnState.set(botState.stateKey, undefined);
+        botState.load(context).then((state) => {
             assert(state.test === 'foo', `state not loaded.`);
             done();
         });
     });
 
-    it(`should read() from storage if cached.state missing.`, function (done) {
-        context.turnState.set(middleware.stateKey, {});
-        middleware.read(context).then((state) => {
+    it(`should load() from storage if cached.state missing.`, function (done) {
+        context.turnState.set(botState.stateKey, {});
+        botState.load(context).then((state) => {
             assert(state.test === 'foo', `state not loaded.`);
             done();
         });
     });
 
-    it(`should read() from cache.`, function (done) {
-        middleware.read(context).then((state) => {
+    it(`should load() from cache.`, function (done) {
+        botState.load(context).then((state) => {
             assert(state.test === 'foo', `state not loaded.`);
             done();
         });
     });
 
-    it(`should force write() to storage of an empty state object.`, function (done) {
-        context.turnState.set(middleware.stateKey, undefined);
-        middleware.write(context, true).then(() => done());
+    it(`should force saveChanges() to storage of an empty state object.`, function (done) {
+        context.turnState.set(botState.stateKey, undefined);
+        botState.saveChanges(context, true).then(() => done());
     });
 
     it(`should no-op calls to clear() when nothing cached.`, function (done) {
-        context.turnState.set(middleware.stateKey, undefined);
-        middleware.clear(context);
+        context.turnState.set(botState.stateKey, undefined);
+        botState.clear(context);
         done();
     });
 
     it(`should create new PropertyAccessors`, function (done) {
-        let count = middleware.createProperty('count', 1);
+        let count = botState.createProperty('count', 1);
         assert(count !== undefined, `did not successfully create PropertyAccessor.`);
         done();
     });
 
     it(`should not allow registering of PropertyAccessors with the same name`, function (done) {
         const duplicateName = 'test';
-        let testA = middleware.createProperty(duplicateName, 0);
+        let testA = botState.createProperty(duplicateName, 0);
         try {
-            let testB = middleware.createProperty(duplicateName, 0);
+            let testB = botState.createProperty(duplicateName, 0);
         } catch (e) {
             // Checking the error message because JavaScript does not have specific Error types like Python, e.g. ValueError.
             // This message check verifies that the bot threw the correct error, and that not something else is breaking.

@@ -2,6 +2,7 @@
     "name": "test",
     "description": "test description",
     "version": "2.0",
+    "secretKey": "",
     "services": [
         {
             "type": "abs",
@@ -9,7 +10,8 @@
             "name": "testAbs",
             "tenantId": "tenant.test.com",
             "subscriptionId": "00000000-0000-0000-0000-000000000000",
-            "resourceGroup": "testGroup"
+            "resourceGroup": "testGroup",
+            "serviceName": "testAbsService"
         },
         {
             "type": "blob",
@@ -18,6 +20,7 @@
             "tenantId": "tenant.test.com",
             "subscriptionId": "00000000-0000-0000-0000-000000000000",
             "resourceGroup": "testGroup",
+            "serviceName": "testBlobService",
             "connectionString": "UseDevelopmentStorage=true;",
             "container": "testContainer"
         },
@@ -28,6 +31,7 @@
             "tenantId": "tenant.test.com",
             "subscriptionId": "00000000-0000-0000-0000-000000000000",
             "resourceGroup": "testGroup",
+            "serviceName": "testInsightsService",
             "instrumentationKey": "00000004-0000-0000-0000-000000000000",
             "applicationId": "00000000-0000-0000-0000-000000000007",
             "apiKeys": {
@@ -39,15 +43,15 @@
             "type": "dispatch",
             "id": "4",
             "name": "testDispatch",
-            "version": "1.0",
             "appId": "00000002-0000-0000-0000-000000000001",
             "authoringKey": "00000002-0000-0000-0000-000000000000",
-            "subscriptionKey": "00000001-0000-0000-0000-000000000000",
-            "region": "westus",
             "serviceIds": [
                 "6",
                 "7"
-            ]
+            ],
+            "subscriptionKey": "00000001-0000-0000-0000-000000000000",
+            "version": "1.0",
+            "region": "westus"
         },
         {
             "type": "endpoint",
@@ -83,7 +87,9 @@
             "tenantId": "tenant.test.com",
             "subscriptionId": "00000000-0000-0000-0000-000000000000",
             "resourceGroup": "testGroup",
-            "connectionString": "UseDevelopmentStorage=true;",
+            "serviceName": "testCosmosService",
+            "endpoint": "https://localhost:8081",
+            "key": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
             "database": "testDatabase",
             "collection": "testCollection"
         },
@@ -96,7 +102,17 @@
                 "key1": "testKey1",
                 "key2": "testKey2"
             }
+        },
+        {
+            "type": "file",
+            "id": "72",
+            "name": "a.bot",
+            "path": "a.bot"
+        },
+        {
+            "type": "unknown",
+            "id": "44",
+            "name": "unknown"
         }
-    ],
-    "secretKey": ""
+    ]
 }
