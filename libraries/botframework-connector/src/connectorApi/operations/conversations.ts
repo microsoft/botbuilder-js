@@ -42,6 +42,7 @@ export class Conversations {
   /**
    * @param callback The callback
    */
+  // NOTE: autorest generates something which typescript does not like. We don't need it so leave this commented out
   //getConversations(callback: msRest.ServiceCallback<Models.ConversationsResult>): void;
   /**
    * @param options The optional parameters
@@ -370,6 +371,7 @@ export class Conversations {
    * @param conversationId Conversation ID
    * @param callback The callback
    */
+  // NOTE: autorest generates something which typescript does not like. We don't need it so leave this commented out
   //getConversationPagedMembers(conversationId: string, callback: msRest.ServiceCallback<Models.PagedMembersResult>): void;
   /**
    * @param conversationId Conversation ID

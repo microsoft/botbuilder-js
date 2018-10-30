@@ -24,6 +24,7 @@ export class ConnectorClientContext extends msRest.ServiceClient {
     }
 
     if (!options) {
+      // NOTE: autogen creates a {} which is invalid, it needs to be cast
       options = {} as Models.ConnectorClientOptions;
     }
 
