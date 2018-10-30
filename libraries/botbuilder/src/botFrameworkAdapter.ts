@@ -12,7 +12,8 @@ import {
     JwtTokenValidation,
     MicrosoftAppCredentials,
     OAuthApiClient,
-    SimpleCredentialProvider
+    SimpleCredentialProvider,
+    GovernmentConstants
 } from 'botframework-connector';
 
 import {
@@ -156,6 +157,10 @@ export class BotFrameworkAdapter extends BotAdapter {
         this.isEmulatingOAuthCards = false;
         if (this.settings.openIdMetadata) {
             ChannelValidation.OpenIdMetadataEndpoint = this.settings.openIdMetadata;
+        }
+        if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
+            this.credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
+            this.credentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
         }
     }
 
