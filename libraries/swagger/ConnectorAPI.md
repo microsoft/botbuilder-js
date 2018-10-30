@@ -29,5 +29,5 @@ typescript:
   azure-arm: false
   clear-output-folder: true
   output-folder: ./connectorApi
-  generate-metadata: false
+  generate-metadata: true
 ```

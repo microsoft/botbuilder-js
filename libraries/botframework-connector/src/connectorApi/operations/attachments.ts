@@ -7,14 +7,13 @@
 import * as msRest from "ms-rest-js";
 import * as Models from "botframework-schema";
 import * as Mappers from "../models/attachmentsMappers";
+import * as Parameters from "../models/parameters";
 import { ConnectorClientContext } from "../connectorClientContext";
-
-const WebResource = msRest.WebResource;
 
 /** Class representing a Attachments. */
 export class Attachments {
   private readonly client: ConnectorClientContext;
-  private readonly serializer = new msRest.Serializer(Mappers);
+
   /**
    * Create a Attachments.
    * @param {ConnectorClientContext} client Reference to the service client.
@@ -24,207 +23,108 @@ export class Attachments {
   }
 
   /**
-   * @summary GetAttachmentInfo
-   *
    * Get AttachmentInfo structure describing the attachment views
-   *
-   * @param {string} attachmentId attachment id
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} The deserialized result object.
-   *
-   * @reject {Error|ServiceError} The error object.
+   * @summary GetAttachmentInfo
+   * @param attachmentId attachment id
+   * @param [options] The optional parameters
+   * @returns Promise<Models.AttachmentsGetAttachmentInfoResponse>
    */
-  async getAttachmentInfoWithHttpOperationResponse(attachmentId: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse<Models.AttachmentInfo>> {
+  getAttachmentInfo(attachmentId: string, options?: msRest.RequestOptionsBase): Promise<Models.AttachmentsGetAttachmentInfoResponse>;
+  /**
+   * @param attachmentId attachment id
+   * @param callback The callback
+   */
+  getAttachmentInfo(attachmentId: string, callback: msRest.ServiceCallback<Models.AttachmentInfo>): void;
+  /**
+   * @param attachmentId attachment id
+   * @param options The optional parameters
+   * @param callback The callback
+   */
+  getAttachmentInfo(attachmentId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.AttachmentInfo>): void;
+  getAttachmentInfo(attachmentId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.AttachmentInfo>): Promise<Models.AttachmentsGetAttachmentInfoResponse> {
+    return this.client.sendOperationRequest(
+      {
+        attachmentId,
+        options
+      },
+      getAttachmentInfoOperationSpec,
+      callback) as Promise<Models.AttachmentsGetAttachmentInfoResponse>;
+  }
 
-    // Create HTTP transport objects
-    const httpRequest = new WebResource();
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
-        {
-          attachmentId
-        },
-        options);
-      operationRes = await this.client.sendOperationRequest(
-        httpRequest,
-        operationArguments,
-        {
-          httpMethod: "GET",
-          baseUrl: this.client.baseUri,
-          path: "v3/attachments/{attachmentId}",
-          urlParameters: [
-            {
-              parameterPath: "attachmentId",
-              mapper: {
-                required: true,
-                serializedName: "attachmentId",
-                type: {
-                  name: "String"
-                }
-              }
-            }
-          ],
-          responses: {
-            200: {
-              bodyMapper: Mappers.AttachmentInfo
-            },
-            default: {
-              bodyMapper: Mappers.ErrorResponse
-            }
-          },
-          serializer: this.serializer
-        });
-      // Deserialize Response
-      let statusCode = operationRes.status;
-      if (statusCode === 200) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.AttachmentInfo;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError.request = msRest.stripRequest(httpRequest);
-          deserializationError.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError);
+  /**
+   * Get the named view as binary content
+   * @summary GetAttachment
+   * @param attachmentId attachment id
+   * @param viewId View id from attachmentInfo
+   * @param [options] The optional parameters
+   * @returns Promise<Models.AttachmentsGetAttachmentResponse>
+   */
+  getAttachment(attachmentId: string, viewId: string, options?: msRest.RequestOptionsBase): Promise<Models.AttachmentsGetAttachmentResponse>;
+  /**
+   * @param attachmentId attachment id
+   * @param viewId View id from attachmentInfo
+   * @param callback The callback
+   */
+  getAttachment(attachmentId: string, viewId: string, callback: msRest.ServiceCallback<void>): void;
+  /**
+   * @param attachmentId attachment id
+   * @param viewId View id from attachmentInfo
+   * @param options The optional parameters
+   * @param callback The callback
+   */
+  getAttachment(attachmentId: string, viewId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<void>): void;
+  getAttachment(attachmentId: string, viewId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<void>): Promise<Models.AttachmentsGetAttachmentResponse> {
+    return this.client.sendOperationRequest(
+      {
+        attachmentId,
+        viewId,
+        options
+      },
+      getAttachmentOperationSpec,
+      callback) as Promise<Models.AttachmentsGetAttachmentResponse>;
+  }
+}
+
+// Operation Specifications
+const serializer = new msRest.Serializer(Mappers);
+const getAttachmentInfoOperationSpec: msRest.OperationSpec = {
+  httpMethod: "GET",
+  path: "v3/attachments/{attachmentId}",
+  urlParameters: [
+    Parameters.attachmentId
+  ],
+  responses: {
+    200: {
+      bodyMapper: Mappers.AttachmentInfo
+    },
+    default: {
+      bodyMapper: Mappers.ErrorResponse
+    }
+  },
+  serializer
+};
+
+const getAttachmentOperationSpec: msRest.OperationSpec = {
+  httpMethod: "GET",
+  path: "v3/attachments/{attachmentId}/views/{viewId}",
+  urlParameters: [
+    Parameters.attachmentId,
+    Parameters.viewId
+  ],
+  responses: {
+    200: {
+      bodyMapper: {
+        serializedName: "parsedResponse",
+        type: {
+          name: "Stream"
         }
       }
-    } catch (err) {
-      return Promise.reject(err);
+    },
+    301: {},
+    302: {},
+    default: {
+      bodyMapper: Mappers.ErrorResponse
     }
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * @summary GetAttachment
-   *
-   * Get the named view as binary content
-   *
-   * @param {string} attachmentId attachment id
-   *
-   * @param {string} viewId View id from attachmentInfo
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} The deserialized result object.
-   *
-   * @reject {Error|ServiceError} The error object.
-   */
-  async getAttachmentWithHttpOperationResponse(attachmentId: string, viewId: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse<void>> {
-
-    // Create HTTP transport objects
-    const httpRequest = new WebResource();
-    httpRequest.rawResponse = true;
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
-        {
-          attachmentId,
-          viewId
-        },
-        options);
-      operationRes = await this.client.sendOperationRequest(
-        httpRequest,
-        operationArguments,
-        {
-          httpMethod: "GET",
-          baseUrl: this.client.baseUri,
-          path: "v3/attachments/{attachmentId}/views/{viewId}",
-          urlParameters: [
-            {
-              parameterPath: "attachmentId",
-              mapper: {
-                required: true,
-                serializedName: "attachmentId",
-                type: {
-                  name: "String"
-                }
-              }
-            },
-            {
-              parameterPath: "viewId",
-              mapper: {
-                required: true,
-                serializedName: "viewId",
-                type: {
-                  name: "String"
-                }
-              }
-            }
-          ],
-          responses: {
-            200: {
-              bodyMapper: {
-                serializedName: "parsedResponse",
-                type: {
-                  name: "Stream"
-                }
-              }
-            },
-            301: {},
-            302: {},
-            default: {
-              bodyMapper: Mappers.ErrorResponse
-            }
-          },
-          serializer: this.serializer
-        });
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * @summary GetAttachmentInfo
-   *
-   * Get AttachmentInfo structure describing the attachment views
-   *
-   * @param {string} attachmentId attachment id
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @param {ServiceCallback} callback The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, operationRes)
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *                      {Models.AttachmentInfo} [result]   - The deserialized result object if an error did not occur.
-   *                      See {@link Models.AttachmentInfo} for more information.
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *                      {HttpOperationResponse} [response] - The HTTP Response stream if an error did not occur.
-   */
-  getAttachmentInfo(attachmentId: string): Promise<Models.AttachmentInfo>;
-  getAttachmentInfo(attachmentId: string, options: msRest.RequestOptionsBase): Promise<Models.AttachmentInfo>;
-  getAttachmentInfo(attachmentId: string, callback: msRest.ServiceCallback<Models.AttachmentInfo>): void;
-  getAttachmentInfo(attachmentId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.AttachmentInfo>): void;
-  getAttachmentInfo(attachmentId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.AttachmentInfo>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<Models.AttachmentInfo>;
-    if (!callback) {
-      return this.getAttachmentInfoWithHttpOperationResponse(attachmentId, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.AttachmentInfo);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.getAttachmentInfoWithHttpOperationResponse(attachmentId, options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
-        }
-        let result = data.parsedBody as Models.AttachmentInfo;
-        return cb(err, result, data.request, data);
-      });
-    }
-  }
-
-}
+  },
+  serializer
+};

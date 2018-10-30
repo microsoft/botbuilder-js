@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "version": "v3",
-    "title": "Microsoft Bot Token  API",
+    "title": "Microsoft Bot Token API",
     "description": "© 2016 Microsoft",
     "termsOfService": "https://www.microsoft.com/en-us/legal/intellectualproperty/copyright/default.aspx",
     "contact": {
@@ -89,12 +89,12 @@
             "required": true,
             "type": "string"
           },
-          {
-            "name": "code",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
+									{
+										"name": "code",
+										"in": "query",
+										"required": false,
+										"type": "string"
+									}
         ],
         "responses": {
           "200": {

@@ -4,7 +4,5 @@
  * regenerated.
  */
 
-import { BotSignIn } from "./botSignIn";
-import { UserToken } from "./userToken";
-
-export { BotSignIn, UserToken };
+export * from "./botSignIn";
+export * from "./userToken";

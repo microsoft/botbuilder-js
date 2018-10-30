@@ -7,14 +7,13 @@
 import * as msRest from "ms-rest-js";
 import * as Models from "../models";
 import * as Mappers from "../models/botSignInMappers";
+import * as Parameters from "../models/parameters";
 import { OAuthApiClientContext } from "../oAuthApiClientContext";
-
-const WebResource = msRest.WebResource;
 
 /** Class representing a BotSignIn. */
 export class BotSignIn {
   private readonly client: OAuthApiClientContext;
-  private readonly serializer = new msRest.Serializer(Mappers);
+
   /**
    * Create a BotSignIn.
    * @param {OAuthApiClientContext} client Reference to the service client.
@@ -24,147 +23,53 @@ export class BotSignIn {
   }
 
   /**
-   * @param {string} state
-   *
-   * @param {BotSignInGetSignInUrlOptionalParams} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} The deserialized result object.
-   *
-   * @reject {Error|ServiceError} The error object.
+   * @param state
+   * @param [options] The optional parameters
+   * @returns Promise<Models.BotSignInGetSignInUrlResponse>
    */
-  async getSignInUrlWithHttpOperationResponse(state: string, options?: Models.BotSignInGetSignInUrlOptionalParams): Promise<msRest.HttpOperationResponse<string>> {
-    let codeChallenge = (options && options.codeChallenge !== undefined) ? options.codeChallenge : undefined;
-    let emulatorUrl = (options && options.emulatorUrl !== undefined) ? options.emulatorUrl : undefined;
+  getSignInUrl(state: string, options?: Models.BotSignInGetSignInUrlOptionalParams): Promise<Models.BotSignInGetSignInUrlResponse>;
+  /**
+   * @param state
+   * @param callback The callback
+   */
+  getSignInUrl(state: string, callback: msRest.ServiceCallback<string>): void;
+  /**
+   * @param state
+   * @param options The optional parameters
+   * @param callback The callback
+   */
+  getSignInUrl(state: string, options: Models.BotSignInGetSignInUrlOptionalParams, callback: msRest.ServiceCallback<string>): void;
+  getSignInUrl(state: string, options?: Models.BotSignInGetSignInUrlOptionalParams, callback?: msRest.ServiceCallback<string>): Promise<Models.BotSignInGetSignInUrlResponse> {
+    return this.client.sendOperationRequest(
+      {
+        state,
+        options
+      },
+      getSignInUrlOperationSpec,
+      callback) as Promise<Models.BotSignInGetSignInUrlResponse>;
+  }
+}
 
-    // Create HTTP transport objects
-    const httpRequest = new WebResource();
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
-        {
-          state,
-          codeChallenge,
-          emulatorUrl
-        },
-        options);
-      operationRes = await this.client.sendOperationRequest(
-        httpRequest,
-        operationArguments,
-        {
-          httpMethod: "GET",
-          baseUrl: this.client.baseUri,
-          path: "api/botsignin/GetSignInUrl",
-          queryParameters: [
-            {
-              parameterPath: "state",
-              mapper: {
-                required: true,
-                serializedName: "state",
-                type: {
-                  name: "String"
-                }
-              }
-            },
-            {
-              parameterPath: "codeChallenge",
-              mapper: {
-                serializedName: "code_challenge",
-                type: {
-                  name: "String"
-                }
-              }
-            },
-            {
-              parameterPath: "emulatorUrl",
-              mapper: {
-                serializedName: "emulatorUrl",
-                type: {
-                  name: "String"
-                }
-              }
-            }
-          ],
-          responses: {
-            200: {
-              bodyMapper: {
-                serializedName: "parsedResponse",
-                type: {
-                  name: "String"
-                }
-              }
-            },
-            default: {}
-          },
-          serializer: this.serializer
-        });
-      // Deserialize Response
-      let statusCode = operationRes.status;
-      if (statusCode === 200) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = {
-              serializedName: "parsedResponse",
-              type: {
-                name: "String"
-              }
-            };
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError.request = msRest.stripRequest(httpRequest);
-          deserializationError.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError);
+// Operation Specifications
+const serializer = new msRest.Serializer(Mappers);
+const getSignInUrlOperationSpec: msRest.OperationSpec = {
+  httpMethod: "GET",
+  path: "api/botsignin/GetSignInUrl",
+  queryParameters: [
+    Parameters.state,
+    Parameters.codeChallenge,
+    Parameters.emulatorUrl
+  ],
+  responses: {
+    200: {
+      bodyMapper: {
+        serializedName: "parsedResponse",
+        type: {
+          name: "String"
         }
       }
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * @param {string} state
-   *
-   * @param {BotSignInGetSignInUrlOptionalParams} [options] Optional Parameters.
-   *
-   * @param {ServiceCallback} callback The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, operationRes)
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *                      {string} [result]   - The deserialized result object if an error did not occur.
-   *
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *                      {HttpOperationResponse} [response] - The HTTP Response stream if an error did not occur.
-   */
-  getSignInUrl(state: string): Promise<string>;
-  getSignInUrl(state: string, options: Models.BotSignInGetSignInUrlOptionalParams): Promise<string>;
-  getSignInUrl(state: string, callback: msRest.ServiceCallback<string>): void;
-  getSignInUrl(state: string, options: Models.BotSignInGetSignInUrlOptionalParams, callback: msRest.ServiceCallback<string>): void;
-  getSignInUrl(state: string, options?: Models.BotSignInGetSignInUrlOptionalParams, callback?: msRest.ServiceCallback<string>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<string>;
-    if (!callback) {
-      return this.getSignInUrlWithHttpOperationResponse(state, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as string);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.getSignInUrlWithHttpOperationResponse(state, options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
-        }
-        let result = data.parsedBody as string;
-        return cb(err, result, data.request, data);
-      });
-    }
-  }
-
-}
+    },
+    default: {}
+  },
+  serializer
+};

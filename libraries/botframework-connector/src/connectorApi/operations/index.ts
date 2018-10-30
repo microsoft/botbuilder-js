@@ -4,7 +4,5 @@
  * regenerated.
  */
 
-import { Attachments } from "./attachments";
-import { Conversations } from "./conversations";
-
-export { Attachments, Conversations };
+export * from "./attachments";
+export * from "./conversations";

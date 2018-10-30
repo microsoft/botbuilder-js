@@ -6,31 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import {
-    ChannelValidation,
-    ConnectorClient,
-    JwtTokenValidation,
-    MicrosoftAppCredentials,
-    OAuthApiClient,
-    SimpleCredentialProvider
-} from 'botframework-connector';
-
-import {
-    Activity,
-    ActivityTypes,
-    BotAdapter,
-    ChannelAccount,
-    ConversationAccount,
-    ConversationParameters,
-    ConversationReference,
-    ConversationsResult,
-    ResourceResponse,
-    TokenResponse,
-    TokenResponseMap,
-    TurnContext
-} from 'botbuilder-core';
-
+import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, ResourceResponse, TokenResponse, TokenResponseMap, TurnContext } from 'botbuilder-core';
+import { ChannelValidation, ConnectorClient, JwtTokenValidation, MicrosoftAppCredentials, OAuthApiClient, SimpleCredentialProvider } from 'botframework-connector';
 import * as os from 'os';
+
+
 
 /**
  * Express or Restify Request object.
@@ -100,8 +80,8 @@ const NODE_VERSION: any = process.version;
 
 // tslint:disable-next-line:no-var-requires no-require-imports
 const pjson: any = require('../package.json');
-const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${ pjson.version } ` +
-    `(Node.js,Version=${ NODE_VERSION }; ${ TYPE } ${ RELEASE }; ${ ARCHITECTURE })`;
+const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${pjson.version} ` +
+    `(Node.js,Version=${NODE_VERSION}; ${TYPE} ${RELEASE}; ${ARCHITECTURE})`;
 const OAUTH_ENDPOINT: string = 'https://api.botframework.com';
 const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 
@@ -149,7 +129,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      */
     constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
         super();
-        this.settings = { appId: '', appPassword: '', ...settings};
+        this.settings = { appId: '', appPassword: '', ...settings };
         this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
         this.isEmulatingOAuthCards = false;
@@ -197,7 +177,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      */
     public async continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void> {
         const request: Partial<Activity> = TurnContext.applyConversationReference(
-            {type: 'event',  name: 'continueConversation' },
+            { type: 'event', name: 'continueConversation' },
             reference,
             true
         );
@@ -244,11 +224,11 @@ export class BotFrameworkAdapter extends BotAdapter {
         // Create conversation
         const parameters: ConversationParameters = { bot: reference.bot, members: [reference.user] } as ConversationParameters;
         const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
-        const response = await client.conversations.createConversation(parameters); 
+        const response = await client.conversations.createConversation(parameters);
 
         // Initialize request and copy over new conversation ID and updated serviceUrl.
         const request: Partial<Activity> = TurnContext.applyConversationReference(
-            {type: 'event', name: 'createConversation' },
+            { type: 'event', name: 'createConversation' },
             reference,
             true
         );
@@ -326,7 +306,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         const serviceUrl: string = context.activity.serviceUrl;
         const conversationId: string = context.activity.conversation.id;
         const client: ConnectorClient = this.createConnectorClient(serviceUrl);
-        
+
         return await client.conversations.getActivityMembers(conversationId, activityId);
     }
 
@@ -362,7 +342,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
      * @param continuationToken (Optional) token used to fetch the next page of results from the channel server. This should be left as `undefined` to retrieve the first page of results.
      */
-    public async getConversations(contextOrServiceUrl: TurnContext|string, continuationToken?: string): Promise<ConversationsResult> {
+    public async getConversations(contextOrServiceUrl: TurnContext | string, continuationToken?: string): Promise<ConversationsResult> {
         const url: string = typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl;
         const client: ConnectorClient = this.createConnectorClient(url);
 
@@ -384,7 +364,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         const url: string = this.oauthApiUrl(context);
         const client: OAuthApiClient = this.createOAuthApiClient(url);
 
-        return await client.getUserToken(userId, connectionName, magicCode);
+        return (await client.userToken.getToken(userId, connectionName, { code: magicCode })) as TokenResponse;
     }
 
     /**
@@ -400,7 +380,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         const userId: string = context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
         const client: OAuthApiClient = this.createOAuthApiClient(url);
-        await client.signOutUser(userId, connectionName);
+        await client.userToken.signOut(userId, connectionName);
     }
 
     /**
@@ -413,8 +393,14 @@ export class BotFrameworkAdapter extends BotAdapter {
         const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
         const url: string = this.oauthApiUrl(context);
         const client: OAuthApiClient = this.createOAuthApiClient(url);
+        const state: any = {
+            ConnectionName: connectionName,
+            Conversation: conversation,
+            MsAppId: (client.credentials as MicrosoftAppCredentials).appId
+        };
 
-        return await client.getSignInLink(conversation as ConversationReference, connectionName);
+        const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
+        return (await client.botSignIn.getSignInUrl(finalState, null)).body;
     }
 
     /**
@@ -439,7 +425,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
      * @param emulate If `true` the token service will emulate the sending of OAuthCards.
      */
-    public async emulateOAuthCards(contextOrServiceUrl: TurnContext|string, emulate: boolean): Promise<void> {
+    public async emulateOAuthCards(contextOrServiceUrl: TurnContext | string, emulate: boolean): Promise<void> {
         this.isEmulatingOAuthCards = emulate;
         const url: string = this.oauthApiUrl(contextOrServiceUrl);
         const client: OAuthApiClient = this.createOAuthApiClient(url);
@@ -532,7 +518,7 @@ export class BotFrameworkAdapter extends BotAdapter {
             } else {
                 status = 200;
             }
-        } catch(err) {
+        } catch (err) {
             body = err.toString();
         }
 
@@ -671,7 +657,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * Allows for mocking of the OAuth Api URL in unit tests.
      * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
      */
-    protected oauthApiUrl(contextOrServiceUrl: TurnContext|string): string {
+    protected oauthApiUrl(contextOrServiceUrl: TurnContext | string): string {
         return this.isEmulatingOAuthCards ?
             (typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl) :
             (this.settings.oAuthEndpoint ? this.settings.oAuthEndpoint : OAUTH_ENDPOINT);

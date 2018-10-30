@@ -4,8 +4,10 @@
  * regenerated.
  */
 
+import * as msRest from "ms-rest-js";
 
-export const AttachmentView = {
+
+export const AttachmentView: msRest.CompositeMapper = {
   serializedName: "AttachmentView",
   type: {
     name: "Composite",
@@ -27,7 +29,7 @@ export const AttachmentView = {
   }
 };
 
-export const AttachmentInfo = {
+export const AttachmentInfo: msRest.CompositeMapper = {
   serializedName: "AttachmentInfo",
   type: {
     name: "Composite",
@@ -50,7 +52,6 @@ export const AttachmentInfo = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "AttachmentViewElementType",
             type: {
               name: "Composite",
               className: "AttachmentView"
@@ -62,7 +63,7 @@ export const AttachmentInfo = {
   }
 };
 
-export const InnerHttpError = {
+export const InnerHttpError: msRest.CompositeMapper = {
   serializedName: "InnerHttpError",
   type: {
     name: "Composite",
@@ -84,7 +85,7 @@ export const InnerHttpError = {
   }
 };
 
-export const ErrorModel = {
+export const ErrorModel: msRest.CompositeMapper = {
   serializedName: "Error",
   type: {
     name: "Composite",
@@ -113,7 +114,7 @@ export const ErrorModel = {
   }
 };
 
-export const ErrorResponse = {
+export const ErrorResponse: msRest.CompositeMapper = {
   serializedName: "ErrorResponse",
   type: {
     name: "Composite",
@@ -130,7 +131,7 @@ export const ErrorResponse = {
   }
 };
 
-export const ChannelAccount = {
+export const ChannelAccount: msRest.CompositeMapper = {
   serializedName: "ChannelAccount",
   type: {
     name: "Composite",
@@ -148,6 +149,12 @@ export const ChannelAccount = {
           name: "String"
         }
       },
+      aadObjectId: {
+        serializedName: "aadObjectId",
+        type: {
+          name: "String"
+        }
+      },
       role: {
         serializedName: "role",
         type: {
@@ -158,7 +165,7 @@ export const ChannelAccount = {
   }
 };
 
-export const ConversationAccount = {
+export const ConversationAccount: msRest.CompositeMapper = {
   serializedName: "ConversationAccount",
   type: {
     name: "Composite",
@@ -188,6 +195,12 @@ export const ConversationAccount = {
           name: "String"
         }
       },
+      aadObjectId: {
+        serializedName: "aadObjectId",
+        type: {
+          name: "String"
+        }
+      },
       role: {
         serializedName: "role",
         type: {
@@ -198,7 +211,7 @@ export const ConversationAccount = {
   }
 };
 
-export const MessageReaction = {
+export const MessageReaction: msRest.CompositeMapper = {
   serializedName: "MessageReaction",
   type: {
     name: "Composite",
@@ -214,7 +227,7 @@ export const MessageReaction = {
   }
 };
 
-export const CardAction = {
+export const CardAction: msRest.CompositeMapper = {
   serializedName: "CardAction",
   type: {
     name: "Composite",
@@ -255,12 +268,18 @@ export const CardAction = {
         type: {
           name: "Object"
         }
+      },
+      channelData: {
+        serializedName: "channelData",
+        type: {
+          name: "Object"
+        }
       }
     }
   }
 };
 
-export const SuggestedActions = {
+export const SuggestedActions: msRest.CompositeMapper = {
   serializedName: "SuggestedActions",
   type: {
     name: "Composite",
@@ -271,7 +290,6 @@ export const SuggestedActions = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "stringElementType",
             type: {
               name: "String"
             }
@@ -283,7 +301,6 @@ export const SuggestedActions = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "CardActionElementType",
             type: {
               name: "Composite",
               className: "CardAction"
@@ -295,7 +312,7 @@ export const SuggestedActions = {
   }
 };
 
-export const Attachment = {
+export const Attachment: msRest.CompositeMapper = {
   serializedName: "Attachment",
   type: {
     name: "Composite",
@@ -335,7 +352,7 @@ export const Attachment = {
   }
 };
 
-export const Entity = {
+export const Entity: msRest.CompositeMapper = {
   serializedName: "Entity",
   type: {
     name: "Composite",
@@ -351,7 +368,7 @@ export const Entity = {
   }
 };
 
-export const ConversationReference = {
+export const ConversationReference: msRest.CompositeMapper = {
   serializedName: "ConversationReference",
   type: {
     name: "Composite",
@@ -400,7 +417,7 @@ export const ConversationReference = {
   }
 };
 
-export const TextHighlight = {
+export const TextHighlight: msRest.CompositeMapper = {
   serializedName: "TextHighlight",
   type: {
     name: "Composite",
@@ -422,7 +439,7 @@ export const TextHighlight = {
   }
 };
 
-export const SemanticAction = {
+export const SemanticAction: msRest.CompositeMapper = {
   serializedName: "SemanticAction",
   type: {
     name: "Composite",
@@ -439,9 +456,9 @@ export const SemanticAction = {
         type: {
           name: "Dictionary",
           value: {
-            serializedName: "ObjectElementType",
             type: {
-              name: "Object"
+              name: "Composite",
+              className: "Entity"
             }
           }
         }
@@ -450,7 +467,7 @@ export const SemanticAction = {
   }
 };
 
-export const Activity = {
+export const Activity: msRest.CompositeMapper = {
   serializedName: "Activity",
   type: {
     name: "Composite",
@@ -478,6 +495,12 @@ export const Activity = {
         serializedName: "localTimestamp",
         type: {
           name: "DateTime"
+        }
+      },
+      localTimezone: {
+        serializedName: "localTimezone",
+        type: {
+          name: "String"
         }
       },
       serviceUrl: {
@@ -530,7 +553,6 @@ export const Activity = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "ChannelAccountElementType",
             type: {
               name: "Composite",
               className: "ChannelAccount"
@@ -543,7 +565,6 @@ export const Activity = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "ChannelAccountElementType",
             type: {
               name: "Composite",
               className: "ChannelAccount"
@@ -556,7 +577,6 @@ export const Activity = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "MessageReactionElementType",
             type: {
               name: "Composite",
               className: "MessageReaction"
@@ -569,7 +589,6 @@ export const Activity = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "MessageReactionElementType",
             type: {
               name: "Composite",
               className: "MessageReaction"
@@ -631,7 +650,6 @@ export const Activity = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "AttachmentElementType",
             type: {
               name: "Composite",
               className: "Attachment"
@@ -644,7 +662,6 @@ export const Activity = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "EntityElementType",
             type: {
               name: "Composite",
               className: "Entity"
@@ -730,7 +747,6 @@ export const Activity = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "stringElementType",
             type: {
               name: "String"
             }
@@ -742,7 +758,6 @@ export const Activity = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "TextHighlightElementType",
             type: {
               name: "Composite",
               className: "TextHighlight"
@@ -761,7 +776,7 @@ export const Activity = {
   }
 };
 
-export const ConversationParameters = {
+export const ConversationParameters: msRest.CompositeMapper = {
   serializedName: "ConversationParameters",
   type: {
     name: "Composite",
@@ -785,7 +800,6 @@ export const ConversationParameters = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "ChannelAccountElementType",
             type: {
               name: "Composite",
               className: "ChannelAccount"
@@ -816,7 +830,7 @@ export const ConversationParameters = {
   }
 };
 
-export const ConversationResourceResponse = {
+export const ConversationResourceResponse: msRest.CompositeMapper = {
   serializedName: "ConversationResourceResponse",
   type: {
     name: "Composite",
@@ -844,7 +858,7 @@ export const ConversationResourceResponse = {
   }
 };
 
-export const ConversationMembers = {
+export const ConversationMembers: msRest.CompositeMapper = {
   serializedName: "ConversationMembers",
   type: {
     name: "Composite",
@@ -861,7 +875,6 @@ export const ConversationMembers = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "ChannelAccountElementType",
             type: {
               name: "Composite",
               className: "ChannelAccount"
@@ -873,7 +886,7 @@ export const ConversationMembers = {
   }
 };
 
-export const ConversationsResult = {
+export const ConversationsResult: msRest.CompositeMapper = {
   serializedName: "ConversationsResult",
   type: {
     name: "Composite",
@@ -890,7 +903,6 @@ export const ConversationsResult = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "ConversationMembersElementType",
             type: {
               name: "Composite",
               className: "ConversationMembers"
@@ -902,7 +914,7 @@ export const ConversationsResult = {
   }
 };
 
-export const ResourceResponse = {
+export const ResourceResponse: msRest.CompositeMapper = {
   serializedName: "ResourceResponse",
   type: {
     name: "Composite",
@@ -918,7 +930,7 @@ export const ResourceResponse = {
   }
 };
 
-export const Transcript = {
+export const Transcript: msRest.CompositeMapper = {
   serializedName: "Transcript",
   type: {
     name: "Composite",
@@ -929,7 +941,6 @@ export const Transcript = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "ActivityElementType",
             type: {
               name: "Composite",
               className: "Activity"
@@ -941,7 +952,7 @@ export const Transcript = {
   }
 };
 
-export const PagedMembersResult = {
+export const PagedMembersResult: msRest.CompositeMapper = {
   serializedName: "PagedMembersResult",
   type: {
     name: "Composite",
@@ -958,7 +969,6 @@ export const PagedMembersResult = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "ChannelAccountElementType",
             type: {
               name: "Composite",
               className: "ChannelAccount"
@@ -970,7 +980,7 @@ export const PagedMembersResult = {
   }
 };
 
-export const AttachmentData = {
+export const AttachmentData: msRest.CompositeMapper = {
   serializedName: "AttachmentData",
   type: {
     name: "Composite",
@@ -1004,7 +1014,7 @@ export const AttachmentData = {
   }
 };
 
-export const CardImage = {
+export const CardImage: msRest.CompositeMapper = {
   serializedName: "CardImage",
   type: {
     name: "Composite",
@@ -1033,7 +1043,7 @@ export const CardImage = {
   }
 };
 
-export const HeroCard = {
+export const HeroCard: msRest.CompositeMapper = {
   serializedName: "HeroCard",
   type: {
     name: "Composite",
@@ -1062,7 +1072,6 @@ export const HeroCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "CardImageElementType",
             type: {
               name: "Composite",
               className: "CardImage"
@@ -1075,7 +1084,6 @@ export const HeroCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "CardActionElementType",
             type: {
               name: "Composite",
               className: "CardAction"
@@ -1094,7 +1102,7 @@ export const HeroCard = {
   }
 };
 
-export const ThumbnailUrl = {
+export const ThumbnailUrl: msRest.CompositeMapper = {
   serializedName: "ThumbnailUrl",
   type: {
     name: "Composite",
@@ -1116,7 +1124,7 @@ export const ThumbnailUrl = {
   }
 };
 
-export const MediaUrl = {
+export const MediaUrl: msRest.CompositeMapper = {
   serializedName: "MediaUrl",
   type: {
     name: "Composite",
@@ -1138,7 +1146,7 @@ export const MediaUrl = {
   }
 };
 
-export const AnimationCard = {
+export const AnimationCard: msRest.CompositeMapper = {
   serializedName: "AnimationCard",
   type: {
     name: "Composite",
@@ -1174,7 +1182,6 @@ export const AnimationCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "MediaUrlElementType",
             type: {
               name: "Composite",
               className: "MediaUrl"
@@ -1187,7 +1194,6 @@ export const AnimationCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "CardActionElementType",
             type: {
               name: "Composite",
               className: "CardAction"
@@ -1219,6 +1225,12 @@ export const AnimationCard = {
           name: "String"
         }
       },
+      duration: {
+        serializedName: "duration",
+        type: {
+          name: "String"
+        }
+      },
       value: {
         serializedName: "value",
         type: {
@@ -1229,7 +1241,7 @@ export const AnimationCard = {
   }
 };
 
-export const AudioCard = {
+export const AudioCard: msRest.CompositeMapper = {
   serializedName: "AudioCard",
   type: {
     name: "Composite",
@@ -1265,7 +1277,6 @@ export const AudioCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "MediaUrlElementType",
             type: {
               name: "Composite",
               className: "MediaUrl"
@@ -1278,7 +1289,6 @@ export const AudioCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "CardActionElementType",
             type: {
               name: "Composite",
               className: "CardAction"
@@ -1310,6 +1320,12 @@ export const AudioCard = {
           name: "String"
         }
       },
+      duration: {
+        serializedName: "duration",
+        type: {
+          name: "String"
+        }
+      },
       value: {
         serializedName: "value",
         type: {
@@ -1320,7 +1336,7 @@ export const AudioCard = {
   }
 };
 
-export const BasicCard = {
+export const BasicCard: msRest.CompositeMapper = {
   serializedName: "BasicCard",
   type: {
     name: "Composite",
@@ -1349,7 +1365,6 @@ export const BasicCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "CardImageElementType",
             type: {
               name: "Composite",
               className: "CardImage"
@@ -1362,7 +1377,6 @@ export const BasicCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "CardActionElementType",
             type: {
               name: "Composite",
               className: "CardAction"
@@ -1381,7 +1395,7 @@ export const BasicCard = {
   }
 };
 
-export const MediaCard = {
+export const MediaCard: msRest.CompositeMapper = {
   serializedName: "MediaCard",
   type: {
     name: "Composite",
@@ -1417,7 +1431,6 @@ export const MediaCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "MediaUrlElementType",
             type: {
               name: "Composite",
               className: "MediaUrl"
@@ -1430,7 +1443,6 @@ export const MediaCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "CardActionElementType",
             type: {
               name: "Composite",
               className: "CardAction"
@@ -1462,6 +1474,12 @@ export const MediaCard = {
           name: "String"
         }
       },
+      duration: {
+        serializedName: "duration",
+        type: {
+          name: "String"
+        }
+      },
       value: {
         serializedName: "value",
         type: {
@@ -1472,7 +1490,7 @@ export const MediaCard = {
   }
 };
 
-export const Fact = {
+export const Fact: msRest.CompositeMapper = {
   serializedName: "Fact",
   type: {
     name: "Composite",
@@ -1494,7 +1512,7 @@ export const Fact = {
   }
 };
 
-export const ReceiptItem = {
+export const ReceiptItem: msRest.CompositeMapper = {
   serializedName: "ReceiptItem",
   type: {
     name: "Composite",
@@ -1548,7 +1566,7 @@ export const ReceiptItem = {
   }
 };
 
-export const ReceiptCard = {
+export const ReceiptCard: msRest.CompositeMapper = {
   serializedName: "ReceiptCard",
   type: {
     name: "Composite",
@@ -1565,7 +1583,6 @@ export const ReceiptCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "FactElementType",
             type: {
               name: "Composite",
               className: "Fact"
@@ -1578,7 +1595,6 @@ export const ReceiptCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "ReceiptItemElementType",
             type: {
               name: "Composite",
               className: "ReceiptItem"
@@ -1616,7 +1632,6 @@ export const ReceiptCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "CardActionElementType",
             type: {
               name: "Composite",
               className: "CardAction"
@@ -1628,7 +1643,7 @@ export const ReceiptCard = {
   }
 };
 
-export const SigninCard = {
+export const SigninCard: msRest.CompositeMapper = {
   serializedName: "SigninCard",
   type: {
     name: "Composite",
@@ -1645,7 +1660,6 @@ export const SigninCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "CardActionElementType",
             type: {
               name: "Composite",
               className: "CardAction"
@@ -1657,7 +1671,7 @@ export const SigninCard = {
   }
 };
 
-export const OAuthCard = {
+export const OAuthCard: msRest.CompositeMapper = {
   serializedName: "OAuthCard",
   type: {
     name: "Composite",
@@ -1680,7 +1694,6 @@ export const OAuthCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "CardActionElementType",
             type: {
               name: "Composite",
               className: "CardAction"
@@ -1692,7 +1705,7 @@ export const OAuthCard = {
   }
 };
 
-export const ThumbnailCard = {
+export const ThumbnailCard: msRest.CompositeMapper = {
   serializedName: "ThumbnailCard",
   type: {
     name: "Composite",
@@ -1721,7 +1734,6 @@ export const ThumbnailCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "CardImageElementType",
             type: {
               name: "Composite",
               className: "CardImage"
@@ -1734,7 +1746,6 @@ export const ThumbnailCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "CardActionElementType",
             type: {
               name: "Composite",
               className: "CardAction"
@@ -1753,7 +1764,7 @@ export const ThumbnailCard = {
   }
 };
 
-export const VideoCard = {
+export const VideoCard: msRest.CompositeMapper = {
   serializedName: "VideoCard",
   type: {
     name: "Composite",
@@ -1789,7 +1800,6 @@ export const VideoCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "MediaUrlElementType",
             type: {
               name: "Composite",
               className: "MediaUrl"
@@ -1802,7 +1812,6 @@ export const VideoCard = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "CardActionElementType",
             type: {
               name: "Composite",
               className: "CardAction"
@@ -1834,6 +1843,12 @@ export const VideoCard = {
           name: "String"
         }
       },
+      duration: {
+        serializedName: "duration",
+        type: {
+          name: "String"
+        }
+      },
       value: {
         serializedName: "value",
         type: {
@@ -1844,7 +1859,7 @@ export const VideoCard = {
   }
 };
 
-export const GeoCoordinates = {
+export const GeoCoordinates: msRest.CompositeMapper = {
   serializedName: "GeoCoordinates",
   type: {
     name: "Composite",
@@ -1884,7 +1899,7 @@ export const GeoCoordinates = {
   }
 };
 
-export const Mention = {
+export const Mention: msRest.CompositeMapper = {
   serializedName: "Mention",
   type: {
     name: "Composite",
@@ -1913,7 +1928,7 @@ export const Mention = {
   }
 };
 
-export const Place = {
+export const Place: msRest.CompositeMapper = {
   serializedName: "Place",
   type: {
     name: "Composite",
@@ -1953,7 +1968,7 @@ export const Place = {
   }
 };
 
-export const Thing = {
+export const Thing: msRest.CompositeMapper = {
   serializedName: "Thing",
   type: {
     name: "Composite",
@@ -1975,7 +1990,7 @@ export const Thing = {
   }
 };
 
-export const MediaEventValue = {
+export const MediaEventValue: msRest.CompositeMapper = {
   serializedName: "MediaEventValue",
   type: {
     name: "Composite",
@@ -1991,7 +2006,7 @@ export const MediaEventValue = {
   }
 };
 
-export const TokenRequest = {
+export const TokenRequest: msRest.CompositeMapper = {
   serializedName: "TokenRequest",
   type: {
     name: "Composite",
@@ -2008,7 +2023,6 @@ export const TokenRequest = {
         type: {
           name: "Dictionary",
           value: {
-            serializedName: "ObjectElementType",
             type: {
               name: "Object"
             }
@@ -2019,7 +2033,7 @@ export const TokenRequest = {
   }
 };
 
-export const TokenResponse = {
+export const TokenResponse: msRest.CompositeMapper = {
   serializedName: "TokenResponse",
   type: {
     name: "Composite",
@@ -2047,7 +2061,7 @@ export const TokenResponse = {
   }
 };
 
-export const MicrosoftPayMethodData = {
+export const MicrosoftPayMethodData: msRest.CompositeMapper = {
   serializedName: "MicrosoftPayMethodData",
   type: {
     name: "Composite",
@@ -2064,7 +2078,6 @@ export const MicrosoftPayMethodData = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "stringElementType",
             type: {
               name: "String"
             }
@@ -2076,7 +2089,6 @@ export const MicrosoftPayMethodData = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "stringElementType",
             type: {
               name: "String"
             }
@@ -2087,7 +2099,7 @@ export const MicrosoftPayMethodData = {
   }
 };
 
-export const PaymentAddress = {
+export const PaymentAddress: msRest.CompositeMapper = {
   serializedName: "PaymentAddress",
   type: {
     name: "Composite",
@@ -2104,7 +2116,6 @@ export const PaymentAddress = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "stringElementType",
             type: {
               name: "String"
             }
@@ -2169,7 +2180,7 @@ export const PaymentAddress = {
   }
 };
 
-export const PaymentCurrencyAmount = {
+export const PaymentCurrencyAmount: msRest.CompositeMapper = {
   serializedName: "PaymentCurrencyAmount",
   type: {
     name: "Composite",
@@ -2197,7 +2208,7 @@ export const PaymentCurrencyAmount = {
   }
 };
 
-export const PaymentItem = {
+export const PaymentItem: msRest.CompositeMapper = {
   serializedName: "PaymentItem",
   type: {
     name: "Composite",
@@ -2226,7 +2237,7 @@ export const PaymentItem = {
   }
 };
 
-export const PaymentShippingOption = {
+export const PaymentShippingOption: msRest.CompositeMapper = {
   serializedName: "PaymentShippingOption",
   type: {
     name: "Composite",
@@ -2261,7 +2272,7 @@ export const PaymentShippingOption = {
   }
 };
 
-export const PaymentDetailsModifier = {
+export const PaymentDetailsModifier: msRest.CompositeMapper = {
   serializedName: "PaymentDetailsModifier",
   type: {
     name: "Composite",
@@ -2272,7 +2283,6 @@ export const PaymentDetailsModifier = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "stringElementType",
             type: {
               name: "String"
             }
@@ -2291,7 +2301,6 @@ export const PaymentDetailsModifier = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "PaymentItemElementType",
             type: {
               name: "Composite",
               className: "PaymentItem"
@@ -2309,7 +2318,7 @@ export const PaymentDetailsModifier = {
   }
 };
 
-export const PaymentDetails = {
+export const PaymentDetails: msRest.CompositeMapper = {
   serializedName: "PaymentDetails",
   type: {
     name: "Composite",
@@ -2327,7 +2336,6 @@ export const PaymentDetails = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "PaymentItemElementType",
             type: {
               name: "Composite",
               className: "PaymentItem"
@@ -2340,7 +2348,6 @@ export const PaymentDetails = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "PaymentShippingOptionElementType",
             type: {
               name: "Composite",
               className: "PaymentShippingOption"
@@ -2353,7 +2360,6 @@ export const PaymentDetails = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "PaymentDetailsModifierElementType",
             type: {
               name: "Composite",
               className: "PaymentDetailsModifier"
@@ -2371,7 +2377,7 @@ export const PaymentDetails = {
   }
 };
 
-export const PaymentMethodData = {
+export const PaymentMethodData: msRest.CompositeMapper = {
   serializedName: "PaymentMethodData",
   type: {
     name: "Composite",
@@ -2382,7 +2388,6 @@ export const PaymentMethodData = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "stringElementType",
             type: {
               name: "String"
             }
@@ -2399,7 +2404,7 @@ export const PaymentMethodData = {
   }
 };
 
-export const PaymentOptions = {
+export const PaymentOptions: msRest.CompositeMapper = {
   serializedName: "PaymentOptions",
   type: {
     name: "Composite",
@@ -2439,7 +2444,7 @@ export const PaymentOptions = {
   }
 };
 
-export const PaymentRequest = {
+export const PaymentRequest: msRest.CompositeMapper = {
   serializedName: "PaymentRequest",
   type: {
     name: "Composite",
@@ -2456,7 +2461,6 @@ export const PaymentRequest = {
         type: {
           name: "Sequence",
           element: {
-            serializedName: "PaymentMethodDataElementType",
             type: {
               name: "Composite",
               className: "PaymentMethodData"
@@ -2488,7 +2492,7 @@ export const PaymentRequest = {
   }
 };
 
-export const PaymentResponse = {
+export const PaymentResponse: msRest.CompositeMapper = {
   serializedName: "PaymentResponse",
   type: {
     name: "Composite",
@@ -2535,7 +2539,7 @@ export const PaymentResponse = {
   }
 };
 
-export const PaymentRequestComplete = {
+export const PaymentRequestComplete: msRest.CompositeMapper = {
   serializedName: "PaymentRequestComplete",
   type: {
     name: "Composite",
@@ -2565,7 +2569,7 @@ export const PaymentRequestComplete = {
   }
 };
 
-export const PaymentRequestCompleteResult = {
+export const PaymentRequestCompleteResult: msRest.CompositeMapper = {
   serializedName: "PaymentRequestCompleteResult",
   type: {
     name: "Composite",
@@ -2581,7 +2585,7 @@ export const PaymentRequestCompleteResult = {
   }
 };
 
-export const PaymentRequestUpdate = {
+export const PaymentRequestUpdate: msRest.CompositeMapper = {
   serializedName: "PaymentRequestUpdate",
   type: {
     name: "Composite",
@@ -2617,7 +2621,7 @@ export const PaymentRequestUpdate = {
   }
 };
 
-export const PaymentRequestUpdateResult = {
+export const PaymentRequestUpdateResult: msRest.CompositeMapper = {
   serializedName: "PaymentRequestUpdateResult",
   type: {
     name: "Composite",
@@ -2628,44 +2632,6 @@ export const PaymentRequestUpdateResult = {
         type: {
           name: "Composite",
           className: "PaymentDetails"
-        }
-      }
-    }
-  }
-};
-
-export const ConversationsGetConversationsOptionalParams = {
-  serializedName: "GetConversationsOptions",
-  type: {
-    name: "Composite",
-    className: "ConversationsGetConversationsOptionalParams",
-    modelProperties: {
-      continuationToken: {
-        serializedName: "continuationToken",
-        type: {
-          name: "String"
-        }
-      }
-    }
-  }
-};
-
-export const ConversationsGetConversationPagedMembersOptionalParams = {
-  serializedName: "GetConversationPagedMembersOptions",
-  type: {
-    name: "Composite",
-    className: "ConversationsGetConversationPagedMembersOptionalParams",
-    modelProperties: {
-      pageSize: {
-        serializedName: "pageSize",
-        type: {
-          name: "Number"
-        }
-      },
-      continuationToken: {
-        serializedName: "continuationToken",
-        type: {
-          name: "String"
         }
       }
     }

@@ -4,6 +4,7 @@
  * regenerated.
  */
 
+import { ServiceClientOptions } from "ms-rest-js";
 import * as msRest from "ms-rest-js";
 
 
@@ -73,6 +74,18 @@ export interface ErrorResponse {
 
 /**
  * @interface
+ * An interface representing OAuthApiClientOptions.
+ * @extends ServiceClientOptions
+ */
+export interface OAuthApiClientOptions extends ServiceClientOptions {
+  /**
+   * @member {string} [baseUri]
+   */
+  baseUri?: string;
+}
+
+/**
+ * @interface
  * An interface representing BotSignInGetSignInUrlOptionalParams.
  * Optional Parameters.
  *
@@ -102,3 +115,68 @@ export interface UserTokenGetTokenOptionalParams extends msRest.RequestOptionsBa
    */
   code?: string;
 }
+
+/**
+ * Contains response data for the getSignInUrl operation.
+ */
+export type BotSignInGetSignInUrlResponse = {
+  /**
+   * The parsed response body.
+   */
+  body: string;
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: string;
+    };
+};
+
+/**
+ * Contains response data for the getToken operation.
+ */
+export type UserTokenGetTokenResponse = TokenResponse & {
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: TokenResponse;
+    };
+};
+
+/**
+ * Contains response data for the signOut operation.
+ */
+export type UserTokenSignOutResponse = {
+  /**
+   * The parsed response body.
+   */
+  body: any;
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: any;
+    };
+};

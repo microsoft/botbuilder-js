@@ -4,8 +4,10 @@
  * regenerated.
  */
 
+import * as msRest from "ms-rest-js";
 
-export const TokenResponse = {
+
+export const TokenResponse: msRest.CompositeMapper = {
   serializedName: "TokenResponse",
   type: {
     name: "Composite",
@@ -33,7 +35,7 @@ export const TokenResponse = {
   }
 };
 
-export const InnerHttpError = {
+export const InnerHttpError: msRest.CompositeMapper = {
   serializedName: "InnerHttpError",
   type: {
     name: "Composite",
@@ -55,7 +57,7 @@ export const InnerHttpError = {
   }
 };
 
-export const ErrorModel = {
+export const ErrorModel: msRest.CompositeMapper = {
   serializedName: "Error",
   type: {
     name: "Composite",
@@ -84,7 +86,7 @@ export const ErrorModel = {
   }
 };
 
-export const ErrorResponse = {
+export const ErrorResponse: msRest.CompositeMapper = {
   serializedName: "ErrorResponse",
   type: {
     name: "Composite",
@@ -95,44 +97,6 @@ export const ErrorResponse = {
         type: {
           name: "Composite",
           className: "ErrorModel"
-        }
-      }
-    }
-  }
-};
-
-export const BotSignInGetSignInUrlOptionalParams = {
-  serializedName: "GetSignInUrlOptions",
-  type: {
-    name: "Composite",
-    className: "BotSignInGetSignInUrlOptionalParams",
-    modelProperties: {
-      codeChallenge: {
-        serializedName: "code_challenge",
-        type: {
-          name: "String"
-        }
-      },
-      emulatorUrl: {
-        serializedName: "emulatorUrl",
-        type: {
-          name: "String"
-        }
-      }
-    }
-  }
-};
-
-export const UserTokenGetTokenOptionalParams = {
-  serializedName: "GetTokenOptions",
-  type: {
-    name: "Composite",
-    className: "UserTokenGetTokenOptionalParams",
-    modelProperties: {
-      code: {
-        serializedName: "code",
-        type: {
-          name: "String"
         }
       }
     }

@@ -8,13 +8,12 @@ import * as Models from "botframework-schema";
 import * as msRest from "ms-rest-js";
 import { ConnectorClientContext } from "../connectorClientContext";
 import * as Mappers from "../models/conversationsMappers";
-
-const WebResource = msRest.WebResource;
+import * as Parameters from "../models/parameters";
 
 /** Class representing a Conversations. */
 export class Conversations {
   private readonly client: ConnectorClientContext;
-  private readonly serializer = new msRest.Serializer(Mappers);
+
   /**
    * Create a Conversations.
    * @param {ConnectorClientContext} client Reference to the service client.
@@ -24,8 +23,6 @@ export class Conversations {
   }
 
   /**
-   * @summary GetConversations
-   *
    * List the Conversations in which this bot has participated.
    *
    * GET from this method with a skip token
@@ -37,1419 +34,30 @@ export class Conversations {
    *
    * Each ConversationMembers object contains the ID of the conversation and an array of
    * ChannelAccounts that describe the members of the conversation.
-   *
-   * @param {ConversationsGetConversationsOptionalParams} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} The deserialized result object.
-   *
-   * @reject {Error|ServiceError} The error object.
-   */
-  async getConversationsWithHttpOperationResponse(options?: Models.ConversationsGetConversationsOptionalParams): Promise<msRest.HttpOperationResponse<Models.ConversationsResult>> {
-    let continuationToken = (options && options.continuationToken !== undefined) ? options.continuationToken : undefined;
-
-    // Create HTTP transport objects
-    const httpRequest = new WebResource();
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
-        {
-          continuationToken
-        },
-        options);
-      operationRes = await this.client.sendOperationRequest(
-        httpRequest,
-        operationArguments,
-        {
-          httpMethod: "GET",
-          baseUrl: this.client.baseUri,
-          path: "v3/conversations",
-          queryParameters: [
-            {
-              parameterPath: "continuationToken",
-              mapper: {
-                serializedName: "continuationToken",
-                type: {
-                  name: "String"
-                }
-              }
-            }
-          ],
-          responses: {
-            200: {
-              bodyMapper: Mappers.ConversationsResult
-            },
-            default: {
-              bodyMapper: Mappers.ErrorResponse
-            }
-          },
-          serializer: this.serializer
-        });
-      // Deserialize Response
-      let statusCode = operationRes.status;
-      if (statusCode === 200) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ConversationsResult;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError.request = msRest.stripRequest(httpRequest);
-          deserializationError.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError);
-        }
-      }
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * @summary CreateConversation
-   *
-   * Create a new Conversation.
-   *
-   * POST to this method with a
-   * * Bot being the bot creating the conversation
-   * * IsGroup set to true if this is not a direct message (default is false)
-   * * Array containing the members to include in the conversation
-   *
-   * The return value is a ResourceResponse which contains a conversation id which is suitable for
-   * use
-   * in the message payload and REST API uris.
-   *
-   * Most channels only support the semantics of bots initiating a direct message conversation.  An
-   * example of how to do that would be:
-   *
-   * ```
-   * var resource = await connector.conversations.CreateConversation(new ConversationParameters(){
-   * Bot = bot, members = new ChannelAccount[] { new ChannelAccount("user1") } );
-   * await connect.Conversations.SendToConversationAsync(resource.Id, new Activity() ... ) ;
-   *
-   * ```
-   *
-   * @param {ConversationParameters} parameters Parameters to create the conversation from
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} The deserialized result object.
-   *
-   * @reject {Error|ServiceError} The error object.
-   */
-  async createConversationWithHttpOperationResponse(parameters: Models.ConversationParameters, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse<Models.ConversationResourceResponse>> {
-
-    // Create HTTP transport objects
-    const httpRequest = new WebResource();
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
-        {
-          parameters
-        },
-        options);
-      operationRes = await this.client.sendOperationRequest(
-        httpRequest,
-        operationArguments,
-        {
-          httpMethod: "POST",
-          baseUrl: this.client.baseUri,
-          path: "v3/conversations",
-          requestBody: {
-            parameterPath: "parameters",
-            mapper: {
-              ...Mappers.ConversationParameters,
-              required: true
-            }
-          },
-          contentType: "application/json; charset=utf-8",
-          responses: {
-            200: {
-              bodyMapper: Mappers.ConversationResourceResponse
-            },
-            201: {
-              bodyMapper: Mappers.ConversationResourceResponse
-            },
-            202: {
-              bodyMapper: Mappers.ConversationResourceResponse
-            },
-            default: {
-              bodyMapper: Mappers.ErrorResponse
-            }
-          },
-          serializer: this.serializer
-        });
-      // Deserialize Response
-      let statusCode = operationRes.status;
-      if (statusCode === 200) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ConversationResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError.request = msRest.stripRequest(httpRequest);
-          deserializationError.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError);
-        }
-      }
-      if (statusCode === 201) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ConversationResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError1 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError1.request = msRest.stripRequest(httpRequest);
-          deserializationError1.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError1);
-        }
-      }
-      if (statusCode === 202) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ConversationResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError2 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError2.request = msRest.stripRequest(httpRequest);
-          deserializationError2.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError2);
-        }
-      }
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * @summary SendToConversation
-   *
-   * This method allows you to send an activity to the end of a conversation.
-   *
-   * This is slightly different from ReplyToActivity().
-   * * SendToConversation(conversationId) - will append the activity to the end of the conversation
-   * according to the timestamp or semantics of the channel.
-   * * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply to another activity,
-   * if the channel supports it. If the channel does not support nested replies, ReplyToActivity
-   * falls back to SendToConversation.
-   *
-   * Use ReplyToActivity when replying to a specific activity in the conversation.
-   *
-   * Use SendToConversation in all other cases.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {Activity} activity Activity to send
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} The deserialized result object.
-   *
-   * @reject {Error|ServiceError} The error object.
-   */
-  async sendToConversationWithHttpOperationResponse(conversationId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse<Models.ResourceResponse>> {
-
-    // Create HTTP transport objects
-    const httpRequest = new WebResource();
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
-        {
-          conversationId,
-          activity
-        },
-        options);
-      operationRes = await this.client.sendOperationRequest(
-        httpRequest,
-        operationArguments,
-        {
-          httpMethod: "POST",
-          baseUrl: this.client.baseUri,
-          path: "v3/conversations/{conversationId}/activities",
-          urlParameters: [
-            {
-              parameterPath: "conversationId",
-              mapper: {
-                required: true,
-                serializedName: "conversationId",
-                type: {
-                  name: "String"
-                }
-              }
-            }
-          ],
-          requestBody: {
-            parameterPath: "activity",
-            mapper: {
-              ...Mappers.Activity,
-              required: true
-            }
-          },
-          contentType: "application/json; charset=utf-8",
-          responses: {
-            200: {
-              bodyMapper: Mappers.ResourceResponse
-            },
-            201: {
-              bodyMapper: Mappers.ResourceResponse
-            },
-            202: {
-              bodyMapper: Mappers.ResourceResponse
-            },
-            default: {
-              bodyMapper: Mappers.ErrorResponse
-            }
-          },
-          serializer: this.serializer
-        });
-      // Deserialize Response
-      let statusCode = operationRes.status;
-      if (statusCode === 200) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError.request = msRest.stripRequest(httpRequest);
-          deserializationError.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError);
-        }
-      }
-      if (statusCode === 201) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError1 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError1.request = msRest.stripRequest(httpRequest);
-          deserializationError1.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError1);
-        }
-      }
-      if (statusCode === 202) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError2 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError2.request = msRest.stripRequest(httpRequest);
-          deserializationError2.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError2);
-        }
-      }
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * @summary SendConversationHistory
-   *
-   * This method allows you to upload the historic activities to the conversation.
-   *
-   * Sender must ensure that the historic activities have unique ids and appropriate timestamps. The
-   * ids are used by the client to deal with duplicate activities and the timestamps are used by the
-   * client to render the activities in the right order.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {Transcript} transcript Transcript of activities
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} The deserialized result object.
-   *
-   * @reject {Error|ServiceError} The error object.
-   */
-  async sendConversationHistoryWithHttpOperationResponse(conversationId: string, transcript: Models.Transcript, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse<Models.ResourceResponse>> {
-
-    // Create HTTP transport objects
-    const httpRequest = new WebResource();
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
-        {
-          conversationId,
-          transcript
-        },
-        options);
-      operationRes = await this.client.sendOperationRequest(
-        httpRequest,
-        operationArguments,
-        {
-          httpMethod: "POST",
-          baseUrl: this.client.baseUri,
-          path: "v3/conversations/{conversationId}/activities/history",
-          urlParameters: [
-            {
-              parameterPath: "conversationId",
-              mapper: {
-                required: true,
-                serializedName: "conversationId",
-                type: {
-                  name: "String"
-                }
-              }
-            }
-          ],
-          requestBody: {
-            parameterPath: "transcript",
-            mapper: {
-              ...Mappers.Transcript,
-              required: true
-            }
-          },
-          contentType: "application/json; charset=utf-8",
-          responses: {
-            200: {
-              bodyMapper: Mappers.ResourceResponse
-            },
-            201: {
-              bodyMapper: Mappers.ResourceResponse
-            },
-            202: {
-              bodyMapper: Mappers.ResourceResponse
-            },
-            default: {
-              bodyMapper: Mappers.ErrorResponse
-            }
-          },
-          serializer: this.serializer
-        });
-      // Deserialize Response
-      let statusCode = operationRes.status;
-      if (statusCode === 200) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError.request = msRest.stripRequest(httpRequest);
-          deserializationError.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError);
-        }
-      }
-      if (statusCode === 201) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError1 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError1.request = msRest.stripRequest(httpRequest);
-          deserializationError1.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError1);
-        }
-      }
-      if (statusCode === 202) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError2 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError2.request = msRest.stripRequest(httpRequest);
-          deserializationError2.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError2);
-        }
-      }
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * @summary UpdateActivity
-   *
-   * Edit an existing activity.
-   *
-   * Some channels allow you to edit an existing activity to reflect the new state of a bot
-   * conversation.
-   *
-   * For example, you can remove buttons after someone has clicked "Approve" button.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {string} activityId activityId to update
-   *
-   * @param {Activity} activity replacement Activity
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} The deserialized result object.
-   *
-   * @reject {Error|ServiceError} The error object.
-   */
-  async updateActivityWithHttpOperationResponse(conversationId: string, activityId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse<Models.ResourceResponse>> {
-
-    // Create HTTP transport objects
-    const httpRequest = new WebResource();
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
-        {
-          conversationId,
-          activityId,
-          activity
-        },
-        options);
-      operationRes = await this.client.sendOperationRequest(
-        httpRequest,
-        operationArguments,
-        {
-          httpMethod: "PUT",
-          baseUrl: this.client.baseUri,
-          path: "v3/conversations/{conversationId}/activities/{activityId}",
-          urlParameters: [
-            {
-              parameterPath: "conversationId",
-              mapper: {
-                required: true,
-                serializedName: "conversationId",
-                type: {
-                  name: "String"
-                }
-              }
-            },
-            {
-              parameterPath: "activityId",
-              mapper: {
-                required: true,
-                serializedName: "activityId",
-                type: {
-                  name: "String"
-                }
-              }
-            }
-          ],
-          requestBody: {
-            parameterPath: "activity",
-            mapper: {
-              ...Mappers.Activity,
-              required: true
-            }
-          },
-          contentType: "application/json; charset=utf-8",
-          responses: {
-            200: {
-              bodyMapper: Mappers.ResourceResponse
-            },
-            201: {
-              bodyMapper: Mappers.ResourceResponse
-            },
-            202: {
-              bodyMapper: Mappers.ResourceResponse
-            },
-            default: {
-              bodyMapper: Mappers.ErrorResponse
-            }
-          },
-          serializer: this.serializer
-        });
-      // Deserialize Response
-      let statusCode = operationRes.status;
-      if (statusCode === 200) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError.request = msRest.stripRequest(httpRequest);
-          deserializationError.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError);
-        }
-      }
-      if (statusCode === 201) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError1 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError1.request = msRest.stripRequest(httpRequest);
-          deserializationError1.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError1);
-        }
-      }
-      if (statusCode === 202) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError2 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError2.request = msRest.stripRequest(httpRequest);
-          deserializationError2.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError2);
-        }
-      }
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * @summary ReplyToActivity
-   *
-   * This method allows you to reply to an activity.
-   *
-   * This is slightly different from SendToConversation().
-   * * SendToConversation(conversationId) - will append the activity to the end of the conversation
-   * according to the timestamp or semantics of the channel.
-   * * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply to another activity,
-   * if the channel supports it. If the channel does not support nested replies, ReplyToActivity
-   * falls back to SendToConversation.
-   *
-   * Use ReplyToActivity when replying to a specific activity in the conversation.
-   *
-   * Use SendToConversation in all other cases.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {string} activityId activityId the reply is to (OPTIONAL)
-   *
-   * @param {Activity} activity Activity to send
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} The deserialized result object.
-   *
-   * @reject {Error|ServiceError} The error object.
-   */
-  async replyToActivityWithHttpOperationResponse(conversationId: string, activityId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse<Models.ResourceResponse>> {
-
-    // Create HTTP transport objects
-    const httpRequest = new WebResource();
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
-        {
-          conversationId,
-          activityId,
-          activity
-        },
-        options);
-      operationRes = await this.client.sendOperationRequest(
-        httpRequest,
-        operationArguments,
-        {
-          httpMethod: "POST",
-          baseUrl: this.client.baseUri,
-          path: "v3/conversations/{conversationId}/activities/{activityId}",
-          urlParameters: [
-            {
-              parameterPath: "conversationId",
-              mapper: {
-                required: true,
-                serializedName: "conversationId",
-                type: {
-                  name: "String"
-                }
-              }
-            },
-            {
-              parameterPath: "activityId",
-              mapper: {
-                required: true,
-                serializedName: "activityId",
-                type: {
-                  name: "String"
-                }
-              }
-            }
-          ],
-          requestBody: {
-            parameterPath: "activity",
-            mapper: {
-              ...Mappers.Activity,
-              required: true
-            }
-          },
-          contentType: "application/json; charset=utf-8",
-          responses: {
-            200: {
-              bodyMapper: Mappers.ResourceResponse
-            },
-            201: {
-              bodyMapper: Mappers.ResourceResponse
-            },
-            202: {
-              bodyMapper: Mappers.ResourceResponse
-            },
-            default: {
-              bodyMapper: Mappers.ErrorResponse
-            }
-          },
-          serializer: this.serializer
-        });
-      // Deserialize Response
-      let statusCode = operationRes.status;
-      if (statusCode === 200) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError.request = msRest.stripRequest(httpRequest);
-          deserializationError.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError);
-        }
-      }
-      if (statusCode === 201) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError1 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError1.request = msRest.stripRequest(httpRequest);
-          deserializationError1.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError1);
-        }
-      }
-      if (statusCode === 202) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError2 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError2.request = msRest.stripRequest(httpRequest);
-          deserializationError2.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError2);
-        }
-      }
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * @summary DeleteActivity
-   *
-   * Delete an existing activity.
-   *
-   * Some channels allow you to delete an existing activity, and if successful this method will
-   * remove the specified activity.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {string} activityId activityId to delete
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} The deserialized result object.
-   *
-   * @reject {Error|ServiceError} The error object.
-   */
-  async deleteActivityWithHttpOperationResponse(conversationId: string, activityId: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse<void>> {
-
-    // Create HTTP transport objects
-    const httpRequest = new WebResource();
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
-        {
-          conversationId,
-          activityId
-        },
-        options);
-      operationRes = await this.client.sendOperationRequest(
-        httpRequest,
-        operationArguments,
-        {
-          httpMethod: "DELETE",
-          baseUrl: this.client.baseUri,
-          path: "v3/conversations/{conversationId}/activities/{activityId}",
-          urlParameters: [
-            {
-              parameterPath: "conversationId",
-              mapper: {
-                required: true,
-                serializedName: "conversationId",
-                type: {
-                  name: "String"
-                }
-              }
-            },
-            {
-              parameterPath: "activityId",
-              mapper: {
-                required: true,
-                serializedName: "activityId",
-                type: {
-                  name: "String"
-                }
-              }
-            }
-          ],
-          responses: {
-            200: {},
-            202: {},
-            default: {
-              bodyMapper: Mappers.ErrorResponse
-            }
-          },
-          serializer: this.serializer
-        });
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * @summary GetConversationMembers
-   *
-   * Enumerate the members of a conversation.
-   *
-   * This REST API takes a ConversationId and returns an array of ChannelAccount objects representing
-   * the members of the conversation.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} The deserialized result object.
-   *
-   * @reject {Error|ServiceError} The error object.
-   */
-  async getConversationMembersWithHttpOperationResponse(conversationId: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse<Models.ChannelAccount[]>> {
-
-    // Create HTTP transport objects
-    const httpRequest = new WebResource();
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
-        {
-          conversationId
-        },
-        options);
-      operationRes = await this.client.sendOperationRequest(
-        httpRequest,
-        operationArguments,
-        {
-          httpMethod: "GET",
-          baseUrl: this.client.baseUri,
-          path: "v3/conversations/{conversationId}/members",
-          urlParameters: [
-            {
-              parameterPath: "conversationId",
-              mapper: {
-                required: true,
-                serializedName: "conversationId",
-                type: {
-                  name: "String"
-                }
-              }
-            }
-          ],
-          responses: {
-            200: {
-              bodyMapper: {
-                serializedName: "parsedResponse",
-                type: {
-                  name: "Sequence",
-                  element: {
-                    serializedName: "ChannelAccountElementType",
-                    type: {
-                      name: "Composite",
-                      className: "ChannelAccount"
-                    }
-                  }
-                }
-              }
-            },
-            default: {
-              bodyMapper: Mappers.ErrorResponse
-            }
-          },
-          serializer: this.serializer
-        });
-      // Deserialize Response
-      let statusCode = operationRes.status;
-      if (statusCode === 200) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = {
-              serializedName: "parsedResponse",
-              type: {
-                name: "Sequence",
-                element: {
-                  serializedName: "ChannelAccountElementType",
-                  type: {
-                    name: "Composite",
-                    className: "ChannelAccount"
-                  }
-                }
-              }
-            };
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError.request = msRest.stripRequest(httpRequest);
-          deserializationError.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError);
-        }
-      }
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * @summary GetConversationPagedMembers
-   *
-   * Enumerate the members of a conversation one page at a time.
-   *
-   * This REST API takes a ConversationId. Optionally a pageSize and/or continuationToken can be
-   * provided. It returns a PagedMembersResult, which contains an array
-   * of ChannelAccounts representing the members of the conversation and a continuation token that
-   * can be used to get more values.
-   *
-   * One page of ChannelAccounts records are returned with each call. The number of records in a page
-   * may vary between channels and calls. The pageSize parameter can be used as
-   * a suggestion. If there are no additional results the response will not contain a continuation
-   * token. If there are no members in the conversation the Members will be empty or not present in
-   * the response.
-   *
-   * A response to a request that has a continuation token from a prior request may rarely return
-   * members from a previous request.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {ConversationsGetConversationPagedMembersOptionalParams} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} The deserialized result object.
-   *
-   * @reject {Error|ServiceError} The error object.
-   */
-  async getConversationPagedMembersWithHttpOperationResponse(conversationId: string, options?: Models.ConversationsGetConversationPagedMembersOptionalParams): Promise<msRest.HttpOperationResponse<Models.PagedMembersResult>> {
-    let pageSize = (options && options.pageSize !== undefined) ? options.pageSize : undefined;
-    let continuationToken = (options && options.continuationToken !== undefined) ? options.continuationToken : undefined;
-
-    // Create HTTP transport objects
-    const httpRequest = new WebResource();
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
-        {
-          conversationId,
-          pageSize,
-          continuationToken
-        },
-        options);
-      operationRes = await this.client.sendOperationRequest(
-        httpRequest,
-        operationArguments,
-        {
-          httpMethod: "GET",
-          baseUrl: this.client.baseUri,
-          path: "v3/conversations/{conversationId}/pagedmembers",
-          urlParameters: [
-            {
-              parameterPath: "conversationId",
-              mapper: {
-                required: true,
-                serializedName: "conversationId",
-                type: {
-                  name: "String"
-                }
-              }
-            }
-          ],
-          queryParameters: [
-            {
-              parameterPath: "pageSize",
-              mapper: {
-                serializedName: "pageSize",
-                type: {
-                  name: "Number"
-                }
-              }
-            },
-            {
-              parameterPath: "continuationToken",
-              mapper: {
-                serializedName: "continuationToken",
-                type: {
-                  name: "String"
-                }
-              }
-            }
-          ],
-          responses: {
-            200: {
-              bodyMapper: Mappers.PagedMembersResult
-            },
-            default: {}
-          },
-          serializer: this.serializer
-        });
-      // Deserialize Response
-      let statusCode = operationRes.status;
-      if (statusCode === 200) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.PagedMembersResult;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError.request = msRest.stripRequest(httpRequest);
-          deserializationError.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError);
-        }
-      }
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * @summary DeleteConversationMember
-   *
-   * Deletes a member from a conversation.
-   *
-   * This REST API takes a ConversationId and a memberId (of type string) and removes that member
-   * from the conversation. If that member was the last member
-   * of the conversation, the conversation will also be deleted.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {string} memberId ID of the member to delete from this conversation
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} The deserialized result object.
-   *
-   * @reject {Error|ServiceError} The error object.
-   */
-  async deleteConversationMemberWithHttpOperationResponse(conversationId: string, memberId: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse<void>> {
-
-    // Create HTTP transport objects
-    const httpRequest = new WebResource();
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
-        {
-          conversationId,
-          memberId
-        },
-        options);
-      operationRes = await this.client.sendOperationRequest(
-        httpRequest,
-        operationArguments,
-        {
-          httpMethod: "DELETE",
-          baseUrl: this.client.baseUri,
-          path: "v3/conversations/{conversationId}/members/{memberId}",
-          urlParameters: [
-            {
-              parameterPath: "conversationId",
-              mapper: {
-                required: true,
-                serializedName: "conversationId",
-                type: {
-                  name: "String"
-                }
-              }
-            },
-            {
-              parameterPath: "memberId",
-              mapper: {
-                required: true,
-                serializedName: "memberId",
-                type: {
-                  name: "String"
-                }
-              }
-            }
-          ],
-          responses: {
-            200: {},
-            204: {},
-            default: {
-              bodyMapper: Mappers.ErrorResponse
-            }
-          },
-          serializer: this.serializer
-        });
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * @summary GetActivityMembers
-   *
-   * Enumerate the members of an activity.
-   *
-   * This REST API takes a ConversationId and a ActivityId, returning an array of ChannelAccount
-   * objects representing the members of the particular activity in the conversation.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {string} activityId Activity ID
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} The deserialized result object.
-   *
-   * @reject {Error|ServiceError} The error object.
-   */
-  async getActivityMembersWithHttpOperationResponse(conversationId: string, activityId: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse<Models.ChannelAccount[]>> {
-
-    // Create HTTP transport objects
-    const httpRequest = new WebResource();
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
-        {
-          conversationId,
-          activityId
-        },
-        options);
-      operationRes = await this.client.sendOperationRequest(
-        httpRequest,
-        operationArguments,
-        {
-          httpMethod: "GET",
-          baseUrl: this.client.baseUri,
-          path: "v3/conversations/{conversationId}/activities/{activityId}/members",
-          urlParameters: [
-            {
-              parameterPath: "conversationId",
-              mapper: {
-                required: true,
-                serializedName: "conversationId",
-                type: {
-                  name: "String"
-                }
-              }
-            },
-            {
-              parameterPath: "activityId",
-              mapper: {
-                required: true,
-                serializedName: "activityId",
-                type: {
-                  name: "String"
-                }
-              }
-            }
-          ],
-          responses: {
-            200: {
-              bodyMapper: {
-                serializedName: "parsedResponse",
-                type: {
-                  name: "Sequence",
-                  element: {
-                    serializedName: "ChannelAccountElementType",
-                    type: {
-                      name: "Composite",
-                      className: "ChannelAccount"
-                    }
-                  }
-                }
-              }
-            },
-            default: {
-              bodyMapper: Mappers.ErrorResponse
-            }
-          },
-          serializer: this.serializer
-        });
-      // Deserialize Response
-      let statusCode = operationRes.status;
-      if (statusCode === 200) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = {
-              serializedName: "parsedResponse",
-              type: {
-                name: "Sequence",
-                element: {
-                  serializedName: "ChannelAccountElementType",
-                  type: {
-                    name: "Composite",
-                    className: "ChannelAccount"
-                  }
-                }
-              }
-            };
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError.request = msRest.stripRequest(httpRequest);
-          deserializationError.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError);
-        }
-      }
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * @summary UploadAttachment
-   *
-   * Upload an attachment directly into a channel's blob storage.
-   *
-   * This is useful because it allows you to store data in a compliant store when dealing with
-   * enterprises.
-   *
-   * The response is a ResourceResponse which contains an AttachmentId which is suitable for using
-   * with the attachments API.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {AttachmentData} attachmentUpload Attachment data
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} The deserialized result object.
-   *
-   * @reject {Error|ServiceError} The error object.
-   */
-  async uploadAttachmentWithHttpOperationResponse(conversationId: string, attachmentUpload: Models.AttachmentData, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse<Models.ResourceResponse>> {
-
-    // Create HTTP transport objects
-    const httpRequest = new WebResource();
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
-        {
-          conversationId,
-          attachmentUpload
-        },
-        options);
-      operationRes = await this.client.sendOperationRequest(
-        httpRequest,
-        operationArguments,
-        {
-          httpMethod: "POST",
-          baseUrl: this.client.baseUri,
-          path: "v3/conversations/{conversationId}/attachments",
-          urlParameters: [
-            {
-              parameterPath: "conversationId",
-              mapper: {
-                required: true,
-                serializedName: "conversationId",
-                type: {
-                  name: "String"
-                }
-              }
-            }
-          ],
-          requestBody: {
-            parameterPath: "attachmentUpload",
-            mapper: {
-              ...Mappers.AttachmentData,
-              required: true
-            }
-          },
-          contentType: "application/json; charset=utf-8",
-          responses: {
-            200: {
-              bodyMapper: Mappers.ResourceResponse
-            },
-            201: {
-              bodyMapper: Mappers.ResourceResponse
-            },
-            202: {
-              bodyMapper: Mappers.ResourceResponse
-            },
-            default: {
-              bodyMapper: Mappers.ErrorResponse
-            }
-          },
-          serializer: this.serializer
-        });
-      // Deserialize Response
-      let statusCode = operationRes.status;
-      if (statusCode === 200) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError.request = msRest.stripRequest(httpRequest);
-          deserializationError.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError);
-        }
-      }
-      if (statusCode === 201) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError1 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError1.request = msRest.stripRequest(httpRequest);
-          deserializationError1.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError1);
-        }
-      }
-      if (statusCode === 202) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse != undefined) {
-            const resultMapper = Mappers.ResourceResponse;
-            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError2 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError2.request = msRest.stripRequest(httpRequest);
-          deserializationError2.response = msRest.stripResponse(operationRes);
-          return Promise.reject(deserializationError2);
-        }
-      }
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
-  }
-
-  /**
    * @summary GetConversations
-   *
-   * List the Conversations in which this bot has participated.
-   *
-   * GET from this method with a skip token
-   *
-   * The return value is a ConversationsResult, which contains an array of ConversationMembers and a
-   * skip token.  If the skip token is not empty, then
-   * there are further values to be returned. Call this method again with the returned token to get
-   * more values.
-   *
-   * Each ConversationMembers object contains the ID of the conversation and an array of
-   * ChannelAccounts that describe the members of the conversation.
-   *
-   * @param {ConversationsGetConversationsOptionalParams} [options] Optional Parameters.
-   *
-   * @param {ServiceCallback} callback The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, operationRes)
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *                      {Models.ConversationsResult} [result]   - The deserialized result object if an error did not occur.
-   *                      See {@link Models.ConversationsResult} for more information.
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *                      {HttpOperationResponse} [response] - The HTTP Response stream if an error did not occur.
+   * @param [options] The optional parameters
+   * @returns Promise<Models.ConversationsGetConversationsResponse>
    */
-  getConversations(): Promise<Models.ConversationsResult>;
-  getConversations(options: Models.ConversationsGetConversationsOptionalParams): Promise<Models.ConversationsResult>;
-//  getConversations(callback: msRest.ServiceCallback<Models.ConversationsResult>): void;
+  getConversations(options?: Models.ConversationsGetConversationsOptionalParams): Promise<Models.ConversationsGetConversationsResponse>;
+  /**
+   * @param callback The callback
+   */
+  //getConversations(callback: msRest.ServiceCallback<Models.ConversationsResult>): void;
+  /**
+   * @param options The optional parameters
+   * @param callback The callback
+   */
   getConversations(options: Models.ConversationsGetConversationsOptionalParams, callback: msRest.ServiceCallback<Models.ConversationsResult>): void;
-  getConversations(options?: Models.ConversationsGetConversationsOptionalParams, callback?: msRest.ServiceCallback<Models.ConversationsResult>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<Models.ConversationsResult>;
-    if (!callback) {
-      return this.getConversationsWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ConversationsResult);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.getConversationsWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
-        }
-        let result = data.parsedBody as Models.ConversationsResult;
-        return cb(err, result, data.request, data);
-      });
-    }
+  getConversations(options?: Models.ConversationsGetConversationsOptionalParams, callback?: msRest.ServiceCallback<Models.ConversationsResult>): Promise<Models.ConversationsGetConversationsResponse> {
+    return this.client.sendOperationRequest(
+      {
+        options
+      },
+      getConversationsOperationSpec,
+      callback) as Promise<Models.ConversationsGetConversationsResponse>;
   }
 
   /**
-   * @summary CreateConversation
-   *
    * Create a new Conversation.
    *
    * POST to this method with a
@@ -1470,50 +78,34 @@ export class Conversations {
    * await connect.Conversations.SendToConversationAsync(resource.Id, new Activity() ... ) ;
    *
    * ```
-   *
-   * @param {ConversationParameters} parameters Parameters to create the conversation from
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @param {ServiceCallback} callback The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, operationRes)
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *                      {Models.ConversationResourceResponse} [result]   - The deserialized result object if an error did not occur.
-   *                      See {@link Models.ConversationResourceResponse} for more information.
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *                      {HttpOperationResponse} [response] - The HTTP Response stream if an error did not occur.
+   * @summary CreateConversation
+   * @param parameters Parameters to create the conversation from
+   * @param [options] The optional parameters
+   * @returns Promise<Models.ConversationsCreateConversationResponse>
    */
-  createConversation(parameters: Models.ConversationParameters): Promise<Models.ConversationResourceResponse>;
-  createConversation(parameters: Models.ConversationParameters, options: msRest.RequestOptionsBase): Promise<Models.ConversationResourceResponse>;
+  createConversation(parameters: Models.ConversationParameters, options?: msRest.RequestOptionsBase): Promise<Models.ConversationsCreateConversationResponse>;
+  /**
+   * @param parameters Parameters to create the conversation from
+   * @param callback The callback
+   */
   createConversation(parameters: Models.ConversationParameters, callback: msRest.ServiceCallback<Models.ConversationResourceResponse>): void;
+  /**
+   * @param parameters Parameters to create the conversation from
+   * @param options The optional parameters
+   * @param callback The callback
+   */
   createConversation(parameters: Models.ConversationParameters, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ConversationResourceResponse>): void;
-  createConversation(parameters: Models.ConversationParameters, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ConversationResourceResponse>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<Models.ConversationResourceResponse>;
-    if (!callback) {
-      return this.createConversationWithHttpOperationResponse(parameters, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ConversationResourceResponse);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.createConversationWithHttpOperationResponse(parameters, options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
-        }
-        let result = data.parsedBody as Models.ConversationResourceResponse;
-        return cb(err, result, data.request, data);
-      });
-    }
+  createConversation(parameters: Models.ConversationParameters, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ConversationResourceResponse>): Promise<Models.ConversationsCreateConversationResponse> {
+    return this.client.sendOperationRequest(
+      {
+        parameters,
+        options
+      },
+      createConversationOperationSpec,
+      callback) as Promise<Models.ConversationsCreateConversationResponse>;
   }
 
   /**
-   * @summary SendToConversation
-   *
    * This method allows you to send an activity to the end of a conversation.
    *
    * This is slightly different from ReplyToActivity().
@@ -1526,157 +118,117 @@ export class Conversations {
    * Use ReplyToActivity when replying to a specific activity in the conversation.
    *
    * Use SendToConversation in all other cases.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {Activity} activity Activity to send
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @param {ServiceCallback} callback The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, operationRes)
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *                      {Models.ResourceResponse} [result]   - The deserialized result object if an error did not occur.
-   *                      See {@link Models.ResourceResponse} for more information.
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *                      {HttpOperationResponse} [response] - The HTTP Response stream if an error did not occur.
+   * @summary SendToConversation
+   * @param conversationId Conversation ID
+   * @param activity Activity to send
+   * @param [options] The optional parameters
+   * @returns Promise<Models.ConversationsSendToConversationResponse>
    */
-  sendToConversation(conversationId: string, activity: Models.Activity): Promise<Models.ResourceResponse>;
-  sendToConversation(conversationId: string, activity: Models.Activity, options: msRest.RequestOptionsBase): Promise<Models.ResourceResponse>;
+  sendToConversation(conversationId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase): Promise<Models.ConversationsSendToConversationResponse>;
+  /**
+   * @param conversationId Conversation ID
+   * @param activity Activity to send
+   * @param callback The callback
+   */
   sendToConversation(conversationId: string, activity: Models.Activity, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
+  /**
+   * @param conversationId Conversation ID
+   * @param activity Activity to send
+   * @param options The optional parameters
+   * @param callback The callback
+   */
   sendToConversation(conversationId: string, activity: Models.Activity, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
-  sendToConversation(conversationId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ResourceResponse>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<Models.ResourceResponse>;
-    if (!callback) {
-      return this.sendToConversationWithHttpOperationResponse(conversationId, activity, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ResourceResponse);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.sendToConversationWithHttpOperationResponse(conversationId, activity, options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
-        }
-        let result = data.parsedBody as Models.ResourceResponse;
-        return cb(err, result, data.request, data);
-      });
-    }
+  sendToConversation(conversationId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsSendToConversationResponse> {
+    return this.client.sendOperationRequest(
+      {
+        conversationId,
+        activity,
+        options
+      },
+      sendToConversationOperationSpec,
+      callback) as Promise<Models.ConversationsSendToConversationResponse>;
   }
 
   /**
-   * @summary SendConversationHistory
-   *
    * This method allows you to upload the historic activities to the conversation.
    *
    * Sender must ensure that the historic activities have unique ids and appropriate timestamps. The
    * ids are used by the client to deal with duplicate activities and the timestamps are used by the
    * client to render the activities in the right order.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {Transcript} transcript Transcript of activities
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @param {ServiceCallback} callback The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, operationRes)
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *                      {Models.ResourceResponse} [result]   - The deserialized result object if an error did not occur.
-   *                      See {@link Models.ResourceResponse} for more information.
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *                      {HttpOperationResponse} [response] - The HTTP Response stream if an error did not occur.
+   * @summary SendConversationHistory
+   * @param conversationId Conversation ID
+   * @param history Historic activities
+   * @param [options] The optional parameters
+   * @returns Promise<Models.ConversationsSendConversationHistoryResponse>
    */
-  sendConversationHistory(conversationId: string, transcript: Models.Transcript): Promise<Models.ResourceResponse>;
-  sendConversationHistory(conversationId: string, transcript: Models.Transcript, options: msRest.RequestOptionsBase): Promise<Models.ResourceResponse>;
-  sendConversationHistory(conversationId: string, transcript: Models.Transcript, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
-  sendConversationHistory(conversationId: string, transcript: Models.Transcript, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
-  sendConversationHistory(conversationId: string, transcript: Models.Transcript, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ResourceResponse>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<Models.ResourceResponse>;
-    if (!callback) {
-      return this.sendConversationHistoryWithHttpOperationResponse(conversationId, transcript, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ResourceResponse);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.sendConversationHistoryWithHttpOperationResponse(conversationId, transcript, options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
-        }
-        let result = data.parsedBody as Models.ResourceResponse;
-        return cb(err, result, data.request, data);
-      });
-    }
+  sendConversationHistory(conversationId: string, history: Models.Transcript, options?: msRest.RequestOptionsBase): Promise<Models.ConversationsSendConversationHistoryResponse>;
+  /**
+   * @param conversationId Conversation ID
+   * @param history Historic activities
+   * @param callback The callback
+   */
+  sendConversationHistory(conversationId: string, history: Models.Transcript, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
+  /**
+   * @param conversationId Conversation ID
+   * @param history Historic activities
+   * @param options The optional parameters
+   * @param callback The callback
+   */
+  sendConversationHistory(conversationId: string, history: Models.Transcript, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
+  sendConversationHistory(conversationId: string, history: Models.Transcript, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsSendConversationHistoryResponse> {
+    return this.client.sendOperationRequest(
+      {
+        conversationId,
+        history,
+        options
+      },
+      sendConversationHistoryOperationSpec,
+      callback) as Promise<Models.ConversationsSendConversationHistoryResponse>;
   }
 
   /**
-   * @summary UpdateActivity
-   *
    * Edit an existing activity.
    *
    * Some channels allow you to edit an existing activity to reflect the new state of a bot
    * conversation.
    *
    * For example, you can remove buttons after someone has clicked "Approve" button.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {string} activityId activityId to update
-   *
-   * @param {Activity} activity replacement Activity
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @param {ServiceCallback} callback The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, operationRes)
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *                      {Models.ResourceResponse} [result]   - The deserialized result object if an error did not occur.
-   *                      See {@link Models.ResourceResponse} for more information.
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *                      {HttpOperationResponse} [response] - The HTTP Response stream if an error did not occur.
+   * @summary UpdateActivity
+   * @param conversationId Conversation ID
+   * @param activityId activityId to update
+   * @param activity replacement Activity
+   * @param [options] The optional parameters
+   * @returns Promise<Models.ConversationsUpdateActivityResponse>
    */
-  updateActivity(conversationId: string, activityId: string, activity: Models.Activity): Promise<Models.ResourceResponse>;
-  updateActivity(conversationId: string, activityId: string, activity: Models.Activity, options: msRest.RequestOptionsBase): Promise<Models.ResourceResponse>;
+  updateActivity(conversationId: string, activityId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase): Promise<Models.ConversationsUpdateActivityResponse>;
+  /**
+   * @param conversationId Conversation ID
+   * @param activityId activityId to update
+   * @param activity replacement Activity
+   * @param callback The callback
+   */
   updateActivity(conversationId: string, activityId: string, activity: Models.Activity, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
+  /**
+   * @param conversationId Conversation ID
+   * @param activityId activityId to update
+   * @param activity replacement Activity
+   * @param options The optional parameters
+   * @param callback The callback
+   */
   updateActivity(conversationId: string, activityId: string, activity: Models.Activity, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
-  updateActivity(conversationId: string, activityId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ResourceResponse>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<Models.ResourceResponse>;
-    if (!callback) {
-      return this.updateActivityWithHttpOperationResponse(conversationId, activityId, activity, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ResourceResponse);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.updateActivityWithHttpOperationResponse(conversationId, activityId, activity, options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
-        }
-        let result = data.parsedBody as Models.ResourceResponse;
-        return cb(err, result, data.request, data);
-      });
-    }
+  updateActivity(conversationId: string, activityId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsUpdateActivityResponse> {
+    return this.client.sendOperationRequest(
+      {
+        conversationId,
+        activityId,
+        activity,
+        options
+      },
+      updateActivityOperationSpec,
+      callback) as Promise<Models.ConversationsUpdateActivityResponse>;
   }
 
   /**
-   * @summary ReplyToActivity
-   *
    * This method allows you to reply to an activity.
    *
    * This is slightly different from SendToConversation().
@@ -1689,152 +241,110 @@ export class Conversations {
    * Use ReplyToActivity when replying to a specific activity in the conversation.
    *
    * Use SendToConversation in all other cases.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {string} activityId activityId the reply is to (OPTIONAL)
-   *
-   * @param {Activity} activity Activity to send
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @param {ServiceCallback} callback The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, operationRes)
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *                      {Models.ResourceResponse} [result]   - The deserialized result object if an error did not occur.
-   *                      See {@link Models.ResourceResponse} for more information.
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *                      {HttpOperationResponse} [response] - The HTTP Response stream if an error did not occur.
+   * @summary ReplyToActivity
+   * @param conversationId Conversation ID
+   * @param activityId activityId the reply is to (OPTIONAL)
+   * @param activity Activity to send
+   * @param [options] The optional parameters
+   * @returns Promise<Models.ConversationsReplyToActivityResponse>
    */
-  replyToActivity(conversationId: string, activityId: string, activity: Models.Activity): Promise<Models.ResourceResponse>;
-  replyToActivity(conversationId: string, activityId: string, activity: Models.Activity, options: msRest.RequestOptionsBase): Promise<Models.ResourceResponse>;
+  replyToActivity(conversationId: string, activityId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase): Promise<Models.ConversationsReplyToActivityResponse>;
+  /**
+   * @param conversationId Conversation ID
+   * @param activityId activityId the reply is to (OPTIONAL)
+   * @param activity Activity to send
+   * @param callback The callback
+   */
   replyToActivity(conversationId: string, activityId: string, activity: Models.Activity, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
+  /**
+   * @param conversationId Conversation ID
+   * @param activityId activityId the reply is to (OPTIONAL)
+   * @param activity Activity to send
+   * @param options The optional parameters
+   * @param callback The callback
+   */
   replyToActivity(conversationId: string, activityId: string, activity: Models.Activity, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
-  replyToActivity(conversationId: string, activityId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ResourceResponse>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<Models.ResourceResponse>;
-    if (!callback) {
-      return this.replyToActivityWithHttpOperationResponse(conversationId, activityId, activity, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ResourceResponse);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.replyToActivityWithHttpOperationResponse(conversationId, activityId, activity, options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
-        }
-        let result = data.parsedBody as Models.ResourceResponse;
-        return cb(err, result, data.request, data);
-      });
-    }
+  replyToActivity(conversationId: string, activityId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsReplyToActivityResponse> {
+    return this.client.sendOperationRequest(
+      {
+        conversationId,
+        activityId,
+        activity,
+        options
+      },
+      replyToActivityOperationSpec,
+      callback) as Promise<Models.ConversationsReplyToActivityResponse>;
   }
 
   /**
-   * @summary DeleteActivity
-   *
    * Delete an existing activity.
    *
    * Some channels allow you to delete an existing activity, and if successful this method will
    * remove the specified activity.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {string} activityId activityId to delete
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @param {ServiceCallback} callback The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, operationRes)
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *                      {void} [result]   - The deserialized result object if an error did not occur.
-   *
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *                      {HttpOperationResponse} [response] - The HTTP Response stream if an error did not occur.
+   * @summary DeleteActivity
+   * @param conversationId Conversation ID
+   * @param activityId activityId to delete
+   * @param [options] The optional parameters
+   * @returns Promise<msRest.RestResponse>
    */
-  deleteActivity(conversationId: string, activityId: string): Promise<void>;
-  deleteActivity(conversationId: string, activityId: string, options: msRest.RequestOptionsBase): Promise<void>;
+  deleteActivity(conversationId: string, activityId: string, options?: msRest.RequestOptionsBase): Promise<msRest.RestResponse>;
+  /**
+   * @param conversationId Conversation ID
+   * @param activityId activityId to delete
+   * @param callback The callback
+   */
   deleteActivity(conversationId: string, activityId: string, callback: msRest.ServiceCallback<void>): void;
+  /**
+   * @param conversationId Conversation ID
+   * @param activityId activityId to delete
+   * @param options The optional parameters
+   * @param callback The callback
+   */
   deleteActivity(conversationId: string, activityId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<void>): void;
-  deleteActivity(conversationId: string, activityId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<void>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<void>;
-    if (!callback) {
-      return this.deleteActivityWithHttpOperationResponse(conversationId, activityId, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as void);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.deleteActivityWithHttpOperationResponse(conversationId, activityId, options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
-        }
-        let result = data.parsedBody as void;
-        return cb(err, result, data.request, data);
-      });
-    }
+  deleteActivity(conversationId: string, activityId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<void>): Promise<msRest.RestResponse> {
+    return this.client.sendOperationRequest(
+      {
+        conversationId,
+        activityId,
+        options
+      },
+      deleteActivityOperationSpec,
+      callback);
   }
 
   /**
-   * @summary GetConversationMembers
-   *
    * Enumerate the members of a conversation.
    *
    * This REST API takes a ConversationId and returns an array of ChannelAccount objects representing
    * the members of the conversation.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @param {ServiceCallback} callback The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, operationRes)
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *                      {Models.ChannelAccount[]} [result]   - The deserialized result object if an error did not occur.
-   *
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *                      {HttpOperationResponse} [response] - The HTTP Response stream if an error did not occur.
+   * @summary GetConversationMembers
+   * @param conversationId Conversation ID
+   * @param [options] The optional parameters
+   * @returns Promise<Models.ConversationsGetConversationMembersResponse>
    */
-  getConversationMembers(conversationId: string): Promise<Models.ChannelAccount[]>;
-  getConversationMembers(conversationId: string, options: msRest.RequestOptionsBase): Promise<Models.ChannelAccount[]>;
+  getConversationMembers(conversationId: string, options?: msRest.RequestOptionsBase): Promise<Models.ConversationsGetConversationMembersResponse>;
+  /**
+   * @param conversationId Conversation ID
+   * @param callback The callback
+   */
   getConversationMembers(conversationId: string, callback: msRest.ServiceCallback<Models.ChannelAccount[]>): void;
+  /**
+   * @param conversationId Conversation ID
+   * @param options The optional parameters
+   * @param callback The callback
+   */
   getConversationMembers(conversationId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ChannelAccount[]>): void;
-  getConversationMembers(conversationId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ChannelAccount[]>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<Models.ChannelAccount[]>;
-    if (!callback) {
-      return this.getConversationMembersWithHttpOperationResponse(conversationId, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ChannelAccount[]);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.getConversationMembersWithHttpOperationResponse(conversationId, options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
-        }
-        let result = data.parsedBody as Models.ChannelAccount[];
-        return cb(err, result, data.request, data);
-      });
-    }
+  getConversationMembers(conversationId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ChannelAccount[]>): Promise<Models.ConversationsGetConversationMembersResponse> {
+    return this.client.sendOperationRequest(
+      {
+        conversationId,
+        options
+      },
+      getConversationMembersOperationSpec,
+      callback) as Promise<Models.ConversationsGetConversationMembersResponse>;
   }
 
   /**
-   * @summary GetConversationPagedMembers
-   *
    * Enumerate the members of a conversation one page at a time.
    *
    * This REST API takes a ConversationId. Optionally a pageSize and/or continuationToken can be
@@ -1850,151 +360,107 @@ export class Conversations {
    *
    * A response to a request that has a continuation token from a prior request may rarely return
    * members from a previous request.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {ConversationsGetConversationPagedMembersOptionalParams} [options] Optional Parameters.
-   *
-   * @param {ServiceCallback} callback The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, operationRes)
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *                      {Models.PagedMembersResult} [result]   - The deserialized result object if an error did not occur.
-   *                      See {@link Models.PagedMembersResult} for more information.
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *                      {HttpOperationResponse} [response] - The HTTP Response stream if an error did not occur.
+   * @summary GetConversationPagedMembers
+   * @param conversationId Conversation ID
+   * @param [options] The optional parameters
+   * @returns Promise<Models.ConversationsGetConversationPagedMembersResponse>
    */
-  getConversationPagedMembers(conversationId: string): Promise<Models.PagedMembersResult>;
-  getConversationPagedMembers(conversationId: string, options: Models.ConversationsGetConversationPagedMembersOptionalParams): Promise<Models.PagedMembersResult>;
-//  getConversationPagedMembers(conversationId: string, callback: msRest.ServiceCallback<Models.PagedMembersResult>): void;
+  getConversationPagedMembers(conversationId: string, options?: Models.ConversationsGetConversationPagedMembersOptionalParams): Promise<Models.ConversationsGetConversationPagedMembersResponse>;
+  /**
+   * @param conversationId Conversation ID
+   * @param callback The callback
+   */
+  //getConversationPagedMembers(conversationId: string, callback: msRest.ServiceCallback<Models.PagedMembersResult>): void;
+  /**
+   * @param conversationId Conversation ID
+   * @param options The optional parameters
+   * @param callback The callback
+   */
   getConversationPagedMembers(conversationId: string, options: Models.ConversationsGetConversationPagedMembersOptionalParams, callback: msRest.ServiceCallback<Models.PagedMembersResult>): void;
-  getConversationPagedMembers(conversationId: string, options?: Models.ConversationsGetConversationPagedMembersOptionalParams, callback?: msRest.ServiceCallback<Models.PagedMembersResult>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<Models.PagedMembersResult>;
-    if (!callback) {
-      return this.getConversationPagedMembersWithHttpOperationResponse(conversationId, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.PagedMembersResult);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.getConversationPagedMembersWithHttpOperationResponse(conversationId, options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
-        }
-        let result = data.parsedBody as Models.PagedMembersResult;
-        return cb(err, result, data.request, data);
-      });
-    }
+  getConversationPagedMembers(conversationId: string, options?: Models.ConversationsGetConversationPagedMembersOptionalParams, callback?: msRest.ServiceCallback<Models.PagedMembersResult>): Promise<Models.ConversationsGetConversationPagedMembersResponse> {
+    return this.client.sendOperationRequest(
+      {
+        conversationId,
+        options
+      },
+      getConversationPagedMembersOperationSpec,
+      callback) as Promise<Models.ConversationsGetConversationPagedMembersResponse>;
   }
 
   /**
-   * @summary DeleteConversationMember
-   *
    * Deletes a member from a conversation.
    *
    * This REST API takes a ConversationId and a memberId (of type string) and removes that member
    * from the conversation. If that member was the last member
    * of the conversation, the conversation will also be deleted.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {string} memberId ID of the member to delete from this conversation
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @param {ServiceCallback} callback The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, operationRes)
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *                      {void} [result]   - The deserialized result object if an error did not occur.
-   *
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *                      {HttpOperationResponse} [response] - The HTTP Response stream if an error did not occur.
+   * @summary DeleteConversationMember
+   * @param conversationId Conversation ID
+   * @param memberId ID of the member to delete from this conversation
+   * @param [options] The optional parameters
+   * @returns Promise<msRest.RestResponse>
    */
-  deleteConversationMember(conversationId: string, memberId: string): Promise<void>;
-  deleteConversationMember(conversationId: string, memberId: string, options: msRest.RequestOptionsBase): Promise<void>;
+  deleteConversationMember(conversationId: string, memberId: string, options?: msRest.RequestOptionsBase): Promise<msRest.RestResponse>;
+  /**
+   * @param conversationId Conversation ID
+   * @param memberId ID of the member to delete from this conversation
+   * @param callback The callback
+   */
   deleteConversationMember(conversationId: string, memberId: string, callback: msRest.ServiceCallback<void>): void;
+  /**
+   * @param conversationId Conversation ID
+   * @param memberId ID of the member to delete from this conversation
+   * @param options The optional parameters
+   * @param callback The callback
+   */
   deleteConversationMember(conversationId: string, memberId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<void>): void;
-  deleteConversationMember(conversationId: string, memberId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<void>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<void>;
-    if (!callback) {
-      return this.deleteConversationMemberWithHttpOperationResponse(conversationId, memberId, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as void);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.deleteConversationMemberWithHttpOperationResponse(conversationId, memberId, options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
-        }
-        let result = data.parsedBody as void;
-        return cb(err, result, data.request, data);
-      });
-    }
+  deleteConversationMember(conversationId: string, memberId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<void>): Promise<msRest.RestResponse> {
+    return this.client.sendOperationRequest(
+      {
+        conversationId,
+        memberId,
+        options
+      },
+      deleteConversationMemberOperationSpec,
+      callback);
   }
 
   /**
-   * @summary GetActivityMembers
-   *
    * Enumerate the members of an activity.
    *
    * This REST API takes a ConversationId and a ActivityId, returning an array of ChannelAccount
    * objects representing the members of the particular activity in the conversation.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {string} activityId Activity ID
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @param {ServiceCallback} callback The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, operationRes)
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *                      {Models.ChannelAccount[]} [result]   - The deserialized result object if an error did not occur.
-   *
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *                      {HttpOperationResponse} [response] - The HTTP Response stream if an error did not occur.
+   * @summary GetActivityMembers
+   * @param conversationId Conversation ID
+   * @param activityId Activity ID
+   * @param [options] The optional parameters
+   * @returns Promise<Models.ConversationsGetActivityMembersResponse>
    */
-  getActivityMembers(conversationId: string, activityId: string): Promise<Models.ChannelAccount[]>;
-  getActivityMembers(conversationId: string, activityId: string, options: msRest.RequestOptionsBase): Promise<Models.ChannelAccount[]>;
+  getActivityMembers(conversationId: string, activityId: string, options?: msRest.RequestOptionsBase): Promise<Models.ConversationsGetActivityMembersResponse>;
+  /**
+   * @param conversationId Conversation ID
+   * @param activityId Activity ID
+   * @param callback The callback
+   */
   getActivityMembers(conversationId: string, activityId: string, callback: msRest.ServiceCallback<Models.ChannelAccount[]>): void;
+  /**
+   * @param conversationId Conversation ID
+   * @param activityId Activity ID
+   * @param options The optional parameters
+   * @param callback The callback
+   */
   getActivityMembers(conversationId: string, activityId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ChannelAccount[]>): void;
-  getActivityMembers(conversationId: string, activityId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ChannelAccount[]>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<Models.ChannelAccount[]>;
-    if (!callback) {
-      return this.getActivityMembersWithHttpOperationResponse(conversationId, activityId, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ChannelAccount[]);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.getActivityMembersWithHttpOperationResponse(conversationId, activityId, options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
-        }
-        let result = data.parsedBody as Models.ChannelAccount[];
-        return cb(err, result, data.request, data);
-      });
-    }
+  getActivityMembers(conversationId: string, activityId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ChannelAccount[]>): Promise<Models.ConversationsGetActivityMembersResponse> {
+    return this.client.sendOperationRequest(
+      {
+        conversationId,
+        activityId,
+        options
+      },
+      getActivityMembersOperationSpec,
+      callback) as Promise<Models.ConversationsGetActivityMembersResponse>;
   }
 
   /**
-   * @summary UploadAttachment
-   *
    * Upload an attachment directly into a channel's blob storage.
    *
    * This is useful because it allows you to store data in a compliant store when dealing with
@@ -2002,47 +468,342 @@ export class Conversations {
    *
    * The response is a ResourceResponse which contains an AttachmentId which is suitable for using
    * with the attachments API.
-   *
-   * @param {string} conversationId Conversation ID
-   *
-   * @param {AttachmentData} attachmentUpload Attachment data
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @param {ServiceCallback} callback The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, operationRes)
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *                      {Models.ResourceResponse} [result]   - The deserialized result object if an error did not occur.
-   *                      See {@link Models.ResourceResponse} for more information.
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *                      {HttpOperationResponse} [response] - The HTTP Response stream if an error did not occur.
+   * @summary UploadAttachment
+   * @param conversationId Conversation ID
+   * @param attachmentUpload Attachment data
+   * @param [options] The optional parameters
+   * @returns Promise<Models.ConversationsUploadAttachmentResponse>
    */
-  uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData): Promise<Models.ResourceResponse>;
-  uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData, options: msRest.RequestOptionsBase): Promise<Models.ResourceResponse>;
+  uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData, options?: msRest.RequestOptionsBase): Promise<Models.ConversationsUploadAttachmentResponse>;
+  /**
+   * @param conversationId Conversation ID
+   * @param attachmentUpload Attachment data
+   * @param callback The callback
+   */
   uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
+  /**
+   * @param conversationId Conversation ID
+   * @param attachmentUpload Attachment data
+   * @param options The optional parameters
+   * @param callback The callback
+   */
   uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
-  uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ResourceResponse>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<Models.ResourceResponse>;
-    if (!callback) {
-      return this.uploadAttachmentWithHttpOperationResponse(conversationId, attachmentUpload, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ResourceResponse);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.uploadAttachmentWithHttpOperationResponse(conversationId, attachmentUpload, options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
-        }
-        let result = data.parsedBody as Models.ResourceResponse;
-        return cb(err, result, data.request, data);
-      });
-    }
+  uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsUploadAttachmentResponse> {
+    return this.client.sendOperationRequest(
+      {
+        conversationId,
+        attachmentUpload,
+        options
+      },
+      uploadAttachmentOperationSpec,
+      callback) as Promise<Models.ConversationsUploadAttachmentResponse>;
   }
-
 }
+
+// Operation Specifications
+const serializer = new msRest.Serializer(Mappers);
+const getConversationsOperationSpec: msRest.OperationSpec = {
+  httpMethod: "GET",
+  path: "v3/conversations",
+  queryParameters: [
+    Parameters.continuationToken
+  ],
+  responses: {
+    200: {
+      bodyMapper: Mappers.ConversationsResult
+    },
+    default: {
+      bodyMapper: Mappers.ErrorResponse
+    }
+  },
+  serializer
+};
+
+const createConversationOperationSpec: msRest.OperationSpec = {
+  httpMethod: "POST",
+  path: "v3/conversations",
+  requestBody: {
+    parameterPath: "parameters",
+    mapper: {
+      ...Mappers.ConversationParameters,
+      required: true
+    }
+  },
+  responses: {
+    200: {
+      bodyMapper: Mappers.ConversationResourceResponse
+    },
+    201: {
+      bodyMapper: Mappers.ConversationResourceResponse
+    },
+    202: {
+      bodyMapper: Mappers.ConversationResourceResponse
+    },
+    default: {
+      bodyMapper: Mappers.ErrorResponse
+    }
+  },
+  serializer
+};
+
+const sendToConversationOperationSpec: msRest.OperationSpec = {
+  httpMethod: "POST",
+  path: "v3/conversations/{conversationId}/activities",
+  urlParameters: [
+    Parameters.conversationId
+  ],
+  requestBody: {
+    parameterPath: "activity",
+    mapper: {
+      ...Mappers.Activity,
+      required: true
+    }
+  },
+  responses: {
+    200: {
+      bodyMapper: Mappers.ResourceResponse
+    },
+    201: {
+      bodyMapper: Mappers.ResourceResponse
+    },
+    202: {
+      bodyMapper: Mappers.ResourceResponse
+    },
+    default: {
+      bodyMapper: Mappers.ErrorResponse
+    }
+  },
+  serializer
+};
+
+const sendConversationHistoryOperationSpec: msRest.OperationSpec = {
+  httpMethod: "POST",
+  path: "v3/conversations/{conversationId}/activities/history",
+  urlParameters: [
+    Parameters.conversationId
+  ],
+  requestBody: {
+    parameterPath: "history",
+    mapper: {
+      ...Mappers.Transcript,
+      required: true
+    }
+  },
+  responses: {
+    200: {
+      bodyMapper: Mappers.ResourceResponse
+    },
+    201: {
+      bodyMapper: Mappers.ResourceResponse
+    },
+    202: {
+      bodyMapper: Mappers.ResourceResponse
+    },
+    default: {
+      bodyMapper: Mappers.ErrorResponse
+    }
+  },
+  serializer
+};
+
+const updateActivityOperationSpec: msRest.OperationSpec = {
+  httpMethod: "PUT",
+  path: "v3/conversations/{conversationId}/activities/{activityId}",
+  urlParameters: [
+    Parameters.conversationId,
+    Parameters.activityId
+  ],
+  requestBody: {
+    parameterPath: "activity",
+    mapper: {
+      ...Mappers.Activity,
+      required: true
+    }
+  },
+  responses: {
+    200: {
+      bodyMapper: Mappers.ResourceResponse
+    },
+    201: {
+      bodyMapper: Mappers.ResourceResponse
+    },
+    202: {
+      bodyMapper: Mappers.ResourceResponse
+    },
+    default: {
+      bodyMapper: Mappers.ErrorResponse
+    }
+  },
+  serializer
+};
+
+const replyToActivityOperationSpec: msRest.OperationSpec = {
+  httpMethod: "POST",
+  path: "v3/conversations/{conversationId}/activities/{activityId}",
+  urlParameters: [
+    Parameters.conversationId,
+    Parameters.activityId
+  ],
+  requestBody: {
+    parameterPath: "activity",
+    mapper: {
+      ...Mappers.Activity,
+      required: true
+    }
+  },
+  responses: {
+    200: {
+      bodyMapper: Mappers.ResourceResponse
+    },
+    201: {
+      bodyMapper: Mappers.ResourceResponse
+    },
+    202: {
+      bodyMapper: Mappers.ResourceResponse
+    },
+    default: {
+      bodyMapper: Mappers.ErrorResponse
+    }
+  },
+  serializer
+};
+
+const deleteActivityOperationSpec: msRest.OperationSpec = {
+  httpMethod: "DELETE",
+  path: "v3/conversations/{conversationId}/activities/{activityId}",
+  urlParameters: [
+    Parameters.conversationId,
+    Parameters.activityId
+  ],
+  responses: {
+    200: {},
+    202: {},
+    default: {
+      bodyMapper: Mappers.ErrorResponse
+    }
+  },
+  serializer
+};
+
+const getConversationMembersOperationSpec: msRest.OperationSpec = {
+  httpMethod: "GET",
+  path: "v3/conversations/{conversationId}/members",
+  urlParameters: [
+    Parameters.conversationId
+  ],
+  responses: {
+    200: {
+      bodyMapper: {
+        serializedName: "parsedResponse",
+        type: {
+          name: "Sequence",
+          element: {
+            type: {
+              name: "Composite",
+              className: "ChannelAccount"
+            }
+          }
+        }
+      }
+    },
+    default: {
+      bodyMapper: Mappers.ErrorResponse
+    }
+  },
+  serializer
+};
+
+const getConversationPagedMembersOperationSpec: msRest.OperationSpec = {
+  httpMethod: "GET",
+  path: "v3/conversations/{conversationId}/pagedmembers",
+  urlParameters: [
+    Parameters.conversationId
+  ],
+  queryParameters: [
+    Parameters.pageSize,
+    Parameters.continuationToken
+  ],
+  responses: {
+    200: {
+      bodyMapper: Mappers.PagedMembersResult
+    },
+    default: {}
+  },
+  serializer
+};
+
+const deleteConversationMemberOperationSpec: msRest.OperationSpec = {
+  httpMethod: "DELETE",
+  path: "v3/conversations/{conversationId}/members/{memberId}",
+  urlParameters: [
+    Parameters.conversationId,
+    Parameters.memberId
+  ],
+  responses: {
+    200: {},
+    204: {},
+    default: {
+      bodyMapper: Mappers.ErrorResponse
+    }
+  },
+  serializer
+};
+
+const getActivityMembersOperationSpec: msRest.OperationSpec = {
+  httpMethod: "GET",
+  path: "v3/conversations/{conversationId}/activities/{activityId}/members",
+  urlParameters: [
+    Parameters.conversationId,
+    Parameters.activityId
+  ],
+  responses: {
+    200: {
+      bodyMapper: {
+        serializedName: "parsedResponse",
+        type: {
+          name: "Sequence",
+          element: {
+            type: {
+              name: "Composite",
+              className: "ChannelAccount"
+            }
+          }
+        }
+      }
+    },
+    default: {
+      bodyMapper: Mappers.ErrorResponse
+    }
+  },
+  serializer
+};
+
+const uploadAttachmentOperationSpec: msRest.OperationSpec = {
+  httpMethod: "POST",
+  path: "v3/conversations/{conversationId}/attachments",
+  urlParameters: [
+    Parameters.conversationId
+  ],
+  requestBody: {
+    parameterPath: "attachmentUpload",
+    mapper: {
+      ...Mappers.AttachmentData,
+      required: true
+    }
+  },
+  responses: {
+    200: {
+      bodyMapper: Mappers.ResourceResponse
+    },
+    201: {
+      bodyMapper: Mappers.ResourceResponse
+    },
+    202: {
+      bodyMapper: Mappers.ResourceResponse
+    },
+    default: {
+      bodyMapper: Mappers.ErrorResponse
+    }
+  },
+  serializer
+};

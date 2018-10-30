@@ -3,7 +3,7 @@
 const fs = require('fs');
 const replace = require('replace-in-file');
 
-var modelsPaths = './connectorApi/models/index.ts';
+var modelsPaths = './connectorApi/lib/models/index.ts';
 var optionalModelProperties = {
     'Activity': ['id', 'timestamp', 'localTimestamp', 'textFormat', 'attachmentLayout', 'membersAdded', 'membersRemoved', 'reactionsAdded', 'reactionsRemoved', 'topicName', 'historyDisclosed', 'locale', 'speak', 'inputHint', 'summary', 'suggestedActions', 'attachments', 'entities', 'channelData', 'action', 'replyToId', 'value', 'name', 'relatesTo', 'code', 'expiration', 'importance', 'deliveryMode', 'textHighlights'],
     'ConversationReference': ['activityId', 'user'],
@@ -26,14 +26,14 @@ var replaceOptions = [
         "from": "as Models from \"../models\"",
         "to": "as Models from \"botframework-schema\""
     }, {
-        "files": "connectorApi/models/index.ts",
+        "files": "connectorApi/lib/models/index.ts",
         "from": "\/*\n * Code connectorApi by Microsoft (R) AutoRest Code Generator.\n * Changes may cause incorrect behavior and will be lost if the code is\n * regenerated.\n *\/",
         "to": "\/**\n * @module botbuilder\n *\/\n\/**\n * Copyright (c) Microsoft Corporation. All rights reserved.  \n * Licensed under the MIT License.\n *\/"
     }, 
-    { "files": "connectorApi/models/index.ts", "from": "{Buffer} [originalBase64]", "to": "{any} [originalBase64]" }, 
-    { "files": "connectorApi/models/index.ts", "from": ": Buffer", "to": ": any" }, 
-    { "files": "connectorApi/models/index.ts", "from": "{Buffer} [thumbnailBase64]", "to": "{any} [thumbnailBase64]" }, 
-    { "files": "connectorApi/models/index.ts", "from": ": Buffer", "to": ": any" }, 
+    { "files": "connectorApi/lib/models/index.ts", "from": "{Buffer} [originalBase64]", "to": "{any} [originalBase64]" }, 
+    { "files": "connectorApi/lib/models/index.ts", "from": ": Buffer", "to": ": any" }, 
+    { "files": "connectorApi/lib/models/index.ts", "from": "{Buffer} [thumbnailBase64]", "to": "{any} [thumbnailBase64]" }, 
+    { "files": "connectorApi/lib/models/index.ts", "from": ": Buffer", "to": ": any" }, 
     {
         "files": "connectorApi/**/*.ts",
         "from": "\/*\n * Code connectorApi by Microsoft (R) AutoRest Code Generator.\n * Changes may cause incorrect behavior and will be lost if the code is\n * regenerated.\n *\/",

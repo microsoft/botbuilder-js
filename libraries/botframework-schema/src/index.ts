@@ -4,6 +4,7 @@
  * regenerated.
  */
 
+import { ServiceClientOptions } from "ms-rest-js";
 import * as msRest from "ms-rest-js";
 
 
@@ -113,6 +114,11 @@ export interface ChannelAccount {
    */
   name: string;
   /**
+   * @member {string} [aadObjectId] This account's object ID within Azure
+   * Active Directory (AAD)
+   */
+  aadObjectId: string;
+  /**
    * @member {RoleTypes} [role] Role of the entity behind the account (Example:
    * User, Bot, etc.). Possible values include: 'user', 'bot'
    */
@@ -145,6 +151,11 @@ export interface ConversationAccount {
    * @member {string} [name] Display friendly name
    */
   name: string;
+  /**
+   * @member {string} [aadObjectId] This account's object ID within Azure
+   * Active Directory (AAD)
+   */
+  aadObjectId: string;
   /**
    * @member {RoleTypes} [role] Role of the entity behind the account (Example:
    * User, Bot, etc.). Possible values include: 'user', 'bot'
@@ -203,6 +214,11 @@ export interface CardAction {
    * property depends on the ActionType
    */
   value: any;
+  /**
+   * @member {any} [channelData] Channel-specific data associated with this
+   * action
+   */
+  channelData: any;
 }
 
 /**
@@ -257,12 +273,12 @@ export interface Attachment {
 /**
  * @interface
  * An interface representing Entity.
- * Object of schema.org types
+ * Metadata object pertaining to an activity
  *
  */
 export interface Entity {
   /**
-   * @member {string} [type] Entity Type (typically from schema.org types)
+   * @member {string} [type] Type of this entity (RFC 3987 IRI)
    */
   type: string;
 }
@@ -332,10 +348,10 @@ export interface SemanticAction {
    */
   id: string;
   /**
-   * @member {{ [propertyName: string]: any }} [entities] Entities associated
-   * with this action
+   * @member {{ [propertyName: string]: Entity }} [entities] Entities
+   * associated with this action
    */
-  entities: { [propertyName: string]: any };
+  entities: { [propertyName: string]: Entity };
 }
 
 /**
@@ -370,6 +386,13 @@ export interface Activity {
    * For example, 2016-09-23T13:07:49.4714686-07:00.
    */
   localTimestamp?: Date;
+  /**
+   * @member {string} [localTimezone] Contains the name of the timezone in
+   * which the message, in local time, expressed in IANA Time Zone database
+   * format.
+   * For example, America/Los_Angeles.
+   */
+  localTimezone: string;
   /**
    * @member {string} [serviceUrl] Contains the URL that specifies the
    * channel's service endpoint. Set by the channel.
@@ -532,7 +555,7 @@ export interface Activity {
    */
   importance?: ActivityImportance | string;
   /**
-   * @member {DeliveryModes} [deliveryMode] A delivery hint to  signal to the
+   * @member {DeliveryModes} [deliveryMode] A delivery hint to signal to the
    * recipient alternate delivery paths for the activity.
    * The default delivery mode is "default". Possible values include: 'normal',
    * 'notification'
@@ -663,12 +686,13 @@ export interface ResourceResponse {
 /**
  * @interface
  * An interface representing Transcript.
- * Conversation Transcript
+ * Transcript
  *
  */
 export interface Transcript {
   /**
-   * @member {Activity[]} [activities] Array of conversation activities.
+   * @member {Activity[]} [activities] A collection of Activities that conforms
+   * to the Transcript schema.
    */
   activities: Activity[];
 }
@@ -831,7 +855,9 @@ export interface AnimationCard {
    */
   image: ThumbnailUrl;
   /**
-   * @member {MediaUrl[]} [media] Media URLs for this card
+   * @member {MediaUrl[]} [media] Media URLs for this card. When this field
+   * contains more than one URL, each URL is an alternative format of the same
+   * content.
    */
   media: MediaUrl[];
   /**
@@ -854,10 +880,16 @@ export interface AnimationCard {
    */
   autostart: boolean;
   /**
-   * @member {string} [aspect] Aspect ratio of thumbnail/media placeholder,
-   * allowed values are "16:9" and "4:3"
+   * @member {string} [aspect] Aspect ratio of thumbnail/media placeholder.
+   * Allowed values are "16:9" and "4:3"
    */
   aspect: string;
+  /**
+   * @member {string} [duration] Describes the length of the media content
+   * without requiring a receiver to open the content. Formatted as an ISO 8601
+   * Duration field.
+   */
+  duration: string;
   /**
    * @member {any} [value] Supplementary parameter for this card
    */
@@ -888,7 +920,9 @@ export interface AudioCard {
    */
   image: ThumbnailUrl;
   /**
-   * @member {MediaUrl[]} [media] Media URLs for this card
+   * @member {MediaUrl[]} [media] Media URLs for this card. When this field
+   * contains more than one URL, each URL is an alternative format of the same
+   * content.
    */
   media: MediaUrl[];
   /**
@@ -911,10 +945,16 @@ export interface AudioCard {
    */
   autostart: boolean;
   /**
-   * @member {string} [aspect] Aspect ratio of thumbnail/media placeholder,
-   * allowed values are "16:9" and "4:3"
+   * @member {string} [aspect] Aspect ratio of thumbnail/media placeholder.
+   * Allowed values are "16:9" and "4:3"
    */
   aspect: string;
+  /**
+   * @member {string} [duration] Describes the length of the media content
+   * without requiring a receiver to open the content. Formatted as an ISO 8601
+   * Duration field.
+   */
+  duration: string;
   /**
    * @member {any} [value] Supplementary parameter for this card
    */
@@ -980,7 +1020,9 @@ export interface MediaCard {
    */
   image: ThumbnailUrl;
   /**
-   * @member {MediaUrl[]} [media] Media URLs for this card
+   * @member {MediaUrl[]} [media] Media URLs for this card. When this field
+   * contains more than one URL, each URL is an alternative format of the same
+   * content.
    */
   media: MediaUrl[];
   /**
@@ -1003,10 +1045,16 @@ export interface MediaCard {
    */
   autostart: boolean;
   /**
-   * @member {string} [aspect] Aspect ratio of thumbnail/media placeholder,
-   * allowed values are "16:9" and "4:3"
+   * @member {string} [aspect] Aspect ratio of thumbnail/media placeholder.
+   * Allowed values are "16:9" and "4:3"
    */
   aspect: string;
+  /**
+   * @member {string} [duration] Describes the length of the media content
+   * without requiring a receiver to open the content. Formatted as an ISO 8601
+   * Duration field.
+   */
+  duration: string;
   /**
    * @member {any} [value] Supplementary parameter for this card
    */
@@ -1213,7 +1261,9 @@ export interface VideoCard {
    */
   image: ThumbnailUrl;
   /**
-   * @member {MediaUrl[]} [media] Media URLs for this card
+   * @member {MediaUrl[]} [media] Media URLs for this card. When this field
+   * contains more than one URL, each URL is an alternative format of the same
+   * content.
    */
   media: MediaUrl[];
   /**
@@ -1236,10 +1286,16 @@ export interface VideoCard {
    */
   autostart: boolean;
   /**
-   * @member {string} [aspect] Aspect ratio of thumbnail/media placeholder,
-   * allowed values are "16:9" and "4:3"
+   * @member {string} [aspect] Aspect ratio of thumbnail/media placeholder.
+   * Allowed values are "16:9" and "4:3"
    */
   aspect: string;
+  /**
+   * @member {string} [duration] Describes the length of the media content
+   * without requiring a receiver to open the content. Formatted as an ISO 8601
+   * Duration field.
+   */
+  duration: string;
   /**
    * @member {any} [value] Supplementary parameter for this card
    */
@@ -1295,7 +1351,7 @@ export interface Mention {
    */
   text: string;
   /**
-   * @member {string} [type] Entity Type (typically from schema.org types)
+   * @member {string} [type] Type of this entity (RFC 3987 IRI)
    */
   type: string;
 }
@@ -1842,6 +1898,18 @@ export interface PaymentRequestUpdateResult {
 
 /**
  * @interface
+ * An interface representing ConnectorClientOptions.
+ * @extends ServiceClientOptions
+ */
+export interface ConnectorClientOptions extends ServiceClientOptions {
+  /**
+   * @member {string} [baseUri]
+   */
+  baseUri: string;
+}
+
+/**
+ * @interface
  * An interface representing ConversationsGetConversationsOptionalParams.
  * Optional Parameters.
  *
@@ -2098,38 +2166,234 @@ export enum InstallationUpdateActionTypes {
 }
 
 /**
- * Defines values for ActivityImportance.
- * Possible values include: 'low', 'normal', 'high'
- * There could be more values for this enum apart from the ones defined here.If
- * you want to set a value that is not from the known values then you can do
- * the following:
- * let param: ActivityImportance =
- * <ActivityImportance>"someUnknownValueThatWillStillBeValid";
- * @readonly
- * @enum {string}
+ * Contains response data for the getAttachmentInfo operation.
  */
-export enum ActivityImportance {
-  Low = 'low',
-  Normal = 'normal',
-  High = 'high',
-}
-
-/**
- * @interface
- * An interface representing a collection of
- * Azure Active Directory resource URLs
- */
-export interface AadResourceUrls {
+export type AttachmentsGetAttachmentInfoResponse = AttachmentInfo & {
   /**
-   * @member {string[]} [resourceUrls] A collection of resource URLs
+   * The underlying HTTP response.
    */
-  resourceUrls: string[];
-}
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: AttachmentInfo;
+    };
+};
 
 /**
- * @interface
- * An interface representing a mapping of names to TokenResponses.
+ * Contains response data for the getAttachment operation.
  */
-export interface TokenResponseMap {
-  [resourceUrl: string]: TokenResponse;
-}
+export type AttachmentsGetAttachmentResponse = {
+  /**
+   * BROWSER ONLY
+   *
+   * The response body as a browser Blob.
+   * Always undefined in node.js.
+   */
+  blobBody: Promise<Blob>;
+  /**
+   * NODEJS ONLY
+   *
+   * The response body as a node.js Readable stream.
+   * Always undefined in the browser.
+   */
+  readableStreamBody: NodeJS.ReadableStream;
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse;
+};
+
+/**
+ * Contains response data for the getConversations operation.
+ */
+export type ConversationsGetConversationsResponse = ConversationsResult & {
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ConversationsResult;
+    };
+};
+
+/**
+ * Contains response data for the createConversation operation.
+ */
+export type ConversationsCreateConversationResponse = ConversationResourceResponse & {
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ConversationResourceResponse;
+    };
+};
+
+/**
+ * Contains response data for the sendToConversation operation.
+ */
+export type ConversationsSendToConversationResponse = ResourceResponse & {
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ResourceResponse;
+    };
+};
+
+/**
+ * Contains response data for the sendConversationHistory operation.
+ */
+export type ConversationsSendConversationHistoryResponse = ResourceResponse & {
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ResourceResponse;
+    };
+};
+
+/**
+ * Contains response data for the updateActivity operation.
+ */
+export type ConversationsUpdateActivityResponse = ResourceResponse & {
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ResourceResponse;
+    };
+};
+
+/**
+ * Contains response data for the replyToActivity operation.
+ */
+export type ConversationsReplyToActivityResponse = ResourceResponse & {
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ResourceResponse;
+    };
+};
+
+/**
+ * Contains response data for the getConversationMembers operation.
+ */
+export type ConversationsGetConversationMembersResponse = Array<ChannelAccount> & {
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ChannelAccount[];
+    };
+};
+
+/**
+ * Contains response data for the getConversationPagedMembers operation.
+ */
+export type ConversationsGetConversationPagedMembersResponse = PagedMembersResult & {
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: PagedMembersResult;
+    };
+};
+
+/**
+ * Contains response data for the getActivityMembers operation.
+ */
+export type ConversationsGetActivityMembersResponse = Array<ChannelAccount> & {
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ChannelAccount[];
+    };
+};
+
+/**
+ * Contains response data for the uploadAttachment operation.
+ */
+export type ConversationsUploadAttachmentResponse = ResourceResponse & {
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ResourceResponse;
+    };
+};

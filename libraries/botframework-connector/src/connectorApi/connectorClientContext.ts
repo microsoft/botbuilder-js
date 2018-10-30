@@ -4,6 +4,7 @@
  * regenerated.
  */
 
+import * as Models from "botframework-schema";
 import * as msRest from "ms-rest-js";
 
 const packageName = "botframework-connector";
@@ -11,42 +12,25 @@ const packageVersion = "4.0.0";
 
 export class ConnectorClientContext extends msRest.ServiceClient {
   credentials: msRest.ServiceClientCredentials;
-  baseUri: string;
 
   /**
-   * @class
    * Initializes a new instance of the ConnectorClientContext class.
-   * @constructor
-   *
-   * @param {msRest.ServiceClientCredentials} credentials - Subscription credentials which uniquely identify client subscription.
-   *
-   * @param {string} [baseUri] - The base URI of the service.
-   *
-   * @param {object} [options] - The parameter options
-   *
-   * @param {Array} [options.filters] - Filters to be added to the request pipeline
-   *
-   * @param {object} [options.requestOptions] - The request options. Detailed info can be found at
-   * {@link https://github.github.io/fetch/#Request Options doc}
-   *
-   * @param {boolean} [options.noRetryPolicy] - If set to true, turn off default retry policy
-   *
+   * @param credentials Subscription credentials which uniquely identify client subscription.
+   * @param [options] The parameter options
    */
-  constructor(credentials: msRest.ServiceClientCredentials, baseUri?: string, options?: msRest.ServiceClientOptions) {
+  constructor(credentials: msRest.ServiceClientCredentials, options?: Models.ConnectorClientOptions) {
     if (credentials === null || credentials === undefined) {
       throw new Error('\'credentials\' cannot be null.');
     }
 
     if (!options) {
-      options = {};
+      options = {} as Models.ConnectorClientOptions;
     }
 
     super(credentials, options);
 
-    this.baseUri = baseUri as string;
-    if (!this.baseUri) {
-      this.baseUri = "https://api.botframework.com";
-    }
+    this.baseUri = options.baseUri || this.baseUri || "https://api.botframework.com";
+    this.requestContentType = "application/json; charset=utf-8";
     this.credentials = credentials;
 
     this.addUserAgentInfo(`${packageName}/${packageVersion}`);
