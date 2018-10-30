@@ -1,5 +1,5 @@
-var path = require('path');
-var exec = require('child_process').exec;
+const path = require('path');
+const exec = require('child_process').exec;
 
 exports.execute = function execute (cmds) {
   if (cmds.length > 0) {

@@ -1,4 +1,14 @@
-# Bot Builder SDK v4 [![Build Status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=master)](https://travis-ci.org/Microsoft/botbuilder-js) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=master)
+# Bot Builder SDK v4
+ | Branch | Description        | Build Status | Coverage Status |
+ |----|---------------|--------------|-----------------|
+ |Master | 4.2.* Preview Builds |[![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=master)](https://travis-ci.org/Microsoft/botbuilder-js) |[![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=master)
+ |4.1 | 4.1.* Patch Builds |[![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=4.1)](https://travis-ci.org/Microsoft/botbuilder-js) | [![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=4.1)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=4.1)
+ |4.0 | 4.0.* Patch Builds | [![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=4.0)](https://travis-ci.org/Microsoft/botbuilder-js) | [![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=4.0)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=4.0)|
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Microsoft/botbuilder-js/blob/master/LICENSE)
+[![Gitter](https://img.shields.io/gitter/room/Microsoft/BotBuilder.svg)](https://gitter.im/Microsoft/BotBuilder)
+
+[![StackExchange](https://img.shields.io/stackexchange/stackoverflow/t/botframework.svg)](https://stackoverflow.com/questions/tagged/botframework)
 
 This repository contains code for the JavaScript version of the [Microsoft Bot Builder SDK](https://github.com/Microsoft/botbuilder). The Bot Builder SDK v4 is the latest SDK for building bot applications. 
 
@@ -7,6 +17,26 @@ In addition to the JavaScript SDK, Bot Builder supports creating bots in other p
 To get started see the [Azure Bot Service Documentation](https://docs.microsoft.com/en-us/azure/bot-service/?view=azure-bot-service-4.0) for the v4 SDK.
 
 A rich set of samples are available at [BotBuilder-Samples](https://github.com/microsoft/botbuilder-samples) repository.
+
+
+## Packages
+| Name                                  | Released Package | Daily Build                                                                                                                                                                  |
+|---------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|--|
+| botbuilder                 | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder.svg?logo=npm&label=botbuilder)](https://www.npmjs.com/package/botbuilder/)                                 | TBD |
+| botbuilder-ai        | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder-ai.svg?logo=npm&label=botbuilder-ai)](https://www.npmjs.com/package/botbuilder-ai/)                 | TBD |
+| botbuilder-azure          | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder-azure.svg?logo=npm&label=botbuilder-azure)](https://www.npmjs.com/package/botbuilder-azure/)                   | TBD |
+| botbuilder-core          | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder-core.svg?logo=npm&label=botbuilder-core)](https://www.npmjs.com/package/botbuilder-core/)                     | TBD |
+| botbuilder-dialogs        | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder-dialogs.svg?logo=npm&label=botbuilder-dialogs)](https://www.npmjs.com/package/botbuilder-dialogs/)                 | TBD |
+| botframework-config | [![BotBuilder Badge](https://img.shields.io/npm/dt/botbuilder-config.svg?logo=npm&label=botframework-config)](https://www.npmjs.com/package/botframework-config/) | TBD |
+| botframework-connector           | [![BotBuilder Badge](https://img.shields.io/npm/dt/botframework-connector.svg?logo=npm&label=botframework-connector)](https://www.npmjs.com/package/botframework-connector/)                     | TBD |
+| botframework-schema             | [![BotBuilder Badge](https://img.shields.io/npm/dt/botframework-schema.svg?logo=npm&label=botframework-schema)](https://www.npmjs.com/package/botframework-schema/)                             | TBD |
+
+
+To use the daily builds, which are published to MyGet, please follow the instructions [here](UsingMyGet.md).
+
+
+
+
 
 ## Contributing
 
@@ -38,4 +68,3 @@ the [Security TechCenter](https://technet.microsoft.com/en-us/security/default).
 Copyright (c) Microsoft Corporation. All rights reserved.
 
 Licensed under the [MIT](https://github.com/Microsoft/vscode/blob/master/LICENSE.txt) License.
-
