@@ -9,6 +9,9 @@ describe("Service Tests", () => {
         let luis = new bf.LuisService({ region: "westus" });
         assert.equal(luis.getEndpoint(), `https://westus.api.cognitive.microsoft.com`);
 
+        luis = new bf.LuisService({ region: "virginia" });
+        assert.equal(luis.getEndpoint(),  `https://virginia.api.cognitive.microsoft.us`);
+
         luis = new bf.LuisService({ region: "usgovvirginia" });
         assert.equal(luis.getEndpoint(),  `https://virginia.api.cognitive.microsoft.us`);
 
