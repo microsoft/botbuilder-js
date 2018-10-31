@@ -48,7 +48,17 @@ export class LuisService extends ConnectedService implements ILuisService {
 
     // get endpoint for the luis service
     public getEndpoint(): string {
-        return `https://${this.region}.api.cognitive.microsoft.com`;
+        let reg  = this.region.toLowerCase(); 
+        if (reg == "virginia" || reg == "usgovvirginia") 
+        { 
+            return `https://virginia.api.cognitive.microsoft.us`; 
+        } 
+        else if (reg.startsWith("usgov") || reg.startsWith("usdod")) 
+        { 
+            return `https://${this.region}.api.cognitive.microsoft.us`; 
+        } 
+ 
+        return `https://${this.region}.api.cognitive.microsoft.com`;     
     }
 
     // encrypt keys in service
