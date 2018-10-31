@@ -1,9 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "v3",
-    "title": "Microsoft Bot Token API",
-    "description": "© 2016 Microsoft",
+    "version": "token",
+    "title": "Microsoft Bot Token API - V3.1",
     "termsOfService": "https://www.microsoft.com/en-us/legal/intellectualproperty/copyright/default.aspx",
     "contact": {
       "name": "Bot Framework",
@@ -15,7 +14,7 @@
       "url": "https://opensource.org/licenses/MIT"
     }
   },
-  "host": "localhost:8000",
+  "host": "token.botframework.com",
   "schemes": [
     "https"
   ],
@@ -48,6 +47,12 @@
           },
           {
             "name": "emulatorUrl",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "finalRedirect",
             "in": "query",
             "required": false,
             "type": "string"
@@ -89,12 +94,12 @@
             "required": true,
             "type": "string"
           },
-									{
-										"name": "code",
-										"in": "query",
-										"required": false,
-										"type": "string"
-									}
+          {
+            "name": "code",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
         ],
         "responses": {
           "200": {
@@ -107,6 +112,66 @@
             "description": "",
             "schema": {
               "$ref": "#/definitions/TokenResponse"
+            }
+          },
+          "default": {
+            "description": "The operation failed and the response is an error object describing the status code and failure.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/usertoken/GetAadTokens": {
+      "post": {
+        "tags": [
+          "UserToken"
+        ],
+        "operationId": "UserToken_GetAadTokens",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "connectionName",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "aadResourceUrls",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AadResourceUrls"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of key value pairs",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/TokenResponse"
+              }
             }
           },
           "default": {
@@ -136,7 +201,7 @@
           {
             "name": "connectionName",
             "in": "query",
-            "required": true,
+            "required": false,
             "type": "string"
           }
         ],
@@ -149,6 +214,52 @@
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "The operation failed and the response is an error object describing the status code and failure.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/usertoken/GetTokenStatus": {
+      "get": {
+        "tags": [
+          "UserToken"
+        ],
+        "operationId": "UserToken_GetTokenStatus",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of TokenStatus objects",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TokenStatus"
+              }
+            }
           },
           "default": {
             "description": "The operation failed and the response is an error object describing the status code and failure.",
@@ -209,9 +320,38 @@
         }
       }
     },
+    "AadResourceUrls": {
+      "type": "object",
+      "properties": {
+        "resourceUrls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "Void": {
       "type": "object",
       "properties": {}
+    },
+    "TokenStatus": {
+      "description": "The status of a particular token",
+      "type": "object",
+      "properties": {
+        "connectionName": {
+          "description": "The name of the connection the token status pertains to",
+          "type": "string"
+        },
+        "hasToken": {
+          "description": "True if a token is stored for this ConnectionName",
+          "type": "boolean"
+        },
+        "serviceProviderDisplayName": {
+          "description": "The display name of the service provider for which this Token belongs to",
+          "type": "string"
+        }
+      }
     }
   },
   "securityDefinitions": {

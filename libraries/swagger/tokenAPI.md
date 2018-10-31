@@ -15,7 +15,7 @@ The current release for the BotFramework Token is v3.0.
 ## Token API 3.0
 
 ``` yaml
-input-file: oAuthApi.json
+input-file: TokenAPI.json
 ```
 
 ### Token API 3.0 - TypeScript Settings
@@ -23,11 +23,11 @@ These settings apply only when `--typescript` is specified on the command line.
 ``` yaml $(typescript)
 
 typescript:
-  override-client-name: OAuthApiClient
+  override-client-name: TokenApiClient
   package-name: botframework-Token
   package-version: 4.0.0
   azure-arm: false
   clear-output-folder: true
-  output-folder: ./oAuthApi
+  output-folder: ./tokenApi
   generate-metadata: true
 ```

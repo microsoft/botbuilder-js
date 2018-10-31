@@ -10,15 +10,15 @@ import * as Models from "./models";
 const packageName = "botframework-Token";
 const packageVersion = "4.0.0";
 
-export class OAuthApiClientContext extends msRest.ServiceClient {
+export class TokenApiClientContext extends msRest.ServiceClient {
   credentials: msRest.ServiceClientCredentials;
 
   /**
-   * Initializes a new instance of the OAuthApiClientContext class.
+   * Initializes a new instance of the TokenApiClientContext class.
    * @param credentials Subscription credentials which uniquely identify client subscription.
    * @param [options] The parameter options
    */
-  constructor(credentials: msRest.ServiceClientCredentials, options?: Models.OAuthApiClientOptions) {
+  constructor(credentials: msRest.ServiceClientCredentials, options?: Models.TokenApiClientOptions) {
     if (credentials === null || credentials === undefined) {
       throw new Error('\'credentials\' cannot be null.');
     }
@@ -29,7 +29,7 @@ export class OAuthApiClientContext extends msRest.ServiceClient {
 
     super(credentials, options);
 
-    this.baseUri = options.baseUri || this.baseUri || "https://localhost:8000";
+    this.baseUri = options.baseUri || this.baseUri || "https://token.botframework.com";
     this.requestContentType = "application/json; charset=utf-8";
     this.credentials = credentials;
 

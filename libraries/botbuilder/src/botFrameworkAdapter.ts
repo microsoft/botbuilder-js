@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, ResourceResponse, TokenResponse, TokenResponseMap, TurnContext } from 'botbuilder-core';
-import { ChannelValidation, ConnectorClient, JwtTokenValidation, MicrosoftAppCredentials, OAuthApiClient, SimpleCredentialProvider } from 'botframework-connector';
+import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, ResourceResponse, TurnContext } from 'botbuilder-core';
+import { ChannelValidation, ConnectorClient, JwtTokenValidation, MicrosoftAppCredentials, TokenApiClient, TokenApiModels, SimpleCredentialProvider, EmulatorApiClient } from 'botframework-connector';
 import * as os from 'os';
 
 
@@ -355,16 +355,16 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
      */
-    public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse> {
+    public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenApiModels.TokenResponse> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`);
         }
         this.checkEmulatingOAuthCards(context);
         const userId: string = context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
-        const client: OAuthApiClient = this.createOAuthApiClient(url);
+        const client: TokenApiClient = this.createTokenApiClient(url);
 
-        return (await client.userToken.getToken(userId, connectionName, { code: magicCode })) as TokenResponse;
+        return (await client.userToken.getToken(userId, connectionName, { code: magicCode })) as TokenApiModels.TokenResponse;
     }
 
     /**
@@ -379,8 +379,8 @@ export class BotFrameworkAdapter extends BotAdapter {
         this.checkEmulatingOAuthCards(context);
         const userId: string = context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
-        const client: OAuthApiClient = this.createOAuthApiClient(url);
-        await client.userToken.signOut(userId, connectionName);
+        const client: TokenApiClient = this.createTokenApiClient(url);
+        await client.userToken.signOut(userId, { connectionName: connectionName } );
     }
 
     /**
@@ -392,7 +392,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         this.checkEmulatingOAuthCards(context);
         const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
         const url: string = this.oauthApiUrl(context);
-        const client: OAuthApiClient = this.createOAuthApiClient(url);
+        const client: TokenApiClient = this.createTokenApiClient(url);
         const state: any = {
             ConnectionName: connectionName,
             Conversation: conversation,
@@ -408,28 +408,29 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      */
-    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<TokenResponseMap> {
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{
+        [propertyName: string]: TokenApiModels.TokenResponse;
+    }> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getAadTokens(): missing from or from.id`);
         }
         this.checkEmulatingOAuthCards(context);
         const userId: string = context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
-        const client: OAuthApiClient = this.createOAuthApiClient(url);
+        const client: TokenApiClient = this.createTokenApiClient(url);
 
-        return await client.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls });
+        return (await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }))._response.parsedBody;
     }
 
     /**
      * Tells the token service to emulate the sending of OAuthCards for a channel.
-     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
-     * @param emulate If `true` the token service will emulate the sending of OAuthCards.
+     * @param contextOrServiceUrl The URL of the emulator.
+     * @param emulate If `true` the emulator will emulate the sending of OAuthCards.
      */
     public async emulateOAuthCards(contextOrServiceUrl: TurnContext | string, emulate: boolean): Promise<void> {
         this.isEmulatingOAuthCards = emulate;
         const url: string = this.oauthApiUrl(contextOrServiceUrl);
-        const client: OAuthApiClient = this.createOAuthApiClient(url);
-        await client.emulateOAuthCards(emulate);
+        await EmulatorApiClient.emulateOAuthCards(this.credentials as MicrosoftAppCredentials,  url, emulate);
     }
 
     /**
@@ -637,7 +638,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param serviceUrl Clients service url.
      */
     protected createConnectorClient(serviceUrl: string): ConnectorClient {
-        const client: ConnectorClient = new ConnectorClient(this.credentials, serviceUrl);
+        const client: ConnectorClient = new ConnectorClient(this.credentials, { baseUri: serviceUrl} );
         client.addUserAgentInfo(USER_AGENT);
 
         return client;
@@ -647,8 +648,8 @@ export class BotFrameworkAdapter extends BotAdapter {
      * Allows for mocking of the OAuth API Client in unit tests.
      * @param serviceUrl Clients service url.
      */
-    protected createOAuthApiClient(serviceUrl: string): OAuthApiClient {
-        const client = new OAuthApiClient(this.credentials, serviceUrl);
+    protected createTokenApiClient(serviceUrl: string): TokenApiClient {
+        const client = new TokenApiClient(this.credentials, { baseUri: serviceUrl} );
         client.addUserAgentInfo(USER_AGENT);
         return client;
     }

@@ -102,3 +102,52 @@ export const ErrorResponse: msRest.CompositeMapper = {
     }
   }
 };
+
+export const AadResourceUrls: msRest.CompositeMapper = {
+  serializedName: "AadResourceUrls",
+  type: {
+    name: "Composite",
+    className: "AadResourceUrls",
+    modelProperties: {
+      resourceUrls: {
+        serializedName: "resourceUrls",
+        type: {
+          name: "Sequence",
+          element: {
+            type: {
+              name: "String"
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
+export const TokenStatus: msRest.CompositeMapper = {
+  serializedName: "TokenStatus",
+  type: {
+    name: "Composite",
+    className: "TokenStatus",
+    modelProperties: {
+      connectionName: {
+        serializedName: "connectionName",
+        type: {
+          name: "String"
+        }
+      },
+      hasToken: {
+        serializedName: "hasToken",
+        type: {
+          name: "Boolean"
+        }
+      },
+      serviceProviderDisplayName: {
+        serializedName: "serviceProviderDisplayName",
+        type: {
+          name: "String"
+        }
+      }
+    }
+  }
+};

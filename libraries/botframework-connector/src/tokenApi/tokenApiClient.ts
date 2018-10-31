@@ -8,19 +8,19 @@ import * as msRest from "ms-rest-js";
 import * as Models from "./models";
 import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
-import { OAuthApiClientContext } from "./oAuthApiClientContext";
+import { TokenApiClientContext } from "./tokenApiClientContext";
 
-class OAuthApiClient extends OAuthApiClientContext {
+class TokenApiClient extends TokenApiClientContext {
   // Operation groups
   botSignIn: operations.BotSignIn;
   userToken: operations.UserToken;
 
   /**
-   * Initializes a new instance of the OAuthApiClient class.
+   * Initializes a new instance of the TokenApiClient class.
    * @param credentials Subscription credentials which uniquely identify client subscription.
    * @param [options] The parameter options
    */
-  constructor(credentials: msRest.ServiceClientCredentials, options?: Models.OAuthApiClientOptions) {
+  constructor(credentials: msRest.ServiceClientCredentials, options?: Models.TokenApiClientOptions) {
     super(credentials, options);
     this.botSignIn = new operations.BotSignIn(this);
     this.userToken = new operations.UserToken(this);
@@ -30,9 +30,9 @@ class OAuthApiClient extends OAuthApiClientContext {
 // Operation Specifications
 
 export {
-  OAuthApiClient,
-  OAuthApiClientContext,
-  Models as OAuthApiModels,
-  Mappers as OAuthApiMappers
+  TokenApiClient,
+  TokenApiClientContext,
+  Models as TokenApiModels,
+  Mappers as TokenApiMappers
 };
 export * from "./operations";

@@ -30,10 +30,22 @@ export const codeChallenge: msRest.OperationQueryParameter = {
     }
   }
 };
-export const connectionName: msRest.OperationQueryParameter = {
+export const connectionName0: msRest.OperationQueryParameter = {
   parameterPath: "connectionName",
   mapper: {
     required: true,
+    serializedName: "connectionName",
+    type: {
+      name: "String"
+    }
+  }
+};
+export const connectionName1: msRest.OperationQueryParameter = {
+  parameterPath: [
+    "options",
+    "connectionName"
+  ],
+  mapper: {
     serializedName: "connectionName",
     type: {
       name: "String"
@@ -47,6 +59,30 @@ export const emulatorUrl: msRest.OperationQueryParameter = {
   ],
   mapper: {
     serializedName: "emulatorUrl",
+    type: {
+      name: "String"
+    }
+  }
+};
+export const finalRedirect: msRest.OperationQueryParameter = {
+  parameterPath: [
+    "options",
+    "finalRedirect"
+  ],
+  mapper: {
+    serializedName: "finalRedirect",
+    type: {
+      name: "String"
+    }
+  }
+};
+export const include: msRest.OperationQueryParameter = {
+  parameterPath: [
+    "options",
+    "include"
+  ],
+  mapper: {
+    serializedName: "include",
     type: {
       name: "String"
     }

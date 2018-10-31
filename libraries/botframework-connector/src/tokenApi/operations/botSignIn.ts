@@ -8,17 +8,17 @@ import * as msRest from "ms-rest-js";
 import * as Models from "../models";
 import * as Mappers from "../models/botSignInMappers";
 import * as Parameters from "../models/parameters";
-import { OAuthApiClientContext } from "../oAuthApiClientContext";
+import { TokenApiClientContext } from "../tokenApiClientContext";
 
 /** Class representing a BotSignIn. */
 export class BotSignIn {
-  private readonly client: OAuthApiClientContext;
+  private readonly client: TokenApiClientContext;
 
   /**
    * Create a BotSignIn.
-   * @param {OAuthApiClientContext} client Reference to the service client.
+   * @param {TokenApiClientContext} client Reference to the service client.
    */
-  constructor(client: OAuthApiClientContext) {
+  constructor(client: TokenApiClientContext) {
     this.client = client;
   }
 
@@ -58,7 +58,8 @@ const getSignInUrlOperationSpec: msRest.OperationSpec = {
   queryParameters: [
     Parameters.state,
     Parameters.codeChallenge,
-    Parameters.emulatorUrl
+    Parameters.emulatorUrl,
+    Parameters.finalRedirect
   ],
   responses: {
     200: {

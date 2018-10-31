@@ -1,7 +1,9 @@
+import { TokenResponse } from './connectorApi/models/mappers';
+
 /**
  * @module botbuilder
  */
 export * from './auth';
 export { ConnectorClient } from './connectorApi/connectorClient';
-export { OAuthApiClient } from './oAuthApi/oAuthApiClient';
-//export { Emulator } from './oAuthApi/operations/Emulator';
+export { TokenApiClient, TokenApiModels } from './tokenApi/tokenApiClient';
+export { EmulatorApiClient } from './emulatorApiClient';

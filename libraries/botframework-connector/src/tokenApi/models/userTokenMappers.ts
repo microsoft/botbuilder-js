@@ -8,6 +8,8 @@ export {
   TokenResponse,
   ErrorResponse,
   ErrorModel,
-  InnerHttpError
+  InnerHttpError,
+  AadResourceUrls,
+  TokenStatus
 } from "../models/mappers";
 

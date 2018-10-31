@@ -3,21 +3,21 @@ rem @echo off
 rd /s /q connectorApi
 rd /s /q oAuthApi
 
-call autorest connectorAPI.md --typescript
+rem call autorest connectorAPI.md --typescript
 
-call node model_fixes.js
+rem call node model_fixes.js
 
 rem Move models to botbuilder-schema
-del /q ..\botframework-schema\src\index.ts
-move ConnectorAPI\lib\models\index.ts ..\botframework-schema\src\index.ts
+rem del /q ..\botframework-schema\src\index.ts
+rem move ConnectorAPI\lib\models\index.ts ..\botframework-schema\src\index.ts
 
 rem Move client to botframework-connector
-rd /s /q ..\botframework-connector\src\connectorApi
-move connectorApi\lib ..\botframework-connector\src\connectorApi
+rem rd /s /q ..\botframework-connector\src\connectorApi
+rem move connectorApi\lib ..\botframework-connector\src\connectorApi
 
-call autorest oAuthAPI.md --typescript
-rd /s /q ..\botframework-connector\src\oAuthApi
-move oAuthApi\lib ..\botframework-connector\src\oAuthApi
+call autorest tokenAPI.md --typescript
+rd /s /q ..\botframework-connector\src\tokenApi
+move tokenApi\lib ..\botframework-connector\src\tokenApi
 
-rd /s /q connectorApi
-rd /s /q oAuthApi
+rem rd /s /q connectorApi
+rd /s /q tokenApi

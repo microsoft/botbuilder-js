@@ -74,10 +74,45 @@ export interface ErrorResponse {
 
 /**
  * @interface
- * An interface representing OAuthApiClientOptions.
+ * An interface representing AadResourceUrls.
+ */
+export interface AadResourceUrls {
+  /**
+   * @member {string[]} [resourceUrls]
+   */
+  resourceUrls?: string[];
+}
+
+/**
+ * @interface
+ * An interface representing TokenStatus.
+ * The status of a particular token
+ *
+ */
+export interface TokenStatus {
+  /**
+   * @member {string} [connectionName] The name of the connection the token
+   * status pertains to
+   */
+  connectionName?: string;
+  /**
+   * @member {boolean} [hasToken] True if a token is stored for this
+   * ConnectionName
+   */
+  hasToken?: boolean;
+  /**
+   * @member {string} [serviceProviderDisplayName] The display name of the
+   * service provider for which this Token belongs to
+   */
+  serviceProviderDisplayName?: string;
+}
+
+/**
+ * @interface
+ * An interface representing TokenApiClientOptions.
  * @extends ServiceClientOptions
  */
-export interface OAuthApiClientOptions extends ServiceClientOptions {
+export interface TokenApiClientOptions extends ServiceClientOptions {
   /**
    * @member {string} [baseUri]
    */
@@ -100,6 +135,10 @@ export interface BotSignInGetSignInUrlOptionalParams extends msRest.RequestOptio
    * @member {string} [emulatorUrl]
    */
   emulatorUrl?: string;
+  /**
+   * @member {string} [finalRedirect]
+   */
+  finalRedirect?: string;
 }
 
 /**
@@ -114,6 +153,34 @@ export interface UserTokenGetTokenOptionalParams extends msRest.RequestOptionsBa
    * @member {string} [code]
    */
   code?: string;
+}
+
+/**
+ * @interface
+ * An interface representing UserTokenSignOutOptionalParams.
+ * Optional Parameters.
+ *
+ * @extends RequestOptionsBase
+ */
+export interface UserTokenSignOutOptionalParams extends msRest.RequestOptionsBase {
+  /**
+   * @member {string} [connectionName]
+   */
+  connectionName?: string;
+}
+
+/**
+ * @interface
+ * An interface representing UserTokenGetTokenStatusOptionalParams.
+ * Optional Parameters.
+ *
+ * @extends RequestOptionsBase
+ */
+export interface UserTokenGetTokenStatusOptionalParams extends msRest.RequestOptionsBase {
+  /**
+   * @member {string} [include]
+   */
+  include?: string;
 }
 
 /**
@@ -159,6 +226,30 @@ export type UserTokenGetTokenResponse = TokenResponse & {
 };
 
 /**
+ * Contains response data for the getAadTokens operation.
+ */
+export type UserTokenGetAadTokensResponse = {
+  /**
+   * The response body properties.
+   */
+  [propertyName: string]: TokenResponse;
+} & {
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: { [propertyName: string]: TokenResponse };
+    };
+};
+
+/**
  * Contains response data for the signOut operation.
  */
 export type UserTokenSignOutResponse = {
@@ -178,5 +269,24 @@ export type UserTokenSignOutResponse = {
        * The response body as parsed JSON or XML
        */
       parsedBody: any;
+    };
+};
+
+/**
+ * Contains response data for the getTokenStatus operation.
+ */
+export type UserTokenGetTokenStatusResponse = Array<TokenStatus> & {
+  /**
+   * The underlying HTTP response.
+   */
+  _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: TokenStatus[];
     };
 };
