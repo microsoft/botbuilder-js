@@ -17,7 +17,11 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
 
     private static readonly trustedHostNames: Map<string, Date> = new Map<string, Date>([
         ['state.botframework.com', new Date(8640000000000000)],              // Date.MAX_VALUE,
-        ['api.botframework.com', new Date(8640000000000000)]                 // Date.MAX_VALUE,
+        ['api.botframework.com', new Date(8640000000000000)],                // Date.MAX_VALUE,
+        ['token.botframework.com', new Date(8640000000000000)],              // Date.MAX_VALUE,
+        ['state.botframework.azure.us', new Date(8640000000000000)],         // Date.MAX_VALUE,
+        ['api.botframework.azure.us', new Date(8640000000000000)],           // Date.MAX_VALUE,
+        ['token.botframework.azure.us', new Date(8640000000000000)],         // Date.MAX_VALUE,
     ]);
 
     private static readonly cache: Map<string, OAuthResponse> = new Map<string, OAuthResponse>();
@@ -25,8 +29,8 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
     public appPassword: string;
     public appId: string;
 
-    public readonly oAuthEndpoint: string = Constants.ToChannelFromBotLoginUrl;
-    public readonly oAuthScope: string = Constants.ToChannelFromBotOAuthScope;
+    public oAuthEndpoint: string = Constants.ToChannelFromBotLoginUrl;
+    public oAuthScope: string = Constants.ToChannelFromBotOAuthScope;
     public readonly tokenCacheKey: string;
     private refreshingToken: Promise<OAuthResponse> | null = null;
 
