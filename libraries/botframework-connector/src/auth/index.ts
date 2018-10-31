@@ -10,6 +10,7 @@ export * from './microsoftAppCredentials';
 export * from './jwtTokenValidation';
 export * from './channelValidation';
 export * from './governmentChannelValidation';
+export * from './governmentConstants';
 export * from './enterpriseChannelValidation';
 export * from './emulatorValidation';
 export * from './endorsementsValidator';
