@@ -49,7 +49,7 @@ export class LuisService extends ConnectedService implements ILuisService {
     // get endpoint for the luis service
     public getEndpoint(): string {
         let reg  = this.region.toLowerCase(); 
-        if (reg == "virginia" || reg == "usgovvirginia") 
+        if (reg === "virginia" || reg === "usgovvirginia") 
         { 
             return `https://virginia.api.cognitive.microsoft.us`; 
         } 
