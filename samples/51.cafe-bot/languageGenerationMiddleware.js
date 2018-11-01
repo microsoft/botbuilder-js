@@ -23,7 +23,7 @@ class LanguageGenerationMiddleware {
                 );
             } catch (e) {
                 console.error('Language generation resolution failed');
-                console.error(e);
+                throw e;
             }
             await next();
         });
