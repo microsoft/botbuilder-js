@@ -364,7 +364,12 @@ export class BotFrameworkAdapter extends BotAdapter {
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
 
-        return (await client.userToken.getToken(userId, connectionName, { code: magicCode })) as TokenApiModels.TokenResponse;
+        const result: TokenApiModels.UserTokenGetTokenResponse = await client.userToken.getToken(userId, connectionName, { code: magicCode });
+        if (!result || !result.token || result._response.status == 404) {
+            return undefined;
+        } else {
+            return result;
+        }
     }
 
     /**
@@ -400,7 +405,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         };
 
         const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
-        return (await client.botSignIn.getSignInUrl(finalState, null)).body;
+        return (await client.botSignIn.getSignInUrl(finalState, null))._response.bodyAsText;
     }
 
     /**

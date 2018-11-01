@@ -10,16 +10,13 @@ export class EmulatorApiClient {
             const opt: request.Options = {
                 method: 'POST',
                 url: requestUrl,
-                headers: [
-                    {
-                    name: 'Authroization',
-                    value: 'Bearer ' + token
-                    }
-                ]
+                auth: {
+                    bearer: token
+                }
             };
 
             request(opt, (err: any, response: any, body: any) => {
-               if (body && response.statusCode && response.statusCode < 300) {
+               if (response.statusCode && response.statusCode < 300) {
                     resolve(true);
                 } else {
                     reject(new Error(`EmulateOAuthCards failed with status code: ${ response.statusCode }`));
