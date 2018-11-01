@@ -227,7 +227,7 @@ export class ChoiceFactory {
             if (choice.action) {
                 return choice.action;
             } else {
-                return { type: ActionTypes.ImBack, value: choice.value, title: choice.value };
+                return { type: ActionTypes.ImBack, value: choice.value, title: choice.value, channelData: undefined };
             }
         });
 
