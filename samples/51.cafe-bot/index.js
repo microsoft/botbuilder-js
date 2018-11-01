@@ -100,7 +100,8 @@ const lgEntityAccessor = userState.createProperty(LG_ENTITIES_PROPERTY);
 adapter.use(
     new LanguageGenerationMiddleware(lgEntityAccessor, {
         applicationId: process.env.lgAppId,
-        endpointKey: process.env.lgEndpointKey
+        endpointKey: process.env.lgEndpointKey,
+        azureRegion: 'westus'
     })
 );
 // Create the main dialog.

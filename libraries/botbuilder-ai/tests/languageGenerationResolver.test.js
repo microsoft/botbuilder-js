@@ -890,7 +890,7 @@ describe('LanguageGenerationResolver', () => {
 				}, {})[templateReference] || { Outputs: {} };
 
 		const mockAuthentication = () =>
-			nock(LGAPI.ISSUE_TOKEN_URL)
+			nock(LGAPI.constructIssueTokenUrl('westus'))
 				.persist()
 				.post('')
 				.reply(200, 'token');
@@ -901,7 +901,7 @@ describe('LanguageGenerationResolver', () => {
 			if (ENABLE_MOCKING) {
 				mockAuthentication();
 
-				nock(LGAPI.BASE_URL + LGAPI.RESOURCE_URL)
+				nock(LGAPI.constructRunTimeUrl('westus'))
 					.persist()
 					.post('')
 					.reply((uri, requestBody, cb) => {
@@ -1030,7 +1030,7 @@ describe('LanguageGenerationResolver', () => {
 			mockAuthentication();
 
 			if (ENABLE_MOCKING) {
-				nock(LGAPI.BASE_URL + LGAPI.RESOURCE_URL)
+				nock(LGAPI.constructRunTimeUrl('westus'))
 					.post('')
 					.reply((uri, requestBody, cb) => {
 						cb(null, [401, '']);
@@ -1059,7 +1059,7 @@ describe('LanguageGenerationResolver', () => {
 				nock.cleanAll();
 				mockAuthentication();
 
-				nock(LGAPI.BASE_URL + LGAPI.RESOURCE_URL)
+				nock(LGAPI.constructRunTimeUrl('westus'))
 					.post('')
 					.reply((uri, requestBody, cb) => {
 						cb(null, [500, null]);
@@ -1084,7 +1084,7 @@ describe('LanguageGenerationResolver', () => {
 				nock.cleanAll();
 				mockAuthentication();
 
-				nock(LGAPI.BASE_URL + LGAPI.RESOURCE_URL)
+				nock(LGAPI.constructRunTimeUrl('westus'))
 					.post('')
 					.reply((uri, requestBody, cb) => {
 						cb(null, [400, null]);

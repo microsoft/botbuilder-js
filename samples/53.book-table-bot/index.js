@@ -103,7 +103,8 @@ const lgEntitiesState = userState.createProperty(LG_ENTITIES_PROPERTY);
 adapter.use(
     new LanguageGenerationMiddleware(lgEntitiesState, {
         applicationId: process.env.lgAppId,
-        endpointKey: process.env.lgEndpointKey
+        endpointKey: process.env.lgEndpointKey,
+        azureRegion: 'westus'
     })
 );
 

@@ -863,23 +863,25 @@ export interface LGResponse {
  * @private
  */
 export class LGAPI {
-	public static readonly BASE_URL = 'https://platform.bing.com/speechdx/lg-dev/';
-	public static readonly RESOURCE_URL = 'v1/lg';
+	public static readonly constructIssueTokenUrl = (region: string) =>
+		`https://${region}.api.cognitive.microsoft.com/sts/v1.0/issueToken`;
 
-	public static readonly ISSUE_TOKEN_URL =
-		'https://wuppe.api.cognitive.microsoft.com/sts/v1.0/issueToken';
+	public static readonly constructRunTimeUrl = (region: string) =>
+		`https://${region}.cts.speech.microsoft.com/v1/lg`;
 
 	private token: string = null;
 
 	constructor(
 		private readonly application: LanguageGenerationApplication,
 		private readonly options: LanguageGenerationOptions
-	) {}
+	) {
+		application.azureRegion = application.azureRegion || 'westus';
+	}
 
 	public async authenticate(): Promise<void> {
 		try {
 			this.token = await request({
-				url: LGAPI.ISSUE_TOKEN_URL,
+				url: LGAPI.constructIssueTokenUrl(this.application.azureRegion),
 				method: 'POST',
 				headers: {
 					'OCP-APIM-SUBSCRIPTION-KEY': this.application.endpointKey,
@@ -894,7 +896,7 @@ export class LGAPI {
 	public fetch = async (lgRequest: LGRequest): Promise<LGResponse> => {
 		try {
 			const response = await request({
-				url: LGAPI.BASE_URL + LGAPI.RESOURCE_URL,
+				url: LGAPI.constructRunTimeUrl(this.application.azureRegion),
 				method: 'POST',
 				headers: {
 					Authorization: `Bearer ${this.token}`,
