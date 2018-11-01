@@ -8,6 +8,15 @@ describe("Service Tests", () => {
     it("Luis.getEndpoint() returns correct url for region", async () => {
         let luis = new bf.LuisService({ region: "westus" });
         assert.equal(luis.getEndpoint(), `https://westus.api.cognitive.microsoft.com`);
+
+        luis = new bf.LuisService({ region: "virginia" });
+        assert.equal(luis.getEndpoint(),  `https://virginia.api.cognitive.microsoft.us`);
+
+        luis = new bf.LuisService({ region: "usgovvirginia" });
+        assert.equal(luis.getEndpoint(),  `https://virginia.api.cognitive.microsoft.us`);
+
+        luis = new bf.LuisService({ region: "usgoviowa" });
+        assert.equal(luis.getEndpoint(),  `https://usgoviowa.api.cognitive.microsoft.us`);
     });
 
     it("QNAMaker corretly adds suffix", () => {
