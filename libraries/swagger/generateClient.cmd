@@ -1,15 +1,23 @@
-@echo off
+rem @echo off
 
-rd /s /q generated
+rd /s /q connectorApi
+rd /s /q oAuthApi
 
-call autorest README.md --typescript
+rem call autorest connectorAPI.md --typescript
 
-call node model_fixes.js
+rem call node model_fixes.js
 
 rem Move models to botbuilder-schema
-del /q ..\botframework-schema\src\index.ts
-move generated\models\index.ts ..\botframework-schema\src\index.ts
+rem del /q ..\botframework-schema\src\index.ts
+rem move ConnectorAPI\lib\models\index.ts ..\botframework-schema\src\index.ts
 
 rem Move client to botframework-connector
-rd /s /q ..\botframework-connector\src\generated
-move generated ..\botframework-connector\src\
+rem rd /s /q ..\botframework-connector\src\connectorApi
+rem move connectorApi\lib ..\botframework-connector\src\connectorApi
+
+call autorest tokenAPI.md --typescript
+rd /s /q ..\botframework-connector\src\tokenApi
+move tokenApi\lib ..\botframework-connector\src\tokenApi
+
+rem rd /s /q connectorApi
+rd /s /q tokenApi

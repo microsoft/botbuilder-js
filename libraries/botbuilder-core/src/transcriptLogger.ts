@@ -45,7 +45,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
         }
 
         // hook up onSend pipeline
-        context.onSendActivities(async (ctx: TurnContext, activities: Partial<Activity>[], next2:  () => Promise<ResourceResponse[]>) => {
+        context.onSendActivities(async (ctx: TurnContext, activities: Partial<Activity>[], next2: () => Promise<ResourceResponse[]>) => {
             // run full pipeline
             const responses: ResourceResponse[] = await next2();
             activities.forEach((a: ResourceResponse) => this.logActivity(this.cloneActivity(a)));
@@ -117,8 +117,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
      * @param activity Activity to clone.
      */
     private cloneActivity(activity: Partial<Activity>): Activity {
-        const emptyActivity: Activity = {type: '', serviceUrl: '', channelId: '', from: undefined, conversation: undefined, recipient: undefined, text: '', label: '', valueType: ''};
-        return Object.assign(emptyActivity, activity);
+        return Object.assign(<Activity>{}, activity);
     }
 }
 

@@ -56,7 +56,7 @@ client.conversations.createConversation({
 ````
 
 ### Simple EchoBot Example ([source code](../../samples/echobot-simple-ts))
-EchoBot is a minimal bot that recieves message activities and replies with the same content.
+EchoBot is a minimal bot that receives message activities and replies with the same content.
 The sample shows how to use restify/express for listening to activities and the ConnectorClient for sending activities.
 
 ## Rest API Documentation

@@ -28,6 +28,6 @@ typescript:
   package-version: 4.0.0
   azure-arm: false
   clear-output-folder: true
-  output-folder: ./generated
-  generate-metadata: false
+  output-folder: ./connectorApi
+  generate-metadata: true
 ```
