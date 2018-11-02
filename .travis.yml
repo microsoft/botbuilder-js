@@ -29,4 +29,4 @@ after_success:
   
 env:
   global:
-  - Version=4.2.0-preview.${TRAVIS_BUILD_NUMBER}
+  - Version=4.5.0
