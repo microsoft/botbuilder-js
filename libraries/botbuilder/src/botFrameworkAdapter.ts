@@ -7,9 +7,8 @@
  */
 
 import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, ResourceResponse, TurnContext } from 'botbuilder-core';
-import { ChannelValidation, ConnectorClient, JwtTokenValidation, MicrosoftAppCredentials, TokenApiClient, TokenApiModels, SimpleCredentialProvider, EmulatorApiClient } from 'botframework-connector';
+import { ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenApiModels } from 'botframework-connector';
 import * as os from 'os';
-
 
 
 /**
