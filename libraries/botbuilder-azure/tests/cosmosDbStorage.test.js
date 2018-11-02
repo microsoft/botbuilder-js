@@ -18,7 +18,7 @@ const getSettings = () => ({
 const reset = (done) => {
     nock.cleanAll();
     nock.enableNetConnect();
-    if (mode!== MockMode.lockdown) {
+    if (mode !== MockMode.lockdown) {
         let settings = getSettings();
         let client = new DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey });
         client.deleteDatabase(UriFactory.createDatabaseUri(settings.databaseId), (err, response) => done());
@@ -412,8 +412,6 @@ describe('CosmosDbStorage Constructor', function() {
         assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing collection ID.')
     });
 });
-
-console.warn(`Disabling CosmosDBStorage tests.`);
 
 describe('CosmosDbStorage', function () {
     this.timeout(20000);

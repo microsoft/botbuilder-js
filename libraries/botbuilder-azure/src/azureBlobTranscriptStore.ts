@@ -386,8 +386,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             getBlobToTextAsync: this.denodeify(blobService, blobService.getBlobToText),
             deleteBlobIfExistsAsync: this.denodeify(blobService, blobService.deleteBlobIfExists),
             listBlobsSegmentedWithPrefixAsync: this.denodeify(blobService, blobService.listBlobsSegmentedWithPrefix),
-            // tslint:disable-next-line:no-string-literal
-            listBlobDirectoriesSegmentedWithPrefixAsync: this.denodeify(blobService, blobService['listBlobDirectoriesSegmentedWithPrefix'])
+            listBlobDirectoriesSegmentedWithPrefixAsync: this.denodeify(blobService, blobService.listBlobDirectoriesSegmentedWithPrefix)
         });
     }
 

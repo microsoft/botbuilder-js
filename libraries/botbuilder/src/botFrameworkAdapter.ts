@@ -83,6 +83,7 @@ const pjson: any = require('../package.json');
 const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${pjson.version} ` +
     `(Node.js,Version=${NODE_VERSION}; ${TYPE} ${RELEASE}; ${ARCHITECTURE})`;
 const OAUTH_ENDPOINT: string = 'https://api.botframework.com';
+const US_GOV_OAUTH_ENDPOINT: string = 'https://api.botframework.azure.us';
 const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 
 /**
@@ -135,6 +136,10 @@ export class BotFrameworkAdapter extends BotAdapter {
         this.isEmulatingOAuthCards = false;
         if (this.settings.openIdMetadata) {
             ChannelValidation.OpenIdMetadataEndpoint = this.settings.openIdMetadata;
+        }
+        if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
+            this.credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
+            this.credentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
         }
     }
 
@@ -666,7 +671,9 @@ export class BotFrameworkAdapter extends BotAdapter {
     protected oauthApiUrl(contextOrServiceUrl: TurnContext | string): string {
         return this.isEmulatingOAuthCards ?
             (typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl) :
-            (this.settings.oAuthEndpoint ? this.settings.oAuthEndpoint : OAUTH_ENDPOINT);
+            (this.settings.oAuthEndpoint ? this.settings.oAuthEndpoint : 
+                JwtTokenValidation.isGovernment(this.settings.channelService) ?
+                US_GOV_OAUTH_ENDPOINT : OAUTH_ENDPOINT);
     }
 
     /**

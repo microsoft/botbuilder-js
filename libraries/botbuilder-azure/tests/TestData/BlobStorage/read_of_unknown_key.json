@@ -1,0 +1,70 @@
+[
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test?restype=container",
+        "body": "",
+        "status": 404,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "ccce0eab-e1b1-4c91-b917-a4f1c9a45cd9",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-error-code",
+            "ContainerNotFound",
+            "Date",
+            "Fri, 26 Oct 2018 14:59:46 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test?restype=container",
+        "body": "",
+        "status": 201,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Fri, 26 Oct 2018 14:59:46 GMT",
+            "ETag",
+            "\"0x8D63B53AB5D0BB0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "8868abf2-8569-4050-879f-4ead156051d0",
+            "x-ms-version",
+            "2018-03-28",
+            "Date",
+            "Fri, 26 Oct 2018 14:59:46 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/unk",
+        "body": "",
+        "status": 404,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "d5fbab9d-69b7-49fc-927f-70f9b3892f0b",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-error-code",
+            "BlobNotFound",
+            "Date",
+            "Fri, 26 Oct 2018 14:59:46 GMT"
+        ]
+    }
+]
