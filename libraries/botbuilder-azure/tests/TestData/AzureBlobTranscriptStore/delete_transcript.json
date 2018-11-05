@@ -1,0 +1,670 @@
+[
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation/8d6434ff5d97380-62ec96db-a8a0-4939-bf6e-731a92e97d30.json",
+        "body": {
+            "type": "message",
+            "timestamp": "2018-11-05T18:53:22.565Z",
+            "id": "62ec96db-a8a0-4939-bf6e-731a92e97d30",
+            "text": "1",
+            "channelId": "test",
+            "from": {
+                "id": "User1"
+            },
+            "conversation": {
+                "id": "_deleteConversation"
+            },
+            "recipient": {
+                "id": "Bot1",
+                "name": "2"
+            },
+            "serviceUrl": "http://foo.com/api/messages"
+        },
+        "status": 201,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-MD5",
+            "Ad7tkU+Ey0y9DnewoywyuQ==",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "ETag",
+            "\"0x8D6434FF5DCCEB0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "d710c7cc-2b66-4e0a-9c3d-5a0534542460",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation/8d6434ff5d97380-62ec96db-a8a0-4939-bf6e-731a92e97d30.json?comp=properties",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "ETag",
+            "\"0x8D6434FF5E05120\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "f8248d11-2197-4758-8906-0a39342a9607",
+            "x-ms-version",
+            "2018-03-28",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation/8d6434ff5d97380-62ec96db-a8a0-4939-bf6e-731a92e97d30.json?comp=metadata",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "ETag",
+            "\"0x8D6434FF5E35E60\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "71649a6e-14d0-4e31-8ea8-3326d2cbfe29",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation/8d64350199cb980-96b607a0-8c2b-472c-86c0-f16b79e92bc3.json",
+        "body": {
+            "type": "message",
+            "timestamp": "2018-11-05T18:54:22.565Z",
+            "id": "96b607a0-8c2b-472c-86c0-f16b79e92bc3",
+            "text": "1",
+            "channelId": "test",
+            "from": {
+                "id": "Bot1",
+                "name": "2"
+            },
+            "conversation": {
+                "id": "_deleteConversation"
+            },
+            "recipient": {
+                "id": "User1"
+            },
+            "serviceUrl": "http://foo.com/api/messages"
+        },
+        "status": 201,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-MD5",
+            "foSAywNJTk50gX9CZoS0UQ==",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "ETag",
+            "\"0x8D6434FF5E6E0D0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "2444a96a-4753-44bb-b997-71bc1c01c510",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation/8d64350199cb980-96b607a0-8c2b-472c-86c0-f16b79e92bc3.json?comp=properties",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "ETag",
+            "\"0x8D6434FF5E978E0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "ae435f36-1e3c-4a88-b0f7-d9a70695c253",
+            "x-ms-version",
+            "2018-03-28",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation/8d64350199cb980-96b607a0-8c2b-472c-86c0-f16b79e92bc3.json?comp=metadata",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "ETag",
+            "\"0x8D6434FF5ECFB50\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "c84698fc-5116-4ff4-b2eb-f3fa8b3d55f3",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation2/8d6434ff5d97380-59ca5664-037d-4db3-a5ff-2bdc75152e1b.json",
+        "body": {
+            "type": "message",
+            "timestamp": "2018-11-05T18:53:22.565Z",
+            "id": "59ca5664-037d-4db3-a5ff-2bdc75152e1b",
+            "text": "1",
+            "channelId": "test",
+            "from": {
+                "id": "User1"
+            },
+            "conversation": {
+                "id": "_deleteConversation2"
+            },
+            "recipient": {
+                "id": "Bot1",
+                "name": "2"
+            },
+            "serviceUrl": "http://foo.com/api/messages"
+        },
+        "status": 201,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-MD5",
+            "sylOwTjwHm4XstwHjzJP3g==",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "ETag",
+            "\"0x8D6434FF5F0A4D0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "3fcd4f79-ec28-4d8d-a332-aedd731ca351",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation2/8d6434ff5d97380-59ca5664-037d-4db3-a5ff-2bdc75152e1b.json?comp=properties",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "ETag",
+            "\"0x8D6434FF5F42740\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "b86197c8-aa99-4418-9d7d-1c0634388cc6",
+            "x-ms-version",
+            "2018-03-28",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation2/8d6434ff5d97380-59ca5664-037d-4db3-a5ff-2bdc75152e1b.json?comp=metadata",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "ETag",
+            "\"0x8D6434FF5F73480\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "967c7825-6b9b-4292-ba19-2bd53c033a7a",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation2/8d64350199cb980-5b812e4e-296e-4a75-9f7d-715ecb7fa131.json",
+        "body": {
+            "type": "message",
+            "timestamp": "2018-11-05T18:54:22.565Z",
+            "id": "5b812e4e-296e-4a75-9f7d-715ecb7fa131",
+            "text": "1",
+            "channelId": "test",
+            "from": {
+                "id": "Bot1",
+                "name": "2"
+            },
+            "conversation": {
+                "id": "_deleteConversation2"
+            },
+            "recipient": {
+                "id": "User1"
+            },
+            "serviceUrl": "http://foo.com/api/messages"
+        },
+        "status": 201,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-MD5",
+            "GMCY2oNkGXAg4RVllQ0jnA==",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "ETag",
+            "\"0x8D6434FF5FAB6F0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "aaa4f765-3429-45bb-8f02-242b3b49407d",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation2/8d64350199cb980-5b812e4e-296e-4a75-9f7d-715ecb7fa131.json?comp=properties",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "ETag",
+            "\"0x8D6434FF5FD4F00\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "77c8439e-5d82-4bcd-86fd-69340de575cc",
+            "x-ms-version",
+            "2018-03-28",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation2/8d64350199cb980-5b812e4e-296e-4a75-9f7d-715ecb7fa131.json?comp=metadata",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "ETag",
+            "\"0x8D6434FF600D170\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "895ba886-0f6a-438a-a025-752f0a976092",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "GET",
+        "path": "/devstoreaccount1/test-transcript?restype=container&comp=list&include=metadata&prefix=test%2F_deleteConversation2%2F",
+        "body": "",
+        "status": 200,
+        "response": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"http://127.0.0.1:10000/devstoreaccount1/\" ContainerName=\"test-transcript\"><Prefix>test/_deleteConversation2/</Prefix><Blobs><Blob><Name>test/_deleteConversation2/8d6434ff5d97380-59ca5664-037d-4db3-a5ff-2bdc75152e1b.json</Name><Properties><Creation-Time>Mon, 05 Nov 2018 18:53:22 GMT</Creation-Time><Last-Modified>Mon, 05 Nov 2018 18:53:22 GMT</Last-Modified><Etag>0x8D6434FF5F73480</Etag><Content-Length>278</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><Metadata><fromid>User1</fromid><recipientid>Bot1</recipientid><timestamp>1541444002565</timestamp></Metadata></Blob><Blob><Name>test/_deleteConversation2/8d64350199cb980-5b812e4e-296e-4a75-9f7d-715ecb7fa131.json</Name><Properties><Creation-Time>Mon, 05 Nov 2018 18:53:22 GMT</Creation-Time><Last-Modified>Mon, 05 Nov 2018 18:53:22 GMT</Last-Modified><Etag>0x8D6434FF600D170</Etag><Content-Length>278</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><Metadata><fromid>Bot1</fromid><recipientid>User1</recipientid><timestamp>1541444062565</timestamp></Metadata></Blob></Blobs><NextMarker /></EnumerationResults>",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/xml",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "2095f7e3-4f17-4b62-8325-887b49b6f6d9",
+            "x-ms-version",
+            "2018-03-28",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "GET",
+        "path": "/devstoreaccount1/test-transcript?restype=container&comp=list&include=metadata&prefix=test%2F_deleteConversation%2F",
+        "body": "",
+        "status": 200,
+        "response": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"http://127.0.0.1:10000/devstoreaccount1/\" ContainerName=\"test-transcript\"><Prefix>test/_deleteConversation/</Prefix><Blobs><Blob><Name>test/_deleteConversation/8d6434ff5d97380-62ec96db-a8a0-4939-bf6e-731a92e97d30.json</Name><Properties><Creation-Time>Mon, 05 Nov 2018 18:53:22 GMT</Creation-Time><Last-Modified>Mon, 05 Nov 2018 18:53:22 GMT</Last-Modified><Etag>0x8D6434FF5E35E60</Etag><Content-Length>277</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><Metadata><fromid>User1</fromid><recipientid>Bot1</recipientid><timestamp>1541444002565</timestamp></Metadata></Blob><Blob><Name>test/_deleteConversation/8d64350199cb980-96b607a0-8c2b-472c-86c0-f16b79e92bc3.json</Name><Properties><Creation-Time>Mon, 05 Nov 2018 18:53:22 GMT</Creation-Time><Last-Modified>Mon, 05 Nov 2018 18:53:22 GMT</Last-Modified><Etag>0x8D6434FF5ECFB50</Etag><Content-Length>277</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding /><Content-Language /><Content-MD5 /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><Metadata><fromid>Bot1</fromid><recipientid>User1</recipientid><timestamp>1541444062565</timestamp></Metadata></Blob></Blobs><NextMarker /></EnumerationResults>",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/xml",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "30ceb2ba-41dd-4a91-829f-7b2713bff0e4",
+            "x-ms-version",
+            "2018-03-28",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "GET",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation2/8d64350199cb980-5b812e4e-296e-4a75-9f7d-715ecb7fa131.json",
+        "body": "",
+        "status": 200,
+        "response": {
+            "type": "message",
+            "timestamp": "2018-11-05T18:54:22.565Z",
+            "id": "5b812e4e-296e-4a75-9f7d-715ecb7fa131",
+            "text": "1",
+            "channelId": "test",
+            "from": {
+                "id": "Bot1",
+                "name": "2"
+            },
+            "conversation": {
+                "id": "_deleteConversation2"
+            },
+            "recipient": {
+                "id": "User1"
+            },
+            "serviceUrl": "http://foo.com/api/messages"
+        },
+        "rawHeaders": [
+            "Content-Length",
+            "278",
+            "Content-Type",
+            "application/json",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D6434FF600D170\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "f3809813-388a-453a-955a-2ba8d0559885",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-meta-fromid",
+            "Bot1",
+            "x-ms-meta-recipientid",
+            "User1",
+            "x-ms-meta-timestamp",
+            "1541444062565",
+            "x-ms-creation-time",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "GET",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation2/8d6434ff5d97380-59ca5664-037d-4db3-a5ff-2bdc75152e1b.json",
+        "body": "",
+        "status": 200,
+        "response": {
+            "type": "message",
+            "timestamp": "2018-11-05T18:53:22.565Z",
+            "id": "59ca5664-037d-4db3-a5ff-2bdc75152e1b",
+            "text": "1",
+            "channelId": "test",
+            "from": {
+                "id": "User1"
+            },
+            "conversation": {
+                "id": "_deleteConversation2"
+            },
+            "recipient": {
+                "id": "Bot1",
+                "name": "2"
+            },
+            "serviceUrl": "http://foo.com/api/messages"
+        },
+        "rawHeaders": [
+            "Content-Length",
+            "278",
+            "Content-Type",
+            "application/json",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D6434FF5F73480\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "1bbae169-c6b9-4044-95dd-4295725354fd",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-meta-fromid",
+            "User1",
+            "x-ms-meta-recipientid",
+            "Bot1",
+            "x-ms-meta-timestamp",
+            "1541444002565",
+            "x-ms-creation-time",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "GET",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation/8d6434ff5d97380-62ec96db-a8a0-4939-bf6e-731a92e97d30.json",
+        "body": "",
+        "status": 200,
+        "response": {
+            "type": "message",
+            "timestamp": "2018-11-05T18:53:22.565Z",
+            "id": "62ec96db-a8a0-4939-bf6e-731a92e97d30",
+            "text": "1",
+            "channelId": "test",
+            "from": {
+                "id": "User1"
+            },
+            "conversation": {
+                "id": "_deleteConversation"
+            },
+            "recipient": {
+                "id": "Bot1",
+                "name": "2"
+            },
+            "serviceUrl": "http://foo.com/api/messages"
+        },
+        "rawHeaders": [
+            "Content-Length",
+            "277",
+            "Content-Type",
+            "application/json",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D6434FF5E35E60\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "dca3ac53-4b60-4525-aeae-35e6cea30242",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-meta-fromid",
+            "User1",
+            "x-ms-meta-recipientid",
+            "Bot1",
+            "x-ms-meta-timestamp",
+            "1541444002565",
+            "x-ms-creation-time",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "GET",
+        "path": "/devstoreaccount1/test-transcript/test/_deleteConversation/8d64350199cb980-96b607a0-8c2b-472c-86c0-f16b79e92bc3.json",
+        "body": "",
+        "status": 200,
+        "response": {
+            "type": "message",
+            "timestamp": "2018-11-05T18:54:22.565Z",
+            "id": "96b607a0-8c2b-472c-86c0-f16b79e92bc3",
+            "text": "1",
+            "channelId": "test",
+            "from": {
+                "id": "Bot1",
+                "name": "2"
+            },
+            "conversation": {
+                "id": "_deleteConversation"
+            },
+            "recipient": {
+                "id": "User1"
+            },
+            "serviceUrl": "http://foo.com/api/messages"
+        },
+        "rawHeaders": [
+            "Content-Length",
+            "277",
+            "Content-Type",
+            "application/json",
+            "Last-Modified",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D6434FF5ECFB50\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "3ab8f28b-a849-4cde-8d0b-3560fc00dbf7",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-meta-fromid",
+            "Bot1",
+            "x-ms-meta-recipientid",
+            "User1",
+            "x-ms-meta-timestamp",
+            "1541444062565",
+            "x-ms-creation-time",
+            "Mon, 05 Nov 2018 18:53:22 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 05 Nov 2018 18:53:22 GMT"
+        ]
+    }
+]
