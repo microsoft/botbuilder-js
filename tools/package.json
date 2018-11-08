@@ -30,7 +30,7 @@
   "dependencies": {
     "@types/request": "^2.47.1",
     "dotenv": "^4.0.0",
-    "mime": "~1.2.4",
+    "mime": "^1.4.1",
     "moment": "^2.22.2",
     "ms-rest": "^2.3.6",
     "ms-rest-azure": "^2.5.7",
