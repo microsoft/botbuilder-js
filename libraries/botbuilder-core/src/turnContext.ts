@@ -286,7 +286,7 @@ export class TurnContext {
      * This example shows how to listen for and logs updated activities.
      *
      * ```JavaScript
-     * context.onUpdateActivities(async (ctx, activity, next) => {
+     * context.onUpdateActivity(async (ctx, activity, next) => {
      *    // Replace activity
      *    await next();
      *
@@ -309,7 +309,7 @@ export class TurnContext {
      * This example shows how to listen for and logs deleted activities.
      *
      * ```JavaScript
-     * context.onDeleteActivities(async (ctx, reference, next) => {
+     * context.onDeleteActivity(async (ctx, reference, next) => {
      *    // Delete activity
      *    await next();
      *
