@@ -11,5 +11,7 @@ export * from './dialog';
 export * from './componentDialog';
 export * from './dialogContext';
 export * from './dialogSet';
+export * from './intentDialog';
+export * from './intentDialogContext';
 export * from './waterfallDialog';
 export * from './waterfallStepContext';
