@@ -76,9 +76,9 @@ export class IntentDialog<O extends object = {}> extends Dialog<O> {
         });
     }
 
-    public endDialogIntent(name: string): this {
+    public endDialogIntent(name: string, result?: any): this {
         return this.onIntent(name, async (intent) => {
-            return await intent.endDialog();
+            return await intent.endDialog(result);
         });
     }
 
