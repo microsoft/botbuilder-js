@@ -10,9 +10,6 @@ import * as msrest from 'ms-rest-js';
 import * as url from 'url';
 import { Constants } from './constants';
 
-const fetch = (new Function('const env = (global || window); return "fetch" in env ? env.fetch : require("node-fetch");'))();
-const FormData = (new Function('const env = (global || window); return "FormData" in env ? env.FormData : require("form-data");'))();
-
 /**
  * MicrosoftAppCredentials auth implementation and cache
  */
@@ -143,9 +140,6 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
 
             this.refreshingToken = fetch(this.oAuthEndpoint, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': "application/x-www-form-urlencoded",
-                },
                 body: params
             });
         }
