@@ -6,9 +6,12 @@
  * Licensed under the MIT License.
  */
 import * as msrest from 'ms-rest-js';
-import * as request from 'request';
+// import * as request from 'request';
 import * as url from 'url';
 import { Constants } from './constants';
+
+const fetch = (new Function('const env = (global || window); return "fetch" in env ? env.fetch : require("node-fetch");'))();
+const FormData = (new Function('const env = (global || window); return "FormData" in env ? env.FormData : require("form-data");'))();
 
 /**
  * MicrosoftAppCredentials auth implementation and cache
@@ -32,7 +35,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
     public oAuthEndpoint: string = Constants.ToChannelFromBotLoginUrl;
     public oAuthScope: string = Constants.ToChannelFromBotOAuthScope;
     public readonly tokenCacheKey: string;
-    private refreshingToken: Promise<OAuthResponse> | null = null;
+    private refreshingToken: Promise<Response> | null = null;
 
     constructor(appId: string, appPassword: string) {
         this.appId = appId;
@@ -112,49 +115,40 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
         // 1. The user requested it via the forceRefresh parameter
         // 2. We have it, but it's expired
         // 3. We don't have it in the cache.
-        const newOAuthToken: OAuthResponse = await this.refreshToken();
-        MicrosoftAppCredentials.cache.set(this.tokenCacheKey, newOAuthToken);
+        const res: Response = await this.refreshToken();
 
-        return newOAuthToken.access_token;
-    }
-
-    private refreshToken(): Promise<OAuthResponse> {
-        if (!this.refreshingToken) {
-            this.refreshingToken = new Promise<OAuthResponse>((resolve: any, reject: any): void => {
-                // Refresh access token
-                const opt: request.Options = {
-                    method: 'POST',
-                    url: this.oAuthEndpoint,
-                    form: {
-                        grant_type: 'client_credentials',
-                        client_id: this.appId,
-                        client_secret: this.appPassword,
-                        scope: this.oAuthScope
-                    }
-                };
-
-                request(opt, (err: any, response: any, body: any) => {
-                    this.refreshingToken = null;
-                    if (!err) {
-                        if (body && response.statusCode && response.statusCode < 300) {
-                            // Subtract 5 minutes from expires_in so they'll we'll get a
-                            // new token before it expires.
-                            const oauthResponse: OAuthResponse = <OAuthResponse>JSON.parse(body);
-                            oauthResponse.expiration_time = new Date(Date.now() + (oauthResponse.expires_in * 1000) - 300000);
-                            resolve(oauthResponse);
-                        } else {
-                            reject(new Error(`Refresh access token failed with status code: ${ response.statusCode }`));
-                        }
-                    } else {
-                        reject(err);
-                    }
-                });
-            }).catch((err: Error) => {
-                this.refreshingToken = null;
-                throw err;
-            });
+        let oauthResponse: OAuthResponse;
+        if (res.ok) {
+            oauthResponse = await res.json();
+            // Subtract 5 minutes from expires_in so they'll we'll get a
+            // new token before it expires.
+            oauthResponse.expiration_time = new Date(Date.now() + (oauthResponse.expires_in * 1000) - 300000);
+        } else {
+            this.refreshingToken = null;
+            throw new Error(res.statusText);
         }
 
+        MicrosoftAppCredentials.cache.set(this.tokenCacheKey, oauthResponse);
+        this.refreshingToken = null;
+        return oauthResponse.access_token;
+    }
+
+    private async refreshToken(): Promise<Response> {
+        if (!this.refreshingToken) {
+            const params = new FormData();
+            params.append('grant_type', 'client_credentials');
+            params.append('client_id', this.appId);
+            params.append('client_secret', this.appPassword);
+            params.append('scope', this.oAuthScope);
+
+            this.refreshingToken = fetch(this.oAuthEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': "application/x-www-form-urlencoded",
+                },
+                body: params
+            });
+        }
         return this.refreshingToken;
     }
 
