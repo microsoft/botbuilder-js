@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 const nock = require('nock');
 const { TestAdapter, TurnContext } = require('botbuilder');
 const { LuisRecognizer } = require('../');
-const luisAppId = '6209a76f-e836-413b-ba92-a5772d1b2087';
+const luisAppId = '38330cad-f768-4619-96f9-69ea333e594b';
 
 // This can be any endpoint key for calling LUIS
 const endpointKey = process.env.LUISAPPKEY || "MockedKey";
@@ -125,6 +125,7 @@ describe('LuisRecognizer', function () {
 
     it('test built-ins composite1', done => TestJson("Composite1.json", res => done()));
     it('test built-ins composite2', done => TestJson("Composite2.json", res => done()));
+    it('test built-ins composite3', done => TestJson("Composite3.json", res => done()));
     it('test built-ins prebuilt', done => TestJson("Prebuilt.json", res => done()));
     it('test patterns', done => TestJson("Patterns.json", res => done()));
     it('should return single intent and a simple entity', done => {

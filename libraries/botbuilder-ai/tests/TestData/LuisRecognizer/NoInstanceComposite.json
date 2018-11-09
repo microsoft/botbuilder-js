@@ -2,44 +2,44 @@
   "text": "Please deliver it to 98033 WA",
   "intents": {
     "Delivery": {
-      "score": 0.939793348
+      "score": 0.9585951
     },
     "Weather_GetForecast": {
-      "score": 0.017216783
+      "score": 0.0151362987
     },
     "Cancel": {
-      "score": 0.015085184
+      "score": 0.0146958372
     },
     "None": {
-      "score": 0.0123939738
+      "score": 0.009877626
     },
     "search": {
-      "score": 0.00845666
-    },
-    "Travel": {
-      "score": 0.00613587769
+      "score": 0.007133263
     },
     "Help": {
-      "score": 0.005032139
-    },
-    "SpecifyName": {
-      "score": 0.004940808
-    },
-    "EntityTests": {
-      "score": 0.00384902442
+      "score": 0.00476914737
     },
     "Greeting": {
-      "score": 0.00304410583
+      "score": 0.00417633541
+    },
+    "Travel": {
+      "score": 0.00407868437
+    },
+    "SpecifyName": {
+      "score": 0.00352112949
+    },
+    "EntityTests": {
+      "score": 0.00260476768
     }
   },
   "entities": {
     "Address": [
       {
-        "number": [
-          98033
-        ],
         "State": [
           "wa"
+        ],
+        "number": [
+          98033
         ]
       }
     ]
@@ -52,57 +52,64 @@
     "query": "Please deliver it to 98033 WA",
     "topScoringIntent": {
       "intent": "Delivery",
-      "score": 0.939793348
+      "score": 0.9585951
     },
     "intents": [
       {
         "intent": "Delivery",
-        "score": 0.939793348
+        "score": 0.9585951
       },
       {
         "intent": "Weather.GetForecast",
-        "score": 0.017216783
+        "score": 0.0151362987
       },
       {
         "intent": "Cancel",
-        "score": 0.015085184
+        "score": 0.0146958372
       },
       {
         "intent": "None",
-        "score": 0.0123939738
+        "score": 0.009877626
       },
       {
         "intent": "search",
-        "score": 0.00845666
-      },
-      {
-        "intent": "Travel",
-        "score": 0.00613587769
+        "score": 0.007133263
       },
       {
         "intent": "Help",
-        "score": 0.005032139
-      },
-      {
-        "intent": "SpecifyName",
-        "score": 0.004940808
-      },
-      {
-        "intent": "EntityTests",
-        "score": 0.00384902442
+        "score": 0.00476914737
       },
       {
         "intent": "Greeting",
-        "score": 0.00304410583
+        "score": 0.00417633541
+      },
+      {
+        "intent": "Travel",
+        "score": 0.00407868437
+      },
+      {
+        "intent": "SpecifyName",
+        "score": 0.00352112949
+      },
+      {
+        "intent": "EntityTests",
+        "score": 0.00260476768
       }
     ],
     "entities": [
+      {
+        "entity": "wa",
+        "type": "State",
+        "startIndex": 27,
+        "endIndex": 28,
+        "score": 0.9781381
+      },
       {
         "entity": "98033 wa",
         "type": "Address",
         "startIndex": 21,
         "endIndex": 28,
-        "score": 0.95091337
+        "score": 0.9807632
       },
       {
         "entity": "98033",
@@ -113,13 +120,6 @@
           "subtype": "integer",
           "value": "98033"
         }
-      },
-      {
-        "entity": "wa",
-        "type": "State",
-        "startIndex": 27,
-        "endIndex": 28,
-        "score": 0.9635184
       }
     ],
     "compositeEntities": [
@@ -128,12 +128,12 @@
         "value": "98033 wa",
         "children": [
           {
-            "type": "builtin.number",
-            "value": "98033"
-          },
-          {
             "type": "State",
             "value": "wa"
+          },
+          {
+            "type": "builtin.number",
+            "value": "98033"
           }
         ]
       }

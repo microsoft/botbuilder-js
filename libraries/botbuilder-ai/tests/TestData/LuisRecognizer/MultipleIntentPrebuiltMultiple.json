@@ -2,34 +2,34 @@
   "text": "Please deliver February 2nd 2001 in room 201",
   "intents": {
     "Delivery": {
-      "score": 0.6995931
+      "score": 0.7287446
     },
     "None": {
-      "score": 0.0637846
+      "score": 0.0483125746
     },
     "Weather_GetForecast": {
-      "score": 0.0187540948
+      "score": 0.01991026
     },
     "search": {
-      "score": 0.0157310218
-    },
-    "EntityTests": {
-      "score": 0.008850135
-    },
-    "Travel": {
-      "score": 0.007951286
+      "score": 0.0128230788
     },
     "Cancel": {
-      "score": 0.00709740771
+      "score": 0.006956813
+    },
+    "EntityTests": {
+      "score": 0.00668122852
     },
     "SpecifyName": {
-      "score": 0.0060519157
+      "score": 0.005081289
+    },
+    "Travel": {
+      "score": 0.005067997
     },
     "Help": {
-      "score": 0.005001736
+      "score": 0.004835693
     },
     "Greeting": {
-      "score": 0.001166465
+      "score": 0.002140487
     }
   },
   "entities": {
@@ -105,48 +105,48 @@
     "query": "Please deliver February 2nd 2001 in room 201",
     "topScoringIntent": {
       "intent": "Delivery",
-      "score": 0.6995931
+      "score": 0.7287446
     },
     "intents": [
       {
         "intent": "Delivery",
-        "score": 0.6995931
+        "score": 0.7287446
       },
       {
         "intent": "None",
-        "score": 0.0637846
+        "score": 0.0483125746
       },
       {
         "intent": "Weather.GetForecast",
-        "score": 0.0187540948
+        "score": 0.01991026
       },
       {
         "intent": "search",
-        "score": 0.0157310218
-      },
-      {
-        "intent": "EntityTests",
-        "score": 0.008850135
-      },
-      {
-        "intent": "Travel",
-        "score": 0.007951286
+        "score": 0.0128230788
       },
       {
         "intent": "Cancel",
-        "score": 0.00709740771
+        "score": 0.006956813
+      },
+      {
+        "intent": "EntityTests",
+        "score": 0.00668122852
       },
       {
         "intent": "SpecifyName",
-        "score": 0.0060519157
+        "score": 0.005081289
+      },
+      {
+        "intent": "Travel",
+        "score": 0.005067997
       },
       {
         "intent": "Help",
-        "score": 0.005001736
+        "score": 0.004835693
       },
       {
         "intent": "Greeting",
-        "score": 0.001166465
+        "score": 0.002140487
       }
     ],
     "entities": [
