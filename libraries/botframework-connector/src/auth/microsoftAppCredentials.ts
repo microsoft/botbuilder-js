@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import * as msrest from 'ms-rest-js';
-// import * as request from 'request';
 import * as url from 'url';
 import { Constants } from './constants';
 
