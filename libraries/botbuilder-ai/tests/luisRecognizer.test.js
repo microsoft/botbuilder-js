@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 const nock = require('nock');
 const { TestAdapter, TurnContext } = require('botbuilder');
 const { LuisRecognizer } = require('../');
-const luisAppId = '6209a76f-e836-413b-ba92-a5772d1b2087';
+const luisAppId = '38330cad-f768-4619-96f9-69ea333e594b';
 
 // This can be any endpoint key for calling LUIS
 const endpointKey = process.env.LUISAPPKEY || "MockedKey";
@@ -125,10 +125,11 @@ describe('LuisRecognizer', function () {
 
     it('test built-ins composite1', done => TestJson("Composite1.json", res => done()));
     it('test built-ins composite2', done => TestJson("Composite2.json", res => done()));
+    it('test built-ins composite3', done => TestJson("Composite3.json", res => done()));
     it('test built-ins prebuilt', done => TestJson("Prebuilt.json", res => done()));
     it('test patterns', done => TestJson("Patterns.json", res => done()));
     it('should return single intent and a simple entity', done => {
-        TestJson("SingleIntentSimple.json", (res) => {
+        TestJson("SingleIntent_SimplyEntity.json", (res) => {
             assert(res);
             assert(res.text == 'My name is Emad');
             assert(Object.keys(res.intents).length == 1);
@@ -147,7 +148,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should return multiple intents and prebuilt entities with a single value', done => {
-        TestJson("MultipleIntentPrebuilt1.json", res => {
+        TestJson("MultipleIntents_PrebuiltEntity.json", res => {
             assert(res);
             assert(res.text == 'Please deliver February 2nd 2001');
             assert(res.intents);
@@ -175,7 +176,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should return multiple intents and prebuilt entities with multiple values', done => {
-        TestJson("MultipleIntentPrebuiltMultiple.json", res => {
+        TestJson("MultipleIntents_PrebuiltEntitiesWithMultiValues.json", res => {
             assert(res);
             assert(res.text == 'Please deliver February 2nd 2001 in room 201');
             assert(res.intents);
@@ -193,7 +194,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should return multiple intents and a list entity with a single value', done => {
-        TestJson("MultipleIntentList1.json", res => {
+        TestJson("MultipleIntents_ListEntityWithSingleValue.json", res => {
             assert(res);
             assert(res.text == 'I want to travel on united');
             assert(res.intents);
@@ -215,7 +216,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should return multiple intents and a list entity with multiple values', done => {
-        TestJson("MultipleIntentListMultiple.json", res => {
+        TestJson("MultipleIntents_ListEntityWithMultiValues.json", res => {
             assert(res);
             assert(res.text == 'I want to travel on DL');
             assert(res.intents);
@@ -239,7 +240,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should return multiple intents and a single composite entity', done => {
-        TestJson("MultipleIntentComposite1.json", res => {
+        TestJson("MultipleIntents_CompositeEntityModel.json", res => {
             assert(res);
             assert(res.text == 'Please deliver it to 98033 WA');
             assert(res.intents);
@@ -281,7 +282,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should cache multiple calls to recognize()', done => {
-        var expected = GetExpected(ExpectedPath("SingleIntentSimple.json"));
+        var expected = GetExpected(ExpectedPath("SingleIntent_SimplyEntity.json"));
         var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         var context = new TestContext({ text: expected.text });
         recognizer.recognize(context)
@@ -335,7 +336,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should emit trace info once per call to recognize', done => {
-        var expected = GetExpected(ExpectedPath("SingleIntentSimple.json"));
+        var expected = GetExpected(ExpectedPath("SingleIntent_SimplyEntity.json"));
         var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         var context = new TestContext({ text: expected.text });
         recognizer.recognize(context).then(res => {

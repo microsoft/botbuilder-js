@@ -2,34 +2,34 @@
   "text": "I want to travel on DL",
   "intents": {
     "Travel": {
-      "score": 0.646017
-    },
-    "Weather_GetForecast": {
-      "score": 0.01369915
+      "score": 0.6166883
     },
     "None": {
-      "score": 0.0121540092
+      "score": 0.0157425776
     },
-    "search": {
-      "score": 0.0115603227
+    "Weather_GetForecast": {
+      "score": 0.0149635375
     },
     "Delivery": {
-      "score": 0.01030324
+      "score": 0.0108271679
     },
     "Help": {
-      "score": 0.009497096
-    },
-    "SpecifyName": {
-      "score": 0.009376918
+      "score": 0.009421702
     },
     "Cancel": {
-      "score": 0.008986873
+      "score": 0.008904019
+    },
+    "search": {
+      "score": 0.007940317
+    },
+    "SpecifyName": {
+      "score": 0.00564856129
     },
     "Greeting": {
-      "score": 0.00274561835
+      "score": 0.00414359
     },
     "EntityTests": {
-      "score": 0.002676612
+      "score": 0.00233200123
     }
   },
   "entities": {
@@ -71,48 +71,48 @@
     "query": "I want to travel on DL",
     "topScoringIntent": {
       "intent": "Travel",
-      "score": 0.646017
+      "score": 0.6166883
     },
     "intents": [
       {
         "intent": "Travel",
-        "score": 0.646017
-      },
-      {
-        "intent": "Weather.GetForecast",
-        "score": 0.01369915
+        "score": 0.6166883
       },
       {
         "intent": "None",
-        "score": 0.0121540092
+        "score": 0.0157425776
       },
       {
-        "intent": "search",
-        "score": 0.0115603227
+        "intent": "Weather.GetForecast",
+        "score": 0.0149635375
       },
       {
         "intent": "Delivery",
-        "score": 0.01030324
+        "score": 0.0108271679
       },
       {
         "intent": "Help",
-        "score": 0.009497096
-      },
-      {
-        "intent": "SpecifyName",
-        "score": 0.009376918
+        "score": 0.009421702
       },
       {
         "intent": "Cancel",
-        "score": 0.008986873
+        "score": 0.008904019
+      },
+      {
+        "intent": "search",
+        "score": 0.007940317
+      },
+      {
+        "intent": "SpecifyName",
+        "score": 0.00564856129
       },
       {
         "intent": "Greeting",
-        "score": 0.00274561835
+        "score": 0.00414359
       },
       {
         "intent": "EntityTests",
-        "score": 0.002676612
+        "score": 0.00233200123
       }
     ],
     "entities": [
