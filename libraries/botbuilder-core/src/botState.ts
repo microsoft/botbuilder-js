@@ -135,22 +135,24 @@ export class BotState implements PropertyManager {
      * Clears the current state object for a turn.
      *
      * @remarks
-     * The cleared state object will not be persisted until [saveChanges()](#savechanges) has
-     * been called.
+     * The underlying storage object is deleted so there's no need to call [saveChanges()](#savechanges)
+     * unless changes are made to the state object after its been cleared.
      *
      * ```JavaScript
      * await botState.clear(context);
-     * await botState.saveChanges(context);
      * ```
      * @param context Context for current turn of conversation with the user.
      */
-    public clear(context: TurnContext): void {
-        // We leave the change hash un-touched which will force the cleared state changes to get persisted.
-        const cached: any = context.turnState.get(this.stateKey) as CachedBotState;
-        if (cached) {
-            cached.state = {};
-            context.turnState.set(this.stateKey, cached);
-        }
+    public clear(context: TurnContext): Promise<void> {
+        return Promise.resolve(this.storageKey(context)).then((key: string) => {
+            // Delete any existing cache object.
+            return this.storage.delete([key]).then(() => {
+                // Update cached value
+                const cached = { state: { eTag: '*' }, hash: '' };
+                cached.hash = calculateChangeHash(cached.state);
+                context.turnState.set(this.stateKey, cached);
+            });
+        });        
     }
 
     /**
