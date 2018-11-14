@@ -21,8 +21,7 @@ export class OpenIdMetadata {
 
     public async getKey(keyId: string): Promise<IOpenIdMetadataKey | null> {
         // If keys are more than 5 days old, refresh them
-        const now: number = new Date().getTime();
-        if (this.lastUpdated < (now - 1000 * 60 * 60 * 24 * 5)) {
+        if (this.lastUpdated < (Date.now() - 1000 * 60 * 60 * 24 * 5)) {
             try {
                 await this.refreshCache();
                 

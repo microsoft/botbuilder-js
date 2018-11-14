@@ -101,7 +101,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
             const oAuthToken: OAuthResponse = MicrosoftAppCredentials.cache.get(this.tokenCacheKey);
             if (oAuthToken) {
                 // we have the token. Is it valid?
-                if (oAuthToken.expiration_time > new Date(Date.now())) {
+                if (oAuthToken.expiration_time > Date.now()) {
                     return oAuthToken.access_token;
                 }
             }
@@ -112,21 +112,38 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
         // 2. We have it, but it's expired
         // 3. We don't have it in the cache.
         const res: Response = await this.refreshToken();
+        this.refreshingToken = null;
 
         let oauthResponse: OAuthResponse;
         if (res.ok) {
-            oauthResponse = await res.json();
-            // Subtract 5 minutes from expires_in so they'll we'll get a
-            // new token before it expires.
-            oauthResponse.expiration_time = new Date(Date.now() + (oauthResponse.expires_in * 1000) - 300000);
+            let access_token: string;
+            
+            // `res` is equalivent to the results from the cached promise `this.refreshingToken`.
+            // Because the promise has been cached, we need to see if the body has been read.
+            // If the body has not been read yet, we can call res.json() to get the access_token.
+            // If the body has been read, the OAuthResponse for that call should have been cached already,
+            // in which case we can return the cache from there. If a cached OAuthResponse does not exist,
+            // call getToken() again to retry the authentication process.
+            if (!res.bodyUsed){
+                oauthResponse = await res.json();
+                // Subtract 5 minutes from expires_in so they'll we'll get a
+                // new token before it expires.
+                oauthResponse.expiration_time = Date.now() + (oauthResponse.expires_in * 1000) - 300000;
+                MicrosoftAppCredentials.cache.set(this.tokenCacheKey, oauthResponse);
+                access_token = oauthResponse.access_token;
+            } else {
+                const oAuthToken: OAuthResponse = MicrosoftAppCredentials.cache.get(this.tokenCacheKey);
+                if (oAuthToken) {
+                    access_token = oAuthToken.access_token;
+                } else {
+                    return await this.getToken();
+                }
+            }
+            return access_token;
         } else {
-            this.refreshingToken = null;
             throw new Error(res.statusText);
         }
 
-        MicrosoftAppCredentials.cache.set(this.tokenCacheKey, oauthResponse);
-        this.refreshingToken = null;
-        return oauthResponse.access_token;
     }
 
     private async refreshToken(): Promise<Response> {
@@ -157,5 +174,5 @@ interface OAuthResponse {
     token_type: string;
     expires_in: number;
     access_token: string;
-    expiration_time: Date;
+    expiration_time: number;
 }
