@@ -101,7 +101,7 @@ adapter.use(
     new LanguageGenerationMiddleware(lgEntityAccessor, {
         applicationId: process.env.lgAppId,
         endpointKey: process.env.lgEndpointKey,
-        azureRegion: 'westus'
+        azureRegion: process.env.lgEndpointRegion
     })
 );
 // Create the main dialog.
