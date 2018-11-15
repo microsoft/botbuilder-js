@@ -94,7 +94,7 @@ export module EmulatorValidation {
      * A token issued by the Bot Framework will FAIL this check. Only Emulator tokens will pass.
      * @param  {string} authHeader The raw HTTP header in the format: "Bearer [longString]"
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
-     * @param  {string} channelService The channelService value that distinguishes public Azure from US Government Azure
+     * @param  {string} channelService The channelService value that distinguishes public Azure from US Government Azure.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
     export async function authenticateEmulatorToken(
