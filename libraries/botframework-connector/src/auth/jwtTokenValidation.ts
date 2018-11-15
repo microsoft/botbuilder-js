@@ -60,7 +60,7 @@ export module JwtTokenValidation {
         const usingEmulator: boolean = EmulatorValidation.isTokenFromEmulator(authHeader);
 
         if (usingEmulator) {
-            return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelId);
+            return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelService, channelId);
         }
 
         if (isPublicAzure(channelService)) {
