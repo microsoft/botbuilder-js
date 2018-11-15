@@ -115,9 +115,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
         this.refreshingToken = null;
 
         let oauthResponse: OAuthResponse;
-        if (res.ok) {
-            let access_token: string;
-            
+        if (res.ok) {          
             // `res` is equalivent to the results from the cached promise `this.refreshingToken`.
             // Because the promise has been cached, we need to see if the body has been read.
             // If the body has not been read yet, we can call res.json() to get the access_token.
@@ -130,16 +128,15 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
                 // new token before it expires.
                 oauthResponse.expiration_time = Date.now() + (oauthResponse.expires_in * 1000) - 300000;
                 MicrosoftAppCredentials.cache.set(this.tokenCacheKey, oauthResponse);
-                access_token = oauthResponse.access_token;
+                return oauthResponse.access_token;
             } else {
                 const oAuthToken: OAuthResponse = MicrosoftAppCredentials.cache.get(this.tokenCacheKey);
                 if (oAuthToken) {
-                    access_token = oAuthToken.access_token;
+                    return oAuthToken.access_token;
                 } else {
                     return await this.getToken();
                 }
             }
-            return access_token;
         } else {
             throw new Error(res.statusText);
         }
