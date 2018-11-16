@@ -25,8 +25,8 @@
     "base64url": "^3.0.0",
     "botframework-schema": "^4.0.0",
     "jsonwebtoken": "8.0.1",
-    "ms-rest-azure-js": "^1.0.176",
-    "ms-rest-js": "^1.0.455",
+    "ms-rest-azure-js": "1.0.176",
+    "ms-rest-js": "1.0.455",
     "request": "^2.87.0",
     "rsa-pem-from-mod-exp": "^0.8.4"
   },
