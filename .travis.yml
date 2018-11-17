@@ -29,4 +29,4 @@ after_success:
   
 env:
   global:
-  - Version=4.1.5
+  - Version=4.1.6
