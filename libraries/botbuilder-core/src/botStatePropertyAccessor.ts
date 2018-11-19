@@ -91,7 +91,9 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
         }
     }
 
-    public async get(context: TurnContext, defaultValue?: T): Promise<T|undefined> {
+    public async get(context: TurnContext): Promise<T|undefined>;
+    public async get(context: TurnContext, defaultValue: T): Promise<T>;
+    public async get(context: TurnContext, defaultValue?: T): Promise<T> {
         const obj: any = await this.state.load(context);
         if (!obj.hasOwnProperty(this.name) && defaultValue !== undefined) {
             const clone: any =
