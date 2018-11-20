@@ -173,7 +173,7 @@ export class QnAMaker {
     public answer(context: TurnContext): Promise<boolean> {
         const { top, scoreThreshold } = this.options;
 
-        return this.generateAnswer(context.activity.text, top, scoreThreshold).then((answers: QnAMakerResult[]) => {
+        return this.generateAnswer(context, top, scoreThreshold).then((answers: QnAMakerResult[]) => {
             return this.emitTraceInfo(context, answers).then(() => {
                 if (answers.length > 0) {
                     return context.sendActivity({ text: answers[0].answer, type: 'message' }).then(() => true);
@@ -193,18 +193,25 @@ export class QnAMaker {
      * @param top (Optional) number of answers to return. Defaults to a value of `1`.
      * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
      */
-    public generateAnswer(question: string|undefined, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]> {
+    public generateAnswer(context: TurnContext, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]> {
+        const question = context.activity.text;
         const q: string = question ? question.trim() : '';
         if (q.length > 0) {
-            return this.callService(this.endpoint, question, typeof top === 'number' ? top : 1).then((answers: QnAMakerResult[]) => {
-                const minScore: number = typeof scoreThreshold === 'number' ? scoreThreshold : 0.001;
+            return this.callService(this.endpoint, question, typeof top === 'number' ? top : 1)
+                .then((answers: QnAMakerResult[]) => {
+                    const minScore: number = typeof scoreThreshold === 'number' ? scoreThreshold : 0.001;
 
-                return answers.filter(
-                    (ans: QnAMakerResult) => ans.score >= minScore
-                ).sort(
-                    (a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score
-                );
-            });
+                    return answers.filter(
+                        (ans: QnAMakerResult) => ans.score >= minScore
+                    ).sort(
+                        (a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score
+                    );
+                })
+                .then((qnaResults: QnAMakerResult[]) => {
+                    this.emitTraceInfo(context, qnaResults);
+                    
+                    return qnaResults;
+                });
         }
 
         return Promise.resolve([]);
