@@ -334,4 +334,19 @@ describe(`TurnContext`, function () {
             });
         });
     });
+
+    it(`should get a conversation reference from a sent activity using getReplyConversationReference.`, function(done) {
+
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        context.sendActivity({text: 'test'}).then((reply) => {
+            assert(reply.id,'reply has an id');
+
+            const reference = TurnContext.getReplyConversationReference(context.activity, reply);
+
+            assert(reference.activityId,'reference has an activity id');
+            assert(reference.activityId === reply.id,'reference id matches outgoing reply id');
+            done();
+        });
+    });
+
 });

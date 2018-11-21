@@ -15,7 +15,7 @@ function base64_encode(file) {
   // read binary data
   var bitmap = fs.readFileSync(file);
   // convert binary data to base64 encoded string
-  return new Buffer(bitmap);
+  return Buffer.from(bitmap);
 }
 
 const BotConnector = require('../lib');

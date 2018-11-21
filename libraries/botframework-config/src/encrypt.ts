@@ -32,7 +32,7 @@ export function encryptString(plainText: string, secret: string): string {
         throw new Error('you must pass a secret');
     }
 
-    const keyBytes: Buffer = new Buffer(secret, 'base64');
+    const keyBytes: Buffer = Buffer.from(secret, 'base64');
 
     // Generates 16 byte cryptographically strong pseudo-random data as IV
     // https://nodejs.org/api/crypto.html#crypto_crypto_randombytes_size_callback
@@ -72,8 +72,8 @@ export function decryptString(encryptedValue: string, secret: string): string {
     const ivText: string = parts[0];
     const encryptedText: string = parts[1];
 
-    const ivBytes: Buffer = new Buffer(ivText, 'base64');
-    const keyBytes: Buffer = new Buffer(secret, 'base64');
+    const ivBytes: Buffer = Buffer.from(ivText, 'base64');
+    const keyBytes: Buffer = Buffer.from(secret, 'base64');
 
     if (ivBytes.length !== 16) {
         throw new Error('The encrypted value is not a valid format');

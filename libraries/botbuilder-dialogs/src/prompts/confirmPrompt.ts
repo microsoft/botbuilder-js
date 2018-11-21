@@ -83,17 +83,13 @@ export class ConfirmPrompt extends Prompt<boolean> {
     }
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
-        // Determine locale
-        let locale: string = context.activity.locale || this.defaultLocale;
-        if (!locale || !ConfirmPrompt.defaultChoiceOptions.hasOwnProperty(locale)) {
-            locale = 'en-us';
-        }
 
         // Format prompt to send
         let prompt: Partial<Activity>;
         const channelId: string = context.activity.channelId;
-        const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ConfirmPrompt.defaultChoiceOptions[locale];
-        const choices: any[] = this.confirmChoices || ConfirmPrompt.defaultConfirmChoices[locale];
+        const culture: string = this.determineCulture(context.activity);
+        const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ConfirmPrompt.defaultChoiceOptions[culture];
+        const choices: any[] = this.confirmChoices || ConfirmPrompt.defaultConfirmChoices[culture];
         if (isRetry && options.retryPrompt) {
             prompt = this.appendChoices(options.retryPrompt, channelId, choices, this.style, choiceOptions);
         } else {
@@ -108,17 +104,17 @@ export class ConfirmPrompt extends Prompt<boolean> {
         const result: PromptRecognizerResult<boolean> = { succeeded: false };
         const activity: Activity = context.activity;
         const utterance: string = activity.text;
-        const locale: string = activity.locale || this.defaultLocale || 'en-us';
-        const results: any = Recognizers.recognizeBoolean(utterance, locale);
+        const culture: string = this.determineCulture(context.activity);
+        const results: any = Recognizers.recognizeBoolean(utterance, culture);
         if (results.length > 0 && results[0].resolution) {
             result.succeeded = true;
             result.value = results[0].resolution.value;
         } else {
             // If the prompt text was sent to the user with numbers, the prompt should recognize number choices.
-            const choiceOptions = this.choiceOptions || ConfirmPrompt.defaultChoiceOptions[locale];
+            const choiceOptions = this.choiceOptions || ConfirmPrompt.defaultChoiceOptions[culture];
 
             if (typeof choiceOptions.includeNumbers !== 'boolean' || choiceOptions.includeNumbers) {
-                const confirmChoices = this.confirmChoices || ConfirmPrompt.defaultConfirmChoices[locale];
+                const confirmChoices = this.confirmChoices || ConfirmPrompt.defaultConfirmChoices[culture];
                 const choices = [confirmChoices[0], confirmChoices[1]];
                 const secondOrMoreAttemptResults = recognizeChoices(utterance, choices);
                 if (secondOrMoreAttemptResults.length > 0) {
@@ -129,5 +125,13 @@ export class ConfirmPrompt extends Prompt<boolean> {
         }
 
         return result;
+    }
+
+    private determineCulture(activity: Activity): string {
+        let culture: string = activity.locale || this.defaultLocale;
+        if (!culture || !ConfirmPrompt.defaultChoiceOptions.hasOwnProperty(culture)) {
+            culture = 'en-us';
+        }
+        return culture;
     }
 }

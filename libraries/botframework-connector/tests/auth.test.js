@@ -7,78 +7,6 @@ describe('Bot Framework Connector - Auth Tests', function () {
 
     describe('Connector Tokens', function () {
         this.timeout(20000);
-        xdescribe('AuthHeader', function () {
-
-            it('with correct ChannelId should validate', function (done) {
-                Connector.ChannelValidation.ToBotFromChannelTokenValidationParameters.ignoreExpiration = true;
-                var header = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IkdDeEFyWG9OOFNxbzdQd2VBNy16NjVkZW5KUSIsIng1dCI6IkdDeEFyWG9OOFNxbzdQd2VBNy16NjVkZW5KUSJ9.eyJzZXJ2aWNldXJsIjoiaHR0cHM6Ly93ZWJjaGF0LmJvdGZyYW1ld29yay5jb20vIiwiaXNzIjoiaHR0cHM6Ly9hcGkuYm90ZnJhbWV3b3JrLmNvbSIsImF1ZCI6IjM5NjE5YTU5LTVhMGMtNGY5Yi04N2M1LTgxNmM2NDhmZjM1NyIsImV4cCI6MTUxNjczNzUyMCwibmJmIjoxNTE2NzM2OTIwfQ.TBgpxbDS-gx1wm7ldvl7To-igfskccNhp-rU1mxUMtGaDjnsU--usH4OXZfzRsZqMlnXWXug_Hgd_qOr5RH8wVlnXnMWewoZTSGZrfp8GOd7jHF13Gz3F1GCl8akc3jeK0Ppc8R_uInpuUKa0SopY0lwpDclCmvDlz4PN6yahHkt_666k-9UGmRt0DDkxuYjbuYG8EDZxyyAhr7J6sFh3yE2UGRpJjRDB4wXWqv08Cp0Gn9PAW2NxOyN8irFzZH5_YZqE3DXDAYZ_IOLpygXQR0O-bFIhLDVxSz6uCeTBRjh8GU7XJ_yNiRDoaby7Rd2IfRrSnvMkBRsB8MsWN8oXg';
-                var credentials = new Connector.SimpleCredentialProvider('39619a59-5a0c-4f9b-87c5-816c648ff357', '');
-                Connector.JwtTokenValidation.validateAuthHeader(header, credentials, undefined, 'webchat', 'https://webchat.botframework.com/')
-                    .then(claims => {
-                        assert(claims.isAuthenticated);
-                        assert.notEqual(claims.claims.length, 0);
-                    })
-                    .catch(err => done(err))
-                    .then(() => {
-                        Connector.ChannelValidation.ToBotFromChannelTokenValidationParameters.ignoreExpiration = false;
-                    });
-            });
-
-            it('with incorrect ChannelId should not validate', function (done) {
-                Connector.ChannelValidation.ToBotFromChannelTokenValidationParameters.ignoreExpiration = true;
-                var header = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IkdDeEFyWG9OOFNxbzdQd2VBNy16NjVkZW5KUSIsIng1dCI6IkdDeEFyWG9OOFNxbzdQd2VBNy16NjVkZW5KUSJ9.eyJzZXJ2aWNldXJsIjoiaHR0cHM6Ly93ZWJjaGF0LmJvdGZyYW1ld29yay5jb20vIiwiaXNzIjoiaHR0cHM6Ly9hcGkuYm90ZnJhbWV3b3JrLmNvbSIsImF1ZCI6IjM5NjE5YTU5LTVhMGMtNGY5Yi04N2M1LTgxNmM2NDhmZjM1NyIsImV4cCI6MTUxNjczNzUyMCwibmJmIjoxNTE2NzM2OTIwfQ.TBgpxbDS-gx1wm7ldvl7To-igfskccNhp-rU1mxUMtGaDjnsU--usH4OXZfzRsZqMlnXWXug_Hgd_qOr5RH8wVlnXnMWewoZTSGZrfp8GOd7jHF13Gz3F1GCl8akc3jeK0Ppc8R_uInpuUKa0SopY0lwpDclCmvDlz4PN6yahHkt_666k-9UGmRt0DDkxuYjbuYG8EDZxyyAhr7J6sFh3yE2UGRpJjRDB4wXWqv08Cp0Gn9PAW2NxOyN8irFzZH5_YZqE3DXDAYZ_IOLpygXQR0O-bFIhLDVxSz6uCeTBRjh8GU7XJ_yNiRDoaby7Rd2IfRrSnvMkBRsB8MsWN8oXg';
-                var credentials = new Connector.SimpleCredentialProvider('39619a59-5a0c-4f9b-87c5-816c648ff357', '');
-                Connector.JwtTokenValidation.validateAuthHeader(header, credentials, undefined, 'foo', 'https://webchat.botframework.com/')
-                    .then(claims => done(new Error('Expected validation to fail.')))
-                    .catch(err => done())
-                    .then(() => {
-                        Connector.ChannelValidation.ToBotFromChannelTokenValidationParameters.ignoreExpiration = false;
-                    });
-            });
-
-            xit('with correct AppId and ServiceUrl should validate', function (done) {
-                var tokenGenerator = new Connector.MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
-                tokenGenerator.getToken(true).then(token => {
-                    var header = `Bearer ${ token }`;
-                    var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '');
-                    Connector.JwtTokenValidation.validateAuthHeader(header, credentials, undefined, '', 'https://webchat.botframework.com/')
-                        .then(claims => {
-                            assert(claims.isAuthenticated);
-                            assert.notEqual(claims.claims.length, 0);
-                            done();
-                        })
-                        .catch(err => done(err));
-                });
-            });
-
-            xit('with BotAppId differs should not validate', function (done) {
-                var tokenGenerator = new Connector.MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
-                tokenGenerator.getToken(true).then(token => {
-                    var header = `Bearer ${ token }`;
-                    var credentials = new Connector.SimpleCredentialProvider('00000000-0000-0000-0000-000000000000', '');
-                    Connector.JwtTokenValidation.validateAuthHeader(header, credentials, undefined, '', '')
-                        .then(claims => done(new Error('Expected validation to fail.')))
-                        .catch(err => {
-                            assert(!!err);
-                            done();
-                        });
-                });
-            });
-
-            xit('with noCredentials should not validate', function (done) {
-                var tokenGenerator = new Connector.MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
-                tokenGenerator.getToken(true).then(token => {
-                    var header = `Bearer ${ token }`;
-                    var credentials = new Connector.SimpleCredentialProvider('', '');
-                    Connector.JwtTokenValidation.validateAuthHeader(header, credentials, undefined, '', '')
-                        .then(claims => done(new Error('Expected validation to fail.')))
-                        .catch(err => {
-                            assert(!!err);
-                            done();
-                        });
-                });
-            });
-        });
 
         describe('EmptyHeader', function () {
             it('Bot with noCredentials should throw', async () => {
@@ -105,6 +33,18 @@ describe('Bot Framework Connector - Auth Tests', function () {
                 const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 const header = `Bearer ${ await tokenGenerator.getToken(true) }`;
                 const credentials = new SimpleCredentialProvider('00000000-0000-0000-0000-000000000000', '');
+                try {
+                    const claims = await JwtTokenValidation.validateAuthHeader(header, credentials, undefined, '', '');
+                    throw new Error('Expected validation to fail.');
+                } catch (err) {
+                    assert(err.message.substring('Unauthorized. Invalid AppId passed on token:'), `unexpected error thrown: "${ err.message }"`);
+                }
+            });
+
+            it('MsaHeader Bot AppId missing should not validate', async () => {
+                const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                const header = `Bearer ${ await tokenGenerator.getToken(true) }`;
+                const credentials = new SimpleCredentialProvider('', '');
                 try {
                     const claims = await JwtTokenValidation.validateAuthHeader(header, credentials, undefined, '', '');
                     throw new Error('Expected validation to fail.');
@@ -203,13 +143,12 @@ describe('Bot Framework Connector - Auth Tests', function () {
                 }
             });
 
-            // Needs further investigation as a TypeError is thrown. Not a simple Error with custom message.
             it('validateIdentity should fail if no identity', async () => {
                 try {
                     const claims = await ChannelValidation.validateIdentity(undefined, undefined);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
-                    assert(!!err);
+                    assert(err.message === 'Unauthorized. Is not authenticated', `unexpected error thrown: "${ err.message }"`);
                 }
             });
 
