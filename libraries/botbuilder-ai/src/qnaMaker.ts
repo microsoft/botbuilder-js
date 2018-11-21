@@ -170,48 +170,72 @@ export class QnAMaker {
      * returned the first one will be delivered.
      * @param context Context for the current turn of conversation with the user.
      */
-    public answer(context: TurnContext): Promise<boolean> {
+    public async answer(context: TurnContext): Promise<boolean> {
         const { top, scoreThreshold } = this.options;
+        const answers = await this.generateAnswer(context.activity.text, top, scoreThreshold);
 
-        return this.generateAnswer(context, top, scoreThreshold).then((answers: QnAMakerResult[]) => {
-            return this.emitTraceInfo(context, answers).then(() => {
-                if (answers.length > 0) {
-                    return context.sendActivity({ text: answers[0].answer, type: 'message' }).then(() => true);
-                } else {
-                    return Promise.resolve(false);
-                }
-            });
-        });
+        await this.emitTraceInfo(context, answers);
+
+        if (answers.length > 0) {
+            await context.sendActivity({ text: answers[0].answer, type: 'message' });
+
+            return true;
+        } 
+        
+        return Promise.resolve(false);
+    }
+    
+    /**
+     * Calls the QnA Maker service to generate answer(s) for a question
+     * 
+     * @remarks
+     * Returns an array of answers sorted by score with the top scoring answer returned first.
+     * @param context The Turn Context that contains the user question to be queried against your knowledge base.
+     * @param top (Optional) number of answers to return. Defaults to a value of `1`.
+     * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
+     */
+    public async getAnswers(context: TurnContext, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]> {
+        const question: string = context ? context.activity.text : '';
+        const q: string = question ? question.trim() : '';
+
+        if (q.length > 0) {
+            const answers = await this.callService(this.endpoint, question, typeof top === 'number' ? top : 1);
+            const minScore: number = typeof scoreThreshold === 'number' ? scoreThreshold : 0.001;
+            const sortedQnaAnswers = answers.filter(
+                (ans: QnAMakerResult) => ans.score >= minScore
+            ).sort(
+                (a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score
+            );
+            
+            this.emitTraceInfo(context, sortedQnaAnswers);
+
+            return sortedQnaAnswers;
+        }
+
+        return Promise.resolve([]);
     }
 
     /**
      * Calls the QnA Maker service to generate answer(s) for a question.
-     *
+     * @deprecated  Use updated version QnAMaker.getAnswers() to include QnAMaker Trace for calls to QnA Maker Service.
      * @remarks
      * Returns an array of answers sorted by score with the top scoring answer returned first.
      * @param question The question to answer.
      * @param top (Optional) number of answers to return. Defaults to a value of `1`.
      * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
      */
-    public generateAnswer(context: TurnContext, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]> {
-        const question = context.activity.text;
+    public async generateAnswer(question: string|undefined, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]> {
         const q: string = question ? question.trim() : '';
-        if (q.length > 0) {
-            return this.callService(this.endpoint, question, typeof top === 'number' ? top : 1)
-                .then((answers: QnAMakerResult[]) => {
-                    const minScore: number = typeof scoreThreshold === 'number' ? scoreThreshold : 0.001;
 
-                    return answers.filter(
-                        (ans: QnAMakerResult) => ans.score >= minScore
-                    ).sort(
-                        (a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score
-                    );
-                })
-                .then((qnaResults: QnAMakerResult[]) => {
-                    this.emitTraceInfo(context, qnaResults);
-                    
-                    return qnaResults;
-                });
+        if (q.length > 0) {
+            const answers = await this.callService(this.endpoint, question, typeof top === 'number' ? top : 1);
+            const minScore: number = typeof scoreThreshold === 'number' ? scoreThreshold : 0.001;
+
+            return answers.filter(
+                (ans: QnAMakerResult) => ans.score >= minScore
+            ).sort(
+                (a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score
+            );
         }
 
         return Promise.resolve([]);
@@ -223,16 +247,17 @@ export class QnAMaker {
      * @remarks
      * This is exposed to enable better unit testing of the service.
      */
-    protected callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResult[]> {
+    protected async callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResult[]> {
         const url: string = `${endpoint.host}/knowledgebases/${endpoint.knowledgeBaseId}/generateanswer`;
         const headers: any = {};
         if (endpoint.host.endsWith('v2.0') || endpoint.host.endsWith('v3.0')) {
             headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
-        } else {
+        } else 
+        {
             headers.Authorization = `EndpointKey ${endpoint.endpointKey}`;
         }
 
-        return request({
+        const qnaResult = await request({
             url: url,
             method: 'POST',
             headers: headers,
@@ -240,17 +265,18 @@ export class QnAMaker {
                 question: question,
                 top: top
             }
-        }).then((result: any) => {
-            return result.answers.map((ans: any) => {
-                ans.score = ans.score / 100;
-                ans.answer = htmlentities.decode(ans.answer);
-                if (ans.qnaId) {
-                    ans.id = ans.qnaId;
-                    delete ans.qnaId;
-                }
+        });
 
-                return ans as QnAMakerResult;
-            });
+        return qnaResult.answers.map((ans: any) => {
+            ans.score = ans.score / 100;
+            ans.answer = htmlentities.decode(ans.answer);
+
+            if (ans.qnaId) {
+                ans.id = ans.qnaId;
+                delete ans.qnaId;
+            }
+
+            return ans as QnAMakerResult;
         });
     }
 
