@@ -87,7 +87,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
         // Format prompt to send
         let prompt: Partial<Activity>;
         const channelId: string = context.activity.channelId;
-        const culture = this.DetermineCulture(context.activity);
+        const culture: string = this.determineCulture(context.activity);
         const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ConfirmPrompt.defaultChoiceOptions[culture];
         const choices: any[] = this.confirmChoices || ConfirmPrompt.defaultConfirmChoices[culture];
         if (isRetry && options.retryPrompt) {
@@ -104,7 +104,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
         const result: PromptRecognizerResult<boolean> = { succeeded: false };
         const activity: Activity = context.activity;
         const utterance: string = activity.text;
-        const culture = this.DetermineCulture(context.activity);
+        const culture: string = this.determineCulture(context.activity);
         const results: any = Recognizers.recognizeBoolean(utterance, culture);
         if (results.length > 0 && results[0].resolution) {
             result.succeeded = true;
@@ -127,7 +127,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
         return result;
     }
 
-    private DetermineCulture(activity: Activity) : string {
+    private determineCulture(activity: Activity): string {
         let culture: string = activity.locale || this.defaultLocale;
         if (!culture || !ConfirmPrompt.defaultChoiceOptions.hasOwnProperty(culture)) {
             culture = 'en-us';
