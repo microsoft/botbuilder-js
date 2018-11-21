@@ -6,6 +6,8 @@
  * Licensed under the MIT License.
  */
 import { ActivityTypes } from 'botbuilder-core';
+import { TurnContext } from 'botbuilder-core';
+import { DialogInstance } from './dialog';
 import { Dialog, DialogReason, DialogTurnResult } from './dialog';
 import { DialogContext } from './dialogContext';
 import { WaterfallStepContext } from './waterfallStepContext';
@@ -174,6 +176,20 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * @param step Context object for the waterfall step to execute.
      */
     protected async onStep(step: WaterfallStepContext<O>): Promise<DialogTurnResult> {
+        // Log Waterfall Step event. Each event has a distinct name to hook up
+        // to the Application Insights funnel.
+        var stepName = "";
+        try {
+            stepName = this.steps[step.index].name;
+        } finally {
+            if (stepName === undefined || stepName === '') {
+                stepName = "Step" + (step.index + 1) + "of" + (this.steps.length);
+            }
+        }
+
+        var eventName = this.id + "." + stepName;
+        var properties = { "DialogId": this.id };
+        this.telemetryClient.trackEvent(eventName, properties);
         return await this.steps[step.index](step);
     }
 
@@ -207,6 +223,25 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
             return await dc.endDialog(result);
         }
     }
+
+    /**
+     * Called when the dialog is ending.
+     *
+     * @param context Context for the current turn of conversation.
+     * @param instance The instance of the current dialog.
+     * @param reason The reason the dialog is ending.
+     */
+    protected async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason) {
+        if (reason === DialogReason.cancelCalled)
+        {
+            var properties = 
+            {
+                 "DialogId": this.id,
+            };
+            this.telemetryClient.trackEvent("WaterfallCancel", properties);
+        }
+    }
+
 }
 
 /**
