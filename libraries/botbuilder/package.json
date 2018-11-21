@@ -2,7 +2,7 @@
   "name": "botbuilder",
   "author": "Microsoft Corp.",
   "description": "Bot Builder is a framework for building rich bots on virtually any platform.",
-  "version": "4.0.0",
+  "version": "4.1.6",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -23,8 +23,8 @@
     "@types/filenamify": "^2.0.1",
     "@types/node": "^9.3.0",
     "async-file": "^2.0.2",
-    "botbuilder-core": "^4.0.0",
-    "botframework-connector": "^4.0.0",
+    "botbuilder-core": "~4.1.6",
+    "botframework-connector": "~4.1.6",
     "filenamify": "^2.0.0",
     "rimraf": "^2.6.2"
   },
