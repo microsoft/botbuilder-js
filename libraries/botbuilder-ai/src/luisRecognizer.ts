@@ -489,9 +489,9 @@ export class LuisRecognizer {
             }
         }
 
-        this.addProperty(entitiesAndMetadata, compositeEntity.parentType, childrenEntites);
+        this.addProperty(entitiesAndMetadata, this.getNormalizedEntityName(compositeEntityMetadata), childrenEntites);
         if (verbose) {
-            this.addProperty(entitiesAndMetadata.$instance, compositeEntity.parentType, childrenEntitiesMetadata);
+            this.addProperty(entitiesAndMetadata.$instance, this.getNormalizedEntityName(compositeEntityMetadata), childrenEntitiesMetadata);
         }
 
         return filteredEntities;

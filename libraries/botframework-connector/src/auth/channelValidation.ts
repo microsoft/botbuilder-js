@@ -84,7 +84,7 @@ export module ChannelValidation {
         identity: ClaimsIdentity,
         credentials: ICredentialProvider
     ): Promise<ClaimsIdentity> {
-        if (!identity.isAuthenticated) {
+        if (!identity || !identity.isAuthenticated) {
             // The token is in some way invalid. Not Authorized.
             throw new Error('Unauthorized. Is not authenticated');
         }

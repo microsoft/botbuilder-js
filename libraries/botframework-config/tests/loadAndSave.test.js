@@ -5,6 +5,7 @@ let path = require('path');
 
 // do not save over testbot
 const testBotPath = require.resolve("./test.bot");
+const govTestBotPath = require.resolve("./govTest.bot");
 const legacyBotPath = require.resolve("./legacy.bot");
 const saveBotPath = testBotPath.replace("test.bot", "save.bot");
 
@@ -116,6 +117,32 @@ describe("LoadAndSaveTests", () => {
         }
         config2.ClearSecret();
         await config2.saveAs(saveBotPath, secret);
+    });
+
+    it("LoadAndVerifyChannelServiceSync", async () => {
+        var config = bf.BotConfiguration.loadSync(testBotPath);
+        for (let i = 0; i < config.services.length; i++) {
+            switch (config.services[i].type) {
+                case bf.ServiceTypes.Endpoint:
+                {
+                    var endpoint = config.services[i];
+                    assert.equal(undefined, endpoint.channelService);
+                }
+                break;
+            }
+        }
+        
+        var govConfig = bf.BotConfiguration.loadSync(govTestBotPath);
+        for (let i = 0; i < govConfig.services.length; i++) {
+            switch (govConfig.services[i].type) {
+                case bf.ServiceTypes.Endpoint:
+                {
+                    var endpoint = govConfig.services[i];
+                    assert.equal('https://botframework.azure.us', endpoint.channelService);
+                }
+                break;
+            }
+        }
     });
 
     it("LoadAndSaveEncrypted", async () => {

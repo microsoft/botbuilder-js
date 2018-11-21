@@ -289,7 +289,7 @@ export class TurnContext {
      * This example shows how to listen for and logs outgoing `message` activities.
      *
      * ```JavaScript
-     * context.onSendActivities(await (ctx, activities, next) => {
+     * context.onSendActivities(async (ctx, activities, next) => {
      *    // Deliver activities
      *    await next();
      *
@@ -312,7 +312,7 @@ export class TurnContext {
      * This example shows how to listen for and logs updated activities.
      *
      * ```JavaScript
-     * context.onUpdateActivities(await (ctx, activity, next) => {
+     * context.onUpdateActivity(async (ctx, activity, next) => {
      *    // Replace activity
      *    await next();
      *
@@ -335,7 +335,7 @@ export class TurnContext {
      * This example shows how to listen for and logs deleted activities.
      *
      * ```JavaScript
-     * context.onDeleteActivities(await (ctx, reference, next) => {
+     * context.onDeleteActivity(async (ctx, reference, next) => {
      *    // Delete activity
      *    await next();
      *

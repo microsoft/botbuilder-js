@@ -18,9 +18,9 @@
 // Helper script that can read the set of services included
 // in the azure SDK dynamically.
 
-var fs = require('fs');
-var path = require('path');
-var util = require('util');
+const fs = require('fs');
+const path = require('path');
+const util = require('util');
 
 var sdkRoot = path.join(__dirname, '..');
 var servicesRoot = path.join(sdkRoot, 'lib/services');

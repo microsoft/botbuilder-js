@@ -1,0 +1,212 @@
+[
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test/keyUpdate2",
+        "body": {
+            "id": "keyUpdate2",
+            "realId": "keyUpdate2",
+            "document": {
+                "count": 1
+            }
+        },
+        "status": 201,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-MD5",
+            "/vm0jlVaqrt5LK0nOQSVXg==",
+            "Last-Modified",
+            "Fri, 26 Oct 2018 14:59:48 GMT",
+            "ETag",
+            "\"0x8D63B53AC637F30\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "01c0ae39-80a6-421b-8eab-24e6d0ec02a8",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Fri, 26 Oct 2018 14:59:47 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/keyUpdate2",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Content-Length",
+            "64",
+            "Content-Type",
+            "application/octet-stream",
+            "Content-MD5",
+            "/vm0jlVaqrt5LK0nOQSVXg==",
+            "Last-Modified",
+            "Fri, 26 Oct 2018 14:59:48 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D63B53AC637F30\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "2d375110-3055-45be-b0df-8bd1536f5242",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-creation-time",
+            "Fri, 26 Oct 2018 14:59:48 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Fri, 26 Oct 2018 14:59:47 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/keyUpdate2?comp=metadata",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Fri, 26 Oct 2018 14:59:48 GMT",
+            "ETag",
+            "\"0x8D63B53AC637F30\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "213ad1df-fba9-43b2-b613-e85082ac76be",
+            "x-ms-version",
+            "2018-03-28",
+            "Date",
+            "Fri, 26 Oct 2018 14:59:47 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "GET",
+        "path": "/devstoreaccount1/test/keyUpdate2",
+        "body": "",
+        "status": 200,
+        "response": {
+            "id": "keyUpdate2",
+            "realId": "keyUpdate2",
+            "document": {
+                "count": 1
+            }
+        },
+        "rawHeaders": [
+            "Content-Length",
+            "64",
+            "Content-Type",
+            "application/octet-stream",
+            "Content-MD5",
+            "/vm0jlVaqrt5LK0nOQSVXg==",
+            "Last-Modified",
+            "Fri, 26 Oct 2018 14:59:48 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D63B53AC637F30\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "cb6951e3-e08e-468f-a66d-4a9ef6c8d867",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-creation-time",
+            "Fri, 26 Oct 2018 14:59:48 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Fri, 26 Oct 2018 14:59:47 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test/keyUpdate2",
+        "body": {
+            "id": "keyUpdate2",
+            "realId": "keyUpdate2",
+            "document": {
+                "count": 2,
+                "eTag": "\"0x8D63B53AC637F30\""
+            }
+        },
+        "status": 201,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-MD5",
+            "d1LMcnC+p/fwLlhtJ9tZOg==",
+            "Last-Modified",
+            "Fri, 26 Oct 2018 14:59:48 GMT",
+            "ETag",
+            "\"0x8D63B53AC89A4D0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "71b379fa-000f-4aa0-84e0-fb29c621ab77",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Fri, 26 Oct 2018 14:59:47 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test/keyUpdate2",
+        "body": {
+            "id": "keyUpdate2",
+            "realId": "keyUpdate2",
+            "document": {
+                "count": 3,
+                "eTag": "\"0x8D63B53AC637F30\""
+            }
+        },
+        "status": 412,
+        "response": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:64912c71-6305-4d52-8ab1-120258a27b9a\nTime:2018-10-26T14:59:48.3756499Z</Message></Error>",
+        "rawHeaders": [
+            "Content-Length",
+            "252",
+            "Content-Type",
+            "application/xml",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "64912c71-6305-4d52-8ab1-120258a27b9a",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-error-code",
+            "ConditionNotMet",
+            "Date",
+            "Fri, 26 Oct 2018 14:59:48 GMT"
+        ]
+    }
+]

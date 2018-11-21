@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import * as msrest from 'ms-rest-js';
-import * as request from 'request';
 import * as url from 'url';
 import { Constants } from './constants';
 
@@ -17,7 +16,11 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
 
     private static readonly trustedHostNames: Map<string, Date> = new Map<string, Date>([
         ['state.botframework.com', new Date(8640000000000000)],              // Date.MAX_VALUE,
-        ['api.botframework.com', new Date(8640000000000000)]                 // Date.MAX_VALUE,
+        ['api.botframework.com', new Date(8640000000000000)],                // Date.MAX_VALUE,
+        ['token.botframework.com', new Date(8640000000000000)],              // Date.MAX_VALUE,
+        ['state.botframework.azure.us', new Date(8640000000000000)],         // Date.MAX_VALUE,
+        ['api.botframework.azure.us', new Date(8640000000000000)],           // Date.MAX_VALUE,
+        ['token.botframework.azure.us', new Date(8640000000000000)],         // Date.MAX_VALUE,
     ]);
 
     private static readonly cache: Map<string, OAuthResponse> = new Map<string, OAuthResponse>();
@@ -25,10 +28,10 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
     public appPassword: string;
     public appId: string;
 
-    public readonly oAuthEndpoint: string = Constants.ToChannelFromBotLoginUrl;
-    public readonly oAuthScope: string = Constants.ToChannelFromBotOAuthScope;
+    public oAuthEndpoint: string = Constants.ToChannelFromBotLoginUrl;
+    public oAuthScope: string = Constants.ToChannelFromBotOAuthScope;
     public readonly tokenCacheKey: string;
-    private refreshingToken: Promise<OAuthResponse> | null = null;
+    private refreshingToken: Promise<Response> | null = null;
 
     constructor(appId: string, appPassword: string) {
         this.appId = appId;
@@ -98,7 +101,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
             const oAuthToken: OAuthResponse = MicrosoftAppCredentials.cache.get(this.tokenCacheKey);
             if (oAuthToken) {
                 // we have the token. Is it valid?
-                if (oAuthToken.expiration_time > new Date(Date.now())) {
+                if (oAuthToken.expiration_time > Date.now()) {
                     return oAuthToken.access_token;
                 }
             }
@@ -108,49 +111,51 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
         // 1. The user requested it via the forceRefresh parameter
         // 2. We have it, but it's expired
         // 3. We don't have it in the cache.
-        const newOAuthToken: OAuthResponse = await this.refreshToken();
-        MicrosoftAppCredentials.cache.set(this.tokenCacheKey, newOAuthToken);
+        const res: Response = await this.refreshToken();
+        this.refreshingToken = null;
 
-        return newOAuthToken.access_token;
-    }
-
-    private refreshToken(): Promise<OAuthResponse> {
-        if (!this.refreshingToken) {
-            this.refreshingToken = new Promise<OAuthResponse>((resolve: any, reject: any): void => {
-                // Refresh access token
-                const opt: request.Options = {
-                    method: 'POST',
-                    url: this.oAuthEndpoint,
-                    form: {
-                        grant_type: 'client_credentials',
-                        client_id: this.appId,
-                        client_secret: this.appPassword,
-                        scope: this.oAuthScope
-                    }
-                };
-
-                request(opt, (err: any, response: any, body: any) => {
-                    this.refreshingToken = null;
-                    if (!err) {
-                        if (body && response.statusCode && response.statusCode < 300) {
-                            // Subtract 5 minutes from expires_in so they'll we'll get a
-                            // new token before it expires.
-                            const oauthResponse: OAuthResponse = <OAuthResponse>JSON.parse(body);
-                            oauthResponse.expiration_time = new Date(Date.now() + (oauthResponse.expires_in * 1000) - 300000);
-                            resolve(oauthResponse);
-                        } else {
-                            reject(new Error(`Refresh access token failed with status code: ${ response.statusCode }`));
-                        }
-                    } else {
-                        reject(err);
-                    }
-                });
-            }).catch((err: Error) => {
-                this.refreshingToken = null;
-                throw err;
-            });
+        let oauthResponse: OAuthResponse;
+        if (res.ok) {          
+            // `res` is equalivent to the results from the cached promise `this.refreshingToken`.
+            // Because the promise has been cached, we need to see if the body has been read.
+            // If the body has not been read yet, we can call res.json() to get the access_token.
+            // If the body has been read, the OAuthResponse for that call should have been cached already,
+            // in which case we can return the cache from there. If a cached OAuthResponse does not exist,
+            // call getToken() again to retry the authentication process.
+            if (!res.bodyUsed){
+                oauthResponse = await res.json();
+                // Subtract 5 minutes from expires_in so they'll we'll get a
+                // new token before it expires.
+                oauthResponse.expiration_time = Date.now() + (oauthResponse.expires_in * 1000) - 300000;
+                MicrosoftAppCredentials.cache.set(this.tokenCacheKey, oauthResponse);
+                return oauthResponse.access_token;
+            } else {
+                const oAuthToken: OAuthResponse = MicrosoftAppCredentials.cache.get(this.tokenCacheKey);
+                if (oAuthToken) {
+                    return oAuthToken.access_token;
+                } else {
+                    return await this.getToken();
+                }
+            }
+        } else {
+            throw new Error(res.statusText);
         }
 
+    }
+
+    private async refreshToken(): Promise<Response> {
+        if (!this.refreshingToken) {
+            const params = new FormData();
+            params.append('grant_type', 'client_credentials');
+            params.append('client_id', this.appId);
+            params.append('client_secret', this.appPassword);
+            params.append('scope', this.oAuthScope);
+
+            this.refreshingToken = fetch(this.oAuthEndpoint, {
+                method: 'POST',
+                body: params
+            });
+        }
         return this.refreshingToken;
     }
 
@@ -166,5 +171,5 @@ interface OAuthResponse {
     token_type: string;
     expires_in: number;
     access_token: string;
-    expiration_time: Date;
+    expiration_time: number;
 }

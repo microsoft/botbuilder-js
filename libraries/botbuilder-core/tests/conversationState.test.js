@@ -80,7 +80,7 @@ describe(`ConversationState`, function () {
         try {
             await conversationState.load(context, true);
         } catch (err) {
-            assert(err.message === 'ConversationState: channelId and/or conversation missing from context.request.',
+            assert(err.message === 'ConversationState: overridden getStorageKey method did not return a key.',
                 `unexpected Error.message received: ${err.message}`);
             return;
         }

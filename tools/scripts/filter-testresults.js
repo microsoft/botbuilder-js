@@ -16,9 +16,9 @@
 
 'use strict';
 
-var Stream = require('stream');
-var fs = require('fs');
-var os = require('os');
+const Stream = require('stream');
+const fs = require('fs');
+const os = require('os');
 
 var EOL = '\n';
 var debugStream = null;

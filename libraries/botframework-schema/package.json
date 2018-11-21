@@ -10,7 +10,8 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@types/node": "^9.3.0"
+    "@types/node": "^9.3.0",
+    "ms-rest-js": "1.0.455"
   },
   "devDependencies": {},
   "scripts": {

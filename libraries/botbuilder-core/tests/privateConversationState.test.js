@@ -92,7 +92,7 @@ describe(`PrivateConversationState`, function () {
         try {
             await privateConversationState.load(context, true);
         } catch (err) {
-            assert(err.message === 'PrivateConversationState: channelId and/or PrivateConversation missing from context.request.',
+            assert(err.message === 'PrivateConversationState: overridden getStorageKey method did not return a key.',
                 `unexpected Error.message received: ${err.message}`);
             return;
         }

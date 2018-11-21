@@ -15,8 +15,8 @@
 // limitations under the License.
 // 
 
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs');
+const path = require('path');
 
 var args = (process.ARGV || process.argv);
 
@@ -84,7 +84,7 @@ var defaultSubscription = 'db1ab6f0-4769-4b27-930e-01e2ef9c123c';
 var defaultAccessToken = 'access_token';
 
 if (!process.env.AZURE_APNS_CERTIFICATE && process.env.AZURE_APNS_CERTIFICATE_FILE) {
-  process.env.AZURE_APNS_CERTIFICATE = new Buffer(fs.readFileSync(process.env['AZURE_APNS_CERTIFICATE_FILE'])).toString('base64');
+  process.env.AZURE_APNS_CERTIFICATE = Buffer.from(fs.readFileSync(process.env['AZURE_APNS_CERTIFICATE_FILE'])).toString('base64');
 } else if (process.env.AZURE_APNS_CERTIFICATE && process.env.AZURE_APNS_CERTIFICATE_FILE) {
   throw new Error('Only one of AZURE_APNS_CERTIFICATE or AZURE_APNS_CERTIFICATE_FILE can be set. Not both.');
 }
@@ -97,7 +97,7 @@ if (!process.env.AZURE_APNS_CERTIFICATE_KEY && process.env.AZURE_APNS_CERTIFICAT
 
 
 if (!process.env.AZURE_MPNS_CERTIFICATE && process.env.AZURE_MPNS_CERTIFICATE_FILE) {
-  process.env.AZURE_MPNS_CERTIFICATE = new Buffer(fs.readFileSync(process.env['AZURE_MPNS_CERTIFICATE_FILE'])).toString('base64');
+  process.env.AZURE_MPNS_CERTIFICATE = Buffer.from(fs.readFileSync(process.env['AZURE_MPNS_CERTIFICATE_FILE'])).toString('base64');
 } else if (process.env.AZURE_MPNS_CERTIFICATE && process.env.AZURE_MPNS_CERTIFICATE_FILE) {
   throw new Error('Only one of AZURE_MPNS_CERTIFICATE or AZURE_MPNS_CERTIFICATE_FILE can be set. Not both.');
 }
@@ -132,11 +132,11 @@ if (!process.env.NOCK_OFF && !process.env.AZURE_NOCK_RECORD) {
     process.env.AZURE_STORAGE_ACCOUNT = defaultStorageAccount;
   }
 
-  process.env.AZURE_STORAGE_ACCESS_KEY = new Buffer('fake_key').toString('base64');
+  process.env.AZURE_STORAGE_ACCESS_KEY = Buffer.from('fake_key').toString('base64');
 
   if (process.env.AZURE_SERVICEBUS_NAMESPACE !== defaultServiceBusAccount) {
     process.env.AZURE_SERVICEBUS_NAMESPACE = defaultServiceBusAccount;
-    process.env.AZURE_SERVICEBUS_ACCESS_KEY = new Buffer('fake_key').toString('base64');
+    process.env.AZURE_SERVICEBUS_ACCESS_KEY = Buffer.from('fake_key').toString('base64');
   }
 
   if (process.env.AZURE_SUBSCRIPTION_ID !== defaultSubscription) {

@@ -43,7 +43,8 @@ export interface StatePropertyAccessor<T = any> {
      * @param context Context for the current turn of conversation with the user.
      * @param defaultValue (Optional) default value to copy to the backing storage object if the property isn't found.
      */
-    get(context: TurnContext, defaultValue?: T): Promise<T|undefined>;
+    get(context: TurnContext): Promise<T|undefined>;
+    get(context: TurnContext, defaultValue: T): Promise<T>;
 
     /**
      * Assigns a new value to the properties backing storage object.
@@ -90,7 +91,9 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
         }
     }
 
-    public async get(context: TurnContext, defaultValue?: T): Promise<T|undefined> {
+    public async get(context: TurnContext): Promise<T|undefined>;
+    public async get(context: TurnContext, defaultValue: T): Promise<T>;
+    public async get(context: TurnContext, defaultValue?: T): Promise<T> {
         const obj: any = await this.state.load(context);
         if (!obj.hasOwnProperty(this.name) && defaultValue !== undefined) {
             const clone: any =

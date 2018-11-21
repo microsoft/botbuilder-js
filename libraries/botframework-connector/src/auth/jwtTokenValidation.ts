@@ -60,7 +60,7 @@ export module JwtTokenValidation {
         const usingEmulator: boolean = EmulatorValidation.isTokenFromEmulator(authHeader);
 
         if (usingEmulator) {
-            return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelId);
+            return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelService, channelId);
         }
 
         if (isPublicAzure(channelService)) {
@@ -102,7 +102,7 @@ export module JwtTokenValidation {
         return !channelService || channelService.length === 0;
     }
 
-    function isGovernment(channelService: string): boolean {
+    export function isGovernment(channelService: string): boolean {
         return channelService && channelService.toLowerCase() === GovernmentConstants.ChannelService;
     }
 }

@@ -1,0 +1,24 @@
+[
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/unknown",
+        "body": "",
+        "status": 404,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "80b04ed7-4459-453d-b76b-693408ef1c73",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-error-code",
+            "BlobNotFound",
+            "Date",
+            "Fri, 26 Oct 2018 14:59:48 GMT"
+        ]
+    }
+]

@@ -2,11 +2,12 @@
   "compilerOptions": {
     "target": "ES2015",
     "module": "commonjs",
+    "strict": false,
     "declaration": true,
     "sourceMap": true,
     "outDir": "./lib",
     "rootDir": "./src",
-    "types" : ["node", "mocha", "jsonwebtoken"]
+    "types" : ["node"]
   },
   "include": [
     "src/**/*"
