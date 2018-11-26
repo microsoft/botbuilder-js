@@ -1,0 +1,38 @@
+{
+  "name": "botbuilder-applicationinsights",
+  "author": "Microsoft Corp.",
+  "description": "Application Insights extensions for Microsoft BotBuilder.",
+  "version": "4.0.0",
+  "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "botframework",
+    "bots",
+    "chatbots",
+    "applicationinsights"
+  ],
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
+  "dependencies": {
+    "botbuilder": "^4.0.0",
+    "appinsights-usage": "^1.0.2",
+    "applicationinsights-js": "^1.0.20"
+  },
+  "devDependencies": {
+    "codelyzer": "^4.1.0"
+  },
+  "scripts": {
+    "test": "tsc && nyc mocha tests/",
+    "build": "tsc",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-applicationinsights --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-applicationinsights .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Application Insights\" --readme none",
+    "clean": "erase /q /s .\\lib",
+    "set-version": "npm version --allow-same-version ${Version}"
+  }
+}
