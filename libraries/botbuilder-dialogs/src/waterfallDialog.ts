@@ -226,7 +226,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * @param instance The instance of the current dialog.
      * @param reason The reason the dialog is ending.
      */
-    protected async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason) {
+     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason) {
         if (reason === DialogReason.endCalled)
         {
             var properties = 

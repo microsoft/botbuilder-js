@@ -19,10 +19,42 @@ export enum Severity
     Critical = 4,
 }
 
-export interface IBotTelemetryClient {
+export interface BotTelemetryClient {
     trackDependency(id: string, method: string, absoluteUrl: string, pathName: string, totalTime: number, success: boolean, resultCode: number);
     trackEvent(name: string, properties?: {[key: string]: any}, metrics?: {[key: string]: number });
     trackException(exception: Error, handledAt?: string, properties?: {[key:string]:string}, measurements?: {[key:string]:number}, severityLevel?: Severity);
     trackTrace(message: string, properties?: {[key:string]:string}, severityLevel?: Severity);
     flush();
+}
+
+export class NullTelemetryClient implements BotTelemetryClient {
+
+    constructor (settings?: any) {
+
+    }
+
+    trackDependency(id: string, method: string, absoluteUrl: string, pathName: string, totalTime: number, success: boolean, resultCode: number) {
+        // noop
+        console.log('Dependency:', id)
+    }
+
+    trackEvent(name: string, properties?: {[key: string]: any}, metrics?: {[key: string]: number })  {
+        // noop
+        console.log('Event:', name)
+
+    }
+
+    trackException(exception: Error, handledAt?: string, properties?: {[key:string]:string}, measurements?: {[key:string]:number}, severityLevel?: Severity)  {
+        // noop
+        console.log('Exception:', exception);
+    }
+    trackTrace(message: string, properties?: {[key:string]:string}, severityLevel?: Severity) {
+        // noop
+        console.log('Trace', message);
+    }
+
+    flush()  {
+        // noop
+    }
+
 }

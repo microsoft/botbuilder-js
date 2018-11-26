@@ -7,7 +7,7 @@
  */
 import { TurnContext } from 'botbuilder-core';
 import { DialogContext } from './dialogContext';
-import { IBotTelemetryClient } from 'botbuilder';
+import { BotTelemetryClient, NullTelemetryClient } from 'botbuilder';
 
 /**
  * Tracking information persisted for an instance of a dialog on the stack.
@@ -144,8 +144,9 @@ export abstract class Dialog<O extends object = {}> {
 
     /**
      * The telemetry client for logging events.
+     * Default this to the NullTelemetryClient, which will log these events to the console.
      */
-    public telemetryClient: IBotTelemetryClient;
+    public telemetryClient: BotTelemetryClient = new NullTelemetryClient(); 
 
     /**
      * Creates a new Dialog instance.

@@ -25,6 +25,7 @@
     "@microsoft/recognizers-text-number": "1.1.2",
     "@microsoft/recognizers-text-suite": "1.1.2",
     "@types/node": "^9.3.0",
+    "botbuilder": "^4.0.0",
     "botbuilder-core": "^4.0.0"
   },
   "devDependencies": {
