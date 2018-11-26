@@ -316,19 +316,6 @@ export class DialogContext {
     private async endActiveDialog(reason: DialogReason): Promise<void> {
         const instance: DialogInstance<any> = this.activeDialog;
         if (instance) {
-            // Log WaterfallConvert event.
-            const dialogId = instance.id;
-            var currentDialog = this.dialogs.find(dialogId);
-            if (currentDialog instanceof WaterfallDialog) // Does this find derived classes?
-            {
-                var properties = 
-                {
-                     "DialogId": dialogId, 
-                     "DialogType": currentDialog.name },
-                };
-                currentDialog.telemetryClient.trackEvent("WaterfallConvert", properties);
-            }
-
             // Lookup dialog
             const dialog: Dialog<{}> = this.dialogs.find(instance.id);
             if (dialog) {

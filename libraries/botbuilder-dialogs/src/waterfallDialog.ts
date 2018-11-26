@@ -176,20 +176,15 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * @param step Context object for the waterfall step to execute.
      */
     protected async onStep(step: WaterfallStepContext<O>): Promise<DialogTurnResult> {
-        // Log Waterfall Step event. Each event has a distinct name to hook up
-        // to the Application Insights funnel.
-        var stepName = "";
-        try {
-            stepName = this.steps[step.index].name;
-        } finally {
-            if (stepName === undefined || stepName === '') {
-                stepName = "Step" + (step.index + 1) + "of" + (this.steps.length);
-            }
-        }
+        // Log Waterfall Step event. 
+        var stepName = this.waterfallStepName(step.index)
 
-        var eventName = this.id + "." + stepName;
-        var properties = { "DialogId": this.id };
-        this.telemetryClient.trackEvent(eventName, properties);
+        var properties = 
+        { 
+            "DialogId": this.id,
+            "StepName": stepName,
+        };
+        this.telemetryClient.trackEvent("WaterfallStep", properties);
         return await this.steps[step.index](step);
     }
 
@@ -232,14 +227,39 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * @param reason The reason the dialog is ending.
      */
     protected async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason) {
-        if (reason === DialogReason.cancelCalled)
+        if (reason === DialogReason.endCalled)
         {
             var properties = 
             {
                  "DialogId": this.id,
             };
-            this.telemetryClient.trackEvent("WaterfallCancel", properties);
+            this.telemetryClient.trackEvent("WaterfallComplete", properties);
         }
+        else if (reason === DialogReason.cancelCalled)
+        {
+            var index = instance.state[instance.state.stepIndex];
+            var stepName = this.waterfallStepName(index);
+            var props = 
+            {
+                 "DialogId": this.id,
+                 "StepName": stepName,
+            };
+            this.telemetryClient.trackEvent("WaterfallCancel", props);
+        }
+    }
+
+    private waterfallStepName(index) {
+        // Log Waterfall Step event. Each event has a distinct name to hook up
+        // to the Application Insights funnel.
+        var stepName = "";
+        try {
+            stepName = this.steps[index].name;
+        } finally {
+            if (stepName === undefined || stepName === '') {
+                stepName = "Step" + (index + 1) + "of" + (this.steps.length);
+            }
+        }
+        return stepName;        
     }
 
 }
