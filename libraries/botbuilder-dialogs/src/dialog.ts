@@ -5,9 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from 'botbuilder-core';
+import { BotTelemetryClient, NullTelemetryClient, TurnContext } from 'botbuilder-core';
 import { DialogContext } from './dialogContext';
-import { BotTelemetryClient, NullTelemetryClient } from 'botbuilder';
 
 /**
  * Tracking information persisted for an instance of a dialog on the stack.
