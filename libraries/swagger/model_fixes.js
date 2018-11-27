@@ -11,7 +11,7 @@ var optionalModelProperties = {
     'SigninCard': ['text'],
     'Attachment': ['content', 'contentUrl', 'name', 'thumbnailUrl'],
     'CardImage': ['alt', 'tap'],
-    'CardAction': ['image', 'displayText', 'text'],
+    'CardAction': ['channelData', 'displayText', 'image', 'text'],
     'MediaUrl': ['profile']
 };
 
