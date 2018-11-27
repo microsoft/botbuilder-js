@@ -24,7 +24,7 @@
     "appinsights-usage": "^1.0.2",
     "applicationinsights": "^1.0.7",
     "applicationinsights-js": "^1.0.20",
-    "botbuilder": "^4.0.0",
+    "botbuilder": "~4.1.7",
     "cls-hooked": "^4.2.2"
   },
   "devDependencies": {
