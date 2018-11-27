@@ -141,6 +141,32 @@ export class TurnContext {
     }
 
     /**
+     * Create a ConversationReference based on an outgoing Activity's ResourceResponse
+     *
+     * @remarks
+     * This method can be used to create a ConversationReference that can be stored
+     * and used later to delete or update the activity.
+     * ```javascript
+     * var reply = await context.sendActivity('Hi');
+     * var reference = TurnContext.getReplyConversationReference(context.activity, reply);
+     * ```
+     *
+     * @param activity Activity from which to pull Conversation info
+     * @param reply ResourceResponse returned from sendActivity
+     */
+    public static getReplyConversationReference(
+        activity: Partial<Activity>,
+        reply: ResourceResponse
+    ): Partial<ConversationReference> {
+        const reference: Partial<ConversationReference> = TurnContext.getConversationReference(activity);
+
+        // Update the reference with the new outgoing Activity's id.
+        reference.activityId = reply.id;
+
+        return reference;
+    }
+
+    /**
      * Sends a single activity or message to the user.
      *
      * @remarks
