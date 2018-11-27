@@ -199,16 +199,10 @@ export class QnAMaker {
      * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
      */
     public async getAnswers(context: TurnContext, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]> {
-        let question: string = '';
+        let question: string = context && context.activity ? context.activity.text : '';
+        const trimmedQuestion: string = question ? question.trim() : '';
 
-        if (context) {
-            if (context.activity) 
-                question = context.activity.text;
-        }
-
-        const q: string = question ? question.trim() : '';
-
-        if (q.length > 0) {
+        if (trimmedQuestion.length > 0) {
             const answers = await this.callService(this.endpoint, question, typeof top === 'number' ? top : 1);
             const minScore: number = typeof scoreThreshold === 'number' ? scoreThreshold : 0.001;
             const sortedQnaAnswers = answers.filter(
