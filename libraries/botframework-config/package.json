@@ -2,7 +2,7 @@
   "name": "botframework-config",
   "author": "Microsoft Corp.",
   "description": "library for working with Bot Framework .bot configuration files",
-  "version": "4.0.0",
+  "version": "4.1.6",
   "license": "MIT",
   "keywords": [
     "bots",
