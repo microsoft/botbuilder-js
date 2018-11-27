@@ -182,20 +182,30 @@ export class QnAMaker {
             return true;
         } 
         
-        return Promise.resolve(false);
+        return false;
     }
     
     /**
-     * Calls the QnA Maker service to generate answer(s) for a question
+     * Calls the QnA Maker service to generate answer(s) for a question.
      * 
      * @remarks
      * Returns an array of answers sorted by score with the top scoring answer returned first.
+     * 
+     * In addition to returning the results from QnA Maker, [getAnswers()](#getAnswers) will also
+     * emit a trace activity that contains the QnA Maker results.
+     * 
      * @param context The Turn Context that contains the user question to be queried against your knowledge base.
      * @param top (Optional) number of answers to return. Defaults to a value of `1`.
      * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
      */
     public async getAnswers(context: TurnContext, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]> {
-        const question: string = context ? context.activity.text : '';
+        let question: string = '';
+
+        if (context) {
+            if (context.activity) 
+                question = context.activity.text;
+        }
+
         const q: string = question ? question.trim() : '';
 
         if (q.length > 0) {
@@ -212,12 +222,12 @@ export class QnAMaker {
             return sortedQnaAnswers;
         }
 
-        return Promise.resolve([]);
+        return [] as QnAMakerResult[];
     }
 
     /**
      * Calls the QnA Maker service to generate answer(s) for a question.
-     * @deprecated  Use updated version QnAMaker.getAnswers() to include QnAMaker Trace for calls to QnA Maker Service.
+     * @deprecated  Instead, favor using [QnAMaker.getAnswers()](#getAnswers) to generate answers for a question.
      * @remarks
      * Returns an array of answers sorted by score with the top scoring answer returned first.
      * @param question The question to answer.
@@ -238,7 +248,7 @@ export class QnAMaker {
             );
         }
 
-        return Promise.resolve([]);
+        return [] as QnAMakerResult[];
     }
 
     /**
@@ -252,8 +262,7 @@ export class QnAMaker {
         const headers: any = {};
         if (endpoint.host.endsWith('v2.0') || endpoint.host.endsWith('v3.0')) {
             headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
-        } else 
-        {
+        } else {
             headers.Authorization = `EndpointKey ${endpoint.endpointKey}`;
         }
 
