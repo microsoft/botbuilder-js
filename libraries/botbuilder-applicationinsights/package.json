@@ -21,9 +21,11 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "botbuilder": "^4.0.0",
     "appinsights-usage": "^1.0.2",
-    "applicationinsights-js": "^1.0.20"
+    "applicationinsights": "^1.0.7",
+    "applicationinsights-js": "^1.0.20",
+    "botbuilder": "^4.0.0",
+    "cls-hooked": "^4.2.2"
   },
   "devDependencies": {
     "codelyzer": "^4.1.0"

@@ -184,7 +184,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
             "DialogId": this.id,
             "StepName": stepName,
         };
-        this.telemetryClient.trackEvent("WaterfallStep", properties);
+        this.telemetryClient.trackEvent({name: "WaterfallStep", properties: properties});
         return await this.steps[step.index](step);
     }
 
@@ -227,24 +227,17 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * @param reason The reason the dialog is ending.
      */
      public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason) {
-        if (reason === DialogReason.endCalled)
-        {
-            var properties = 
-            {
-                 "DialogId": this.id,
-            };
-            this.telemetryClient.trackEvent("WaterfallComplete", properties);
-        }
-        else if (reason === DialogReason.cancelCalled)
-        {
+        if (reason === DialogReason.endCalled) {
+            this.telemetryClient.trackEvent({name: "WaterfallComplete", properties: {
+                "DialogId": this.id,
+            }});
+        } else if (reason === DialogReason.cancelCalled) {
             var index = instance.state[instance.state.stepIndex];
             var stepName = this.waterfallStepName(index);
-            var props = 
-            {
-                 "DialogId": this.id,
-                 "StepName": stepName,
-            };
-            this.telemetryClient.trackEvent("WaterfallCancel", props);
+            this.telemetryClient.trackEvent({name: "WaterfallCancel", properties: {
+                "DialogId": this.id,
+                "StepName": stepName,
+            }});
         }
     }
 

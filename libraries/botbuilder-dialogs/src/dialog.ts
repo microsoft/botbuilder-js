@@ -144,7 +144,7 @@ export abstract class Dialog<O extends object = {}> {
 
     /**
      * The telemetry client for logging events.
-     * Default this to the NullTelemetryClient, which will log these events to the console.
+     * Default this to the NullTelemetryClient, which does nothing.
      */
     public telemetryClient: BotTelemetryClient = new NullTelemetryClient(); 
 

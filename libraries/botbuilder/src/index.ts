@@ -8,5 +8,4 @@
 
 export * from './botFrameworkAdapter';
 export * from './fileTranscriptStore';
-export * from './botTelemetryClient';
 export * from 'botbuilder-core';
