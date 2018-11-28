@@ -2,7 +2,7 @@
   "name": "botbuilder-applicationinsights",
   "author": "Microsoft Corp.",
   "description": "Application Insights extensions for Microsoft BotBuilder.",
-  "version": "4.0.0",
+  "version": "4.1.6",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -24,7 +24,7 @@
     "appinsights-usage": "^1.0.2",
     "applicationinsights": "^1.0.7",
     "applicationinsights-js": "^1.0.20",
-    "botbuilder": "~4.1.7",
+    "botbuilder-core": "~4.1.6",
     "cls-hooked": "^4.2.2"
   },
   "devDependencies": {

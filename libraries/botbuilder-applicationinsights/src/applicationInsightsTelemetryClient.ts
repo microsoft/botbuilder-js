@@ -1,4 +1,4 @@
-import { BotTelemetryClient, Severity } from 'botbuilder';
+import { BotTelemetryClient, Severity } from 'botbuilder-core';
 const appInsights = require('applicationinsights');
 const cls = require('cls-hooked');
 const ns = cls.createNamespace('my.request');
