@@ -134,8 +134,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         .then((blobs: azure.BlobService.BlobResult[]): Promise<PagedResult<Activity>> => {
             return Promise.all(blobs.map((blob: azure.BlobService.BlobResult) => this.blobToActivity(blob)))
             .then((activities: Activity[]) => {
-                const pagedResult: PagedResult<Activity> = new PagedResult<Activity>();
-                pagedResult.items = activities;
+                const pagedResult: PagedResult<Activity> = { items: activities, continuationToken: undefined };
                 if (pagedResult.items.length === this.pageSize) {
                     pagedResult.continuationToken = blobs.slice(-1).pop().name;
                 }
@@ -169,8 +168,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             token
         ))
         .then((transcripts: TranscriptInfo[]) => {
-            const pagedResult: PagedResult<TranscriptInfo> = new PagedResult<TranscriptInfo>();
-            pagedResult.items = transcripts;
+            const pagedResult: PagedResult<TranscriptInfo> = { items: transcripts, continuationToken: undefined };
             if (pagedResult.items.length === this.pageSize) {
                 pagedResult.continuationToken = transcripts.slice(-1).pop().id;
             }
@@ -266,9 +264,11 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             this.client.listBlobDirectoriesSegmentedWithPrefixAsync(container, prefix, token).then(
                 (result: azure.BlobService.ListBlobsResult): void => {
                     result.entries.some((blob: azure.BlobService.BlobResult) => {
-                        const conversation: TranscriptInfo = new TranscriptInfo();
-                        conversation.id = blob.name.split('/').filter((part: string) => part).slice(-1).pop();
-                        conversation.channelId = channelId;
+                        const conversation: TranscriptInfo = {
+                            channelId: channelId,
+                            id: blob.name.split('/').filter((part: string) => part).slice(-1).pop(),
+                            created: undefined
+                        }
                         if (continuationToken) {
                             if (conversation.id === continuationToken) {
                                 continuationToken = null;

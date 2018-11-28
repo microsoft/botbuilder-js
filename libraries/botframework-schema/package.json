@@ -1,6 +1,6 @@
 {
   "name": "botframework-schema",
-  "version": "4.0.0",
+  "version": "4.1.6",
   "description": "Activity schema for the Microsoft Bot Framework.",
   "keywords": [
     "botconnector",
@@ -11,7 +11,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "@types/node": "^9.3.0",
-    "ms-rest-js": "^1.0.455"
+    "ms-rest-js": "1.0.455"
   },
   "devDependencies": {},
   "scripts": {

@@ -10,7 +10,7 @@ import { BotState } from './botState';
 import { Storage } from './storage';
 import { TurnContext } from './turnContext';
 
-const NO_KEY: string = `ConversationState: channelId and/or conversation missing from context.request.`;
+const NO_KEY: string = `ConversationState: overridden getStorageKey method did not return a key.`;
 
 /**
  * Reads and writes conversation state for your bot to storage.

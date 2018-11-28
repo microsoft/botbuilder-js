@@ -71,7 +71,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
 
         if (!conversationId) { throw new Error('Missing conversationId'); }
 
-        const pagedResult: PagedResult<Activity> = new PagedResult<Activity>();
+        const pagedResult: PagedResult<Activity> = { items: [], continuationToken: undefined };
         if (this.channels.has(channelId)) {
             const channel: Map<string, Activity[]> = this.channels.get(channelId);
             if (channel.has(conversationId)) {
@@ -106,7 +106,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
     public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
-        const pagedResult: PagedResult<TranscriptInfo> = new PagedResult<TranscriptInfo>();
+        const pagedResult: PagedResult<TranscriptInfo> = { items: [], continuationToken: undefined };
         if (this.channels.has(channelId)) {
             const channel: Map<string, Activity[]> = this.channels.get(channelId);
 
