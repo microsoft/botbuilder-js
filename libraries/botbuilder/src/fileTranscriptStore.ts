@@ -76,7 +76,7 @@ export class FileTranscriptStore implements TranscriptStore {
 
         if (!conversationId) { throw new Error('Missing conversationId'); }
 
-        const pagedResult: PagedResult<Activity> = new PagedResult<Activity>();
+        const pagedResult: PagedResult<Activity> = { items: [], continuationToken: undefined };
         const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
 
         return fs.exists(transcriptFolder).then((exists: boolean) => {
@@ -119,7 +119,7 @@ export class FileTranscriptStore implements TranscriptStore {
     public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
-        const pagedResult: PagedResult<TranscriptInfo> = new PagedResult<TranscriptInfo>();
+        const pagedResult: PagedResult<TranscriptInfo> = { items: [], continuationToken: undefined };
         const channelFolder: string = this.getChannelFolder(channelId);
 
         return fs.exists(channelFolder).then((exists: boolean) => {

@@ -185,21 +185,21 @@ export interface TranscriptStore extends TranscriptLogger {
 /**
  * Metadata for a stored transcript.
  */
-export class TranscriptInfo {
+export interface TranscriptInfo {
     /**
      * ChannelId that the transcript was taken from.
      */
-    public channelId: string;
+    channelId: string;
 
     /**
      * Conversation Id.
      */
-    public id: string;
+    id: string;
 
     /**
      * Date conversation was started.
      */
-    public created: Date;
+    created: Date;
 }
 
 /**
@@ -207,15 +207,15 @@ export class TranscriptInfo {
  * @param T type of items being paged in.
  */
 // tslint:disable-next-line:max-classes-per-file
-export class PagedResult<T> {
+export interface PagedResult<T> {
 
     /**
      * Page of items.
      */
-    public items: T[] = [];
+    items: T[];
 
     /**
      * Token used to page through multiple pages.
      */
-    public continuationToken: string;
+    continuationToken: string;
 }
