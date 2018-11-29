@@ -259,11 +259,13 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         // Log Waterfall Step event. Each event has a distinct name to hook up
         // to the Application Insights funnel.
         var stepName = "";
-        try {
-            stepName = this.steps[index].name;
-        } finally {
-            if (stepName === undefined || stepName === '') {
-                stepName = "Step" + (index + 1) + "of" + (this.steps.length);
+        if (this.steps[index]) {
+            try {
+                stepName = this.steps[index].name;
+            } finally {
+                if (stepName === undefined || stepName === '') {
+                    stepName = "Step" + (index + 1) + "of" + (this.steps.length);
+                }
             }
         }
         return stepName;        
