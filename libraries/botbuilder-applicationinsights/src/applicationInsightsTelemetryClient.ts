@@ -45,11 +45,15 @@ export const ApplicationInsightsWebserverMiddleware = function (req, res, next) 
 
 /* ApplicationInsightsTelemetryClient Class
  * This is a wrapper class around the Application Insights node client.
+ * This is primarily designed to be used alongside the WaterfallDialog telemetry collection.
  * It provides a pre-configured App Insights client, and wrappers around
  * the major tracking functions, allowing it to conform to Botbuilder's generic BotTelemetryClient interface.
  * To use it, create pass in an instrumentation key:
+ * 
  * ```
+ * const myDialog = new WaterfallDialog('my_dialog', steps);
  * const appInsightsClient = new ApplicationInsightsTelemetryClient(my_instrumentation_key);
+ * myDialog.telemetryClient = appInsightsClient;
  * ```
  */
 export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
