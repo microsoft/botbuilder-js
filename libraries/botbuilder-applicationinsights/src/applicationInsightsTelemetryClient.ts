@@ -1,3 +1,10 @@
+/**
+ * @module botbuilder-applicationinsights
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { BotTelemetryClient, Severity } from 'botbuilder-core';
 const appInsights = require('applicationinsights');
 const cls = require('cls-hooked');
@@ -39,23 +46,41 @@ export const ApplicationInsightsWebserverMiddleware = function (req, res, next) 
 export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
 
     private _telemetryClient: any;
+    private _configuration: any;
 
     // TODO: Do we want to expose the post-setup options for developers to configure themselve?
     constructor(settings: any) {
 
-        appInsights.setup(settings)
-        .setAutoDependencyCorrelation(true)
+        this._configuration = appInsights.setup(settings);
+
+        this._configuration.setAutoDependencyCorrelation(true)
         .setAutoCollectRequests(true)
         .setAutoCollectPerformance(true)
         .setAutoCollectExceptions(true)
         .setAutoCollectDependencies(true)
-        .setAutoCollectConsole(true, true)
         .start(); 
 
         this._telemetryClient = appInsights.defaultClient;
 
         this._telemetryClient.addTelemetryProcessor(addBotIdentifiers);
     }
+
+    /* configuration() 
+     * Provides access to the Application Insights configuration that is running here.
+     * Allows developers to adjust the options, for example:
+     * `appInsightsClient.configuration.setAutoCollectDependencies(false)`
+     */
+    get configuration() {
+        return this._configuration;
+    }
+
+    /* defaultClient()
+     * Provides direct access to the telemetry client object, which might be necessary for some operations.
+     */
+    get defaultClient() {
+        return this._telemetryClient;
+    }
+    
 
     trackDependency(telemetry: { id: string, method: string, absoluteUrl: string, pathName: string, totalTime: number, success: boolean, resultCode: number}) {
         this._telemetryClient.trackDependency(telemetry);
@@ -79,6 +104,9 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
 
 }
 
+/* Define the telemetry initializer function which is responsible for setting the userId. sessionId and some other values
+ * so that application insights can correlate related events.
+ */
 function addBotIdentifiers(envelope, context) {
     if (context.correlationContext && context.correlationContext.activity) {
         const activity = context.correlationContext.activity;
