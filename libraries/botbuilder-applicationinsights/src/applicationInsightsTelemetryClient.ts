@@ -43,12 +43,24 @@ export const ApplicationInsightsWebserverMiddleware = function (req, res, next) 
 };
 
 
+/* ApplicationInsightsTelemetryClient Class
+ * This is a wrapper class around the Application Insights node client.
+ * It provides a pre-configured App Insights client, and wrappers around
+ * the major tracking functions, allowing it to conform to Botbuilder's generic BotTelemetryClient interface.
+ * To use it, create pass in an instrumentation key:
+ * ```
+ * const appInsightsClient = new ApplicationInsightsTelemetryClient(my_instrumentation_key);
+ * ```
+ */
 export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
 
     private _telemetryClient: any;
     private _configuration: any;
 
-    // TODO: Do we want to expose the post-setup options for developers to configure themselve?
+    /* The settings parameter is passed directly into appInsights.setup().
+     * https://www.npmjs.com/package/applicationinsights#basic-usage
+     * This function currently takes an app insights instrumentation key only.
+     */
     constructor(settings: any) {
 
         this._configuration = appInsights.setup(settings);
