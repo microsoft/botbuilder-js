@@ -5,23 +5,24 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotTelemetryClient, Severity } from 'botbuilder-core';
-const appInsights = require('applicationinsights');
-const cls = require('cls-hooked');
+import { BotTelemetryClient, Severity, TelemetryDependency, TelemetryEvent, TelemetryException, TelemetryTrace } from 'botbuilder-core';
+import appInsights = require('applicationinsights');
+import cls from 'cls-hooked'
 const ns = cls.createNamespace('my.request');
 
 // This is the currently recommended work-around for using Application Insights with async/await
 // https://github.com/Microsoft/ApplicationInsights-node.js/issues/296
 // This allows AppInsights to automatically apply the appropriate context objects deep inside the async/await chain.
-const correlationContextManager = require('applicationinsights/out/AutoCollection/CorrelationContextManager').CorrelationContextManager;
-const origGetCurrentContext = correlationContextManager.getCurrentContext;
+import { CorrelationContextManager } from 'applicationinsights/out/AutoCollection/CorrelationContextManager';
+import { Envelope, TraceTelemetry, ExceptionTelemetry, EventTelemetry, DependencyTelemetry } from 'applicationinsights/out/Declarations/Contracts';
+const origGetCurrentContext = CorrelationContextManager.getCurrentContext;
 
 function getCurrentContext(){
   return ns.get('ctx') || origGetCurrentContext();
 }
 
 // Overwrite the built-in getCurrentContext() method with a new one.
-correlationContextManager.getCurrentContext = getCurrentContext;
+CorrelationContextManager.getCurrentContext = getCurrentContext;
 
 export const ApplicationInsightsWebserverMiddleware = function (req, res, next) {
 
@@ -30,7 +31,7 @@ export const ApplicationInsightsWebserverMiddleware = function (req, res, next) 
   const activity = req.body;
   if (activity && activity.id) {
     const context = appInsights.getCorrelationContext();
-    context.activity = req.body;
+    context['activity'] = req.body;
   }
 
   ns.bindEmitter(req);
@@ -58,18 +59,17 @@ export const ApplicationInsightsWebserverMiddleware = function (req, res, next) 
  */
 export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
 
-    private _telemetryClient: any;
-    private _configuration: any;
+    private _telemetryClient: appInsights.TelemetryClient;
+    private _configuration: appInsights.Configuration;
 
     /* The settings parameter is passed directly into appInsights.setup().
      * https://www.npmjs.com/package/applicationinsights#basic-usage
      * This function currently takes an app insights instrumentation key only.
      */
-    constructor(settings: any) {
+    constructor(instrumentationKey: string) {
 
-        this._configuration = appInsights.setup(settings);
-
-        this._configuration.setAutoDependencyCorrelation(true)
+        this._configuration = appInsights.setup(instrumentationKey)
+        .setAutoDependencyCorrelation(true)
         .setAutoCollectRequests(true)
         .setAutoCollectPerformance(true)
         .setAutoCollectExceptions(true)
@@ -86,7 +86,7 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
      * Allows developers to adjust the options, for example:
      * `appInsightsClient.configuration.setAutoCollectDependencies(false)`
      */
-    get configuration() {
+    get configuration(): appInsights.Configuration {
         return this._configuration;
     }
 
@@ -96,22 +96,21 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
     get defaultClient() {
         return this._telemetryClient;
     }
-    
 
-    trackDependency(telemetry: { id: string, method: string, absoluteUrl: string, pathName: string, totalTime: number, success: boolean, resultCode: number}) {
-        this._telemetryClient.trackDependency(telemetry);
+    trackDependency(telemetry: TelemetryDependency) {
+        this._telemetryClient.trackDependency(telemetry as DependencyTelemetry);
     }
 
-    trackEvent(telemetry: { name: string, properties?: {[key: string]: any}, metrics?: {[key: string]: number } })  {
-        this._telemetryClient.trackEvent(telemetry);
+    trackEvent(telemetry: TelemetryEvent)  {
+        this._telemetryClient.trackEvent(telemetry as EventTelemetry);
     }
 
-    trackException(telemetry: { exception: Error, handledAt?: string, properties?: {[key:string]:string}, measurements?: {[key:string]:number}, severityLevel?: Severity})  {
-        this._telemetryClient.trackException(telemetry)
+    trackException(telemetry: TelemetryException)  {
+        this._telemetryClient.trackException(telemetry as ExceptionTelemetry)
     }
 
-    trackTrace(telemetry: { message: string, properties?: {[key:string]:string}, severityLevel?: Severity }) {
-        this._telemetryClient.trackTrace(telemetry);
+    trackTrace(telemetry: TelemetryTrace) {
+        this._telemetryClient.trackTrace(telemetry as TraceTelemetry);
     }
 
     flush()  {
@@ -123,10 +122,10 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
 /* Define the telemetry initializer function which is responsible for setting the userId. sessionId and some other values
  * so that application insights can correlate related events.
  */
-function addBotIdentifiers(envelope, context) {
+function addBotIdentifiers(envelope: Envelope, context: { [name: string]: any }): boolean {
     if (context.correlationContext && context.correlationContext.activity) {
         const activity = context.correlationContext.activity;
-        const telemetryItem = envelope.data.baseData;
+        const telemetryItem = envelope.data['baseData']; // have to use bracket notation here because baseData is not in TS definition.
         const userId = activity.from ? activity.from.id : '';
         const channelId = activity.channelId || '';
         const conversationId = activity.conversation ? activity.conversation.id : '';
@@ -137,8 +136,10 @@ function addBotIdentifiers(envelope, context) {
 
         // Add additional properties
         telemetryItem.properties = telemetryItem.properties || {};
-        telemetryItem.properties["activityId"] = activity.id;
-        telemetryItem.properties["channelId"] = channelId;
-        telemetryItem.properties["activityType"] = activity.type;
+        telemetryItem.properties.activityId = activity.id;
+        telemetryItem.properties.channelId = channelId;
+        telemetryItem.properties.activityType = activity.type;
     }
+    
+    return true;
 }

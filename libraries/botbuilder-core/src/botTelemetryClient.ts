@@ -20,11 +20,41 @@ export enum Severity
 }
 
 export interface BotTelemetryClient {
-    trackDependency(telemetry: { id: string, method: string, absoluteUrl: string, pathName: string, totalTime: number, success: boolean, resultCode: number });
-    trackEvent(telemetry: {  name: string, properties?: {[key: string]: any}, metrics?: {[key: string]: number } });
-    trackException(telemetry: { exception: Error, handledAt?: string, properties?: {[key:string]:string}, measurements?: {[key:string]:number}, severityLevel?: Severity });
-    trackTrace(telemetry: { message: string, properties?: {[key:string]:string}, severityLevel?: Severity });
+    trackDependency(telemetry: TelemetryDependency);
+    trackEvent(telemetry: TelemetryEvent);
+    trackException(telemetry: TelemetryException);
+    trackTrace(telemetry: TelemetryTrace);
     flush();
+}
+
+export interface TelemetryDependency {
+    dependencyTypeName: string;
+    target: string;
+    name: string;
+    data: string;
+    duration: number; 
+    success: boolean;
+    resultCode: number;
+}
+
+export interface TelemetryEvent {
+    name: string;
+    properties?: {[key: string]: any};
+    metrics?: {[key: string]: number };
+}
+
+export interface TelemetryException { 
+    exception: Error;
+    handledAt?: string;
+    properties?: {[key:string]:string};
+    measurements?: {[key:string]:number};
+    severityLevel?: Severity;
+}
+
+export interface TelemetryTrace {
+    message: string;
+    properties?: {[key:string]:string};
+    severityLevel?: Severity;
 }
 
 export class NullTelemetryClient implements BotTelemetryClient {
@@ -33,18 +63,18 @@ export class NullTelemetryClient implements BotTelemetryClient {
         // noop
     }
 
-    trackDependency(telemetry: { id: string, method: string, absoluteUrl: string, pathName: string, totalTime: number, success: boolean, resultCode: number}) {
+    trackDependency(telemetry: TelemetryDependency) {
         // noop
     }
 
-    trackEvent(telemetry: { name: string, properties?: {[key: string]: any}, metrics?: {[key: string]: number }})  {
+    trackEvent(telemetry: TelemetryEvent)  {
         // noop
     }
 
-    trackException(telemetry: { exception: Error, handledAt?: string, properties?: {[key:string]:string}, measurements?: {[key:string]:number}, severityLevel?: Severity})  {
+    trackException(telemetry: TelemetryException)  {
         // noop
     }
-    trackTrace(telemetry: { message: string, properties?: {[key:string]:string}, severityLevel?: Severity }) {
+    trackTrace(telemetry: TelemetryTrace) {
         // noop
     }
 
