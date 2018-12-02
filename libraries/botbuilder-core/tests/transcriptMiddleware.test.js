@@ -1,6 +1,18 @@
 const assert = require('assert');
 const { TestAdapter, TranscriptLoggerMiddleware, MemoryTranscriptStore, ActivityTypes } = require('../');
 
+class SyncErrorLogger {
+    logActivity(activity) {
+        throw new Error();
+    }
+}
+
+class AsyncErrorLogger {
+    async logActivity(activity) {
+        throw new Error();
+    }
+}
+
 describe(`TranscriptLoggerMiddleware`, function () {
     this.timeout(5000);
 
@@ -109,6 +121,38 @@ describe(`TranscriptLoggerMiddleware`, function () {
                     done();
                 });
             })
+    });
+
+    describe('\'s error handling', function () {
+        const originalConsoleError = console.error;
+
+        this.afterEach(function () {
+            console.error = originalConsoleError;
+        })
+
+        function stubConsoleError(done) {            
+            console.error = function (error) {
+                assert(typeof error === 'string', `unexpected typeof arg passed to console.error: "typeof ${ typeof error }"`);
+                assert(error.startsWith('TranscriptLoggerMiddleware logActivity failed'), `unexpected error message received: ${ error }`);
+                done();
+            }
+        }
+
+        it(`should print to console errors from synchronous logActivity()`, function (done) {
+            stubConsoleError(done);
+            var adapter = new TestAdapter(async (context) => {
+            }).use(new TranscriptLoggerMiddleware(new SyncErrorLogger()));
+    
+            adapter.send('test');
+        });
+
+        it(`should print to console errors from asynchronous logActivity().`, function (done) {
+            stubConsoleError(done);
+            var adapter = new TestAdapter(async (context) => {
+            }).use(new TranscriptLoggerMiddleware(new AsyncErrorLogger()));
+    
+            adapter.send('test');
+        });
     });
 });
 
