@@ -1,23 +1,30 @@
-rem @echo off
+@echo off
 
+echo [92mRemoving any preexisting output folders ("connectorApi/", "tokenApi/")[0m
 rd /s /q connectorApi
-rd /s /q oAuthApi
+rd /s /q tokenApi
 
-rem call autorest connectorAPI.md --typescript
+@echo on
+call npx autorest connectorAPI.md --typescript --use=".\node_modules\@microsoft.azure\autorest.typescript"
 
-rem call node model_fixes.js
+call node model_fixes.js
 
-rem Move models to botbuilder-schema
-rem del /q ..\botframework-schema\src\index.ts
-rem move ConnectorAPI\lib\models\index.ts ..\botframework-schema\src\index.ts
+echo [92mMove models to botbuilder-schema[0m
+del /q ..\botframework-schema\src\index.ts
+move connectorAPI\lib\models\index.ts ..\botframework-schema\src\index.ts
 
-rem Move client to botframework-connector
-rem rd /s /q ..\botframework-connector\src\connectorApi
-rem move connectorApi\lib ..\botframework-connector\src\connectorApi
+echo [92mMove client to botframework-connector[0m
+rd /s /q ..\botframework-connector\src\connectorApi
+move connectorApi\lib ..\botframework-connector\src\connectorApi
 
-call autorest tokenAPI.md --typescript
+@echo on
+call npx autorest tokenAPI.md --typescript --use=".\node_modules\@microsoft.azure\autorest.typescript"
+@echo off
+
+echo [92mMove tokenAPI to botframework-connector[0m
 rd /s /q ..\botframework-connector\src\tokenApi
 move tokenApi\lib ..\botframework-connector\src\tokenApi
 
-rem rd /s /q connectorApi
+echo [92mRemoving generated folders ("connectorApi/", "tokenApi/")[0m
+rd /s /q connectorApi
 rd /s /q tokenApi

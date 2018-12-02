@@ -117,12 +117,12 @@ export interface ChannelAccount {
    * @member {string} [aadObjectId] This account's object ID within Azure
    * Active Directory (AAD)
    */
-  aadObjectId: string;
+  aadObjectId?: string;
   /**
    * @member {RoleTypes} [role] Role of the entity behind the account (Example:
    * User, Bot, etc.). Possible values include: 'user', 'bot'
    */
-  role: RoleTypes | string;
+  role?: RoleTypes | string;
 }
 
 /**
@@ -155,12 +155,12 @@ export interface ConversationAccount {
    * @member {string} [aadObjectId] This account's object ID within Azure
    * Active Directory (AAD)
    */
-  aadObjectId: string;
+  aadObjectId?: string;
   /**
    * @member {RoleTypes} [role] Role of the entity behind the account (Example:
    * User, Bot, etc.). Possible values include: 'user', 'bot'
    */
-  role: RoleTypes;
+  role?: RoleTypes;
 }
 
 /**
@@ -218,7 +218,7 @@ export interface CardAction {
    * @member {any} [channelData] Channel-specific data associated with this
    * action
    */
-  channelData: any;
+  channelData?: any;
 }
 
 /**
