@@ -133,4 +133,6 @@ See this module in action in these example apps:
 
 [WaterfallDialog](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/waterfalldialog) WaterfallDialogs execute a series of step functions in order, passing the resulting user input from each steo into the next step's function.
 
+[Track Waterfall Dialogs with Application Insights](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder-applicationinsights#use-with-waterfall-dialogs).
+
 [ComponentDialog](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/componentdialog) ComponentDialogs are containers that encapsulate multiple sub-dialogs, but can be invoked like normal dialogs. This is useful for re-usable dialogs, or creating multiple dialogs with similarly named sub-dialogs that would otherwise collide.
