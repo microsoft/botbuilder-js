@@ -12,6 +12,8 @@ var optionalModelProperties = {
     'Attachment': ['content', 'contentUrl', 'name', 'thumbnailUrl'],
     'CardImage': ['alt', 'tap'],
     'CardAction': ['channelData', 'displayText', 'image', 'text'],
+    'ChannelAccount': ['aadObjectId', 'role'],
+    'ConversationAccount': ['aadObjectId', 'role'],
     'MediaUrl': ['profile']
 };
 

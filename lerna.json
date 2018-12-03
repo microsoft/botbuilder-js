@@ -1,7 +1,14 @@
 {
   "lerna": "3.2.1",
   "packages": [
-    "libraries/*",
+    "libraries/botbuilder",
+    "libraries/botbuilder-ai",
+    "libraries/botbuilder-azure",
+    "libraries/botbuilder-core",
+    "libraries/botbuilder-dialogs",
+    "libraries/botframework-config",
+    "libraries/botframework-connector",
+    "libraries/botframework-schema",
     "transcripts"
   ],
   "version": "independent",
