@@ -24,7 +24,7 @@ describe('TelemetryWaterfall', function() {
         dialog.telemetryClient = {
             trackEvent: (telemetry) => {
                 assert(telemetry, 'telemetry is null');
-                if (telemetry.name==='WaterfallStart') {
+                if (telemetry.name === 'WaterfallStart') {
                     done();
                 }
             }
@@ -61,12 +61,12 @@ describe('TelemetryWaterfall', function() {
         dialog.telemetryClient = {
             trackEvent: (telemetry) => {
                 assert(telemetry, 'telemetry is null');
-                if (telemetry.name==='WaterfallStep') {
+                if (telemetry.name === 'WaterfallStep') {
                     assert(telemetry.properties.StepName==='Step' + (count + 1) + 'of' + dialog.steps.length,'waterfallstep step name is wrong');
                     count++;
                 }
-                if (telemetry.name==='WaterfallComplete') {
-                    assert(count===dialog.steps.length,'incorrect number of waterfall step events');
+                if (telemetry.name === 'WaterfallComplete') {
+                    assert(count === dialog.steps.length,'incorrect number of waterfall step events');
                     done();
                 }
 
@@ -100,7 +100,7 @@ describe('TelemetryWaterfall', function() {
         dialog.telemetryClient = {
             trackEvent: (telemetry) => {
                 assert(telemetry, 'telemetry is null');
-                if (telemetry.name==='WaterfallComplete') {
+                if (telemetry.name === 'WaterfallComplete') {
                     done();
                 }
             }
@@ -133,7 +133,7 @@ describe('TelemetryWaterfall', function() {
         dialog.telemetryClient = {
             trackEvent: (telemetry) => {
                 assert(telemetry, 'telemetry is null');
-                if (telemetry.name==='WaterfallCancel') {
+                if (telemetry.name === 'WaterfallCancel') {
                     done();
                 }
             }
@@ -175,14 +175,14 @@ describe('TelemetryWaterfall', function() {
                 }
                 assert(telemetry, 'telemetry is null');
                 assert(instanceId,'instanceid is not set on event');
-                assert(instanceId===telemetry.properties.InstanceId,'instance id does not match other events');
+                assert(instanceId === telemetry.properties.InstanceId,'instance id does not match other events');
 
-                if (telemetry.name==='WaterfallStep') {
+                if (telemetry.name === 'WaterfallStep') {
                     count++;
                 }
 
-                if (telemetry.name==='WaterfallComplete') {
-                    assert(count===dialog.steps.length,'wrong number of waterfall step events');
+                if (telemetry.name === 'WaterfallComplete') {
+                    assert(count === dialog.steps.length,'wrong number of waterfall step events');
                     done();
                 }
             }
