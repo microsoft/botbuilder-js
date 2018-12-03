@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotTelemetryClient, Severity, TelemetryDependency, TelemetryEvent, TelemetryException, TelemetryTrace } from 'botbuilder-core';
-import appInsights = require('applicationinsights');
+import { BotTelemetryClient, TelemetryDependency, TelemetryEvent, TelemetryException, TelemetryTrace } from 'botbuilder-core';
+import * as appInsights from 'applicationinsights';
 import cls from 'cls-hooked'
 const ns = cls.createNamespace('my.request');
 
@@ -59,8 +59,8 @@ export const ApplicationInsightsWebserverMiddleware = function (req, res, next) 
  */
 export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
 
-    private _telemetryClient: appInsights.TelemetryClient;
-    private _configuration: appInsights.Configuration;
+    private client: appInsights.TelemetryClient;
+    private config: appInsights.Configuration;
 
     /* The settings parameter is passed directly into appInsights.setup().
      * https://www.npmjs.com/package/applicationinsights#basic-usage
@@ -68,7 +68,7 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
      */
     constructor(instrumentationKey: string) {
 
-        this._configuration = appInsights.setup(instrumentationKey)
+        this.config = appInsights.setup(instrumentationKey)
         .setAutoDependencyCorrelation(true)
         .setAutoCollectRequests(true)
         .setAutoCollectPerformance(true)
@@ -76,9 +76,9 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
         .setAutoCollectDependencies(true)
         .start(); 
 
-        this._telemetryClient = appInsights.defaultClient;
+        this.client = appInsights.defaultClient;
 
-        this._telemetryClient.addTelemetryProcessor(addBotIdentifiers);
+        this.client.addTelemetryProcessor(addBotIdentifiers);
     }
 
     /* configuration() 
@@ -87,36 +87,35 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
      * `appInsightsClient.configuration.setAutoCollectDependencies(false)`
      */
     get configuration(): appInsights.Configuration {
-        return this._configuration;
+        return this.config;
     }
 
     /* defaultClient()
      * Provides direct access to the telemetry client object, which might be necessary for some operations.
      */
     get defaultClient() {
-        return this._telemetryClient;
+        return this.client;
     }
 
     trackDependency(telemetry: TelemetryDependency) {
-        this._telemetryClient.trackDependency(telemetry as DependencyTelemetry);
+        this.defaultClient.trackDependency(telemetry as DependencyTelemetry);
     }
 
     trackEvent(telemetry: TelemetryEvent)  {
-        this._telemetryClient.trackEvent(telemetry as EventTelemetry);
+        this.defaultClient.trackEvent(telemetry as EventTelemetry);
     }
 
     trackException(telemetry: TelemetryException)  {
-        this._telemetryClient.trackException(telemetry as ExceptionTelemetry)
+        this.defaultClient.trackException(telemetry as ExceptionTelemetry)
     }
 
     trackTrace(telemetry: TelemetryTrace) {
-        this._telemetryClient.trackTrace(telemetry as TraceTelemetry);
+        this.defaultClient.trackTrace(telemetry as TraceTelemetry);
     }
 
     flush()  {
-        this._telemetryClient.flush();
+        this.defaultClient.flush();
     }
-
 }
 
 /* Define the telemetry initializer function which is responsible for setting the userId. sessionId and some other values
