@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, InputHints, TurnContext } from 'botbuilder-core';
+import { Activity, InputHints, TurnContext, ActivityTypes } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
@@ -45,7 +45,7 @@ export abstract class ActivityPrompt extends Dialog {
         state.state = {};
 
         // Send initial prompt
-        await this.onPrompt(dc.context, state.state, state.options);
+        await this.onPrompt(dc.context, state.state, state.options, false);
 
         return Dialog.EndOfTurn;
     }
@@ -69,6 +69,10 @@ export abstract class ActivityPrompt extends Dialog {
         if (isValid) {
             return await dc.endDialog(recognized.value);
         } else {
+            if (dc.context.activity.type == ActivityTypes.Message && !dc.context.responded) {
+                await this.onPrompt(dc.context, state.state, state.options, true);
+            }
+
             return Dialog.EndOfTurn;
         }
     }
@@ -86,11 +90,13 @@ export abstract class ActivityPrompt extends Dialog {
 
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         const state: ActivityPromptState = instance.state as ActivityPromptState;
-        await this.onPrompt(context, state.state, state.options);
+        await this.onPrompt(context, state.state, state.options, true);
     }
 
-    protected async onPrompt(context: TurnContext, state: object, options: PromptOptions): Promise<void> {
-        if (options.prompt) {
+    protected async onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void> {
+        if (isRetry && options.retryPrompt) {
+            await context.sendActivity(options.retryPrompt, undefined, InputHints.ExpectingInput);
+        } else if (options.prompt) {
             await context.sendActivity(options.prompt, undefined, InputHints.ExpectingInput);
         }
     }
