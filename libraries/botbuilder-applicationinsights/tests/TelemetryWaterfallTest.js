@@ -1,5 +1,5 @@
-const { BotTelemetryClient, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { DialogSet, DialogReason,  WaterfallDialog } = require('../../botbuilder-dialogs');
+const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { DialogSet, WaterfallDialog } = require('../../botbuilder-dialogs');
 const assert = require('assert');
 
 describe('TelemetryWaterfall', function() {
