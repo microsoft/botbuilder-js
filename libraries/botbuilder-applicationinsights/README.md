@@ -83,7 +83,7 @@ appInsightsClient.configuration.setAutoCollectConsole(true, true);
 As of version `4.2`, Waterfall Dialogs included in [botbuilder-dialogs](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder-dialogs) can 
 tracked automatically with a properly configured telemetry client.  To use Application Insights to track a waterfall dialog, set the `dialog.telemetryClient` property:
 
-```
+```javascript
 const myDialog = new WaterfallDialog(DIALOG_ID, array_of_steps);
 myDialog.telemetryClient = appInsightsClient;
 ```
