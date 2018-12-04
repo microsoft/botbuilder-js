@@ -13,6 +13,9 @@
         "update-versions": "lerna run set-version && npm run set-dependency-versions"
     },
     "dependencies": {
+        "ms-rest-azure": "^2.5.9",
+        "ms-rest-js": "^1.0.1",
+        "read-text-file": "^1.1.0",
         "replace-in-file": "^3.4.2",
         "sinon": "^6.3.4",
         "typedoc": "^0.12.0",
