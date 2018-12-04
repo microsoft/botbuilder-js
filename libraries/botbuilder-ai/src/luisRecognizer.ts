@@ -244,9 +244,9 @@ export class LuisRecognizer {
         // Note when the ms-rest dependency the LuisClient uses has been updated
         // this code should be modified to use the client's addUserAgentInfo() function.
 
-        var packageUserAgent = `${pjson.name}/${pjson.version}`;
-        var platformUserAgent = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
-        var userAgent = `${packageUserAgent} ${platformUserAgent}`;
+        const packageUserAgent = `${pjson.name}/${pjson.version}`;
+        const platformUserAgent = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
+        const userAgent = `${packageUserAgent} ${platformUserAgent}`;
 
         return userAgent;
     }
