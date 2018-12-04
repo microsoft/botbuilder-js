@@ -88,6 +88,8 @@ const myDialog = new WaterfallDialog(DIALOG_ID, array_of_steps);
 myDialog.telemetryClient = appInsightsClient;
 ```
 
+You may also set the `telemetryClient` field on `DialogSet` and `ComponentDialog` objects. Setting the property on these classes will apply it to all contained dialogs automatically.
+
 Once enabled, expect to see `WaterfallStart`, `WaterfallStep`, `WaterfallComplete` and `WaterfallCancel` events logged in Application Insights.
 These custom events will also include the dialog id, a unique instance id for each use of the dialog, and the name of the dialog step.
 
