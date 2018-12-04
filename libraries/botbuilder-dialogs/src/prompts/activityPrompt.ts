@@ -69,7 +69,7 @@ export abstract class ActivityPrompt extends Dialog {
         if (isValid) {
             return await dc.endDialog(recognized.value);
         } else {
-            if (dc.context.activity.type == ActivityTypes.Message && !dc.context.responded) {
+            if (dc.context.activity.type === ActivityTypes.Message && !dc.context.responded) {
                 await this.onPrompt(dc.context, state.state, state.options, true);
             }
 
