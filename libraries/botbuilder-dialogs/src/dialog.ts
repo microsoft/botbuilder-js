@@ -145,7 +145,7 @@ export abstract class Dialog<O extends object = {}> {
      * The telemetry client for logging events.
      * Default this to the NullTelemetryClient, which does nothing.
      */
-    public telemetryClient: BotTelemetryClient = new NullTelemetryClient(); 
+    protected _telemetryClient: BotTelemetryClient =  new NullTelemetryClient();
 
     /**
      * Creates a new Dialog instance.
@@ -154,6 +154,22 @@ export abstract class Dialog<O extends object = {}> {
     constructor(dialogId: string) {
         this.id = dialogId;
     }
+
+
+    /** 
+     * Retrieve the telemetry client for this dialog.
+     */
+    public get telemetryClient(): BotTelemetryClient {
+        return this._telemetryClient;
+    }
+
+    /** 
+     * Set the telemetry client for this dialog.
+     */
+    public set telemetryClient(client: BotTelemetryClient) {
+        this._telemetryClient = client ? client : new NullTelemetryClient();
+    }
+
 
     /**
      * Called when a new instance of the dialog has been pushed onto the stack and is being

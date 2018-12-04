@@ -1,5 +1,5 @@
-const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { DialogSet, WaterfallDialog } = require('../../botbuilder-dialogs');
+const { ConversationState, MemoryStorage, NullTelemetryClient, TestAdapter } = require('botbuilder-core');
+const { ComponentDialog, DialogSet, WaterfallDialog } = require('../../botbuilder-dialogs');
 const assert = require('assert');
 
 describe('TelemetryWaterfall', function() {
@@ -190,6 +190,47 @@ describe('TelemetryWaterfall', function() {
         dialogs.add(dialog);
 
         adapter.send({text: 'hello'}).startTest();
+    });
+
+    it('should set telemetryClient on dialogs inside a component dialog', function(done) {
+
+        const component = new ComponentDialog('id');
+        
+        component.addDialog(new WaterfallDialog('secondary'), [
+            async (step) => { return await step.next(); }
+        ]);
+
+        assert(component.findDialog('secondary').telemetryClient instanceof NullTelemetryClient, 'should be nulltelemetryclient by default');
+        assert(component.telemetryClient instanceof NullTelemetryClient,'child dialog should have same telemetry client');
+
+        class TestClient {
+            trackEvent(t) {
+            } 
+            trackTrace(t) {
+            }
+            trackEvent(t) {
+            }
+            trackException(t) {
+            }
+        }
+
+        component.telemetryClient = new TestClient();
+
+        assert(component.findDialog('secondary').telemetryClient instanceof TestClient, 'child dialogs should now be TestClient');
+        assert(component.telemetryClient instanceof TestClient,'component should have a testclient as well');
+        assert(component.telemetryClient === component.findDialog('secondary').telemetryClient,'component should have same client as children');
+
+        component.addDialog(new WaterfallDialog('third'), [
+            async (step) => { return await step.next(); }
+        ]);
+
+        assert(component.findDialog('third').telemetryClient instanceof TestClient, 'child dialogs should now be TestClient');
+        assert(component.findDialog('secondary').telemetryClient instanceof TestClient, 'child dialogs should now be TestClient');
+        assert(component.telemetryClient === component.findDialog('third').telemetryClient,'component should have same client as new children');
+        assert(component.findDialog('third').telemetryClient === component.findDialog('secondary').telemetryClient,'children should have identical clients');
+
+        done();
+
     });
 
 });
