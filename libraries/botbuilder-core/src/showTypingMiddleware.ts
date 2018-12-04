@@ -59,7 +59,7 @@ export class ShowTypingMiddleware implements Middleware {
              */
             function startInterval(context: TurnContext, delay: number, period: number): void {
                 hTimeout = setTimeout(
-                    () => {
+                    async () => {
                         if (!finished) {
                             let typingActivity: Partial<Activity> = {
                                 type: ActivityTypes.Typing,
@@ -72,7 +72,7 @@ export class ShowTypingMiddleware implements Middleware {
                                 TurnContext.getConversationReference(context.activity);
                             typingActivity = TurnContext.applyConversationReference(typingActivity, conversationReference);
 
-                            context.adapter.sendActivities(context, [typingActivity]);
+                            await context.adapter.sendActivities(context, [typingActivity]);
 
                             // Pass in period as the delay to repeat at an interval.
                             startInterval(context, period, period);
