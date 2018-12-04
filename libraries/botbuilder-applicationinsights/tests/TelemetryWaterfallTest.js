@@ -229,6 +229,10 @@ describe('TelemetryWaterfall', function() {
         assert(component.telemetryClient === component.findDialog('third').telemetryClient,'component should have same client as new children');
         assert(component.findDialog('third').telemetryClient === component.findDialog('secondary').telemetryClient,'children should have identical clients');
 
+        component.telemetryClient = null;
+        assert(component.findDialog('secondary').telemetryClient instanceof NullTelemetryClient, 'child dialog should be reset to nulltelemetryclient');
+        assert(component.telemetryClient instanceof NullTelemetryClient,'component should be reset to nulltelemetryclient');
+
         done();
 
     });
