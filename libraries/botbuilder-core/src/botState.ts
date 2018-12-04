@@ -152,6 +152,26 @@ export class BotState implements PropertyManager {
     }
 
     /**
+     * Delete the backing state object for the current turn.
+     *
+     * @remarks
+     * The state object will be removed from storage if it exists.  If the state object has been
+     * read in and cached, the cache will be cleared. 
+     *
+     * ```JavaScript
+     * await botState.delete(context);
+     * ```
+     * @param context Context for current turn of conversation with the user.
+     */
+    public delete(context: TurnContext): Promise<void> {
+        if (context.turnState.has(this.stateKey)) {
+            context.turnState.delete(this.stateKey);
+        }
+
+        return Promise.resolve(this.storageKey(context)).then((key: string) => this.storage.delete([key]));
+    }
+
+    /**
      * Returns a cached state object or undefined if not cached.
      *
      * @remarks

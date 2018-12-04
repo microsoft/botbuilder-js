@@ -56,7 +56,18 @@ describe(`BotState`, function () {
         await botState.saveChanges(context);
         
         const items = await storage.read([storageKey]);
+        assert(items[storageKey], `state removed from storage.`);        
         assert(!items[storageKey].hasOwnProperty('test'), `state not cleared from storage.`);        
+    });
+
+    it(`should delete() state storage.`, async function () {
+        await botState.load(context);
+        assert(cachedState(context, botState.stateKey), `invalid initial state`);
+        await botState.delete(context);
+        assert(!cachedState(context, botState.stateKey), `state not cleared on context.`);
+        
+        const items = await storage.read([storageKey]);
+        assert(!items.hasOwnProperty(storageKey), `state not removed from storage.`);        
     });
 
     it(`should force immediate saveChanges() of state to storage.`, function (done) {
