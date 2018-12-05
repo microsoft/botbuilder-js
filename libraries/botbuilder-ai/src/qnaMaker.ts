@@ -336,8 +336,6 @@ export class QnAMaker {
     }
 
     private getUserAgent() : string {
-        // Note when the ms-rest dependency the LuisClient uses has been updated
-        // this code should be modified to use the client's addUserAgentInfo() function.
         const packageUserAgent = `${pjson.name}/${pjson.version}`;
         const platformUserAgent = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
         const userAgent = `${packageUserAgent} ${platformUserAgent}`;
