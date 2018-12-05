@@ -478,4 +478,18 @@ describe('LuisRecognizer', function () {
                 done();
             })
         });
+
+    it('should send user-agent header.', done => {
+        nock.cleanAll();
+        nock('https://westus.api.cognitive.microsoft.com')
+            .matchHeader('User-Agent', /botbuilder-ai\/4.*/)
+            .post(/apps/)
+            .reply(200, { query: null, intents: [], entities: [] });
+        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
+        const context = new TestContext({ text: 'Hello world!' });
+        recognizer.recognize(context).then(res => {
+            nock.cleanAll();
+            done();
+        });
+    });
 });
