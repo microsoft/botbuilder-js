@@ -294,9 +294,6 @@ export class QnAMaker {
 
     /**
      * Called internally to query the QnA Maker service.
-     *
-     * @remarks
-     * This is exposed to enable better unit testing of the service.
      */
     private async queryQnaService(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResult[]> {
         const url: string = `${endpoint.host}/knowledgebases/${endpoint.knowledgeBaseId}/generateanswer`;
