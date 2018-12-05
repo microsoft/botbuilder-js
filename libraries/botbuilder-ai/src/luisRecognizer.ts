@@ -8,6 +8,9 @@
 import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from 'azure-cognitiveservices-luis-runtime';
 import { RecognizerResult, TurnContext } from 'botbuilder';
 import * as msRest from 'ms-rest';
+import * as os from 'os';
+
+const pjson = require('../package.json');
 
 const LUIS_TRACE_TYPE: string = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME: string = 'LuisRecognizer';
@@ -198,7 +201,10 @@ export class LuisRecognizer {
                 this.application.applicationId, utterance,
                 {
                     verbose: this.options.includeAllIntents,
-                    customHeaders: { 'Ocp-Apim-Subscription-Key': this.application.endpointKey },
+                    customHeaders: {
+                        'Ocp-Apim-Subscription-Key': this.application.endpointKey,
+                        'User-Agent': this.getUserAgent()
+                    },
                     ...this.options
                 }
             )
@@ -231,6 +237,18 @@ export class LuisRecognizer {
         }
 
         return Promise.resolve(cached);
+    }
+
+    private getUserAgent() : string {
+
+        // Note when the ms-rest dependency the LuisClient uses has been updated
+        // this code should be modified to use the client's addUserAgentInfo() function.
+
+        const packageUserAgent = `${pjson.name}/${pjson.version}`;
+        const platformUserAgent = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
+        const userAgent = `${packageUserAgent} ${platformUserAgent}`;
+
+        return userAgent;
     }
 
     private emitTraceInfo(context: TurnContext, luisResult: LuisModels.LuisResult, recognizerResult: RecognizerResult): Promise<any> {
