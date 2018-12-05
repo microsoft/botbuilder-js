@@ -104,13 +104,11 @@ export class TranscriptLoggerMiddleware implements Middleware {
                 // console.
                 if (logActivityResult instanceof Promise) {
                     logActivityResult.catch(err => {
-                        // tslint:disable-next-line:no-console
-                        console.error('TranscriptLoggerMiddleware logActivity failed', err);
+                        this.transcriptLoggerErrorHandler(err);
                     });
                 }
             } catch (err) {
-                // tslint:disable-next-line:no-console
-                console.error('TranscriptLoggerMiddleware logActivity failed', err);
+                this.transcriptLoggerErrorHandler(err);
             }
         }
     }
@@ -134,6 +132,21 @@ export class TranscriptLoggerMiddleware implements Middleware {
     private cloneActivity(activity: Partial<Activity>): Activity {
         return Object.assign(<Activity>{}, activity);
     }
+
+    /**
+     * Error logging helper function.
+     * @param err Error or object to console.error out.
+     */
+    private transcriptLoggerErrorHandler(err: Error|any): void {
+        // tslint:disable:no-console
+        if (err instanceof Error) {
+          console.error(`TranscriptLoggerMiddleware logActivity failed: "${ err.message }"`);
+          console.error(err.stack);
+        } else {
+          console.error(`TranscriptLoggerMiddleware logActivity failed: "${ JSON.stringify(err) }"`);
+        }
+        // tslint:enable:no-console
+      }
 }
 
 /**
