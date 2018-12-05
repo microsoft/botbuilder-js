@@ -12,6 +12,7 @@ export * from './botAdapter';
 export * from './botState';
 export * from './botStatePropertyAccessor';
 export * from './botStateSet';
+export * from './botTelemetryClient';
 export * from './browserStorage';
 export * from './cardFactory';
 export * from './conversationState';

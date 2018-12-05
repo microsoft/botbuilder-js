@@ -1,0 +1,48 @@
+{
+  "name": "botbuilder-applicationinsights",
+  "author": "Microsoft Corp.",
+  "description": "Application Insights extensions for Microsoft BotBuilder.",
+  "version": "4.1.6",
+  "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "botframework",
+    "bots",
+    "chatbots",
+    "applicationinsights"
+  ],
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
+  "dependencies": {
+    "appinsights-usage": "^1.0.2",
+    "applicationinsights": "^1.0.7",
+    "applicationinsights-js": "^1.0.20",
+    "botbuilder-core": "^4.1.6",
+    "cls-hooked": "^4.2.2"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.47",
+    "assert": "^1.4.1",
+    "chatdown": "^1.0.2",
+    "codelyzer": "^4.1.0",
+    "mocha": "^5.2.0",
+    "nyc": "^11.4.1",
+    "source-map-support": "^0.5.3",
+    "ts-node": "^4.1.0",
+    "unzip": "^0.1.11"
+  },
+  "scripts": {
+    "test": "tsc && nyc mocha tests/",
+    "build": "tsc",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-applicationinsights --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-applicationinsights .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Application Insights\" --readme none",
+    "clean": "erase /q /s .\\lib",
+    "set-version": "npm version --allow-same-version ${Version}"
+  }
+}

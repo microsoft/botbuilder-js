@@ -27,6 +27,7 @@
     "jsonwebtoken": "8.0.1",
     "ms-rest-azure-js": "1.0.176",
     "ms-rest-js": "1.0.455",
+    "nock": "^10.0.3",
     "node-fetch": "^2.2.1",
     "rsa-pem-from-mod-exp": "^0.8.4"
   },

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from 'botbuilder-core';
+import { BotTelemetryClient, NullTelemetryClient, TurnContext } from 'botbuilder-core';
 import { DialogContext } from './dialogContext';
 
 /**
@@ -142,12 +142,34 @@ export abstract class Dialog<O extends object = {}> {
     public readonly id: string;
 
     /**
+     * The telemetry client for logging events.
+     * Default this to the NullTelemetryClient, which does nothing.
+     */
+    protected _telemetryClient: BotTelemetryClient =  new NullTelemetryClient();
+
+    /**
      * Creates a new Dialog instance.
      * @param dialogId Unique ID of the dialog.
      */
     constructor(dialogId: string) {
         this.id = dialogId;
     }
+
+
+    /** 
+     * Retrieve the telemetry client for this dialog.
+     */
+    public get telemetryClient(): BotTelemetryClient {
+        return this._telemetryClient;
+    }
+
+    /** 
+     * Set the telemetry client for this dialog.
+     */
+    public set telemetryClient(client: BotTelemetryClient) {
+        this._telemetryClient = client ? client : new NullTelemetryClient();
+    }
+
 
     /**
      * Called when a new instance of the dialog has been pushed onto the stack and is being

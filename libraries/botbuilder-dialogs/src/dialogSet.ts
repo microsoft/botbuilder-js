@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { StatePropertyAccessor, TurnContext } from 'botbuilder-core';
+import { BotTelemetryClient, StatePropertyAccessor, TurnContext } from 'botbuilder-core';
 import { Dialog } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 
@@ -58,7 +58,7 @@ import { DialogContext, DialogState } from './dialogContext';
 export class DialogSet {
     private readonly dialogs: { [id: string]: Dialog } = {};
     private readonly dialogState: StatePropertyAccessor<DialogState>;
-
+    private _telemetryClient: BotTelemetryClient;
     /**
      * Creates a new DialogSet instance.
      *
@@ -82,6 +82,7 @@ export class DialogSet {
      * @remarks
      * The `Dialog.id` of all dialogs or prompts added to the set need to be unique within the set.
      * @param dialog The dialog or prompt to add.
+     * If a telemetryClient is present on the dialog set, it will be added to each dialog.
      */
     public add<T extends Dialog>(dialog: T): this {
         if (!(dialog instanceof Dialog)) { throw new Error(`DialogSet.add(): Invalid dialog being added.`); }
@@ -92,6 +93,11 @@ export class DialogSet {
             throw new Error(`DialogSet.add(): A dialog with an id of '${dialog.id}' already added.`);
         }
 
+        // If a telemetry client has already been set on this dialogSet, also set it on new dialogs as they are added.
+        if (this._telemetryClient) {
+            dialog.telemetryClient = this._telemetryClient;
+        }
+        
         this.dialogs[dialog.id] = dialog;
 
         return this;
@@ -123,5 +129,23 @@ export class DialogSet {
      */
     public find(dialogId: string): Dialog|undefined {
         return this.dialogs.hasOwnProperty(dialogId) ? this.dialogs[dialogId] : undefined;
+    }
+
+    /** 
+     * Set the telemetry client for this dialog set and apply it to all current dialogs.
+     */
+    public get telemetryClient(): BotTelemetryClient {
+        return this._telemetryClient;
+    }
+
+    /** 
+     * Set the telemetry client for this dialog set and apply it to all current dialogs.
+     * Future dialogs added to the set will also inherit this client.
+     */
+    public set telemetryClient(client: BotTelemetryClient) {
+        this._telemetryClient = client;
+        for (let key in this.dialogs) {
+            this.dialogs[key].telemetryClient = this._telemetryClient;
+        }
     }
 }
