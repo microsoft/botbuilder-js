@@ -1,6 +1,31 @@
 const assert = require('assert');
 const { TestAdapter, TranscriptLoggerMiddleware, MemoryTranscriptStore, ActivityTypes } = require('../');
 
+class SyncErrorLogger {
+    logActivity(activity) {
+        throw new Error();
+    }
+}
+
+class AsyncErrorLogger {
+    async logActivity(activity) {
+        throw new Error();
+    }
+}
+
+class SyncThrowerLogger {
+    logActivity(activity) {
+        throw 1;
+    }
+}
+
+class AsyncThrowerLogger {
+    async logActivity(activity) {
+        throw 2;
+    }
+}
+
+
 describe(`TranscriptLoggerMiddleware`, function () {
     this.timeout(5000);
 
@@ -109,6 +134,67 @@ describe(`TranscriptLoggerMiddleware`, function () {
                     done();
                 });
             })
+    });
+
+    describe('\'s error handling', function () {
+        const originalConsoleError = console.error;
+
+        this.afterEach(function () {
+            console.error = originalConsoleError;
+        })
+
+        function stubConsoleError(done, expectedErrorMessage, expectedErrors = 1) {
+            let errorCounter = 0;      
+            console.error = function (error) {
+                // We only care about the error message on the first error.
+                if (errorCounter === 0) {
+                    if (expectedErrorMessage) {
+                        assert(error.startsWith(expectedErrorMessage), `unexpected error message received: ${ error }`);
+                    } else {
+                        assert(error.startsWith('TranscriptLoggerMiddleware logActivity failed'), `unexpected error message received: ${ error }`);
+                    }
+                }
+                errorCounter++;
+
+                if (expectedErrors === errorCounter)  {
+                    done();
+                } if (errorCounter > expectedErrors) {
+                    throw new Error(`console.error() called too many times.`);
+                }
+            }
+        }
+
+        it(`should print to console errors from synchronous logActivity()`, function (done) {
+            stubConsoleError(done, undefined, 2);
+            var adapter = new TestAdapter(async (context) => {
+            }).use(new TranscriptLoggerMiddleware(new SyncErrorLogger()));
+    
+            adapter.send('test');
+        });
+
+        it(`should print to console errors from asynchronous logActivity().`, function (done) {
+            stubConsoleError(done, undefined, 2);
+            var adapter = new TestAdapter(async (context) => {
+            }).use(new TranscriptLoggerMiddleware(new AsyncErrorLogger()));
+    
+            adapter.send('test');
+        });
+
+        it(`should print to console thrown info from synchronous logActivity()`, function (done) {
+            stubConsoleError(done, 'TranscriptLoggerMiddleware logActivity failed: "1"');
+            var adapter = new TestAdapter(async (context) => {
+            }).use(new TranscriptLoggerMiddleware(new SyncThrowerLogger()));
+    
+            adapter.send('test');
+        });
+
+        it(`should print to console thrown info from asynchronous logActivity().`, function (done) {
+            stubConsoleError(done, 'TranscriptLoggerMiddleware logActivity failed: "2"');
+            var adapter = new TestAdapter(async (context) => {
+            }).use(new TranscriptLoggerMiddleware(new AsyncThrowerLogger()));
+    
+            adapter.send('test');
+        });
     });
 });
 

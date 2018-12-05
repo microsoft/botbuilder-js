@@ -92,10 +92,23 @@ export class TranscriptLoggerMiddleware implements Middleware {
         while (this.transcript.length > 0) {
             try {
                 const activity: Activity = this.transcript.shift();
-                this.logger.logActivity(activity);
+                // If the implementation of this.logger.logActivity() is asynchronous, we don't
+                // await it as to not block processing of activities.
+                // Because TranscriptLogger.logActivity() returns void or Promise<void>, we capture
+                // the result and see if it is a Promise.
+                const logActivityResult = this.logger.logActivity(activity);
+
+                // If this.logger.logActivity() returns a Promise, a catch is added in case there
+                // is no innate error handling in the method. This catch prevents
+                // UnhandledPromiseRejectionWarnings from being thrown and prints the error to the
+                // console.
+                if (logActivityResult instanceof Promise) {
+                    logActivityResult.catch(err => {
+                        this.transcriptLoggerErrorHandler(err);
+                    });
+                }
             } catch (err) {
-                // tslint:disable-next-line:no-console
-                console.error('TranscriptLoggerMiddleware logActivity failed', err);
+                this.transcriptLoggerErrorHandler(err);
             }
         }
     }
@@ -119,6 +132,21 @@ export class TranscriptLoggerMiddleware implements Middleware {
     private cloneActivity(activity: Partial<Activity>): Activity {
         return Object.assign(<Activity>{}, activity);
     }
+
+    /**
+     * Error logging helper function.
+     * @param err Error or object to console.error out.
+     */
+    private transcriptLoggerErrorHandler(err: Error|any): void {
+        // tslint:disable:no-console
+        if (err instanceof Error) {
+          console.error(`TranscriptLoggerMiddleware logActivity failed: "${ err.message }"`);
+          console.error(err.stack);
+        } else {
+          console.error(`TranscriptLoggerMiddleware logActivity failed: "${ JSON.stringify(err) }"`);
+        }
+        // tslint:enable:no-console
+      }
 }
 
 /**
