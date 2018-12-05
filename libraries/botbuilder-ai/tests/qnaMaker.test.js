@@ -99,22 +99,6 @@ describe('QnAMaker', function () {
         assert.strictEqual(resultsWithoutAns.length, 0, 'Should have not received answers for a question with no answers.');
     });
 
-    // it('should return 0 answers for a question with no answer after a succesful call', async function () {
-    //     const qna = new ai.QnAMaker(endpoint, { top: 1 });
-    //     const answer = 'BaseCamp: You can use a damp rag to clean around the Power Pack';
-    //     const context_questionWithAns = new TestContext({ text: 'how do I clean the stove?' });
-    //     const context_questionWithoutAns = new TestContext({ text: 'how is the weather?' });
-
-    //     const resultsWithAns = await qna.getAnswers(context_questionWithAns);
-    //     assert.notStrictEqual(resultsWithAns, true, `The response was returned as 'undefined'.`);
-    //     assert.strictEqual(resultsWithAns.length, 1, 'Should have received just one answer on the first call.');
-    //     assert.strictEqual(resultsWithAns[0].answer.startsWith(answer), true, `The answer should have started with '${answer}' for the first call.`);
-
-    //     const resultsWithoutAns = await qna.getAnswers(context_questionWithoutAns);
-    //     assert.notStrictEqual(resultsWithoutAns, true, `The response was returned as 'undefined'.`);
-    //     assert.strictEqual(resultsWithoutAns.length, 0, 'Should have not received answers for a question with no answers.');
-    // });
-    
     it('should return 0 answers for an empty or undefined utterance', async function () {
         const qna = new ai.QnAMaker(endpoint, { top: 1 });
         

@@ -336,6 +336,7 @@ export class QnAMaker {
         const packageUserAgent = `${pjson.name}/${pjson.version}`;
         const platformUserAgent = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
         const userAgent = `${packageUserAgent} ${platformUserAgent}`;
+        
         return userAgent;
    }
 
