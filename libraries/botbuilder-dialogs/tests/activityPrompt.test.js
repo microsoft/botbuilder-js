@@ -47,7 +47,7 @@ describe('ActivityPrompt', function () {
             .assertReply('You said test');
     });
 
-    it('should return Dialog.EndOfTurn if validator returned false.', async function () {
+    it('should re-prompt with original prompt if validator returned false.', async function () {
         const adapter = new TestAdapter(async turnContext => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -57,9 +57,6 @@ describe('ActivityPrompt', function () {
             } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result.text;
                 await turnContext.sendActivity(`You said ${reply}`);
-            } else if (results.status === DialogTurnStatus.waiting) {
-                // This status is reached if the ActivityPrompt fails the validation process.
-                await turnContext.sendActivity('Test complete.');
             }
             await convoState.saveChanges(turnContext);
         });
@@ -76,7 +73,36 @@ describe('ActivityPrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please send an activity.')
             .send('test')
-            .assertReply('Test complete.');
+            .assertReply('Please send an activity.');
+    });
+
+    it('should re-prompt with custom retyrPrompt if validator returned false.', async function () {
+        const adapter = new TestAdapter(async turnContext => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', { prompt: 'Please send activity.', retryPrompt: 'Activity not received.' });
+            } else if (results.status === DialogTurnStatus.complete) {
+                const reply = results.result.text;
+                await turnContext.sendActivity(`You said ${reply}`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new SimpleActivityPrompt('prompt', async prompt => {
+            assert(prompt, `validator missing PromptValidatorContext.`);
+            assert(typeof prompt.recognized.value === 'object', 'recognized.value was not an object.');
+            return false;
+        }));
+
+        await adapter.send('Hello')
+            .assertReply('Please send activity.')
+            .send('test')
+            .assertReply('Activity not received.');
     });
 
     it('should have resumeDialog() prompt user and return Dialog.EndOfTurn.', async function () {
