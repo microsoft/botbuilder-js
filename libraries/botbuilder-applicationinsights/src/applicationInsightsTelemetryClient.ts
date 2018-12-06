@@ -7,7 +7,7 @@
  */
 import * as appInsights from 'applicationinsights';
 import { Activity, BotTelemetryClient, TelemetryDependency, TelemetryEvent, TelemetryException, TelemetryTrace } from 'botbuilder-core';
-import { clsHooked as cls } from 'cls-hooked';
+import * as cls from 'cls-hooked';
 const ns: any = cls.createNamespace('my.request');
 
 // This is the currently recommended work-around for using Application Insights with async/await
