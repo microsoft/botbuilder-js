@@ -37,13 +37,13 @@ export interface CosmosDbStorageSettings {
      */
      collectionId: string;
      /**
-      * Cosmos DB RequestOptions that are passed when the database is created.
+      * (Optional) Cosmos DB RequestOptions that are passed when the database is created.
       */
-     databaseCreationRequestOptions: RequestOptions;
+     databaseCreationRequestOptions?: RequestOptions;
      /**
-      * Cosmos DB RequestOptiones that are passed when the document collection is created.
+      * (Optional) Cosmos DB RequestOptiones that are passed when the document collection is created.
       */
-     documentCollectionRequestOptions: RequestOptions;
+     documentCollectionRequestOptions?: RequestOptions;
 }
 
 /**
