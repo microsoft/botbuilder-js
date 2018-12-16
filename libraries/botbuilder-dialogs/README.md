@@ -17,7 +17,8 @@ To add the latest version of this package to your bot:
 npm install --save botbuilder-dialogs
 ```
 
-#### Use the Daily Build
+#### How to Use Daily Builds
+If you want to play with the very latest versions of botbuilder, you can opt in to working with the daily builds.  This is not meant to be used in a production environment and is for advanced development.  Quality will vary and you should only use daily builds for exploritory purposes. 
 
 To get access to the daily builds of this library, configure npm to use the MyGet feed before installing.
 
