@@ -8,7 +8,6 @@
 import {  Activity, TurnContext } from 'botbuilder';
 import * as entities from 'html-entities';
 import * as request from 'request-promise-native';
-import { isContext } from 'vm';
 const pjson: any = require('../package.json');
 import * as os from 'os';
 
@@ -98,12 +97,12 @@ export interface QnAMakerOptions {
     top?: number;
 
     /**
-     * (Optional) Filters used on query. Not used in JavaScript SDK v4 yet.
+     * (Optional) Filters used on query.
      */
     strictFilters?: QnAMakerMetadata[];
 
     /**
-     * (Optional) Metadata related to query. Not used in JavaScript SDK v4 yet.
+     * (Optional) Metadata related to query.
      */
     metadataBoost?: QnAMakerMetadata[];
 }
@@ -163,7 +162,6 @@ export interface QnAMakerMetadata {
     value: string;
 }
 
-
 /**
  * Query a QnA Maker knowledge base for answers.
  *
@@ -181,6 +179,9 @@ export class QnAMaker {
      * @param options (Optional) additional settings used to configure the instance.
      */
     constructor(private readonly endpoint: QnAMakerEndpoint, options: QnAMakerOptions = {} as QnAMakerOptions) {
+        if (!endpoint) {
+            throw new TypeError('QnAMaker requires valid QnAMakerEndpoint.');
+        }
 
         const { 
             scoreThreshold = 0.3,
@@ -195,6 +196,208 @@ export class QnAMaker {
             strictFilters,
             metadataBoost 
         } as QnAMakerOptions;
+
+        this.validateOptions(this._options);
+    }
+
+    /**
+     * Calls the QnA Maker service to generate answer(s) for a question.
+     * 
+     * @remarks
+     * Returns an array of answers sorted by score with the top scoring answer returned first.
+     * 
+     * In addition to returning the results from QnA Maker, [getAnswers()](#getAnswers) will also
+     * emit a trace activity that contains the QnA Maker results.
+     * 
+     * @param context The Turn Context that contains the user question to be queried against your knowledge base.
+     * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     */
+    public async getAnswers(context: TurnContext, options?: QnAMakerOptions): Promise<QnAMakerResult[]> {
+        if (!context) {
+            throw new TypeError('QnAMaker.getAnswers() requires a TurnContext.');
+        }
+
+        let queryResult = [] as QnAMakerResult[];
+        const question: string = this.getTrimmedMessageText(context);
+        const queryOptions = { ...this._options, ...options } as QnAMakerOptions;
+        
+        this.validateOptions(queryOptions);
+
+        if (question.length > 0) {
+            const answers: QnAMakerResult[] = await this.queryQnaService(this.endpoint, question, queryOptions);
+            const sortedQnaAnswers = this.sortAnswersWithinThreshold(answers, queryOptions);
+
+            queryResult.push(...sortedQnaAnswers);
+        }
+
+        await this.emitTraceInfo(context, queryResult, queryOptions);
+
+        return queryResult;
+    }
+
+    /**
+     * Gets the message from the Activity in the TurnContext, trimmed of whitespaces.
+     */
+    private getTrimmedMessageText(context: TurnContext): string {
+        const question: string = this.hasMessageWithText(context) ? context.activity.text : '';
+        const trimmedQuestion: string = question.trim();
+
+        return trimmedQuestion;
+    }
+
+    /**
+     * Called internally to query the QnA Maker service.
+     */
+    private async queryQnaService(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResult[]> {
+        const url: string = `${endpoint.host}/knowledgebases/${endpoint.knowledgeBaseId}/generateanswer`;
+        const headers: any = this.getHeaders(endpoint);
+        const queryOptions = { ...this._options, ...options } as QnAMakerOptions;
+        
+        this.validateOptions(queryOptions);
+
+        const qnaResult = await request({
+            url: url,
+            method: 'POST',
+            headers: headers,
+            json: {
+                question: question,
+                ...queryOptions
+            }
+        });
+
+        const formattedQnaResult = this.formatQnaResult(qnaResult);
+
+        return formattedQnaResult;
+    }
+
+    /**
+     * Sorts all QnAMakerResult from highest-to-lowest scoring. 
+     * Filters QnAMakerResults within threshold specified (default threshold: .001).
+     */
+    private sortAnswersWithinThreshold(answers: QnAMakerResult[] = [] as QnAMakerResult[], queryOptions: QnAMakerOptions): QnAMakerResult[] {
+        const minScore: number = typeof queryOptions.scoreThreshold === 'number' ? queryOptions.scoreThreshold : 0.001;
+        const sortedQnaAnswers = answers.filter(
+            (ans: QnAMakerResult) => ans.score >= minScore
+        ).sort(
+            (a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score
+        );
+
+        return sortedQnaAnswers;
+    }
+
+    /**
+     * Emits a trace event detailing a QnA Maker call and its results.
+     *
+     * @param context Context for the current turn of conversation with the user.
+     * @param answers Answers returned by QnA Maker.
+     */
+    private emitTraceInfo(context: TurnContext, answers: QnAMakerResult[], queryOptions: QnAMakerOptions): Promise<any> {
+        const requestOptions = { ...this._options, ...queryOptions };
+        const { scoreThreshold, top, strictFilters, metadataBoost } = requestOptions;
+        
+        const traceInfo: QnAMakerTraceInfo = {
+            message: context.activity,
+            queryResults: answers,
+            knowledgeBaseId: this.endpoint.knowledgeBaseId,
+            scoreThreshold,
+            top,
+            strictFilters,
+            metadataBoost
+        };
+
+        return context.sendActivity({
+            type: 'trace',
+            valueType: QNAMAKER_TRACE_TYPE,
+            name: QNAMAKER_TRACE_NAME,
+            label: QNAMAKER_TRACE_LABEL,
+            value: traceInfo
+        });
+    }
+
+    /**
+     * Sets headers for request to QnAMaker service. 
+     * 
+     * The [QnAMakerEndpointKey](#QnAMakerEndpoint.QnAMakerEndpointKey) is set to the value of `Authorization` header for v4.0 and later of QnAMaker service.
+     * 
+     * Legacy QnAMaker APIs instead use the `Ocp-Apim-Subscription-Key` header for the QnAMakerEndpoint value.
+     * 
+     * [QnAMaker.getHeaders()](#QnAMaker.getHeaders) also gets the User-Agent header value.
+     */
+    private getHeaders(endpoint: QnAMakerEndpoint) {
+        const headers: any = {};
+        const isLegacyProtocol = endpoint.host.endsWith('v2.0') || endpoint.host.endsWith('v3.0');
+
+        if (isLegacyProtocol) {
+            headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
+        } else {
+            headers.Authorization = `EndpointKey ${endpoint.endpointKey}`;
+        }
+
+        headers['User-Agent'] = this.getUserAgent();
+
+        return headers;
+    }
+
+    private getUserAgent() : string {
+        const packageUserAgent = `${pjson.name}/${pjson.version}`;
+        const platformUserAgent = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
+        const userAgent = `${packageUserAgent} ${platformUserAgent}`;
+        
+        return userAgent;
+    }
+
+    private validateOptions(options: QnAMakerOptions): void {
+        const { scoreThreshold, top } = options;
+
+        if (scoreThreshold) {
+            this.validateScoreThreshold(scoreThreshold);
+        }
+
+        if (top) {
+            this.validateTop(top);
+        }
+    }
+
+    private validateScoreThreshold(scoreThreshold: number): void {
+        if (typeof scoreThreshold !== 'number') {
+            throw new TypeError('Invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.');
+        }
+
+        if (!this.isValidScore(scoreThreshold)) {
+            throw new RangeError('Invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.');
+        }
+    }
+
+    private isValidScore(number: number) {
+        return number > 0 && number < 1;
+    }
+
+    private validateTop(qnaOptionTop: number): void {
+        if (!Number.isInteger(qnaOptionTop) || qnaOptionTop < 1) {
+            throw new RangeError('Invalid "top" value. QnAMakerOptions.top must be an integer greater than 0.');
+        }
+    }
+
+    private formatQnaResult(qnaResult: any) {
+        return qnaResult.answers.map((ans: any) => {
+            ans.score = ans.score / 100;
+            ans.answer = htmlentities.decode(ans.answer);
+
+            if (ans.qnaId) {
+                ans.id = ans.qnaId;
+                delete ans.qnaId;
+            }
+
+            return ans as QnAMakerResult;
+        });
+    }
+
+    private hasMessageWithText(context: TurnContext): boolean {
+        if (context && context.activity && context.activity.text) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -206,10 +409,16 @@ export class QnAMaker {
      * @param context Context for the current turn of conversation with the user.
      */
     public async answer(context: TurnContext): Promise<boolean> {
-        const { top, scoreThreshold } = this._options;
-        const answers: QnAMakerResult[] = await this.generateAnswer(context.activity.text, top, scoreThreshold);
+        if (!context) {
+            throw new TypeError('QnAMaker.answer method requires a TurnContext.');
+        }
 
-        await this.emitTraceInfo(context, answers);
+        const { top, scoreThreshold } = this._options;
+        const question: string = this.getTrimmedMessageText(context);
+
+        const answers: QnAMakerResult[] = await this.generateAnswer(question, top, scoreThreshold);
+
+        await this.emitTraceInfo(context, answers, this._options);
 
         if (answers.length > 0) {
             await context.sendActivity({ text: answers[0].answer, type: 'message' });
@@ -250,119 +459,12 @@ export class QnAMaker {
     }
 
     /**
-     * Calls the QnA Maker service to generate answer(s) for a question.
-     * 
-     * @remarks
-     * Returns an array of answers sorted by score with the top scoring answer returned first.
-     * 
-     * In addition to returning the results from QnA Maker, [getAnswers()](#getAnswers) will also
-     * emit a trace activity that contains the QnA Maker results.
-     * 
-     * @param context The Turn Context that contains the user question to be queried against your knowledge base.
-     * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
-     */
-    public async getAnswers(context: TurnContext, options?: QnAMakerOptions): Promise<QnAMakerResult[]> {
-        const queryOptions = { ...this._options, ...options } as QnAMakerOptions;
-
-        const question: string = context && context.activity ? context.activity.text : '';
-        const trimmedQuestion: string = question ? question.trim() : '';
-        if (trimmedQuestion.length > 0) {
-            const answers: QnAMakerResult[] = await this.queryQnaService(this.endpoint, trimmedQuestion, queryOptions);
-            const minScore: number = typeof queryOptions.scoreThreshold === 'number' ? queryOptions.scoreThreshold : 0.001;
-            const sortedQnaAnswers = answers.filter(
-                (ans: QnAMakerResult) => ans.score >= minScore
-            ).sort(
-                (a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score
-            );
-            this.emitTraceInfo(context, sortedQnaAnswers);
-
-            return sortedQnaAnswers;
-        }
-
-        return [] as QnAMakerResult[];
-    }
-
-    /**
      * Called internally to query the QnA Maker service.
      *
      * @remarks
      * This is exposed to enable better unit testing of the service.
      */
     protected async callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResult[]> {
-       return this.queryQnaService(endpoint, question, { top } as QnAMakerOptions);
-    }
-
-    /**
-     * Called internally to query the QnA Maker service.
-     */
-    private async queryQnaService(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResult[]> {
-        const url: string = `${endpoint.host}/knowledgebases/${endpoint.knowledgeBaseId}/generateanswer`;
-        const headers: any = {};
-        const isLegacyProtocol = endpoint.host.endsWith('v2.0') || endpoint.host.endsWith('v3.0');
-        const queryOptions = { ...this._options, ...options } as QnAMakerOptions;
-
-        if (isLegacyProtocol) {
-            headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
-        } else {
-            headers.Authorization = `EndpointKey ${endpoint.endpointKey}`;
-        }
-
-        headers['User-Agent'] = this.getUserAgent();
-
-        const qnaResult = await request({
-            url: url,
-            method: 'POST',
-            headers: headers,
-            json: {
-                question: question,
-                ...queryOptions
-            }
-        });
-
-        return qnaResult.answers.map((ans: any) => {
-            ans.score = ans.score / 100;
-            ans.answer = htmlentities.decode(ans.answer);
-
-            if (ans.qnaId) {
-                ans.id = ans.qnaId;
-                delete ans.qnaId;
-            }
-
-            return ans as QnAMakerResult;
-        });
-    }
-
-    private getUserAgent() : string {
-        const packageUserAgent = `${pjson.name}/${pjson.version}`;
-        const platformUserAgent = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
-        const userAgent = `${packageUserAgent} ${platformUserAgent}`;
-        
-        return userAgent;
-   }
-
-    /**
-     * Emits a trace event detailing a QnA Maker call and its results.
-     *
-     * @param context Context for the current turn of conversation with the user.
-     * @param answers Answers returned by QnA Maker.
-     */
-    private emitTraceInfo(context: TurnContext, answers: QnAMakerResult[]): Promise<any> {
-        const traceInfo: QnAMakerTraceInfo = {
-            message: context.activity,
-            queryResults: answers,
-            knowledgeBaseId: this.endpoint.knowledgeBaseId,
-            scoreThreshold: this._options.scoreThreshold,
-            top: this._options.top,
-            strictFilters: [{}],
-            metadataBoost: [{}]
-        };
-
-        return context.sendActivity({
-            type: 'trace',
-            valueType: QNAMAKER_TRACE_TYPE,
-            name: QNAMAKER_TRACE_NAME,
-            label: QNAMAKER_TRACE_LABEL,
-            value: traceInfo
-        });
-    }
+        return this.queryQnaService(endpoint, question, { top } as QnAMakerOptions);
+     }
 }
