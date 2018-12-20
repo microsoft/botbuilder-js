@@ -317,9 +317,10 @@ export class QnAMaker {
     /**
      * Sets headers for request to QnAMaker service. 
      * 
-     * The [QnAMakerEndpointKey](#QnAMakerEndpoint.QnAMakerEndpointKey) is set to the value of `Authorization` header for v4.0 and later of QnAMaker service.
+     * The [QnAMakerEndpointKey](#QnAMakerEndpoint.QnAMakerEndpointKey) is set as the value of 
+     * `Authorization` header for v4.0 and later of QnAMaker service.
      * 
-     * Legacy QnAMaker APIs instead use the `Ocp-Apim-Subscription-Key` header for the QnAMakerEndpoint value.
+     * Legacy QnAMaker services use the `Ocp-Apim-Subscription-Key` header for the QnAMakerEndpoint value instead.
      * 
      * [QnAMaker.getHeaders()](#QnAMaker.getHeaders) also gets the User-Agent header value.
      */
