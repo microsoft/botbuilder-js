@@ -7,7 +7,14 @@
  */
 
 import { Storage, StoreItems } from 'botbuilder';
-import { DocumentBase, DocumentClient, UriFactory } from 'documentdb';
+import { ConnectionPolicy, DocumentClient, RequestOptions, UriFactory } from 'documentdb';
+import * as semaphore from 'semaphore';
+import { CosmosDbKeyEscape } from './cosmosDbKeyEscape';
+
+const _semaphore: semaphore.Semaphore = semaphore(1);
+
+// @types/documentdb does not have DocumentBase definition
+const DocumentBase: any = require('documentdb').DocumentBase; // tslint:disable-line no-require-imports no-var-requires
 
 /**
  * Additional settings for configuring an instance of `CosmosDbStorage`.
@@ -29,6 +36,14 @@ export interface CosmosDbStorageSettings {
      * The Collection ID.
      */
      collectionId: string;
+     /**
+      * Cosmos DB RequestOptions that are passed when the database is created.
+      */
+     databaseCreationRequestOptions: RequestOptions;
+     /**
+      * Cosmos DB RequestOptiones that are passed when the document collection is created.
+      */
+     documentCollectionRequestOptions: RequestOptions;
 }
 
 /**
@@ -63,6 +78,8 @@ export class CosmosDbStorage implements Storage {
     private settings: CosmosDbStorageSettings;
     private client: DocumentClient;
     private collectionExists: Promise<string>;
+    private documentCollectionCreationRequestOption: RequestOptions;
+    private databaseCreationRequestOption: RequestOptions;
 
     /**
      * Creates a new ConsmosDbStorage instance.
@@ -70,25 +87,47 @@ export class CosmosDbStorage implements Storage {
      * @param settings Setting to configure the provider.
      * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies. More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
      */
-    public constructor(settings: CosmosDbStorageSettings, connectionPolicyConfigurator: (policy: DocumentBase.ConnectionPolicy) => void = null) {
+    public constructor(
+        settings: CosmosDbStorageSettings,
+        connectionPolicyConfigurator: (policy: ConnectionPolicy) => void = null
+    ) {
         if (!settings) {
             throw new Error('The settings parameter is required.');
+        }
+
+        if (!settings.serviceEndpoint || settings.serviceEndpoint.trim() === '') {
+            throw new Error('The settings service Endpoint is required.');
+        }
+
+        if (!settings.authKey || settings.authKey.trim() === '') {
+            throw new Error('The settings authKey is required.');
+        }
+
+        if (!settings.databaseId || settings.databaseId.trim() === '') {
+            throw new Error('The settings dataBase ID is required.');
+        }
+
+        if (!settings.collectionId || settings.collectionId.trim() === '') {
+            throw new Error('The settings collection ID is required.');
         }
 
         this.settings = {...settings};
 
         // Invoke collectionPolicy delegate to further customize settings
-        const policy: DocumentBase.ConnectionPolicy = new DocumentBase.ConnectionPolicy();
+        const policy: ConnectionPolicy = new DocumentBase.ConnectionPolicy();
         if (connectionPolicyConfigurator && typeof connectionPolicyConfigurator === 'function') {
             connectionPolicyConfigurator(policy);
         }
 
         this.client = new DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey }, policy);
+        this.databaseCreationRequestOption = settings.databaseCreationRequestOptions;
+        this.documentCollectionCreationRequestOption = settings.documentCollectionRequestOptions;
     }
 
     public read(keys: string[]): Promise<StoreItems> {
         if (!keys || keys.length === 0) {
-            throw new Error('Please provide at least one key to read from storage.');
+            // No keys passed in, no result to return.
+            return Promise.resolve({});
         }
 
         const parameterSequence: string = Array.from(Array(keys.length).keys())
@@ -99,7 +138,7 @@ export class CosmosDbStorage implements Storage {
             value: string;
         }[] = keys.map((key: string, ix: number) => ({
             name: `@id${ix}`,
-            value: sanitizeKey(key)
+            value: CosmosDbKeyEscape.escapeKey(key)
         }));
 
         const querySpec: {
@@ -144,8 +183,8 @@ export class CosmosDbStorage implements Storage {
     }
 
     public write(changes: StoreItems): Promise<void> {
-        if (!changes) {
-            throw new Error('Please provide a StoreItems with changes to persist.');
+        if (!changes || Object.keys(changes).length === 0) {
+            return Promise.resolve();
         }
 
         return this.ensureCollectionExists().then(() => {
@@ -156,7 +195,7 @@ export class CosmosDbStorage implements Storage {
                 // The ETag information is updated as an _etag attribute in the document metadata.
                 delete changesCopy.eTag;
                 const documentChange: DocumentStoreItem = {
-                    id: sanitizeKey(k),
+                    id: CosmosDbKeyEscape.escapeKey(k),
                     realId: k,
                     document: changesCopy
                 };
@@ -189,11 +228,15 @@ export class CosmosDbStorage implements Storage {
     }
 
     public delete(keys: string[]): Promise<void> {
+        if (!keys || keys.length === 0) {
+            return Promise.resolve();
+        }
+
         return this.ensureCollectionExists().then(() =>
             Promise.all(keys.map((k: string) =>
                 new Promise((resolve: any, reject: any): void =>
                     this.client.deleteDocument(
-                        UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, sanitizeKey(k)),
+                        UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, CosmosDbKeyEscape.escapeKey(k)),
                         (err: any, data: any): void =>
                             err && err.code !== 404 ? reject(err) : resolve()
                         )
@@ -210,8 +253,16 @@ export class CosmosDbStorage implements Storage {
      */
     private ensureCollectionExists(): Promise<string> {
         if (!this.collectionExists) {
-            this.collectionExists = getOrCreateDatabase(this.client, this.settings.databaseId)
-                .then((databaseLink: string) => getOrCreateCollection(this.client, databaseLink, this.settings.collectionId));
+            this.collectionExists = new Promise((resolve : Function, reject : Function) : void => {
+                _semaphore.take(() => {
+                    const result : Promise<string> = this.collectionExists ? this.collectionExists :
+                        getOrCreateDatabase(this.client, this.settings.databaseId, this.databaseCreationRequestOption)
+                        .then((databaseLink: string) => getOrCreateCollection(
+                            this.client, databaseLink, this.settings.collectionId, this.documentCollectionCreationRequestOption));
+                    _semaphore.leave();
+                    resolve(result);
+                });
+            });
         }
 
         return this.collectionExists;
@@ -221,7 +272,7 @@ export class CosmosDbStorage implements Storage {
 /**
  * @private
  */
-function getOrCreateDatabase(client: DocumentClient, databaseId: string): Promise<string> {
+function getOrCreateDatabase(client: DocumentClient, databaseId: string, databaseCreationRequestOption: RequestOptions): Promise<string> {
     const querySpec: {
         query: string;
         parameters: {
@@ -229,7 +280,7 @@ function getOrCreateDatabase(client: DocumentClient, databaseId: string): Promis
             value: string;
         }[];
     } = {
-        query: 'SELECT * FROM root r WHERE r.id = @id',
+        query: 'SELECT r._self FROM root r WHERE r.id = @id',
         parameters: [{ name: '@id', value: databaseId }]
     };
 
@@ -239,7 +290,7 @@ function getOrCreateDatabase(client: DocumentClient, databaseId: string): Promis
             if (results.length === 1) { return resolve(results[0]._self); }
 
             // create db
-            client.createDatabase({ id: databaseId }, (db_create_err: any, databaseLink: any) => {
+            client.createDatabase({ id: databaseId }, databaseCreationRequestOption, (db_create_err: any, databaseLink: any) => {
                 if (db_create_err) { return reject(db_create_err); }
                 resolve(databaseLink._self);
             });
@@ -250,7 +301,10 @@ function getOrCreateDatabase(client: DocumentClient, databaseId: string): Promis
 /**
  * @private
  */
-function getOrCreateCollection(client: DocumentClient, databaseLink: string, collectionId: string): Promise<string> {
+function getOrCreateCollection(client: DocumentClient,
+                               databaseLink: string,
+                               collectionId: string,
+                               documentCollectionCreationRequestOption: RequestOptions): Promise<string> {
     const querySpec: {
         query: string;
         parameters: {
@@ -258,7 +312,7 @@ function getOrCreateCollection(client: DocumentClient, databaseLink: string, col
             value: string;
         }[];
     } = {
-        query: 'SELECT * FROM root r WHERE r.id=@id',
+        query: 'SELECT r._self FROM root r WHERE r.id=@id',
         parameters: [{ name: '@id', value: collectionId }]
     };
 
@@ -267,38 +321,13 @@ function getOrCreateCollection(client: DocumentClient, databaseLink: string, col
             if (err) { return reject(err); }
             if (results.length === 1) { return resolve(results[0]._self); }
 
-            client.createCollection(databaseLink, { id: collectionId }, (err2: any, collectionLink: any) => {
-                if (err2) { return reject(err2); }
-                resolve(collectionLink._self);
+            client.createCollection(databaseLink,
+                                    { id: collectionId },
+                                    documentCollectionCreationRequestOption,
+                                    (err2: any, collectionLink: any) => {
+                                        if (err2) { return reject(err2); }
+                                        resolve(collectionLink._self);
             });
         });
     });
-}
-
-/**
- * @private
- * Converts the key into a DocumentID that can be used safely with CosmosDB.
- * The following characters are restricted and cannot be used in the Id property: '/', '\', '?', '#'
- * More information at https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.documents.resource.id?view=azure-dotnet#remarks
- */
-function sanitizeKey(key: string): string {
-    const badChars: string[] = ['\\', '?', '/', '#', '\t', '\n', '\r'];
-    let sb: string = '';
-    for (const ch of key) {
-        let isBad: boolean = false;
-        for (const badChar of badChars) {
-            if (ch === badChar) {
-                // We cannot use % because DocumentClient will try to re-encode the % with encodeURI()
-                // tslint:disable-next-line:prefer-template
-                sb += '*' + ch.charCodeAt(0).toString(16);
-                isBad = true;
-                break;
-            }
-        }
-        if (!isBad) {
-            sb += ch;
-        }
-    }
-
-    return sb;
 }

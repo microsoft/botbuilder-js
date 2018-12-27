@@ -4,10 +4,10 @@ node_js:
 notifications:
   email: false
 before_install:
-- npm install --global npm@5.6.0 lerna@3.2.1 nyc mocha typescript@2.7.2
+- npm install --global lerna@3.2.1 nyc mocha typescript@2.7.2
 - cd tools/ && npm install && cd ..
 install:
-- printf "//botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/:_authToken=${API_KEY}" >> ~/.npmrc
+- printf "//botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/:_authToken=${MyGet_API_KEY}" >> ~/.npmrc
 - npm run update-versions
 - lerna bootstrap --hoist
 script:
@@ -29,6 +29,4 @@ after_success:
   
 env:
   global:
-  - Version=4.1.0-preview.${TRAVIS_BUILD_NUMBER}
-  # API_KEY=:
-  - secure: PQemyKrBXbCBw8fjmxw0xFmmg9j4zazgVpYbopKxkx3ME1msQWoRLQlatbUDhC2daj2DQQ8b3AM54p/Gvl0i9wXPvoHcO7cJaOFai2RrHzcAvYNVEXXaFtmxTHmuu/4UwXB2jxXhKyfUOHuh0KCIs9X55PNWnuxRtn5smNd14wFjDq69rYgHU6Nv17lK8VUzOOCK5Lx1w8OZnqQfhxoqxuq77ecrs53JCfM4Zpy80p3KZDQXsEbYvZCvGiDAIJdj/PmpLSKkLyP4FuLEJNU4v1OQEl/+mmgL3/lpbnhosMKh3FT+nkV69R1GT6MgM3t2pC1S4h5UK2xJezP1cSGDmSVWDNr4PG5/8OPjD/YdfvWM+kIHUUzJE9kLTZdx963xUQNi+orAOwt+W8zQFvR17ugLurcs5ujk05/KJYz0jxKRAmAEHtDC/60IYVDsAZoJ/ZcrpY6LXH9oxE4X/+PaM6O6vdROBnVmqr4L5RGqpOaJG3CkwHvgfbHCezt+XDpwsd59zYIEUZXRyrWRw3x+A8IY95PZVeS5xeeeQbZNF7+h0iA6Bc7xHnWggAc13g2Sn4tKw2pCSN5dS/cmoXMmALcelV09iMmapKcoieG5J4u3KlmeUTCB23Wdhg9yshLdWiItN7pUTjAO0btsCUUETDM6YPRpeFNUjctIrliI2yE=
+  - Version=4.1.7

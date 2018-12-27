@@ -1,16 +1,41 @@
 /**
+ * @module botframework-config
+ */
+/**
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
 import { ICosmosDBService, ServiceTypes } from '../schema';
 import { AzureService } from './azureService';
 
+/**
+ * Defines a CosmosDB service connection.
+ */
 export class CosmosDbService extends AzureService implements ICosmosDBService {
+    /**
+     * Endpoint/uri for CosmosDB.
+     */
     public endpoint: string;
+
+    /**
+     * Key for accessing CosmosDB.
+     */
     public key: string;
+
+    /**
+     * Database name.
+     */
     public database: string;
+
+    /**
+     * Collection name.
+     */
     public collection: string;
 
+    /**
+     * Creates a new CosmosDBService instance.
+     * @param source (Optional) JSON based service definition.
+     */
     constructor(source: ICosmosDBService = {} as ICosmosDBService) {
         super(source, ServiceTypes.CosmosDB);
     }

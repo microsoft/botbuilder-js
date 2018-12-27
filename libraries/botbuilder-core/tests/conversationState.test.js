@@ -74,4 +74,16 @@ describe(`ConversationState`, function () {
             done();
         }
     });
+
+    it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function () {
+        conversationState.getStorageKey = turnContext => undefined;
+        try {
+            await conversationState.load(context, true);
+        } catch (err) {
+            assert(err.message === 'ConversationState: channelId and/or conversation missing from context.request.',
+                `unexpected Error.message received: ${err.message}`);
+            return;
+        }
+        assert(false, `should have thrown an error.`);
+    });
 });

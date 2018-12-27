@@ -18,6 +18,8 @@ import { TurnContext } from './turnContext';
  * ```TypeScript
  * type TestActivityInspector = (activity: Partial<Activity>, description: string) => void;
  * ```
+ * @param TestActivityInspector.activity The activity being inspected.
+ * @param TestActivityInspector.description Text to log in the event of an error.
  */
 export type TestActivityInspector = (activity: Partial<Activity>, description: string) => void;
 
@@ -233,8 +235,10 @@ export class TestAdapter extends BotAdapter {
 
     /**
      * Test a list of activities.
-     * Each activity with the "bot" role will be processed with assertReply()
-     * Every other activity will be processed as a user message with send()
+     *
+     * @remarks
+     * Each activity with the "bot" role will be processed with assertReply() and every other
+     * activity will be processed as a user message with send().
      * @param activities Array of activities.
      * @param description (Optional) Description of the test case. If not provided one will be generated.
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
@@ -455,7 +459,7 @@ export class TestFlow {
     }
 
     /**
-     * start the test sequence, returning a promise to await
+     * Start the test sequence, returning a promise to await
      */
     public startTest() : Promise<void> {
         return this.previous;
@@ -481,10 +485,6 @@ function validateActivity(activity: Partial<Activity>, expected: Partial<Activit
  * - text
  * - speak
  * - suggestedActions
- *
- * @param activity
- * @param expected
- * @param description
  */
 function validateTranscriptActivity(activity: Partial<Activity>, expected: Partial<Activity>, description: string): void {
     assert.equal(activity.type, expected.type, `failed "type" assert on ${description}`);

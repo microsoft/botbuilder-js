@@ -11,16 +11,21 @@ import { Middleware, MiddlewareHandler, MiddlewareSet } from './middlewareSet';
 import { TurnContext } from './turnContext';
 
 /**
- * Abstract base class for all adapter plugins. Adapters manage the communication between the bot
- * and a user over a specific channel, or set of channels.
+ * Abstract base class for all adapter plugins.
+ *
+ * @remarks
+ * Adapters manage the communication between the bot and a user over a specific channel, or set
+ * of channels.
  */
 export abstract class BotAdapter {
     private middleware: MiddlewareSet = new MiddlewareSet();
     private turnError: (context: TurnContext, error: Error) => Promise<void>;
 
     /**
-     * Sends a set of activities to the user. An array of responses form the server will be
-     * returned.
+     * Sends a set of activities to the user.
+     *
+     * @remarks
+     * An array of responses from the server will be returned.
      * @param context Context for the current turn of conversation with the user.
      * @param activities Set of activities being sent.
      */
@@ -42,7 +47,7 @@ export abstract class BotAdapter {
 
     /**
      * Proactively continues an existing conversation.
-     * @param reference Conversation reference of the conversation being continued.
+     * @param reference Conversation reference for the conversation being continued.
      * @param logic Function to execute for performing the bots logic.
      */
     public abstract continueConversation(
@@ -50,6 +55,10 @@ export abstract class BotAdapter {
         logic: (revocableContext: TurnContext
     ) => Promise<void>): Promise<void>;
 
+    /**
+     * Gets/sets a error handler that will be called anytime an uncaught exception is raised during
+     * a turn.
+     */
     public get onTurnError(): (context: TurnContext, error: Error) => Promise<void> {
         return this.turnError;
     }
@@ -69,14 +78,19 @@ export abstract class BotAdapter {
     }
 
     /**
-     * Called by the parent class to run the adapters middleware set and calls the passed in
-     * `next()` handler at the end of the chain.  While the context object is passed in from the
-     * caller is created by the caller, what gets passed to the `next()` is a wrapped version of
-     * the context which will automatically be revoked upon completion of the turn.  This causes
-     * the bots logic to throw an error if it tries to use the context after the turn completes.
+     * Executes the adapters middleware chain.
+     *
+     * @remarks
+     * This should be be called by the parent class to run the adapters middleware chain. The
+     * `next()` handler passed to the method will be called at the end of the chain.
+     *
+     * While the context object is passed in from the caller is created by the caller, what gets
+     * passed to the `next()` handler is a wrapped version of the context which will automatically
+     * be revoked upon completion of the turn.  This causes the bots logic to throw an error if it
+     * tries to use the context object after the turn completes.
      * @param context Context for the current turn of conversation with the user.
      * @param next Function to call at the end of the middleware chain.
-     * @param next.callback A revocable version of the context object.
+     * @param next.revocableContext A revocable version of the context object.
      */
     protected runMiddleware(context: TurnContext, next: (revocableContext: TurnContext) => Promise<void>): Promise<void> {
         // Wrap context with revocable proxy

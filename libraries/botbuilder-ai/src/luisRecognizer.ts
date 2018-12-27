@@ -98,9 +98,12 @@ export interface LuisPredictionOptions {
 }
 
 /**
- * Component used to recognize intents in a user utterance using a configured LUIS model.
+ * Recognize intents in a user utterance using a configured LUIS model.
  *
  * @remarks
+ * This class is used to recognize intents and extract entities from incoming messages.
+ * See this class in action [in this sample application](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/12.nlp-with-luis).
+ *
  * This component can be used within your bots logic by calling [recognize()](#recognize).
  */
 export class LuisRecognizer {
@@ -113,8 +116,9 @@ export class LuisRecognizer {
 
     /**
      * Creates a new LuisRecognizer instance.
-     * @param application LUIS application to use.
-     * @param options Options used to control predictions.
+     * @param application An object conforming to the [LuisApplication](#luisapplication) definition.
+     * @param options (Optional) options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
+     * @param includeApiResults (Optional) flag that if set to `true` will force the inclusion of LUIS Api call in results returned by [recognize()](#recognize). Defaults to a value of `false`.
      */
     constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean) {
         this.application = application;
@@ -160,8 +164,29 @@ export class LuisRecognizer {
      * Calls LUIS to recognize intents and entities in a users utterance.
      *
      * @remarks
+     * Returns a [RecognizerResult](../botbuilder-core/recognizerresult) containing any intents and entities recognized by LUIS.
+     *
      * In addition to returning the results from LUIS, [recognize()](#recognize) will also
      * emit a trace activity that contains the LUIS results.
+     *
+     * Here is an example of recognize being used within a bot's turn handler: to interpret an incoming message:
+     *
+     * ```javascript
+     * async onTurn(context) {
+     *     if (turnContext.activity.type === ActivityTypes.Message) {
+     *         const results = await luisRecognizer.recognize(turnContext);
+     *         const topIntent = LuisRecognizer.topIntent(results);
+     *         switch (topIntent) {
+     *             case 'MyIntent':
+     *                 // ... handle intent ...
+     *                 break;
+     *             case 'None':
+     *                 // ... handle intent ...
+     *                 break;
+     *         }
+     *     }
+     * }
+     * ```
      * @param context Context for the current turn of conversation with the use.
      */
     public recognize(context: TurnContext): Promise<RecognizerResult> {
@@ -172,10 +197,9 @@ export class LuisRecognizer {
             return this.luisClient.prediction.resolve(
                 this.application.applicationId, utterance,
                 {
-                    timezoneOffset: this.options.timezoneOffset,
                     verbose: this.options.includeAllIntents,
-                    log: this.options.log,
-                    customHeaders: { 'Ocp-Apim-Subscription-Key': this.application.endpointKey }
+                    customHeaders: { 'Ocp-Apim-Subscription-Key': this.application.endpointKey },
+                    ...this.options
                 }
             )
                 .then((luisResult: LuisModels.LuisResult) => {
@@ -200,7 +224,7 @@ export class LuisRecognizer {
                         return recognizerResult;
                     });
                 })
-                .catch(error => {
+                .catch((error: any) => {
                     this.prepareErrorMessage(error);
                     throw error;
                 });
@@ -231,12 +255,16 @@ export class LuisRecognizer {
     }
 
     private prepareErrorMessage(error: Error): void {
-        // If the `error` received is a azure-cognitiveservices-luis-runtime error, it may have a `response` property and `response.statusCode`.
+        // If the `error` received is a azure-cognitiveservices-luis-runtime error,
+        // it may have a `response` property and `response.statusCode`.
         // If these properties exist, we should populate the error with a correct and informative error message.
         if ((error as any).response && (error as any).response.statusCode) {
             switch ((error as any).response.statusCode) {
                 case 400:
-                    error.message = `Response 400: The request's body or parameters are incorrect, meaning they are missing, malformed, or too large.`;
+                    error.message = [
+                        `Response 400: The request's body or parameters are incorrect,`,
+                        `meaning they are missing, malformed, or too large.`
+                    ].join(' ');
                     break;
                 case 401:
                     error.message = `Response 401: The key used is invalid, malformed, empty, or doesn't match the region.`;
@@ -257,7 +285,10 @@ export class LuisRecognizer {
                     error.message = `Response 429: Too many requests.`;
                     break;
                 default:
-                    error.message = `Response ${(error as any).response.statusCode}: Unexpected status code received. Please verify that your LUIS application is properly setup.`;
+                    error.message = [
+                        `Response ${(error as any).response.statusCode}: Unexpected status code received.`,
+                        `Please verify that your LUIS application is properly setup.`
+                    ].join(' ');
             }
         }
     }

@@ -1,21 +1,41 @@
 /**
+ * @module botframework-config
+ */
+/**
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
 import { IAppInsightsService, ServiceTypes } from '../schema';
 import { AzureService } from './azureService';
 
+/**
+ * Defines an App Insights service connection.
+ */
 export class AppInsightsService extends AzureService implements IAppInsightsService {
+    /**
+     * Instrumentation key for logging data to appInsights.
+     */
     public instrumentationKey: string;
+
+    /**
+     * (Optional) application ID used for programmatic access to AppInsights.
+     */
     public applicationId: string;
+
+    /**
+     * (Optional) named api keys for programmatic access to AppInsights.
+     */
     public apiKeys: { [key: string]: string };
 
+    /**
+     * Creates a new AppInsightService instance.
+     * @param source (Optional) JSON based service definition.
+     */
     constructor(source: IAppInsightsService = {} as IAppInsightsService) {
         super(source, ServiceTypes.AppInsights);
         this.apiKeys = this.apiKeys || {};
     }
 
-    // encrypt keys in service
     public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         const that: AppInsightsService = this;
         if (this.instrumentationKey && this.instrumentationKey.length > 0) {
@@ -28,7 +48,6 @@ export class AppInsightsService extends AzureService implements IAppInsightsServ
         }
     }
 
-    // decrypt keys in service
     public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         const that: AppInsightsService = this;
         if (this.instrumentationKey && this.instrumentationKey.length > 0) {

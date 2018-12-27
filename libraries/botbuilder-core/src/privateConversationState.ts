@@ -20,26 +20,10 @@ const NO_KEY: string = `PrivateConversationState: channelId and/or PrivateConver
  * that can be used to persist PrivateConversation tracking information between turns of the PrivateConversation.
  * This state information can be reset at any point by calling [clear()](#clear).
  *
- * Since the `PrivateConversationState` class derives from `BotState` it can be used as middleware to
- * automatically read and write the bots PrivateConversation state for each turn. And it also means it
- * can be passed to a `BotStateSet` middleware instance to be managed in parallel with other state
- * providers.
- *
  * ```JavaScript
  * const { PrivateConversationState, MemoryStorage } = require('botbuilder');
  *
  * const PrivateConversationState = new PrivateConversationState(new MemoryStorage());
- * adapter.use(PrivateConversationState);
- *
- * server.post('/api/messages', (req, res) => {
- *    adapter.processActivity(req, res, async (context) => {
- *       // Get loaded PrivateConversation state
- *       const convo = PrivateConversationState.get(context);
- *
- *       // ... route activity ...
- *
- *    });
- * });
  * ```
  */
 export class PrivateConversationState extends BotState {
@@ -52,6 +36,7 @@ export class PrivateConversationState extends BotState {
         super(storage, (context: TurnContext) => {
             // Calculate storage key
             const key: string = this.getStorageKey(context);
+
             return key ? Promise.resolve(key) : Promise.reject(new Error(NO_KEY));
         });
     }
@@ -77,6 +62,7 @@ export class PrivateConversationState extends BotState {
         if (!userId) {
             throw new Error('missing activity.from.id');
         }
+
         return `${channelId}/conversations/${conversationId}/users/${userId}/${this.namespace}`;
     }
 }

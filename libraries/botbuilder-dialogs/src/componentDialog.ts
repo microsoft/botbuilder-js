@@ -13,12 +13,69 @@ import { DialogSet } from './dialogSet';
 const PERSISTED_DIALOG_STATE: string = 'dialogs';
 
 /**
- * The `ComponentDialog` class lets you break your bots logic up into components that can be added
- * as a dialog to other dialog sets within your bots project or exported and used in other bot
- * projects.
- * @param O (Optional) options that can be passed into the begin() method.
+ * Base class for a dialog that contains other child dialogs.
+ *
+ * @remarks
+ * Component dialogs let you break your bot's logic up into components that can themselves be added
+ * as a dialog to another `ComponentDialog` or `DialogSet`. Components can also be exported as part
+ * of a node package and used within other bots.
+ *
+ * To define a new component derive a class from ComponentDialog and add your child dialogs within
+ * the classes constructor:
+ *
+ * ```JavaScript
+ * const { ComponentDialog, WaterfallDialog, TextPrompt, NumberPrompt } = require('botbuilder-dialogs);
+ *
+ * class FillProfileDialog extends ComponentDialog {
+ *     constructor(dialogId) {
+ *         super(dialogId);
+ *
+ *         // Add control flow dialogs
+ *         this.addDialog(new WaterfallDialog('start', [
+ *             async (step) => {
+ *                 // Ask user their name
+ *                 return await step.prompt('namePrompt', `What's your name?`);
+ *             },
+ *             async (step) => {
+ *                 // Remember the users answer
+ *                 step.values['name'] = step.result;
+ *
+ *                 // Ask user their age.
+ *                 return await step.prompt('agePrompt', `Hi ${step.values['name']}. How old are you?`);
+ *             },
+ *             async (step) => {
+ *                 // Remember the users answer
+ *                 step.values['age'] = step.result;
+ *
+ *                 // End the component and return the completed profile.
+ *                 return await step.endDialog(step.values);
+ *             }
+ *         ]));
+ *
+ *         // Add prompts
+ *         this.addDialog(new TextPrompt('namePrompt'));
+ *         this.addDialog(new NumberPrompt('agePrompt'))
+ *     }
+ * }
+ * module.exports.FillProfileDialog = FillProfileDialog;
+ * ```
+ *
+ * You can then add new instances of your component to another `DialogSet` or `ComponentDialog`:
+ *
+ * ```JavaScript
+ * const dialogs = new DialogSet(dialogState);
+ * dialogs.add(new FillProfileDialog('fillProfile'));
+ * ```
+ * @param O (Optional) options that can be passed into the `DialogContext.beginDialog()` method.
  */
 export class ComponentDialog<O extends object = {}> extends Dialog<O> {
+
+    /**
+     * ID of the child dialog that should be started anytime the component is started.
+     *
+     * @remarks
+     * This defaults to the ID of the first child dialog added using [addDialog()](#adddialog).
+     */
     protected initialDialogId: string;
     private dialogs: DialogSet = new DialogSet(null);
 
@@ -88,7 +145,15 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
         await this.onEndDialog(context, instance, reason);
     }
 
-    public addDialog<T extends Dialog>(dialog: T): ComponentDialog<O> {
+    /**
+     * Adds a child dialog or prompt to the components internal `DialogSet`.
+     *
+     * @remarks
+     * The `Dialog.id` of the first child added to the component will be assigned to the [initialDialogId](#initialdialogid)
+     * property.
+     * @param dialog The child dialog or prompt to add.
+     */
+    public addDialog(dialog: Dialog): this {
         this.dialogs.add(dialog);
         if (this.initialDialogId === undefined) { this.initialDialogId = dialog.id; }
 
@@ -96,37 +161,76 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     }
 
     /**
-     * Finds a dialog that was previously added to the set using [add()](#add).
-     *
-     * @remarks
-     * This example finds a dialog named "greeting":
-     *
-     * ```JavaScript
-     * const dialog = dialogs.find('greeting');
-     * ```
-     * @param dialogId ID of the dialog/prompt to lookup.
+     * Finds a child dialog that was previously added to the component using
+     * [addDialog()](#adddialog).
+     * @param dialogId ID of the dialog or prompt to lookup.
      */
     public findDialog(dialogId: string): Dialog | undefined {
         return this.dialogs.find(dialogId);
     }
 
-
+    /**
+     * Called anytime an instance of the component has been started.
+     *
+     * @remarks
+     * SHOULD be overridden by components that wish to perform custom interruption logic. The
+     * default implementation calls `innerDC.beginDialog()` with the dialog assigned to
+     * [initialDialogId](#initialdialogid).
+     * @param innerDC Dialog context for the components internal `DialogSet`.
+     * @param options (Optional) options that were passed to the component by its parent.
+     */
     protected onBeginDialog(innerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         return innerDC.beginDialog(this.initialDialogId, options);
     }
 
+    /**
+     * Called anytime a multi-turn component receives additional activities.
+     *
+     * @remarks
+     * SHOULD be overridden by components that wish to perform custom interruption logic. The
+     * default implementation calls `innerDC.continueDialog()`.
+     * @param innerDC Dialog context for the components internal `DialogSet`.
+     */
     protected onContinueDialog(innerDC: DialogContext): Promise<DialogTurnResult> {
         return innerDC.continueDialog();
     }
 
+    /**
+     * Called when the component is ending.
+     *
+     * @remarks
+     * If the `reason` code is equal to `DialogReason.cancelCalled`, then any active child dialogs
+     * will be cancelled before this method is called.
+     * @param context Context for the current turn of conversation.
+     * @param instance The components instance data within its parents dialog stack.
+     * @param reason The reason the component is ending.
+     */
     protected onEndDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         return Promise.resolve();
     }
 
+    /**
+     * Called when the component has been requested to re-prompt the user for input.
+     *
+     * @remarks
+     * The active child dialog will have already been asked to reprompt before this method is called.
+     * @param context Context for the current turn of conversation.
+     * @param instance The instance of the current dialog.
+     */
     protected onRepromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         return Promise.resolve();
     }
 
+    /**
+     * Called when the components last active child dialog ends and the component is ending.
+     *
+     * @remarks
+     * SHOULD be overridden by components that wish to perform custom logic before the component
+     * ends.  The default implementation calls `outerDC.endDialog()` with the `result` returned
+     * from the last active child dialog.
+     * @param outerDC Dialog context for the parents `DialogSet`.
+     * @param result Result returned by the last active child dialog. Can be a value of `undefined`.
+     */
     protected endComponent(outerDC: DialogContext, result: any): Promise<DialogTurnResult> {
         return outerDC.endDialog(result);
     }

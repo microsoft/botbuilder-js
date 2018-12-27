@@ -11,7 +11,7 @@
  */
 export interface InstanceData {
     /**
-     * 0-based index in the analyzed text for where entity starts.
+     * 0-based index in the analyzed text representing the start of the recognized entity
      */
     startIndex: number;
 
@@ -26,11 +26,11 @@ export interface InstanceData {
     text: string;
 
     /**
-     * (Optional) confidence in the recognition on a scale from 0.0 - 1.0.
+     * (Optional) Confidence in the recognition on a scale from 0.0 - 1.0.
      */
     score?: number;
 
-    /** 
+    /**
      * Any extra properties.
      */
     [propName: string] : any;

@@ -9,6 +9,9 @@ import * as Recognizers from '@microsoft/recognizers-text-date-time';
 import { Activity, InputHints, TurnContext } from 'botbuilder-core';
 import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
+/**
+ * Result returned by the `DateTimePrompt`.
+ */
 export interface DateTimeResolution {
     /**
      * TIMEX expression representing ambiguity of the recognized time.
@@ -32,18 +35,20 @@ export interface DateTimeResolution {
  * Prompts a user to enter a datetime expression.
  *
  * @remarks
- * By default the prompt will return to the calling dialog a `FoundDatetime[]` but this can be
- * overridden using a custom `PromptValidator`.
+ * By default the prompt will return to the calling dialog a `DateTimeResolution[]`.
  */
 export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
 
+    /**
+     * The prompts default locale that should be recognized.
+     */
     public defaultLocale: string|undefined;
 
     /**
-     * Creates a new `DatetimePrompt` instance.
-     * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
-     * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
+     * Creates a new DateTimePrompt instance.
+     * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
      */
     constructor(dialogId: string, validator?: PromptValidator<DateTimeResolution[]>, defaultLocale?: string) {
         super(dialogId, validator);

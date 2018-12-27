@@ -1,0 +1,293 @@
+[
+    {
+        "scope": "https://localhost:8081",
+        "method": "GET",
+        "path": "/",
+        "body": "",
+        "status": 200,
+        "response": {
+            "_self": "",
+            "id": "localhost",
+            "_rid": "localhost",
+            "media": "//media/",
+            "addresses": "//addresses/",
+            "_dbs": "//dbs/",
+            "writableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "readableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "userReplicationPolicy": {
+                "asyncReplication": false,
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "userConsistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "systemReplicationPolicy": {
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "readPolicy": {
+                "primaryReadCoefficient": 1,
+                "secondaryReadCoefficient": 1
+            },
+            "queryEngineConfiguration": "{\"maxSqlQueryInputLength\":262144,\"maxJoinsPerSqlQuery\":5,\"maxLogicalAndPerSqlQuery\":500,\"maxLogicalOrPerSqlQuery\":500,\"maxUdfRefPerSqlQuery\":10,\"maxInExpressionItemsCount\":16000,\"queryMaxInMemorySortDocumentCount\":500,\"maxQueryRequestTimeoutFraction\":0.9,\"sqlAllowNonFiniteNumbers\":false,\"sqlAllowAggregateFunctions\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"allowNewKeywords\":true,\"sqlAllowLike\":false,\"maxSpatialQueryCells\":12,\"spatialMaxGeometryPointCount\":256,\"sqlAllowTop\":true,\"enableSpatialIndexing\":true}"
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://localhost:8081/",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "x-ms-max-media-storage-usage-mb",
+            "10240",
+            "x-ms-media-storage-usage-mb",
+            "0",
+            "x-ms-databaseaccount-consumed-mb",
+            "0",
+            "x-ms-databaseaccount-reserved-mb",
+            "0",
+            "x-ms-databaseaccount-provisioned-mb",
+            "0",
+            "x-ms-gatewayversion",
+            "version=2.0.0.0",
+            "Date",
+            "Thu, 25 Oct 2018 20:14:43 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "POST",
+        "path": "/dbs",
+        "body": {
+            "query": "SELECT r._self FROM root r WHERE r.id = @id",
+            "parameters": [
+                {
+                    "name": "@id",
+                    "value": "test-db"
+                }
+            ]
+        },
+        "status": 200,
+        "response": {
+            "_rid": "",
+            "Databases": [
+                {
+                    "_self": "dbs/A7V-AA==/"
+                }
+            ],
+            "_count": 1
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "x-ms-last-state-change-utc",
+            "Thu, 25 Oct 2018 20:14:00.991 GMT",
+            "x-ms-resource-quota",
+            "databases=100;",
+            "x-ms-resource-usage",
+            "databases=1;",
+            "lsn",
+            "79",
+            "x-ms-item-count",
+            "1",
+            "x-ms-schemaversion",
+            "1.6",
+            "x-ms-quorum-acked-lsn",
+            "79",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-transport-request-id",
+            "63",
+            "x-ms-cosmos-llsn",
+            "79",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "79",
+            "x-ms-session-token",
+            "0:79",
+            "x-ms-request-charge",
+            "4.48",
+            "x-ms-serviceversion",
+            "version=2.0.0.0",
+            "x-ms-activity-id",
+            "4dacf567-a8c2-4837-8eef-e85c4be01fd8",
+            "x-ms-gatewayversion",
+            "version=2.0.0.0",
+            "Date",
+            "Thu, 25 Oct 2018 20:14:43 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "POST",
+        "path": "/dbs/A7V-AA==/colls/",
+        "body": {
+            "query": "SELECT r._self FROM root r WHERE r.id=@id",
+            "parameters": [
+                {
+                    "name": "@id",
+                    "value": "bot-storage"
+                }
+            ]
+        },
+        "status": 200,
+        "response": {
+            "_rid": "A7V-AA==",
+            "DocumentCollections": [
+                {
+                    "_self": "dbs/A7V-AA==/colls/A7V-AIqw5hc=/"
+                }
+            ],
+            "_count": 1
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "x-ms-last-state-change-utc",
+            "Thu, 25 Oct 2018 20:14:00.991 GMT",
+            "x-ms-resource-quota",
+            "collections=5000;",
+            "x-ms-resource-usage",
+            "collections=1;",
+            "collection-partition-index",
+            "0",
+            "collection-service-index",
+            "0",
+            "lsn",
+            "79",
+            "x-ms-item-count",
+            "1",
+            "x-ms-schemaversion",
+            "1.6",
+            "x-ms-alt-content-path",
+            "dbs/test-db",
+            "x-ms-quorum-acked-lsn",
+            "79",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-transport-request-id",
+            "65",
+            "x-ms-cosmos-llsn",
+            "79",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "79",
+            "x-ms-session-token",
+            "0:79",
+            "x-ms-request-charge",
+            "4.5",
+            "x-ms-serviceversion",
+            "version=2.0.0.0",
+            "x-ms-activity-id",
+            "80f999aa-d147-4ef1-89b1-d3c38bdb9d3c",
+            "x-ms-gatewayversion",
+            "version=2.0.0.0",
+            "Date",
+            "Thu, 25 Oct 2018 20:14:43 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "DELETE",
+        "path": "/dbs/test-db/colls/bot-storage/docs/unknown",
+        "body": "",
+        "status": 404,
+        "response": {
+            "code": "NotFound",
+            "message": "Message: {\"Errors\":[\"Resource Not Found\"]}\r\nActivityId: c0a6bcc1-0636-4934-9463-91f9fc2d8746, Request URI: /apps/DocDbApp/services/DocDbServer12/partitions/a4cb4958-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, RequestStats: \r\nRequestStartTime: 2018-10-25T20:14:44.0714148Z, Number of regions attempted: 1\r\n, SDK: Microsoft.Azure.Documents.Common/2.0.0.0"
+        },
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://127.0.0.1:8081/dbs/test-db/colls/bot-storage/docs/unknown",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "x-ms-last-state-change-utc",
+            "Thu, 25 Oct 2018 20:14:08.836 GMT",
+            "lsn",
+            "242",
+            "x-ms-schemaversion",
+            "1.6",
+            "x-ms-quorum-acked-lsn",
+            "242",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-transport-request-id",
+            "40",
+            "x-ms-cosmos-llsn",
+            "242",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "242",
+            "x-ms-session-token",
+            "0:242",
+            "x-ms-request-charge",
+            "1.24",
+            "x-ms-serviceversion",
+            "version=2.0.0.0",
+            "x-ms-activity-id",
+            "c0a6bcc1-0636-4934-9463-91f9fc2d8746",
+            "x-ms-gatewayversion",
+            "version=2.0.0.0",
+            "Date",
+            "Thu, 25 Oct 2018 20:14:43 GMT"
+        ]
+    }
+]

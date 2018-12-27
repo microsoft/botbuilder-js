@@ -6,7 +6,9 @@
  * Licensed under the MIT License.
  */
 import * as request from 'request';
+// tslint:disable-next-line:no-var-requires no-require-imports
 const getPem: any = require('rsa-pem-from-mod-exp');
+// tslint:disable-next-line:no-var-requires no-require-imports
 const base64url: any = require('base64url');
 
 export class OpenIdMetadata {

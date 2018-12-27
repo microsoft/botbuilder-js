@@ -84,8 +84,8 @@ export class ChoiceFactory {
      * @param options (Optional) formatting options to use when rendering as a list.
      */
     public static forChannel(
-        channelOrContext: string|TurnContext,
-        choices: (string|Choice)[],
+        channelOrContext: string | TurnContext,
+        choices: (string | Choice)[],
         text?: string,
         speak?: string,
         options?: ChoiceFactoryOptions
@@ -140,7 +140,7 @@ export class ChoiceFactory {
      * @param speak (Optional) SSML to speak for the message.
      * @param options (Optional) formatting options to tweak rendering of list.
      */
-    public static inline(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity> {
+    public static inline(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity> {
         const opt: ChoiceFactoryOptions = {
             inlineSeparator: ', ',
             inlineOr: ' or ',
@@ -185,7 +185,7 @@ export class ChoiceFactory {
      * @param speak (Optional) SSML to speak for the message.
      * @param options (Optional) formatting options to tweak rendering of list.
      */
-    public static list(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity> {
+    public static list(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity> {
         const opt: ChoiceFactoryOptions = {
             includeNumbers: true,
             ...options
@@ -199,7 +199,7 @@ export class ChoiceFactory {
             const title: string = choice.action && choice.action.title ? choice.action.title : choice.value;
             // tslint:disable-next-line:prefer-template
             txt += `${connector}${opt.includeNumbers ? (index + 1).toString() + '. ' : '- '}${title}`;
-            connector =  '\n   ';
+            connector = '\n   ';
         });
 
         // Return activity with choices as a numbered list.
@@ -221,13 +221,13 @@ export class ChoiceFactory {
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to speak for the message.
      */
-    public static suggestedAction(choices: (string|Choice)[], text?: string, speak?: string): Partial<Activity> {
+    public static suggestedAction(choices: (string | Choice)[], text?: string, speak?: string): Partial<Activity> {
         // Map choices to actions
         const actions: CardAction[] = ChoiceFactory.toChoices(choices).map<CardAction>((choice: Choice) => {
             if (choice.action) {
                 return choice.action;
             } else {
-                return { type: ActionTypes.ImBack, value: choice.value, title: choice.value };
+                return { type: ActionTypes.ImBack, value: choice.value, title: choice.value, channelData: undefined };
             }
         });
 
@@ -240,16 +240,33 @@ export class ChoiceFactory {
      *
      * @remarks
      * This example converts a simple array of string based choices to a properly formated `Choice[]`.
+     * 
+     * If the `Choice` has a `Partial<CardAction>` for `Choice.action`, `.toChoices()` will attempt to
+     * fill the `Choice.action`.
      *
      * ```JavaScript
      * const choices = ChoiceFactory.toChoices(['red', 'green', 'blue']);
      * ```
      * @param choices List of choices to add.
      */
-    public static toChoices(choices: (string|Choice)[]|undefined): Choice[] {
+    public static toChoices(choices: (string | Choice)[] | undefined): Choice[] {
         return (choices || []).map(
             (choice: Choice) => typeof choice === 'string' ? { value: choice } : choice
-        ).filter(
+        ).map((choice: Choice) => {
+            const action: CardAction = choice.action;
+            // If the choice.action is incomplete, populate the missing fields.
+            if (action) {
+                action.type = action.type ? action.type : ActionTypes.ImBack;
+                if (!action.value && action.title) {
+                    action.value = action.title;
+                } else if (!action.title && action.value) {
+                    action.title = action.value;
+                } else if (!action.title && !action.value) {
+                    action.title = action.value = choice.value;
+                }
+            }
+            return choice;
+        }).filter(
             (choice: Choice) => choice
         );
     }

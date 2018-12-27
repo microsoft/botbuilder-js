@@ -16,10 +16,10 @@ import { Storage, StoreItems } from './storage';
  *
  * - Starts off completely empty when the bot is run.
  * - Anything written to the store will be forgotten when the process exits.
- * - Object that are read and written to the store are cloned to properly simulate network based
+ * - Objects that are read and written to the store are cloned to properly simulate network based
  *   storage providers.
- * - Cloned objects serialized using `JSON.stringify()` to catch any possible serialization related
- *   issues that might occur when using a network based storage provider.
+ * - Cloned objects are serialized using `JSON.stringify()` to catch any possible serialization
+ *   related issues that might occur when using a network based storage provider.
  *
  * ```JavaScript
  * const { MemoryStorage } = require('botbuilder');

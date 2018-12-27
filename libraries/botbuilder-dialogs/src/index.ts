@@ -1,7 +1,10 @@
 /**
  * @module botbuilder-dialogs
  */
-// Licensed under the MIT License.
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 export * from './choices';
 export * from './prompts';
 export * from './dialog';

@@ -1,6 +1,13 @@
 /**
+ * @module botframework-config
+ */
+/**
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
+ */
+
+/**
+ * Connected service types supported.
  */
 export enum ServiceTypes {
     AppInsights = 'appInsights',
@@ -15,166 +22,298 @@ export enum ServiceTypes {
     File = 'file'
 }
 
+/**
+ * JSON description of a connected service.
+ */
 export interface IConnectedService {
-    // ServiceType of the service (LUIS, QnA, etc.)
+    /**
+     * (Optional) ServiceType of the service (LUIS, QnA, etc.)
+     */
     readonly type?: ServiceTypes;
 
-    // Friendly name for the service
+    /**
+     * Friendly name for the service.
+     */
     name: string;
 
-    // unique Id for the service
+    /**
+     * (Optional) unique Id for the service.
+     */
     id?: string;
 }
 
+/**
+ * JSON description of an endpoint service.
+ *
+ * @remarks
+ * - [type](#type) SHOULD be set to `ServiceTypes.Endpoint`.
+ * - [id](#id) SHOULD be set to the bots ID.
+ */
 export interface IEndpointService extends IConnectedService {
-    // type = ServiceTypes.Endpoint
-    // id = bot id
-
-    // MSA Appid
+    /**
+     * MSA App ID.
+     */
     appId: string;
 
-    // MSA app password for the bot
+    /**
+     * MSA app password for the bot.
+     */
     appPassword: string;
 
-    // endpoint of localhost service
+    /**
+     * Endpoint of localhost service.
+     */
     endpoint: string;
-
 }
 
+/**
+ * JSON description of an azure service.
+ */
 export interface IAzureService extends IConnectedService {
-    // tenantId for azure
+    /**
+     * Tenant ID for azure.
+     */
     tenantId: string;
 
-    // subscriptionId for azure
+    /**
+     * Subscription ID for azure.
+     */
     subscriptionId: string;
 
-    // resourceGroup for azure
+    /**
+     * Resource group for azure.
+     */
     resourceGroup: string;
 
-    // name of the service
+    /**
+     * Name of the service.
+     */
     serviceName: string;
 }
 
+/**
+ * JSON description of an Azure Bot Service.
+ *
+ * @remarks
+ * - [type](#type) SHOULD be set to `ServiceTypes.Bot`.
+ */
 export interface IBotService extends IAzureService {
-    // type = ServiceTypes.AzureBotService
-
-    // MSA Appid for the bot
+    /**
+     * MSA App ID for the bot.
+     */
     appId: string;
 }
 
+/**
+ * JSON description of an App Insights service.
+ *
+ * @remarks
+ * - [type](#type) SHOULD be set to `ServiceTypes.AppInsights`.
+ */
 export interface IAppInsightsService extends IAzureService {
-    // type = ServiceTypes.AppInsights
-
-    // instrumentationKey for logging data to appInsights
+    /**
+     * Instrumentation key for logging data to appInsights.
+     */
     instrumentationKey: string;
 
-    // (OPTIONAL) applicationId is used for programmatic acccess to AppInsights
+    /**
+     * (Optional) application ID used for programmatic access to AppInsights.
+     */
     applicationId?: string;
 
-    // (OPTIONAL) named apiKeys for programatic access to AppInsights
+    /**
+     * (Optional) named api keys for programmatic access to AppInsights.
+     */
     apiKeys?: { [key: string]: string };
 }
 
+/**
+ * JSON description of a blob storage service.
+ *
+ * @remarks
+ * - [type](#type) SHOULD be set to `ServiceTypes.BlobStorage`.
+ */
 export interface IBlobStorageService extends IAzureService {
-    // type = ServiceTypes.AzureStorage
-
-    // connectionstring for blob storage
+    /**
+     * Connection string for blob storage.
+     */
     connectionString: string;
 
-    // (OPTIONAL) container name
+    /**
+     * (Optional) container name.
+     */
     container?: string | null;
 }
 
+/**
+ * JSON description of a CosmosDB service.
+ *
+ * @remarks
+ * - [type](#type) SHOULD be set to `ServiceTypes.CosmosDB`.
+ */
 export interface ICosmosDBService extends IAzureService {
-    // type = ServiceTypes.CosmosDB
-
-    // endpoint/uri for CosmosDB
+    /**
+     * Endpoint/uri for CosmosDB.
+     */
     endpoint: string;
-    
-    // key for accessing CosmosDB
+
+    /**
+     * Key for accessing CosmosDB.
+     */
     key: string;
 
-    // database name
+    /**
+     * Database name.
+     */
     database: string;
 
-    // collection anme
+    /**
+     * Collection name.
+     */
     collection: string;
 }
 
+/**
+ * JSON description of a LUIS service.
+ *
+ * @remarks
+ * - [type](#type) SHOULD be set to `ServiceTypes.Luis`.
+ * - [id](#id) SHOULD be set to the LUIS appid.
+ */
 export interface ILuisService extends IConnectedService {
-    // type = ServiceTypes.Luis
-    // id = appid
-
-    // luis appid
+    /**
+     * Luis app ID.
+     */
     appId: string;
 
-    // authoring key for using authoring api
+    /**
+     * Authoring key for using authoring api.
+     */
     authoringKey: string;
 
-    // subscription key for using calling model api for predictions
+    /**
+     * Subscription key for using calling model api for predictions.
+     */
     subscriptionKey: string;
 
-    // version of the application
+    /**
+     * Version of the application.
+     */
     version: string;
 
-    // region for luis
+    /**
+     * Region for luis.
+     */
     region: string;
+
+    /**
+     * getEndpoint() Returns the full region endpoint for the LUIS service.
+     */
+    getEndpoint(): string;
 }
 
+/**
+ * JSON description of a dispatch service.
+ *
+ * @remarks
+ * - [type](#type) SHOULD be set to `ServiceTypes.Dispatch`.
+ */
 export interface IDispatchService extends ILuisService {
-    // type = ServiceTypes.Dispatch
-
-    // service Ids that the dispatch model will dispatch across
+    /**
+     * Service IDs that the dispatch model will dispatch across.
+     */
     serviceIds: string[];
 }
 
+/**
+ * JSON description of a generic service.
+ *
+ * @remarks
+ * - [type](#type) SHOULD be set to `ServiceTypes.Generic`.
+ */
 export interface IGenericService extends IConnectedService {
-    // type = ServiceTypes.Generic
-
-    // deep link to service
+    /**
+     * Deep link to service.
+     */
     url: string;
 
-    // named/value configuration data
+    /**
+     * Named/value configuration data.
+     */
     configuration: { [key: string]: string };
 }
 
+/**
+ * JSON description of a QnA Maker service.
+ *
+ * @remarks
+ * - [type](#type) SHOULD be set to `ServiceTypes.QnA`.
+ */
 export interface IQnAService extends IConnectedService {
-    // type=Servicestypes.QnA
-
-    // subscriptionkey for calling admin api
+    /**
+     * Subscription key for calling admin api.
+     */
     subscriptionKey: string;
 
-    // kb id
+    /**
+     * Knowledge base id.
+     */
     kbId: string;
 
-    // hostname for private service endpoint Example: https://myqna.azurewebsites.net
+    /**
+     * hostname for private service endpoint Example: https://myqna.azurewebsites.net.
+     */
     hostname: string;
 
-    // endpointKey for querying the kb
+    /**
+     * Endpoint Key for querying the kb.
+     */
     endpointKey: string;
 }
 
+/**
+ * JSON description of a file.
+ *
+ * @remarks
+ * - [type](#type) SHOULD be set to `ServiceTypes.File`.
+ */
 export interface IFileService extends IConnectedService {
-    // type = ServiceTypes.File
-
-    // filePath
+    /**
+     * File path.
+     */
     path: string;
 }
 
+/**
+ * JSON description of a bot configuration file.
+ */
 export interface IBotConfiguration {
-    // name of the bot
+    /**
+     * Name of the bot.
+     */
     name: string;
 
-    // description of the bot
+    /**
+     * Description of the bot.
+     */
     description: string;
 
-    // encrypted guid used to validate password is the same,
-    // you need to be able to decrypt this key with passed in secret before we will use the secret to encrypt new values
+    /**
+     * Encrypted GUID used to validate password is the same.
+     *
+     * @remarks
+     * You need to be able to decrypt this key with a passed in secret before we will use the
+     * secret to encrypt new values.
+     */
     padlock: string;
 
-    // version of the schema of this file
+    /**
+     * Version of the schema of this file.
+     */
     version: string;
 
-    // connected services for the bot
+    /**
+     * Connected services for the bot.
+     */
     services: IConnectedService[];
 }

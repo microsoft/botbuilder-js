@@ -15,14 +15,15 @@ import { CardFactory } from './cardFactory';
  * @remarks
  * The following example shows sending a message containing a single hero card:
  *
- * ```JavaScript
- * const message = MessageFactory.attachment(
- *     CardFactory.heroCard(
- *         'White T-Shirt',
- *         ['https://example.com/whiteShirt.jpg'],
- *         ['buy']
- *      )
+ * ```javascript
+ * const { MessageFactory, CardFactory } = require('botbuilder');
+ *
+ * const card = CardFactory.heroCard(
+ *      'White T-Shirt',
+ *      ['https://example.com/whiteShirt.jpg'],
+ *      ['buy']
  * );
+ * const message = MessageFactory.attachment(card);
  * await context.sendActivity(message);
  * ```
  */
@@ -35,9 +36,7 @@ export class MessageFactory {
      *
      * ```JavaScript
      * const message = MessageFactory.text('Greetings from example message');
-     * await context.sendActivity(message);
      * ```
-     *
      * @param text Text to include in the message.
      * @param speak (Optional) SSML to include in the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
@@ -57,11 +56,10 @@ export class MessageFactory {
      * Returns a message that includes a set of suggested actions and optional text.
      *
      * @remarks
-     * This example shows sending a message with suggested actions:
+     * This example shows creating a message with suggested actions:
      *
      * ```JavaScript
      * const message = MessageFactory.suggestedActions(['red', 'green', 'blue'], `Choose a color`);
-     * await context.sendActivity(message);
      * ```
      * @param actions Array of card actions or strings to include. Strings will be converted to `messageBack` actions.
      * @param text (Optional) text of the message.
@@ -90,7 +88,7 @@ export class MessageFactory {
      * Returns a single message activity containing an attachment.
      *
      * @remarks
-     * This example shows sending a message with a hero card attachment:
+     * This example shows creating a message with a hero card attachment:
      *
      * ```JavaScript
      * const message = MessageFactory.attachment(
@@ -100,9 +98,7 @@ export class MessageFactory {
      *         ['buy']
      *      )
      * );
-     * await context.sendActivity(message);
      * ```
-     *
      * @param attachment Adaptive card to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
@@ -116,7 +112,7 @@ export class MessageFactory {
      * Returns a message that will display a set of attachments in list form.
      *
      * @remarks
-     * This example shows sending a message with a list of hero cards:
+     * This example shows creating a message with a list of hero cards:
      *
      * ```JavaScript
      * const message = MessageFactory.list([
@@ -124,7 +120,6 @@ export class MessageFactory {
      *    CardFactory.heroCard('title2', ['imageUrl2'], ['button2']),
      *    CardFactory.heroCard('title3', ['imageUrl3'], ['button3'])
      * ]);
-     * await context.sendActivity(message);
      * ```
      * @param attachments Array of attachments to include in the message.
      * @param text (Optional) text of the message.
@@ -139,7 +134,7 @@ export class MessageFactory {
      * Returns a message that will display a set of attachments using a carousel layout.
      *
      * @remarks
-     * This example shows sending a message with a carousel of hero cards:
+     * This example shows creating a message with a carousel of hero cards:
      *
      * ```JavaScript
      * const message = MessageFactory.carousel([
@@ -147,9 +142,7 @@ export class MessageFactory {
      *    CardFactory.heroCard('title2', ['imageUrl2'], ['button2']),
      *    CardFactory.heroCard('title3', ['imageUrl3'], ['button3'])
      * ]);
-     * await context.sendActivity(message);
      * ```
-     *
      * @param attachments Array of attachments to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
@@ -167,9 +160,7 @@ export class MessageFactory {
      *
      * ```JavaScript
      * const message = MessageFactory.contentUrl('https://example.com/hawaii.jpg', 'image/jpeg', 'Hawaii Trip', 'A photo from our family vacation.');
-     * await context.sendActivity(message);
      * ```
-     *
      * @param url Url of the image/video to send.
      * @param contentType The MIME type of the image/video.
      * @param name (Optional) Name of the image/video file.

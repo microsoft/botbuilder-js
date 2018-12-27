@@ -17,13 +17,16 @@ import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from '
  */
 export class NumberPrompt extends Prompt<number> {
 
+    /**
+     * The prompts default locale that should be recognized.
+     */
     public defaultLocale: string|undefined;
 
     /**
-     * Creates a new `NumberPrompt` instance.
-     * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
-     * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
+     * Creates a new NumberPrompt instance.
+     * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
      */
     constructor(dialogId: string, validator?: PromptValidator<number>, defaultLocale?: string) {
         super(dialogId, validator);
@@ -42,19 +45,12 @@ export class NumberPrompt extends Prompt<number> {
         const result: PromptRecognizerResult<number> = { succeeded: false };
         const activity: Activity = context.activity;
         const utterance: string = activity.text;
-        const locale: string =  activity.locale || this.defaultLocale || 'en-us';
+        const locale: string = activity.locale || this.defaultLocale || 'en-us';
         const results: any = Recognizers.recognizeNumber(utterance, locale);
         if (results.length > 0 && results[0].resolution) {
             result.succeeded = true;
             result.value = parseFloat(results[0].resolution.value);
-			// This check is a temporary fix for a bug in the number recognizer.
-			// This can be removed once the underlying issue is fully resolved.
-			// https://github.com/Microsoft/botbuilder-js/issues/420
-			if (isNaN(result.value)) {
-				result.value = 0;
-			}
-			// End of temporary fix.
-		}
+        }
 
         return result;
     }

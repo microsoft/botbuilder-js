@@ -11,9 +11,20 @@ import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
 /**
- * Base class for all prompts.
+ * Waits for an activity to be received.
+ *
+ * @remarks
+ * This prompt requires a validator be passed in and is useful when waiting for non-message
+ * activities like an event to be received. The validator can ignore received events until the
+ * expected activity is received.
  */
 export abstract class ActivityPrompt extends Dialog {
+
+    /**
+     * Creates a new ActivityPrompt instance.
+     * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
+     * @param validator Validator that will be called each time a new activity is received.
+     */
     constructor(dialogId: string, private validator: PromptValidator<Activity>) {
         super(dialogId);
     }
@@ -46,8 +57,8 @@ export abstract class ActivityPrompt extends Dialog {
 
         // Validate the return value
         // - Unlike the other prompts a validator is required for an ActivityPrompt so we don't
-        //   need to check for its existence before calling it. 
-        const isValid = await this.validator({
+        //   need to check for its existence before calling it.
+        const isValid: boolean = await this.validator({
             context: dc.context,
             recognized: recognized,
             state: state.state,
@@ -89,6 +100,9 @@ export abstract class ActivityPrompt extends Dialog {
     }
 }
 
+/**
+ * @private
+ */
 interface ActivityPromptState {
     state: object;
     options: PromptOptions;

@@ -11,41 +11,72 @@ import { DialogContext } from './dialogContext';
 import { WaterfallStepContext } from './waterfallStepContext';
 
 /**
- * Function signature of a waterfall step.
- *
- * @remarks
+ * Function signature of an individual waterfall step.
  *
  * ```TypeScript
- * type WaterfallStep = (step: WaterfallStepContext<O>) => Promise<DialogTurnResult>;
+ * type WaterfallStep<O extends object = {}> = (step: WaterfallStepContext<O>) => Promise<DialogTurnResult>;
  * ```
- * @param WaterfallStepContext Contextual information for the current step being executed.
+ * @param O (Optional) type of dialog options passed into the step.
+ * @param WaterfallStep.step Contextual information for the current step being executed.
  */
 export type WaterfallStep<O extends object = {}> = (step: WaterfallStepContext<O>) => Promise<DialogTurnResult>;
 
 /**
- * When called within a waterfall step the dialog will skip to the next waterfall step.
- *
- * ```TypeScript
- * type SkipStepFunction = (args?: any) => Promise<DialogTurnResult>;
- * ```
- * @param SkipStepFunction.args (Optional) additional argument(s) to pass into the next step.
- */
-export type SkipStepFunction = (args?: any) => Promise<DialogTurnResult>;
-
-/**
- * Dialog optimized for prompting a user with a series of questions.
+ * A waterfall is a dialog that's optimized for prompting a user with a series of questions.
  *
  * @remarks
  * Waterfalls accept a stack of functions which will be executed in sequence. Each waterfall step
- * can ask a question of the user and the users response will be passed as an argument to the next
- * waterfall step.
+ * can ask a question of the user and the user's response will be passed to the next step in the
+ * waterfall via `step.result`. A special `step.value` object can be used to persist values between
+ * steps:
+ *
+ * ```JavaScript
+ * const { ComponentDialog, WaterfallDialog, TextPrompt, NumberPrompt } = require('botbuilder-dialogs);
+ *
+ * class FillProfileDialog extends ComponentDialog {
+ *     constructor(dialogId) {
+ *         super(dialogId);
+ *
+ *         // Add control flow dialogs
+ *         this.addDialog(new WaterfallDialog('start', [
+ *             async (step) => {
+ *                 // Ask user their name
+ *                 return await step.prompt('namePrompt', `What's your name?`);
+ *             },
+ *             async (step) => {
+ *                 // Remember the users answer
+ *                 step.values['name'] = step.result;
+ *
+ *                 // Ask user their age.
+ *                 return await step.prompt('agePrompt', `Hi ${step.values['name']}. How old are you?`);
+ *             },
+ *             async (step) => {
+ *                 // Remember the users answer
+ *                 step.values['age'] = step.result;
+ *
+ *                 // End the component and return the completed profile.
+ *                 return await step.endDialog(step.values);
+ *             }
+ *         ]));
+ *
+ *         // Add prompts
+ *         this.addDialog(new TextPrompt('namePrompt'));
+ *         this.addDialog(new NumberPrompt('agePrompt'))
+ *     }
+ * }
+ * module.exports.FillProfileDialog = FillProfileDialog;
+ * ```
  */
 export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     private readonly steps: WaterfallStep<O>[];
 
     /**
      * Creates a new waterfall dialog containing the given array of steps.
-     * @param steps Array of waterfall steps.
+     *
+     * @remarks
+     * See the [addStep()](#addstep) function for details on creating a valid step function.
+     * @param dialogId Unique ID of the dialog within the component or set its being added to.
+     * @param steps (Optional) array of asynchronous waterfall step functions.
      */
     constructor(dialogId: string, steps?: WaterfallStep<O>[]) {
         super(dialogId);
@@ -56,12 +87,46 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     }
 
     /**
-     * add a new step to the waterfall
-     * @param step method to call
-     * @returns WaterfallDialog
+     * Adds a new step to the waterfall.
+     *
+     * @remarks
+     * All step functions should be asynchronous and return a `DialogTurnResult`. The
+     * `WaterfallStepContext` passed into your function derives from `DialogContext` and contains
+     * numerous stack manipulation methods which return a `DialogTurnResult` so you can typically
+     * just return the result from the DialogContext method you call.
+     *
+     * The step function itself can be either an asynchronous closure:
+     *
+     * ```JavaScript
+     * const helloDialog = new WaterfallDialog('hello');
+     *
+     * helloDialog.addStep(async (step) => {
+     *     await step.context.sendActivity(`Hello World!`);
+     *     return await step.endDialog();
+     * });
+     * ```
+     *
+     * A named async function:
+     *
+     * ```JavaScript
+     * async function helloWorldStep(step) {
+     *     await step.context.sendActivity(`Hello World!`);
+     *     return await step.endDialog();
+     * }
+     *
+     * helloDialog.addStep(helloWorldStep);
+     * ```
+     *
+     * Or a class method that's been bound to its `this` pointer:
+     *
+     * ```JavaScript
+     * helloDialog.addStep(this.helloWorldStep.bind(this));
+     * ```
+     * @param step Asynchronous step function to call.
      */
-    public addStep(step: WaterfallStep<O>): WaterfallDialog<O> {
+    public addStep(step: WaterfallStep<O>): this {
         this.steps.push(step);
+
         return this;
     }
 
@@ -92,6 +157,22 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         return await this.runStep(dc, state.stepIndex + 1, reason, result);
     }
 
+    /**
+     * Called when an individual waterfall step is being executed.
+     *
+     * @remarks
+     * SHOULD be overridden by derived class that want to add custom logging semantics.
+     *
+     * ```JavaScript
+     * class LoggedWaterfallDialog extends WaterfallDialog {
+     *     async onStep(step) {
+     *          console.log(`Executing step ${step.index} of the "${this.id}" waterfall.`);
+     *          return await super.onStep(step);
+     *     }
+     * }
+     * ```
+     * @param step Context object for the waterfall step to execute.
+     */
     protected async onStep(step: WaterfallStepContext<O>): Promise<DialogTurnResult> {
         return await this.steps[step.index](step);
     }
@@ -103,8 +184,8 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
             state.stepIndex = index;
 
             // Create step context
-            const nextCalled: boolean = false;
-            const step = new WaterfallStepContext<O>(dc, {
+            let nextCalled: boolean = false;
+            const step: WaterfallStepContext<O> = new WaterfallStepContext<O>(dc, {
                 index: index,
                 options: <O>state.options,
                 reason: reason,
@@ -114,7 +195,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
                     if (nextCalled) {
                         throw new Error(`WaterfallStepContext.next(): method already called for dialog and step '${this.id}[${index}]'.`);
                     }
-
+                    nextCalled = true;
                     return await this.resumeDialog(dc, DialogReason.nextCalled, stepResult);
                 }
             });

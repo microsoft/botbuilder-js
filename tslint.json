@@ -1,12 +1,13 @@
 {
-    "defaultSeverity": "warning",
+    "defaultSeverity": "off",
     "extends": [
         "tslint:recommended",
         "tslint-microsoft-contrib"
     ],
     "linterOptions": {
         "exclude":[
-            "libraries/botframework-connector/src/generated/**/*",
+            "libraries/botframework-connector/src/connectorApi/**/*",
+            "libraries/botframework-connector/src/oAuthApi/**/*",
             "libraries/botframework-schema/**/*"
         ]
     },

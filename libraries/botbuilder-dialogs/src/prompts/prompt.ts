@@ -66,24 +66,92 @@ export interface PromptOptions {
     validations?: object;
 }
 
+/**
+ * Result returned by a prompts recognizer function.
+ * @param T Type of value being recognized.
+ */
 export interface PromptRecognizerResult<T> {
+    /**
+     * If `true` the users utterance was successfully recognized and [value](#value) contains the
+     * recognized result.
+     */
     succeeded: boolean;
+
+    /**
+     * Value that was recognized if [succeeded](#succeeded) is `true`.
+     */
     value?: T;
 }
 
+/**
+ * Function signature for providing a custom prompt validator.
+ *
+ * ```TypeScript
+ * type PromptValidator<T> = (prompt: PromptValidatorContext<T>) => Promise<boolean>;
+ * ```
+ *
+ * @remarks
+ * The validator should be an asynchronous function that returns `true` if
+ * `prompt.recognized.value` is valid and the prompt should end.
+ *
+ * > [!NOTE]
+ * > If the validator returns `false` the prompts default re-prompt logic will be run unless the
+ * > validator sends a custom re-prompt to the user using `prompt.context.sendActivity()`. In that
+ * > case the prompts default re-rpompt logic will not be run.
+ * @param T Type of recognizer result being validated.
+ * @param PromptValidator.prompt Contextual information containing the recognizer result and original options passed to the prompt.
+ */
 export type PromptValidator<T> = (prompt: PromptValidatorContext<T>) => Promise<boolean>;
 
+/**
+ * Contextual information passed to a custom `PromptValidator`.
+ * @param T Type of recognizer result being validated.
+ */
 export interface PromptValidatorContext<T> {
+    /**
+     * The context for the current turn of conversation with the user.
+     *
+     * @remarks
+     * The validator can use this to re-prompt the user.
+     */
     readonly context: TurnContext;
+
+    /**
+     * Result returned from the prompts recognizer function.
+     *
+     * @remarks
+     * The `prompt.recognized.succeeded` field can be checked to determine of the recognizer found
+     * anything and then the value can be retrieved from `prompt.recognized.value`.
+     */
     readonly recognized: PromptRecognizerResult<T>;
+
+    /**
+     * A dictionary of values persisted for each conversational turn while the prompt is active.
+     *
+     * @remarks
+     * The validator can use this to persist things like turn counts or other state information.
+     */
     readonly state: object;
+
+    /**
+     * Original set of options passed to the prompt by the calling dialog.
+     *
+     * @remarks
+     * The validator can extend this interface to support additional prompt options.
+     */
     readonly options: PromptOptions;
 }
 
 /**
  * Base class for all prompts.
+ * @param T Type of value being returned by the prompts recognizer function.
  */
 export abstract class Prompt<T> extends Dialog {
+    /**
+     * Creates a new Prompt instance.
+     * @param dialogId Unique ID of the prompt within its parent `DialogSet` or `ComponentDialog`.
+     * @param validator (Optional) custom validator used to provide additional validation and re-prompting logic for the prompt.
+     */
     constructor(dialogId: string, private validator?: PromptValidator<T>) {
         super(dialogId);
     }
@@ -160,10 +228,35 @@ export abstract class Prompt<T> extends Dialog {
         await this.onPrompt(context, state.state, state.options, false);
     }
 
+    /**
+     * Called anytime the derived class should send the user a prompt.
+     * @param context Context for the current turn of conversation with the user.
+     * @param state Additional state being persisted for the prompt.
+     * @param options Options that the prompt was started with in the call to `DialogContext.prompt()`.
+     * @param isRetry If `true` the users response wasn't recognized and the re-prompt should be sent.
+     */
     protected abstract onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void>;
 
+    /**
+     * Called to recognize an utterance received from the user.
+     *
+     * @remarks
+     * The Prompt class filters out non-message activities so its safe to assume that the users
+     * utterance can be retrieved from `context.activity.text`.
+     * @param context Context for the current turn of conversation with the user.
+     * @param state Additional state being persisted for the prompt.
+     * @param options Options that the prompt was started with in the call to `DialogContext.prompt()`.
+     */
     protected abstract onRecognize(context: TurnContext, state: object, options: PromptOptions): Promise<PromptRecognizerResult<T>>;
 
+    /**
+     * Helper function to compose an output activity containing a set of choices.
+     * @param prompt The prompt to append the users choices to.
+     * @param channelId ID of the channel the prompt is being sent to.
+     * @param choices List of choices to append.
+     * @param style Configured style for the list of choices.
+     * @param options (Optional) options to configure the underlying ChoiceFactory call.
+     */
     protected appendChoices(
         prompt: string|Partial<Activity>,
         channelId: string,
@@ -205,6 +298,8 @@ export abstract class Prompt<T> extends Dialog {
 
         // Update prompt with text and actions
         if (typeof prompt === 'object') {
+            // Clone the prompt Activity as to not modify the original prompt.
+            prompt = JSON.parse(JSON.stringify(prompt)) as Activity;
             prompt.text = msg.text;
             if (msg.suggestedActions && Array.isArray(msg.suggestedActions.actions) && msg.suggestedActions.actions.length > 0) {
                 prompt.suggestedActions = msg.suggestedActions;
@@ -219,6 +314,9 @@ export abstract class Prompt<T> extends Dialog {
     }
 }
 
+/**
+ * @private
+ */
 interface PromptState {
     state: object;
     options: PromptOptions;
