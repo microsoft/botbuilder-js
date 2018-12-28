@@ -40,17 +40,26 @@ export interface LanguageGenerationApplication {
 	/* Language generation application id */
 	applicationId: string;
 
-	/** (Optional) Azure region */
-	azureRegion?: string;
+	/* Language generation locale */
+	applicationLocale: string;
 
-	/* Congnetive service authorization key */
-	endpointKey: string;
+	/** Language generation region */
+	applicationRegion: string;
+
+	/** Language generation version */
+	applicationVersion: string;
+
+	/* Congnetive services subscription key */
+	subscriptionKey: string;
 }
 
 /**
  * Options for LanguageGenerationResolver.
  */
-export interface LanguageGenerationOptions {}
+export interface LanguageGenerationOptions {
+	resolverApiEndpoint?: string;
+	tokenGenerationApiEndpoint?: string;
+}
 
 /**
  * Component used to extract template references from the activity object, resolve them using the language generation service
@@ -60,7 +69,7 @@ export class LanguageGenerationResolver {
 	private lgApi: LGAPI;
 	constructor(
 		private application: LanguageGenerationApplication,
-		private options: LanguageGenerationOptions
+		options: LanguageGenerationOptions = {}
 	) {
 		this.validateApplicationInputs();
 		this.lgApi = new LGAPI(application, options);
@@ -93,7 +102,7 @@ export class LanguageGenerationResolver {
 			.map(templateReference =>
 				new LGRequestBuilder()
 					.setScenario(this.application.applicationId)
-					.setLocale(activity.locale)
+					.setLocale(this.application.applicationLocale)
 					.setSlots(entitiesSlots)
 					.setTemplateId(templateReference)
 					.build()
@@ -121,12 +130,26 @@ export class LanguageGenerationResolver {
 	}
 
 	private validateApplicationInputs(): void {
+		const makeErrorStr = (resourceName: string) => `${resourceName} can't be null or empty`;
+
 		if (isEmpty(this.application.applicationId)) {
-			throw new Error(`Application Id can't be null or empty`);
+			throw new Error(makeErrorStr('applicationId'));
 		}
 
-		if (isEmpty(this.application.endpointKey)) {
-			throw new Error(`Endpoint key can't be null or empty`);
+		if (isEmpty(this.application.applicationLocale)) {
+			throw new Error(makeErrorStr('applicationLocale'));
+		}
+
+		if (isEmpty(this.application.applicationRegion)) {
+			throw new Error(makeErrorStr('applicationRegion'));
+		}
+
+		if (isEmpty(this.application.applicationVersion)) {
+			throw new Error(makeErrorStr('applicationVersion'));
+		}
+
+		if (isEmpty(this.application.subscriptionKey)) {
+			throw new Error(makeErrorStr('subscriptionKey'));
 		}
 	}
 }
@@ -311,44 +334,45 @@ const mediaCardInspector = (card: MediaCard): string[] => {
 	return res;
 };
 
-const attachmentsInspector: IActivityInspector = (activity: Partial<Activity>): string[] => {
-	return !isNil(activity.attachments)
+const attachmentsInspector: IActivityInspector = (activity: Partial<Activity>): string[] =>
+	!isNil(activity.attachments)
 		? flatten(
-				activity.attachments.filter(({ content }) => !isNil(content)).map(attachment => {
-					switch (attachment.contentType) {
-						case CardFactory.contentTypes.adaptiveCard: {
-							//TODO
-							return [];
+				activity.attachments
+					.filter(({ content }) => !isNil(content))
+					.map(attachment => {
+						switch (attachment.contentType) {
+							case CardFactory.contentTypes.adaptiveCard: {
+								//TODO
+								return [];
+							}
+							case CardFactory.contentTypes.animationCard: {
+								return mediaCardInspector(attachment.content);
+							}
+							case CardFactory.contentTypes.audioCard: {
+								return mediaCardInspector(attachment.content);
+							}
+							case CardFactory.contentTypes.heroCard: {
+								return thumbnailCardInspector(attachment.content);
+							}
+							case CardFactory.contentTypes.receiptCard: {
+								return receiptCardInspector(attachment.content);
+							}
+							case CardFactory.contentTypes.oauthCard: {
+								return oauthOrSigninCardInspector(attachment.content);
+							}
+							case CardFactory.contentTypes.signinCard: {
+								return oauthOrSigninCardInspector(attachment.content);
+							}
+							case CardFactory.contentTypes.thumbnailCard: {
+								return thumbnailCardInspector(attachment.content);
+							}
+							case CardFactory.contentTypes.videoCard: {
+								return mediaCardInspector(attachment.content);
+							}
 						}
-						case CardFactory.contentTypes.animationCard: {
-							return mediaCardInspector(attachment.content);
-						}
-						case CardFactory.contentTypes.audioCard: {
-							return mediaCardInspector(attachment.content);
-						}
-						case CardFactory.contentTypes.heroCard: {
-							return thumbnailCardInspector(attachment.content);
-						}
-						case CardFactory.contentTypes.receiptCard: {
-							return receiptCardInspector(attachment.content);
-						}
-						case CardFactory.contentTypes.oauthCard: {
-							return oauthOrSigninCardInspector(attachment.content);
-						}
-						case CardFactory.contentTypes.signinCard: {
-							return oauthOrSigninCardInspector(attachment.content);
-						}
-						case CardFactory.contentTypes.thumbnailCard: {
-							return thumbnailCardInspector(attachment.content);
-						}
-						case CardFactory.contentTypes.videoCard: {
-							return mediaCardInspector(attachment.content);
-						}
-					}
-				})
+					})
 		  )
 		: [];
-};
 
 //#endregion
 
@@ -549,46 +573,48 @@ const attachmentsInjector = (
 	templateResolutions: Map<string, string>
 ): void => {
 	if (activity.attachments) {
-		activity.attachments.filter(({ content }) => !isNil(content)).forEach(attachment => {
-			switch (attachment.contentType) {
-				case CardFactory.contentTypes.adaptiveCard: {
-					//TODO
-					break;
+		activity.attachments
+			.filter(({ content }) => !isNil(content))
+			.forEach(attachment => {
+				switch (attachment.contentType) {
+					case CardFactory.contentTypes.adaptiveCard: {
+						//TODO
+						break;
+					}
+					case CardFactory.contentTypes.animationCard: {
+						mediaCardInjector(attachment.content, templateResolutions);
+						break;
+					}
+					case CardFactory.contentTypes.audioCard: {
+						mediaCardInjector(attachment.content, templateResolutions);
+						break;
+					}
+					case CardFactory.contentTypes.heroCard: {
+						thumbnailCardInjector(attachment.content, templateResolutions);
+						break;
+					}
+					case CardFactory.contentTypes.receiptCard: {
+						receiptCardInjector(attachment.content, templateResolutions);
+						break;
+					}
+					case CardFactory.contentTypes.oauthCard: {
+						oauthOrSigninCardInjector(attachment.content, templateResolutions);
+						break;
+					}
+					case CardFactory.contentTypes.signinCard: {
+						oauthOrSigninCardInjector(attachment.content, templateResolutions);
+						break;
+					}
+					case CardFactory.contentTypes.thumbnailCard: {
+						thumbnailCardInjector(attachment.content, templateResolutions);
+						break;
+					}
+					case CardFactory.contentTypes.videoCard: {
+						mediaCardInjector(attachment.content, templateResolutions);
+						break;
+					}
 				}
-				case CardFactory.contentTypes.animationCard: {
-					mediaCardInjector(attachment.content, templateResolutions);
-					break;
-				}
-				case CardFactory.contentTypes.audioCard: {
-					mediaCardInjector(attachment.content, templateResolutions);
-					break;
-				}
-				case CardFactory.contentTypes.heroCard: {
-					thumbnailCardInjector(attachment.content, templateResolutions);
-					break;
-				}
-				case CardFactory.contentTypes.receiptCard: {
-					receiptCardInjector(attachment.content, templateResolutions);
-					break;
-				}
-				case CardFactory.contentTypes.oauthCard: {
-					oauthOrSigninCardInjector(attachment.content, templateResolutions);
-					break;
-				}
-				case CardFactory.contentTypes.signinCard: {
-					oauthOrSigninCardInjector(attachment.content, templateResolutions);
-					break;
-				}
-				case CardFactory.contentTypes.thumbnailCard: {
-					thumbnailCardInjector(attachment.content, templateResolutions);
-					break;
-				}
-				case CardFactory.contentTypes.videoCard: {
-					mediaCardInjector(attachment.content, templateResolutions);
-					break;
-				}
-			}
-		});
+			});
 	}
 };
 //#endregion
@@ -863,10 +889,10 @@ export interface LGResponse {
  * @private
  */
 export class LGAPI {
-	public static readonly constructIssueTokenUrl = (region: string) =>
+	public static readonly constructDefaultTokenGenerationApi = (region: string) =>
 		`https://${region}.api.cognitive.microsoft.com/sts/v1.0/issueToken`;
 
-	public static readonly constructRunTimeUrl = (region: string) =>
+	public static readonly constructDefaultResolverApi = (region: string) =>
 		`https://${region}.cts.speech.microsoft.com/v1/lg`;
 
 	private token: string = null;
@@ -875,16 +901,20 @@ export class LGAPI {
 		private readonly application: LanguageGenerationApplication,
 		private readonly options: LanguageGenerationOptions
 	) {
-		application.azureRegion = application.azureRegion || 'westus';
+		application.applicationRegion = application.applicationRegion;
 	}
 
 	public async authenticate(): Promise<void> {
+		const url =
+			this.options.tokenGenerationApiEndpoint ||
+			LGAPI.constructDefaultTokenGenerationApi(this.application.applicationRegion);
+
 		try {
 			this.token = await request({
-				url: LGAPI.constructIssueTokenUrl(this.application.azureRegion),
+				url,
 				method: 'POST',
 				headers: {
-					'OCP-APIM-SUBSCRIPTION-KEY': this.application.endpointKey,
+					'OCP-APIM-SUBSCRIPTION-KEY': this.application.subscriptionKey,
 				},
 				json: true,
 			});
@@ -894,9 +924,12 @@ export class LGAPI {
 	}
 
 	public fetch = async (lgRequest: LGRequest): Promise<LGResponse> => {
+		const url =
+			this.options.resolverApiEndpoint ||
+			LGAPI.constructDefaultResolverApi(this.application.applicationRegion);
 		try {
 			const response = await request({
-				url: LGAPI.constructRunTimeUrl(this.application.azureRegion),
+				url,
 				method: 'POST',
 				headers: {
 					Authorization: `Bearer ${this.token}`,

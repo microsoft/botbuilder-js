@@ -99,11 +99,14 @@ const lgEntityAccessor = userState.createProperty(LG_ENTITIES_PROPERTY);
 // Wire language generation middleware with the bot
 adapter.use(
     new LanguageGenerationMiddleware(lgEntityAccessor, {
-        applicationId: process.env.lgAppId,
-        endpointKey: process.env.lgEndpointKey,
-        azureRegion: process.env.lgEndpointRegion
+        applicationId: process.env.lgApplicationId,
+        applicationLocale: process.env.lgApplicationLocale,
+        applicationRegion: process.env.lgApplicationRegion,
+        applicationVersion: process.env.lgApplicationVersion,
+        subscriptionKey: process.env.lgSubscriptionKey
     })
 );
+
 // Create the main dialog.
 let bot;
 try {

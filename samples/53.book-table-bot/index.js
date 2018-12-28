@@ -102,9 +102,11 @@ const lgEntitiesState = userState.createProperty(LG_ENTITIES_PROPERTY);
 // Wire language generation middleware with the bot
 adapter.use(
     new LanguageGenerationMiddleware(lgEntitiesState, {
-        applicationId: process.env.lgAppId,
-        endpointKey: process.env.lgEndpointKey,
-        azureRegion: 'westus'
+        applicationId: process.env.lgApplicationId,
+        applicationLocale: process.env.lgApplicationLocale,
+        applicationRegion: process.env.lgApplicationRegion,
+        applicationVersion: process.env.lgApplicationVersion,
+        subscriptionKey: process.env.lgSubscriptionKey
     })
 );
 

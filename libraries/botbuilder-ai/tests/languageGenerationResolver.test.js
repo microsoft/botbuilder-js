@@ -879,7 +879,10 @@ describe('LanguageGenerationResolver', () => {
 	describe('Resolve function', () => {
 		const application = {
 			applicationId: 'lgmodelfortesting',
-			endpointKey: '4262b7b8accc4fceaa6da4174f9c2a67',
+			applicationLocale: 'en-US',
+			applicationRegion: 'westus',
+			applicationVersion: 'default',
+			subscriptionKey: '<insert_key_here>',
 		};
 
 		const findTemplateReferenceAPIRes = templateReference =>
@@ -890,7 +893,7 @@ describe('LanguageGenerationResolver', () => {
 				}, {})[templateReference] || { Outputs: {} };
 
 		const mockAuthentication = () =>
-			nock(LGAPI.constructIssueTokenUrl('westus'))
+			nock(LGAPI.constructDefaultTokenGenerationApi('westus'))
 				.persist()
 				.post('')
 				.reply(200, 'token');
@@ -901,7 +904,7 @@ describe('LanguageGenerationResolver', () => {
 			if (ENABLE_MOCKING) {
 				mockAuthentication();
 
-				nock(LGAPI.constructRunTimeUrl('westus'))
+				nock(LGAPI.constructDefaultResolverApi('westus'))
 					.persist()
 					.post('')
 					.reply((uri, requestBody, cb) => {
@@ -915,13 +918,16 @@ describe('LanguageGenerationResolver', () => {
 			}
 		});
 
-		it('should throw an error if an invalid key or application id are given', async () => {
+		it('should throw an error if an invalid options object is provided', async () => {
 			let err = null;
 			try {
 				const resolver = new LanguageGenerationResolver(
 					{
 						applicationId: '',
-						endpointKey: '',
+						applicationLocale: '',
+						applicationRegion: '',
+						applicationVersion: '',
+						subscriptionKey: '',
 					},
 					{}
 				);
@@ -1030,7 +1036,7 @@ describe('LanguageGenerationResolver', () => {
 			mockAuthentication();
 
 			if (ENABLE_MOCKING) {
-				nock(LGAPI.constructRunTimeUrl('westus'))
+				nock(LGAPI.constructDefaultResolverApi('westus'))
 					.post('')
 					.reply((uri, requestBody, cb) => {
 						cb(null, [401, '']);
@@ -1059,7 +1065,7 @@ describe('LanguageGenerationResolver', () => {
 				nock.cleanAll();
 				mockAuthentication();
 
-				nock(LGAPI.constructRunTimeUrl('westus'))
+				nock(LGAPI.constructDefaultResolverApi('westus'))
 					.post('')
 					.reply((uri, requestBody, cb) => {
 						cb(null, [500, null]);
@@ -1084,7 +1090,7 @@ describe('LanguageGenerationResolver', () => {
 				nock.cleanAll();
 				mockAuthentication();
 
-				nock(LGAPI.constructRunTimeUrl('westus'))
+				nock(LGAPI.constructDefaultResolverApi('westus'))
 					.post('')
 					.reply((uri, requestBody, cb) => {
 						cb(null, [400, null]);
