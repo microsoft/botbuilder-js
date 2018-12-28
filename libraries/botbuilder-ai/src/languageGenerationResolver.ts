@@ -105,6 +105,7 @@ export class LanguageGenerationResolver {
 					.setLocale(this.application.applicationLocale)
 					.setSlots(entitiesSlots)
 					.setTemplateId(templateReference)
+					.setVersion(this.application.applicationVersion)
 					.build()
 			)
 			.map(this.lgApi.fetch);
@@ -826,6 +827,7 @@ export interface LGRequest {
 	locale: string;
 	slots: { [key: string]: LGValue };
 	templateId: string;
+	version: string;
 }
 
 /**
@@ -836,6 +838,14 @@ class LGRequestBuilder {
 	private scenario: string;
 	private slots: Slot[];
 	private templateId: string;
+	private version: string;
+
+	public setVersion(version: string){
+		this.version = version;
+
+		return this;
+
+	}
 
 	public setSlots(slots: Slot[]): LGRequestBuilder {
 		this.slots = slots;
@@ -873,6 +883,7 @@ class LGRequestBuilder {
 			scenario: this.scenario,
 			slots: slotsJSON,
 			templateId: this.templateId,
+			version: this.version
 		};
 	}
 }
