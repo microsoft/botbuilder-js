@@ -21,7 +21,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "@types/filenamify": "^2.0.1",
-    "@types/node": "^9.3.0",
+    "@types/node": "^10.3.0",
     "async-file": "^2.0.2",
     "botbuilder-core": "~4.1.6",
     "botframework-connector": "~4.1.6",
