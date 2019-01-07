@@ -98,7 +98,8 @@ export class TurnContext {
             bot: shallowCopy(activity.recipient),
             conversation: shallowCopy(activity.conversation),
             channelId: activity.channelId,
-            serviceUrl: activity.serviceUrl
+            serviceUrl: activity.serviceUrl,
+            channelData: activity.channelData
         };
     }
 

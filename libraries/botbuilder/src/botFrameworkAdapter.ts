@@ -230,6 +230,11 @@ export class BotFrameworkAdapter extends BotAdapter {
         const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
         const response = await client.conversations.createConversation(parameters);
 
+        // Mix in the tenant ID if specified. This is required for MS Teams.
+        if (reference.channelData && reference.channelData.tenant) {
+            parameters.channelData = { tenant: reference.channelData.tenant };
+        }
+
         // Initialize request and copy over new conversation ID and updated serviceUrl.
         const request: Partial<Activity> = TurnContext.applyConversationReference(
             { type: 'event', name: 'createConversation' },
