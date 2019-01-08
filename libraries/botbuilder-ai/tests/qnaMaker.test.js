@@ -257,7 +257,7 @@ describe('QnAMaker', function () {
         it('method should throw error if context is undefined', async function() {
             const qna = new QnAMaker(endpoint);
 
-            assert.rejects(async () => await qna.answer(undefined), new TypeError('QnAMaker.getAnswers() requires a TurnContext.'));
+            assert.rejects(async () => await qna.getAnswers(undefined), new TypeError('QnAMaker.getAnswers() requires a TurnContext.'));
         });
     });
 
