@@ -256,9 +256,8 @@ describe('QnAMaker', function () {
     describe('emitTraceInfo()', function() {
         it('method should throw error if context is undefined', async function() {
             const qna = new QnAMaker(endpoint);
-            const undefinedContextResult = qna.getAnswers(undefined);
-            
-            assert.rejects(undefinedContextResult, new TypeError('QnAMaker.getAnswers() requires a TurnContext.'));
+
+            assert.rejects(async () => await qna.answer(undefined), new TypeError('QnAMaker.getAnswers() requires a TurnContext.'));
         });
     });
 
