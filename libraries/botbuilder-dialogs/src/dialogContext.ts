@@ -10,6 +10,7 @@ import { Choice } from './choices';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
+import { ValueMap } from './valueMap';
 
 /**
  * State information persisted by a `DialogSet`.
@@ -19,6 +20,18 @@ export interface DialogState {
      * The dialog stack being persisted.
      */
     dialogStack: DialogInstance[];
+
+    /**
+     * Persisted values that are visible across all of a components dialogs.
+     */
+    componentValues: object;
+}
+
+export interface RootDialogState extends DialogState {
+    /**
+     * Persisted values that are visible across all of the bots components.
+     */
+    sessionValues: object;
 }
 
 /**
@@ -48,17 +61,36 @@ export class DialogContext {
      */
     public readonly stack: DialogInstance[];
 
+    /**
+     * Persisted values that are visible across all of the bots components.
+     */
+    public readonly sessionValues: ValueMap;
+
+    /**
+     * Persisted values that are visible across all of the dialogs for the current component.
+     */
+    public readonly componentValues: ValueMap;
+
      /**
       * Creates a new DialogContext instance.
       * @param dialogs Parent dialog set.
       * @param context Context for the current turn of conversation with the user.
       * @param state State object being used to persist the dialog stack.
+      * @param sessionValues (Optional) session values to bind context to. Session values will be persisted off the `state` property if not specified.
       */
-    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState) {
+    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState, sessionValues?: ValueMap) {
         if (!Array.isArray(state.dialogStack)) { state.dialogStack = []; }
+        if (typeof state.componentValues !== 'object') { state.componentValues = {}; }
         this.dialogs = dialogs;
         this.context = context;
         this.stack = state.dialogStack;
+        this.componentValues = new ValueMap(state.componentValues);
+        if (!sessionValues) {
+            // Create a new session values map
+            if (typeof (state as RootDialogState).sessionValues !== 'object') { (state as RootDialogState).sessionValues = {}; }
+            sessionValues = new ValueMap((state as RootDialogState).sessionValues);
+        }
+        this.sessionValues = sessionValues;
     }
 
     /**

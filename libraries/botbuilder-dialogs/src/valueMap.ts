@@ -7,23 +7,23 @@
  */
 import { EventEmitter } from 'events';
 
-export enum SlotMapEvents {
+export enum ValueMapEvents {
     delete = 'delete',
     change = 'change'
 }
 
-export interface DeletedSlotEvent {
+export interface DeletedValueEvent {
     name: string;
     tags: string[];
 }
 
-export interface ChangedSlotEvent {
+export interface ChangedValueEvent {
     name: string;
     value: any;
     tags: string[];
 }
 
-export class SlotMap extends EventEmitter {
+export class ValueMap extends EventEmitter {
     public readonly memory: SlotMemory;
 
     constructor(memory: object) {
@@ -40,10 +40,10 @@ export class SlotMap extends EventEmitter {
             delete this.memory[name];
 
             // Notify listeners
-            this.emit(SlotMapEvents.delete, {
+            this.emit(ValueMapEvents.delete, {
                 name: name,
                 tags: tags
-            } as DeletedSlotEvent)
+            } as DeletedValueEvent)
             return true;
         }
 
@@ -74,11 +74,11 @@ export class SlotMap extends EventEmitter {
         this.memory[name] = entry;
 
         // Notify listeners
-        this.emit(SlotMapEvents.change, {
+        this.emit(ValueMapEvents.change, {
             name: name,
             value: value,
             tags: tags
-        } as ChangedSlotEvent)
+        } as ChangedValueEvent)
 
         return this;
     }
