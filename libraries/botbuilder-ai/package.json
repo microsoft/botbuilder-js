@@ -22,7 +22,7 @@
   "dependencies": {
     "@microsoft/recognizers-text-date-time": "1.1.2",
     "@types/html-entities": "^1.2.16",
-    "@types/node": "^10.3.0",
+    "@types/node": "^10.12.18",
     "@types/request-promise-native": "^1.0.10",
     "azure-cognitiveservices-luis-runtime": "^1.0.0",
     "botbuilder": "~4.1.6",

@@ -21,7 +21,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@types/node": "^10.3.0",
+    "@types/node": "^10.12.18",
     "azure-storage": "^2.10.2",
     "botbuilder": "~4.1.6",
     "documentdb": "1.14.5",
