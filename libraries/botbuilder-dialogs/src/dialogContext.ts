@@ -10,7 +10,7 @@ import { Choice } from './choices';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
-import { ValueMap } from './valueMap';
+import { StateMap } from './stateMap';
 
 /**
  * State information persisted by a `DialogSet`.
@@ -64,33 +64,33 @@ export class DialogContext {
     /**
      * Persisted values that are visible across all of the bots components.
      */
-    public readonly sessionValues: ValueMap;
+    public readonly sessionState: StateMap;
 
     /**
      * Persisted values that are visible across all of the dialogs for the current component.
      */
-    public readonly componentValues: ValueMap;
+    public readonly componentState: StateMap;
 
      /**
       * Creates a new DialogContext instance.
       * @param dialogs Parent dialog set.
       * @param context Context for the current turn of conversation with the user.
       * @param state State object being used to persist the dialog stack.
-      * @param sessionValues (Optional) session values to bind context to. Session values will be persisted off the `state` property if not specified.
+      * @param sessionState (Optional) session values to bind context to. Session values will be persisted off the `state` property if not specified.
       */
-    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState, sessionValues?: ValueMap) {
+    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState, sessionState?: StateMap) {
         if (!Array.isArray(state.dialogStack)) { state.dialogStack = []; }
         if (typeof state.componentValues !== 'object') { state.componentValues = {}; }
         this.dialogs = dialogs;
         this.context = context;
         this.stack = state.dialogStack;
-        this.componentValues = new ValueMap(state.componentValues);
-        if (!sessionValues) {
-            // Create a new session values map
+        this.componentState = new StateMap(state.componentValues);
+        if (!sessionState) {
+            // Create a new session state map
             if (typeof (state as RootDialogState).sessionValues !== 'object') { (state as RootDialogState).sessionValues = {}; }
-            sessionValues = new ValueMap((state as RootDialogState).sessionValues);
+            sessionState = new StateMap((state as RootDialogState).sessionValues);
         }
-        this.sessionValues = sessionValues;
+        this.sessionState = sessionState;
     }
 
     /**
@@ -99,13 +99,15 @@ export class DialogContext {
      *
      * @remarks
      * Dialogs can use this to persist custom state in between conversation turns:
-     *
-     * ```JavaScript
-     * dc.activeDialog.state = { someFlag: true };
-     * ```
      */
     public get activeDialog(): DialogInstance|undefined {
         return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
+    }
+
+    public get dialogState(): StateMap {
+        const instance = this.activeDialog;
+        if (!instance) { throw new Error(`DialogContext.dialogState: no active dialog instance.`); }
+        return new StateMap(instance.state);
     }
 
     /**
@@ -131,7 +133,7 @@ export class DialogContext {
         if (!dialog) { throw new Error(`DialogContext.beginDialog(): A dialog with an id of '${dialogId}' wasn't found.`); }
 
         // Push new instance onto stack.
-        const instance: DialogInstance<any> = {
+        const instance: DialogInstance = {
             id: dialogId,
             state: {}
         };
@@ -225,7 +227,7 @@ export class DialogContext {
      */
     public async continueDialog(): Promise<DialogTurnResult> {
         // Check for a dialog on the stack
-        const instance: DialogInstance<any> = this.activeDialog;
+        const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
             const dialog: Dialog<{}> = this.dialogs.find(instance.id);
@@ -265,7 +267,7 @@ export class DialogContext {
         await this.endActiveDialog(DialogReason.endCalled);
 
         // Resume parent dialog
-        const instance: DialogInstance<any> = this.activeDialog;
+        const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
             const dialog: Dialog<{}> = this.dialogs.find(instance.id);
@@ -332,7 +334,7 @@ export class DialogContext {
      */
     public async repromptDialog(): Promise<void> {
         // Check for a dialog on the stack
-        const instance: DialogInstance<any> = this.activeDialog;
+        const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
             const dialog: Dialog<{}> = this.dialogs.find(instance.id);
@@ -346,7 +348,7 @@ export class DialogContext {
     }
 
     private async endActiveDialog(reason: DialogReason): Promise<void> {
-        const instance: DialogInstance<any> = this.activeDialog;
+        const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
             const dialog: Dialog<{}> = this.dialogs.find(instance.id);

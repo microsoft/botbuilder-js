@@ -10,9 +10,8 @@ import { DialogContext } from './dialogContext';
 
 /**
  * Tracking information persisted for an instance of a dialog on the stack.
- * @param T (Optional) type of state being persisted for the dialog.
  */
-export interface DialogInstance<T = any> {
+export interface DialogInstance {
     /**
      * ID of the dialog this instance is for.
      */
@@ -21,7 +20,7 @@ export interface DialogInstance<T = any> {
     /**
      * The instances persisted state.
      */
-     state: T;
+     state: object;
 }
 
 /**

@@ -9,6 +9,7 @@ import { Activity, ActivityTypes, InputHints, MessageFactory, TurnContext } from
 import { Choice, ChoiceFactory, ChoiceFactoryOptions } from '../choices';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
+import { StateMap } from '../stateMap';
 
 /**
  * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
@@ -167,12 +168,12 @@ export abstract class Prompt<T> extends Dialog {
         }
 
         // Initialize prompt state
-        const state: PromptState = dc.activeDialog.state as PromptState;
-        state.options = opt;
-        state.state = {};
+        const state = dc.dialogState;
+        state.set(PERSISTED_OPTIONS, opt);
+        state.set(PERSISTED_STATE, {});
 
         // Send initial prompt
-        await this.onPrompt(dc.context, state.state, state.options, false);
+        await this.onPrompt(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), false);
 
         return Dialog.EndOfTurn;
     }
@@ -184,8 +185,8 @@ export abstract class Prompt<T> extends Dialog {
         }
 
         // Perform base recognition
-        const state: PromptState = dc.activeDialog.state as PromptState;
-        const recognized: PromptRecognizerResult<T> = await this.onRecognize(dc.context, state.state, state.options);
+        const state = dc.dialogState;
+        const recognized: PromptRecognizerResult<T> = await this.onRecognize(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS));
 
         // Validate the return value
         let isValid: boolean = false;
@@ -193,8 +194,8 @@ export abstract class Prompt<T> extends Dialog {
             isValid = await this.validator({
                 context: dc.context,
                 recognized: recognized,
-                state: state.state,
-                options: state.options
+                state: state.get(PERSISTED_STATE),
+                options: state.get(PERSISTED_OPTIONS)
             });
         } else if (recognized.succeeded) {
             isValid = true;
@@ -205,7 +206,7 @@ export abstract class Prompt<T> extends Dialog {
             return await dc.endDialog(recognized.value);
         } else {
             if (!dc.context.responded) {
-                await this.onPrompt(dc.context, state.state, state.options, true);
+                await this.onPrompt(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), true);
             }
 
             return Dialog.EndOfTurn;
@@ -224,8 +225,8 @@ export abstract class Prompt<T> extends Dialog {
     }
 
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
-        const state: PromptState = instance.state as PromptState;
-        await this.onPrompt(context, state.state, state.options, false);
+        const state = new StateMap(instance.state);
+        await this.onPrompt(context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), false);
     }
 
     /**
@@ -317,7 +318,9 @@ export abstract class Prompt<T> extends Dialog {
 /**
  * @private
  */
-interface PromptState {
-    state: object;
-    options: PromptOptions;
-}
+const PERSISTED_STATE = 'state';
+
+/**
+ * @private
+ */
+const PERSISTED_OPTIONS = 'options';
