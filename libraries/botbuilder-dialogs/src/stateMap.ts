@@ -96,6 +96,9 @@ export class StateMap extends EventEmitter {
     }
 }
 
+/**
+ * @private
+ */
 interface StateMemory {
     [name:string]: any;
     '@tags': { [name:string]: string[] }; 

@@ -341,6 +341,17 @@ export class DialogContext {
         return jsonpath.query(obj, pathExpression, count);
     }
 
+    public queryStateValue<T = any>(pathExpression: string, defaultValue?: T): T {
+        const obj = {
+            user: this.userState.memory,
+            session: this.sessionState.memory,
+            component: this.componentState.memory,
+            dialog: this.dialogState.memory
+        }
+        const value = jsonpath.value(obj, pathExpression);
+        return value !== undefined ? value : defaultValue;
+    }
+
     /**
      * Ends the active dialog and starts a new dialog in its place.
      *
