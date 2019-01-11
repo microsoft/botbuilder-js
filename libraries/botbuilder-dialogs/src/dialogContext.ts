@@ -11,6 +11,7 @@ import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatu
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
 import { StateMap } from './stateMap';
+import * as jsonpath from 'jsonpath';
 
 /**
  * State information persisted by a `DialogSet`.
@@ -24,14 +25,23 @@ export interface DialogState {
     /**
      * Persisted values that are visible across all of a components dialogs.
      */
-    componentValues: object;
+    componentState: object;
 }
 
 export interface RootDialogState extends DialogState {
     /**
      * Persisted values that are visible across all of the bots components.
+     * 
+     * @remarks
+     * These values are intended to be transient and may automatically expire after some timeout
+     * period.
      */
-    sessionValues: object;
+    sessionState: object;
+
+    /**
+     * (Optional) persisted values that are visible across all of the bots components.
+     */
+    userState?: object;
 }
 
 /**
@@ -64,6 +74,15 @@ export class DialogContext {
     /**
      * Persisted values that are visible across all of the bots components.
      */
+    public readonly userState: StateMap;
+
+    /**
+     * Persisted values that are visible across all of the bots components.
+     * 
+     * @remarks
+     * These values are intended to be transient and may automatically expire after some timeout
+     * period.
+     */
     public readonly sessionState: StateMap;
 
     /**
@@ -76,21 +95,28 @@ export class DialogContext {
       * @param dialogs Parent dialog set.
       * @param context Context for the current turn of conversation with the user.
       * @param state State object being used to persist the dialog stack.
-      * @param sessionState (Optional) session values to bind context to. Session values will be persisted off the `state` property if not specified.
+      * @param sessionState (Optional) session state to bind context to. If not specified, a new set of session values will be persisted off the passed in `state` property.
+      * @param userState (Optional) user values to bind context to. If not specified, a new set of session values will be persisted off the passed in `state` property.
       */
-    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState, sessionState?: StateMap) {
+    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState, sessionState?: StateMap, userState?: StateMap) {
         if (!Array.isArray(state.dialogStack)) { state.dialogStack = []; }
-        if (typeof state.componentValues !== 'object') { state.componentValues = {}; }
+        if (typeof state.componentState !== 'object') { state.componentState = {}; }
         this.dialogs = dialogs;
         this.context = context;
         this.stack = state.dialogStack;
-        this.componentState = new StateMap(state.componentValues);
+        this.componentState = new StateMap(state.componentState);
         if (!sessionState) {
             // Create a new session state map
-            if (typeof (state as RootDialogState).sessionValues !== 'object') { (state as RootDialogState).sessionValues = {}; }
-            sessionState = new StateMap((state as RootDialogState).sessionValues);
+            if (typeof (state as RootDialogState).sessionState !== 'object') { (state as RootDialogState).sessionState = {}; }
+            sessionState = new StateMap((state as RootDialogState).sessionState);
         }
         this.sessionState = sessionState;
+        if (!userState) {
+            // Create a new session state map
+            if (typeof (state as RootDialogState).userState !== 'object') { (state as RootDialogState).userState = {}; }
+            userState = new StateMap((state as RootDialogState).userState);
+        }
+        this.userState = userState;
     }
 
     /**
@@ -281,6 +307,38 @@ export class DialogContext {
             // Signal completion
             return { status: DialogTurnStatus.complete, result: result };
         }
+    }
+
+    /**
+     * Executes a JSONPath expression across the current `xxxState` properties.
+     * 
+     * @remarks
+     * The syntax for JSONPath can be found [here](https://github.com/dchester/jsonpath#jsonpath-syntax). 
+     * An array of matching values will be returned.
+     * 
+     * The shape of the object being searched over is as follows:
+     * 
+     * ```JS
+     * {
+     *     user: { ...userState values... },
+     *     session: { ...sessionState values... },
+     *     component: { ...componentState values... },
+     *     dialog: { ...dialogState values... } 
+     * }
+     * ```
+     * 
+     * As an example, to search for the users name you would pass in an expression of `$.user.name`.
+     * @param pathExpression JSONPath expression to evaluate.
+     * @param count (Optional) number of matches to return. The default value is to return all matches.
+     */
+    public queryState(pathExpression: string, count?: number): any[] {
+        const obj = {
+            user: this.userState.memory,
+            session: this.sessionState.memory,
+            component: this.componentState.memory,
+            dialog: this.dialogState.memory
+        }
+        return jsonpath.query(obj, pathExpression, count);
     }
 
     /**

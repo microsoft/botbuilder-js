@@ -81,7 +81,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
 
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Start the inner dialog.
-        const dialogState: DialogState = { dialogStack: [], componentValues: {} };
+        const dialogState: DialogState = { dialogStack: [], componentState: {} };
         outerDC.activeDialog.state[PERSISTED_DIALOG_STATE] = dialogState;
         const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState, outerDC.sessionState);
         const turnResult: DialogTurnResult<any> = await this.onBeginDialog(innerDC, options);
