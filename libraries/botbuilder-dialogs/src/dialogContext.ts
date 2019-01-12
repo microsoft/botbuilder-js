@@ -151,7 +151,7 @@ export class DialogContext {
      * @param promptOrOptions (Optional) Initial prompt to send the user or a set of options to configure the prompt with..
      * @param choices (Optional) array of choices associated with the prompt.
      */
-    public async prompt(dialogId: string, promptOrOptions: string|Partial<Activity>|PromptOptions, choices?: (string|Choice)[]): Promise<DialogTurnResult>;
+    public async prompt(dialogId: string, promptOrOptions?: string|Partial<Activity>|PromptOptions, choices?: (string|Choice)[]): Promise<DialogTurnResult>;
     public async prompt(
         dialogId: string,
         promptOrOptions: string|Partial<Activity>,
