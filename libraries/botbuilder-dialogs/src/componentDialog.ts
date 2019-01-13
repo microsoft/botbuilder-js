@@ -328,7 +328,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
 
         // Start the component if it wasn't already running
         if (result.status === DialogTurnStatus.empty) {
-            result = await dc.beginDialog(this.id, options);
+            result = await dc.beginDialog(this.id, options.dialogOptions);
         }
         return result;
 

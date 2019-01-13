@@ -149,7 +149,7 @@ describe('ComponentDialog', function () {
         component.addDialog(startDialog);
 
         const adapter = new TestAdapter(async turnContext => {
-            await component.run(turnContext, { foo: 'bar' });
+            await component.run(turnContext, { dialogOptions: { foo: 'bar' } });
             await conversationState.saveChanges(turnContext);
         });
 
