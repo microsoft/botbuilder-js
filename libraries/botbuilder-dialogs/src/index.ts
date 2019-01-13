@@ -11,5 +11,6 @@ export * from './dialog';
 export * from './componentDialog';
 export * from './dialogContext';
 export * from './dialogSet';
+export * from './stateMap';
 export * from './waterfallDialog';
 export * from './waterfallStepContext';

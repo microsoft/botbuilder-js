@@ -11,6 +11,7 @@ import { DialogInstance } from './dialog';
 import { Dialog, DialogReason, DialogTurnResult } from './dialog';
 import { DialogContext } from './dialogContext';
 import { WaterfallStepContext } from './waterfallStepContext';
+import { StateMap } from './stateMap';
 
 /**
  * Function signature of an individual waterfall step.
@@ -134,15 +135,15 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Initialize waterfall state
-        const state: WaterfallDialogState = dc.activeDialog.state as WaterfallDialogState;
-        state.options = options || {};
-        state.values = {
+        const state = dc.dialogState;
+        state.set(PERSISTED_OPTIONS, options || {});
+        state.set(PERSISTED_VALUES, {
             instanceId: generate_guid()
-        };
+        });
 
         this.telemetryClient.trackEvent({name: "WaterfallStart", properties: {
             "DialogId": this.id,
-            "InstanceId": state.values['instanceId']
+            "InstanceId": state.get(PERSISTED_VALUES)['instanceId']
         }});
 
         // Run the first step
@@ -161,9 +162,9 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // Increment step index and run step
-        const state: WaterfallDialogState = dc.activeDialog.state as WaterfallDialogState;
+        const state = dc.dialogState;
 
-        return await this.runStep(dc, state.stepIndex + 1, reason, result);
+        return await this.runStep(dc, state.get(PERSISTED_STEP_INDEX) + 1, reason, result);
     }
 
     /**
@@ -186,12 +187,12 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         // Log Waterfall Step event. 
         var stepName = this.waterfallStepName(step.index)
 
-        const state: WaterfallDialogState = step.activeDialog.state as WaterfallDialogState;
+        const state = step.dialogState;
 
         var properties = 
         { 
             "DialogId": this.id,
-            "InstanceId": state.values['instanceId'],
+            "InstanceId": state.get(PERSISTED_VALUES)['instanceId'],
             "StepName": stepName,
         };
         this.telemetryClient.trackEvent({name: "WaterfallStep", properties: properties});
@@ -201,17 +202,17 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     private async runStep(dc: DialogContext, index: number, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         if (index < this.steps.length) {
             // Update persisted step index
-            const state: WaterfallDialogState = dc.activeDialog.state as WaterfallDialogState;
-            state.stepIndex = index;
+            const state = dc.dialogState;
+            state.set(PERSISTED_STEP_INDEX, index);
 
             // Create step context
             let nextCalled: boolean = false;
             const step: WaterfallStepContext<O> = new WaterfallStepContext<O>(dc, {
                 index: index,
-                options: <O>state.options,
+                options: <O>state.get(PERSISTED_OPTIONS),
                 reason: reason,
                 result: result,
-                values: state.values,
+                values: state.get(PERSISTED_VALUES),
                 onNext: async (stepResult?: any): Promise<DialogTurnResult<any>> => {
                     if (nextCalled) {
                         throw new Error(`WaterfallStepContext.next(): method already called for dialog and step '${this.id}[${index}]'.`);
@@ -237,15 +238,15 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * @param reason The reason the dialog is ending.
      */
      public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason) {
-
-        const instanceId = instance.state.values['instanceId'];
+        const state = new StateMap(instance.state);
+        const instanceId = state.get(PERSISTED_VALUES)['instanceId'];
         if (reason === DialogReason.endCalled) {
             this.telemetryClient.trackEvent({name: "WaterfallComplete", properties: {
                 "DialogId": this.id,
                 "InstanceId": instanceId,
             }});
         } else if (reason === DialogReason.cancelCalled) {
-            var index = instance.state[instance.state.stepIndex];
+            var index = state.get(PERSISTED_STEP_INDEX);
             var stepName = this.waterfallStepName(index);
             this.telemetryClient.trackEvent({name: "WaterfallCancel", properties: {
                 "DialogId": this.id,
@@ -276,11 +277,17 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 /**
  * @private
  */
-interface WaterfallDialogState {
-    options: object;
-    stepIndex: number;
-    values: object;
-}
+const PERSISTED_OPTIONS = 'options';
+
+/**
+ * @private
+ */
+const PERSISTED_STEP_INDEX = 'stepIndex';
+
+/**
+ * @private
+ */
+const PERSISTED_VALUES = 'values';
 
 /* 
  * This function generates a GUID-like random number that should be sufficient for our purposes of tracking 

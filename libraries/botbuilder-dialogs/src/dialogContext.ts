@@ -10,6 +10,8 @@ import { Choice } from './choices';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
+import { StateMap } from './stateMap';
+import * as jsonpath from 'jsonpath';
 
 /**
  * State information persisted by a `DialogSet`.
@@ -19,6 +21,27 @@ export interface DialogState {
      * The dialog stack being persisted.
      */
     dialogStack: DialogInstance[];
+
+    /**
+     * Persisted values that are visible across all of a components dialogs.
+     */
+    componentState: object;
+}
+
+export interface RootDialogState extends DialogState {
+    /**
+     * Persisted values that are visible across all of the bots components.
+     * 
+     * @remarks
+     * These values are intended to be transient and may automatically expire after some timeout
+     * period.
+     */
+    sessionState: object;
+
+    /**
+     * (Optional) persisted values that are visible across all of the bots components.
+     */
+    userState?: object;
 }
 
 /**
@@ -48,17 +71,52 @@ export class DialogContext {
      */
     public readonly stack: DialogInstance[];
 
+    /**
+     * Persisted values that are visible across all of the bots components.
+     */
+    public readonly userState: StateMap;
+
+    /**
+     * Persisted values that are visible across all of the bots components.
+     * 
+     * @remarks
+     * These values are intended to be transient and may automatically expire after some timeout
+     * period.
+     */
+    public readonly sessionState: StateMap;
+
+    /**
+     * Persisted values that are visible across all of the dialogs for the current component.
+     */
+    public readonly componentState: StateMap;
+
      /**
       * Creates a new DialogContext instance.
       * @param dialogs Parent dialog set.
       * @param context Context for the current turn of conversation with the user.
       * @param state State object being used to persist the dialog stack.
+      * @param sessionState (Optional) session state to bind context to. If not specified, a new set of session values will be persisted off the passed in `state` property.
+      * @param userState (Optional) user values to bind context to. If not specified, a new set of session values will be persisted off the passed in `state` property.
       */
-    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState) {
+    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState, sessionState?: StateMap, userState?: StateMap) {
         if (!Array.isArray(state.dialogStack)) { state.dialogStack = []; }
+        if (typeof state.componentState !== 'object') { state.componentState = {}; }
         this.dialogs = dialogs;
         this.context = context;
         this.stack = state.dialogStack;
+        this.componentState = new StateMap(state.componentState);
+        if (!sessionState) {
+            // Create a new session state map
+            if (typeof (state as RootDialogState).sessionState !== 'object') { (state as RootDialogState).sessionState = {}; }
+            sessionState = new StateMap((state as RootDialogState).sessionState);
+        }
+        this.sessionState = sessionState;
+        if (!userState) {
+            // Create a new session state map
+            if (typeof (state as RootDialogState).userState !== 'object') { (state as RootDialogState).userState = {}; }
+            userState = new StateMap((state as RootDialogState).userState);
+        }
+        this.userState = userState;
     }
 
     /**
@@ -67,13 +125,15 @@ export class DialogContext {
      *
      * @remarks
      * Dialogs can use this to persist custom state in between conversation turns:
-     *
-     * ```JavaScript
-     * dc.activeDialog.state = { someFlag: true };
-     * ```
      */
     public get activeDialog(): DialogInstance|undefined {
         return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
+    }
+
+    public get dialogState(): StateMap {
+        const instance = this.activeDialog;
+        if (!instance) { throw new Error(`DialogContext.dialogState: no active dialog instance.`); }
+        return new StateMap(instance.state);
     }
 
     /**
@@ -99,7 +159,7 @@ export class DialogContext {
         if (!dialog) { throw new Error(`DialogContext.beginDialog(): A dialog with an id of '${dialogId}' wasn't found.`); }
 
         // Push new instance onto stack.
-        const instance: DialogInstance<any> = {
+        const instance: DialogInstance = {
             id: dialogId,
             state: {}
         };
@@ -193,7 +253,7 @@ export class DialogContext {
      */
     public async continueDialog(): Promise<DialogTurnResult> {
         // Check for a dialog on the stack
-        const instance: DialogInstance<any> = this.activeDialog;
+        const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
             const dialog: Dialog<{}> = this.dialogs.find(instance.id);
@@ -233,7 +293,7 @@ export class DialogContext {
         await this.endActiveDialog(DialogReason.endCalled);
 
         // Resume parent dialog
-        const instance: DialogInstance<any> = this.activeDialog;
+        const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
             const dialog: Dialog<{}> = this.dialogs.find(instance.id);
@@ -247,6 +307,49 @@ export class DialogContext {
             // Signal completion
             return { status: DialogTurnStatus.complete, result: result };
         }
+    }
+
+    /**
+     * Executes a JSONPath expression across the current `xxxState` properties.
+     * 
+     * @remarks
+     * The syntax for JSONPath can be found [here](https://github.com/dchester/jsonpath#jsonpath-syntax). 
+     * An array of matching values will be returned.
+     * 
+     * The shape of the object being searched over is as follows:
+     * 
+     * ```JS
+     * {
+     *     user: { ...userState values... },
+     *     session: { ...sessionState values... },
+     *     component: { ...componentState values... },
+     *     dialog: { ...dialogState values... } 
+     * }
+     * ```
+     * 
+     * As an example, to search for the users name you would pass in an expression of `$.user.name`.
+     * @param pathExpression JSONPath expression to evaluate.
+     * @param count (Optional) number of matches to return. The default value is to return all matches.
+     */
+    public queryState(pathExpression: string, count?: number): any[] {
+        const obj = {
+            user: this.userState.memory,
+            session: this.sessionState.memory,
+            component: this.componentState.memory,
+            dialog: this.dialogState.memory
+        }
+        return jsonpath.query(obj, pathExpression, count);
+    }
+
+    public queryStateValue<T = any>(pathExpression: string, defaultValue?: T): T {
+        const obj = {
+            user: this.userState.memory,
+            session: this.sessionState.memory,
+            component: this.componentState.memory,
+            dialog: this.dialogState.memory
+        }
+        const value = jsonpath.value(obj, pathExpression);
+        return value !== undefined ? value : defaultValue;
     }
 
     /**
@@ -300,7 +403,7 @@ export class DialogContext {
      */
     public async repromptDialog(): Promise<void> {
         // Check for a dialog on the stack
-        const instance: DialogInstance<any> = this.activeDialog;
+        const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
             const dialog: Dialog<{}> = this.dialogs.find(instance.id);
@@ -314,7 +417,7 @@ export class DialogContext {
     }
 
     private async endActiveDialog(reason: DialogReason): Promise<void> {
-        const instance: DialogInstance<any> = this.activeDialog;
+        const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
             const dialog: Dialog<{}> = this.dialogs.find(instance.id);
