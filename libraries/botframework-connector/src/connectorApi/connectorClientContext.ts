@@ -4,8 +4,8 @@
  * regenerated.
  */
 
+import * as msRest from "@azure/ms-rest-js";
 import * as Models from "botframework-schema";
-import * as msRest from "ms-rest-js";
 
 const packageName = "botframework-connector";
 const packageVersion = "4.0.0";
@@ -27,6 +27,10 @@ export class ConnectorClientContext extends msRest.ServiceClient {
       // NOTE: autogen creates a {} which is invalid, it needs to be cast
       options = {} as Models.ConnectorClientOptions;
     }
+    if(!options.userAgent) {
+      const defaultUserAgent = msRest.getDefaultUserAgentValue();
+      options.userAgent = `${packageName}/${packageVersion} ${defaultUserAgent}`;
+    }
 
     super(credentials, options);
 
@@ -34,6 +38,5 @@ export class ConnectorClientContext extends msRest.ServiceClient {
     this.requestContentType = "application/json; charset=utf-8";
     this.credentials = credentials;
 
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
   }
 }
