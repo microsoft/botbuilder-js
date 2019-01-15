@@ -27,10 +27,9 @@ export class ConnectorClientContext extends msRest.ServiceClient {
       // NOTE: autogen creates a {} which is invalid, it needs to be cast
       options = {} as Models.ConnectorClientOptions;
     }
-    if(!options.userAgent) {
-      const defaultUserAgent = msRest.getDefaultUserAgentValue();
-      options.userAgent = `${packageName}/${packageVersion} ${defaultUserAgent}`;
-    }
+    // TODO  This is to workaround fact that AddUserAgent() was removed.  
+    const defaultUserAgent = msRest.getDefaultUserAgentValue();
+    options.userAgent = `${packageName}/${packageVersion} ${defaultUserAgent} ${options.userAgent || ''}`;
 
     super(credentials, options);
 
