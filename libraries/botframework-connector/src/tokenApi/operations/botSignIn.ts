@@ -4,7 +4,7 @@
  * regenerated.
  */
 
-import * as msRest from "ms-rest-js";
+import * as msRest from "@azure/ms-rest-js";
 import * as Models from "../models";
 import * as Mappers from "../models/botSignInMappers";
 import * as Parameters from "../models/parameters";
@@ -39,7 +39,7 @@ export class BotSignIn {
    * @param callback The callback
    */
   getSignInUrl(state: string, options: Models.BotSignInGetSignInUrlOptionalParams, callback: msRest.ServiceCallback<string>): void;
-  getSignInUrl(state: string, options?: Models.BotSignInGetSignInUrlOptionalParams, callback?: msRest.ServiceCallback<string>): Promise<Models.BotSignInGetSignInUrlResponse> {
+  getSignInUrl(state: string, options?: Models.BotSignInGetSignInUrlOptionalParams | msRest.ServiceCallback<string>, callback?: msRest.ServiceCallback<string>): Promise<Models.BotSignInGetSignInUrlResponse> {
     return this.client.sendOperationRequest(
       {
         state,

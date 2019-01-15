@@ -30,4 +30,5 @@ typescript:
   clear-output-folder: true
   output-folder: ./connectorApi
   generate-metadata: true
+  enum-types: true
 ```
