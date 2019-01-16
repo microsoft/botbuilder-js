@@ -210,7 +210,7 @@ describe('QnAMaker', function () {
                 "id": 18,
                 "metadata": [],
                 "questions": ["How do I be the best?"],
-                "score": .98,
+                "score": .30500827898,
                 "source": "Editorial"
             }];
 

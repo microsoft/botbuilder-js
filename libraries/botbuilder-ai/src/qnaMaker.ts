@@ -369,7 +369,7 @@ export class QnAMaker {
         }
     }
 
-    private isValidScore(number: number) {
+    private isValidScore(number: number): boolean {
         return number > 0 && number < 1;
     }
 
