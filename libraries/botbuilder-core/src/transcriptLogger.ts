@@ -15,7 +15,6 @@ import { TurnContext } from './turnContext';
  */
 export class TranscriptLoggerMiddleware implements Middleware {
     private logger: TranscriptLogger;
-    private transcript: Activity[] = [];
 
     /**
      * Middleware for logging incoming and outgoing activities to a transcript store.
@@ -35,20 +34,22 @@ export class TranscriptLoggerMiddleware implements Middleware {
      * @param next Function to call at the end of the middleware chain.
      */
     public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+        let transcript: Activity[] = [];
+
         // log incoming activity at beginning of turn
         if (context.activity) {
             if (!context.activity.from.role) {
                 context.activity.from.role = 'user';
             }
 
-            this.logActivity(this.cloneActivity(context.activity));
+            this.logActivity(transcript, this.cloneActivity(context.activity));
         }
 
         // hook up onSend pipeline
         context.onSendActivities(async (ctx: TurnContext, activities: Partial<Activity>[], next2: () => Promise<ResourceResponse[]>) => {
             // run full pipeline
             const responses: ResourceResponse[] = await next2();
-            activities.forEach((a: ResourceResponse) => this.logActivity(this.cloneActivity(a)));
+            activities.forEach((a: ResourceResponse) => this.logActivity(transcript, this.cloneActivity(a)));
 
             return responses;
         });
@@ -61,7 +62,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
             // add Message Update activity
             const updateActivity: Activity = this.cloneActivity(activity);
             updateActivity.type = ActivityTypes.MessageUpdate;
-            this.logActivity(updateActivity);
+            this.logActivity(transcript, updateActivity);
 
             return response;
         });
@@ -82,16 +83,16 @@ export class TranscriptLoggerMiddleware implements Middleware {
                 false
             );
 
-            this.logActivity(<Activity>deleteActivity);
+            this.logActivity(transcript, <Activity>deleteActivity);
         });
 
         // process bot logic
         await next();
 
         // flush transcript at end of turn
-        while (this.transcript.length > 0) {
+        while (transcript.length > 0) {
             try {
-                const activity: Activity = this.transcript.shift();
+                const activity: Activity = transcript.shift();
                 // If the implementation of this.logger.logActivity() is asynchronous, we don't
                 // await it as to not block processing of activities.
                 // Because TranscriptLogger.logActivity() returns void or Promise<void>, we capture
@@ -117,12 +118,12 @@ export class TranscriptLoggerMiddleware implements Middleware {
      * Logs the Activity.
      * @param activity Activity to log.
      */
-    private logActivity(activity: Activity): void {
+    private logActivity(transcript: Activity[], activity: Activity): void {
         if (!activity.timestamp) {
             activity.timestamp = new Date();
         }
 
-        this.transcript.push(activity);
+        transcript.push(activity);
     }
 
     /**
