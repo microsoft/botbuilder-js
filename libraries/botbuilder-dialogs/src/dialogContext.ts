@@ -28,15 +28,15 @@ export interface DialogState {
     componentState: object;
 }
 
-export interface RootDialogState extends DialogState {
+export interface MainDialogState extends DialogState {
     /**
-     * Persisted values that are visible across all of the bots components.
+     * (optional) persisted values that are visible across all of the bots components.
      * 
      * @remarks
      * These values are intended to be transient and may automatically expire after some timeout
      * period.
      */
-    sessionState: object;
+    sessionState?: object;
 
     /**
      * (Optional) persisted values that are visible across all of the bots components.
@@ -107,14 +107,14 @@ export class DialogContext {
         this.componentState = new StateMap(state.componentState);
         if (!sessionState) {
             // Create a new session state map
-            if (typeof (state as RootDialogState).sessionState !== 'object') { (state as RootDialogState).sessionState = {}; }
-            sessionState = new StateMap((state as RootDialogState).sessionState);
+            if (typeof (state as MainDialogState).sessionState !== 'object') { (state as MainDialogState).sessionState = {}; }
+            sessionState = new StateMap((state as MainDialogState).sessionState);
         }
         this.sessionState = sessionState;
         if (!userState) {
             // Create a new session state map
-            if (typeof (state as RootDialogState).userState !== 'object') { (state as RootDialogState).userState = {}; }
-            userState = new StateMap((state as RootDialogState).userState);
+            if (typeof (state as MainDialogState).userState !== 'object') { (state as MainDialogState).userState = {}; }
+            userState = new StateMap((state as MainDialogState).userState);
         }
         this.userState = userState;
     }

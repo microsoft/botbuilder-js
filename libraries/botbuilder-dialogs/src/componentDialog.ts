@@ -9,6 +9,7 @@ import { TurnContext, BotTelemetryClient, NullTelemetryClient, StatePropertyAcce
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 import { DialogSet } from './dialogSet';
+import { StateMap } from './stateMap';
 
 const PERSISTED_DIALOG_STATE: string = 'dialogs';
 
@@ -22,10 +23,22 @@ export interface ComponentDialogRunOptions {
     dialogOptions?: object;
 
     /**
-     * (Optional) object used to persist the components state. If omitted the 
-     * `StatePropertyAccessor<DialogState>` passed to the components constructor will be used. 
+     * (Optional) object used to persist the bots conversation state. If omitted the 
+     * `conversationState` accessor passed to the managers constructor will be used. 
      */
-    dialogState?: DialogState;
+    conversationState?: DialogState;
+
+    /**
+     * (Optional) object used to persist the current users state. If omitted the 
+     * `conversationState` will be used to persist the bots session state. 
+     */
+    sessionState?: object;
+
+    /**
+     * (Optional) object used to persist the current users state. If omitted the 
+     * `userState` accessor passed to the managers constructor will be used. 
+     */
+    userState?: object;
 }
 
 /**
@@ -95,16 +108,19 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     protected initialDialogId: string;
     private readonly dialogs: DialogSet = new DialogSet(null);
     private readonly mainDialogSet: DialogSet;
+    private readonly userState: StatePropertyAccessor<object>;
 
     /**
      * Creates a new ComponentDialog instance.
      * @param dialogId Unique ID of the component within its parents dialog set.
-     * @param dialogState (Optional) state property used to persists the components dialog state when the `run()` method is called.
+     * @param conversationState (Optional) state property used to persists the components conversation state when the `run()` method is called.
+     * @param userState (Optional) state property used to persist the users state when the `run()` method is called.
      */
-    constructor(dialogId: string, dialogState?: StatePropertyAccessor<DialogState>) {
+    constructor(dialogId: string, conversationState?: StatePropertyAccessor<DialogState>, userState?: StatePropertyAccessor<object>) {
         super(dialogId);
-        this.mainDialogSet = new DialogSet(dialogState);
+        this.mainDialogSet = new DialogSet(conversationState);
         this.mainDialogSet.add(this);
+        this.userState = userState;
     }
 
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
@@ -315,12 +331,21 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     public async run(context: TurnContext, options?: ComponentDialogRunOptions): Promise<DialogTurnResult> {
         options = options || {};
 
+        // Lookup user state
+        const sessionState = options.sessionState;
+        let userState = options.userState;
+        if (!userState && this.userState) {
+            userState = await this.userState.get(context, {});
+        }
+
         // Create a dialog context
         let dc: DialogContext;
-        if (options.dialogState) {
-            dc = new DialogContext(this.mainDialogSet, context, options.dialogState);
+        if (options.conversationState) {
+            const session = sessionState ? new StateMap(sessionState) : undefined;
+            const user = userState ? new StateMap(userState) : undefined;
+            dc = new DialogContext(this.mainDialogSet, context, options.conversationState, session, user);
         } else {
-            dc = await this.mainDialogSet.createContext(context);
+            dc = await this.mainDialogSet.createContext(context, sessionState, userState);
         }
 
         // Attempt to continue execution of the components current dialog
@@ -330,8 +355,8 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
         if (result.status === DialogTurnStatus.empty) {
             result = await dc.beginDialog(this.id, options.dialogOptions);
         }
-        return result;
 
+        return result;
     }
 
 }

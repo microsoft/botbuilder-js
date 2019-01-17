@@ -31,6 +31,14 @@ export class StateMap extends EventEmitter {
         this.memory = memory as StateMemory;
     }
 
+    public clear(): void {
+        for (const key in this.memory) {
+            if (this.memory.hasOwnProperty(key)) {
+                delete this.memory[key];
+            }
+        }
+    }
+
     public delete(name: string): boolean {
         if (this.memory.hasOwnProperty(name)) {
             // Delete from memory

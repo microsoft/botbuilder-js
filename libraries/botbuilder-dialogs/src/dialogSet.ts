@@ -8,6 +8,7 @@
 import { BotTelemetryClient, StatePropertyAccessor, TurnContext } from 'botbuilder-core';
 import { Dialog } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
+import { StateMap } from './stateMap';
 
 /**
  * A related set of dialogs that can all call each other.
@@ -107,13 +108,15 @@ export class DialogSet {
      * Creates a dialog context which can be used to work with the dialogs in the set.
      * @param context Context for the current turn of conversation with the user.
      */
-    public async createContext(context: TurnContext): Promise<DialogContext> {
+    public async createContext(context: TurnContext, sessionState?: object, userState?: object): Promise<DialogContext> {
         if (!this.dialogState) {
             throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`);
         }
         const state: DialogState = await this.dialogState.get(context, { dialogStack: [] } as DialogState);
+        const session = sessionState ? new StateMap(sessionState) : undefined;
+        const user = userState ? new StateMap(userState) : undefined;
 
-        return new DialogContext(this, context, state);
+        return new DialogContext(this, context, state, session, user);
     }
 
     /**
