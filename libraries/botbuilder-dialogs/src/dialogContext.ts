@@ -23,25 +23,21 @@ export interface DialogState {
     dialogStack: DialogInstance[];
 
     /**
-     * Persisted values that are visible across all of a components dialogs.
-     */
-    componentState: object;
-}
-
-export interface RootDialogState extends DialogState {
-    /**
-     * Persisted values that are visible across all of the bots components.
+     * (optional) values that are persisted for the lifetime of the conversation.
      * 
      * @remarks
      * These values are intended to be transient and may automatically expire after some timeout
      * period.
      */
-    sessionState: object;
+    conversationState?: object;
 
     /**
-     * (Optional) persisted values that are visible across all of the bots components.
+     * (Optional) values that are persisted across all interactions with the current user.
      */
     userState?: object;
+}
+
+export interface RootDialogState extends DialogState {
 }
 
 /**
@@ -72,49 +68,42 @@ export class DialogContext {
     public readonly stack: DialogInstance[];
 
     /**
-     * Persisted values that are visible across all of the bots components.
+     * Values that are persisted across all interactions with the current user.
      */
     public readonly userState: StateMap;
 
     /**
-     * Persisted values that are visible across all of the bots components.
+     * Values that are persisted for the lifetime of the conversation
      * 
      * @remarks
      * These values are intended to be transient and may automatically expire after some timeout
      * period.
      */
-    public readonly sessionState: StateMap;
+    public readonly conversationState: StateMap;
 
     /**
-     * Persisted values that are visible across all of the dialogs for the current component.
+     * Creates a new DialogContext instance.
+     * @param dialogs Parent dialog set.
+     * @param context Context for the current turn of conversation with the user.
+     * @param state State object being used to persist the dialog stack.
+     * @param conversationState (Optional) conversation values to bind context to. If not specified, a new set of conversation values will be persisted off the passed in `state` property.
+     * @param userState (Optional) user values to bind context to. If not specified, a new set of user values will be persisted off the passed in `state` property.
      */
-    public readonly componentState: StateMap;
-
-     /**
-      * Creates a new DialogContext instance.
-      * @param dialogs Parent dialog set.
-      * @param context Context for the current turn of conversation with the user.
-      * @param state State object being used to persist the dialog stack.
-      * @param sessionState (Optional) session state to bind context to. If not specified, a new set of session values will be persisted off the passed in `state` property.
-      * @param userState (Optional) user values to bind context to. If not specified, a new set of session values will be persisted off the passed in `state` property.
-      */
-    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState, sessionState?: StateMap, userState?: StateMap) {
+    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState, conversationState?: StateMap, userState?: StateMap) {
         if (!Array.isArray(state.dialogStack)) { state.dialogStack = []; }
-        if (typeof state.componentState !== 'object') { state.componentState = {}; }
         this.dialogs = dialogs;
         this.context = context;
         this.stack = state.dialogStack;
-        this.componentState = new StateMap(state.componentState);
-        if (!sessionState) {
+        if (!conversationState) {
             // Create a new session state map
-            if (typeof (state as RootDialogState).sessionState !== 'object') { (state as RootDialogState).sessionState = {}; }
-            sessionState = new StateMap((state as RootDialogState).sessionState);
+            if (typeof state.conversationState !== 'object') { state.conversationState = {}; }
+            conversationState = new StateMap(state.conversationState);
         }
-        this.sessionState = sessionState;
+        this.conversationState = conversationState;
         if (!userState) {
             // Create a new session state map
-            if (typeof (state as RootDialogState).userState !== 'object') { (state as RootDialogState).userState = {}; }
-            userState = new StateMap((state as RootDialogState).userState);
+            if (typeof state.userState !== 'object') { state.userState = {}; }
+            userState = new StateMap(state.userState);
         }
         this.userState = userState;
     }
@@ -321,8 +310,7 @@ export class DialogContext {
      * ```JS
      * {
      *     user: { ...userState values... },
-     *     session: { ...sessionState values... },
-     *     component: { ...componentState values... },
+     *     conversation: { ...conversationState values... },
      *     dialog: { ...dialogState values... } 
      * }
      * ```
@@ -334,22 +322,29 @@ export class DialogContext {
     public queryState(pathExpression: string, count?: number): any[] {
         const obj = {
             user: this.userState.memory,
-            session: this.sessionState.memory,
-            component: this.componentState.memory,
+            conversation: this.conversationState.memory,
             dialog: this.dialogState.memory
         }
         return jsonpath.query(obj, pathExpression, count);
     }
 
-    public queryStateValue<T = any>(pathExpression: string, defaultValue?: T): T {
+    public getStateValue<T = any>(pathExpression: string, defaultValue?: T): T {
         const obj = {
             user: this.userState.memory,
-            session: this.sessionState.memory,
-            component: this.componentState.memory,
+            conversation: this.conversationState.memory,
             dialog: this.dialogState.memory
         }
         const value = jsonpath.value(obj, pathExpression);
         return value !== undefined ? value : defaultValue;
+    }
+
+    public setStateValue(pathExpression: string, value?: any): void {
+        const obj = {
+            user: this.userState.memory,
+            conversation: this.conversationState.memory,
+            dialog: this.dialogState.memory
+        }
+        jsonpath.value(obj, pathExpression, value);
     }
 
     /**
