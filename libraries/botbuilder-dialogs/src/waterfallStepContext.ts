@@ -59,7 +59,7 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
      * @param info Values to initialize the step context with.
      */
     constructor(dc: DialogContext, info: WaterfallStepInfo<O>) {
-        super(dc.dialogs, dc.context, { dialogStack: dc.stack, componentState: dc.componentState.memory }, dc.sessionState);
+        super(dc.dialogs, dc.context, { dialogStack: dc.stack }, dc.conversationState, dc.userState);
         this._info = info;
     }
 

@@ -125,9 +125,9 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
 
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Start the inner dialog.
-        const dialogState: DialogState = { dialogStack: [], componentState: {} };
+        const dialogState: DialogState = { dialogStack: [] };
         outerDC.activeDialog.state[PERSISTED_DIALOG_STATE] = dialogState;
-        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState, outerDC.sessionState);
+        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState, outerDC.conversationState, outerDC.userState);
         const turnResult: DialogTurnResult<any> = await this.onBeginDialog(innerDC, options);
 
         // Check for end of inner dialog
@@ -143,7 +143,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     public async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
         // Continue execution of inner dialog.
         const dialogState: any = outerDC.activeDialog.state[PERSISTED_DIALOG_STATE];
-        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState, outerDC.sessionState);
+        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState, outerDC.conversationState, outerDC.userState);
         const turnResult: DialogTurnResult<any> = await this.onContinueDialog(innerDC);
 
         // Check for end of inner dialog
@@ -170,7 +170,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Forward to inner dialogs
         const dialogState: any = instance.state[PERSISTED_DIALOG_STATE];
-        const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
+        const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState, new StateMap({}), new StateMap({}));
         await innerDC.repromptDialog();
 
         // Notify component.
@@ -181,7 +181,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
         // Forward cancel to inner dialogs
         if (reason === DialogReason.cancelCalled) {
             const dialogState: any = instance.state[PERSISTED_DIALOG_STATE];
-            const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
+            const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState, new StateMap({}), new StateMap({}));
             await innerDC.cancelAllDialogs();
         }
 
