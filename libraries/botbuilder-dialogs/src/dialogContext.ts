@@ -148,26 +148,26 @@ export class DialogContext {
      * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
      * @param dialogId ID of the prompt to start.
-     * @param promptOrOptions (Optional) Initial prompt to send the user or a set of options to configure the prompt with..
+     * @param promptOrOptions Initial prompt to send the user or a set of options to configure the prompt with.
      * @param choices (Optional) array of choices associated with the prompt.
      */
-    public async prompt(dialogId: string, promptOrOptions?: string|Partial<Activity>|PromptOptions, choices?: (string|Choice)[]): Promise<DialogTurnResult>;
+    public async prompt(dialogId: string, promptOrOptions: string | Partial<Activity> | PromptOptions): Promise<DialogTurnResult>;
+    public async prompt(dialogId: string, promptOrOptions: string | Partial<Activity> | PromptOptions, choices: (string | Choice)[]): Promise<DialogTurnResult>;
     public async prompt(
         dialogId: string,
-        promptOrOptions: string|Partial<Activity>,
-        choices?: (string|Choice)[]
+        promptOrOptions: string | Partial<Activity>,
+        choices?: (string | Choice)[]
     ): Promise<DialogTurnResult> {
         let options: PromptOptions;
         if (
             (typeof promptOrOptions === 'object' &&
-            (promptOrOptions as Activity).type !== undefined) ||
+                (promptOrOptions as Activity).type !== undefined) ||
             typeof promptOrOptions === 'string'
         ) {
-            options = { prompt: promptOrOptions as string|Partial<Activity>, choices: choices };
+            options = { prompt: promptOrOptions as string | Partial<Activity>, choices: choices };
         } else {
-            options = {...promptOrOptions as PromptOptions};
+            options = { ...promptOrOptions as PromptOptions };
         }
-
         return this.beginDialog(dialogId, options);
     }
 
