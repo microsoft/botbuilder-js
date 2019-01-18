@@ -24,7 +24,7 @@
     "@microsoft/recognizers-text-date-time": "1.1.2",
     "@microsoft/recognizers-text-number": "1.1.2",
     "@microsoft/recognizers-text-suite": "1.1.2",
-    "@types/node": "^10.3.0",
+    "@types/node": "^10.12.18",
     "botbuilder-core": "~4.1.6"
   },
   "devDependencies": {
