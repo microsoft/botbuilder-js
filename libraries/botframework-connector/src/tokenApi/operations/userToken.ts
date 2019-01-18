@@ -4,7 +4,7 @@
  * regenerated.
  */
 
-import * as msRest from "ms-rest-js";
+import * as msRest from "@azure/ms-rest-js";
 import * as Models from "../models";
 import * as Mappers from "../models/userTokenMappers";
 import * as Parameters from "../models/parameters";
@@ -42,7 +42,7 @@ export class UserToken {
    * @param callback The callback
    */
   getToken(userId: string, connectionName: string, options: Models.UserTokenGetTokenOptionalParams, callback: msRest.ServiceCallback<Models.TokenResponse>): void;
-  getToken(userId: string, connectionName: string, options?: Models.UserTokenGetTokenOptionalParams, callback?: msRest.ServiceCallback<Models.TokenResponse>): Promise<Models.UserTokenGetTokenResponse> {
+  getToken(userId: string, connectionName: string, options?: Models.UserTokenGetTokenOptionalParams | msRest.ServiceCallback<Models.TokenResponse>, callback?: msRest.ServiceCallback<Models.TokenResponse>): Promise<Models.UserTokenGetTokenResponse> {
     return this.client.sendOperationRequest(
       {
         userId,
@@ -76,7 +76,7 @@ export class UserToken {
    * @param callback The callback
    */
   getAadTokens(userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<{ [propertyName: string]: Models.TokenResponse }>): void;
-  getAadTokens(userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<{ [propertyName: string]: Models.TokenResponse }>): Promise<Models.UserTokenGetAadTokensResponse> {
+  getAadTokens(userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<{ [propertyName: string]: Models.TokenResponse }>, callback?: msRest.ServiceCallback<{ [propertyName: string]: Models.TokenResponse }>): Promise<Models.UserTokenGetAadTokensResponse> {
     return this.client.sendOperationRequest(
       {
         userId,
@@ -105,7 +105,7 @@ export class UserToken {
    * @param callback The callback
    */
   signOut(userId: string, options: Models.UserTokenSignOutOptionalParams, callback: msRest.ServiceCallback<any>): void;
-  signOut(userId: string, options?: Models.UserTokenSignOutOptionalParams, callback?: msRest.ServiceCallback<any>): Promise<Models.UserTokenSignOutResponse> {
+  signOut(userId: string, options?: Models.UserTokenSignOutOptionalParams | msRest.ServiceCallback<any>, callback?: msRest.ServiceCallback<any>): Promise<Models.UserTokenSignOutResponse> {
     return this.client.sendOperationRequest(
       {
         userId,
@@ -132,7 +132,7 @@ export class UserToken {
    * @param callback The callback
    */
   getTokenStatus(userId: string, options: Models.UserTokenGetTokenStatusOptionalParams, callback: msRest.ServiceCallback<Models.TokenStatus[]>): void;
-  getTokenStatus(userId: string, options?: Models.UserTokenGetTokenStatusOptionalParams, callback?: msRest.ServiceCallback<Models.TokenStatus[]>): Promise<Models.UserTokenGetTokenStatusResponse> {
+  getTokenStatus(userId: string, options?: Models.UserTokenGetTokenStatusOptionalParams | msRest.ServiceCallback<Models.TokenStatus[]>, callback?: msRest.ServiceCallback<Models.TokenStatus[]>): Promise<Models.UserTokenGetTokenStatusResponse> {
     return this.client.sendOperationRequest(
       {
         userId,
