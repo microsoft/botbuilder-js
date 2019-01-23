@@ -217,7 +217,7 @@ export class QnAMaker {
             throw new TypeError('QnAMaker.getAnswers() requires a TurnContext.');
         }
 
-        let queryResult = [] as QnAMakerResult[];
+        const queryResult = [] as QnAMakerResult[];
         const question: string = this.getTrimmedMessageText(context);
         const queryOptions = { ...this._options, ...options } as QnAMakerOptions;
         
@@ -239,7 +239,7 @@ export class QnAMaker {
      * Gets the message from the Activity in the TurnContext, trimmed of whitespaces.
      */
     private getTrimmedMessageText(context: TurnContext): string {
-        const question: string = this.hasMessageWithText(context) ? context.activity.text : '';
+        const question: string = (context && context.activity && context.activity.text) ? context.activity.text : '';
         const trimmedQuestion: string = question.trim();
 
         return trimmedQuestion;
@@ -360,20 +360,12 @@ export class QnAMaker {
     }
 
     private validateScoreThreshold(scoreThreshold: number): void {
-        if (typeof scoreThreshold !== 'number') {
+        if (typeof scoreThreshold !== 'number' || !(scoreThreshold > 0 && scoreThreshold < 1)) {
             throw new TypeError('Invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.');
         }
-
-        if (!this.isValidScore(scoreThreshold)) {
-            throw new RangeError('Invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.');
-        }
     }
 
-    private isValidScore(number: number): boolean {
-        return number > 0 && number < 1;
-    }
-
-    private validateTop(qnaOptionTop: number): void {
+    private validateTop(qnaOptionTop: number): void { 
         if (!Number.isInteger(qnaOptionTop) || qnaOptionTop < 1) {
             throw new RangeError('Invalid "top" value. QnAMakerOptions.top must be an integer greater than 0.');
         }
@@ -393,17 +385,10 @@ export class QnAMaker {
         });
     }
 
-    private hasMessageWithText(context: TurnContext): boolean {
-        if (context && context.activity && context.activity.text) {
-            return true;
-        }
-
-        return false;
-    }
-
     /**
      * Calls [generateAnswer()](#generateanswer) and sends the resulting answer as a reply to the user.
-     *
+     * @deprecated Instead, favor using [QnAMaker.getAnswers()](#getAnswers) to generate answers for a question.
+     * 
      * @remarks
      * Returns a value of `true` if an answer was found and sent. If multiple answers are
      * returned the first one will be delivered.
@@ -411,12 +396,11 @@ export class QnAMaker {
      */
     public async answer(context: TurnContext): Promise<boolean> {
         if (!context) {
-            throw new TypeError('QnAMaker.answer method requires a TurnContext.');
+            throw new TypeError('QnAMaker.answer() requires a TurnContext.');
         }
 
         const { top, scoreThreshold } = this._options;
         const question: string = this.getTrimmedMessageText(context);
-
         const answers: QnAMakerResult[] = await this.generateAnswer(question, top, scoreThreshold);
 
         await this.emitTraceInfo(context, answers, this._options);
@@ -433,7 +417,7 @@ export class QnAMaker {
     /**
      * Calls the QnA Maker service to generate answer(s) for a question.
      *
-     * @deprecated  Instead, favor using [QnAMaker.getAnswers()](#getAnswers) to generate answers for a question.
+     * @deprecated Instead, favor using [QnAMaker.getAnswers()](#getAnswers) to generate answers for a question.
      * 
      * @remarks
      * Returns an array of answers sorted by score with the top scoring answer returned first.
@@ -467,5 +451,5 @@ export class QnAMaker {
      */
     protected async callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResult[]> {
         return this.queryQnaService(endpoint, question, { top } as QnAMakerOptions);
-     }
+    }
 }

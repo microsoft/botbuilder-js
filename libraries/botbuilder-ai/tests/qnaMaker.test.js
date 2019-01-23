@@ -1,7 +1,6 @@
 const assert = require('assert');
 const { TestAdapter, TurnContext } = require('botbuilder');
-const ai = require('../');
-const { QnAMaker } = ai;
+const { QnAMaker } = require('../');
 const nock = require('nock');
 const fs = require('fs');
 
@@ -73,18 +72,14 @@ describe('QnAMaker', function () {
 
     describe('Instantiation', function() {
         it('should instantiate a QnAMaker class successfully with QnAMakerEndpoint, but without options specified', function() {
-            const qnaWithoutOptions = new QnAMaker(endpoint);
-            const isQnaMaker = qnaWithoutOptions instanceof QnAMaker;
-
-            assert.strictEqual(isQnaMaker, true, 'Should create QnAMaker instance successfully with only QnAMakerEndpoint arg.');
+            new QnAMaker(endpoint);
         });
 
         it('should instantiate a QnAMaker class successfully with both QnAMakerEndpoint and QnAMakerOptions args', function() {
             const options = { top: 7 };
             const qnaWithOptions = new QnAMaker(endpoint, options);
-            const isQnaMaker = qnaWithOptions instanceof QnAMaker;
 
-            assert.strictEqual(isQnaMaker, true, 'Should create QnAMake instance successfully with QnAMakerOptions.');
+            assert.strictEqual(qnaWithOptions._options.top, options.top);
         });
 
         it('should throw an error instantiating without QnAMakerEndpoint', function() {
@@ -97,22 +92,22 @@ describe('QnAMaker', function () {
             const nonNumberError = new TypeError('Invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.')
             
             function createQnAWithInvalidThreshold() {
-                new QnAMaker(context, stringScoreThreshold_options)
+                new QnAMaker(context, stringScoreThreshold_options);
             }
 
             assert.throws(() => createQnAWithInvalidThreshold(), nonNumberError);
         });
 
-        it('should throw RangeError if QnAMakerOptions.scoreThreshold is not a number between 0 and 1 during QnAMaker instantiation.', function () {
+        it('should throw error if QnAMakerOptions.scoreThreshold is not a number between 0 and 1 during QnAMaker instantiation.', function () {
             const context = new TestContext({ text: 'do woodpeckers get concussions?' });
             const outOfRangeScoreThreshold_options = { scoreThreshold: 9000 };
-            const outOfRangeError = new RangeError('Invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.')
+            const error = new TypeError('Invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.')
 
             function createQnaWithOutOfRangeThreshold() {
                 new QnAMaker(context, outOfRangeScoreThreshold_options);
             }
 
-            assert.throws(() => createQnaWithOutOfRangeThreshold(), outOfRangeError);
+            assert.throws(() => createQnaWithOutOfRangeThreshold(), error);
         });
 
         it('should throw RangeError if QnAMakerOptions.top is not an integer during instantiation', function() {
@@ -349,7 +344,7 @@ describe('QnAMaker', function () {
         it('should throw TypeError from answer() if no context', function(){
             const qna = new QnAMaker(endpoint);
             const context = undefined;
-            const contextMissingError = new TypeError('QnAMaker.answer method requires a TurnContext.');
+            const contextMissingError = new TypeError('QnAMaker.answer() requires a TurnContext.');
             
             assert.rejects(async () => await qna.answer(context), contextMissingError);
         });
