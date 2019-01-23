@@ -89,7 +89,7 @@ describe('QnAMaker', function () {
         it('should throw TypeError if QnAMakerOptions.scoreThreshold is not a number during QnAMaker instantiation', function() {
             const context = new TestContext({ text: 'what happens when you hug a porcupine?' });
             const stringScoreThreshold_options = { scoreThreshold: "I should be a number, but I'm not." };
-            const nonNumberError = new TypeError('Invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.')
+            const nonNumberError = new TypeError(`"${stringScoreThreshold_options.scoreThreshold}" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`)
             
             function createQnAWithInvalidThreshold() {
                 new QnAMaker(context, stringScoreThreshold_options);
@@ -101,7 +101,7 @@ describe('QnAMaker', function () {
         it('should throw error if QnAMakerOptions.scoreThreshold is not a number between 0 and 1 during QnAMaker instantiation.', function () {
             const context = new TestContext({ text: 'do woodpeckers get concussions?' });
             const outOfRangeScoreThreshold_options = { scoreThreshold: 9000 };
-            const error = new TypeError('Invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.')
+            const error = new TypeError(`"${outOfRangeScoreThreshold_options.scoreThreshold}" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`)
 
             function createQnaWithOutOfRangeThreshold() {
                 new QnAMaker(context, outOfRangeScoreThreshold_options);
@@ -113,7 +113,7 @@ describe('QnAMaker', function () {
         it('should throw RangeError if QnAMakerOptions.top is not an integer during instantiation', function() {
             const context = new TestContext({ text: 'what if ostriches could fly?' });
             const decimalNumberTopOptions = { top: 2.5 };
-            const notAnIntegerError = new RangeError('Invalid "top" value. QnAMakerOptions.top must be an integer greater than 0.');
+            const notAnIntegerError = new RangeError(`"${decimalNumberTopOptions.top}" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`);
 
             function createQnaWithDecimalTopOption() {
                 new QnAMaker(context, decimalNumberTopOptions);
@@ -125,7 +125,7 @@ describe('QnAMaker', function () {
         it('should throw error if QnAMaker.top is not a number during instantiation', function() {
             const context = new TestContext({ text: 'why were there sloths at the post office?' });
             const objectTopOptions = { top: { 'key': 'value' } };
-            const nonNumberError = new RangeError('Invalid "top" value. QnAMakerOptions.top must be an integer greater than 0.');
+            const nonNumberError = new RangeError(`"${objectTopOptions.top}" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`);
 
             function createQnaWithObjectTopOption() {
                 new QnAMaker(context, objectTopOptions);
@@ -137,7 +137,7 @@ describe('QnAMaker', function () {
         it('should throw RangeError if QnAMaker.top is not an integer greater than 1', function() {
            const context = new TestContext({ text: 'why did my son think the wasabi was guacamole?' });
            const smallerThanOneTopOptions = { top: -1 };
-           const notGreaterThanOneError = new RangeError('Invalid "top" value. QnAMakerOptions.top must be an integer greater than 0.');
+           const notGreaterThanOneError = new RangeError(`"${smallerThanOneTopOptions.top}" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`);
 
             function createQnaWithNegativeTopOption() {
                 new QnAMaker(context, smallerThanOneTopOptions);
@@ -241,7 +241,7 @@ describe('QnAMaker', function () {
             const context = new TestContext({ text: "what's the number for 911?" });
             const qna = new QnAMaker(context);
             const stringScoreThreshold_options = { scoreThreshold: 'I should be a number' };
-            const nonNumberError = new TypeError('Invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.');
+            const nonNumberError = new TypeError(`"${stringScoreThreshold_options.scoreThreshold}" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`);
 
             assert.rejects(async () => await qna.getAnswers(context, stringScoreThreshold_options), nonNumberError );
         });
