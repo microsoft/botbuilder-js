@@ -361,13 +361,13 @@ export class QnAMaker {
 
     private validateScoreThreshold(scoreThreshold: number): void {
         if (typeof scoreThreshold !== 'number' || !(scoreThreshold > 0 && scoreThreshold < 1)) {
-            throw new TypeError('Invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.');
+            throw new TypeError(`"${scoreThreshold}" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`);
         }
     }
 
     private validateTop(qnaOptionTop: number): void { 
         if (!Number.isInteger(qnaOptionTop) || qnaOptionTop < 1) {
-            throw new RangeError('Invalid "top" value. QnAMakerOptions.top must be an integer greater than 0.');
+            throw new RangeError(`"${qnaOptionTop}" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`);
         }
     }
 
