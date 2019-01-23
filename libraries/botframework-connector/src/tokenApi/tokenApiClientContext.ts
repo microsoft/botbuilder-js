@@ -4,7 +4,7 @@
  * regenerated.
  */
 
-import * as msRest from "ms-rest-js";
+import * as msRest from "@azure/ms-rest-js";
 import * as Models from "./models";
 
 const packageName = "botframework-Token";
@@ -26,6 +26,8 @@ export class TokenApiClientContext extends msRest.ServiceClient {
     if (!options) {
       options = {};
     }
+    const defaultUserAgent = msRest.getDefaultUserAgentValue();
+    options.userAgent = `${packageName}/${packageVersion} ${defaultUserAgent} ${options.userAgent || ''}`;
 
     super(credentials, options);
 
@@ -33,6 +35,5 @@ export class TokenApiClientContext extends msRest.ServiceClient {
     this.requestContentType = "application/json; charset=utf-8";
     this.credentials = credentials;
 
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
   }
 }
