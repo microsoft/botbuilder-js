@@ -10,8 +10,8 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@types/node": "^9.3.0",
-    "ms-rest-js": "1.0.455"
+    "@azure/ms-rest-js": "1.2.6",
+    "@types/node": "^10.12.18"
   },
   "devDependencies": {},
   "scripts": {

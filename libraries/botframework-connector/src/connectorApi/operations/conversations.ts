@@ -4,11 +4,11 @@
  * regenerated.
  */
 
+import * as msRest from "@azure/ms-rest-js";
 import * as Models from "botframework-schema";
-import * as msRest from "ms-rest-js";
-import { ConnectorClientContext } from "../connectorClientContext";
 import * as Mappers from "../models/conversationsMappers";
 import * as Parameters from "../models/parameters";
+import { ConnectorClientContext } from "../connectorClientContext";
 
 /** Class representing a Conversations. */
 export class Conversations {
@@ -42,14 +42,13 @@ export class Conversations {
   /**
    * @param callback The callback
    */
-  // NOTE: autorest generates something which typescript does not like. We don't need it so leave this commented out
-  //getConversations(callback: msRest.ServiceCallback<Models.ConversationsResult>): void;
+  getConversations(callback: msRest.ServiceCallback<Models.ConversationsResult>): void;
   /**
    * @param options The optional parameters
    * @param callback The callback
    */
   getConversations(options: Models.ConversationsGetConversationsOptionalParams, callback: msRest.ServiceCallback<Models.ConversationsResult>): void;
-  getConversations(options?: Models.ConversationsGetConversationsOptionalParams, callback?: msRest.ServiceCallback<Models.ConversationsResult>): Promise<Models.ConversationsGetConversationsResponse> {
+  getConversations(options?: Models.ConversationsGetConversationsOptionalParams | msRest.ServiceCallback<Models.ConversationsResult>, callback?: msRest.ServiceCallback<Models.ConversationsResult>): Promise<Models.ConversationsGetConversationsResponse> {
     return this.client.sendOperationRequest(
       {
         options
@@ -96,7 +95,7 @@ export class Conversations {
    * @param callback The callback
    */
   createConversation(parameters: Models.ConversationParameters, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ConversationResourceResponse>): void;
-  createConversation(parameters: Models.ConversationParameters, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ConversationResourceResponse>): Promise<Models.ConversationsCreateConversationResponse> {
+  createConversation(parameters: Models.ConversationParameters, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.ConversationResourceResponse>, callback?: msRest.ServiceCallback<Models.ConversationResourceResponse>): Promise<Models.ConversationsCreateConversationResponse> {
     return this.client.sendOperationRequest(
       {
         parameters,
@@ -139,7 +138,7 @@ export class Conversations {
    * @param callback The callback
    */
   sendToConversation(conversationId: string, activity: Models.Activity, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
-  sendToConversation(conversationId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsSendToConversationResponse> {
+  sendToConversation(conversationId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.ResourceResponse>, callback?: msRest.ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsSendToConversationResponse> {
     return this.client.sendOperationRequest(
       {
         conversationId,
@@ -176,7 +175,7 @@ export class Conversations {
    * @param callback The callback
    */
   sendConversationHistory(conversationId: string, history: Models.Transcript, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
-  sendConversationHistory(conversationId: string, history: Models.Transcript, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsSendConversationHistoryResponse> {
+  sendConversationHistory(conversationId: string, history: Models.Transcript, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.ResourceResponse>, callback?: msRest.ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsSendConversationHistoryResponse> {
     return this.client.sendOperationRequest(
       {
         conversationId,
@@ -217,7 +216,7 @@ export class Conversations {
    * @param callback The callback
    */
   updateActivity(conversationId: string, activityId: string, activity: Models.Activity, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
-  updateActivity(conversationId: string, activityId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsUpdateActivityResponse> {
+  updateActivity(conversationId: string, activityId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.ResourceResponse>, callback?: msRest.ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsUpdateActivityResponse> {
     return this.client.sendOperationRequest(
       {
         conversationId,
@@ -265,7 +264,7 @@ export class Conversations {
    * @param callback The callback
    */
   replyToActivity(conversationId: string, activityId: string, activity: Models.Activity, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
-  replyToActivity(conversationId: string, activityId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsReplyToActivityResponse> {
+  replyToActivity(conversationId: string, activityId: string, activity: Models.Activity, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.ResourceResponse>, callback?: msRest.ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsReplyToActivityResponse> {
     return this.client.sendOperationRequest(
       {
         conversationId,
@@ -302,7 +301,7 @@ export class Conversations {
    * @param callback The callback
    */
   deleteActivity(conversationId: string, activityId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<void>): void;
-  deleteActivity(conversationId: string, activityId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<void>): Promise<msRest.RestResponse> {
+  deleteActivity(conversationId: string, activityId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<void>, callback?: msRest.ServiceCallback<void>): Promise<msRest.RestResponse> {
     return this.client.sendOperationRequest(
       {
         conversationId,
@@ -335,7 +334,7 @@ export class Conversations {
    * @param callback The callback
    */
   getConversationMembers(conversationId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ChannelAccount[]>): void;
-  getConversationMembers(conversationId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ChannelAccount[]>): Promise<Models.ConversationsGetConversationMembersResponse> {
+  getConversationMembers(conversationId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.ChannelAccount[]>, callback?: msRest.ServiceCallback<Models.ChannelAccount[]>): Promise<Models.ConversationsGetConversationMembersResponse> {
     return this.client.sendOperationRequest(
       {
         conversationId,
@@ -371,15 +370,14 @@ export class Conversations {
    * @param conversationId Conversation ID
    * @param callback The callback
    */
-  // NOTE: autorest generates something which typescript does not like. We don't need it so leave this commented out
-  //getConversationPagedMembers(conversationId: string, callback: msRest.ServiceCallback<Models.PagedMembersResult>): void;
+  getConversationPagedMembers(conversationId: string, callback: msRest.ServiceCallback<Models.PagedMembersResult>): void;
   /**
    * @param conversationId Conversation ID
    * @param options The optional parameters
    * @param callback The callback
    */
   getConversationPagedMembers(conversationId: string, options: Models.ConversationsGetConversationPagedMembersOptionalParams, callback: msRest.ServiceCallback<Models.PagedMembersResult>): void;
-  getConversationPagedMembers(conversationId: string, options?: Models.ConversationsGetConversationPagedMembersOptionalParams, callback?: msRest.ServiceCallback<Models.PagedMembersResult>): Promise<Models.ConversationsGetConversationPagedMembersResponse> {
+  getConversationPagedMembers(conversationId: string, options?: Models.ConversationsGetConversationPagedMembersOptionalParams | msRest.ServiceCallback<Models.PagedMembersResult>, callback?: msRest.ServiceCallback<Models.PagedMembersResult>): Promise<Models.ConversationsGetConversationPagedMembersResponse> {
     return this.client.sendOperationRequest(
       {
         conversationId,
@@ -415,7 +413,7 @@ export class Conversations {
    * @param callback The callback
    */
   deleteConversationMember(conversationId: string, memberId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<void>): void;
-  deleteConversationMember(conversationId: string, memberId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<void>): Promise<msRest.RestResponse> {
+  deleteConversationMember(conversationId: string, memberId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<void>, callback?: msRest.ServiceCallback<void>): Promise<msRest.RestResponse> {
     return this.client.sendOperationRequest(
       {
         conversationId,
@@ -451,7 +449,7 @@ export class Conversations {
    * @param callback The callback
    */
   getActivityMembers(conversationId: string, activityId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ChannelAccount[]>): void;
-  getActivityMembers(conversationId: string, activityId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ChannelAccount[]>): Promise<Models.ConversationsGetActivityMembersResponse> {
+  getActivityMembers(conversationId: string, activityId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.ChannelAccount[]>, callback?: msRest.ServiceCallback<Models.ChannelAccount[]>): Promise<Models.ConversationsGetActivityMembersResponse> {
     return this.client.sendOperationRequest(
       {
         conversationId,
@@ -490,7 +488,7 @@ export class Conversations {
    * @param callback The callback
    */
   uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ResourceResponse>): void;
-  uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsUploadAttachmentResponse> {
+  uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.ResourceResponse>, callback?: msRest.ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsUploadAttachmentResponse> {
     return this.client.sendOperationRequest(
       {
         conversationId,
