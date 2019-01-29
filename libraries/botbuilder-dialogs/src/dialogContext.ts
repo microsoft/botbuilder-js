@@ -37,9 +37,6 @@ export interface DialogState {
     userState?: object;
 }
 
-export interface RootDialogState extends DialogState {
-}
-
 /**
  * A context object used to manipulate a dialog stack.
  *
@@ -119,9 +116,9 @@ export class DialogContext {
         return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
     }
 
-    public get dialogState(): StateMap {
+    public get thisState(): StateMap {
         const instance = this.activeDialog;
-        if (!instance) { throw new Error(`DialogContext.dialogState: no active dialog instance.`); }
+        if (!instance) { throw new Error(`DialogContext.thisState: no active dialog instance.`); }
         return new StateMap(instance.state);
     }
 
@@ -311,7 +308,7 @@ export class DialogContext {
      * {
      *     user: { ...userState values... },
      *     conversation: { ...conversationState values... },
-     *     dialog: { ...dialogState values... } 
+     *     this: { ...thisState values... } 
      * }
      * ```
      * 
@@ -323,7 +320,7 @@ export class DialogContext {
         const obj = {
             user: this.userState.memory,
             conversation: this.conversationState.memory,
-            dialog: this.dialogState.memory
+            this: this.thisState.memory
         }
         return jsonpath.query(obj, pathExpression, count);
     }
@@ -332,7 +329,7 @@ export class DialogContext {
         const obj = {
             user: this.userState.memory,
             conversation: this.conversationState.memory,
-            dialog: this.dialogState.memory
+            this: this.thisState.memory
         }
         const value = jsonpath.value(obj, pathExpression);
         return value !== undefined ? value : defaultValue;
@@ -342,7 +339,7 @@ export class DialogContext {
         const obj = {
             user: this.userState.memory,
             conversation: this.conversationState.memory,
-            dialog: this.dialogState.memory
+            this: this.thisState.memory
         }
         jsonpath.value(obj, pathExpression, value);
     }
