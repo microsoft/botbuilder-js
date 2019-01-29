@@ -141,6 +141,18 @@ export abstract class Dialog<O extends object = {}> {
     public readonly id: string;
 
     /**
+     * (Optional) JSONPath expression for the memory slots to bind the dialogs options to on a 
+     * call to `beginDialog()`. 
+     */
+    public readonly inputBindings: { [option:string]: string; } = {};
+
+    /**
+     * (Optional) JSONPath expression for the memory slot to bind the dialogs result to when 
+     * `endDialog()` is called.
+     */
+    public outputBinding: string;
+
+    /**
      * The telemetry client for logging events.
      * Default this to the NullTelemetryClient, which does nothing.
      */
