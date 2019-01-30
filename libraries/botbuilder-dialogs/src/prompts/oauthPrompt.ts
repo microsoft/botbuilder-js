@@ -32,7 +32,7 @@ export interface OAuthPromptSettings {
 
     /**
      * (Optional) number of milliseconds the prompt will wait for the user to authenticate.
-     * Defaults to a value `54,000,000` (15 minutes.)
+     * Defaults to a value `900,000` (15 minutes.)
      */
     timeout?: number;
 }
@@ -126,7 +126,7 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Initialize prompt state
-        const timeout: number = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000;
+        const timeout: number = typeof this.settings.timeout === 'number' ? this.settings.timeout : 900000;
         const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
         state.state = {};
         state.options = o;
