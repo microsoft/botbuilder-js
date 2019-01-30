@@ -21,6 +21,7 @@ function assertActivity(received, expected) {
 }
 
 const colorChoices = ['red', 'green', 'blue'];
+const extraChoices = ['red', 'green', 'blue', 'alpha'];
 
 const choicesWithActionTitle = [
     {
@@ -167,6 +168,18 @@ describe('ChoiceFactory', function() {
         done();
     });
 
+    it('should choose correct styles for Cortana.', done => {
+        const inlineActivity = ChoiceFactory.forChannel('cortana', colorChoices, 'select from:');
+        assertActivity(inlineActivity, {
+            text: `select from: (1) red, (2) green, or (3) blue`
+        });
+        const listActivity = ChoiceFactory.forChannel('cortana', extraChoices, 'select from:');
+        assertActivity(listActivity, {
+            text: `select from:\n\n   1. red\n   2. green\n   3. blue\n   4. alpha`
+        });
+        done();
+    });
+    
     it('should use action.title to populate action.value if action.value is falsey.', done => {
         const preparedChoices = ChoiceFactory.toChoices(choicesWithActionTitle);
         assertChoices(preparedChoices, ['Red Color', 'Green Color', 'Blue Color']);
