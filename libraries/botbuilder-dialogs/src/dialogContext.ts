@@ -81,6 +81,14 @@ export class DialogContext {
      */
     public readonly conversationState: StateMap;
 
+   /**
+    * The parent DialogContext if any.
+    * 
+    * @remarks
+    * This will be used when searching for dialogs to start.
+    */
+   public parent: DialogContext|undefined;
+
     /**
      * Creates a new DialogContext instance.
      * @param dialogs Parent dialog set.
@@ -151,7 +159,7 @@ export class DialogContext {
      */
     public async beginDialog(dialogId: string, options?: object): Promise<DialogTurnResult> {
         // Lookup dialog
-        const dialog: Dialog<{}> = this.dialogs.find(dialogId);
+        const dialog: Dialog<{}> = this.findDialog(dialogId);
         if (!dialog) { throw new Error(`DialogContext.beginDialog(): A dialog with an id of '${dialogId}' wasn't found.`); }
 
         // Process dialogs input bindings
@@ -203,6 +211,22 @@ export class DialogContext {
     }
 
     /**
+     * Searches for a dialog with a given ID.
+     * 
+     * @remarks
+     * If the dialog cannot be found within the current `DialogSet`, the parent `DialogContext` 
+     * will be searched if there is one. 
+     * @param dialogId ID of the dialog to search for.
+     */
+    public findDialog(dialogId: string): Dialog|undefined {
+        let dialog = this.dialogs.find(dialogId);
+        if (!dialog && this.parent) {
+            dialog = this.parent.findDialog(dialogId);
+        }
+        return dialog;
+    }
+
+    /**
      * Helper function to simplify formatting the options for calling a `Prompt` based dialog.
      *
      * @remarks
@@ -213,26 +237,26 @@ export class DialogContext {
      * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
      * @param dialogId ID of the prompt to start.
-     * @param promptOrOptions Initial prompt to send the user or a set of options to configure the prompt with..
-     * @param choicesOrOptions (Optional) array of choices associated with the prompt.
+     * @param promptOrOptions Initial prompt to send the user or a set of options to configure the prompt with.
+     * @param choices (Optional) array of choices associated with the prompt.
      */
-    public async prompt(dialogId: string, promptOrOptions: string|Partial<Activity>|PromptOptions): Promise<DialogTurnResult>;
+    public async prompt(dialogId: string, promptOrOptions: string | Partial<Activity> | PromptOptions): Promise<DialogTurnResult>;
+    public async prompt(dialogId: string, promptOrOptions: string | Partial<Activity> | PromptOptions, choices: (string | Choice)[]): Promise<DialogTurnResult>;
     public async prompt(
         dialogId: string,
-        promptOrOptions: string|Partial<Activity>,
-        choices?: (string|Choice)[]
+        promptOrOptions: string | Partial<Activity>,
+        choices?: (string | Choice)[]
     ): Promise<DialogTurnResult> {
         let options: PromptOptions;
         if (
             (typeof promptOrOptions === 'object' &&
-            (promptOrOptions as Activity).type !== undefined) ||
+                (promptOrOptions as Activity).type !== undefined) ||
             typeof promptOrOptions === 'string'
         ) {
-            options = { prompt: promptOrOptions as string|Partial<Activity>, choices: choices };
+            options = { prompt: promptOrOptions as string | Partial<Activity>, choices: choices };
         } else {
-            options = {...promptOrOptions as PromptOptions};
+            options = { ...promptOrOptions as PromptOptions };
         }
-
         return this.beginDialog(dialogId, options);
     }
 
@@ -261,7 +285,7 @@ export class DialogContext {
         const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
-            const dialog: Dialog<{}> = this.dialogs.find(instance.id);
+            const dialog: Dialog<{}> = this.findDialog(instance.id);
             if (!dialog) {
                 throw new Error(`DialogContext.continue(): Can't continue dialog. A dialog with an id of '${instance.id}' wasn't found.`);
             }
@@ -301,7 +325,7 @@ export class DialogContext {
         const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
-            const dialog: Dialog<{}> = this.dialogs.find(instance.id);
+            const dialog: Dialog<{}> = this.findDialog(instance.id);
             if (!dialog) {
                 throw new Error(`DialogContext.end(): Can't resume previous dialog. A dialog with an id of '${instance.id}' wasn't found.`);
             }
@@ -430,7 +454,7 @@ export class DialogContext {
         const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
-            const dialog: Dialog<{}> = this.dialogs.find(instance.id);
+            const dialog: Dialog<{}> = this.findDialog(instance.id);
             if (!dialog) {
                 throw new Error(`DialogSet.reprompt(): Can't find A dialog with an id of '${instance.id}'.`);
              }
@@ -444,7 +468,7 @@ export class DialogContext {
         const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
-            const dialog: Dialog<{}> = this.dialogs.find(instance.id);
+            const dialog: Dialog<{}> = this.findDialog(instance.id);
             if (dialog) {
                 // Notify dialog of end
                 await dialog.endDialog(this.context, instance, reason);
