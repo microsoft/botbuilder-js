@@ -61,6 +61,7 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
     constructor(dc: DialogContext, info: WaterfallStepInfo<O>) {
         super(dc.dialogs, dc.context, { dialogStack: dc.stack });
         this._info = info;
+        this.parent = dc.parent;
     }
 
     /**
