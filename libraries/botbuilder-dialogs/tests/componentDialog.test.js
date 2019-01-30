@@ -399,6 +399,59 @@ describe('ComponentDialog', function () {
             .assertReply('Cancelling all component dialog dialogs.')
             .assertReply('Cancelled successfully.');
     });
+
+    it('should call a dialog defined in a parent component.', (done) => {
+        const conversationState = new ConversationState(new MemoryStorage());
+        const dialogState = conversationState.createProperty('dialog');
+
+        const childComponent = new ComponentDialog('childComponent');
+        childComponent.addDialog(new WaterfallDialog('childDialog', [
+            async step => {
+                await step.context.sendActivity('Child started.');
+                return await step.beginDialog('parentDialog', { value: 'test' });
+            },
+            async step => {
+                assert(step.result === 'test');
+                await step.context.sendActivity('Child finished.');
+                return await step.endDialog();
+            }
+        ]));
+
+        const parentComponent = new ComponentDialog('parentComponent');
+        parentComponent.addDialog(childComponent);
+        parentComponent.addDialog(new WaterfallDialog('parentDialog', [
+            async step => {
+                assert(step.options.value);
+                await step.context.sendActivity(`Parent called with: ${step.options.value}`);
+                return await step.endDialog(step.options.value);
+            }
+        ]));
+
+
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(parentComponent);
+
+        const adapter = new TestAdapter(async turnContext => {
+            const dc = await dialogs.createContext(turnContext);
+            const results = await dc.continueDialog();
+
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.beginDialog('parentComponent');
+            } else {
+                assert(results.status === DialogTurnStatus.complete, `results.status should be 'complete' not ${ results.status }`);
+                assert(results.result === undefined, `results.result should be undefined, not ${ results.result }`);
+                await turnContext.sendActivity('Done.');
+                done();
+            }
+            await conversationState.saveChanges(turnContext);
+        });
+
+        adapter.send('Hi')
+            .assertReply('Child started.')
+            .assertReply('Parent called with: test')
+            .assertReply('Child finished.')
+            .then(() => done());
+    });
 });
 
 class ContinueDialog extends ComponentDialog {

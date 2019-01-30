@@ -5,6 +5,20 @@ const assert = require('assert');
 const beginMessage = { text: `begin`, type: 'message' };
 const continueMessage = { text: `continue`, type: 'message' };
 
+class BindingTestDialog extends Dialog {
+    constructor(dialogId, inputBinding, outputBinding) {
+        super(dialogId);
+        this.inputBindings['value'] = inputBinding;
+        this.outputBinding = outputBinding; 
+    }
+
+    async beginDialog(dc, options) {
+        assert(typeof options === 'object');
+        assert(options.value !== undefined);
+        return dc.endDialog(options.value);
+    }
+}
+
 describe('DialogContext', function() {
     this.timeout(5000);
 
@@ -415,5 +429,254 @@ describe('DialogContext', function() {
         ]));
 
         adapter.send(beginMessage);
+    });
+
+    it(`should persist userState, conversationState, and thisState changes.`, function (done) {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+        
+            const results = await dc.continueDialog();
+            switch (results.status) {
+                case DialogTurnStatus.empty:
+                    await dc.beginDialog('a');
+                    break;
+                
+                case DialogTurnStatus.complete:
+                    done();
+                    break;
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+        
+        const dialogState = convoState.createProperty('dialogState');
+
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new WaterfallDialog('a', [
+            async function (step) {
+                step.userState.set('name', 'bill');
+                step.conversationState.set('order', 1);
+                step.thisState.set('result', 'foo');
+                return Dialog.EndOfTurn;
+            },
+            async function (step) {
+                assert(step.userState.get('name') === 'bill');
+                assert(step.conversationState.get('order') === 1);
+                assert(step.thisState.get('result') === 'foo');
+                done();
+                return Dialog.EndOfTurn;
+            }
+        ]));
+
+        adapter.send('start')
+               .send('continue');
+    });
+
+    it(`should persist userState, conversationState, and thisState changes.`, function (done) {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+        
+            const results = await dc.continueDialog();
+            switch (results.status) {
+                case DialogTurnStatus.empty:
+                    await dc.beginDialog('a');
+                    break;
+                
+                case DialogTurnStatus.complete:
+                    done();
+                    break;
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+        
+        const dialogState = convoState.createProperty('dialogState');
+
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new WaterfallDialog('a', [
+            async function (step) {
+                step.userState.set('name', 'bill');
+                step.conversationState.set('order', 1);
+                step.thisState.set('result', 'foo');
+                return Dialog.EndOfTurn;
+            },
+            async function (step) {
+                assert(step.userState.get('name') === 'bill');
+                assert(step.conversationState.get('order') === 1);
+                assert(step.thisState.get('result') === 'foo');
+                done();
+                return Dialog.EndOfTurn;
+            }
+        ]));
+
+        adapter.send('start')
+               .send('continue');
+    });
+
+    it(`should retrieve state values using queryState().`, function (done) {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+        
+            const results = await dc.continueDialog();
+            switch (results.status) {
+                case DialogTurnStatus.empty:
+                    await dc.beginDialog('a');
+                    break;
+                
+                case DialogTurnStatus.complete:
+                    done();
+                    break;
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+        
+        const dialogState = convoState.createProperty('dialogState');
+
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new WaterfallDialog('a', [
+            async function (step) {
+                step.userState.set('name', 'user');
+                step.conversationState.set('name', 'convo');
+                step.thisState.set('name', 'this');
+                return Dialog.EndOfTurn;
+            },
+            async function (step) {
+                let result = step.queryState('user.name');
+                assert(result.length === 1 && result[0] === 'user');
+                result = step.queryState('conversation.name');
+                assert(result.length === 1 && result[0] === 'convo');
+                result = step.queryState('this.name');
+                assert(result.length === 1 && result[0] === 'this');
+                result = step.queryState('$..name');
+                assert(result.length === 3);
+                done();
+                return Dialog.EndOfTurn;
+            }
+        ]));
+
+        adapter.send('start')
+               .send('continue');
+    });
+
+    it(`should retrieve a state value using getStateValue().`, function (done) {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+        
+            const results = await dc.continueDialog();
+            switch (results.status) {
+                case DialogTurnStatus.empty:
+                    await dc.beginDialog('a');
+                    break;
+                
+                case DialogTurnStatus.complete:
+                    done();
+                    break;
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+        
+        const dialogState = convoState.createProperty('dialogState');
+
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new WaterfallDialog('a', [
+            async function (step) {
+                step.userState.set('firstName', 'bill');
+                return Dialog.EndOfTurn;
+            },
+            async function (step) {
+                assert(step.getStateValue('user.firstName') === 'bill');
+                assert(step.getStateValue('user.lastName') === undefined);
+                assert(step.getStateValue('user.lastName', 'smith') === 'smith');
+                done();
+                return Dialog.EndOfTurn;
+            }
+        ]));
+
+        adapter.send('start')
+               .send('continue');
+    });
+
+    it(`should update a state value using setStateValue().`, function (done) {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+        
+            const results = await dc.continueDialog();
+            switch (results.status) {
+                case DialogTurnStatus.empty:
+                    await dc.beginDialog('a');
+                    break;
+                
+                case DialogTurnStatus.complete:
+                    done();
+                    break;
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+        
+        const dialogState = convoState.createProperty('dialogState');
+
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new WaterfallDialog('a', [
+            async function (step) {
+                step.setStateValue('user.profile.firstName', 'bill');
+                return Dialog.EndOfTurn;
+            },
+            async function (step) {
+                assert(step.getStateValue('user.profile.firstName') === 'bill');
+                assert(step.getStateValue('user.profile.lastName') === undefined);
+                assert(step.getStateValue('user.profile.lastName', 'smith') === 'smith');
+                done();
+                return Dialog.EndOfTurn;
+            }
+        ]));
+
+        adapter.send('start')
+               .send('continue');
+    });
+
+    it(`should bind input & output state to a dialog.`, function (done) {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+        
+            const results = await dc.continueDialog();
+            switch (results.status) {
+                case DialogTurnStatus.empty:
+                    await dc.beginDialog('a');
+                    break;
+                
+                case DialogTurnStatus.complete:
+                    done();
+                    break;
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+        
+        const dialogState = convoState.createProperty('dialogState');
+
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new WaterfallDialog('a', [
+            async function (step) {
+                step.setStateValue('user.profile.name', 'bill');
+                return await step.beginDialog('b');
+            },
+            async function (step) {
+                assert(step.getStateValue('this.result.name') === 'bill');
+                done();
+                return Dialog.EndOfTurn;
+            }
+        ]));
+        dialogs.add(new BindingTestDialog('b', 'user.profile.name', 'this.result.name'))
+
+        adapter.send('start');
     });
 });

@@ -66,17 +66,28 @@ export class DialogContext {
 
     /**
      * Values that are persisted across all interactions with the current user.
+     * 
+     * @remarks
+     * These values are visible to all dialogs.
      */
     public readonly userState: StateMap;
 
     /**
-     * Values that are persisted for the lifetime of the conversation
+     * Values that are persisted for the lifetime of the conversation.
      * 
      * @remarks
-     * These values are intended to be transient and may automatically expire after some timeout
-     * period.
+     * These values are visible to all dialogs but are intended to be transient and may 
+     * automatically expire after some timeout period.
      */
     public readonly conversationState: StateMap;
+
+   /**
+    * The parent DialogContext if any.
+    * 
+    * @remarks
+    * This will be used when searching for dialogs to start.
+    */
+   public parent: DialogContext|undefined;
 
     /**
      * Creates a new DialogContext instance.
@@ -116,9 +127,16 @@ export class DialogContext {
         return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
     }
 
-    public get dialogState(): StateMap {
+    /**
+     * Values that are persisted for the current dialog instance.
+     * 
+     * @remarks
+     * These variables are only visible to the current dialog instance but may be passed to a child
+     * dialog using an `inputBinding`. 
+     */
+    public get thisState(): StateMap {
         const instance = this.activeDialog;
-        if (!instance) { throw new Error(`DialogContext.dialogState: no active dialog instance.`); }
+        if (!instance) { throw new Error(`DialogContext.thisState: no active dialog instance.`); }
         return new StateMap(instance.state);
     }
 
@@ -141,8 +159,17 @@ export class DialogContext {
      */
     public async beginDialog(dialogId: string, options?: object): Promise<DialogTurnResult> {
         // Lookup dialog
-        const dialog: Dialog<{}> = this.dialogs.find(dialogId);
+        const dialog: Dialog<{}> = this.findDialog(dialogId);
         if (!dialog) { throw new Error(`DialogContext.beginDialog(): A dialog with an id of '${dialogId}' wasn't found.`); }
+
+        // Process dialogs input bindings
+        options = options || {};
+        for(const option in dialog.inputBindings) {
+            if (dialog.inputBindings.hasOwnProperty(option)) {
+                const binding = dialog.inputBindings[option];
+                options[option] = this.getStateValue(binding);
+            }
+        }
 
         // Push new instance onto stack.
         const instance: DialogInstance = {
@@ -184,6 +211,22 @@ export class DialogContext {
     }
 
     /**
+     * Searches for a dialog with a given ID.
+     * 
+     * @remarks
+     * If the dialog cannot be found within the current `DialogSet`, the parent `DialogContext` 
+     * will be searched if there is one. 
+     * @param dialogId ID of the dialog to search for.
+     */
+    public findDialog(dialogId: string): Dialog|undefined {
+        let dialog = this.dialogs.find(dialogId);
+        if (!dialog && this.parent) {
+            dialog = this.parent.findDialog(dialogId);
+        }
+        return dialog;
+    }
+
+    /**
      * Helper function to simplify formatting the options for calling a `Prompt` based dialog.
      *
      * @remarks
@@ -194,26 +237,26 @@ export class DialogContext {
      * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
      * @param dialogId ID of the prompt to start.
-     * @param promptOrOptions Initial prompt to send the user or a set of options to configure the prompt with..
-     * @param choicesOrOptions (Optional) array of choices associated with the prompt.
+     * @param promptOrOptions Initial prompt to send the user or a set of options to configure the prompt with.
+     * @param choices (Optional) array of choices associated with the prompt.
      */
-    public async prompt(dialogId: string, promptOrOptions: string|Partial<Activity>|PromptOptions): Promise<DialogTurnResult>;
+    public async prompt(dialogId: string, promptOrOptions: string | Partial<Activity> | PromptOptions): Promise<DialogTurnResult>;
+    public async prompt(dialogId: string, promptOrOptions: string | Partial<Activity> | PromptOptions, choices: (string | Choice)[]): Promise<DialogTurnResult>;
     public async prompt(
         dialogId: string,
-        promptOrOptions: string|Partial<Activity>,
-        choices?: (string|Choice)[]
+        promptOrOptions: string | Partial<Activity>,
+        choices?: (string | Choice)[]
     ): Promise<DialogTurnResult> {
         let options: PromptOptions;
         if (
             (typeof promptOrOptions === 'object' &&
-            (promptOrOptions as Activity).type !== undefined) ||
+                (promptOrOptions as Activity).type !== undefined) ||
             typeof promptOrOptions === 'string'
         ) {
-            options = { prompt: promptOrOptions as string|Partial<Activity>, choices: choices };
+            options = { prompt: promptOrOptions as string | Partial<Activity>, choices: choices };
         } else {
-            options = {...promptOrOptions as PromptOptions};
+            options = { ...promptOrOptions as PromptOptions };
         }
-
         return this.beginDialog(dialogId, options);
     }
 
@@ -242,7 +285,7 @@ export class DialogContext {
         const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
-            const dialog: Dialog<{}> = this.dialogs.find(instance.id);
+            const dialog: Dialog<{}> = this.findDialog(instance.id);
             if (!dialog) {
                 throw new Error(`DialogContext.continue(): Can't continue dialog. A dialog with an id of '${instance.id}' wasn't found.`);
             }
@@ -276,13 +319,13 @@ export class DialogContext {
      */
     public async endDialog(result?: any): Promise<DialogTurnResult> {
         // End the active dialog
-        await this.endActiveDialog(DialogReason.endCalled);
+        await this.endActiveDialog(DialogReason.endCalled, result);
 
         // Resume parent dialog
         const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
-            const dialog: Dialog<{}> = this.dialogs.find(instance.id);
+            const dialog: Dialog<{}> = this.findDialog(instance.id);
             if (!dialog) {
                 throw new Error(`DialogContext.end(): Can't resume previous dialog. A dialog with an id of '${instance.id}' wasn't found.`);
             }
@@ -308,7 +351,7 @@ export class DialogContext {
      * {
      *     user: { ...userState values... },
      *     conversation: { ...conversationState values... },
-     *     dialog: { ...dialogState values... } 
+     *     this: { ...thisState values... } 
      * }
      * ```
      * 
@@ -317,29 +360,42 @@ export class DialogContext {
      * @param count (Optional) number of matches to return. The default value is to return all matches.
      */
     public queryState(pathExpression: string, count?: number): any[] {
+        if (pathExpression.indexOf('$.') !== 0) { pathExpression = '$.' + pathExpression }
         const obj = {
             user: this.userState.memory,
             conversation: this.conversationState.memory,
-            dialog: this.dialogState.memory
+            this: this.activeDialog ? this.thisState.memory : undefined
         }
         return jsonpath.query(obj, pathExpression, count);
     }
 
+    /**
+     * Returns the first value that matches a JSONPath expression.
+     * @param pathExpression JSONPath expression to evaluate.
+     * @param defaultValue (Optional) value to return if the path can't be found. Defaults to `undefined`.
+     */
     public getStateValue<T = any>(pathExpression: string, defaultValue?: T): T {
+        if (pathExpression.indexOf('$.') !== 0) { pathExpression = '$.' + pathExpression }
         const obj = {
             user: this.userState.memory,
             conversation: this.conversationState.memory,
-            dialog: this.dialogState.memory
+            this: this.activeDialog ? this.thisState.memory : undefined
         }
         const value = jsonpath.value(obj, pathExpression);
         return value !== undefined ? value : defaultValue;
     }
 
+    /**
+     * Assigns a value to a given JSONPath expression.
+     * @param pathExpression JSONPath expression to evaluate.
+     * @param value Value to assign.
+     */
     public setStateValue(pathExpression: string, value?: any): void {
+        if (pathExpression.indexOf('$.') !== 0) { pathExpression = '$.' + pathExpression }
         const obj = {
             user: this.userState.memory,
             conversation: this.conversationState.memory,
-            dialog: this.dialogState.memory
+            this: this.activeDialog ? this.thisState.memory : undefined
         }
         jsonpath.value(obj, pathExpression, value);
     }
@@ -398,7 +454,7 @@ export class DialogContext {
         const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
-            const dialog: Dialog<{}> = this.dialogs.find(instance.id);
+            const dialog: Dialog<{}> = this.findDialog(instance.id);
             if (!dialog) {
                 throw new Error(`DialogSet.reprompt(): Can't find A dialog with an id of '${instance.id}'.`);
              }
@@ -408,11 +464,11 @@ export class DialogContext {
         }
     }
 
-    private async endActiveDialog(reason: DialogReason): Promise<void> {
+    private async endActiveDialog(reason: DialogReason, result?: any): Promise<void> {
         const instance: DialogInstance = this.activeDialog;
         if (instance) {
             // Lookup dialog
-            const dialog: Dialog<{}> = this.dialogs.find(instance.id);
+            const dialog: Dialog<{}> = this.findDialog(instance.id);
             if (dialog) {
                 // Notify dialog of end
                 await dialog.endDialog(this.context, instance, reason);
@@ -420,6 +476,11 @@ export class DialogContext {
 
             // Pop dialog off stack
             this.stack.pop();
+
+            // Process dialogs output binding
+            if (dialog && dialog.outputBinding && result !== undefined) {
+                this.setStateValue(dialog.outputBinding, result);
+            }
         }
     }
 }

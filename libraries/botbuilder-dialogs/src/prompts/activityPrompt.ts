@@ -41,7 +41,7 @@ export abstract class ActivityPrompt extends Dialog {
         }
 
         // Initialize prompt state
-        const state = dc.dialogState;
+        const state = dc.thisState;
         state.set(PERSISTED_OPTIONS, opt);
         state.set(PERSISTED_STATE, {});
 
@@ -53,7 +53,7 @@ export abstract class ActivityPrompt extends Dialog {
 
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Perform base recognition
-        const state = dc.dialogState;
+        const state = dc.thisState;
         const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS));
 
         // Validate the return value
