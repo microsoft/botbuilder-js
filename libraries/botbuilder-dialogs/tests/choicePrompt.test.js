@@ -1,4 +1,5 @@
-const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter,TranscriptLoggerMiddleware } = require('botbuilder-core');
+const { FileTranscriptLogger } = require('botbuilder');
 const { ChoicePrompt, DialogSet, ListStyle, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
@@ -23,7 +24,9 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -54,7 +57,9 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -82,7 +87,9 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -116,7 +123,9 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -148,7 +157,9 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -177,7 +188,9 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -212,7 +225,9 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -246,7 +261,9 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -278,7 +295,9 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -310,7 +329,9 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -336,7 +357,9 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -368,7 +391,9 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -400,7 +425,9 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -432,7 +459,9 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -460,7 +489,9 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 

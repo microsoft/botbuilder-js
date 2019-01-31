@@ -1,4 +1,5 @@
-const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter,TranscriptLoggerMiddleware } = require('botbuilder-core');
+const { FileTranscriptLogger } = require('botbuilder');
 const { ConfirmPrompt, DialogSet, DialogTurnStatus, ListStyle } = require('../');
 const assert = require('assert');
 
@@ -21,7 +22,8 @@ describe('ConfirmPrompt', function () {
                 await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
@@ -48,7 +50,8 @@ describe('ConfirmPrompt', function () {
                 await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -81,7 +84,8 @@ describe('ConfirmPrompt', function () {
                 await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -114,7 +118,8 @@ describe('ConfirmPrompt', function () {
                 await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -149,7 +154,8 @@ describe('ConfirmPrompt', function () {
                 await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -185,7 +191,8 @@ describe('ConfirmPrompt', function () {
                 await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -220,7 +227,9 @@ describe('ConfirmPrompt', function () {
                 }
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -258,7 +267,9 @@ describe('ConfirmPrompt', function () {
                 }
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -294,7 +305,9 @@ describe('ConfirmPrompt', function () {
                 }
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -325,7 +338,8 @@ describe('ConfirmPrompt', function () {
                 await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -357,7 +371,8 @@ describe('ConfirmPrompt', function () {
                 await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -392,7 +407,8 @@ describe('ConfirmPrompt', function () {
                 await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -425,7 +441,8 @@ describe('ConfirmPrompt', function () {
                 await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -457,7 +474,8 @@ describe('ConfirmPrompt', function () {
                 await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -489,7 +507,8 @@ describe('ConfirmPrompt', function () {
                 await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -521,7 +540,8 @@ describe('ConfirmPrompt', function () {
                 await turnContext.sendActivity(`The result found is '${ results.result }'.`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 

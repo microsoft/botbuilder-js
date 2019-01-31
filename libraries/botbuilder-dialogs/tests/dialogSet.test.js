@@ -1,4 +1,5 @@
-const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter,TranscriptLoggerMiddleware } = require('botbuilder-core');
+const { FileTranscriptLogger } = require('botbuilder');
 const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus } = require('../');
 const assert = require('assert');
 

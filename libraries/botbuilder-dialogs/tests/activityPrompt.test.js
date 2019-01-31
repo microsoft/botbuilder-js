@@ -1,4 +1,5 @@
-const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ConversationState, MemoryStorage, TestAdapter,TranscriptLoggerMiddleware } = require('botbuilder-core');
+const { FileTranscriptLogger } = require('botbuilder');
 const { ActivityPrompt, DialogReason, DialogSet, DialogTurnStatus } =  require('../');
 const assert = require('assert');
 
@@ -28,7 +29,8 @@ describe('ActivityPrompt', function () {
                 await turnContext.sendActivity(`You said ${reply}`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -59,7 +61,8 @@ describe('ActivityPrompt', function () {
                 await turnContext.sendActivity(`You said ${reply}`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -88,7 +91,9 @@ describe('ActivityPrompt', function () {
                 await turnContext.sendActivity(`You said ${reply}`);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -118,7 +123,9 @@ describe('ActivityPrompt', function () {
             assert(secondResults.status === DialogTurnStatus.waiting, 'resumeDialog() did not return a correct Dialog.EndOfTurn.');
             assert(secondResults.result === undefined, 'resumeDialog() did not return a correct Dialog.EndOfTurn.');
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');

@@ -1,4 +1,5 @@
-const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter,TranscriptLoggerMiddleware } = require('botbuilder-core');
+const { FileTranscriptLogger } = require('botbuilder');
 const { DialogSet, NumberPrompt, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
@@ -17,7 +18,9 @@ describe('NumberPrompt', function () {
                 await turnContext.sendActivity(reply);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -45,7 +48,8 @@ describe('NumberPrompt', function () {
                 await turnContext.sendActivity(reply);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -78,7 +82,8 @@ describe('NumberPrompt', function () {
                 await turnContext.sendActivity(reply);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -111,7 +116,8 @@ describe('NumberPrompt', function () {
                 await turnContext.sendActivity(reply);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -148,7 +154,8 @@ describe('NumberPrompt', function () {
                 await turnContext.sendActivity(reply);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -179,7 +186,8 @@ describe('NumberPrompt', function () {
                 await turnContext.sendActivity(reply);
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 

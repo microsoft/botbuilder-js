@@ -1,4 +1,5 @@
-const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter,TranscriptLoggerMiddleware } = require('botbuilder-core');
+const { FileTranscriptLogger } = require('botbuilder');
 const { DialogSet, Dialog, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
@@ -35,7 +36,9 @@ describe('Dialog', function () {
 
             await dc.beginDialog('testDialog');
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -54,7 +57,8 @@ describe('Dialog', function () {
             const dc = await dialogs.createContext(turnContext);
             await dc.beginDialog('testDialog', { test: 'test1' });
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -83,7 +87,9 @@ describe('Dialog', function () {
                     break;
             }
             await convoState.saveChanges(turnContext);
-        });
+        }, TestAdapter.CreateConversation(this.test.title))
+        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+
 
         const convoState = new ConversationState(new MemoryStorage());
 

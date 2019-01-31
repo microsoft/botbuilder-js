@@ -6,6 +6,8 @@
  * Licensed under the MIT License.
  */
 
-export * from './botFrameworkAdapter';
-export * from './fileTranscriptStore';
 export * from 'botbuilder-core';
+export * from './botFrameworkAdapter';
+export * from './fileTranscriptLogger';
+export * from './fileTranscriptStore';
+

@@ -101,10 +101,22 @@ export class TestAdapter extends BotAdapter {
         this.template = {
             channelId: 'test',
             serviceUrl: 'https://test.com',
-            from: { id: 'user', name: 'User1' },
+            from: { id: 'user1', name: 'User1' },
             recipient: { id: 'bot', name: 'Bot' },
             conversation: { id: 'Convo1' },
             ...template
+        } as Partial<Activity>;
+    }
+
+    public static CreateConversation(name: string, user?: string, bot?: string): Partial<Activity> {
+        bot = bot || 'Bot';
+        user = user || 'User1';
+        return {
+            channelId: 'test',
+            serviceUrl: 'https://test.com',
+            from: { id: user.toLowerCase(), name: user },
+            recipient: { id: bot.toLowerCase(), name: bot },
+            conversation: { id: name.toLowerCase(), name: name }
         } as Partial<Activity>;
     }
 
@@ -461,7 +473,7 @@ export class TestFlow {
     /**
      * Start the test sequence, returning a promise to await
      */
-    public startTest() : Promise<void> {
+    public startTest(): Promise<void> {
         return this.previous;
     }
 }
