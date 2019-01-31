@@ -10,6 +10,7 @@ import {  Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageF
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
+import { channels } from '../choices/channel';
 
 /**
  * Settings used to configure an `OAuthPrompt` instance.
@@ -298,10 +299,10 @@ export class OAuthPrompt extends Dialog {
 
     private channelSupportsOAuthCard(channelId: string): boolean {
         switch (channelId) {
-            case 'msteams':
-            case 'cortana':
-            case 'skype':
-            case 'skypeforbusiness':
+            case channels.msteams:
+            case channels.cortana:
+            case channels.skype:
+            case channels.skypeforbusiness:
                 return false;
             default:
         }
