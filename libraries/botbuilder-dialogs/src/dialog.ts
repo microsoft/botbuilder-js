@@ -131,12 +131,16 @@ export interface DialogTurnResult<T = any> {
  */
 export abstract class Dialog<O extends object = {}> {
     private _id: string;
-    private _label: string;
 
     /**
      * Signals the end of a turn by a dialog method or waterfall/sequence step.
      */
     public static EndOfTurn: DialogTurnResult = { status: DialogTurnStatus.waiting };
+
+    /**
+     * (Optional) label for the dialog.
+     */
+    public label: string;
 
     /**
      * (Optional) JSONPath expression for the memory slots to bind the dialogs options to on a 
@@ -158,11 +162,10 @@ export abstract class Dialog<O extends object = {}> {
 
     /**
      * Creates a new Dialog instance.
-     * @param label (Optional) label and ID to assign to the dialog.
+     * @param dialogId (Optional) unique ID to assign to the dialog.
      */
-    constructor(label?: string) {
-        this._label = label;
-        this._id = label;
+    constructor(dialogId?: string) {
+        this._id = dialogId;
     }
 
     /**
@@ -180,20 +183,6 @@ export abstract class Dialog<O extends object = {}> {
 
     public set id(value: string) {
         this._id = value;
-    }
-
-    /**
-     * (Optional) label for the dialog.
-     */
-    public get label(): string {
-        return this._label;
-    }
-
-    public set label(value: string) {
-        this._label = value;
-        if (this._id === undefined) {
-            this._id = value;
-        }
     }
 
     /** 
@@ -284,9 +273,19 @@ export abstract class Dialog<O extends object = {}> {
      * 
      * @remarks
      * SHOULD be overridden to provide a more contextually relevant ID. The default implementation 
-     * returns an empty string. 
+     * returns `dialog[${this.bindingPath()}]`. 
      */
     protected onComputeID(): string {
-        return '';
+        return `dialog[${this.bindingPath()}]`;
+    }
+
+    protected bindingPath(): string {
+        if (this.inputBindings.hasOwnProperty('value')) {
+            return this.inputBindings['value'];
+        } else if (this.outputBinding && this.outputBinding.length) {
+            return this.outputBinding;
+        } else {
+            return '';
+        }
     }
 }

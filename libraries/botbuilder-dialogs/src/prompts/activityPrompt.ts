@@ -23,15 +23,15 @@ export abstract class ActivityPrompt extends Dialog {
 
     /**
      * Creates a new ActivityPrompt instance.
-     * @param label (Optional) label and ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
+     * @param dialogId (Optional) unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) validator that will be called each time a new activity is received.
      */
-    constructor(label?: string, private validator?: PromptValidator<Activity>) {
-        super(label);
+    constructor(dialogId?: string, private validator?: PromptValidator<Activity>) {
+        super(dialogId);
     }
 
     protected onComputeID(): string {
-        return 'activityPrompt';
+        return `activityPrompt[${this.bindingPath()}]`;
     }
 
     public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {

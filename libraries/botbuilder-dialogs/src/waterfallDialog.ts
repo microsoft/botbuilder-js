@@ -78,11 +78,11 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      *
      * @remarks
      * See the [addStep()](#addstep) function for details on creating a valid step function.
-     * @param label (Optional) label and ID of the dialog within the component or set its being added to.
+     * @param dialogId (Optional) unique ID of the dialog within the component or set its being added to.
      * @param steps (Optional) array of asynchronous waterfall step functions.
      */
-    constructor(label?: string, steps?: WaterfallStep<O>[]) {
-        super(label);
+    constructor(dialogId?: string, steps?: WaterfallStep<O>[]) {
+        super(dialogId);
         this.steps = [];
         if (steps) {
             this.steps = steps.slice(0);
@@ -90,7 +90,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeID(): string {
-        return 'waterfall';
+        return `waterfall[${this.bindingPath()}]`;
     }
 
     /**

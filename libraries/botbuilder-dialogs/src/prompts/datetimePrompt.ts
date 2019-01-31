@@ -46,17 +46,17 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
 
     /**
      * Creates a new DateTimePrompt instance.
-     * @param label (Optional) label and ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
+     * @param dialogId (Optional) unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
      */
-    constructor(label?: string, validator?: PromptValidator<DateTimeResolution[]>, defaultLocale?: string) {
-        super(label, validator);
+    constructor(dialogId?: string, validator?: PromptValidator<DateTimeResolution[]>, defaultLocale?: string) {
+        super(dialogId, validator);
         this.defaultLocale = defaultLocale;
     }
 
     protected onComputeID(): string {
-        return 'datetimePrompt';
+        return `datetimePrompt[${this.bindingPath()}]`;
     }
     
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {

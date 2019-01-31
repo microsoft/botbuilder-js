@@ -144,9 +144,8 @@ export class DialogContext {
      * Pushes a new dialog onto the dialog stack.
      *
      * @remarks
-     * Only "labeled" dialogs can be started using beginDialog(). If there's already an active 
-     * dialog on the stack, that dialog will be paused until the new dialog calls 
-     * [endDialog()](#enddialog).
+     * If there's already an active dialog on the stack, that dialog will be paused until the new 
+     * dialog calls [endDialog()](#enddialog).
      *
      * ```JavaScript
      * return await dc.beginDialog('greeting', { name: user.name });
@@ -155,37 +154,12 @@ export class DialogContext {
      * The `DialogTurnResult.status` returned can be:
      * - `DialogTurnStatus.active` if the dialog started was a multi-turn dialog.
      * - `DialogTurnStatus.completed` if the dialog started was a single-turn dialog.
-     * @param label Label of the dialog to start.
+     * @param dialogId ID of the dialog to start.
      * @param options (Optional) additional argument(s) to pass to the dialog being started.
      */
-    public async beginDialog(label: string, options?: object): Promise<DialogTurnResult> {
+    public async beginDialog(dialogId: string, options?: object): Promise<DialogTurnResult> {
         // Lookup dialog
-        const dialog: Dialog<{}> = this.findDialog(label);
-        if (!dialog) { throw new Error(`DialogContext.beginDialog(): A dialog with an id of '${label}' wasn't found.`); }
-
-        // Process dialogs input bindings
-        options = options || {};
-        for(const option in dialog.inputBindings) {
-            if (dialog.inputBindings.hasOwnProperty(option)) {
-                const binding = JSON.parse(JSON.stringify(dialog.inputBindings[option]));
-                options[option] = this.getStateValue(binding);
-            }
-        }
-
-        // Push new instance onto stack.
-        const instance: DialogInstance = {
-            id: label,
-            state: {}
-        };
-        this.stack.push(instance);
-
-        // Call dialogs begin() method.
-        return await dialog.beginDialog(this, options);
-    }
-
-    public async beginDialogWithId(dialogId: string, options?: object): Promise<DialogTurnResult> {
-        // Lookup dialog
-        const dialog: Dialog<{}> = this.dialogs.findById(dialogId);
+        const dialog: Dialog<{}> = this.findDialog(dialogId);
         if (!dialog) { throw new Error(`DialogContext.beginDialog(): A dialog with an id of '${dialogId}' wasn't found.`); }
 
         // Process dialogs input bindings
@@ -237,17 +211,17 @@ export class DialogContext {
     }
 
     /**
-     * Searches for a "labeled" dialog to begin or replace.
+     * Searches for a dialog to begin or replace.
      * 
      * @remarks
-     * If the "labeled" dialog cannot be found within the current `DialogSet`, the parent `DialogContext` 
+     * If the dialog cannot be found within the current `DialogSet`, the parent `DialogContext` 
      * will be searched as well. 
-     * @param label Unique label of the dialog to search for.
+     * @param dialogId ID of the dialog to search for.
      */
-    public findDialog(label: string): Dialog|undefined {
-        let dialog = this.dialogs.find(label);
+    public findDialog(dialogId: string): Dialog|undefined {
+        let dialog = this.dialogs.find(dialogId);
         if (!dialog && this.parent) {
-            dialog = this.parent.findDialog(label);
+            dialog = this.parent.findDialog(dialogId);
         }
         return dialog;
     }
@@ -256,22 +230,20 @@ export class DialogContext {
      * Helper function to simplify formatting the options for calling a `Prompt` based dialog.
      *
      * @remarks
-     * Only "labaeled" prompts can be started using this method.
-     * 
      * This is a lightweight wrapper abound [beginDialog()](#begindialog). It fills in a
      * `PromptOptions` structure and then passes it through to `dc.beginDialog(dialogId, options)`.
      *
      * ```JavaScript
      * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
-     * @param label ID of the prompt to start.
+     * @param dialogId ID of the prompt to start.
      * @param promptOrOptions Initial prompt to send the user or a set of options to configure the prompt with.
      * @param choices (Optional) array of choices associated with the prompt.
      */
-    public async prompt(label: string, promptOrOptions: string | Partial<Activity> | PromptOptions): Promise<DialogTurnResult>;
-    public async prompt(label: string, promptOrOptions: string | Partial<Activity> | PromptOptions, choices: (string | Choice)[]): Promise<DialogTurnResult>;
+    public async prompt(dialogId: string, promptOrOptions: string | Partial<Activity> | PromptOptions): Promise<DialogTurnResult>;
+    public async prompt(dialogId: string, promptOrOptions: string | Partial<Activity> | PromptOptions, choices: (string | Choice)[]): Promise<DialogTurnResult>;
     public async prompt(
-        label: string,
+        dialogId: string,
         promptOrOptions: string | Partial<Activity>,
         choices?: (string | Choice)[]
     ): Promise<DialogTurnResult> {
@@ -285,7 +257,7 @@ export class DialogContext {
         } else {
             options = { ...promptOrOptions as PromptOptions };
         }
-        return this.beginDialog(label, options);
+        return this.beginDialog(dialogId, options);
     }
 
     /**
@@ -435,8 +407,6 @@ export class DialogContext {
      * This method is conceptually equivalent to calling [endDialog()](#enddialog) and then
      * immediately calling [beginDialog()](#begindialog). The difference is that the parent
      * dialog is not resumed or otherwise notified that the dialog it started has been replaced.
-     *
-     * The current dialog can only be replaced with a "labeled" dialog.
      * 
      * This method is particularly useful for creating conversational loops within your bot:
      *
@@ -458,15 +428,15 @@ export class DialogContext {
      *
      * this.addDialog(new ConfirmPrompt('continuePrompt'));
      * ```
-     * @param label Label of the new dialog to start.
+     * @param dialogId ID of the new dialog to start.
      * @param options (Optional) additional argument(s) to pass to the new dialog.
      */
-    public async replaceDialog(label: string, options?: object): Promise<DialogTurnResult> {
+    public async replaceDialog(dialogId: string, options?: object): Promise<DialogTurnResult> {
         // End the active dialog
         await this.endActiveDialog(DialogReason.replaceCalled);
 
         // Start replacement dialog
-        return await this.beginDialog(label, options);
+        return await this.beginDialog(dialogId, options);
     }
 
     /**

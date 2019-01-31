@@ -99,17 +99,17 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
 
     /**
      * Creates a new ComponentDialog instance.
-     * @param label (Optional) label and ID of the component within its parents dialog set.
+     * @param dialogId (Optional) unique ID of the component within its parents dialog set.
      * @param dialogState (Optional) state property used to persists the components dialog state when the `run()` method is called.
      */
-    constructor(label?: string, dialogState?: StatePropertyAccessor<DialogState>) {
-        super(label);
+    constructor(dialogId?: string, dialogState?: StatePropertyAccessor<DialogState>) {
+        super(dialogId);
         this.mainDialogSet = new DialogSet(dialogState);
         this.mainDialogSet.add(this);
     }
 
     protected onComputeID(): string {
-        return 'component';
+        return `component[${this.bindingPath()}]`;
     }
 
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
@@ -196,21 +196,12 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     }
 
     /**
-     * Finds a "labeled" child dialog that was previously added to the component using
-     * [addDialog()](#adddialog).
-     * @param label Unique label of the dialog or prompt to lookup.
-     */
-    public findDialog(label: string): Dialog | undefined {
-        return this.dialogs.find(label);
-    }
-
-    /**
      * Finds a child dialog that was previously added to the component using
      * [addDialog()](#adddialog).
      * @param dialogId ID of the dialog or prompt to lookup.
      */
-    public findDialogWithId(dialogId: string): Dialog | undefined {
-        return this.dialogs.findById(dialogId);
+    public findDialog(dialogId: string): Dialog | undefined {
+        return this.dialogs.find(dialogId);
     }
 
     /**

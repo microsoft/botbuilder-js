@@ -18,15 +18,15 @@ export class TextPrompt extends Prompt<string> {
 
     /**
      * Creates a new TextPrompt instance.
-     * @param label (Optional) label and ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
+     * @param dialogId (Optional) unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
-    constructor(label?: string, validator?: PromptValidator<string>) {
-        super(label, validator);
+    constructor(dialogId?: string, validator?: PromptValidator<string>) {
+        super(dialogId, validator);
     }
 
     protected onComputeID(): string {
-        return 'textPrompt';
+        return `textPrompt[${this.bindingPath()}]`;
     }
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {

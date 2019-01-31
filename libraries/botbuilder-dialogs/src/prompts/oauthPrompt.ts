@@ -107,16 +107,16 @@ export class OAuthPrompt extends Dialog {
 
     /**
      * Creates a new OAuthPrompt instance.
-     * @param label (Optional) label and ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
+     * @param dialogId (Optional) unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param settings (Optional) settings used to configure the prompt.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
-    constructor(label?: string, private settings?: OAuthPromptSettings, private validator?: PromptValidator<TokenResponse>) {
-        super(label);
+    constructor(dialogId?: string, private settings?: OAuthPromptSettings, private validator?: PromptValidator<TokenResponse>) {
+        super(dialogId);
     }
 
     protected onComputeID(): string {
-        return 'oauthPrompt';
+        return `oauthPrompt[${this.bindingPath()}]`;
     }
 
     public async beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {

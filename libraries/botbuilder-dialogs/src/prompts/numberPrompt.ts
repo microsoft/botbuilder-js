@@ -24,17 +24,17 @@ export class NumberPrompt extends Prompt<number> {
 
     /**
      * Creates a new NumberPrompt instance.
-     * @param label (Optional) label an ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
+     * @param dialogId (Optional) unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
      */
-    constructor(label?: string, validator?: PromptValidator<number>, defaultLocale?: string) {
-        super(label, validator);
+    constructor(dialogId?: string, validator?: PromptValidator<number>, defaultLocale?: string) {
+        super(dialogId, validator);
         this.defaultLocale = defaultLocale;
     }
 
     protected onComputeID(): string {
-        return 'numberPrompt';
+        return `numberPrompt[${this.bindingPath()}]`;
     }
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {

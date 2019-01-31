@@ -57,7 +57,6 @@ import { DialogContext, DialogState } from './dialogContext';
  */
 export class DialogSet {
     private readonly dialogs: { [id: string]: Dialog; } = {};
-    private readonly dialogsById: { [label:string]: Dialog; } = {};
     private readonly dialogState: StatePropertyAccessor<DialogState>;
     private _telemetryClient: BotTelemetryClient;
     /**
@@ -81,7 +80,10 @@ export class DialogSet {
      * Adds a new dialog or prompt to the set.
      *
      * @remarks
-     * The `Dialog.id` of all dialogs or prompts added to the set need to be unique within the set.
+     * If the `Dialog.id` being added already exists in the set, the dialogs id will be updated to 
+     * include a suffix which makes it unique. So adding 2 dialogs named "duplicate" to the set 
+     * would result in the first one having an id of "duplicate" and the second one having an id
+     * of "duplicate2".
      * @param dialog The dialog or prompt to add.
      * If a telemetryClient is present on the dialog set, it will be added to each dialog.
      */
@@ -89,9 +91,8 @@ export class DialogSet {
         if (!(dialog instanceof Dialog)) { throw new Error(`DialogSet.add(): Invalid dialog being added.`); }
 
         // Ensure dialog has a unique ID.
-        if (!dialog.id || dialog.id.length === 0) { dialog.id = 'dialog' }
         if (this.dialogs.hasOwnProperty(dialog.id)) {
-            let nextSuffix = 1;
+            let nextSuffix = 2;
             while (true) {
                 if (!this.dialogs.hasOwnProperty(dialog.id + nextSuffix.toString())) {
                     dialog.id = dialog.id + nextSuffix.toString();
@@ -107,10 +108,7 @@ export class DialogSet {
             dialog.telemetryClient = this._telemetryClient;
         }
         
-        this.dialogsById[dialog.id] = dialog;
-        if (dialog.label && dialog.label.length > 0) {
-            this.dialogs[dialog.label] = dialog;
-        }
+        this.dialogs[dialog.id] = dialog;
         return this;
     }
 
@@ -128,7 +126,7 @@ export class DialogSet {
     }
 
     /**
-     * Finds a "labeled" dialog that was previously added to the set using [add()](#add).
+     * Finds a dialog that was previously added to the set using [add()](#add).
      *
      * @remarks
      * This example finds a dialog named "greeting":
@@ -136,18 +134,10 @@ export class DialogSet {
      * ```JavaScript
      * const dialog = dialogs.find('greeting');
      * ```
-     * @param label Unique label of the dialog or prompt to lookup.
+     * @param dialogId ID of the dialog or prompt to lookup.
      */
     public find(dialogId: string): Dialog|undefined {
         return this.dialogs.hasOwnProperty(dialogId) ? this.dialogs[dialogId] : undefined;
-    }
-
-    /**
-     * Finds a dialog that was previously added to the set using [add()](#add).
-     * @param dialogId ID of the dialog or prompt to lookup.
-     */
-    public findById(dialogId: string): Dialog|undefined {
-        return this.dialogsById.hasOwnProperty(dialogId) ? this.dialogsById[dialogId] : undefined;
     }
 
     /** 
