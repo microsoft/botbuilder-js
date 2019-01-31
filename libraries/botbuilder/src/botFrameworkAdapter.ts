@@ -234,6 +234,11 @@ export class BotFrameworkAdapter extends BotAdapter {
             parameters.channelData = { tenant: reference.channelData.tenant };
         }
 
+        // possible better solution?  Missing def of tenant on this element!
+        // if (reference.conversation && reference.conversation.tenant) {
+        //     parameters.channelData = { tenant: reference.conversation.tenant };
+        // }
+
         const response = await client.conversations.createConversation(parameters);
 
         // Initialize request and copy over new conversation ID and updated serviceUrl.

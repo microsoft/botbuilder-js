@@ -101,6 +101,21 @@ export class TurnContext {
             serviceUrl: activity.serviceUrl,
             channelData: activity.channelData
         };
+
+        // possible better solution?
+        // const reference = {
+        //     activityId: activity.id,
+        //     user: shallowCopy(activity.from),
+        //     bot: shallowCopy(activity.recipient),
+        //     conversation: shallowCopy(activity.conversation),
+        //     channelId: activity.channelId,
+        //     serviceUrl: activity.serviceUrl,
+        // };
+        // if (activity.channelData.tenant) {
+        //      reference.conversation.tenant = activity.channelData.tenant;
+        // }
+        // return reference;
+        }
     }
 
     /**
