@@ -58,14 +58,18 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
 
     /**
      * Creates a new `ChoicePrompt` instance.
-     * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
+     * @param label (Optional) label and ID of the dialog within its parent `DialogSet`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(dialogId: string, validator?: PromptValidator<FoundChoice>, defaultLocale?: string) {
-        super(dialogId, validator);
+    constructor(label?: string, validator?: PromptValidator<FoundChoice>, defaultLocale?: string) {
+        super(label, validator);
         this.style = ListStyle.auto;
         this.defaultLocale = defaultLocale;
+    }
+
+    protected onComputeID(): string {
+        return 'choicePrompt';
     }
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {

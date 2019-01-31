@@ -18,11 +18,15 @@ export class AttachmentPrompt extends Prompt<Attachment[]> {
 
     /**
      * Creates a new `AttachmentPrompt` instance.
-     * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
+     * @param label (Optional) label and ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
-    constructor(dialogId: string, validator?: PromptValidator<Attachment[]>) {
-        super(dialogId, validator);
+    constructor(label?: string, validator?: PromptValidator<Attachment[]>) {
+        super(label, validator);
+    }
+
+    protected onComputeID(): string {
+        return 'attachmentPrompt';
     }
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {

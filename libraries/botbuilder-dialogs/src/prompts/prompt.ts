@@ -150,11 +150,11 @@ export interface PromptValidatorContext<T> {
 export abstract class Prompt<T> extends Dialog {
     /**
      * Creates a new Prompt instance.
-     * @param dialogId Unique ID of the prompt within its parent `DialogSet` or `ComponentDialog`.
+     * @param label (Optional) label and ID of the prompt within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) custom validator used to provide additional validation and re-prompting logic for the prompt.
      */
-    constructor(dialogId: string, private validator?: PromptValidator<T>) {
-        super(dialogId);
+    constructor(label?: string, private validator?: PromptValidator<T>) {
+        super(label);
     }
 
     public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {

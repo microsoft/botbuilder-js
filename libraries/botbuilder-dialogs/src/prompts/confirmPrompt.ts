@@ -72,14 +72,18 @@ export class ConfirmPrompt extends Prompt<boolean> {
 
     /**
      * Creates a new ConfirmPrompt instance.
-     * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
+     * @param label (Optional) label and ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
      */
-    constructor(dialogId: string, validator?: PromptValidator<boolean>, defaultLocale?: string) {
-        super(dialogId, validator);
+    constructor(label?: string, validator?: PromptValidator<boolean>, defaultLocale?: string) {
+        super(label, validator);
         this.style = ListStyle.auto;
         this.defaultLocale = defaultLocale;
+    }
+
+    protected onComputeID(): string {
+        return 'comfirmPrompt';
     }
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
