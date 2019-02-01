@@ -1,5 +1,5 @@
 const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter,TranscriptLoggerMiddleware } = require('botbuilder-core');
-const { FileTranscriptLogger } = require('botbuilder');
+const { UnitTestTranscriptLogger } = require('botbuilder');
 const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus } = require('../');
 
 const assert = require('assert');
@@ -51,7 +51,7 @@ describe('WaterfallDialog', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
@@ -95,7 +95,7 @@ describe('WaterfallDialog', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
@@ -145,7 +145,7 @@ describe('WaterfallDialog', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
@@ -171,7 +171,7 @@ describe('WaterfallDialog', function () {
 
             await turnContext.sendActivity(`ended WaterfallDialog ["${ results.result }"].`);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -210,7 +210,7 @@ describe('WaterfallDialog', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -254,7 +254,7 @@ describe('WaterfallDialog', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -314,7 +314,7 @@ describe('WaterfallDialog', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -375,7 +375,7 @@ describe('WaterfallDialog', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -447,7 +447,7 @@ describe('WaterfallDialog', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -515,7 +515,7 @@ describe('WaterfallDialog', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -556,7 +556,7 @@ describe('WaterfallDialog', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -601,7 +601,7 @@ describe('WaterfallDialog', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 

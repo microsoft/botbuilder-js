@@ -8,6 +8,6 @@
 
 export * from 'botbuilder-core';
 export * from './botFrameworkAdapter';
-export * from './fileTranscriptLogger';
 export * from './fileTranscriptStore';
+export * from './unitTestTranscriptLogger';
 

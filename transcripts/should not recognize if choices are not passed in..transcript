@@ -1,0 +1,24 @@
+[
+	{
+		"type": "message",
+		"text": "Please choose a color.",
+		"inputHint": "expectingInput",
+		"channelId": "test",
+		"serviceUrl": "https://test.com",
+		"conversation": {
+			"id": "should not recognize if choices are not passed in.",
+			"name": "should not recognize if choices are not passed in."
+		},
+		"from": {
+			"id": "bot",
+			"name": "Bot"
+		},
+		"recipient": {
+			"id": "user1",
+			"name": "User1",
+			"role": "user"
+		},
+		"replyToId": "2",
+		"timestamp": "2019-02-01T19:03:56.817Z"
+	}
+]

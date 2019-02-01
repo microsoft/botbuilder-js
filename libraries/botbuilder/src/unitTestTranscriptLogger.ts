@@ -13,7 +13,7 @@ import * as path from 'path';
 import { Activity, TranscriptLogger } from '.';
 
 /**
- * The file transcript logger creates .transcript file for each conversation it logs
+ * The UnitTestTranscriptLogger transcript logger creates .transcript file for each conversation it logs
  *
  * @remarks
  * This class logs all activities for a conversation to a {conversationId}.transcript file 
@@ -21,12 +21,12 @@ import { Activity, TranscriptLogger } from '.';
  *
  * Below is the boilerplate code needed to use this in your app:
  * ```javascript
- * const { FileTranscriptLogger, TranscriptLoggerMiddleware } = require('botbuilder');
+ * const { UnitTestTranscriptLogger, TranscriptLoggerMiddleware } = require('botbuilder');
  *
- * adapter.use(new TranscriptLoggerMiddleware(new FileTranscriptLogger()));
+ * adapter.use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger()));
  * ```
  */
-export class FileTranscriptLogger implements TranscriptLogger {
+export class UnitTestTranscriptLogger implements TranscriptLogger {
 
     private folder: string;
     private started = new Set<string>();

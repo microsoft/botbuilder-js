@@ -1,5 +1,5 @@
 const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter,TranscriptLoggerMiddleware } = require('botbuilder-core');
-const { FileTranscriptLogger } = require('botbuilder');
+const { UnitTestTranscriptLogger } = require('botbuilder');
 const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus } =  require('../');
 const assert = require('assert');
 
@@ -21,7 +21,7 @@ describe('DialogContext', function() {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
 
         // Create new ConversationState with MemoryStorage and register the state as middleware.
@@ -51,7 +51,7 @@ describe('DialogContext', function() {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
         
@@ -83,7 +83,7 @@ describe('DialogContext', function() {
             }
             throw new Error('Should have thrown an error.');
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
         const dialogState = convoState.createProperty('dialogState');
@@ -106,7 +106,7 @@ describe('DialogContext', function() {
             await convoState.saveChanges(turnContext);
             done();
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
         const dialogState = convoState.createProperty('dialogState');
@@ -131,7 +131,7 @@ describe('DialogContext', function() {
             await convoState.saveChanges(turnContext);
             done();
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
         const dialogState = convoState.createProperty('dialogState');
@@ -155,7 +155,7 @@ describe('DialogContext', function() {
             await convoState.saveChanges(turnContext);
             done();
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
         const dialogState = convoState.createProperty('dialogState');
@@ -182,7 +182,7 @@ describe('DialogContext', function() {
             assert.strictEqual(results.result, 119, `unexpected results.result value received from 'a' dialog.`);
             done();
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
         const dialogState = convoState.createProperty('dialogState');
@@ -227,7 +227,7 @@ describe('DialogContext', function() {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
         const dialogState = convoState.createProperty('dialogState');
@@ -267,7 +267,7 @@ describe('DialogContext', function() {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
   
         const convoState = new ConversationState(new MemoryStorage());
         const dialogState = convoState.createProperty('dialogState');
@@ -298,7 +298,7 @@ describe('DialogContext', function() {
             await convoState.saveChanges(turnContext);
             done();
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
         const dialogState = convoState.createProperty('dialogState');
@@ -317,7 +317,7 @@ describe('DialogContext', function() {
             await convoState.saveChanges(turnContext);
             done();
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
         
@@ -357,7 +357,7 @@ describe('DialogContext', function() {
             assert.strictEqual(results.result, undefined, `received unexpected value for results.result (expected undefined).`);
             done();
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
         
@@ -383,7 +383,7 @@ describe('DialogContext', function() {
             assert.strictEqual(results.result, 'z', `received unexpected final result from dialog.`);
             done();
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
         
@@ -417,7 +417,7 @@ describe('DialogContext', function() {
             await convoState.saveChanges(turnContext);
             done();
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
         

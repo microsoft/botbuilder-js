@@ -1,0 +1,24 @@
+[
+	{
+		"text": "ending WaterfallDialog.",
+		"inputHint": "acceptingInput",
+		"channelId": "test",
+		"serviceUrl": "https://test.com",
+		"conversation": {
+			"id": "should support receive options via `step.options`.",
+			"name": "should support receive options via `step.options`."
+		},
+		"from": {
+			"id": "bot",
+			"name": "Bot"
+		},
+		"recipient": {
+			"id": "user1",
+			"name": "User1",
+			"role": "user"
+		},
+		"replyToId": "2",
+		"type": "message",
+		"timestamp": "2019-02-01T19:04:08.047Z"
+	}
+]

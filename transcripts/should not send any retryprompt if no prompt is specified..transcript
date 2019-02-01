@@ -1,0 +1,44 @@
+[
+	{
+		"channelId": "test",
+		"serviceUrl": "https://test.com",
+		"from": {
+			"id": "user1",
+			"name": "User1",
+			"role": "user"
+		},
+		"recipient": {
+			"id": "bot",
+			"name": "Bot"
+		},
+		"conversation": {
+			"id": "should not send any retryprompt if no prompt is specified.",
+			"name": "should not send any retryPrompt if no prompt is specified."
+		},
+		"type": "message",
+		"text": "Hello",
+		"id": "0",
+		"timestamp": "2019-02-01T19:04:00.697Z"
+	},
+	{
+		"channelId": "test",
+		"serviceUrl": "https://test.com",
+		"from": {
+			"id": "user1",
+			"name": "User1",
+			"role": "user"
+		},
+		"recipient": {
+			"id": "bot",
+			"name": "Bot"
+		},
+		"conversation": {
+			"id": "should not send any retryprompt if no prompt is specified.",
+			"name": "should not send any retryPrompt if no prompt is specified."
+		},
+		"type": "message",
+		"text": "what?",
+		"id": "2",
+		"timestamp": "2019-02-01T19:04:00.698Z"
+	}
+]

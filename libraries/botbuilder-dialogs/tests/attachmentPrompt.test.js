@@ -1,5 +1,5 @@
 const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter,TranscriptLoggerMiddleware } = require('botbuilder-core');
-const { FileTranscriptLogger } = require('botbuilder');
+const { UnitTestTranscriptLogger } = require('botbuilder');
 const { AttachmentPrompt, DialogSet, DialogTurnStatus } =  require('../');
 const assert = require('assert');
 
@@ -24,7 +24,7 @@ describe('AttachmentPrompt', function() {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         // Create new ConversationState with MemoryStorage 
         const convoState = new ConversationState(new MemoryStorage());
@@ -55,7 +55,7 @@ describe('AttachmentPrompt', function() {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -87,7 +87,7 @@ describe('AttachmentPrompt', function() {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -121,7 +121,7 @@ describe('AttachmentPrompt', function() {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -159,7 +159,7 @@ describe('AttachmentPrompt', function() {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 

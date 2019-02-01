@@ -1,5 +1,5 @@
 const { ConversationState, MemoryStorage, TestAdapter,TranscriptLoggerMiddleware } = require('botbuilder-core');
-const { FileTranscriptLogger } = require('botbuilder');
+const { UnitTestTranscriptLogger } = require('botbuilder');
 const { ActivityPrompt, DialogReason, DialogSet, DialogTurnStatus } =  require('../');
 const assert = require('assert');
 
@@ -30,7 +30,7 @@ describe('ActivityPrompt', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -62,7 +62,7 @@ describe('ActivityPrompt', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -92,7 +92,7 @@ describe('ActivityPrompt', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -124,7 +124,7 @@ describe('ActivityPrompt', function () {
             assert(secondResults.result === undefined, 'resumeDialog() did not return a correct Dialog.EndOfTurn.');
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new FileTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
 
         const convoState = new ConversationState(new MemoryStorage());
 

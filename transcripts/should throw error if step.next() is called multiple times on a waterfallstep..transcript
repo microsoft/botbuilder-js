@@ -1,0 +1,24 @@
+[
+	{
+		"text": "bot responding.",
+		"inputHint": "acceptingInput",
+		"channelId": "test",
+		"serviceUrl": "https://test.com",
+		"conversation": {
+			"id": "should throw error if step.next() is called multiple times on a waterfallstep.",
+			"name": "should throw error if step.next() is called multiple times on a WaterfallStep."
+		},
+		"from": {
+			"id": "bot",
+			"name": "Bot"
+		},
+		"recipient": {
+			"id": "user1",
+			"name": "User1",
+			"role": "user"
+		},
+		"replyToId": "0",
+		"type": "message",
+		"timestamp": "2019-02-01T19:04:08.246Z"
+	}
+]
