@@ -4,7 +4,7 @@
  * regenerated.
  */
 
-import * as msRest from "ms-rest-js";
+import * as msRest from "@azure/ms-rest-js";
 import * as Models from "botframework-schema";
 import * as Mappers from "../models/attachmentsMappers";
 import * as Parameters from "../models/parameters";
@@ -41,7 +41,7 @@ export class Attachments {
    * @param callback The callback
    */
   getAttachmentInfo(attachmentId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.AttachmentInfo>): void;
-  getAttachmentInfo(attachmentId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.AttachmentInfo>): Promise<Models.AttachmentsGetAttachmentInfoResponse> {
+  getAttachmentInfo(attachmentId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.AttachmentInfo>, callback?: msRest.ServiceCallback<Models.AttachmentInfo>): Promise<Models.AttachmentsGetAttachmentInfoResponse> {
     return this.client.sendOperationRequest(
       {
         attachmentId,
@@ -73,7 +73,7 @@ export class Attachments {
    * @param callback The callback
    */
   getAttachment(attachmentId: string, viewId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<void>): void;
-  getAttachment(attachmentId: string, viewId: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<void>): Promise<Models.AttachmentsGetAttachmentResponse> {
+  getAttachment(attachmentId: string, viewId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<void>, callback?: msRest.ServiceCallback<void>): Promise<Models.AttachmentsGetAttachmentResponse> {
     return this.client.sendOperationRequest(
       {
         attachmentId,
