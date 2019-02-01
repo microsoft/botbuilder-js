@@ -130,15 +130,17 @@ export interface DialogTurnResult<T = any> {
  * Base class for all dialogs.
  */
 export abstract class Dialog<O extends object = {}> {
+    private _id: string;
+
     /**
      * Signals the end of a turn by a dialog method or waterfall/sequence step.
      */
     public static EndOfTurn: DialogTurnResult = { status: DialogTurnStatus.waiting };
 
     /**
-     * Unique ID of the dialog.
+     * (Optional) label for the dialog.
      */
-    public readonly id: string;
+    public label: string;
 
     /**
      * (Optional) JSONPath expression for the memory slots to bind the dialogs options to on a 
@@ -160,12 +162,28 @@ export abstract class Dialog<O extends object = {}> {
 
     /**
      * Creates a new Dialog instance.
-     * @param dialogId Unique ID of the dialog.
+     * @param dialogId (Optional) unique ID to assign to the dialog.
      */
-    constructor(dialogId: string) {
-        this.id = dialogId;
+    constructor(dialogId?: string) {
+        this._id = dialogId;
     }
 
+    /**
+     * Unique ID of the dialog.
+     * 
+     * @remarks
+     * This will be automatically generated if not specified.
+     */
+    public get id(): string {
+        if (this._id === undefined) {
+            this._id = this.onComputeID();
+        }
+        return this._id;
+    }
+
+    public set id(value: string) {
+        this._id = value;
+    }
 
     /** 
      * Retrieve the telemetry client for this dialog.
@@ -248,5 +266,26 @@ export abstract class Dialog<O extends object = {}> {
      */
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // No-op by default
+    }
+
+    /**
+     * Called when a unique ID needs to be computed for a dialog.
+     * 
+     * @remarks
+     * SHOULD be overridden to provide a more contextually relevant ID. The default implementation 
+     * returns `dialog[${this.bindingPath()}]`. 
+     */
+    protected onComputeID(): string {
+        return `dialog[${this.bindingPath()}]`;
+    }
+
+    protected bindingPath(): string {
+        if (this.inputBindings.hasOwnProperty('value')) {
+            return this.inputBindings['value'];
+        } else if (this.outputBinding && this.outputBinding.length) {
+            return this.outputBinding;
+        } else {
+            return '';
+        }
     }
 }

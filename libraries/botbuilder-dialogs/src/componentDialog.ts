@@ -112,15 +112,19 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
 
     /**
      * Creates a new ComponentDialog instance.
-     * @param dialogId Unique ID of the component within its parents dialog set.
+     * @param dialogId (Optional) unique ID of the component within its parents dialog set.
      * @param conversationState (Optional) state property used to persists the components conversation state when the `run()` method is called.
      * @param userState (Optional) state property used to persist the users state when the `run()` method is called.
      */
-    constructor(dialogId: string, conversationState?: StatePropertyAccessor<DialogState>, userState?: StatePropertyAccessor<object>) {
+    constructor(dialogId?: string, conversationState?: StatePropertyAccessor<DialogState>, userState?: StatePropertyAccessor<object>) {
         super(dialogId);
         this.mainDialogSet = new DialogSet(conversationState);
         this.mainDialogSet.add(this);
         this.userState = userState;
+    }
+
+    protected onComputeID(): string {
+        return `component[${this.bindingPath()}]`;
     }
 
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {

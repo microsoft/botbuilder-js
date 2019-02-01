@@ -57,7 +57,7 @@ import { StateMap } from './stateMap';
  * ```
  */
 export class DialogSet {
-    private readonly dialogs: { [id: string]: Dialog } = {};
+    private readonly dialogs: { [id: string]: Dialog; } = {};
     private readonly dialogState: StatePropertyAccessor<DialogState>;
     private _telemetryClient: BotTelemetryClient;
     /**
@@ -81,17 +81,27 @@ export class DialogSet {
      * Adds a new dialog or prompt to the set.
      *
      * @remarks
-     * The `Dialog.id` of all dialogs or prompts added to the set need to be unique within the set.
+     * If the `Dialog.id` being added already exists in the set, the dialogs id will be updated to 
+     * include a suffix which makes it unique. So adding 2 dialogs named "duplicate" to the set 
+     * would result in the first one having an id of "duplicate" and the second one having an id
+     * of "duplicate2".
      * @param dialog The dialog or prompt to add.
      * If a telemetryClient is present on the dialog set, it will be added to each dialog.
      */
     public add<T extends Dialog>(dialog: T): this {
         if (!(dialog instanceof Dialog)) { throw new Error(`DialogSet.add(): Invalid dialog being added.`); }
-        if (typeof dialog.id !== 'string' || dialog.id.length === 0) {
-            throw new Error(`DialogSet.add(): Dialog being added is missing its 'id'.`);
-        }
+
+        // Ensure dialog has a unique ID.
         if (this.dialogs.hasOwnProperty(dialog.id)) {
-            throw new Error(`DialogSet.add(): A dialog with an id of '${dialog.id}' already added.`);
+            let nextSuffix = 2;
+            while (true) {
+                if (!this.dialogs.hasOwnProperty(dialog.id + nextSuffix.toString())) {
+                    dialog.id = dialog.id + nextSuffix.toString();
+                    break;
+                } else {
+                    nextSuffix++;
+                }
+            }
         }
 
         // If a telemetry client has already been set on this dialogSet, also set it on new dialogs as they are added.
@@ -100,7 +110,6 @@ export class DialogSet {
         }
         
         this.dialogs[dialog.id] = dialog;
-
         return this;
     }
 

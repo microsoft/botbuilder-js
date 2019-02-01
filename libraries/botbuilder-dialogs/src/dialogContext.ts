@@ -144,7 +144,7 @@ export class DialogContext {
      * Pushes a new dialog onto the dialog stack.
      *
      * @remarks
-     * If there's already an active dialog on the stack, that dialog will be paused until the new
+     * If there's already an active dialog on the stack, that dialog will be paused until the new 
      * dialog calls [endDialog()](#enddialog).
      *
      * ```JavaScript
@@ -166,7 +166,7 @@ export class DialogContext {
         options = options || {};
         for(const option in dialog.inputBindings) {
             if (dialog.inputBindings.hasOwnProperty(option)) {
-                const binding = dialog.inputBindings[option];
+                const binding = JSON.parse(JSON.stringify(dialog.inputBindings[option]));
                 options[option] = this.getStateValue(binding);
             }
         }
@@ -211,11 +211,11 @@ export class DialogContext {
     }
 
     /**
-     * Searches for a dialog with a given ID.
+     * Searches for a dialog to begin or replace.
      * 
      * @remarks
      * If the dialog cannot be found within the current `DialogSet`, the parent `DialogContext` 
-     * will be searched if there is one. 
+     * will be searched as well. 
      * @param dialogId ID of the dialog to search for.
      */
     public findDialog(dialogId: string): Dialog|undefined {
@@ -407,7 +407,7 @@ export class DialogContext {
      * This method is conceptually equivalent to calling [endDialog()](#enddialog) and then
      * immediately calling [beginDialog()](#begindialog). The difference is that the parent
      * dialog is not resumed or otherwise notified that the dialog it started has been replaced.
-     *
+     * 
      * This method is particularly useful for creating conversational loops within your bot:
      *
      * ```JavaScript
