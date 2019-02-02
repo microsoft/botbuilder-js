@@ -18,7 +18,7 @@ import { PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt
  * activities like an event to be received. The validator can ignore received events until the
  * expected activity is received.
  */
-export abstract class ActivityPrompt extends Dialog {
+export class ActivityPrompt extends Dialog {
 
     /**
      * Creates a new ActivityPrompt instance.
