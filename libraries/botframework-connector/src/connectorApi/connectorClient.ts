@@ -5,10 +5,10 @@
  */
 
 import * as msRest from "@azure/ms-rest-js";
-import * as Models from "botframework-schema";
+import { ConnectorClientContext } from "./connectorClientContext";
+import * as Models from "./models";
 import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
-import { ConnectorClientContext } from "./connectorClientContext";
 
 class ConnectorClient extends ConnectorClientContext {
   // Operation groups
@@ -29,10 +29,6 @@ class ConnectorClient extends ConnectorClientContext {
 
 // Operation Specifications
 
-export {
-  ConnectorClient,
-  ConnectorClientContext,
-  Models as ConnectorModels,
-  Mappers as ConnectorMappers
-};
 export * from "./operations";
+export { ConnectorClient, ConnectorClientContext, Models as ConnectorModels, Mappers as ConnectorMappers };
+
