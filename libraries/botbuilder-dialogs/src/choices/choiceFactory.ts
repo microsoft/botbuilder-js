@@ -107,11 +107,9 @@ export class ChoiceFactory {
 
         // Determine list style
         const supportsSuggestedActions: boolean = channel.supportsSuggestedActions(channelId, choices.length);
-        const supportsCardActions: boolean = channel.supportsCardActions(channelId, choices.length);
         const maxActionTitleLength: number = channel.maxActionTitleLength(channelId);
-        const hasMessageFeed: boolean = channel.hasMessageFeed(channelId);
         const longTitles: boolean = maxTitleLength > maxActionTitleLength;
-        if (!longTitles && (supportsSuggestedActions || (!hasMessageFeed && supportsCardActions))) {
+        if (!longTitles && supportsSuggestedActions) {
             // We always prefer showing choices using suggested actions. If the titles are too long, however,
             // we'll have to show them as a text list.
             return ChoiceFactory.suggestedAction(list, text, speak);

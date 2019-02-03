@@ -1,0 +1,34 @@
+{
+    "answers": [
+      {
+        "answer": "A liger!",
+        "Id": 20,
+        "metadata": [
+          {
+            "name": "animal",
+            "value": "liger"
+          }
+        ],
+        "questions": [
+          "what's your favorite animal?"
+        ],
+        "score": 98.54820341616869,
+        "source": "Custom Editorial"
+      },
+      {
+        "answer": "Pandas are my spirit animal. I love their dorkiness!",
+        "Id": 20,
+        "metadata": [
+          {
+            "name": "animal",
+            "value": "panda"
+          }
+        ],
+        "questions": [
+          "favorite animal?"
+        ],
+        "score": 50.54161686900007,
+        "source": "Custom Editorial"
+      }
+    ]
+  }
