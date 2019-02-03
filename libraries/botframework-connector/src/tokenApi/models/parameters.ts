@@ -6,6 +6,18 @@
 
 import * as msRest from "ms-rest-js";
 
+export const channelId: msRest.OperationQueryParameter = {
+  parameterPath: [
+    "options",
+    "channelId"
+  ],
+  mapper: {
+    serializedName: "channelId",
+    type: {
+      name: "String"
+    }
+  }
+};
 export const code: msRest.OperationQueryParameter = {
   parameterPath: [
     "options",
