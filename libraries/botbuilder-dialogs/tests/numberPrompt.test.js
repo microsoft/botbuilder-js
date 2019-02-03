@@ -2,6 +2,7 @@ const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter,TranscriptL
 const { UnitTestTranscriptLogger } = require('botbuilder');
 const { DialogSet, NumberPrompt, DialogTurnStatus } = require('../');
 const assert = require('assert');
+const path = require('path');
 
 describe('NumberPrompt', function () {
     this.timeout(5000);
@@ -19,7 +20,7 @@ describe('NumberPrompt', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
@@ -49,7 +50,7 @@ describe('NumberPrompt', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -83,7 +84,7 @@ describe('NumberPrompt', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -117,7 +118,7 @@ describe('NumberPrompt', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -155,7 +156,7 @@ describe('NumberPrompt', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -187,7 +188,7 @@ describe('NumberPrompt', function () {
             }
             await convoState.saveChanges(turnContext);
         }, TestAdapter.CreateConversation(this.test.title))
-        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger("transcripts")));
+        .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
 
