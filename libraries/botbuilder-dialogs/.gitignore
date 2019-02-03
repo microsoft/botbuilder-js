@@ -3,4 +3,4 @@
 /**/lib/*
 coverage
 .nyc_output
-/**/tests/transcripts/*.transcript
+/**/transcripts/*.transcript
