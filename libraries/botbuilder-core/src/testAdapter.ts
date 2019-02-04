@@ -98,14 +98,6 @@ export class TestAdapter extends BotAdapter {
     constructor(private logic: (context: TurnContext) => Promise<void>, template?: Partial<Activity> | ConversationReference, sendTraceActivities?: boolean) {
         super();
         this.sendTraceActivities = sendTraceActivities || false;
-        this.template = {
-            channelId: 'test',
-            serviceUrl: 'https://test.com',
-            from: { id: 'user1', name: 'User1' },
-            recipient: { id: 'bot', name: 'Bot' },
-            conversation: { id: 'Convo1' },
-            ...template
-        } as Partial<Activity>;
 
         // if it's a conversationReference then map those properties in...
         if (template && template.hasOwnProperty("bot")) {
@@ -117,6 +109,15 @@ export class TestAdapter extends BotAdapter {
                 recipient: reference.bot,
                 conversation: reference.conversation
             };
+        } else {
+            this.template = {
+                channelId: 'test',
+                serviceUrl: 'https://test.com',
+                from: { id: 'user1', name: 'User1' },
+                recipient: { id: 'bot', name: 'Bot' },
+                conversation: { id: 'Convo1' },
+                ...template
+            } as Partial<Activity>;
         }
     }
 
