@@ -108,7 +108,7 @@ export class TestAdapter extends BotAdapter {
         } as Partial<Activity>;
 
         // if it's a conversationReference then map those properties in...
-        if (template.hasOwnProperty("bot")) {
+        if (template && template.hasOwnProperty("bot")) {
             let reference = <ConversationReference>template;
             this.template = {
                 channelId: reference.channelId,
