@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
+    "botbuilder": "^4.2.1",
     "codelyzer": "^4.1.0",
     "mocha": "^5.2.0",
     "nyc": "^11.4.1",

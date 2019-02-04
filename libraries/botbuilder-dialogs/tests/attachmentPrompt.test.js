@@ -24,7 +24,7 @@ describe('AttachmentPrompt', function() {
                 await turnContext.sendActivity(`${attachment.content}`);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         // Create new ConversationState with MemoryStorage 
@@ -55,7 +55,7 @@ describe('AttachmentPrompt', function() {
                 await turnContext.sendActivity(`${attachment.content}`);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -87,7 +87,7 @@ describe('AttachmentPrompt', function() {
                 await turnContext.sendActivity(`${attachment.content}`);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -121,7 +121,7 @@ describe('AttachmentPrompt', function() {
                 await turnContext.sendActivity(`${attachment.content}`);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -159,7 +159,7 @@ describe('AttachmentPrompt', function() {
                 await turnContext.sendActivity(`${attachment.content}`);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());

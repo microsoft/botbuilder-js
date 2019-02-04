@@ -24,7 +24,7 @@ describe('DatetimePrompt', function () {
                 await turnContext.sendActivity(dates[0].timex);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         // Create new ConversationState with MemoryStorage and register the state as middleware.
@@ -53,7 +53,7 @@ describe('DatetimePrompt', function () {
                 await turnContext.sendActivity(dates[0].timex);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -80,7 +80,7 @@ describe('DatetimePrompt', function () {
                 await turnContext.sendActivity(dates[0].timex);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -110,7 +110,7 @@ describe('DatetimePrompt', function () {
                 await turnContext.sendActivity(dates[0].timex);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -142,7 +142,7 @@ describe('DatetimePrompt', function () {
                 await turnContext.sendActivity(dates[0].timex);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -177,7 +177,7 @@ describe('DatetimePrompt', function () {
                 await turnContext.sendActivity(dates[0].timex);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());

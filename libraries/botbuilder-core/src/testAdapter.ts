@@ -95,7 +95,7 @@ export class TestAdapter extends BotAdapter {
      * @param logic The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(private logic: (context: TurnContext) => Promise<void>, template?: Partial<Activity>, sendTraceActivities?: boolean) {
+    constructor(private logic: (context: TurnContext) => Promise<void>, template?: Partial<Activity> | ConversationReference, sendTraceActivities?: boolean) {
         super();
         this.sendTraceActivities = sendTraceActivities || false;
         this.template = {
@@ -106,18 +106,30 @@ export class TestAdapter extends BotAdapter {
             conversation: { id: 'Convo1' },
             ...template
         } as Partial<Activity>;
+
+        // if it's a conversationReference then map those properties in...
+        if (template.hasOwnProperty("bot")) {
+            let reference = <ConversationReference>template;
+            this.template = {
+                channelId: reference.channelId,
+                serviceUrl: reference.serviceUrl,
+                from: reference.user,
+                recipient: reference.bot,
+                conversation: reference.conversation
+            };
+        }
     }
 
-    public static CreateConversation(name: string, user?: string, bot?: string): Partial<Activity> {
+    public static createConversation(name: string, user?: string, bot?: string): ConversationReference {
         bot = bot || 'Bot';
         user = user || 'User1';
         return {
             channelId: 'test',
             serviceUrl: 'https://test.com',
-            from: { id: user.toLowerCase(), name: user },
-            recipient: { id: bot.toLowerCase(), name: bot },
-            conversation: { id: name.toLowerCase(), name: name }
-        } as Partial<Activity>;
+            user: { id: user.toLowerCase(), name: user },
+            bot: { id: bot.toLowerCase(), name: bot },
+            conversation: { id: name.toLowerCase(), name: name, isGroup: false, conversationType: "test" }
+        };
     }
 
     /**

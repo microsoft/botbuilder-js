@@ -37,7 +37,7 @@ describe('Dialog', function () {
 
             await dc.beginDialog('testDialog');
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         // Create new ConversationState with MemoryStorage and register the state as middleware.
@@ -58,7 +58,7 @@ describe('Dialog', function () {
             const dc = await dialogs.createContext(turnContext);
             await dc.beginDialog('testDialog', { test: 'test1' });
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -88,7 +88,7 @@ describe('Dialog', function () {
                     break;
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
 

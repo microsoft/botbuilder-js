@@ -25,7 +25,7 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         // Create new ConversationState with MemoryStorage and register the state as middleware.
@@ -58,7 +58,7 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -88,7 +88,7 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -124,7 +124,7 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -158,7 +158,7 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -189,7 +189,7 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -226,7 +226,7 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -262,7 +262,7 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -296,7 +296,7 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -330,7 +330,7 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -358,7 +358,7 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -392,7 +392,7 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -426,7 +426,7 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -460,7 +460,7 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -490,7 +490,7 @@ describe('ChoicePrompt', function () {
                 await turnContext.sendActivity(selectedChoice.value);
             }
             await convoState.saveChanges(turnContext);
-        }, TestAdapter.CreateConversation(this.test.title))
+        }, TestAdapter.createConversation(this.test.title))
         .use(new TranscriptLoggerMiddleware(new UnitTestTranscriptLogger(path.join(__dirname,"transcripts"))));
 
         // Create new ConversationState with MemoryStorage and register the state as middleware.
