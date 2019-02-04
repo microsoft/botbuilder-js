@@ -121,9 +121,16 @@ export class TestAdapter extends BotAdapter {
         }
     }
 
+    /**
+     * createConversation - creates a test conversation reference bewteen the user and bot)
+     * @param name name of the conversation (this will be used as the conversation.id as well)
+     * @param user name of the user (this will be used as the user.id as well)
+     * @param bot name of the bot (this will be used as the bot.id as well)
+     */
     public static createConversation(name: string, user?: string, bot?: string): ConversationReference {
         bot = bot || 'Bot';
         user = user || 'User1';
+        name = name || "Conversation1";
         return {
             channelId: 'test',
             serviceUrl: 'https://test.com',
