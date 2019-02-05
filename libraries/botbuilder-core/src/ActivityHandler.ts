@@ -359,13 +359,16 @@ export class ActivityHandler {
                     await this.handle(context, 'MessageUpdate', runDialogs);
                     break;
                 case ActivityTypes.MessageReaction:
-                    await this.handle(context, 'MessageReaction', runDialogs);
-                    if (context.activity.reactionsAdded && context.activity.reactionsAdded.length) {
-                        await this.handle(context, 'MessageReactionAdded', runDialogs);
-                    }
-                    if (context.activity.reactionsRemoved && context.activity.reactionsRemoved.length) {
-                        await this.handle(context, 'MessageReactionRemoved', runDialogs);
-                    }
+                    await this.handle(context, 'MessageReaction', async() => {
+                        if (context.activity.reactionsAdded && context.activity.reactionsAdded.length) {
+                            await this.handle(context, 'MessageReactionAdded', runDialogs);
+                        } else if (context.activity.reactionsRemoved && context.activity.reactionsRemoved.length) {
+                            await this.handle(context, 'MessageReactionRemoved', runDialogs);
+                        } else {
+                            await runDialogs();
+                        }
+                    });
+
                     break;
                 case ActivityTypes.Typing:
                     await this.handle(context, 'Typing', runDialogs);
