@@ -192,10 +192,14 @@ export class LuisRecognizer {
      * ```
      * @param context Context for the current turn of conversation with the use.
      */
-    public recognize(context: TurnContext): Promise<RecognizerResult> {
+    public recognize(context: TurnContext): Promise<RecognizerResult>;
+
+    public recognize(context: TurnContext, text: string): Promise<RecognizerResult>;
+
+    public recognize(context: TurnContext, text: string = null): Promise<RecognizerResult> {
         const cached: any = context.turnState.get(this.cacheKey);
         if (!cached) {
-            const utterance: string = context.activity.text || '';
+            const utterance: string = text || context.activity.text || '';
 
             return this.luisClient.prediction.resolve(
                 this.application.applicationId, utterance,
