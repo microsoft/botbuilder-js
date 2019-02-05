@@ -7,6 +7,7 @@
  */
 
 export * from 'botframework-schema';
+export * from './ActivityHandler';
 export * from './autoSaveStateMiddleware';
 export * from './botAdapter';
 export * from './botState';
