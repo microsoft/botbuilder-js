@@ -658,9 +658,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param serviceUrl Clients service url.
      */
     protected createConnectorClient(serviceUrl: string): ConnectorClient {
-        const client: ConnectorClient = new ConnectorClient(this.credentials, { baseUri: serviceUrl} );
-        client.addUserAgentInfo(USER_AGENT);
-
+        const client: ConnectorClient = new ConnectorClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
         return client;
     }
 
@@ -669,8 +667,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param serviceUrl Clients service url.
      */
     protected createTokenApiClient(serviceUrl: string): TokenApiClient {
-        const client = new TokenApiClient(this.credentials, { baseUri: serviceUrl} );
-        client.addUserAgentInfo(USER_AGENT);
+        const client = new TokenApiClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
         return client;
     }
 
