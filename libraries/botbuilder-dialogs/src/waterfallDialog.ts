@@ -238,14 +238,15 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      */
      public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason) {
 
-        const instanceId = instance.state.values['instanceId'];
+        const state: WaterfallDialogState = instance.state as WaterfallDialogState
+        const instanceId = state.values['instanceId'];
         if (reason === DialogReason.endCalled) {
             this.telemetryClient.trackEvent({name: "WaterfallComplete", properties: {
                 "DialogId": this.id,
                 "InstanceId": instanceId,
             }});
         } else if (reason === DialogReason.cancelCalled) {
-            var index = instance.state[instance.state.stepIndex];
+            var index = instance.state[state.stepIndex];
             var stepName = this.waterfallStepName(index);
             this.telemetryClient.trackEvent({name: "WaterfallCancel", properties: {
                 "DialogId": this.id,

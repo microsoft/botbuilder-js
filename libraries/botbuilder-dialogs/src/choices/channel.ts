@@ -11,20 +11,21 @@ import { TurnContext } from 'botbuilder-core';
  * @private
  */
 export const channels: any = {
-    facebook: 'facebook',
-    skype: 'skype',
-    msteams: 'msteams',
-    telegram: 'telegram',
-    kik: 'kik',
-    email: 'email',
-    slack: 'slack',
-    groupme: 'groupme',
-    sms: 'sms',
-    emulator: 'emulator',
-    directline: 'directline',
-    webchat: 'webchat',
     console: 'console',
-    cortana: 'cortana'
+    cortana: 'cortana',
+    directline: 'directline',
+    email: 'email',
+    emulator: 'emulator',
+    facebook: 'facebook',
+    groupme: 'groupme',
+    kik: 'kik',
+    msteams: 'msteams',
+    skype: 'skype',
+    skypeforbusiness: 'skypeforbusiness',
+    slack: 'slack',
+    sms: 'sms',
+    telegram: 'telegram',
+    webchat: 'webchat'
 };
 
 /**

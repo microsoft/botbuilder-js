@@ -10,6 +10,7 @@ import {  Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageF
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
+import { channels } from '../choices/channel';
 
 /**
  * Settings used to configure an `OAuthPrompt` instance.
@@ -32,7 +33,7 @@ export interface OAuthPromptSettings {
 
     /**
      * (Optional) number of milliseconds the prompt will wait for the user to authenticate.
-     * Defaults to a value `54,000,000` (15 minutes.)
+     * Defaults to a value `900,000` (15 minutes.)
      */
     timeout?: number;
 }
@@ -126,7 +127,7 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Initialize prompt state
-        const timeout: number = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000;
+        const timeout: number = typeof this.settings.timeout === 'number' ? this.settings.timeout : 900000;
         const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
         state.state = {};
         state.options = o;
@@ -298,10 +299,10 @@ export class OAuthPrompt extends Dialog {
 
     private channelSupportsOAuthCard(channelId: string): boolean {
         switch (channelId) {
-            case 'msteams':
-            case 'cortana':
-            case 'skype':
-            case 'skypeforbusiness':
+            case channels.msteams:
+            case channels.cortana:
+            case channels.skype:
+            case channels.skypeforbusiness:
                 return false;
             default:
         }
