@@ -262,12 +262,6 @@ export interface ConversationReference {
    * Service endpoint where operations concerning the referenced conversation may be performed
    */
   serviceUrl: string;
-
-  /**
-   * @member {any} [channelData] Channel specific payload for re-creating the
-   * conversation
-   */
-  channelData?: any;
 }
 
 /**

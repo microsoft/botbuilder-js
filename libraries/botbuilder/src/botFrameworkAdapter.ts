@@ -230,14 +230,9 @@ export class BotFrameworkAdapter extends BotAdapter {
         const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
 
         // Mix in the tenant ID if specified. This is required for MS Teams.
-        if (reference.channelData && reference.channelData.tenant) {
-            parameters.channelData = { tenant: reference.channelData.tenant };
+        if (reference.conversation && reference.conversation.tenantId) {
+            parameters.channelData = { tenant: { id: reference.conversation.tenantId } };
         }
-
-        // possible better solution?  Missing def of tenant on this element!
-        // if (reference.conversation && reference.conversation.tenant) {
-        //     parameters.channelData = { tenant: reference.conversation.tenant };
-        // }
 
         const response = await client.conversations.createConversation(parameters);
 
