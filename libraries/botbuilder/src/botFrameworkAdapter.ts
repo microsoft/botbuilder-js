@@ -231,7 +231,12 @@ export class BotFrameworkAdapter extends BotAdapter {
 
         // Mix in the tenant ID if specified. This is required for MS Teams.
         if (reference.conversation && reference.conversation.tenantId) {
+            // Putting tenantId in channelData is a temporary solution while we wait for the Teams API to be updated
             parameters.channelData = { tenant: { id: reference.conversation.tenantId } };
+
+            // Permanent solution is to put tenantId in conversation.tenantId
+            parameters.conversation = { tenantId: reference.conversation.tenantId };
+
         }
 
         const response = await client.conversations.createConversation(parameters);
