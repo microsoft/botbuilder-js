@@ -12,6 +12,12 @@ export const TokenResponse: msRest.CompositeMapper = {
     name: "Composite",
     className: "TokenResponse",
     modelProperties: {
+      channelId: {
+        serializedName: "channelId",
+        type: {
+          name: "String"
+        }
+      },
       connectionName: {
         serializedName: "connectionName",
         type: {
@@ -129,6 +135,12 @@ export const TokenStatus: msRest.CompositeMapper = {
     name: "Composite",
     className: "TokenStatus",
     modelProperties: {
+      channelId: {
+        serializedName: "channelId",
+        type: {
+          name: "String"
+        }
+      },
       connectionName: {
         serializedName: "connectionName",
         type: {
