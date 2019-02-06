@@ -7,9 +7,10 @@
  */
 // tslint:disable-next-line:no-require-imports
 import assert = require('assert');
-import { Activity, ActivityTypes, ConversationReference, ResourceResponse } from 'botframework-schema';
+import { Activity, ActivityTypes, ConversationReference, ResourceResponse, TokenResponse } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
 import { TurnContext } from './turnContext';
+import { IUserTokenProvider } from './userTokenProvider';
 
 /**
  * Signature for a function that can be used to inspect individual activities returned by a bot
@@ -41,7 +42,7 @@ export type TestActivityInspector = (activity: Partial<Activity>, description: s
  *        .then(() => done());
  * ```
  */
-export class TestAdapter extends BotAdapter {
+export class TestAdapter extends BotAdapter implements IUserTokenProvider {
     /**
      * @private
      * INTERNAL: used to drive the promise chain forward when running tests.
@@ -265,6 +266,120 @@ export class TestAdapter extends BotAdapter {
             new TestFlow(Promise.resolve(), this));
     }
 
+    private _userTokens: UserToken[] = [];
+    private _magicCodes: TokenMagicCode[] = [];
+
+    /**
+     * Adds a fake user token so it can later be retrieved.
+     * @param connectionName The connection name.
+     * @param channelId The channel id.
+     * @param userId The user id.
+     * @param token The token to store.
+     * @param magicCode (Optional) The optional magic code to associate with this token.
+     */
+    public addUserToken(connectionName: string, channelId: string, userId: string, token: string, magicCode: string = undefined) {
+        const key: UserToken = new UserToken();
+        key.ChannelId = channelId;
+        key.ConnectionName = connectionName;
+        key.UserId = userId;
+        key.Token = token;
+
+        if (!magicCode)
+        {
+            this._userTokens.push(key);
+        }
+        else
+        {
+            const mc = new TokenMagicCode();
+            mc.Key = key;
+            mc.MagicCode = magicCode;
+            this._magicCodes.push(mc);
+        }
+    }
+
+     /**
+     * Retrieves the OAuth token for a user that is in a sign-in flow.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     * @param magicCode (Optional) Optional user entered code to validate.
+     */
+    public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse> {
+        const key: UserToken = new UserToken();
+        key.ChannelId = context.activity.channelId;
+        key.ConnectionName = connectionName;
+        key.UserId = context.activity.from.id;
+
+        if (magicCode) {
+            var magicCodeRecord = this._magicCodes.filter(x => key.EqualsKey(x.Key));
+            if (magicCodeRecord && magicCodeRecord.length > 0 && magicCodeRecord[0].MagicCode === magicCode) {
+                // move the token to long term dictionary
+                this.addUserToken(connectionName, key.ChannelId, key.UserId, magicCodeRecord[0].Key.Token);
+
+                // remove from the magic code list
+                const idx = this._magicCodes.indexOf(magicCodeRecord[0]);
+                this._magicCodes = this._magicCodes.splice(idx, 1);
+            }
+        }
+
+        var match = this._userTokens.filter(x => key.EqualsKey(x));
+
+        if (match && match.length > 0)
+        {
+            return {
+                connectionName: match[0].ConnectionName,
+                token: match[0].Token,
+                expiration: undefined
+            };
+        }
+        else
+        {
+            // not found
+            return undefined;
+        }
+    }
+
+    /**
+     * Signs the user out with the token server.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     */
+    public async signOutUser(context: TurnContext, connectionName: string): Promise<void> {
+        var channelId = context.activity.channelId;
+        var userId = context.activity.from.id;
+        
+        var newRecords: UserToken[] = [];
+        for (var i = 0; i < this._userTokens.length; i++) {
+            var t = this._userTokens[i];
+            if (t.ChannelId !== channelId ||
+                t.UserId !== userId || 
+                (connectionName && connectionName !== t.ConnectionName))
+            {
+                newRecords.push(t);
+            }
+        }
+        this._userTokens = newRecords;
+    }
+
+    /**
+     * Gets a signin link from the token server that can be sent as part of a SigninCard.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     */
+    public async getSignInLink(context: TurnContext, connectionName: string): Promise<string> {
+        return `https://fake.com/oauthsignin/${connectionName}/${context.activity.channelId}/${context.activity.from.id}`;
+    }
+
+    /**
+     * Signs the user out with the token server.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     */
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{
+        [propertyName: string]: TokenResponse;
+    }> {
+        return undefined;
+    }
+
     /**
      * Indicates if the activity is a reply from the bot (role == 'bot')
      *
@@ -280,6 +395,25 @@ export class TestAdapter extends BotAdapter {
             return false;
         }
     }
+}
+
+class UserToken {
+    public ConnectionName: string;
+    public UserId: string;
+    public ChannelId: string;
+    public Token: string;
+
+    public EqualsKey(rhs: UserToken): boolean {
+        return rhs != null &&
+            this.ConnectionName === rhs.ConnectionName &&
+            this.UserId === rhs.UserId &&
+            this.ChannelId === rhs.ChannelId;
+    }
+}
+
+class TokenMagicCode {
+    public Key: UserToken;
+    public MagicCode: string;
 }
 
 /**
