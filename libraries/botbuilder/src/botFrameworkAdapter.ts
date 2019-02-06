@@ -367,7 +367,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
 
-        const result: TokenApiModels.UserTokenGetTokenResponse = await client.userToken.getToken(userId, connectionName, { code: magicCode });
+        const result: TokenApiModels.UserTokenGetTokenResponse = await client.userToken.getToken(userId, connectionName, { code: magicCode, channelId: context.activity.channelId });
         if (!result || !result.token || result._response.status == 404) {
             return undefined;
         } else {
@@ -388,7 +388,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const userId: string = context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
-        await client.userToken.signOut(userId, { connectionName: connectionName } );
+        await client.userToken.signOut(userId, { connectionName: connectionName, channelId: context.activity.channelId } );
     }
 
     /**
@@ -408,7 +408,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         };
 
         const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
-        return (await client.botSignIn.getSignInUrl(finalState, null))._response.bodyAsText;
+        return (await client.botSignIn.getSignInUrl(finalState, { channelId: context.activity.channelId }))._response.bodyAsText;
     }
 
     /**
@@ -427,7 +427,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
 
-        return <{[propertyName: string]: TokenResponse; }>(await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }))._response.parsedBody;
+        return <{[propertyName: string]: TokenResponse; }>(await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody;
     }
 
     /**
