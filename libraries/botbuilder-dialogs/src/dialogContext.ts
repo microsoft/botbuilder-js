@@ -21,20 +21,6 @@ export interface DialogState {
      * The dialog stack being persisted.
      */
     dialogStack: DialogInstance[];
-
-    /**
-     * (optional) values that are persisted for the lifetime of the conversation.
-     * 
-     * @remarks
-     * These values are intended to be transient and may automatically expire after some timeout
-     * period.
-     */
-    conversationState?: object;
-
-    /**
-     * (Optional) values that are persisted across all interactions with the current user.
-     */
-    userState?: object;
 }
 
 /**
