@@ -455,15 +455,15 @@ describe('DialogContext', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
             async function (step) {
-                step.userState.set('name', 'bill');
-                step.conversationState.set('order', 1);
-                step.thisState.set('result', 'foo');
+                step.state.user.set('name', 'bill');
+                step.state.conversation.set('order', 1);
+                step.state.dialog.set('result', 'foo');
                 return Dialog.EndOfTurn;
             },
             async function (step) {
-                assert(step.userState.get('name') === 'bill');
-                assert(step.conversationState.get('order') === 1);
-                assert(step.thisState.get('result') === 'foo');
+                assert(step.state.user.get('name') === 'bill');
+                assert(step.state.conversation.get('order') === 1);
+                assert(step.state.dialog.get('result') === 'foo');
                 done();
                 return Dialog.EndOfTurn;
             }
@@ -497,15 +497,15 @@ describe('DialogContext', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
             async function (step) {
-                step.userState.set('name', 'bill');
-                step.conversationState.set('order', 1);
-                step.thisState.set('result', 'foo');
+                step.state.user.set('name', 'bill');
+                step.state.conversation.set('order', 1);
+                step.state.dialog.set('result', 'foo');
                 return Dialog.EndOfTurn;
             },
             async function (step) {
-                assert(step.userState.get('name') === 'bill');
-                assert(step.conversationState.get('order') === 1);
-                assert(step.thisState.get('result') === 'foo');
+                assert(step.state.user.get('name') === 'bill');
+                assert(step.state.conversation.get('order') === 1);
+                assert(step.state.dialog.get('result') === 'foo');
                 done();
                 return Dialog.EndOfTurn;
             }
@@ -515,7 +515,7 @@ describe('DialogContext', function() {
                .send('continue');
     });
 
-    it(`should retrieve state values using queryState().`, function (done) {
+    it(`should retrieve state values using state.query().`, function (done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
@@ -539,19 +539,19 @@ describe('DialogContext', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
             async function (step) {
-                step.userState.set('name', 'user');
-                step.conversationState.set('name', 'convo');
-                step.thisState.set('name', 'this');
+                step.state.user.set('name', 'user');
+                step.state.conversation.set('name', 'convo');
+                step.state.dialog.set('name', 'dlg');
                 return Dialog.EndOfTurn;
             },
             async function (step) {
-                let result = step.queryState('user.name');
+                let result = step.state.query('user.name');
                 assert(result.length === 1 && result[0] === 'user');
-                result = step.queryState('conversation.name');
+                result = step.state.query('conversation.name');
                 assert(result.length === 1 && result[0] === 'convo');
-                result = step.queryState('this.name');
-                assert(result.length === 1 && result[0] === 'this');
-                result = step.queryState('$..name');
+                result = step.state.query('dialog.name');
+                assert(result.length === 1 && result[0] === 'dlg');
+                result = step.state.query('$..name');
                 assert(result.length === 3);
                 done();
                 return Dialog.EndOfTurn;
@@ -562,7 +562,7 @@ describe('DialogContext', function() {
                .send('continue');
     });
 
-    it(`should retrieve a state value using getStateValue().`, function (done) {
+    it(`should retrieve a state value using state.getValue().`, function (done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
@@ -586,13 +586,13 @@ describe('DialogContext', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
             async function (step) {
-                step.userState.set('firstName', 'bill');
+                step.state.user.set('firstName', 'bill');
                 return Dialog.EndOfTurn;
             },
             async function (step) {
-                assert(step.getStateValue('user.firstName') === 'bill');
-                assert(step.getStateValue('user.lastName') === undefined);
-                assert(step.getStateValue('user.lastName', 'smith') === 'smith');
+                assert(step.state.getValue('user.firstName') === 'bill');
+                assert(step.state.getValue('user.lastName') === undefined);
+                assert(step.state.getValue('user.lastName', 'smith') === 'smith');
                 done();
                 return Dialog.EndOfTurn;
             }
@@ -602,7 +602,7 @@ describe('DialogContext', function() {
                .send('continue');
     });
 
-    it(`should update a state value using setStateValue().`, function (done) {
+    it(`should update a state value using state.setValue().`, function (done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
@@ -626,13 +626,13 @@ describe('DialogContext', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
             async function (step) {
-                step.setStateValue('user.profile.firstName', 'bill');
+                step.state.setValue('user.profile.firstName', 'bill');
                 return Dialog.EndOfTurn;
             },
             async function (step) {
-                assert(step.getStateValue('user.profile.firstName') === 'bill');
-                assert(step.getStateValue('user.profile.lastName') === undefined);
-                assert(step.getStateValue('user.profile.lastName', 'smith') === 'smith');
+                assert(step.state.getValue('user.profile.firstName') === 'bill');
+                assert(step.state.getValue('user.profile.lastName') === undefined);
+                assert(step.state.getValue('user.profile.lastName', 'smith') === 'smith');
                 done();
                 return Dialog.EndOfTurn;
             }
@@ -666,16 +666,16 @@ describe('DialogContext', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
             async function (step) {
-                step.setStateValue('user.profile.name', 'bill');
+                step.state.setValue('user.profile.name', 'bill');
                 return await step.beginDialog('b');
             },
             async function (step) {
-                assert(step.getStateValue('this.result.name') === 'bill');
+                assert(step.state.getValue('dialog.result.name') === 'bill');
                 done();
                 return Dialog.EndOfTurn;
             }
         ]));
-        dialogs.add(new BindingTestDialog('b', 'user.profile.name', 'this.result.name'))
+        dialogs.add(new BindingTestDialog('b', 'user.profile.name', 'dialog.result.name'))
 
         adapter.send('start');
     });

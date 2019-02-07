@@ -10,6 +10,7 @@ export * from './prompts';
 export * from './dialog';
 export * from './componentDialog';
 export * from './dialogContext';
+export * from './dialogContextState';
 export * from './dialogSet';
 export * from './stateMap';
 export * from './waterfallDialog';

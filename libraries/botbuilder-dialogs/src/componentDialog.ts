@@ -84,7 +84,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
         // Start the inner dialog.
         const dialogState: DialogState = { dialogStack: [] };
         outerDC.activeDialog.state[PERSISTED_DIALOG_STATE] = dialogState;
-        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState, outerDC.conversationState, outerDC.userState);
+        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState, outerDC.state.user, outerDC.state.conversation);
         const turnResult: DialogTurnResult<any> = await this.onBeginDialog(innerDC, options);
 
         // Check for end of inner dialog
@@ -100,7 +100,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     public async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
         // Continue execution of inner dialog.
         const dialogState: any = outerDC.activeDialog.state[PERSISTED_DIALOG_STATE];
-        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState, outerDC.conversationState, outerDC.userState);
+        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState, outerDC.state.user, outerDC.state.conversation);
         const turnResult: DialogTurnResult<any> = await this.onContinueDialog(innerDC);
 
         // Check for end of inner dialog
