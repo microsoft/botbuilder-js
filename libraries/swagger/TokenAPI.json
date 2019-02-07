@@ -95,6 +95,12 @@
             "type": "string"
           },
           {
+            "name": "channelId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "code",
             "in": "query",
             "required": false,
@@ -103,13 +109,13 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "A Token Response object will be returned\r\n",
             "schema": {
               "$ref": "#/definitions/TokenResponse"
             }
           },
           "404": {
-            "description": "",
+            "description": "Resource was not found\r\n",
             "schema": {
               "$ref": "#/definitions/TokenResponse"
             }
@@ -162,6 +168,12 @@
             "schema": {
               "$ref": "#/definitions/AadResourceUrls"
             }
+          },
+          {
+            "name": "channelId",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -203,11 +215,17 @@
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "channelId",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "The operation succeeded, there is no response.",
             "schema": {
               "$ref": "#/definitions/Void"
             }
@@ -245,6 +263,12 @@
             "type": "string"
           },
           {
+            "name": "channelId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "include",
             "in": "query",
             "required": false,
@@ -275,6 +299,9 @@
     "TokenResponse": {
       "type": "object",
       "properties": {
+        "channelId": {
+          "type": "string"
+        },
         "connectionName": {
           "type": "string"
         },
@@ -339,6 +366,10 @@
       "description": "The status of a particular token",
       "type": "object",
       "properties": {
+        "channelId": {
+          "description": "The channelId of the token status pertains to",
+          "type": "string"
+        },
         "connectionName": {
           "description": "The name of the connection the token status pertains to",
           "type": "string"
