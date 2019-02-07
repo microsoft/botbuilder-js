@@ -126,6 +126,24 @@ export interface DialogTurnResult<T = any> {
     result?: T;
 }
 
+export interface DialogEvent {
+    /**
+     * If `true` the event will be bubbled to the parent `DialogContext` if not handled by the 
+     * current dialog.
+     */
+    bubble: boolean;
+
+    /**
+     * Name of the event being raised.
+     */
+    name: string;
+
+    /**
+     * (Optional) value associated with the event.
+     */
+    value?: any;
+}
+
 /**
  * Base class for all dialogs.
  */
@@ -239,6 +257,17 @@ export abstract class Dialog<O extends object = {}> {
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // By default just end the current dialog and return result to parent.
         return dc.endDialog(result);
+    }
+
+    /**
+     * Called when an event has been raised, using `DialogContext.emitEvent()`, by either the current 
+     * dialog or a dialog that the current dialog started. 
+     * @param dc The dialog context for the current turn of conversation.
+     * @param event The event being raised.
+     * @returns `true` if the event is handled by the current dialog and bubbling should stop.
+     */
+    public onDialogEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
+        return Promise.resolve(false);
     }
 
     /**

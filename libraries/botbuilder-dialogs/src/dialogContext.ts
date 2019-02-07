@@ -7,7 +7,7 @@
  */
 import { Activity, TurnContext } from 'botbuilder-core';
 import { Choice } from './choices';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
 import { StateMap } from './stateMap';
@@ -182,6 +182,43 @@ export class DialogContext {
         } else {
             return { status: DialogTurnStatus.empty };
         }
+    }
+
+    /**
+     * Emits a named event for the current dialog, or someone who started it, to handle.
+     * @param name Name of the event to raise.
+     * @param value (Optional) value to send along with the event.
+     * @param bubble (Optional) flag to control whether the event should be bubbled to its parent if not handled locally. Defaults to a value of `true`.
+     */
+    public async emitEvent(name: string, value?: any, bubble = true): Promise<boolean> {
+        // Initialize event
+        const event: DialogEvent = {
+            bubble: bubble,
+            name: name,
+            value: value
+        };
+
+        // Dispatch to active dialog first
+        let handled = false;
+        let dc: DialogContext = this;
+        while (true) {
+            const instance = dc.activeDialog;
+            if (instance) {
+                const dialog = dc.findDialog(instance.id);
+                if (dialog) {
+                    handled = await dialog.onDialogEvent(dc, event);
+                }
+            }
+
+            // Break out if not bubbling or no parent
+            if (!handled && event.bubble && this.parent) {
+                dc = this.parent;
+            } else {
+                break;
+            }
+        }
+
+        return handled;
     }
 
     /**
