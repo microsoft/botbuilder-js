@@ -139,7 +139,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Initialize waterfall state
-        const state = dc.thisState;
+        const state = dc.state.dialog;
         state.set(PERSISTED_OPTIONS, options || {});
         state.set(PERSISTED_VALUES, {
             instanceId: generate_guid()
@@ -166,7 +166,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // Increment step index and run step
-        const state = dc.thisState;
+        const state = dc.state.dialog;
 
         return await this.runStep(dc, state.get(PERSISTED_STEP_INDEX) + 1, reason, result);
     }
@@ -191,7 +191,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         // Log Waterfall Step event. 
         var stepName = this.waterfallStepName(step.index)
 
-        const state = step.thisState;
+        const state = step.state.dialog;
 
         var properties = 
         { 
@@ -206,7 +206,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     private async runStep(dc: DialogContext, index: number, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         if (index < this.steps.length) {
             // Update persisted step index
-            const state = dc.thisState;
+            const state = dc.state.dialog;
             state.set(PERSISTED_STEP_INDEX, index);
 
             // Create step context

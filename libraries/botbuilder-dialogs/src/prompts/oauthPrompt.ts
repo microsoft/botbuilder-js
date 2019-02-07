@@ -131,7 +131,7 @@ export class OAuthPrompt extends Dialog {
 
         // Initialize prompt state
         const timeout: number = typeof this.settings.timeout === 'number' ? this.settings.timeout : 900000;
-        const state = dc.thisState;
+        const state = dc.state.dialog;
         state.set(PERSISTED_STATE, {});
         state.set(PERSISTED_OPTIONS, o);
         state.set(PERSISTED_EXPIRES, new Date().getTime() + timeout);
@@ -154,7 +154,7 @@ export class OAuthPrompt extends Dialog {
         const recognized: PromptRecognizerResult<TokenResponse> = await this.recognizeToken(dc.context);
 
         // Check for timeout
-        const state = dc.thisState;
+        const state = dc.state.dialog;
         const isMessage: boolean = dc.context.activity.type === ActivityTypes.Message;
         const hasTimedOut: boolean = isMessage && (new Date().getTime() > state.get(PERSISTED_EXPIRES));
         if (hasTimedOut) {
