@@ -138,9 +138,9 @@ export abstract class Dialog<O extends object = {}> {
     public static EndOfTurn: DialogTurnResult = { status: DialogTurnStatus.waiting };
 
     /**
-     * (Optional) label for the dialog.
+     * (Optional) set of tags assigned to the dialog.
      */
-    public label: string;
+    public tags: string[];
 
     /**
      * (Optional) JSONPath expression for the memory slots to bind the dialogs options to on a 
