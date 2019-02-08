@@ -118,6 +118,10 @@ export interface ConversationAccount {
    */
   conversationType: string;
   /**
+   * This conversation's tenant ID
+   */
+  tenantId: string;
+  /**
    * Channel id for the user or bot on this channel (Example: joe@smith.com, or @joesmith or
    * 123456)
    */
@@ -501,6 +505,10 @@ export interface ConversationParameters {
    * (Optional) Topic of the conversation (if supported by the channel)
    */
   topicName?: string;
+  /**
+   * (Optional) The tenant ID in which the conversation should be created
+   */
+  tenantId?: string;
   /**
    * (Optional) When creating a new conversation, use this activity as the initial message to the
    * conversation

@@ -235,7 +235,7 @@ export class BotFrameworkAdapter extends BotAdapter {
             parameters.channelData = { tenant: { id: reference.conversation.tenantId } };
 
             // Permanent solution is to put tenantId in conversation.tenantId
-            parameters.conversation = { tenantId: reference.conversation.tenantId };
+            parameters.tenantId = reference.conversation.tenantId;
 
         }
 
