@@ -154,7 +154,6 @@ export class DialogContext {
         return this._activeTags;
     }
 
-
     /**
      * Pushes a new dialog onto the dialog stack.
      *
@@ -418,6 +417,29 @@ export class DialogContext {
             // Ask dialog to re-prompt if supported
             await dialog.repromptDialog(this.context, instance);
         }
+    }
+
+    /**
+     * Evaluates a selector expression to see if it matches the current set of active tags.
+     * 
+     * @remarks
+     * The syntax for the selector is simply a do separated list of tags. So `profile.namePrompt` 
+     * would return `true` if both the "profile" and "namePrompt" were found to exist in the
+     * current list of [activeTags](#activetags).  
+     * @param selector Selector expression to evaluate. 
+     * @param additionalTags (Optional) additional list of tags that should be considered active.
+     */
+    public tagSelectorMatched(selector: string, additionalTags?: string[]): boolean {
+        const selected = selector.split('.');
+        const activeTags = this.activeTags;
+        additionalTags = additionalTags || [];
+        for (let i = 0; i < selected.length; i++) {
+            const tag = selected[i];
+            if (tag.length > 0 && activeTags.indexOf(tag) < 0 && additionalTags.indexOf(tag) < 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private async endActiveDialog(reason: DialogReason, result?: any): Promise<void> {
