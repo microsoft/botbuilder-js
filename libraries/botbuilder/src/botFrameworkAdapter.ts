@@ -233,7 +233,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             // Putting tenantId in channelData is a temporary solution while we wait for the Teams API to be updated
             parameters.channelData = { tenant: { id: reference.conversation.tenantId } };
 
-            // Permanent solution is to put tenantId in conversation.tenantId
+            // Permanent solution is to put tenantId in parameters.tenantId
             parameters.tenantId = reference.conversation.tenantId;
 
         }
