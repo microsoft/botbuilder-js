@@ -1,5 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+/**
+ * @module botbuilder
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { ActivityTypes, TurnContext } from '.';
 
 export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Promise<void>;
