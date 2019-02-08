@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActivityTypes, TurnContext } from '.';
+import { Activity, ActivityTypes, TurnContext } from '.';
 
-export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Promise<void>;
+export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Promise<any>;
 
 /**
  * Event-emitting base class bots.
@@ -142,6 +142,16 @@ export class ActivityHandler {
     }
 
     /**
+     * Receives event activities of type 'tokens/response'
+     * @remarks
+     * These events occur during the oauth flow
+     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     */
+    public onTokenResponseEvent(handler: BotHandler): this {
+        return this.on('TokenResponseEvent', handler);
+    }
+
+    /**
      * Receives all Invoke activities.
      * @remarks
      * Invoke activities are the synchronous counterpart to event activities.
@@ -150,6 +160,17 @@ export class ActivityHandler {
     public onInvoke(handler: BotHandler): this {
         return this.on('Invoke', handler);
     }
+
+    /**
+     * Receives all MS Teams-specific oauth Invoke activities.
+     * @remarks
+     * Invoke activities are the synchronous counterpart to event activities.
+     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     */
+    public onTeamsVerificationInvoke(handler: BotHandler): this {
+        return this.on('TeamsVerificationInvoke', handler);
+    }
+
 
     /**
      * Receives all InstallationUpdate activities.
@@ -342,7 +363,9 @@ export class ActivityHandler {
                     break;
                 case ActivityTypes.Event:
                     await this.handle(context, 'Event', async () => {
-                        if (context.activity.name === 'createConversation') {
+                        if (context.activity.name === 'tokens/response') {
+                            await this.handle(context, 'TokenResponseEvent', runDialogs);
+                        } else if (context.activity.name === 'createConversation') {
                             await this.handle(context, 'CreateConversation', runDialogs);
                         } else if (context.activity.name === 'continueConversation') {
                             await this.handle(context, 'ContinueConversation', runDialogs);
@@ -352,7 +375,28 @@ export class ActivityHandler {
                     });
                     break;
                 case ActivityTypes.Invoke:
-                    await this.handle(context, 'Invoke', runDialogs);
+                    let response = null;
+                    response = await this.handle(context, 'Invoke', async () => {
+                        if (context.activity.name === 'signin/verifyState') {
+                            // if we have a more specialized handler for this, get our invoke response from that.
+                            if (this.handlers.TeamsVerificationInvoke && this.handlers.TeamsVerificationInvoke.length) {
+                                response = await this.handle(context, 'TeamsVerificationInvoke', runDialogs);
+                            }
+                        } else {
+                            await runDialogs();
+                        }
+                    });
+                    // pass invoke response on
+                    if (response !== null) {
+                        // Send an invokeResponse activity.
+                        // This will actually be cached and sent as the http response
+                        // by the BotFrameworkAdapter (if in use)
+                        const invokeResponseActivity = {
+                            type: 'invokeResponse',
+                            value: response,
+                        } as Activity;
+                        await context.sendActivity(invokeResponseActivity);
+                    }
                     break;
                 case ActivityTypes.InstallationUpdate:
                     await this.handle(context, 'InstallationUpdate', runDialogs);
@@ -408,17 +452,29 @@ export class ActivityHandler {
      * @param type string
      * @param handler BotHandler
      */
-    private async handle(context: TurnContext, type: string,  onNext: () => Promise<void>): Promise<void> {
+    private async handle(context: TurnContext, type: string,  onNext: () => Promise<void>): Promise<any> {
+        let returnValue: any = null;
+
         async function runHandler(index: number): Promise<void> {
             if (index < handlers.length) {
-                await handlers[index](context, () => runHandler(index + 1));
+                const val = await handlers[index](context, () => runHandler(index + 1));
+                // if a value is returned, and we have not yet set the return value,
+                // capture it.  This is used to allow InvokeResponses to be returned.
+                if (typeof(val) !== 'undefined' && returnValue === null) {
+                    returnValue = val;
+                }
             } else {
-                await onNext();
+                const val = await onNext();
+                if (typeof(val) !== 'undefined') {
+                    returnValue = val;
+                }
             }
         }
 
         const handlers = this.handlers[type] || [];
         await runHandler(0);
+
+        return returnValue;
     }
 
 }
