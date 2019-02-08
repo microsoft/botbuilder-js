@@ -49,6 +49,8 @@ export interface DialogState {
  * ```
  */
 export class DialogContext {
+    private _activeTags: string[]|undefined;
+
     /**
      * Set of dialogs that can be called from this dialog context.
      */
@@ -69,13 +71,13 @@ export class DialogContext {
      */
     public readonly state: DialogContextState;
 
-   /**
-    * The parent DialogContext if any.
-    * 
-    * @remarks
-    * This will be used when searching for dialogs to start.
-    */
-   public parent: DialogContext|undefined;
+    /**
+     * The parent DialogContext if any.
+     * 
+     * @remarks
+     * This will be used when searching for dialogs to start.
+     */
+    public parent: DialogContext|undefined;
 
     /**
      * Creates a new DialogContext instance.
@@ -115,6 +117,45 @@ export class DialogContext {
     }
 
     /**
+     * Returns a list of all `Dialog.tags` that are currently on the dialog stack.
+     * 
+     * @remarks
+     * Any duplicate tags are removed from the returned list and the order of the tag reflects the
+     * order of the dialogs on the stack. 
+     * 
+     * The returned list will also include any tags applied as "globalTags". These tags are 
+     * retrieved by calling `context.turnState.get('globalTags')` and will therefore need to be
+     * assigned for every turn of conversation using `context.turnState.set('globalTags', ['myTag'])`.
+     */
+    public get activeTags(): string[] {
+        // Cache tags on first request
+        if (this._activeTags == undefined) {
+            // Get parent tags that are active
+            if (this.parent) {
+                this._activeTags = this.parent.activeTags;
+            } else {
+                this._activeTags = this.context.turnState.get('globalTags') || [];
+            }
+
+            // Add tags for current dialog stack
+            const stack = this.stack;
+            for (let i = 0; i < stack.length; i++) {
+                const dialog = this.findDialog(stack[i].id);
+                if (dialog && dialog.tags.length > 0) {
+                    dialog.tags.forEach((tag) => {
+                        if (this._activeTags.indexOf(tag) < 0) {
+                            this._activeTags.push(tag);
+                        }
+                    });
+                }
+            }
+        }
+
+        return this._activeTags;
+    }
+
+
+    /**
      * Pushes a new dialog onto the dialog stack.
      *
      * @remarks
@@ -151,6 +192,7 @@ export class DialogContext {
             state: {}
         };
         this.stack.push(instance);
+        this._activeTags = undefined;
 
         // Call dialogs begin() method.
         return await dialog.beginDialog(this, options);
@@ -173,6 +215,7 @@ export class DialogContext {
      * - `DialogTurnStatus.empty` if the stack was empty.
      */
     public async cancelAllDialogs(): Promise<DialogTurnResult> {
+        this._activeTags = undefined;
         if (this.stack.length > 0) {
             while (this.stack.length > 0) {
                 await this.endActiveDialog(DialogReason.cancelCalled);
@@ -294,6 +337,7 @@ export class DialogContext {
     public async endDialog(result?: any): Promise<DialogTurnResult> {
         // End the active dialog
         await this.endActiveDialog(DialogReason.endCalled, result);
+        this._activeTags = undefined;
 
         // Resume parent dialog
         const instance: DialogInstance = this.activeDialog;
