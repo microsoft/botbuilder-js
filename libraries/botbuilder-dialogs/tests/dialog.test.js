@@ -13,7 +13,7 @@ class TestDialog extends Dialog {
 
     async beginDialog(dc, options) {
         assert(dc);
-        if (options) {
+        if (options && options.test) {
             assert(options.test === 'test1', `received options and options.test ("${options.test}") was not "test1".`);
         }
         await dc.context.sendActivity('begin called');

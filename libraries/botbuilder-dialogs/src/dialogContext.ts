@@ -7,11 +7,11 @@
  */
 import { Activity, TurnContext } from 'botbuilder-core';
 import { Choice } from './choices';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
 import { StateMap } from './stateMap';
-import * as jsonpath from 'jsonpath';
+import { DialogContextState } from './dialogContextState';
 
 /**
  * State information persisted by a `DialogSet`.
@@ -35,8 +35,10 @@ export interface DialogState {
  * ```
  */
 export class DialogContext {
+    private _activeTags: string[]|undefined;
+
     /**
-     * Set of dialogs that can be called from this context.
+     * Set of dialogs that can be called from this dialog context.
      */
     public readonly dialogs: DialogSet;
 
@@ -51,39 +53,27 @@ export class DialogContext {
     public readonly stack: DialogInstance[];
 
     /**
-     * Values that are persisted across all interactions with the current user.
-     * 
-     * @remarks
-     * These values are visible to all dialogs.
+     * In-memory properties that are currently visible to the active dialog.
      */
-    public readonly userState: StateMap;
+    public readonly state: DialogContextState;
 
     /**
-     * Values that are persisted for the lifetime of the conversation.
+     * The parent DialogContext if any.
      * 
      * @remarks
-     * These values are visible to all dialogs but are intended to be transient and may 
-     * automatically expire after some timeout period.
+     * This will be used when searching for dialogs to start.
      */
-    public readonly conversationState: StateMap;
-
-   /**
-    * The parent DialogContext if any.
-    * 
-    * @remarks
-    * This will be used when searching for dialogs to start.
-    */
-   public parent: DialogContext|undefined;
+    public parent: DialogContext|undefined;
 
     /**
      * Creates a new DialogContext instance.
      * @param dialogs Parent dialog set.
      * @param context Context for the current turn of conversation with the user.
      * @param state State object being used to persist the dialog stack.
-     * @param conversationState (Optional) conversation values to bind context to. If not specified, a new set of conversation values will be persisted off the passed in `state` property.
      * @param userState (Optional) user values to bind context to. If not specified, a new set of user values will be persisted off the passed in `state` property.
+     * @param conversationState (Optional) conversation values to bind context to. If not specified, a new set of conversation values will be persisted off the passed in `state` property.
      */
-    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState, conversationState?: StateMap, userState?: StateMap) {
+    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState, userState?: StateMap, conversationState?: StateMap) {
         if (!Array.isArray(state.dialogStack)) { state.dialogStack = []; }
         this.dialogs = dialogs;
         this.context = context;
@@ -93,13 +83,12 @@ export class DialogContext {
             if (typeof state.conversationState !== 'object') { state.conversationState = {}; }
             conversationState = new StateMap(state.conversationState);
         }
-        this.conversationState = conversationState;
         if (!userState) {
             // Create a new session state map
             if (typeof state.userState !== 'object') { state.userState = {}; }
             userState = new StateMap(state.userState);
         }
-        this.userState = userState;
+        this.state = new DialogContextState(this, userState, conversationState);
     }
 
     /**
@@ -114,16 +103,41 @@ export class DialogContext {
     }
 
     /**
-     * Values that are persisted for the current dialog instance.
+     * Returns a list of all `Dialog.tags` that are currently on the dialog stack.
      * 
      * @remarks
-     * These variables are only visible to the current dialog instance but may be passed to a child
-     * dialog using an `inputBinding`. 
+     * Any duplicate tags are removed from the returned list and the order of the tag reflects the
+     * order of the dialogs on the stack. 
+     * 
+     * The returned list will also include any tags applied as "globalTags". These tags are 
+     * retrieved by calling `context.turnState.get('globalTags')` and will therefore need to be
+     * assigned for every turn of conversation using `context.turnState.set('globalTags', ['myTag'])`.
      */
-    public get thisState(): StateMap {
-        const instance = this.activeDialog;
-        if (!instance) { throw new Error(`DialogContext.thisState: no active dialog instance.`); }
-        return new StateMap(instance.state);
+    public get activeTags(): string[] {
+        // Cache tags on first request
+        if (this._activeTags == undefined) {
+            // Get parent tags that are active
+            if (this.parent) {
+                this._activeTags = this.parent.activeTags;
+            } else {
+                this._activeTags = this.context.turnState.get('globalTags') || [];
+            }
+
+            // Add tags for current dialog stack
+            const stack = this.stack;
+            for (let i = 0; i < stack.length; i++) {
+                const dialog = this.findDialog(stack[i].id);
+                if (dialog && dialog.tags.length > 0) {
+                    dialog.tags.forEach((tag) => {
+                        if (this._activeTags.indexOf(tag) < 0) {
+                            this._activeTags.push(tag);
+                        }
+                    });
+                }
+            }
+        }
+
+        return this._activeTags;
     }
 
     /**
@@ -153,7 +167,7 @@ export class DialogContext {
         for(const option in dialog.inputBindings) {
             if (dialog.inputBindings.hasOwnProperty(option)) {
                 const binding = JSON.parse(JSON.stringify(dialog.inputBindings[option]));
-                options[option] = this.getStateValue(binding);
+                options[option] = this.state.getValue(binding);
             }
         }
 
@@ -163,6 +177,7 @@ export class DialogContext {
             state: {}
         };
         this.stack.push(instance);
+        this._activeTags = undefined;
 
         // Call dialogs begin() method.
         return await dialog.beginDialog(this, options);
@@ -185,6 +200,7 @@ export class DialogContext {
      * - `DialogTurnStatus.empty` if the stack was empty.
      */
     public async cancelAllDialogs(): Promise<DialogTurnResult> {
+        this._activeTags = undefined;
         if (this.stack.length > 0) {
             while (this.stack.length > 0) {
                 await this.endActiveDialog(DialogReason.cancelCalled);
@@ -194,6 +210,43 @@ export class DialogContext {
         } else {
             return { status: DialogTurnStatus.empty };
         }
+    }
+
+    /**
+     * Emits a named event for the current dialog, or someone who started it, to handle.
+     * @param name Name of the event to raise.
+     * @param value (Optional) value to send along with the event.
+     * @param bubble (Optional) flag to control whether the event should be bubbled to its parent if not handled locally. Defaults to a value of `true`.
+     */
+    public async emitEvent(name: string, value?: any, bubble = true): Promise<boolean> {
+        // Initialize event
+        const event: DialogEvent = {
+            bubble: bubble,
+            name: name,
+            value: value
+        };
+
+        // Dispatch to active dialog first
+        let handled = false;
+        let dc: DialogContext = this;
+        while (true) {
+            const instance = dc.activeDialog;
+            if (instance) {
+                const dialog = dc.findDialog(instance.id);
+                if (dialog) {
+                    handled = await dialog.onDialogEvent(dc, event);
+                }
+            }
+
+            // Break out if not bubbling or no parent
+            if (!handled && event.bubble && this.parent) {
+                dc = this.parent;
+            } else {
+                break;
+            }
+        }
+
+        return handled;
     }
 
     /**
@@ -306,6 +359,7 @@ export class DialogContext {
     public async endDialog(result?: any): Promise<DialogTurnResult> {
         // End the active dialog
         await this.endActiveDialog(DialogReason.endCalled, result);
+        this._activeTags = undefined;
 
         // Resume parent dialog
         const instance: DialogInstance = this.activeDialog;
@@ -322,68 +376,6 @@ export class DialogContext {
             // Signal completion
             return { status: DialogTurnStatus.complete, result: result };
         }
-    }
-
-    /**
-     * Executes a JSONPath expression across the current `xxxState` properties.
-     * 
-     * @remarks
-     * The syntax for JSONPath can be found [here](https://github.com/dchester/jsonpath#jsonpath-syntax). 
-     * An array of matching values will be returned.
-     * 
-     * The shape of the object being searched over is as follows:
-     * 
-     * ```JS
-     * {
-     *     user: { ...userState values... },
-     *     conversation: { ...conversationState values... },
-     *     this: { ...thisState values... } 
-     * }
-     * ```
-     * 
-     * As an example, to search for the users name you would pass in an expression of `$.user.name`.
-     * @param pathExpression JSONPath expression to evaluate.
-     * @param count (Optional) number of matches to return. The default value is to return all matches.
-     */
-    public queryState(pathExpression: string, count?: number): any[] {
-        if (pathExpression.indexOf('$.') !== 0) { pathExpression = '$.' + pathExpression }
-        const obj = {
-            user: this.userState.memory,
-            conversation: this.conversationState.memory,
-            this: this.activeDialog ? this.thisState.memory : undefined
-        }
-        return jsonpath.query(obj, pathExpression, count);
-    }
-
-    /**
-     * Returns the first value that matches a JSONPath expression.
-     * @param pathExpression JSONPath expression to evaluate.
-     * @param defaultValue (Optional) value to return if the path can't be found. Defaults to `undefined`.
-     */
-    public getStateValue<T = any>(pathExpression: string, defaultValue?: T): T {
-        if (pathExpression.indexOf('$.') !== 0) { pathExpression = '$.' + pathExpression }
-        const obj = {
-            user: this.userState.memory,
-            conversation: this.conversationState.memory,
-            this: this.activeDialog ? this.thisState.memory : undefined
-        }
-        const value = jsonpath.value(obj, pathExpression);
-        return value !== undefined ? value : defaultValue;
-    }
-
-    /**
-     * Assigns a value to a given JSONPath expression.
-     * @param pathExpression JSONPath expression to evaluate.
-     * @param value Value to assign.
-     */
-    public setStateValue(pathExpression: string, value?: any): void {
-        if (pathExpression.indexOf('$.') !== 0) { pathExpression = '$.' + pathExpression }
-        const obj = {
-            user: this.userState.memory,
-            conversation: this.conversationState.memory,
-            this: this.activeDialog ? this.thisState.memory : undefined
-        }
-        jsonpath.value(obj, pathExpression, value);
     }
 
     /**
@@ -450,6 +442,29 @@ export class DialogContext {
         }
     }
 
+    /**
+     * Evaluates a selector expression to see if it matches the current set of active tags.
+     * 
+     * @remarks
+     * The syntax for the selector is simply a do separated list of tags. So `profile.namePrompt` 
+     * would return `true` if both the "profile" and "namePrompt" were found to exist in the
+     * current list of [activeTags](#activetags).  
+     * @param selector Selector expression to evaluate. 
+     * @param additionalTags (Optional) additional list of tags that should be considered active.
+     */
+    public tagSelectorMatched(selector: string, additionalTags?: string[]): boolean {
+        const selected = selector.split('.');
+        const activeTags = this.activeTags;
+        additionalTags = additionalTags || [];
+        for (let i = 0; i < selected.length; i++) {
+            const tag = selected[i];
+            if (tag.length > 0 && activeTags.indexOf(tag) < 0 && additionalTags.indexOf(tag) < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private async endActiveDialog(reason: DialogReason, result?: any): Promise<void> {
         const instance: DialogInstance = this.activeDialog;
         if (instance) {
@@ -465,7 +480,7 @@ export class DialogContext {
 
             // Process dialogs output binding
             if (dialog && dialog.outputBinding && result !== undefined) {
-                this.setStateValue(dialog.outputBinding, result);
+                this.state.setValue(dialog.outputBinding, result);
             }
         }
     }
