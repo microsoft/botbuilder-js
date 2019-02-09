@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from 'azure-cognitiveservices-luis-runtime';
+import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
 import { RecognizerResult, TurnContext } from 'botbuilder';
-import * as msRest from 'ms-rest';
+import * as msRest from "@azure/ms-rest-js";
 import * as os from 'os';
 
 const pjson = require('../package.json');
@@ -135,9 +135,10 @@ export class LuisRecognizer {
         this.includeApiResults = !!includeApiResults;
 
         // Create client
+        
         const creds: msRest.TokenCredentials = new msRest.TokenCredentials(application.endpointKey);
         const baseUri: string = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
-        this.luisClient = new LuisClient(creds, baseUri);
+        this.luisClient = new LuisClient(baseUri, creds);
     }
 
     /**

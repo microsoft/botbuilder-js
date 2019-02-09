@@ -369,8 +369,8 @@ describe('LuisRecognizer', function () {
         const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response 400: The request's body or parameters are incorrect, meaning they are missing, malformed, or too large.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
+            expectedStatus = 400;
+            assert(error.statusCode === expectedStatus, `unexpected error message thrown.`);
             nock.cleanAll();
             done();
         });
@@ -382,8 +382,8 @@ describe('LuisRecognizer', function () {
         const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response 401: The key used is invalid, malformed, empty, or doesn't match the region.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
+            expectedStatus = 401;
+            assert(error.statusCode === expectedStatus, `unexpected error message thrown.`);
             nock.cleanAll();
             done();
         });
@@ -395,8 +395,8 @@ describe('LuisRecognizer', function () {
         const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response 403: Total monthly key quota limit exceeded.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
+            expectedStatus = 403;
+            assert(error.statusCode === expectedStatus, `unexpected error message thrown.`);
             nock.cleanAll();
             done();
         });
@@ -408,8 +408,8 @@ describe('LuisRecognizer', function () {
         const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response 409: Application loading in progress, please try again.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
+            expectedStatus = 409;
+            assert(error.statusCode === expectedStatus, `unexpected error message thrown.`);
             nock.cleanAll();
             done();
         });
@@ -421,8 +421,8 @@ describe('LuisRecognizer', function () {
         const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response 410: Please retrain and republish your application.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
+            expectedStatus = 410;
+            assert(error.statusCode === expectedStatus, `unexpected error message thrown.`);
             nock.cleanAll();
             done();
         });
@@ -434,8 +434,8 @@ describe('LuisRecognizer', function () {
         const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response 414: The query is too long. Please reduce the query length to 500 or less characters.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
+            expectedStatus = 414;
+            assert(error.statusCode === expectedStatus, `unexpected error message thrown.`);
             nock.cleanAll();
             done();
         });
@@ -447,8 +447,8 @@ describe('LuisRecognizer', function () {
         const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response 429: Too many requests.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
+            expectedStatus = 429;
+            assert(error.statusCode === expectedStatus, `unexpected error message thrown.`);
             nock.cleanAll();
             done();
         });
@@ -461,8 +461,8 @@ describe('LuisRecognizer', function () {
         const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response ${statusCode}: Unexpected status code received. Please verify that your LUIS application is properly setup.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
+            expectedStatus = 404;
+            assert(error.statusCode === expectedStatus, `unexpected error message thrown.`);
             nock.cleanAll();
             done();
         });
