@@ -9,6 +9,8 @@ import { Dialog, DialogTurnResult } from './dialog';
 import { DialogContext } from './dialogContext';
 
 export abstract class DialogCommand<O extends object = {}> extends Dialog<O> {
+    public steps: Dialog[] = [];
+
     protected abstract onRunCommand(dc: DialogContext): Promise<DialogTurnResult>;
 
     public beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
@@ -35,7 +37,7 @@ export abstract class DialogCommand<O extends object = {}> extends Dialog<O> {
         let i = dc.stack.length - 1; 
         while (i > 0) {
             // Commands store the index of the state they're inheriting so we can tell a command
-            // by looking to see if its state of type 'number'.
+            // by looking to see if its state is of type 'number'.
             if (typeof dc.stack[i].state === 'number') {
                 dc.stack.pop();
                 i--;
