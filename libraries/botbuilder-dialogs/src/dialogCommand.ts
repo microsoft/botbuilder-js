@@ -27,6 +27,11 @@ export abstract class DialogCommand<O extends object = {}> extends Dialog<O> {
         return await dc.replaceDialog(dialogId, options);
     }
 
+    protected async repeatParentDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
+        this.popCommands(dc);
+        return await dc.replaceDialog(dc.activeDialog.id, options);
+    }
+
     protected async cancelAllParentDialogs(dc: DialogContext): Promise<DialogTurnResult> {
         this.popCommands(dc);
         return await dc.cancelAllDialogs();
