@@ -86,10 +86,6 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         this.runDialogSet.add(this);
     }
 
-    protected onComputeID(): string {
-        return `planningDialog(${this.bindingPath()})`;
-    }
-
     public beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Persist options to dialog state
         options = options || {} as O;

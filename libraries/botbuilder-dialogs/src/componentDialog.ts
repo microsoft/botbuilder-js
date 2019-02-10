@@ -107,21 +107,6 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
      */
     protected initialDialogId: string;
     private readonly dialogs: DialogSet = new DialogSet(null);
-    private readonly mainDialogSet: DialogSet;
-    private readonly userState: StatePropertyAccessor<object>;
-
-    /**
-     * Creates a new ComponentDialog instance.
-     * @param dialogId (Optional) unique ID of the component within its parents dialog set.
-     * @param conversationState (Optional) state property used to persists the components conversation state when the `run()` method is called.
-     * @param userState (Optional) state property used to persist the users state when the `run()` method is called.
-     */
-    constructor(dialogId?: string, conversationState?: StatePropertyAccessor<DialogState>, userState?: StatePropertyAccessor<object>) {
-        super(dialogId);
-        this.mainDialogSet = new DialogSet(conversationState);
-        this.mainDialogSet.add(this);
-        this.userState = userState;
-    }
 
     protected onComputeID(): string {
         return `component[${this.bindingPath()}]`;
@@ -323,46 +308,4 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
-
-    /**
-     * Called from within the bots logic handler to route a received activity to the appropriate 
-     * dialog.
-     * 
-     * @remarks
-     * This method lets any component be run in isolation without having to be added to another 
-     * `ComponentDialog` or `DialogSet`. 
-     * @param context Context for the current turn of conversation with the user.
-     * @param options (Optional) options that can be used to control the running of the component.
-     */
-    public async run(context: TurnContext, options?: ComponentDialogRunOptions): Promise<DialogTurnResult> {
-        options = options || {};
-
-        // Lookup user state
-        const sessionState = options.sessionState;
-        let userState = options.userState;
-        if (!userState && this.userState) {
-            userState = await this.userState.get(context, {});
-        }
-
-        // Create a dialog context
-        let dc: DialogContext;
-        if (options.conversationState) {
-            const session = sessionState ? new StateMap(sessionState) : undefined;
-            const user = userState ? new StateMap(userState) : undefined;
-            dc = new DialogContext(this.mainDialogSet, context, options.conversationState, session, user);
-        } else {
-            dc = await this.mainDialogSet.createContext(context, sessionState, userState);
-        }
-
-        // Attempt to continue execution of the components current dialog
-        let result = await dc.continueDialog();
-
-        // Start the component if it wasn't already running
-        if (result.status === DialogTurnStatus.empty) {
-            result = await dc.beginDialog(this.id, options.dialogOptions);
-        }
-
-        return result;
-    }
-
 }

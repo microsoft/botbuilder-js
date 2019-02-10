@@ -13,6 +13,10 @@ import { PlanningEventNames, PlanChangeList, PlanChange, PlanChangeType } from '
 export class SequenceDialog extends PlanningDialog {
     public readonly steps: Dialog[] = [];
 
+    protected onComputeID(): string {
+        return `sequence(${this.bindingPath()})`;
+    }
+
     public addStep(...steps: Dialog[]): this {
         steps.forEach((step) => {
             this.addDialog(step);
