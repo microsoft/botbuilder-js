@@ -1,5 +1,4 @@
 const assert = require('assert');
-const { ActivityTypes } = require('libraries/botbuilder-core/lib');
 
 function uuid() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -12,7 +11,7 @@ function createActivities(conversationId, ts, count = 5) {
     var activities = [];
     for (let i = 1; i <= count; i++) {
         activities.push({
-            type: ActivityTypes.Message,
+            type: 'message',
             timestamp: ts,
             id: uuid(),
             text: i.toString(),
@@ -25,7 +24,7 @@ function createActivities(conversationId, ts, count = 5) {
         ts = new Date(ts.getTime() + 60000);
 
         activities.push({
-            type: ActivityTypes.Message,
+            type: 'message',
             timestamp: ts,
             id: uuid(),
             text: i.toString(),
