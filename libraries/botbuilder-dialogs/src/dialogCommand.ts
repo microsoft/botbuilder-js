@@ -11,10 +11,10 @@ import { DialogContext } from './dialogContext';
 export abstract class DialogCommand<O extends object = {}> extends Dialog<O> {
     public steps: Dialog[] = [];
 
-    protected abstract onRunCommand(dc: DialogContext): Promise<DialogTurnResult>;
+    protected abstract onRunCommand(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
 
-    public beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
-        return this.onRunCommand(dc);
+    public beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        return this.onRunCommand(dc, options);
     }
 
     protected async endParentDialog(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
@@ -25,6 +25,11 @@ export abstract class DialogCommand<O extends object = {}> extends Dialog<O> {
     protected async replaceParentDialog(dc: DialogContext, dialogId: string, options?: object): Promise<DialogTurnResult> {
         this.popCommands(dc);
         return await dc.replaceDialog(dialogId, options);
+    }
+
+    protected async repeatParentDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
+        this.popCommands(dc);
+        return await dc.replaceDialog(dc.activeDialog.id, options);
     }
 
     protected async cancelAllParentDialogs(dc: DialogContext): Promise<DialogTurnResult> {
