@@ -24,7 +24,7 @@ export interface CallDialogConfiguration extends DialogConfiguration {
     options?: object;
 
     /**
-     * (Optional) data binds the called dialogs input & output to the given property.
+     * (Optional) data binds the called dialogs input & output to the given state property.
      * 
      * @remarks
      * The bound properties current value will be passed to the called dialog as part of its 
@@ -46,7 +46,7 @@ export class CallDialog<O extends object = {}> extends Dialog<O> {
     public dialogId: string;
 
     /**
-     * (Optional) static options to pass to called dialog.
+     * (Optional) static options to pass to the called dialog.
      * 
      * @remarks
      * These options will be merged with any dynamic options configured as 

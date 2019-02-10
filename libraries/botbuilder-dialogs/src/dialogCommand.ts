@@ -11,10 +11,10 @@ import { DialogContext } from './dialogContext';
 export abstract class DialogCommand<O extends object = {}> extends Dialog<O> {
     public steps: Dialog[] = [];
 
-    protected abstract onRunCommand(dc: DialogContext): Promise<DialogTurnResult>;
+    protected abstract onRunCommand(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
 
-    public beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
-        return this.onRunCommand(dc);
+    public beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        return this.onRunCommand(dc, options);
     }
 
     protected async endParentDialog(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
