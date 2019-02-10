@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 export * from './choices';
+export * from './planning';
 export * from './prompts';
 export * from './dialog';
 export * from './componentDialog';

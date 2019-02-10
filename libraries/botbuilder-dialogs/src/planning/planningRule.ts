@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog } from '../dialog';
-import { PlanningContext as PlanningContext, PlanChangeList } from './sequenceContext';
+import { PlanningContext, PlanChangeList } from './planningContext';
  
 export interface PlanningRule {
     /**
@@ -16,8 +16,8 @@ export interface PlanningRule {
 
     /**
      * Evaluates the rule and returns a predicted set of changes that should be applied to the 
-     * current sequence.
-     * @param sequence Context object for the current sequence.
+     * current plan.
+     * @param planning Planning context object for the current conversation.
      */
-    evaluate(sequence: PlanningContext): Promise<PlanChangeList|undefined>;
+    evaluate(planning: PlanningContext): Promise<PlanChangeList|undefined>;
 }
