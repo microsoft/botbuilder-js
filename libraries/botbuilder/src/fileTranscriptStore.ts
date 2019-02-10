@@ -9,7 +9,6 @@ import * as fs from 'async-file';
 import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
 import * as filenamify from 'filenamify';
 import * as path from 'path';
-import * as rimraf from 'rimraf';
 
 /**
  * The file transcript store stores transcripts in file system with each activity as a file.
@@ -30,7 +29,7 @@ export class FileTranscriptStore implements TranscriptStore {
 
     private static readonly PageSize: number = 20;
 
-    private rootFolder: string;
+    private readonly rootFolder: string;
 
     /**
      * Creates an instance of FileTranscriptStore.
@@ -48,7 +47,7 @@ export class FileTranscriptStore implements TranscriptStore {
      * Log an activity to the transcript.
      * @param activity Activity being logged.
      */
-    public logActivity(activity: Activity): void | Promise<void> {
+    public async logActivity(activity: Activity): Promise<void> {
         if (!activity) {
             throw new Error('activity cannot be null for logActivity()');
         }
@@ -66,7 +65,7 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param continuationToken (Optional) Continuation token to page through results.
      * @param startDate (Optional) Earliest time to include.
      */
-    public getTranscriptActivities(
+    public async getTranscriptActivities(
         channelId: string,
         conversationId: string,
         continuationToken?: string,
@@ -79,36 +78,31 @@ export class FileTranscriptStore implements TranscriptStore {
         const pagedResult: PagedResult<Activity> = { items: [], continuationToken: undefined };
         const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
 
-        return fs.exists(transcriptFolder).then((exists: boolean) => {
-            if (!exists) { return pagedResult; }
+        const exists = await fs.exists(transcriptFolder);
+        if (!exists) {
+        	return pagedResult;
+		}
 
-            return fs.readdir(transcriptFolder)
-                .then((files: string[]) => files
-                    .filter((f: string) => f.endsWith('.json'))     // .json only
-                    .sort()                                         // sorted
-                    .filter(withDateFilter(startDate)))             // >= startDate
-                .then((files: string[]) => {                        // get proper page
-                    if (continuationToken) {
-                        return files
-                            .filter(withContinuationToken(continuationToken))
-                            .slice(1, FileTranscriptStore.PageSize + 1);
-                    } else {
-                        return files.slice(0, FileTranscriptStore.PageSize);
-                    }
-                })
-                .then((files: string[]) => files.map((activityFilename: string) =>
-                    fs.readFile(path.join(transcriptFolder, activityFilename), 'utf8')))
-                .then((reads: any[]) => Promise.all(reads))
-                .then((jsons: string[]) => {
-                    const items: Activity[] = jsons.map(parseActivity);
-                    pagedResult.items = items;
-                    if (pagedResult.items.length === FileTranscriptStore.PageSize) {
-                        pagedResult.continuationToken = pagedResult.items[pagedResult.items.length - 1].id;
-                    }
+        let transcriptFolderContents = await fs.readdir(transcriptFolder);
+        const include = includeWhen(fileName => !continuationToken || path.parse(fileName).name === continuationToken);
+        const items = transcriptFolderContents.filter(transcript =>
+			transcript.endsWith('.json') &&
+			withDateFilter(startDate, transcript) &&
+			include(transcript));
 
-                    return pagedResult;
-                });
-        });
+		pagedResult.items = await Promise.all(items
+			.slice(0, FileTranscriptStore.PageSize)
+			.sort()
+			.map(async activityFilename => {
+				const json = await fs.readFile(path.join(transcriptFolder, activityFilename), 'utf8');
+				return parseActivity(json);
+			})
+		);
+		const {length} = pagedResult.items;
+		if (pagedResult.items.length === FileTranscriptStore.PageSize && items[length]) {
+			pagedResult.continuationToken = path.parse(items[length]).name;
+		}
+		return pagedResult;
     }
 
     /**
@@ -116,39 +110,27 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param channelId Channel Id.
      * @param continuationToken (Optional) Continuation token to page through results.
      */
-    public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
+    public async listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
         const pagedResult: PagedResult<TranscriptInfo> = { items: [], continuationToken: undefined };
         const channelFolder: string = this.getChannelFolder(channelId);
 
-        return fs.exists(channelFolder).then((exists: boolean) => {
-            if (!exists) { return pagedResult; }
+        const exists = await fs.exists(channelFolder);
+        if (!exists) {
+        	return pagedResult;
+		}
+        const channels = await fs.readdir(channelFolder);
+        const items = channels.filter(includeWhen(di => !continuationToken || di === continuationToken));
+        pagedResult.items = items
+			.slice(0, FileTranscriptStore.PageSize)
+			.map(i => ({channelId: channelId,	id: i,	created: null}));
+		const {length} = pagedResult.items;
+		if (length === FileTranscriptStore.PageSize && items[length]) {
+			pagedResult.continuationToken = items[length];
+		}
 
-            return fs.readdir(channelFolder)
-                .then((dirs: string[]) => {
-                    let items: string[] = [];
-                    if (continuationToken) {
-                        items = dirs
-                            .filter(skipWhileExpression((di: string) => di !== continuationToken))
-                            .slice(1, FileTranscriptStore.PageSize + 1);
-                    } else {
-                        items = dirs.slice(0, FileTranscriptStore.PageSize);
-                    }
-
-                    pagedResult.items = items.map((i: string) => ({
-                        channelId: channelId,
-                        id: i,
-                        created: null
-                    }));
-
-                    if (pagedResult.items.length === FileTranscriptStore.PageSize) {
-                        pagedResult.continuationToken = pagedResult.items[pagedResult.items.length - 1].id;
-                    }
-
-                    return pagedResult;
-                });
-        });
+		return pagedResult;
     }
 
     /**
@@ -156,30 +138,24 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      */
-    public deleteTranscript(channelId: string, conversationId: string): Promise<void> {
+    public async deleteTranscript(channelId: string, conversationId: string): Promise<void> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
         if (!conversationId) { throw new Error('Missing conversationId'); }
 
         const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
 
-        return new Promise((resolve: any): void =>
-            rimraf(transcriptFolder, resolve));
+        return fs.delete(transcriptFolder);
     }
 
-    private saveActivity(activity: Activity, transcriptPath: string, activityFilename: string): Promise<void> {
+    private async saveActivity(activity: Activity, transcriptPath: string, activityFilename: string): Promise<void> {
         const json: string = JSON.stringify(activity, null, '\t');
 
-        return this.ensureFolder(transcriptPath).then(() => {
-            return fs.writeFile(path.join(transcriptPath, activityFilename), json, 'utf8');
-        });
-    }
-
-    // tslint:disable-next-line:no-shadowed-variable
-    private ensureFolder(path: string): Promise<void> {
-        return fs.exists(path).then((exists: boolean) => {
-            if (!exists) { return fs.mkdirp(path); }
-        });
+        const exists = await fs.exists(transcriptPath);
+        if (!exists) {
+        	await fs.mkdirp(transcriptPath);
+		}
+		return fs.writeFile(path.join(transcriptPath, activityFilename), json, 'utf8');
     }
 
     private getActivityFilename(activity: Activity): string {
@@ -234,45 +210,24 @@ function readDate(ticks: string): Date {
 /**
  * @private
  * @param date A date used to create a filter.
+ * @param fileName The filename containing the timestamp string
  */
-function withDateFilter(date: Date): any {
-    if (!date) { return (): boolean => true; }
+function withDateFilter(date: Date, fileName: string): any {
+    if (!date) { return true; }
 
-    return (filename: string): boolean => {
-        const ticks: string = filename.split('-')[0];
-
-        return readDate(ticks) >= date;
-    };
-}
-
-/**
- * @private
- * @param continuationToken A continuation token.
- */
-function withContinuationToken(continuationToken: string): any {
-    if (!continuationToken) { return (): boolean => true; }
-
-    return skipWhileExpression((fileName: string): boolean => {
-        const id: string = fileName.substring(fileName.indexOf('-') + 1, fileName.indexOf('.'));
-
-        return id !== continuationToken;
-    });
+	const ticks: string = fileName.split('-')[0];
+	return readDate(ticks) >= date;
 }
 
 /**
  * @private
  * @param expression A function that will be used to test items.
  */
-function skipWhileExpression(expression: any): any {
-    let skipping: boolean = true;
+function includeWhen(expression: any): any {
+    let shouldInclude: boolean = false;
 
     return (item: any): boolean => {
-        if (!skipping) { return true; }
-        if (!expression(item)) {
-            skipping = false;
-        }
-
-        return !skipping;
+		return shouldInclude || (shouldInclude = expression(item));
     };
 }
 
