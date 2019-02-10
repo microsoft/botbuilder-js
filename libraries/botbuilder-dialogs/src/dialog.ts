@@ -15,12 +15,12 @@ export interface DialogInstance {
     /**
      * ID of the dialog this instance is for.
      */
-     id: string;
+    id: string;
 
     /**
      * The instances persisted state.
      */
-     state: object;
+    state: object;
 }
 
 /**
@@ -144,6 +144,18 @@ export interface DialogEvent {
     value?: any;
 }
 
+export interface DialogConfiguration {
+    id?: string;
+
+    tags?: string[];
+
+    inputBindings?: { [option:string]: string; };
+
+    outputBinding?: string;
+
+    telemetryClient?: BotTelemetryClient;
+}
+
 /**
  * Base class for all dialogs.
  */
@@ -158,7 +170,7 @@ export abstract class Dialog<O extends object = {}> {
     /**
      * (Optional) set of tags assigned to the dialog.
      */
-    public tags: string[];
+    public readonly tags: string[] = [];
 
     /**
      * (Optional) JSONPath expression for the memory slots to bind the dialogs options to on a 
@@ -316,5 +328,20 @@ export abstract class Dialog<O extends object = {}> {
         } else {
             return '';
         }
+    }
+
+    public static configure(dialog: Dialog, config: DialogConfiguration): Dialog {
+        if (config.id) { dialog.id = config.id }
+        if (config.telemetryClient) { dialog.telemetryClient = config.telemetryClient }
+        if (config.outputBinding) { dialog.outputBinding = config.outputBinding }
+        if (config.inputBindings) {
+            for (const key in config.inputBindings) {
+                dialog.inputBindings[key] = config.inputBindings[key];
+            }
+        }
+        if (config.tags) { 
+            config.tags.forEach((tag) => dialog.tags.push(tag));
+        }
+        return dialog;
     }
 }
