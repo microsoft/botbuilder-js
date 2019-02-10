@@ -6,7 +6,11 @@
  * Licensed under the MIT License.
  */
 import { InputHints, TurnContext } from 'botbuilder-core';
-import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
+import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext } from './prompt';
+import { DialogConfiguration } from '../dialog';
+
+export interface TextPromptConfiguration extends DialogConfiguration {
+}
 
 /**
  * Prompts a user to enter some text.
@@ -22,7 +26,7 @@ export class TextPrompt extends Prompt<string> {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
     constructor(dialogId?: string, validator?: PromptValidator<string>) {
-        super(dialogId, validator);
+        super(dialogId, validator||defaultValidator);
     }
 
     protected onComputeID(): string {
@@ -42,4 +46,8 @@ export class TextPrompt extends Prompt<string> {
 
         return typeof value === 'string' && value.length > 0 ? { succeeded: true, value: value } : { succeeded: false };
     }
+}
+
+async function defaultValidator(prompt: PromptValidatorContext<string>): Promise<boolean> {
+    return prompt.preValidation ? typeof prompt.recognized.value === 'string' : prompt.recognized.succeeded;
 }

@@ -65,6 +65,8 @@ export interface PromptOptions {
      * (Optional) Additional validation rules to pass the prompts validator routine.
      */
     validations?: object;
+
+    value?: any;
 }
 
 /**
@@ -141,6 +143,12 @@ export interface PromptValidatorContext<T> {
      * The validator can extend this interface to support additional prompt options.
      */
     readonly options: PromptOptions;
+
+    /**
+     * If `true` the [recognized.value](#recognized) is the initial value passed into the prompt
+     * and the validator is being called to determine if the current value is valid. 
+     */
+    readonly preValidation: boolean;
 }
 
 /**
@@ -155,6 +163,15 @@ export abstract class Prompt<T> extends Dialog {
      */
     constructor(dialogId?: string, private validator?: PromptValidator<T>) {
         super(dialogId);
+    }
+
+    public set property(value: string) {
+        this.inputBindings['value'] = value;
+        this.outputBinding = value;
+    }
+
+    public get property(): string {
+        return this.inputBindings['value'];
     }
 
     public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
@@ -172,8 +189,35 @@ export abstract class Prompt<T> extends Dialog {
         state.set(PERSISTED_OPTIONS, opt);
         state.set(PERSISTED_STATE, {});
 
-        // Send initial prompt
-        await this.onPrompt(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), false);
+        const recognized: PromptRecognizerResult<T> = {
+            value: options.value,
+            succeeded: true
+        };
+        const value = options['value'];
+        if (value !== undefined) {
+            let isValid = true;
+            if (this.validator) {
+                isValid = await this.validator({
+                    context: dc.context,
+                    recognized: recognized,
+                    state: state.get(PERSISTED_STATE),
+                    options: state.get(PERSISTED_OPTIONS),
+                    preValidation: true
+                });
+            }
+
+            // Return validated value or prompt
+            if (isValid) {
+                return await dc.endDialog(recognized.value);
+            } else {
+                if (!dc.context.responded) {
+                    await this.onPrompt(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), false);
+                }
+            }
+        } else {
+            // Send initial prompt
+            await this.onPrompt(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), false);
+        }
 
         return Dialog.EndOfTurn;
     }
@@ -195,7 +239,8 @@ export abstract class Prompt<T> extends Dialog {
                 context: dc.context,
                 recognized: recognized,
                 state: state.get(PERSISTED_STATE),
-                options: state.get(PERSISTED_OPTIONS)
+                options: state.get(PERSISTED_OPTIONS),
+                preValidation: false
             });
         } else if (recognized.succeeded) {
             isValid = true;

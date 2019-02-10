@@ -7,7 +7,7 @@
  */
 import * as Recognizers from '@microsoft/recognizers-text-date-time';
 import { Activity, InputHints, TurnContext } from 'botbuilder-core';
-import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
+import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext } from './prompt';
 
 /**
  * Result returned by the `DateTimePrompt`.
@@ -51,7 +51,7 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
      * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
      */
     constructor(dialogId?: string, validator?: PromptValidator<DateTimeResolution[]>, defaultLocale?: string) {
-        super(dialogId, validator);
+        super(dialogId, validator || defaultValidator);
         this.defaultLocale = defaultLocale;
     }
 
@@ -83,5 +83,20 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
         }
 
         return result;
+    }
+}
+
+async function defaultValidator(prompt: PromptValidatorContext<DateTimeResolution[]>): Promise<boolean> {
+    if (prompt.preValidation) {
+        const results = prompt.recognized.value;
+        if (Array.isArray(results) && results.length > 0) {
+            if (typeof results[0] === 'object' && results[0].timex) {
+                return true;
+            }
+        }
+
+        return false;
+    } else {
+        return prompt.recognized.succeeded;
     }
 }

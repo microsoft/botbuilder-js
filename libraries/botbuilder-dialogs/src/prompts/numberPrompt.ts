@@ -7,7 +7,7 @@
  */
 import * as Recognizers from '@microsoft/recognizers-text-number';
 import { Activity, InputHints, TurnContext } from 'botbuilder-core';
-import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
+import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext } from './prompt';
 
 /**
  * Prompts a user to enter a number.
@@ -29,7 +29,7 @@ export class NumberPrompt extends Prompt<number> {
      * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
      */
     constructor(dialogId?: string, validator?: PromptValidator<number>, defaultLocale?: string) {
-        super(dialogId, validator);
+        super(dialogId, validator || defaultValidator);
         this.defaultLocale = defaultLocale;
     }
 
@@ -58,4 +58,9 @@ export class NumberPrompt extends Prompt<number> {
 
         return result;
     }
+}
+
+
+async function defaultValidator(prompt: PromptValidatorContext<number>): Promise<boolean> {
+    return prompt.preValidation ? typeof prompt.recognized.value === 'number' : prompt.recognized.succeeded;
 }

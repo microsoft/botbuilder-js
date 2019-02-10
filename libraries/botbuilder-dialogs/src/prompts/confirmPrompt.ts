@@ -8,7 +8,7 @@
 import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { Activity, TurnContext } from 'botbuilder-core';
 import { Choice, ChoiceFactoryOptions, recognizeChoices } from '../choices';
-import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
+import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext } from './prompt';
 
 /**
  * Prompts a user to confirm something with a "yes" or "no" response.
@@ -77,7 +77,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
      * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
      */
     constructor(dialogId?: string, validator?: PromptValidator<boolean>, defaultLocale?: string) {
-        super(dialogId, validator);
+        super(dialogId, validator || defaultValidator);
         this.style = ListStyle.auto;
         this.defaultLocale = defaultLocale;
     }
@@ -138,4 +138,8 @@ export class ConfirmPrompt extends Prompt<boolean> {
         }
         return culture;
     }
+}
+
+async function defaultValidator(prompt: PromptValidatorContext<boolean>): Promise<boolean> {
+    return prompt.preValidation ? typeof prompt.recognized.value === 'boolean' : prompt.recognized.succeeded;
 }

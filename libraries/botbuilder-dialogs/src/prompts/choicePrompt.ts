@@ -7,7 +7,7 @@
  */
 import { Activity, TurnContext } from 'botbuilder-core';
 import { ChoiceFactory, ChoiceFactoryOptions, FindChoicesOptions, FoundChoice, recognizeChoices } from '../choices';
-import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
+import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext } from './prompt';
 
 /**
  * Prompts a user to select from a list of choices.
@@ -63,7 +63,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
     constructor(dialogId?: string, validator?: PromptValidator<FoundChoice>, defaultLocale?: string) {
-        super(dialogId, validator);
+        super(dialogId, validator || defaultValidator);
         this.style = ListStyle.auto;
         this.defaultLocale = defaultLocale;
     }
@@ -111,3 +111,23 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         return result;
     }
 }
+
+async function defaultValidator(prompt: PromptValidatorContext<FoundChoice>): Promise<boolean> {
+    if (prompt.preValidation) {
+        const choice = prompt.recognized.value;
+        if (typeof choice === 'object' && choice.value) {
+            const options = prompt.options;
+            const choices = ChoiceFactory.toChoices(options.choices);
+            const results = recognizeChoices(choice.value, choices);
+            if (Array.isArray(results) && results.length > 0) {
+                prompt.recognized.value = results[0].resolution;
+                return true;
+            }
+        }
+
+        return false;
+    } else {
+        return prompt.recognized.succeeded;
+    }
+}
+

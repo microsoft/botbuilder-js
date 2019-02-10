@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Attachment, InputHints, TurnContext } from 'botbuilder-core';
-import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
+import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext } from './prompt';
 
 /**
  * Prompts a user to upload attachments like images.
@@ -22,7 +22,7 @@ export class AttachmentPrompt extends Prompt<Attachment[]> {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
     constructor(dialogId?: string, validator?: PromptValidator<Attachment[]>) {
-        super(dialogId, validator);
+        super(dialogId, validator || defaultValidator);
     }
 
     protected onComputeID(): string {
@@ -41,5 +41,21 @@ export class AttachmentPrompt extends Prompt<Attachment[]> {
         const value: Attachment[] = context.activity.attachments;
 
         return Array.isArray(value) && value.length > 0 ? { succeeded: true, value: value } : { succeeded: false };
+    }
+}
+
+
+async function defaultValidator(prompt: PromptValidatorContext<Attachment[]>): Promise<boolean> {
+    if (prompt.preValidation) {
+        const attachments = prompt.recognized.value;
+        if (Array.isArray(attachments) && attachments.length > 0) {
+            if (typeof attachments[0] === 'object' && (attachments[0].content || attachments[0].contentUrl)) {
+                return true;
+            }
+        }
+
+        return false;
+    } else {
+        return prompt.recognized.succeeded;
     }
 }
