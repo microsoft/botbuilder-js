@@ -32,12 +32,13 @@ export abstract class DialogCommand<O extends object = {}> extends Dialog<O> {
 
     private popCommands(dc: DialogContext): void {
         // Pop all commands off the stack.
-        while (dc.stack.length > 1) {
+        let i = dc.stack.length - 1; 
+        while (i > 0) {
             // Commands store the index of the state they're inheriting so we can tell a command
             // by looking to see if its state of type 'number'.
-            const i = dc.stack.length - 1;
             if (typeof dc.stack[i].state === 'number') {
                 dc.stack.pop();
+                i--;
             } else {
                 break;
             }
