@@ -9,6 +9,7 @@ import { BotTelemetryClient, StatePropertyAccessor, TurnContext } from 'botbuild
 import { Dialog } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 import { StateMap } from './stateMap';
+import { DialogCommand } from './dialogCommand';
 
 /**
  * A related set of dialogs that can all call each other.
@@ -110,6 +111,13 @@ export class DialogSet {
         }
         
         this.dialogs[dialog.id] = dialog;
+
+        // Automatically add and DialogCommand's steps to the set.
+        if (dialog instanceof DialogCommand) {
+            const command = dialog as DialogCommand;
+            command.steps.forEach((step) => this.add(step));
+        }
+
         return this;
     }
 

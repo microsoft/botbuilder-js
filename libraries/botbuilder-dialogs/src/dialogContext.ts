@@ -12,6 +12,7 @@ import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
 import { StateMap } from './stateMap';
 import { DialogContextState } from './dialogContextState';
+import { DialogCommand } from './dialogCommand';
 
 /**
  * State information persisted by a `DialogSet`.
@@ -113,7 +114,16 @@ export class DialogContext {
      * Dialogs can use this to persist custom state in between conversation turns:
      */
     public get activeDialog(): DialogInstance|undefined {
-        return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
+        let instance: DialogInstance;
+        if (this.stack.length > 0) {
+            // For DialogCommand instances we need to return the inherited state.
+            const frame = this.stack[this.stack.length - 1];
+            instance = { 
+                id: frame.id,
+                state: typeof frame.state == 'number' ? this.stack[frame.state].state : frame.state 
+            };
+        }
+        return instance;
     }
 
     /**
@@ -185,10 +195,23 @@ export class DialogContext {
             }
         }
 
+        // Check for inherited state
+        let state: number|object;
+        if (dialog instanceof DialogCommand) {
+            // Find stack entry to inherit
+            for (let i = this.stack.length - 1; i >= 0; i--) {
+                if (typeof this.stack[i] === 'object') {
+                    state = i;
+                    break;
+                }
+            }
+        }
+        if (state == undefined) { state = {} }
+
         // Push new instance onto stack.
         const instance: DialogInstance = {
             id: dialogId,
-            state: {}
+            state: state
         };
         this.stack.push(instance);
         this._activeTags = undefined;
