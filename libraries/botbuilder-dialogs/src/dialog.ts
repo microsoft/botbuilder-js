@@ -18,9 +18,13 @@ export interface DialogInstance {
      id: string;
 
     /**
-     * The instances persisted state.
+     * The instances persisted state or the index of the state object to use.
+     * 
+     * @remarks
+     * When the dialog referenced by [id](#id) derives from `DialogCommand`, the state field will 
+     * contain the stack index of the state object that should be inherited by the command.  
      */
-     state: object;
+    state: any;
 }
 
 /**

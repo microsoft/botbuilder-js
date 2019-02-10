@@ -7,8 +7,9 @@
  */
 export * from './choices';
 export * from './prompts';
-export * from './dialog';
 export * from './componentDialog';
+export * from './dialog';
+export * from './dialogCommand';
 export * from './dialogContext';
 export * from './dialogContextState';
 export * from './dialogSet';
