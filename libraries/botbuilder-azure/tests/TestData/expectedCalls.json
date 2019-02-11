@@ -72,7 +72,7 @@
 			"createBlockBlobFromTextAsync": [
 				"test-transcript",
 				"test/logActivityTest/8d66ef5f66ec000-1.json",
-				"{\"type\":\"message\",\"timestamp\":\"2018-12-31T08:00:00.000Z\",\"id\":1,\"text\":\"0\",\"channelId\":\"test\",\"from\":{\"id\":\"User0\"},\"conversation\":{\"id\":\"logActivityTest\"},\"recipient\":{\"id\":\"Bot1\",\"name\":\"2\"},\"serviceUrl\":\"http://foo.com/api/messages\"}",
+				"{\"type\":\"message\",\"timestamp\":\"2018-12-31T00:00:00.000Z\",\"id\":1,\"text\":\"0\",\"channelId\":\"test\",\"from\":{\"id\":\"User0\"},\"conversation\":{\"id\":\"logActivityTest\"},\"recipient\":{\"id\":\"Bot1\",\"name\":\"2\"},\"serviceUrl\":\"http://foo.com/api/messages\"}",
 				null
 			]
 		},
