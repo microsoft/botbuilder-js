@@ -6,7 +6,7 @@ const expectedCalls = require('./TestData/expectedCalls');
 // Mocks
 class MockBlobService {
 	constructor(storageAccount, storageAccessKey, host) {
-		this.timeStamp = new Date('12/31/18');
+		this.timeStamp = new Date('2018-12-31T00:00:00.000Z');
 		this.mockFunctionCalls = [ { constructor: { storageAccount, storageAccessKey, host } } ];
 	}
 
@@ -196,7 +196,7 @@ describe('The AzureBlobTranscriptStore', () => {
 	});
 
 	it('should log an activity', async () => {
-		const date = new Date('12/31/18');
+		const date = new Date('2018-12-31T00:00:00.000Z');
 		const [ activity ] = createActivities('logActivityTest', date, 1);
 
 		await storage.logActivity(activity);
