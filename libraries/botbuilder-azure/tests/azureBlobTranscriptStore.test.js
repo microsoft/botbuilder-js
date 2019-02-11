@@ -6,7 +6,7 @@ const expectedCalls = require('./TestData/expectedCalls');
 // Mocks
 class MockBlobService {
 	constructor(storageAccount, storageAccessKey, host) {
-		this.timeStamp = new Date('2018-12-31T00:00:00.000Z');
+		this.timeStamp = {getTime: () => 1546214400000};
 		this.mockFunctionCalls = [ { constructor: { storageAccount, storageAccessKey, host } } ];
 	}
 
@@ -42,12 +42,12 @@ class MockBlobService {
 
 	getBlobToTextAsync(container, blob, cb) {
 		this.mockFunctionCalls.push({ getBlobToTextAsync: [ container, blob ] });
-		return cb(null, JSON.stringify(createActivities('123432', this.timeStamp, 1)[0]));
+		return cb(null, JSON.stringify(createActivity('123432', this.timeStamp)));
 	}
 
 	listBlobDirectoriesSegmentedWithPrefixAsync(container, prefix, currentToken, cb) {
 		this.mockFunctionCalls.push({ listBlobDirectoriesSegmentedWithPrefixAsync: [ container, prefix, currentToken ] });
-		return cb(null, {entries: [{name: 'blob1'}, {name: "blob2"}]});
+		return cb(null, { entries: [ { name: 'blob1' }, { name: 'blob2' } ] });
 	}
 
 	listBlobsSegmentedWithPrefixAsync(container, prefix, currentToken, options, cb) {
@@ -84,13 +84,13 @@ const getSettings = (container = null) => ( {
 	storageAccessKey: '*(^&%*',
 	host: 'none'
 } );
-const {createBlobService} = azure;
+const { createBlobService } = azure;
 describe('The AzureBlobTranscriptStore', () => {
 	let storage;
 	let mockService;
 	beforeEach(() => {
-		for (let key of Reflect.ownKeys(AzureBlobTranscriptStore[checkedCollectionsKey])) {
-			delete AzureBlobTranscriptStore[checkedCollectionsKey][key];
+		for (let key of Reflect.ownKeys(AzureBlobTranscriptStore[ checkedCollectionsKey ])) {
+			delete AzureBlobTranscriptStore[ checkedCollectionsKey ][ key ];
 		}
 		azure.createBlobService = (storageAccount, storageAccessKey, host) => {
 			return ( mockService = new MockBlobService(storageAccount, storageAccessKey, host) );
@@ -196,15 +196,15 @@ describe('The AzureBlobTranscriptStore', () => {
 	});
 
 	it('should log an activity', async () => {
-		const date = new Date('2018-12-31T00:00:00.000Z');
-		const [ activity ] = createActivities('logActivityTest', date, 1);
+		const date = {getTime: () => 1546214400000};
+		const activity = createActivity('logActivityTest', date);
 
 		await storage.logActivity(activity);
 		const { mockFunctionCalls } = mockService;
 		const { logActivity } = expectedCalls;
 		assert.ok(mockFunctionCalls.length === 6, `Expected 6 function calls but received ${ mockService.mockFunctionCalls.length }`);
 		mockFunctionCalls.forEach((call, index) => {
-			assert.ok(JSON.stringify(call) === JSON.stringify(logActivity[ index ]), `Expected: ${JSON.stringify(logActivity[ index ])} but got: ${JSON.stringify(call)}`);
+			assert.ok(JSON.stringify(call) === JSON.stringify(logActivity[ index ]), `Expected: ${ JSON.stringify(logActivity[ index ]) } but got: ${ JSON.stringify(call) }`);
 		});
 	});
 
@@ -237,34 +237,16 @@ describe('The AzureBlobTranscriptStore', () => {
 	});
 });
 
-function createActivities(conversationId, ts, count = 5) {
-	const activities = [];
-	for (let i = 0; i < count; i++) {
-		activities.push({
-			type: 'message',
-			timestamp: ts,
-			id: 1,
-			text: i.toString(),
-			channelId: 'test',
-			from: { id: `User${ i }` },
-			conversation: { id: conversationId },
-			recipient: { id: 'Bot1', name: '2' },
-			serviceUrl: 'http://foo.com/api/messages'
-		});
-		ts = new Date(ts.getTime() + 60000);
-
-		activities.push({
-			type: 'message',
-			timestamp: ts,
-			id: 2,
-			text: i.toString(),
-			channelId: 'test',
-			from: { id: 'Bot1', name: '2' },
-			conversation: { id: conversationId },
-			recipient: { id: `User${ i }` },
-			serviceUrl: 'http://foo.com/api/messages'
-		});
-		ts = new Date(ts.getTime() + 60000);
-	}
-	return activities;
+function createActivity(conversationId, ts) {
+	return {
+		type: 'message',
+		timestamp: ts,
+		id: 1,
+		text: "testMessage",
+		channelId: 'test',
+		from: { id: `User1` },
+		conversation: { id: conversationId },
+		recipient: { id: 'Bot1', name: '2' },
+		serviceUrl: 'http://foo.com/api/messages'
+	};
 }
