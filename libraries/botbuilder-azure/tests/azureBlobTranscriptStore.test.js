@@ -204,7 +204,7 @@ describe('The AzureBlobTranscriptStore', () => {
 		const { logActivity } = expectedCalls;
 		assert.ok(mockFunctionCalls.length === 6, `Expected 6 function calls but received ${ mockService.mockFunctionCalls.length }`);
 		mockFunctionCalls.forEach((call, index) => {
-			assert.ok(JSON.stringify(call) === JSON.stringify(logActivity[ index ]));
+			assert.ok(JSON.stringify(call) === JSON.stringify(logActivity[ index ]), `Expected: ${JSON.stringify(logActivity[ index ])} but got: ${JSON.stringify(call)}`);
 		});
 	});
 
