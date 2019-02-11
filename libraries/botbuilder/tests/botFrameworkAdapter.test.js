@@ -753,6 +753,14 @@ describe(`BotFrameworkAdapter`, function () {
 				'status': 200
 			}
 		}));
+		assert.ok(argsPassedToMockClient.length === 1);
+		assert.ok(JSON.stringify(argsPassedToMockClient[0]) === JSON.stringify({getToken: [
+			'some id',
+			'aConnectionName',
+			{
+				'channelId': 'The Facebook'
+			}
+		]}));
 		connector.TokenApiClient = TokenApiClient; // restore
 	});
 
