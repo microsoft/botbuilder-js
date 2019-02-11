@@ -84,7 +84,7 @@ const getSettings = (container = null) => ( {
 	storageAccessKey: '*(^&%*',
 	host: 'none'
 } );
-
+const {createBlobService} = azure;
 describe('The AzureBlobTranscriptStore', () => {
 	let storage;
 	let mockService;
@@ -96,6 +96,10 @@ describe('The AzureBlobTranscriptStore', () => {
 			return ( mockService = new MockBlobService(storageAccount, storageAccessKey, host) );
 		};
 		storage = new AzureBlobTranscriptStore(getSettings());
+	});
+	after(() => {
+		// reset mock
+		azure.createBlobService = createBlobService;
 	});
 
 	describe('should throw when', () => {
