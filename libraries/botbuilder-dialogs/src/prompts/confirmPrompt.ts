@@ -8,7 +8,7 @@
 import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { Activity, TurnContext } from 'botbuilder-core';
 import { Choice, ChoiceFactoryOptions, recognizeChoices } from '../choices';
-import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext } from './prompt';
+import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext, PromptConfiguration } from './prompt';
 
 /**
  * Prompts a user to confirm something with a "yes" or "no" response.
@@ -137,6 +137,15 @@ export class ConfirmPrompt extends Prompt<boolean> {
             culture = 'en-us';
         }
         return culture;
+    }
+
+
+    public static create(config?: PromptConfiguration): ConfirmPrompt {
+        const dialog = new ConfirmPrompt();
+        if (config) {
+            Prompt.configure(dialog, config);
+        }
+        return dialog;
     }
 }
 

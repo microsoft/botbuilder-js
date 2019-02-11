@@ -7,7 +7,7 @@
  */
 import { Activity, TurnContext } from 'botbuilder-core';
 import { ChoiceFactory, ChoiceFactoryOptions, FindChoicesOptions, FoundChoice, recognizeChoices } from '../choices';
-import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext } from './prompt';
+import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext, PromptConfiguration } from './prompt';
 
 /**
  * Prompts a user to select from a list of choices.
@@ -109,6 +109,14 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         }
 
         return result;
+    }
+
+    public static create(config?: PromptConfiguration): ChoicePrompt {
+        const dialog = new ChoicePrompt();
+        if (config) {
+            Prompt.configure(dialog, config);
+        }
+        return dialog;
     }
 }
 

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Attachment, InputHints, TurnContext } from 'botbuilder-core';
-import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext } from './prompt';
+import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext, PromptConfiguration } from './prompt';
 
 /**
  * Prompts a user to upload attachments like images.
@@ -41,6 +41,15 @@ export class AttachmentPrompt extends Prompt<Attachment[]> {
         const value: Attachment[] = context.activity.attachments;
 
         return Array.isArray(value) && value.length > 0 ? { succeeded: true, value: value } : { succeeded: false };
+    }
+
+
+    public static create(config?: PromptConfiguration): AttachmentPrompt {
+        const dialog = new AttachmentPrompt();
+        if (config) {
+            Prompt.configure(dialog, config);
+        }
+        return dialog;
     }
 }
 

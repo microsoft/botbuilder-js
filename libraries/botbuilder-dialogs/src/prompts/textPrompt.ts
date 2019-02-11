@@ -6,11 +6,7 @@
  * Licensed under the MIT License.
  */
 import { InputHints, TurnContext } from 'botbuilder-core';
-import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext } from './prompt';
-import { DialogConfiguration } from '../dialog';
-
-export interface TextPromptConfiguration extends DialogConfiguration {
-}
+import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext, PromptConfiguration } from './prompt';
 
 /**
  * Prompts a user to enter some text.
@@ -30,7 +26,7 @@ export class TextPrompt extends Prompt<string> {
     }
 
     protected onComputeID(): string {
-        return `textPrompt[${this.bindingPath()}]`;
+        return `textPrompt[${this.bindingPath() || this.prompt.displayLabel}]`;
     }
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
@@ -45,6 +41,14 @@ export class TextPrompt extends Prompt<string> {
         const value: string = context.activity.text;
 
         return typeof value === 'string' && value.length > 0 ? { succeeded: true, value: value } : { succeeded: false };
+    }
+
+    public static create(config?: PromptConfiguration): TextPrompt {
+        const dialog = new TextPrompt();
+        if (config) {
+            Prompt.configure(dialog, config);
+        }
+        return dialog;
     }
 }
 

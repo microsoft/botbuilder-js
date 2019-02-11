@@ -7,9 +7,10 @@
  */
 import { Activity, ActivityTypes, InputHints, MessageFactory, TurnContext } from 'botbuilder-core';
 import { Choice, ChoiceFactory, ChoiceFactoryOptions } from '../choices';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult } from '../dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogConfiguration } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { StateMap } from '../stateMap';
+import { ActivityProperty } from '../activityProperty';
 
 /**
  * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
@@ -67,6 +68,28 @@ export interface PromptOptions {
     validations?: object;
 
     value?: any;
+}
+
+export interface PromptConfiguration extends DialogConfiguration {
+    /**
+     * (Optional) Initial prompt to send the user.
+     */
+    prompt?: string|Partial<Activity>;
+
+    /**
+     * (Optional) Retry prompt to send the user.
+     */
+    retryPrompt?: string|Partial<Activity>;
+
+    /**
+     * (Optional) data binds the prompts input & output to the given state property.
+     */
+    property?: string;
+
+    /**
+     * (Optional) List of choices associated with the prompt.
+     */
+    choices?: (string|Choice)[];
 }
 
 /**
@@ -163,7 +186,15 @@ export abstract class Prompt<T> extends Dialog {
      */
     constructor(dialogId?: string, private validator?: PromptValidator<T>) {
         super(dialogId);
+        this.prompt.inputHint = InputHints.ExpectingInput;
+        this.retryPrompt.inputHint = InputHints.ExpectingInput;
     }
+
+    public prompt = new ActivityProperty();
+    
+    public retryPrompt = new ActivityProperty();
+
+    public choices: (string|Choice)[] = [];
 
     public set property(value: string) {
         this.inputBindings['value'] = value;
@@ -175,13 +206,16 @@ export abstract class Prompt<T> extends Dialog {
     }
 
     public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
-        // Ensure prompts have input hint set
+        // Format prompts
         const opt: Partial<PromptOptions> = {...options};
-        if (opt.prompt && typeof opt.prompt === 'object' && typeof opt.prompt.inputHint !== 'string') {
-            opt.prompt.inputHint = InputHints.ExpectingInput;
+        if (this.prompt.hasValue(opt.prompt)) {
+            opt.prompt = this.prompt.format(dc, opt.prompt);
         }
-        if (opt.retryPrompt && typeof opt.retryPrompt === 'object' && typeof opt.retryPrompt.inputHint !== 'string') {
-            opt.retryPrompt.inputHint = InputHints.ExpectingInput;
+        if (this.retryPrompt.hasValue(opt.retryPrompt)) {
+            opt.retryPrompt = this.retryPrompt.format(dc, opt.retryPrompt);
+        }
+        if (this.choices.length > 0 && !opt.choices) {
+            opt.choices = this.choices;
         }
 
         // Initialize prompt state
@@ -357,6 +391,14 @@ export abstract class Prompt<T> extends Dialog {
 
             return msg;
         }
+    }
+
+    public static configure(dialog: Prompt<any>, config: PromptConfiguration): void {
+        if (config.prompt) { dialog.prompt.value = config.prompt }
+        if (config.retryPrompt) { dialog.retryPrompt.value = config.retryPrompt }
+        if (config.property) { dialog.property = config.property }
+        if (config.choices && config.choices.length > 0) { dialog.choices = config.choices }
+        Dialog.configure(dialog, config);
     }
 }
 

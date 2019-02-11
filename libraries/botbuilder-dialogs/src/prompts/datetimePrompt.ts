@@ -7,7 +7,7 @@
  */
 import * as Recognizers from '@microsoft/recognizers-text-date-time';
 import { Activity, InputHints, TurnContext } from 'botbuilder-core';
-import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext } from './prompt';
+import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext, PromptConfiguration } from './prompt';
 
 /**
  * Result returned by the `DateTimePrompt`.
@@ -83,6 +83,14 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
         }
 
         return result;
+    }
+
+    public static create(config?: PromptConfiguration): DateTimePrompt {
+        const dialog = new DateTimePrompt();
+        if (config) {
+            Prompt.configure(dialog, config);
+        }
+        return dialog;
     }
 }
 

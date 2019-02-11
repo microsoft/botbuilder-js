@@ -7,7 +7,7 @@
  */
 import * as Recognizers from '@microsoft/recognizers-text-number';
 import { Activity, InputHints, TurnContext } from 'botbuilder-core';
-import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext } from './prompt';
+import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext, PromptConfiguration } from './prompt';
 
 /**
  * Prompts a user to enter a number.
@@ -57,6 +57,15 @@ export class NumberPrompt extends Prompt<number> {
         }
 
         return result;
+    }
+
+
+    public static create(config?: PromptConfiguration): NumberPrompt {
+        const dialog = new NumberPrompt();
+        if (config) {
+            Prompt.configure(dialog, config);
+        }
+        return dialog;
     }
 }
 

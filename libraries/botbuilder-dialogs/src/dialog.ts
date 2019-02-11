@@ -334,7 +334,7 @@ export abstract class Dialog<O extends object = {}> {
         }
     }
 
-    public static configure(dialog: Dialog, config: DialogConfiguration): Dialog {
+    public static configure(dialog: Dialog, config: DialogConfiguration): void {
         if (config.id) { dialog.id = config.id }
         if (config.telemetryClient) { dialog.telemetryClient = config.telemetryClient }
         if (config.outputBinding) { dialog.outputBinding = config.outputBinding }
@@ -346,6 +346,5 @@ export abstract class Dialog<O extends object = {}> {
         if (config.tags) { 
             config.tags.forEach((tag) => dialog.tags.push(tag));
         }
-        return dialog;
     }
 }
