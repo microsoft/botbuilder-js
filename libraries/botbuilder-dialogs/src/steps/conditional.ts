@@ -31,12 +31,12 @@ export class Conditional extends DialogCommand {
         return this;
     }
 
-    public elseIf(expression: ConditionalExpression, step: Dialog): this {
+    public elseIfDo(expression: ConditionalExpression, step: Dialog): this {
         this.addTest(expression, step);
         return this;
     }
 
-    public else(step: Dialog): this {
+    public elseDo(step: Dialog): this {
         this.addTest(async (dc) => true, step);
         return this;
     }
@@ -56,7 +56,7 @@ export class Conditional extends DialogCommand {
         return await dc.endDialog();
     }
 
-    static if(expression: ConditionalExpression, step: Dialog): Conditional {
+    static ifDo(expression: ConditionalExpression, step: Dialog): Conditional {
         const dialog = new Conditional();
         dialog.addTest(expression, step);
         return dialog;
