@@ -6,10 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, ResourceResponse, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
 import { ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenApiModels } from 'botframework-connector';
 import * as os from 'os';
-
 
 /**
  * Express or Restify Request object.
@@ -105,7 +104,7 @@ const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
  * });
  * ```
  */
-export class BotFrameworkAdapter extends BotAdapter {
+export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvider {
     protected readonly credentials: MicrosoftAppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
     protected readonly settings: BotFrameworkAdapterSettings;
@@ -359,7 +358,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
      */
-    public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenApiModels.TokenResponse> {
+    public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`);
         }
@@ -372,7 +371,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         if (!result || !result.token || result._response.status == 404) {
             return undefined;
         } else {
-            return result;
+            return <TokenResponse>result;
         }
     }
 
@@ -418,7 +417,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param connectionName Name of the auth connection to use.
      */
     public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{
-        [propertyName: string]: TokenApiModels.TokenResponse;
+        [propertyName: string]: TokenResponse;
     }> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getAadTokens(): missing from or from.id`);
@@ -428,7 +427,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
 
-        return (await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody;
+        return <{[propertyName: string]: TokenResponse; }>(await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody;
     }
 
     /**
