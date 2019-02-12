@@ -99,7 +99,7 @@ export class FileTranscriptStore implements TranscriptStore {
 			})
 		);
 		const {length} = pagedResult.items;
-		if (pagedResult.items.length === FileTranscriptStore.PageSize && items[length]) {
+		if (length === FileTranscriptStore.PageSize && items[length]) {
 			pagedResult.continuationToken = path.parse(items[length]).name;
 		}
 		return pagedResult;
