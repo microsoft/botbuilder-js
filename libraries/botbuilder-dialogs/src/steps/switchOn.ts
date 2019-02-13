@@ -73,6 +73,7 @@ export class SwitchOn extends DialogCommand {
             const result = comparer(v, test.value);
             if (result) {
                 // Replace condition with step
+                return await dc.replaceDialog(test.step.id);
             }
         }
 

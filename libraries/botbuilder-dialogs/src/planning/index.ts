@@ -12,4 +12,5 @@ export * from './planningContext';
 export * from './planningDialog';
 export * from './planningRule';
 export * from './recognizer';
+export * from './regExpRecognizer';
 export * from './sequenceDialog';

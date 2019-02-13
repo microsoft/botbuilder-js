@@ -8,6 +8,7 @@
 export * from './choices';
 export * from './planning';
 export * from './prompts';
+export * from './steps';
 export * from './componentDialog';
 export * from './dialog';
 export * from './dialogCommand';

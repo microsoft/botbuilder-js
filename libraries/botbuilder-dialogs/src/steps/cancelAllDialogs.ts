@@ -16,7 +16,7 @@ export class CancelAllDialogs extends DialogCommand {
     }
     
     protected async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
-        return await this.cancelAllParentDialogs(dc);
+        return await dc.cancelAllDialogs();
     }
 
     static create(config?: DialogConfiguration): CancelAllDialogs {
