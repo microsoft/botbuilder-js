@@ -7,6 +7,7 @@
  */
 export * from './activityRule';
 export * from './eventRule';
+export * from './fallbackRule';
 export * from './intentRule';
 export * from './planningContext';
 export * from './planningDialog';

@@ -198,8 +198,6 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
             } else {
                 // Remove current step from plan
                 state.plan.steps.splice(0, 1);
-
-                // TODO: check for endDialog command.
             }
 
             // Check for end of plan
@@ -244,6 +242,13 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
 
                         // Emit utteranceRecognized event
                         handled = await this.doBestMatch(dc, { bubble: false, name: PlanningEventNames.utteranceRecognized, value: recognized }); 
+                        if (!handled) {
+                            const state = dc.activeDialog.state as PlanningState<O>;
+                            if (!state.plan || state.plan.steps.length == 0) {
+                                // Emit fallback event
+                                handled = await this.doFirstMatch(dc, { bubble: false, name: PlanningEventNames.fallback, value: recognized  })
+                            }
+                        }
                     } else if (dc.context.activity.type === ActivityTypes.Event) {
                         // Emit named event that was received
                         handled = await this.doFirstMatch(dc, { bubble: false, name: dc.context.activity.name, value: dc.context.activity.value });

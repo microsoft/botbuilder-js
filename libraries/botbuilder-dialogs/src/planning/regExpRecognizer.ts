@@ -7,7 +7,6 @@
  */
 import { TurnContext, RecognizerResult, ActivityTypes } from 'botbuilder-core';
 import { Recognizer, createRecognizerResult, IntentMap } from './recognizer';
-import { Match } from '@microsoft/recognizers-text';
 
 export class RegExpRecognizer implements Recognizer {
     

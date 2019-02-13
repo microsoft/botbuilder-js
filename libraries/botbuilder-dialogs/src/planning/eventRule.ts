@@ -97,8 +97,9 @@ export class EventRule implements PlanningRule {
     }
 
     protected async onIsTriggered(planning: PlanningContext): Promise<boolean> {
-        if (!this.enableSelector || planning.tagSelectorMatched(this.enableSelector)) {
-            if (!this.disableSelector || !planning.tagSelectorMatched(this.disableSelector)) {
+        const addedTags = planning.plan && planning.plan.steps.length > 0 ? ['activePlan'] : [];
+        if (!this.enableSelector || planning.tagSelectorMatched(this.enableSelector, addedTags)) {
+            if (!this.disableSelector || !planning.tagSelectorMatched(this.disableSelector, addedTags)) {
                 return true;
             }
         }

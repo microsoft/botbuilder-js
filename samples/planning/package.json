@@ -1,0 +1,17 @@
+{
+  "name": "planning",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^10.0.3",
+    "botbuilder": "^4.1.6",
+    "botbuilder-dialogs": "^4.1.6",
+    "restify": "^7.7.0"
+  }
+}

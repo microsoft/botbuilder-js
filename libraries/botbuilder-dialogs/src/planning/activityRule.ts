@@ -5,9 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { RecognizerResult } from 'botbuilder-core';
 import { EventRule } from './eventRule';
-import { PlanningEventNames, PlanningContext, PlanChangeList } from './planningContext';
+import { PlanningEventNames, PlanningContext } from './planningContext';
 
 export class ActivityRule extends EventRule {
 

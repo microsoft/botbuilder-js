@@ -52,6 +52,7 @@ export enum PlanningEventNames {
     continueDialog = 'continueDialog',
     activityReceived = 'activityReceived',
     utteranceRecognized = 'utteranceRecognized',
+    fallback = 'fallback',
     planStarted = 'planStarted',
     planSaved = 'planSaved',
     planEnded = 'planEnded',
