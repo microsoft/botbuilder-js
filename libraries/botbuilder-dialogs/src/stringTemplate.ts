@@ -52,7 +52,7 @@ export function compile(template: string): (data: object) => string {
         }
     }
     if (buffer.length > 0) { 
-        chunks.push(textLiteral('{' + buffer));
+        chunks.push(textLiteral((inSlot ? '{' : '') + buffer));
     }
 
     // Return stitching function

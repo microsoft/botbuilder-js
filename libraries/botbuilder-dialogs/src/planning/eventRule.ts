@@ -33,7 +33,7 @@ export class EventRule implements PlanningRule {
     }
 
     public doNow(...steps: Dialog[]): this {
-        steps.reverse().forEach(step => {
+        steps.forEach(step => {
             this.steps.push(step);
             this.changes.push({
                 type: PlanChangeType.doNow,
@@ -44,7 +44,7 @@ export class EventRule implements PlanningRule {
     }
 
     public doBeforeTags(tags: string|string[], ...steps: Dialog[]): this {
-        steps.reverse().forEach(step => {
+        steps.forEach(step => {
             this.steps.push(step);
             this.changes.push({
                 type: PlanChangeType.doBeforeTags,
@@ -92,7 +92,7 @@ export class EventRule implements PlanningRule {
 
     protected async onEvaluate(planning: PlanningContext): Promise<PlanChangeList|undefined> {
         if (await this.onIsTriggered(planning)) {
-            return this.onCreateChangeList(undefined);
+            return this.onCreateChangeList(planning);
         }
     }
 

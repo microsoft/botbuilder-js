@@ -209,10 +209,10 @@ export abstract class Prompt<T> extends Dialog {
         // Format prompts
         const opt: Partial<PromptOptions> = {...options};
         if (this.prompt.hasValue(opt.prompt)) {
-            opt.prompt = this.prompt.format(dc, opt.prompt);
+            opt.prompt = this.prompt.format(dc, {}, opt.prompt);
         }
         if (this.retryPrompt.hasValue(opt.retryPrompt)) {
-            opt.retryPrompt = this.retryPrompt.format(dc, opt.retryPrompt);
+            opt.retryPrompt = this.retryPrompt.format(dc, {}, opt.retryPrompt);
         }
         if (this.choices.length > 0 && !opt.choices) {
             opt.choices = this.choices;

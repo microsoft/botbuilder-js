@@ -134,34 +134,60 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
      * @param planChanges List of changes to apply. 
      */
     public async applyChanges(planChanges: PlanChangeList): Promise<void> {
+        // Sort changes
+        let endPlan: PlanChange;
+        let beginPlan: PlanChange;
+        let doNow: PlanStepState[] = [];
+        let doBeforeTags: PlanChange[] = [];
+        let doLater: PlanStepState[] = [];
         const changes = planChanges.changes;
-        let planStarted = false;
-        let planResumed = false;
-        let planEnded = false;
-        let planSaved = false;
         for (let i = 0; i < changes.length; i++) {
             const change = changes[i];
             switch (change.type) {
                 case PlanChangeType.beginPlan:
-                    planSaved = this.beginPlan(change);
-                    planStarted = true;
-                    planEnded = false;
-                    planResumed = false;
+                    if (!beginPlan) { beginPlan = change }
                     break;
                 case PlanChangeType.endPlan:
-                    planResumed = this.endPlan();
-                    planEnded = true;
-                    break;
-                case PlanChangeType.doLater:
-                    if (this.addStep(change, true)) { planStarted = true }
+                    if (!endPlan && !beginPlan) { endPlan = change }
                     break;
                 case PlanChangeType.doNow:
-                    if (this.addStep(change, false)) { planStarted = true }
+                    doNow.push({ dialogStack: [], dialogId: change.dialogId, dialogOptions: change.dialogOptions });
                     break;
                 case PlanChangeType.doBeforeTags:
-                    if (this.addStepBeforeTags(change)) { planStarted = true }
+                    doBeforeTags.push(change);
+                    break;
+                case PlanChangeType.doLater:
+                    doLater.push({ dialogStack: [], dialogId: change.dialogId, dialogOptions: change.dialogOptions });
                     break;
             }
+        }
+
+        // Apply changes
+        let planEnded = false;
+        let planStarted = false;
+        let planSaved = false;
+        let planResumed = false;
+        if (endPlan) {
+            planResumed = this.endPlan();
+            planEnded = true;
+        }
+        if (!beginPlan && (!this.plan || this.plan.steps.length == 0)) {
+            beginPlan = { type: PlanChangeType.beginPlan };
+        }
+        if (beginPlan) {
+            planSaved = this.beginPlan(beginPlan);
+            planStarted = true;
+        }
+        if (doNow.length > 0) {
+            Array.prototype.unshift.apply(this.plan.steps, doNow);
+        }
+        if (doBeforeTags.length > 0) {
+            for (let i = doBeforeTags.length - 1; i >= 0; i--) {
+                this.addStepBeforeTags(doBeforeTags[i]);
+            }
+        }
+        if (doLater.length > 0) {
+            Array.prototype.push.apply(this.plan.steps, doLater);
         }
 
         // Emit change events
@@ -207,28 +233,6 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
             delete plans.plan;
         }
         return planResumed;
-    }
-
-    private addStep(change: PlanChange, beforeSteps: boolean): boolean {
-        let planStarted = false;
-        const plans = this._info.plans;
-        if (!plans.plan) {
-            plans.plan = {
-                steps: []
-            };
-            planStarted = true;
-        }
-        const step: PlanStepState = {
-            dialogStack: [],
-            dialogId: change.dialogId,
-            dialogOptions: change.dialogOptions
-        };
-        if (beforeSteps) {
-            plans.plan.steps.unshift(step);
-        } else {
-            plans.plan.steps.push(step);
-        }
-        return planStarted;
     }
 
     private addStepBeforeTags(change: PlanChange): boolean {

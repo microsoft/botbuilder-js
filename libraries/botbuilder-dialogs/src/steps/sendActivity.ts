@@ -69,7 +69,7 @@ export class SendActivity extends DialogCommand {
         // Send activity and return result
         // - If `resultProperty` has been set, the returned result will be saved to the requested
         //   memory location.
-        const activity = this.activity.format(dc);
+        const activity = this.activity.format(dc, { utterance: dc.context.activity.text || '' });
         const result = await dc.context.sendActivity(activity);
         return await dc.endDialog(result);
     }

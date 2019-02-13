@@ -12,4 +12,5 @@ export * from './endDialog';
 export * from './gotoDialog';
 export * from './repeatDialog';
 export * from './sendActivity';
+export * from './setState';
 export * from './switchOn';

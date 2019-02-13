@@ -63,7 +63,7 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     private readonly dialogs: DialogSet = new DialogSet();
     private readonly runDialogSet: DialogSet = new DialogSet(); // Used by the run() method
 
-    private readonly rules: PlanningRule[];
+    private readonly rules: PlanningRule[] = [];
 
     /**
      * (Optional) state property used to persists the bots current state when the `run()` method is called.

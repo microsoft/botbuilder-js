@@ -63,9 +63,9 @@ export class ActivityProperty {
         return !!(override || this._value);
     }
 
-    public format(dc: DialogContext, override?: Partial<Activity>|string): Partial<Activity> {
+    public format(dc: DialogContext, extraData?: object, override?: Partial<Activity>|string): Partial<Activity> {
         // Format basic activity
-        const data = dc.state.toJSON();
+        const data = Object.assign({}, extraData, dc.state.toJSON());
         let activity: Partial<Activity>;
         if (override) {
             activity = this.formatOverride(override, data);
