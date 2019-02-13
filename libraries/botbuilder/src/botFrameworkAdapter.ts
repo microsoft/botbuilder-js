@@ -373,6 +373,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`);
         }
+        if (!connectionName) {
+        	throw new Error('getUserToken() requires a connectionName but none was provided.');
+		}
         this.checkEmulatingOAuthCards(context);
         const userId: string = context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
