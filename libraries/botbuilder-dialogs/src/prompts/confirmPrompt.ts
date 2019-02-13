@@ -140,9 +140,15 @@ export class ConfirmPrompt extends Prompt<boolean> {
     }
 
 
-    public static create(config?: PromptConfiguration): ConfirmPrompt {
+    public static create(propertyOrConfig: PromptConfiguration): ConfirmPrompt;
+    public static create(propertyOrConfig: string, prompt: string|Partial<Activity>, config?: PromptConfiguration): ConfirmPrompt;
+    public static create(propertyOrConfig: string|PromptConfiguration, prompt?: Partial<Activity>|string, config?: PromptConfiguration): ConfirmPrompt {
         const dialog = new ConfirmPrompt();
-        if (config) {
+        if (typeof propertyOrConfig === 'string') {
+            dialog.property = propertyOrConfig;
+            dialog.prompt.value = prompt;
+            if (config) { Prompt.configure(dialog, config) }
+        } else {
             Prompt.configure(dialog, config);
         }
         return dialog;

@@ -15,3 +15,4 @@ export * from './planningRule';
 export * from './recognizer';
 export * from './regExpRecognizer';
 export * from './sequenceDialog';
+export * from './stepContext';

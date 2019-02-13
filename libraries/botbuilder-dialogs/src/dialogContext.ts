@@ -188,10 +188,14 @@ export class DialogContext {
 
         // Process dialogs input bindings
         options = options || {};
+        const emptyStack = this.stack.length == 0;
         for(const option in dialog.inputBindings) {
             if (dialog.inputBindings.hasOwnProperty(option)) {
-                const binding = JSON.parse(JSON.stringify(dialog.inputBindings[option]));
-                options[option] = this.state.getValue(binding);
+                const binding = dialog.inputBindings[option];
+                if (!emptyStack || binding.indexOf('dialog') !== 0) {
+                    const value = this.state.getValue(binding);
+                    options[option] = Array.isArray(value) || typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : value;
+        }
             }
         }
 
@@ -517,7 +521,10 @@ export class DialogContext {
 
             // Process dialogs output binding
             if (dialog && dialog.outputBinding && result !== undefined) {
-                this.state.setValue(dialog.outputBinding, result);
+                const emptyStack = this.stack.length == 0;
+                if (!emptyStack || dialog.outputBinding.indexOf('dialog.') !== 0) {
+                    this.state.setValue(dialog.outputBinding, result);
+                }
             }
         }
     }

@@ -13,6 +13,7 @@ import { StateMap } from '../stateMap';
 import { PlanningRule } from './planningRule';
 import { PlanningEventNames, PlanningContext, PlanningState, PlanState, PlanChangeList } from './planningContext';
 import { Recognizer } from './recognizer';
+import { StepContext } from './stepContext';
 
 export interface BotState extends DialogState {
     /**
@@ -90,10 +91,15 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         return `planning(${this.bindingPath()})`;
     }
 
+    public setRecognizer(recognizer: Recognizer): this {
+        this.recognizer = recognizer;
+        return this;
+    }
+
     public beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Persist options to dialog state
         options = options || {} as O;
-        dc.activeDialog.state = { options: options } as PlanningState<O>;
+        dc.activeDialog.state = { options: options, result: {} } as PlanningState<O>;
         
         return this.onBeginDialog(dc, options);
     }
@@ -180,7 +186,7 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         if (state.plan && state.plan.steps.length > 0) {
             // Run current step
             const step = state.plan.steps[0];
-            const innerDc = new DialogContext(this.dialogs, dc.context, step, dc.state.user, dc.state.conversation);
+            const innerDc = new StepContext(dc, this.dialogs, step);
             let result = await innerDc.continueDialog();
             if (result.status === DialogTurnStatus.empty) {
                 result = await innerDc.beginDialog(step.dialogId, step.dialogOptions);

@@ -12,14 +12,6 @@ import { Activity, InputHints, ActivityTypes } from 'botbuilder-core';
 import { ActivityProperty } from '../activityProperty';
 
 export interface SendActivityConfiguration extends DialogConfiguration {
-    /**
-     * Activity or text of a message to send the user.
-     */
-    activityOrText: Partial<Activity>|string;
-
-    /**
-     * (Optional) SSML that should be spoken to the user for the message.
-     */
     speak?: string;
 
     /**
@@ -69,16 +61,23 @@ export class SendActivity extends DialogCommand {
         // Send activity and return result
         // - If `resultProperty` has been set, the returned result will be saved to the requested
         //   memory location.
+        console.log(JSON.stringify(dc.state.toJSON().dialog));
         const activity = this.activity.format(dc, { utterance: dc.context.activity.text || '' });
         const result = await dc.context.sendActivity(activity);
         return await dc.endDialog(result);
     }
 
-    static create(config?: SendActivityConfiguration): SendActivity {
+    static create(activityOrText: Partial<Activity>|string, config?: SendActivityConfiguration): SendActivity;
+    static create(activityOrText: Partial<Activity>|string, speak?: string, config?: SendActivityConfiguration): SendActivity;
+    static create(activityOrText: Partial<Activity>|string, speak?: string|SendActivityConfiguration, config?: SendActivityConfiguration): SendActivity {
+        if (typeof speak == 'object') {
+            config = speak;
+            speak = config.speak;
+        }
         const dialog = new SendActivity();
+        dialog.activity.value = activityOrText;
+        dialog.activity.speak = speak;
         if (config) {
-            if (config.activityOrText) { dialog.activity.value = config.activityOrText }
-            if (config.speak) { dialog.activity.speak = config.speak }
             if (config.inputHint) { dialog.activity.inputHint = config.inputHint }
             if (config.resultProperty) { dialog.resultProperty = config.resultProperty }
             Dialog.configure(dialog, config);

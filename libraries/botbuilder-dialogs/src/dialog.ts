@@ -233,6 +233,11 @@ export abstract class Dialog<O extends object = {}> {
         this._telemetryClient = client ? client : new NullTelemetryClient();
     }
 
+    public addTags(tags: string): this {
+        tags.split(' ').forEach((tag) => this.tags.push(tag));
+        return this;
+    }
+
 
     /**
      * Called when a new instance of the dialog has been pushed onto the stack and is being

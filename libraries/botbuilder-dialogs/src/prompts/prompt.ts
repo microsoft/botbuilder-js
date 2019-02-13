@@ -68,6 +68,8 @@ export interface PromptOptions {
     validations?: object;
 
     value?: any;
+
+    parentState?: object;
 }
 
 export interface PromptConfiguration extends DialogConfiguration {
@@ -188,6 +190,7 @@ export abstract class Prompt<T> extends Dialog {
         super(dialogId);
         this.prompt.inputHint = InputHints.ExpectingInput;
         this.retryPrompt.inputHint = InputHints.ExpectingInput;
+        this.inputBindings['parentState'] = 'dialog';
     }
 
     public prompt = new ActivityProperty();
@@ -209,14 +212,16 @@ export abstract class Prompt<T> extends Dialog {
         // Format prompts
         const opt: Partial<PromptOptions> = {...options};
         if (this.prompt.hasValue(opt.prompt)) {
-            opt.prompt = this.prompt.format(dc, {}, opt.prompt);
+            opt.prompt = this.prompt.format(dc, { dialog: opt.parentState }, opt.prompt);
         }
         if (this.retryPrompt.hasValue(opt.retryPrompt)) {
-            opt.retryPrompt = this.retryPrompt.format(dc, {}, opt.retryPrompt);
+            opt.retryPrompt = this.retryPrompt.format(dc, { dialog: opt.parentState }, opt.retryPrompt);
         }
         if (this.choices.length > 0 && !opt.choices) {
             opt.choices = this.choices;
         }
+        if (opt.value) { delete opt.value }
+        if (opt.parentState) { delete opt.parentState }
 
         // Initialize prompt state
         const state = dc.state.dialog;

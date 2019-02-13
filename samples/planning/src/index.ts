@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState } from 'botbuilder';
-import { PlanningDialog, FallbackRule, SendActivity, SetState, RegExpRecognizer, IntentRule } from 'botbuilder-dialogs';
+import { PlanningDialog, FallbackRule, SendActivity, SetState, RegExpRecognizer, IntentRule, SequenceDialog, CallDialog, CancelAllDialogs, TextPrompt, NumberPrompt, ChoicePrompt } from 'botbuilder-dialogs';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -42,17 +42,36 @@ server.post('/api/messages', (req, res) => {
     });
 });
 
-dialogs.recognizer = new RegExpRecognizer()
-    .addIntent('Help', /^help/i);
+const recognizer = new RegExpRecognizer()
+    .addIntent('Help', /^help/i)
+    .addIntent('Cancel', /^cancel/i);
 
-// Add rules
-dialogs.addRule(new IntentRule('Help').doNow(
-    SendActivity.create({ activityOrText: `I'm an echo bot. Say something to me and I'll say it back.` })
-));
-dialogs.addRule(new FallbackRule().doNow(
-    SetState.create((state) => {
-        const count = state.conversation.get('count') || 0;
-        state.conversation.set('count', count + 1);
-    }),
-    SendActivity.create({ activityOrText: `{conversation.count}: you said "{utterance}".` })
-));
+// Planning rules
+dialogs
+    .setRecognizer(recognizer)
+    .addRule(new IntentRule('Help').doNow(
+        CallDialog.create('HelpDialog'),
+    ))
+    .addRule(new FallbackRule().doNow(
+        CallDialog.create('SurveyDialog'),
+        SendActivity.create(`Thanks {dialog.lastResult.name}. I enjoy programming in {dialog.lastResult.language.value} too.`)
+    ));
+
+// Survey Dialog
+dialogs.addDialog(new SequenceDialog('SurveyDialog')
+    .setRecognizer(recognizer)
+    .addRule(new IntentRule('Cancel').doNow(
+        CancelAllDialogs.create()
+    ))
+    .do(
+        SendActivity.create(`Please take this short survey. You can say "cancel" at anytime.`),
+        TextPrompt.create('dialog.result.name', `What is your name?`),
+        NumberPrompt.create('dialog.result.age', `Hi {dialog.result.name}. How old are you?`),
+        ChoicePrompt.create('dialog.result.language', `What is your preferred programming language?`, ['c#', 'TypeScript', 'JavaScript']),
+    ));
+
+// Help dialog
+dialogs.addDialog(new SequenceDialog('HelpDialog')
+    .do(
+        SendActivity.create(`I'm an echo bot. Say something to me and I'll say it back.`)
+    ));

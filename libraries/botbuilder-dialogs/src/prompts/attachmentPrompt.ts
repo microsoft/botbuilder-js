@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Attachment, InputHints, TurnContext } from 'botbuilder-core';
+import { Attachment, InputHints, TurnContext, Activity } from 'botbuilder-core';
 import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext, PromptConfiguration } from './prompt';
 
 /**
@@ -43,10 +43,15 @@ export class AttachmentPrompt extends Prompt<Attachment[]> {
         return Array.isArray(value) && value.length > 0 ? { succeeded: true, value: value } : { succeeded: false };
     }
 
-
-    public static create(config?: PromptConfiguration): AttachmentPrompt {
+    public static create(propertyOrConfig: PromptConfiguration): AttachmentPrompt;
+    public static create(propertyOrConfig: string, prompt: string|Partial<Activity>, config?: PromptConfiguration): AttachmentPrompt;
+    public static create(propertyOrConfig: string|PromptConfiguration, prompt?: Partial<Activity>|string, config?: PromptConfiguration): AttachmentPrompt {
         const dialog = new AttachmentPrompt();
-        if (config) {
+        if (typeof propertyOrConfig === 'string') {
+            dialog.property = propertyOrConfig;
+            dialog.prompt.value = prompt;
+            if (config) { Prompt.configure(dialog, config) }
+        } else {
             Prompt.configure(dialog, config);
         }
         return dialog;

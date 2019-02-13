@@ -85,9 +85,15 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
         return result;
     }
 
-    public static create(config?: PromptConfiguration): DateTimePrompt {
+    public static create(propertyOrConfig: PromptConfiguration): DateTimePrompt;
+    public static create(propertyOrConfig: string, prompt: string|Partial<Activity>, config?: PromptConfiguration): DateTimePrompt;
+    public static create(propertyOrConfig: string|PromptConfiguration, prompt?: Partial<Activity>|string, config?: PromptConfiguration): DateTimePrompt {
         const dialog = new DateTimePrompt();
-        if (config) {
+        if (typeof propertyOrConfig === 'string') {
+            dialog.property = propertyOrConfig;
+            dialog.prompt.value = prompt;
+            if (config) { Prompt.configure(dialog, config) }
+        } else {
             Prompt.configure(dialog, config);
         }
         return dialog;

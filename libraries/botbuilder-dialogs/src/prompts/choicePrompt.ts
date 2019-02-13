@@ -111,9 +111,16 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         return result;
     }
 
-    public static create(config?: PromptConfiguration): ChoicePrompt {
+    public static create(propertyOrConfig: PromptConfiguration): ChoicePrompt;
+    public static create(propertyOrConfig: string, prompt: string|Partial<Activity>, choices: (FoundChoice|string)[], config?: PromptConfiguration): ChoicePrompt;
+    public static create(propertyOrConfig: string|PromptConfiguration, prompt?: Partial<Activity>|string, choices?: (FoundChoice|string)[],  config?: PromptConfiguration): ChoicePrompt {
         const dialog = new ChoicePrompt();
-        if (config) {
+        if (typeof propertyOrConfig === 'string') {
+            dialog.property = propertyOrConfig;
+            dialog.prompt.value = prompt;
+            dialog.choices = choices;
+            if (config) { Prompt.configure(dialog, config) }
+        } else {
             Prompt.configure(dialog, config);
         }
         return dialog;

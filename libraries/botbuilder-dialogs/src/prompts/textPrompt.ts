@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { InputHints, TurnContext } from 'botbuilder-core';
+import { InputHints, TurnContext, Activity } from 'botbuilder-core';
 import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext, PromptConfiguration } from './prompt';
 
 /**
@@ -43,9 +43,15 @@ export class TextPrompt extends Prompt<string> {
         return typeof value === 'string' && value.length > 0 ? { succeeded: true, value: value } : { succeeded: false };
     }
 
-    public static create(config?: PromptConfiguration): TextPrompt {
+    public static create(propertyOrConfig: PromptConfiguration): TextPrompt;
+    public static create(propertyOrConfig: string, prompt: string|Partial<Activity>, config?: PromptConfiguration): TextPrompt;
+    public static create(propertyOrConfig: string|PromptConfiguration, prompt?: Partial<Activity>|string, config?: PromptConfiguration): TextPrompt {
         const dialog = new TextPrompt();
-        if (config) {
+        if (typeof propertyOrConfig === 'string') {
+            dialog.property = propertyOrConfig;
+            dialog.prompt.value = prompt;
+            if (config) { Prompt.configure(dialog, config) }
+        } else {
             Prompt.configure(dialog, config);
         }
         return dialog;

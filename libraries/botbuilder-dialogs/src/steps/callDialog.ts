@@ -10,11 +10,6 @@ import { DialogContext } from '../dialogContext';
 
 export interface CallDialogConfiguration extends DialogConfiguration {
     /**
-     * ID of the dialog to call.
-     */
-    dialogId: string;
-
-    /**
      * (Optional) static options to pass to called dialog.
      * 
      * @remarks
@@ -35,6 +30,11 @@ export interface CallDialogConfiguration extends DialogConfiguration {
 }
 
 export class CallDialog<O extends object = {}> extends Dialog<O> {
+
+    constructor(dialogId?: string) {
+        super(dialogId);
+        this.outputBinding = 'dialog.lastResult';
+    }
 
     protected onComputeID(): string {
         return `call(${this.dialogId}, ${this.bindingPath()})`;
@@ -76,10 +76,10 @@ export class CallDialog<O extends object = {}> extends Dialog<O> {
         return await dc.beginDialog(this.dialogId, options);
     }
 
-    public static create(config?: CallDialogConfiguration): CallDialog {
+    public static create(dialogId: string, config?: CallDialogConfiguration): CallDialog {
         const dialog = new CallDialog();
+        dialog.dialogId = dialogId;
         if (config) {
-            if (config.dialogId) { dialog.dialogId = config.dialogId }
             if (config.options) { dialog.options = config.options }
             if (config.property) { dialog.property = config.property }
             Dialog.configure(dialog, config);

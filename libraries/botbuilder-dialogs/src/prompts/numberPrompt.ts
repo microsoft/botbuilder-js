@@ -59,10 +59,15 @@ export class NumberPrompt extends Prompt<number> {
         return result;
     }
 
-
-    public static create(config?: PromptConfiguration): NumberPrompt {
+    public static create(propertyOrConfig: PromptConfiguration): NumberPrompt;
+    public static create(propertyOrConfig: string, prompt: string|Partial<Activity>, config?: PromptConfiguration): NumberPrompt;
+    public static create(propertyOrConfig: string|PromptConfiguration, prompt?: Partial<Activity>|string, config?: PromptConfiguration): NumberPrompt {
         const dialog = new NumberPrompt();
-        if (config) {
+        if (typeof propertyOrConfig === 'string') {
+            dialog.property = propertyOrConfig;
+            dialog.prompt.value = prompt;
+            if (config) { Prompt.configure(dialog, config) }
+        } else {
             Prompt.configure(dialog, config);
         }
         return dialog;

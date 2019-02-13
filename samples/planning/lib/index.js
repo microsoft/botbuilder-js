@@ -36,12 +36,20 @@ server.post('/api/messages', (req, res) => {
         await convoState.saveChanges(context);
     });
 });
-dialogs.recognizer = new botbuilder_dialogs_1.RegExpRecognizer()
-    .addIntent('Help', /^help/i);
-// Add rules
-dialogs.addRule(new botbuilder_dialogs_1.IntentRule('Help').doNow(botbuilder_dialogs_1.SendActivity.create({ activityOrText: `I'm an echo bot. Say something to me and I'll say it back.` })));
-dialogs.addRule(new botbuilder_dialogs_1.FallbackRule().doNow(botbuilder_dialogs_1.SetState.create((state) => {
-    const count = state.conversation.get('count') || 0;
-    state.conversation.set('count', count + 1);
-}), botbuilder_dialogs_1.SendActivity.create({ activityOrText: `{conversation.count}: you said "{utterance}".` })));
+const recognizer = new botbuilder_dialogs_1.RegExpRecognizer()
+    .addIntent('Help', /^help/i)
+    .addIntent('Cancel', /^cancel/i);
+// Planning rules
+dialogs
+    .setRecognizer(recognizer)
+    .addRule(new botbuilder_dialogs_1.IntentRule('Help').doNow(botbuilder_dialogs_1.CallDialog.create('HelpDialog')))
+    .addRule(new botbuilder_dialogs_1.FallbackRule().doNow(botbuilder_dialogs_1.CallDialog.create('SurveyDialog'), botbuilder_dialogs_1.SendActivity.create(`Thanks {dialog.lastResult.name}. I enjoy programming in {dialog.lastResult.language.value} too.`)));
+// Survey Dialog
+dialogs.addDialog(new botbuilder_dialogs_1.SequenceDialog('SurveyDialog')
+    .setRecognizer(recognizer)
+    .addRule(new botbuilder_dialogs_1.IntentRule('Cancel').doNow(botbuilder_dialogs_1.CancelAllDialogs.create()))
+    .do(botbuilder_dialogs_1.SendActivity.create(`Please take this short survey. You can say "cancel" at anytime.`), botbuilder_dialogs_1.TextPrompt.create('dialog.result.name', `What is your name?`), botbuilder_dialogs_1.NumberPrompt.create('dialog.result.age', `Hi {dialog.result.name}. How old are you?`), botbuilder_dialogs_1.ChoicePrompt.create('dialog.result.language', `What is your preferred programming language?`, ['c#', 'TypeScript', 'JavaScript'])));
+// Help dialog
+dialogs.addDialog(new botbuilder_dialogs_1.SequenceDialog('HelpDialog')
+    .do(botbuilder_dialogs_1.SendActivity.create(`I'm an echo bot. Say something to me and I'll say it back.`)));
 //# sourceMappingURL=index.js.map

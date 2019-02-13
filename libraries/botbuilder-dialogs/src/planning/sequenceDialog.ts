@@ -17,7 +17,7 @@ export class SequenceDialog extends PlanningDialog {
         return `sequence(${this.bindingPath()})`;
     }
 
-    public addStep(...steps: Dialog[]): this {
+    public do(...steps: Dialog[]): this {
         steps.forEach((step) => {
             this.addDialog(step);
             this.steps.push(step);

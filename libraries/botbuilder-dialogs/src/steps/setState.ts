@@ -16,14 +16,14 @@ export class SetState extends DialogCommand {
         return `setState(${this.expression.toString()})`;
     }
 
-    public expression: (state: DialogContextState) => void;
+    public expression: (state: DialogContextState) => Promise<void>;
 
     protected async onRunCommand(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
-        this.expression(dc.state);
+        await this.expression(dc.state);
         return await dc.endDialog();
     }
 
-    static create(expression: (state: DialogContextState) => void, config?: DialogConfiguration): SetState {
+    static create(expression: (state: DialogContextState) => Promise<void>, config?: DialogConfiguration): SetState {
         const dialog = new SetState();
         dialog.expression = expression;
         if (config) {
