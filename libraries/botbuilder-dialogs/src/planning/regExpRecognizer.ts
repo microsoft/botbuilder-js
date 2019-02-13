@@ -13,10 +13,10 @@ export class RegExpRecognizer implements Recognizer {
     
     public readonly intents: { name: string; expression: RegExp; }[] = [];
 
-    public multiIntentSupport = false;
+    public multiIntentMode = false;
 
-    constructor(multiIntentSupport = false) {
-        this.multiIntentSupport = multiIntentSupport;
+    constructor(multiIntentMode = false) {
+        this.multiIntentMode = multiIntentMode;
     }
 
     public addIntent(name: string, expression: RegExp): this {
@@ -53,7 +53,7 @@ export class RegExpRecognizer implements Recognizer {
         // Populate intents and entities matched
         const intents: IntentMap = {};
         const entities: { [name:string]: string[]; } = {};
-        if (this.multiIntentSupport) {
+        if (this.multiIntentMode) {
             // Return all intents and entities
             for (const name in matched) {
                 const match = matched[name];
