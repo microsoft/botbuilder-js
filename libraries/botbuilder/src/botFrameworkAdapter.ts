@@ -227,6 +227,17 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         // Create conversation
         const parameters: ConversationParameters = { bot: reference.bot, members: [reference.user] } as ConversationParameters;
         const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
+
+        // Mix in the tenant ID if specified. This is required for MS Teams.
+        if (reference.conversation && reference.conversation.tenantId) {
+            // Putting tenantId in channelData is a temporary solution while we wait for the Teams API to be updated
+            parameters.channelData = { tenant: { id: reference.conversation.tenantId } };
+
+            // Permanent solution is to put tenantId in parameters.tenantId
+            parameters.tenantId = reference.conversation.tenantId;
+
+        }
+
         const response = await client.conversations.createConversation(parameters);
 
         // Initialize request and copy over new conversation ID and updated serviceUrl.
