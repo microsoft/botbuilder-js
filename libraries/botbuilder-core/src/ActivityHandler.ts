@@ -79,16 +79,6 @@ export class ActivityHandler {
     }
 
     /**
-     * Receives all ContactRelationUpdate activities
-     * @remarks
-     * Contact relation update activities signal a change in the relationship between the recipient and a user within the channel.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
-     */
-    public onContactRelationUpdate(handler: BotHandler): this {
-        return this.on('ContactRelationUpdate', handler);
-    }
-
-    /**
      * Receives all ConversationUpdate activities, regardless of whether members were added or removed
      * @remarks
      * Conversation update activities describe a change in a conversation's members, description, existence, or otherwise.
@@ -119,18 +109,6 @@ export class ActivityHandler {
     }
 
     /**
-     * Receives all EndOfConversation activities.
-     * @remarks
-     * End of conversation activities signal the end of a conversation from the recipient's perspective.
-     * This may be because the conversation has been completely ended, or because the recipient has been
-     * removed from the conversation in a way that is indistinguishable from it ending.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
-     */
-    public onEndOfConversation(handler: BotHandler): this {
-        return this.on('EndOfConversation', handler);
-    }
-
-    /**
      * Receives all Event activities.
      * @remarks
      * Event activities communicate programmatic information from a client or channel to a bot.
@@ -139,145 +117,6 @@ export class ActivityHandler {
      */
     public onEvent(handler: BotHandler): this {
         return this.on('Event', handler);
-    }
-
-    /**
-     * Receives event activities of type 'tokens/response'
-     * @remarks
-     * These events occur during the oauth flow
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
-     */
-    public onTokenResponseEvent(handler: BotHandler): this {
-        return this.on('TokenResponseEvent', handler);
-    }
-
-    /**
-     * Receives all Invoke activities.
-     * @remarks
-     * Invoke activities are the synchronous counterpart to event activities.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
-     */
-    public onInvoke(handler: BotHandler): this {
-        return this.on('Invoke', handler);
-    }
-
-    /**
-     * Receives all MS Teams-specific oauth Invoke activities.
-     * @remarks
-     * Invoke activities are the synchronous counterpart to event activities.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
-     */
-    public onTeamsVerificationInvoke(handler: BotHandler): this {
-        return this.on('TeamsVerificationInvoke', handler);
-    }
-
-
-    /**
-     * Receives all InstallationUpdate activities.
-     * @remarks
-     * Installation update activities represent an installation or uninstallation of a bot
-     * within an organizational unit (such as a customer tenant or "team") of a channel.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
-     */
-    public onInstallationUpdate(handler: BotHandler): this {
-        return this.on('InstallationUpdate', handler);
-    }
-
-    /**
-     * Receives all MessageDelete activities.
-     * @remarks
-     * Message delete activities represent a deletion of an existing message activity within a conversation.
-     * The deleted activity is referred to by the id and conversation fields within the activity.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
-     */
-    public onMessageDelete(handler: BotHandler): this {
-        return this.on('MessageDelete', handler);
-    }
-
-    /**
-     * Receives all MessageUpdate activities.
-     * @remarks
-     * Message update activities represent an update of an existing message activity within a conversation.
-     * The updated activity is referred to by the id and conversation fields within the activity, and the
-     * message update activity contains all fields in the revised message activity.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
-     */
-    public onMessageUpdate(handler: BotHandler): this {
-        return this.on('MessageUpdate', handler);
-    }
-
-    /**
-     * Receives all MessageReaction activities, regardless of the sub-type of event.
-     * @remarks
-     * Message reaction activities represent a social interaction on an existing message activity within a conversation.
-     * The original activity is referred to by the id and conversation fields within the activity.
-     * The from field represents the source of the reaction (i.e., the user that reacted to the message).
-     *
-     * See related events: onMessageReactionAdded and onMessageReactionRemoved
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
-     */
-    public onMessageReaction(handler: BotHandler): this {
-        return this.on('MessageReaction', handler);
-    }
-
-    /**
-     * Receives MessageReaction activities when a reaction is added
-     * @remarks
-     * The `context.activity.reactionsAdded` field contains a list of reactions added to this activity.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
-     */
-    public onMessageReactionAdded(handler: BotHandler): this {
-        return this.on('MessageReactionAdded', handler);
-    }
-
-    /**
-     * Receives MessageReaction activities when a reaction is removed
-     * @remarks
-     * The `context.activity.reactionsRemoved` field contains a list of reactions added from this activity.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
-     */
-    public onMessageReactionRemoved(handler: BotHandler): this {
-        return this.on('MessageReactionRemoved', handler);
-    }
-
-    /**
-     * Receives any Typing activities received
-     * @remarks
-     * Typing activities represent ongoing input from a user or a bot. This activity is often sent when keystrokes are being entered by a user.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
-     */
-    public onTyping(handler: BotHandler): this {
-        return this.on('Typing', handler);
-    }
-
-    /**
-     * Receives Handoff activities when a reaction is removed
-     * @remarks
-     * Handoff activities are used to request or signal a change in focus between elements inside a bot.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
-     */
-    public onHandoff(handler: BotHandler): this {
-        return this.on('Handoff', handler);
-    }
-
-    /**
-     * Receives Event activities that indicate a new conversation has been created.
-     * @remarks
-     * activity.context.name will be 'createConversation'
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
-     */
-    public onCreateConversation(handler: BotHandler): this {
-        return this.on('CreateConversation', handler);
-    }
-
-    /**
-     * Receives Event activities that indicate an existing conversation is being continued.
-     * @remarks
-     * activity.context.name will be 'continueConversation'
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
-     */
-    public onContinueConversation(handler: BotHandler): this {
-        return this.on('ContinueConversation', handler);
     }
 
     /**
@@ -344,9 +183,6 @@ export class ActivityHandler {
                 case ActivityTypes.Message:
                     await this.handle(context, 'Message', runDialogs);
                     break;
-                case ActivityTypes.ContactRelationUpdate:
-                    await this.handle(context, 'ContactRelationUpdate', runDialogs);
-                    break;
                 case ActivityTypes.ConversationUpdate:
                     await this.handle(context, 'ConversationUpdate', async () => {
                         if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
@@ -358,72 +194,14 @@ export class ActivityHandler {
                         }
                     });
                     break;
-                case ActivityTypes.EndOfConversation:
-                    await this.handle(context, 'EndOfConversation', runDialogs);
-                    break;
                 case ActivityTypes.Event:
                     await this.handle(context, 'Event', async () => {
                         if (context.activity.name === 'tokens/response') {
                             await this.handle(context, 'TokenResponseEvent', runDialogs);
-                        } else if (context.activity.name === 'createConversation') {
-                            await this.handle(context, 'CreateConversation', runDialogs);
-                        } else if (context.activity.name === 'continueConversation') {
-                            await this.handle(context, 'ContinueConversation', runDialogs);
                         } else {
                             await runDialogs();
                         }
                     });
-                    break;
-                case ActivityTypes.Invoke:
-                    let response = null;
-                    response = await this.handle(context, 'Invoke', async () => {
-                        if (context.activity.name === 'signin/verifyState') {
-                            // if we have a more specialized handler for this, get our invoke response from that.
-                            if (this.handlers.TeamsVerificationInvoke && this.handlers.TeamsVerificationInvoke.length) {
-                                response = await this.handle(context, 'TeamsVerificationInvoke', runDialogs);
-                            }
-                        } else {
-                            await runDialogs();
-                        }
-                    });
-                    // pass invoke response on
-                    if (response !== null) {
-                        // Send an invokeResponse activity.
-                        // This will actually be cached and sent as the http response
-                        // by the BotFrameworkAdapter (if in use)
-                        const invokeResponseActivity = {
-                            type: 'invokeResponse',
-                            value: response,
-                        } as Activity;
-                        await context.sendActivity(invokeResponseActivity);
-                    }
-                    break;
-                case ActivityTypes.InstallationUpdate:
-                    await this.handle(context, 'InstallationUpdate', runDialogs);
-                    break;
-                case ActivityTypes.MessageDelete:
-                    await this.handle(context, 'MessageDelete', runDialogs);
-                    break;
-                case ActivityTypes.MessageUpdate:
-                    await this.handle(context, 'MessageUpdate', runDialogs);
-                    break;
-                case ActivityTypes.MessageReaction:
-                    await this.handle(context, 'MessageReaction', async() => {
-                        if (context.activity.reactionsAdded && context.activity.reactionsAdded.length) {
-                            await this.handle(context, 'MessageReactionAdded', runDialogs);
-                        } else if (context.activity.reactionsRemoved && context.activity.reactionsRemoved.length) {
-                            await this.handle(context, 'MessageReactionRemoved', runDialogs);
-                        } else {
-                            await runDialogs();
-                        }
-                    });
-
-                    break;
-                case ActivityTypes.Typing:
-                    await this.handle(context, 'Typing', runDialogs);
-                    break;
-                case ActivityTypes.Handoff:
-                    await this.handle(context, 'Handoff', runDialogs);
                     break;
                 default:
                     // handler for unknown or unhandled types
