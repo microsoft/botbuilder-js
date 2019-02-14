@@ -119,6 +119,16 @@ export class ActivityHandler {
         return this.on('Event', handler);
     }
 
+     /**
+     * Receives event activities of type 'tokens/response'
+     * @remarks
+     * These events occur during the oauth flow
+     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     */
+    public onTokenResponseEvent(handler: BotHandler): this {
+        return this.on('TokenResponseEvent', handler);
+    }
+
     /**
      * UnrecognizedActivityType will fire if an activity is received with a type that has not previously been defined.
      * @remarks
@@ -169,6 +179,18 @@ export class ActivityHandler {
      */
     public async run(context: TurnContext): Promise<void> {
 
+        if (!context) {
+            throw new Error(`Missing TurnContext parameter`);
+        }
+
+        if (!context.activity) {
+            throw new Error(`TurnContext does not include an activity`);
+        }
+
+        if (!context.activity.type) {
+            throw new Error(`Activity is missing it's type`);
+        }
+        
         // Allow the dialog system to be triggered at the end of the chain
         const runDialogs = async (): Promise<void> => {
             await this.handle(context, 'Dialog', async () => {
