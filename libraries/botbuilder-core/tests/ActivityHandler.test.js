@@ -94,19 +94,6 @@ describe('ActivityHandler', function() {
         processActivity({type: 'message'}, bot);
     });
 
-    it(`should fire onContactRelationUpdate`, async function (done) {
-
-        const bot = new ActivityHandler();
-
-        bot.onContactRelationUpdate(async(context, next) => {
-            assert(true, 'onContactRelationUpdate not called');
-            done();
-            await next();
-        });
-
-        processActivity({type: ActivityTypes.ContactRelationUpdate}, bot);
-    });
-
     it(`should fire onConversationUpdate`, async function (done) {
 
         const bot = new ActivityHandler();
@@ -146,19 +133,6 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.ConversationUpdate, membersRemoved: [{id: 1}]}, bot);
     });
 
-    it(`should fire onEndOfConversation`, async function (done) {
-
-        const bot = new ActivityHandler();
-
-        bot.onEndOfConversation(async(context, next) => {
-            assert(true, 'onEndOfConversation not called');
-            done();
-            await next();
-        });
-
-        processActivity({type: ActivityTypes.EndOfConversation}, bot);
-    });
-
     it(`should fire onEvent`, async function (done) {
 
         const bot = new ActivityHandler();
@@ -172,126 +146,6 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.Event}, bot);
     });
 
-
-    it(`should fire onInvoke`, async function (done) {
-
-        const bot = new ActivityHandler();
-
-        bot.onInvoke(async(context, next) => {
-            assert(true, 'onInvoke not called');
-            done();
-            await next();
-        });
-
-        processActivity({type: ActivityTypes.Invoke}, bot);
-    });
-
-    it(`should fire onInstallationUpdate`, async function (done) {
-
-        const bot = new ActivityHandler();
-
-        bot.onInstallationUpdate(async(context, next) => {
-            assert(true, 'onInstallationUpdate not called');
-            done();
-            await next();
-        });
-
-        processActivity({type: ActivityTypes.InstallationUpdate}, bot);
-    });
-
-    it(`should fire onMessageDelete`, async function (done) {
-
-        const bot = new ActivityHandler();
-
-        bot.onMessageDelete(async(context, next) => {
-            assert(true, 'onMessageDelete not called');
-            done();
-            await next();
-        });
-
-        processActivity({type: ActivityTypes.MessageDelete}, bot);
-    });
-
-    it(`should fire onMessageUpdate`, async function (done) {
-
-        const bot = new ActivityHandler();
-
-        bot.onMessageUpdate(async(context, next) => {
-            assert(true, 'onMessageUpdate not called');
-            done();
-            await next();
-        });
-
-        processActivity({type: ActivityTypes.MessageUpdate}, bot);
-    });
-
-
-    it(`should fire onMessageReaction`, async function (done) {
-
-        const bot = new ActivityHandler();
-
-        bot.onMessageReaction(async(context, next) => {
-            assert(true, 'onMessageReaction not called');
-            done();
-            await next();
-        });
-
-        processActivity({type: ActivityTypes.MessageReaction}, bot);
-    });
-
-    
-    it(`should fire onMessageReactionAdded`, async function (done) {
-
-        const bot = new ActivityHandler();
-
-        bot.onMessageReactionAdded(async(context, next) => {
-            assert(true, 'onMessageReactionAdded not called');
-            done();
-            await next();
-        });
-
-        processActivity({type: ActivityTypes.MessageReaction, reactionsAdded: [{type: 1}]}, bot);
-    });
-
-
-    it(`should fire onMessageReactionRemoved`, async function (done) {
-
-        const bot = new ActivityHandler();
-
-        bot.onMessageReactionRemoved(async(context, next) => {
-            assert(true, 'onMessageReactionRemoved not called');
-            done();
-            await next();
-        });
-
-        processActivity({type: ActivityTypes.MessageReaction, reactionsRemoved: [{type: 1}]}, bot);
-    });
-
-    it(`should fire onTyping`, async function (done) {
-
-        const bot = new ActivityHandler();
-
-        bot.onTyping(async(context, next) => {
-            assert(true, 'onTyping not called');
-            done();
-            await next();
-        });
-
-        processActivity({type: ActivityTypes.Typing}, bot);
-    });
-
-    it(`should fire onHandoff`, async function (done) {
-
-        const bot = new ActivityHandler();
-
-        bot.onHandoff(async(context, next) => {
-            assert(true, 'onHandoff not called');
-            done();
-            await next();
-        });
-
-        processActivity({type: ActivityTypes.Handoff}, bot);
-    });
 
     it(`should fire onUnrecognizedActivityType`, async function (done) {
 
