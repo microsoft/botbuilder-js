@@ -7,10 +7,9 @@
  */
 import { Activity, ActivityTypes, InputHints, MessageFactory, TurnContext } from 'botbuilder-core';
 import { Choice, ChoiceFactory, ChoiceFactoryOptions } from '../choices';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogConfiguration } from '../dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { StateMap } from '../stateMap';
-import { ActivityProperty } from '../activityProperty';
 
 /**
  * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
@@ -66,32 +65,6 @@ export interface PromptOptions {
      * (Optional) Additional validation rules to pass the prompts validator routine.
      */
     validations?: object;
-
-    value?: any;
-
-    parentState?: object;
-}
-
-export interface PromptConfiguration extends DialogConfiguration {
-    /**
-     * (Optional) Initial prompt to send the user.
-     */
-    prompt?: string|Partial<Activity>;
-
-    /**
-     * (Optional) Retry prompt to send the user.
-     */
-    retryPrompt?: string|Partial<Activity>;
-
-    /**
-     * (Optional) data binds the prompts input & output to the given state property.
-     */
-    property?: string;
-
-    /**
-     * (Optional) List of choices associated with the prompt.
-     */
-    choices?: (string|Choice)[];
 }
 
 /**
@@ -168,12 +141,6 @@ export interface PromptValidatorContext<T> {
      * The validator can extend this interface to support additional prompt options.
      */
     readonly options: PromptOptions;
-
-    /**
-     * If `true` the [recognized.value](#recognized) is the initial value passed into the prompt
-     * and the validator is being called to determine if the current value is valid. 
-     */
-    readonly preValidation: boolean;
 }
 
 /**
@@ -188,75 +155,25 @@ export abstract class Prompt<T> extends Dialog {
      */
     constructor(dialogId?: string, private validator?: PromptValidator<T>) {
         super(dialogId);
-        this.prompt.inputHint = InputHints.ExpectingInput;
-        this.retryPrompt.inputHint = InputHints.ExpectingInput;
-        this.inputBindings['parentState'] = 'dialog';
-    }
-
-    public prompt = new ActivityProperty();
-    
-    public retryPrompt = new ActivityProperty();
-
-    public choices: (string|Choice)[] = [];
-
-    public set property(value: string) {
-        this.inputBindings['value'] = value;
-        this.outputBinding = value;
-    }
-
-    public get property(): string {
-        return this.inputBindings['value'];
     }
 
     public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
-        // Format prompts
+        // Ensure prompts have input hint set
         const opt: Partial<PromptOptions> = {...options};
-        if (this.prompt.hasValue(opt.prompt)) {
-            opt.prompt = this.prompt.format(dc, { dialog: opt.parentState }, opt.prompt);
+        if (opt.prompt && typeof opt.prompt === 'object' && typeof opt.prompt.inputHint !== 'string') {
+            opt.prompt.inputHint = InputHints.ExpectingInput;
         }
-        if (this.retryPrompt.hasValue(opt.retryPrompt)) {
-            opt.retryPrompt = this.retryPrompt.format(dc, { dialog: opt.parentState }, opt.retryPrompt);
+        if (opt.retryPrompt && typeof opt.retryPrompt === 'object' && typeof opt.retryPrompt.inputHint !== 'string') {
+            opt.retryPrompt.inputHint = InputHints.ExpectingInput;
         }
-        if (this.choices.length > 0 && !opt.choices) {
-            opt.choices = this.choices;
-        }
-        if (opt.value) { delete opt.value }
-        if (opt.parentState) { delete opt.parentState }
 
         // Initialize prompt state
         const state = dc.state.dialog;
         state.set(PERSISTED_OPTIONS, opt);
         state.set(PERSISTED_STATE, {});
 
-        const recognized: PromptRecognizerResult<T> = {
-            value: options.value,
-            succeeded: true
-        };
-        const value = options['value'];
-        if (value !== undefined) {
-            let isValid = true;
-            if (this.validator) {
-                isValid = await this.validator({
-                    context: dc.context,
-                    recognized: recognized,
-                    state: state.get(PERSISTED_STATE),
-                    options: state.get(PERSISTED_OPTIONS),
-                    preValidation: true
-                });
-            }
-
-            // Return validated value or prompt
-            if (isValid) {
-                return await dc.endDialog(recognized.value);
-            } else {
-                if (!dc.context.responded) {
-                    await this.onPrompt(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), false);
-                }
-            }
-        } else {
-            // Send initial prompt
-            await this.onPrompt(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), false);
-        }
+        // Send initial prompt
+        await this.onPrompt(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), false);
 
         return Dialog.EndOfTurn;
     }
@@ -278,8 +195,7 @@ export abstract class Prompt<T> extends Dialog {
                 context: dc.context,
                 recognized: recognized,
                 state: state.get(PERSISTED_STATE),
-                options: state.get(PERSISTED_OPTIONS),
-                preValidation: false
+                options: state.get(PERSISTED_OPTIONS)
             });
         } else if (recognized.succeeded) {
             isValid = true;
@@ -396,14 +312,6 @@ export abstract class Prompt<T> extends Dialog {
 
             return msg;
         }
-    }
-
-    public static configure(dialog: Prompt<any>, config: PromptConfiguration): void {
-        if (config.prompt) { dialog.prompt.value = config.prompt }
-        if (config.retryPrompt) { dialog.retryPrompt.value = config.retryPrompt }
-        if (config.property) { dialog.property = config.property }
-        if (config.choices && config.choices.length > 0) { dialog.choices = config.choices }
-        Dialog.configure(dialog, config);
     }
 }
 

@@ -167,8 +167,7 @@ export class OAuthPrompt extends Dialog {
                     context: dc.context,
                     recognized: recognized,
                     state: state.get(PERSISTED_STATE),
-                    options: state.get(PERSISTED_OPTIONS),
-                    preValidation: false
+                    options: state.get(PERSISTED_OPTIONS)
                 });
             } else if (recognized.succeeded) {
                 isValid = true;

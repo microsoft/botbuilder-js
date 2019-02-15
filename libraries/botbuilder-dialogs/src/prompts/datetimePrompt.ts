@@ -7,7 +7,7 @@
  */
 import * as Recognizers from '@microsoft/recognizers-text-date-time';
 import { Activity, InputHints, TurnContext } from 'botbuilder-core';
-import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext, PromptConfiguration } from './prompt';
+import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
 /**
  * Result returned by the `DateTimePrompt`.
@@ -51,7 +51,7 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
      * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
      */
     constructor(dialogId?: string, validator?: PromptValidator<DateTimeResolution[]>, defaultLocale?: string) {
-        super(dialogId, validator || defaultValidator);
+        super(dialogId, validator);
         this.defaultLocale = defaultLocale;
     }
 
@@ -83,34 +83,5 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
         }
 
         return result;
-    }
-
-    public static create(propertyOrConfig: PromptConfiguration): DateTimePrompt;
-    public static create(propertyOrConfig: string, prompt: string|Partial<Activity>, config?: PromptConfiguration): DateTimePrompt;
-    public static create(propertyOrConfig: string|PromptConfiguration, prompt?: Partial<Activity>|string, config?: PromptConfiguration): DateTimePrompt {
-        const dialog = new DateTimePrompt();
-        if (typeof propertyOrConfig === 'string') {
-            dialog.property = propertyOrConfig;
-            dialog.prompt.value = prompt;
-            if (config) { Prompt.configure(dialog, config) }
-        } else {
-            Prompt.configure(dialog, config);
-        }
-        return dialog;
-    }
-}
-
-async function defaultValidator(prompt: PromptValidatorContext<DateTimeResolution[]>): Promise<boolean> {
-    if (prompt.preValidation) {
-        const results = prompt.recognized.value;
-        if (Array.isArray(results) && results.length > 0) {
-            if (typeof results[0] === 'object' && results[0].timex) {
-                return true;
-            }
-        }
-
-        return false;
-    } else {
-        return prompt.recognized.succeeded;
     }
 }

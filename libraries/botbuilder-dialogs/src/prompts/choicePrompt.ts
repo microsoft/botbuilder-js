@@ -7,7 +7,7 @@
  */
 import { Activity, TurnContext } from 'botbuilder-core';
 import { ChoiceFactory, ChoiceFactoryOptions, FindChoicesOptions, FoundChoice, recognizeChoices } from '../choices';
-import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext, PromptConfiguration } from './prompt';
+import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
 /**
  * Prompts a user to select from a list of choices.
@@ -63,7 +63,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
     constructor(dialogId?: string, validator?: PromptValidator<FoundChoice>, defaultLocale?: string) {
-        super(dialogId, validator || defaultValidator);
+        super(dialogId, validator);
         this.style = ListStyle.auto;
         this.defaultLocale = defaultLocale;
     }
@@ -110,44 +110,4 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
 
         return result;
     }
-
-    public static create(propertyOrConfig: PromptConfiguration): ChoicePrompt;
-    public static create(propertyOrConfig: string, prompt: string|Partial<Activity>, choices: (FoundChoice|string)[]|string, config?: PromptConfiguration): ChoicePrompt;
-    public static create(propertyOrConfig: string|PromptConfiguration, prompt?: Partial<Activity>|string, choices?: (FoundChoice|string)[]|string,  config?: PromptConfiguration): ChoicePrompt {
-        const dialog = new ChoicePrompt();
-        if (typeof propertyOrConfig === 'string') {
-            dialog.property = propertyOrConfig;
-            dialog.prompt.value = prompt;
-            if (Array.isArray(choices)) {
-                dialog.choices = choices;
-            } else {
-                // Setup input binding
-                dialog.inputBindings['choices'] = choices;
-            }
-            if (config) { Prompt.configure(dialog, config) }
-        } else {
-            Prompt.configure(dialog, config);
-        }
-        return dialog;
-    }
 }
-
-async function defaultValidator(prompt: PromptValidatorContext<FoundChoice>): Promise<boolean> {
-    if (prompt.preValidation) {
-        const choice = prompt.recognized.value;
-        if (typeof choice === 'object' && choice.value) {
-            const options = prompt.options;
-            const choices = ChoiceFactory.toChoices(options.choices);
-            const results = recognizeChoices(choice.value, choices);
-            if (Array.isArray(results) && results.length > 0) {
-                prompt.recognized.value = results[0].resolution;
-                return true;
-            }
-        }
-
-        return false;
-    } else {
-        return prompt.recognized.succeeded;
-    }
-}
-

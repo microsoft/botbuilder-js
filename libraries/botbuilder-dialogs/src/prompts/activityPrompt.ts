@@ -67,8 +67,7 @@ export abstract class ActivityPrompt extends Dialog {
             context: dc.context,
             recognized: recognized,
             state: state.get(PERSISTED_STATE),
-            options: state.get(PERSISTED_OPTIONS),
-            preValidation: false
+            options: state.get(PERSISTED_OPTIONS)
         });
 
         // Return recognized value or re-prompt

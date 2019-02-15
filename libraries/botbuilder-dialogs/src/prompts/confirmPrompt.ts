@@ -8,7 +8,7 @@
 import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { Activity, TurnContext } from 'botbuilder-core';
 import { Choice, ChoiceFactoryOptions, recognizeChoices } from '../choices';
-import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator, PromptValidatorContext, PromptConfiguration } from './prompt';
+import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
 /**
  * Prompts a user to confirm something with a "yes" or "no" response.
@@ -77,7 +77,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
      * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
      */
     constructor(dialogId?: string, validator?: PromptValidator<boolean>, defaultLocale?: string) {
-        super(dialogId, validator || defaultValidator);
+        super(dialogId, validator);
         this.style = ListStyle.auto;
         this.defaultLocale = defaultLocale;
     }
@@ -138,23 +138,4 @@ export class ConfirmPrompt extends Prompt<boolean> {
         }
         return culture;
     }
-
-
-    public static create(propertyOrConfig: PromptConfiguration): ConfirmPrompt;
-    public static create(propertyOrConfig: string, prompt: string|Partial<Activity>, config?: PromptConfiguration): ConfirmPrompt;
-    public static create(propertyOrConfig: string|PromptConfiguration, prompt?: Partial<Activity>|string, config?: PromptConfiguration): ConfirmPrompt {
-        const dialog = new ConfirmPrompt();
-        if (typeof propertyOrConfig === 'string') {
-            dialog.property = propertyOrConfig;
-            dialog.prompt.value = prompt;
-            if (config) { Prompt.configure(dialog, config) }
-        } else {
-            Prompt.configure(dialog, config);
-        }
-        return dialog;
-    }
-}
-
-async function defaultValidator(prompt: PromptValidatorContext<boolean>): Promise<boolean> {
-    return prompt.preValidation ? typeof prompt.recognized.value === 'boolean' : prompt.recognized.succeeded;
 }
