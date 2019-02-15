@@ -127,29 +127,25 @@ export class LuisRecognizer {
     constructor(application: string, options?: LuisPredictionOptions, includeApiResults?: boolean);
     constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean);
     constructor(application: LuisApplication|string, options?: LuisPredictionOptions, includeApiResults?: boolean) {
-        if (typeof(application) === 'string') {
-            this.application = {} as LuisApplication;
-            const parsedEndpoint: any = Url(application);
-            if (parsedEndpoint.origin === 'null') {
-                throw new Error(`Unable to parse \`endpoint\` value (e.g. "https://westus.api.cognitive.microsoft.com") from LUIS endpoint ${application}.\nPlease make sure your endpoint is a valid LUIS Endpoint.`);
-            }
-            this.application.endpoint = parsedEndpoint.origin;
-            this.application.applicationId = parsedEndpoint.pathname.split('apps/')[1];
-            
-            if (!this.application.applicationId) {
-                throw new Error(`Unable to parse \`applicationId\` value (e.g. "b31aeaf3-3511-495b-a07f-571fc873214b") not detected in LUIS endpoint ${application}.\nPlease make sure your endpoint is a valid LUIS Endpoint.`);
-            }
-
+        if (typeof application === 'string') {
+            const parsedEndpoint: Url = Url(application);
             // Use exposed querystringify to parse the query string for the endpointKey value.
             const parsedQuery = Url.qs.parse(parsedEndpoint.query);
-            if (parsedQuery && parsedQuery['subscription-key']) {
-                this.application.endpointKey = parsedQuery['subscription-key'];
-            } else {
-                throw new Error(`Unable to parse \`endpointKey\` ("subscription-key") from passed in LUIS endpoint's query string ${application}.\nPlease make sure your endpoint is a valid LUIS Endpoint.`);
-            }
+            this.application = {
+                applicationId: parsedEndpoint.pathname.split('apps/')[1],
+                // Note: The query string parser bundled with url-parse can return "null" as a value for the origin.
+                endpoint: parsedEndpoint.origin,
+                endpointKey: parsedQuery['subscription-key']
+            };
         } else {
-            this.application = application as LuisApplication;
+            const { applicationId, endpoint, endpointKey } = application;
+            this.application = {
+                applicationId: applicationId,
+                endpoint: endpoint,
+                endpointKey: endpointKey
+            };
         }
+        this.validateLuisApplication();
         
         this.options = {
             includeAllIntents: false,
@@ -565,5 +561,19 @@ export class LuisRecognizer {
         }
 
         return result;
+    }
+
+    /**
+     * Performs a series of valdiations on `LuisRecognizer.application`.
+     * 
+     * Note: Neither the LUIS Application ID nor the Endpoint Key are actual LUIS components, they are representations of what two valid values would appear as.
+     */
+    private validateLuisApplication(): void {
+        if (!this.application.applicationId) {
+            throw new Error(`Invalid \`applicationId\` value detected: ${this.application.applicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
+        }
+        if (!this.application.endpointKey) {
+            throw new Error(`Invalid \`endpointKey\` value detected: ${this.application.endpointKey}\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`);
+        }
     }
 }

@@ -506,22 +506,24 @@ describe('LuisRecognizer', function () {
     });
 
     it('should throw an error when parsing application endpoint with no subscription-key.', () => {
-        const endpointWithNoSubscriptionKey = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/b31aeaf3-3511-495b-a07f-571fc873214b?verbose=true&timezoneOffset=-360&q='
+        const endpointWithNoSubscriptionKey = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/b31aeaf3-3511-495b-a07f-571fc873214b?verbose=true&timezoneOffset=-360&q=';
+        const expectedSubscriptionKey = undefined;
         try {
             const recognizer = new LuisRecognizer(endpointWithNoSubscriptionKey);
             assert(false, 'should have thrown an error.');
         } catch (e) {
-            assert(e.message === `Unable to parse \`endpointKey\` ("subscription-key") from passed in LUIS endpoint's query string ${endpointWithNoSubscriptionKey}.\nPlease make sure your endpoint is a valid LUIS Endpoint.`);
+            assert(e.message === `Invalid \`endpointKey\` value detected: ${expectedSubscriptionKey}\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`);
         }
     });
 
+    const expectedApplicationId = undefined;
     it('should throw an error when parsing application endpoint with no application ID.', () => {
         const endpointWithNoAppId = 'https://westus.api.cognitive.microsoft.com?verbose=true&timezoneOffset=-360&subscription-key=048ec46dc58e495482b0c447cfdbd291&q=';
         try {
             const recognizer = new LuisRecognizer(endpointWithNoAppId);
             assert(false, 'should have thrown an error.');
         } catch (e) {
-            assert(e.message === `Unable to parse \`applicationId\` value (e.g. "b31aeaf3-3511-495b-a07f-571fc873214b") not detected in LUIS endpoint ${endpointWithNoAppId}.\nPlease make sure your endpoint is a valid LUIS Endpoint.`);
+            assert(e.message === `Invalid \`applicationId\` value detected: ${expectedApplicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
         }
     });
 
@@ -530,7 +532,7 @@ describe('LuisRecognizer', function () {
             const recognizer = new LuisRecognizer('this.is.not.a.url');
             assert(false, 'should have thrown an error.');
         } catch (e) {
-            assert(e.message === `Unable to parse \`endpoint\` value (e.g. "https://westus.api.cognitive.microsoft.com") from LUIS endpoint this.is.not.a.url.\nPlease make sure your endpoint is a valid LUIS Endpoint.`);
+            assert(e.message === `Invalid \`applicationId\` value detected: ${expectedApplicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
         }
     });
 });
