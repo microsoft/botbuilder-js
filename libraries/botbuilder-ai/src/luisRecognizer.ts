@@ -9,6 +9,7 @@ import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from
 import { RecognizerResult, TurnContext } from 'botbuilder';
 import * as msRest from 'ms-rest';
 import * as os from 'os';
+import * as Url from 'url-parse';
 
 const pjson = require('../package.json');
 
@@ -119,12 +120,37 @@ export class LuisRecognizer {
 
     /**
      * Creates a new LuisRecognizer instance.
-     * @param application An object conforming to the [LuisApplication](#luisapplication) definition.
+     * @param application An object conforming to the [LuisApplication](#luisapplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
      * @param options (Optional) options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
      * @param includeApiResults (Optional) flag that if set to `true` will force the inclusion of LUIS Api call in results returned by [recognize()](#recognize). Defaults to a value of `false`.
      */
-    constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean) {
-        this.application = application;
+    constructor(application: string, options?: LuisPredictionOptions, includeApiResults?: boolean);
+    constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean);
+    constructor(application: LuisApplication|string, options?: LuisPredictionOptions, includeApiResults?: boolean) {
+        if (typeof(application) === 'string') {
+            this.application = {} as LuisApplication;
+            const parsedEndpoint: any = Url(application);
+            if (parsedEndpoint.origin === 'null') {
+                throw new Error(`Unable to parse \`endpoint\` value (e.g. "https://westus.api.cognitive.microsoft.com") from LUIS endpoint ${application}.\nPlease make sure your endpoint is a valid LUIS Endpoint.`);
+            }
+            this.application.endpoint = parsedEndpoint.origin;
+            this.application.applicationId = parsedEndpoint.pathname.split('apps/')[1];
+            
+            if (!this.application.applicationId) {
+                throw new Error(`Unable to parse \`applicationId\` value (e.g. "b31aeaf3-3511-495b-a07f-571fc873214b") not detected in LUIS endpoint ${application}.\nPlease make sure your endpoint is a valid LUIS Endpoint.`);
+            }
+
+            // Use exposed querystringify to parse the query string for the endpointKey value.
+            const parsedQuery = Url.qs.parse(parsedEndpoint.query);
+            if (parsedQuery && parsedQuery['subscription-key']) {
+                this.application.endpointKey = parsedQuery['subscription-key'];
+            } else {
+                throw new Error(`Unable to parse \`endpointKey\` ("subscription-key") from passed in LUIS endpoint's query string ${application}.\nPlease make sure your endpoint is a valid LUIS Endpoint.`);
+            }
+        } else {
+            this.application = application as LuisApplication;
+        }
+        
         this.options = {
             includeAllIntents: false,
             includeInstanceData: true,
@@ -135,7 +161,7 @@ export class LuisRecognizer {
         this.includeApiResults = !!includeApiResults;
 
         // Create client
-        const creds: msRest.TokenCredentials = new msRest.TokenCredentials(application.endpointKey);
+        const creds: msRest.TokenCredentials = new msRest.TokenCredentials(this.application.endpointKey);
         const baseUri: string = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
         this.luisClient = new LuisClient(creds, baseUri);
     }
