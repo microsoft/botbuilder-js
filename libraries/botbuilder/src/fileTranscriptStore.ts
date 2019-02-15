@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as fs from 'async-file';
+import * as fs from 'fs-extra';
 import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
 import * as filenamify from 'filenamify';
 import * as path from 'path';
@@ -79,7 +79,7 @@ export class FileTranscriptStore implements TranscriptStore {
         const pagedResult: PagedResult<Activity> = { items: [], continuationToken: undefined };
         const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
 
-        return fs.exists(transcriptFolder).then((exists: boolean) => {
+        return existsAsync(transcriptFolder).then((exists: boolean) => {
             if (!exists) { return pagedResult; }
 
             return fs.readdir(transcriptFolder)
@@ -122,7 +122,7 @@ export class FileTranscriptStore implements TranscriptStore {
         const pagedResult: PagedResult<TranscriptInfo> = { items: [], continuationToken: undefined };
         const channelFolder: string = this.getChannelFolder(channelId);
 
-        return fs.exists(channelFolder).then((exists: boolean) => {
+        return existsAsync(channelFolder).then((exists: boolean) => {
             if (!exists) { return pagedResult; }
 
             return fs.readdir(channelFolder)
@@ -177,7 +177,7 @@ export class FileTranscriptStore implements TranscriptStore {
 
     // tslint:disable-next-line:no-shadowed-variable
     private ensureFolder(path: string): Promise<void> {
-        return fs.exists(path).then((exists: boolean) => {
+        return existsAsync(path).then((exists: boolean) => {
             if (!exists) { return fs.mkdirp(path); }
         });
     }
@@ -286,3 +286,17 @@ function parseActivity(json: string): Activity {
 
     return activity;
 }
+
+/**
+ * @private
+ * @param Full path to the file existence.
+ */
+function existsAsync(path: string) {
+  return new Promise(function(resolve, reject){
+    fs.exists(path, function(exists){
+      resolve(exists);
+    })
+  })
+}
+
+
