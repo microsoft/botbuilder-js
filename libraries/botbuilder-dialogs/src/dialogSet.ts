@@ -56,8 +56,8 @@ import { DialogContext, DialogState } from './dialogContext';
  * ```
  */
 export class DialogSet {
-    private readonly dialogs: { [id: string]: Dialog } = {};
-    private readonly dialogState: StatePropertyAccessor<DialogState>;
+    protected readonly dialogs: { [id: string]: Dialog } = {};
+    protected readonly dialogState: StatePropertyAccessor<DialogState>;
     private _telemetryClient: BotTelemetryClient;
     /**
      * Creates a new DialogSet instance.
@@ -97,7 +97,7 @@ export class DialogSet {
         if (this._telemetryClient) {
             dialog.telemetryClient = this._telemetryClient;
         }
-        
+
         this.dialogs[dialog.id] = dialog;
 
         return this;
@@ -131,14 +131,14 @@ export class DialogSet {
         return this.dialogs.hasOwnProperty(dialogId) ? this.dialogs[dialogId] : undefined;
     }
 
-    /** 
+    /**
      * Set the telemetry client for this dialog set and apply it to all current dialogs.
      */
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
 
-    /** 
+    /**
      * Set the telemetry client for this dialog set and apply it to all current dialogs.
      * Future dialogs added to the set will also inherit this client.
      */
