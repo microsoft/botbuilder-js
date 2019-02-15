@@ -10,7 +10,7 @@ import { DialogContext } from '../dialogContext';
 import { DialogTurnResult, DialogConfiguration, Dialog } from '../dialog';
 import { DialogContextState } from '../dialogContextState';
 
-export class SetState extends DialogCommand {
+export class SetProperty extends DialogCommand {
 
     protected onComputeID(): string {
         return `setState(${this.expression.toString()})`;
@@ -23,8 +23,8 @@ export class SetState extends DialogCommand {
         return await dc.endDialog();
     }
 
-    static create(expression: (state: DialogContextState) => Promise<void>, config?: DialogConfiguration): SetState {
-        const dialog = new SetState();
+    static create(expression: (state: DialogContextState) => Promise<void>, config?: DialogConfiguration): SetProperty {
+        const dialog = new SetProperty();
         dialog.expression = expression;
         if (config) {
             Dialog.configure(dialog, config);

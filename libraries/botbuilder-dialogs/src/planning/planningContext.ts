@@ -32,9 +32,9 @@ export interface PlanChangeList {
 
 export enum PlanChangeType {
     beginPlan = 'beginPlan',
-    doNow = 'doNow',
-    doBeforeTags = 'doBeforeTags',
-    doLater = 'doLater',
+    doSteps = 'doSteps',
+    doStepsBeforeTags = 'doStepsBeforeTags',
+    doStepsLater = 'doStepsLater',
     endPlan = 'endPlan'
 }
 
@@ -137,9 +137,9 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
         // Sort changes
         let endPlan: PlanChange;
         let beginPlan: PlanChange;
-        let doNow: PlanStepState[] = [];
-        let doBeforeTags: PlanChange[] = [];
-        let doLater: PlanStepState[] = [];
+        let doSteps: PlanStepState[] = [];
+        let doStepsBeforeTags: PlanChange[] = [];
+        let doStepsLater: PlanStepState[] = [];
         const changes = planChanges.changes;
         for (let i = 0; i < changes.length; i++) {
             const change = changes[i];
@@ -150,14 +150,14 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
                 case PlanChangeType.endPlan:
                     if (!endPlan && !beginPlan) { endPlan = change }
                     break;
-                case PlanChangeType.doNow:
-                    doNow.push({ dialogStack: [], dialogId: change.dialogId, dialogOptions: change.dialogOptions });
+                case PlanChangeType.doSteps:
+                    doSteps.push({ dialogStack: [], dialogId: change.dialogId, dialogOptions: change.dialogOptions });
                     break;
-                case PlanChangeType.doBeforeTags:
-                    doBeforeTags.push(change);
+                case PlanChangeType.doStepsBeforeTags:
+                    doStepsBeforeTags.push(change);
                     break;
-                case PlanChangeType.doLater:
-                    doLater.push({ dialogStack: [], dialogId: change.dialogId, dialogOptions: change.dialogOptions });
+                case PlanChangeType.doStepsLater:
+                    doStepsLater.push({ dialogStack: [], dialogId: change.dialogId, dialogOptions: change.dialogOptions });
                     break;
             }
         }
@@ -178,16 +178,16 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
             planSaved = this.beginPlan(beginPlan);
             planStarted = true;
         }
-        if (doNow.length > 0) {
-            Array.prototype.unshift.apply(this.plan.steps, doNow);
+        if (doSteps.length > 0) {
+            Array.prototype.unshift.apply(this.plan.steps, doSteps);
         }
-        if (doBeforeTags.length > 0) {
-            for (let i = doBeforeTags.length - 1; i >= 0; i--) {
-                this.addStepBeforeTags(doBeforeTags[i]);
+        if (doStepsBeforeTags.length > 0) {
+            for (let i = doStepsBeforeTags.length - 1; i >= 0; i--) {
+                this.addStepBeforeTags(doStepsBeforeTags[i]);
             }
         }
-        if (doLater.length > 0) {
-            Array.prototype.push.apply(this.plan.steps, doLater);
+        if (doStepsLater.length > 0) {
+            Array.prototype.push.apply(this.plan.steps, doStepsLater);
         }
 
         // Emit change events

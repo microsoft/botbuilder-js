@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState } from 'botbuilder';
-import { PlanningDialog, FallbackRule, SendActivity, SetState, RegExpRecognizer, IntentRule, SequenceDialog, CallDialog, CancelAllDialogs, TextPrompt, NumberPrompt, ChoicePrompt } from 'botbuilder-dialogs';
+import { PlanningDialog, FallbackRule, SendActivity, RegExpRecognizer, IntentRule, SequenceDialog, CallDialog, CancelAllDialogs, TextPrompt, MapEntity, SetProperty, ChoicePrompt, IfPropertyRule, SendList } from 'botbuilder-dialogs';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -42,36 +42,144 @@ server.post('/api/messages', (req, res) => {
     });
 });
 
+//=============================================================================
+// Planning Rules
+//=============================================================================
+// The rules add logic to process the users intent
+
+// Bind planning dialog to its recognizer
 const recognizer = new RegExpRecognizer()
-    .addIntent('Help', /^help/i)
-    .addIntent('Cancel', /^cancel/i);
+    .addIntent('AddToDo', /(?:add|create) .*(?:to-do|todo|task) .*(?:called|named) (?<title>.*)/i)
+    .addIntent('AddToDo', /(?:add|create) .*(?:to-do|todo|task)/i)
+    .addIntent('DeleteToDo', /(?:delete|remove|clear) .*(?:to-do|todo|task) .*(?:called|named) (?<title>.*)/i)
+    .addIntent('DeleteToDo', /(?:delete|remove|clear) .*(?:to-do|todo|task)/i)
+    .addIntent('ClearToDos', /(?:delete|remove|clear) (?:all|every) (?:to-dos|todos|tasks)/i)
+    .addIntent('ShowToDos', /(?:show|see|view) .*(?:to-do|todo|task)/i);
+dialogs.recognizer = recognizer;
 
-// Planning rules
-dialogs
-    .setRecognizer(recognizer)
-    .addRule(new IntentRule('Help').doNow(
-        CallDialog.create('HelpDialog'),
-    ))
-    .addRule(new FallbackRule().doNow(
-        CallDialog.create('SurveyDialog'),
-        SendActivity.create(`Thanks {dialog.lastResult.name}. I enjoy programming in {dialog.lastResult.language.value} too.`)
+// Define rule to handle AddToDo intent.
+// - This rule simply starts a sequence that processes the intent.
+// - Any recognized entities will be automatically passed as options to the started sequence.
+// - The .endPlan() clause cases the rule to interrupt any sequence that might be currently running.
+const addToDoRule = new IntentRule('AddToDo')
+    .endPlan()
+    .doSteps(
+        CallDialog.create('AddToDoDialog')
+    );
+
+// Define rules that should only run if we have todos.
+// - The ifPropertyRule() lets you define a set of rules that should only run if an expression is true.
+// - We're storing the list of todos in "user.todos" which can be manipulated through the passed in state object.
+// - In the declarative case the code bellow would be written using our expression syntax. 
+const ifHasToDos = new IfPropertyRule(async (state) => {
+    const todos: string[] = state.getValue('user.todos');
+    return Array.isArray(todos) && todos.length > 0;
+});
+
+ifHasToDos.addRule(new IntentRule('DeleteToDo')
+    .endPlan()
+    .doSteps(
+        CallDialog.create('DeleteToDoDialog')
     ));
 
-// Survey Dialog
-dialogs.addDialog(new SequenceDialog('SurveyDialog')
-    .setRecognizer(recognizer)
-    .addRule(new IntentRule('Cancel').doNow(
-        CancelAllDialogs.create()
-    ))
-    .do(
-        SendActivity.create(`Please take this short survey. You can say "cancel" at anytime.`),
-        TextPrompt.create('dialog.result.name', `What is your name?`),
-        NumberPrompt.create('dialog.result.age', `Hi {dialog.result.name}. How old are you?`),
-        ChoicePrompt.create('dialog.result.language', `What is your preferred programming language?`, ['c#', 'TypeScript', 'JavaScript']),
+ifHasToDos.addRule(new IntentRule('ClearToDos')
+    .endPlan()
+    .doSteps(
+        CallDialog.create('ClearToDosDialog')
     ));
 
-// Help dialog
-dialogs.addDialog(new SequenceDialog('HelpDialog')
-    .do(
-        SendActivity.create(`I'm an echo bot. Say something to me and I'll say it back.`)
+ifHasToDos.addRule(new IntentRule('ShowToDos')
+    .doSteps(
+        CallDialog.create('ShowToDosDialog')
     ));
+
+// Define rules that should run if we don't have todos.
+// - These rules just send a message saying there aren't any todos and continue processing
+//   of the users current sequence (if there is one.)
+const ifNoToDos = new IfPropertyRule(async (state) => {
+    const todos: string[] = state.getValue('user.todos');
+    return !Array.isArray(todos) || todos.length == 0;
+});
+
+ifNoToDos.addRule(new IntentRule('DeleteToDo')
+    .doSteps(
+        SendActivity.create(`There are no todos to delete.`)
+    ));
+
+ifNoToDos.addRule(new IntentRule('ClearToDos')
+    .doSteps(
+        SendActivity.create(`There are no todos to clear.`)
+    ));
+
+ifNoToDos.addRule(new IntentRule('ShowToDos')
+    .doSteps(
+        SendActivity.create(`You have no todos.`)
+    ));
+
+// Add a top level fallback rule to handle un-recognized utterances
+const fallbackRule = new FallbackRule()
+    .doSteps(
+        SendActivity.create(`Hi. To get started ask me to "add a todo named first one"`)
+    );
+
+// Add rules to planning dialog in the order they should be evaluated
+dialogs.addRule(addToDoRule, ifHasToDos, ifNoToDos, fallbackRule);
+
+//=============================================================================
+// Sequences
+//=============================================================================
+// These are the sequence dialogs that the planning rules call.
+
+// AddToDoDialog
+const addToDoDialog = new SequenceDialog('AddToDoDialog')
+    .doSteps(
+        MapEntity.create('title', 'dialog.result.title'),
+        TextPrompt.create('dialog.result.title', `What would you like to call your new todo?`),
+        SetProperty.create(async (state) => {
+            // Save todo to user state
+            const title: string = state.getValue('dialog.result.title');
+            const todos: string[] = state.getValue('user.todos') || [];
+            todos.push(title);
+            state.setValue('user.todos', todos);
+        }),
+        SendActivity.create(`Added a todo named "{dialog.result.title}". You can delete it by saying "delete todo named {dialog.result.title}".`),
+        SendActivity.create(`To view your todos just ask me to "show my todos".`)
+    );
+dialogs.addDialog(addToDoDialog);
+
+// DeleteToDoDialog
+const deleteToDoDialog = new SequenceDialog('DeleteToDoDialog')
+    .doSteps(
+        MapEntity.create('title', 'dialog.result.title'),
+        ChoicePrompt.create('dialog.result.title', `Which todo would you like to remove?`, 'user.todos'),
+        SetProperty.create(async (state) => {
+            // Remove todo from user state
+            const title: string = state.getValue('dialog.result.title.value');
+            const todos: string[] = state.getValue('user.todos') || [];
+            const pos = todos.indexOf(title);
+            if (pos >= 0) {
+                todos.splice(pos, 1);
+            }
+            state.setValue('user.todos', todos);
+        }),
+        SendActivity.create(`Deleted the todo named "{dialog.result.title.value}". You can delete all your todos by saying "delete all todos".`),
+    );
+dialogs.addDialog(deleteToDoDialog);
+
+// ClearToDosDialog
+const clearToDosDialog = new SequenceDialog('ClearToDosDialog')
+    .doSteps(
+        SetProperty.create(async (state) => {
+            // Clear all todos in user state
+            state.setValue('user.todos', []);
+        }),
+        SendActivity.create(`All todos removed.`)
+    );
+dialogs.addDialog(clearToDosDialog);
+
+// ShowToDosDialog
+const showToDosDialog = new SequenceDialog('ShowToDosDialog')
+    .doSteps(
+        SendList.create('user.todos', `Here are your todos:`)
+    );
+dialogs.addDialog(showToDosDialog);

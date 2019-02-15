@@ -16,12 +16,20 @@ export class EventRule implements PlanningRule {
 
     public readonly events: string[];
 
+    public tags: string;
+
     public enableSelector: string;
 
     public disableSelector: string;
 
     constructor(events?: string|string[]) {
         this.events = Array.isArray(events) ? events : (events !== undefined ? [events] : []);
+    }
+
+    public addTags(tags: string): this {
+        this.tags = tags;
+        this.steps.forEach((step) => step.addTags(tags));
+        return this;
     }
 
     public beginPlan(title?: string): this {
@@ -32,22 +40,24 @@ export class EventRule implements PlanningRule {
         return this;
     }
 
-    public doNow(...steps: Dialog[]): this {
+    public doSteps(...steps: Dialog[]): this {
         steps.forEach(step => {
+            step.addTags(this.tags);
             this.steps.push(step);
             this.changes.push({
-                type: PlanChangeType.doNow,
+                type: PlanChangeType.doSteps,
                 step: step 
             });
         });
         return this;
     }
 
-    public doBeforeTags(tags: string|string[], ...steps: Dialog[]): this {
+    public doStepsBeforeTags(tags: string|string[], ...steps: Dialog[]): this {
         steps.forEach(step => {
+            step.addTags(this.tags);
             this.steps.push(step);
             this.changes.push({
-                type: PlanChangeType.doBeforeTags,
+                type: PlanChangeType.doStepsBeforeTags,
                 step: step,
                 tags: Array.isArray(tags) ? tags : [tags]
             });
@@ -55,11 +65,12 @@ export class EventRule implements PlanningRule {
         return this;
     }
 
-    public doLater(...steps: Dialog[]): this {
+    public doStepsLater(...steps: Dialog[]): this {
         steps.forEach(step => {
+            step.addTags(this.tags);
             this.steps.push(step);
             this.changes.push({
-                type: PlanChangeType.doLater,
+                type: PlanChangeType.doStepsLater,
                 step: step 
             });
         });
@@ -81,7 +92,7 @@ export class EventRule implements PlanningRule {
         return this;
     }
 
-    public evaluate(planning: PlanningContext): Promise<PlanChangeList|undefined> {
+    public evaluate(planning: PlanningContext): Promise<PlanChangeList[]|undefined> {
         // Limit evaluation to only supported events
         if (this.events.indexOf(planning.eventName) >= 0) {
             return this.onEvaluate(planning);
@@ -90,14 +101,21 @@ export class EventRule implements PlanningRule {
         }
     }
 
-    protected async onEvaluate(planning: PlanningContext): Promise<PlanChangeList|undefined> {
+    protected async onEvaluate(planning: PlanningContext): Promise<PlanChangeList[]|undefined> {
         if (await this.onIsTriggered(planning)) {
-            return this.onCreateChangeList(planning);
+            return [this.onCreateChangeList(planning)];
         }
     }
 
     protected async onIsTriggered(planning: PlanningContext): Promise<boolean> {
-        const addedTags = planning.plan && planning.plan.steps.length > 0 ? ['activePlan'] : [];
+        let addedTags: string[] = [];
+        if (planning.plan && planning.plan.steps.length > 0) {
+            addedTags.push('planActive');
+            const dialog = planning.findDialog(planning.plan.steps[0].dialogId);
+            if (dialog) {
+                dialog.tags.forEach((tag) => addedTags.push(tag));
+            }
+        }
         if (!this.enableSelector || planning.tagSelectorMatched(this.enableSelector, addedTags)) {
             if (!this.disableSelector || !planning.tagSelectorMatched(this.disableSelector, addedTags)) {
                 return true;

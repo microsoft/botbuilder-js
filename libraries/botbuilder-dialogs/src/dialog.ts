@@ -234,7 +234,9 @@ export abstract class Dialog<O extends object = {}> {
     }
 
     public addTags(tags: string): this {
-        tags.split(' ').forEach((tag) => this.tags.push(tag));
+        if (tags && tags.length > 0) {
+            tags.split('.').forEach((tag) => this.tags.push(tag));
+        }
         return this;
     }
 

@@ -17,7 +17,7 @@ export class SequenceDialog extends PlanningDialog {
         return `sequence(${this.bindingPath()})`;
     }
 
-    public do(...steps: Dialog[]): this {
+    public doSteps(...steps: Dialog[]): this {
         steps.forEach((step) => {
             this.addDialog(step);
             this.steps.push(step);
@@ -31,7 +31,7 @@ export class SequenceDialog extends PlanningDialog {
             // Create change list
             const changes = this.steps.map((step) => {
                 return {
-                    type: PlanChangeType.doNow,
+                    type: PlanChangeType.doSteps,
                     dialogId: step.id
                 } as PlanChange
             });

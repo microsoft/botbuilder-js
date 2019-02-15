@@ -56,7 +56,7 @@ export class RegExpRecognizer implements Recognizer {
             // Return all intents and entities
             for (const name in matched) {
                 const match = matched[name];
-                intents[name] = { score: match.score };
+                intents[name] = { score: 1.0 };
                 this.addEntities(entities, match)
             }
         } else {

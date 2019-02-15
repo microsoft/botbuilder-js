@@ -36,20 +36,96 @@ server.post('/api/messages', (req, res) => {
         await convoState.saveChanges(context);
     });
 });
+//=============================================================================
+// Planning Rules
+//=============================================================================
+// The rules add logic to process the users intent
+// Bind planning dialog to its recognizer
 const recognizer = new botbuilder_dialogs_1.RegExpRecognizer()
-    .addIntent('Help', /^help/i)
-    .addIntent('Cancel', /^cancel/i);
-// Planning rules
-dialogs
-    .setRecognizer(recognizer)
-    .addRule(new botbuilder_dialogs_1.IntentRule('Help').doNow(botbuilder_dialogs_1.CallDialog.create('HelpDialog')))
-    .addRule(new botbuilder_dialogs_1.FallbackRule().doNow(botbuilder_dialogs_1.CallDialog.create('SurveyDialog'), botbuilder_dialogs_1.SendActivity.create(`Thanks {dialog.lastResult.name}. I enjoy programming in {dialog.lastResult.language.value} too.`)));
-// Survey Dialog
-dialogs.addDialog(new botbuilder_dialogs_1.SequenceDialog('SurveyDialog')
-    .setRecognizer(recognizer)
-    .addRule(new botbuilder_dialogs_1.IntentRule('Cancel').doNow(botbuilder_dialogs_1.CancelAllDialogs.create()))
-    .do(botbuilder_dialogs_1.SendActivity.create(`Please take this short survey. You can say "cancel" at anytime.`), botbuilder_dialogs_1.TextPrompt.create('dialog.result.name', `What is your name?`), botbuilder_dialogs_1.NumberPrompt.create('dialog.result.age', `Hi {dialog.result.name}. How old are you?`), botbuilder_dialogs_1.ChoicePrompt.create('dialog.result.language', `What is your preferred programming language?`, ['c#', 'TypeScript', 'JavaScript'])));
-// Help dialog
-dialogs.addDialog(new botbuilder_dialogs_1.SequenceDialog('HelpDialog')
-    .do(botbuilder_dialogs_1.SendActivity.create(`I'm an echo bot. Say something to me and I'll say it back.`)));
+    .addIntent('AddToDo', /(?:add|create) .*(?:to-do|todo|task) .*(?:called|named) (?<title>.*)/i)
+    .addIntent('AddToDo', /(?:add|create) .*(?:to-do|todo|task)/i)
+    .addIntent('DeleteToDo', /(?:delete|remove|clear) .*(?:to-do|todo|task) .*(?:called|named) (?<title>.*)/i)
+    .addIntent('DeleteToDo', /(?:delete|remove|clear) .*(?:to-do|todo|task)/i)
+    .addIntent('ClearToDos', /(?:delete|remove|clear) (?:all|every) (?:to-dos|todos|tasks)/i)
+    .addIntent('ShowToDos', /(?:show|see|view) .*(?:to-do|todo|task)/i);
+dialogs.recognizer = recognizer;
+// Define rule to handle AddToDo intent.
+// - This rule simply starts a sequence that processes the intent.
+// - Any recognized entities will be automatically passed as options to the started sequence.
+// - The .endPlan() clause cases the rule to interrupt any sequence that might be currently running.
+const addToDoRule = new botbuilder_dialogs_1.IntentRule('AddToDo')
+    .endPlan()
+    .doSteps(botbuilder_dialogs_1.CallDialog.create('AddToDoDialog'));
+// Define rules that should only run if we have todos.
+// - The ifPropertyRule() lets you define a set of rules that should only run if an expression is true.
+// - We're storing the list of todos in "user.todos" which can be manipulated through the passed in state object.
+// - In the declarative case the code bellow would be written using our expression syntax. 
+const ifHasToDos = new botbuilder_dialogs_1.IfPropertyRule(async (state) => {
+    const todos = state.getValue('user.todos');
+    return Array.isArray(todos) && todos.length > 0;
+});
+ifHasToDos.addRule(new botbuilder_dialogs_1.IntentRule('DeleteToDo')
+    .endPlan()
+    .doSteps(botbuilder_dialogs_1.CallDialog.create('DeleteToDoDialog')));
+ifHasToDos.addRule(new botbuilder_dialogs_1.IntentRule('ClearToDos')
+    .endPlan()
+    .doSteps(botbuilder_dialogs_1.CallDialog.create('ClearToDosDialog')));
+ifHasToDos.addRule(new botbuilder_dialogs_1.IntentRule('ShowToDos')
+    .doSteps(botbuilder_dialogs_1.CallDialog.create('ShowToDosDialog')));
+// Define rules that should run if we don't have todos.
+// - These rules just send a message saying there aren't any todos and continue processing
+//   of the users current sequence (if there is one.)
+const ifNoToDos = new botbuilder_dialogs_1.IfPropertyRule(async (state) => {
+    const todos = state.getValue('user.todos');
+    return !Array.isArray(todos) || todos.length == 0;
+});
+ifNoToDos.addRule(new botbuilder_dialogs_1.IntentRule('DeleteToDo')
+    .doSteps(botbuilder_dialogs_1.SendActivity.create(`There are no todos to delete.`)));
+ifNoToDos.addRule(new botbuilder_dialogs_1.IntentRule('ClearToDos')
+    .doSteps(botbuilder_dialogs_1.SendActivity.create(`There are no todos to clear.`)));
+ifNoToDos.addRule(new botbuilder_dialogs_1.IntentRule('ShowToDos')
+    .doSteps(botbuilder_dialogs_1.SendActivity.create(`You have no todos.`)));
+// Add a top level fallback rule to handle un-recognized utterances
+const fallbackRule = new botbuilder_dialogs_1.FallbackRule()
+    .doSteps(botbuilder_dialogs_1.SendActivity.create(`Hi. To get started ask me to "add a todo named first one"`));
+// Add rules to planning dialog in the order they should be evaluated
+dialogs.addRule(addToDoRule, ifHasToDos, ifNoToDos, fallbackRule);
+//=============================================================================
+// Sequences
+//=============================================================================
+// These are the sequence dialogs that the planning rules call.
+// AddToDoDialog
+const addToDoDialog = new botbuilder_dialogs_1.SequenceDialog('AddToDoDialog')
+    .doSteps(botbuilder_dialogs_1.MapEntity.create('title', 'dialog.result.title'), botbuilder_dialogs_1.TextPrompt.create('dialog.result.title', `What would you like to call your new todo?`), botbuilder_dialogs_1.SetProperty.create(async (state) => {
+    // Save todo to user state
+    const title = state.getValue('dialog.result.title');
+    const todos = state.getValue('user.todos') || [];
+    todos.push(title);
+    state.setValue('user.todos', todos);
+}), botbuilder_dialogs_1.SendActivity.create(`Added a todo named "{dialog.result.title}". You can delete it by saying "delete todo named {dialog.result.title}".`), botbuilder_dialogs_1.SendActivity.create(`To view your todos just ask me to "show my todos".`));
+dialogs.addDialog(addToDoDialog);
+// DeleteToDoDialog
+const deleteToDoDialog = new botbuilder_dialogs_1.SequenceDialog('DeleteToDoDialog')
+    .doSteps(botbuilder_dialogs_1.MapEntity.create('title', 'dialog.result.title'), botbuilder_dialogs_1.ChoicePrompt.create('dialog.result.title', `Which todo would you like to remove?`, 'user.todos'), botbuilder_dialogs_1.SetProperty.create(async (state) => {
+    // Remove todo from user state
+    const title = state.getValue('dialog.result.title.value');
+    const todos = state.getValue('user.todos') || [];
+    const pos = todos.indexOf(title);
+    if (pos >= 0) {
+        todos.splice(pos, 1);
+    }
+    state.setValue('user.todos', todos);
+}), botbuilder_dialogs_1.SendActivity.create(`Deleted the todo named "{dialog.result.title.value}". You can delete all your todos by saying "delete all todos".`));
+dialogs.addDialog(deleteToDoDialog);
+// ClearToDosDialog
+const clearToDosDialog = new botbuilder_dialogs_1.SequenceDialog('ClearToDosDialog')
+    .doSteps(botbuilder_dialogs_1.SetProperty.create(async (state) => {
+    // Clear all todos in user state
+    state.setValue('user.todos', []);
+}), botbuilder_dialogs_1.SendActivity.create(`All todos removed.`));
+dialogs.addDialog(clearToDosDialog);
+// ShowToDosDialog
+const showToDosDialog = new botbuilder_dialogs_1.SequenceDialog('ShowToDosDialog')
+    .doSteps(botbuilder_dialogs_1.SendList.create('user.todos', `Here are your todos:`));
+dialogs.addDialog(showToDosDialog);
 //# sourceMappingURL=index.js.map

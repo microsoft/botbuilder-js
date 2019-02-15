@@ -19,5 +19,5 @@ export interface PlanningRule {
      * current plan.
      * @param planning Planning context object for the current conversation.
      */
-    evaluate(planning: PlanningContext): Promise<PlanChangeList|undefined>;
+    evaluate(planning: PlanningContext): Promise<PlanChangeList[]|undefined>;
 }

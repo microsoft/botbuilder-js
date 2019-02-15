@@ -99,7 +99,7 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     public beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Persist options to dialog state
         options = options || {} as O;
-        dc.activeDialog.state = { options: options, result: {} } as PlanningState<O>;
+        dc.state.dialog.set('options', options);
         
         return this.onBeginDialog(dc, options);
     }
@@ -201,6 +201,9 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
             if (result.status === DialogTurnStatus.cancelled) {
                 // Cancel any remaining plan steps
                 state.plan.steps = [];
+                if (!state.savedPlans || state.savedPlans.length == 0) {
+                    return await dc.cancelAllDialogs();
+                }
             } else {
                 // Remove current step from plan
                 state.plan.steps.splice(0, 1);
@@ -278,9 +281,9 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     private async doFirstMatch(dc: DialogContext, event: DialogEvent): Promise<boolean> {
         const planning = this.createPlanningContext(dc, event);
         for (let i = 0; i < this.rules.length; i++) {
-            const change = await this.rules[i].evaluate(planning);
-            if (change) {
-                await planning.applyChanges(change);
+            const changes = await this.rules[i].evaluate(planning);
+            if (changes && changes.length > 0) {
+                await planning.applyChanges(changes[0]);
                 return true;
             } 
         }
@@ -289,30 +292,30 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
 
     private async doBestMatch(dc: DialogContext, event: DialogEvent): Promise<boolean> {
         // Get list of proposed changes
-        const changes: PlanChangeList[] = [];
+        const allChanges: PlanChangeList[] = [];
         const planning = this.createPlanningContext(dc, event);
         for (let i = 0; i < this.rules.length; i++) {
-            const change = await this.rules[i].evaluate(planning);
-            if (change) { changes.push(change) } 
+            const changes = await this.rules[i].evaluate(planning);
+            if (changes) { changes.forEach((change) => allChanges.push(change)) } 
         }
 
         // Apply changes with most coverage
-        if (changes.length > 0) {
+        if (allChanges.length > 0) {
             while (true) {
                 // Find the change that has the most intents and entities covered.
-                const index = this.findBestChange(changes);
+                const index = this.findBestChange(allChanges);
                 if (index >= 0) {
                     // Apply selected changes
-                    const change = changes[index];
+                    const change = allChanges[index];
                     await planning.applyChanges(change);
 
                     // Remove applied changes
-                    changes.splice(index, 1);
+                    allChanges.splice(index, 1);
 
                     // Remove changes with overlapping intents.
-                    for (let i = changes.length - 1; i >= 0; i--) {
-                        if (this.intentsOverlap(change, changes[i])) {
-                            changes.splice(i, 0);
+                    for (let i = allChanges.length - 1; i >= 0; i--) {
+                        if (this.intentsOverlap(change, allChanges[i])) {
+                            allChanges.splice(i, 1);
                         }
                     }
                 } else {
@@ -359,7 +362,7 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         const i2 = c2.intentsMatched || [];
         if (i2.length > 0 && i1.length > 0) {
             for (let i = 0; i < i2.length; i++) {
-                if (i1.indexOf(i2[i])) {
+                if (i1.indexOf(i2[i]) >= 0) {
                     return true;
                 }
             }

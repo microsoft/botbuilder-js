@@ -187,7 +187,6 @@ describe('NumberPrompt', function () {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new NumberPrompt('prompt', async (prompt) => {
             assert(prompt);
-            console.log('recognized value:', prompt.recognized.value);
             return prompt.recognized.value === 0;
         }));
 
