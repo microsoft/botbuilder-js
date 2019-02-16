@@ -98,23 +98,20 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     }
 
     public async consultDialog(outerDC: DialogContext): Promise<DialogConsultation> {
-        // Continue execution of inner dialog.
+        // Consult the inner dialog.
         const dialogState: any = outerDC.activeDialog.state[PERSISTED_DIALOG_STATE];
         const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState);
         innerDC.parent = outerDC;
         const innerConsultation = await this.onConsultDialog(innerDC);
-        if (innerConsultation) {
-            // Run processor with inner dialog context
-            return {
-                desire: innerConsultation.desire,
-                processor: (outerDC) => innerConsultation.processor(innerDC)
-            };
-        } else {
-            // Legacy component dialog
-            return {
-                desire: DialogConsultationDesire.canProcess,
-                processor: (outerDC) => this.onContinueDialog(innerDC)
-            }
+
+        // Call onContinueDialog() with inner consultation
+        // - The default implementation of onContinueDialog() will simply invoke the inner processor 
+        //   that was returned. 
+        // - This lets legacy components that have added custom interruption logic to continue to 
+        //   operate as designed.
+        return {
+            desire: innerConsultation ? innerConsultation.desire : DialogConsultationDesire.canProcess,
+            processor: (outerDC) => this.onContinueDialog(innerDC, innerConsultation)
         }
     }
 
@@ -202,12 +199,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
      * @param innerDC Dialog context for the components internal `DialogSet`.
      */
     protected async onConsultDialog(innerDC: DialogContext): Promise<DialogConsultation|undefined> {
-        const consultation = await innerDC.consultDialog();
-        if (consultation && consultation.desire === DialogConsultationDesire.shouldProcess) {
-            return consultation;
-        } else {
-            return undefined;
-        }
+        return await innerDC.consultDialog();
     } 
 
     /**
@@ -216,9 +208,10 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
      * @remarks
      * Derived classes should override [onConsultDialog()](#onconsultdialog) instead.
      * @param innerDC Dialog context for the components internal `DialogSet`.
+     * @param consultation (Optional) consultation from [consultDialog()](#consultDialog) call. Invoking the processor on this object is more efficient the calling `innerDC.continueDialog()`.
      */
-    protected onContinueDialog(innerDC: DialogContext): Promise<DialogTurnResult> {
-        return innerDC.continueDialog();
+    protected onContinueDialog(innerDC: DialogContext, consultation?: DialogConsultation): Promise<DialogTurnResult> {
+        return consultation ? consultation.processor(innerDC) : innerDC.continueDialog();
     }
 
     /**
