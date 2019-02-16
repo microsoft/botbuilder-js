@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogTurnResult, DialogConfiguration } from '../dialog';
+import { Dialog, DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
 import { DialogContext } from '../dialogContext';
 
 export interface CallDialogConfiguration extends DialogConfiguration {

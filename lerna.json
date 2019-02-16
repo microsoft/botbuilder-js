@@ -8,6 +8,7 @@
     "libraries/botbuilder-azure",
     "libraries/botbuilder-core",
     "libraries/botbuilder-dialogs",
+    "libraries/botbuilder-planning",
     "libraries/botframework-config",
     "libraries/botframework-connector",
     "libraries/botframework-schema",

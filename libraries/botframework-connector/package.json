@@ -26,7 +26,7 @@
     "botframework-schema": "~4.1.6",
     "form-data": "^2.3.3",
     "jsonwebtoken": "8.0.1",
-    "nock": "^10.0.3",
+    "nock": "^10.0.1",
     "node-fetch": "^2.2.1",
     "rsa-pem-from-mod-exp": "^0.8.4"
   },

@@ -7,7 +7,7 @@
  */
 import { Activity, ActivityTypes, InputHints, MessageFactory, TurnContext } from 'botbuilder-core';
 import { Choice, ChoiceFactory, ChoiceFactoryOptions } from '../choices';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult } from '../dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogConsultationDesire, DialogConsultation } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { StateMap } from '../stateMap';
 
@@ -82,6 +82,12 @@ export interface PromptRecognizerResult<T> {
      * Value that was recognized if [succeeded](#succeeded) is `true`.
      */
     value?: T;
+
+    /**
+     * (Optional) flag indicating whether or not parent dialogs should be allowed to interrupt the 
+     * prompt. The default value is `false`.
+     */
+    allowInterruption?: boolean;
 }
 
 /**
@@ -178,39 +184,46 @@ export abstract class Prompt<T> extends Dialog {
         return Dialog.EndOfTurn;
     }
 
-    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    public async consultDialog(dc: DialogContext): Promise<DialogConsultation> {
         // Don't do anything for non-message activities
         if (dc.context.activity.type !== ActivityTypes.Message) {
-            return Dialog.EndOfTurn;
+            return {
+                desire: DialogConsultationDesire.canProcess,
+                processor: async (dc) => Dialog.EndOfTurn
+            };
         }
 
         // Perform base recognition
         const state = dc.state.dialog;
         const recognized: PromptRecognizerResult<T> = await this.onRecognize(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS));
+        return {
+            desire: recognized.succeeded && !recognized.allowInterruption ? DialogConsultationDesire.shouldProcess : DialogConsultationDesire.canProcess,
+            processor: async (dc) => {
+                // Validate the return value
+                let isValid: boolean = false;
+                if (this.validator) {
+                    isValid = await this.validator({
+                        context: dc.context,
+                        recognized: recognized,
+                        state: state.get(PERSISTED_STATE),
+                        options: state.get(PERSISTED_OPTIONS)
+                    });
+                } else if (recognized.succeeded) {
+                    isValid = true;
+                }
 
-        // Validate the return value
-        let isValid: boolean = false;
-        if (this.validator) {
-            isValid = await this.validator({
-                context: dc.context,
-                recognized: recognized,
-                state: state.get(PERSISTED_STATE),
-                options: state.get(PERSISTED_OPTIONS)
-            });
-        } else if (recognized.succeeded) {
-            isValid = true;
-        }
+                // Return recognized value or re-prompt
+                if (isValid) {
+                    return await dc.endDialog(recognized.value);
+                } else {
+                    if (!dc.context.responded) {
+                        await this.onPrompt(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), true);
+                    }
 
-        // Return recognized value or re-prompt
-        if (isValid) {
-            return await dc.endDialog(recognized.value);
-        } else {
-            if (!dc.context.responded) {
-                await this.onPrompt(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), true);
+                    return Dialog.EndOfTurn;
+                }
             }
-
-            return Dialog.EndOfTurn;
-        }
+        };
     }
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
