@@ -263,7 +263,7 @@ describe('DialogContext', function() {
             }
             catch (err) {
                 assert(err, `Error not found.`);
-                assert.strictEqual(err.message, `DialogContext.continue(): Can't continue dialog. A dialog with an id of 'b' wasn't found.`, `unexpected error message thrown: "${err.message}"`);
+                assert.strictEqual(err.message, `DialogContext.consultDialog(): Can't consult dialog. A dialog with an id of 'b' wasn't found.`, `unexpected error message thrown: "${err.message}"`);
                 return done();
             }
             if (results.status === DialogTurnStatus.empty) {
@@ -280,7 +280,7 @@ describe('DialogContext', function() {
             async function (step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 assert.strictEqual(step.activeDialog.id, 'a', `incorrect value for step.activeDialog.id`);
-                step.activeDialog.id = 'b';
+                step.stack[0].id = 'b';
                 return Dialog.EndOfTurn;
             },
             async function (step) {

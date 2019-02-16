@@ -7,7 +7,7 @@
  */
 import { Token } from '@microsoft/recognizers-text-date-time';
 import {  Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, TokenResponse, TurnContext } from 'botbuilder-core';
-import { Dialog, DialogTurnResult } from '../dialog';
+import { Dialog, DialogTurnResult, DialogConsultation, DialogConsultationDesire } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
 
@@ -149,42 +149,46 @@ export class OAuthPrompt extends Dialog {
         }
     }
 
-    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    public async consultDialog(dc: DialogContext): Promise<DialogConsultation> {
         // Recognize token
         const recognized: PromptRecognizerResult<TokenResponse> = await this.recognizeToken(dc.context);
+        return {
+            desire: recognized.succeeded && !recognized.allowInterruption ? DialogConsultationDesire.shouldProcess : DialogConsultationDesire.canProcess,
+            processor: async (dc) => {
+                // Check for timeout
+                const state = dc.state.dialog;
+                const isMessage: boolean = dc.context.activity.type === ActivityTypes.Message;
+                const hasTimedOut: boolean = isMessage && (new Date().getTime() > state.get(PERSISTED_EXPIRES));
+                if (hasTimedOut) {
+                    return await dc.endDialog(undefined);
+                } else {
+                    // Validate the return value
+                    let isValid: boolean = false;
+                    if (this.validator) {
+                        isValid = await this.validator({
+                            context: dc.context,
+                            recognized: recognized,
+                            state: state.get(PERSISTED_STATE),
+                            options: state.get(PERSISTED_OPTIONS)
+                        });
+                    } else if (recognized.succeeded) {
+                        isValid = true;
+                    }
 
-        // Check for timeout
-        const state = dc.state.dialog;
-        const isMessage: boolean = dc.context.activity.type === ActivityTypes.Message;
-        const hasTimedOut: boolean = isMessage && (new Date().getTime() > state.get(PERSISTED_EXPIRES));
-        if (hasTimedOut) {
-            return await dc.endDialog(undefined);
-        } else {
-            // Validate the return value
-            let isValid: boolean = false;
-            if (this.validator) {
-                isValid = await this.validator({
-                    context: dc.context,
-                    recognized: recognized,
-                    state: state.get(PERSISTED_STATE),
-                    options: state.get(PERSISTED_OPTIONS)
-                });
-            } else if (recognized.succeeded) {
-                isValid = true;
-            }
+                    // Return recognized value or re-prompt
+                    if (isValid) {
+                        return await dc.endDialog(recognized.value);
+                    } else {
+                        // Send retry prompt
+                        if (!dc.context.responded && isMessage && state.get(PERSISTED_OPTIONS).retryPrompt) {
+                            await dc.context.sendActivity(state.get(PERSISTED_OPTIONS).retryPrompt);
+                        }
 
-            // Return recognized value or re-prompt
-            if (isValid) {
-                return await dc.endDialog(recognized.value);
-            } else {
-                // Send retry prompt
-                if (!dc.context.responded && isMessage && state.get(PERSISTED_OPTIONS).retryPrompt) {
-                    await dc.context.sendActivity(state.get(PERSISTED_OPTIONS).retryPrompt);
+                        return Dialog.EndOfTurn;
+                    }
                 }
-
-                return Dialog.EndOfTurn;
             }
-        }
+        };
     }
 
     /**

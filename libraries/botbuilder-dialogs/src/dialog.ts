@@ -148,6 +148,30 @@ export interface DialogEvent {
     value?: any;
 }
 
+export enum DialogConsultationDesire {
+    /**
+     * The dialog can process the utterance but if parent dialogs should process it they can. 
+     */
+    canProcess = 'canProcess',
+
+    /**
+     * The dialog should process the utterance.
+     */
+    shouldProcess = 'shouldProcess'
+}
+
+export interface DialogConsultation {
+    /**
+     * Expresses the desire of the dialog to process the current utterance.
+     */
+    desire: DialogConsultationDesire;
+
+    /**
+     * Function that should be invoked to process the utterance.
+     */
+    processor: (dc: DialogContext) => Promise<DialogTurnResult>;
+}
+
 /**
  * Base class for all dialogs.
  */
@@ -235,11 +259,35 @@ export abstract class Dialog<O extends object = {}> {
     public abstract beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
 
     /**
-     * Called when an instance of the dialog is the active dialog and a new activity is received.
+     * Called when an instance of the dialog is being consulted about its desire to process the 
+     * current utterance.
      *
      * @remarks
-     * SHOULD be overridden by dialogs that support multi-turn conversations. The default
-     * implementation calls `DialogContext.endDialog()`.
+     * SHOULD be overridden by dialogs that support multi-turn conversations. A function for 
+     * processing the utterance is returned along with a code indicating the dialogs desire to 
+     * process the utterance.  This can be one of the following values.
+     * 
+     * - `canProcess` - The dialog is capable of processing the utterance but parent dialogs 
+     * should feel free to intercept the utterance if they'd like.
+     * - `shouldProcess` - The dialog (or one of its children) wants to process the utterance 
+     * so parents should not intercept it.
+     * 
+     * The default implementation calls the legacy [continueDialog()](#continuedialog) for 
+     * compatibility reasons. That method simply calls `DialogContext.endDialog()`.
+     * @param dc The dialog context for the current turn of conversation.
+     */
+    public async consultDialog(dc: DialogContext): Promise<DialogConsultation> {
+        return {
+            desire: DialogConsultationDesire.canProcess,
+            processor: (dc) => this.continueDialog(dc)
+        };
+    }
+
+    /**
+     * Legacy dialog continuation method.
+     *
+     * @remarks
+     * Multi-turn dialogs should now override [consultDialog()](#consultdialog) instead.
      * @param dc The dialog context for the current turn of conversation.
      */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {

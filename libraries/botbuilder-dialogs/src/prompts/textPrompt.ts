@@ -40,6 +40,6 @@ export class TextPrompt extends Prompt<string> {
     protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<string>> {
         const value: string = context.activity.text;
 
-        return typeof value === 'string' && value.length > 0 ? { succeeded: true, value: value } : { succeeded: false };
+        return typeof value === 'string' && value.length > 0 ? { succeeded: true, value: value, allowInterruption: true } : { succeeded: false };
     }
 }
