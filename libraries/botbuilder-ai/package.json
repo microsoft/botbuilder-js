@@ -31,7 +31,8 @@
     "ms-rest": "^2.3.6",
     "mstranslator": "^3.0.0",
     "request": "^2.87.0",
-    "request-promise-native": "1.0.5"
+    "request-promise-native": "1.0.5",
+    "url-parse": "^1.4.4"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
@@ -48,5 +49,9 @@
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-ai --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-ai .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - AI\" --readme none",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}"
-  }
+  },
+  "files": [
+    "/lib",
+    "/src"   
+  ]
 }
