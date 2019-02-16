@@ -23,5 +23,9 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:Microsoft/botbuilder-js.git"
-  }
+  },
+  "files": [
+    "/lib",
+    "/src"   
+  ]
 }

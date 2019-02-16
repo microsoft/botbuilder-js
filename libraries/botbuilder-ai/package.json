@@ -49,5 +49,9 @@
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-ai --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-ai .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - AI\" --readme none",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}"
-  }
+  },
+  "files": [
+    "/lib",
+    "/src"   
+  ]
 }
