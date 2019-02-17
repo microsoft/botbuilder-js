@@ -120,7 +120,7 @@ export class DialogContext {
             const frame = this.stack[this.stack.length - 1];
             instance = { 
                 id: frame.id,
-                state: typeof frame.state == 'number' ? this.stack[frame.state].state : frame.state 
+                state: this.getActiveDialogState(this, frame.state) 
             };
         }
         return instance;
@@ -187,21 +187,28 @@ export class DialogContext {
         if (!dialog) { throw new Error(`DialogContext.beginDialog(): A dialog with an id of '${dialogId}' wasn't found.`); }
 
         // Process dialogs input bindings
+        // - If the stack is empty, any `dialog.` bindings will be pulled from the active dialog on
+        //   the parents stack.
         options = options || {};
-        const emptyStack = this.stack.length == 0;
         for(const option in dialog.inputBindings) {
             if (dialog.inputBindings.hasOwnProperty(option)) {
                 const binding = dialog.inputBindings[option];
-                if (!emptyStack || binding.indexOf('dialog') !== 0) {
-                    const value = this.state.getValue(binding);
-                    options[option] = Array.isArray(value) || typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : value;
-        }
+                const value = this.state.getValue(binding);
+                options[option] = Array.isArray(value) || typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : value;
             }
         }
 
         // Check for inherited state
+        // - Local stack references are positive numbers and negative numbers are references on the
+        //   parents stack.
         let state: number|object;
         if (dialog instanceof DialogCommand) {
+            if (this.stack.length > 0) {
+                state = this.stack.length - 1;
+            } else if (this.parent) {
+                // We can't use -0 so index 0 in the parents stack is encoded as -1.
+                state = 0 - this.parent.stack.length;
+            }
             // Find stack entry to inherit
             for (let i = this.stack.length - 1; i >= 0; i--) {
                 if (typeof this.stack[i] === 'object') {
@@ -545,12 +552,32 @@ export class DialogContext {
             this.stack.pop();
 
             // Process dialogs output binding
+            // - if the stack is empty, any `dialog.` bindings will be applied to the active dialog
+            //   on the parents stack.
             if (dialog && dialog.outputBinding && result !== undefined) {
-                const emptyStack = this.stack.length == 0;
-                if (!emptyStack || dialog.outputBinding.indexOf('dialog.') !== 0) {
-                    this.state.setValue(dialog.outputBinding, result);
-                }
+                this.state.setValue(dialog.outputBinding, result);
             }
+        }
+    }
+
+    private getActiveDialogState(dc: DialogContext, state: object|number): object {
+        if (typeof state === 'number') {
+            // Positive values are indexes within the current DC and negative values are indexes in
+            // the parent DC.
+            if (state >= 0) {
+                if (state < dc.stack.length) {
+                    return this.getActiveDialogState(dc, dc.stack[state].state);
+                } else {
+                    throw new Error(`DialogContext.activeDialog: Can't find inherited state. Index out of range.`);
+                }
+            } else if (dc.parent) {
+                // Parent stack index of 0 is encoded as -1 so we need to make positive and then subtract 1
+                return this.getActiveDialogState(dc.parent, (0 - state) - 1);
+            } else {
+                throw new Error(`DialogContext.activeDialog: Can't find inherited state. No parent DialogContext.`);
+            }
+        } else {
+            return state;
         }
     }
 }

@@ -68,8 +68,14 @@ export class DialogContextState {
      * dialog using an `inputBinding`. 
      */
     public get dialog(): StateMap {
-        const instance = this.dc.activeDialog;
-        if (!instance) { throw new Error(`DialogContext.state.dialog: no active dialog instance.`); }
+        let instance = this.dc.activeDialog;
+        if (!instance) {
+            if (this.dc.parent) {
+                instance = this.dc.parent.activeDialog
+            } else {
+                throw new Error(`DialogContext.state.dialog: no active or parent dialog instance.`); 
+            }
+        }
         return new StateMap(instance.state);
     }
 
@@ -82,10 +88,15 @@ export class DialogContextState {
      * [user](#user), [conversation](#conversation), and [dialog](#dialog) properties.
      */
     public toJSON(): DialogContextVisibleState {
+        // Calculate dialog state
+        let instance = this.dc.activeDialog;
+        if (!instance && this.dc.parent) {
+            instance = this.dc.parent.activeDialog
+        }
         return {
             user: this.user.memory,
             conversation: this.conversation.memory,
-            dialog: this.dc.activeDialog ? this.dialog.memory : undefined
+            dialog: instance ? instance.state : undefined
         };
     }
 
