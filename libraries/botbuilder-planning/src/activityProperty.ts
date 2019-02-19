@@ -1,13 +1,13 @@
 /**
- * @module botbuilder-dialogs
+ * @module botbuilder-planning
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { Activity, InputHints, ActivityTypes } from 'botbuilder-core';
+import { DialogContext } from 'botbuilder-dialogs';
 import * as stringTemplate from './stringTemplate';
-import { DialogContext } from './dialogContext';
 
 export class ActivityProperty {
     private _value: Partial<Activity>|string;

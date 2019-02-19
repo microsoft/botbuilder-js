@@ -1,12 +1,12 @@
 /**
- * @module botbuilder-dialogs
+ * @module botbuilder-planning
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog } from '../dialog';
-import { PlanningContext, PlanChangeList } from './planningContext';
+import { Dialog, DialogEvent } from 'botbuilder-dialogs';
+import { PlanningContext, PlanChangeList } from '../planningContext';
  
 export interface PlanningRule {
     /**
@@ -18,6 +18,7 @@ export interface PlanningRule {
      * Evaluates the rule and returns a predicted set of changes that should be applied to the 
      * current plan.
      * @param planning Planning context object for the current conversation.
+     * @param event The current event being evaluated.
      */
-    evaluate(planning: PlanningContext): Promise<PlanChangeList[]|undefined>;
+    evaluate(planning: PlanningContext, event: DialogEvent): Promise<PlanChangeList[]|undefined>;
 }

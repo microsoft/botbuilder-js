@@ -1,15 +1,12 @@
 /**
- * @module botbuilder-dialogs
+ * @module botbuilder-planning
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogCommand } from '../dialogCommand';
-import { DialogContext } from '../dialogContext';
-import { DialogTurnResult, DialogConfiguration, Dialog } from '../dialog';
+import { DialogTurnResult, DialogConfiguration, Dialog, DialogCommand, DialogContext } from 'botbuilder-dialogs';
 import { ActivityProperty } from '../activityProperty';
-import { Activity } from 'botbuilder-core';
 
 export class SendList extends DialogCommand {
 

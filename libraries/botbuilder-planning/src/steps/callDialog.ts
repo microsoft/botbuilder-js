@@ -1,12 +1,11 @@
 /**
- * @module botbuilder-dialogs
+ * @module botbuilder-planning
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
-import { DialogContext } from '../dialogContext';
+import { Dialog, DialogTurnResult, DialogConfiguration, DialogContext } from 'botbuilder-dialogs';
 
 export interface CallDialogConfiguration extends DialogConfiguration {
     /**

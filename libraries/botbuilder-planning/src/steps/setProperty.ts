@@ -1,14 +1,11 @@
 /**
- * @module botbuilder-dialogs
+ * @module botbuilder-planning
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogCommand } from '../dialogCommand';
-import { DialogContext } from '../dialogContext';
-import { DialogTurnResult, DialogConfiguration, Dialog } from '../dialog';
-import { DialogContextState } from '../dialogContextState';
+import { DialogTurnResult, DialogConfiguration, Dialog, DialogCommand, DialogContext, DialogContextState } from 'botbuilder-dialogs';
 
 export class SetProperty extends DialogCommand {
 
