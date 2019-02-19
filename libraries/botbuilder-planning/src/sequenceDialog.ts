@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-dialogs
+ * @module botbuilder-planning
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 import { PlanningDialog } from './planningDialog';
 import { Dialog, DialogEvent } from '../dialog';
 import { DialogContext } from '../dialogContext';
-import { PlanningEventNames, PlanChangeList, PlanChange, PlanChangeType } from './planningContext';
+import { PlanningEventNames, PlanChangeList, PlanStepInfo, PlanChangeType } from './planningContext';
 
 export class SequenceDialog extends PlanningDialog {
     public readonly steps: Dialog[] = [];
@@ -33,12 +33,12 @@ export class SequenceDialog extends PlanningDialog {
                 return {
                     type: PlanChangeType.doSteps,
                     dialogId: step.id
-                } as PlanChange
+                } as PlanStepInfo
             });
 
             // Apply plan changes
             const planning = this.createPlanningContext(dc, event);
-            await planning.applyChanges({ changes: changes });
+            await planning.applyChanges({ doSteps: changes });
             return true;
         } else {
             return await super.onDialogEvent(dc, event);
