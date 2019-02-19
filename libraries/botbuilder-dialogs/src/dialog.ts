@@ -86,13 +86,7 @@ export enum DialogTurnStatus {
     /**
      * Indicates that the dialog was cancelled and the stack is empty.
      */
-    cancelled = 'cancelled',
-
-    /**
-     * Returned by DialogCommands to indicate that their parent dialog was ended and planning or 
-     * sequence dialogs should not perform any further processing.
-     */
-    parentEnded = 'parentEnded'
+    cancelled = 'cancelled'
 }
 
 /**
@@ -134,6 +128,12 @@ export interface DialogTurnResult<T = any> {
      * Final result returned by a dialog that just completed. Can be `undefined` even when [hasResult](#hasResult) is true.
      */
     result?: T;
+
+    /**
+     * If true, a `DialogCommand` has ended its parent container and the parent should not perform 
+     * any further processing.
+     */
+    parentEnded?: boolean;
 }
 
 export interface DialogEvent<T = any> {

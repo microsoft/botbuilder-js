@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogTurnResult, DialogTurnStatus } from './dialog';
+import { Dialog, DialogTurnResult } from './dialog';
 import { DialogContext } from './dialogContext';
 
 export abstract class DialogCommand<O extends object = {}> extends Dialog<O> {
@@ -22,9 +22,10 @@ export abstract class DialogCommand<O extends object = {}> extends Dialog<O> {
         if (dc.stack.length > 0 || !dc.parent) {
             return await dc.endDialog(result);
         } else {
-            await dc.parent.endDialog(result);
-            return { status: DialogTurnStatus.parentEnded };
-        }
+            const turnResult = await dc.parent.endDialog(result);
+            turnResult.parentEnded = true;
+            return turnResult;
+         }
     }    
 
     protected async replaceParentDialog(dc: DialogContext, dialogId: string, options?: object): Promise<DialogTurnResult> {
@@ -32,9 +33,10 @@ export abstract class DialogCommand<O extends object = {}> extends Dialog<O> {
         if (dc.stack.length > 0 || !dc.parent) {
             return await dc.replaceDialog(dialogId, options);
         } else {
-            await dc.parent.replaceDialog(dialogId, options);
-            return { status: DialogTurnStatus.parentEnded };
-        }
+            const turnResult = await dc.parent.replaceDialog(dialogId, options);
+            turnResult.parentEnded = true;
+            return turnResult;
+         }
     }
 
     protected async repeatParentDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
@@ -42,9 +44,10 @@ export abstract class DialogCommand<O extends object = {}> extends Dialog<O> {
         if (dc.stack.length > 0 || !dc.parent) {
             return await dc.replaceDialog(dc.activeDialog.id, options);
         } else {
-            await dc.parent.replaceDialog(dc.parent.activeDialog.id, options);
-            return { status: DialogTurnStatus.parentEnded };
-        }
+            const turnsResult = await dc.parent.replaceDialog(dc.parent.activeDialog.id, options);
+            turnsResult.parentEnded = true;
+            return turnsResult;
+         }
     }
 
     protected async cancelAllParentDialogs(dc: DialogContext): Promise<DialogTurnResult> {
@@ -52,8 +55,9 @@ export abstract class DialogCommand<O extends object = {}> extends Dialog<O> {
         if (dc.stack.length > 0 || !dc.parent) {
             return await dc.cancelAllDialogs();
         } else {
-            await dc.parent.cancelAllDialogs();
-            return { status: DialogTurnStatus.parentEnded };
+           const turnResult = await dc.parent.cancelAllDialogs();
+           turnResult.parentEnded = true;
+           return turnResult;
         }
     }
 
