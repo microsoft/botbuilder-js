@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import {  Activity, TurnContext } from 'botbuilder';
+import { Activity, TurnContext } from 'botbuilder-core';
 import * as entities from 'html-entities';
 import * as os from 'os';
 const pjson: any = require('../package.json');

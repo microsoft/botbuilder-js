@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { TestAdapter, TurnContext } = require('botbuilder');
+const { TestAdapter, TurnContext } = require('botbuilder-core');
 const { QnAMaker } = require('../');
 const nock = require('nock');
 const fs = require('fs');

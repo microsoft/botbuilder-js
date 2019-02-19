@@ -1,7 +1,7 @@
 const assert = require('assert');
 const fs = require('fs-extra');
 const nock = require('nock');
-const { TestAdapter, TurnContext } = require('botbuilder');
+const { TestAdapter, TurnContext } = require('botbuilder-core');
 const { LuisRecognizer } = require('../');
 const luisAppId = '38330cad-f768-4619-96f9-69ea333e594b';
 
