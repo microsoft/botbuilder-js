@@ -9,8 +9,19 @@ import { DialogTurnResult, DialogConfiguration, Dialog, DialogCommand, DialogCon
 
 export class SetProperty extends DialogCommand {
 
+    /**
+     * 
+     * @param expression 
+     */
+    constructor();
+    constructor(expression: (state: DialogContextState) => Promise<void>);
+    constructor(expression?: (state: DialogContextState) => Promise<void>) {
+        super();
+        if (expression) { this.expression = expression }
+    }
+
     protected onComputeID(): string {
-        return `setState(${this.expression.toString()})`;
+        return `setProperty(${this.expression.toString()})`;
     }
 
     public expression: (state: DialogContextState) => Promise<void>;
@@ -18,14 +29,5 @@ export class SetProperty extends DialogCommand {
     protected async onRunCommand(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         await this.expression(dc.state);
         return await dc.endDialog();
-    }
-
-    static create(expression: (state: DialogContextState) => Promise<void>, config?: DialogConfiguration): SetProperty {
-        const dialog = new SetProperty();
-        dialog.expression = expression;
-        if (config) {
-            Dialog.configure(dialog, config);
-        }
-        return dialog;
     }
 }

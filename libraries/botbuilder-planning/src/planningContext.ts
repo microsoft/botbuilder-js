@@ -21,7 +21,7 @@ export interface PlanState {
 
 export interface PlanStepState extends DialogState {
     dialogId: string;
-    dialogOptions?: object;
+    options?: object;
 }
 
 export interface PlanChangeList {

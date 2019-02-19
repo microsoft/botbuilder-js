@@ -263,13 +263,24 @@ export abstract class Dialog<O extends object = {}> {
         this._telemetryClient = client ? client : new NullTelemetryClient();
     }
 
-    public addTags(tags: string): this {
-        if (tags && tags.length > 0) {
-            tags.split('.').forEach((tag) => this.tags.push(tag));
+    /**
+     * Fluent method for configuring the dialogs properties. 
+     * @param config Configuration properties to apply. 
+     */
+    public configure(config: DialogConfiguration): this {
+        if (config.id) { this.id = config.id }
+        if (config.telemetryClient) { this.telemetryClient = config.telemetryClient }
+        if (config.outputBinding) { this.outputBinding = config.outputBinding }
+        if (config.inputBindings) {
+            for (const key in config.inputBindings) {
+                this.inputBindings[key] = config.inputBindings[key];
+            }
+        }
+        if (config.tags) { 
+            config.tags.forEach((tag) => this.tags.push(tag));
         }
         return this;
     }
-
 
     /**
      * Called when a new instance of the dialog has been pushed onto the stack and is being
@@ -392,20 +403,6 @@ export abstract class Dialog<O extends object = {}> {
             return this.outputBinding;
         } else {
             return '';
-        }
-    }
-
-    public static configure(dialog: Dialog, config: DialogConfiguration): void {
-        if (config.id) { dialog.id = config.id }
-        if (config.telemetryClient) { dialog.telemetryClient = config.telemetryClient }
-        if (config.outputBinding) { dialog.outputBinding = config.outputBinding }
-        if (config.inputBindings) {
-            for (const key in config.inputBindings) {
-                dialog.inputBindings[key] = config.inputBindings[key];
-            }
-        }
-        if (config.tags) { 
-            config.tags.forEach((tag) => dialog.tags.push(tag));
         }
     }
 }

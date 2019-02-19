@@ -9,6 +9,11 @@ import { Dialog, DialogTurnResult, DialogConfiguration, DialogContext } from 'bo
 
 export interface CallDialogConfiguration extends DialogConfiguration {
     /**
+     * ID of the dialog to call.
+     */
+    dialogId?: string;
+
+    /**
      * (Optional) static options to pass to called dialog.
      * 
      * @remarks
@@ -30,13 +35,39 @@ export interface CallDialogConfiguration extends DialogConfiguration {
 
 export class CallDialog<O extends object = {}> extends Dialog<O> {
 
-    constructor(dialogId?: string) {
-        super(dialogId);
+    /**
+     * Creates a new `CallDialog` instance.
+     * @param dialogId ID of the dialog to call.
+     * @param property (Optional) property to bind the called dialogs value to.
+     * @param options (Optional) static options to pass the called dialog.
+     */
+    constructor();
+    constructor(dialogId: string, options?: O);
+    constructor(dialogId: string, property: string, options?: O)
+    constructor(dialogId?: string, optionsOrProperty?: O|string, options?: O) {
+        super();
         this.outputBinding = 'dialog.lastResult';
+
+        // Process args
+        if (typeof optionsOrProperty === 'object') {
+            options = optionsOrProperty;
+            optionsOrProperty = undefined;
+        }
+        if (dialogId) { this.dialogId = dialogId }
+        if (typeof optionsOrProperty == 'string') { this.property = optionsOrProperty }
+        if (options) { this.options = options }
     }
 
     protected onComputeID(): string {
         return `call(${this.dialogId}, ${this.bindingPath()})`;
+    }
+
+    public configure(config: CallDialogConfiguration): this {
+        super.configure(config);
+        if (config.dialogId) { this.dialogId = config.dialogId }
+        if (config.options) { this.options = config.options }
+        if (config.property) { this.property = config.property }
+        return this;
     }
 
     /**
@@ -73,16 +104,5 @@ export class CallDialog<O extends object = {}> extends Dialog<O> {
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         options = Object.assign({}, options, this.options);
         return await dc.beginDialog(this.dialogId, options);
-    }
-
-    public static create(dialogId: string, config?: CallDialogConfiguration): CallDialog {
-        const dialog = new CallDialog();
-        dialog.dialogId = dialogId;
-        if (config) {
-            if (config.options) { dialog.options = config.options }
-            if (config.property) { dialog.property = config.property }
-            Dialog.configure(dialog, config);
-        }
-        return dialog;
     }
 }

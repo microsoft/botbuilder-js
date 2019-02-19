@@ -17,6 +17,15 @@ export interface EndDialogConfiguration extends DialogConfiguration {
 
 export class EndDialog extends DialogCommand {
 
+    /**
+     * Creates a new `EndDialog` instance.
+     * @param resultProperty (Optional) in-memory state property to return to the called dialog.
+     */
+    constructor(resultProperty?: string) {
+        super();
+        if (resultProperty) { this.resultProperty = resultProperty }
+    }
+
     protected onComputeID(): string {
         return `end(${this.resultProperty || ''})`;
     }
@@ -25,19 +34,16 @@ export class EndDialog extends DialogCommand {
      * (Optional) specifies an in-memory state property that should be returned to the calling
      * dialog.
      */
-    public resultProperty?: string;
+    public resultProperty: string;
+
+    public configure(config: EndDialogConfiguration): this {
+        super.configure(config);
+        if (config.resultProperty) { this.resultProperty = config.resultProperty }
+        return this;
+    }
 
     protected async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
         const result = this.resultProperty ? dc.state.getValue(this.resultProperty) : undefined;
         return await this.endParentDialog(dc, result);
-    }
-
-    static create(config?: EndDialogConfiguration): EndDialog {
-        const dialog = new EndDialog();
-        if (config) {
-            if (config.resultProperty) { dialog.resultProperty = config.resultProperty }
-            Dialog.configure(dialog, config);
-        }
-        return dialog;
     }
 }

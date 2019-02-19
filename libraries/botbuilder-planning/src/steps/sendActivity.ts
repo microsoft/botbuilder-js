@@ -10,10 +10,18 @@ import { Activity, InputHints } from 'botbuilder-core';
 import { ActivityProperty } from '../activityProperty';
 
 export interface SendActivityConfiguration extends DialogConfiguration {
+    /**
+     * Activity or message text to send the user. 
+     */
+    activityOrText?: Partial<Activity>|string;
+
+    /**
+     * (Optional) Structured Speech Markup Language (SSML) to speak to the user.
+     */
     speak?: string;
 
     /**
-     * (Optional) input hint for the message. Defaults to `acceptingInput`.
+     * (Optional) input hint for the message. Defaults to a value of `InputHints.acceptingInput`.
      */
     inputHint?: InputHints;
 
@@ -27,6 +35,21 @@ export interface SendActivityConfiguration extends DialogConfiguration {
 }
 
 export class SendActivity extends DialogCommand {
+
+    /**
+     * Creates a new `SendActivity` instance.
+     * @param activityOrText Activity or message text to send the user. 
+     * @param speak (Optional) Structured Speech Markup Language (SSML) to speak to the user.
+     * @param inputHint (Optional) input hint for the message. Defaults to a value of `InputHints.acceptingInput`.
+     */
+    constructor();
+    constructor(activityOrText: Partial<Activity>|string, speak?: string, inputHint?: InputHints);
+    constructor(activityOrText?: Partial<Activity>|string, speak?: string, inputHint?: InputHints) {
+        super();
+        if (activityOrText) { this.activity.value = activityOrText }
+        if (speak) { this.activity.speak = speak }
+        this.activity.inputHint = inputHint || InputHints.AcceptingInput;
+    }
 
     protected onComputeID(): string {
         return `send(${this.activity.displayLabel})`;
@@ -51,6 +74,15 @@ export class SendActivity extends DialogCommand {
         return this.outputBinding;
     }
 
+    public configure(config: SendActivityConfiguration): this {
+        super.configure(config);
+        if (config.activityOrText) { this.activity.value = config.activityOrText }
+        if (config.speak) { this.activity.speak = config.speak }
+        if (config.inputHint) { this.activity.inputHint = config.inputHint }
+        if (config.resultProperty) { this.resultProperty = config.resultProperty }
+        return this;
+    }
+    
     protected async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
         if (!this.activity.hasValue()) {
             throw new Error(`SendActivity: no activity assigned for step '${this.id}'.`) 
@@ -62,23 +94,5 @@ export class SendActivity extends DialogCommand {
         const activity = this.activity.format(dc, { utterance: dc.context.activity.text || '' });
         const result = await dc.context.sendActivity(activity);
         return await dc.endDialog(result);
-    }
-
-    static create(activityOrText: Partial<Activity>|string, config?: SendActivityConfiguration): SendActivity;
-    static create(activityOrText: Partial<Activity>|string, speak?: string, config?: SendActivityConfiguration): SendActivity;
-    static create(activityOrText: Partial<Activity>|string, speak?: string|SendActivityConfiguration, config?: SendActivityConfiguration): SendActivity {
-        if (typeof speak == 'object') {
-            config = speak;
-            speak = config.speak;
-        }
-        const dialog = new SendActivity();
-        dialog.activity.value = activityOrText;
-        dialog.activity.speak = speak;
-        if (config) {
-            if (config.inputHint) { dialog.activity.inputHint = config.inputHint }
-            if (config.resultProperty) { dialog.resultProperty = config.resultProperty }
-            Dialog.configure(dialog, config);
-        }
-        return dialog;
     }
 }

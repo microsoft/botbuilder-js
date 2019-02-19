@@ -5,57 +5,113 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, Dialog, DialogCommand, DialogContext } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogCommand, DialogContext } from 'botbuilder-dialogs';
 import { ActivityProperty } from '../activityProperty';
 
+export interface SendListConfiguration extends DialogConfiguration {
+    /**
+     * In-memory state property that contains the map or list.
+     */
+    listProperty?: string;
+
+    /**
+     * Template to use for the main message body.
+     */
+    messageTemplate?: string;
+
+    /**
+     * (Optional) template used to format individual items.
+     */
+    itemTemplate?: string;
+}
+
 export class SendList extends DialogCommand {
+    private readonly _messageTemplate = new ActivityProperty();
+    private readonly _itemTemplate = new ActivityProperty();
+
+    /**
+     * Creates a new `SendList` instance.
+     * @param listProperty In-memory state property that contains the map or list.
+     * @param messageTemplate Template to use for the main message body.
+     * @param itemTemplate (Optional) template used to format individual items.
+     */
+    constructor();
+    constructor(listProperty: string, messageTemplate: string, itemTemplate?: string);
+    constructor(listProperty?: string, messageTemplate?: string, itemTemplate?: string) {
+        super();
+        if (listProperty) { this.listProperty = listProperty }
+        if (messageTemplate) { this.messageTemplate = messageTemplate }
+        if (itemTemplate) { this.itemTemplate = itemTemplate }
+    }
 
     protected onComputeID(): string {
         return `sendList(${this.bindingPath()})`;
     }
 
+    /**
+     * In-memory state property that contains the map or list.
+     */
     public listProperty: string;
 
-    public messageTemplate = new ActivityProperty();
+    /**
+     * Template to use for the main message body.
+     */
+    public set messageTemplate(value: string) {
+        this._messageTemplate.value = value;
+    }
 
-    public itemTemplate = new ActivityProperty();
+    public get messageTemplate(): string {
+        return this._messageTemplate.value as string;
+    }
+
+    /**
+     * (Optional) template used to format individual items.
+     */
+    public set itemTemplate(value: string) {
+        this._itemTemplate.value = value;
+    }
+
+    public get itemTemplate(): string {
+        return this._itemTemplate.value as string;
+    }
+
+    public configure(config: SendListConfiguration): this {
+        super.configure(config);
+        if (config.listProperty) { this.listProperty = config.listProperty }
+        if (config.messageTemplate) { this.messageTemplate = config.messageTemplate }
+        if (config.itemTemplate)  { this.itemTemplate = config.itemTemplate }
+        return this;
+    }
 
     protected async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
+        // Ensure templates configured
+        if (!this.messageTemplate) {
+            this.messageTemplate = '{list}';
+        } else if (this.messageTemplate.indexOf('{list') < 0) {
+            this.messageTemplate += '\n\n{list}';
+        }
+        if (!this.itemTemplate) {
+            this.itemTemplate = '- {item}\n';
+        } else if (this.itemTemplate.indexOf('{item') < 0) {
+            this.itemTemplate += ' {item}\n';
+        }
+
         // Render list content
         let list = '';
         const value = dc.state.getValue(this.listProperty);
         if (Array.isArray(value) && value.length > 0) {
             value.forEach((item) => {
-                list += this.itemTemplate.format(dc, { item: item }).text;
+                list += this._itemTemplate.format(dc, { item: item }).text;
             });
         } else if (typeof value === 'object') {
             for (const key in value) {
-                list += this.itemTemplate.format(dc, { key: key, item: value[key] }).text;
+                list += this._itemTemplate.format(dc, { key: key, item: value[key] }).text;
             }
         }
 
         // Render message
-        const activity = this.messageTemplate.format(dc, { utterance: dc.context.activity.text || '', list: list });
+        const activity = this._messageTemplate.format(dc, { utterance: dc.context.activity.text || '', list: list });
         const result = await dc.context.sendActivity(activity);
         return await dc.endDialog(result);
-    }
-
-    static create(listProperty: string, messageTemplate: string, itemTemplate?: string, config?: DialogConfiguration): SendList {
-        itemTemplate = itemTemplate || '- {item}\n';
-        if (messageTemplate.indexOf('{list}') < 0) {
-            messageTemplate += '\n\n{list}';
-        }
-        if (itemTemplate.indexOf('{item') < 0) {
-            itemTemplate += ' {item}\n';
-        }
-        
-        const dialog = new SendList();
-        dialog.listProperty = listProperty;
-        dialog.messageTemplate.value = messageTemplate;
-        dialog.itemTemplate.value = itemTemplate;
-        if (config) {
-            Dialog.configure(dialog, config);
-        }
-        return dialog;
     }
 }

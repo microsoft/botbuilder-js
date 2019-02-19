@@ -65,7 +65,7 @@ export class EventRule implements PlanningRule {
         this.steps.forEach((step) => {
             const stepState: PlanStepState = { dialogStack: [], dialogId: step.id };
             if (dialogOptions !== undefined) {
-                stepState.dialogOptions = dialogOptions;
+                stepState.options = dialogOptions;
             }
             changeList.steps.push(stepState);
         });

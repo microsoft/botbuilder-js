@@ -20,6 +20,15 @@ export interface RepeatDialogConfiguration extends DialogConfiguration {
 
 export class RepeatDialog extends DialogCommand {
 
+    /**
+     * Creates a new `RepeatDialog` instance.
+     * @param options (Optional) static options to pass into the dialog when it's repeated.
+     */
+    constructor(options?: object) {
+        super();
+        if (options) { this.options = options }
+    }
+
     protected onComputeID(): string {
         return `repeat(${this.bindingPath()})`;
     }
@@ -33,18 +42,15 @@ export class RepeatDialog extends DialogCommand {
      */
     public options?: object;
 
+    public configure(config: RepeatDialogConfiguration): this {
+        super.configure(config);
+        if (config.options) { this.options = config.options }
+        return this;
+    }
+
     protected async onRunCommand(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         const originalOptions = dc.state.dialog.get('options');
         options = Object.assign({}, originalOptions, options, this.options);
         return await this.repeatParentDialog(dc, options);
-    }
-
-    static create(config?: RepeatDialogConfiguration): RepeatDialog {
-        const dialog = new RepeatDialog();
-        if (config) {
-            if (config.options) { dialog.options = config.options }
-            Dialog.configure(dialog, config);
-        }
-        return dialog;
     }
 }

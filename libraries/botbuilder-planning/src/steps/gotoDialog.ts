@@ -25,6 +25,19 @@ export interface GotoDialogConfiguration extends DialogConfiguration {
 
 export class GotoDialog extends DialogCommand {
 
+    /**
+     * Creates a new `GotoDialog` instance.
+     * @param dialogId ID of the dialog to goto.
+     * @param options (Optional) static options to pass the dialog.
+     */
+    constructor();
+    constructor(dialogId: string, options?: object);
+    constructor(dialogId?: string, options?: object) {
+        super();
+        if (dialogId) { this.dialogId = dialogId }
+        if (options) { this.options = options }
+    }
+
     protected onComputeID(): string {
         return `goto(${this.dialogId})`;
     }
@@ -43,18 +56,15 @@ export class GotoDialog extends DialogCommand {
      */
     public options?: object;
 
+    public configure(config: GotoDialogConfiguration): this {
+        super.configure(config);
+        if (config.dialogId) { this.dialogId = config.dialogId }
+        if (config.options) { this.options = config.options }
+        return this;
+    }
+
     protected async onRunCommand(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         options = Object.assign({}, options, this.options);
         return await this.replaceParentDialog(dc, this.dialogId, options);
-    }
-
-    static create(config?: GotoDialogConfiguration): GotoDialog {
-        const dialog = new GotoDialog();
-        if (config) {
-            if (config.dialogId) { dialog.dialogId = config.dialogId }
-            if (config.options) { dialog.options = config.options }
-            Dialog.configure(dialog, config);
-        }
-        return dialog;
     }
 }

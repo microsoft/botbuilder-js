@@ -5,14 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, BotTelemetryClient, NullTelemetryClient, StatePropertyAccessor, ActivityTypes, RecognizerResult, calculateChangeHash } from 'botbuilder-core';
+import { 
+    TurnContext, BotTelemetryClient, NullTelemetryClient, StatePropertyAccessor, ActivityTypes, 
+    RecognizerResult
+} from 'botbuilder-core';
 import { 
     Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent,
-    DialogContext, DialogState, DialogSet, StateMap, DialogContextState, DialogConsultation, DialogConsultationDesire
+    DialogContext, DialogState, DialogSet, StateMap, DialogConsultation, DialogConsultationDesire, DialogConfiguration
 } from 'botbuilder-dialogs';
+import { 
+    PlanningEventNames, PlanningContext, PlanningState, PlanState, PlanChangeList, PlanChangeType 
+} from './planningContext';
 import { PlanningRule } from './rules';
 import { Recognizer } from './recognizers';
-import { PlanningEventNames, PlanningContext, PlanningState, PlanState, PlanChangeList, PlanChangeType } from './planningContext';
+
 
 export interface BotState extends DialogState {
     /**
@@ -35,10 +41,10 @@ export interface BotState extends DialogState {
     userState?: object;    
 }
 
-export interface RuleDialogRunOptions {
+export interface PlanningDialogRunOptions {
     /**
      * (Optional) object used to persist the bots dialog state. If omitted the 
-     * `RuleDialog.botState` property will be used. 
+     * `PlanningDialog.botState` property will be used. 
      */
     botState?: BotState;
 
@@ -54,7 +60,7 @@ export interface RuleDialogRunOptions {
 
     /**
      * (Optional) object used to persist the current users state. If omitted the 
-     * `RuleDialog.userState` property will be used. 
+     * `PlanningDialog.userState` property will be used. 
      */
     userState?: object;
 }
@@ -132,7 +138,7 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     }
 
 
-    public async run(context: TurnContext, options?: RuleDialogRunOptions): Promise<DialogTurnResult> {
+    public async run(context: TurnContext, options?: PlanningDialogRunOptions): Promise<DialogTurnResult> {
         options = options || {};
 
         // Initialize bot state
@@ -514,7 +520,7 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
                     let result = consultation ? await consultation.processor(step) : { status: DialogTurnStatus.empty };
                     if (result.status == DialogTurnStatus.empty && !result.parentEnded) {
                         const nextStep = step.plan.steps[0];
-                        result = await step.beginDialog(nextStep.dialogId, nextStep.dialogOptions);
+                        result = await step.beginDialog(nextStep.dialogId, nextStep.options);
                     }
 
                     // Process step results

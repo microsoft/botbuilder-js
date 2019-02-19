@@ -32,7 +32,7 @@ export class SequenceDialog extends PlanningDialog {
                         return {
                             dialogStack: [],
                             dialogId: step.id,
-                            dialogOptions: event.value
+                            options: event.value
                         } as PlanStepState
                     });
                     await planning.doSteps(changes);
