@@ -240,18 +240,9 @@ export class DialogContext {
      */
     public async cancelAllDialogs(): Promise<DialogTurnResult> {
         this._activeTags = undefined;
-        if (this.stack.length > 0) {
-            // Cancel all local dialogs and check for interception
-            let result = await this.cancelLocalDialogs(DialogReason.cancelCalled, CANCEL_EVENT);
-            if (result.status == DialogTurnStatus.cancelled && this.parent) {
-                // Not intercepted so propagate to parent
-                result = await this.parent.cancelAllDialogs();
-            }
-
-            return result;
-        } else if (this.parent) {
-            // Propagate to parent
-            return this.parent.cancelAllDialogs();
+        if (this.stack.length > 0 || this.parent) {
+            // Cancel all local and parent dialogs while checking for interception
+            return this.cancelDialogs(DialogReason.cancelCalled, CANCEL_EVENT);
         } else {
             // Stack was empty and no parent
             return { status: DialogTurnStatus.empty };
@@ -435,7 +426,14 @@ export class DialogContext {
         // Resume parent dialog
         const instance: DialogInstance = this.activeDialog;
         if (instance) {
-            return await this.resumeDialog(instance, DialogReason.endCalled, result);
+            // Lookup dialog
+            const dialog: Dialog<{}> = this.findDialog(instance.id);
+            if (!dialog) {
+                throw new Error(`DialogContext.endDialog(): Can't resume previous dialog. A dialog with an id of '${instance.id}' wasn't found.`);
+            }
+
+            // Return result to previous dialog
+            return await dialog.resumeDialog(this, DialogReason.endCalled, result);
         } else {
             // Signal completion
             return { status: DialogTurnStatus.complete, result: result };
@@ -529,17 +527,26 @@ export class DialogContext {
         return true;
     }
 
-    private async cancelLocalDialogs(reason: DialogReason, eventName: string, eventValue?: any): Promise<DialogTurnResult> {
-        while (this.stack.length > 0) {
-            // Check to see if the dialog wants to handle the event
-            if (await this.emitEvent(eventName, eventValue, false)) {
-                // Event handled so resume 
-                const instance: DialogInstance = this.activeDialog;
-                return await this.resumeDialog(instance, reason);
-            }
+    private async cancelDialogs(reason: DialogReason, eventName: string, eventValue?: any): Promise<DialogTurnResult> {
+        let notify = false;
+        let dc: DialogContext = this;
+        while (dc) {
+            if (dc.stack.length > 0)
+            {
+                // Check to see if the dialog wants to handle the event
+                if (notify && await dc.emitEvent(eventName, eventValue, false)) {
+                    // Event handled so resume dialog
+                    const instance: DialogInstance = dc.activeDialog;
+                    const dialog = dc.findDialog(instance.id);
+                    return await dialog.resumeDialog(dc, reason, undefined);
+                }
 
-            // End the active dialog
-            await this.endActiveDialog(reason);
+                // End the active dialog
+                await dc.endActiveDialog(reason);
+            } else {
+                dc = dc.parent;
+            }
+            notify = true;
         }
 
         return { status: DialogTurnStatus.cancelled };
@@ -565,17 +572,6 @@ export class DialogContext {
                 this.state.setValue(dialog.outputBinding, result);
             }
         }
-    }
-
-    private async resumeDialog(instance: DialogInstance, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
-        // Lookup dialog
-        const dialog: Dialog<{}> = this.findDialog(instance.id);
-        if (!dialog) {
-            throw new Error(`DialogContext.resumeDialog(): Can't resume previous dialog. A dialog with an id of '${instance.id}' wasn't found.`);
-        }
-
-        // Return result to previous dialog
-        return await dialog.resumeDialog(this, reason, result);
     }
 
     private getActiveDialogState(dc: DialogContext, state: object|number): object {
