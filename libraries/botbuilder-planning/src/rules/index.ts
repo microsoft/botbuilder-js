@@ -16,3 +16,5 @@ export * from './newPlanRule';
 export * from './planningRule';
 export * from './replacePlanRule';
 export * from './utteranceRecognizeRule';
+export * from './welcomeRule';
+

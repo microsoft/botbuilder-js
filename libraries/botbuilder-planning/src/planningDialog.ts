@@ -213,13 +213,11 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         // Create a new planning context
         const planning = PlanningContext.create(dc, state);
 
-        // Consult rules
-        const consultation = await this.consultRules(planning, { name: PlanningEventNames.beginDialog, value: options, bubble: false });
-        if (consultation) {
-            return await consultation.processor(planning);
-        } else {
-            return await this.continuePlan(planning);
-        }
+        // Evaluate rules and queue up plan changes
+        await this.evaluateRules(planning, { name: PlanningEventNames.beginDialog, value: options, bubble: false });
+        
+        // Run plan
+        return await this.continuePlan(planning);
     }
 
     public async consultDialog(dc: DialogContext): Promise<DialogConsultation> {
@@ -230,10 +228,13 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         // First consult plan
         let consultation = await this.consultPlan(planning);
         if (!consultation || consultation.desire != DialogConsultationDesire.shouldProcess) {
-            // Next consult rules
-            const ruleConsultation = await this.consultRules(planning, { name: PlanningEventNames.consultDialog, value: undefined, bubble: false });
-            if (ruleConsultation && ruleConsultation.desire == DialogConsultationDesire.shouldProcess) {
-                consultation = ruleConsultation;
+            // Next evaluate rules
+            const changesQueued = await this.evaluateRules(planning, { name: PlanningEventNames.consultDialog, value: undefined, bubble: false });
+            if (changesQueued) {
+                consultation = {
+                    desire: DialogConsultationDesire.shouldProcess,
+                    processor: (dc) => this.continuePlan(planning)
+                };
             }
 
             // Fallback to just continuing the plan
@@ -253,15 +254,8 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         const state: PlanningState<O> = dc.activeDialog.state;
         const planning = PlanningContext.create(dc, state);
 
-        // Consult rules for plan changes
-        const consultation = await this.consultRules(planning, event);
-        if (consultation) {
-            // Apply plan changes
-            await consultation.processor(planning);
-            return true;
-        } else {
-            return false;
-        }
+        // Evaluate rules and queue up any potential changes 
+        return await this.evaluateRules(planning, event);
     }
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
@@ -315,14 +309,14 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     // Rule Processing
     //---------------------------------------------------------------------------------------------
 
-    protected async consultRules(planning: PlanningContext, event: DialogEvent): Promise<DialogConsultation|undefined> {
-        let consultation = await this.findFirstMatch(planning, event);
-        if (!consultation) {
+    protected async evaluateRules(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
+        let handled = await this.queueFirstMatch(planning, event);
+        if (!handled) {
             switch (event.name) {
                 case PlanningEventNames.beginDialog:
                 case PlanningEventNames.consultDialog:
                     // Process activityReceived event
-                    consultation = await this.consultRules(planning, { name: PlanningEventNames.activityReceived, value: undefined, bubble: false });
+                    handled = await this.evaluateRules(planning, { name: PlanningEventNames.activityReceived, value: undefined, bubble: false });
                     break;
                 case PlanningEventNames.activityReceived:
                     const activity = planning.context.activity;
@@ -331,20 +325,20 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
                         const recognized = await this.onRecognize(planning.context);
 
                         // Emit utteranceRecognized event
-                        consultation = await this.findBestMatch(planning, { name: PlanningEventNames.utteranceRecognized, value: recognized, bubble: false });
-                        if (!consultation && !planning.plan || planning.plan.steps.length == 0) {
+                        handled = await this.queueBestMatches(planning, { name: PlanningEventNames.utteranceRecognized, value: recognized, bubble: false });
+                        if (!handled && !planning.plan || planning.plan.steps.length == 0) {
                             // Emit fallback event
-                            consultation = await this.findFirstMatch(planning, { name: PlanningEventNames.fallback, value: recognized, bubble: false });
+                            handled = await this.queueFirstMatch(planning, { name: PlanningEventNames.fallback, value: recognized, bubble: false });
                         }
                     } else if (activity.type === ActivityTypes.Event) {
                         // Emit named event that was received
-                        consultation = await this.findFirstMatch(planning, { name: activity.name, value: activity.value, bubble: false });
+                        handled = await this.queueFirstMatch(planning, { name: activity.name, value: activity.value, bubble: false });
                     }
                     break;
             }
         }
 
-        return consultation;
+        return handled;
     }
 
     protected async onRecognize(context: TurnContext): Promise<RecognizerResult> {
@@ -356,27 +350,19 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         return this.recognizer ? await this.recognizer.recognize(context) : noneIntent;
     }
 
-    private async findFirstMatch(planning: PlanningContext, event: DialogEvent): Promise<DialogConsultation|undefined> {
+    private async queueFirstMatch(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
         for (let i = 0; i < this.rules.length; i++) {
             const changes = await this.rules[i].evaluate(planning, event);
             if (changes && changes.length > 0) {
-                return {
-                    desire: DialogConsultationDesire.shouldProcess,
-                    processor: async (dc) => {
-                        // Apply plan changes
-                        await planning.applyChanges(changes[0]);
-
-                        // Continue plan execution
-                        return await this.continuePlan(planning);
-                    }
-                };
-            } 
+                planning.queueChanges(changes[0]);
+                return true;
+            }
         }
 
-        return undefined;
+        return false;
     }
 
-    private async findBestMatch(planning: PlanningContext, event: DialogEvent): Promise<DialogConsultation|undefined> {
+    private async queueBestMatches(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
         // Get list of proposed changes
         const allChanges: PlanChangeList[] = [];
         for (let i = 0; i < this.rules.length; i++) {
@@ -411,53 +397,48 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
             }
         }
 
-        // Return consultation result
+        // Queue changes
         if (appliedChanges.length > 0) {
-            return {
-                desire: DialogConsultationDesire.shouldProcess,
-                processor: async (dc) => {
-                    // Apply plan changes in priority order
-                    const sorted = appliedChanges.sort((a, b) => a.index - b.index);
-                    if (sorted.length > 1) {
-                        // Look for the first change that starts a new plan 
-                        for (let i = 0; i < sorted.length; i++) {
-                            const changeType = sorted[i].change.changeType;
-                            if (changeType == PlanChangeType.newPlan || changeType == PlanChangeType.replacePlan) {
-                                // Apply change and remove from list
-                                await planning.applyChanges(sorted[i].change);
-                                sorted.splice(i, 1);
-                                break;
-                            }
-                            
-                        }
-
-                        // Update plan with additional steps
-                        // - Additional newPlan or replacePlan steps will be appended to the new 
-                        //   plan.
-                        for (let i = 0; i < sorted.length; i++) {
-                            const change = sorted[i].change;
-                            switch (change.changeType) {
-                                case PlanChangeType.doSteps:
-                                    await planning.doSteps(change.steps);
-                                    break;
-                                case PlanChangeType.doStepsLater:
-                                case PlanChangeType.newPlan:
-                                case PlanChangeType.replacePlan:
-                                    await planning.doStepsLater(change.steps);
-                                    break;
-                            }
-                        }
-                    } else {
-                        // Just apply the change
-                        await planning.applyChanges(sorted[0].change);
+            const sorted = appliedChanges.sort((a, b) => a.index - b.index);
+            if (sorted.length > 1) {
+                // Look for the first change that starts a new plan 
+                for (let i = 0; i < sorted.length; i++) {
+                    const changeType = sorted[i].change.changeType;
+                    if (changeType == PlanChangeType.newPlan || changeType == PlanChangeType.replacePlan) {
+                        // Queue change and remove from list
+                        planning.queueChanges(sorted[i].change);
+                        sorted.splice(i, 1);
+                        break;
                     }
-
-                    // Continue plan execution
-                    return this.continuePlan(planning);
+                    
                 }
-            };
+
+                // Queue additional changes
+                // - Additional newPlan or replacePlan steps will be changed to a `doStepsLater`
+                //   changeType so that they're appended to teh new plan.
+                for (let i = 0; i < sorted.length; i++) {
+                    const change = sorted[i].change;
+                    switch (change.changeType) {
+                        case PlanChangeType.doSteps:
+                        case PlanChangeType.doStepsBeforeTags:
+                        case PlanChangeType.doStepsLater:
+                            planning.queueChanges(change);
+                            break;
+                        case PlanChangeType.newPlan:
+                        case PlanChangeType.replacePlan:
+                            change.changeType = PlanChangeType.doStepsLater;
+                            planning.queueChanges(change);
+                            break;
+                    }
+                }
+            } else {
+                // Just queue the change
+                planning.queueChanges(sorted[0].change);
+            }
+            
+            return true;
         } else {
-            return undefined;
+            return false;
         }
     }
 
@@ -509,6 +490,9 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     //---------------------------------------------------------------------------------------------
 
     protected async consultPlan(planning: PlanningContext): Promise<DialogConsultation> {
+        // Apply any queued up changes
+        await planning.applyChanges();
+
         // Delegate consultation to any active planning step
         const step = PlanningContext.createForStep(planning, this.dialogs);
         const consultation = step ? await step.consultDialog() : undefined;
@@ -517,6 +501,7 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
             processor: async (dc) => {
                 if (step) {
                     // Continue current step
+                    console.log(`running step: ${step.plan.steps[0].dialogId}`);
                     let result = consultation ? await consultation.processor(step) : { status: DialogTurnStatus.empty };
                     if (result.status == DialogTurnStatus.empty && !result.parentEnded) {
                         const nextStep = step.plan.steps[0];

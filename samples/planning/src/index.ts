@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState } from 'botbuilder';
-import { PlanningDialog, FallbackRule, SendActivity, RegExpRecognizer, IntentRule, SequenceDialog, CallDialog, CancelAllDialogs, TextPrompt, MapEntity, SetProperty, ChoicePrompt, IfPropertyRule, SendList } from 'botbuilder-dialogs';
+import { PlanningDialog, FallbackRule, SendActivity, WaitForInput, IfProperty, WelcomeRule  } from 'botbuilder-planning';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -25,11 +25,6 @@ const storage = new MemoryStorage();
 const userState = new UserState(storage);
 const convoState = new ConversationState(storage);
 
-// Create the main planning dialog and bind to storage.
-const dialogs = new PlanningDialog();
-dialogs.userState = userState.createProperty('user');
-dialogs.botState = convoState.createProperty('bot');
-
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
@@ -42,10 +37,36 @@ server.post('/api/messages', (req, res) => {
     });
 });
 
+// Create the main planning dialog and bind to storage.
+const dialogs = new PlanningDialog();
+dialogs.userState = userState.createProperty('user');
+dialogs.botState = convoState.createProperty('bot');
+
+// Add a rule to automatically greet the user
+dialogs.addRule(new WelcomeRule([
+    new SendActivity(`Hi... I'm Greg. I greet people.`)
+]));
+
+// Add a top level fallback rule to handle un-recognized utterances
+dialogs.addRule(new FallbackRule([
+    new IfProperty(async (state) => state.user.get('name') == undefined, [
+        new SendActivity(`Hi, what's your name?`),
+        new WaitForInput('user.name'),
+    ]),
+    new SendActivity(`Hi {user.name}. Nice to meet you. I'm greg.`)
+]));
+
+
+/*
 //=============================================================================
 // Planning Rules
 //=============================================================================
 // The rules add logic to process the users intent
+
+    new IfProperty(async (state) => state.user.get('name') == undefined, [
+        new SendActivity(`Hi, what's your name?`),
+        new WaitForInput('user.name'),
+    ]),
 
 // Bind planning dialog to its recognizer
 const recognizer = new RegExpRecognizer()
@@ -183,3 +204,4 @@ const showToDosDialog = new SequenceDialog('ShowToDosDialog')
         SendList.create('user.todos', `Here are your todos:`)
     );
 dialogs.addDialog(showToDosDialog);
+*/

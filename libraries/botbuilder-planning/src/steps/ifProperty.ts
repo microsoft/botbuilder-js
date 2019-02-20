@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogCommand, DialogTurnResult, Dialog, DialogContext, DialogContextState } from 'botbuilder-dialogs';
-import { PlanningContext, PlanStepState } from '../planningContext';
+import { PlanningContext, PlanStepState, PlanChangeType } from '../planningContext';
 
 export interface IfPropertyCondition {
     expression: (state: DialogContextState) => Promise<boolean>;
@@ -89,10 +89,10 @@ export class IfProperty extends DialogCommand {
                         dialogId: step.id,
                         options: options
                     } as PlanStepState
-                })
+                });
 
-                // Do steps after current step
-                await planning.doStepsAfter(0, steps);
+                // Queue up steps that should run after current step
+                await planning.queueChanges({ changeType: PlanChangeType.doSteps, steps: steps });
             }
         }
 

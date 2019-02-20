@@ -9,7 +9,9 @@ import { Dialog, DialogTurnResult } from './dialog';
 import { DialogContext } from './dialogContext';
 
 export abstract class DialogCommand<O extends object = {}> extends Dialog<O> {
-    public steps: Dialog[] = [];
+    public get steps(): Dialog[] {
+        return [];
+    }
 
     protected abstract onRunCommand(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
 

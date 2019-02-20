@@ -21,28 +21,21 @@ export class SequenceDialog extends PlanningDialog {
         return `sequence(${this.bindingPath()})`;
     }
 
-    public async consultRules(planning: PlanningContext, event: DialogEvent): Promise<DialogConsultation> {
+    public async evaluateRules(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
         // Intercept beginDialog event
         if (event.name == PlanningEventNames.beginDialog) {
-            return {
-                desire: DialogConsultationDesire.shouldProcess,
-                processor: async (dc) => {
-                    // Initialize sequences plan
-                    const changes = this.steps.map((step) => {
-                        return {
-                            dialogStack: [],
-                            dialogId: step.id,
-                            options: event.value
-                        } as PlanStepState
-                    });
-                    await planning.doSteps(changes);
-
-                    // Begin plan execution
-                    return await this.continuePlan(planning);
-                } 
-            };
+            // Queue up sequences plan
+            const steps = this.steps.map((step) => {
+                return {
+                    dialogStack: [],
+                    dialogId: step.id,
+                    options: event.value
+                } as PlanStepState
+            });
+            planning.queueChanges({ changeType: PlanChangeType.doSteps, steps: steps });
+            return true;
         } else {
-            return await super.consultRules(planning, event);
+            return await super.evaluateRules(planning, event);
         }
     }
 }

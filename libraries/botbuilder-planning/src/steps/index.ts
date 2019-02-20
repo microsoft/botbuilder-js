@@ -15,3 +15,4 @@ export * from './saveEntity';
 export * from './sendActivity';
 export * from './sendList';
 export * from './setProperty';
+export * from './waitForInput';

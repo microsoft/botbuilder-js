@@ -11,6 +11,7 @@ export interface PlanningState<O extends Object> {
     options: O;
     plan?: PlanState;
     savedPlans?: PlanState[];
+    changes?: PlanChangeList[];
     result?: any;
 }
 
@@ -27,6 +28,7 @@ export interface PlanStepState extends DialogState {
 export interface PlanChangeList {
     changeType: PlanChangeType;
     steps: PlanStepState[];
+    tags?: string[];
     intentsMatched?: string[];
     entitiesMatched?: string[];
 }
@@ -34,6 +36,7 @@ export interface PlanChangeList {
 export enum PlanChangeType {
     newPlan = 'newPlan',
     doSteps = 'doSteps',
+    doStepsBeforeTags = 'doStepsBeforeTags',
     doStepsLater = 'doStepsLater',
     endPlan = 'endPlan',
     replacePlan = 'replacePlan'
@@ -77,31 +80,67 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
      */
     public get hasSavedPlans(): boolean {
         const plans = this.plans;
-        return plans.savedPlans && plans.savedPlans.length > 0;
+        return Array.isArray(plans.savedPlans) && plans.savedPlans.length > 0;
     }
 
     /**
-     * Applies a predicted set of changes to the plan. 
-     * @param changes List of changes to apply.
+     * Queues up a set of plan changes that will be applied when [applyChanges()](#applychanges)
+     * is called.
+     * @param changes Plan changes to queue up. 
      */
-    public async applyChanges(changes: PlanChangeList): Promise<void> {
-        switch (changes.changeType) {
-            case PlanChangeType.newPlan:
-                await this.newPlan(changes.steps);
-                break;
-            case PlanChangeType.doSteps:
-                await this.doSteps(changes.steps);
-                break;
-            case PlanChangeType.doStepsLater:
-                await this.doStepsLater(changes.steps);
-                break;
-            case PlanChangeType.endPlan:
-                await this.endPlan(changes.steps);
-                break;
-            case PlanChangeType.replacePlan:
-                await this.replacePlan(changes.steps);
-                break; 
+    public queueChanges(changes: PlanChangeList): void {
+        console.log('queuing changes');
+        if (!Array.isArray(this.plans.changes)) { this.plans.changes = [] }
+        this.plans.changes.push(changes);
+    }
+
+    /**
+     * Applies any queued up changes.
+     * 
+     * @remarks
+     * Applying a set of changes can result in additional plan changes being queued. The method
+     * will loop and apply any additional plan changes until there are no more changes left to 
+     * apply.
+     * @returns true if there were any changes to apply. 
+     */
+    public async applyChanges(): Promise<boolean> {
+        const changes = this.plans.changes;
+        if (Array.isArray(changes)) {
+            console.log(`applying changes: ${JSON.stringify(changes)}`);
+            delete this.plans.changes;
+
+            // Apply each queued set of changes
+            for (let i = 0; i < changes.length; i++) {
+                const change = changes[i];
+                switch (change.changeType) {
+                    case PlanChangeType.newPlan:
+                        await this.newPlan(change.steps);
+                        break;
+                    case PlanChangeType.doSteps:
+                        await this.doSteps(change.steps);
+                        break;
+                    case PlanChangeType.doStepsBeforeTags:
+                        await this.doStepsBeforeTags(change.tags, change.steps);
+                        break;
+                    case PlanChangeType.doStepsLater:
+                        await this.doStepsLater(change.steps);
+                        break;
+                    case PlanChangeType.endPlan:
+                        await this.endPlan(change.steps);
+                        break;
+                    case PlanChangeType.replacePlan:
+                        await this.replacePlan(change.steps);
+                        break; 
+                }
+            }
+
+            // Apply any new queued up changes
+            await this.applyChanges();
+            return true;
         }
+
+        console.log(`applying 0 changes`);
+        return false;
     }
 
     /**
@@ -125,28 +164,6 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
 
         return newPlan;
     }
-
-    /**
-     * Inserts steps into the plan after a specific step index.
-     * @param index Step index to insert steps after.
-     * @param steps Steps to add to the plan.
-     */
-    public async doStepsAfter(index: number, steps: PlanStepState[]): Promise<void> {
-        // Ensure index is within range
-        const plan = this.plans.plan;
-        if (plan == undefined || index < 0 || index >= plan.steps.length) { throw new Error(`PlanningContext.doStepsAfter(): Index is out of range.`) }
-
-        // Update plan
-        index++;
-        if (index < plan.steps.length) {
-            // Insert steps before index
-            const args = ([index, 0] as any[]).concat(steps);
-            Array.prototype.splice.apply(plan.steps, args);
-        } else {
-            // Just append steps
-            plan.steps = plan.steps.concat(steps);
-        }
-    }    
 
     /**
      * Appends new steps to the plan but ensures that they're before any steps with a given set 
