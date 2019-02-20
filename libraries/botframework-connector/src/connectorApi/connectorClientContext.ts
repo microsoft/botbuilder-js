@@ -5,7 +5,7 @@
  */
 
 import * as msRest from "@azure/ms-rest-js";
-import * as Models from "botframework-schema";
+import * as Models from "./models";
 
 const packageName = "botframework-connector";
 const packageVersion = "4.0.0";

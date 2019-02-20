@@ -10,6 +10,7 @@ import {  Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageF
 import { Dialog, DialogTurnResult, DialogConsultation, DialogConsultationDesire } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
+import { channels } from '../choices/channel';
 
 /**
  * Settings used to configure an `OAuthPrompt` instance.
@@ -203,7 +204,7 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Get the token and call validator
-        const adapter: any = context.adapter as any; // cast to BotFrameworkAdapter
+        const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
 
         return await adapter.getUserToken(context, this.settings.connectionName, code);
     }
@@ -230,7 +231,7 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Sign out user
-        const adapter: any = context.adapter as any; // cast to BotFrameworkAdapter
+        const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
 
         return adapter.signOutUser(context, this.settings.connectionName);
     }
@@ -306,10 +307,10 @@ export class OAuthPrompt extends Dialog {
 
     private channelSupportsOAuthCard(channelId: string): boolean {
         switch (channelId) {
-            case 'msteams':
-            case 'cortana':
-            case 'skype':
-            case 'skypeforbusiness':
+            case channels.msteams:
+            case channels.cortana:
+            case channels.skype:
+            case channels.skypeforbusiness:
                 return false;
             default:
         }

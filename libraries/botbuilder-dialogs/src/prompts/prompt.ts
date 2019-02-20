@@ -39,7 +39,12 @@ export enum ListStyle {
     /**
      * Add choices to prompt as suggested actions.
      */
-    suggestedAction
+    suggestedAction,
+
+    /**
+     * Add choices to prompt as a HeroCard with buttons.
+     */
+    heroCard
 }
 
 /**
@@ -49,17 +54,17 @@ export interface PromptOptions {
     /**
      * (Optional) Initial prompt to send the user.
      */
-    prompt?: string|Partial<Activity>;
+    prompt?: string | Partial<Activity>;
 
     /**
      * (Optional) Retry prompt to send the user.
      */
-    retryPrompt?: string|Partial<Activity>;
+    retryPrompt?: string | Partial<Activity>;
 
     /**
      * (Optional) List of choices associated with the prompt.
      */
-    choices?: (string|Choice)[];
+    choices?: (string | Choice)[];
 
     /**
      * (Optional) Additional validation rules to pass the prompts validator routine.
@@ -272,9 +277,9 @@ export abstract class Prompt<T> extends Dialog {
      * @param options (Optional) options to configure the underlying ChoiceFactory call.
      */
     protected appendChoices(
-        prompt: string|Partial<Activity>,
+        prompt: string | Partial<Activity>,
         channelId: string,
-        choices: (string|Choice)[],
+        choices: (string | Choice)[],
         style: ListStyle,
         options?: ChoiceFactoryOptions
     ): Partial<Activity> {
@@ -301,6 +306,10 @@ export abstract class Prompt<T> extends Dialog {
                 msg = ChoiceFactory.suggestedAction(choices, text);
                 break;
 
+            case ListStyle.heroCard:
+                msg = ChoiceFactory.heroCard(choices as Choice[], text);
+                break;
+
             case ListStyle.none:
                 msg = MessageFactory.text(text);
                 break;
@@ -310,13 +319,17 @@ export abstract class Prompt<T> extends Dialog {
                 break;
         }
 
-        // Update prompt with text and actions
+        // Update prompt with text, actions and attachments
         if (typeof prompt === 'object') {
             // Clone the prompt Activity as to not modify the original prompt.
             prompt = JSON.parse(JSON.stringify(prompt)) as Activity;
             prompt.text = msg.text;
             if (msg.suggestedActions && Array.isArray(msg.suggestedActions.actions) && msg.suggestedActions.actions.length > 0) {
                 prompt.suggestedActions = msg.suggestedActions;
+            }
+
+            if (msg.attachments) {
+                prompt.attachments = msg.attachments;
             }
 
             return prompt;

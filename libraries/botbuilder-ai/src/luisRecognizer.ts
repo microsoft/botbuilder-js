@@ -5,10 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from 'azure-cognitiveservices-luis-runtime';
-import { RecognizerResult, TurnContext } from 'botbuilder';
-import * as msRest from 'ms-rest';
+import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
+import { RecognizerResult, TurnContext } from 'botbuilder-core';
+import * as msRest from "@azure/ms-rest-js";
 import * as os from 'os';
+import * as Url from 'url-parse';
 
 const pjson = require('../package.json');
 
@@ -119,12 +120,33 @@ export class LuisRecognizer {
 
     /**
      * Creates a new LuisRecognizer instance.
-     * @param application An object conforming to the [LuisApplication](#luisapplication) definition.
+     * @param application An object conforming to the [LuisApplication](#luisapplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
      * @param options (Optional) options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
      * @param includeApiResults (Optional) flag that if set to `true` will force the inclusion of LUIS Api call in results returned by [recognize()](#recognize). Defaults to a value of `false`.
      */
-    constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean) {
-        this.application = application;
+    constructor(application: string, options?: LuisPredictionOptions, includeApiResults?: boolean);
+    constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean);
+    constructor(application: LuisApplication|string, options?: LuisPredictionOptions, includeApiResults?: boolean) {
+        if (typeof application === 'string') {
+            const parsedEndpoint: Url = Url(application);
+            // Use exposed querystringify to parse the query string for the endpointKey value.
+            const parsedQuery = Url.qs.parse(parsedEndpoint.query);
+            this.application = {
+                applicationId: parsedEndpoint.pathname.split('apps/')[1],
+                // Note: The query string parser bundled with url-parse can return "null" as a value for the origin.
+                endpoint: parsedEndpoint.origin,
+                endpointKey: parsedQuery['subscription-key']
+            };
+        } else {
+            const { applicationId, endpoint, endpointKey } = application;
+            this.application = {
+                applicationId: applicationId,
+                endpoint: endpoint,
+                endpointKey: endpointKey
+            };
+        }
+        this.validateLuisApplication();
+        
         this.options = {
             includeAllIntents: false,
             includeInstanceData: true,
@@ -135,9 +157,9 @@ export class LuisRecognizer {
         this.includeApiResults = !!includeApiResults;
 
         // Create client
-        const creds: msRest.TokenCredentials = new msRest.TokenCredentials(application.endpointKey);
+        const creds: msRest.TokenCredentials = new msRest.TokenCredentials(this.application.endpointKey);
         const baseUri: string = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
-        this.luisClient = new LuisClient(creds, baseUri);
+        this.luisClient = new LuisClient(baseUri, creds);
     }
 
     /**
@@ -276,8 +298,8 @@ export class LuisRecognizer {
         // If the `error` received is a azure-cognitiveservices-luis-runtime error,
         // it may have a `response` property and `response.statusCode`.
         // If these properties exist, we should populate the error with a correct and informative error message.
-        if ((error as any).response && (error as any).response.statusCode) {
-            switch ((error as any).response.statusCode) {
+        if ((error as any).response && (error as any).response.status) {
+            switch ((error as any).response.status) {
                 case 400:
                     error.message = [
                         `Response 400: The request's body or parameters are incorrect,`,
@@ -304,7 +326,7 @@ export class LuisRecognizer {
                     break;
                 default:
                     error.message = [
-                        `Response ${(error as any).response.statusCode}: Unexpected status code received.`,
+                        `Response ${(error as any).response.status}: Unexpected status code received.`,
                         `Please verify that your LUIS application is properly setup.`
                     ].join(' ');
             }
@@ -539,5 +561,19 @@ export class LuisRecognizer {
         }
 
         return result;
+    }
+
+    /**
+     * Performs a series of valdiations on `LuisRecognizer.application`.
+     * 
+     * Note: Neither the LUIS Application ID nor the Endpoint Key are actual LUIS components, they are representations of what two valid values would appear as.
+     */
+    private validateLuisApplication(): void {
+        if (!this.application.applicationId) {
+            throw new Error(`Invalid \`applicationId\` value detected: ${this.application.applicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
+        }
+        if (!this.application.endpointKey) {
+            throw new Error(`Invalid \`endpointKey\` value detected: ${this.application.endpointKey}\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`);
+        }
     }
 }

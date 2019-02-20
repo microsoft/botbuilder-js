@@ -5,10 +5,10 @@
  */
 
 import * as msRest from "@azure/ms-rest-js";
-import * as Models from "botframework-schema";
+import { ConnectorClientContext } from "../connectorClientContext";
+import * as Models from "../models";
 import * as Mappers from "../models/conversationsMappers";
 import * as Parameters from "../models/parameters";
-import { ConnectorClientContext } from "../connectorClientContext";
 
 /** Class representing a Conversations. */
 export class Conversations {

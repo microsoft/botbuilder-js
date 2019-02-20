@@ -21,7 +21,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
     /**
      * Default options for rendering the choices to the user based on locale.
      */
-    public static defaultChoiceOptions: { [locale: string]: ChoiceFactoryOptions } = {
+    private static defaultChoiceOptions: { [locale: string]: ChoiceFactoryOptions } = {
         'es-es': { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true },
         'nl-nl': { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true },
         'en-us': { inlineSeparator: ', ', inlineOr: ' or ', inlineOrMore: ', or ', includeNumbers: true },
