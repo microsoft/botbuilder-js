@@ -14,7 +14,7 @@ import { StateMap } from './stateMap';
 import { DialogContextState } from './dialogContextState';
 import { DialogCommand } from './dialogCommand';
 
-const CANCEL_EVENT = 'dialogCancelled';
+const CANCEL_EVENT = 'cancelDialog';
 
 /**
  * State information persisted by a `DialogSet`.
