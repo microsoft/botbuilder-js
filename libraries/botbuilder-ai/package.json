@@ -29,7 +29,6 @@
     "html-entities": "^1.2.1",
     "moment": "^2.20.1",
     "ms-rest": "2.5.0",
-    "mstranslator": "3.0.0",
     "request": "^2.87.0",
     "request-promise-native": "1.0.5",
     "url-parse": "^1.4.4"
