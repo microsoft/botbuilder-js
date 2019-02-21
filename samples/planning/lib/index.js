@@ -32,22 +32,62 @@ server.post('/api/messages', (req, res) => {
         await convoState.saveChanges(context);
     });
 });
+class TextPrompt extends botbuilder_planning_1.SequenceDialog {
+    constructor(property, prompt) {
+        super(`textPrompt(${property})`, [
+            new botbuilder_planning_1.SendActivity(prompt),
+            new botbuilder_planning_1.WaitForInput('dialog.result')
+        ]);
+        // Setup output binding
+        this.outputBinding = property;
+        // Setup recognizer
+        const recognizer = new botbuilder_planning_1.RegExpRecognizer();
+        recognizer.addIntent('Cancel', /^cancel/i);
+        this.recognizer = recognizer;
+        // Listen for user to say cancel
+        this.addRule(new botbuilder_planning_1.DoStepsRule('Cancel', [
+            new botbuilder_planning_1.CancelDialog()
+        ]));
+    }
+}
 // Create the main planning dialog and bind to storage.
 const dialogs = new botbuilder_planning_1.PlanningDialog();
 dialogs.userState = userState.createProperty('user');
 dialogs.botState = convoState.createProperty('bot');
-// Add a rule to automatically greet the user
-dialogs.addRule(new botbuilder_planning_1.WelcomeRule([
-    new botbuilder_planning_1.SendActivity(`Hi... I'm Greg. I greet people.`)
+// Setup dialogs recognizer
+const recognizer = new botbuilder_planning_1.RegExpRecognizer();
+recognizer.addIntent('PlaceOrder', /place .*order/i);
+dialogs.recognizer = recognizer;
+// Listen for triggered intents
+dialogs.addRule(new botbuilder_planning_1.NewPlanRule('PlaceOrder', [
+    new botbuilder_planning_1.CallDialog('PlaceOrderDialog')
 ]));
 // Add a top level fallback rule to handle un-recognized utterances
 dialogs.addRule(new botbuilder_planning_1.FallbackRule([
-    new botbuilder_planning_1.IfProperty(async (state) => state.user.get('name') == undefined, [
-        new botbuilder_planning_1.SendActivity(`Hi, what's your name?`),
-        new botbuilder_planning_1.WaitForInput('user.name'),
-    ]),
-    new botbuilder_planning_1.SendActivity(`Hi {user.name}. Nice to meet you. I'm greg.`)
+    new botbuilder_planning_1.SendActivity(`Hi. Ask me to "place an order" to get started.`)
 ]));
+//-----------------------------------------------------------------------------
+// Add dialogs
+//-----------------------------------------------------------------------------
+// PlaceOrderDialog
+const placeOrderDialog = new botbuilder_planning_1.SequenceDialog('PlaceOrderDialog', [
+    new botbuilder_planning_1.CallDialog('AddItemDialog'),
+    new TextPrompt('dialog.continue', `Would you like anything else?`),
+    new botbuilder_planning_1.IfProperty(async (state) => state.getValue('dialog.continue') == 'yes', [
+        new botbuilder_planning_1.RepeatDialog()
+    ])
+]);
+placeOrderDialog.addRule(new botbuilder_planning_1.OnCancelDialogRule([
+    new botbuilder_planning_1.SendActivity(`Item Canceled`)
+]));
+dialogs.addDialog(placeOrderDialog);
+// AddItemDialog
+const addItemDialog = new botbuilder_planning_1.SequenceDialog('AddItemDialog', [
+    new TextPrompt('dialog.result.item', `What would you like?`),
+    new TextPrompt('dialog.result.quantity', `How many would you like?`),
+    new botbuilder_planning_1.SendActivity(`Ok. I've added {dialog.result.quantity} {dialog.result.item} to your order.`)
+]);
+dialogs.addDialog(addItemDialog);
 /*
 //=============================================================================
 // Planning Rules

@@ -45,6 +45,7 @@ export enum PlanChangeType {
 export enum PlanningEventNames {
     beginDialog = 'beginDialog',
     consultDialog = 'consultDialog',
+    cancelDialog = 'cancelDialog',
     activityReceived = 'activityReceived',
     utteranceRecognized = 'utteranceRecognized',
     fallback = 'fallback',

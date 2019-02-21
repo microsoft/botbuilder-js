@@ -21,6 +21,11 @@ export class SequenceDialog extends PlanningDialog {
         return `sequence(${this.bindingPath()})`;
     }
 
+    protected onInstallDependencies(): void {
+        this.steps.forEach((step) => this.addDialog(step));        
+        super.onInstallDependencies();
+    }
+
     public async evaluateRules(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
         // Intercept beginDialog event
         if (event.name == PlanningEventNames.beginDialog) {

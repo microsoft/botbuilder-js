@@ -68,8 +68,9 @@ export interface PlanningDialogRunOptions {
 export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     private readonly dialogs: DialogSet = new DialogSet();
     private readonly runDialogSet: DialogSet = new DialogSet(); // Used by the run() method
+    private installedDependencies = false;
 
-    private readonly rules: PlanningRule[] = [];
+    public readonly rules: PlanningRule[] = [];
 
     /**
      * (Optional) state property used to persists the bots current state when the `run()` method is called.
@@ -94,7 +95,6 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         super(dialogId);
         this.runDialogSet.add(this);
     }
-
     
     /**
      * Set the telemetry client, and also apply it to all child dialogs.
@@ -126,17 +126,13 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     }
 
     public addRule(...rules: PlanningRule[]): this {
-        rules.forEach((rule) => {
-            rule.steps.forEach((step) => this.dialogs.add(step));
-            this.rules.push(rule);
-        });
+        Array.prototype.push.apply(this.rules, rules);
         return this;
     }
 
     public findDialog(dialogId: string): Dialog | undefined {
         return this.dialogs.find(dialogId);
     }
-
 
     public async run(context: TurnContext, options?: PlanningDialogRunOptions): Promise<DialogTurnResult> {
         options = options || {};
@@ -189,6 +185,13 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         return result;
     }
 
+    protected onInstallDependencies(): void {
+        // Install each rules steps
+        this.rules.forEach((rule) => {
+            rule.steps.forEach((step) => this.dialogs.add(step));
+        });
+    }
+
     //---------------------------------------------------------------------------------------------
     // Base Dialog Overrides
     //---------------------------------------------------------------------------------------------
@@ -200,6 +203,12 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         const state: PlanningState<O> = dc.activeDialog.state;
 
+        // Install dependencies on first access
+        if (!this.installedDependencies) {
+            this.installedDependencies = true;
+            this.onInstallDependencies();
+        }
+        
         // Persist options to dialog state
         state.options = options || {} as O;
 
@@ -326,7 +335,7 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
 
                         // Emit utteranceRecognized event
                         handled = await this.queueBestMatches(planning, { name: PlanningEventNames.utteranceRecognized, value: recognized, bubble: false });
-                        if (!handled && !planning.plan || planning.plan.steps.length == 0) {
+                        if (!handled && (!planning.plan || planning.plan.steps.length == 0)) {
                             // Emit fallback event
                             handled = await this.queueFirstMatch(planning, { name: PlanningEventNames.fallback, value: recognized, bubble: false });
                         }
@@ -493,6 +502,11 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         // Apply any queued up changes
         await planning.applyChanges();
 
+        // Get a unique instance ID for the current stack entry.
+        // - We need to do this because things like cancellation can cause us to be removed
+        //   from the stack and we want to detect this so we can stop processing steps.
+        const instanceId = this.getUniqueInstanceId(planning);
+
         // Delegate consultation to any active planning step
         const step = PlanningContext.createForStep(planning, this.dialogs);
         const consultation = step ? await step.consultDialog() : undefined;
@@ -509,20 +523,16 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
                     }
 
                     // Process step results
-                    if (!result.parentEnded) {
+                    if (!result.parentEnded && this.getUniqueInstanceId(planning) === instanceId) {
                         // Is step waiting?
                         if (result.status === DialogTurnStatus.waiting) {
                             return result;
                         }
 
-                        // Was step cancelled?
-                        if (result.status === DialogTurnStatus.cancelled) {
-                            // Just end the current plan
-                            await planning.endPlan();
-                        } else {
-                            // End the current step
-                            await planning.endStep();
-                        }
+                        // End the current step
+                        // - If we intercepted a cancellation, the plan should get updated with 
+                        //   additional steps when we continue.
+                        await planning.endStep();
 
                         // Continue plan execution
                         const plan = planning.plan;
@@ -535,10 +545,10 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
                         }
                     } else {
                         // Remove parent ended flag and return result.
-                        delete result.parentEnded;
+                        if (result.parentEnded) { delete result.parentEnded };
                         return result;
                     }
-                } else {
+                } else if (planning.activeDialog) {
                     // End dialog and return default result
                     const state: PlanningState<O> = planning.activeDialog.state;
                     return await planning.endDialog(state.result);
@@ -551,5 +561,9 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         // Consult plan and execute returned processor
         const consultation = await this.consultPlan(planning);
         return await consultation.processor(planning);
+    }
+
+    private getUniqueInstanceId(dc: DialogContext): string {
+        return dc.stack.length > 0 ? `${dc.stack.length}:${dc.activeDialog.id}` : '';
     }
 }

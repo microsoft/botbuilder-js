@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState } from 'botbuilder';
-import { PlanningDialog, FallbackRule, SendActivity, WaitForInput, IfProperty, WelcomeRule  } from 'botbuilder-planning';
+import { PlanningDialog, FallbackRule, SendActivity, WaitForInput, IfProperty, WelcomeRule, SequenceDialog, RegExpRecognizer, DoStepsRule, CancelDialog, NewPlanRule, CallDialog, RepeatDialog, OnCancelDialogRule  } from 'botbuilder-planning';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -37,25 +37,76 @@ server.post('/api/messages', (req, res) => {
     });
 });
 
+
+class TextPrompt extends SequenceDialog {
+    constructor(property: string, prompt: string) {
+        super(`textPrompt(${property})`, [
+            new SendActivity(prompt),
+            new WaitForInput('dialog.result')
+        ]);
+
+        // Setup output binding
+        this.outputBinding = property;
+
+        // Setup recognizer
+        const recognizer = new RegExpRecognizer();
+        recognizer.addIntent('Cancel', /^cancel/i);
+        this.recognizer = recognizer;
+
+        // Listen for user to say cancel
+        this.addRule(new DoStepsRule('Cancel', [
+            new CancelDialog()
+        ]));
+    }
+}
+
+
 // Create the main planning dialog and bind to storage.
 const dialogs = new PlanningDialog();
 dialogs.userState = userState.createProperty('user');
 dialogs.botState = convoState.createProperty('bot');
 
-// Add a rule to automatically greet the user
-dialogs.addRule(new WelcomeRule([
-    new SendActivity(`Hi... I'm Greg. I greet people.`)
+// Setup dialogs recognizer
+const recognizer = new RegExpRecognizer();
+recognizer.addIntent('PlaceOrder', /place .*order/i);
+dialogs.recognizer = recognizer;
+
+// Listen for triggered intents
+dialogs.addRule(new NewPlanRule('PlaceOrder', [
+    new CallDialog('PlaceOrderDialog')
 ]));
 
 // Add a top level fallback rule to handle un-recognized utterances
 dialogs.addRule(new FallbackRule([
-    new IfProperty(async (state) => state.user.get('name') == undefined, [
-        new SendActivity(`Hi, what's your name?`),
-        new WaitForInput('user.name'),
-    ]),
-    new SendActivity(`Hi {user.name}. Nice to meet you. I'm greg.`)
+    new SendActivity(`Hi. Ask me to "place an order" to get started.`)
 ]));
 
+//-----------------------------------------------------------------------------
+// Add dialogs
+//-----------------------------------------------------------------------------
+
+// PlaceOrderDialog
+const placeOrderDialog = new SequenceDialog('PlaceOrderDialog', [
+    new CallDialog('AddItemDialog'),
+    new TextPrompt('dialog.continue', `Would you like anything else?`),
+    new IfProperty(async (state) => state.getValue('dialog.continue') == 'yes', [
+        new RepeatDialog()
+    ])
+]);
+
+placeOrderDialog.addRule(new OnCancelDialogRule([
+    new SendActivity(`Item Canceled`)
+]));
+
+dialogs.addDialog(placeOrderDialog);
+
+// AddItemDialog
+const addItemDialog = new SequenceDialog('AddItemDialog', [
+    new TextPrompt('dialog.result.item', `What would you like?`),
+    new TextPrompt('dialog.result.quantity', `How many would you like?`),
+    new SendActivity(`Ok. I've added {dialog.result.quantity} {dialog.result.item} to your order.`)
+]);
+dialogs.addDialog(addItemDialog);
 
 /*
 //=============================================================================
