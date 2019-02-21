@@ -10,6 +10,7 @@ export * from './cancelDialog';
 export * from './endDialog';
 export * from './gotoDialog';
 export * from './ifProperty';
+export * from './onCancelDialog';
 export * from './repeatDialog';
 export * from './saveEntity';
 export * from './sendActivity';

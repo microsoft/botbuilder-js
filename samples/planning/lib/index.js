@@ -71,15 +71,14 @@ dialogs.addRule(new botbuilder_planning_1.FallbackRule([
 //-----------------------------------------------------------------------------
 // PlaceOrderDialog
 const placeOrderDialog = new botbuilder_planning_1.SequenceDialog('PlaceOrderDialog', [
-    new botbuilder_planning_1.CallDialog('AddItemDialog'),
+    new botbuilder_planning_1.OnCancelDialog(new botbuilder_planning_1.CallDialog('AddItemDialog'), [
+        new botbuilder_planning_1.SendActivity(`Item Canceled`)
+    ]),
     new TextPrompt('dialog.continue', `Would you like anything else?`),
     new botbuilder_planning_1.IfProperty(async (state) => state.getValue('dialog.continue') == 'yes', [
         new botbuilder_planning_1.RepeatDialog()
     ])
 ]);
-placeOrderDialog.addRule(new botbuilder_planning_1.OnCancelDialogRule([
-    new botbuilder_planning_1.SendActivity(`Item Canceled`)
-]));
 dialogs.addDialog(placeOrderDialog);
 // AddItemDialog
 const addItemDialog = new botbuilder_planning_1.SequenceDialog('AddItemDialog', [

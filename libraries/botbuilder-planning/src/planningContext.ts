@@ -90,7 +90,6 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
      * @param changes Plan changes to queue up. 
      */
     public queueChanges(changes: PlanChangeList): void {
-        console.log('queuing changes');
         if (!Array.isArray(this.plans.changes)) { this.plans.changes = [] }
         this.plans.changes.push(changes);
     }
@@ -107,7 +106,6 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
     public async applyChanges(): Promise<boolean> {
         const changes = this.plans.changes;
         if (Array.isArray(changes)) {
-            console.log(`applying changes: ${JSON.stringify(changes)}`);
             delete this.plans.changes;
 
             // Apply each queued set of changes
@@ -348,4 +346,3 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
         }
     }
 }
-
