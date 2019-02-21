@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TokenStatus, TurnContext } from 'botbuilder-core';
 import { ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenApiModels } from 'botframework-connector';
 import * as os from 'os';
 
@@ -432,6 +432,27 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
         const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
         return (await client.botSignIn.getSignInUrl(finalState, { channelId: context.activity.channelId }))._response.bodyAsText;
+    }
+
+    /** 
+     * Retrieves the token status for each configured connection for the given user.
+     * <param name="context">Context for the current turn of conversation with the user.</param>
+     * <param name="userId">The user Id for which token status is retrieved.</param>
+     * <param name="includeFilter">Optional comma seperated list of connection's to include. Blank will return token status for all configured connections.</param>
+     * <returns>Array of TokenStatus.</returns>
+     * */ 
+    
+    public async  getTokenStatus(context: TurnContext, userId: string, includeFilter?: string ):Promise<TokenStatus[]>
+    {
+
+       if(!context || !userId){
+        throw new Error(`BotFrameworkAdapter.getTokenStatus(): missing userId or cotext`);
+       }
+        this.checkEmulatingOAuthCards(context);
+        const url: string = this.oauthApiUrl(context);
+        const client: TokenApiClient = this.createTokenApiClient(url);
+
+        return (await client.userToken.getTokenStatus(userId, {channelId: context.activity.channelId, include: includeFilter}))._response.parsedBody;
     }
 
     /**
