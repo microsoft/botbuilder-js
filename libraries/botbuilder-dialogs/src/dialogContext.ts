@@ -535,10 +535,8 @@ export class DialogContext {
             {
                 // Check to see if the dialog wants to handle the event
                 if (notify && await dc.emitEvent(eventName, eventValue, false)) {
-                    // Event handled so resume dialog
-                    const instance: DialogInstance = dc.activeDialog;
-                    const dialog = dc.findDialog(instance.id);
-                    return await dialog.resumeDialog(dc, reason, undefined);
+                    // Event handled so stop canceling dialogs
+                    break;
                 }
 
                 // End the active dialog
