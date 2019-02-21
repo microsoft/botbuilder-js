@@ -40,7 +40,7 @@ export class IfProperty extends DialogCommand {
 
     protected onComputeID(): string {
         const stepList = this.steps.map((step) => step.id);
-        return `conditional(${stepList.join(',')})`;
+        return `ifProperty(${stepList.join(',')})`;
     }
 
     public get steps(): Dialog[] {
