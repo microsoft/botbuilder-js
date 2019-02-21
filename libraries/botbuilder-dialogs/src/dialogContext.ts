@@ -14,8 +14,6 @@ import { StateMap } from './stateMap';
 import { DialogContextState } from './dialogContextState';
 import { DialogCommand } from './dialogCommand';
 
-const CANCEL_EVENT = 'cancelDialog';
-
 /**
  * State information persisted by a `DialogSet`.
  */
@@ -235,14 +233,33 @@ export class DialogContext {
 
     /**
      * Cancels any dialogs on the stack resulting in an empty stack.
-     *
-     * @remarks
+     * @param eventName (Optional) name of event to bubble up as dialogs are cancelled. Defaults to `cancelDialog`.
+     * @param eventValue (Optional) value to pass with event.
      */
-    public async cancelAllDialogs(): Promise<DialogTurnResult> {
+    public async cancelAllDialogs(eventName = 'cancelDialog', eventValue?: any): Promise<DialogTurnResult> {
         this._activeTags = undefined;
         if (this.stack.length > 0 || this.parent) {
             // Cancel all local and parent dialogs while checking for interception
-            return this.cancelDialogs(DialogReason.cancelCalled, CANCEL_EVENT);
+            let notify = false;
+            let dc: DialogContext = this;
+            while (dc) {
+                if (dc.stack.length > 0)
+                {
+                    // Check to see if the dialog wants to handle the event
+                    if (notify && await dc.emitEvent(eventName, eventValue, false)) {
+                        // Event handled so stop canceling dialogs
+                        break;
+                    }
+    
+                    // End the active dialog
+                    await dc.endActiveDialog(DialogReason.cancelCalled);
+                } else {
+                    dc = dc.parent;
+                }
+                notify = true;
+            }
+    
+            return { status: DialogTurnStatus.cancelled };
         } else {
             // Stack was empty and no parent
             return { status: DialogTurnStatus.empty };
@@ -525,29 +542,6 @@ export class DialogContext {
             }
         }
         return true;
-    }
-
-    private async cancelDialogs(reason: DialogReason, eventName: string, eventValue?: any): Promise<DialogTurnResult> {
-        let notify = false;
-        let dc: DialogContext = this;
-        while (dc) {
-            if (dc.stack.length > 0)
-            {
-                // Check to see if the dialog wants to handle the event
-                if (notify && await dc.emitEvent(eventName, eventValue, false)) {
-                    // Event handled so stop canceling dialogs
-                    break;
-                }
-
-                // End the active dialog
-                await dc.endActiveDialog(reason);
-            } else {
-                dc = dc.parent;
-            }
-            notify = true;
-        }
-
-        return { status: DialogTurnStatus.cancelled };
     }
 
     private async endActiveDialog(reason: DialogReason, result?: any): Promise<void> {
