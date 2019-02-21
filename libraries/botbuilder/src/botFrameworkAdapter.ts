@@ -394,12 +394,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      */
-    public async signOutUser(context: TurnContext, connectionName: string): Promise<void> {
+    public async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`);
         }
+        !userId? userId = context.activity.from.id: userId;
+        
         this.checkEmulatingOAuthCards(context);
-        const userId: string = context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
         await client.userToken.signOut(userId, { connectionName: connectionName, channelId: context.activity.channelId } );
