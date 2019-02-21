@@ -22,7 +22,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "@types/node": "^10.12.18",
-    "azure-storage": "^2.10.2",
+    "azure-storage": "2.10.2",
     "botbuilder": "~4.1.6",
     "documentdb": "1.14.5",
     "flat": "^4.0.0",
