@@ -77,10 +77,20 @@ function ExpectedPath(file) {
 
 function GetExpected(oracle) {
     var expected = fs.readJSONSync(oracle);
+
+    var query = 'verbose=(true|false)&staging=false&spellCheck=false&log=true';
+    var path = `/luis/v2\\.0/apps/${luisAppId}`;
+    var pattern = `${path}\\?${query}`;
+    var uri = new RegExp(pattern);
+    var requestContent = expected.text != undefined ? `"${expected.text}"` : undefined;
+    var responseBody = expected.luisResult;
+
     if (mockLuis) {
         nock('https://westus.api.cognitive.microsoft.com')
-            .post(/apps/)
-            .reply(200, expected.luisResult);
+            .matchHeader('Ocp-Apim-Subscription-Key', endpointKey)
+            .matchHeader('authorization', `Bearer ${endpointKey}`)
+            .post(uri, requestContent)
+            .reply(200, responseBody);
     }
     return expected;
 }
