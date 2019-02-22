@@ -811,4 +811,28 @@ describe(`BotFrameworkAdapter`, function () {
         }
         assert(false, `should have thrown an error message`);
     });
+
+    it(`should throw error if missing from in getTokenStatus()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getTokenStatus({ activity: {} });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getTokenStatus(): missing from or from.id',
+                `expected "BotFrameworkAdapter.getTokenStatus(): missing from or from.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing from.id in getTokenStatus()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getTokenStatus({ activity: { from: {} } });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getTokenStatus(): missing from or from.id',
+                `expected "BotFrameworkAdapter.getTokenStatus(): missing from or from.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
 });
