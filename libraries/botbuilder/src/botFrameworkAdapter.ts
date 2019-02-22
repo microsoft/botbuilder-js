@@ -433,12 +433,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * @returns Array of TokenStatus
      * */ 
     
-    public async  getTokenStatus(context: TurnContext, userId: string, includeFilter?: string ):Promise<TokenStatus[]>
+    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string ):Promise<TokenStatus[]>
     {
-       if(!context.activity.from || !context.activity.from.id){
+       if(!userId && (!context.activity.from || !context.activity.from.id)){
         throw new Error(`BotFrameworkAdapter.getTokenStatus(): missing from or from.id`);
        }
         this.checkEmulatingOAuthCards(context);
+        !userId? userId = context.activity.from.id: userId;
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
 
