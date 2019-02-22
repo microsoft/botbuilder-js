@@ -427,10 +427,10 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
     /** 
      * Retrieves the token status for each configured connection for the given user.
-     * <param name="context">Context for the current turn of conversation with the user.</param>
-     * <param name="userId">The user Id for which token status is retrieved.</param>
-     * <param name="includeFilter">Optional comma seperated list of connection's to include. Blank will return token status for all configured connections.</param>
-     * <returns>Array of TokenStatus.</returns>
+     * @param context Context for the current turn of conversation with the user.
+     * @param userId The user Id for which token status is retrieved.
+     * @param includeFilter Optional comma seperated list of connection's to include. Blank will return token status for all configured connections.
+     * @returns Array of TokenStatus
      * */ 
     
     public async  getTokenStatus(context: TurnContext, userId: string, includeFilter?: string ):Promise<TokenStatus[]>
