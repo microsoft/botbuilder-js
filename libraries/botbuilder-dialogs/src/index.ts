@@ -8,6 +8,7 @@
 export * from './choices';
 export * from './prompts';
 export * from './componentDialog';
+export * from './configurable';
 export * from './dialog';
 export * from './dialogCommand';
 export * from './dialogContext';

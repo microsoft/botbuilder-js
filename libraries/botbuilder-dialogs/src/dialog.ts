@@ -7,6 +7,7 @@
  */
 import { BotTelemetryClient, NullTelemetryClient, TurnContext } from 'botbuilder-core';
 import { DialogContext } from './dialogContext';
+import { Configurable } from './configurable';
 
 /**
  * Tracking information persisted for an instance of a dialog on the stack.
@@ -193,7 +194,7 @@ export interface DialogConsultation {
 /**
  * Base class for all dialogs.
  */
-export abstract class Dialog<O extends object = {}> {
+export abstract class Dialog<O extends object = {}> extends Configurable {
     private _id: string;
 
     /**
@@ -229,6 +230,7 @@ export abstract class Dialog<O extends object = {}> {
      * @param dialogId (Optional) unique ID to assign to the dialog.
      */
     constructor(dialogId?: string) {
+        super();
         this._id = dialogId;
     }
 
@@ -268,18 +270,7 @@ export abstract class Dialog<O extends object = {}> {
      * @param config Configuration properties to apply. 
      */
     public configure(config: DialogConfiguration): this {
-        if (config.id) { this.id = config.id }
-        if (config.telemetryClient) { this.telemetryClient = config.telemetryClient }
-        if (config.outputBinding) { this.outputBinding = config.outputBinding }
-        if (config.inputBindings) {
-            for (const key in config.inputBindings) {
-                this.inputBindings[key] = config.inputBindings[key];
-            }
-        }
-        if (config.tags) { 
-            config.tags.forEach((tag) => this.tags.push(tag));
-        }
-        return this;
+        return super.configure(config);
     }
 
     /**
