@@ -174,6 +174,30 @@ describe(`BotFrameworkAdapter`, function () {
             done();
         });
     });
+    
+    const reference = {
+        activityId: '1234',
+        channelId: 'test',
+        serviceUrl: 'https://example.org/channel',
+        user: { id: 'user', name: 'User Name' },
+        bot: { id: 'bot', name: 'Bot Name' },
+        conversation: { id: 'convo1' }
+    };
+
+    it(`should return the status of every connection the user has`, async function () {
+            const adapter = new AdapterUnderTest();
+            const activity =  
+                {
+                    channelId: "directline", 
+                    from: 
+                    { 
+                        id: "testUser" 
+                    } 
+                }
+             
+            const context = new TurnContext(adapter, activity);
+            await adapter.getTokenStatus(context);
+    });
 
     it(`should processActivity() sent as body.`, function (done) {
         let called = false;
@@ -815,6 +839,7 @@ describe(`BotFrameworkAdapter`, function () {
     it(`should throw error if missing from in getTokenStatus()`, async function () {
         try {
             const adapter = new AdapterUnderTest();
+
             await adapter.getTokenStatus({ activity: {} });
         } catch (err) {
             assert(err.message === 'BotFrameworkAdapter.getTokenStatus(): missing from or from.id',
