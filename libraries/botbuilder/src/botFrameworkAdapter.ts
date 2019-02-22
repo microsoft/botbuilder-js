@@ -442,7 +442,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * @returns Array of TokenStatus
      * */ 
     
-    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string ):Promise<TokenStatus[]>
+    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string ): Promise<TokenStatus[]>
     {
        if(!userId && (!context.activity.from || !context.activity.from.id)){
         throw new Error(`BotFrameworkAdapter.getTokenStatus(): missing from or from.id`);
