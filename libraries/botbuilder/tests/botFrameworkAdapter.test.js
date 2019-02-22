@@ -174,30 +174,6 @@ describe(`BotFrameworkAdapter`, function () {
             done();
         });
     });
-    
-    const reference = {
-        activityId: '1234',
-        channelId: 'test',
-        serviceUrl: 'https://example.org/channel',
-        user: { id: 'user', name: 'User Name' },
-        bot: { id: 'bot', name: 'Bot Name' },
-        conversation: { id: 'convo1' }
-    };
-
-    it(`should return the status of every connection the user has`, async function () {
-            const adapter = new AdapterUnderTest();
-            const activity =  
-                {
-                    channelId: "directline", 
-                    from: 
-                    { 
-                        id: "testUser" 
-                    } 
-                }
-             
-            const context = new TurnContext(adapter, activity);
-            await adapter.getTokenStatus(context);
-    });
 
     it(`should processActivity() sent as body.`, function (done) {
         let called = false;
@@ -354,6 +330,19 @@ describe(`BotFrameworkAdapter`, function () {
         }, (err) => {
             assert(err, `error not returned.`);
             done();
+        });
+    });
+
+    it(`should return the status of every connection the user has`, async function () {
+            
+        const adapter = new AdapterUnderTest();
+        const context = new TurnContext(adapter, incomingMessage);
+        adapter.getTokenStatus(context)
+        .then((responses)=>{
+            assert(responses.length>0);
+        })
+        .catch((error) => {
+            assert(error);
         });
     });
 
