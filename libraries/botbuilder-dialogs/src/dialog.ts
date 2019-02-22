@@ -387,6 +387,10 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         return `dialog[${this.bindingPath()}]`;
     }
 
+    /**
+     * Aids in computing a unique ID for a dialog by returning the current input or output property
+     * the dialog is bound to.
+     */
     protected bindingPath(): string {
         if (this.inputBindings.hasOwnProperty('value')) {
             return this.inputBindings['value'];
@@ -395,5 +399,26 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         } else {
             return '';
         }
+    }
+
+    /**
+     * Aids with computing a unique ID for a dialog by computing a 32 bit hash for a string.
+     * 
+     * @remarks
+     * The source for this function was derived from the following article:
+     * 
+     * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+     * 
+     * @param text String to generate hash code for.
+     */
+    protected hashCode(text: string): number {
+        let hash = 0;
+        const l = text.length;
+        for (let i = 0; i < l; i++) {
+            const chr   = text.charCodeAt(i);
+            hash  = ((hash << 5) - hash) + chr;
+            hash |= 0; // Convert to 32 bit integer
+        }
+        return hash;
     }
 }
