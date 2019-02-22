@@ -393,6 +393,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * Signs the user out with the token server.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
+     * @param userId id of user to sign out.
+     * @returns A promise that represents the work queued to execute.
      */
     public async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void> {
         if (!context.activity.from || !context.activity.from.id) {
