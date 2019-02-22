@@ -7,14 +7,15 @@
  */
 import { Dialog, DialogTurnResult } from './dialog';
 import { DialogContext } from './dialogContext';
+import { DialogDependencies } from './dialogSet';
 
-export abstract class DialogCommand<O extends object = {}> extends Dialog<O> {
-    public get steps(): Dialog[] {
-        return [];
-    }
-
+export abstract class DialogCommand<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     protected abstract onRunCommand(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
 
+    public getDependencies(): Dialog[] {
+        return [];
+    }
+    
     public beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         return this.onRunCommand(dc, options);
     }
