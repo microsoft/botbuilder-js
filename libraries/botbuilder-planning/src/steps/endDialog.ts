@@ -26,8 +26,12 @@ export class EndDialog extends DialogCommand {
         if (resultProperty) { this.resultProperty = resultProperty }
     }
 
+    public configure(config: EndDialogConfiguration): this {
+        return super.configure(config);
+    }
+
     protected onComputeID(): string {
-        return `end(${this.resultProperty || ''})`;
+        return `end[${this.hashedLabel(this.resultProperty || '')}]`;
     }
 
     /**
@@ -35,12 +39,6 @@ export class EndDialog extends DialogCommand {
      * dialog.
      */
     public resultProperty: string;
-
-    public configure(config: EndDialogConfiguration): this {
-        super.configure(config);
-        if (config.resultProperty) { this.resultProperty = config.resultProperty }
-        return this;
-    }
 
     protected async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
         const result = this.resultProperty ? dc.state.getValue(this.resultProperty) : undefined;

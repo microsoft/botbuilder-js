@@ -5,13 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogCommand, DialogContext, DialogContextState, Dialog } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogCommand, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
 import { PlanningContext, PlanStepState, PlanChangeType } from '../planningContext';
 
+export interface DoStepsBeforeTagsConfiguration extends DialogConfiguration {
+    tags?: string[];
+    steps?: Dialog[];
+}
+
 export class DoStepsBeforeTags extends DialogCommand {
-    private readonly _steps: Dialog[];
-    
     public tags: string[];
+
+    public steps: Dialog[];
 
     /**
      * 
@@ -23,16 +28,20 @@ export class DoStepsBeforeTags extends DialogCommand {
     constructor(tags?: string|string[], steps?: Dialog[]) {
         super();
         this.tags = typeof tags == 'string' ? [tags] : tags || [];
-        this._steps = steps || [];
+        this.steps = steps || [];
     }
 
-    public get steps(): Dialog[] {
-        return this._steps;
+    public configure(config: DoStepsBeforeTagsConfiguration): this {
+        return super.configure(config);
+    }
+
+    public getDependencies(): Dialog[] {
+        return this.steps;
     }
 
     protected onComputeID(): string {
-        const stepList = this.steps.map((step) => step.id);
-        return `doStepsBeforeTagsLater(${this.tags.join(',')},${stepList.join(',')})`;
+        const stepList = this.getDependencies().map((step) => step.id).join(',');
+        return `doStepsBeforeTags[${this.hashedLabel(stepList)}]`;
     }
 
     protected async onRunCommand(planning: PlanningContext, options?: object): Promise<DialogTurnResult> {

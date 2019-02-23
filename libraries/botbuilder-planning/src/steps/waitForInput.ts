@@ -30,7 +30,7 @@ export class WaitForInput extends Dialog {
     }
 
     protected onComputeID(): string {
-        return `waitForInput(${this.resultProperty || ''})`;
+        return `waitForInput[${this.hashedLabel(this.resultProperty || '')}]`;
     }
 
     /**
@@ -48,9 +48,7 @@ export class WaitForInput extends Dialog {
     }
 
     public configure(config: WaitForInputConfiguration): this {
-        super.configure(config);
-        if (config.resultProperty) { this.resultProperty = config.resultProperty }
-        return this;
+        return super.configure(config);
     }
 
     public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {

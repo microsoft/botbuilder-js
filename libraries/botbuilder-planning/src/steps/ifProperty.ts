@@ -5,10 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogCommand, DialogTurnResult, Dialog, DialogContext, DialogContextState } from 'botbuilder-dialogs';
+import { DialogCommand, DialogTurnResult, Dialog, DialogContextState, DialogConfiguration } from 'botbuilder-dialogs';
 import { PlanningContext, PlanStepState, PlanChangeType } from '../planningContext';
 
-export interface IfPropertyCondition {
+export interface IfPropertyConfiguration extends DialogConfiguration {
+    conditionals?: IfPropertyConditional[];
+}
+
+export interface IfPropertyConditional {
     expression: (state: DialogContextState) => Promise<boolean>;
     steps: Dialog[];
 }
@@ -22,7 +26,7 @@ export class IfProperty extends DialogCommand {
      * its associated block of steps will then be added to the plan immediately after the 
      * current step.
      */
-    private conditionals: IfPropertyCondition[] = [];
+    public conditionals: IfPropertyConditional[] = [];
 
     /**
      * Creates a new `IfProperty` instance.
@@ -39,11 +43,15 @@ export class IfProperty extends DialogCommand {
     }
 
     protected onComputeID(): string {
-        const stepList = this.steps.map((step) => step.id);
-        return `ifProperty(${stepList.join(',')})`;
+        const stepList = this.getDependencies().map((step) => step.id).join(',');
+        return `ifProperty[${this.hashedLabel(stepList)}]`;
     }
 
-    public get steps(): Dialog[] {
+    public configure(config: IfPropertyConfiguration): this {
+        return super.configure(config);
+    }
+
+    public getDependencies(): Dialog[] {
         const steps: Dialog[] = [];
         this.conditionals.forEach((c) => c.steps.forEach((s) => steps.push(s)));
         return steps;

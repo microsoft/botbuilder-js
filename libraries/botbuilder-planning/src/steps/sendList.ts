@@ -45,7 +45,7 @@ export class SendList extends DialogCommand {
     }
 
     protected onComputeID(): string {
-        return `sendList(${this.bindingPath()})`;
+        return `sendList[${this.bindingPath()}]`;
     }
 
     /**
@@ -76,11 +76,7 @@ export class SendList extends DialogCommand {
     }
 
     public configure(config: SendListConfiguration): this {
-        super.configure(config);
-        if (config.listProperty) { this.listProperty = config.listProperty }
-        if (config.messageTemplate) { this.messageTemplate = config.messageTemplate }
-        if (config.itemTemplate)  { this.itemTemplate = config.itemTemplate }
-        return this;
+        return super.configure(config);
     }
 
     protected async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {

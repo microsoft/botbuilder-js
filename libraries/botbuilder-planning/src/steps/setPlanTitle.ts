@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogCommand } from 'botbuilder-dialogs';
-import { PlanningContext, PlanStepState, PlanChangeType } from '../planningContext';
+import { PlanningContext } from '../planningContext';
 import * as stringTemplate from '../stringTemplate';
 
 export class SetPlanTitle extends DialogCommand {
@@ -24,7 +24,7 @@ export class SetPlanTitle extends DialogCommand {
     }
 
     protected onComputeID(): string {
-        return `setPlanTitle(${this.titleTemplate})`;
+        return `setPlanTitle[${this.hashedLabel(this.titleTemplate)}]`;
     }
 
     protected async onRunCommand(planning: PlanningContext, options?: object): Promise<DialogTurnResult> {

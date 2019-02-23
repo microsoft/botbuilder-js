@@ -12,7 +12,7 @@ export * from './doStepsLater';
 export * from './endDialog';
 export * from './gotoDialog';
 export * from './ifProperty';
-export * from './onCancelDialog';
+export * from './onCatch';
 export * from './repeatDialog';
 export * from './saveEntity';
 export * from './sendActivity';

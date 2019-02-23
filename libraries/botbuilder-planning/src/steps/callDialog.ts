@@ -59,15 +59,11 @@ export class CallDialog<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeID(): string {
-        return `call(${this.dialogId}, ${this.bindingPath()})`;
+        return `call[${this.hashedLabel(this.dialogId + ':' + this.bindingPath(false))}]`;
     }
 
     public configure(config: CallDialogConfiguration): this {
-        super.configure(config);
-        if (config.dialogId) { this.dialogId = config.dialogId }
-        if (config.options) { this.options = config.options }
-        if (config.property) { this.property = config.property }
-        return this;
+        return super.configure(config);
     }
 
     /**

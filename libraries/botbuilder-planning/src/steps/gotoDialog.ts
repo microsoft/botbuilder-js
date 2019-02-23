@@ -39,7 +39,7 @@ export class GotoDialog extends DialogCommand {
     }
 
     protected onComputeID(): string {
-        return `goto(${this.dialogId})`;
+        return `goto[${this.hashedLabel(this.dialogId)}]`;
     }
 
     /**
@@ -57,10 +57,7 @@ export class GotoDialog extends DialogCommand {
     public options?: object;
 
     public configure(config: GotoDialogConfiguration): this {
-        super.configure(config);
-        if (config.dialogId) { this.dialogId = config.dialogId }
-        if (config.options) { this.options = config.options }
-        return this;
+        return super.configure(config);
     }
 
     protected async onRunCommand(dc: DialogContext, options?: object): Promise<DialogTurnResult> {

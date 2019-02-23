@@ -30,7 +30,7 @@ export class RepeatDialog extends DialogCommand {
     }
 
     protected onComputeID(): string {
-        return `repeat(${this.bindingPath()})`;
+        return `repeat[${this.bindingPath()}]`;
     }
 
     /**
@@ -43,9 +43,7 @@ export class RepeatDialog extends DialogCommand {
     public options?: object;
 
     public configure(config: RepeatDialogConfiguration): this {
-        super.configure(config);
-        if (config.options) { this.options = config.options }
-        return this;
+        return super.configure(config);
     }
 
     protected async onRunCommand(dc: DialogContext, options?: object): Promise<DialogTurnResult> {

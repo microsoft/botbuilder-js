@@ -10,7 +10,7 @@ import { DialogTurnResult, DialogCommand, DialogContext } from 'botbuilder-dialo
 export class CancelDialog extends DialogCommand {
 
     protected onComputeID(): string {
-        return `cancelDialog()`;
+        return `cancelDialog[]`;
     }
     
     protected async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {

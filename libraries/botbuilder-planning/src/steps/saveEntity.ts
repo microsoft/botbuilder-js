@@ -35,7 +35,7 @@ export class SaveEntity extends DialogCommand {
     }
 
     protected onComputeID(): string {
-        return `saveEntity(${this.entityName}, ${this.property})`;
+        return `saveEntity[${this.hashedLabel(this.entityName + ':' + this.property)}]`;
     }
 
     /**
@@ -49,10 +49,7 @@ export class SaveEntity extends DialogCommand {
     public property: string;
 
     public configure(config: SaveEntityConfiguration): this {
-        super.configure(config);
-        if (config.entityName) { this.entityName = config.entityName }
-        if (config.property) { this.property = config.property }
-        return this;
+        return super.configure(config);
     }
 
     protected async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {

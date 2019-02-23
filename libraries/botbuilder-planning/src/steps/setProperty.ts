@@ -5,7 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, Dialog, DialogCommand, DialogContext, DialogContextState } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogCommand, DialogContext, DialogContextState, DialogConfiguration } from 'botbuilder-dialogs';
+
+export interface SetPropertyConfiguration extends DialogConfiguration {
+    expression?: (state: DialogContextState) => Promise<void>;
+}
 
 export class SetProperty extends DialogCommand {
 
@@ -21,11 +25,15 @@ export class SetProperty extends DialogCommand {
     }
 
     protected onComputeID(): string {
-        return `setProperty(${this.expression.toString()})`;
+        return `set[${this.hashedLabel(this.expression.toString())}]`;
     }
 
     public expression: (state: DialogContextState) => Promise<void>;
 
+    public configure(config: SetPropertyConfiguration): this {
+        return super.configure(config);
+    }
+    
     protected async onRunCommand(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         await this.expression(dc.state);
         return await dc.endDialog();

@@ -390,15 +390,17 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     /**
      * Aids in computing a unique ID for a dialog by returning the current input or output property
      * the dialog is bound to.
+     * @param hashOutput (Optional) if true the output will be hashed to less than 15 characters before returning.
      */
-    protected bindingPath(): string {
+    protected bindingPath(hashOutput = true): string {
+        let output = '';
         if (this.inputBindings.hasOwnProperty('value')) {
-            return this.inputBindings['value'];
+            output = this.inputBindings['value'];
         } else if (this.outputBinding && this.outputBinding.length) {
-            return this.outputBinding;
-        } else {
-            return '';
+            output = this.outputBinding;
         }
+
+        return hashOutput ? this.hashedLabel(output) : output;
     }
 
     /**
@@ -409,16 +411,21 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * 
      * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
      * 
-     * @param text String to generate hash code for.
+     * @param label String to generate a hash for.
      */
-    protected hashCode(text: string): number {
-        let hash = 0;
-        const l = text.length;
-        for (let i = 0; i < l; i++) {
-            const chr   = text.charCodeAt(i);
-            hash  = ((hash << 5) - hash) + chr;
-            hash |= 0; // Convert to 32 bit integer
+    protected hashedLabel(label: string): string {
+        const l = label.length;
+        if (label.length > 15)
+        {
+            let hash = 0;
+            for (let i = 0; i < l; i++) {
+                const chr = label.charCodeAt(i);
+                hash  = ((hash << 5) - hash) + chr;
+                hash |= 0; // Convert to 32 bit integer
+            }
+            label = `${label.substr(0, 5)}:${hash.toString()}`;
         }
-        return hash;
+
+        return label;
     }
 }

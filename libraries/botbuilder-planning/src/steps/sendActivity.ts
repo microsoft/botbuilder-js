@@ -52,7 +52,7 @@ export class SendActivity extends DialogCommand {
     }
 
     protected onComputeID(): string {
-        return `send(${this.activity.displayLabel})`;
+        return `send[${this.hashedLabel(this.activity.displayLabel)}]`;
     }
 
     /**
@@ -75,12 +75,7 @@ export class SendActivity extends DialogCommand {
     }
 
     public configure(config: SendActivityConfiguration): this {
-        super.configure(config);
-        if (config.activityOrText) { this.activity.value = config.activityOrText }
-        if (config.speak) { this.activity.speak = config.speak }
-        if (config.inputHint) { this.activity.inputHint = config.inputHint }
-        if (config.resultProperty) { this.resultProperty = config.resultProperty }
-        return this;
+        return super.configure(config);
     }
     
     protected async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
