@@ -36,7 +36,7 @@ export class DoStepsLater extends DialogCommand {
 
     protected onComputeID(): string {
         const stepList = this.getDependencies().map((step) => step.id).join(',');
-        return `doStepsLater[${this.hashedLabel(stepList)}]`;
+        return `doLater[${this.hashedLabel(stepList)}]`;
     }
 
     protected async onRunCommand(planning: PlanningContext, options?: object): Promise<DialogTurnResult> {

@@ -44,7 +44,7 @@ export class IfProperty extends DialogCommand {
 
     protected onComputeID(): string {
         const stepList = this.getDependencies().map((step) => step.id).join(',');
-        return `ifProperty[${this.hashedLabel(stepList)}]`;
+        return `if[${this.hashedLabel(stepList)}]`;
     }
 
     public configure(config: IfPropertyConfiguration): this {

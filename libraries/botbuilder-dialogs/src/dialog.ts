@@ -412,6 +412,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
      * 
      * @param label String to generate a hash for.
+     * @returns A string that is 15 characters or less in length.
      */
     protected hashedLabel(label: string): string {
         const l = label.length;
@@ -423,7 +424,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
                 hash  = ((hash << 5) - hash) + chr;
                 hash |= 0; // Convert to 32 bit integer
             }
-            label = `${label.substr(0, 5)}:${hash.toString()}`;
+            label = `${label.substr(0, 5)}${hash.toString()}`;
         }
 
         return label;

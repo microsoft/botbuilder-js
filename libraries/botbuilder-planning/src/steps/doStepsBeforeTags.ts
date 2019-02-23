@@ -41,7 +41,7 @@ export class DoStepsBeforeTags extends DialogCommand {
 
     protected onComputeID(): string {
         const stepList = this.getDependencies().map((step) => step.id).join(',');
-        return `doStepsBeforeTags[${this.hashedLabel(stepList)}]`;
+        return `doBeforeTags[${this.hashedLabel(stepList)}]`;
     }
 
     protected async onRunCommand(planning: PlanningContext, options?: object): Promise<DialogTurnResult> {
