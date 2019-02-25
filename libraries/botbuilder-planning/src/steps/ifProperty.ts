@@ -101,6 +101,7 @@ export class IfProperty extends DialogCommand {
 
                 // Queue up steps that should run after current step
                 await planning.queueChanges({ changeType: PlanChangeType.doSteps, steps: steps });
+                break;
             }
         }
 

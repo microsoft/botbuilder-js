@@ -70,8 +70,19 @@ export class ChoiceInput extends DialogCommand implements DialogDependencies {
             // Get list of choices
             let choices = this.choices;
             if (!Array.isArray(choices) && this.choicesProperty) {
-                choices = dc.state.getValue(this.choicesProperty);
+                const val = dc.state.getValue(this.choicesProperty);
+                if (Array.isArray(val)) {
+                    choices = val
+                } else if (typeof val == 'object') {
+                    choices = [];
+                    for(const key in val) {
+                        if (val.hasOwnProperty(key)) {
+                            choices.push(key);
+                        }
+                    }
+                }
             }
+
 
             // Ensure choices
             if (!Array.isArray(choices)) {
