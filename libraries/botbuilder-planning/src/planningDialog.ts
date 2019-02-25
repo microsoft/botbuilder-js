@@ -319,33 +319,48 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     //---------------------------------------------------------------------------------------------
 
     protected async evaluateRules(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
-        let handled = await this.queueFirstMatch(planning, event);
-        if (!handled) {
-            switch (event.name) {
-                case PlanningEventNames.beginDialog:
-                case PlanningEventNames.consultDialog:
-                    // Process activityReceived event
+        let handled = false;
+        switch (event.name) {
+            case PlanningEventNames.beginDialog:
+            case PlanningEventNames.consultDialog:
+                // Emit event
+                handled = await this.queueFirstMatch(planning, event);
+                if (!handled) {
+                    // Dispatch activityReceived event
                     handled = await this.evaluateRules(planning, { name: PlanningEventNames.activityReceived, value: undefined, bubble: false });
-                    break;
-                case PlanningEventNames.activityReceived:
-                    const activity = planning.context.activity;
-                    if (activity.type === ActivityTypes.Message) {
-                        // Recognize utterance
-                        const recognized = await this.onRecognize(planning.context);
+                }
+                break;
+            case PlanningEventNames.activityReceived:
+                const activity = planning.context.activity;
+                if (activity.type === ActivityTypes.Message) {
+                    // Recognize utterance
+                    const recognized = await this.onRecognize(planning.context);
 
-                        // Emit utteranceRecognized event
-                        handled = await this.queueBestMatches(planning, { name: PlanningEventNames.utteranceRecognized, value: recognized, bubble: false });
-                        if (!handled && (!planning.plan || planning.plan.steps.length == 0)) {
-                            // Emit fallback event
-                            handled = await this.queueFirstMatch(planning, { name: PlanningEventNames.fallback, value: recognized, bubble: false });
-                        }
-                    } else if (activity.type === ActivityTypes.Event) {
-                        // Emit named event that was received
-                        handled = await this.queueFirstMatch(planning, { name: activity.name, value: activity.value, bubble: false });
-                    }
-                    break;
+                    // Dispatch utteranceRecognized event
+                    handled = await this.evaluateRules(planning, { name: PlanningEventNames.utteranceRecognized, value: recognized, bubble: false });
+                } else if (activity.type === ActivityTypes.Event) {
+                    // Dispatch named event that was received
+                    handled = await this.evaluateRules(planning, { name: activity.name, value: activity.value, bubble: false });
+                }
+                break;
+            case PlanningEventNames.utteranceRecognized:
+                // Emit utteranceRecognized event
+                handled = await this.queueBestMatches(planning, event);
+                if (!handled) {
+                    // Dispatch fallback event
+                    handled = await this.evaluateRules(planning, { name: PlanningEventNames.fallback, value: event.value, bubble: false });
+                }
+                break;
+            case PlanningEventNames.fallback:
+                if (!planning.plan || planning.plan.steps.length == 0) {
+                    // Emit fallback event
+                    handled = await this.queueFirstMatch(planning, event);
+                }
+                break;
+            default:
+                // Emit event received
+                handled = await this.queueFirstMatch(planning, event);
             }
-        }
 
         return handled;
     }
@@ -549,9 +564,7 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
                         return result;
                     }
                 } else if (planning.activeDialog) {
-                    // End dialog and return default result
-                    const state: PlanningState<O> = planning.activeDialog.state;
-                    return await planning.endDialog(state.result);
+                    return await this.onEndOfPlan(planning);
                 }
             }
         }
@@ -561,6 +574,12 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         // Consult plan and execute returned processor
         const consultation = await this.consultPlan(planning);
         return await consultation.processor(planning);
+    }
+
+    protected async onEndOfPlan(planning: PlanningContext): Promise<DialogTurnResult> {
+        // End dialog and return default result
+        const state: PlanningState<O> = planning.activeDialog.state;
+        return await planning.endDialog(state.result);
     }
 
     private getUniqueInstanceId(dc: DialogContext): string {

@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState } from 'botbuilder';
-import { PlanningDialog, FallbackRule, SendActivity, WaitForInput, IfProperty, WelcomeRule, SequenceDialog, RegExpRecognizer, DoStepsRule, CancelDialog, NewPlanRule, CallDialog, RepeatDialog, OnCancelDialogRule, OnCancelDialog  } from 'botbuilder-planning';
+import { PlanningDialog, FallbackRule, SendActivity, WaitForInput, IfProperty, SequenceDialog, RegExpRecognizer, DoStepsRule, CancelDialog, NewPlanRule, CallDialog, RepeatDialog, OnCatch } from 'botbuilder-planning';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -87,9 +87,10 @@ dialogs.addRule(new FallbackRule([
 
 // PlaceOrderDialog
 const placeOrderDialog = new SequenceDialog('PlaceOrderDialog', [
-    new OnCancelDialog(new CallDialog('AddItemDialog'), [
-        new SendActivity(`Item Canceled`)
-    ]),
+    new OnCatch(new CallDialog('AddItemDialog'))
+        .case('cancelDialog', [
+            new SendActivity(`Item Canceled`)
+        ]),
     new TextPrompt('dialog.continue', `Would you like anything else?`),
     new IfProperty(async (state) => state.getValue('dialog.continue') == 'yes', [
         new RepeatDialog()

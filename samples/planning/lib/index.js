@@ -71,7 +71,8 @@ dialogs.addRule(new botbuilder_planning_1.FallbackRule([
 //-----------------------------------------------------------------------------
 // PlaceOrderDialog
 const placeOrderDialog = new botbuilder_planning_1.SequenceDialog('PlaceOrderDialog', [
-    new botbuilder_planning_1.OnCancelDialog(new botbuilder_planning_1.CallDialog('AddItemDialog'), [
+    new botbuilder_planning_1.OnCatch(new botbuilder_planning_1.CallDialog('AddItemDialog'))
+        .case('cancelDialog', [
         new botbuilder_planning_1.SendActivity(`Item Canceled`)
     ]),
     new TextPrompt('dialog.continue', `Would you like anything else?`),
