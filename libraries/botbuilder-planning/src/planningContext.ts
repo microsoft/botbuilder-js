@@ -138,7 +138,6 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
             return true;
         }
 
-        console.log(`applying 0 changes`);
         return false;
     }
 

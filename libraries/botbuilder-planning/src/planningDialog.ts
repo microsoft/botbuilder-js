@@ -137,6 +137,9 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     public async run(context: TurnContext, options?: PlanningDialogRunOptions): Promise<DialogTurnResult> {
         options = options || {};
 
+        // Log start of turn
+        console.log('------------:');
+    
         // Initialize bot state
         let botState = options.botState;
         if (botState) {
@@ -331,16 +334,20 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
                 }
                 break;
             case PlanningEventNames.activityReceived:
-                const activity = planning.context.activity;
-                if (activity.type === ActivityTypes.Message) {
-                    // Recognize utterance
-                    const recognized = await this.onRecognize(planning.context);
-
-                    // Dispatch utteranceRecognized event
-                    handled = await this.evaluateRules(planning, { name: PlanningEventNames.utteranceRecognized, value: recognized, bubble: false });
-                } else if (activity.type === ActivityTypes.Event) {
-                    // Dispatch named event that was received
-                    handled = await this.evaluateRules(planning, { name: activity.name, value: activity.value, bubble: false });
+                // Emit event
+                handled = await this.queueFirstMatch(planning, event);
+                if (!handled) {
+                    const activity = planning.context.activity;
+                    if (activity.type === ActivityTypes.Message) {
+                        // Recognize utterance
+                        const recognized = await this.onRecognize(planning.context);
+    
+                        // Dispatch utteranceRecognized event
+                        handled = await this.evaluateRules(planning, { name: PlanningEventNames.utteranceRecognized, value: recognized, bubble: false });
+                    } else if (activity.type === ActivityTypes.Event) {
+                        // Dispatch named event that was received
+                        handled = await this.evaluateRules(planning, { name: activity.name, value: activity.value, bubble: false });
+                    }
                 }
                 break;
             case PlanningEventNames.utteranceRecognized:
