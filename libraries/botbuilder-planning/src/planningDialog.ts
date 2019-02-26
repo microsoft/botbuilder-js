@@ -345,7 +345,7 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
                 }
                 break;
             case PlanningEventNames.fallback:
-                if (!planning.plan || planning.plan.steps.length == 0) {
+                if (!planning.hasPlans) {
                     // Emit fallback event
                     handled = await this.queueFirstMatch(planning, event);
                 }

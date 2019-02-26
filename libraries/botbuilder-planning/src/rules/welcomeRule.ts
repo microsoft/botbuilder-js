@@ -30,7 +30,7 @@ export class WelcomeRule extends EventRule {
     constructor();
     constructor(steps: Dialog[], conversationProperty?: string);
     constructor(steps?: Dialog[], welcomedProperty = WELCOMED_PROPERTY) {
-        super([PlanningEventNames.activityReceived, PlanningEventNames.planStarted], steps, PlanChangeType.doSteps);
+        super([PlanningEventNames.activityReceived, PlanningEventNames.fallback, PlanningEventNames.planStarted], steps, PlanChangeType.doSteps);
         this.welcomedProperty = welcomedProperty;
     }
 
@@ -38,6 +38,7 @@ export class WelcomeRule extends EventRule {
         switch (event.name) {
             case PlanningEventNames.activityReceived:
                 return this.handleActivityReceived(planning);
+            case PlanningEventNames.fallback:
             case PlanningEventNames.planStarted:
                 return this.handlePlanStarted(planning);
         }

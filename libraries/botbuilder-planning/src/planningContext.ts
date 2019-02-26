@@ -77,6 +77,16 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
     }
 
     /**
+     * Returns true if there is either an active plan or there are queued up changes
+     * which will start a new plan.
+     */
+    public get hasPlans(): boolean {
+        const hasPlan = this.plans.plan && this.plans.plan.steps.length > 0;
+        const hasChanges = this.plans.changes && this.plans.changes.length > 0;
+        return hasPlan || hasChanges;
+    }
+
+    /**
      * Returns true if there are 1 or more saved plans.
      */
     public get hasSavedPlans(): boolean {
