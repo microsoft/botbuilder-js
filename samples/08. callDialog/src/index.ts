@@ -67,8 +67,8 @@ bot.addRule(new ReplacePlanRule('JokeIntent', [
 //=================================================================================================
 
 const askNameDialog = new SequenceDialog('AskNameDialog', [
-    new IfProperty(async (state) => state.getValue('user.name') == undefined, [
-        new TextInput('user.name', `What's your name?`)
+    new IfProperty('!user.name', [
+        new TextInput('user.name', `Hi! what's your name?`)
     ]),
     new SendActivity(`Hi {user.name}. It's nice to meet you.`)
 ]);

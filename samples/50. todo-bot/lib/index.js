@@ -106,7 +106,7 @@ addToDoDialog.addRule(new botbuilder_planning_1.DoStepsRule('CancelIntent', [
 bot.addDialog(addToDoDialog);
 // DeleteToDoDialog
 const deleteToDoDialog = new botbuilder_planning_1.SequenceDialog('DeleteToDoDialog', [
-    new botbuilder_planning_1.IfProperty(hasToDos, [
+    new botbuilder_planning_1.IfProperty('user.todos', [
         new botbuilder_planning_1.SaveEntity('title', 'dialog.result.title'),
         new botbuilder_planning_1.ChoiceInput('dialog.result.title', `Which todo would you like to remove?`, 'user.todos'),
         new botbuilder_planning_1.SetProperty(async (state) => {
@@ -131,7 +131,7 @@ deleteToDoDialog.addRule(new botbuilder_planning_1.DoStepsRule('CancelIntent', [
 bot.addDialog(deleteToDoDialog);
 // ClearToDosDialog
 const clearToDosDialog = new botbuilder_planning_1.SequenceDialog('ClearToDosDialog', [
-    new botbuilder_planning_1.IfProperty(hasToDos, [
+    new botbuilder_planning_1.IfProperty('user.todos', [
         new botbuilder_planning_1.SetProperty(async (state) => {
             // Clear all todos in user state
             state.setValue('user.todos', []);
@@ -144,18 +144,11 @@ const clearToDosDialog = new botbuilder_planning_1.SequenceDialog('ClearToDosDia
 bot.addDialog(clearToDosDialog);
 // ShowToDosDialog
 const showToDosDialog = new botbuilder_planning_1.SequenceDialog('ShowToDosDialog', [
-    new botbuilder_planning_1.IfProperty(hasToDos, [
+    new botbuilder_planning_1.IfProperty('user.todos', [
         new botbuilder_planning_1.SendList('user.todos', `Here are your todos:`)
     ]).else([
         new botbuilder_planning_1.SendActivity(`You have no todos.`)
     ])
 ]);
 bot.addDialog(showToDosDialog);
-//=============================================================================
-// Helper Functions
-//=============================================================================
-async function hasToDos(state) {
-    const todos = state.getValue('user.todos');
-    return Array.isArray(todos) && todos.length > 0;
-}
 //# sourceMappingURL=index.js.map

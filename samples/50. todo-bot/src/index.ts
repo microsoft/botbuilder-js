@@ -127,7 +127,7 @@ bot.addDialog(addToDoDialog);
 
 // DeleteToDoDialog
 const deleteToDoDialog = new SequenceDialog('DeleteToDoDialog', [
-    new IfProperty(hasToDos, [
+    new IfProperty('user.todos', [
         new SaveEntity('title', 'dialog.result.title'),
         new ChoiceInput('dialog.result.title', `Which todo would you like to remove?`, 'user.todos'),
         new SetProperty(async (state) => {
@@ -153,7 +153,7 @@ bot.addDialog(deleteToDoDialog);
 
 // ClearToDosDialog
 const clearToDosDialog = new SequenceDialog('ClearToDosDialog', [
-    new IfProperty(hasToDos, [
+    new IfProperty('user.todos', [
         new SetProperty(async (state) => {
             // Clear all todos in user state
             state.setValue('user.todos', []);
@@ -167,19 +167,10 @@ bot.addDialog(clearToDosDialog);
 
 // ShowToDosDialog
 const showToDosDialog = new SequenceDialog('ShowToDosDialog', [
-    new IfProperty(hasToDos, [
+    new IfProperty('user.todos', [
         new SendList('user.todos', `Here are your todos:`)
     ]).else([
         new SendActivity(`You have no todos.`)
     ])
 ]);
 bot.addDialog(showToDosDialog);
-
-//=============================================================================
-// Helper Functions
-//=============================================================================
-
-async function hasToDos(state: DialogContextState): Promise<boolean> {
-    const todos = state.getValue('user.todos');
-    return Array.isArray(todos) && todos.length > 0;
-}

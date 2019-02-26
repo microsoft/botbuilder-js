@@ -49,8 +49,8 @@ bot.addRule(new WelcomeRule([
 
 // Add a top level fallback rule to handle received messages
 bot.addRule(new FallbackRule([
-    new IfProperty(async (state) => state.getValue('user.name') == undefined, [
-        new TextInput('user.name', `What's your name?`)
+    new IfProperty('!user.name', [
+        new TextInput('user.name', `Hi! what's your name?`)
     ]),
     new SendActivity(`Hi {user.name}. It's nice to meet you.`)
 ]));

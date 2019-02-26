@@ -38,7 +38,7 @@ bot.userState = userState.createProperty('user');
 bot.botState = convoState.createProperty('bot');
 // Add a top level fallback rule to handle received messages
 bot.addRule(new botbuilder_planning_1.FallbackRule([
-    new botbuilder_planning_1.IfProperty(async (state) => state.getValue('user.name') == undefined, [
+    new botbuilder_planning_1.IfProperty('!user.name', [
         new botbuilder_planning_1.SendActivity(`Hi! what's your name?`),
         new botbuilder_planning_1.WaitForInput('user.name')
     ]),

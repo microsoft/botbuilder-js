@@ -59,8 +59,8 @@ bot.addRule(new botbuilder_planning_1.EventRule('cancelDialog', [
 // Sequences and Dialogs
 //=================================================================================================
 const askNameDialog = new botbuilder_planning_1.SequenceDialog('AskNameDialog', [
-    new botbuilder_planning_1.IfProperty(async (state) => state.getValue('user.name') == undefined, [
-        new botbuilder_planning_1.TextInput('user.name', `What's your name?`)
+    new botbuilder_planning_1.IfProperty('!user.name', [
+        new botbuilder_planning_1.TextInput('user.name', `Hi! what's your name?`)
     ]),
     new botbuilder_planning_1.SendActivity(`Hi {user.name}. It's nice to meet you.`)
 ]);

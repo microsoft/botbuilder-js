@@ -13,7 +13,7 @@ export interface IfPropertyConfiguration extends DialogConfiguration {
 }
 
 export interface IfPropertyConditional {
-    expression: (state: DialogContextState) => Promise<boolean>;
+    property?: string;
     steps: Dialog[];
 }
 
@@ -30,15 +30,15 @@ export class IfProperty extends DialogCommand {
 
     /**
      * Creates a new `IfProperty` instance.
-     * @param expression The expression to test for the steps "if" clause.
+     * @param property The property to test for the steps "if" clause.
      * @param steps The steps to run if the expression returns true. 
      */
     constructor();
-    constructor(expression: (state: DialogContextState) => Promise<boolean>, steps: Dialog[]);
-    constructor(expression?: (state: DialogContextState) => Promise<boolean>, steps?: Dialog[]) {
+    constructor(property: string, steps: Dialog[]);
+    constructor(property?: string, steps?: Dialog[]) {
         super();
-        if (expression && steps) {
-            this.conditionals.push({ expression: expression, steps: steps });
+        if (property && steps) {
+            this.conditionals.push({ property: property, steps: steps });
         }
     }
 
@@ -60,11 +60,11 @@ export class IfProperty extends DialogCommand {
     /**
      * Adds an additional expression to test and associated block of steps to run if the
      * expression returns true.
-     * @param expression An expression to test.
+     * @param property An in-memory property to test.
      * @param steps The steps to run if the expression returns true. 
      */
-    public elseIf(expression: (state: DialogContextState) => Promise<boolean>, steps: Dialog[]): this {
-        this.conditionals.push({ expression: expression, steps: steps });
+    public elseIf(property: string, steps: Dialog[]): this {
+        this.conditionals.push({ property: property, steps: steps });
         return this;
     }
 
@@ -77,7 +77,7 @@ export class IfProperty extends DialogCommand {
      * @param steps The steps to run if all expressions before the `else()` return false. 
      */
     public else(steps: Dialog[]): this {
-        this.conditionals.push({ expression: async (state) => true, steps: steps });
+        this.conditionals.push({ steps: steps });
         return this;
     }  
 
@@ -88,7 +88,7 @@ export class IfProperty extends DialogCommand {
         // Look for first expression to return true.
         for (let i = 0; i < this.conditionals.length; i++) {
             const conditional = this.conditionals[i];
-            const result = await conditional.expression(planning.state);
+            const result = this.isTruthy(planning, conditional.property);
             if (result) {
                 // Create change list
                 const steps = conditional.steps.map((step) => {
@@ -106,5 +106,32 @@ export class IfProperty extends DialogCommand {
         }
 
         return await planning.endDialog();
+    }
+
+    private isTruthy(planning: PlanningContext, property?: string): boolean {
+        if (property) {
+            // Check for '!' prefix
+            let result = true;
+            if (property[0] == '!') {
+                result = false;
+                property = property.substr(1);
+            }
+            const value = planning.state.getValue(property);
+            if (Array.isArray(value)) {
+                return value.length > 0 ? result : !result;
+            } else if (typeof value == 'object') {
+                for (const key in value) {
+                    if (value.hasOwnProperty(key)) {
+                        return result;
+                    }
+                }
+
+                return !result;
+            } else {
+                return !!value ? result : !result;
+            }
+        } else {
+            return true;
+        }
     }
 }

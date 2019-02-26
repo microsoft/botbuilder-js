@@ -26,24 +26,24 @@ const convoState = new botbuilder_1.ConversationState(storage);
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
         // Route to main dialog.
-        await dialogs.run(context);
+        await bot.run(context);
         // Save state changes
         await userState.saveChanges(context);
         await convoState.saveChanges(context);
     });
 });
 // Create the main planning dialog and bind to storage.
-const dialogs = new botbuilder_planning_1.PlanningDialog();
-dialogs.userState = userState.createProperty('user');
-dialogs.botState = convoState.createProperty('bot');
+const bot = new botbuilder_planning_1.PlanningDialog();
+bot.userState = userState.createProperty('user');
+bot.botState = convoState.createProperty('bot');
 // Greet the user
-dialogs.addRule(new botbuilder_planning_1.WelcomeRule([
+bot.addRule(new botbuilder_planning_1.WelcomeRule([
     new botbuilder_planning_1.SendActivity(`Welcome! Say "hello" to get started.`)
 ]));
 // Add a top level fallback rule to handle received messages
-dialogs.addRule(new botbuilder_planning_1.FallbackRule([
-    new botbuilder_planning_1.IfProperty(async (state) => state.getValue('user.name') == undefined, [
-        new botbuilder_planning_1.TextInput('user.name', `What's your name?`)
+bot.addRule(new botbuilder_planning_1.FallbackRule([
+    new botbuilder_planning_1.IfProperty('!user.name', [
+        new botbuilder_planning_1.TextInput('user.name', `Hi! what's your name?`)
     ]),
     new botbuilder_planning_1.SendActivity(`Hi {user.name}. It's nice to meet you.`)
 ]));
