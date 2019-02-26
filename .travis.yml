@@ -3,8 +3,10 @@ node_js:
 - lts/*
 notifications:
   email: false
-install:
+before_install:
 - cd tools/ && npm install && cd ..
+install:
+- npm install
 - printf "//botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/:_authToken=${MyGet_API_KEY}" >> ~/.npmrc
 - npm run update-versions
 - lerna bootstrap --hoist
