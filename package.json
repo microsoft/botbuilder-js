@@ -34,6 +34,8 @@
         "eslint-plugin-only-warn": "^1.0.1",
         "lerna": "^3.2.1",
         "mocha": "^5.2.0"
+        "tslint-microsoft-contrib": "^5.2.1",
+        "typescript": "^2.7.2"
     },
     "nyc": {
         "exclude": [
