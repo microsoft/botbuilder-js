@@ -6,6 +6,7 @@ notifications:
 install:
 - printf "//botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/:_authToken=${MyGet_API_KEY}" >> ~/.npmrc
 - npm run update-versions
+- npm i
 - lerna bootstrap --hoist
 script:
 - npm run test:travis
