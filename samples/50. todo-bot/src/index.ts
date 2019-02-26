@@ -93,6 +93,11 @@ bot.addRule(new EventRule('cancelDelete', [
     new SendActivity(`Ok...`)
 ]));
 
+// Define rules for handling errors
+bot.addRule(new EventRule('error', [
+    new SendActivity(`Oops. An error occurred: {message}`)
+]));
+
 //=============================================================================
 // Sequences
 //=============================================================================
@@ -103,9 +108,7 @@ const cancelRecognizer = new RegExpRecognizer().addIntent('CancelIntent', /^canc
 // AddToDoDialog
 const addToDoDialog = new SequenceDialog('AddToDoDialog', [
     new SaveEntity('title', 'dialog.result.title'),
-    //new TextInput('dialog.result.title', `What would you like to call your new todo?`),
-    new SendActivity(`What would you like to call your new todo?`),
-    new WaitForInput('dialog.result.title'),
+    new TextInput('dialog.result.title', `What would you like to call your new todo?`),
     new SetProperty(async (state) => {
         // Save todo to user state
         const title: string = state.getValue('dialog.result.title');

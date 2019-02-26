@@ -206,59 +206,70 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         const state: PlanningState<O> = dc.activeDialog.state;
 
-        // Install dependencies on first access
-        if (!this.installedDependencies) {
-            this.installedDependencies = true;
-            this.onInstallDependencies();
+        try {
+            // Install dependencies on first access
+            if (!this.installedDependencies) {
+                this.installedDependencies = true;
+                this.onInstallDependencies();
+            }
+            
+            // Persist options to dialog state
+            state.options = options || {} as O;
+
+            // Initialize 'result' with any initial value
+            if (state.options.hasOwnProperty('value')) {
+                const value = options['value'];
+                const clone = Array.isArray(value) || typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : value;
+                state.result = clone;
+            }
+
+            // Create a new planning context
+            const planning = PlanningContext.create(dc, state);
+
+            // Evaluate rules and queue up plan changes
+            await this.evaluateRules(planning, { name: PlanningEventNames.beginDialog, value: options, bubble: false });
+            
+            // Run plan
+            return await this.continuePlan(planning);
+        } catch (err) {
+            return await dc.cancelAllDialogs('error', { message: err.message, stack: err.stack });
         }
-        
-        // Persist options to dialog state
-        state.options = options || {} as O;
-
-        // Initialize 'result' with any initial value
-        if (state.options.hasOwnProperty('value')) {
-            const value = options['value'];
-            const clone = Array.isArray(value) || typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : value;
-            state.result = clone;
-        }
-
-        // Create a new planning context
-        const planning = PlanningContext.create(dc, state);
-
-        // Evaluate rules and queue up plan changes
-        await this.evaluateRules(planning, { name: PlanningEventNames.beginDialog, value: options, bubble: false });
-        
-        // Run plan
-        return await this.continuePlan(planning);
     }
 
     public async consultDialog(dc: DialogContext): Promise<DialogConsultation> {
-        // Create a new planning context
-        const state: PlanningState<O> = dc.activeDialog.state;
-        const planning = PlanningContext.create(dc, state);
+        try {
+            // Create a new planning context
+            const state: PlanningState<O> = dc.activeDialog.state;
+            const planning = PlanningContext.create(dc, state);
 
-        // First consult plan
-        let consultation = await this.consultPlan(planning);
-        if (!consultation || consultation.desire != DialogConsultationDesire.shouldProcess) {
-            // Next evaluate rules
-            const changesQueued = await this.evaluateRules(planning, { name: PlanningEventNames.consultDialog, value: undefined, bubble: false });
-            if (changesQueued) {
-                consultation = {
-                    desire: DialogConsultationDesire.shouldProcess,
-                    processor: (dc) => this.continuePlan(planning)
-                };
-            }
+            // First consult plan
+            let consultation = await this.consultPlan(planning);
+            if (!consultation || consultation.desire != DialogConsultationDesire.shouldProcess) {
+                // Next evaluate rules
+                const changesQueued = await this.evaluateRules(planning, { name: PlanningEventNames.consultDialog, value: undefined, bubble: false });
+                if (changesQueued) {
+                    consultation = {
+                        desire: DialogConsultationDesire.shouldProcess,
+                        processor: (dc) => this.continuePlan(planning)
+                    };
+                }
 
-            // Fallback to just continuing the plan
-            if (!consultation) {
-                consultation = {
-                    desire: DialogConsultationDesire.canProcess,
-                    processor: (dc) => this.continuePlan(planning)
-                };
-            }
-        } 
+                // Fallback to just continuing the plan
+                if (!consultation) {
+                    consultation = {
+                        desire: DialogConsultationDesire.canProcess,
+                        processor: (dc) => this.continuePlan(planning)
+                    };
+                }
+            } 
 
-        return consultation;
+            return consultation;
+        } catch (err) {
+            return {
+                desire: DialogConsultationDesire.shouldProcess,
+                processor: (dc) => dc.cancelAllDialogs('error', { message: err.message, stack: err.stack })
+            };
+        }
     }
 
     public async onDialogEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
@@ -289,31 +300,6 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
             // We need to mockup a DialogContext so that we can call repromptDialog() for the active step 
             const stepDC: DialogContext = new DialogContext(this.dialogs, context, plan.steps[0], new StateMap({}), new StateMap({}));
             await stepDC.repromptDialog();
-        }
-    }
-
-    public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
-        // Forward cancellation to sequences
-        if (reason === DialogReason.cancelCalled) {
-            const state = instance.state as PlanningState<O>;
-            if (state.plan) {
-                await this.cancelPlan(context, state.plan);
-                delete state.plan;
-            }
-            if (state.savedPlans) {
-                for (let i = 0; i < state.savedPlans.length; i++) {
-                    await this.cancelPlan(context, state.savedPlans[i]);
-                }
-                delete state.savedPlans;
-            }
-        }
-    }
-    
-    private async cancelPlan(context, plan: PlanState): Promise<void> {
-        for (let i = 0; i < plan.steps.length; i++) {
-            // We need to mock up a dialog context so that endDialog() can be called on any active steps
-            const stepDC: DialogContext = new DialogContext(this.dialogs, context, plan.steps[i], new StateMap({}), new StateMap({}));
-            await stepDC.cancelAllDialogs();
         }
     }
  
@@ -579,8 +565,12 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
 
     protected async continuePlan(planning: PlanningContext): Promise<DialogTurnResult> {
         // Consult plan and execute returned processor
-        const consultation = await this.consultPlan(planning);
-        return await consultation.processor(planning);
+        try {
+            const consultation = await this.consultPlan(planning);
+            return await consultation.processor(planning);
+        } catch (err) {
+            return await planning.cancelAllDialogs('error', { message: err.message, stack: err.stack });
+        }
     }
 
     protected async onEndOfPlan(planning: PlanningContext): Promise<DialogTurnResult> {

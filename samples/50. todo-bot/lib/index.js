@@ -76,6 +76,10 @@ bot.addRule(new botbuilder_planning_1.EventRule('cancelAdd', [
 bot.addRule(new botbuilder_planning_1.EventRule('cancelDelete', [
     new botbuilder_planning_1.SendActivity(`Ok...`)
 ]));
+// Define rules for handling errors
+bot.addRule(new botbuilder_planning_1.EventRule('error', [
+    new botbuilder_planning_1.SendActivity(`Oops. An error occurred: {message}`)
+]));
 //=============================================================================
 // Sequences
 //=============================================================================
@@ -84,9 +88,7 @@ const cancelRecognizer = new botbuilder_planning_1.RegExpRecognizer().addIntent(
 // AddToDoDialog
 const addToDoDialog = new botbuilder_planning_1.SequenceDialog('AddToDoDialog', [
     new botbuilder_planning_1.SaveEntity('title', 'dialog.result.title'),
-    //new TextInput('dialog.result.title', `What would you like to call your new todo?`),
-    new botbuilder_planning_1.SendActivity(`What would you like to call your new todo?`),
-    new botbuilder_planning_1.WaitForInput('dialog.result.title'),
+    new botbuilder_planning_1.TextInput('dialog.result.title', `What would you like to call your new todo?`),
     new botbuilder_planning_1.SetProperty(async (state) => {
         // Save todo to user state
         const title = state.getValue('dialog.result.title');
