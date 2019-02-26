@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogCommand, DialogTurnResult, Dialog, DialogContextState, DialogConfiguration } from 'botbuilder-dialogs';
+import { DialogCommand, DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
 import { PlanningContext, PlanStepState, PlanChangeType } from '../planningContext';
 
 export interface IfPropertyConfiguration extends DialogConfiguration {

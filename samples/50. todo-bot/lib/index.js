@@ -33,9 +33,7 @@ server.post('/api/messages', (req, res) => {
     });
 });
 // Create the bots main dialog and bind it to storage.
-const bot = new botbuilder_planning_1.MainDialog([
-    new botbuilder_planning_1.SendActivity(`I'm sorry I didn't understand.`)
-]);
+const bot = new botbuilder_planning_1.PlanningDialog();
 bot.userState = userState.createProperty('user');
 bot.botState = convoState.createProperty('bot');
 //=============================================================================
@@ -80,6 +78,10 @@ bot.addRule(new botbuilder_planning_1.EventRule('cancelDelete', [
 bot.addRule(new botbuilder_planning_1.EventRule('error', [
     new botbuilder_planning_1.SendActivity(`Oops. An error occurred: {message}`)
 ]));
+// Define FallbackRule
+bot.addRule(new botbuilder_planning_1.FallbackRule([
+    new botbuilder_planning_1.SendActivity(`Say "add a todo named first one" to get started.`)
+]));
 //=============================================================================
 // Sequences
 //=============================================================================
@@ -89,12 +91,13 @@ const cancelRecognizer = new botbuilder_planning_1.RegExpRecognizer().addIntent(
 const addToDoDialog = new botbuilder_planning_1.SequenceDialog('AddToDoDialog', [
     new botbuilder_planning_1.SaveEntity('title', 'dialog.result.title'),
     new botbuilder_planning_1.TextInput('dialog.result.title', `What would you like to call your new todo?`),
-    new botbuilder_planning_1.SetProperty(async (state) => {
+    new botbuilder_planning_1.CodeStep(async (planning) => {
         // Save todo to user state
-        const title = state.getValue('dialog.result.title');
-        const todos = state.getValue('user.todos') || [];
+        const title = planning.state.getValue('dialog.result.title');
+        const todos = planning.state.getValue('user.todos') || [];
         todos.push(title);
-        state.setValue('user.todos', todos);
+        planning.state.setValue('user.todos', todos);
+        return await planning.endDialog();
     }),
     new botbuilder_planning_1.SendActivity(`Added a todo named "{dialog.result.title}". You can delete it by saying "delete todo named {dialog.result.title}".`),
     new botbuilder_planning_1.SendActivity(`To view your todos just ask me to "show my todos".`)
@@ -109,15 +112,16 @@ const deleteToDoDialog = new botbuilder_planning_1.SequenceDialog('DeleteToDoDia
     new botbuilder_planning_1.IfProperty('user.todos', [
         new botbuilder_planning_1.SaveEntity('title', 'dialog.result.title'),
         new botbuilder_planning_1.ChoiceInput('dialog.result.title', `Which todo would you like to remove?`, 'user.todos'),
-        new botbuilder_planning_1.SetProperty(async (state) => {
+        new botbuilder_planning_1.CodeStep(async (planning) => {
             // Remove todo from user state
-            const title = state.getValue('dialog.result.title');
-            const todos = state.getValue('user.todos') || [];
+            const title = planning.state.getValue('dialog.result.title');
+            const todos = planning.state.getValue('user.todos') || [];
             const pos = todos.indexOf(title);
             if (pos >= 0) {
                 todos.splice(pos, 1);
             }
-            state.setValue('user.todos', todos);
+            planning.state.setValue('user.todos', todos);
+            return await planning.endDialog();
         }),
         new botbuilder_planning_1.SendActivity(`Deleted the todo named "{dialog.result.title}". You can delete all your todos by saying "delete all todos".`),
     ]).else([
@@ -132,9 +136,10 @@ bot.addDialog(deleteToDoDialog);
 // ClearToDosDialog
 const clearToDosDialog = new botbuilder_planning_1.SequenceDialog('ClearToDosDialog', [
     new botbuilder_planning_1.IfProperty('user.todos', [
-        new botbuilder_planning_1.SetProperty(async (state) => {
+        new botbuilder_planning_1.CodeStep(async (planning) => {
             // Clear all todos in user state
-            state.setValue('user.todos', []);
+            planning.state.setValue('user.todos', []);
+            return await planning.endDialog();
         }),
         new botbuilder_planning_1.SendActivity(`All todos removed.`)
     ]).else([

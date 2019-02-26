@@ -7,6 +7,7 @@
  */
 export * from './callDialog';
 export * from './cancelDialog';
+export * from './codeStep';
 export * from './doStepsBeforeTags';
 export * from './doStepsLater';
 export * from './emitEvent';
@@ -19,5 +20,4 @@ export * from './saveEntity';
 export * from './sendActivity';
 export * from './sendList';
 export * from './setPlanTitle';
-export * from './setProperty';
 export * from './waitForInput';
