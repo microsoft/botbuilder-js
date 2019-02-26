@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState } from 'botbuilder';
-import { PlanningDialog, FallbackRule, SendActivity, WaitForInput, IfProperty } from 'botbuilder-planning';
+import { PlanningDialog, FallbackRule, SendActivity, StateMachineDialog, RegExpRecognizer, DoStepsRule, EmitEvent, BoolInput, IfProperty, SetProperty } from 'botbuilder-planning';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -38,15 +38,39 @@ server.post('/api/messages', (req, res) => {
 });
 
 // Create the main planning dialog and bind to storage.
-const bot = new PlanningDialog();
+const bot = new StateMachineDialog('main', 'offHook');
 bot.userState = userState.createProperty('user');
 bot.botState = convoState.createProperty('bot');
 
-// Add a top level fallback rule to handle received messages
-bot.addRule(new FallbackRule([
-    new IfProperty(async (state) => state.getValue('user.name') == undefined, [
-        new SendActivity(`Hi! what's your name?`),
-        new WaitForInput('user.name')
-    ]),
-    new SendActivity(`Hi {user.name}. It's nice to meet you.`)
+// offHook state
+const offHook = bot.addState('offHook', [
+    new SendActivity(`☎️ off hook`),
+    new SendActivity(`say "place a call" to get started.`)
+]);
+offHook.permit('callDialed', 'ringing');
+offHook.recognizer = new RegExpRecognizer().addIntent('PlaceCallIntent', /place .*call/i);
+offHook.addRule(new DoStepsRule('PlaceCallIntent', [
+    new EmitEvent('callDialed')
 ]));
+
+
+// ringing state
+const ringing = bot.addState('ringing', [
+    new SendActivity(`☎️ ring... ring...`),
+    new BoolInput('dialog.answer', `Would you like to answer it?`, true),
+    new IfProperty(async (state) => state.getValue('dialog.answer'), [
+        new EmitEvent('callConnected')
+    ])
+]);
+ringing.permit('callConnected', 'connected');
+
+
+// connected state
+const connected = bot.addState('connected', [
+    new SendActivity(`📞 talk... talk... talk... ☹️`),
+    new BoolInput('dialog.hangup', `Heard enough yet?`, true),
+    new IfProperty(async (state) => state.getValue('dialog.hangup'), [
+        new EmitEvent('callEnded')
+    ])
+]);
+connected.permit('callEnded', 'offHook');

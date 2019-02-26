@@ -33,15 +33,35 @@ server.post('/api/messages', (req, res) => {
     });
 });
 // Create the main planning dialog and bind to storage.
-const bot = new botbuilder_planning_1.PlanningDialog();
+const bot = new botbuilder_planning_1.StateMachineDialog('main', 'offHook');
 bot.userState = userState.createProperty('user');
 bot.botState = convoState.createProperty('bot');
-// Add a top level fallback rule to handle received messages
-bot.addRule(new botbuilder_planning_1.FallbackRule([
-    new botbuilder_planning_1.IfProperty(async (state) => state.getValue('user.name') == undefined, [
-        new botbuilder_planning_1.SendActivity(`Hi! what's your name?`),
-        new botbuilder_planning_1.WaitForInput('user.name')
-    ]),
-    new botbuilder_planning_1.SendActivity(`Hi {user.name}. It's nice to meet you.`)
+// offHook state
+const offHook = bot.addState('offHook', [
+    new botbuilder_planning_1.SendActivity(`☎️ off hook`),
+    new botbuilder_planning_1.SendActivity(`say "place a call" to get started.`)
+]);
+offHook.permit('callDialed', 'ringing');
+offHook.recognizer = new botbuilder_planning_1.RegExpRecognizer().addIntent('PlaceCallIntent', /place .*call/i);
+offHook.addRule(new botbuilder_planning_1.DoStepsRule('PlaceCallIntent', [
+    new botbuilder_planning_1.EmitEvent('callDialed')
 ]));
+// ringing state
+const ringing = bot.addState('ringing', [
+    new botbuilder_planning_1.SendActivity(`☎️ ring... ring...`),
+    new botbuilder_planning_1.BoolInput('dialog.answer', `Would you like to answer it?`, true),
+    new botbuilder_planning_1.IfProperty(async (state) => state.getValue('dialog.answer'), [
+        new botbuilder_planning_1.EmitEvent('callConnected')
+    ])
+]);
+ringing.permit('callConnected', 'connected');
+// connected state
+const connected = bot.addState('connected', [
+    new botbuilder_planning_1.SendActivity(`📞 talk... talk... talk... ☹️`),
+    new botbuilder_planning_1.BoolInput('dialog.hangup', `Heard enough yet?`, true),
+    new botbuilder_planning_1.IfProperty(async (state) => state.getValue('dialog.hangup'), [
+        new botbuilder_planning_1.EmitEvent('callEnded')
+    ])
+]);
+connected.permit('callEnded', 'offHook');
 //# sourceMappingURL=index.js.map

@@ -26,18 +26,18 @@ const convoState = new botbuilder_1.ConversationState(storage);
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
         // Route to main dialog.
-        await dialogs.run(context);
+        await bot.run(context);
         // Save state changes
         await userState.saveChanges(context);
         await convoState.saveChanges(context);
     });
 });
 // Create the main planning dialog and bind to storage.
-const dialogs = new botbuilder_planning_1.PlanningDialog();
-dialogs.userState = userState.createProperty('user');
-dialogs.botState = convoState.createProperty('bot');
+const bot = new botbuilder_planning_1.PlanningDialog();
+bot.userState = userState.createProperty('user');
+bot.botState = convoState.createProperty('bot');
 // Add a top level fallback rule to handle received messages
-dialogs.addRule(new botbuilder_planning_1.FallbackRule([
+bot.addRule(new botbuilder_planning_1.FallbackRule([
     new botbuilder_planning_1.SendActivity(`Hi! what's your name?`),
     new botbuilder_planning_1.WaitForInput('user.name'),
     new botbuilder_planning_1.SendActivity(`Hi {user.name}. It's nice to meet you.`)

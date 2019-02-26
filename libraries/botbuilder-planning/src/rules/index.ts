@@ -15,6 +15,7 @@ export * from './ifPropertyRule';
 export * from './newPlanRule';
 export * from './planningRule';
 export * from './replacePlanRule';
+export * from './stateTransitionRule';
 export * from './utteranceRecognizeRule';
 export * from './welcomeRule';
 

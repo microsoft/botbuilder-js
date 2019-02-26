@@ -9,6 +9,7 @@ export * from './callDialog';
 export * from './cancelDialog';
 export * from './doStepsBeforeTags';
 export * from './doStepsLater';
+export * from './emitEvent';
 export * from './endDialog';
 export * from './gotoDialog';
 export * from './ifProperty';

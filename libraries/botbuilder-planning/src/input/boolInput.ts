@@ -12,10 +12,11 @@ import { Activity } from 'botbuilder-core';
 export class BoolInput extends DialogCommand implements DialogDependencies {
     private prompt = new ConfirmPrompt();
 
-    constructor(property: string, activity: string|Partial<Activity>) {
+    constructor(property: string, activity: string|Partial<Activity>, alwaysPrompt = false) {
         super();
         this.property = property;
         this.activity.value = activity;
+        this.allwaysPrompt = alwaysPrompt;
     }
 
     protected onComputeID(): string {
@@ -31,6 +32,8 @@ export class BoolInput extends DialogCommand implements DialogDependencies {
     public configure(config: DialogConfiguration): this {
         return super.configure(config);
     }
+
+    public allwaysPrompt: boolean;
 
     /**
      * Activity to send the user.
@@ -57,7 +60,7 @@ export class BoolInput extends DialogCommand implements DialogDependencies {
     public async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
         // Check value and only call if missing
         const value = dc.state.getValue(this.property);
-        if (value === undefined) {
+        if (value === undefined || this.allwaysPrompt) {
             const activity = this.activity.format(dc, { utterance: dc.context.activity.text || '' });
             return await dc.prompt(this.prompt.id, activity);
         } else {

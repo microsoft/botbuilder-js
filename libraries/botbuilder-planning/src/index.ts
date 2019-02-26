@@ -14,4 +14,6 @@ export * from './mainDialog';
 export * from './planningContext';
 export * from './planningDialog';
 export * from './sequenceDialog';
+export * from './stateMachineDialog';
+export * from './stateMachineState';
 export * from './stringTemplate';
