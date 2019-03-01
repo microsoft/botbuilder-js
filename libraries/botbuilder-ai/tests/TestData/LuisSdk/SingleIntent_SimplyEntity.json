@@ -1,0 +1,58 @@
+{
+  "query": "My name is Emad",
+  "topScoringIntent": {
+    "intent": "SpecifyName",
+    "score": 0.8033912
+  },
+  "intents": [
+    {
+      "intent": "SpecifyName",
+      "score": 0.8033912
+    },
+    {
+      "intent": "Greeting",
+      "score": 0.08372224
+    },
+    {
+      "intent": "None",
+      "score": 0.0159699433
+    },
+    {
+      "intent": "Weather.GetForecast",
+      "score": 0.01070365
+    },
+    {
+      "intent": "Cancel",
+      "score": 0.008010856
+    },
+    {
+      "intent": "Delivery",
+      "score": 0.007976341
+    },
+    {
+      "intent": "Help",
+      "score": 0.0069025564
+    },
+    {
+      "intent": "search",
+      "score": 0.006409485
+    },
+    {
+      "intent": "Travel",
+      "score": 0.00352007686
+    },
+    {
+      "intent": "EntityTests",
+      "score": 0.0017162587
+    }
+  ],
+  "entities": [
+    {
+      "entity": "emad",
+      "type": "Name",
+      "startIndex": 11,
+      "endIndex": 14,
+      "score": 0.89257884
+    }
+  ]
+}
