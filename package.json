@@ -27,6 +27,7 @@
         "@types/jsonwebtoken": "7.2.8",
         "@types/lodash": "^4.14.116",
         "coveralls": "^3.0.2",
+        "lerna": "^3.2.1",
         "mocha": "^5.2.0",
         "tslint": "^5.11.0",
         "tslint-microsoft-contrib": "^5.2.1"
