@@ -1227,29 +1227,6 @@ export interface TokenResponse {
 }
 
 /**
- * The status of a particular token
- */
-export interface TokenStatus {
-  /**
-   * @member {string} [channelId] The channelId of the token status pertains to
-   */
-  channelId?: string;
-  /**
-   * @member {string} [connectionName] The name of the connection the token
-   * status pertains to
-   */
-  connectionName?: string;
-  /**
-   * True if a token is stored for this ConnectionName
-   */
-  hasToken?: boolean;
-  /**
-   * The display name of the service provider for which this Token belongs to
-   */
-  serviceProviderDisplayName?: string;
-}
-
-/**
  * W3C Payment Method Data for Microsoft Pay
  */
 export interface MicrosoftPayMethodData {
