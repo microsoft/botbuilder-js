@@ -400,7 +400,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`);
         }
-        !userId? userId = context.activity.from.id: userId;
+        if (!userId){
+            userId = context.activity.from.id;
+        }
         
         this.checkEmulatingOAuthCards(context);
         const url: string = this.oauthApiUrl(context);
