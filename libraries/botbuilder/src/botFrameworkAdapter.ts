@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TokenStatus, TurnContext } from 'botbuilder-core';
-import { ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenApiModels } from 'botframework-connector';
+import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
+import { ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
 import * as os from 'os';
 
 /**
