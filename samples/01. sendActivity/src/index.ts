@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState } from 'botbuilder';
-import { PlanningDialog, FallbackRule, SendActivity } from 'botbuilder-planning';
+import { PlanningDialog, FallbackRule, SendActivity, SequenceDialog, CallDialog, RepeatDialog, WaitForInput, IfProperty, CodeStep, EndDialog, BoolInput, TextInput, DoStepsLater, SetPlanTitle, RegExpRecognizer, DoStepsRule, CancelDialog, EventRule, OnCatch } from 'botbuilder-planning';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -20,29 +20,60 @@ const adapter = new BotFrameworkAdapter({
     appPassword: process.env.microsoftAppPassword,
 });
 
-// Initialize state storage
-const storage = new MemoryStorage();
-const userState = new UserState(storage);
-const convoState = new ConversationState(storage);
-
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
         // Route to main dialog.
-        await bot.run(context);
-
-        // Save state changes
-        await userState.saveChanges(context);
-        await convoState.saveChanges(context);
+        await bot.onTurn(context);
     });
 });
 
 // Create the main planning dialog and bind to storage.
 const bot = new PlanningDialog();
-bot.userState = userState.createProperty('user');
-bot.botState = convoState.createProperty('bot');
+bot.storage = new MemoryStorage();
 
 // Add a top level fallback rule to handle received messages
 bot.addRule(new FallbackRule([
-    new SendActivity(`Hello World!`)
+    new CallDialog('hello')
 ]));
+
+bot.addRule(new EventRule('cancelDialog', [
+    new SendActivity('ok canceling')
+]))
+
+bot.addRule(new EventRule('cancelApi', [
+    new SendActivity('api call cancelled')
+]))
+
+const helloDialog = new SequenceDialog('hello', [
+    new CallDialog('myApi'),
+    new IfProperty('!conversation.apiSuccess', [
+        new DoStepsLater([
+            new SendActivity(`I'm really done`)
+        ])
+    ]),
+    new SetPlanTitle(`booking your trip to {dialog.result.dest}`),
+    new IfProperty('conversation.maxAlarms', [
+        new SendActivity('max alarms'),
+        new EndDialog()
+    ]),
+    new TextInput('conversation.alarmTime', `What time would you like to set your alarm for?`),
+    new SendActivity(`done`)
+]);
+bot.addDialog(helloDialog);
+
+const callApi = new SequenceDialog('myApi', [
+    new SendActivity(`calling api...`),
+    new CodeStep(async (planning) => {
+        planning.state.setValue('conversation.apiSuccess', false);
+        planning.state.setValue('conversation.maxAlarms', false);
+        planning.state.setValue('conversation.alarmTime', '9am');
+        return await planning.endDialog();
+    }),
+    new WaitForInput()
+]);
+callApi.recognizer = new RegExpRecognizer().addIntent('Cancel', /^cancel/i);
+callApi.addRule(new DoStepsRule('Cancel', [
+    new CancelDialog('cancelApi')
+]));
+bot.addDialog(callApi);

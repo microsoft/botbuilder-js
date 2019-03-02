@@ -6,63 +6,40 @@
  * Licensed under the MIT License.
  */
 import { 
-    TurnContext, BotTelemetryClient, NullTelemetryClient, StatePropertyAccessor, ActivityTypes, 
-    RecognizerResult
+    TurnContext, BotTelemetryClient, NullTelemetryClient, Storage, ActivityTypes, 
+    RecognizerResult, Activity, StoreItems
 } from 'botbuilder-core';
 import { 
     Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent,
-    DialogContext, DialogState, DialogSet, StateMap, DialogConsultation, DialogConsultationDesire, DialogConfiguration
+    DialogContext, DialogState, DialogSet, StateMap, DialogConsultation, DialogConsultationDesire
 } from 'botbuilder-dialogs';
 import { 
-    PlanningEventNames, PlanningContext, PlanningState, PlanState, PlanChangeList, PlanChangeType 
+    PlanningEventNames, PlanningContext, PlanningState, PlanChangeList, PlanChangeType 
 } from './planningContext';
 import { PlanningRule } from './rules';
 import { Recognizer } from './recognizers';
+import { PlanningAdapter } from './internal/planningAdapter';
 
-
-export interface BotState extends DialogState {
-    /**
-     * (optional) values that are persisted for the lifetime of the conversation.
-     * 
-     * @remarks
-     * These values are intended to be transient and may automatically expire after some timeout
-     * period.
-     */
-    conversationState?: object;
-
-    /**
-     * (Optional) timestamp of when the dialog was last accessed.
-     */
-    lastAccess?: string;
-
-    /**
-     * (Optional) values that are persisted across all interactions with the current user.
-     */
-    userState?: object;    
+export interface StoredBotState {
+    userState: { 
+        eTag?: string; 
+    };
+    conversationState: {
+        eTag?: string;
+        _dialogs?: DialogState;
+        _lastAccess?: string;
+    };
 }
 
-export interface PlanningDialogRunOptions {
-    /**
-     * (Optional) object used to persist the bots dialog state. If omitted the 
-     * `PlanningDialog.botState` property will be used. 
-     */
-    botState?: BotState;
+export interface BotTurnResult {
+    turnResult: DialogTurnResult;
+    activities?: Partial<Activity>[];
+    newState?: StoredBotState;
+}
 
-    /**
-     * (Optional) options to pass to the component when its first started.
-     */
-    dialogOptions?: object;
-
-    /**
-     * (Optional) number of milliseconds to expire the contents of `botState` after. 
-     */
-    expireAfter?: number;
-
-    /**
-     * (Optional) object used to persist the current users state. If omitted the 
-     * `PlanningDialog.userState` property will be used. 
-     */
-    userState?: object;
+export interface BotStateStorageKeys {
+    userState: string;
+    conversationState: string;
 }
 
 export class PlanningDialog<O extends object = {}> extends Dialog<O> {
@@ -73,14 +50,14 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     public readonly rules: PlanningRule[] = [];
 
     /**
-     * (Optional) state property used to persists the bots current state when the `run()` method is called.
+     * (Optional) number of milliseconds to expire the bots state after. 
      */
-    public botState: StatePropertyAccessor<BotState>;
+    public expireAfter?: number;
 
     /**
-     * (Optional) state property used to persist the users state when the `run()` method is called.
+     * (Optional) storage provider that will be used to read and write the bots state..
      */
-    public userState: StatePropertyAccessor<object>;
+    public storage: Storage;
 
     /**
      * (Optional) recognizer used to analyze any message utterances.
@@ -134,57 +111,64 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         return this.dialogs.find(dialogId);
     }
 
-    public async run(context: TurnContext, options?: PlanningDialogRunOptions): Promise<DialogTurnResult> {
-        options = options || {};
-
+    public async onTurn(context: TurnContext, state?: StoredBotState): Promise<BotTurnResult> {
         // Log start of turn
         console.log('------------:');
-    
-        // Initialize bot state
-        let botState = options.botState;
-        if (botState) {
-            if (!botState.dialogStack) { botState.dialogStack = [] }
-            if (!botState.conversationState) { botState.conversationState = {} }
-        } else if (this.botState) {
-            botState = await this.botState.get(context, { dialogStack: [], conversationState: {} });
-        } else {
-            throw new Error(`RuleDialog.run(): method called without a 'botState'. Set the 'RuleDialog.botState' property or pass in the state to use.`);
+
+        // Load state from storage if needed
+        let saveState = false;
+        const keys = PlanningDialog.getStorageKeys(context);
+        if (!state) {
+            if (!this.storage) { throw new Error(`PlanningDialog: unable to load the bots state. PlanningDialog.storage not assigned.`) }
+            state = await PlanningDialog.loadBotState(this.storage, keys);
+            saveState = true;
         }
 
-        // Initialize user state
-        let userState: object;
-        if (options.userState) {
-            userState = options.userState;
-        } else if (this.userState) {
-            userState = await this.userState.get(context, {});
-        } else if (!botState.userState) {
-            botState.userState = {};
-            userState = botState.userState;
-        }
+        // Clone state to preserve original state
+        const newState = JSON.parse(JSON.stringify(state));
 
-        // Check for expiration
+        // Check for expired conversation
         const now  = new Date();
-        if (typeof options.expireAfter === 'number' && botState.lastAccess) {
-            const lastAccess = new Date(botState.lastAccess);
-            if (now.getTime() - lastAccess.getTime() >= options.expireAfter) {
-                // Clear stack and conversation state
-                botState.dialogStack = [];
-                botState.conversationState = {};
+        if (typeof this.expireAfter == 'number' && newState.conversationState._lastAccess) {
+            const lastAccess = new Date(newState.conversationState._lastAccess);
+            if (now.getTime() - lastAccess.getTime() >= this.expireAfter) {
+                // Clear conversation state
+                state.conversationState = { eTag: newState.conversationState.eTag }
             }
         }
-        botState.lastAccess = now.toISOString();
+        newState.conversationState._lastAccess = now.toISOString();
 
-        // Create a dialog context
-        const dc = new DialogContext(this.runDialogSet, context, botState, new StateMap(botState.conversationState), new StateMap(userState));
-
-        // Attempt to continue execution of the components current dialog
-        let result = await dc.continueDialog();
-
-        // Start the component if it wasn't already running
-        if (result.status === DialogTurnStatus.empty) {
-            result = await dc.beginDialog(this.id, options.dialogOptions);
+        // Ensure dialog stack populated
+        if (!newState.conversationState._dialogs) { 
+            newState.conversationState._dialogs = { dialogStack: [] }
         }
 
+        // Create DialogContext
+        const userState = new StateMap(newState.userState);
+        const conversationState = new StateMap(newState.conversationState);
+        const dc = new DialogContext(this.runDialogSet, context, newState.conversationState._dialogs, userState, conversationState);
+
+        // Execute component
+        let result = await dc.continueDialog();
+        if (result.status == DialogTurnStatus.empty) {
+            result = await dc.beginDialog(this.id);
+        }
+
+        // Save state if loaded from storage
+        if (saveState) {
+            await PlanningDialog.saveBotState(this.storage, keys, newState, state, '*');
+            return { turnResult: result };
+        } else {
+            return { turnResult: result, newState: newState };
+        }
+    }
+
+    public async run(activity: Partial<Activity>, state?: StoredBotState): Promise<BotTurnResult> {
+        // Initialize context object
+        const adapter = new PlanningAdapter();
+        const context = new TurnContext(adapter, activity);
+        const result = await this.onTurn(context, state);
+        result.activities = adapter.activities;
         return result;
     }
 
@@ -581,5 +565,75 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
 
     private getUniqueInstanceId(dc: DialogContext): string {
         return dc.stack.length > 0 ? `${dc.stack.length}:${dc.activeDialog.id}` : '';
+    }
+
+    //---------------------------------------------------------------------------------------------
+    // State loading
+    //---------------------------------------------------------------------------------------------
+
+    static async loadBotState(storage: Storage, keys: BotStateStorageKeys): Promise<StoredBotState> {
+        const data = await storage.read([keys.userState, keys.conversationState]);
+        return {
+            userState: data[keys.userState] || {},
+            conversationState: data[keys.conversationState] || {}
+        };
+    }
+
+    static async saveBotState(storage: Storage, keys: BotStateStorageKeys, newState: StoredBotState, oldState?: StoredBotState, eTag?: string): Promise<void> {
+        // Check for state changes
+        let save = false;
+        const changes: StoreItems = {};
+        if (oldState) {
+            if (JSON.stringify(newState.userState) != JSON.stringify(oldState.userState)) {
+                if (eTag) { newState.userState.eTag = eTag }
+                changes[keys.userState] = newState.userState;
+                save = true; 
+            }
+            if (JSON.stringify(newState.conversationState) != JSON.stringify(oldState.conversationState)) {
+                if (eTag) { newState.conversationState.eTag = eTag }
+                changes[keys.conversationState] = newState.conversationState;
+                save = true;
+            }
+        } else {
+            if (eTag) {
+                newState.userState.eTag = eTag;
+                newState.conversationState.eTag = eTag;
+            }
+            changes[keys.userState] = newState.userState;
+            changes[keys.conversationState] = newState.conversationState;
+            save = true;
+        }
+
+        // Save changes
+        if (save) {
+            await storage.write(changes);
+        }
+    }
+
+    static getStorageKeys(context: TurnContext): BotStateStorageKeys {
+        // Get channel, user, and conversation ID's
+        const activity = context.activity;
+        const channelId: string = activity.channelId;
+        let userId: string = activity.from && activity.from.id ? activity.from.id : undefined;
+        const conversationId: string = activity.conversation && activity.conversation.id ? activity.conversation.id : undefined;
+
+        // Patch User ID if needed
+        if (activity.type == ActivityTypes.ConversationUpdate) {
+            const users = (activity.membersAdded || activity.membersRemoved || []).filter((u) => u.id != activity.recipient.id);
+            const found = userId ? users.filter((u) => u.id == userId) : [];
+            if (found.length == 0 && users.length > 0) {
+                userId = users[0].id
+            }
+        } 
+
+        // Verify ID's found
+        if (!userId) { throw new Error(`PlanningDialog: unable to load the bots state. The users ID couldn't be found.`) }
+        if (!conversationId) { throw new Error(`PlanningDialog: unable to load the bots state. The conversations ID couldn't be found.`) }
+
+        // Return storage keys
+        return {
+            userState: `${channelId}/users/${userId}`,
+            conversationState: `${channelId}/conversations/${conversationId}`
+        };
     }
 }
