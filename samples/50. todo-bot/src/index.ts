@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState } from 'botbuilder';
-import { FallbackRule, SendActivity, IfProperty, WelcomeRule, TextInput, RegExpRecognizer, ReplacePlanRule, SequenceDialog, CallDialog, DoStepsRule, CancelDialog, EventRule, SendList, SaveEntity, ChoiceInput, PlanningDialog, CodeStep, PlanningContext } from 'botbuilder-planning';
+import { FallbackRule, SendActivity, IfProperty, WelcomeRule, TextInput, RegExpRecognizer, ReplacePlanRule, SequenceDialog, CallDialog, DoStepsRule, CancelDialog, EventRule, SendList, SaveEntity, ChoiceInput, PlanningDialog, CodeStep, PlanningContext, ChangeList, ChangeListType } from 'botbuilder-planning';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -20,28 +20,17 @@ const adapter = new BotFrameworkAdapter({
     appPassword: process.env.microsoftAppPassword,
 });
 
-// Initialize state storage
-const storage = new MemoryStorage();
-const userState = new UserState(storage);
-const convoState = new ConversationState(storage);
-
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
         // Route to main dialog.
-        await bot.run(context);
-
-        // Save state changes
-        await userState.saveChanges(context);
-        await convoState.saveChanges(context);
+        await bot.onTurn(context);
     });
 });
 
 // Create the bots main dialog and bind it to storage.
 const bot = new PlanningDialog();
-bot.userState = userState.createProperty('user');
-bot.botState = convoState.createProperty('bot');
-
+bot.storage = new MemoryStorage();
 
 //=============================================================================
 // Planning Rules
@@ -111,14 +100,7 @@ const cancelRecognizer = new RegExpRecognizer().addIntent('CancelIntent', /^canc
 const addToDoDialog = new SequenceDialog('AddToDoDialog', [
     new SaveEntity('title', 'dialog.result.title'),
     new TextInput('dialog.result.title', `What would you like to call your new todo?`),
-    new CodeStep(async (planning) => {
-        // Save todo to user state
-        const title: string = planning.state.getValue('dialog.result.title');
-        const todos: string[] = planning.state.getValue('user.todos') || [];
-        todos.push(title);
-        planning.state.setValue('user.todos', todos);
-        return await planning.endDialog();
-    }),
+    new ChangeList(ChangeListType.push, 'user.todos', 'dialog.result.title'),
     new SendActivity(`Added a todo named "{dialog.result.title}". You can delete it by saying "delete todo named {dialog.result.title}".`),
     new SendActivity(`To view your todos just ask me to "show my todos".`)
 ]);
@@ -133,17 +115,7 @@ const deleteToDoDialog = new SequenceDialog('DeleteToDoDialog', [
     new IfProperty('user.todos', [
         new SaveEntity('title', 'dialog.result.title'),
         new ChoiceInput('dialog.result.title', `Which todo would you like to remove?`, 'user.todos'),
-        new CodeStep(async (planning) => {
-            // Remove todo from user state
-            const title: string = planning.state.getValue('dialog.result.title');
-            const todos: string[] = planning.state.getValue('user.todos') || [];
-            const pos = todos.indexOf(title);
-            if (pos >= 0) {
-                todos.splice(pos, 1);
-            }
-            planning.state.setValue('user.todos', todos);
-            return await planning.endDialog();
-        }),
+        new ChangeList(ChangeListType.remove, 'user.todos', 'dialog.result.title'),
         new SendActivity(`Deleted the todo named "{dialog.result.title}". You can delete all your todos by saying "delete all todos".`),
     ]).else([
         new SendActivity(`No todos to delete.`)
@@ -158,11 +130,7 @@ bot.addDialog(deleteToDoDialog);
 // ClearToDosDialog
 const clearToDosDialog = new SequenceDialog('ClearToDosDialog', [
     new IfProperty('user.todos', [
-        new CodeStep(async (planning) => {
-            // Clear all todos in user state
-            planning.state.setValue('user.todos', []);
-            return await planning.endDialog();
-        }),
+        new ChangeList(ChangeListType.clear, 'user.todos'),
         new SendActivity(`All todos removed.`)
     ]).else([
         new SendActivity(`No todos to clear.`)

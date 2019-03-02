@@ -7,12 +7,15 @@
  */
 export * from './callDialog';
 export * from './cancelDialog';
+export * from './changeCollection';
+export * from './changeList';
 export * from './codeStep';
 export * from './doStepsBeforeTags';
 export * from './doStepsLater';
 export * from './emitEvent';
 export * from './endDialog';
 export * from './gotoDialog';
+export * from './ifNotProperty';
 export * from './ifProperty';
 export * from './onCatch';
 export * from './repeatDialog';

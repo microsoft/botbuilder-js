@@ -8,11 +8,11 @@
 import { DialogCommand, DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
 import { PlanningContext, PlanStepState, PlanChangeType } from '../planningContext';
 
-export interface IfPropertyConfiguration extends DialogConfiguration {
-    conditionals?: IfPropertyConditional[];
+export interface IfConfiguration extends DialogConfiguration {
+    conditionals?: IfConditional[];
 }
 
-export interface IfPropertyConditional {
+export interface IfConditional {
     property?: string;
     steps: Dialog[];
 }
@@ -26,7 +26,7 @@ export class IfProperty extends DialogCommand {
      * its associated block of steps will then be added to the plan immediately after the 
      * current step.
      */
-    public conditionals: IfPropertyConditional[] = [];
+    public conditionals: IfConditional[] = [];
 
     /**
      * Creates a new `IfProperty` instance.
@@ -47,7 +47,7 @@ export class IfProperty extends DialogCommand {
         return `if[${this.hashedLabel(stepList)}]`;
     }
 
-    public configure(config: IfPropertyConfiguration): this {
+    public configure(config: IfConfiguration): this {
         return super.configure(config);
     }
 
@@ -108,8 +108,9 @@ export class IfProperty extends DialogCommand {
         return await planning.endDialog();
     }
 
-    private isTruthy(planning: PlanningContext, property?: string): boolean {
+    protected isTruthy(planning: PlanningContext, property?: string): boolean {
         if (property) {
+            console.log(property);
             // Check for '!' prefix
             let result = true;
             if (property[0] == '!') {
@@ -128,6 +129,7 @@ export class IfProperty extends DialogCommand {
 
                 return !result;
             } else {
+                console.log(`value: ${value}`)
                 return !!value ? result : !result;
             }
         } else {
