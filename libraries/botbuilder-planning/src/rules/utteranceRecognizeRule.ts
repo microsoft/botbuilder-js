@@ -62,12 +62,13 @@ export class UtteranceRecognizedRule extends EventRule {
         return true;
     }
 
-    protected onCreateChangeList(planning: PlanningContext, dialogOptions?: any): PlanChangeList {
-        const changes = super.onCreateChangeList(planning, dialogOptions);
+    protected onCreateChangeList(planning: PlanningContext, event: DialogEvent<RecognizerResult>, dialogOptions?: any): PlanChangeList {
+        const changes = super.onCreateChangeList(planning, event, dialogOptions);
 
         // Add recognized intents and entities to change list
         changes.intentsMatched = this.intents;
         changes.entitiesMatched = this.entities;
+        changes.entitiesReocgnized = event.value.entities;
         return changes;
     }
 }

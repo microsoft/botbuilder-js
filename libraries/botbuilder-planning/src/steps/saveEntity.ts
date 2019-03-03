@@ -54,10 +54,12 @@ export class SaveEntity extends DialogCommand {
 
     protected async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
         // Get entity
-        const values: string[] = dc.state.getValue(`dialog.options.entities.${this.entityName}`);
+        const values: any|any[] = dc.state.entities.get(this.entityName);
         if (Array.isArray(values) && values.length > 0) {
-            // Map value to property
+            // Save first value to property
             dc.state.setValue(this.property, values[0]);
+        } else if (values !== undefined) {
+            dc.state.setValue(this.property, values);
         }
         return await dc.endDialog();
     }

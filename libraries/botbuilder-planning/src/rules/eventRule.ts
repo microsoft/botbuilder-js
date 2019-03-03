@@ -52,7 +52,7 @@ export class EventRule implements PlanningRule {
 
     protected async onEvaluate(planning: PlanningContext, event: DialogEvent): Promise<PlanChangeList[]|undefined> {
         if (await this.onIsTriggered(planning, event)) {
-            return [this.onCreateChangeList(planning, event.value)];
+            return [this.onCreateChangeList(planning, event)];
         }
     }
 
@@ -60,7 +60,7 @@ export class EventRule implements PlanningRule {
         return true;
     }
 
-    protected onCreateChangeList(planning: PlanningContext, dialogOptions?: any): PlanChangeList {
+    protected onCreateChangeList(planning: PlanningContext, event: DialogEvent, dialogOptions?: any): PlanChangeList {
         const changeList: PlanChangeList = { changeType: this.changeType, steps: [] };
         this.steps.forEach((step) => {
             const stepState: PlanStepState = { dialogStack: [], dialogId: step.id };

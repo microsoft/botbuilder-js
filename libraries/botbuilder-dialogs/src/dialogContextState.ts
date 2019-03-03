@@ -28,6 +28,11 @@ export interface DialogContextVisibleState {
      * All properties being persisted for the current dialog that's active.
      */
     dialog: object;
+
+    /**
+     * Any entities that have been recognized for the current turn of conversation.
+     */
+    entities: object;
 }
 
 export class DialogContextState {
@@ -80,6 +85,23 @@ export class DialogContextState {
     }
 
     /**
+     * Any entities that have been recognized for the current turn of conversation.
+     * 
+     * @remarks
+     * These entities are not persisted so if they need to be remembered beyond the current turn 
+     * the bot will need to copy them to memory using something like a `SaveEntity` step. 
+     */
+    public get entities(): StateMap {
+        // Get entities collection for the turn state
+        let entities: object = this.dc.context.turnState.get(TURN_ENTITIES);
+        if (!entities) {
+            entities = {};
+            this.dc.context.turnState.set(TURN_ENTITIES, entities);
+        }
+        return new StateMap(entities);
+    }
+
+    /**
      * Returns a JSON object representing the in-memory properties that are visible to the current
      * `DialogContext`.
      * 
@@ -96,7 +118,8 @@ export class DialogContextState {
         return {
             user: this.user.memory,
             conversation: this.conversation.memory,
-            dialog: instance ? instance.state : undefined
+            dialog: instance ? instance.state : undefined,
+            entities: this.entities.memory
         };
     }
 
@@ -142,3 +165,5 @@ export class DialogContextState {
     }
    
 }
+
+const TURN_ENTITIES = Symbol('turn_entities');
