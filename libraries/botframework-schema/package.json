@@ -9,10 +9,7 @@
   ],
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
-  "dependencies": {
-    "@azure/ms-rest-js": "1.2.6",
-    "@types/node": "^10.12.18"
-  },
+  "dependencies": {},
   "devDependencies": {},
   "scripts": {
     "build": "tsc",
@@ -26,5 +23,9 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:Microsoft/botbuilder-js.git"
-  }
+  },
+  "files": [
+    "/lib",
+    "/src"   
+  ]
 }

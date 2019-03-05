@@ -60,7 +60,7 @@ export class UserToken {
    * @param [options] The optional parameters
    * @returns Promise<Models.UserTokenGetAadTokensResponse>
    */
-  getAadTokens(userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options?: msRest.RequestOptionsBase): Promise<Models.UserTokenGetAadTokensResponse>;
+  getAadTokens(userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options?: Models.UserTokenGetAadTokensOptionalParams): Promise<Models.UserTokenGetAadTokensResponse>;
   /**
    * @param userId
    * @param connectionName
@@ -75,8 +75,8 @@ export class UserToken {
    * @param options The optional parameters
    * @param callback The callback
    */
-  getAadTokens(userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<{ [propertyName: string]: Models.TokenResponse }>): void;
-  getAadTokens(userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<{ [propertyName: string]: Models.TokenResponse }>, callback?: msRest.ServiceCallback<{ [propertyName: string]: Models.TokenResponse }>): Promise<Models.UserTokenGetAadTokensResponse> {
+  getAadTokens(userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options: Models.UserTokenGetAadTokensOptionalParams, callback: msRest.ServiceCallback<{ [propertyName: string]: Models.TokenResponse }>): void;
+  getAadTokens(userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options?: Models.UserTokenGetAadTokensOptionalParams, callback?: msRest.ServiceCallback<{ [propertyName: string]: Models.TokenResponse }>): Promise<Models.UserTokenGetAadTokensResponse> {
     return this.client.sendOperationRequest(
       {
         userId,
@@ -151,6 +151,7 @@ const getTokenOperationSpec: msRest.OperationSpec = {
   queryParameters: [
     Parameters.userId,
     Parameters.connectionName0,
+    Parameters.channelId,
     Parameters.code
   ],
   responses: {
@@ -172,7 +173,8 @@ const getAadTokensOperationSpec: msRest.OperationSpec = {
   path: "api/usertoken/GetAadTokens",
   queryParameters: [
     Parameters.userId,
-    Parameters.connectionName0
+    Parameters.connectionName0,
+    Parameters.channelId
   ],
   requestBody: {
     parameterPath: "aadResourceUrls",
@@ -208,7 +210,8 @@ const signOutOperationSpec: msRest.OperationSpec = {
   path: "api/usertoken/SignOut",
   queryParameters: [
     Parameters.userId,
-    Parameters.connectionName1
+    Parameters.connectionName1,
+    Parameters.channelId
   ],
   responses: {
     200: {
@@ -232,6 +235,7 @@ const getTokenStatusOperationSpec: msRest.OperationSpec = {
   path: "api/usertoken/GetTokenStatus",
   queryParameters: [
     Parameters.userId,
+    Parameters.channelId,
     Parameters.include
   ],
   responses: {

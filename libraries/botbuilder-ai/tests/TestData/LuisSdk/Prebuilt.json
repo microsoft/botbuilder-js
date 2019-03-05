@@ -1,0 +1,90 @@
+{
+  "query": "http://foo.com is where you can get a weather forecast for seattle",
+  "topScoringIntent": {
+    "intent": "Weather.GetForecast",
+    "score": 0.8953107
+  },
+  "intents": [
+    {
+      "intent": "Weather.GetForecast",
+      "score": 0.8953107
+    },
+    {
+      "intent": "EntityTests",
+      "score": 0.210975379
+    },
+    {
+      "intent": "search",
+      "score": 0.111334175
+    },
+    {
+      "intent": "None",
+      "score": 0.038558647
+    },
+    {
+      "intent": "Travel",
+      "score": 0.00523124449
+    },
+    {
+      "intent": "Delivery",
+      "score": 0.00396467233
+    },
+    {
+      "intent": "SpecifyName",
+      "score": 0.00354276248
+    },
+    {
+      "intent": "Help",
+      "score": 0.00175959955
+    },
+    {
+      "intent": "Cancel",
+      "score": 0.000602799933
+    },
+    {
+      "intent": "Greeting",
+      "score": 0.000445256825
+    }
+  ],
+  "entities": [
+    {
+      "entity": "http://foo.com",
+      "type": "builtin.url",
+      "startIndex": 0,
+      "endIndex": 13,
+      "resolution": {
+        "value": "http://foo.com"
+      }
+    },
+    {
+      "entity": "seattle",
+      "type": "Weather.Location",
+      "startIndex": 59,
+      "endIndex": 65,
+      "score": 0.780343533
+    },
+    {
+      "entity": "http : / / foo . com is where you can get a weather forecast for seattle",
+      "type": "Composite2",
+      "startIndex": 0,
+      "endIndex": 65,
+      "score": 0.5083543
+    }
+  ],
+  "compositeEntities": [
+    {
+      "parentType": "Composite2",
+      "value": "http : / / foo . com is where you can get a weather forecast for seattle",
+      "children": [
+        {
+          "type": "builtin.url",
+          "value": "http://foo.com"
+        },
+        {
+          "type": "Weather.Location",
+          "value": "seattle"
+        }
+      ]
+    }
+  ]
+}

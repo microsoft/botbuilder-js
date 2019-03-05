@@ -15,9 +15,11 @@ const ContainerNameCheck: RegExp = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[
 
 /**
  * @private
- * Internal dictionary with the containers where entities will be stored.
+ * Unique ket used to access the static <code>checkedCollections</code>
+ * property of the AzureBlobTranscriptStore. Accessing it is necessary for
+ * proper testing and debugging.
  */
-const checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerResult> } = {};
+export const checkedCollectionsKey = Symbol('checkedCollectionsKey');
 
 /**
  * Stores transcripts in an Azure Blob container.
@@ -27,7 +29,12 @@ const checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerRe
  * `container/{channelId]/{conversationId}/{Timestamp.ticks}-{activity.id}.json`.
  */
 export class AzureBlobTranscriptStore implements TranscriptStore {
-    private settings: BlobStorageSettings;
+	/**
+	 * @private
+	 * Internal dictionary with the containers where entities will be stored.
+	 */
+	private static [checkedCollectionsKey]: { [key: string]: Promise<azure.BlobService.ContainerResult> } = {};
+    private readonly settings: BlobStorageSettings;
     private client: BlobServiceAsync;
     private pageSize: number = 20;
 
@@ -49,54 +56,42 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         }
 
         this.settings = {...settings};
-        this.client = this.createBlobService(
-            this.settings.storageAccountOrConnectionString,
-            this.settings.storageAccessKey,
-            this.settings.host
-        );
+        this.client = this.createBlobService(this.settings);
     }
 
     /**
      * Log an activity to the transcript.
      * @param activity Activity being logged.
      */
-    public logActivity(activity: Activity): void | Promise<void> {
+    public async logActivity(activity: Activity): Promise<void> {
         if (!activity) {
             throw new Error('Missing activity.');
         }
 
         const blobName: string = this.getBlobName(activity);
         const data: string = JSON.stringify(activity);
+		const container = await this.ensureContainerExists();
 
-        return this.ensureContainerExists().then((container: azure.BlobService.ContainerResult) => {
-            const writeProperties: () => Promise<azure.BlobService.BlobResult> =
-             (): Promise<azure.BlobService.BlobResult> => this.client.setBlobPropertiesAsync(
-                container.name,
-                blobName,
-                {
-                    contentType: 'application/json'
-                }
-            );
+		const block = this.client.createBlockBlobFromTextAsync(container.name, blobName, data, null);
+		const meta = this.client.setBlobMetadataAsync(
+			container.name,
+			blobName,
+			{
+				fromid: activity.from.id,
+				recipientid: activity.recipient.id,
+				timestamp: activity.timestamp.getTime().toString()
+			}
+		);
 
-            const writeMetadata: () => Promise<azure.BlobService.BlobResult> =
-             (): Promise<azure.BlobService.BlobResult> => this.client.setBlobMetadataAsync(
-                    container.name,
-                    blobName,
-                    {
-                        fromid: activity.from.id,
-                        recipientid: activity.recipient.id,
-                        timestamp: activity.timestamp.getTime().toString()
-                    }
-            );
+		const props = this.client.setBlobPropertiesAsync(
+			container.name,
+			blobName,
+			{
+				contentType: 'application/json'
+			}
+		);
 
-            const writeData: () => Promise<azure.BlobService.BlobResult> =
-             (): Promise<azure.BlobService.BlobResult> => this.client.createBlockBlobFromTextAsync(container.name, blobName, data, null);
-
-            return writeData().then(writeProperties).then(writeMetadata).then(() => {
-                // noop
-            });
-        });
-
+		await Promise.all([block, meta, props]); // Concurrent
     }
 
     /**
@@ -106,7 +101,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
      * @param continuationToken Continuatuation token to page through results.
      * @param startDate Earliest time to include.
      */
-    public getTranscriptActivities(
+    public async getTranscriptActivities(
         channelId: string,
         conversationId: string,
         continuationToken?: string,
@@ -128,28 +123,23 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         const prefix: string = this.getDirName(channelId, conversationId) + '/';
         const token: azure.common.ContinuationToken = null;
 
-        return this.ensureContainerExists()
-        .then((container: azure.BlobService.ContainerResult): Promise<azure.BlobService.BlobResult[]> =>
-         this.getActivityBlobs([], container.name, prefix, continuationToken, startDate, token))
-        .then((blobs: azure.BlobService.BlobResult[]): Promise<PagedResult<Activity>> => {
-            return Promise.all(blobs.map((blob: azure.BlobService.BlobResult) => this.blobToActivity(blob)))
-            .then((activities: Activity[]) => {
-                const pagedResult: PagedResult<Activity> = { items: activities, continuationToken: undefined };
-                if (pagedResult.items.length === this.pageSize) {
-                    pagedResult.continuationToken = blobs.slice(-1).pop().name;
-                }
+        const container = await this.ensureContainerExists();
+        const activityBlobs = await this.getActivityBlobs([], container.name, prefix, continuationToken, startDate, token);
+        const activities = await Promise.all(activityBlobs.map(blob => this.blobToActivity(blob)));
+		const pagedResult: PagedResult<Activity> = { items: activities, continuationToken: undefined };
+		if (pagedResult.items.length === this.pageSize) {
+			pagedResult.continuationToken = activityBlobs.slice(-1).pop().name;
+		}
 
-                return pagedResult;
-            });
-        });
+		return pagedResult;
     }
 
     /**
      * List conversations in the channelId.
      * @param channelId Channel Id.
-     * @param continuationToken Continuatuation token to page through results.
+     * @param continuationToken ContinuationToken token to page through results.
      */
-    public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
+    public async listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) {
             throw new Error('Missing channelId');
         }
@@ -158,23 +148,20 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         const prefix: string = this.getDirName(channelId) + '/';
         const token: azure.common.ContinuationToken = null;
 
-        return this.ensureContainerExists()
-        .then((container: azure.BlobService.ContainerResult) => this.getTranscriptsFolders(
-            [],
-            container.name,
-            prefix,
-            continuationToken,
-            channelId,
-            token
-        ))
-        .then((transcripts: TranscriptInfo[]) => {
-            const pagedResult: PagedResult<TranscriptInfo> = { items: transcripts, continuationToken: undefined };
-            if (pagedResult.items.length === this.pageSize) {
-                pagedResult.continuationToken = transcripts.slice(-1).pop().id;
-            }
+        const container =  await this.ensureContainerExists();
+        const transcripts = await this.getTranscriptsFolders([],
+			container.name,
+			prefix,
+			continuationToken,
+			channelId,
+			token);
 
-            return pagedResult;
-        });
+		const pagedResult: PagedResult<TranscriptInfo> = { items: transcripts, continuationToken: undefined };
+		if (pagedResult.items.length === this.pageSize) {
+			pagedResult.continuationToken = transcripts.slice(-1).pop().id;
+		}
+
+		return pagedResult;
     }
 
     /**
@@ -182,7 +169,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      */
-    public deleteTranscript(channelId: string, conversationId: string): Promise<void> {
+    public async deleteTranscript(channelId: string, conversationId: string): Promise<void> {
         if (!channelId) {
             throw new Error('Missing channelId');
         }
@@ -195,27 +182,20 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         const prefix: string = this.getDirName(channelId, conversationId) + '/';
         const token: azure.common.ContinuationToken = null;
 
-        return this.ensureContainerExists()
-        .then((container: azure.BlobService.ContainerResult) => this.getConversationsBlobs([], container.name, prefix, token))
-        .then((blobs: azure.BlobService.BlobResult[]) => Promise.all(
-            blobs.map((blob: azure.BlobService.BlobResult) => this.client.deleteBlobIfExistsAsync(blob.container, blob.name))
-        ))
-        .then((results: boolean[]) => {
-            return;
-        });
+        const container =  await this.ensureContainerExists();
+        const conversationBlobs = await this.getConversationsBlobs([], container.name, prefix, token);
+        await Promise.all(conversationBlobs.map(blob => this.client.deleteBlobIfExistsAsync(blob.container, blob.name)));
     }
 
-    private blobToActivity(blob: azure.BlobService.BlobResult): Promise<Activity> {
-        return this.client.getBlobToTextAsync(blob.container, blob.name)
-        .then((content: azure.BlobService.BlobToText) => {
-            const activity: Activity = JSON.parse(content as any) as Activity;
-            activity.timestamp = new Date(activity.timestamp);
+    private async blobToActivity(blob: azure.BlobService.BlobResult): Promise<Activity> {
+    	const content = await this.client.getBlobToTextAsync(blob.container, blob.name);
+		const activity: Activity = JSON.parse(content as any) as Activity;
+		activity.timestamp = new Date(activity.timestamp);
 
-            return activity;
-        });
+		return activity;
     }
 
-    private getActivityBlobs(
+    private async getActivityBlobs(
         blobs: azure.BlobService.BlobResult[],
         container: string,
         prefix: string,
@@ -223,36 +203,32 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         startDate: Date,
         token: azure.common.ContinuationToken
     ): Promise<azure.BlobService.BlobResult[]> {
-        return new Promise((resolve: any, reject: any): void => {
-            this.client.listBlobsSegmentedWithPrefixAsync(container, prefix, token, { include: 'metadata' })
-            .then((result: azure.BlobService.ListBlobsResult) => {
-                result.entries.some((blob: azure.BlobService.BlobResult) => {
-                    const timestamp: number = Number.parseInt(blob.metadata.timestamp, 10);
-                    if (timestamp >= startDate.getTime()) {
-                        if (continuationToken) {
-                            if (blob.name === continuationToken) {
-                                continuationToken = null;
-                            }
-                        } else {
-                            blob.container = container;
-                            blobs.push(blob);
+    	const listBlobResult = await this.client.listBlobsSegmentedWithPrefixAsync(container, prefix, token, { include: 'metadata' });
+		listBlobResult.entries.some(blob => {
+			const timestamp: number = parseInt(blob.metadata.timestamp, 10);
+			if (timestamp >= startDate.getTime()) {
+				if (continuationToken) {
+					if (blob.name === continuationToken) {
+						continuationToken = null;
+					}
+				} else {
+					blob.container = container;
+					blobs.push(blob);
 
-                            return (blobs.length === this.pageSize);
-                        }
-                    }
+					return (blobs.length === this.pageSize);
+				}
+			}
 
-                    return false;
-                });
-                if (result.continuationToken && blobs.length < this.pageSize) {
-                    resolve(this.getActivityBlobs(blobs, container, prefix, continuationToken, startDate, result.continuationToken));
-                }
-                resolve(blobs);
-            })
-            .catch(reject);
-        });
+			return false;
+		});
+
+		if (listBlobResult.continuationToken && blobs.length < this.pageSize) {
+			await this.getActivityBlobs(blobs, container, prefix, continuationToken, startDate, listBlobResult.continuationToken);
+		}
+		return blobs;
     }
 
-    private getTranscriptsFolders(
+    private async getTranscriptsFolders(
         transcripts: TranscriptInfo[],
         container: string,
         prefix: string,
@@ -260,62 +236,48 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         channelId: string,
         token: azure.common.ContinuationToken
     ): Promise<TranscriptInfo[]> {
-        return new Promise((resolve: any, reject: any): void => {
-            this.client.listBlobDirectoriesSegmentedWithPrefixAsync(container, prefix, token).then(
-                (result: azure.BlobService.ListBlobsResult): void => {
-                    result.entries.some((blob: azure.BlobService.BlobResult) => {
-                        const conversation: TranscriptInfo = {
-                            channelId: channelId,
-                            id: blob.name.split('/').filter((part: string) => part).slice(-1).pop(),
-                            created: undefined
-                        }
-                        if (continuationToken) {
-                            if (conversation.id === continuationToken) {
-                                continuationToken = null;
-                            }
-                        } else {
-                            transcripts.push(conversation);
+    	const result = await this.client.listBlobDirectoriesSegmentedWithPrefixAsync(container, prefix, token);
+    	result.entries.some(blob => {
+			const conversation: TranscriptInfo = {
+				channelId: channelId,
+				id: blob.name.split('/').filter((part: string) => part).slice(-1).pop(),
+				created: undefined
+			};
+			if (continuationToken) {
+				if (conversation.id === continuationToken) {
+					continuationToken = null;
+				}
+			} else {
+				transcripts.push(conversation);
 
-                            return (transcripts.length === this.pageSize);
-                        }
+				return (transcripts.length === this.pageSize);
+			}
 
-                        return false;
-                    });
-                    if (result.continuationToken && transcripts.length < this.pageSize) {
-                        resolve(
-                            this.getTranscriptsFolders(
-                                transcripts, container, prefix, continuationToken, channelId, result.continuationToken
-                            )
-                        );
-                    }
-                    resolve(transcripts);
-                }
-            )
-            .catch(reject);
-        });
+			return false;
+		});
+
+		if (result.continuationToken && transcripts.length < this.pageSize) {
+			await this.getTranscriptsFolders(transcripts, container, prefix, continuationToken, channelId, result.continuationToken);
+		}
+		return transcripts;
     }
 
-    private getConversationsBlobs(
+    private async getConversationsBlobs(
         blobs: azure.BlobService.BlobResult[],
         container: string,
         prefix: string,
         token: azure.common.ContinuationToken
     ): Promise<azure.BlobService.BlobResult[]> {
-        return new Promise((resolve: any, reject: any): void => {
-            this.client.listBlobsSegmentedWithPrefixAsync(container, prefix, token, null)
-            .then((result: azure.BlobService.ListBlobsResult) => {
-                blobs = blobs.concat(result.entries.map((blob: azure.BlobService.BlobResult) => {
-                    blob.container = container;
+    	const result = await this.client.listBlobsSegmentedWithPrefixAsync(container, prefix, token, null);
+		blobs = blobs.concat(result.entries.map((blob: azure.BlobService.BlobResult) => {
+			blob.container = container;
 
-                    return blob;
-                }));
-                if (result.continuationToken) {
-                    resolve(this.getConversationsBlobs(blobs, container, prefix, result.continuationToken));
-                }
-                resolve(blobs);
-            })
-            .catch(reject);
-        });
+			return blob;
+		}));
+		if (result.continuationToken) {
+			await this.getConversationsBlobs(blobs, container, prefix, result.continuationToken);
+		}
+		return blobs;
     }
 
     private checkContainerName(container: string): boolean {
@@ -354,14 +316,14 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
 
     private ensureContainerExists(): Promise<azure.BlobService.ContainerResult> {
         const key: string = this.settings.containerName;
-        if (!checkedCollections[key]) {
-            checkedCollections[key] = this.client.createContainerIfNotExistsAsync(key);
+        if (!AzureBlobTranscriptStore[checkedCollectionsKey][key]) {
+			AzureBlobTranscriptStore[checkedCollectionsKey][key] = this.client.createContainerIfNotExistsAsync(key);
         }
 
-        return checkedCollections[key];
+        return AzureBlobTranscriptStore[checkedCollectionsKey][key];
     }
 
-    private createBlobService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): BlobServiceAsync {
+    private createBlobService({storageAccountOrConnectionString, storageAccessKey, host}: BlobStorageSettings): BlobServiceAsync {
         if (!storageAccountOrConnectionString) {
             throw new Error('The storageAccountOrConnectionString parameter is required.');
         }
@@ -371,33 +333,21 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             storageAccessKey,
             host
         ).withFilter(new azure.LinearRetryPolicyFilter(5, 500));
+		// The perfect use case for a Proxy
+		return new Proxy({}, {
+			get(target: azure.services.blob.blobservice.BlobService, p: PropertyKey): Promise<any> {
+				return target[p] || (target[p] = denodeify(blobService, blobService[p]));
+			}
+		}) as BlobServiceAsync;
 
-        // create BlobServiceAsync by using denodeify to create promise wrappers around cb functions
-        // tslint:disable-next-line:prefer-object-spread
-        return Object.assign(blobService as any, {
-            createContainerIfNotExistsAsync: this.denodeify(blobService, blobService.createContainerIfNotExists),
-            deleteContainerIfExistsAsync: this.denodeify(blobService, blobService.deleteContainerIfExists),
-
-            createBlockBlobFromTextAsync: this.denodeify(blobService, blobService.createBlockBlobFromText),
-            getBlobMetadataAsync: this.denodeify(blobService, blobService.getBlobMetadata),
-            setBlobMetadataAsync: this.denodeify(blobService, blobService.setBlobMetadata),
-            getBlobPropertiesAsync: this.denodeify(blobService, blobService.getBlobProperties),
-            setBlobPropertiesAsync: this.denodeify(blobService, blobService.setBlobProperties),
-            getBlobToTextAsync: this.denodeify(blobService, blobService.getBlobToText),
-            deleteBlobIfExistsAsync: this.denodeify(blobService, blobService.deleteBlobIfExists),
-            listBlobsSegmentedWithPrefixAsync: this.denodeify(blobService, blobService.listBlobsSegmentedWithPrefix),
-            listBlobDirectoriesSegmentedWithPrefixAsync: this.denodeify(blobService, blobService.listBlobDirectoriesSegmentedWithPrefix)
-        });
-    }
-
-    // turn a cb based azure method into a Promisified one
-    private denodeify<T>(thisArg: any, fn: Function): (...args: any[]) => Promise<T> {
-        return (...args: any[]): Promise<T> => {
-            return new Promise<T>((resolve: any, reject: any): void => {
-                args.push((error: Error, result: any) => (error) ? reject(error) : resolve(result));
-                fn.apply(thisArg, args);
-            });
-        };
+        function denodeify<T>(thisArg: any, fn: Function): (...args: any[]) => Promise<T> {
+			return (...args: any[]): Promise<T> => {
+				return new Promise<T>((resolve: any, reject: any): void => {
+					args.push((error: Error, result: any) => (error) ? reject(error) : resolve(result));
+					fn.apply(thisArg, args);
+				});
+			};
+		}
     }
 }
 

@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { TurnContext } = require('botbuilder-core');
-const { ChannelValidation } = require('botframework-connector');
+const connector = require('botframework-connector');
 const { BotFrameworkAdapter } = require('../');
 const os = require('os');
 
@@ -553,10 +553,10 @@ describe(`BotFrameworkAdapter`, function () {
 
     it(`should set openIdMetadata property on ChannelValidation`, function (done) {
         const testEndpoint = "http://rainbows.com";
-        const original = ChannelValidation.OpenIdMetadataEndpoint;
+        const original = connector.ChannelValidation.OpenIdMetadataEndpoint;
         const adapter = new BotFrameworkAdapter({openIdMetadata: testEndpoint});
-        assert(testEndpoint === ChannelValidation.OpenIdMetadataEndpoint, `ChannelValidation.OpenIdMetadataEndpoint was not set.`);
-        ChannelValidation.OpenIdMetadataEndpoint = original;
+        assert(testEndpoint === connector.ChannelValidation.OpenIdMetadataEndpoint, `ChannelValidation.OpenIdMetadataEndpoint was not set.`);
+	    connector.ChannelValidation.OpenIdMetadataEndpoint = original;
         done();
     });
 
@@ -712,6 +712,58 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
+	it(`should throw error if missing connectionName`, async function () {
+		try {
+			const adapter = new AdapterUnderTest();
+			await adapter.getUserToken({ activity: { from: {id: 'some id'} } });
+		} catch (err) {
+			assert(err.message === 'getUserToken() requires a connectionName but none was provided.',
+				`expected "getUserToken() requires a connectionName but none was provided." Error message, not "${ err.message }"`);
+			return;
+		}
+		assert(false, `should have thrown an error message`);
+	});
+
+	it(`should get the user token when all params are provided`, async function () {
+		const argsPassedToMockClient = [];
+		class MockTokenApiClient {
+			constructor() {
+				this.userToken = {
+					getToken: async (...args) => {
+						argsPassedToMockClient.push({getToken: args});
+						return {
+							token: 'yay! a token!',
+							_response: {status: 200}
+						}
+					}
+				}
+			}
+
+		}
+		const {TokenApiClient} = connector;
+		connector.TokenApiClient = MockTokenApiClient;
+		const adapter = new AdapterUnderTest();
+		const token = await adapter.getUserToken(
+			{ activity: { channelId: 'The Facebook', from: {id: 'some id'} } },
+			'aConnectionName');
+
+		assert.ok(JSON.stringify(token) === JSON.stringify({
+			'token': 'yay! a token!',
+			'_response': {
+				'status': 200
+			}
+		}));
+		assert.ok(argsPassedToMockClient.length === 1);
+		assert.ok(JSON.stringify(argsPassedToMockClient[0]) === JSON.stringify({getToken: [
+			'some id',
+			'aConnectionName',
+			{
+				'channelId': 'The Facebook'
+			}
+		]}));
+		connector.TokenApiClient = TokenApiClient; // restore
+	});
+
     it(`should throw error if missing from in signOutUser()`, async function () {
         try {
             const adapter = new AdapterUnderTest();
@@ -736,7 +788,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing from in signOutUser()`, async function () {
+    it(`should throw error if missing from in getAadTokens()`, async function () {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.getAadTokens({ activity: {} });
