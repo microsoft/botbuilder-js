@@ -11,6 +11,10 @@
     },
     "rules": {
         "@typescript-eslint/interface-name-prefix": 0,
-        "@typescript-eslint/no-explicit-any": 1
+        "@typescript-eslint/no-explicit-any": 0,
+        "@typescript-eslint/no-object-literal-type-assertion": ["error", {
+            "allowAsParameter": true
+         }],
+         "@typescript-eslint/no-use-before-define": ["error", { "functions": false, "classes": true }]
     }
 }
