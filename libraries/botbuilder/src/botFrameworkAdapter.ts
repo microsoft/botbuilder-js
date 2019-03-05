@@ -225,7 +225,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`); }
 
         // Create conversation
-        const parameters: ConversationParameters = { bot: reference.bot, members: [reference.user] } as ConversationParameters;
+        const parameters: ConversationParameters = { bot: reference.bot, members: [reference.user], isGroup: false, activity: null, channelData: null };
         const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
 
         // Mix in the tenant ID if specified. This is required for MS Teams.
@@ -246,7 +246,16 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             reference,
             true
         );
-        request.conversation = { id: response.id } as ConversationAccount;
+
+        const conversation: ConversationAccount = {
+            id: response.id,
+            isGroup: false,
+            conversationType: null,
+            tenantId: null,
+            name: null,
+        };
+        request.conversation = conversation;
+
         if (response.serviceUrl) { request.serviceUrl = response.serviceUrl; }
 
         // Create context and run middleware
@@ -385,7 +394,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         if (!result || !result.token || result._response.status == 404) {
             return undefined;
         } else {
-            return <TokenResponse>result;
+            return result as TokenResponse;
         }
     }
 
@@ -441,7 +450,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
 
-        return <{[propertyName: string]: TokenResponse }>(await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody;
+        return (await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody as {[propertyName: string]: TokenResponse };
     }
 
     /**
@@ -746,7 +755,7 @@ function parseRequest(req: WebRequest): Promise<Activity> {
 }
 
 function delay(timeout: number): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         setTimeout(resolve, timeout);
     });
 }

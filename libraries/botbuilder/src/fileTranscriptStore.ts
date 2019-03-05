@@ -10,6 +10,75 @@ import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuild
 import * as filenamify from 'filenamify';
 import * as path from 'path';
 
+
+/**
+ * @private
+ * The number of .net ticks at the unix epoch.
+ */
+const epochTicks = 621355968000000000;
+
+/**
+ * @private
+ * There are 10000 .net ticks per millisecond.
+ */
+const ticksPerMillisecond = 10000;
+
+/**
+ * @private
+ * @param timestamp A date used to calculate future ticks.
+ */
+function getTicks(timestamp: Date): string {
+    const ticks: number = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
+
+    return ticks.toString(16);
+}
+
+/**
+ * @private
+ * @param ticks A string containing ticks.
+ */
+function readDate(ticks: string): Date {
+    const t: number = Math.round((parseInt(ticks, 16) - epochTicks) / ticksPerMillisecond);
+
+    return new Date(t);
+}
+
+/**
+ * @private
+ * @param date A date used to create a filter.
+ * @param fileName The filename containing the timestamp string
+ */
+function withDateFilter(date: Date, fileName: string): any {
+    if (!date) { return true; }
+
+    const ticks: string = fileName.split('-')[0];
+    return readDate(ticks) >= date;
+}
+
+/**
+ * @private
+ * @param expression A function that will be used to test items.
+ */
+function includeWhen(expression: any): any {
+    let shouldInclude = false;
+
+    return (item: any): boolean => {
+        return shouldInclude || (shouldInclude = expression(item));
+    };
+}
+
+/**
+ * @private
+ * @param json A JSON string to be parsed into an activity.
+ */
+function parseActivity(json: string): Activity {
+    const activity: Activity = JSON.parse(json);
+    activity.timestamp = new Date(activity.timestamp);
+
+    return activity;
+}
+
+
 /**
  * The file transcript store stores transcripts in file system with each activity as a file.
  *
@@ -173,71 +242,4 @@ export class FileTranscriptStore implements TranscriptStore {
     private sanitizeKey(key: string): string {
         return filenamify(key);
     }
-}
-
-/**
- * @private
- * The number of .net ticks at the unix epoch.
- */
-const epochTicks = 621355968000000000;
-
-/**
- * @private
- * There are 10000 .net ticks per millisecond.
- */
-const ticksPerMillisecond = 10000;
-
-/**
- * @private
- * @param timestamp A date used to calculate future ticks.
- */
-function getTicks(timestamp: Date): string {
-    const ticks: number = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
-
-    return ticks.toString(16);
-}
-
-/**
- * @private
- * @param ticks A string containing ticks.
- */
-function readDate(ticks: string): Date {
-    const t: number = Math.round((parseInt(ticks, 16) - epochTicks) / ticksPerMillisecond);
-
-    return new Date(t);
-}
-
-/**
- * @private
- * @param date A date used to create a filter.
- * @param fileName The filename containing the timestamp string
- */
-function withDateFilter(date: Date, fileName: string): any {
-    if (!date) { return true; }
-
-    const ticks: string = fileName.split('-')[0];
-    return readDate(ticks) >= date;
-}
-
-/**
- * @private
- * @param expression A function that will be used to test items.
- */
-function includeWhen(expression: any): any {
-    let shouldInclude = false;
-
-    return (item: any): boolean => {
-        return shouldInclude || (shouldInclude = expression(item));
-    };
-}
-
-/**
- * @private
- * @param json A JSON string to be parsed into an activity.
- */
-function parseActivity(json: string): Activity {
-    const activity: Activity = JSON.parse(json);
-    activity.timestamp = new Date(activity.timestamp);
-
-    return activity;
 }
