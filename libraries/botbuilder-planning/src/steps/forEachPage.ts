@@ -5,17 +5,46 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogCommand, DialogTurnResult, Dialog, DialogConfiguration, ConfirmPrompt } from 'botbuilder-dialogs';
-import { PlanningContext, PlanStepState, PlanChangeType, PlanChangeList } from '../planningContext';
-import { SendList } from './sendList';
-import { BoolInput } from '../input';
-import { IfNotProperty } from './ifNotProperty';
-import { EndDialog } from './endDialog';
+import { DialogCommand, DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
+import { PlanningContext, PlanChangeType, PlanChangeList } from '../planningContext';
 
+/**
+ * Configuration info passed to a `ForEachPage` step.
+ */
 export interface ForEachPageConfiguration extends DialogConfiguration {
+    /**
+     * In-memory property containing list or collection to be enumerated.
+     */
+    property?: string;
+
+    /**
+     * (Optional) number of items per page. Defaults to a value of 10.
+     */
+    pageSize?: number;
+
+    /**
+     * Steps to be run for each page of items.
+     */
+    steps?: Dialog[];
 }
 
+/**
+ * Executes a set of steps once for each page of results in an in-memory list or collection.
+ * 
+ * @remarks
+ * The list or collection at [property](#property) will be broken up into pages and stored in
+ * `dialog.page` for each iteration of the loop. The size of each page is determined by [maxSize](#maxsize)
+ * and defaults to a size of 10. The loop can be exited early by including either a `EndDialog` or
+ * `GotoDialog` step.
+ */
 export class ForEachPage extends DialogCommand {
+
+    /**
+     * Creates a new `ForEachPage` instance.
+     * @param property In-memory property containing list or collection to be enumerated.
+     * @param pageSize (Optional) number of items per page. Defaults to a value of 10.
+     * @param steps Steps to be run for each page of items. 
+     */
     constructor();
     constructor(property: string, steps: Dialog[]);
     constructor(property: string, pageSize: number, steps: Dialog[]);
@@ -34,8 +63,19 @@ export class ForEachPage extends DialogCommand {
         return `forEachPage[${this.bindingPath}]`;
     }
 
+    /**
+     * In-memory property containing list or collection to be enumerated.
+     */
     public property: string;
+
+    /**
+     * Number of items per page. Defaults to a value of 10.
+     */
     public pageSize: number = 10;
+
+    /**
+     * Steps to be run for each page of items.
+     */
     public steps: Dialog[] = [];
 
     public configure(config: ForEachPageConfiguration): this {
@@ -73,7 +113,7 @@ export class ForEachPage extends DialogCommand {
         return await planning.endDialog();
     }
 
-    private getPage(planning: PlanningContext, offset): any[] {
+    private getPage(planning: PlanningContext, offset: number): any[] {
         const page: any[] = [];
         const end = offset + this.pageSize;
         const value = planning.state.getValue(this.property);

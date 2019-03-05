@@ -14,6 +14,7 @@ export * from './doStepsBeforeTags';
 export * from './doStepsLater';
 export * from './emitEvent';
 export * from './endDialog';
+export * from './forEach';
 export * from './forEachPage';
 export * from './gotoDialog';
 export * from './ifNotProperty';
