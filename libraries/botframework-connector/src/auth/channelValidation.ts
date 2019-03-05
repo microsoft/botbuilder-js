@@ -11,9 +11,9 @@ import { Constants } from './constants';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 
-export module ChannelValidation {
+export namespace ChannelValidation {
 
-    export let OpenIdMetadataEndpoint : string;
+    export let OpenIdMetadataEndpoint: string;
 
     /**
      * TO BOT FROM CHANNEL: Token validation parameters when connecting to a bot

@@ -173,7 +173,7 @@ export class ChoiceFactory {
         } as ChoiceFactoryOptions;
 
         // Format list of choices
-        let connector: string = '';
+        let connector = '';
         let txt: string = (text || '');
         txt += ' ';
         ChoiceFactory.toChoices(choices).forEach((choice: any, index: number) => {
@@ -215,7 +215,7 @@ export class ChoiceFactory {
         } as ChoiceFactoryOptions;
 
         // Format list of choices
-        let connector: string = '';
+        let connector = '';
         let txt: string = (text || '');
         txt += '\n\n   ';
         ChoiceFactory.toChoices(choices).forEach((choice: any, index: number) => {

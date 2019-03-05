@@ -13,7 +13,7 @@ import { ICredentialProvider } from './credentialProvider';
 import { GovernmentConstants } from './governmentConstants';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 
-export module GovernmentChannelValidation {
+export namespace GovernmentChannelValidation {
 
     /**
      * TO BOT FROM GOVERNMENT CHANNEL: Token validation parameters when connecting to a bot
@@ -75,7 +75,7 @@ export module GovernmentChannelValidation {
         return await validateIdentity(identity, credentials);
     }
 
-     /**
+    /**
       * Validate the ClaimsIdentity to ensure it came from the channel service.
       * @param  {ClaimsIdentity} identity The identity to validate
       * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.

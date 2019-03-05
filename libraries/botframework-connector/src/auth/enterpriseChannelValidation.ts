@@ -12,7 +12,7 @@ import { Constants } from './constants';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 
-export module EnterpriseChannelValidation {
+export namespace EnterpriseChannelValidation {
 
     /**
      * TO BOT FROM CHANNEL: Token validation parameters when connecting to a bot
@@ -68,7 +68,7 @@ export module EnterpriseChannelValidation {
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromEnterpriseChannelTokenValidationParameters,
             ChannelValidation.OpenIdMetadataEndpoint ?
-            ChannelValidation.OpenIdMetadataEndpoint :
+                ChannelValidation.OpenIdMetadataEndpoint :
                 Constants.ToBotFromEnterpriseChannelOpenIdMetadataUrlFormat.replace('{channelService}', channelService),
             Constants.AllowedSigningAlgorithms);
 
