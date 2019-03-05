@@ -26,7 +26,10 @@
     "devDependencies": {
         "@types/jsonwebtoken": "7.2.8",
         "@types/lodash": "^4.14.116",
+        "@typescript-eslint/eslint-plugin": "^1.4.2",
+        "@typescript-eslint/parser": "^1.4.2",
         "coveralls": "^3.0.2",
+        "eslint": "^5.15.1",
         "lerna": "^3.2.1",
         "mocha": "^5.2.0",
         "tslint": "^5.11.0",
