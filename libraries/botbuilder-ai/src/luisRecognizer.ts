@@ -13,9 +13,9 @@ import * as Url from 'url-parse';
 
 const pjson = require('../package.json');
 
-const LUIS_TRACE_TYPE: string = 'https://www.luis.ai/schemas/trace';
-const LUIS_TRACE_NAME: string = 'LuisRecognizer';
-const LUIS_TRACE_LABEL: string = 'Luis Trace';
+const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
+const LUIS_TRACE_NAME = 'LuisRecognizer';
+const LUIS_TRACE_LABEL = 'Luis Trace';
 
 /**
  * @private
@@ -261,7 +261,7 @@ export class LuisRecognizer {
         return Promise.resolve(cached);
     }
 
-    private getUserAgent() : string {
+    private getUserAgent(): string {
 
         // Note when the ms-rest dependency the LuisClient uses has been updated
         // this code should be modified to use the client's addUserAgentInfo() function.
@@ -408,28 +408,28 @@ export class LuisRecognizer {
                 case 'builtin.number':
                 case 'builtin.ordinal': return Number(res.value);
                 case 'builtin.percentage':
-                    {
-                        let svalue: string = res.value;
-                        if (svalue.endsWith('%')) {
-                            svalue = svalue.substring(0, svalue.length - 1);
-                        }
-
-                        return Number(svalue);
+                {
+                    let svalue: string = res.value;
+                    if (svalue.endsWith('%')) {
+                        svalue = svalue.substring(0, svalue.length - 1);
                     }
+
+                    return Number(svalue);
+                }
                 case 'builtin.age':
                 case 'builtin.dimension':
                 case 'builtin.currency':
                 case 'builtin.temperature':
-                    {
-                        const val: any = res.value;
-                        const obj: any = {};
-                        if (val) {
-                            obj.number = Number(val);
-                        }
-                        obj.units = res.unit;
-
-                        return obj;
+                {
+                    const val: any = res.value;
+                    const obj: any = {};
+                    if (val) {
+                        obj.number = Number(val);
                     }
+                    obj.units = res.unit;
+
+                    return obj;
+                }
                 default:
                     return Object.keys(entity.resolution).length > 1 ?
                         entity.resolution :
@@ -498,7 +498,7 @@ export class LuisRecognizer {
         // This is now implemented as O(n*k) search and can be reduced to O(n + k) using a map as an optimization if n or k grow
         const coveredSet: Set<any> = new Set();
         compositeEntity.children.forEach((childEntity: LuisModels.CompositeChildModel) => {
-            for (let i: number = 0; i < entities.length; i++) {
+            for (let i = 0; i < entities.length; i++) {
                 const entity: LuisModels.EntityModel = entities[i];
                 if (!coveredSet.has(i) &&
                     childEntity.type === entity.type &&
@@ -523,7 +523,7 @@ export class LuisRecognizer {
         });
 
         // filter entities that were covered by this composite entity
-        for (let i: number = 0; i < entities.length; i++) {
+        for (let i = 0; i < entities.length; i++) {
             if (!coveredSet.has(i)) {
                 filteredEntities.push(entities[i]);
             }

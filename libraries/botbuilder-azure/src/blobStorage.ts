@@ -44,7 +44,7 @@ export interface BlobStorageSettings {
     /**
      * (Optional) azure storage host.
      */
-     host?: string | Host;
+    host?: string | Host;
 }
 
 /**
@@ -55,15 +55,15 @@ interface DocumentStoreItem {
     /**
      * Represents the Sanitized Key and used as name of blob
      */
-     id: string;
+    id: string;
     /**
      * Represents the original Id/Key
      */
-     realId: string;
+    realId: string;
     /**
      * The item itself + eTag information
      */
-     document: any;
+    document: any;
 }
 
 /**
@@ -310,9 +310,9 @@ export class BlobStorage implements Storage {
  */
 interface BlobServiceAsync extends azure.BlobService {
     createBlockBlobFromTextAsync(container: string,
-                                 blob: string,
-                                 text: string | Buffer,
-                                 options: azure.BlobService.CreateBlobRequestOptions): Promise<azure.BlobService.BlobResult>;
+        blob: string,
+        text: string | Buffer,
+        options: azure.BlobService.CreateBlobRequestOptions): Promise<azure.BlobService.BlobResult>;
     createContainerIfNotExistsAsync(container: string): Promise<azure.BlobService.ContainerResult>;
     deleteBlobIfExistsAsync(container: string, blob: string): Promise<boolean>;
     deleteContainerIfExistsAsync(container: string): Promise<boolean>;

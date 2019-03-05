@@ -80,8 +80,8 @@ const NODE_VERSION: any = process.version;
 const pjson: any = require('../package.json');
 const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${pjson.version} ` +
     `(Node.js,Version=${NODE_VERSION}; ${TYPE} ${RELEASE}; ${ARCHITECTURE})`;
-const OAUTH_ENDPOINT: string = 'https://api.botframework.com';
-const US_GOV_OAUTH_ENDPOINT: string = 'https://api.botframework.azure.us';
+const OAUTH_ENDPOINT = 'https://api.botframework.com';
+const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
 const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 
 /**
@@ -375,7 +375,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         }
         if (!connectionName) {
         	throw new Error('getUserToken() requires a connectionName but none was provided.');
-		}
+        }
         this.checkEmulatingOAuthCards(context);
         const userId: string = context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
@@ -441,7 +441,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
 
-        return <{[propertyName: string]: TokenResponse; }>(await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody;
+        return <{[propertyName: string]: TokenResponse }>(await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody;
     }
 
     /**
@@ -682,7 +682,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             (typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl) :
             (this.settings.oAuthEndpoint ? this.settings.oAuthEndpoint : 
                 JwtTokenValidation.isGovernment(this.settings.channelService) ?
-                US_GOV_OAUTH_ENDPOINT : OAUTH_ENDPOINT);
+                    US_GOV_OAUTH_ENDPOINT : OAUTH_ENDPOINT);
     }
 
     /**
@@ -729,7 +729,7 @@ function parseRequest(req: WebRequest): Promise<Activity> {
                 reject(err);
             }
         } else {
-            let requestData: string = '';
+            let requestData = '';
             req.on('data', (chunk: string) => {
                 requestData += chunk;
             });

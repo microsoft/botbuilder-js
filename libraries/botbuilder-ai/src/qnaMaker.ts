@@ -11,9 +11,9 @@ import * as os from 'os';
 const pjson: any = require('../package.json');
 import * as request from 'request-promise-native';
 
-const QNAMAKER_TRACE_TYPE: string = 'https://www.qnamaker.ai/schemas/trace';
-const QNAMAKER_TRACE_NAME: string = 'QnAMaker';
-const QNAMAKER_TRACE_LABEL: string = 'QnAMaker Trace';
+const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
+const QNAMAKER_TRACE_NAME = 'QnAMaker';
+const QNAMAKER_TRACE_LABEL = 'QnAMaker Trace';
 
 /**
  * @private
@@ -52,7 +52,7 @@ export interface QnAMakerResult {
     /**
      * The index of the answer in the knowledge base. V3 uses 'qnaId', V4 uses 'id'. (If any)
      */
-     id?: number;
+    id?: number;
 }
 
 /**
@@ -337,8 +337,7 @@ export class QnAMaker {
      * Sorts all QnAMakerResult from highest-to-lowest scoring.
      * Filters QnAMakerResults within threshold specified (default threshold: .001).
      */
-    private sortAnswersWithinThreshold(answers: QnAMakerResult[] = [] as QnAMakerResult[], queryOptions: QnAMakerOptions)
-        : QnAMakerResult[] {
+    private sortAnswersWithinThreshold(answers: QnAMakerResult[] = [] as QnAMakerResult[], queryOptions: QnAMakerOptions): QnAMakerResult[] {
         const minScore: number = typeof queryOptions.scoreThreshold === 'number' ? queryOptions.scoreThreshold : 0.001;
 
         return answers.filter((ans: QnAMakerResult) => ans.score >= minScore)
@@ -399,7 +398,7 @@ export class QnAMaker {
         return headers;
     }
 
-    private getUserAgent() : string {
+    private getUserAgent(): string {
         const packageUserAgent: string = `${pjson.name}/${pjson.version}`;
         const platformUserAgent: string = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
 

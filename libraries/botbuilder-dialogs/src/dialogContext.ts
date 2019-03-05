@@ -56,7 +56,7 @@ export class DialogContext {
      */
     public parent: DialogContext|undefined;
 
-     /**
+    /**
       * Creates a new DialogContext instance.
       * @param dialogs Parent dialog set.
       * @param context Context for the current turn of conversation with the user.
@@ -330,7 +330,7 @@ export class DialogContext {
             const dialog: Dialog<{}> = this.findDialog(instance.id);
             if (!dialog) {
                 throw new Error(`DialogSet.reprompt(): Can't find A dialog with an id of '${instance.id}'.`);
-             }
+            }
 
             // Ask dialog to re-prompt if supported
             await dialog.repromptDialog(this.context, instance);

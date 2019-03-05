@@ -297,7 +297,7 @@ export class TestAdapter extends BotAdapter implements IUserTokenProvider {
         }
     }
 
-     /**
+    /**
      * Retrieves the OAuth token for a user that is in a sign-in flow.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
@@ -595,7 +595,7 @@ export class TestFlow {
     /**
      * Start the test sequence, returning a promise to await
      */
-    public startTest() : Promise<void> {
+    public startTest(): Promise<void> {
         return this.previous;
     }
 }

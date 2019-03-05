@@ -23,7 +23,7 @@ export interface CosmosDbStorageSettings {
     /**
      * The endpoint Uri for the service endpoint from the Azure Cosmos DB service.
      */
-     serviceEndpoint: string;
+    serviceEndpoint: string;
     /**
      * The AuthKey used by the client from the Azure Cosmos DB service.
      */
@@ -35,15 +35,15 @@ export interface CosmosDbStorageSettings {
     /**
      * The Collection ID.
      */
-     collectionId: string;
-     /**
+    collectionId: string;
+    /**
       * (Optional) Cosmos DB RequestOptions that are passed when the database is created.
       */
-     databaseCreationRequestOptions?: RequestOptions;
-     /**
+    databaseCreationRequestOptions?: RequestOptions;
+    /**
       * (Optional) Cosmos DB RequestOptiones that are passed when the document collection is created.
       */
-     documentCollectionRequestOptions?: RequestOptions;
+    documentCollectionRequestOptions?: RequestOptions;
 }
 
 /**
@@ -58,11 +58,11 @@ interface DocumentStoreItem {
     /**
      * Represents the original Id/Key
      */
-   realId: string;
+    realId: string;
     /**
      * The item itself + eTag information
      */
-   document: any;
+    document: any;
 }
 
 /**
@@ -239,13 +239,13 @@ export class CosmosDbStorage implements Storage {
                         UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, CosmosDbKeyEscape.escapeKey(k)),
                         (err: any, data: any): void =>
                             err && err.code !== 404 ? reject(err) : resolve()
-                        )
                     )
+                )
             ))
         ) // handle notfound as Ok
-        .then(() => {
-            return;
-         }); // void
+            .then(() => {
+                return;
+            }); // void
     }
 
     /**
@@ -253,12 +253,12 @@ export class CosmosDbStorage implements Storage {
      */
     private ensureCollectionExists(): Promise<string> {
         if (!this.collectionExists) {
-            this.collectionExists = new Promise((resolve : Function, reject : Function) : void => {
+            this.collectionExists = new Promise((resolve: Function, reject: Function): void => {
                 _semaphore.take(() => {
-                    const result : Promise<string> = this.collectionExists ? this.collectionExists :
+                    const result: Promise<string> = this.collectionExists ? this.collectionExists :
                         getOrCreateDatabase(this.client, this.settings.databaseId, this.databaseCreationRequestOption)
-                        .then((databaseLink: string) => getOrCreateCollection(
-                            this.client, databaseLink, this.settings.collectionId, this.documentCollectionCreationRequestOption));
+                            .then((databaseLink: string) => getOrCreateCollection(
+                                this.client, databaseLink, this.settings.collectionId, this.documentCollectionCreationRequestOption));
                     _semaphore.leave();
                     resolve(result);
                 });
@@ -302,9 +302,9 @@ function getOrCreateDatabase(client: DocumentClient, databaseId: string, databas
  * @private
  */
 function getOrCreateCollection(client: DocumentClient,
-                               databaseLink: string,
-                               collectionId: string,
-                               documentCollectionCreationRequestOption: RequestOptions): Promise<string> {
+    databaseLink: string,
+    collectionId: string,
+    documentCollectionCreationRequestOption: RequestOptions): Promise<string> {
     const querySpec: {
         query: string;
         parameters: {
@@ -322,12 +322,12 @@ function getOrCreateCollection(client: DocumentClient,
             if (results.length === 1) { return resolve(results[0]._self); }
 
             client.createCollection(databaseLink,
-                                    { id: collectionId },
-                                    documentCollectionCreationRequestOption,
-                                    (err2: any, collectionLink: any) => {
-                                        if (err2) { return reject(err2); }
-                                        resolve(collectionLink._self);
-            });
+                { id: collectionId },
+                documentCollectionCreationRequestOption,
+                (err2: any, collectionLink: any) => {
+                    if (err2) { return reject(err2); }
+                    resolve(collectionLink._self);
+                });
         });
     });
 }

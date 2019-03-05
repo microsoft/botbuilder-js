@@ -280,7 +280,7 @@ export class BotConfiguration extends BotConfigurationBase {
                 for (const service of this.services) {
                     if (service.type === ServiceTypes.Dispatch) {
                         const dispatch: IDispatchService = (<IDispatchService>service);
-                        for (let i: number = 0; i < dispatch.serviceIds.length; i++) {
+                        for (let i = 0; i < dispatch.serviceIds.length; i++) {
                             dispatch.serviceIds[i] = map[dispatch.serviceIds[i]];
                         }
                     }

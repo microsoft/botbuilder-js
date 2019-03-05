@@ -81,28 +81,28 @@ export class FileTranscriptStore implements TranscriptStore {
         const exists = await fs.exists(transcriptFolder);
         if (!exists) {
         	return pagedResult;
-		}
+        }
 
         let transcriptFolderContents = await fs.readdir(transcriptFolder);
         const include = includeWhen(fileName => !continuationToken || path.parse(fileName).name === continuationToken);
         const items = transcriptFolderContents.filter(transcript =>
-			transcript.endsWith('.json') &&
+            transcript.endsWith('.json') &&
 			withDateFilter(startDate, transcript) &&
 			include(transcript));
 
-		pagedResult.items = await Promise.all(items
-			.slice(0, FileTranscriptStore.PageSize)
-			.sort()
-			.map(async activityFilename => {
-				const json = await fs.readFile(path.join(transcriptFolder, activityFilename), 'utf8');
-				return parseActivity(json);
-			})
-		);
-		const {length} = pagedResult.items;
-		if (length === FileTranscriptStore.PageSize && items[length]) {
-			pagedResult.continuationToken = path.parse(items[length]).name;
-		}
-		return pagedResult;
+        pagedResult.items = await Promise.all(items
+            .slice(0, FileTranscriptStore.PageSize)
+            .sort()
+            .map(async activityFilename => {
+                const json = await fs.readFile(path.join(transcriptFolder, activityFilename), 'utf8');
+                return parseActivity(json);
+            })
+        );
+        const {length} = pagedResult.items;
+        if (length === FileTranscriptStore.PageSize && items[length]) {
+            pagedResult.continuationToken = path.parse(items[length]).name;
+        }
+        return pagedResult;
     }
 
     /**
@@ -119,18 +119,18 @@ export class FileTranscriptStore implements TranscriptStore {
         const exists = await fs.exists(channelFolder);
         if (!exists) {
         	return pagedResult;
-		}
+        }
         const channels = await fs.readdir(channelFolder);
         const items = channels.filter(includeWhen(di => !continuationToken || di === continuationToken));
         pagedResult.items = items
-			.slice(0, FileTranscriptStore.PageSize)
-			.map(i => ({channelId: channelId,	id: i,	created: null}));
-		const {length} = pagedResult.items;
-		if (length === FileTranscriptStore.PageSize && items[length]) {
-			pagedResult.continuationToken = items[length];
-		}
+            .slice(0, FileTranscriptStore.PageSize)
+            .map(i => ({channelId: channelId,	id: i,	created: null}));
+        const {length} = pagedResult.items;
+        if (length === FileTranscriptStore.PageSize && items[length]) {
+            pagedResult.continuationToken = items[length];
+        }
 
-		return pagedResult;
+        return pagedResult;
     }
 
     /**
@@ -154,8 +154,8 @@ export class FileTranscriptStore implements TranscriptStore {
         const exists = await fs.exists(transcriptPath);
         if (!exists) {
         	await fs.mkdirp(transcriptPath);
-		}
-		return fs.writeFile(path.join(transcriptPath, activityFilename), json, 'utf8');
+        }
+        return fs.writeFile(path.join(transcriptPath, activityFilename), json, 'utf8');
     }
 
     private getActivityFilename(activity: Activity): string {
@@ -179,13 +179,13 @@ export class FileTranscriptStore implements TranscriptStore {
  * @private
  * The number of .net ticks at the unix epoch.
  */
-const epochTicks: number = 621355968000000000;
+const epochTicks = 621355968000000000;
 
 /**
  * @private
  * There are 10000 .net ticks per millisecond.
  */
-const ticksPerMillisecond: number = 10000;
+const ticksPerMillisecond = 10000;
 
 /**
  * @private
@@ -215,8 +215,8 @@ function readDate(ticks: string): Date {
 function withDateFilter(date: Date, fileName: string): any {
     if (!date) { return true; }
 
-	const ticks: string = fileName.split('-')[0];
-	return readDate(ticks) >= date;
+    const ticks: string = fileName.split('-')[0];
+    return readDate(ticks) >= date;
 }
 
 /**
@@ -224,10 +224,10 @@ function withDateFilter(date: Date, fileName: string): any {
  * @param expression A function that will be used to test items.
  */
 function includeWhen(expression: any): any {
-    let shouldInclude: boolean = false;
+    let shouldInclude = false;
 
     return (item: any): boolean => {
-		return shouldInclude || (shouldInclude = expression(item));
+        return shouldInclude || (shouldInclude = expression(item));
     };
 }
 

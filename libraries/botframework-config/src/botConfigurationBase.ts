@@ -108,7 +108,7 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
         const service: ConnectedService = BotConfigurationBase.serviceFromJSON(newService);
 
         // assign a unique id
-        let found: boolean = false;
+        let found = false;
         do {
             found = false;
             service.id = Math.floor((Math.random() * 255)).toString();

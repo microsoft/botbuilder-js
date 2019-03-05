@@ -205,7 +205,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
             state.stepIndex = index;
 
             // Create step context
-            let nextCalled: boolean = false;
+            let nextCalled = false;
             const step: WaterfallStepContext<O> = new WaterfallStepContext<O>(dc, {
                 index: index,
                 options: <O>state.options,
@@ -236,7 +236,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * @param instance The instance of the current dialog.
      * @param reason The reason the dialog is ending.
      */
-     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason) {
+    public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason) {
 
         const state: WaterfallDialogState = instance.state as WaterfallDialogState
         const instanceId = state.values['instanceId'];
@@ -290,10 +290,10 @@ interface WaterfallDialogState {
  */  
 function generate_guid() {
     function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
     }
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
       s4() + '-' + s4() + s4() + s4();
-  }
+}
