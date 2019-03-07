@@ -7,7 +7,7 @@
  */
 import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from 'azure-cognitiveservices-luis-runtime';
 import { RecognizerResult, TurnContext } from 'botbuilder-core';
-import * as msRest from "ms-rest";
+import * as msRest from 'ms-rest';
 import * as os from 'os';
 import * as Url from 'url-parse';
 

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { MicrosoftAppCredentials } from "./auth/microsoftAppCredentials";
+import { MicrosoftAppCredentials } from './auth/microsoftAppCredentials';
 
 export class EmulatorApiClient {
     public static async emulateOAuthCards(credentials: MicrosoftAppCredentials, emulatorUrl: string, emulate: boolean): Promise<boolean> {

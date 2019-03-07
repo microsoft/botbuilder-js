@@ -18,6 +18,7 @@
             "anonymous": "never",
             "asyncArrow": "always"
         }],
+        "quotes": ["error", "single", {"allowTemplateLiterals": true}],
         "template-curly-spacing": [2, "always"],
         "@typescript-eslint/interface-name-prefix": 0,
         "@typescript-eslint/no-explicit-any": 0,
