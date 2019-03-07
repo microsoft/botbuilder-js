@@ -10,15 +10,15 @@
         }
     },
     "rules": {
-        "semi": [2, "always"],
+        "semi": ["error", "always"],
         "no-return-await": 0,
-        "space-before-function-paren": [2, {
+        "space-before-function-paren": ["error", {
             "named": "never",
             "anonymous": "never",
             "asyncArrow": "always"
         }],
         "quotes": ["error", "single", {"allowTemplateLiterals": true}],
-        "template-curly-spacing": [2, "always"],
+        "template-curly-spacing": ["error", "always"],
         "@typescript-eslint/indent": ["error", 4],
         "@typescript-eslint/interface-name-prefix": 0,
         "@typescript-eslint/no-explicit-any": 0,
