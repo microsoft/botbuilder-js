@@ -179,7 +179,7 @@ export class ChoiceFactory {
         ChoiceFactory.toChoices(choices).forEach((choice: any, index: number) => {
             const title: string = choice.action && choice.action.title ? choice.action.title : choice.value;
             // tslint:disable-next-line:prefer-template
-            txt += `${connector}${opt.includeNumbers ? '(' + (index + 1).toString() + ') ' : ''}${title}`;
+            txt += `${ connector }${ opt.includeNumbers ? '(' + (index + 1).toString() + ') ' : '' }${ title }`;
             if (index === (choices.length - 2)) {
                 connector = (index === 0 ? opt.inlineOr : opt.inlineOrMore) || '';
             } else {
@@ -221,7 +221,7 @@ export class ChoiceFactory {
         ChoiceFactory.toChoices(choices).forEach((choice: any, index: number) => {
             const title: string = choice.action && choice.action.title ? choice.action.title : choice.value;
             // tslint:disable-next-line:prefer-template
-            txt += `${connector}${opt.includeNumbers ? (index + 1).toString() + '. ' : '- '}${title}`;
+            txt += `${ connector }${ opt.includeNumbers ? (index + 1).toString() + '. ' : '- ' }${ title }`;
             connector = '\n   ';
         });
 

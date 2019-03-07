@@ -114,7 +114,7 @@ export namespace EnterpriseChannelValidation {
         const audClaim: string = identity.getClaimValue(Constants.AudienceClaim);
         if (!(await credentials.isValidAppId(audClaim || ''))) {
             // The AppId is not valid or not present. Not Authorized.
-            throw new Error(`Unauthorized. Invalid AppId passed on token: ${audClaim}`);
+            throw new Error(`Unauthorized. Invalid AppId passed on token: ${ audClaim }`);
         }
 
         return identity;

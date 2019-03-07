@@ -157,11 +157,11 @@ export namespace EmulatorValidation {
             appId = appZClaim;
         } else {
             // Unknown Version. Not Authorized.
-            throw new Error(`Unauthorized. Unknown Emulator Token version "${versionClaim}".`);
+            throw new Error(`Unauthorized. Unknown Emulator Token version "${ versionClaim }".`);
         }
 
         if (!await credentials.isValidAppId(appId)) {
-            throw new Error(`Unauthorized. Invalid AppId passed on token: ${appId}`);
+            throw new Error(`Unauthorized. Invalid AppId passed on token: ${ appId }`);
         }
 
         return identity;

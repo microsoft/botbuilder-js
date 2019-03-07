@@ -36,7 +36,7 @@ export class OpenIdMetadata {
         } else {
             // Otherwise read from cache
             const key: IOpenIdMetadataKey = this.findKey(keyId);
-            return key
+            return key;
         }
     }
 
