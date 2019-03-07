@@ -11,3 +11,5 @@ export * from './dateTimeSpec';
 export * from './instanceData';
 export * from './intentData';
 export * from './numberWithUnits';
+export * from './lg';
+

@@ -4,3 +4,4 @@
 #coverage
 coverage
 .nyc_output
+/**/.antlr
