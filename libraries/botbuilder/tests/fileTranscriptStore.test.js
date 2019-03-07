@@ -3,7 +3,7 @@ const { FileTranscriptStore } = require('../');
 const assert = require('assert');
 const path = require('path');
 const os = require('os');
-const fs = require('async-file');
+const fs = require('fs-extra');
 const uuid = require('uuid');
 const { ActivityTypes } = require('botbuilder-core');
 
@@ -13,10 +13,10 @@ describe('The FileTranscriptStore', () => {
 	let storage;
 	const startDate = new Date();
 	before(async () => {
-		await fs.delete(workingFolder);
+		await fs.remove(workingFolder);
 		storage = new FileTranscriptStore(workingFolder);
 	});
-	after(() => fs.delete(workingFolder));
+	after(() => fs.remove(workingFolder));
 
 	it('should delete transcripts', async () => {
 		const [activity] = createActivities('deleteActivitySpec', startDate, 1);
@@ -155,7 +155,7 @@ describe('The FileTranscriptStore', () => {
 			storage = new FileTranscriptStore(workingFolder);
 			return Promise.all(activities.map(activity => storage.logActivity(activity)));
 		});
-		after(() => fs.delete(workingFolder));
+		after(() => fs.remove(workingFolder));
 
 		it('with a continuationToken when the page size is smaller than the number of activities stored', async () => {
 			let pagedResult = await storage.getTranscriptActivities('test', conversationId);
@@ -224,7 +224,7 @@ describe('The FileTranscriptStore', () => {
 			storage = new FileTranscriptStore(workingFolder);
 			return Promise.all(activities.map(activity => storage.logActivity(activity)));
 		});
-		after(() => fs.delete(workingFolder));
+		after(() => fs.remove(workingFolder));
 
 		it('for a given conversation and page through them as expected', async () => {
 			let pagedResult = {};
