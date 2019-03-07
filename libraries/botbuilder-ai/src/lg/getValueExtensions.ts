@@ -1,5 +1,5 @@
-import { GetValueDelegate, PropertyBinder } from "botframework-expression";
-import { Evaluator } from "./evaluator";
+import { GetValueDelegate, PropertyBinder } from 'botframework-expression';
+import { Evaluator } from './evaluator';
 
 export class GetValueExtensions {
     private readonly evaluator: Evaluator;
@@ -10,7 +10,7 @@ export class GetValueExtensions {
 
     public GetValueX: GetValueDelegate = (instance: any, property: any) => {
         try {
-            const result = PropertyBinder.Auto(instance, property);
+            const result: any = PropertyBinder.Auto(instance, property);
 
             if (result === undefined) {
                 throw new Error();
@@ -18,11 +18,12 @@ export class GetValueExtensions {
 
             return result;
         } catch (error) {
-            if (typeof (property) === "string") {
+            if (typeof (property) === 'string') {
                 if (this.evaluator.Context.TemplateContexts[property] !== undefined) {
                     return property;
                 }
             }
+
             return instance[property];
         }
     }

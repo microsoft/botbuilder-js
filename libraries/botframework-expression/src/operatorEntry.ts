@@ -1,16 +1,14 @@
-import { BindingDirection } from "./bindingDirection";
+import { BindingDirection } from './bindingDirection';
+
+/**
+ * Delegate which evaluates operators operands (aka the paramters) to the result
+ */
 export type EvaluationDelegate = (parameters: any[]) => any;
 
+/**
+ * Schema for entry in table of operators
+ */
 export class OperatorEntry {
-
-    public static From(token: string,
-                       power: number,
-                       direction: BindingDirection,
-                       minArgs: number,
-                       maxArgs: number,
-                       evaluate: EvaluationDelegate): OperatorEntry {
-        return new OperatorEntry(token, power, direction, minArgs, maxArgs, evaluate);
-    }
 
     public readonly Token: string;
     public readonly Power: number;
@@ -31,6 +29,15 @@ export class OperatorEntry {
         this.MinArgs = minArgs;
         this.MaxArgs = maxArgs;
         this.Evaluate = evaluate;
+    }
+
+    public static From(token: string,
+                       power: number,
+                       direction: BindingDirection,
+                       minArgs: number,
+                       maxArgs: number,
+                       evaluate: EvaluationDelegate): OperatorEntry {
+        return new OperatorEntry(token, power, direction, minArgs, maxArgs, evaluate);
     }
 
     public ToString(): string {

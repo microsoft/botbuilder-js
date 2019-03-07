@@ -1,11 +1,10 @@
-import { OperatorEntry } from "./operatorEntry";
-import { Token } from "./token";
+import { OperatorEntry } from './operatorEntry';
+import { Token } from './token';
 
+/**
+ * Expression term from grammar analysis.
+ */
 export class Term {
-
-    public static From(token: Token, entity: OperatorEntry, ...terms: Term[]): Term {
-        return new Term(token, entity, terms);
-    }
 
     public readonly Entity: OperatorEntry;
     public readonly Token: Token;
@@ -17,9 +16,12 @@ export class Term {
         this.Terms = terms;
     }
 
-    public ToString(): string {
-        return this.Terms.length > 0 ? `${this.Token}(${this.Terms.join(",")})` : this.Token.Input;
+    public static From(token: Token, entity: OperatorEntry, ...terms: Term[]): Term {
+        return new Term(token, entity, terms);
     }
 
+    public ToString(): string {
+        return this.Terms.length > 0 ? `${this.Token}(${this.Terms.join(',')})` : this.Token.Input;
+    }
 
 }

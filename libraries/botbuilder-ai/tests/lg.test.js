@@ -9,14 +9,14 @@ function GetExampleFilePath(fileName){
 describe('LG', function () {
     it('TestBasic', function () {
         let engine = TemplateEngine.FromFile(GetExampleFilePath('2.lg'));
-        let evaled = engine.EvaluateTemplate("wPhrase", null);
+        let evaled = engine.EvaluateTemplate("wPhrase", undefined);
         const options = ['Hi','Hello','Hiya'];
         assert.strictEqual(options.includes(evaled), true, `The result ${evaled} is not in those options [${options.join(",")}]`);
     });
 
     it('TestBasicTemplateReference', function () {
         let engine = TemplateEngine.FromFile(GetExampleFilePath('3.lg'));
-        let evaled = engine.EvaluateTemplate("welcome-user", null);
+        let evaled = engine.EvaluateTemplate("welcome-user", undefined);
         const options = ["Hi", "Hello", "Hiya", "Hi :)", "Hello :)", "Hiya :)"];
         assert.strictEqual(options.includes(evaled), true, `The result ${evaled} is not in those options [${options.join(",")}]`);
     });
@@ -39,7 +39,7 @@ describe('LG', function () {
     it('TestBasicTemplateRefWithParameters', function () {
         let engine = TemplateEngine.FromFile(GetExampleFilePath('6.lg'));
 
-        let evaled = engine.EvaluateTemplate("welcome", null);
+        let evaled = engine.EvaluateTemplate("welcome", undefined);
         assert.strictEqual(evaled.includes("DongLei"), true, `Evaled is ${evaled}`);
 
         evaled = engine.EvaluateTemplate("welcome",{userName : "DL"});
