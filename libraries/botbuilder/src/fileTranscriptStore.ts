@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as fs from 'async-file';
+import * as fs from 'fs-extra';
 import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
 import * as filenamify from 'filenamify';
 import * as path from 'path';
@@ -78,7 +78,7 @@ export class FileTranscriptStore implements TranscriptStore {
         const pagedResult: PagedResult<Activity> = { items: [], continuationToken: undefined };
         const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
 
-        const exists = await fs.exists(transcriptFolder);
+        const exists = await fs.pathExists(transcriptFolder);
         if (!exists) {
         	return pagedResult;
 		}
@@ -116,7 +116,7 @@ export class FileTranscriptStore implements TranscriptStore {
         const pagedResult: PagedResult<TranscriptInfo> = { items: [], continuationToken: undefined };
         const channelFolder: string = this.getChannelFolder(channelId);
 
-        const exists = await fs.exists(channelFolder);
+        const exists = await fs.pathExists(channelFolder);
         if (!exists) {
         	return pagedResult;
 		}
@@ -145,13 +145,13 @@ export class FileTranscriptStore implements TranscriptStore {
 
         const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
 
-        return fs.delete(transcriptFolder);
+        return fs.remove(transcriptFolder);
     }
 
     private async saveActivity(activity: Activity, transcriptPath: string, activityFilename: string): Promise<void> {
         const json: string = JSON.stringify(activity, null, '\t');
 
-        const exists = await fs.exists(transcriptPath);
+        const exists = await fs.pathExists(transcriptPath);
         if (!exists) {
         	await fs.mkdirp(transcriptPath);
 		}
