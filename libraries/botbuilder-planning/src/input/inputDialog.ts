@@ -5,56 +5,118 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PlanningDialog } from '../planningDialog';
+import { PlanningDialog, PlanningDialogConfiguration } from '../planningDialog';
 import { InputSlot } from './inputSlot';
 import { PlanningContext, PlanningEventNames, PlanningState, PlanChangeList, PlanChangeType, PlanStepState } from '../planningContext';
 import { DialogEvent, DialogTurnResult, Dialog } from 'botbuilder-dialogs';
-import { Activity } from 'botbuilder-core';
+import { RecognizerResult, Activity, InputHints } from 'botbuilder-core';
 import { SendActivity } from '../steps';
-import { TextSlot, TextSlotFormat } from './textSlot';
-import { NumberSlot, NumberSlotFormat } from './numberSlot';
 
-export interface InputDialogPrompt {
-    tagSelector: string[];
-    steps: Dialog[]; 
+export interface InputDialogAction {
+    tagSelector: string;
+    steps: Dialog[];
 }
 
-export interface InputDialogComputedPlanChange {
-    changes: PlanChangeList[];
-    expectedSlots: string[];
+export interface CompiledInputDialogAction {
+    tags: { [name: string]: any; }
+    tagCount: number;
+    hasPriority: boolean;
+    steps: Dialog[];
+}
+
+export interface InputSlotEventValue<T = any> {
+    slot: InputSlot<T>;
+    value?: T;
+    recognized?: RecognizerResult;
+}
+
+export interface InputDialogConfiguration extends PlanningDialogConfiguration {
+    /**
+     * Slot class used to recognize and validate the users input.
+     */
+    slot?: InputSlot;
+
+    /**
+     * Actions configured for the input dialog.
+     */
+    actions?: InputDialogAction[];
+
+    /**
+     * The in-memory property that the input dialog is bound to.
+     */
+    property?: string;
 }
 
 export class InputDialog<O extends object = {}> extends PlanningDialog<O> {
-    private planChangeCache: { [key:string]: InputDialogComputedPlanChange; } = {};
-
-    public slots: InputSlot[] = [];
-    public prompts: InputDialogPrompt[] = [];
-    public stepsBefore: Dialog[];
-    public stepsAfter: Dialog[];
-
-    public addSlot(...slots: InputSlot[]): this {
-        Array.prototype.push.apply(this.slots, slots);
-        return this;
+    constructor(slot?: InputSlot, property?: string, activity?: string|Partial<Activity>, speak?: string, inputHint?: InputHints) {
+        super();
+        if (slot) { this.slot = slot }
+        if (property) { this.property = property }
+        if (activity) {
+            this.sendActivity('', activity, speak, inputHint);
+        }
+    }
+    
+    protected onComputeID(): string {
+        return `inputDialog[${this.bindingPath()}]`;
     }
 
-    public addPrompt(tagSelector: string, prompt: string|Partial<Activity>): this;
-    public addPrompt(tagSelector: string, steps: Dialog[]): this;
-    public addPrompt(tagSelector: string, promptOrSteps: string|Partial<Activity>|Dialog[]): this {
-        this.prompts.push({
-            tagSelector: tagSelector.split('.'),
-            steps: Array.isArray(promptOrSteps) ? promptOrSteps : [new SendActivity(promptOrSteps)]
+    protected onInstallDependencies(): void {
+        // Install actions
+        this.actions.forEach((action) => {
+            // Install steps
+            action.steps.forEach((step) => this.addDialog(step));
+
+            // Compile selector(s)
+            // - Commas in a selector are ORs' and periods are ANDs'.
+            action.tagSelector.split(',').forEach((selector) => {
+                const tags = selector.trim().split('.');
+                const compiled: CompiledInputDialogAction = {
+                    tags: {},
+                    tagCount: tags.length,
+                    hasPriority: false,
+                    steps: action.steps
+                };
+                tags.forEach((tag) => { 
+                    compiled.tags[tag] = '';
+                    if (tag.indexOf('intent(') == 0 || tag.indexOf('turn(')) { compiled.hasPriority = true }
+                });
+                this.compiledActions.push(compiled);
+            });
         });
-        return this;
+        super.onInstallDependencies();
     }
 
-    public doStepBefore(steps: Dialog[]): this {
-        this.stepsBefore = steps;
-        return this;
+    /**
+     * Registered [actions](#actions) after they've been compiled on first run.
+     */
+    protected compiledActions: CompiledInputDialogAction[] = [];
+
+    /**
+     * Slot class used to recognize and validate the users input.
+     */
+    public slot: InputSlot;
+
+    /**
+     * Actions configured for the input dialog.
+     */
+    public readonly actions: InputDialogAction[] = [];
+
+    /**
+     * Data binds input dialog to the given property.
+     * 
+     * @remarks
+     * The bound properties current value will be passed to the called dialog as part of its 
+     * options and will be accessible within the dialog via `dialog.result`. The result
+     * returned from the called dialog will then be copied to the bound property.
+     */
+    public set property(value: string) {
+        this.inputBindings['value'] = value;
+        this.outputBinding = value;
     }
 
-    public doStepAfter(steps: Dialog[]): this {
-        this.stepsAfter = steps;
-        return this;
+    public get property(): string {
+        return this.outputBinding;
     }
 
     public async evaluateRules(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
@@ -66,14 +128,8 @@ export class InputDialog<O extends object = {}> extends PlanningDialog<O> {
                 // Initialize turn count and result object
                 state.turnCount = 0;
 
-                // Queue up any before steps
-                this.queueSteps(planning, this.stepsBefore, state.options);
-
-                // Validate values and queue prompt
-                handled = await this.validateValues(planning, event); 
-                if (!handled) {
-                    handled = await this.queuePrompt(planning, event);
-                }
+                // Validate slots initial value
+                handled = await this.onValidateSlot(planning);
                 break;
 
             case PlanningEventNames.consultDialog:
@@ -82,11 +138,25 @@ export class InputDialog<O extends object = {}> extends PlanningDialog<O> {
                 break;
 
             case PlanningEventNames.fallback:
-                // Recognize users input and queue prompt
-                handled = await this.recognizeInput(planning, event);
-                if (!handled) {
-                    handled = await this.queuePrompt(planning, event);
+                if (planning.hasPlans) {
+                    // Remember that we're in the middle of continuing an action 
+                    state.continuingAction = true;
+                } else {
+                    // Recognize users input
+                    handled = await this.onRecognizeInput(planning, event.value);
                 }
+                break;
+
+            case PlanningEventNames.slotMissing:
+                handled = await this.onSlotMissing(planning, event);
+                break;
+
+            case PlanningEventNames.slotInvalid:
+                handled = await this.onSlotInvalid(planning, event);
+                break;
+
+            case PlanningEventNames.inputFulfilled: 
+                handled = await this.onInputFulfilled(planning);
                 break;
         }
 
@@ -96,216 +166,219 @@ export class InputDialog<O extends object = {}> extends PlanningDialog<O> {
         }
         return handled;
     }
-    
-    protected onComputeID(): string {
-        return `inputDialog[${this.bindingPath()}]`;
+
+    public configure(config: InputDialogConfiguration): this {
+        return super.configure(config);
     }
 
-    protected onInstallDependencies(): void {
-        if (this.stepsBefore) {
-            this.stepsBefore.forEach((step) => this.addDialog(step));
+    //=============================================================================================
+    // Recognize and Validate Users Input
+    //=============================================================================================
+
+    protected async onRecognizeInput(planning: PlanningContext, recognized: RecognizerResult): Promise<boolean> {
+        // Attempt to recognize input
+        const state = planning.activeDialog.state as InputDialogState<O>;
+        const result = await this.slot.recognizeInput(planning, recognized, state.turnCount);
+        if (result.succeeded) {
+            state.result = result.value;
         }
-        this.slots.forEach((slot) => {
-            if (typeof (slot as any).getDependencies == 'function') {
-                const steps = (slot as any).getDependencies();
-                steps.forEach((step) => this.addDialog(step));
+
+        // Validate slot
+        return await this.onValidateSlot(planning);
+    }
+
+    protected async onValidateSlot(planning: PlanningContext, recognized?: RecognizerResult): Promise<boolean> {
+        // Check for a slot value
+        const value: InputSlotEventValue = { slot: this.slot, recognized: recognized };
+        const state = planning.activeDialog.state as InputDialogState<O>;
+        if (state.result != undefined) {
+            // Validate slot
+            if (await this.slot.validateValue(planning, state.result)) {
+                // Emit inputFulfilled event
+                return await this.evaluateRules(planning, { name: PlanningEventNames.inputFulfilled, bubble: false });
+            } else {
+                // Emit slotInvalid event 
+                value.value = state.result;
+                return await this.evaluateRules(planning, { name: PlanningEventNames.slotInvalid, value: value, bubble: false });
             }
-        });
-        this.prompts.forEach((prompt) => prompt.steps.forEach((step) => this.addDialog(step)));
-        if (this.stepsAfter) {
-            this.stepsAfter.forEach((step) => this.addDialog(step));
+        } else {
+            // Emit slotMissing event
+            return await this.evaluateRules(planning, { name: PlanningEventNames.slotMissing, value: value, bubble: false });
         }
-        super.onInstallDependencies();
+    }
+
+    //=============================================================================================
+    // Slot Missing or Invalid Events
+    //=============================================================================================
+
+    protected async onSlotMissing(planning: PlanningContext, event: DialogEvent<InputSlotEventValue>): Promise<boolean> {
+        // Get active tags
+        const state = planning.activeDialog.state as InputDialogState<O>;
+        const additionalTags = [`turn(${state.turnCount})`, `missing(${this.slot.name})`].concat(this.getIntentTags(event.value.recognized));
+        if (state.turnCount > 0) { additionalTags.push('reprompt') }      
+        const tags = this.getActiveTags(planning, additionalTags);
+
+        // Queue up top missing slot action
+        const actions = this.actionsContainingTags(this.compiledActions, tags);
+        return this.queueTopAction(planning, actions);
+    }
+
+    protected async onSlotInvalid(planning: PlanningContext, event: DialogEvent<InputSlotEventValue>): Promise<boolean> {
+        // Get active tags
+        const state = planning.activeDialog.state as InputDialogState<O>;
+        const additionalTags = [`turn(${state.turnCount})`, `invalid(${this.slot.name} || '')`].concat(this.getIntentTags(event.value.recognized))
+        if (state.turnCount > 0) { additionalTags.push('reprompt') }        
+        const tags = this.getActiveTags(planning, additionalTags);
+
+        // Queue up top missing slot action
+        const actions = this.actionsContainingTags(this.compiledActions, tags);
+        return this.queueTopAction(planning, actions, { value: event.value.value });
+    }
+
+    //=============================================================================================
+    // Input Fulfilled Event
+    //=============================================================================================
+
+    protected async onInputFulfilled(planning: PlanningContext): Promise<boolean> {
+        // Change state to fulfilled
+        const state = planning.activeDialog.state as InputDialogState<O>;
+        state.fulfilled = true;
+
+        // Get active tags
+        const filledTag = `filled(${this.slot.name} || '')`;
+        const tags = this.getActiveTags(planning, [filledTag]);
+
+        // Queue up top fulfillment action (if any.)
+        const actions = this.actionsContainingTags(this.compiledActions, tags);
+        const filledActions = this.actionsWithTag(actions, filledTag);
+        this.queueTopAction(planning, filledActions);
+
+        return true;
     }
 
     protected async onEndOfPlan(planning: PlanningContext): Promise<DialogTurnResult> {
-        // Are all required fields satisfied?
+        // Evaluate current status
         const state = planning.activeDialog.state as InputDialogState<O>;
-        if (state.satisfied) {
+        if (state.fulfilled) {
             // Return result
             return await planning.endDialog(state.result);
+        } else if (state.continuingAction) {
+            // The action just completed so we need to re-evaluate our state and re-prompt as
+            // needed.
+            delete state.continuingAction;
+            await this.onValidateSlot(planning);
+            return await this.continuePlan(planning);
         } else {
+            // Just wait for user to reply
             return Dialog.EndOfTurn;
         }
     }
 
-    protected async recognizeInput(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
-        // TODO
-        return false;
+    //=============================================================================================
+    // Actions
+    //=============================================================================================
 
+    public sendActivity(tagSelector: string, activity: string|Partial<Activity>, speak?: string, inputHint?: InputHints): this {
+        this.actions.push({
+            tagSelector: tagSelector,
+            steps: [
+                new SendActivity(activity, speak, inputHint)
+            ]
+        })
+        return this;
     }
 
-    protected async validateValues(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
-        // TODO
-        return false;
+    public doSteps(tagSelector: string, steps: Dialog[]): this {
+        this.actions.push({
+            tagSelector: tagSelector,
+            steps: steps
+        })
+        return this;
     }
 
-    protected async queuePrompt(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
-        // TODO
-        return false;
+    protected getActiveTags(planning: PlanningContext, additionalTags: string[] = []): { [name: string]: any; } {
+        const tags: { [name: string]: any; } = {};
+
+        // Add tag for tun
+        const state = planning.activeDialog.state as InputDialogState<O>;
+        tags[`turn(${state.turnCount})`] = '';
+
+        // Add active tags
+        planning.activeTags.forEach((tag) => tags[tag] = '');
+
+        // Add additional tags
+        additionalTags.forEach((tag) => tags[tag] = '');
+
+        return tags;
     }
 
-    /**
-     * Computes a list of plan changes to apply for a given set of tags.
-     * 
-     * @remarks
-     * The computation can potentially be expensive so the results of a computation are cached such that
-     * future requests for the same exact set of tags will be returned from the cache. 
-     * 
-     * The algorithm first filters the dialogs prompts to a list of prompts matching the combined set of 
-     * tags passed in.  It then will begin searching for the list of changes that should be applied.
-     * 
-     * The algorithm wants to first show the best prompt that matches the set of `priorityTags`. The
-     * algorithm will keep appending plan changes until as many of the priority tags as possible are
-     * covered. If, however, it ever renders a prompt that also covers any `missingSlots` it will end 
-     * and return the changes up to that point. That's because the algorithm never wants to prompt the
-     * user for missing information more than once.
-     * 
-     * Once all of the `priorityTags` have been appended to the change list, the algorithm will search
-     * for the prompt that covers the most `missingSlots`. It will then append that prompts plan 
-     * changes, cache the results, and then return.
-     * 
-     * The list of `otherTags` passed in represents other tags in scope for the current dialog. These 
-     * tags are only used to calculate the cache key and filter the initial set of candidate prompts.      
-     * @param priorityTags List of tags that should be rendered first. These tags represent slots that have been set, changed, or removed.
-     * @param missingSlots List of tags for slots that are still missing.
-     * @param otherTags Additional tags that are currently in scope for the dialog.
-     */
-    protected computePlanChanges(priorityTags: string[], missingSlots: string[], otherTags: string[]): InputDialogComputedPlanChange {
-        // Check cache first
-        const filterTags = priorityTags.concat(missingSlots, otherTags);        
-        const key = filterTags.join('.');
-        if (this.planChangeCache.hasOwnProperty(key)) {
-            return this.planChangeCache[key];
-        }
-
-        // Filter prompts to eligible prompts
-        const prompts = this.prompts.filter((prompt) => this.promptMatchesFilter(prompt, filterTags));
-
-        // Compute changes
-        let done = false;
-        let lastPrompt: InputDialogPrompt;
-        const change: InputDialogComputedPlanChange = {
-            changes: [],
-            expectedSlots: []
-        }
-        while (!done && prompts.length > 0) {
-            if (priorityTags.length > 0) {
-                // Find best fitting priority prompts
-                const index = this.findBestFit(prompts, priorityTags);
-                if (index >= 0) {
-                    // Does prompt cover any missing slots?
-                    const prompt = prompts[index];
-                    if (this.countMatchingTags(prompt.tagSelector, missingSlots)) {
-                        // Is there already a last prompt?
-                        if (lastPrompt != undefined) {
-                            // Remove prompt from list and continue
-                            prompts.splice(index, 1);
-                            continue;
-                        }
-
-                        // Save this prompt to be used as the last prompt 
-                        lastPrompt = prompt;
-                    } else {
-                        // Queue plan change
-                        change.changes.push(this.createChangeList(prompt.steps));
-                    }
-
-                    // Remove prompt from list so that it can't be reused
-                    prompts.splice(index, 1);
-
-                    // Remove priority tags from tag list so they can't be reused
-                    priorityTags = priorityTags.filter((tag) => prompt.tagSelector.indexOf(tag) < 0);
-                } else {
-                    priorityTags = [];
+    protected getIntentTags(recognized: RecognizerResult|undefined): string[] {
+        const tags: string[] = [];
+        if (recognized && recognized.intents) {
+            for (const intent in recognized.intents) {
+                if (recognized.intents.hasOwnProperty(intent)) {
+                    tags.push(`intent(${intent})`);
                 }
-            } else if (lastPrompt) {
-                // Queue plan change
-                change.changes.push(this.createChangeList(lastPrompt.steps));
-
-                // Update expected slots
-                change.expectedSlots = missingSlots.filter((slot) => lastPrompt.tagSelector.indexOf(slot) >= 0);
-
-                done = true;
-            } else {
-                // Find best fitting missing slot prompt
-                const index = this.findBestFit(prompts, missingSlots);
-                if (index >= 0) {
-                    // Queue plan change
-                    const prompt = prompts[index];
-                    change.changes.push(this.createChangeList(prompt.steps));
-
-                    // Update expected slots
-                    change.expectedSlots = missingSlots.filter((slot) => prompt.tagSelector.indexOf(slot) >= 0);
-                }
-
-                done = true;
             }
         }
 
-        // Post process expected slots
-        // - checks for "invalid(slot)" tag and returns just the "slot"
-        change.expectedSlots = change.expectedSlots.map((tag) => {
-            const matched = /\w*\((.*)\)/.exec(tag);
-            return matched ? matched[1] : tag
+        return tags;
+    }
+
+    protected actionsContainingTags(actions: CompiledInputDialogAction[], tags: { [name: string]: any; }): CompiledInputDialogAction[] {
+        return actions.filter((action) => {
+            for (const tag in action.tags) {
+                if (action.tags.hasOwnProperty(tag)) {
+                    if (!tags.hasOwnProperty(tag)) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        });
+    }
+
+    protected actionsWithTag(actions: CompiledInputDialogAction[], tag: string): CompiledInputDialogAction[] {
+        return actions.filter((action) => action.tags.hasOwnProperty(tag));
+    }
+
+    protected queueTopAction(planning: PlanningContext, actions: CompiledInputDialogAction[], options?: object): boolean {
+        // Find top action
+        let top: CompiledInputDialogAction = undefined;
+        let hasPriority = false;
+        actions.forEach((action) => {
+            if (hasPriority) {
+                if (action.hasPriority && action.tagCount > top.tagCount) {
+                    top = action;
+                }
+            } else {
+                if (top == undefined || action.hasPriority || action.tagCount > top.tagCount) {
+                    top = action;
+                    hasPriority = action.hasPriority;
+                }
+            }
         });
 
-        // Cache changes before returning
-        this.planChangeCache[key] = change;
-        return change;
-    }
-
-    private promptMatchesFilter(prompt: InputDialogPrompt, filterTags: string[]): boolean {
-        // Ensure the prompts tags all match the filter
-        const matched = this.countMatchingTags(prompt.tagSelector, filterTags);
-        return matched == prompt.tagSelector.length;
-    }
-
-    private findBestFit(prompts: InputDialogPrompt[], filterTags: string[]): number {
-        let bestCnt = 0;
-        let bestPos = -1;
-        for (let i = 0; i < prompts.length; i++) {
-            // Does prompt have more tags that match the filterTags?
-            const prompt = prompts[i];
-            const cnt = this.countMatchingTags(prompt.tagSelector, filterTags);
-            if (cnt > bestCnt) {
-                bestCnt = cnt;
-                bestPos = i;
-            }
-        }
-
-        return bestPos;
-    }
-
-    private countMatchingTags(a: string[], b: string[]): number {
-        const filtered = a.length > b.length ? b.filter((t) => a.indexOf(t) >= 0) : a.filter((t) => b.indexOf(t) >= 0);
-        return filtered.length;
-    }
-
-    private queueSteps(planning: PlanningContext, steps?: Dialog[], options?: any): boolean {
-        if (steps) {
-            // Queue up changes
-            const changes = this.createChangeList(steps, options);
+        // Queue actions steps
+        if (top) {
+            const changes: PlanChangeList = { changeType: PlanChangeType.doSteps, steps: [] };
+            top.steps.forEach((step) => {
+                const stepState: PlanStepState = { dialogStack: [], dialogId: step.id };
+                if (options) { stepState.options = options }
+                changes.steps.push(stepState);
+            });
             planning.queueChanges(changes);
             return true;
+        } else {
+            return false;
         }
-
-        return false;
-    }
-
-    private createChangeList(steps: Dialog[], options?: any): PlanChangeList {
-        const changes: PlanChangeList = { changeType: PlanChangeType.doSteps, steps: [] };
-        steps.forEach((step) => {
-            const ss: PlanStepState = { dialogStack: [], dialogId: step.id };
-            if (options) { ss.options = options }
-            changes.steps.push(ss);
-        });
-
-        return changes;
     }
 }
 
 interface InputDialogState<O extends object> extends PlanningState<O> {
     turnCount: number;
-    satisfied?: boolean;
+    fulfilled?: boolean;
+    continuingAction?: boolean;
 }
+

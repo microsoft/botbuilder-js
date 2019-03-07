@@ -11,7 +11,7 @@ import {
 } from 'botbuilder-core';
 import { 
     Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent,
-    DialogContext, DialogState, DialogSet, StateMap, DialogConsultation, DialogConsultationDesire
+    DialogContext, DialogState, DialogSet, StateMap, DialogConsultation, DialogConsultationDesire, DialogConfiguration
 } from 'botbuilder-dialogs';
 import { 
     PlanningEventNames, PlanningContext, PlanningState, PlanChangeList, PlanChangeType 
@@ -42,11 +42,45 @@ export interface BotStateStorageKeys {
     conversationState: string;
 }
 
+export interface PlanningDialogConfiguration extends DialogConfiguration {
+    /**
+     * Planning rules to evaluate for each conversational turn.
+     */
+    rules?: PlanningRule[];
+
+    /**
+     * (Optional) number of milliseconds to expire the bots state after. 
+     */
+    expireAfter?: number;
+
+    /**
+     * (Optional) storage provider that will be used to read and write the bots state..
+     */
+    storage?: Storage;
+
+    /**
+     * (Optional) recognizer used to analyze any message utterances.
+     */
+    recognizer?: Recognizer;
+}
+
 export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     private readonly dialogs: DialogSet = new DialogSet();
     private readonly runDialogSet: DialogSet = new DialogSet(); // Used by the run() method
     private installedDependencies = false;
 
+    /**
+     * Creates a new `PlanningDialog` instance.
+     * @param dialogId (Optional) unique ID of the component within its parents dialog set.
+     */
+    constructor(dialogId?: string) {
+        super(dialogId);
+        this.runDialogSet.add(this);
+    }
+
+    /**
+     * Planning rules to evaluate for each conversational turn.
+     */
     public readonly rules: PlanningRule[] = [];
 
     /**
@@ -57,44 +91,16 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     /**
      * (Optional) storage provider that will be used to read and write the bots state..
      */
-    public storage: Storage;
+    public storage?: Storage;
 
     /**
      * (Optional) recognizer used to analyze any message utterances.
      */
-    public recognizer: Recognizer;
-
-    /**
-     * Creates a new `PlanningDialog` instance.
-     * @param dialogId (Optional) unique ID of the component within its parents dialog set.
-     */
-    constructor(dialogId?: string) {
-        super(dialogId);
-        this.runDialogSet.add(this);
-    }
+    public recognizer?: Recognizer;
     
-    /**
-     * Set the telemetry client, and also apply it to all child dialogs.
-     * Future dialogs added to the component will also inherit this client.
-     */
     public set telemetryClient(client: BotTelemetryClient) {
-        this._telemetryClient = client ? client : new NullTelemetryClient();
+        super.telemetryClient = client ? client : new NullTelemetryClient();
         this.dialogs.telemetryClient = client;
-    }
-
-     /**
-     * Get the current telemetry client.
-     */
-    public get telemetryClient(): BotTelemetryClient {
-        return this._telemetryClient;
-    }
-    /**
-     * Fluent method for assigning a recognizer to the dialog.
-     * @param recognizer The recognizer to assign to the dialog.
-     */
-    public setRecognizer(recognizer: Recognizer): this {
-        this.recognizer = recognizer;
-        return this;
     }
 
     public addDialog(...dialogs: Dialog[]): this {
@@ -285,6 +291,10 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
             const stepDC: DialogContext = new DialogContext(this.dialogs, context, plan.steps[0], new StateMap({}), new StateMap({}));
             await stepDC.repromptDialog();
         }
+    }
+
+    public configure(config: PlanningDialogConfiguration): this {
+        return super.configure(this);
     }
  
     //---------------------------------------------------------------------------------------------

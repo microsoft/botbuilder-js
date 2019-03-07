@@ -53,7 +53,10 @@ export enum PlanningEventNames {
     planStarted = 'planStarted',
     planSaved = 'planSaved',
     planEnded = 'planEnded',
-    planResumed = 'planResumed'
+    planResumed = 'planResumed',
+    slotMissing = 'slotMissing',
+    slotInvalid = 'slotInvalid',
+    inputFulfilled = 'inputFulfilled'
 }
 
 export class PlanningContext<O extends object = {}> extends DialogContext {

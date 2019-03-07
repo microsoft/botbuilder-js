@@ -5,63 +5,35 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogTurnResult, DialogContext, TextPrompt, DialogConfiguration, DialogDependencies, DialogCommand } from 'botbuilder-dialogs';
-import { ActivityProperty } from '../activityProperty';
-import { Activity } from 'botbuilder-core';
+import { InputDialog, InputDialogConfiguration } from "./inputDialog";
+import { Activity, InputHints } from "botbuilder-core";
+import { TextSlot, TextSlotConfiguration } from "./textSlot";
+import { PlanningDialog } from "../planningDialog";
+import { DoStepsRule } from "../rules";
+import { CallDialog, EndDialog } from "../steps";
 
-export class TextInput extends DialogCommand implements DialogDependencies {
-    private prompt = new TextPrompt();
+export interface TextInputConfiguration extends InputDialogConfiguration, TextSlotConfiguration {
 
-    constructor(property: string, activity: string|Partial<Activity>) {
-        super();
-        this.property = property;
-        this.activity.value = activity;
+}
+
+export class TextInput extends InputDialog {
+
+    constructor(property?: string, activity?: string|Partial<Activity>, speak?: string, inputHint?: InputHints) {
+        super(new TextSlot('value'), property, activity, speak, inputHint);
     }
 
     protected onComputeID(): string {
         return `textInput[${this.bindingPath()}]`;
     }
 
-    public getDependencies(): Dialog[] {
-        // Update prompts ID before returning.
-        this.prompt.id = this.id + ':prompt';
-        return [this.prompt];
-    }
-
-    public configure(config: DialogConfiguration): this {
+    public configure(config: TextInputConfiguration): this {
+        // Divert slot settings to slot
+        ['minLength', 'minLengthProperty', 'pattern', 'patternProperty', 'formatValue'].forEach((key) => {
+            if (config.hasOwnProperty(key)) {
+                this.slot.configure({ [key]: config[key] });
+                delete config[key];
+            }
+        });
         return super.configure(config);
-    }
-
-    /**
-     * Activity to send the user.
-     */
-    public activity = new ActivityProperty();
-
-    /**
-     * (Optional) data binds the called dialogs input & output to the given property.
-     * 
-     * @remarks
-     * The bound properties current value will be passed to the called dialog as part of its 
-     * options and will be accessible within the dialog via `dialog.options.value`. The result
-     * returned from the called dialog will then be copied to the bound property.
-     */
-    public set property(value: string) {
-        this.inputBindings['value'] = value;
-        this.outputBinding = value;
-    }
-
-    public get property(): string {
-       return this.inputBindings['value']; 
-    }
-
-    public async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
-        // Check value and only call if missing
-        const value = dc.state.getValue(this.property);
-        if (value === undefined) {
-            const activity = this.activity.format(dc, { utterance: dc.context.activity.text || '' });
-            return await dc.prompt(this.prompt.id, activity);
-        } else {
-            return await dc.endDialog();
-        }
     }
 }

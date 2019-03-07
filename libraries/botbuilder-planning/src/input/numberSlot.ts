@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { PlanningContext } from '../planningContext';
-import { InputSlot, RecognizedInput, InputSlotConfiguration, RecognizedInputType } from './inputSlot';
+import { InputSlot, RecognizedInput, InputSlotConfiguration } from './inputSlot';
 import * as Recognizers from '@microsoft/recognizers-text-number';
 
 export interface NumberSlotConfiguration extends InputSlotConfiguration {
@@ -55,11 +55,11 @@ export class NumberSlot extends InputSlot<number> {
             const recognized: any = Recognizers.recognizeNumber(utterance, locale);
             if (recognized.length > 0 && recognized[0].resolution) {
                 const value = parseFloat(recognized[0].resolution.value);
-                return this.returnRecognizedInput(RecognizedInputType.set, value, true);
+                return { succeeded: true, value: value, score: 1.0 };
             }
         }
 
-        return undefined;
+        return { succeeded: false };
     }
 
     protected async onFormatValue(planning: PlanningContext, value: number): Promise<number> {

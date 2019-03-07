@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 import { PlanningContext } from '../planningContext';
-import { InputSlot, RecognizedInput, InputSlotConfiguration, RecognizedInputType } from './inputSlot';
-import { TextFormatTypes } from 'botbuilder-core';
+import { InputSlot, RecognizedInput, InputSlotConfiguration } from './inputSlot';
 
 export interface TextSlotConfiguration extends InputSlotConfiguration {
     minLength?: number;
@@ -63,12 +62,12 @@ export class TextSlot extends InputSlot<string> {
         return value;
     }
 
-    protected async onRecognizeUtterance(planning: PlanningContext, utterance: string, locale: string): Promise<RecognizedInput<string>|undefined> {
+    protected async onRecognizeUtterance(planning: PlanningContext, utterance: string, locale: string): Promise<RecognizedInput<string>> {
         if (utterance && utterance.length > 0) {
-            return this.returnRecognizedInput(RecognizedInputType.set, utterance);
+            return { succeeded: true, value: utterance };
         }
 
-        return undefined;
+        return { succeeded: false };
     }
 
     protected async onValidateValue(planning: PlanningContext, value: string): Promise<boolean> {
