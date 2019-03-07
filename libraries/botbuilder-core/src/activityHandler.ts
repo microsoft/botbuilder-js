@@ -226,7 +226,7 @@ export class ActivityHandler {
                     });
                     break;
                 default:
-                    // handler for unknown or unhandled types
+                // handler for unknown or unhandled types
                     await this.handle(context, 'UnrecognizedActivityType', runDialogs);
                     break;
             }

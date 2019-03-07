@@ -266,9 +266,9 @@ export class LuisRecognizer {
         // Note when the ms-rest dependency the LuisClient uses has been updated
         // this code should be modified to use the client's addUserAgentInfo() function.
 
-        const packageUserAgent = `${pjson.name}/${pjson.version}`;
-        const platformUserAgent = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
-        const userAgent = `${packageUserAgent} ${platformUserAgent}`;
+        const packageUserAgent = `${ pjson.name }/${ pjson.version }`;
+        const platformUserAgent = `(${ os.arch() }-${ os.type() }-${ os.release() }; Node.js,Version=${ process.version })`;
+        const userAgent = `${ packageUserAgent } ${ platformUserAgent }`;
 
         return userAgent;
     }
@@ -326,7 +326,7 @@ export class LuisRecognizer {
                     break;
                 default:
                     error.message = [
-                        `Response ${(error as any).response.statusCode}: Unexpected status code received.`,
+                        `Response ${ (error as any).response.statusCode }: Unexpected status code received.`,
                         `Please verify that your LUIS application is properly setup.`
                     ].join(' ');
             }
@@ -570,10 +570,10 @@ export class LuisRecognizer {
      */
     private validateLuisApplication(): void {
         if (!this.application.applicationId) {
-            throw new Error(`Invalid \`applicationId\` value detected: ${this.application.applicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
+            throw new Error(`Invalid \`applicationId\` value detected: ${ this.application.applicationId }\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
         }
         if (!this.application.endpointKey) {
-            throw new Error(`Invalid \`endpointKey\` value detected: ${this.application.endpointKey}\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`);
+            throw new Error(`Invalid \`endpointKey\` value detected: ${ this.application.endpointKey }\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`);
         }
     }
 }

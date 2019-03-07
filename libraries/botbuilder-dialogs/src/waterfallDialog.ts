@@ -184,7 +184,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      */
     protected async onStep(step: WaterfallStepContext<O>): Promise<DialogTurnResult> {
         // Log Waterfall Step event. 
-        var stepName = this.waterfallStepName(step.index)
+        var stepName = this.waterfallStepName(step.index);
 
         const state: WaterfallDialogState = step.activeDialog.state as WaterfallDialogState;
 
@@ -214,7 +214,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
                 values: state.values,
                 onNext: async (stepResult?: any): Promise<DialogTurnResult<any>> => {
                     if (nextCalled) {
-                        throw new Error(`WaterfallStepContext.next(): method already called for dialog and step '${this.id}[${index}]'.`);
+                        throw new Error(`WaterfallStepContext.next(): method already called for dialog and step '${ this.id }[${ index }]'.`);
                     }
                     nextCalled = true;
                     return await this.resumeDialog(dc, DialogReason.nextCalled, stepResult);
@@ -238,7 +238,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      */
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason) {
 
-        const state: WaterfallDialogState = instance.state as WaterfallDialogState
+        const state: WaterfallDialogState = instance.state as WaterfallDialogState;
         const instanceId = state.values['instanceId'];
         if (reason === DialogReason.endCalled) {
             this.telemetryClient.trackEvent({name: "WaterfallComplete", properties: {

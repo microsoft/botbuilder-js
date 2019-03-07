@@ -290,7 +290,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         const timestamp: string = this.sanitizeKey(this.getTicks(activity.timestamp));
         const activityId: string = this.sanitizeKey(activity.id);
 
-        return `${channelId}/${conversationId}/${timestamp}-${activityId}.json`;
+        return `${ channelId }/${ conversationId }/${ timestamp }-${ activityId }.json`;
     }
 
     private getDirName(channelId: string, conversationId?: string): string {
@@ -298,7 +298,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             return this.sanitizeKey(channelId);
         }
 
-        return `${this.sanitizeKey(channelId)}/${this.sanitizeKey(conversationId)}`;
+        return `${ this.sanitizeKey(channelId) }/${ this.sanitizeKey(conversationId) }`;
     }
 
     private sanitizeKey(key: string): string {

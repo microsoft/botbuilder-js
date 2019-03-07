@@ -131,13 +131,13 @@ export class CosmosDbStorage implements Storage {
         }
 
         const parameterSequence: string = Array.from(Array(keys.length).keys())
-            .map((ix: number) => `@id${ix}`)
+            .map((ix: number) => `@id${ ix }`)
             .join(',');
         const parameterValues: {
             name: string;
             value: string;
         }[] = keys.map((key: string, ix: number) => ({
-            name: `@id${ix}`,
+            name: `@id${ ix }`,
             value: CosmosDbKeyEscape.escapeKey(key)
         }));
 
@@ -148,7 +148,7 @@ export class CosmosDbStorage implements Storage {
                 value: string;
             }[];
         } = {
-            query: `SELECT c.id, c.realId, c.document, c._etag FROM c WHERE c.id in (${parameterSequence})`,
+            query: `SELECT c.id, c.realId, c.document, c._etag FROM c WHERE c.id in (${ parameterSequence })`,
             parameters: parameterValues
         };
 

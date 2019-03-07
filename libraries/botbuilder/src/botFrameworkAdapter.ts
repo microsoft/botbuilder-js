@@ -78,8 +78,8 @@ const NODE_VERSION: any = process.version;
 
 // tslint:disable-next-line:no-var-requires no-require-imports
 const pjson: any = require('../package.json');
-const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${pjson.version} ` +
-    `(Node.js,Version=${NODE_VERSION}; ${TYPE} ${RELEASE}; ${ARCHITECTURE})`;
+const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${ pjson.version } ` +
+    `(Node.js,Version=${ NODE_VERSION }; ${ TYPE } ${ RELEASE }; ${ ARCHITECTURE })`;
 const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
 const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
@@ -556,12 +556,12 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
         // Return status 
         res.status(status);
-        if (body) { res.send(body) }
+        if (body) { res.send(body); }
         res.end();
 
         // Check for an error
         if (status >= 400) {
-            console.warn(`BotFrameworkAdapter.processActivity(): ${status} ERROR - ${body.toString()}`);
+            console.warn(`BotFrameworkAdapter.processActivity(): ${ status } ERROR - ${ body.toString() }`);
             throw new Error(body.toString());
         }
     }
@@ -594,7 +594,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
                     responses.push({} as ResourceResponse);
                     break;
                 case 'invokeResponse':
-                    // Cache response to context object. This will be retrieved when turn completes.
+                // Cache response to context object. This will be retrieved when turn completes.
                     context.turnState.set(INVOKE_RESPONSE_KEY, activity);
                     responses.push({} as ResourceResponse);
                     break;
@@ -605,7 +605,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
                     }
                     const client: ConnectorClient = this.createConnectorClient(activity.serviceUrl);
                     if (activity.type === 'trace' && activity.channelId !== 'emulator') {
-                        // Just eat activity
+                    // Just eat activity
                         responses.push({} as ResourceResponse);
                     } else if (activity.replyToId) {
                         responses.push(await client.conversations.replyToActivity(

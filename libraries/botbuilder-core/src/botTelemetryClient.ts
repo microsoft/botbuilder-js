@@ -59,7 +59,7 @@ export interface TelemetryTrace {
 
 export class NullTelemetryClient implements BotTelemetryClient {
 
-    constructor (settings?: any) {
+    constructor(settings?: any) {
         // noop
     }
 

@@ -15,7 +15,7 @@ export namespace CosmosDbKeyEscape {
     const illegalKeyCharacterReplacementMap: Map<string, string> =
         illegalKeys.reduce<Map<string, string>>(
             (map: Map<string, string>, c: string) => {
-                map.set(c, `*${c.charCodeAt(0).toString(16)}`);
+                map.set(c, `*${ c.charCodeAt(0).toString(16) }`);
 
                 return map;
             },

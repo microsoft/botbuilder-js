@@ -172,7 +172,7 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
                 return services.splice(i, 1)[0];
             }
         }
-        throw new Error(`a service with id or name of [${nameOrId}] was not found`);
+        throw new Error(`a service with id or name of [${ nameOrId }] was not found`);
     }
 
     /**

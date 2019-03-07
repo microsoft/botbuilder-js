@@ -58,7 +58,7 @@ export class BotState implements PropertyManager {
      * @param name Name of the property to add. Must be unique within the set.
      */
     public createProperty<T = any>(name: string): StatePropertyAccessor<T> {
-        if (this.properties.has(name)) { throw new Error(`BotState.createProperty(): a property named '${name}' already exists.`); }
+        if (this.properties.has(name)) { throw new Error(`BotState.createProperty(): a property named '${ name }' already exists.`); }
         const prop: BotStatePropertyAccessor<T> = new BotStatePropertyAccessor<T>(this, name);
         this.properties.set(name, prop);
 

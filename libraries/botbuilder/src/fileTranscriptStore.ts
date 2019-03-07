@@ -228,7 +228,7 @@ export class FileTranscriptStore implements TranscriptStore {
     }
 
     private getActivityFilename(activity: Activity): string {
-        return `${getTicks(activity.timestamp)}-${this.sanitizeKey(activity.id)}.json`;
+        return `${ getTicks(activity.timestamp) }-${ this.sanitizeKey(activity.id) }.json`;
     }
 
     private getChannelFolder(channelId: string): string {
