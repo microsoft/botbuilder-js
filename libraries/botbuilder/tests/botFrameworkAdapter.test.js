@@ -135,15 +135,11 @@ describe(`BotFrameworkAdapter`, function () {
     this.timeout(5000);
     
     it(`should return the status of every connection the user has`, async function () {
-            
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         adapter.getTokenStatus(context)
         .then((responses) => {
-            assert(responses.length>0);
-        })
-        .catch((error) => {
-            assert(error);
+            assert(responses.length > 0);
         });
     });
 
