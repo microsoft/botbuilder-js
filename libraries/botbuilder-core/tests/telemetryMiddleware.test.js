@@ -1,5 +1,8 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License
+
 const assert = require('assert');
-const { TestAdapter, TelemetryLoggerMiddleware, ActivityTypes, MemoryTranscriptStore, TranscriptLoggerMiddleware } = require('../');
+const { TestAdapter, TelemetryLoggerMiddleware, ActivityTypes } = require('../');
 
 
 describe(`TelemetryMiddleware`, function () {
