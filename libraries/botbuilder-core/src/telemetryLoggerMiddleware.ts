@@ -2,13 +2,9 @@
 // Licensed under the MIT License
 
 import { BotTelemetryClient, NullTelemetryClient } from './botTelemetryClient';
-
-import { Activity,
-        ActivityTypes,
-        ConversationReference,
-        Middleware,
-        ResourceResponse,
-        TurnContext } from 'botbuilder';
+import { Middleware } from './middlewareSet';
+import { TurnContext } from './turnContext';
+import { Activity, ActivityTypes, ConversationReference, ResourceResponse } from 'botframework-schema';
 import { TelemetryConstants } from './telemetryConstants';
 
 /**
