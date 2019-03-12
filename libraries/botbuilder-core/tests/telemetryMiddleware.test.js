@@ -106,6 +106,30 @@ describe(`TelemetryMiddleware`, function () {
             .then(done);
     });
 
+    it(`telemetry null telemetryClient`, function (done) {
+        var callCount = 0;
+        let myLogger = new TelemetryLoggerMiddleware(null, true);
+        var conversationId = null;
+        var adapter = new TestAdapter(async (context) => {
+            conversationId = context.activity.conversation.id;
+            var typingActivity = {
+                type: ActivityTypes.Typing,
+                relatesTo: context.activity.relatesTo
+                };
+            await context.sendActivity(typingActivity);
+            await context.sendActivity(`echo:${context.activity.text}`);
+        }).use(myLogger);
+
+        adapter
+            .send('foo')
+                .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+                .assertReply('echo:foo')
+            .send('bar')
+                .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+                .assertReply('echo:bar')
+            .then(done);
+    });
+
     it(`telemetry should not log PII properties for send and receive activities`, function (done) {
         var callCount = 0;
         var telemetryClient = {
@@ -303,6 +327,7 @@ describe(`TelemetryMiddleware`, function () {
                         assert(telemetry.properties);
                         assert('fromId' in telemetry.properties);
                         assert('conversationName' in telemetry.properties);
+                        assert(telemetry.properties.conversationName === 'OVERRIDE');
                         assert('locale' in telemetry.properties);
                         assert('recipientId' in telemetry.properties);
                         assert('recipientName' in telemetry.properties);
@@ -502,7 +527,7 @@ class overrideReceiveLogger extends TelemetryLoggerMiddleware
                                 "ImportantProperty": "ImportantValue"  } });
         this.telemetryClient.trackEvent({
             name: "MyReceive",
-            properties: await this.fillReceiveEventProperties(activity) });
+            properties: await this.fillReceiveEventProperties(activity, {"conversationName": "OVERRIDE"}) });
     }
 }
 
