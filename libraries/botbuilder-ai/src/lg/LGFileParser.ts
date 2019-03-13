@@ -1,24 +1,30 @@
-// Generated from .\LGFileParser.g4 by ANTLR 4.6-SNAPSHOT
+// Generated from LGFileParser.g4 by ANTLR 4.6-SNAPSHOT
 
 
 import { ATN } from "antlr4ts/atn/ATN";
 import { ATNDeserializer } from "antlr4ts/atn/ATNDeserializer";
-import { ParserATNSimulator } from "antlr4ts/atn/ParserATNSimulator";
-import * as Utils from "antlr4ts/misc/Utils";
+import { FailedPredicateException } from "antlr4ts/FailedPredicateException";
+import { NotNull } from "antlr4ts/Decorators";
 import { NoViableAltException } from "antlr4ts/NoViableAltException";
+import { Override } from "antlr4ts/Decorators";
 import { Parser } from "antlr4ts/Parser";
 import { ParserRuleContext } from "antlr4ts/ParserRuleContext";
+import { ParserATNSimulator } from "antlr4ts/atn/ParserATNSimulator";
+import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
+import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 import { RecognitionException } from "antlr4ts/RecognitionException";
-import { Token } from "antlr4ts/Token";
-import { TokenStream } from "antlr4ts/TokenStream";
+import { RuleContext } from "antlr4ts/RuleContext";
 //import { RuleVersion } from "antlr4ts/RuleVersion";
 import { TerminalNode } from "antlr4ts/tree/TerminalNode";
+import { Token } from "antlr4ts/Token";
+import { TokenStream } from "antlr4ts/TokenStream";
 import { Vocabulary } from "antlr4ts/Vocabulary";
 import { VocabularyImpl } from "antlr4ts/VocabularyImpl";
+
+import * as Utils from "antlr4ts/misc/Utils";
+
 import { LGFileParserListener } from "./LGFileParserListener";
 import { LGFileParserVisitor } from "./LGFileParserVisitor";
-
-
 
 
 export class LGFileParser extends Parser {
@@ -37,10 +43,12 @@ export class LGFileParser extends Parser {
 	public static readonly CASE = 13;
 	public static readonly DEFAULT = 14;
 	public static readonly MULTI_LINE_TEXT = 15;
-	public static readonly EXPRESSION = 16;
-	public static readonly TEMPLATE_REF = 17;
-	public static readonly TEXT_SEPARATOR = 18;
-	public static readonly TEXT = 19;
+	public static readonly ESCAPE_CHARACTER = 16;
+	public static readonly INVALID_ESCAPE = 17;
+	public static readonly EXPRESSION = 18;
+	public static readonly TEMPLATE_REF = 19;
+	public static readonly TEXT_SEPARATOR = 20;
+	public static readonly TEXT = 21;
 	public static readonly RULE_file = 0;
 	public static readonly RULE_paragraph = 1;
 	public static readonly RULE_newline = 2;
@@ -71,8 +79,8 @@ export class LGFileParser extends Parser {
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
 		undefined, "COMMENTS", "WS", "NEWLINE", "HASH", "DASH", "WS_IN_NAME", 
 		"IDENTIFIER", "DOT", "OPEN_PARENTHESIS", "CLOSE_PARENTHESIS", "COMMA", 
-		"WS_IN_BODY_IGNORED", "CASE", "DEFAULT", "MULTI_LINE_TEXT", "EXPRESSION", 
-		"TEMPLATE_REF", "TEXT_SEPARATOR", "TEXT",
+		"WS_IN_BODY_IGNORED", "CASE", "DEFAULT", "MULTI_LINE_TEXT", "ESCAPE_CHARACTER", 
+		"INVALID_ESCAPE", "EXPRESSION", "TEMPLATE_REF", "TEXT_SEPARATOR", "TEXT",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(LGFileParser._LITERAL_NAMES, LGFileParser._SYMBOLIC_NAMES, []);
 
@@ -474,12 +482,12 @@ export class LGFileParser extends Parser {
 			this.state = 86;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.MULTI_LINE_TEXT) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEMPLATE_REF) | (1 << LGFileParser.TEXT_SEPARATOR) | (1 << LGFileParser.TEXT))) !== 0)) {
+			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.MULTI_LINE_TEXT) | (1 << LGFileParser.ESCAPE_CHARACTER) | (1 << LGFileParser.INVALID_ESCAPE) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEMPLATE_REF) | (1 << LGFileParser.TEXT_SEPARATOR) | (1 << LGFileParser.TEXT))) !== 0)) {
 				{
 				{
 				this.state = 83;
 				_la = this._input.LA(1);
-				if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.MULTI_LINE_TEXT) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEMPLATE_REF) | (1 << LGFileParser.TEXT_SEPARATOR) | (1 << LGFileParser.TEXT))) !== 0))) {
+				if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.MULTI_LINE_TEXT) | (1 << LGFileParser.ESCAPE_CHARACTER) | (1 << LGFileParser.INVALID_ESCAPE) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEMPLATE_REF) | (1 << LGFileParser.TEXT_SEPARATOR) | (1 << LGFileParser.TEXT))) !== 0))) {
 				this._errHandler.recoverInline(this);
 				} else {
 					if (this._input.LA(1) === Token.EOF) {
@@ -673,7 +681,7 @@ export class LGFileParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03\x15r\x04\x02" +
+		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03\x17r\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
 		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x04\r\t\r\x04" +
 		"\x0E\t\x0E\x04\x0F\t\x0F\x04\x10\t\x10\x03\x02\x06\x02\"\n\x02\r\x02\x0E" +
@@ -686,7 +694,7 @@ export class LGFileParser extends Parser {
 		"\r\x03\x0E\x03\x0E\x03\x0E\x03\x0E\x03\x0F\x03\x0F\x03\x0F\x03\x0F\x03" +
 		"\x10\x03\x10\x03\x10\x03\x10\x03#\x02\x02\x11\x02\x02\x04\x02\x06\x02" +
 		"\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14\x02\x16\x02\x18\x02\x1A" +
-		"\x02\x1C\x02\x1E\x02\x02\x04\x03\x03\x05\x05\x04\x02\x04\x04\x11\x15k" +
+		"\x02\x1C\x02\x1E\x02\x02\x04\x03\x03\x05\x05\x04\x02\x04\x04\x11\x17k" +
 		"\x02!\x03\x02\x02\x02\x04)\x03\x02\x02\x02\x06+\x03\x02\x02\x02\b-\x03" +
 		"\x02\x02\x02\n1\x03\x02\x02\x02\f6\x03\x02\x02\x02\x0E>\x03\x02\x02\x02" +
 		"\x10K\x03\x02\x02\x02\x12P\x03\x02\x02\x02\x14T\x03\x02\x02\x02\x16\\" +
@@ -713,7 +721,7 @@ export class LGFileParser extends Parser {
 		"\x02`a\x05\x1A\x0E\x02a\x17\x03\x02\x02\x02bc\x05\x1C\x0F\x02cd\x05\x06" +
 		"\x04\x02de\x05\x12\n\x02e\x19\x03\x02\x02\x02fg\x05\x1E\x10\x02gh\x05" +
 		"\x06\x04\x02hi\x05\x12\n\x02i\x1B\x03\x02\x02\x02jk\x07\x07\x02\x02kl" +
-		"\x07\x0F\x02\x02lm\x07\x12\x02\x02m\x1D\x03\x02\x02\x02no\x07\x07\x02" +
+		"\x07\x0F\x02\x02lm\x07\x14\x02\x02m\x1D\x03\x02\x02\x02no\x07\x07\x02" +
 		"\x02op\x07\x10\x02\x02p\x1F\x03\x02\x02\x02\v#)4;DKRX^";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
@@ -1172,6 +1180,24 @@ export class NormalTemplateStringContext extends ParserRuleContext {
 			return this.getTokens(LGFileParser.MULTI_LINE_TEXT);
 		} else {
 			return this.getToken(LGFileParser.MULTI_LINE_TEXT, i);
+		}
+	}
+	public ESCAPE_CHARACTER(): TerminalNode[];
+	public ESCAPE_CHARACTER(i: number): TerminalNode;
+	public ESCAPE_CHARACTER(i?: number): TerminalNode | TerminalNode[] {
+		if (i === undefined) {
+			return this.getTokens(LGFileParser.ESCAPE_CHARACTER);
+		} else {
+			return this.getToken(LGFileParser.ESCAPE_CHARACTER, i);
+		}
+	}
+	public INVALID_ESCAPE(): TerminalNode[];
+	public INVALID_ESCAPE(i: number): TerminalNode;
+	public INVALID_ESCAPE(i?: number): TerminalNode | TerminalNode[] {
+		if (i === undefined) {
+			return this.getTokens(LGFileParser.INVALID_ESCAPE);
+		} else {
+			return this.getToken(LGFileParser.INVALID_ESCAPE, i);
 		}
 	}
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {

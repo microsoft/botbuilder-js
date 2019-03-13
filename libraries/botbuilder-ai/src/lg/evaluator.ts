@@ -95,8 +95,12 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
             const innerNode: TerminalNode =  node as TerminalNode;
             switch (innerNode.symbol.type) {
                 case LGFileParser.DASH: break;
+                case LGFileParser.ESCAPE_CHARACTER:
+                    result = result.concat(this.EvalEscapeCharacter(innerNode.text));
+                    break;
+                case LGFileParser.INVALID_ESCAPE:
+                    throw new Error(`escape character ${innerNode.text} is invalid`);
                 case LGFileParser.EXPRESSION: {
-
                     result = result.concat(this.EvalExpression(innerNode.text));
                     break;
                 }
@@ -143,6 +147,25 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     private currentTarget(): EvaluationTarget {
         return this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
     }
+
+     private EvalEscapeCharacter(exp: string): string
+        {
+            var validCharactersDict = {
+                "\\r": "\r",
+                "\\n": "\n",
+                "\\t": "\t",
+                "\\\\": "\\",
+                "\\[": "[",
+                "\\]": "]",
+                "\\{": "{",
+                "\\}": "}",
+            };
+
+            if (Object.keys(validCharactersDict).includes(exp))
+                return validCharactersDict[exp];
+
+            throw new Error(`escape character ${exp} is invalid`);
+        }
 
     private EvalCondition(exp: string): boolean {
         try {
