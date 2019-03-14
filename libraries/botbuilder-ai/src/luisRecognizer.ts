@@ -6,10 +6,12 @@
  * Licensed under the MIT License.
  */
 import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from 'azure-cognitiveservices-luis-runtime';
-import { RecognizerResult, TurnContext } from 'botbuilder-core';
+import { RecognizerResult, TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 import * as msRest from "ms-rest";
 import * as os from 'os';
 import * as Url from 'url-parse';
+import { TelemetryConstants } from 'botbuilder-core/lib/telemetryConstants';
+import { LuisTelemetryConstants } from './luisTelemetryConstants';
 
 const pjson = require('../package.json');
 
@@ -111,6 +113,9 @@ export interface LuisPredictionOptions {
  * This component can be used within your bots logic by calling [recognize()](#recognize).
  */
 export class LuisRecognizer {
+    protected telemetryClient: BotTelemetryClient;
+    protected logPersonalInformation: boolean;
+
     private application: LuisApplication;
     private options: LuisPredictionOptions;
     private includeApiResults: boolean;
@@ -124,9 +129,9 @@ export class LuisRecognizer {
      * @param options (Optional) options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
      * @param includeApiResults (Optional) flag that if set to `true` will force the inclusion of LUIS Api call in results returned by [recognize()](#recognize). Defaults to a value of `false`.
      */
-    constructor(application: string, options?: LuisPredictionOptions, includeApiResults?: boolean);
-    constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean);
-    constructor(application: LuisApplication|string, options?: LuisPredictionOptions, includeApiResults?: boolean) {
+    constructor(application: string, options?: LuisPredictionOptions, includeApiResults?: boolean, telemetryClient?: BotTelemetryClient, logPersonalInformation?: boolean);
+    constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean, telemetryClient?: BotTelemetryClient, logPersonalInformation?: boolean);
+    constructor(application: LuisApplication|string, options?: LuisPredictionOptions, includeApiResults?: boolean, telemetryClient?: BotTelemetryClient, logPersonalInformation?: boolean) {
         if (typeof application === 'string') {
             const parsedEndpoint: Url = Url(application);
             // Use exposed querystringify to parse the query string for the endpointKey value.
@@ -160,6 +165,9 @@ export class LuisRecognizer {
         const creds: msRest.TokenCredentials = new msRest.TokenCredentials(this.application.endpointKey);
         const baseUri: string = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
         this.luisClient = new LuisClient(creds, baseUri);
+
+        this.telemetryClient = telemetryClient || new NullTelemetryClient();
+        this.logPersonalInformation = logPersonalInformation;
     }
 
     /**
@@ -187,7 +195,6 @@ export class LuisRecognizer {
 
     /**
      * Calls LUIS to recognize intents and entities in a users utterance.
-     *
      * @remarks
      * Returns a [RecognizerResult](../botbuilder-core/recognizerresult) containing any intents and entities recognized by LUIS.
      *
@@ -213,8 +220,10 @@ export class LuisRecognizer {
      * }
      * ```
      * @param context Context for the current turn of conversation with the use.
+     * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
+     * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
      */
-    public recognize(context: TurnContext): Promise<RecognizerResult> {
+    public recognize(context: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number} ): Promise<RecognizerResult> {
         const cached: any = context.turnState.get(this.cacheKey);
         if (!cached) {
             const utterance: string = context.activity.text || '';
@@ -248,6 +257,9 @@ export class LuisRecognizer {
                     // Write to cache
                     context.turnState.set(this.cacheKey, recognizerResult);
 
+                    // Log telemetry
+                    this.onRecognizerResults(recognizerResult, context, telemetryProperties, telemetryMetrics);
+
                     return this.emitTraceInfo(context, luisResult, recognizerResult).then(() => {
                         return recognizerResult;
                     });
@@ -260,6 +272,79 @@ export class LuisRecognizer {
 
         return Promise.resolve(cached);
     }
+
+    /**
+     * Invoked prior to a LuisResult Event being logged.
+     * @param recognizerResult The Luis Results for the call.
+     * @param turnContext Context object containing information for a single turn of conversation with a user.
+     * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
+     * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
+     */
+    protected onRecognizerResults(recognizerResult: RecognizerResult, turnContext: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number}): Promise<void> {
+        this.fillLuisProperties(recognizerResult, turnContext, telemetryProperties).then(props => {
+            this.telemetryClient.trackEvent(
+                { 
+                  name: LuisTelemetryConstants.luisResultEvent,
+                  properties: props,
+                  metrics: telemetryMetrics 
+                });
+        });
+        return;
+    } 
+
+    /**
+     * Fills the event properties for LuisResult event for telemetry.
+     * These properties are logged when the recognizer is called.
+     * @param recognizerResult Last activity sent from user.
+     * @param turnContext Context object containing information for a single turn of conversation with a user.
+     * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
+     * @returns A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the LuisResult event.
+     */
+    protected async fillLuisProperties(recognizerResult: RecognizerResult, turnContext: TurnContext, telemetryProperties?: {[key: string]:string}): Promise<{[key: string]:string}> {
+        const topLuisIntent: string = LuisRecognizer.topIntent(recognizerResult);
+        const intentScore: number = (recognizerResult.intents[topLuisIntent] && 'score' in recognizerResult.intents[topLuisIntent]) ?
+           recognizerResult.intents[topLuisIntent].score : 0;
+
+        // Add the intent score and conversation id properties
+        const properties: { [key: string]: string } = {};
+        properties[LuisTelemetryConstants.applicationIdProperty] = this.application.applicationId;
+        properties[LuisTelemetryConstants.intentProperty] = topLuisIntent;
+        properties[LuisTelemetryConstants.intentScoreProperty] = intentScore.toString();
+        if (turnContext.activity.from) {
+            properties[LuisTelemetryConstants.fromIdProperty] = turnContext.activity.from.id;;
+        }
+
+        if (recognizerResult.sentiment) {
+            if (recognizerResult.sentiment.label) {
+                properties[LuisTelemetryConstants.sentimentLabelProperty] = recognizerResult.sentiment.label;
+            }
+
+            if (recognizerResult.sentiment.score) {
+                properties[LuisTelemetryConstants.sentimentScoreProperty] = recognizerResult.sentiment.score.toString();
+            }
+        }
+
+        // Log entity names
+        if (recognizerResult.entities)
+        {
+            properties[LuisTelemetryConstants.entitiesProperty] = JSON.stringify(recognizerResult.entities);
+        }
+
+        // Use the LogPersonalInformation flag to toggle logging PII data, text is a common example
+        if (this.logPersonalInformation && turnContext.activity.text)
+        {
+            properties[LuisTelemetryConstants.questionProperty] = turnContext.activity.text;
+        }
+
+        // Additional Properties can override "stock" properties.
+        if (telemetryProperties != null)
+        {
+            return Object.assign({}, properties, telemetryProperties);
+        }
+
+        return properties;
+    }
+
 
     private getUserAgent() : string {
 
