@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { EventRule } from './eventRule';
-import { PlanningEventNames, PlanningContext, PlanChangeType } from '../planningContext';
+import { RuleDialogEventNames, PlanningContext, PlanChangeType } from '../planningContext';
 import { DialogEvent, Dialog } from 'botbuilder-dialogs';
 
 /**
@@ -26,7 +26,7 @@ export class ActivityRule extends EventRule {
      * @param changeType (Optional) type of plan modification to make when triggered. Defaults to `PlanChangeType.doSteps`.
      */
     constructor(types?: string|string[], steps?: Dialog[], changeType?: PlanChangeType) {
-        super(PlanningEventNames.activityReceived, steps, changeType);
+        super(RuleDialogEventNames.activityReceived, steps, changeType);
         this.types = Array.isArray(types) ? types : (types !== undefined ? [types] : []);
     }
 

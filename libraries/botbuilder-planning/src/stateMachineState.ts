@@ -8,7 +8,7 @@
 import { SequenceDialog } from './sequenceDialog';
 import { StateTransitionRule } from './rules';
 import { Dialog, DialogTurnResult, DialogEvent } from 'botbuilder-dialogs';
-import { PlanningContext, PlanningEventNames, PlanStepState, PlanChangeType } from './planningContext';
+import { PlanningContext, RuleDialogEventNames, PlanStepState, PlanChangeType } from './planningContext';
 
 export class StateMachineState extends SequenceDialog {
     private rule = new StateTransitionRule();
@@ -33,7 +33,7 @@ export class StateMachineState extends SequenceDialog {
 
     protected async evaluateRules(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
         // Intercept fallback event
-        if (event.name == PlanningEventNames.fallback) {
+        if (event.name == RuleDialogEventNames.unhandledUtterance) {
             // Queue up sequences plan
             const steps = this.steps.map((step) => {
                 return {

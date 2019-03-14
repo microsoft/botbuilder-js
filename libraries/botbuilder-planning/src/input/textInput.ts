@@ -8,9 +8,6 @@
 import { InputDialog, InputDialogConfiguration } from "./inputDialog";
 import { Activity, InputHints } from "botbuilder-core";
 import { TextSlot, TextSlotConfiguration } from "./textSlot";
-import { PlanningDialog } from "../planningDialog";
-import { DoStepsRule } from "../rules";
-import { CallDialog, EndDialog } from "../steps";
 
 export interface TextInputConfiguration extends InputDialogConfiguration, TextSlotConfiguration {
 

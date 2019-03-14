@@ -7,7 +7,7 @@
  */
 import { RecognizerResult } from 'botbuilder-core';
 import { EventRule } from './eventRule';
-import { PlanningEventNames, PlanningContext, PlanChangeList, PlanChangeType } from '../planningContext';
+import { RuleDialogEventNames, PlanningContext, PlanChangeList, PlanChangeType } from '../planningContext';
 import { DialogEvent, Dialog } from 'botbuilder-dialogs';
 
 /**
@@ -34,7 +34,7 @@ export class UtteranceRecognizedRule extends EventRule {
      * @param changeType (Optional) type of plan modification to make when triggered. Defaults to `PlanChangeType.doSteps`.
      */
     constructor(intents?: string|string[], entities?: string|string[], steps?: Dialog[], changeType?: PlanChangeType) {
-        super(PlanningEventNames.utteranceRecognized, steps, changeType);
+        super(RuleDialogEventNames.utteranceRecognized, steps, changeType);
         this.intents = Array.isArray(intents) ? intents : (intents !== undefined ? [intents] : []);
         this.entities = Array.isArray(entities) ? entities : (entities !== undefined ? [entities] : []);
     }

@@ -7,42 +7,19 @@
  */
 import { 
     TurnContext, BotTelemetryClient, NullTelemetryClient, Storage, ActivityTypes, 
-    RecognizerResult, Activity, StoreItems
+    RecognizerResult
 } from 'botbuilder-core';
 import { 
     Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent,
-    DialogContext, DialogState, DialogSet, StateMap, DialogConsultation, DialogConsultationDesire, DialogConfiguration
+    DialogContext, DialogSet, StateMap, DialogConsultation, DialogConsultationDesire, DialogConfiguration
 } from 'botbuilder-dialogs';
 import { 
-    PlanningEventNames, PlanningContext, PlanningState, PlanChangeList, PlanChangeType 
+    RuleDialogEventNames, PlanningContext, RuleDialogState, PlanChangeList, PlanChangeType 
 } from './planningContext';
 import { PlanningRule } from './rules';
 import { Recognizer } from './recognizers';
-import { PlanningAdapter } from './internal/planningAdapter';
 
-export interface StoredBotState {
-    userState: { 
-        eTag?: string; 
-    };
-    conversationState: {
-        eTag?: string;
-        _dialogs?: DialogState;
-        _lastAccess?: string;
-    };
-}
-
-export interface BotTurnResult {
-    turnResult: DialogTurnResult;
-    activities?: Partial<Activity>[];
-    newState?: StoredBotState;
-}
-
-export interface BotStateStorageKeys {
-    userState: string;
-    conversationState: string;
-}
-
-export interface PlanningDialogConfiguration extends DialogConfiguration {
+export interface RuleDialogConfiguration extends DialogConfiguration {
     /**
      * Planning rules to evaluate for each conversational turn.
      */
@@ -64,34 +41,22 @@ export interface PlanningDialogConfiguration extends DialogConfiguration {
     recognizer?: Recognizer;
 }
 
-export class PlanningDialog<O extends object = {}> extends Dialog<O> {
+export class RuleDialog<O extends object = {}> extends Dialog<O> {
     private readonly dialogs: DialogSet = new DialogSet();
-    private readonly runDialogSet: DialogSet = new DialogSet(); // Used by the run() method
     private installedDependencies = false;
 
     /**
-     * Creates a new `PlanningDialog` instance.
+     * Creates a new `RuleDialog` instance.
      * @param dialogId (Optional) unique ID of the component within its parents dialog set.
      */
     constructor(dialogId?: string) {
         super(dialogId);
-        this.runDialogSet.add(this);
     }
 
     /**
-     * Planning rules to evaluate for each conversational turn.
+     * Rules to evaluate for each conversational turn.
      */
     public readonly rules: PlanningRule[] = [];
-
-    /**
-     * (Optional) number of milliseconds to expire the bots state after. 
-     */
-    public expireAfter?: number;
-
-    /**
-     * (Optional) storage provider that will be used to read and write the bots state..
-     */
-    public storage?: Storage;
 
     /**
      * (Optional) recognizer used to analyze any message utterances.
@@ -117,67 +82,6 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         return this.dialogs.find(dialogId);
     }
 
-    public async onTurn(context: TurnContext, state?: StoredBotState): Promise<BotTurnResult> {
-        // Log start of turn
-        console.log('------------:');
-
-        // Load state from storage if needed
-        let saveState = false;
-        const keys = PlanningDialog.getStorageKeys(context);
-        if (!state) {
-            if (!this.storage) { throw new Error(`PlanningDialog: unable to load the bots state. PlanningDialog.storage not assigned.`) }
-            state = await PlanningDialog.loadBotState(this.storage, keys);
-            saveState = true;
-        }
-
-        // Clone state to preserve original state
-        const newState = JSON.parse(JSON.stringify(state));
-
-        // Check for expired conversation
-        const now  = new Date();
-        if (typeof this.expireAfter == 'number' && newState.conversationState._lastAccess) {
-            const lastAccess = new Date(newState.conversationState._lastAccess);
-            if (now.getTime() - lastAccess.getTime() >= this.expireAfter) {
-                // Clear conversation state
-                state.conversationState = { eTag: newState.conversationState.eTag }
-            }
-        }
-        newState.conversationState._lastAccess = now.toISOString();
-
-        // Ensure dialog stack populated
-        if (!newState.conversationState._dialogs) { 
-            newState.conversationState._dialogs = { dialogStack: [] }
-        }
-
-        // Create DialogContext
-        const userState = new StateMap(newState.userState);
-        const conversationState = new StateMap(newState.conversationState);
-        const dc = new DialogContext(this.runDialogSet, context, newState.conversationState._dialogs, userState, conversationState);
-
-        // Execute component
-        let result = await dc.continueDialog();
-        if (result.status == DialogTurnStatus.empty) {
-            result = await dc.beginDialog(this.id);
-        }
-
-        // Save state if loaded from storage
-        if (saveState) {
-            await PlanningDialog.saveBotState(this.storage, keys, newState, state, '*');
-            return { turnResult: result };
-        } else {
-            return { turnResult: result, newState: newState };
-        }
-    }
-
-    public async run(activity: Partial<Activity>, state?: StoredBotState): Promise<BotTurnResult> {
-        // Initialize context object
-        const adapter = new PlanningAdapter();
-        const context = new TurnContext(adapter, activity);
-        const result = await this.onTurn(context, state);
-        result.activities = adapter.activities;
-        return result;
-    }
-
     protected onInstallDependencies(): void {
         // Install each rules steps
         this.rules.forEach((rule) => {
@@ -194,7 +98,7 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     }
    
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        const state: PlanningState<O> = dc.activeDialog.state;
+        const state: RuleDialogState<O> = dc.activeDialog.state;
 
         try {
             // Install dependencies on first access
@@ -217,7 +121,7 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
             const planning = PlanningContext.create(dc, state);
 
             // Evaluate rules and queue up plan changes
-            await this.evaluateRules(planning, { name: PlanningEventNames.beginDialog, value: options, bubble: false });
+            await this.evaluateRules(planning, { name: RuleDialogEventNames.beginDialog, value: options, bubble: false });
             
             // Run plan
             return await this.continuePlan(planning);
@@ -229,14 +133,14 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     public async consultDialog(dc: DialogContext): Promise<DialogConsultation> {
         try {
             // Create a new planning context
-            const state: PlanningState<O> = dc.activeDialog.state;
+            const state: RuleDialogState<O> = dc.activeDialog.state;
             const planning = PlanningContext.create(dc, state);
 
             // First consult plan
             let consultation = await this.consultPlan(planning);
             if (!consultation || consultation.desire != DialogConsultationDesire.shouldProcess) {
                 // Next evaluate rules
-                const changesQueued = await this.evaluateRules(planning, { name: PlanningEventNames.consultDialog, value: undefined, bubble: false });
+                const changesQueued = await this.evaluateRules(planning, { name: RuleDialogEventNames.consultDialog, value: undefined, bubble: false });
                 if (changesQueued) {
                     consultation = {
                         desire: DialogConsultationDesire.shouldProcess,
@@ -264,7 +168,7 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
 
     public async onDialogEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
         // Create a new planning context
-        const state: PlanningState<O> = dc.activeDialog.state;
+        const state: RuleDialogState<O> = dc.activeDialog.state;
         const planning = PlanningContext.create(dc, state);
 
         // Evaluate rules and queue up any potential changes 
@@ -284,7 +188,7 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
 
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Forward to current sequence step
-        const state = instance.state as PlanningState<O>;
+        const state = instance.state as RuleDialogState<O>;
         const plan = state.plan;
         if (plan && plan.steps.length > 0) {
             // We need to mockup a DialogContext so that we can call repromptDialog() for the active step 
@@ -293,7 +197,7 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
         }
     }
 
-    public configure(config: PlanningDialogConfiguration): this {
+    public configure(config: RuleDialogConfiguration): this {
         return super.configure(this);
     }
  
@@ -304,16 +208,16 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
     protected async evaluateRules(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
         let handled = false;
         switch (event.name) {
-            case PlanningEventNames.beginDialog:
-            case PlanningEventNames.consultDialog:
+            case RuleDialogEventNames.beginDialog:
+            case RuleDialogEventNames.consultDialog:
                 // Emit event
                 handled = await this.queueFirstMatch(planning, event);
                 if (!handled) {
                     // Dispatch activityReceived event
-                    handled = await this.evaluateRules(planning, { name: PlanningEventNames.activityReceived, value: undefined, bubble: false });
+                    handled = await this.evaluateRules(planning, { name: RuleDialogEventNames.activityReceived, value: undefined, bubble: false });
                 }
                 break;
-            case PlanningEventNames.activityReceived:
+            case RuleDialogEventNames.activityReceived:
                 // Emit event
                 handled = await this.queueFirstMatch(planning, event);
                 if (!handled) {
@@ -323,22 +227,22 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
                         const recognized = await this.onRecognize(planning.context);
     
                         // Dispatch utteranceRecognized event
-                        handled = await this.evaluateRules(planning, { name: PlanningEventNames.utteranceRecognized, value: recognized, bubble: false });
+                        handled = await this.evaluateRules(planning, { name: RuleDialogEventNames.utteranceRecognized, value: recognized, bubble: false });
                     } else if (activity.type === ActivityTypes.Event) {
                         // Dispatch named event that was received
                         handled = await this.evaluateRules(planning, { name: activity.name, value: activity.value, bubble: false });
                     }
                 }
                 break;
-            case PlanningEventNames.utteranceRecognized:
+            case RuleDialogEventNames.utteranceRecognized:
                 // Emit utteranceRecognized event
                 handled = await this.queueBestMatches(planning, event);
                 if (!handled) {
                     // Dispatch fallback event
-                    handled = await this.evaluateRules(planning, { name: PlanningEventNames.fallback, value: event.value, bubble: false });
+                    handled = await this.evaluateRules(planning, { name: RuleDialogEventNames.unhandledUtterance, value: event.value, bubble: false });
                 }
                 break;
-            case PlanningEventNames.fallback:
+            case RuleDialogEventNames.unhandledUtterance:
                 if (!planning.hasPlans) {
                     // Emit fallback event
                     handled = await this.queueFirstMatch(planning, event);
@@ -569,81 +473,11 @@ export class PlanningDialog<O extends object = {}> extends Dialog<O> {
 
     protected async onEndOfPlan(planning: PlanningContext): Promise<DialogTurnResult> {
         // End dialog and return default result
-        const state: PlanningState<O> = planning.activeDialog.state;
+        const state: RuleDialogState<O> = planning.activeDialog.state;
         return await planning.endDialog(state.result);
     }
 
     private getUniqueInstanceId(dc: DialogContext): string {
         return dc.stack.length > 0 ? `${dc.stack.length}:${dc.activeDialog.id}` : '';
-    }
-
-    //---------------------------------------------------------------------------------------------
-    // State loading
-    //---------------------------------------------------------------------------------------------
-
-    static async loadBotState(storage: Storage, keys: BotStateStorageKeys): Promise<StoredBotState> {
-        const data = await storage.read([keys.userState, keys.conversationState]);
-        return {
-            userState: data[keys.userState] || {},
-            conversationState: data[keys.conversationState] || {}
-        };
-    }
-
-    static async saveBotState(storage: Storage, keys: BotStateStorageKeys, newState: StoredBotState, oldState?: StoredBotState, eTag?: string): Promise<void> {
-        // Check for state changes
-        let save = false;
-        const changes: StoreItems = {};
-        if (oldState) {
-            if (JSON.stringify(newState.userState) != JSON.stringify(oldState.userState)) {
-                if (eTag) { newState.userState.eTag = eTag }
-                changes[keys.userState] = newState.userState;
-                save = true; 
-            }
-            if (JSON.stringify(newState.conversationState) != JSON.stringify(oldState.conversationState)) {
-                if (eTag) { newState.conversationState.eTag = eTag }
-                changes[keys.conversationState] = newState.conversationState;
-                save = true;
-            }
-        } else {
-            if (eTag) {
-                newState.userState.eTag = eTag;
-                newState.conversationState.eTag = eTag;
-            }
-            changes[keys.userState] = newState.userState;
-            changes[keys.conversationState] = newState.conversationState;
-            save = true;
-        }
-
-        // Save changes
-        if (save) {
-            await storage.write(changes);
-        }
-    }
-
-    static getStorageKeys(context: TurnContext): BotStateStorageKeys {
-        // Get channel, user, and conversation ID's
-        const activity = context.activity;
-        const channelId: string = activity.channelId;
-        let userId: string = activity.from && activity.from.id ? activity.from.id : undefined;
-        const conversationId: string = activity.conversation && activity.conversation.id ? activity.conversation.id : undefined;
-
-        // Patch User ID if needed
-        if (activity.type == ActivityTypes.ConversationUpdate) {
-            const users = (activity.membersAdded || activity.membersRemoved || []).filter((u) => u.id != activity.recipient.id);
-            const found = userId ? users.filter((u) => u.id == userId) : [];
-            if (found.length == 0 && users.length > 0) {
-                userId = users[0].id
-            }
-        } 
-
-        // Verify ID's found
-        if (!userId) { throw new Error(`PlanningDialog: unable to load the bots state. The users ID couldn't be found.`) }
-        if (!conversationId) { throw new Error(`PlanningDialog: unable to load the bots state. The conversations ID couldn't be found.`) }
-
-        // Return storage keys
-        return {
-            userState: `${channelId}/users/${userId}`,
-            conversationState: `${channelId}/conversations/${conversationId}`
-        };
     }
 }

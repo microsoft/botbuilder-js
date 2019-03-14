@@ -7,7 +7,7 @@
  */
 import { DialogContext, DialogState, DialogSet } from 'botbuilder-dialogs';
 
-export interface PlanningState<O extends Object> {
+export interface RuleDialogState<O extends Object> {
     options: O;
     plan?: PlanState;
     savedPlans?: PlanState[];
@@ -43,13 +43,13 @@ export enum PlanChangeType {
     replacePlan = 'replacePlan'
 }
 
-export enum PlanningEventNames {
+export enum RuleDialogEventNames {
     beginDialog = 'beginDialog',
     consultDialog = 'consultDialog',
     cancelDialog = 'cancelDialog',
     activityReceived = 'activityReceived',
     utteranceRecognized = 'utteranceRecognized',
-    fallback = 'fallback',
+    unhandledUtterance = 'unhandledUtterance',
     planStarted = 'planStarted',
     planSaved = 'planSaved',
     planEnded = 'planEnded',
@@ -60,14 +60,14 @@ export enum PlanningEventNames {
 }
 
 export class PlanningContext<O extends object = {}> extends DialogContext {
-    private plans: PlanningState<O>;
+    private plans: RuleDialogState<O>;
 
     /**
      * Creates a new `PlanningContext` instance.
      * @param dc The dialog context for the current turn of conversation.
      * @param info Values to initialize the planning context with.
      */
-    constructor(dc: DialogContext, parent: DialogContext, dialogs: DialogSet, state: DialogState, plans: PlanningState<O>) {
+    constructor(dc: DialogContext, parent: DialogContext, dialogs: DialogSet, state: DialogState, plans: RuleDialogState<O>) {
         super(dialogs, dc.context, state, dc.state.user, dc.state.conversation);
         this.plans = plans;
         this.parent = parent;
@@ -182,7 +182,7 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
 
         // Emit new plan event
         if (newPlan) {
-            await this.emitEvent(PlanningEventNames.planStarted, undefined, false);
+            await this.emitEvent(RuleDialogEventNames.planStarted, undefined, false);
         }
 
         return newPlan;
@@ -224,7 +224,7 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
 
         // Emit new plan event
         if (newPlan) {
-            await this.emitEvent(PlanningEventNames.planStarted, undefined, false);
+            await this.emitEvent(RuleDialogEventNames.planStarted, undefined, false);
         }
 
         return newPlan;
@@ -246,7 +246,7 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
 
         // Emit new plan event
         if (newPlan) {
-            await this.emitEvent(PlanningEventNames.planStarted, undefined, false);
+            await this.emitEvent(RuleDialogEventNames.planStarted, undefined, false);
         }
 
         return newPlan;
@@ -271,12 +271,12 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
             }
 
             // Emit resumption event
-            await this.emitEvent(PlanningEventNames.planResumed, undefined, true);
+            await this.emitEvent(RuleDialogEventNames.planResumed, undefined, true);
         } else if (this.plans.plan) {
             delete this.plans.plan;
 
             // Emit planning ended event
-            await this.emitEvent(PlanningEventNames.planEnded, undefined, false);
+            await this.emitEvent(RuleDialogEventNames.planEnded, undefined, false);
         }
 
         return resumePlan;
@@ -320,9 +320,9 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
         
         // Emit plan change events
         if (savePlan) {
-            await this.emitEvent(PlanningEventNames.planSaved, undefined, false);
+            await this.emitEvent(RuleDialogEventNames.planSaved, undefined, false);
         }
-        await this.emitEvent(PlanningEventNames.planStarted, undefined, false);
+        await this.emitEvent(RuleDialogEventNames.planStarted, undefined, false);
 
         return savePlan;
     }
@@ -338,7 +338,7 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
         this.plans.plan = { steps: steps }
 
         // Emit plan started event
-        await this.emitEvent(PlanningEventNames.planStarted, undefined, false);
+        await this.emitEvent(RuleDialogEventNames.planStarted, undefined, false);
 
         return planReplaced;
     }
@@ -356,7 +356,7 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
     }
 
 
-    public static create<O extends object = {}>(dc: DialogContext, plans: PlanningState<O>): PlanningContext<O> {
+    public static create<O extends object = {}>(dc: DialogContext, plans: RuleDialogState<O>): PlanningContext<O> {
         return new PlanningContext<O>(dc, dc.parent, dc.dialogs, { dialogStack: dc.stack }, plans);
     }
 

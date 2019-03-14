@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PlanningDialog } from '../planningDialog';
+import { RuleDialog } from '../ruleDialog';
 import { InputSlot } from './inputSlot';
-import { PlanningContext, PlanningEventNames, PlanningState, PlanChangeList, PlanChangeType, PlanStepState } from '../planningContext';
+import { PlanningContext, RuleDialogEventNames, RuleDialogState, PlanChangeList, PlanChangeType, PlanStepState } from '../planningContext';
 import { DialogEvent, DialogTurnResult, Dialog } from 'botbuilder-dialogs';
 
 export interface MultiInputDialogAction {
@@ -27,7 +27,7 @@ export interface MultiInputDialogComputedPlanChange {
     expectedSlots: string[];
 }
 
-export class MultiInputDialog<O extends object = {}> extends PlanningDialog<O> {
+export class MultiInputDialog<O extends object = {}> extends RuleDialog<O> {
     private planChangeCache: { [key:string]: MultiInputDialogComputedPlanChange; } = {};
 
     public slots: InputSlot[] = [];
@@ -76,7 +76,7 @@ export class MultiInputDialog<O extends object = {}> extends PlanningDialog<O> {
         let handled = false;
         const state = planning.activeDialog.state as MultiInputDialogState<O>;
         switch (event.name) {
-            case PlanningEventNames.beginDialog:
+            case RuleDialogEventNames.beginDialog:
                 // Initialize turn count and result object
                 state.turnCount = 0;
 
@@ -90,12 +90,12 @@ export class MultiInputDialog<O extends object = {}> extends PlanningDialog<O> {
                 }
                 break;
 
-            case PlanningEventNames.consultDialog:
+            case RuleDialogEventNames.consultDialog:
                 // Just increment turn count
                 state.turnCount += 0;
                 break;
 
-            case PlanningEventNames.fallback:
+            case RuleDialogEventNames.unhandledUtterance:
                 // Recognize users input and queue prompt
                 handled = await this.recognizeInput(planning, event);
                 if (!handled) {
@@ -319,7 +319,7 @@ export class MultiInputDialog<O extends object = {}> extends PlanningDialog<O> {
     }
 }
 
-interface MultiInputDialogState<O extends object> extends PlanningState<O> {
+interface MultiInputDialogState<O extends object> extends RuleDialogState<O> {
     turnCount: number;
     satisfied?: boolean;
 }

@@ -10,20 +10,19 @@ import { Dialog } from "botbuilder-dialogs";
 import { PlanChangeType } from "../planningContext";
 
 /**
- * When triggered, this rule will insert additional steps at the beginning of the current plan.
+ * When triggered, this rule will begin a new plan with a specified set of steps.
  * 
  * @remarks
- * The inserted steps will be executed immediately. The plans current steps will continue execution
- * upon completion of the inserted steps. If a step was in the middle of executing it will 
- * automatically reprompt the user once its continued.  
+ * Any currently executing plan will be saved and automatically resumed once the new plan finishes
+ * executing.
  */
-export class DoStepsRule extends UtteranceRecognizedRule {
+export class NewTopicRule extends UtteranceRecognizedRule {
 
     /**
-     * Creates a new `DoStepsRule` instance.
+     * Creates a new `NewTopicRule` instance.
      * @param intents List of intents to filter to.
      * @param entities List of entities to filter to.
-     * @param steps List of steps to execute immediately.
+     * @param steps List of steps to initialize new plan with.
      */
     constructor();
     constructor(intents: string|string[], steps: Dialog[]);
@@ -33,6 +32,6 @@ export class DoStepsRule extends UtteranceRecognizedRule {
             steps = entitiesOrSteps as Dialog[];
             entitiesOrSteps = undefined;
         }
-        super(intents, entitiesOrSteps as any, steps, PlanChangeType.doSteps);
+        super(intents, entitiesOrSteps as any, steps, PlanChangeType.newPlan);
     }
 }

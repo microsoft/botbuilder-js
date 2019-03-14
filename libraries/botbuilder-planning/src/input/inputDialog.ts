@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PlanningDialog, PlanningDialogConfiguration } from '../planningDialog';
+import { RuleDialog, RuleDialogConfiguration } from '../ruleDialog';
 import { InputSlot } from './inputSlot';
-import { PlanningContext, PlanningEventNames, PlanningState, PlanChangeList, PlanChangeType, PlanStepState } from '../planningContext';
+import { PlanningContext, RuleDialogEventNames, RuleDialogState, PlanChangeList, PlanChangeType, PlanStepState } from '../planningContext';
 import { DialogEvent, DialogTurnResult, Dialog } from 'botbuilder-dialogs';
 import { RecognizerResult, Activity, InputHints } from 'botbuilder-core';
 import { SendActivity } from '../steps';
@@ -30,7 +30,7 @@ export interface InputSlotEventValue<T = any> {
     recognized?: RecognizerResult;
 }
 
-export interface InputDialogConfiguration extends PlanningDialogConfiguration {
+export interface InputDialogConfiguration extends RuleDialogConfiguration {
     /**
      * Slot class used to recognize and validate the users input.
      */
@@ -47,7 +47,7 @@ export interface InputDialogConfiguration extends PlanningDialogConfiguration {
     property?: string;
 }
 
-export class InputDialog<O extends object = {}> extends PlanningDialog<O> {
+export class InputDialog<O extends object = {}> extends RuleDialog<O> {
     constructor(slot?: InputSlot, property?: string, activity?: string|Partial<Activity>, speak?: string, inputHint?: InputHints) {
         super();
         if (slot) { this.slot = slot }
@@ -124,7 +124,7 @@ export class InputDialog<O extends object = {}> extends PlanningDialog<O> {
         let handled = false;
         const state = planning.activeDialog.state as InputDialogState<O>;
         switch (event.name) {
-            case PlanningEventNames.beginDialog:
+            case RuleDialogEventNames.beginDialog:
                 // Initialize turn count and result object
                 state.turnCount = 0;
 
@@ -132,12 +132,12 @@ export class InputDialog<O extends object = {}> extends PlanningDialog<O> {
                 handled = await this.onValidateSlot(planning);
                 break;
 
-            case PlanningEventNames.consultDialog:
+            case RuleDialogEventNames.consultDialog:
                 // Just increment turn count
                 state.turnCount += 0;
                 break;
 
-            case PlanningEventNames.fallback:
+            case RuleDialogEventNames.unhandledUtterance:
                 if (planning.hasPlans) {
                     // Remember that we're in the middle of continuing an action 
                     state.continuingAction = true;
@@ -147,15 +147,15 @@ export class InputDialog<O extends object = {}> extends PlanningDialog<O> {
                 }
                 break;
 
-            case PlanningEventNames.slotMissing:
+            case RuleDialogEventNames.slotMissing:
                 handled = await this.onSlotMissing(planning, event);
                 break;
 
-            case PlanningEventNames.slotInvalid:
+            case RuleDialogEventNames.slotInvalid:
                 handled = await this.onSlotInvalid(planning, event);
                 break;
 
-            case PlanningEventNames.inputFulfilled: 
+            case RuleDialogEventNames.inputFulfilled: 
                 handled = await this.onInputFulfilled(planning);
                 break;
         }
@@ -195,15 +195,15 @@ export class InputDialog<O extends object = {}> extends PlanningDialog<O> {
             // Validate slot
             if (await this.slot.validateValue(planning, state.result)) {
                 // Emit inputFulfilled event
-                return await this.evaluateRules(planning, { name: PlanningEventNames.inputFulfilled, bubble: false });
+                return await this.evaluateRules(planning, { name: RuleDialogEventNames.inputFulfilled, bubble: false });
             } else {
                 // Emit slotInvalid event 
                 value.value = state.result;
-                return await this.evaluateRules(planning, { name: PlanningEventNames.slotInvalid, value: value, bubble: false });
+                return await this.evaluateRules(planning, { name: RuleDialogEventNames.slotInvalid, value: value, bubble: false });
             }
         } else {
             // Emit slotMissing event
-            return await this.evaluateRules(planning, { name: PlanningEventNames.slotMissing, value: value, bubble: false });
+            return await this.evaluateRules(planning, { name: RuleDialogEventNames.slotMissing, value: value, bubble: false });
         }
     }
 
@@ -376,7 +376,7 @@ export class InputDialog<O extends object = {}> extends PlanningDialog<O> {
     }
 }
 
-interface InputDialogState<O extends object> extends PlanningState<O> {
+interface InputDialogState<O extends object> extends RuleDialogState<O> {
     turnCount: number;
     fulfilled?: boolean;
     continuingAction?: boolean;

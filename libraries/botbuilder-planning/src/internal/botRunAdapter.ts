@@ -10,7 +10,7 @@ import { BotAdapter, TurnContext, Activity, ResourceResponse, ConversationRefere
 /**
  * @private
  */
-export class PlanningAdapter extends BotAdapter {
+export class BotRunAdapter extends BotAdapter {
     public readonly activities: Partial<Activity>[] = [];
 
     public async sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
@@ -23,14 +23,14 @@ export class PlanningAdapter extends BotAdapter {
     }
 
     public updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void> {
-        throw new Error(`PlanningContext: adapter.updateActivity() isn't supported from PlanningContext.run().`);
+        throw new Error(`BotRunAdapter: adapter.updateActivity() isn't supported from Bot.run().`);
     }
 
     public deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
-        throw new Error(`PlanningContext: adapter.deleteActivity() isn't supported from PlanningContext.run().`);
+        throw new Error(`BotRunAdapter: adapter.deleteActivity() isn't supported from Bot.run().`);
     }
 
     public continueConversation(reference: Partial<ConversationReference>, logic: (revocableContext: TurnContext) => Promise<void>): Promise<void> {
-        throw new Error(`PlanningContext: adapter.continueConversation() isn't supported from PlanningContext.run().`);
+        throw new Error(`BotRunAdapter: adapter.continueConversation() isn't supported from Bot.run().`);
     }
 }

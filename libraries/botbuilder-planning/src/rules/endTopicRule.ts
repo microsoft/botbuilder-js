@@ -17,10 +17,10 @@ import { PlanChangeType } from "../planningContext";
  * provided which will be inserted into the beginning of the resumed plan.  This allows the bot
  * to prompt the user if they'd like to continue executing the resumed plan. 
  */
-export class EndPlanRule extends UtteranceRecognizedRule {
+export class EndTopicRule extends UtteranceRecognizedRule {
 
     /**
-     * Creates a new `EndPlanRule` instance.
+     * Creates a new `EndTopicRule` instance.
      * @param intents List of intents to filter to.
      * @param entities List of entities to filter to.
      * @param steps (Optional) list of steps to insert at the beginning of the resumed plan.

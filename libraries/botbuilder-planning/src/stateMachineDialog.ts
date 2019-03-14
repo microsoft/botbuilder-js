@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 import { DialogEvent, Dialog } from 'botbuilder-dialogs';
-import { PlanningDialog } from './planningDialog';
-import { PlanningEventNames, PlanChangeType, PlanningContext, PlanStepState } from './planningContext';
+import { RuleDialog } from './ruleDialog';
+import { RuleDialogEventNames, PlanChangeType, PlanningContext } from './planningContext';
 import { StateMachineState } from './stateMachineState';
 
-export class StateMachineDialog extends PlanningDialog {
+export class StateMachineDialog extends RuleDialog {
     public states: { [state: string]: StateMachineState; } = {};
 
     constructor (dialogId?: string, initialState?: string) {
@@ -40,7 +40,7 @@ export class StateMachineDialog extends PlanningDialog {
 
     public async evaluateRules(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
         // Intercept beginDialog event
-        if (event.name == PlanningEventNames.beginDialog) {
+        if (event.name == RuleDialogEventNames.beginDialog) {
             // Start dialog at initial state
             planning.queueChanges({ 
                 changeType: PlanChangeType.doSteps, 

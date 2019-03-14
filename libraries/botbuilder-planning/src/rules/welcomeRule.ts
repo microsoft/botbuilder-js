@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { EventRule } from './eventRule';
-import { PlanningEventNames, PlanChangeType, PlanningContext } from '../planningContext';
+import { RuleDialogEventNames, PlanChangeType, PlanningContext } from '../planningContext';
 import { Dialog, DialogEvent } from 'botbuilder-dialogs';
 import { ActivityTypes } from 'botbuilder-core';
 
@@ -30,16 +30,16 @@ export class WelcomeRule extends EventRule {
     constructor();
     constructor(steps: Dialog[], conversationProperty?: string);
     constructor(steps?: Dialog[], welcomedProperty = WELCOMED_PROPERTY) {
-        super([PlanningEventNames.activityReceived, PlanningEventNames.fallback, PlanningEventNames.planStarted], steps, PlanChangeType.doSteps);
+        super([RuleDialogEventNames.activityReceived, RuleDialogEventNames.unhandledUtterance, RuleDialogEventNames.planStarted], steps, PlanChangeType.doSteps);
         this.welcomedProperty = welcomedProperty;
     }
 
     protected async onIsTriggered(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
         switch (event.name) {
-            case PlanningEventNames.activityReceived:
+            case RuleDialogEventNames.activityReceived:
                 return this.handleActivityReceived(planning);
-            case PlanningEventNames.fallback:
-            case PlanningEventNames.planStarted:
+            case RuleDialogEventNames.unhandledUtterance:
+            case RuleDialogEventNames.planStarted:
                 return this.handlePlanStarted(planning);
         }
 
