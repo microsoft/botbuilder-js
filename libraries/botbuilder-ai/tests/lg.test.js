@@ -143,4 +143,30 @@ describe('LG', function () {
         assert.strictEqual(evaled, "Good morning Dong Lei", `Evaled is ${evaled}`);
     });
 
+    it('TestEscapeCharacter', function() {
+        var engine = TemplateEngine.FromFile(GetExampleFilePath("EscapeCharacter.lg"));
+        var evaled = engine.EvaluateTemplate("wPhrase", null);
+        assert.strictEqual(evaled, "Hi \r\n\t[]{}\\", "Happy path failed.");
+
+        try
+        {
+            engine.EvaluateTemplate("wPhrase2", null);
+            assert.fail("Should throw exception!");
+        }
+        catch (e)
+        {
+            assert.strictEqual(e.message, "escape character \\ is invalid");
+        }
+
+        try
+        {
+            engine.EvaluateTemplate("wPhrase3", null);
+            assert.fail("Should throw exception!");
+        }
+        catch (e)
+        {
+            assert.strictEqual(e.message, "escape character \\y is invalid");
+        }
+    })
+
 });

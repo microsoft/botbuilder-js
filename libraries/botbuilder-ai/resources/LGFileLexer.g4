@@ -96,6 +96,14 @@ MULTI_LINE_TEXT
   : '```' .*? '```' { this.ignoreWS = false; this.expectCaseOrDefault = false;}
   ;
 
+ESCAPE_CHARACTER
+  : '\\{' | '\\[' | '\\\\' | '\\'[rtn\]}]  { ignoreWS = false; expectCaseOrDefault = false;}
+  ;
+
+INVALID_ESCAPE
+  : '\\'~[\r\n]?
+  ;
+  
 EXPRESSION
   : '{' ~[\r\n{}]* '}'  { this.ignoreWS = false; this.expectCaseOrDefault = false;}
   ;
@@ -109,5 +117,5 @@ TEXT_SEPARATOR
   ;
 
 TEXT
-  : ~[ \t\r\n{}[\]()]+  { this.ignoreWS = false; this.expectCaseOrDefault = false;}
+  : ~[ \\\t\r\n{}[\]()]+  { ignoreWS = false; expectCaseOrDefault = false;}
   ;
