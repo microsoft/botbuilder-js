@@ -10,7 +10,7 @@ tsc
 
 Then back to botbuilder-ai directory
 ```
-    npm i
+    yarn install
 ```
 
 Then 
