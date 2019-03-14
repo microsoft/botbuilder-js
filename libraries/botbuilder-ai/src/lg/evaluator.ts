@@ -148,24 +148,24 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         return this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
     }
 
-     private EvalEscapeCharacter(exp: string): string
-        {
-            var validCharactersDict = {
-                "\\r": "\r",
-                "\\n": "\n",
-                "\\t": "\t",
-                "\\\\": "\\",
-                "\\[": "[",
-                "\\]": "]",
-                "\\{": "{",
-                "\\}": "}",
-            };
+    private EvalEscapeCharacter(exp: string): string {
+        const validCharactersDict: any = {
+            '\\r': '\r',
+            '\\n': '\n',
+            '\\t': '\t',
+            '\\\\': '\\',
+            '\\[': '[',
+            '\\]': ']',
+            '\\{': '{',
+            '\\}': '}'
+        };
 
-            if (Object.keys(validCharactersDict).includes(exp))
-                return validCharactersDict[exp];
-
-            throw new Error(`escape character ${exp} is invalid`);
+        if (Object.keys(validCharactersDict).includes(exp)) {
+            return validCharactersDict[exp];
         }
+
+        throw new Error(`escape character ${exp} is invalid`);
+    }
 
     private EvalCondition(exp: string): boolean {
         try {
