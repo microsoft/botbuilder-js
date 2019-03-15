@@ -41,22 +41,22 @@ export class EventRule implements PlanningRule {
         this.changeType = changeType || PlanChangeType.doSteps;
     }
 
-    public evaluate(planning: PlanningContext, event: DialogEvent): Promise<PlanChangeList[]|undefined> {
+    public evaluate(planning: PlanningContext, event: DialogEvent, memory: object): Promise<PlanChangeList[]|undefined> {
         // Limit evaluation to only supported events
         if (this.events.indexOf(event.name) >= 0) {
-            return this.onEvaluate(planning, event);
+            return this.onEvaluate(planning, event, memory);
         } else {
             return undefined;
         }
     }
 
-    protected async onEvaluate(planning: PlanningContext, event: DialogEvent): Promise<PlanChangeList[]|undefined> {
-        if (await this.onIsTriggered(planning, event)) {
+    protected async onEvaluate(planning: PlanningContext, event: DialogEvent, memory: object): Promise<PlanChangeList[]|undefined> {
+        if (await this.onIsTriggered(planning, event, memory)) {
             return [this.onCreateChangeList(planning, event)];
         }
     }
 
-    protected async onIsTriggered(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
+    protected async onIsTriggered(planning: PlanningContext, event: DialogEvent, memory: object): Promise<boolean> {
         return true;
     }
 

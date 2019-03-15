@@ -11,7 +11,7 @@ import {
 } from 'botbuilder-core';
 import { 
     Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent,
-    DialogContext, DialogSet, StateMap, DialogConsultation, DialogConsultationDesire, DialogConfiguration
+    DialogContext, DialogSet, StateMap, DialogConsultation, DialogConsultationDesire, DialogConfiguration, DialogContextVisibleState
 } from 'botbuilder-dialogs';
 import { 
     RuleDialogEventNames, PlanningContext, RuleDialogState, PlanChangeList, PlanChangeType 
@@ -266,9 +266,11 @@ export class RuleDialog<O extends object = {}> extends Dialog<O> {
     }
 
     private async queueFirstMatch(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
+        const memory = this.getMemoryForEvent(planning, event);
         for (let i = 0; i < this.rules.length; i++) {
-            const changes = await this.rules[i].evaluate(planning, event);
+            const changes = await this.rules[i].evaluate(planning, event, memory);
             if (changes && changes.length > 0) {
+                changes[0].turnState = memory.turn;
                 planning.queueChanges(changes[0]);
                 return true;
             }
@@ -280,9 +282,15 @@ export class RuleDialog<O extends object = {}> extends Dialog<O> {
     private async queueBestMatches(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
         // Get list of proposed changes
         const allChanges: PlanChangeList[] = [];
+        const memory = this.getMemoryForEvent(planning, event);
         for (let i = 0; i < this.rules.length; i++) {
-            const changes = await this.rules[i].evaluate(planning, event);
-            if (changes) { changes.forEach((change) => allChanges.push(change)) } 
+            const changes = await this.rules[i].evaluate(planning, event, memory);
+            if (changes) { 
+                changes.forEach((change) => {
+                    change.turnState = memory.turn;
+                    allChanges.push(change);
+                });
+            } 
         }
 
         // Find changes with most coverage
@@ -479,5 +487,15 @@ export class RuleDialog<O extends object = {}> extends Dialog<O> {
 
     private getUniqueInstanceId(dc: DialogContext): string {
         return dc.stack.length > 0 ? `${dc.stack.length}:${dc.activeDialog.id}` : '';
+    }
+
+    private getMemoryForEvent(dc: DialogContext, event: DialogEvent): DialogContextVisibleState {
+        // Add event value fields to turn state
+        const memory = dc.state.toJSON();
+        if (typeof event.value == 'object') {
+            memory.turn = Object.assign({}, memory.turn, event.value);
+        }
+
+        return memory;
     }
 }

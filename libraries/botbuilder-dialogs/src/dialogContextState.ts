@@ -30,9 +30,9 @@ export interface DialogContextVisibleState {
     dialog: object;
 
     /**
-     * Any entities that have been recognized for the current turn of conversation.
+     * Transient properties that are only remembered for the current turn.
      */
-    entities: object;
+    turn: object;
 }
 
 export class DialogContextState {
@@ -85,20 +85,16 @@ export class DialogContextState {
     }
 
     /**
-     * Any entities that have been recognized for the current turn of conversation.
-     * 
-     * @remarks
-     * These entities are not persisted so if they need to be remembered beyond the current turn 
-     * the bot will need to copy them to memory using something like a `SaveEntity` step. 
+     * Transient properties that are only remembered for the current turn.
      */
-    public get entities(): StateMap {
-        // Get entities collection for the turn state
-        let entities: object = this.dc.context.turnState.get(TURN_ENTITIES);
-        if (!entities) {
-            entities = {};
-            this.dc.context.turnState.set(TURN_ENTITIES, entities);
+    public get turn(): StateMap {
+        // Get transient state for the current turn
+        let turn: object = this.dc.context.turnState.get(TURN_STATE);
+        if (!turn) {
+            turn = {};
+            this.dc.context.turnState.set(TURN_STATE, turn);
         }
-        return new StateMap(entities);
+        return new StateMap(turn);
     }
 
     /**
@@ -119,7 +115,7 @@ export class DialogContextState {
             user: this.user.memory,
             conversation: this.conversation.memory,
             dialog: instance ? instance.state : undefined,
-            entities: this.entities.memory
+            turn: this.turn.memory
         };
     }
 
@@ -139,8 +135,7 @@ export class DialogContextState {
      * @param count (Optional) number of matches to return. The default value is to return all matches.
      */
     public query(pathExpression: string, count?: number): any[] {
-        if (pathExpression.indexOf('$.') !== 0) { pathExpression = '$.' + pathExpression }
-        return jsonpath.query(this.toJSON(), pathExpression, count);
+        return DialogContextState.queryMemory(this.toJSON(), pathExpression, count);
     }
 
     /**
@@ -161,6 +156,10 @@ export class DialogContextState {
     public setValue(pathExpression: string, value?: any): void {
         jsonpath.value(this.toJSON(), DialogContextState.resolvePath(pathExpression), value);
     }
+
+    static queryMemory(memory: object, pathExpression: string, count?: number): any[] {
+        return jsonpath.query(memory, DialogContextState.resolvePath(pathExpression), count);
+    }
    
     static resolvePath(pathExpression: string): string {
         // Check for JSONPath selector
@@ -168,17 +167,20 @@ export class DialogContextState {
             return pathExpression;
         } else {
             // Check for scope selector
-            ['$user.', '$conversation.', '$dialog.', '$entities.'].forEach((prefix) => {
-                if (pathExpression.indexOf(prefix) == 0) {
+            const prefixes = ['$user.', '$conversation.', '$dialog.', '$turn.'];
+            for (let i = 0; i < prefixes.length; i++) {
+                if (pathExpression.indexOf(prefixes[i]) == 0) {
                     return '$.' + pathExpression.substr(1);
                 }
-            });
+            }
 
             // Check for shortcuts
             if (pathExpression[0] == '$') {
                 return '$.dialog.result.' + pathExpression.substr(1);
             } else if (pathExpression[0] == '@') {
-                return '$.entities.' + pathExpression.substr(1);
+                return '$.turn.entities.' + pathExpression.substr(1);
+            } else if (pathExpression[0] == '#') {
+                return '$.turn.intents.' + pathExpression.substr(1);
             }
 
             // Add JSONPath selector prefix
@@ -187,4 +189,4 @@ export class DialogContextState {
     }
 }
 
-const TURN_ENTITIES = Symbol('turn_entities');
+const TURN_STATE = Symbol('turn_state');

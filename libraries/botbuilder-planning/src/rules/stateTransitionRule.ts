@@ -45,7 +45,7 @@ export class StateTransitionRule implements PlanningRule {
         return steps;
     }
 
-    public async evaluate(planning: PlanningContext, event: DialogEvent): Promise<PlanChangeList[]|undefined> {
+    public async evaluate(planning: PlanningContext, event: DialogEvent, memory: object): Promise<PlanChangeList[]|undefined> {
         // Look for state changes
         if (this.transitions.hasOwnProperty(event.name)) {
             const state = this.transitions[event.name];

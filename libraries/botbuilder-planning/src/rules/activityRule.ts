@@ -30,7 +30,7 @@ export class ActivityRule extends EventRule {
         this.types = Array.isArray(types) ? types : (types !== undefined ? [types] : []);
     }
 
-    protected async onIsTriggered(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
+    protected async onIsTriggered(planning: PlanningContext, event: DialogEvent, memory: object): Promise<boolean> {
         // Filter to supported activities.
         const activity = planning.context.activity;
         for (let i = 0; i < this.types.length; i++) {

@@ -34,7 +34,7 @@ export class WelcomeRule extends EventRule {
         this.welcomedProperty = welcomedProperty;
     }
 
-    protected async onIsTriggered(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
+    protected async onIsTriggered(planning: PlanningContext, event: DialogEvent, memory: object): Promise<boolean> {
         switch (event.name) {
             case RuleDialogEventNames.activityReceived:
                 return this.handleActivityReceived(planning);

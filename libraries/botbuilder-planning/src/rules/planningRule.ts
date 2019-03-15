@@ -19,6 +19,7 @@ export interface PlanningRule {
      * current plan.
      * @param planning Planning context object for the current conversation.
      * @param event The current event being evaluated.
+     * @param memory Memory projection for the current turn.
      */
-    evaluate(planning: PlanningContext, event: DialogEvent): Promise<PlanChangeList[]|undefined>;
+    evaluate(planning: PlanningContext, event: DialogEvent, memory: object): Promise<PlanChangeList[]|undefined>;
 }

@@ -51,7 +51,7 @@ export class IfPropertyRule implements PlanningRule {
         return steps;
     }
 
-    public async evaluate(planning: PlanningContext, event: DialogEvent): Promise<PlanChangeList[]|undefined> {
+    public async evaluate(planning: PlanningContext, event: DialogEvent, memory: object): Promise<PlanChangeList[]|undefined> {
         // Find first matching conditional
         const changes: PlanChangeList[] = [];
         for (let i = 0; i < this.conditionals.length; i++) {
@@ -59,7 +59,7 @@ export class IfPropertyRule implements PlanningRule {
             if (await conditional.expression(planning.state)) {
                 // Evaluate child rules
                 for (let j = 0; j < conditional.rules.length; j++) {
-                    const change = await conditional.rules[j].evaluate(planning, event);
+                    const change = await conditional.rules[j].evaluate(planning, event, memory);
                     if (change !== undefined) {
                         Array.prototype.push.apply(changes, change);
                     }

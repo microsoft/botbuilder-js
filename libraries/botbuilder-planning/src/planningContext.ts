@@ -31,7 +31,7 @@ export interface PlanChangeList {
     tags?: string[];
     intentsMatched?: string[];
     entitiesMatched?: string[];
-    entitiesReocgnized?:  { [name:string]: any; };
+    turnState?:  { [name:string]: any; };
 }
 
 export enum PlanChangeType {
@@ -126,11 +126,10 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
             for (let i = 0; i < changes.length; i++) {
                 // Save any matched entities for the turn
                 const change = changes[i];
-                if (change.entitiesReocgnized) {
-                    const entities = this.state.entities;
-                    for(const name in change.entitiesReocgnized) {
-                        if (change.entitiesReocgnized.hasOwnProperty(name)) {
-                            entities.set(name, change.entitiesReocgnized[name]);
+                if (change.turnState) {
+                    for (const key in change.turnState) {
+                        if (change.turnState.hasOwnProperty(key)) {
+                            this.state.turn.set(key, change.turnState[key]);
                         }
                     }
                 }

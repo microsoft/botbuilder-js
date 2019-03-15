@@ -23,12 +23,12 @@ export class SaveEntity extends DialogCommand {
 
     /**
      * Creates a new `SaveEntity` instance.
-     * @param entityName Name of the entity to save.
      * @param property In-memory state property to save the entity to.
+     * @param entityName Name of the entity to save.
      */
     constructor();
-    constructor(entityName: string, property: string);
-    constructor(entityName?: string, property?: string) {
+    constructor(property: string, entityName: string);
+    constructor(property?: string, entityName?: string) {
         super();
         if (entityName) { this.entityName = entityName }
         if (property) { this.property = property }
@@ -54,7 +54,7 @@ export class SaveEntity extends DialogCommand {
 
     protected async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
         // Get entity
-        const values: any|any[] = dc.state.entities.get(this.entityName);
+        const values: any|any[] = dc.state.getValue(this.entityName);
         if (Array.isArray(values) && values.length > 0) {
             // Save first value to property
             dc.state.setValue(this.property, values[0]);

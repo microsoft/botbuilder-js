@@ -21,18 +21,12 @@ export class EndTopicRule extends UtteranceRecognizedRule {
 
     /**
      * Creates a new `EndTopicRule` instance.
-     * @param intents List of intents to filter to.
-     * @param entities List of entities to filter to.
+     * @param matches List of intents, entities, or properties to filter to.
      * @param steps (Optional) list of steps to insert at the beginning of the resumed plan.
      */
     constructor();
-    constructor(intents: string|string[], steps?: Dialog[]);
-    constructor(intents: string|string[], entities: string|string[], steps?: Dialog[]);
-    constructor(intents?: string|string[], entitiesOrSteps?: string|string[]|Dialog[], steps?: Dialog[]) {
-        if (!steps) {
-            steps = entitiesOrSteps as Dialog[];
-            entitiesOrSteps = undefined;
-        }
-        super(intents, entitiesOrSteps as any, steps, PlanChangeType.endPlan);
+    constructor(matches: string|string[], steps?: Dialog[]);
+    constructor(matches?: string|string[], steps?: Dialog[]) {
+        super(matches, steps, PlanChangeType.endPlan);
     }
 }

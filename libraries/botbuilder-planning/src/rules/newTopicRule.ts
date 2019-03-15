@@ -20,18 +20,12 @@ export class NewTopicRule extends UtteranceRecognizedRule {
 
     /**
      * Creates a new `NewTopicRule` instance.
-     * @param intents List of intents to filter to.
-     * @param entities List of entities to filter to.
+     * @param matches List of intents, entities, or properties to filter to.
      * @param steps List of steps to initialize new plan with.
      */
     constructor();
-    constructor(intents: string|string[], steps: Dialog[]);
-    constructor(intents: string|string[], entities: string|string[], steps: Dialog[]);
-    constructor(intents?: string|string[], entitiesOrSteps?: string|string[]|Dialog[], steps?: Dialog[]) {
-        if (!steps) {
-            steps = entitiesOrSteps as Dialog[];
-            entitiesOrSteps = undefined;
-        }
-        super(intents, entitiesOrSteps as any, steps, PlanChangeType.newPlan);
+    constructor(matches: string|string[], steps: Dialog[]);
+    constructor(matches?: string|string[], steps?: Dialog[]) {
+        super(matches, steps, PlanChangeType.replacePlan);
     }
 }
