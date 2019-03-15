@@ -31,6 +31,7 @@
         "@typescript-eslint/parser": "^1.4.2",
         "coveralls": "^3.0.2",
         "eslint": "^5.15.1",
+        "eslint-plugin-only-warn": "^1.0.1",
         "lerna": "^3.2.1",
         "mocha": "^5.2.0"
     },

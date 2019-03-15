@@ -1,6 +1,9 @@
 {
     "parser": "@typescript-eslint/parser",
-    "plugins": ["@typescript-eslint"],
+    "plugins": [
+        "@typescript-eslint",
+        "only-warn"
+    ],
     "extends": ["plugin:@typescript-eslint/recommended"],
     "parserOptions": {
         "ecmaVersion": 9,
