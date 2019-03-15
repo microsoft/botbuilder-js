@@ -36,5 +36,5 @@ export interface RecognizerResult {
     /**
      * (Optional) other properties
      */
-     [propName: string]: any;
+    [propName: string]: any;
 }

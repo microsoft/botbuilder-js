@@ -140,9 +140,9 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
             instanceId: generate_guid()
         };
 
-        this.telemetryClient.trackEvent({name: "WaterfallStart", properties: {
-            "DialogId": this.id,
-            "InstanceId": state.values['instanceId']
+        this.telemetryClient.trackEvent({name: 'WaterfallStart', properties: {
+            'DialogId': this.id,
+            'InstanceId': state.values['instanceId']
         }});
 
         // Run the first step
@@ -184,17 +184,17 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      */
     protected async onStep(step: WaterfallStepContext<O>): Promise<DialogTurnResult> {
         // Log Waterfall Step event. 
-        var stepName = this.waterfallStepName(step.index)
+        var stepName = this.waterfallStepName(step.index);
 
         const state: WaterfallDialogState = step.activeDialog.state as WaterfallDialogState;
 
         var properties = 
         { 
-            "DialogId": this.id,
-            "InstanceId": state.values['instanceId'],
-            "StepName": stepName,
+            'DialogId': this.id,
+            'InstanceId': state.values['instanceId'],
+            'StepName': stepName,
         };
-        this.telemetryClient.trackEvent({name: "WaterfallStep", properties: properties});
+        this.telemetryClient.trackEvent({name: 'WaterfallStep', properties: properties});
         return await this.steps[step.index](step);
     }
 
@@ -205,7 +205,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
             state.stepIndex = index;
 
             // Create step context
-            let nextCalled: boolean = false;
+            let nextCalled = false;
             const step: WaterfallStepContext<O> = new WaterfallStepContext<O>(dc, {
                 index: index,
                 options: <O>state.options,
@@ -214,7 +214,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
                 values: state.values,
                 onNext: async (stepResult?: any): Promise<DialogTurnResult<any>> => {
                     if (nextCalled) {
-                        throw new Error(`WaterfallStepContext.next(): method already called for dialog and step '${this.id}[${index}]'.`);
+                        throw new Error(`WaterfallStepContext.next(): method already called for dialog and step '${ this.id }[${ index }]'.`);
                     }
                     nextCalled = true;
                     return await this.resumeDialog(dc, DialogReason.nextCalled, stepResult);
@@ -236,22 +236,22 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * @param instance The instance of the current dialog.
      * @param reason The reason the dialog is ending.
      */
-     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason) {
+    public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason) {
 
-        const state: WaterfallDialogState = instance.state as WaterfallDialogState
+        const state: WaterfallDialogState = instance.state as WaterfallDialogState;
         const instanceId = state.values['instanceId'];
         if (reason === DialogReason.endCalled) {
-            this.telemetryClient.trackEvent({name: "WaterfallComplete", properties: {
-                "DialogId": this.id,
-                "InstanceId": instanceId,
+            this.telemetryClient.trackEvent({name: 'WaterfallComplete', properties: {
+                'DialogId': this.id,
+                'InstanceId': instanceId,
             }});
         } else if (reason === DialogReason.cancelCalled) {
             var index = instance.state[state.stepIndex];
             var stepName = this.waterfallStepName(index);
-            this.telemetryClient.trackEvent({name: "WaterfallCancel", properties: {
-                "DialogId": this.id,
-                "StepName": stepName,
-                "InstanceId": instanceId,
+            this.telemetryClient.trackEvent({name: 'WaterfallCancel', properties: {
+                'DialogId': this.id,
+                'StepName': stepName,
+                'InstanceId': instanceId,
             }});
         }
     }
@@ -259,13 +259,13 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     private waterfallStepName(index) {
         // Log Waterfall Step event. Each event has a distinct name to hook up
         // to the Application Insights funnel.
-        var stepName = "";
+        var stepName = '';
         if (this.steps[index]) {
             try {
                 stepName = this.steps[index].name;
             } finally {
                 if (stepName === undefined || stepName === '') {
-                    stepName = "Step" + (index + 1) + "of" + (this.steps.length);
+                    stepName = 'Step' + (index + 1) + 'of' + (this.steps.length);
                 }
             }
         }
@@ -290,10 +290,10 @@ interface WaterfallDialogState {
  */  
 function generate_guid() {
     function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
     }
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
       s4() + '-' + s4() + s4() + s4();
-  }
+}
