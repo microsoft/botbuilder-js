@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogSet, DialogState, DialogTurnResult, Configurable, StateMap, DialogContext, DialogTurnStatus } from 'botbuilder-dialogs';
-import { Storage, Activity, TurnContext, ActivityTypes, StoreItems } from 'botbuilder-core';
+import { Storage, Activity, TurnContext, ActivityTypes, StoreItems, ConversationReference, ChannelAccount } from 'botbuilder-core';
 import { BotRunAdapter } from './internal/botRunAdapter';
 
 export interface StoredBotState {
@@ -128,6 +128,9 @@ export class Bot extends Configurable  {
             result = await dc.beginDialog(this.mainId);
         }
 
+        // Save snapshot of final state for the turn
+        context.turnState.set(Bot.BotStateSnapshotKey, newState);
+
         // Save state if loaded from storage
         if (saveState) {
             await Bot.saveBotState(this.storage, keys, newState, state, '*');
@@ -150,6 +153,8 @@ export class Bot extends Configurable  {
     //---------------------------------------------------------------------------------------------
     // State loading
     //---------------------------------------------------------------------------------------------
+
+    static BotStateSnapshotKey = Symbol('BotStateSnapshot');
 
     static async loadBotState(storage: Storage, keys: BotStateStorageKeys): Promise<StoredBotState> {
         const data = await storage.read([keys.userState, keys.conversationState]);
@@ -191,24 +196,32 @@ export class Bot extends Configurable  {
     }
 
     static getStorageKeys(context: TurnContext): BotStateStorageKeys {
-        // Get channel, user, and conversation ID's
-        const activity = context.activity;
-        const channelId: string = activity.channelId;
-        let userId: string = activity.from && activity.from.id ? activity.from.id : undefined;
-        const conversationId: string = activity.conversation && activity.conversation.id ? activity.conversation.id : undefined;
-
         // Patch User ID if needed
+        const activity = context.activity;
+        const reference = TurnContext.getConversationReference(activity);
+        if (!reference.user) { reference.user = {} as ChannelAccount }
         if (activity.type == ActivityTypes.ConversationUpdate) {
             const users = (activity.membersAdded || activity.membersRemoved || []).filter((u) => u.id != activity.recipient.id);
-            const found = userId ? users.filter((u) => u.id == userId) : [];
+            const found = reference.user.id ? users.filter((u) => u.id == reference.user.id) : [];
             if (found.length == 0 && users.length > 0) {
-                userId = users[0].id
+                reference.user.id = users[0].id;
             }
         } 
 
+        // Return keys
+        return Bot.getStorageKeysForReference(reference);
+
+    }
+
+    static getStorageKeysForReference(reference: Partial<ConversationReference>): BotStateStorageKeys {
+        // Get channel, user, and conversation ID's
+        const channelId: string = reference.channelId;
+        let userId: string = reference.user && reference.user.id ? reference.user.id : undefined;
+        const conversationId: string = reference.conversation && reference.conversation.id ? reference.conversation.id : undefined;
+
         // Verify ID's found
-        if (!userId) { throw new Error(`Bot: unable to load the bots state. The users ID couldn't be found.`) }
-        if (!conversationId) { throw new Error(`Bot: unable to load the bots state. The conversations ID couldn't be found.`) }
+        if (!userId) { throw new Error(`Bot: unable to load/save the bots state. The users ID couldn't be found.`) }
+        if (!conversationId) { throw new Error(`Bot: unable to load/save the bots state. The conversations ID couldn't be found.`) }
 
         // Return storage keys
         return {
