@@ -5,11 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, TurnContext } from 'botbuilder-core';
+import { Activity, TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 import * as entities from 'html-entities';
 import * as os from 'os';
 const pjson: any = require('../package.json');
 import * as request from 'request-promise-native';
+import { constants } from 'http2';
+import { QnATelemetryConstants } from './qnaTelemetryConstants';
 
 const QNAMAKER_TRACE_TYPE: string = 'https://www.qnamaker.ai/schemas/trace';
 const QNAMAKER_TRACE_NAME: string = 'QnAMaker';
@@ -171,14 +173,19 @@ export interface QnAMakerMetadata {
  * Use this to process incoming messages with the [getAnswers()](#getAnswers) method.
  */
 export class QnAMaker {
+    private readonly _logPersonalInformation: boolean;
+    private readonly _telemetryClient: BotTelemetryClient;
+
     private readonly _options: QnAMakerOptions;
 
     /**
      * Creates a new QnAMaker instance.
      * @param endpoint The endpoint of the knowledge base to query.
      * @param options (Optional) additional settings used to configure the instance.
+     * @param telemetryClient The BotTelemetryClient used for logging telemetry events.
+     * @param logPersonalInformation Set to true to include personally indentifiable information in telemetry events.
      */
-    constructor(private readonly endpoint: QnAMakerEndpoint, options: QnAMakerOptions = {} as QnAMakerOptions) {
+    constructor(private readonly endpoint: QnAMakerEndpoint, options: QnAMakerOptions = {} as QnAMakerOptions, telemetryClient?: BotTelemetryClient, logPersonalInformation?: boolean) {
         if (!endpoint) {
             throw new TypeError('QnAMaker requires valid QnAMakerEndpoint.');
         }
@@ -198,7 +205,20 @@ export class QnAMaker {
         } as QnAMakerOptions;
 
         this.validateOptions(this._options);
+
+        this._telemetryClient = telemetryClient || new NullTelemetryClient();
+        this._logPersonalInformation = logPersonalInformation || false;
     }
+
+    /**
+     * Gets a value indicating whether determines whether to log personal information that came from the user.
+     */
+    public get logPersonalInformation(): boolean { return this._logPersonalInformation; }
+
+   /**
+     * Gets the currently configured botTelemetryClient that logs the events.
+     */
+    public get telemetryClient(): BotTelemetryClient { return this._telemetryClient; }
 
     /**
      * Calls the QnA Maker service to generate answer(s) for a question.
@@ -211,8 +231,10 @@ export class QnAMaker {
      *
      * @param context The Turn Context that contains the user question to be queried against your knowledge base.
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
      */
-    public async getAnswers(context: TurnContext, options?: QnAMakerOptions): Promise<QnAMakerResult[]> {
+    public async getAnswers(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number} ): Promise<QnAMakerResult[]> {
         if (!context) {
             throw new TypeError('QnAMaker.getAnswers() requires a TurnContext.');
         }
@@ -229,6 +251,9 @@ export class QnAMaker {
 
             queryResult.push(...sortedQnaAnswers);
         }
+
+        // Log telemetry
+        this.onQnaResults(queryResult, context, telemetryProperties, telemetryMetrics);
 
         await this.emitTraceInfo(context, queryResult, queryOptions);
 
@@ -300,6 +325,88 @@ export class QnAMaker {
     protected async callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResult[]> {
         return this.queryQnaService(endpoint, question, { top } as QnAMakerOptions);
     }
+
+    /**
+     * Invoked prior to a QnaMessage Event being logged.
+     * @param qnaResult The QnA Results for the call.
+     * @param turnContext Context object containing information for a single turn of conversation with a user.
+     * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
+     */
+    protected async onQnaResults(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number}): Promise<void> {
+        this.fillQnAEvent(qnaResults, turnContext, telemetryProperties, telemetryMetrics).then(data => {
+            this.telemetryClient.trackEvent(
+                { 
+                  name: QnATelemetryConstants.qnaMessageEvent,
+                  properties: data[0],
+                  metrics: data[1]
+                });
+        });
+        return;
+    } 
+
+    /**
+     * Fills the event properties for QnaMessage event for telemetry.
+     * These properties are logged when the recognizer is called.
+     * @param qnaResult Last activity sent from user.
+     * @param turnContext Context object containing information for a single turn of conversation with a user.
+     * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
+     * @returns A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the QnaMessage event.
+     */
+    protected async fillQnAEvent(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number}): Promise<[{[key: string]:string}, {[key: string]:number} ]> {
+        var properties: { [key: string]: string } = {};
+        var metrics: { [key: string]: number } = {};
+
+        properties[QnATelemetryConstants.knowledgeBaseIdProperty] = this.endpoint.knowledgeBaseId;
+
+        var text = turnContext.activity.text;
+        var userName = ('from' in turnContext.activity) ? turnContext.activity.from.name : "";
+        // Use the LogPersonalInformation flag to toggle logging PII data, text is a common example
+        if (this.logPersonalInformation)
+        {
+            if (text)
+            {
+                properties[QnATelemetryConstants.questionProperty] = text;
+            }
+            if (userName)
+            {
+                properties[QnATelemetryConstants.usernameProperty] = userName;
+            }
+        }
+
+        // Fill in Qna Results (found or not)
+        if (qnaResults.length > 0)
+        {
+            var queryResult = qnaResults[0];
+            properties[QnATelemetryConstants.matchedQuestionProperty] = JSON.stringify(queryResult.questions);
+            properties[QnATelemetryConstants.questionIdProperty] = String(queryResult.id);
+            properties[QnATelemetryConstants.answerProperty] = queryResult.answer;
+            metrics[QnATelemetryConstants.scoreMetric] = queryResult.score;
+            properties[QnATelemetryConstants.articleFoundProperty] = "true";
+        }
+        else
+        {
+            properties[QnATelemetryConstants.matchedQuestionProperty] = "No Qna Question matched";
+            properties[QnATelemetryConstants.questionIdProperty] = "No QnA Question Id matched";
+            properties[QnATelemetryConstants.answerProperty] =  "No Qna Answer matched";
+            properties[QnATelemetryConstants.articleFoundProperty] = "false";
+        }
+        
+        // Additional Properties can override "stock" properties.
+        if (telemetryProperties != null)
+        {
+            properties = Object.assign({}, properties, telemetryProperties);
+        }
+
+        // Additional Metrics can override "stock" metrics.
+        if (telemetryMetrics != null)
+        {
+            metrics = Object.assign({}, metrics, telemetryMetrics);
+        }
+
+        return [properties, metrics];
+    }
+
 
     /**
      * Gets the message from the Activity in the TurnContext, trimmed of whitespaces.
