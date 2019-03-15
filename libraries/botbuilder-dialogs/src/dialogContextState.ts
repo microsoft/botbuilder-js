@@ -149,8 +149,7 @@ export class DialogContextState {
      * @param defaultValue (Optional) value to return if the path can't be found. Defaults to `undefined`.
      */
     public getValue<T = any>(pathExpression: string, defaultValue?: T): T {
-        if (pathExpression.indexOf('$.') !== 0) { pathExpression = '$.' + pathExpression }
-        const value = jsonpath.value(this.toJSON(), pathExpression);
+        const value = jsonpath.value(this.toJSON(), DialogContextState.resolvePath(pathExpression));
         return value !== undefined ? value : defaultValue;
     }
 
@@ -160,10 +159,32 @@ export class DialogContextState {
      * @param value Value to assign.
      */
     public setValue(pathExpression: string, value?: any): void {
-        if (pathExpression.indexOf('$.') !== 0) { pathExpression = '$.' + pathExpression }
-        jsonpath.value(this.toJSON(), pathExpression, value);
+        jsonpath.value(this.toJSON(), DialogContextState.resolvePath(pathExpression), value);
     }
    
+    static resolvePath(pathExpression: string): string {
+        // Check for JSONPath selector
+        if (pathExpression.indexOf('$.') == 0) {
+            return pathExpression;
+        } else {
+            // Check for scope selector
+            ['$user.', '$conversation.', '$dialog.', '$entities.'].forEach((prefix) => {
+                if (pathExpression.indexOf(prefix) == 0) {
+                    return '$.' + pathExpression.substr(1);
+                }
+            });
+
+            // Check for shortcuts
+            if (pathExpression[0] == '$') {
+                return '$.dialog.result.' + pathExpression.substr(1);
+            } else if (pathExpression[0] == '@') {
+                return '$.entities.' + pathExpression.substr(1);
+            }
+
+            // Add JSONPath selector prefix
+            return '$.' + pathExpression;
+        }
+    }
 }
 
 const TURN_ENTITIES = Symbol('turn_entities');

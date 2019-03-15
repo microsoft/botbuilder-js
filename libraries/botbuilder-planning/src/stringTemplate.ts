@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 import * as jsonpath from 'jsonpath';
+import { DialogContextState } from 'botbuilder-dialogs';
 
 /**
  * @private
@@ -82,7 +83,7 @@ function textLiteral(buffer: string): (data: object) => string {
 }
 
 function textSlot(path: string): (data: object) => string {
-    if (path.indexOf('$.') !== 0) { path = '$.' + path }
+    path = DialogContextState.resolvePath(path);
     return (data) => {
         const value = jsonpath.value(data, path);
         return value !== undefined ? value.toString() : '';

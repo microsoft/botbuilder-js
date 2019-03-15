@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState } from 'botbuilder';
-import { PlanningDialog, FallbackRule, SendActivity, WaitForInput } from 'botbuilder-planning';
+import { Bot, RuleDialog, DefaultResponseRule, SendActivity, WaitForInput } from 'botbuilder-planning';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -20,31 +20,25 @@ const adapter = new BotFrameworkAdapter({
     appPassword: process.env.microsoftAppPassword,
 });
 
-// Initialize state storage
-const storage = new MemoryStorage();
-const userState = new UserState(storage);
-const convoState = new ConversationState(storage);
+// Create bot and bind to state storage
+const bot = new Bot();
+bot.storage = new MemoryStorage();
 
-// Listen for incoming requests.
+// Listen for incoming activities.
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
-        // Route to main dialog.
-        await bot.run(context);
-
-        // Save state changes
-        await userState.saveChanges(context);
-        await convoState.saveChanges(context);
+        // Route activity to bot.
+        await bot.onTurn(context);
     });
 });
 
-// Create the main planning dialog and bind to storage.
-const bot = new PlanningDialog();
-bot.userState = userState.createProperty('user');
-bot.botState = convoState.createProperty('bot');
+// Initialize bots root dialog
+const dialogs = new RuleDialog();
+bot.rootDialog = dialogs;
 
-// Add a top level fallback rule to handle received messages
-bot.addRule(new FallbackRule([
+// Add rules
+dialogs.addRule(new DefaultResponseRule([
     new SendActivity(`Hi! what's your name?`),
-    new WaitForInput('user.name'),
-    new SendActivity(`Hi {user.name}. It's nice to meet you.`)
+    new WaitForInput('$user.name'),
+    new SendActivity(`Hi {$user.name}. It's nice to meet you.`)
 ]));

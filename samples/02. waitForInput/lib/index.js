@@ -18,28 +18,23 @@ const adapter = new botbuilder_1.BotFrameworkAdapter({
     appId: process.env.microsoftAppID,
     appPassword: process.env.microsoftAppPassword,
 });
-// Initialize state storage
-const storage = new botbuilder_1.MemoryStorage();
-const userState = new botbuilder_1.UserState(storage);
-const convoState = new botbuilder_1.ConversationState(storage);
-// Listen for incoming requests.
+// Create bot and bind to state storage
+const bot = new botbuilder_planning_1.Bot();
+bot.storage = new botbuilder_1.MemoryStorage();
+// Listen for incoming activities.
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
-        // Route to main dialog.
-        await bot.run(context);
-        // Save state changes
-        await userState.saveChanges(context);
-        await convoState.saveChanges(context);
+        // Route activity to bot.
+        await bot.onTurn(context);
     });
 });
-// Create the main planning dialog and bind to storage.
-const bot = new botbuilder_planning_1.PlanningDialog();
-bot.userState = userState.createProperty('user');
-bot.botState = convoState.createProperty('bot');
-// Add a top level fallback rule to handle received messages
-bot.addRule(new botbuilder_planning_1.FallbackRule([
+// Initialize bots root dialog
+const dialogs = new botbuilder_planning_1.RuleDialog();
+bot.rootDialog = dialogs;
+// Add rules
+dialogs.addRule(new botbuilder_planning_1.DefaultResponseRule([
     new botbuilder_planning_1.SendActivity(`Hi! what's your name?`),
-    new botbuilder_planning_1.WaitForInput('user.name'),
-    new botbuilder_planning_1.SendActivity(`Hi {user.name}. It's nice to meet you.`)
+    new botbuilder_planning_1.WaitForInput('$user.name'),
+    new botbuilder_planning_1.SendActivity(`Hi {$user.name}. It's nice to meet you.`)
 ]));
 //# sourceMappingURL=index.js.map
