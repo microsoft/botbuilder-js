@@ -1,0 +1,3 @@
+libraries/botframework-connector/src/connectorApi/**/*
+libraries/botframework-connector/src/tokenApi/**/*
+libraries/botframework-schema/**/*

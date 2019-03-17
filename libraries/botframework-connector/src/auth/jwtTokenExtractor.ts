@@ -106,13 +106,13 @@ export class JwtTokenExtractor {
             if (Array.isArray(endorsements) && endorsements.length !== 0) {
                 const isEndorsed: boolean = EndorsementsValidator.validate(channelId, endorsements);
                 if (!isEndorsed) {
-                    throw new Error(`Could not validate endorsement for key: ${keyId} with endorsements: ${endorsements.join(',')}`);
+                    throw new Error(`Could not validate endorsement for key: ${ keyId } with endorsements: ${ endorsements.join(',') }`);
                 }
             }
 
             if (this.tokenValidationParameters.algorithms) {
                 if (this.tokenValidationParameters.algorithms.indexOf(decodedToken.header.alg) === -1) {
-                    throw new Error(`"Token signing algorithm '${decodedToken.header.alg}' not in allowed list`);
+                    throw new Error(`"Token signing algorithm '${ decodedToken.header.alg }' not in allowed list`);
                 }
             }
 
@@ -129,7 +129,7 @@ export class JwtTokenExtractor {
 
         } catch (err) {
             // tslint:disable-next-line:no-console
-            console.error(`Error finding key for token. Available keys: ${metadata.key}`);
+            console.error(`Error finding key for token. Available keys: ${ metadata.key }`);
             throw err;
         }
     }
