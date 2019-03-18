@@ -78,10 +78,10 @@ const NODE_VERSION: any = process.version;
 
 // tslint:disable-next-line:no-var-requires no-require-imports
 const pjson: any = require('../package.json');
-const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${pjson.version} ` +
-    `(Node.js,Version=${NODE_VERSION}; ${TYPE} ${RELEASE}; ${ARCHITECTURE})`;
-const OAUTH_ENDPOINT: string = 'https://api.botframework.com';
-const US_GOV_OAUTH_ENDPOINT: string = 'https://api.botframework.azure.us';
+const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${ pjson.version } ` +
+    `(Node.js,Version=${ NODE_VERSION }; ${ TYPE } ${ RELEASE }; ${ ARCHITECTURE })`;
+const OAUTH_ENDPOINT = 'https://api.botframework.com';
+const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
 const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 
 /**
@@ -225,7 +225,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`); }
 
         // Create conversation
-        const parameters: ConversationParameters = { bot: reference.bot, members: [reference.user] } as ConversationParameters;
+        const parameters: ConversationParameters = { bot: reference.bot, members: [reference.user], isGroup: false, activity: null, channelData: null };
         const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
 
         // Mix in the tenant ID if specified. This is required for MS Teams.
@@ -246,7 +246,16 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             reference,
             true
         );
-        request.conversation = { id: response.id } as ConversationAccount;
+
+        const conversation: ConversationAccount = {
+            id: response.id,
+            isGroup: false,
+            conversationType: null,
+            tenantId: null,
+            name: null,
+        };
+        request.conversation = conversation;
+
         if (response.serviceUrl) { request.serviceUrl = response.serviceUrl; }
 
         // Create context and run middleware
@@ -375,7 +384,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         }
         if (!connectionName) {
         	throw new Error('getUserToken() requires a connectionName but none was provided.');
-		}
+        }
         this.checkEmulatingOAuthCards(context);
         const userId: string = context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
@@ -385,7 +394,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         if (!result || !result.token || result._response.status == 404) {
             return undefined;
         } else {
-            return <TokenResponse>result;
+            return result as TokenResponse;
         }
     }
 
@@ -441,7 +450,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
 
-        return <{[propertyName: string]: TokenResponse; }>(await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody;
+        return (await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody as {[propertyName: string]: TokenResponse };
     }
 
     /**
@@ -547,12 +556,12 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
         // Return status 
         res.status(status);
-        if (body) { res.send(body) }
+        if (body) { res.send(body); }
         res.end();
 
         // Check for an error
         if (status >= 400) {
-            console.warn(`BotFrameworkAdapter.processActivity(): ${status} ERROR - ${body.toString()}`);
+            console.warn(`BotFrameworkAdapter.processActivity(): ${ status } ERROR - ${ body.toString() }`);
             throw new Error(body.toString());
         }
     }
@@ -585,7 +594,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
                     responses.push({} as ResourceResponse);
                     break;
                 case 'invokeResponse':
-                    // Cache response to context object. This will be retrieved when turn completes.
+                // Cache response to context object. This will be retrieved when turn completes.
                     context.turnState.set(INVOKE_RESPONSE_KEY, activity);
                     responses.push({} as ResourceResponse);
                     break;
@@ -596,7 +605,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
                     }
                     const client: ConnectorClient = this.createConnectorClient(activity.serviceUrl);
                     if (activity.type === 'trace' && activity.channelId !== 'emulator') {
-                        // Just eat activity
+                    // Just eat activity
                         responses.push({} as ResourceResponse);
                     } else if (activity.replyToId) {
                         responses.push(await client.conversations.replyToActivity(
@@ -682,7 +691,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             (typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl) :
             (this.settings.oAuthEndpoint ? this.settings.oAuthEndpoint : 
                 JwtTokenValidation.isGovernment(this.settings.channelService) ?
-                US_GOV_OAUTH_ENDPOINT : OAUTH_ENDPOINT);
+                    US_GOV_OAUTH_ENDPOINT : OAUTH_ENDPOINT);
     }
 
     /**
@@ -729,7 +738,7 @@ function parseRequest(req: WebRequest): Promise<Activity> {
                 reject(err);
             }
         } else {
-            let requestData: string = '';
+            let requestData = '';
             req.on('data', (chunk: string) => {
                 requestData += chunk;
             });
@@ -746,7 +755,7 @@ function parseRequest(req: WebRequest): Promise<Activity> {
 }
 
 function delay(timeout: number): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         setTimeout(resolve, timeout);
     });
 }

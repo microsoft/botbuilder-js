@@ -13,9 +13,9 @@ import * as request from 'request-promise-native';
 import { constants } from 'http2';
 import { QnATelemetryConstants } from './qnaTelemetryConstants';
 
-const QNAMAKER_TRACE_TYPE: string = 'https://www.qnamaker.ai/schemas/trace';
-const QNAMAKER_TRACE_NAME: string = 'QnAMaker';
-const QNAMAKER_TRACE_LABEL: string = 'QnAMaker Trace';
+const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
+const QNAMAKER_TRACE_NAME = 'QnAMaker';
+const QNAMAKER_TRACE_LABEL = 'QnAMaker Trace';
 
 /**
  * @private
@@ -54,7 +54,7 @@ export interface QnAMakerResult {
     /**
      * The index of the answer in the knowledge base. V3 uses 'qnaId', V4 uses 'id'. (If any)
      */
-     id?: number;
+    id?: number;
 }
 
 /**
@@ -450,7 +450,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
      * Called internally to query the QnA Maker service.
      */
     private async queryQnaService(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResult[]> {
-        const url: string = `${endpoint.host}/knowledgebases/${endpoint.knowledgeBaseId}/generateanswer`;
+        const url: string = `${ endpoint.host }/knowledgebases/${ endpoint.knowledgeBaseId }/generateanswer`;
         const headers: any = this.getHeaders(endpoint);
         const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
 
@@ -473,8 +473,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
      * Sorts all QnAMakerResult from highest-to-lowest scoring.
      * Filters QnAMakerResults within threshold specified (default threshold: .001).
      */
-    private sortAnswersWithinThreshold(answers: QnAMakerResult[] = [] as QnAMakerResult[], queryOptions: QnAMakerOptions)
-        : QnAMakerResult[] {
+    private sortAnswersWithinThreshold(answers: QnAMakerResult[] = [] as QnAMakerResult[], queryOptions: QnAMakerOptions): QnAMakerResult[] {
         const minScore: number = typeof queryOptions.scoreThreshold === 'number' ? queryOptions.scoreThreshold : 0.001;
 
         return answers.filter((ans: QnAMakerResult) => ans.score >= minScore)
@@ -527,7 +526,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         if (isLegacyProtocol) {
             headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
         } else {
-            headers.Authorization = `EndpointKey ${endpoint.endpointKey}`;
+            headers.Authorization = `EndpointKey ${ endpoint.endpointKey }`;
         }
 
         headers['User-Agent'] = this.getUserAgent();
@@ -535,11 +534,11 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         return headers;
     }
 
-    private getUserAgent() : string {
-        const packageUserAgent: string = `${pjson.name}/${pjson.version}`;
-        const platformUserAgent: string = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
+    private getUserAgent(): string {
+        const packageUserAgent: string = `${ pjson.name }/${ pjson.version }`;
+        const platformUserAgent: string = `(${ os.arch() }-${ os.type() }-${ os.release() }; Node.js,Version=${ process.version })`;
 
-        return `${packageUserAgent} ${platformUserAgent}`;
+        return `${ packageUserAgent } ${ platformUserAgent }`;
     }
 
     private validateOptions(options: QnAMakerOptions): void {
@@ -557,14 +556,14 @@ export class QnAMaker implements QnAMakerTelemetryClient {
     private validateScoreThreshold(scoreThreshold: number): void {
         if (typeof scoreThreshold !== 'number' || !(scoreThreshold > 0 && scoreThreshold < 1)) {
             throw new TypeError(
-                `"${scoreThreshold}" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`
+                `"${ scoreThreshold }" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`
             );
         }
     }
 
     private validateTop(qnaOptionTop: number): void {
         if (!Number.isInteger(qnaOptionTop) || qnaOptionTop < 1) {
-            throw new RangeError(`"${qnaOptionTop}" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`);
+            throw new RangeError(`"${ qnaOptionTop }" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`);
         }
     }
 

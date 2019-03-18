@@ -57,6 +57,6 @@ export class UserState extends BotState {
             throw new Error('missing activity.from.id');
         }
 
-        return `${channelId}/users/${userId}/${this.namespace}`;
+        return `${ channelId }/users/${ userId }/${ this.namespace }`;
     }
 }

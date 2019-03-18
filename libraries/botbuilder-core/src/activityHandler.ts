@@ -119,7 +119,7 @@ export class ActivityHandler {
         return this.on('Event', handler);
     }
 
-     /**
+    /**
      * Receives event activities of type 'tokens/response'
      * @remarks
      * These events occur during the oauth flow
@@ -137,9 +137,9 @@ export class ActivityHandler {
      * Check `context.activity.type` for the type value.
      * @param handler BotHandler A handler function in the form async(context, next) => { ... }
      */
-     public onUnrecognizedActivityType(handler: BotHandler): this {
+    public onUnrecognizedActivityType(handler: BotHandler): this {
         return this.on('UnrecognizedActivityType', handler);
-     }
+    }
 
     /**
      * onDialog fires at the end of the event emission process, and should be used to handle Dialog activity.
@@ -226,7 +226,7 @@ export class ActivityHandler {
                     });
                     break;
                 default:
-                    // handler for unknown or unhandled types
+                // handler for unknown or unhandled types
                     await this.handle(context, 'UnrecognizedActivityType', runDialogs);
                     break;
             }
