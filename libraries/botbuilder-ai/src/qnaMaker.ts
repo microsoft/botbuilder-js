@@ -164,6 +164,35 @@ export interface QnAMakerMetadata {
     value: string;
 }
 
+export interface QnAMakerTelemetryClient
+{
+    /**
+     * Gets a value indicating whether determines whether to log personal information that came from the user.
+     */
+    readonly logPersonalInformation: boolean;
+
+   /**
+     * Gets the currently configured botTelemetryClient that logs the events.
+     */
+    readonly telemetryClient: BotTelemetryClient;
+
+    /**
+     * Calls the QnA Maker service to generate answer(s) for a question.
+     *
+     * @remarks
+     * Returns an array of answers sorted by score with the top scoring answer returned first.
+     *
+     * In addition to returning the results from QnA Maker, [getAnswers()](#getAnswers) will also
+     * emit a trace activity that contains the QnA Maker results.
+     *
+     * @param context The Turn Context that contains the user question to be queried against your knowledge base.
+     * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
+     */
+    getAnswers(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number} ): Promise<QnAMakerResult[]>;
+}
+
 /**
  * Query a QnA Maker knowledge base for answers.
  *
@@ -172,7 +201,7 @@ export interface QnAMakerMetadata {
  *
  * Use this to process incoming messages with the [getAnswers()](#getAnswers) method.
  */
-export class QnAMaker {
+export class QnAMaker implements QnAMakerTelemetryClient {
     private readonly _logPersonalInformation: boolean;
     private readonly _telemetryClient: BotTelemetryClient;
 
