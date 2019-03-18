@@ -103,6 +103,31 @@ export interface LuisPredictionOptions {
     timezoneOffset?: number;
 }
 
+export interface LuisRecognizerTelemetryClient
+{
+    /**
+     * Gets a value indicating whether determines whether to log personal information that came from the user.
+     */
+    readonly logPersonalInformation: boolean;
+
+    /**
+     * Gets the currently configured botTelemetryClient that logs the events.
+     */
+    readonly telemetryClient: BotTelemetryClient;
+
+    /**
+     * Calls LUIS to recognize intents and entities in a users utterance.
+     * @remarks
+     * Returns a [RecognizerResult](../botbuilder-core/recognizerresult) containing any intents and entities recognized by LUIS.
+     *
+     * @param context Context for the current turn of conversation with the use.
+     * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
+     * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
+     */
+    recognize(context: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number} ): Promise<RecognizerResult>;
+}
+
+
 /**
  * Recognize intents in a user utterance using a configured LUIS model.
  *
@@ -112,9 +137,9 @@ export interface LuisPredictionOptions {
  *
  * This component can be used within your bots logic by calling [recognize()](#recognize).
  */
-export class LuisRecognizer {
-    protected telemetryClient: BotTelemetryClient;
-    protected logPersonalInformation: boolean;
+export class LuisRecognizer implements LuisRecognizerTelemetryClient{
+    private readonly _logPersonalInformation: boolean;
+    private readonly _telemetryClient: BotTelemetryClient;
 
     private application: LuisApplication;
     private options: LuisPredictionOptions;
@@ -166,9 +191,19 @@ export class LuisRecognizer {
         const baseUri: string = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
         this.luisClient = new LuisClient(creds, baseUri);
 
-        this.telemetryClient = telemetryClient || new NullTelemetryClient();
-        this.logPersonalInformation = logPersonalInformation;
+        this._telemetryClient = telemetryClient || new NullTelemetryClient();
+        this._logPersonalInformation = logPersonalInformation || false;
     }
+
+    /**
+     * Gets a value indicating whether determines whether to log personal information that came from the user.
+     */
+    public get logPersonalInformation(): boolean { return this._logPersonalInformation; }
+
+   /**
+     * Gets the currently configured botTelemetryClient that logs the events.
+     */
+    public get telemetryClient(): BotTelemetryClient { return this._telemetryClient; }
 
     /**
      * Returns the name of the top scoring intent from a set of LUIS results.
@@ -281,7 +316,7 @@ export class LuisRecognizer {
      * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
      */
     protected onRecognizerResults(recognizerResult: RecognizerResult, turnContext: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number}): Promise<void> {
-        this.fillLuisProperties(recognizerResult, turnContext, telemetryProperties).then(props => {
+        this.fillTelemetryProperties(recognizerResult, turnContext, telemetryProperties).then(props => {
             this.telemetryClient.trackEvent(
                 { 
                   name: LuisTelemetryConstants.luisResultEvent,
@@ -300,7 +335,7 @@ export class LuisRecognizer {
      * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
      * @returns A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the LuisResult event.
      */
-    protected async fillLuisProperties(recognizerResult: RecognizerResult, turnContext: TurnContext, telemetryProperties?: {[key: string]:string}): Promise<{[key: string]:string}> {
+    protected async fillTelemetryProperties(recognizerResult: RecognizerResult, turnContext: TurnContext, telemetryProperties?: {[key: string]:string}): Promise<{[key: string]:string}> {
         const topLuisIntent: string = LuisRecognizer.topIntent(recognizerResult);
         const intentScore: number = (recognizerResult.intents[topLuisIntent] && 'score' in recognizerResult.intents[topLuisIntent]) ?
            recognizerResult.intents[topLuisIntent].score : 0;
