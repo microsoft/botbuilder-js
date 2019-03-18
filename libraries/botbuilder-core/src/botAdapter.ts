@@ -53,7 +53,7 @@ export abstract class BotAdapter {
     public abstract continueConversation(
         reference: Partial<ConversationReference>,
         logic: (revocableContext: TurnContext
-    ) => Promise<void>): Promise<void>;
+        ) => Promise<void>): Promise<void>;
 
     /**
      * Gets/sets a error handler that will be called anytime an uncaught exception is raised during

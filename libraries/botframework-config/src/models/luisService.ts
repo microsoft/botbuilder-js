@@ -52,17 +52,17 @@ export class LuisService extends ConnectedService implements ILuisService {
 
         // usgovvirginia is that actual azure region name, but the cognitive service team called their endpoint 'virginia' instead of 'usgovvirginia'
         // We handle both region names as an alias for virginia.api.cognitive.microsoft.us
-        if (reg === "virginia" || reg === "usgovvirginia") 
+        if (reg === 'virginia' || reg === 'usgovvirginia') 
         { 
             return `https://virginia.api.cognitive.microsoft.us`; 
         } 
         // regardless, if it starts with usgov or usdod then it is us TLD (ex: api.cognitive.microsoft.us )
-        else if (reg.startsWith("usgov") || reg.startsWith("usdod")) 
+        else if (reg.startsWith('usgov') || reg.startsWith('usdod')) 
         { 
-            return `https://${this.region}.api.cognitive.microsoft.us`; 
+            return `https://${ this.region }.api.cognitive.microsoft.us`; 
         } 
  
-        return `https://${this.region}.api.cognitive.microsoft.com`;     
+        return `https://${ this.region }.api.cognitive.microsoft.com`;     
     }
 
     // encrypt keys in service

@@ -158,7 +158,7 @@ export class OAuthPrompt extends Dialog {
             return await dc.endDialog(undefined);
         } else {
             // Validate the return value
-            let isValid: boolean = false;
+            let isValid = false;
             if (this.validator) {
                 isValid = await this.validator({
                     context: dc.context,

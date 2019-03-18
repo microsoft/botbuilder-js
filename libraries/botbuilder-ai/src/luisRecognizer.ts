@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from 'azure-cognitiveservices-luis-runtime';
+
 import { RecognizerResult, TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 import * as msRest from "ms-rest";
 import * as os from 'os';
@@ -15,9 +16,9 @@ import { LuisTelemetryConstants } from './luisTelemetryConstants';
 
 const pjson = require('../package.json');
 
-const LUIS_TRACE_TYPE: string = 'https://www.luis.ai/schemas/trace';
-const LUIS_TRACE_NAME: string = 'LuisRecognizer';
-const LUIS_TRACE_LABEL: string = 'Luis Trace';
+const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
+const LUIS_TRACE_NAME = 'LuisRecognizer';
+const LUIS_TRACE_LABEL = 'Luis Trace';
 
 /**
  * @private
@@ -386,9 +387,9 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
         // Note when the ms-rest dependency the LuisClient uses has been updated
         // this code should be modified to use the client's addUserAgentInfo() function.
 
-        const packageUserAgent = `${pjson.name}/${pjson.version}`;
-        const platformUserAgent = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
-        const userAgent = `${packageUserAgent} ${platformUserAgent}`;
+        const packageUserAgent = `${ pjson.name }/${ pjson.version }`;
+        const platformUserAgent = `(${ os.arch() }-${ os.type() }-${ os.release() }; Node.js,Version=${ process.version })`;
+        const userAgent = `${ packageUserAgent } ${ platformUserAgent }`;
 
         return userAgent;
     }
@@ -446,7 +447,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
                     break;
                 default:
                     error.message = [
-                        `Response ${(error as any).response.statusCode}: Unexpected status code received.`,
+                        `Response ${ (error as any).response.statusCode }: Unexpected status code received.`,
                         `Please verify that your LUIS application is properly setup.`
                     ].join(' ');
             }
@@ -528,28 +529,28 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
                 case 'builtin.number':
                 case 'builtin.ordinal': return Number(res.value);
                 case 'builtin.percentage':
-                    {
-                        let svalue: string = res.value;
-                        if (svalue.endsWith('%')) {
-                            svalue = svalue.substring(0, svalue.length - 1);
-                        }
-
-                        return Number(svalue);
+                {
+                    let svalue: string = res.value;
+                    if (svalue.endsWith('%')) {
+                        svalue = svalue.substring(0, svalue.length - 1);
                     }
+
+                    return Number(svalue);
+                }
                 case 'builtin.age':
                 case 'builtin.dimension':
                 case 'builtin.currency':
                 case 'builtin.temperature':
-                    {
-                        const val: any = res.value;
-                        const obj: any = {};
-                        if (val) {
-                            obj.number = Number(val);
-                        }
-                        obj.units = res.unit;
-
-                        return obj;
+                {
+                    const val: any = res.value;
+                    const obj: any = {};
+                    if (val) {
+                        obj.number = Number(val);
                     }
+                    obj.units = res.unit;
+
+                    return obj;
+                }
                 default:
                     return Object.keys(entity.resolution).length > 1 ?
                         entity.resolution :
@@ -618,7 +619,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
         // This is now implemented as O(n*k) search and can be reduced to O(n + k) using a map as an optimization if n or k grow
         const coveredSet: Set<any> = new Set();
         compositeEntity.children.forEach((childEntity: LuisModels.CompositeChildModel) => {
-            for (let i: number = 0; i < entities.length; i++) {
+            for (let i = 0; i < entities.length; i++) {
                 const entity: LuisModels.EntityModel = entities[i];
                 if (!coveredSet.has(i) &&
                     childEntity.type === entity.type &&
@@ -643,7 +644,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
         });
 
         // filter entities that were covered by this composite entity
-        for (let i: number = 0; i < entities.length; i++) {
+        for (let i = 0; i < entities.length; i++) {
             if (!coveredSet.has(i)) {
                 filteredEntities.push(entities[i]);
             }
@@ -690,10 +691,10 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
      */
     private validateLuisApplication(): void {
         if (!this.application.applicationId) {
-            throw new Error(`Invalid \`applicationId\` value detected: ${this.application.applicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
+            throw new Error(`Invalid \`applicationId\` value detected: ${ this.application.applicationId }\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
         }
         if (!this.application.endpointKey) {
-            throw new Error(`Invalid \`endpointKey\` value detected: ${this.application.endpointKey}\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`);
+            throw new Error(`Invalid \`endpointKey\` value detected: ${ this.application.endpointKey }\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`);
         }
     }
 }

@@ -90,7 +90,7 @@ export class DialogSet {
             throw new Error(`DialogSet.add(): Dialog being added is missing its 'id'.`);
         }
         if (this.dialogs.hasOwnProperty(dialog.id)) {
-            throw new Error(`DialogSet.add(): A dialog with an id of '${dialog.id}' already added.`);
+            throw new Error(`DialogSet.add(): A dialog with an id of '${ dialog.id }' already added.`);
         }
 
         // If a telemetry client has already been set on this dialogSet, also set it on new dialogs as they are added.

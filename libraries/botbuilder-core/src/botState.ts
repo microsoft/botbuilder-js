@@ -58,7 +58,7 @@ export class BotState implements PropertyManager {
      * @param name Name of the property to add. Must be unique within the set.
      */
     public createProperty<T = any>(name: string): StatePropertyAccessor<T> {
-        if (this.properties.has(name)) { throw new Error(`BotState.createProperty(): a property named '${name}' already exists.`); }
+        if (this.properties.has(name)) { throw new Error(`BotState.createProperty(): a property named '${ name }' already exists.`); }
         const prop: BotStatePropertyAccessor<T> = new BotStatePropertyAccessor<T>(this, name);
         this.properties.set(name, prop);
 
@@ -84,14 +84,14 @@ export class BotState implements PropertyManager {
         const cached: CachedBotState = context.turnState.get(this.stateKey);
         if (force || !cached || !cached.state) {
             return Promise.resolve(this.storageKey(context)).then((key: string) => {
-                    return this.storage.read([key]).then((items: StoreItems) => {
-                        const state: any = items[key] || {};
-                        const hash: string = calculateChangeHash(state);
-                        context.turnState.set(this.stateKey, { state: state, hash: hash });
+                return this.storage.read([key]).then((items: StoreItems) => {
+                    const state: any = items[key] || {};
+                    const hash: string = calculateChangeHash(state);
+                    context.turnState.set(this.stateKey, { state: state, hash: hash });
 
-                        return state;
-                    });
+                    return state;
                 });
+            });
         }
 
         return Promise.resolve(cached.state);
@@ -121,10 +121,10 @@ export class BotState implements PropertyManager {
                 changes[key] = cached.state;
 
                 return this.storage.write(changes).then(() => {
-                        // Update change hash and cache
-                        cached.hash = calculateChangeHash(cached.state);
-                        context.turnState.set(this.stateKey, cached);
-                    });
+                    // Update change hash and cache
+                    cached.hash = calculateChangeHash(cached.state);
+                    context.turnState.set(this.stateKey, cached);
+                });
             });
         }
 

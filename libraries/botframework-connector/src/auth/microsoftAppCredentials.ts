@@ -36,7 +36,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
     constructor(appId: string, appPassword: string) {
         this.appId = appId;
         this.appPassword = appPassword;
-        this.tokenCacheKey = `${appId}-cache`;
+        this.tokenCacheKey = `${ appId }-cache`;
     }
 
     /**

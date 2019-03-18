@@ -26,13 +26,13 @@ import * as moment from 'moment';
  * is documented here: https://www.luis.ai/Help#PreBuiltEntities.
  */
 export interface Entity {
-  role?: string;
-  entity?: string;
-  type: string;
-  startIndex?: number;
-  endIndex?: number;
-  score?: number;
-  resolution?: { [propertyName: string]: any };
+    role?: string;
+    entity?: string;
+    type: string;
+    startIndex?: number;
+    endIndex?: number;
+    score?: number;
+    resolution?: { [propertyName: string]: any };
 }
 
 /**
@@ -45,9 +45,9 @@ export interface Entity {
  * @member {array} [value] Value of extracted entities for this parameter.
  */
 export interface ActionParameter {
-  name?: string;
-  required?: boolean;
-  value?: Entity[];
+    name?: string;
+    required?: boolean;
+    value?: Entity[];
 }
 
 /**
@@ -60,9 +60,9 @@ export interface ActionParameter {
  * @member {array} [parameters] The parameters for the action.
  */
 export interface Action {
-  triggered?: boolean;
-  name?: string;
-  parameters?: ActionParameter[];
+    triggered?: boolean;
+    name?: string;
+    parameters?: ActionParameter[];
 }
 
 /**
@@ -77,9 +77,9 @@ export interface Action {
  * @member {array} [actions] The action associated with this Luis intent.
  */
 export interface Intent {
-  intent?: string;
-  score?: number;
-  actions?: Action[];
+    intent?: string;
+    score?: number;
+    actions?: Action[];
 }
 
 /**
@@ -92,8 +92,8 @@ export interface Intent {
  * @member {string} value Value extracted by Luis.
  */
 export interface CompositeChild {
-  type: string;
-  value: string;
+    type: string;
+    value: string;
 }
 
 /**
@@ -108,9 +108,9 @@ export interface CompositeChild {
  * @member {array} children
  */
 export interface CompositeEntity {
-  parentType: string;
-  value: string;
-  children: CompositeChild[];
+    parentType: string;
+    value: string;
+    children: CompositeChild[];
 }
 
 /**
@@ -127,11 +127,11 @@ export interface CompositeEntity {
  * 'Question', 'Finished'
  */
 export interface DialogResponse {
-  prompt?: string;
-  parameterName?: string;
-  parameterType?: string;
-  contextId?: string;
-  status?: string;
+    prompt?: string;
+    parameterName?: string;
+    parameterType?: string;
+    contextId?: string;
+    status?: string;
 }
 
 /**
@@ -161,11 +161,11 @@ export interface DialogResponse {
  * model, this field will contain the spell checked utterance.
  */
 export interface LuisResult {
-  query: string;
-  topScoringIntent?: Intent;
-  intents?: Intent[];
-  entities: Entity[];
-  compositeEntities?: CompositeEntity[];
-  dialog?: DialogResponse;
-  alteredQuery?: string;
+    query: string;
+    topScoringIntent?: Intent;
+    intents?: Intent[];
+    entities: Entity[];
+    compositeEntities?: CompositeEntity[];
+    dialog?: DialogResponse;
+    alteredQuery?: string;
 }
