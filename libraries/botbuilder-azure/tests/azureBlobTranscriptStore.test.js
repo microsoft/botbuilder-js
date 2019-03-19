@@ -10,47 +10,47 @@ class MockBlobService {
 		this.mockFunctionCalls = [ { constructor: { storageAccount, storageAccessKey, host } } ];
 	}
 
-	createBlockBlobFromTextAsync(container, blob, text, options, cb) {
+	createBlockBlobFromText(container, blob, text, options, cb) {
 		this.mockFunctionCalls.push({ createBlockBlobFromTextAsync: [ container, blob, text, options ] });
 		return cb();
 	}
 
-	createContainerIfNotExistsAsync(container, cb) {
+	createContainerIfNotExists(container, cb) {
 		this.mockFunctionCalls.push({ createContainerIfNotExistsAsync: [ container ] });
 		return cb(null, { name: container });
 	}
 
-	deleteBlobIfExistsAsync(container, blob, cb) {
+	deleteBlobIfExists(container, blob, cb) {
 		this.mockFunctionCalls.push({ deleteBlobIfExistsAsync: [ container, blob ] });
 		return cb();
 	}
 
-	deleteContainerIfExistsAsync(container, cb) {
+	deleteContainerIfExists(container, cb) {
 		this.mockFunctionCalls.push({ deleteContainerIfExistsAsync: [ container ] });
 		return cb();
 	}
 
-	getBlobMetadataAsync(container, blob, cb) {
+	getBlobMetadata(container, blob, cb) {
 		this.mockFunctionCalls.push({ getBlobMetadataAsync: [ container, blob ] });
 		return cb();
 	}
 
-	getBlobPropertiesAsync(container, blob, cb) {
+	getBlobProperties(container, blob, cb) {
 		this.mockFunctionCalls.push({ getBlobPropertiesAsync: [ container, blob ] });
 		return cb();
 	}
 
-	getBlobToTextAsync(container, blob, cb) {
+	getBlobToText(container, blob, cb) {
 		this.mockFunctionCalls.push({ getBlobToTextAsync: [ container, blob ] });
 		return cb(null, JSON.stringify(createActivity('123432', this.timeStamp)));
 	}
 
-	listBlobDirectoriesSegmentedWithPrefixAsync(container, prefix, currentToken, cb) {
+	listBlobDirectoriesSegmentedWithPrefix(container, prefix, currentToken, cb) {
 		this.mockFunctionCalls.push({ listBlobDirectoriesSegmentedWithPrefixAsync: [ container, prefix, currentToken ] });
 		return cb(null, { entries: [ { name: 'blob1' }, { name: 'blob2' } ] });
 	}
 
-	listBlobsSegmentedWithPrefixAsync(container, prefix, currentToken, options, cb) {
+	listBlobsSegmentedWithPrefix(container, prefix, currentToken, options, cb) {
 		this.mockFunctionCalls.push({ listBlobsSegmentedWithPrefixAsync: [ container, prefix, currentToken, options ] });
 		return cb(null, {
 			entries: [
@@ -61,12 +61,12 @@ class MockBlobService {
 		});
 	}
 
-	setBlobMetadataAsync(container, blob, metadata, cb) {
+	setBlobMetadata(container, blob, metadata, cb) {
 		this.mockFunctionCalls.push({ setBlobMetadataAsync: [ container, blob, metadata ] });
 		return cb();
 	}
 
-	setBlobPropertiesAsync(container, blob, propertiesAndOptions, cb) {
+	setBlobProperties(container, blob, propertiesAndOptions, cb) {
 		this.mockFunctionCalls.push({ setBlobPropertiesAsync: [ container, blob, propertiesAndOptions ] });
 		return cb();
 	}
