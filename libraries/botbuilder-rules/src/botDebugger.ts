@@ -86,7 +86,7 @@ export class BotDebugger extends BotAdapterSet {
 	 * id is used in later calls to properly route activities to the Emulator.
 	 */
 	private static async connectToEmulator(context: TurnContext): Promise<string> {
-		const client = new ConnectorClient(new EmulatorServiceCredentials(), {baseUri: process.env.EMULATOR_URL});
+		const client = new ConnectorClient(new EmulatorServiceCredentials() as any, {baseUri: process.env.EMULATOR_URL});
 		const payload: ConversationParameters = {
 			bot: context.activity.recipient,
 			isGroup: context.activity.conversation.isGroup,
