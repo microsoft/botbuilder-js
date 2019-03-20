@@ -166,14 +166,6 @@ export class DialogContextState {
         if (pathExpression.indexOf('$.') == 0) {
             return pathExpression;
         } else {
-            // Check for scope selector
-            const prefixes = ['$user.', '$conversation.', '$dialog.', '$turn.'];
-            for (let i = 0; i < prefixes.length; i++) {
-                if (pathExpression.indexOf(prefixes[i]) == 0) {
-                    return '$.' + pathExpression.substr(1);
-                }
-            }
-
             // Check for shortcuts
             if (pathExpression[0] == '$') {
                 return '$.dialog.result.' + pathExpression.substr(1);
