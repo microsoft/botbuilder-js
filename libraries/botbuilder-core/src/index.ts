@@ -26,8 +26,10 @@ export * from './propertyManager';
 export * from './recognizerResult';
 export * from './showTypingMiddleware';
 export * from './storage';
+export * from './telemetryLoggerMiddleware';
 export * from './testAdapter';
 export * from './transcriptLogger';
 export * from './turnContext';
 export * from './userState';
 export * from './userTokenProvider';
+

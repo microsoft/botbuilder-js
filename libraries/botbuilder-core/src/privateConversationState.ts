@@ -63,6 +63,6 @@ export class PrivateConversationState extends BotState {
             throw new Error('missing activity.from.id');
         }
 
-        return `${channelId}/conversations/${conversationId}/users/${userId}/${this.namespace}`;
+        return `${ channelId }/conversations/${ conversationId }/users/${ userId }/${ this.namespace }`;
     }
 }

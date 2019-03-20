@@ -5,15 +5,17 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, TurnContext } from 'botbuilder-core';
+import { Activity, TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 import * as entities from 'html-entities';
 import * as os from 'os';
 const pjson: any = require('../package.json');
 import * as request from 'request-promise-native';
+import { constants } from 'http2';
+import { QnATelemetryConstants } from './qnaTelemetryConstants';
 
-const QNAMAKER_TRACE_TYPE: string = 'https://www.qnamaker.ai/schemas/trace';
-const QNAMAKER_TRACE_NAME: string = 'QnAMaker';
-const QNAMAKER_TRACE_LABEL: string = 'QnAMaker Trace';
+const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
+const QNAMAKER_TRACE_NAME = 'QnAMaker';
+const QNAMAKER_TRACE_LABEL = 'QnAMaker Trace';
 
 /**
  * @private
@@ -52,7 +54,7 @@ export interface QnAMakerResult {
     /**
      * The index of the answer in the knowledge base. V3 uses 'qnaId', V4 uses 'id'. (If any)
      */
-     id?: number;
+    id?: number;
 }
 
 /**
@@ -162,6 +164,35 @@ export interface QnAMakerMetadata {
     value: string;
 }
 
+export interface QnAMakerTelemetryClient
+{
+    /**
+     * Gets a value indicating whether determines whether to log personal information that came from the user.
+     */
+    readonly logPersonalInformation: boolean;
+
+   /**
+     * Gets the currently configured botTelemetryClient that logs the events.
+     */
+    readonly telemetryClient: BotTelemetryClient;
+
+    /**
+     * Calls the QnA Maker service to generate answer(s) for a question.
+     *
+     * @remarks
+     * Returns an array of answers sorted by score with the top scoring answer returned first.
+     *
+     * In addition to returning the results from QnA Maker, [getAnswers()](#getAnswers) will also
+     * emit a trace activity that contains the QnA Maker results.
+     *
+     * @param context The Turn Context that contains the user question to be queried against your knowledge base.
+     * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
+     */
+    getAnswers(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number} ): Promise<QnAMakerResult[]>;
+}
+
 /**
  * Query a QnA Maker knowledge base for answers.
  *
@@ -170,15 +201,20 @@ export interface QnAMakerMetadata {
  *
  * Use this to process incoming messages with the [getAnswers()](#getAnswers) method.
  */
-export class QnAMaker {
+export class QnAMaker implements QnAMakerTelemetryClient {
+    private readonly _logPersonalInformation: boolean;
+    private readonly _telemetryClient: BotTelemetryClient;
+
     private readonly _options: QnAMakerOptions;
 
     /**
      * Creates a new QnAMaker instance.
      * @param endpoint The endpoint of the knowledge base to query.
      * @param options (Optional) additional settings used to configure the instance.
+     * @param telemetryClient The BotTelemetryClient used for logging telemetry events.
+     * @param logPersonalInformation Set to true to include personally indentifiable information in telemetry events.
      */
-    constructor(private readonly endpoint: QnAMakerEndpoint, options: QnAMakerOptions = {} as QnAMakerOptions) {
+    constructor(private readonly endpoint: QnAMakerEndpoint, options: QnAMakerOptions = {} as QnAMakerOptions, telemetryClient?: BotTelemetryClient, logPersonalInformation?: boolean) {
         if (!endpoint) {
             throw new TypeError('QnAMaker requires valid QnAMakerEndpoint.');
         }
@@ -198,7 +234,20 @@ export class QnAMaker {
         } as QnAMakerOptions;
 
         this.validateOptions(this._options);
+
+        this._telemetryClient = telemetryClient || new NullTelemetryClient();
+        this._logPersonalInformation = logPersonalInformation || false;
     }
+
+    /**
+     * Gets a value indicating whether determines whether to log personal information that came from the user.
+     */
+    public get logPersonalInformation(): boolean { return this._logPersonalInformation; }
+
+   /**
+     * Gets the currently configured botTelemetryClient that logs the events.
+     */
+    public get telemetryClient(): BotTelemetryClient { return this._telemetryClient; }
 
     /**
      * Calls the QnA Maker service to generate answer(s) for a question.
@@ -211,8 +260,10 @@ export class QnAMaker {
      *
      * @param context The Turn Context that contains the user question to be queried against your knowledge base.
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
      */
-    public async getAnswers(context: TurnContext, options?: QnAMakerOptions): Promise<QnAMakerResult[]> {
+    public async getAnswers(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number} ): Promise<QnAMakerResult[]> {
         if (!context) {
             throw new TypeError('QnAMaker.getAnswers() requires a TurnContext.');
         }
@@ -229,6 +280,9 @@ export class QnAMaker {
 
             queryResult.push(...sortedQnaAnswers);
         }
+
+        // Log telemetry
+        this.onQnaResults(queryResult, context, telemetryProperties, telemetryMetrics);
 
         await this.emitTraceInfo(context, queryResult, queryOptions);
 
@@ -302,6 +356,88 @@ export class QnAMaker {
     }
 
     /**
+     * Invoked prior to a QnaMessage Event being logged.
+     * @param qnaResult The QnA Results for the call.
+     * @param turnContext Context object containing information for a single turn of conversation with a user.
+     * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
+     */
+    protected async onQnaResults(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number}): Promise<void> {
+        this.fillQnAEvent(qnaResults, turnContext, telemetryProperties, telemetryMetrics).then(data => {
+            this.telemetryClient.trackEvent(
+                { 
+                  name: QnATelemetryConstants.qnaMessageEvent,
+                  properties: data[0],
+                  metrics: data[1]
+                });
+        });
+        return;
+    } 
+
+    /**
+     * Fills the event properties for QnaMessage event for telemetry.
+     * These properties are logged when the recognizer is called.
+     * @param qnaResult Last activity sent from user.
+     * @param turnContext Context object containing information for a single turn of conversation with a user.
+     * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
+     * @returns A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the QnaMessage event.
+     */
+    protected async fillQnAEvent(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number}): Promise<[{[key: string]:string}, {[key: string]:number} ]> {
+        var properties: { [key: string]: string } = {};
+        var metrics: { [key: string]: number } = {};
+
+        properties[QnATelemetryConstants.knowledgeBaseIdProperty] = this.endpoint.knowledgeBaseId;
+
+        var text = turnContext.activity.text;
+        var userName = ('from' in turnContext.activity) ? turnContext.activity.from.name : "";
+        // Use the LogPersonalInformation flag to toggle logging PII data, text is a common example
+        if (this.logPersonalInformation)
+        {
+            if (text)
+            {
+                properties[QnATelemetryConstants.questionProperty] = text;
+            }
+            if (userName)
+            {
+                properties[QnATelemetryConstants.usernameProperty] = userName;
+            }
+        }
+
+        // Fill in Qna Results (found or not)
+        if (qnaResults.length > 0)
+        {
+            var queryResult = qnaResults[0];
+            properties[QnATelemetryConstants.matchedQuestionProperty] = JSON.stringify(queryResult.questions);
+            properties[QnATelemetryConstants.questionIdProperty] = String(queryResult.id);
+            properties[QnATelemetryConstants.answerProperty] = queryResult.answer;
+            metrics[QnATelemetryConstants.scoreMetric] = queryResult.score;
+            properties[QnATelemetryConstants.articleFoundProperty] = "true";
+        }
+        else
+        {
+            properties[QnATelemetryConstants.matchedQuestionProperty] = "No Qna Question matched";
+            properties[QnATelemetryConstants.questionIdProperty] = "No QnA Question Id matched";
+            properties[QnATelemetryConstants.answerProperty] =  "No Qna Answer matched";
+            properties[QnATelemetryConstants.articleFoundProperty] = "false";
+        }
+        
+        // Additional Properties can override "stock" properties.
+        if (telemetryProperties != null)
+        {
+            properties = Object.assign({}, properties, telemetryProperties);
+        }
+
+        // Additional Metrics can override "stock" metrics.
+        if (telemetryMetrics != null)
+        {
+            metrics = Object.assign({}, metrics, telemetryMetrics);
+        }
+
+        return [properties, metrics];
+    }
+
+
+    /**
      * Gets the message from the Activity in the TurnContext, trimmed of whitespaces.
      */
     private getTrimmedMessageText(context: TurnContext): string {
@@ -314,7 +450,7 @@ export class QnAMaker {
      * Called internally to query the QnA Maker service.
      */
     private async queryQnaService(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResult[]> {
-        const url: string = `${endpoint.host}/knowledgebases/${endpoint.knowledgeBaseId}/generateanswer`;
+        const url: string = `${ endpoint.host }/knowledgebases/${ endpoint.knowledgeBaseId }/generateanswer`;
         const headers: any = this.getHeaders(endpoint);
         const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
 
@@ -337,8 +473,7 @@ export class QnAMaker {
      * Sorts all QnAMakerResult from highest-to-lowest scoring.
      * Filters QnAMakerResults within threshold specified (default threshold: .001).
      */
-    private sortAnswersWithinThreshold(answers: QnAMakerResult[] = [] as QnAMakerResult[], queryOptions: QnAMakerOptions)
-        : QnAMakerResult[] {
+    private sortAnswersWithinThreshold(answers: QnAMakerResult[] = [] as QnAMakerResult[], queryOptions: QnAMakerOptions): QnAMakerResult[] {
         const minScore: number = typeof queryOptions.scoreThreshold === 'number' ? queryOptions.scoreThreshold : 0.001;
 
         return answers.filter((ans: QnAMakerResult) => ans.score >= minScore)
@@ -391,7 +526,7 @@ export class QnAMaker {
         if (isLegacyProtocol) {
             headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
         } else {
-            headers.Authorization = `EndpointKey ${endpoint.endpointKey}`;
+            headers.Authorization = `EndpointKey ${ endpoint.endpointKey }`;
         }
 
         headers['User-Agent'] = this.getUserAgent();
@@ -399,11 +534,11 @@ export class QnAMaker {
         return headers;
     }
 
-    private getUserAgent() : string {
-        const packageUserAgent: string = `${pjson.name}/${pjson.version}`;
-        const platformUserAgent: string = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
+    private getUserAgent(): string {
+        const packageUserAgent: string = `${ pjson.name }/${ pjson.version }`;
+        const platformUserAgent: string = `(${ os.arch() }-${ os.type() }-${ os.release() }; Node.js,Version=${ process.version })`;
 
-        return `${packageUserAgent} ${platformUserAgent}`;
+        return `${ packageUserAgent } ${ platformUserAgent }`;
     }
 
     private validateOptions(options: QnAMakerOptions): void {
@@ -421,14 +556,14 @@ export class QnAMaker {
     private validateScoreThreshold(scoreThreshold: number): void {
         if (typeof scoreThreshold !== 'number' || !(scoreThreshold > 0 && scoreThreshold < 1)) {
             throw new TypeError(
-                `"${scoreThreshold}" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`
+                `"${ scoreThreshold }" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`
             );
         }
     }
 
     private validateTop(qnaOptionTop: number): void {
         if (!Number.isInteger(qnaOptionTop) || qnaOptionTop < 1) {
-            throw new RangeError(`"${qnaOptionTop}" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`);
+            throw new RangeError(`"${ qnaOptionTop }" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`);
         }
     }
 

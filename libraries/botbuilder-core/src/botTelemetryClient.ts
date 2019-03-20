@@ -11,7 +11,7 @@
  * Defines the level of severity for the event.
  */
 export enum Severity
-{
+    {
     Verbose = 0,
     Information = 1,
     Warning = 2,
@@ -46,20 +46,20 @@ export interface TelemetryEvent {
 export interface TelemetryException { 
     exception: Error;
     handledAt?: string;
-    properties?: {[key:string]:string};
-    measurements?: {[key:string]:number};
+    properties?: {[key: string]: string};
+    measurements?: {[key: string]: number};
     severityLevel?: Severity;
 }
 
 export interface TelemetryTrace {
     message: string;
-    properties?: {[key:string]:string};
+    properties?: {[key: string]: string};
     severityLevel?: Severity;
 }
 
 export class NullTelemetryClient implements BotTelemetryClient {
 
-    constructor (settings?: any) {
+    constructor(settings?: any) {
         // noop
     }
 

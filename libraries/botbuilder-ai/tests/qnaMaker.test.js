@@ -1,5 +1,6 @@
+const QnATelemetryConstants = require('../lib/qnaTelemetryConstants');
 const assert = require('assert');
-const { TestAdapter, TurnContext } = require('botbuilder-core');
+const { TestAdapter, TurnContext, NullTelemetryClient } = require('botbuilder-core');
 const { QnAMaker } = require('../');
 const nock = require('nock');
 const fs = require('fs');
@@ -145,6 +146,24 @@ describe('QnAMaker', function () {
 
             assert.throws(() => createQnaWithNegativeTopOption(), notGreaterThanOneError);
         });
+
+        it('null telemetry should work', function() {
+            const options = { top: 7 };
+            const qnaWithNullTelemetry = new QnAMaker(endpoint, options, null);
+
+            assert(qnaWithNullTelemetry.telemetryClient instanceof NullTelemetryClient);
+            assert(qnaWithNullTelemetry.logPersonalInformation === false);
+         });
+
+         it('null telemetry logPersonalInformation should work', function() {
+            const options = { top: 7 };
+            const qnaWithNullTelemetry = new QnAMaker(endpoint, options, null, null);
+
+            assert(qnaWithNullTelemetry.telemetryClient instanceof NullTelemetryClient);
+            assert(qnaWithNullTelemetry.logPersonalInformation === false);
+         });
+ 
+ 
     });
 
     describe('getAnswers()', function() {
@@ -245,6 +264,203 @@ describe('QnAMaker', function () {
 
             assert.rejects(async () => await qna.getAnswers(context, stringScoreThreshold_options), nonNumberError );
         });
+
+        it('should log telemetry', async function() {
+            // Arrange
+            var callCount = 0;
+            var telemetryClient = {
+                trackEvent: (telemetry) => {
+                    assert(telemetry, 'telemetry is null');
+                    switch(++callCount) {
+                        case 1:
+                            // console.warn('Call number:' + callCount);
+                            // console.warn(telemetry);
+                            assert(telemetry.name === "QnaMessage");
+                            assert(telemetry.properties);
+                            assert('knowledgeBaseId' in telemetry.properties);
+                            assert('question' in telemetry.properties);
+                            assert('questionId' in telemetry.properties);
+                            assert('username' in telemetry.properties);
+                            assert('answer' in telemetry.properties);
+                            assert('articleFound' in telemetry.properties);
+                            assert(telemetry.properties.articleFound === 'true');
+                            assert('score' in telemetry.metrics);
+                            break;
+
+                        default:
+                            console.warn('Call number:' + callCount);
+                            console.warn(telemetry);
+                            assert(false);
+                            break;
+                    }
+                }
+            }
+    
+            const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient=telemetryClient, logPersonalInformation=true);
+            const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: "testname"}  })
+            const defaultNumberOfAnswers = 1;
+
+            // Act
+            const resultsWithoutOptions = await noOptionsQnA.getAnswers(noOptionsContext);
+            const numberOfResults = resultsWithoutOptions.length;
+            // Assert
+            assert.strictEqual(noOptionsQnA.logPersonalInformation, true);
+            assert.strictEqual(numberOfResults, defaultNumberOfAnswers, 'Should return only 1 answer with default settings (i.e. no options specified) for question with answer.');
+
+        });
+
+        it('should not log telemetry pii', async function() {
+            // Arrange
+            var callCount = 0;
+            var telemetryClient = {
+                trackEvent: (telemetry) => {
+                    assert(telemetry, 'telemetry is null');
+                    switch(++callCount) {
+                        case 1:
+                            // console.warn('Call number:' + callCount);
+                            // console.warn(telemetry);
+                            assert(telemetry.name === "QnaMessage");
+                            assert(telemetry.properties);
+                            assert('knowledgeBaseId' in telemetry.properties);
+                            assert(!('question' in telemetry.properties));
+                            assert(!('username' in telemetry.properties));
+                            assert('questionId' in telemetry.properties);
+                            assert('answer' in telemetry.properties);
+                            assert('articleFound' in telemetry.properties);
+                            assert(telemetry.properties.articleFound === 'true');
+                            assert('score' in telemetry.metrics);
+                            break;
+
+                        default:
+                            console.warn('Call number:' + callCount);
+                            console.warn(telemetry);
+                            assert(false);
+                            break;
+                    }
+                }
+            }
+    
+            const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient=telemetryClient, logPersonalInformation=false);
+            const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: "testname"} })
+            const defaultNumberOfAnswers = 1;
+
+            // Act
+            const resultsWithoutOptions = await noOptionsQnA.getAnswers(noOptionsContext);
+            const numberOfResults = resultsWithoutOptions.length;
+            // Assert
+            assert(noOptionsQnA.logPersonalInformation == false);
+            assert.strictEqual(numberOfResults, defaultNumberOfAnswers, 'Should return only 1 answer with default settings (i.e. no options specified) for question with answer.');
+
+        });
+
+        it('should log telemetry using derived qna', async function() {
+            // Arrange
+            var callCount = 0;
+            var telemetryClient = {
+                trackEvent: (telemetry) => {
+                    assert(telemetry, 'telemetry is null');
+                    switch(++callCount) {
+                        case 1:
+                            // console.warn('Call number:' + callCount);
+                            // console.warn(telemetry);
+                            assert('foo' in telemetry.properties);
+                            assert(telemetry.properties['foo'] == 'bar');
+                            assert('ImportantProperty' in telemetry.properties);
+                            assert(telemetry.properties['ImportantProperty'] == 'ImportantValue');
+                            break;
+
+                        case 2:
+                            // console.warn('Call number:' + callCount);
+                            // console.warn(telemetry);
+                            assert(telemetry.name === "MyQnA");
+                            assert(telemetry.properties);
+                            assert('knowledgeBaseId' in telemetry.properties);
+                            assert('question' in telemetry.properties);
+                            assert('questionId' in telemetry.properties);
+                            // Validate you can override "default" properties
+                            assert(telemetry.properties.questionId == "OVERRIDE");
+                            assert('username' in telemetry.properties);
+                            assert('answer' in telemetry.properties);
+                            assert('articleFound' in telemetry.properties);
+                            assert(telemetry.properties.articleFound === 'true');
+                            assert('score' in telemetry.metrics);
+                            break;
+
+                        default:
+                            console.warn('Call number:' + callCount);
+                            console.warn(telemetry);
+                            assert(false);
+                            break;
+                    }
+                }
+            }
+    
+            const noOptionsQnA = new overrideTwoEventsWithOverrideLogger(endpoint, { top: 1 }, telemetryClient=telemetryClient, logPersonalInformation=true);
+            const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: "testname"}  })
+            const defaultNumberOfAnswers = 1;
+
+            // Act
+            const resultsWithoutOptions = await noOptionsQnA.getAnswers(noOptionsContext);
+            const numberOfResults = resultsWithoutOptions.length;
+            // Assert
+            assert.strictEqual(noOptionsQnA.logPersonalInformation, true);
+            assert.strictEqual(numberOfResults, defaultNumberOfAnswers, 'Should return only 1 answer with default settings (i.e. no options specified) for question with answer.');
+
+        });
+
+        it('should log telemetry additionalprops', async function() {
+            // Arrange
+            var callCount = 0;
+            var telemetryClient = {
+                trackEvent: (telemetry) => {
+                    assert(telemetry, 'telemetry is null');
+                    switch(++callCount) {
+                        case 1:
+                            // console.warn('Call number:' + callCount);
+                            // console.warn(telemetry);
+                            assert(telemetry.name === "QnaMessage");
+                            assert(telemetry.properties);
+                            assert('knowledgeBaseId' in telemetry.properties);
+                            assert('question' in telemetry.properties);
+                            assert(telemetry.properties['question'] == "OVERRIDE");
+                            assert('MyImportantProperty' in telemetry.properties);
+                            assert(telemetry.properties['MyImportantProperty'] == "MyImportantValue");
+                            assert('questionId' in telemetry.properties);
+                            assert('username' in telemetry.properties);
+                            assert('answer' in telemetry.properties);
+                            assert('articleFound' in telemetry.properties);
+                            assert(telemetry.properties.articleFound === 'true');
+                            assert('score' in telemetry.metrics);
+                            assert(telemetry.metrics['score'] == 3.14159);
+                            break;
+
+                        default:
+                            console.warn('Call number:' + callCount);
+                            console.warn(telemetry);
+                            assert(false);
+                            break;
+                    }
+                }
+            }
+    
+            const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient=telemetryClient, logPersonalInformation=true);
+            const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: "testname"}  })
+            const defaultNumberOfAnswers = 1;
+
+            // Act
+            const resultsWithoutOptions = await noOptionsQnA.getAnswers(noOptionsContext, null, 
+                { "question": "OVERRIDE", "MyImportantProperty":"MyImportantValue" },
+                { "score":3.14159 }
+                );
+            const numberOfResults = resultsWithoutOptions.length;
+            // Assert
+            assert.strictEqual(noOptionsQnA.logPersonalInformation, true);
+            assert.strictEqual(numberOfResults, defaultNumberOfAnswers, 'Should return only 1 answer with default settings (i.e. no options specified) for question with answer.');
+
+        });
+
+
+
     });
 
     
@@ -361,3 +577,24 @@ describe('QnAMaker', function () {
         });
     });
 });
+
+class overrideTwoEventsWithOverrideLogger extends QnAMaker
+{
+    async onQnaResults(qnaResults, turnContext, telemetryProperties, telmetryMetrics) {
+        // Track regular property
+        this.telemetryClient.trackEvent({
+                    name: QnATelemetryConstants.qnaMessageEvent,
+                    properties: {"foo":"bar",
+                                "ImportantProperty": "ImportantValue"  } });
+
+        this.fillQnAEvent(qnaResults, turnContext, {"questionId": "OVERRIDE"})
+            .then(data => {
+                // Add additional event
+                this.telemetryClient.trackEvent({
+                    name: "MyQnA",
+                    properties: data[0],
+                    metrics: data[1]
+                });
+            });
+    }
+}

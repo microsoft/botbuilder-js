@@ -69,7 +69,7 @@ export class MemoryStorage  implements Storage {
                     if (newItem.eTag === oldItem.eTag) {
                         saveItem(key, newItem);
                     } else {
-                        reject(new Error(`Storage: error writing "${key}" due to eTag conflict.`));
+                        reject(new Error(`Storage: error writing "${ key }" due to eTag conflict.`));
                     }
                 }
             });
