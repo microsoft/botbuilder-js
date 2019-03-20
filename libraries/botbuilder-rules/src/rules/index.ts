@@ -6,13 +6,9 @@
  * Licensed under the MIT License.
  */
 export * from './activityRule';
-export * from './addTopicRule';
 export * from './defaultResponseRule';
-export * from './digressionRule';
-export * from './endTopicRule';
 export * from './eventRule';
 export * from './ifPropertyRule';
-export * from './newTopicRule';
 export * from './planningRule';
 export * from './stateTransitionRule';
 export * from './utteranceRecognizeRule';

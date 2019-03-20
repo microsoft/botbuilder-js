@@ -62,7 +62,7 @@ export class WelcomeRule extends EventRule {
 
                 // Trigger only if user added
                 if (userAdded) {
-                    planning.state.setValue(this.welcomedProperty, true);
+                    planning.state.setValue(this.welcomedProperty, true); // BUGBUG: needs to be deferred
                     return true;
                 }
             }
@@ -75,7 +75,7 @@ export class WelcomeRule extends EventRule {
         // Have we already welcomed the user?
         if (!planning.state.getValue(this.welcomedProperty)) {
             // Trigger the greeting
-            planning.state.setValue(this.welcomedProperty, true);
+            planning.state.setValue(this.welcomedProperty, true); // BUGBUG: needs to be deferred
             return true;
         } else {
             return false;
