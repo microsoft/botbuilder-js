@@ -33,7 +33,6 @@
   "devDependencies": {
     "@types/mocha": "^2.2.47",
     "codelyzer": "^4.1.0",
-    "dotenv": "^5.0.1",
     "mocha": "^5.2.0",
     "nyc": "^11.4.1",
     "should": "^13.2.3",
