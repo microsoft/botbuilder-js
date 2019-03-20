@@ -48,7 +48,7 @@ dialogs.addRule(new botbuilder_planning_1.WelcomeRule([
     new botbuilder_planning_1.SendActivity(`Hi! I'm a ToDo bot. Say "add a todo named first one" to get started.`)
 ]));
 // Handle recognized intents
-dialogs.addRule(new botbuilder_planning_1.NewTopicRule('#AddToDo', [
+dialogs.addRule(new botbuilder_planning_1.NewTopicRule(['#AddToDo'], [
     new botbuilder_planning_1.CallDialog('AddToDoDialog')
 ]));
 dialogs.addRule(new botbuilder_planning_1.NewTopicRule('#DeleteToDo', [
@@ -57,7 +57,7 @@ dialogs.addRule(new botbuilder_planning_1.NewTopicRule('#DeleteToDo', [
 dialogs.addRule(new botbuilder_planning_1.NewTopicRule('#ClearToDos', [
     new botbuilder_planning_1.CallDialog('ClearToDosDialog')
 ]));
-dialogs.addRule(new botbuilder_planning_1.NewTopicRule('#ShowToDos', [
+dialogs.addRule(new botbuilder_planning_1.AddTopicRule('#ShowToDos', [
     new botbuilder_planning_1.CallDialog('ShowToDosDialog')
 ]));
 // Define rules to handle cancel events
@@ -68,11 +68,9 @@ dialogs.addRule(new botbuilder_planning_1.EventRule('cancelDelete', [
     new botbuilder_planning_1.SendActivity(`Ok...`)
 ]));
 // Define rules for handling errors
-/*
-dialogs.addRule(new EventRule('error', [
-    new SendActivity(`Oops. An error occurred: {message}`)
+dialogs.addRule(new botbuilder_planning_1.EventRule('error', [
+    new botbuilder_planning_1.SendActivity(`Oops. An error occurred: {message}`)
 ]));
-*/
 // Define rule for default response
 dialogs.addRule(new botbuilder_planning_1.DefaultResponseRule([
     new botbuilder_planning_1.SendActivity(`Say "add a todo named first one" to get started.`)
@@ -80,12 +78,12 @@ dialogs.addRule(new botbuilder_planning_1.DefaultResponseRule([
 //=============================================================================
 // Sequences
 //=============================================================================
-// These are the sequence dialogs that the planning rules call.
 const cancelRecognizer = new botbuilder_planning_1.RegExpRecognizer().addIntent('CancelIntent', /^cancel/i);
 // AddToDoDialog
 const addToDoDialog = new botbuilder_planning_1.SequenceDialog('AddToDoDialog', [
     new botbuilder_planning_1.SaveEntity('$title', '@title'),
-    new botbuilder_planning_1.TextInput('$title', `What would you like to call your new todo?`),
+    new botbuilder_planning_1.SendActivity(`What would you like to call your new todo?`),
+    new botbuilder_planning_1.WaitForInput('dialog.result.title'),
     new botbuilder_planning_1.ChangeList(botbuilder_planning_1.ChangeListType.push, '$user.todos', '$title'),
     new botbuilder_planning_1.SendActivity(`Added a todo named "{$title}". You can delete it by saying "delete todo named {$title}".`),
     new botbuilder_planning_1.SendActivity(`To view your todos just ask me to "show my todos".`)

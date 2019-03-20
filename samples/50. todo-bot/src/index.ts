@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { Bot, RuleDialog, DefaultResponseRule, SendActivity, IfProperty, WelcomeRule, TextInput, RegExpRecognizer, SequenceDialog, CallDialog, CancelDialog, EventRule, SendList, SaveEntity, ChoiceInput, ChangeList, ChangeListType, NewTopicRule, DigressionRule } from 'botbuilder-planning';
+import { Bot, RuleDialog, DefaultResponseRule, SendActivity, IfProperty, WelcomeRule, TextInput, RegExpRecognizer, SequenceDialog, CallDialog, CancelDialog, EventRule, SendList, SaveEntity, ChoiceInput, ChangeList, ChangeListType, NewTopicRule, DigressionRule, CodeStep, AddTopicRule, WaitForInput } from 'botbuilder-planning';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -56,7 +56,7 @@ dialogs.addRule(new WelcomeRule([
 ]));
 
 // Handle recognized intents
-dialogs.addRule(new NewTopicRule('#AddToDo', [
+dialogs.addRule(new NewTopicRule(['#AddToDo'], [
     new CallDialog('AddToDoDialog')
 ]));
 
@@ -68,7 +68,7 @@ dialogs.addRule(new NewTopicRule('#ClearToDos', [
     new CallDialog('ClearToDosDialog')
 ]))
 
-dialogs.addRule(new NewTopicRule('#ShowToDos', [
+dialogs.addRule(new AddTopicRule('#ShowToDos', [
     new CallDialog('ShowToDosDialog')
 ]));
 
@@ -100,7 +100,8 @@ const cancelRecognizer = new RegExpRecognizer().addIntent('CancelIntent', /^canc
 // AddToDoDialog
 const addToDoDialog = new SequenceDialog('AddToDoDialog', [
     new SaveEntity('$title', '@title'),
-    new TextInput('$title', `What would you like to call your new todo?`),
+    new SendActivity(`What would you like to call your new todo?`),
+    new WaitForInput('dialog.result.title'),
     new ChangeList(ChangeListType.push, '$user.todos', '$title'),
     new SendActivity(`Added a todo named "{$title}". You can delete it by saying "delete todo named {$title}".`),
     new SendActivity(`To view your todos just ask me to "show my todos".`)

@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import * as restify from 'restify';
-import { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState } from 'botbuilder';
+import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
 import { Bot, RuleDialog, DefaultResponseRule, SendActivity, WaitForInput } from 'botbuilder-planning';
 
 // Create HTTP server.

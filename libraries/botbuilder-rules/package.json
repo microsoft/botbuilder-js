@@ -1,7 +1,7 @@
 {
-  "name": "botbuilder-planning",
+  "name": "botbuilder-rules",
   "author": "Microsoft Corp.",
-  "description": "Planning extensions for the Microsoft BotBuilder dialog system.",
+  "description": "Rule system for the Microsoft BotBuilder dialog system.",
   "version": "4.1.6",
   "license": "MIT",
   "keywords": [

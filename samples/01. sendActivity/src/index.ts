@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { PlanningDialog, FallbackRule, CallDialog, RepeatDialog, WaitForInput, IfProperty, CodeStep, EndDialog, BoolInput, TextInput, DoStepsLater, SetPlanTitle, RegExpRecognizer, DoStepsRule, CancelDialog, EventRule, OnCatch, Bot, RuleDialog } from 'botbuilder-planning';
+import { Bot, RuleDialog, DefaultResponseRule, SendActivity } from 'botbuilder-planning';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -20,23 +20,23 @@ const adapter = new BotFrameworkAdapter({
     appPassword: process.env.microsoftAppPassword,
 });
 
-// Setup bot with storage provider used to persist the bots state.
+// Create bot and bind to state storage
 const bot = new Bot();
 bot.storage = new MemoryStorage();
 
-// Listen for incoming requests.
+// Listen for incoming activities.
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
-        // Route activities to bot.
+        // Route activity to bot.
         await bot.onTurn(context);
     });
 });
 
-// Create the bots root dialog.
-const rules = new RuleDialog();
-bot.rootDialog = rules;
+// Initialize bots root dialog
+const dialogs = new RuleDialog();
+bot.rootDialog = dialogs;
 
 // Add a default rule for handling incoming messages
-rules.addRule(new FallbackRule([
-    new CallDialog('hello')
+dialogs.addRule(new DefaultResponseRule([
+    new SendActivity('Hello World!')
 ]));
