@@ -18,11 +18,11 @@ export abstract class MethodBinder {
     }
 
     private static readonly FunctionMap = (): Map<string, EvaluationDelegate> => {
-        let functionMap = new Map<string, EvaluationDelegate>();
-        functionMap['/'] = BuildinFunctions.Div;
-        functionMap['*'] = BuildinFunctions.Mul;
-        functionMap['+'] = BuildinFunctions.Add;
-        functionMap['-'] = BuildinFunctions.Sub;
+        let functionMap: Map<string, EvaluationDelegate> = new Map<string, EvaluationDelegate>();
+        functionMap.set('/', BuildinFunctions.Div);
+        functionMap.set('*', BuildinFunctions.Mul);
+        functionMap.set('+', BuildinFunctions.Add);
+        functionMap.set('-', BuildinFunctions.Sub);
 
         return functionMap;
     }
