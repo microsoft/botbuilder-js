@@ -7,6 +7,22 @@ import { ExpressionVisitor } from './resources/ExpressionVisitor';
 
 // tslint:disable-next-line: completed-docs
 export class ExpressionEvaluator extends AbstractParseTreeVisitor<any> implements ExpressionVisitor<any> {
+    public static readonly OperatorFunctionNames: Map<string, string> = new Map([
+        ['^', 'pow'],
+        ['/', 'div'],
+        ['*', 'mul'],
+        ['+', 'add'],
+        ['-', 'sub'],
+        ['==', 'equal'],
+        ['!=', 'notEqual'],
+        ['<', 'lessThan'],
+        ['<=', 'lessThanOrEqual'],
+        ['>', 'greaterThan'],
+        ['>=', 'greaterThanorEqual'],
+        ['&&', 'and'],
+        ['||', 'or']
+    ]);
+
     private readonly GetValue: GetValueDelegate;
     private readonly GetMethod: GetMethodDelegate;
     private Scope: any;
@@ -34,7 +50,9 @@ export class ExpressionEvaluator extends AbstractParseTreeVisitor<any> implement
 
     public visitBinaryOpExp(context: ep.BinaryOpExpContext): any {
         const binaryOperationName: string = context.getChild(1).text;
-        const method: EvaluationDelegate = MethodBinder.All(binaryOperationName);
+        const methodName: string = ExpressionEvaluator.OperatorFunctionNames.get(binaryOperationName);
+        const method: EvaluationDelegate = MethodBinder.All(methodName);
+
         const left: any = this.visit(context.expression(0));
         const right: any = this.visit(context.expression(1));
         const parameters: any[] =  [left, right];
@@ -73,6 +91,19 @@ export class ExpressionEvaluator extends AbstractParseTreeVisitor<any> implement
 
     public visitIdAtom(context: ep.IdAtomContext): any {
         return this.GetValue(this.Scope, context.text);
+    }
+
+    public visitIndexAccessExp(context: ep.IndexAccessExpContext): any {
+        const instance: any = this.visit(context.primaryExpression());
+        const property: any = this.visit(context.expression());
+
+        return this.GetValue(instance, property);
+    }
+
+    public visitMemberAccessExp(context: ep.MemberAccessExpContext): any {
+        const instance: any = this.visit(context.primaryExpression());
+
+        return this.GetValue(instance, context.IDENTIFIER().text);
     }
 
     public visitNumericAtom(context: ep.NumericAtomContext): any {

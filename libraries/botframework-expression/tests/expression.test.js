@@ -3,18 +3,29 @@ const assert = require('assert');
 
  const dataSource = [
     ['1 + 2',3],
-    ['1.0 + 2.0',3.0],
+    ['1.0 + 2.0',3],
     ['1 * 2 + 3',5],
     ['1 + 2 * 3',7],
     ['1 * (2 + 3)',5],
     ['(1 + 2) * 3',9],
-    ['(one + two) * bag.three',9.0],
-    ['(one + two) * bag.set.four',12.0],
+    ['(one + two) * bag.three',9],
+    ['(one + two) * bag.set.four',12],
     ["(hello + ' ' + world)","hello world"],
     ['items[2]',"two"],
     ['bag.list[bag.index - 2]',"blue"],
     ["bag.list[bag.index - 2] + 'more'","bluemore"],
-    ['min(1.0, two) + max(one, 2.0)',3.0],
+    ['min(1.0, two) + max(one, 2.0)',3],
+    
+    ["add(1, 2)", 3],
+    ["add(1.0, 2.0)", 3.0],
+    ["add(mul(1, 2), 3)", 5],
+
+    ["2^2", 4],
+    ["3^2^2", 81],
+    ["pow(2,2)", 4],
+
+    ["one > 0.5 && two < 2.5", true],
+    ["one > 0.5 || two < 1.5", true]
 ]
 
 const scope = {
