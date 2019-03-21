@@ -57,7 +57,7 @@ export class NumberInput extends DialogCommand implements DialogDependencies {
     public async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
         // Check value and only call if missing
         const value = dc.state.getValue(this.property);
-        if (value === undefined) {
+        if (typeof value !== 'number') {
             const activity = this.activity.format(dc, { utterance: dc.context.activity.text || '' });
             return await dc.prompt(this.prompt.id, activity);
         } else {

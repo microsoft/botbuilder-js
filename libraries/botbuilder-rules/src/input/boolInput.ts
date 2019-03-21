@@ -60,7 +60,7 @@ export class BoolInput extends DialogCommand implements DialogDependencies {
     public async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
         // Check value and only call if missing
         const value = dc.state.getValue(this.property);
-        if (value === undefined || this.allwaysPrompt) {
+        if (typeof value !== 'boolean' || this.allwaysPrompt) {
             const activity = this.activity.format(dc, { utterance: dc.context.activity.text || '' });
             return await dc.prompt(this.prompt.id, activity);
         } else {
