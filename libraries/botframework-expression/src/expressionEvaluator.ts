@@ -52,7 +52,7 @@ export class ExpressionEvaluator extends AbstractParseTreeVisitor<any> implement
         return parameters;
     }
 
-    public VisitUnaryOpExp(context: ep.UnaryOpExpContext): any {
+    public visitUnaryOpExp(context: ep.UnaryOpExpContext): any {
         const unaryOperationName : string = context.getChild(0).text;
         const methodName: string = ExpressionEvaluator.UnaryOperatorFunctions.get(unaryOperationName);
         const method: EvaluationDelegate = this.GetMethod(methodName);
