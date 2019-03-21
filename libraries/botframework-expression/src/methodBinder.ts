@@ -23,7 +23,8 @@ export abstract class MethodBinder {
         ['greaterThanOrEqual', BuildinFunctions.GreaterThanOrEqual],
         ['pow', BuildinFunctions.Pow],
         ['and', BuildinFunctions.And],
-        ['or', BuildinFunctions.Or]
+        ['or', BuildinFunctions.Or],
+        ['not', BuildinFunctions.Not]
     ]);
 
     public static readonly All: GetMethodDelegate = (name: string) => {

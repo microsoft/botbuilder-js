@@ -25,7 +25,14 @@ const assert = require('assert');
     ["pow(2,2)", 4],
 
     ["one > 0.5 && two < 2.5", true],
-    ["one > 0.5 || two < 1.5", true]
+    ["one > 0.5 || two < 1.5", true],
+
+    ['!one', false],
+    ['!!one', true],
+    ['!one || !!two', true],
+    ['not(one)', false],
+    ['not(not(one))', true],
+    ['not(0)', true]
 ]
 
 const scope = {
@@ -52,7 +59,7 @@ describe('expression functional test', () => {
     for (const data of dataSource) {
         var parsed = ExpressionEngine.Parse(data[0].toString());
         var actual = ExpressionEngine.Evaluate(parsed, scope);
-        assert(actual == data[1],`actual is: ${actual}`);
+        assert(actual == data[1],`actual is: ${actual} for case ${data[0]}`);
     }
   });
 });

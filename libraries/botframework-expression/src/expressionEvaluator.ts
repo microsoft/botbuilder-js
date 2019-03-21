@@ -1,13 +1,13 @@
 import { AbstractParseTreeVisitor, ParseTree } from 'antlr4ts/tree';
 import { Util } from './common/util';
-import { EvaluationDelegate, GetMethodDelegate, MethodBinder } from './methodBinder';
+import { EvaluationDelegate, GetMethodDelegate } from './methodBinder';
 import { GetValueDelegate } from './propertyBinder';
 import * as ep from './resources/ExpressionParser';
 import { ExpressionVisitor } from './resources/ExpressionVisitor';
 
 // tslint:disable-next-line: completed-docs
 export class ExpressionEvaluator extends AbstractParseTreeVisitor<any> implements ExpressionVisitor<any> {
-    public static readonly OperatorFunctionNames: Map<string, string> = new Map([
+    public static readonly BinaryOperatorFunctions: Map<string, string> = new Map([
         ['^', 'pow'],
         ['/', 'div'],
         ['*', 'mul'],
@@ -21,6 +21,10 @@ export class ExpressionEvaluator extends AbstractParseTreeVisitor<any> implement
         ['>=', 'greaterThanorEqual'],
         ['&&', 'and'],
         ['||', 'or']
+    ]);
+
+    public static readonly UnaryOperatorFunctions : Map<string, string> = new Map([
+        ['!', 'not']
     ]);
 
     private readonly GetValue: GetValueDelegate;
@@ -48,10 +52,19 @@ export class ExpressionEvaluator extends AbstractParseTreeVisitor<any> implement
         return parameters;
     }
 
+    public VisitUnaryOpExp(context: ep.UnaryOpExpContext): any {
+        const unaryOperationName : string = context.getChild(0).text;
+        const methodName: string = ExpressionEvaluator.UnaryOperatorFunctions.get(unaryOperationName);
+        const method: EvaluationDelegate = this.GetMethod(methodName);
+        const value: any = this.visit(context.expression());
+
+        return method([value]);
+    }
+
     public visitBinaryOpExp(context: ep.BinaryOpExpContext): any {
         const binaryOperationName: string = context.getChild(1).text;
-        const methodName: string = ExpressionEvaluator.OperatorFunctionNames.get(binaryOperationName);
-        const method: EvaluationDelegate = MethodBinder.All(methodName);
+        const methodName: string = ExpressionEvaluator.BinaryOperatorFunctions.get(binaryOperationName);
+        const method: EvaluationDelegate = this.GetMethod(methodName);
 
         const left: any = this.visit(context.expression(0));
         const right: any = this.visit(context.expression(1));

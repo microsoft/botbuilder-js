@@ -10,6 +10,7 @@ import { IndexAccessExpContext } from "./ExpressionParser";
 import { MemberAccessExpContext } from "./ExpressionParser";
 import { ParenthesisExpContext } from "./ExpressionParser";
 import { NumericAtomContext } from "./ExpressionParser";
+import { UnaryOpExpContext } from "./ExpressionParser";
 import { BinaryOpExpContext } from "./ExpressionParser";
 import { PrimaryExpContext } from "./ExpressionParser";
 import { ExpressionContext } from "./ExpressionParser";
@@ -80,6 +81,14 @@ export interface ExpressionVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitNumericAtom?: (ctx: NumericAtomContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `unaryOpExp`
+	 * labeled alternative in `ExpressionParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitUnaryOpExp?: (ctx: UnaryOpExpContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `binaryOpExp`

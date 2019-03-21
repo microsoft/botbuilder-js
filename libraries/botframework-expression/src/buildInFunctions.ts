@@ -65,4 +65,9 @@ export abstract class BuildinFunctions {
     public static Or = (operands: any[]): EvaluationDelegate =>
         typeof operands[0] === 'boolean' && typeof operands[1] === 'boolean' ? <any>(operands[0] || operands[1]) :
         new Error()
+
+    public static Not = (operands: any[]): EvaluationDelegate =>
+        typeof operands[0] === 'boolean' ? !<boolean>operands[0] :
+        typeof operands[0] === 'number' ? operands[0] === 0 :
+        <any>(operands[0] === undefined || operands[0] === null || operands[0] === '')
 }

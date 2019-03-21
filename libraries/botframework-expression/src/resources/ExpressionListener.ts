@@ -10,6 +10,7 @@ import { IndexAccessExpContext } from "./ExpressionParser";
 import { MemberAccessExpContext } from "./ExpressionParser";
 import { ParenthesisExpContext } from "./ExpressionParser";
 import { NumericAtomContext } from "./ExpressionParser";
+import { UnaryOpExpContext } from "./ExpressionParser";
 import { BinaryOpExpContext } from "./ExpressionParser";
 import { PrimaryExpContext } from "./ExpressionParser";
 import { ExpressionContext } from "./ExpressionParser";
@@ -112,6 +113,19 @@ export interface ExpressionListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitNumericAtom?: (ctx: NumericAtomContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `unaryOpExp`
+	 * labeled alternative in `ExpressionParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterUnaryOpExp?: (ctx: UnaryOpExpContext) => void;
+	/**
+	 * Exit a parse tree produced by the `unaryOpExp`
+	 * labeled alternative in `ExpressionParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitUnaryOpExp?: (ctx: UnaryOpExpContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `binaryOpExp`
