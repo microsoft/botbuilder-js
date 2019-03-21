@@ -25,4 +25,4 @@ export * from './saveEntity';
 export * from './sendActivity';
 export * from './sendList';
 export * from './setPlanTitle';
-export * from './waitForInput';
+export * from './setProperty';
