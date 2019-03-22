@@ -40,7 +40,7 @@ bot.rootDialog = dialogs;
 // Greet User
 dialogs.addRule(new WelcomeRule([
     new SendActivity(`Welcome! Say "hello" to get started.`)
-], `user.greeted`));
+]));
 
 // Send Default Response
 dialogs.addRule(new DefaultRule([

@@ -34,7 +34,7 @@ bot.rootDialog = dialogs;
 // Greet User
 dialogs.addRule(new botbuilder_rules_1.WelcomeRule([
     new botbuilder_rules_1.SendActivity(`Welcome! Say "hello" to get started.`)
-], `user.greeted`));
+]));
 // Send Default Response
 dialogs.addRule(new botbuilder_rules_1.DefaultRule([
     new botbuilder_rules_1.IfProperty('!user.name', [
