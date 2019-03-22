@@ -1,4 +1,4 @@
-import {BotDebugger} from "botbuilder-planning";
+import {BotDebugger} from 'botbuilder-rules';
 
 const {MemoryStorage} = require('botbuilder-core');
 
