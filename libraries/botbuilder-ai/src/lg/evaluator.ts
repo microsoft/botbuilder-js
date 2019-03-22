@@ -83,9 +83,13 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
             }
         }
 
-        return this.visit(ctx.conditionalTemplateBody()
-                            .defaultRule()
-                            .normalTemplateBody());
+        if (ctx !== undefined && ctx.conditionalTemplateBody() !== undefined && ctx.conditionalTemplateBody().defaultRule() !== undefined) {
+            return this.visit(ctx.conditionalTemplateBody()
+                                .defaultRule()
+                                .normalTemplateBody());
+        } else {
+            return undefined;
+        }
     }
 
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string {

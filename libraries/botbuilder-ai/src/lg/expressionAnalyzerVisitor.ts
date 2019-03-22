@@ -16,6 +16,12 @@ export class ExpressionAnalyzerVisitor extends AbstractParseTreeVisitor<string[]
         return this.visit(context);
     }
 
+    public visitUnaryOpExp(context: ep.UnaryOpExpContext): string[] {
+        let result: string[] = [];
+
+        return result.concat(this.visit(context.expression()));
+    }
+
     public visitBinaryOpExp(context: ep.BinaryOpExpContext): string[] {
         let result: string[] = [];
 

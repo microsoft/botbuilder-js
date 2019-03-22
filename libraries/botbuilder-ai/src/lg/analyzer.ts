@@ -31,7 +31,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         this.evalutationTargetStack.push(new EvaluationTarget(templateName, undefined));
         const rawDependencies: string[] = this.visit(this.Context.TemplateContexts[templateName]);
         const parameters: string[] = this.ExtractParamters(templateName);
-        const dependencies = rawDependencies.filter((element) => !parameters.includes(element));
+        const dependencies = Array.from(new Set(rawDependencies.filter((element) => !parameters.includes(element))));
         this.evalutationTargetStack.pop();
 
         return dependencies;
