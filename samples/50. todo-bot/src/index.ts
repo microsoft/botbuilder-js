@@ -70,7 +70,7 @@ dialogs.addRule(new IntentRule('#ClearToDos', [
 
 dialogs.addRule(new IntentRule('#ShowToDos', [
     new CallDialog('ShowToDosDialog')
-]));
+], PlanChangeType.doSteps));
 
 // Define rules to handle cancel events
 dialogs.addRule(new EventRule('cancelAdd', [

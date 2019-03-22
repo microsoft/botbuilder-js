@@ -3,7 +3,15 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { Bot, AdaptiveDialog, DefaultRule, SendActivity, TextInput, SetProperty } from 'botbuilder-rules';
+import { Bot, AdaptiveDialog, DefaultRule, SendActivity, IfProperty, TextInput, WelcomeRule, CodeStep } from 'botbuilder-rules';
+
+
+// Create adapter.
+// See https://aka.ms/about-bot-adapter to learn more about .bot file its use and bot configuration.
+const adapter = new BotFrameworkAdapter({
+    appId: process.env.microsoftAppID,
+    appPassword: process.env.microsoftAppPassword,
+});
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -11,13 +19,6 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
     console.log(`\n${server.name} listening to ${server.url}`);
     console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
     console.log(`\nTo talk to your bot, open echobot.bot file in the Emulator.`);
-});
-
-// Create adapter.
-// See https://aka.ms/about-bot-adapter to learn more about .bot file its use and bot configuration.
-const adapter = new BotFrameworkAdapter({
-    appId: process.env.microsoftAppID,
-    appPassword: process.env.microsoftAppPassword,
 });
 
 // Create bot and bind to state storage
@@ -36,9 +37,15 @@ server.post('/api/messages', (req, res) => {
 const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
-// Add rules
+// Greet User
+dialogs.addRule(new WelcomeRule([
+    new SendActivity(`Welcome! Say "hello" to get started.`)
+], `user.greeted`));
+
+// Send Default Response
 dialogs.addRule(new DefaultRule([
-    new SetProperty(`user.name = ''`),
-    new TextInput('user.name', `Hi! what's your name?`),
+    new IfProperty('!user.name', [
+        new TextInput('user.name', `Hi! what's your name?`),
+    ]),
     new SendActivity(`Hi {user.name}. It's nice to meet you.`)
 ]));
