@@ -255,7 +255,7 @@ export class BotDebugger extends BotAdapterSet {
 				const result = await BotDebugger.connectToEmulator(context);
 				memory = {id: result};
 				await this.updateMemory(context.activity.conversation.id, memory);
-			} catch {
+			} catch (e) {
 			}
 		}
 		return !!memory.id;
