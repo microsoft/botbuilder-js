@@ -14,7 +14,7 @@ import { DialogEvent, Dialog, DialogContextState } from 'botbuilder-dialogs';
  * This rule is triggered when a message is received and the recognized intents & entities match a
  * specified list of intent & entity filters.
  */
-export class UtteranceRecognizedRule extends EventRule {
+export class IntentRule extends EventRule {
 
     /**
      * List of intents, entities, and properties to filter to.
@@ -22,7 +22,7 @@ export class UtteranceRecognizedRule extends EventRule {
     public readonly matches: string[];
 
     /**
-     * Creates a new `UtteranceRecognizedRule` instance.
+     * Creates a new `IntentRule` instance.
      * @param matches (Optional) list of intents, entities, and properties to filter to.
      * @param steps (Optional) list of steps to update the plan with when triggered.
      * @param changeType (Optional) type of plan modification to make when triggered. Defaults to `PlanChangeType.doSteps`.

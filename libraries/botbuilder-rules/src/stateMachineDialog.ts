@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 import { DialogEvent, Dialog } from 'botbuilder-dialogs';
-import { RuleDialog } from './ruleDialog';
+import { AdaptiveDialog } from './adaptiveDialog';
 import { RuleDialogEventNames, PlanChangeType, PlanningContext } from './planningContext';
 import { StateMachineState } from './stateMachineState';
 
-export class StateMachineDialog extends RuleDialog {
+export class StateMachineDialog extends AdaptiveDialog {
     public states: { [state: string]: StateMachineState; } = {};
 
     constructor (dialogId?: string, initialState?: string) {

@@ -16,7 +16,7 @@ import { Dialog } from 'botbuilder-dialogs';
  * A message is considered unhandled if there were no other rules triggered by the message and 
  * there is no active plan being executed.
  */
-export class DefaultResponseRule extends EventRule {
+export class DefaultRule extends EventRule {
 
     /**
      * Creates a new `DefaultResponseRule` instance.

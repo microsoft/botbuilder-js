@@ -6,11 +6,12 @@
  * Licensed under the MIT License.
  */
 export * from './activityRule';
-export * from './defaultResponseRule';
+export * from './beginDialogRule';
+export * from './defaultRule';
 export * from './eventRule';
 export * from './ifPropertyRule';
 export * from './planningRule';
 export * from './stateTransitionRule';
-export * from './utteranceRecognizeRule';
+export * from './intentRule';
 export * from './welcomeRule';
 

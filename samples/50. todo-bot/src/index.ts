@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { Bot, RuleDialog, DefaultResponseRule, SendActivity, IfProperty, WelcomeRule, TextInput, RegExpRecognizer, SequenceDialog, CallDialog, CancelDialog, EventRule, SendList, SaveEntity, ChoiceInput, ChangeList, ChangeListType, NewTopicRule, DigressionRule, CodeStep, AddTopicRule, WaitForInput } from 'botbuilder-planning';
+import { Bot, AdaptiveDialog, DefaultRule, SendActivity, IfProperty, WelcomeRule, RegExpRecognizer, CallDialog, CancelDialog, EventRule, SendList, SaveEntity, ChoiceInput, ChangeList, ChangeListType, IntentRule, TextInput, PlanChangeType, BeginDialogRule, EndDialog } from 'botbuilder-rules';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -33,7 +33,7 @@ server.post('/api/messages', (req, res) => {
 });
 
 // Initialize bots root dialog
-const dialogs = new RuleDialog();
+const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
 // Add recognizer to root dialog
@@ -56,19 +56,19 @@ dialogs.addRule(new WelcomeRule([
 ]));
 
 // Handle recognized intents
-dialogs.addRule(new NewTopicRule(['#AddToDo'], [
+dialogs.addRule(new IntentRule('#AddToDo', [
     new CallDialog('AddToDoDialog')
 ]));
 
-dialogs.addRule(new NewTopicRule('#DeleteToDo', [
+dialogs.addRule(new IntentRule('#DeleteToDo', [
     new CallDialog('DeleteToDoDialog')
 ]));
 
-dialogs.addRule(new NewTopicRule('#ClearToDos', [
+dialogs.addRule(new IntentRule('#ClearToDos', [
     new CallDialog('ClearToDosDialog')
 ]))
 
-dialogs.addRule(new AddTopicRule('#ShowToDos', [
+dialogs.addRule(new IntentRule('#ShowToDos', [
     new CallDialog('ShowToDosDialog')
 ]));
 
@@ -87,7 +87,7 @@ dialogs.addRule(new EventRule('error', [
 ]));
 
 // Define rule for default response
-dialogs.addRule(new DefaultResponseRule([
+dialogs.addRule(new DefaultRule([
     new SendActivity(`Say "add a todo named first one" to get started.`)
 ]));
 
@@ -98,54 +98,65 @@ dialogs.addRule(new DefaultResponseRule([
 const cancelRecognizer = new RegExpRecognizer().addIntent('CancelIntent', /^cancel/i);
 
 // AddToDoDialog
-const addToDoDialog = new SequenceDialog('AddToDoDialog', [
-    new SaveEntity('$title', '@title'),
-    new SendActivity(`What would you like to call your new todo?`),
-    new WaitForInput('dialog.result.title'),
-    new ChangeList(ChangeListType.push, '$user.todos', '$title'),
-    new SendActivity(`Added a todo named "{$title}". You can delete it by saying "delete todo named {$title}".`),
-    new SendActivity(`To view your todos just ask me to "show my todos".`)
-]);
+const addToDoDialog = new AdaptiveDialog('AddToDoDialog');
 addToDoDialog.recognizer = cancelRecognizer;
-addToDoDialog.addRule(new DigressionRule('CancelIntent', [
+
+addToDoDialog.addRule(new IntentRule('#CancelIntent', [
     new CancelDialog('cancelAdd')
-]))
+]));
+
+addToDoDialog.addRule(new BeginDialogRule([
+    new SaveEntity('$title', '@title'),
+    new TextInput('$title', `What would you like to call your new todo?`),
+    new ChangeList(ChangeListType.push, 'user.todos', '$title'),
+    new SendActivity(`Added a todo named "{$title}". You can delete it by saying "delete todo named {$title}".`),
+    new SendActivity(`To view your todos just ask me to "show my todos".`),
+    new EndDialog()
+]));
 dialogs.addDialog(addToDoDialog);
 
 // DeleteToDoDialog
-const deleteToDoDialog = new SequenceDialog('DeleteToDoDialog', [
-    new IfProperty('$user.todos', [
+const deleteToDoDialog = new AdaptiveDialog('DeleteToDoDialog');
+deleteToDoDialog.recognizer = cancelRecognizer;
+
+deleteToDoDialog.addRule(new IntentRule('#CancelIntent', [
+    new CancelDialog('cancelDelete')
+], PlanChangeType.doSteps));
+
+deleteToDoDialog.addRule(new BeginDialogRule([
+    new IfProperty('user.todos', [
         new SaveEntity('$title', '@title'),
-        new ChoiceInput('$title', `Which todo would you like to remove?`, '$user.todos'),
+        new ChoiceInput('$title', `Which todo would you like to remove?`, 'user.todos'),
         new ChangeList(ChangeListType.remove, '$user.todos', '$title'),
         new SendActivity(`Deleted the todo named "{$title}". You can delete all your todos by saying "delete all todos".`),
     ]).else([
         new SendActivity(`No todos to delete.`)
-    ])
-]);
-deleteToDoDialog.recognizer = cancelRecognizer;
-deleteToDoDialog.addRule(new DigressionRule('CancelIntent', [
-    new CancelDialog('cancelDelete')
-]))
+    ]),
+    new EndDialog()
+]));
 dialogs.addDialog(deleteToDoDialog);
 
 // ClearToDosDialog
-const clearToDosDialog = new SequenceDialog('ClearToDosDialog', [
-    new IfProperty('$user.todos', [
-        new ChangeList(ChangeListType.clear, '$user.todos'),
+const clearToDosDialog = new AdaptiveDialog('ClearToDosDialog');
+clearToDosDialog.addRule(new BeginDialogRule([
+    new IfProperty('user.todos', [
+        new ChangeList(ChangeListType.clear, 'user.todos'),
         new SendActivity(`All todos removed.`)
     ]).else([
         new SendActivity(`No todos to clear.`)
-    ])
-]);
+    ]),
+    new EndDialog()
+]));
 dialogs.addDialog(clearToDosDialog);
 
 // ShowToDosDialog
-const showToDosDialog = new SequenceDialog('ShowToDosDialog', [
-    new IfProperty('$user.todos', [
-        new SendList('$user.todos', `Here are your todos:`)
+const showToDosDialog = new AdaptiveDialog('ShowToDosDialog');
+showToDosDialog.addRule(new BeginDialogRule([
+    new IfProperty('user.todos', [
+        new SendList('user.todos', `Here are your todos:`)
     ]).else([
         new SendActivity(`You have no todos.`)
-    ])
-]);
+    ]),
+    new EndDialog()
+]));
 dialogs.addDialog(showToDosDialog);

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { RuleDialog, RuleDialogConfiguration } from '../ruleDialog';
+import { AdaptiveDialog, AdaptiveDialogConfiguration } from '../adaptiveDialog';
 import { InputSlot } from './inputSlot';
 import { PlanningContext, RuleDialogEventNames, RuleDialogState, PlanChangeList, PlanChangeType, PlanStepState } from '../planningContext';
 import { DialogEvent, DialogTurnResult, Dialog } from 'botbuilder-dialogs';
@@ -30,7 +30,7 @@ export interface InputSlotEventValue<T = any> {
     recognized?: RecognizerResult;
 }
 
-export interface InputDialogConfiguration extends RuleDialogConfiguration {
+export interface InputDialogConfiguration extends AdaptiveDialogConfiguration {
     /**
      * Slot class used to recognize and validate the users input.
      */
@@ -47,7 +47,7 @@ export interface InputDialogConfiguration extends RuleDialogConfiguration {
     property?: string;
 }
 
-export class InputDialog<O extends object = {}> extends RuleDialog<O> {
+export class InputDialog<O extends object = {}> extends AdaptiveDialog<O> {
     constructor(slot?: InputSlot, property?: string, activity?: string|Partial<Activity>, speak?: string, inputHint?: InputHints) {
         super();
         if (slot) { this.slot = slot }
@@ -256,7 +256,7 @@ export class InputDialog<O extends object = {}> extends RuleDialog<O> {
         return true;
     }
 
-    protected async onEndOfPlan(planning: PlanningContext): Promise<DialogTurnResult> {
+    protected async onEndOfPlan(planning: PlanningContext, pass: number): Promise<DialogTurnResult> {
         // Evaluate current status
         const state = planning.activeDialog.state as InputDialogState<O>;
         if (state.fulfilled) {
@@ -267,7 +267,7 @@ export class InputDialog<O extends object = {}> extends RuleDialog<O> {
             // needed.
             delete state.continuingAction;
             await this.onValidateSlot(planning);
-            return await this.continuePlan(planning);
+            return await this.continuePlan(planning, pass + 1);
         } else {
             // Just wait for user to reply
             return Dialog.EndOfTurn;

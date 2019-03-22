@@ -19,7 +19,7 @@ import {
 import { PlanningRule } from './rules';
 import { Recognizer } from './recognizers';
 
-export interface RuleDialogConfiguration extends DialogConfiguration {
+export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     /**
      * Planning rules to evaluate for each conversational turn.
      */
@@ -41,12 +41,12 @@ export interface RuleDialogConfiguration extends DialogConfiguration {
     recognizer?: Recognizer;
 }
 
-export class RuleDialog<O extends object = {}> extends Dialog<O> {
+export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     private readonly dialogs: DialogSet = new DialogSet();
     private installedDependencies = false;
 
     /**
-     * Creates a new `RuleDialog` instance.
+     * Creates a new `AdaptiveDialog` instance.
      * @param dialogId (Optional) unique ID of the component within its parents dialog set.
      */
     constructor(dialogId?: string) {
@@ -124,7 +124,7 @@ export class RuleDialog<O extends object = {}> extends Dialog<O> {
             await this.evaluateRules(planning, { name: RuleDialogEventNames.beginDialog, value: options, bubble: false });
             
             // Run plan
-            return await this.continuePlan(planning);
+            return await this.continuePlan(planning, 0);
         } catch (err) {
             return await dc.cancelAllDialogs('error', { message: err.message, stack: err.stack });
         }
@@ -137,14 +137,14 @@ export class RuleDialog<O extends object = {}> extends Dialog<O> {
             const planning = PlanningContext.create(dc, state);
 
             // First consult plan
-            let consultation = await this.consultPlan(planning);
+            let consultation = await this.consultPlan(planning, 0);
             if (!consultation || consultation.desire != DialogConsultationDesire.shouldProcess) {
                 // Next evaluate rules
                 const changesQueued = await this.evaluateRules(planning, { name: RuleDialogEventNames.consultDialog, value: undefined, bubble: false });
                 if (changesQueued) {
                     consultation = {
                         desire: DialogConsultationDesire.shouldProcess,
-                        processor: (dc) => this.continuePlan(planning)
+                        processor: (dc) => this.continuePlan(planning, 0)
                     };
                 }
 
@@ -152,10 +152,10 @@ export class RuleDialog<O extends object = {}> extends Dialog<O> {
                 if (!consultation) {
                     consultation = {
                         desire: DialogConsultationDesire.canProcess,
-                        processor: (dc) => this.continuePlan(planning)
+                        processor: (dc) => this.continuePlan(planning, 0)
                     };
                 }
-            } 
+            }
 
             return consultation;
         } catch (err) {
@@ -197,7 +197,7 @@ export class RuleDialog<O extends object = {}> extends Dialog<O> {
         }
     }
 
-    public configure(config: RuleDialogConfiguration): this {
+    public configure(config: AdaptiveDialogConfiguration): this {
         return super.configure(this);
     }
  
@@ -412,7 +412,7 @@ export class RuleDialog<O extends object = {}> extends Dialog<O> {
     // Plan Execution
     //---------------------------------------------------------------------------------------------
 
-    protected async consultPlan(planning: PlanningContext): Promise<DialogConsultation> {
+    protected async consultPlan(planning: PlanningContext, pass: number): Promise<DialogConsultation> {
         // Apply any queued up changes
         await planning.applyChanges();
 
@@ -455,7 +455,7 @@ export class RuleDialog<O extends object = {}> extends Dialog<O> {
                             await this.repromptDialog(dc.context, dc.activeDialog);
                             return { status: DialogTurnStatus.waiting };
                         } else {
-                            return await this.continuePlan(planning);
+                            return await this.continuePlan(planning, pass + 1);
                         }
                     } else {
                         // Remove parent ended flag and return result.
@@ -463,26 +463,30 @@ export class RuleDialog<O extends object = {}> extends Dialog<O> {
                         return result;
                     }
                 } else if (planning.activeDialog) {
-                    return await this.onEndOfPlan(planning);
+                    return await this.onEndOfPlan(planning, pass);
                 }
             }
         }
     }
 
-    protected async continuePlan(planning: PlanningContext): Promise<DialogTurnResult> {
+    protected async continuePlan(planning: PlanningContext, pass: number): Promise<DialogTurnResult> {
         // Consult plan and execute returned processor
         try {
-            const consultation = await this.consultPlan(planning);
+            const consultation = await this.consultPlan(planning, pass);
             return await consultation.processor(planning);
         } catch (err) {
             return await planning.cancelAllDialogs('error', { message: err.message, stack: err.stack });
         }
     }
 
-    protected async onEndOfPlan(planning: PlanningContext): Promise<DialogTurnResult> {
-        // End dialog and return default result
-        const state: RuleDialogState<O> = planning.activeDialog.state;
-        return await planning.endDialog(state.result);
+    protected async onEndOfPlan(planning: PlanningContext, pass: number): Promise<DialogTurnResult> {
+        if (pass == 0) {
+            // Nothing to execute so end
+            return await planning.endDialog();
+        } else {
+            // Wait for next turn
+            return Dialog.EndOfTurn;
+        }
     }
 
     private getUniqueInstanceId(dc: DialogContext): string {

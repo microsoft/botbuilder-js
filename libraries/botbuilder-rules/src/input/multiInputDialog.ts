@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { RuleDialog } from '../ruleDialog';
+import { AdaptiveDialog } from '../adaptiveDialog';
 import { InputSlot } from './inputSlot';
 import { PlanningContext, RuleDialogEventNames, RuleDialogState, PlanChangeList, PlanChangeType, PlanStepState } from '../planningContext';
 import { DialogEvent, DialogTurnResult, Dialog } from 'botbuilder-dialogs';
@@ -27,7 +27,7 @@ export interface MultiInputDialogComputedPlanChange {
     expectedSlots: string[];
 }
 
-export class MultiInputDialog<O extends object = {}> extends RuleDialog<O> {
+export class MultiInputDialog<O extends object = {}> extends AdaptiveDialog<O> {
     private planChangeCache: { [key:string]: MultiInputDialogComputedPlanChange; } = {};
 
     public slots: InputSlot[] = [];
