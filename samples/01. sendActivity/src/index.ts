@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { Bot, RuleDialog, DefaultResponseRule, SendActivity } from 'botbuilder-rules';
+import { Bot, AdaptiveDialog, DefaultRule, SendActivity } from 'botbuilder-rules';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -33,10 +33,10 @@ server.post('/api/messages', (req, res) => {
 });
 
 // Initialize bots root dialog
-const dialogs = new RuleDialog();
+const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
 // Add a default rule for handling incoming messages
-dialogs.addRule(new DefaultResponseRule([
+dialogs.addRule(new DefaultRule([
     new SendActivity('Hello World!')
 ]));

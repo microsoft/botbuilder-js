@@ -29,10 +29,10 @@ server.post('/api/messages', (req, res) => {
     });
 });
 // Initialize bots root dialog
-const dialogs = new botbuilder_rules_1.RuleDialog();
+const dialogs = new botbuilder_rules_1.AdaptiveDialog();
 bot.rootDialog = dialogs;
 // Add rules
-dialogs.addRule(new botbuilder_rules_1.DefaultResponseRule([
+dialogs.addRule(new botbuilder_rules_1.DefaultRule([
     new botbuilder_rules_1.TextInput('user.name', `Hi! what's your name?`),
     new botbuilder_rules_1.SendActivity(`Hi {user.name}. It's nice to meet you.`)
 ]));

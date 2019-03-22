@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { Bot, RuleDialog, DefaultResponseRule, SendActivity, TextInput, IfProperty } from 'botbuilder-rules';
+import { Bot, AdaptiveDialog, DefaultRule, SendActivity, TextInput, IfProperty } from 'botbuilder-rules';
 
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about .bot file its use and bot configuration.
@@ -33,11 +33,11 @@ server.post('/api/messages', (req, res) => {
 });
 
 // Initialize bots root dialog
-const dialogs = new RuleDialog();
+const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
 // Add rules
-dialogs.addRule(new DefaultResponseRule([
+dialogs.addRule(new DefaultRule([
     new IfProperty('!user.name', [
         new TextInput('user.name', `Hi! what's your name?`),
     ]),

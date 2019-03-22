@@ -26,3 +26,4 @@ export * from './sendActivity';
 export * from './sendList';
 export * from './setPlanTitle';
 export * from './setProperty';
+export * from './waitForInput';

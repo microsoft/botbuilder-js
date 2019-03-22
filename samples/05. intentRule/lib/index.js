@@ -31,11 +31,22 @@ server.post('/api/messages', (req, res) => {
 // Initialize bots root dialog
 const dialogs = new botbuilder_rules_1.AdaptiveDialog();
 bot.rootDialog = dialogs;
-// Add rules
+// Greet the user
+dialogs.addRule(new botbuilder_rules_1.WelcomeRule([
+    new botbuilder_rules_1.SendActivity(`I'm a joke bot. To get started say "tell me a joke".`)
+]));
+// Add a top level fallback rule to handle received messages
 dialogs.addRule(new botbuilder_rules_1.DefaultRule([
     new botbuilder_rules_1.IfProperty('!user.name', [
-        new botbuilder_rules_1.TextInput('user.name', `Hi! what's your name?`),
+        new botbuilder_rules_1.TextInput('user.name', `Hi! what's your name?`)
     ]),
     new botbuilder_rules_1.SendActivity(`Hi {user.name}. It's nice to meet you.`)
+]));
+// Tell the user a joke
+dialogs.recognizer = new botbuilder_rules_1.RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
+dialogs.addRule(new botbuilder_rules_1.IntentRule('#JokeIntent', [
+    new botbuilder_rules_1.SendActivity(`Why did the 🐔 cross the 🛣️?`),
+    new botbuilder_rules_1.WaitForInput(),
+    new botbuilder_rules_1.SendActivity(`To get to the other side...`)
 ]));
 //# sourceMappingURL=index.js.map
