@@ -41,7 +41,7 @@ export class NumberSlot extends InputSlot<number> {
             if (typeof result.value == 'string') {
                 try {
                     result.value = parseFloat(result.value);
-                } catch {
+                } catch (e) {
                     return undefined;
                 }
             }
