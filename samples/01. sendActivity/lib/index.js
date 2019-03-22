@@ -4,7 +4,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const restify = require("restify");
 const botbuilder_1 = require("botbuilder");
-const botbuilder_planning_1 = require("botbuilder-planning");
+const botbuilder_rules_1 = require("botbuilder-rules");
 // Create HTTP server.
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, () => {
@@ -19,7 +19,7 @@ const adapter = new botbuilder_1.BotFrameworkAdapter({
     appPassword: process.env.microsoftAppPassword,
 });
 // Create bot and bind to state storage
-const bot = new botbuilder_planning_1.Bot();
+const bot = new botbuilder_rules_1.Bot();
 bot.storage = new botbuilder_1.MemoryStorage();
 // Listen for incoming activities.
 server.post('/api/messages', (req, res) => {
@@ -29,10 +29,10 @@ server.post('/api/messages', (req, res) => {
     });
 });
 // Initialize bots root dialog
-const dialogs = new botbuilder_planning_1.RuleDialog();
+const dialogs = new botbuilder_rules_1.RuleDialog();
 bot.rootDialog = dialogs;
 // Add a default rule for handling incoming messages
-dialogs.addRule(new botbuilder_planning_1.DefaultResponseRule([
-    new botbuilder_planning_1.SendActivity('Hello World!')
+dialogs.addRule(new botbuilder_rules_1.DefaultResponseRule([
+    new botbuilder_rules_1.SendActivity('Hello World!')
 ]));
 //# sourceMappingURL=index.js.map

@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { Bot, RuleDialog, DefaultResponseRule, SendActivity, WaitForInput } from 'botbuilder-planning';
+import { Bot, RuleDialog, DefaultResponseRule, SendActivity, TextInput } from 'botbuilder-rules';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -38,7 +38,6 @@ bot.rootDialog = dialogs;
 
 // Add rules
 dialogs.addRule(new DefaultResponseRule([
-    new SendActivity(`Hi! what's your name?`),
-    new WaitForInput('$user.name'),
-    new SendActivity(`Hi {$user.name}. It's nice to meet you.`)
+    new TextInput('user.name', `Hi! what's your name?`),
+    new SendActivity(`Hi {user.name}. It's nice to meet you.`)
 ]));

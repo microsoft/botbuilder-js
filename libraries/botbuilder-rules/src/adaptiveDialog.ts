@@ -16,8 +16,9 @@ import {
 import { 
     RuleDialogEventNames, PlanningContext, RuleDialogState, PlanChangeList, PlanChangeType 
 } from './planningContext';
-import { PlanningRule } from './rules';
+import { PlanningRule, BeginDialogRule } from './rules';
 import { Recognizer } from './recognizers';
+import { SendActivity, EndDialog } from './steps';
 
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     /**
