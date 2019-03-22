@@ -8,17 +8,17 @@ import { ExpressionVisitor } from './resources/ExpressionVisitor';
 // tslint:disable-next-line: completed-docs
 export class ExpressionEvaluator extends AbstractParseTreeVisitor<any> implements ExpressionVisitor<any> {
     public static readonly BinaryOperatorFunctions: Map<string, string> = new Map([
-        ['^', 'pow'],
+        ['^', 'exp'],
         ['/', 'div'],
         ['*', 'mul'],
         ['+', 'add'],
         ['-', 'sub'],
-        ['==', 'equal'],
-        ['!=', 'notEqual'],
-        ['<', 'lessThan'],
-        ['<=', 'lessThanOrEqual'],
-        ['>', 'greaterThan'],
-        ['>=', 'greaterThanorEqual'],
+        ['==', 'equals'],
+        ['!=', 'notEquals'],
+        ['<', 'less'],
+        ['<=', 'lessOrEquals'],
+        ['>', 'greater'],
+        ['>=', 'greaterOrEquals'],
         ['&&', 'and'],
         ['||', 'or']
     ]);
