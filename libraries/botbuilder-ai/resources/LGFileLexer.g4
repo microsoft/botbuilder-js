@@ -97,7 +97,7 @@ MULTI_LINE_TEXT
   ;
 
 ESCAPE_CHARACTER
-  : '\\{' | '\\[' | '\\\\' | '\\'[rtn\]}]  { ignoreWS = false; expectCaseOrDefault = false;}
+  : '\\{' | '\\[' | '\\\\' | '\\'[rtn\]}]  { this.ignoreWS = false; this.expectCaseOrDefault = false;}
   ;
 
 INVALID_ESCAPE
@@ -117,5 +117,5 @@ TEXT_SEPARATOR
   ;
 
 TEXT
-  : ~[ \\\t\r\n{}[\]()]+  { ignoreWS = false; expectCaseOrDefault = false;}
+  : ~[ \\\t\r\n{}[\]()]+  { this.ignoreWS = false; this.expectCaseOrDefault = false;}
   ;

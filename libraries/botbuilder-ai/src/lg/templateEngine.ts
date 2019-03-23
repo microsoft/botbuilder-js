@@ -1,12 +1,14 @@
-import { ANTLRInputStream } from "antlr4ts/ANTLRInputStream";
-import { BailErrorStrategy } from "antlr4ts/BailErrorStrategy";
-import { CommonTokenStream } from "antlr4ts/CommonTokenStream";
-import { TerminalNode } from "antlr4ts/tree";
+import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
+import { BailErrorStrategy } from 'antlr4ts/BailErrorStrategy';
+import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
+import { TerminalNode } from 'botframework-expression//node_modules/antlr4ts/tree';
 import { Evaluator } from './evaluator';
 import { LGFileLexer } from './LGFileLexer';
 import { FileContext, LGFileParser, ParagraphContext, ParametersContext, TemplateDefinitionContext } from './LGFileParser';
+import { TemplateErrorListener } from './TemplateErrorListener';
 
 import fs = require('fs');
+import { Analyzer } from './Analyzer';
 
 export class EvaluationContext {
     public TemplateContexts: {};
@@ -70,10 +72,12 @@ export class TemplateEngine {
             const input: ANTLRInputStream = new ANTLRInputStream(lgFileContent);
             const lexer: LGFileLexer = new LGFileLexer(input);
             const tokens: CommonTokenStream = new CommonTokenStream(lexer);
-
             const parser: LGFileParser = new LGFileParser(tokens);
+            parser.removeErrorListeners();
+            parser.addErrorListener(TemplateErrorListener.INSTANCE);
             parser.buildParseTree = true;
             parser.errorHandler = new BailErrorStrategy();
+
             const context: FileContext = parser.file();
 
             return new TemplateEngine(context);
@@ -88,6 +92,12 @@ export class TemplateEngine {
         return evalutor.EvaluateTemplate(templateName, scope);
     }
 
+    public AnalyzeTemplate(templateName: string): string[] {
+        const analyzer = new Analyzer(this.evaluationContext);
+
+        return analyzer.AnalyzeTemplate(templateName);
+    }
+
     public EvaluateInline(inlinsStr: string, scope: any): string {
         const fakeTemplateId: string = '__temp__';
         const wrappedStr: string = `# ${fakeTemplateId} \r\n - ${inlinsStr}`;
@@ -95,10 +105,12 @@ export class TemplateEngine {
             const input: ANTLRInputStream = new ANTLRInputStream(wrappedStr);
             const lexer: LGFileLexer = new LGFileLexer(input);
             const tokens: CommonTokenStream = new CommonTokenStream(lexer);
-
             const parser: LGFileParser = new LGFileParser(tokens);
+            parser.removeErrorListeners();
+            parser.addErrorListener(TemplateErrorListener.INSTANCE);
             parser.buildParseTree = true;
             parser.errorHandler = new BailErrorStrategy();
+
             const context: TemplateDefinitionContext = parser.templateDefinition();
             const evaluationContext: EvaluationContext = new EvaluationContext(this.evaluationContext.TemplateContexts,
                                                                                this.evaluationContext.TemplateParameters);

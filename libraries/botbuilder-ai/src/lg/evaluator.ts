@@ -1,15 +1,14 @@
 
-import { AbstractParseTreeVisitor } from "antlr4ts/tree";
-import { TerminalNode } from "antlr4ts/tree/TerminalNode";
+import { AbstractParseTreeVisitor } from 'antlr4ts/tree';
 import { ExpressionEngine } from 'botframework-expression';
+import { TerminalNode } from 'botframework-expression/node_modules/antlr4ts/tree';
 import { GetMethodExtensions } from './getMethodExtensions';
 import { GetValueExtensions } from './getValueExtensions';
-import { ConditionalBodyContext, LGFileParser, NormalBodyContext,
-    NormalTemplateBodyContext, NormalTemplateStringContext, TemplateDefinitionContext, TemplateNameLineContext, CaseRuleContext } from './lGFileParser';
+import * as lp from './lGFileParser';
 import { LGFileParserVisitor } from './LGFileParserVisitor';
 import { EvaluationContext } from './templateEngine';
 
-class EvaluationTarget {
+export class EvaluationTarget {
     public TemplateName: string;
     public Scope: any;
     public constructor(templateName: string, scope: any) {
@@ -53,8 +52,8 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         return result;
     }
 
-    public visitTemplateDefinition(ctx: TemplateDefinitionContext): string {
-        const templateNameContext: TemplateNameLineContext = ctx.templateNameLine();
+    public visitTemplateDefinition(ctx: lp.TemplateDefinitionContext): string {
+        const templateNameContext: lp.TemplateNameLineContext = ctx.templateNameLine();
         if (templateNameContext.templateName().text === this.currentTarget().TemplateName) {
             return this.visit(ctx.templateBody());
         }
@@ -62,19 +61,19 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         return undefined;
     }
 
-    public visitNormalBody(ctx: NormalBodyContext): string {
+    public visitNormalBody(ctx: lp.NormalBodyContext): string {
         return this.visit(ctx.normalTemplateBody());
     }
 
-    public visitNormalTemplateBody(ctx: NormalTemplateBodyContext) : string {
-        const normalTemplateStrs: NormalTemplateStringContext[] = ctx.normalTemplateString();
+    public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext) : string {
+        const normalTemplateStrs: lp.NormalTemplateStringContext[] = ctx.normalTemplateString();
         const randomNumber: number = Math.floor(Math.random() * normalTemplateStrs.length);
 
         return this.visit(normalTemplateStrs[randomNumber]);
     }
 
-    public visitConditionalBody(ctx: ConditionalBodyContext) : string{
-        const caseRules: CaseRuleContext[] = ctx.conditionalTemplateBody()
+    public visitConditionalBody(ctx: lp.ConditionalBodyContext) : string{
+        const caseRules: lp.CaseRuleContext[] = ctx.conditionalTemplateBody()
                         .caseRule();
         for (const caseRule of caseRules) {
             const conditionExpression: string = caseRule.caseCondition()
@@ -84,31 +83,35 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
             }
         }
 
-        return this.visit(ctx.conditionalTemplateBody()
-                            .defaultRule()
-                            .normalTemplateBody());
+        if (ctx !== undefined && ctx.conditionalTemplateBody() !== undefined && ctx.conditionalTemplateBody().defaultRule() !== undefined) {
+            return this.visit(ctx.conditionalTemplateBody()
+                                .defaultRule()
+                                .normalTemplateBody());
+        } else {
+            return undefined;
+        }
     }
 
-    public visitNormalTemplateString(ctx: NormalTemplateStringContext): string {
+    public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string {
         let result: string = '';
         for (const node of ctx.children) {
-            const innerNode: TerminalNode =  node as TerminalNode;
+            const innerNode: TerminalNode =  <TerminalNode>node;;
             switch (innerNode.symbol.type) {
-                case LGFileParser.DASH: break;
-                case LGFileParser.ESCAPE_CHARACTER:
+                case lp.LGFileParser.DASH: break;
+                case lp.LGFileParser.ESCAPE_CHARACTER:
                     result = result.concat(this.EvalEscapeCharacter(innerNode.text));
                     break;
-                case LGFileParser.INVALID_ESCAPE:
+                case lp.LGFileParser.INVALID_ESCAPE:
                     throw new Error(`escape character ${innerNode.text} is invalid`);
-                case LGFileParser.EXPRESSION: {
+                case lp.LGFileParser.EXPRESSION: {
                     result = result.concat(this.EvalExpression(innerNode.text));
                     break;
                 }
-                case LGFileParser.TEMPLATE_REF: {
+                case lp.LGFileParser.TEMPLATE_REF: {
                     result = result.concat(this.EvalTemplateRef(innerNode.text));
                     break;
                 }
-                case LGFileParser.MULTI_LINE_TEXT: {
+                case lp.LGFileParser.MULTI_LINE_TEXT: {
                     result = result.concat(this.EvalMultiLineText(innerNode.text));
                     break;
                 }

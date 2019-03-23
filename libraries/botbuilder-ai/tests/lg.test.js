@@ -34,6 +34,22 @@ describe('LG', function () {
 
         let evaled = engine.EvaluateTemplate("time-of-day-readout", { timeOfDay : "morning" });
         assert.strictEqual(evaled === "Good morning" || evaled === "Morning! ", true, `Evaled is ${evaled}`);
+
+        evaled = engine.EvaluateTemplate("time-of-day-readout", { timeOfDay : "evening" });
+        assert.strictEqual(evaled === "Good evening" || evaled === "Evening! ", true, `Evaled is ${evaled}`);
+    });
+
+    it('TestBasicConditionalTemplateWithoutDefault', function () {
+        let engine = TemplateEngine.FromFile(GetExampleFilePath('5.lg'));
+
+        let evaled = engine.EvaluateTemplate("time-of-day-readout-without-default", { timeOfDay : "morning" });
+        assert.strictEqual(evaled === "Good morning" || evaled === "Morning! ", true, `Evaled is ${evaled}`);
+
+        evaled = engine.EvaluateTemplate("time-of-day-readout-without-default2", { timeOfDay : "morning" });
+        assert.strictEqual(evaled === "Good morning" || evaled === "Morning! ", true, `Evaled is ${evaled}`);
+
+        evaled = engine.EvaluateTemplate("time-of-day-readout-without-default2", { timeOfDay : "evening" });
+        assert.strictEqual(evaled, undefined, `Evaled is ${evaled} which should be undefined.`);
     });
 
     it('TestBasicTemplateRefWithParameters', function () {
@@ -167,6 +183,24 @@ describe('LG', function () {
         {
             assert.strictEqual(e.message, "escape character \\y is invalid");
         }
-    })
+    });
 
+    it('TestAnalyzer', function() {
+        var engine = TemplateEngine.FromFile(GetExampleFilePath("Analyzer.lg"));
+        var evaled1 = engine.AnalyzeTemplate("orderReadOut");
+        var evaled1Options = ["orderType","userName","base","topping","bread","meat"];
+        console.log(evaled1[0]);
+        assert.strictEqual(evaled1.length, evaled1Options.length);
+        evaled1Options.forEach(element => assert.strictEqual(evaled1.includes(element), true));
+
+        var evaled2 = engine.AnalyzeTemplate("sandwichOrderConfirmation");
+        var evaled2Options = ["bread","meat"];
+        assert.strictEqual(evaled2.length, evaled2Options.length);
+        evaled2Options.forEach(element => assert.strictEqual(evaled2.includes(element), true));
+
+        var evaled3 = engine.AnalyzeTemplate("template1");
+        var evaled3Options = ["alarms", "tasks", "age","other"];
+        assert.strictEqual(evaled3.length, evaled3Options.length);
+        evaled3Options.forEach(element => assert.strictEqual(evaled3.includes(element), true));
+    })
 });

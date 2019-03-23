@@ -1,4 +1,5 @@
-import Dictionary from "typescript-dotnet-umd/System/Collections/Dictionaries/Dictionary";
+import Dictionary from 'typescript-dotnet-umd/System/Collections/Dictionaries/Dictionary';
+
 /**
  * Get the value of a property of an object
  */
