@@ -19,7 +19,8 @@ export class RegExpRecognizer implements Recognizer {
     }
 
     public addIntent(name: string, expression: RegExp): this {
-        this.intents.push({ name: name, expression: expression });
+        const intent = name[0] == '#' ? name.substr(1) : name;
+        this.intents.push({ name: intent, expression: expression });
         return this;
     }
 
