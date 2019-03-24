@@ -14,27 +14,16 @@ import {
     DialogContext, DialogSet, StateMap, DialogConsultation, DialogConsultationDesire, DialogConfiguration, DialogContextVisibleState
 } from 'botbuilder-dialogs';
 import { 
-    RuleDialogEventNames, PlanningContext, RuleDialogState, PlanChangeList, PlanChangeType 
+    RuleDialogEventNames, PlanningContext, RuleDialogState as AdaptiveDialogState, PlanChangeList, PlanChangeType 
 } from './planningContext';
-import { PlanningRule, BeginDialogRule } from './rules';
+import { PlanningRule, DefaultRule } from './rules';
 import { Recognizer } from './recognizers';
-import { SendActivity, EndDialog } from './steps';
 
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     /**
      * Planning rules to evaluate for each conversational turn.
      */
     rules?: PlanningRule[];
-
-    /**
-     * (Optional) number of milliseconds to expire the bots state after. 
-     */
-    expireAfter?: number;
-
-    /**
-     * (Optional) storage provider that will be used to read and write the bots state..
-     */
-    storage?: Storage;
 
     /**
      * (Optional) recognizer used to analyze any message utterances.
@@ -49,9 +38,11 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     /**
      * Creates a new `AdaptiveDialog` instance.
      * @param dialogId (Optional) unique ID of the component within its parents dialog set.
+     * @param steps (Optional) set of dialog steps that should be run by default.
      */
-    constructor(dialogId?: string) {
+    constructor(dialogId?: string, steps?: Dialog[]) {
         super(dialogId);
+        if (steps) { this.addRule(new DefaultRule(steps)) }
     }
 
     /**
@@ -95,11 +86,11 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     //---------------------------------------------------------------------------------------------
 
     protected onComputeID(): string {
-        return `planning(${this.bindingPath()})`;
+        return `adaptive[${this.bindingPath()}]`;
     }
    
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        const state: RuleDialogState<O> = dc.activeDialog.state;
+        const state: AdaptiveDialogState<O> = dc.activeDialog.state;
 
         try {
             // Install dependencies on first access
@@ -125,7 +116,7 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
             await this.evaluateRules(planning, { name: RuleDialogEventNames.beginDialog, value: options, bubble: false });
             
             // Run plan
-            return await this.continuePlan(planning, 0);
+            return await this.continuePlan(planning);
         } catch (err) {
             return await dc.cancelAllDialogs('error', { message: err.message, stack: err.stack });
         }
@@ -134,18 +125,18 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     public async consultDialog(dc: DialogContext): Promise<DialogConsultation> {
         try {
             // Create a new planning context
-            const state: RuleDialogState<O> = dc.activeDialog.state;
+            const state: AdaptiveDialogState<O> = dc.activeDialog.state;
             const planning = PlanningContext.create(dc, state);
 
             // First consult plan
-            let consultation = await this.consultPlan(planning, 0);
+            let consultation = await this.consultPlan(planning);
             if (!consultation || consultation.desire != DialogConsultationDesire.shouldProcess) {
                 // Next evaluate rules
                 const changesQueued = await this.evaluateRules(planning, { name: RuleDialogEventNames.consultDialog, value: undefined, bubble: false });
                 if (changesQueued) {
                     consultation = {
                         desire: DialogConsultationDesire.shouldProcess,
-                        processor: (dc) => this.continuePlan(planning, 0)
+                        processor: (dc) => this.continuePlan(planning)
                     };
                 }
 
@@ -153,7 +144,7 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
                 if (!consultation) {
                     consultation = {
                         desire: DialogConsultationDesire.canProcess,
-                        processor: (dc) => this.continuePlan(planning, 0)
+                        processor: (dc) => this.continuePlan(planning)
                     };
                 }
             }
@@ -169,7 +160,7 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
 
     public async onDialogEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
         // Create a new planning context
-        const state: RuleDialogState<O> = dc.activeDialog.state;
+        const state: AdaptiveDialogState<O> = dc.activeDialog.state;
         const planning = PlanningContext.create(dc, state);
 
         // Evaluate rules and queue up any potential changes 
@@ -189,7 +180,7 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
 
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Forward to current sequence step
-        const state = instance.state as RuleDialogState<O>;
+        const state = instance.state as AdaptiveDialogState<O>;
         const plan = state.plan;
         if (plan && plan.steps.length > 0) {
             // We need to mockup a DialogContext so that we can call repromptDialog() for the active step 
@@ -258,12 +249,36 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     }
 
     protected async onRecognize(context: TurnContext): Promise<RecognizerResult> {
+        const { text, value } = context.activity;
         const noneIntent: RecognizerResult = {
-            text: context.activity.text || '',
+            text: text || '',
             intents: { 'None': { score: 0.0 } },
             entities: {}
         };
-        return this.recognizer ? await this.recognizer.recognize(context) : noneIntent;
+
+        // Check for submission of an adaptive card
+        if (!text && typeof value == 'object' && typeof value['intent'] == 'string') {
+            // Map submitted values to a recognizer result
+            const recognized: RecognizerResult = {
+                text: '',
+                intents: {},
+                entities: {}
+            };
+            for (const key in value) {
+                if (value.hasOwnProperty(key)) {
+                    if (key == 'intent') {
+                        recognized.intents[value[key]] = { score: 1.0 };
+                    } else {
+                        recognized.entities[key] = [value[key]];
+                    }
+                }
+            }
+
+            return recognized;
+        } else {
+            // Call recognizer as normal
+            return this.recognizer ? await this.recognizer.recognize(context) : noneIntent;
+        }
     }
 
     private async queueFirstMatch(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
@@ -413,7 +428,7 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     // Plan Execution
     //---------------------------------------------------------------------------------------------
 
-    protected async consultPlan(planning: PlanningContext, pass: number): Promise<DialogConsultation> {
+    protected async consultPlan(planning: PlanningContext): Promise<DialogConsultation> {
         // Apply any queued up changes
         await planning.applyChanges();
 
@@ -456,7 +471,7 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
                             await this.repromptDialog(dc.context, dc.activeDialog);
                             return { status: DialogTurnStatus.waiting };
                         } else {
-                            return await this.continuePlan(planning, pass + 1);
+                            return await this.continuePlan(planning);
                         }
                     } else {
                         // Remove parent ended flag and return result.
@@ -464,30 +479,26 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
                         return result;
                     }
                 } else if (planning.activeDialog) {
-                    return await this.onEndOfPlan(planning, pass);
+                    return await this.onEndOfPlan(planning);
                 }
             }
         }
     }
 
-    protected async continuePlan(planning: PlanningContext, pass: number): Promise<DialogTurnResult> {
+    protected async continuePlan(planning: PlanningContext): Promise<DialogTurnResult> {
         // Consult plan and execute returned processor
         try {
-            const consultation = await this.consultPlan(planning, pass);
+            const consultation = await this.consultPlan(planning);
             return await consultation.processor(planning);
         } catch (err) {
             return await planning.cancelAllDialogs('error', { message: err.message, stack: err.stack });
         }
     }
 
-    protected async onEndOfPlan(planning: PlanningContext, pass: number): Promise<DialogTurnResult> {
-        if (pass == 0) {
-            // Nothing to execute so end
-            return await planning.endDialog();
-        } else {
-            // Wait for next turn
-            return Dialog.EndOfTurn;
-        }
+    protected async onEndOfPlan(planning: PlanningContext): Promise<DialogTurnResult> {
+        // End dialog and return result
+        const state: AdaptiveDialogState<O> = planning.activeDialog.state;
+        return await planning.endDialog(state.result);
     }
 
     private getUniqueInstanceId(dc: DialogContext): string {

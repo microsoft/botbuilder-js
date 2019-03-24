@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { AdaptiveDialog, WelcomeRule, SendActivity, IntentRule, PlanChangeType, EventRule, DefaultRule } from "botbuilder-rules";
+import { AdaptiveDialog, WelcomeRule, SendActivity, IntentRule, PlanChangeType, EventRule, DefaultRule, SetProperty } from "botbuilder-rules";
 import { getRecognizer } from "./recognizer";
 import { intents, events } from "../schema";
 import { AddToDo } from "./addToDo";

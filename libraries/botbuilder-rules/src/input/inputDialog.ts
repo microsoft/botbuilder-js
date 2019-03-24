@@ -256,7 +256,7 @@ export class InputDialog<O extends object = {}> extends AdaptiveDialog<O> {
         return true;
     }
 
-    protected async onEndOfPlan(planning: PlanningContext, pass: number): Promise<DialogTurnResult> {
+    protected async onEndOfPlan(planning: PlanningContext): Promise<DialogTurnResult> {
         // Evaluate current status
         const state = planning.activeDialog.state as InputDialogState<O>;
         if (state.fulfilled) {
@@ -267,7 +267,7 @@ export class InputDialog<O extends object = {}> extends AdaptiveDialog<O> {
             // needed.
             delete state.continuingAction;
             await this.onValidateSlot(planning);
-            return await this.continuePlan(planning, pass + 1);
+            return await this.continuePlan(planning);
         } else {
             // Just wait for user to reply
             return Dialog.EndOfTurn;

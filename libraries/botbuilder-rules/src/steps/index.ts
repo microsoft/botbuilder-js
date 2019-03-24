@@ -23,6 +23,7 @@ export * from './onCatch';
 export * from './repeatDialog';
 export * from './saveEntity';
 export * from './sendActivity';
+export * from './sendChart';
 export * from './sendList';
 export * from './setPlanTitle';
 export * from './setProperty';
