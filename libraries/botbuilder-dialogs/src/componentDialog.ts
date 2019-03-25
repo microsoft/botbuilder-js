@@ -10,7 +10,7 @@ import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatu
 import { DialogContext, DialogState } from './dialogContext';
 import { DialogSet } from './dialogSet';
 
-const PERSISTED_DIALOG_STATE: string = 'dialogs';
+const PERSISTED_DIALOG_STATE = 'dialogs';
 
 /**
  * Base class for a dialog that contains other child dialogs.
@@ -246,7 +246,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
         this.dialogs.telemetryClient = client;
     }
 
-     /**
+    /**
      * Get the current telemetry client.
      */
     public get telemetryClient(): BotTelemetryClient {
