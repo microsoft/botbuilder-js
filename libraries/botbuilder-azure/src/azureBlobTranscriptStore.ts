@@ -72,8 +72,8 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         const data: string = JSON.stringify(activity);
         const container = await this.ensureContainerExists();
 
-        const block = this.client.createBlockBlobFromTextAsync(container.name, blobName, data, null);
-        const meta = this.client.setBlobMetadataAsync(
+		const block = await this.client.createBlockBlobFromTextAsync(container.name, blobName, data, null);
+		const meta = this.client.setBlobMetadataAsync(
             container.name,
             blobName,
             {
@@ -83,7 +83,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             }
         );
 
-        const props = this.client.setBlobPropertiesAsync(
+		const props = this.client.setBlobPropertiesAsync(
             container.name,
             blobName,
             {
@@ -333,10 +333,12 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             storageAccessKey,
             host
         ).withFilter(new azure.LinearRetryPolicyFilter(5, 500));
+
         // The perfect use case for a Proxy
         return new Proxy({}, {
             get(target: azure.services.blob.blobservice.BlobService, p: PropertyKey): Promise<any> {
-                return target[p] || (target[p] = denodeify(blobService, blobService[p]));
+				const prop = p.toString().endsWith('Async') ? p.toString().replace('Async', '') :p;
+                return target[p] || (target[p] = denodeify(blobService, blobService[prop]));
             }
         }) as BlobServiceAsync;
 
