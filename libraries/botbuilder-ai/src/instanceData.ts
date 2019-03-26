@@ -33,5 +33,5 @@ export interface InstanceData {
     /**
      * Any extra properties.
      */
-    [propName: string] : any;
+    [propName: string]: any;
 }

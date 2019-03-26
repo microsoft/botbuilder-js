@@ -193,7 +193,7 @@ export abstract class Prompt<T> extends Dialog {
         const recognized: PromptRecognizerResult<T> = await this.onRecognize(dc.context, state.state, state.options);
 
         // Validate the return value
-        let isValid: boolean = false;
+        let isValid = false;
         if (this.validator) {
             isValid = await this.validator({
                 context: dc.context,
@@ -270,7 +270,7 @@ export abstract class Prompt<T> extends Dialog {
         options?: ChoiceFactoryOptions
     ): Partial<Activity> {
         // Get base prompt text (if any)
-        let text: string = '';
+        let text = '';
         if (typeof prompt === 'string') {
             text = prompt;
         } else if (prompt && prompt.text) {

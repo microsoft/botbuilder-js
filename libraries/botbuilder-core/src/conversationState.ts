@@ -58,6 +58,6 @@ export class ConversationState extends BotState {
             throw new Error('missing activity.conversation.id');
         }
 
-        return `${channelId}/conversations/${conversationId}/${this.namespace}`;
+        return `${ channelId }/conversations/${ conversationId }/${ this.namespace }`;
     }
 }

@@ -16,12 +16,12 @@ export interface DialogInstance<T = any> {
     /**
      * ID of the dialog this instance is for.
      */
-     id: string;
+    id: string;
 
     /**
      * The instances persisted state.
      */
-     state: T;
+    state: T;
 }
 
 /**

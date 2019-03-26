@@ -62,7 +62,7 @@ export function recognizeChoices(utterance: string, choices: (string|Choice)[], 
         } catch (e) {
             // noop
             // TODO: Should this log an error or do something?
-         }
+        }
     }
 
     // Normalize choices

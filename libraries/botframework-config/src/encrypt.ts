@@ -45,7 +45,7 @@ export function encryptString(plainText: string, secret: string): string {
     encryptedValue += cipher.final('base64');
 
     // store base64(ivBytes)!base64(encryptedValue)
-    return `${ivText}!${encryptedValue}`;
+    return `${ ivText }!${ encryptedValue }`;
 }
 
 /**
