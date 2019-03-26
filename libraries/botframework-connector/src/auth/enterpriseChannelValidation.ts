@@ -12,7 +12,7 @@ import { Constants } from './constants';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 
-export module EnterpriseChannelValidation {
+export namespace EnterpriseChannelValidation {
 
     /**
      * TO BOT FROM CHANNEL: Token validation parameters when connecting to a bot
@@ -68,7 +68,7 @@ export module EnterpriseChannelValidation {
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromEnterpriseChannelTokenValidationParameters,
             ChannelValidation.OpenIdMetadataEndpoint ?
-            ChannelValidation.OpenIdMetadataEndpoint :
+                ChannelValidation.OpenIdMetadataEndpoint :
                 Constants.ToBotFromEnterpriseChannelOpenIdMetadataUrlFormat.replace('{channelService}', channelService),
             Constants.AllowedSigningAlgorithms);
 
@@ -114,7 +114,7 @@ export module EnterpriseChannelValidation {
         const audClaim: string = identity.getClaimValue(Constants.AudienceClaim);
         if (!(await credentials.isValidAppId(audClaim || ''))) {
             // The AppId is not valid or not present. Not Authorized.
-            throw new Error(`Unauthorized. Invalid AppId passed on token: ${audClaim}`);
+            throw new Error(`Unauthorized. Invalid AppId passed on token: ${ audClaim }`);
         }
 
         return identity;

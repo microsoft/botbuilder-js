@@ -101,8 +101,8 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
         // - The total deviation is a count of the number of tokens skipped in the
         //   match so for the example above the number of tokens matched would be
         //   2 and the total deviation would be 1.
-        let matched: number = 0;
-        let totalDeviation: number = 0;
+        let matched = 0;
+        let totalDeviation = 0;
         let start: number = -1;
         let end: number = -1;
         vTokens.forEach((token: Token) => {
@@ -173,7 +173,7 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
         // - To match "last one" in "the last time I chose the last one" we need
         //   to re-search the string starting from the end of the previous match.
         // - The start & end position returned for the match are token positions.
-        let startPos: number = 0;
+        let startPos = 0;
         const vTokens: Token[] = tokenizer(entry.value.trim(), opt.locale);
         while (startPos < tokens.length) {
             const match: ModelResult<FoundValue> = matchValue(entry.index, entry.value, vTokens, startPos);

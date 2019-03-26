@@ -108,7 +108,7 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
         const service: ConnectedService = BotConfigurationBase.serviceFromJSON(newService);
 
         // assign a unique id
-        let found: boolean = false;
+        let found = false;
         do {
             found = false;
             service.id = Math.floor((Math.random() * 255)).toString();
@@ -172,7 +172,7 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
                 return services.splice(i, 1)[0];
             }
         }
-        throw new Error(`a service with id or name of [${nameOrId}] was not found`);
+        throw new Error(`a service with id or name of [${ nameOrId }] was not found`);
     }
 
     /**
