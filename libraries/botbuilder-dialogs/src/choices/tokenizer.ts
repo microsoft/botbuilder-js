@@ -13,12 +13,12 @@ export interface Token {
     /**
      * Start character position of the token within the outer string.
      */
-     start: number;
+    start: number;
 
     /**
      * End character position of the token within the outer string.
      */
-     end: number;
+    end: number;
 
     /**
      * Original text of the token.
@@ -28,7 +28,7 @@ export interface Token {
     /**
      * Normalized form of the token. This can include things like lower casing or stemming.
      */
-     normalized: string;
+    normalized: string;
 }
 
 /**
@@ -84,7 +84,7 @@ export function defaultTokenizer(text: string, locale?: string): Token[] {
 
     // Parse text
     const length: number = text ? text.length : 0;
-    let i: number = 0;
+    let i = 0;
     while (i < length) {
         // Get both the UNICODE value of the current character and the complete character itself
         // which can potentially be multiple segments.

@@ -15,7 +15,7 @@
  * recognized. The actual result can be accessed through the [resolution](#resolution) property.
  * @param T The type of entity/resolution being returned.
  */
-export interface ModelResult<T extends Object = {}> {
+export interface ModelResult<T extends Record<string, any> = {}> {
     /**
      * Substring of the utterance that was recognized.
      */
@@ -39,5 +39,5 @@ export interface ModelResult<T extends Object = {}> {
     /**
      * The recognized entity.
      */
-     resolution: T;
+    resolution: T;
 }

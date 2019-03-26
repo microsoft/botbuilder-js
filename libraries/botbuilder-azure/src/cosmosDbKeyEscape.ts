@@ -7,7 +7,7 @@
  */
 var crypto = require('crypto');
 
-export module CosmosDbKeyEscape {
+export namespace CosmosDbKeyEscape {
     // Per the CosmosDB Docs, there is a max key length of 255. 
     // https://docs.microsoft.com/en-us/azure/cosmos-db/faq#table
     const maxKeyLength = 255;
@@ -15,14 +15,14 @@ export module CosmosDbKeyEscape {
     const illegalKeyCharacterReplacementMap: Map<string, string> =
         illegalKeys.reduce<Map<string, string>>(
             (map: Map<string, string>, c: string) => {
-                map.set(c, `*${c.charCodeAt(0).toString(16)}`);
+                map.set(c, `*${ c.charCodeAt(0).toString(16) }`);
 
                 return map;
             },
             new Map()
         );
 
-     /**
+    /**
      * Converts the key into a DocumentID that can be used safely with CosmosDB.
      * The following characters are restricted and cannot be used in the Id property: '/', '\', '?', '#'
      * More information at https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.documents.resource.id?view=azure-dotnet#remarks

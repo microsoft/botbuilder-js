@@ -18,7 +18,7 @@ export function shallowCopy<T>(value: T): T {
  * @param target a thing that will be made revocable
  * @param handler an object that defines the way the new revocable object works
  */
-export function makeRevocable<T extends Object>(target: T, handler?: ProxyHandler<T>): { proxy: T; revoke(): void } {
+export function makeRevocable<T extends Record<string, any>>(target: T, handler?: ProxyHandler<T>): { proxy: T; revoke(): void } {
     // Ensure proxy supported (some browsers don't)
     if (Proxy && Proxy.revocable) {
         return Proxy.revocable(target, handler || {});

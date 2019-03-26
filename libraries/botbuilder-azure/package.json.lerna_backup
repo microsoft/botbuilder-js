@@ -1,0 +1,33 @@
+{
+	"name": "botbuilder-azure",
+	"author": "Microsoft Corp.",
+	"description": "Azure extensions for Microsoft BotBuilder.",
+	"version": "4.1.6",
+	"license": "MIT",
+	"keywords": [
+		"botbuilder",
+		"botframework",
+		"bots",
+		"chatbots",
+		"azure"
+	],
+	"bugs": {
+		"url": "https://github.com/Microsoft/botbuilder-js/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Microsoft/botbuilder-js.git"
+	},
+	"main": "./lib/index.js",
+	"typings": "./lib/index.d.ts",
+	"dependencies": {
+		"botbuilder": "~4.1.6"
+	},
+	"devDependencies": {
+		"nock": "^10.0.1"
+	},
+	"files": [
+		"/lib",
+		"/src"
+	]
+}

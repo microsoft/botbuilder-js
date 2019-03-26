@@ -16,7 +16,7 @@ import { JwtTokenValidation } from './jwtTokenValidation';
 /**
  * Validates and Examines JWT tokens from the Bot Framework Emulator
  */
-export module EmulatorValidation {
+export namespace EmulatorValidation {
 
     /**
      * TO BOT FROM EMULATOR: Token validation parameters when connecting to a channel.
@@ -132,7 +132,7 @@ export module EmulatorValidation {
             throw new Error('Unauthorized. "ver" claim is required on Emulator Tokens.');
         }
 
-        let appId: string = '';
+        let appId = '';
 
         // The Emulator, depending on Version, sends the AppId via either the
         // appid claim (Version 1) or the Authorized Party claim (Version 2).
@@ -157,11 +157,11 @@ export module EmulatorValidation {
             appId = appZClaim;
         } else {
             // Unknown Version. Not Authorized.
-            throw new Error(`Unauthorized. Unknown Emulator Token version "${versionClaim}".`);
+            throw new Error(`Unauthorized. Unknown Emulator Token version "${ versionClaim }".`);
         }
 
         if (!await credentials.isValidAppId(appId)) {
-            throw new Error(`Unauthorized. Invalid AppId passed on token: ${appId}`);
+            throw new Error(`Unauthorized. Invalid AppId passed on token: ${ appId }`);
         }
 
         return identity;
