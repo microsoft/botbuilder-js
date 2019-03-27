@@ -28,13 +28,13 @@ server.post('/api/messages', (req, res) => {
         await bot.onTurn(context);
     });
 });
+const bingMapsKey = 'AlUaNNIoQRik0DZRUj518gEoFeVSxRjo5MTv6JDU1GPX_djqyMFRwIBv89nlfJM6';
 // Initialize bots root dialog
 const dialogs = new botbuilder_rules_1.AdaptiveDialog();
 bot.rootDialog = dialogs;
 // Add a default rule for handling incoming messages
 dialogs.addRule(new botbuilder_rules_1.DefaultRule([
-    new botbuilder_rules_1.SetProperty(`conversation.chartData.Hello = [1,5,15,10,17]`),
-    new botbuilder_rules_1.SetProperty(`conversation.chartData.World = [0,3,12,13,14]`),
-    new botbuilder_rules_1.SendChart(botbuilder_rules_1.ChartType.lines, 'conversation.chartData')
+    new botbuilder_rules_1.SetProperty(`conversation.mapPins = ["47.6221,-122.3540;46;1", "47.6205,-122.3493;46;2"]`),
+    new botbuilder_rules_1.SendMap(bingMapsKey, botbuilder_rules_1.MapType.aerialWithLabels, 'conversation.mapPins')
 ]));
 //# sourceMappingURL=index.js.map
