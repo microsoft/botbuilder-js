@@ -448,9 +448,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             throw new Error(`BotFrameworkAdapter.getTokenStatus(): missing from or from.id`);
         }
         this.checkEmulatingOAuthCards(context);
-        if (!userId){
-            userId = context.activity.from.id;
-        }
+        userId = userId || context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
         
