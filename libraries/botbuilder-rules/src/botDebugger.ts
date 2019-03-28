@@ -192,7 +192,9 @@ export class BotDebugger extends BotAdapterSet {
 			// - We don't need to do this for the emulator as its already seeing everything
 			if (channelId !== 'emulator') {
 				// Log incoming activity
-				log.push(BotDebugger.trace(Object.assign({}, context.activity), 'https://www.botframework.com/schemas/activity', 'ReceivedActivity', 'Received Activity'));
+				const trace = BotDebugger.trace(Object.assign({}, context.activity), 'https://www.botframework.com/schemas/activity', 'ReceivedActivity', 'Received Activity');
+				trace.value.from.role = 'user'; // WebChat needs this.
+				log.push(trace);
 
 				// Log ougoing activities and changes
 				context.onSendActivities((ctx, activities, next) => {
@@ -233,7 +235,7 @@ export class BotDebugger extends BotAdapterSet {
 				// Append snapshot of turns final bot state to log
 				let state = context.turnState.get(Bot.BotStateSnapshotKey);
 				if (!state) {
-					state = this.loadBotState(TurnContext.getConversationReference(context.activity));
+					state = await this.loadBotState(TurnContext.getConversationReference(context.activity));
 				}
 				log.push(BotDebugger.trace(state, 'https://www.botframework.com/schemas/botState', 'BotState', 'Bot State'));
 

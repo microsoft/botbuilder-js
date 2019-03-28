@@ -1,4 +1,5 @@
 import {BotDebugger} from 'botbuilder-rules';
+import {ConversationState} from "botbuilder-core";
 
 const {MemoryStorage} = require('botbuilder-core');
 
@@ -9,11 +10,13 @@ const {BotFrameworkAdapter} = require('botbuilder');
 const {EmulatorAwareBot} = require('./bot');
 
 const memoryStorage = new MemoryStorage();
-const bot = new EmulatorAwareBot(memoryStorage);
+// Create conversation state with in-memory storage provider.
+const conversationState = new ConversationState(memoryStorage);
+const bot = new EmulatorAwareBot(conversationState);
 
 const adapter = new BotFrameworkAdapter({
-	appId: process.env.APP_ID,
-	appPassword: process.env.APP_PASSWORD,
+	appId: process.env.MICROSOFT_APP_ID,
+	appPassword: process.env.MICROSOFT_APP_PASSWORD,
 });
 
 if (process.env.NODE_ENV === 'development') {
@@ -26,5 +29,5 @@ server.listen(process.env.PORT, () => {
 });
 
 server.post('/api/messages', (req, res) => {
-	return adapter.processActivity(req, res, bot.processTurnContext.bind(bot)).catch(res.error);
+	return adapter.processActivity(req, res, bot.onTurn.bind(bot)).catch(res.error);
 });
