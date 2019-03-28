@@ -159,7 +159,7 @@ export class LuisRecognizer {
         // Create client
         const creds: msRest.TokenCredentials = new msRest.TokenCredentials(this.application.endpointKey);
         const baseUri: string = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
-        this.luisClient = new LuisClient(baseUri, creds);
+        this.luisClient = new LuisClient(baseUri, creds as any);
     }
 
     /**

@@ -25,6 +25,7 @@ export * from './saveEntity';
 export * from './sendActivity';
 export * from './sendChart';
 export * from './sendList';
+export * from './sendMap';
 export * from './setPlanTitle';
 export * from './setProperty';
 export * from './waitForInput';

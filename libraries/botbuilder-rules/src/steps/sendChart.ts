@@ -37,7 +37,7 @@ export class SendChart extends DialogCommand {
     }
 
     protected onComputeID(): string {
-        return `pieChart[${this.hashedLabel(this.type + ':' + this.dataProperty)}]`;
+        return `chart[${this.hashedLabel(this.type + ':' + this.dataProperty)}]`;
     }
 
     public colors: string;

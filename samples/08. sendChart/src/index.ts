@@ -38,7 +38,7 @@ bot.rootDialog = dialogs;
 
 // Add a default rule for handling incoming messages
 dialogs.addRule(new DefaultRule([
-    new SetProperty(`conversation.chartData.World = 10`),
-    new SetProperty(`conversation.chartData.Hello = 15`),
-    new SendChart(ChartType.pie, 'conversation.chartData')
+    new SetProperty(`conversation.chartData.Hello = [1,5,15,10,17]`),
+    new SetProperty(`conversation.chartData.World = [0,3,12,13,14]`),
+    new SendChart(ChartType.lines, 'conversation.chartData')
 ]));
