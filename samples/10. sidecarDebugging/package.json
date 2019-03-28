@@ -14,7 +14,7 @@
     "@types/node": "^10.12.18",
     "botbuilder": "^4.1.6",
     "botbuilder-dialogs": "^4.1.6",
-    "botbuilder-rules": "^4.1.6",
+    "botbuilder-dialogs-adaptive": "^4.1.6",
     "botframework-connector": "^4.2.1",
     "restify": "^8.0.0",
     "botframework-config": "^4.2.1",

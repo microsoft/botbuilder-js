@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { Bot, AdaptiveDialog, DefaultRule, SetProperty, SendMap, ChartType, CodeStep, MapType } from 'botbuilder-rules';
+import { Bot, AdaptiveDialog, DefaultRule, SetProperty, SendMap, MapType } from 'botbuilder-dialogs-adaptive';
 
 // Create HTTP server.
 const server = restify.createServer();
