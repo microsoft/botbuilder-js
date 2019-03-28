@@ -10,8 +10,8 @@ import { Storage, Activity, TurnContext, ActivityTypes, StoreItems, Conversation
 import { BotRunAdapter } from './internal/botRunAdapter';
 
 export interface StoredBotState {
-    userState: { 
-        eTag?: string; 
+    userState: {
+        eTag?: string;
     };
     conversationState: {
         eTag?: string;
@@ -38,7 +38,7 @@ export interface BotConfiguration {
     rootDialog?: Dialog;
 
     /**
-     * (Optional) number of milliseconds to expire the bots state after. 
+     * (Optional) number of milliseconds to expire the bots state after.
      */
     expireAfter?: number;
 
@@ -49,6 +49,7 @@ export interface BotConfiguration {
 }
 
 export class Bot extends Configurable  {
+	public namespace = '';
     private main: DialogSet;
     private mainId: string;
 
@@ -72,7 +73,7 @@ export class Bot extends Configurable  {
     }
 
     /**
-     * (Optional) number of milliseconds to expire the bots state after. 
+     * (Optional) number of milliseconds to expire the bots state after.
      */
     public expireAfter?: number;
 
@@ -113,7 +114,7 @@ export class Bot extends Configurable  {
         newState.conversationState._lastAccess = now.toISOString();
 
         // Ensure dialog stack populated
-        if (!newState.conversationState._dialogs) { 
+        if (!newState.conversationState._dialogs) {
             newState.conversationState._dialogs = { dialogStack: [] }
         }
 
@@ -172,7 +173,7 @@ export class Bot extends Configurable  {
             if (JSON.stringify(newState.userState) != JSON.stringify(oldState.userState)) {
                 if (eTag) { newState.userState.eTag = eTag }
                 changes[keys.userState] = newState.userState;
-                save = true; 
+                save = true;
             }
             if (JSON.stringify(newState.conversationState) != JSON.stringify(oldState.conversationState)) {
                 if (eTag) { newState.conversationState.eTag = eTag }
@@ -206,14 +207,14 @@ export class Bot extends Configurable  {
             if (found.length == 0 && users.length > 0) {
                 reference.user.id = users[0].id;
             }
-        } 
+        }
 
         // Return keys
         return Bot.getStorageKeysForReference(reference);
 
     }
 
-    static getStorageKeysForReference(reference: Partial<ConversationReference>): BotStateStorageKeys {
+    static getStorageKeysForReference(reference: Partial<ConversationReference>, namespace: string = ''): BotStateStorageKeys {
         // Get channel, user, and conversation ID's
         const channelId: string = reference.channelId;
         let userId: string = reference.user && reference.user.id ? reference.user.id : undefined;
@@ -226,7 +227,7 @@ export class Bot extends Configurable  {
         // Return storage keys
         return {
             userState: `${channelId}/users/${userId}`,
-            conversationState: `${channelId}/conversations/${conversationId}`
+            conversationState: `${channelId}/conversations/${conversationId}/${namespace}`
         };
     }
 }

@@ -1,14 +1,20 @@
+import { DialogSet } from "botbuilder-dialogs";
+import { ConversationState } from "botbuilder-core";
 export declare class EmulatorAwareBot {
-    private memoryStorage;
+    conversationState: ConversationState;
+    dialogs: DialogSet;
+    dialogState: any;
+    /**
+     * SampleBot defines the core business logic of this bot.
+     * @param {ConversationState} conversationState A ConversationState object used to store dialog state.
+     */
+    constructor(conversationState: ConversationState);
+    startDialog(step: any): Promise<any>;
+    processResults(step: any): Promise<any>;
+    shoeSizeValidator(prompt: any): Promise<boolean>;
     /**
      *
-     * @param {MemoryStorage} memoryStorage
+     * @param {TurnContext} turnContext A TurnContext object representing an incoming message to be handled by the bot.
      */
-    constructor(memoryStorage: any);
-    /**
-     * Processes the current turn containing the activity from the user
-     *
-     * @param {TurnContext} context The context of the current conversation turn.
-     */
-    processTurnContext(context: any): Promise<void>;
+    onTurn(turnContext: any): Promise<void>;
 }
