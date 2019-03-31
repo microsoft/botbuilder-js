@@ -115,7 +115,7 @@ function TestJson(file, done, includeAllIntents, includeInstance, telemetryClien
     var newPath = expectedPath + ".new";
     var context = new TestContext({ text: expected.text });
     var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, 
-        { includeAllIntents: includeAllIntents, includeInstanceData: includeInstance }, true, telemetryClient, logPersonalInformation);
+        { includeAllIntents: includeAllIntents, includeInstanceData: includeInstance, telemetryClient: telemetryClient, logPersonalInformation: logPersonalInformation }, true, telemetryClient, logPersonalInformation);
     recognizer.recognize(context, telemetryProperties, telemetryMetrics).then(res => {
         if (!WithinDelta(expected, res, 0.1, false)) {
             fs.outputJSONSync(newPath, res, { spaces: 2 });
@@ -772,7 +772,7 @@ describe('LuisRecognizer', function () {
         var expected = GetExpected(expectedPath);
         var context = new TestContext({ text: expected.text });
         var recognizer = new telemetryOverrideRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, 
-            { includeAllIntents: true, includeInstanceData: true }, true, telemetryClient, logPersonalInformation);
+            { includeAllIntents: true, includeInstanceData: true, telemetryClient:telemetryClient, logPersonalInformation:true}, true);
         recognizer.recognize(context, properties, metrics).then(res => {
             if (!WithinDelta(expected, res, 0.1, false)) {
                 fs.outputJSONSync(newPath, res, { spaces: 2 });
@@ -834,7 +834,7 @@ describe('LuisRecognizer', function () {
         var expected = GetExpected(expectedPath);
         var context = new TestContext({ text: expected.text });
         var recognizer = new overrideFillRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, 
-            { includeAllIntents: true, includeInstanceData: true }, true, telemetryClient, logPersonalInformation);
+            { includeAllIntents: true, includeInstanceData: true, telemetryClient:telemetryClient, logPersonalInformation:true}, true );
         recognizer.recognize(context, properties, metrics).then(res => {
             if (!WithinDelta(expected, res, 0.1, false)) {
                 fs.outputJSONSync(newPath, res, { spaces: 2 });
@@ -880,7 +880,7 @@ class telemetryOverrideRecognizer extends LuisRecognizer {
 
 class overrideFillRecognizer extends LuisRecognizer {
     async onRecognizerResults(recognizerResult, turnContext, properties, metrics) {
-        var props = await this.fillLuisProperties(recognizerResult, turnContext, properties);
+        var props = await this.fillTelemetryProperties(recognizerResult, turnContext, properties);
         if (!("MyImportantProperty" in props)) {
             props["MyImportantProperty"] = "myImportantValue";
         }
