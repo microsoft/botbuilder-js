@@ -33,13 +33,13 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
     public readonly tokenCacheKey: string;
     private refreshingToken: Promise<Response> | null = null;
 
-    constructor(appId: string, appPassword: string, channelAuthTenant: string = null) {
+    constructor(appId: string, appPassword: string, channelAuthTenant?: string) {
         this.appId = appId;
         this.appPassword = appPassword;
         const tenant = channelAuthTenant && channelAuthTenant.length > 0
             ? channelAuthTenant
-            : "botframework.com";
-        this.oAuthEndpoint = Constants.ToChannelFromBotLoginUrlPrefix + tenant + '/oauth2/v2.0/token';
+            : Constants.DefaultChannelAuthTenant;
+        this.oAuthEndpoint = Constants.ToChannelFromBotLoginUrlPrefix + tenant + Constants.ToChannelFromBotTokenEndpointPath;
         this.tokenCacheKey = `${ appId }-cache`;
     }
 

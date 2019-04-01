@@ -12,6 +12,16 @@ export namespace Constants {
     export const ToChannelFromBotLoginUrlPrefix = 'https://login.microsoftonline.com/';
 
     /**
+     * TO CHANNEL FROM BOT: Login URL token endpoint path
+     */
+    export const ToChannelFromBotTokenEndpointPath = '/oauth2/v2.0/token';
+
+    /**
+     * TO CHANNEL FROM BOT: Default tenant from which to obtain a token for bot to channel communication
+     */
+    export const DefaultChannelAuthTenant = 'botframework.com';
+
+    /**
      * TO CHANNEL FROM BOT: OAuth scope to request
      */
     export const ToChannelFromBotOAuthScope = 'https://api.botframework.com/.default';
