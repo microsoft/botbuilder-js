@@ -328,7 +328,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
      * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
      */
     protected async onRecognizerResults(recognizerResult: RecognizerResult, turnContext: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number}): Promise<void> {
-        this.fillTelemetryProperties(recognizerResult, turnContext, telemetryProperties).then(props => {
+        await this.fillTelemetryProperties(recognizerResult, turnContext, telemetryProperties).then(props => {
             this.telemetryClient.trackEvent(
                 { 
                   name: LuisTelemetryConstants.luisResultEvent,

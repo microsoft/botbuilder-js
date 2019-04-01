@@ -115,7 +115,7 @@ function TestJson(file, done, includeAllIntents, includeInstance, telemetryClien
     var newPath = expectedPath + ".new";
     var context = new TestContext({ text: expected.text });
     var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, 
-        { includeAllIntents: includeAllIntents, includeInstanceData: includeInstance, telemetryClient: telemetryClient, logPersonalInformation: logPersonalInformation }, true, telemetryClient, logPersonalInformation);
+        { includeAllIntents: includeAllIntents, includeInstanceData: includeInstance, telemetryClient: telemetryClient, logPersonalInformation: logPersonalInformation }, true);
     recognizer.recognize(context, telemetryProperties, telemetryMetrics).then(res => {
         if (!WithinDelta(expected, res, 0.1, false)) {
             fs.outputJSONSync(newPath, res, { spaces: 2 });
