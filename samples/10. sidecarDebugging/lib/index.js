@@ -22,6 +22,12 @@ const server = restify.createServer();
 server.listen(process.env.PORT, () => {
     process.stdout.write(`Bot is listening on port: ${chalk.blue(server.address().port)}`);
 });
+server.opts('/api/messages', (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+    res.end();
+});
 server.post('/api/messages', (req, res) => {
     return adapter.processActivity(req, res, bot.onTurn.bind(bot)).catch(res.error);
 });
