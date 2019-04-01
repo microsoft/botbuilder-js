@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { AdaptiveDialog, BeginDialogRule, ChangeList, ChangeListType, SendActivity, EndDialog, IfProperty } from "botbuilder-rules";
+import { AdaptiveDialog, BeginDialogRule, ChangeList, ChangeListType, SendActivity, EndDialog, IfProperty } from "botbuilder-dialogs-adaptive";
 import { user } from "../../schema";
 import { getRecognizer } from "../recognizer";
 

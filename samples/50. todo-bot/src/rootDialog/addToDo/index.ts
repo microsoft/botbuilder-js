@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { AdaptiveDialog, IntentRule, CancelDialog, BeginDialogRule, SaveEntity, TextInput, ChangeList, ChangeListType, SendActivity, EndDialog } from "botbuilder-rules";
+import { AdaptiveDialog, IntentRule, CancelDialog, BeginDialogRule, SaveEntity, TextInput, ChangeList, ChangeListType, SendActivity, EndDialog } from "botbuilder-dialogs-adaptive";
 import { intents, events, variables, entities, user } from "../../schema";
 import { getRecognizer } from "../recognizer";
 

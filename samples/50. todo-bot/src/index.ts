@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { Bot } from 'botbuilder-rules';
+import { Bot } from 'botbuilder-dialogs-adaptive';
 import { RootDialog } from './rootDialog';
 
 // Create HTTP server.

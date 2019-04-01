@@ -1,5 +1,5 @@
 {
-  "name": "botbuilder-rules",
+  "name": "botbuilder-dialogs-declarative",
   "author": "Microsoft Corp.",
   "description": "Rule system for the Microsoft BotBuilder dialog system.",
   "version": "4.1.6",

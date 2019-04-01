@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState } from 'botbuilder';
-import { PlanningDialog, FallbackRule, SendActivity, StateMachineDialog, RegExpRecognizer, DoStepsRule, EmitEvent, BoolInput, IfProperty, SetProperty } from 'botbuilder-planning';
+import { PlanningDialog, FallbackRule, SendActivity, StateMachineDialog, RegExpRecognizer, DoStepsRule, EmitEvent, BoolInput, IfProperty } from 'botbuilder-dialogs-adaptive';
 
 // Create HTTP server.
 const server = restify.createServer();
