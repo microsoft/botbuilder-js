@@ -24,11 +24,11 @@
     "@types/html-entities": "^1.2.16",
     "@types/node": "^10.12.18",
     "@types/request-promise-native": "^1.0.10",
-    "azure-cognitiveservices-luis-runtime": "1.2.2",
+    "@azure/cognitiveservices-luis-runtime": "2.0.0",
     "botbuilder-core": "~4.1.6",
     "html-entities": "^1.2.1",
     "moment": "^2.20.1",
-    "ms-rest": "2.5.0",
+    "@azure/ms-rest-js": "1.8.1",
     "request": "^2.87.0",
     "request-promise-native": "1.0.5",
     "url-parse": "^1.4.4"

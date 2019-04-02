@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from 'azure-cognitiveservices-luis-runtime';
+import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
 
 import { RecognizerResult, TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
-import * as msRest from "ms-rest";
+import * as msRest from "@azure/ms-rest-js";
 import * as os from 'os';
 import * as Url from 'url-parse';
 import { TelemetryConstants } from 'botbuilder-core/lib/telemetryConstants';
@@ -430,8 +430,8 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
         // If the `error` received is a azure-cognitiveservices-luis-runtime error,
         // it may have a `response` property and `response.statusCode`.
         // If these properties exist, we should populate the error with a correct and informative error message.
-        if ((error as any).response && (error as any).response.statusCode) {
-            switch ((error as any).response.statusCode) {
+        if ((error as any).response && (error as any).response.status) {
+            switch ((error as any).response.status) {
                 case 400:
                     error.message = [
                         `Response 400: The request's body or parameters are incorrect,`,
@@ -458,7 +458,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
                     break;
                 default:
                     error.message = [
-                        `Response ${ (error as any).response.statusCode }: Unexpected status code received.`,
+                        `Response ${ (error as any).response.status }: Unexpected status code received.`,
                         `Please verify that your LUIS application is properly setup.`
                     ].join(' ');
             }
