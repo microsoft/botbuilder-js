@@ -4,7 +4,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const restify = require("restify");
 const botbuilder_1 = require("botbuilder");
-const botbuilder_rules_1 = require("botbuilder-rules");
+const botbuilder_dialogs_adaptive_1 = require("botbuilder-dialogs-adaptive");
+const lib_1 = require("../../../libraries/botbuilder-dialogs/lib");
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about .bot file its use and bot configuration.
 const adapter = new botbuilder_1.BotFrameworkAdapter({
@@ -18,8 +19,8 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
     console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
     console.log(`\nTo talk to your bot, open echobot.bot file in the Emulator.`);
 });
-// Create bot and bind to state storage
-const bot = new botbuilder_rules_1.Bot();
+// Create bots DialogManager and bind to state storage
+const bot = new lib_1.DialogManager();
 bot.storage = new botbuilder_1.MemoryStorage();
 // Listen for incoming activities.
 server.post('/api/messages', (req, res) => {
@@ -29,24 +30,24 @@ server.post('/api/messages', (req, res) => {
     });
 });
 // Initialize bots root dialog
-const dialogs = new botbuilder_rules_1.AdaptiveDialog();
+const dialogs = new botbuilder_dialogs_adaptive_1.AdaptiveDialog();
 bot.rootDialog = dialogs;
 // Greet the user
-dialogs.addRule(new botbuilder_rules_1.WelcomeRule([
-    new botbuilder_rules_1.SendActivity(`I'm a joke bot. To get started say "tell me a joke".`)
+dialogs.addRule(new botbuilder_dialogs_adaptive_1.WelcomeRule([
+    new botbuilder_dialogs_adaptive_1.SendActivity(`I'm a joke bot. To get started say "tell me a joke".`)
 ]));
 // Add a top level fallback rule to handle received messages
-dialogs.addRule(new botbuilder_rules_1.DefaultRule([
-    new botbuilder_rules_1.IfProperty('!user.name', [
-        new botbuilder_rules_1.TextInput('user.name', `Hi! what's your name?`)
+dialogs.addRule(new botbuilder_dialogs_adaptive_1.DefaultRule([
+    new botbuilder_dialogs_adaptive_1.IfProperty('!user.name', [
+        new botbuilder_dialogs_adaptive_1.TextInput('user.name', `Hi! what's your name?`)
     ]),
-    new botbuilder_rules_1.SendActivity(`Hi {user.name}. It's nice to meet you.`)
+    new botbuilder_dialogs_adaptive_1.SendActivity(`Hi {user.name}. It's nice to meet you.`)
 ]));
 // Tell the user a joke
-dialogs.recognizer = new botbuilder_rules_1.RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
-dialogs.addRule(new botbuilder_rules_1.IntentRule('#JokeIntent', [
-    new botbuilder_rules_1.SendActivity(`Why did the 🐔 cross the 🛣️?`),
-    new botbuilder_rules_1.WaitForInput(),
-    new botbuilder_rules_1.SendActivity(`To get to the other side...`)
+dialogs.recognizer = new botbuilder_dialogs_adaptive_1.RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
+dialogs.addRule(new botbuilder_dialogs_adaptive_1.IntentRule('#JokeIntent', [
+    new botbuilder_dialogs_adaptive_1.SendActivity(`Why did the 🐔 cross the 🛣️?`),
+    new botbuilder_dialogs_adaptive_1.WaitForInput(),
+    new botbuilder_dialogs_adaptive_1.SendActivity(`To get to the other side...`)
 ]));
 //# sourceMappingURL=index.js.map

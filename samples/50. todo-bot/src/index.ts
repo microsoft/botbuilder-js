@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { Bot } from 'botbuilder-dialogs-adaptive';
+import { DialogManager } from 'botbuilder-dialogs';
 import { RootDialog } from './rootDialog';
 
 // Create HTTP server.
@@ -21,8 +21,8 @@ const adapter = new BotFrameworkAdapter({
     appPassword: process.env.microsoftAppPassword,
 });
 
-// Create bot and bind to state storage
-const bot = new Bot();
+// Create bots DialogManager and bind to state storage
+const bot = new DialogManager();
 bot.storage = new MemoryStorage();
 bot.rootDialog = new RootDialog();
 

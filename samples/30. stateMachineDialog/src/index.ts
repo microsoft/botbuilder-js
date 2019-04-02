@@ -2,8 +2,9 @@
 // Licensed under the MIT License.
 
 import * as restify from 'restify';
-import { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState } from 'botbuilder';
-import { PlanningDialog, FallbackRule, SendActivity, StateMachineDialog, RegExpRecognizer, DoStepsRule, EmitEvent, BoolInput, IfProperty } from 'botbuilder-dialogs-adaptive';
+import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
+import { SendActivity, StateMachineDialog, RegExpRecognizer, EmitEvent, BoolInput, IfProperty, IntentRule } from 'botbuilder-dialogs-adaptive';
+import { DialogManager } from 'botbuilder-dialogs';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -20,45 +21,40 @@ const adapter = new BotFrameworkAdapter({
     appPassword: process.env.microsoftAppPassword,
 });
 
-// Initialize state storage
-const storage = new MemoryStorage();
-const userState = new UserState(storage);
-const convoState = new ConversationState(storage);
 
-// Listen for incoming requests.
+// Create bots DialogManager and bind to state storage
+const bot = new DialogManager();
+bot.storage = new MemoryStorage();
+
+// Listen for incoming activities.
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
-        // Route to main dialog.
-        await bot.run(context);
-
-        // Save state changes
-        await userState.saveChanges(context);
-        await convoState.saveChanges(context);
+        // Route activity to bot.
+        await bot.onTurn(context);
     });
 });
 
-// Create the main planning dialog and bind to storage.
-const bot = new StateMachineDialog('main', 'offHook');
-bot.userState = userState.createProperty('user');
-bot.botState = convoState.createProperty('bot');
+// Initialize bots root dialog
+const dialogs = new StateMachineDialog('main', 'offHook');
+bot.rootDialog = dialogs;
 
 // offHook state
-const offHook = bot.addState('offHook', [
+const offHook = dialogs.addState('offHook', [
     new SendActivity(`☎️ off hook`),
     new SendActivity(`say "place a call" to get started.`)
 ]);
 offHook.permit('callDialed', 'ringing');
 offHook.recognizer = new RegExpRecognizer().addIntent('PlaceCallIntent', /place .*call/i);
-offHook.addRule(new DoStepsRule('PlaceCallIntent', [
+offHook.addRule(new IntentRule('PlaceCallIntent', [
     new EmitEvent('callDialed')
 ]));
 
 
 // ringing state
-const ringing = bot.addState('ringing', [
+const ringing = dialogs.addState('ringing', [
     new SendActivity(`☎️ ring... ring...`),
     new BoolInput('dialog.answer', `Would you like to answer it?`, true),
-    new IfProperty(async (state) => state.getValue('dialog.answer'), [
+    new IfProperty('dialog.answer', [
         new EmitEvent('callConnected')
     ])
 ]);
@@ -66,10 +62,10 @@ ringing.permit('callConnected', 'connected');
 
 
 // connected state
-const connected = bot.addState('connected', [
+const connected = dialogs.addState('connected', [
     new SendActivity(`📞 talk... talk... talk... ☹️`),
     new BoolInput('dialog.hangup', `Heard enough yet?`, true),
-    new IfProperty(async (state) => state.getValue('dialog.hangup'), [
+    new IfProperty('dialog.hangup', [
         new EmitEvent('callEnded')
     ])
 ]);

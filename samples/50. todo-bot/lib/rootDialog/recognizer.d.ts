@@ -1,2 +1,2 @@
-import { Recognizer } from 'botbuilder-rules';
+import { Recognizer } from 'botbuilder-dialogs-adaptive';
 export declare function getRecognizer(): Recognizer;

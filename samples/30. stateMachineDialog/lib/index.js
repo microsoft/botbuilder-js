@@ -4,7 +4,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const restify = require("restify");
 const botbuilder_1 = require("botbuilder");
-const botbuilder_planning_1 = require("botbuilder-planning");
+const botbuilder_dialogs_adaptive_1 = require("botbuilder-dialogs-adaptive");
+const botbuilder_dialogs_1 = require("botbuilder-dialogs");
 // Create HTTP server.
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, () => {
@@ -18,49 +19,44 @@ const adapter = new botbuilder_1.BotFrameworkAdapter({
     appId: process.env.microsoftAppID,
     appPassword: process.env.microsoftAppPassword,
 });
-// Initialize state storage
-const storage = new botbuilder_1.MemoryStorage();
-const userState = new botbuilder_1.UserState(storage);
-const convoState = new botbuilder_1.ConversationState(storage);
-// Listen for incoming requests.
+// Create bots DialogManager and bind to state storage
+const bot = new botbuilder_dialogs_1.DialogManager();
+bot.storage = new botbuilder_1.MemoryStorage();
+// Listen for incoming activities.
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
-        // Route to main dialog.
-        await bot.run(context);
-        // Save state changes
-        await userState.saveChanges(context);
-        await convoState.saveChanges(context);
+        // Route activity to bot.
+        await bot.onTurn(context);
     });
 });
-// Create the main planning dialog and bind to storage.
-const bot = new botbuilder_planning_1.StateMachineDialog('main', 'offHook');
-bot.userState = userState.createProperty('user');
-bot.botState = convoState.createProperty('bot');
+// Initialize bots root dialog
+const dialogs = new botbuilder_dialogs_adaptive_1.StateMachineDialog('main', 'offHook');
+bot.rootDialog = dialogs;
 // offHook state
-const offHook = bot.addState('offHook', [
-    new botbuilder_planning_1.SendActivity(`☎️ off hook`),
-    new botbuilder_planning_1.SendActivity(`say "place a call" to get started.`)
+const offHook = dialogs.addState('offHook', [
+    new botbuilder_dialogs_adaptive_1.SendActivity(`☎️ off hook`),
+    new botbuilder_dialogs_adaptive_1.SendActivity(`say "place a call" to get started.`)
 ]);
 offHook.permit('callDialed', 'ringing');
-offHook.recognizer = new botbuilder_planning_1.RegExpRecognizer().addIntent('PlaceCallIntent', /place .*call/i);
-offHook.addRule(new botbuilder_planning_1.DoStepsRule('PlaceCallIntent', [
-    new botbuilder_planning_1.EmitEvent('callDialed')
+offHook.recognizer = new botbuilder_dialogs_adaptive_1.RegExpRecognizer().addIntent('PlaceCallIntent', /place .*call/i);
+offHook.addRule(new botbuilder_dialogs_adaptive_1.IntentRule('PlaceCallIntent', [
+    new botbuilder_dialogs_adaptive_1.EmitEvent('callDialed')
 ]));
 // ringing state
-const ringing = bot.addState('ringing', [
-    new botbuilder_planning_1.SendActivity(`☎️ ring... ring...`),
-    new botbuilder_planning_1.BoolInput('dialog.answer', `Would you like to answer it?`, true),
-    new botbuilder_planning_1.IfProperty(async (state) => state.getValue('dialog.answer'), [
-        new botbuilder_planning_1.EmitEvent('callConnected')
+const ringing = dialogs.addState('ringing', [
+    new botbuilder_dialogs_adaptive_1.SendActivity(`☎️ ring... ring...`),
+    new botbuilder_dialogs_adaptive_1.BoolInput('dialog.answer', `Would you like to answer it?`, true),
+    new botbuilder_dialogs_adaptive_1.IfProperty('dialog.answer', [
+        new botbuilder_dialogs_adaptive_1.EmitEvent('callConnected')
     ])
 ]);
 ringing.permit('callConnected', 'connected');
 // connected state
-const connected = bot.addState('connected', [
-    new botbuilder_planning_1.SendActivity(`📞 talk... talk... talk... ☹️`),
-    new botbuilder_planning_1.BoolInput('dialog.hangup', `Heard enough yet?`, true),
-    new botbuilder_planning_1.IfProperty(async (state) => state.getValue('dialog.hangup'), [
-        new botbuilder_planning_1.EmitEvent('callEnded')
+const connected = dialogs.addState('connected', [
+    new botbuilder_dialogs_adaptive_1.SendActivity(`📞 talk... talk... talk... ☹️`),
+    new botbuilder_dialogs_adaptive_1.BoolInput('dialog.hangup', `Heard enough yet?`, true),
+    new botbuilder_dialogs_adaptive_1.IfProperty('dialog.hangup', [
+        new botbuilder_dialogs_adaptive_1.EmitEvent('callEnded')
     ])
 ]);
 connected.permit('callEnded', 'offHook');

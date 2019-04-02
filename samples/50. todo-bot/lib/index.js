@@ -4,7 +4,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const restify = require("restify");
 const botbuilder_1 = require("botbuilder");
-const botbuilder_rules_1 = require("botbuilder-rules");
+const botbuilder_dialogs_1 = require("botbuilder-dialogs");
 const rootDialog_1 = require("./rootDialog");
 // Create HTTP server.
 const server = restify.createServer();
@@ -19,8 +19,8 @@ const adapter = new botbuilder_1.BotFrameworkAdapter({
     appId: process.env.microsoftAppID,
     appPassword: process.env.microsoftAppPassword,
 });
-// Create bot and bind to state storage
-const bot = new botbuilder_rules_1.Bot();
+// Create bots DialogManager and bind to state storage
+const bot = new botbuilder_dialogs_1.DialogManager();
 bot.storage = new botbuilder_1.MemoryStorage();
 bot.rootDialog = new rootDialog_1.RootDialog();
 // Listen for incoming activities.

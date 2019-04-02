@@ -1,15 +1,19 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogSet, DialogState, DialogTurnResult, Configurable, StateMap, DialogContext, DialogTurnStatus } from 'botbuilder-dialogs';
 import { Storage, Activity, TurnContext, ActivityTypes, StoreItems, ConversationReference, ChannelAccount } from 'botbuilder-core';
-import { BotRunAdapter } from './internal/botRunAdapter';
+import { DialogManagerAdapter } from './internal';
+import { DialogState, DialogContext } from './dialogContext';
+import { DialogTurnResult, Dialog, DialogTurnStatus } from './dialog';
+import { Configurable } from './configurable';
+import { DialogSet } from './dialogSet';
+import { StateMap } from './stateMap';
 
-export interface StoredBotState {
+export interface PersistedState {
     userState: {
         eTag?: string;
     };
@@ -20,13 +24,13 @@ export interface StoredBotState {
     };
 }
 
-export interface BotTurnResult {
+export interface DialogManagerResult {
     turnResult: DialogTurnResult;
     activities?: Partial<Activity>[];
-    newState?: StoredBotState;
+    newState?: PersistedState;
 }
 
-export interface BotStateStorageKeys {
+export interface PersistedStateKeys {
     userState: string;
     conversationState: string;
 }
@@ -48,7 +52,7 @@ export interface BotConfiguration {
     storage?: Storage;
 }
 
-export class Bot extends Configurable  {
+export class DialogManager extends Configurable  {
 	public namespace = '';
     private main: DialogSet;
     private mainId: string;
@@ -86,16 +90,16 @@ export class Bot extends Configurable  {
         return super.configure(config);
     }
 
-    public async onTurn(context: TurnContext, state?: StoredBotState): Promise<BotTurnResult> {
+    public async onTurn(context: TurnContext, state?: PersistedState): Promise<DialogManagerResult> {
         // Log start of turn
         console.log('------------:');
 
         // Load state from storage if needed
         let saveState = false;
-        const keys = Bot.getStorageKeys(context);
+        const keys = DialogManager.getKeys(context);
         if (!state) {
-            if (!this.storage) { throw new Error(`Bot: unable to load the bots state. Bot.storage not assigned.`) }
-            state = await Bot.loadBotState(this.storage, keys);
+            if (!this.storage) { throw new Error(`DialogManager: unable to load the bots state. Bot.storage not assigned.`) }
+            state = await DialogManager.loadState(this.storage, keys);
             saveState = true;
         }
 
@@ -130,20 +134,20 @@ export class Bot extends Configurable  {
         }
 
         // Save snapshot of final state for the turn
-        context.turnState.set(Bot.BotStateSnapshotKey, newState);
+        context.turnState.set(DialogManager.PersistedStateSnapshotKey, newState);
 
         // Save state if loaded from storage
         if (saveState) {
-            await Bot.saveBotState(this.storage, keys, newState, state, '*');
+            await DialogManager.saveState(this.storage, keys, newState, state, '*');
             return { turnResult: result };
         } else {
             return { turnResult: result, newState: newState };
         }
     }
 
-    public async run(activity: Partial<Activity>, state?: StoredBotState): Promise<BotTurnResult> {
+    public async run(activity: Partial<Activity>, state?: PersistedState): Promise<DialogManagerResult> {
         // Initialize context object
-        const adapter = new BotRunAdapter();
+        const adapter = new DialogManagerAdapter();
         const context = new TurnContext(adapter, activity);
         const result = await this.onTurn(context, state);
         result.activities = adapter.activities;
@@ -155,9 +159,9 @@ export class Bot extends Configurable  {
     // State loading
     //---------------------------------------------------------------------------------------------
 
-    static BotStateSnapshotKey = Symbol('BotStateSnapshot');
+    static PersistedStateSnapshotKey = Symbol('PersistedStateSnapshot');
 
-    static async loadBotState(storage: Storage, keys: BotStateStorageKeys): Promise<StoredBotState> {
+    static async loadState(storage: Storage, keys: PersistedStateKeys): Promise<PersistedState> {
         const data = await storage.read([keys.userState, keys.conversationState]);
         return {
             userState: data[keys.userState] || {},
@@ -165,7 +169,7 @@ export class Bot extends Configurable  {
         };
     }
 
-    static async saveBotState(storage: Storage, keys: BotStateStorageKeys, newState: StoredBotState, oldState?: StoredBotState, eTag?: string): Promise<void> {
+    static async saveState(storage: Storage, keys: PersistedStateKeys, newState: PersistedState, oldState?: PersistedState, eTag?: string): Promise<void> {
         // Check for state changes
         let save = false;
         const changes: StoreItems = {};
@@ -196,7 +200,7 @@ export class Bot extends Configurable  {
         }
     }
 
-    static getStorageKeys(context: TurnContext): BotStateStorageKeys {
+    static getKeys(context: TurnContext): PersistedStateKeys {
         // Patch User ID if needed
         const activity = context.activity;
         const reference = TurnContext.getConversationReference(activity);
@@ -210,19 +214,19 @@ export class Bot extends Configurable  {
         }
 
         // Return keys
-        return Bot.getStorageKeysForReference(reference);
+        return DialogManager.getKeysForReference(reference);
 
     }
 
-    static getStorageKeysForReference(reference: Partial<ConversationReference>, namespace: string = ''): BotStateStorageKeys {
+    static getKeysForReference(reference: Partial<ConversationReference>, namespace: string = ''): PersistedStateKeys {
         // Get channel, user, and conversation ID's
         const channelId: string = reference.channelId;
         let userId: string = reference.user && reference.user.id ? reference.user.id : undefined;
         const conversationId: string = reference.conversation && reference.conversation.id ? reference.conversation.id : undefined;
 
         // Verify ID's found
-        if (!userId) { throw new Error(`Bot: unable to load/save the bots state. The users ID couldn't be found.`) }
-        if (!conversationId) { throw new Error(`Bot: unable to load/save the bots state. The conversations ID couldn't be found.`) }
+        if (!userId) { throw new Error(`DialogManager: unable to load/save the bots state. The users ID couldn't be found.`) }
+        if (!conversationId) { throw new Error(`DialogManager: unable to load/save the bots state. The conversations ID couldn't be found.`) }
 
         // Return storage keys
         return {

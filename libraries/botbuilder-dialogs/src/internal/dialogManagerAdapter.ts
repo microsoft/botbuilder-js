@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10,7 +10,7 @@ import { BotAdapter, TurnContext, Activity, ResourceResponse, ConversationRefere
 /**
  * @private
  */
-export class BotRunAdapter extends BotAdapter {
+export class DialogManagerAdapter extends BotAdapter {
     public readonly activities: Partial<Activity>[] = [];
 
     public async sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {

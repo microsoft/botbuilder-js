@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const botbuilder_rules_1 = require("botbuilder-rules");
+const botbuilder_dialogs_1 = require("botbuilder-dialogs");
 const botbuilder_core_1 = require("botbuilder-core");
 const { MemoryStorage } = require('botbuilder-core');
 const restify = require('restify');
@@ -16,7 +16,7 @@ const adapter = new BotFrameworkAdapter({
     appPassword: process.env.MICROSOFT_APP_PASSWORD,
 });
 if (process.env.NODE_ENV === 'development') {
-    new botbuilder_rules_1.BotDebugger(memoryStorage, adapter);
+    new botbuilder_dialogs_1.BotDebugger(memoryStorage, adapter);
 }
 const server = restify.createServer();
 server.listen(process.env.PORT, () => {

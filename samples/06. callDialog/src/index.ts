@@ -3,7 +3,8 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { Bot, AdaptiveDialog, DefaultRule, SendActivity, TextInput, IfProperty, WelcomeRule, RegExpRecognizer, IntentRule, WaitForInput, CallDialog, BeginDialogRule, EndDialog } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, DefaultRule, SendActivity, TextInput, IfProperty, WelcomeRule, RegExpRecognizer, IntentRule, WaitForInput, CallDialog, BeginDialogRule, EndDialog } from 'botbuilder-dialogs-adaptive';
+import { DialogManager } from 'botbuilder-dialogs';
 
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about .bot file its use and bot configuration.
@@ -20,8 +21,8 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
     console.log(`\nTo talk to your bot, open echobot.bot file in the Emulator.`);
 });
 
-// Create bot and bind to state storage
-const bot = new Bot();
+// Create bots DialogManager and bind to state storage
+const bot = new DialogManager();
 bot.storage = new MemoryStorage();
 
 // Listen for incoming activities.
