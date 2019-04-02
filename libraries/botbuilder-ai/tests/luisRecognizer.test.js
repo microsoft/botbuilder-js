@@ -129,7 +129,7 @@ function TestJson(file, done, includeAllIntents, includeInstance, telemetryClien
 }
 
 describe('LuisRecognizer', function () {
-    this.timeout(10000);
+    this.timeout(15000);
 
     if (!mockLuis && endpointKey === "MockedKey") {
         console.warn('WARNING: skipping LuisRecognizer test suite because the LUISAPPKEY environment variable is not defined');
