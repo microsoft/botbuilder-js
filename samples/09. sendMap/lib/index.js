@@ -4,7 +4,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const restify = require("restify");
 const botbuilder_1 = require("botbuilder");
-const botbuilder_rules_1 = require("botbuilder-rules");
+const botbuilder_dialogs_adaptive_1 = require("botbuilder-dialogs-adaptive");
+const lib_1 = require("../../../libraries/botbuilder-dialogs/lib");
 // Create HTTP server.
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, () => {
@@ -18,8 +19,8 @@ const adapter = new botbuilder_1.BotFrameworkAdapter({
     appId: process.env.microsoftAppID,
     appPassword: process.env.microsoftAppPassword,
 });
-// Create bot and bind to state storage
-const bot = new botbuilder_rules_1.Bot();
+// Create bots DialogManager and bind to state storage
+const bot = new lib_1.DialogManager();
 bot.storage = new botbuilder_1.MemoryStorage();
 // Listen for incoming activities.
 server.post('/api/messages', (req, res) => {
@@ -30,11 +31,11 @@ server.post('/api/messages', (req, res) => {
 });
 const bingMapsKey = 'AlUaNNIoQRik0DZRUj518gEoFeVSxRjo5MTv6JDU1GPX_djqyMFRwIBv89nlfJM6';
 // Initialize bots root dialog
-const dialogs = new botbuilder_rules_1.AdaptiveDialog();
+const dialogs = new botbuilder_dialogs_adaptive_1.AdaptiveDialog();
 bot.rootDialog = dialogs;
 // Add a default rule for handling incoming messages
-dialogs.addRule(new botbuilder_rules_1.DefaultRule([
-    new botbuilder_rules_1.SetProperty(`conversation.mapPins = ["47.6221,-122.3540;46;1", "47.6205,-122.3493;46;2"]`),
-    new botbuilder_rules_1.SendMap(bingMapsKey, botbuilder_rules_1.MapType.aerialWithLabels, 'conversation.mapPins')
+dialogs.addRule(new botbuilder_dialogs_adaptive_1.DefaultRule([
+    new botbuilder_dialogs_adaptive_1.SetProperty(`conversation.mapPins = ["47.6221,-122.3540;46;1", "47.6205,-122.3493;46;2"]`),
+    new botbuilder_dialogs_adaptive_1.SendMap(bingMapsKey, botbuilder_dialogs_adaptive_1.MapType.aerialWithLabels, 'conversation.mapPins')
 ]));
 //# sourceMappingURL=index.js.map

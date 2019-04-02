@@ -4,7 +4,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const restify = require("restify");
 const botbuilder_1 = require("botbuilder");
-const botbuilder_rules_1 = require("botbuilder-rules");
+const botbuilder_dialogs_adaptive_1 = require("botbuilder-dialogs-adaptive");
+const lib_1 = require("../../../libraries/botbuilder-dialogs/lib");
 // Create HTTP server.
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, () => {
@@ -18,8 +19,8 @@ const adapter = new botbuilder_1.BotFrameworkAdapter({
     appId: process.env.microsoftAppID,
     appPassword: process.env.microsoftAppPassword,
 });
-// Create bot and bind to state storage
-const bot = new botbuilder_rules_1.Bot();
+// Create bots DialogManager and bind to state storage
+const bot = new lib_1.DialogManager();
 bot.storage = new botbuilder_1.MemoryStorage();
 // Listen for incoming activities.
 server.post('/api/messages', (req, res) => {
@@ -29,15 +30,15 @@ server.post('/api/messages', (req, res) => {
     });
 });
 // Initialize bots root dialog
-const dialogs = new botbuilder_rules_1.AdaptiveDialog();
+const dialogs = new botbuilder_dialogs_adaptive_1.AdaptiveDialog();
 bot.rootDialog = dialogs;
 // Add a default rule for handling incoming messages
-dialogs.addRule(new botbuilder_rules_1.DefaultRule([
-    new botbuilder_rules_1.CodeStep(async (dc) => {
+dialogs.addRule(new botbuilder_dialogs_adaptive_1.DefaultRule([
+    new botbuilder_dialogs_adaptive_1.CodeStep(async (dc) => {
         const count = dc.state.getValue('conversation.count') || 0;
         dc.state.setValue('conversation.count', count + 1);
         return await dc.endDialog();
     }),
-    new botbuilder_rules_1.SendActivity('{conversation.count}: You said: {utterance}')
+    new botbuilder_dialogs_adaptive_1.SendActivity('{conversation.count}: You said: {utterance}')
 ]));
 //# sourceMappingURL=index.js.map

@@ -3,7 +3,8 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { Bot, AdaptiveDialog, DefaultRule, SendActivity, IfProperty, TextInput, WelcomeRule } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, DefaultRule, SendActivity, IfProperty, TextInput, WelcomeRule } from 'botbuilder-dialogs-adaptive';
+import { DialogManager } from 'botbuilder-dialogs';
 
 
 // Create adapter.
@@ -21,8 +22,8 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
     console.log(`\nTo talk to your bot, open echobot.bot file in the Emulator.`);
 });
 
-// Create bot and bind to state storage
-const bot = new Bot();
+// Create bots DialogManager and bind to state storage
+const bot = new DialogManager();
 bot.storage = new MemoryStorage();
 
 // Listen for incoming activities.

@@ -7,12 +7,14 @@
  */
 export * from './choices';
 export * from './prompts';
+export * from './botDebugger';
 export * from './componentDialog';
 export * from './configurable';
 export * from './dialog';
 export * from './dialogCommand';
 export * from './dialogContext';
 export * from './dialogContextState';
+export * from './dialogManager';
 export * from './dialogSet';
 export * from './stateMap';
 export * from './waterfallDialog';

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { RegExpRecognizer, Recognizer } from 'botbuilder-rules';
+import { RegExpRecognizer, Recognizer } from 'botbuilder-dialogs-adaptive';
 import { intents } from '../schema';
 
 export function getRecognizer(): Recognizer {

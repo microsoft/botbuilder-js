@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -14,7 +14,7 @@ import {
 	Storage,
 	TurnContext
 } from 'botbuilder-core';
-import {Bot, StoredBotState} from './bot';
+import {DialogManager, PersistedState} from './dialogManager';
 import * as crypto from 'crypto';
 import {ConnectorClient} from 'botframework-connector';
 import * as msRest from "@azure/ms-rest-js";
@@ -140,10 +140,10 @@ export class BotDebugger extends BotAdapterSet {
 	 *
 	 * @param reference The ConversationReference to load the StoredBotState from.
 	 */
-	public async loadBotState(reference: Partial<ConversationReference>): Promise<StoredBotState> {
+	public async loadBotState(reference: Partial<ConversationReference>): Promise<PersistedState> {
 		// Get storage keys and read state
-		const keys = Bot.getStorageKeysForReference(reference);
-		return await Bot.loadBotState(this.stateStorage, keys);
+		const keys = DialogManager.getKeysForReference(reference);
+		return await DialogManager.loadState(this.stateStorage, keys);
 	}
 
 	/**
@@ -156,10 +156,10 @@ export class BotDebugger extends BotAdapterSet {
 	 * @param reference The ConversationReference containing the bot state
 	 * @param state Teh StoredBot state to save
 	 */
-	public async saveBotState(reference: Partial<ConversationReference>, state: StoredBotState): Promise<void> {
+	public async saveBotState(reference: Partial<ConversationReference>, state: PersistedState): Promise<void> {
 		// Get storage keys and write state
-		const keys = Bot.getStorageKeysForReference(reference);
-		return await Bot.saveBotState(this.stateStorage, keys, state);
+		const keys = DialogManager.getKeysForReference(reference);
+		return await DialogManager.saveState(this.stateStorage, keys, state);
 	}
 
 	/**
@@ -182,7 +182,7 @@ export class BotDebugger extends BotAdapterSet {
 						await context.sendActivity(BotDebugger.trace(state, 'https://www.botframework.com/schemas/botState', 'BotState', 'Bot State'));
 						break;
 					case 'saveBotState':
-						await this.saveBotState(relatesTo, command.value as StoredBotState);
+						await this.saveBotState(relatesTo, command.value as PersistedState);
 						break;
 				}
 				return;
@@ -233,7 +233,7 @@ export class BotDebugger extends BotAdapterSet {
 			// Dump debug info to emulator
 			if (debugging) {
 				// Append snapshot of turns final bot state to log
-				let state = context.turnState.get(Bot.BotStateSnapshotKey);
+				let state = context.turnState.get(DialogManager.PersistedStateSnapshotKey);
 				if (!state) {
 					state = await this.loadBotState(TurnContext.getConversationReference(context.activity));
 				}
