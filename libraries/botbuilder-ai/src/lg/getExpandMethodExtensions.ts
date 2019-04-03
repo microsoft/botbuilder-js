@@ -1,11 +1,11 @@
 import { GetMethodDelegate, MethodBinder } from 'botframework-expression';
-import { Evaluator } from './evaluator';
+import { Expander } from './expander';
 
 export class GetMethodExtensions {
-    private readonly evaluator: Evaluator;
+    private readonly expander: Expander;
 
-    public constructor(evaluator: Evaluator) {
-        this.evaluator = evaluator;
+    public constructor(expander: Expander) {
+        this.expander = expander;
     }
 
     public GetMethodX: GetMethodDelegate = (name: string) => {
@@ -66,14 +66,14 @@ export class GetMethodExtensions {
             const li: any[] = paramters[0];
             const func: any = paramters[1];
 
-            if (!this.evaluator.Context.TemplateContexts.has(func)) {
+            if (!this.expander.Context.TemplateContexts.has(func)) {
                 throw new Error(`No such template defined: ${func}`);
             }
 
             return li.map((x: any) => {
-                const newScope: any = this.evaluator.ConstructScope(func, [x]);
+                const newScope: any = this.expander.ConstructScope(func, [x]);
 
-                return this.evaluator.EvaluateTemplate(func, newScope);
+                return this.expander.ExpandTemplate(func, newScope)[0];
             });
 
         }
@@ -87,14 +87,14 @@ export class GetMethodExtensions {
             const li: any[] = paramters[0];
             const func = paramters[1];
 
-            if (!this.evaluator.Context.TemplateContexts.has(func)) {
+            if (!this.expander.Context.TemplateContexts.has(func)) {
                 throw new Error(`No such template defined: ${func}`);
             }
 
             const result = li.map((x: any) => {
-                const newScope: any = this.evaluator.ConstructScope(func, [x]);
+                const newScope: any = this.expander.ConstructScope(func, [x]);
 
-                return this.evaluator.EvaluateTemplate(func, newScope);
+                return this.expander.ExpandTemplate(func, newScope)[0];
             });
 
             const newParameter: any = paramters.slice(1);
