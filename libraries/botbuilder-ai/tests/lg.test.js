@@ -137,18 +137,18 @@ describe('LG', function () {
     it('TestMultiLine',function(){
         var engine = TemplateEngine.FromFile(GetExampleFilePath("MultilineTextForAdaptiveCard.lg"));
         var evaled1 = engine.EvaluateTemplate("wPhrase", "");
-        var options1 = ["\r\ncardContent\r\n","hello"];
+        var options1 = ["\r\ncardContent\r\n","hello","\ncardContent\n"];
         assert.strictEqual(options1.includes(evaled1), true, `1.Evaled is ${evaled1}`);
 
          var evaled2 = engine.EvaluateTemplate("nameTemplate", {name:"N"});
-        var options2 = ["\r\nN\r\n","N"];
+        var options2 = ["\r\nN\r\n","N","\nN\n"];
         assert.strictEqual(options2.includes(evaled2), true, `2.Evaled is ${evaled2}`);
 
         var evaled3 = engine.EvaluateTemplate("adaptivecardsTemplate", "");
         console.log(evaled3);
 
         var evaled4 = engine.EvaluateTemplate("refTemplate", "");
-        var options4 = ["\r\nhi\r\n"];
+        var options4 = ["\r\nhi\r\n","\nhi\n"];
         assert.strictEqual(options4.includes(evaled4), true, `4.Evaled is ${evaled4}`);
     });
 
