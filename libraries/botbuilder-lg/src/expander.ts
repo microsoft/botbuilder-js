@@ -78,10 +78,13 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         const caseRules: lp.CaseRuleContext[] = ctx.conditionalTemplateBody()
                         .caseRule();
         for (const caseRule of caseRules) {
-            const conditionExpression: string = caseRule.caseCondition()
-                                        .EXPRESSION().text;
-            if (this.EvalCondition(conditionExpression)) {
-                return this.visit(caseRule.normalTemplateBody());
+            if (caseRule.caseCondition().EXPRESSION() !== undefined
+                && caseRule.caseCondition().EXPRESSION().length > 0) {
+                const conditionExpression: string = caseRule.caseCondition()
+                    .EXPRESSION(0).text;
+                if (this.EvalCondition(conditionExpression)) {
+                    return this.visit(caseRule.normalTemplateBody());
+                }
             }
         }
 

@@ -52,15 +52,18 @@ export class TemplateExtractor extends AbstractParseTreeVisitor<Map<string, any>
         let result: Map<string, any> = new Map<string, any>();
         const caseRules: lp.CaseRuleContext[] = context.conditionalTemplateBody().caseRule();
         for (const caseRule of caseRules) {
-            const conditionExpression: string = caseRule.caseCondition()
-                                        .EXPRESSION().text;
-            let childTemplateBodyResult: string[] = [];
-            const templateBodies = this.visit(caseRule.normalTemplateBody());
-            for (const templateBody of templateBodies) {
-                childTemplateBodyResult.push(templateBody[0]);
-            }
+            if (caseRule.caseCondition().EXPRESSION() !== undefined
+                && caseRule.caseCondition().EXPRESSION().length > 0) {
+                const conditionExpression: string = caseRule.caseCondition()
+                    .EXPRESSION(0).text;
+                let childTemplateBodyResult: string[] = [];
+                const templateBodies = this.visit(caseRule.normalTemplateBody());
+                for (const templateBody of templateBodies) {
+                    childTemplateBodyResult.push(templateBody[0]);
+                }
 
-            result.set(conditionExpression, childTemplateBodyResult);
+                result.set(conditionExpression, childTemplateBodyResult);
+            }
         }
 
         if (context.conditionalTemplateBody() !== undefined && context.conditionalTemplateBody().defaultRule() !== undefined) {

@@ -59,18 +59,23 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         return result;
     }
 
-    public visitConditionalBody(ctx: lp.ConditionalBodyContext) : string[] {
+    public visitConditionalBody(ctx: lp.ConditionalBodyContext): string[] {
         let result: string[] = [];
 
         const caseRules: lp.CaseRuleContext[] = ctx.conditionalTemplateBody().caseRule();
         for (const caseRule of caseRules) {
-            const conditionExpression: string = caseRule.caseCondition()
-                                        .EXPRESSION().text;
-            const childConditionResult: string[] = this.AnalyzeExpression(conditionExpression);
-            result = result.concat(childConditionResult);
+            if (caseRule.caseCondition().EXPRESSION() !== undefined
+                && caseRule.caseCondition().EXPRESSION().length > 0) {
+                const conditionExpression: string = caseRule.caseCondition()
+                    .EXPRESSION(0).text;
+                const childConditionResult: string[] = this.AnalyzeExpression(conditionExpression);
+                result = result.concat(childConditionResult);
+            }
 
-            const childTemplateBodyResult: string[] = this.visit(caseRule.normalTemplateBody());
-            result = result.concat(childTemplateBodyResult);
+            if (caseRule.normalTemplateBody() !== undefined) {
+                const childTemplateBodyResult: string[] = this.visit(caseRule.normalTemplateBody());
+                result = result.concat(childTemplateBodyResult);
+            }
         }
 
         if (ctx.conditionalTemplateBody() !== undefined && ctx.conditionalTemplateBody().defaultRule() !== undefined) {

@@ -1,4 +1,4 @@
-// Generated from resource/LGFileLexer.g4 by ANTLR 4.6-SNAPSHOT
+// Generated from ../LGFileLexer.g4 by ANTLR 4.6-SNAPSHOT
 
 
 import { ATN } from "antlr4ts/atn/ATN";
@@ -74,8 +74,8 @@ export class LGFileLexer extends Lexer {
 	// tslint:enable:no-trailing-whitespace
 
 
-	  bool ignoreWS = true;             // usually we ignore whitespace, but inside template, whitespace is significant
-	  bool expectCaseOrDefault = false; // whethe we are expecting CASE: or DEFAULT:
+	  ignoreWS = true;             // usually we ignore whitespace, but inside template, whitespace is significant
+	  expectCaseOrDefault = false; // whethe we are expecting CASE: or DEFAULT:
 
 
 	constructor(input: CharStream) {
@@ -142,70 +142,70 @@ export class LGFileLexer extends Lexer {
 	private DASH_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 0:
-			expectCaseOrDefault = true;
+			this.expectCaseOrDefault = true;
 			break;
 		}
 	}
 	private NEWLINE_IN_BODY_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 1:
-			ignoreWS = true;
+			this.ignoreWS = true;
 			break;
 		}
 	}
 	private CASE_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 2:
-			 ignoreWS = true;
+			 this.ignoreWS = true;
 			break;
 		}
 	}
 	private DEFAULT_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 3:
-			 ignoreWS = true;
+			 this.ignoreWS = true;
 			break;
 		}
 	}
 	private MULTI_LINE_TEXT_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 4:
-			 ignoreWS = false; expectCaseOrDefault = false;
+			 this.ignoreWS = false; this.expectCaseOrDefault = false;
 			break;
 		}
 	}
 	private ESCAPE_CHARACTER_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 5:
-			 ignoreWS = false; expectCaseOrDefault = false;
+			 this.ignoreWS = false; this.expectCaseOrDefault = false;
 			break;
 		}
 	}
 	private EXPRESSION_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 6:
-			 ignoreWS = false; expectCaseOrDefault = false;
+			 this.ignoreWS = false; this.expectCaseOrDefault = false;
 			break;
 		}
 	}
 	private TEMPLATE_REF_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 7:
-			 ignoreWS = false; expectCaseOrDefault = false;
+			 this.ignoreWS = false; this.expectCaseOrDefault = false;
 			break;
 		}
 	}
 	private TEXT_SEPARATOR_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 8:
-			 ignoreWS = false; expectCaseOrDefault = false;
+			 this.ignoreWS = false; this.expectCaseOrDefault = false;
 			break;
 		}
 	}
 	private TEXT_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 9:
-			 ignoreWS = false; expectCaseOrDefault = false;
+			 this.ignoreWS = false; this.expectCaseOrDefault = false;
 			break;
 		}
 	}
@@ -226,21 +226,21 @@ export class LGFileLexer extends Lexer {
 	private WS_IN_BODY_IGNORED_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 0:
-			return ignoreWS;
+			return this.ignoreWS;
 		}
 		return true;
 	}
 	private CASE_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 1:
-			return expectCaseOrDefault;
+			return this.expectCaseOrDefault;
 		}
 		return true;
 	}
 	private DEFAULT_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 2:
-			return expectCaseOrDefault;
+			return this.expectCaseOrDefault;
 		}
 		return true;
 	}
