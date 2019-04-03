@@ -1,6 +1,6 @@
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree';
-import * as lp from './lGFileParser';
-import { LGFileParserVisitor } from './LGFileParserVisitor';
+import * as lp from './generator/LGFileParser';
+import { LGFileParserVisitor } from './generator/LGFileParserVisitor';
 import { EvaluationContext } from './templateEngine';
 
 export class TemplateExtractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGFileParserVisitor<Map<string, any>> {

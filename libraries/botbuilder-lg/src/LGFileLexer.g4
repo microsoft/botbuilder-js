@@ -11,8 +11,8 @@ lexer grammar LGFileLexer;
 //    so it would be very little effort to translate to other languages
 
 @lexer::members {
-  ignoreWS = true;             // usually we ignore whitespace, but inside template, whitespace is significant
-  expectCaseOrDefault = false; // whethe we are expecting CASE: or DEFAULT:
+  bool ignoreWS = true;             // usually we ignore whitespace, but inside template, whitespace is significant
+  bool expectCaseOrDefault = false; // whethe we are expecting CASE: or DEFAULT:
 }
 
 fragment LETTER: 'a'..'z' | 'A'..'Z';
@@ -35,7 +35,7 @@ HASH
   ;
 
 DASH
-  : '-' {this.expectCaseOrDefault = true;} -> pushMode(TEMPLATE_BODY_MODE)
+  : '-' {expectCaseOrDefault = true;} -> pushMode(TEMPLATE_BODY_MODE)
   ;
 
 mode TEMPLATE_NAME_MODE;
@@ -68,11 +68,15 @@ COMMA
   : ','
   ;
 
+INVALID_SEPERATE_CHAR
+  : [;]
+  ;
+
 mode TEMPLATE_BODY_MODE;
 
 // a little tedious on the rules, a big improvement on portability
 WS_IN_BODY_IGNORED
-  : (' '|'\t')+  {this.ignoreWS}? -> skip
+  : (' '|'\t')+  {ignoreWS}? -> skip
   ;
 
 WS_IN_BODY
@@ -80,42 +84,42 @@ WS_IN_BODY
   ;
 
 NEWLINE_IN_BODY
-  : '\r'? '\n' {this.ignoreWS = true;} -> type(NEWLINE), popMode
+  : '\r'? '\n' {ignoreWS = true;} -> type(NEWLINE), popMode
   ;
 
 // only CASE and DEFAULT makes ignoreWS = true
 CASE
-  : ('case:' | 'CASE:') {this.expectCaseOrDefault}? { this.ignoreWS = true;}
+  : ('case:' | 'CASE:') {expectCaseOrDefault}? { ignoreWS = true;}
   ;
 
 DEFAULT
-  : ('default:' | 'DEFAULT:') {this.expectCaseOrDefault}? { this.ignoreWS = true;}
+  : ('default:' | 'DEFAULT:') {expectCaseOrDefault}? { ignoreWS = true;}
   ;
 
 MULTI_LINE_TEXT
-  : '```' .*? '```' { this.ignoreWS = false; this.expectCaseOrDefault = false;}
+  : '```' .*? '```' { ignoreWS = false; expectCaseOrDefault = false;}
   ;
 
 ESCAPE_CHARACTER
-  : '\\{' | '\\[' | '\\\\' | '\\'[rtn\]}]  { this.ignoreWS = false; this.expectCaseOrDefault = false;}
+  : '\\{' | '\\[' | '\\\\' | '\\'[rtn\]}]  { ignoreWS = false; expectCaseOrDefault = false;}
   ;
 
 INVALID_ESCAPE
   : '\\'~[\r\n]?
   ;
-  
+
 EXPRESSION
-  : '{' ~[\r\n{}]* '}'  { this.ignoreWS = false; this.expectCaseOrDefault = false;}
+  : '{' ~[\r\n{}]* '}'  { ignoreWS = false; expectCaseOrDefault = false;}
   ;
 
 TEMPLATE_REF
-  : '[' (~[\r\n\]] | TEMPLATE_REF)* ']'  { this.ignoreWS = false; this.expectCaseOrDefault = false;}
+  : '[' (~[\r\n\]] | TEMPLATE_REF)* ']'  { ignoreWS = false; expectCaseOrDefault = false;}
   ;
 
 TEXT_SEPARATOR
-  : [ \t\r\n{}[\]()]  { this.ignoreWS = false; this.expectCaseOrDefault = false;}
+  : [ \t\r\n{}[\]()]  { ignoreWS = false; expectCaseOrDefault = false;}
   ;
 
 TEXT
-  : ~[ \\\t\r\n{}[\]()]+  { this.ignoreWS = false; this.expectCaseOrDefault = false;}
+  : ~[ \\\t\r\n{}[\]()]+  { ignoreWS = false; expectCaseOrDefault = false;}
   ;

@@ -3,8 +3,8 @@ import { BailErrorStrategy } from 'antlr4ts/BailErrorStrategy';
 import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import { TerminalNode } from 'botframework-expression//node_modules/antlr4ts/tree';
 import { Evaluator } from './evaluator';
-import { LGFileLexer } from './LGFileLexer';
-import { FileContext, LGFileParser, ParagraphContext, ParametersContext, TemplateDefinitionContext } from './LGFileParser';
+import { LGFileLexer } from './generator/LGFileLexer';
+import { FileContext, LGFileParser, ParagraphContext, ParametersContext, TemplateDefinitionContext } from './generator/LGFileParser';
 import { TemplateErrorListener } from './TemplateErrorListener';
 
 import fs = require('fs');

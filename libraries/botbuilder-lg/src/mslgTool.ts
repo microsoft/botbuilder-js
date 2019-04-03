@@ -3,8 +3,8 @@ import { BailErrorStrategy } from 'antlr4ts/BailErrorStrategy';
 import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import { TerminalNode } from 'botframework-expression//node_modules/antlr4ts/tree';
 import { Analyzer } from './analyzer';
-import { LGFileLexer } from './LGFileLexer';
-import { FileContext, LGFileParser, ParagraphContext, ParametersContext, TemplateDefinitionContext } from './LGFileParser';
+import { LGFileLexer } from './generator/LGFileLexer';
+import { FileContext, LGFileParser, ParagraphContext, ParametersContext, TemplateDefinitionContext } from './generator/LGFileParser';
 import { TemplateErrorListener } from './TemplateErrorListener';
 
 // tslint:disable-next-line: no-require-imports

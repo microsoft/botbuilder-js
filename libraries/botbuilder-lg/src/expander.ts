@@ -4,8 +4,8 @@ import { ExpressionEngine } from 'botframework-expression';
 import { TerminalNode } from 'botframework-expression/node_modules/antlr4ts/tree';
 import { GetMethodExtensions } from './getExpandMethodExtensions';
 import { GetValueExtensions } from './getExpandValueExtensions';
-import * as lp from './lGFileParser';
-import { LGFileParserVisitor } from './LGFileParserVisitor';
+import * as lp from './generator/LGFileParser';
+import { LGFileParserVisitor } from './generator/LGFileParserVisitor';
 import { EvaluationContext } from './templateEngine';
 
 export class EvaluationTarget {

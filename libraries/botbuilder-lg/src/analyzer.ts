@@ -3,8 +3,8 @@ import { TerminalNode } from 'botframework-expression//node_modules/antlr4ts/tre
 import { ExpressionEngine } from 'botframework-expression';
 import { EvaluationTarget } from './evaluator';
 import { ExpressionAnalyzerVisitor } from './expressionAnalyzerVisitor';
-import * as lp from './lGFileParser';
-import { LGFileParserVisitor } from './LGFileParserVisitor';
+import * as lp from './generator/LGFileParser';
+import { LGFileParserVisitor } from './generator/LGFileParserVisitor';
 import { EvaluationContext } from './templateEngine';
 
 // tslint:disable-next-line: max-classes-per-file
