@@ -18,7 +18,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     public AnalyzeTemplate(templateName: string): string[] {
-        if (this.Context.TemplateContexts[templateName] === undefined) {
+        if (!this.Context.TemplateContexts.has(templateName)) {
             throw new Error(`No such template: ${templateName}`);
         }
 
@@ -29,7 +29,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         }
 
         this.evalutationTargetStack.push(new EvaluationTarget(templateName, undefined));
-        const rawDependencies: string[] = this.visit(this.Context.TemplateContexts[templateName]);
+        const rawDependencies: string[] = this.visit(this.Context.TemplateContexts.get(templateName));
         const parameters: string[] = this.ExtractParamters(templateName);
         const dependencies = Array.from(new Set(rawDependencies.filter((element) => !parameters.includes(element))));
         this.evalutationTargetStack.pop();
@@ -167,7 +167,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
 
     private ExtractParamters(templateName: string): string[] {
         const result: string[] = [];
-        const parameters: any = this.Context.TemplateParameters[templateName];
+        const parameters: any = this.Context.TemplateParameters.get(templateName);
         if (parameters === undefined || !(parameters instanceof Array)) {
             return result;
         }

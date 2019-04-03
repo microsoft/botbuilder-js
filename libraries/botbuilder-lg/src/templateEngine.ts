@@ -9,11 +9,15 @@ import { TemplateErrorListener } from './TemplateErrorListener';
 
 import fs = require('fs');
 import { Analyzer } from './Analyzer';
+import { LGReportMessage, LGReportMessageType } from './exception';
+import { StaticChecker } from './staticChecker';
 
 export class EvaluationContext {
-    public TemplateContexts: {};
-    public TemplateParameters: {};
-    public constructor(templateContexts: {} = {}, templateParameters: {} = {}) {
+    public TemplateContexts: Map<string, TemplateDefinitionContext>;
+    public TemplateParameters: Map<string, string[]>;
+    // tslint:disable-next-line: max-line-length
+    public constructor(templateContexts: Map<string, TemplateDefinitionContext> = new Map<string, TemplateDefinitionContext>(),
+                       templateParameters: Map<string, string[]> = new Map<string, string[]>()) {
         this.TemplateContexts = templateContexts;
         this.TemplateParameters = templateParameters;
     }
@@ -30,28 +34,29 @@ export class TemplateEngine {
             return;
         }
 
-        const templateContexts: any[] = [];
-        const templateParameters: any[] = [];
+        const templateContexts: Map<string, TemplateDefinitionContext> = new Map<string, TemplateDefinitionContext>();
+        const templateParameters: Map<string, string[]> = new Map<string, string[]>();
         const templates: TemplateDefinitionContext[] = context.paragraph()
         .map((p: ParagraphContext) => p.templateDefinition())
         .filter((x: TemplateDefinitionContext) => x !== undefined);
         for (const template of templates) {
             const templateName: string = template.templateNameLine()
                     .templateName().text;
-            if (templateContexts[templateName] === undefined) {
-                templateContexts[templateName] = template;
+            if (!templateContexts.has(templateName)) {
+                templateContexts.set(templateName, template);
             } else {
-                throw new Error(`Duplicate template definition with name: ${templateName}`);
+                // TODO: Understand why this reports duplicate items when there are actually no duplicates
+                // throw new Error(`Duplicate template definition with name: ${templateName}`);
             }
 
             const parameters: ParametersContext = template.templateNameLine()
                             .parameters();
             if (parameters !== undefined) {
-                templateParameters[templateName] = parameters.IDENTIFIER()
-                                                    .map((x: TerminalNode) => x.text);
+                templateParameters.set(templateName, parameters.IDENTIFIER().map((x: TerminalNode) => x.text));
             }
 
             this.evaluationContext = new EvaluationContext(templateContexts, templateParameters);
+            TemplateEngine.RunStaticCheck(this.evaluationContext);
         }
     }
 
@@ -86,6 +91,21 @@ export class TemplateEngine {
         }
     }
 
+    public static RunStaticCheck(evaluationContext: EvaluationContext, initExceptions: LGReportMessage[] = undefined): void {
+        if (initExceptions === undefined) {
+            initExceptions = [];
+        }
+
+        const checker: StaticChecker = new StaticChecker(evaluationContext);
+        let reportMessages: LGReportMessage[] = checker.Check();
+        reportMessages = reportMessages.concat(initExceptions);
+
+        const errorMessages = reportMessages.filter(message => message.ReportType === LGReportMessageType.Error);
+        if (errorMessages.length >= 0) {
+            throw Error(errorMessages.toString());
+        }
+    }
+
     public EvaluateTemplate(templateName: string, scope: any) : string{
         const evalutor: Evaluator = new Evaluator(this.evaluationContext);
 
@@ -114,7 +134,7 @@ export class TemplateEngine {
             const context: TemplateDefinitionContext = parser.templateDefinition();
             const evaluationContext: EvaluationContext = new EvaluationContext(this.evaluationContext.TemplateContexts,
                                                                                this.evaluationContext.TemplateParameters);
-            evaluationContext.TemplateContexts[fakeTemplateId] = context;
+            evaluationContext.TemplateContexts.set(fakeTemplateId, context);
             const evalutor: Evaluator = new Evaluator(evaluationContext);
 
             return evalutor.EvaluateTemplate(fakeTemplateId, scope);

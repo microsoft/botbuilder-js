@@ -1,11 +1,11 @@
 import { GetValueDelegate, PropertyBinder } from 'botframework-expression';
-import { Evaluator } from './evaluator';
+import { Expander } from './expander';
 
 export class GetValueExtensions {
-    private readonly evaluator: Evaluator;
+    private readonly expander: Expander;
 
-    public constructor(evaluator: Evaluator) {
-        this.evaluator = evaluator;
+    public constructor(expander: Expander) {
+        this.expander = expander;
     }
 
     public GetValueX: GetValueDelegate = (instance: any, property: any) => {
@@ -19,7 +19,7 @@ export class GetValueExtensions {
             return result;
         } catch (error) {
             if (typeof (property) === 'string') {
-                if (this.evaluator.Context.TemplateContexts.has(property)) {
+                if (this.expander.Context.TemplateContexts.has(property)) {
                     return property;
                 }
             }
