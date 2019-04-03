@@ -1,9 +1,18 @@
-import { Expression, ReturnType} from './expression';
+import { Expression, ReturnType } from './expression';
 
+/**
+ * Delegate for doing static validation on an expression.
+ */
 export type ValidateExpressionDelegate = (expression: Expression) => any;
 
-export type EvaluateExpressionDelegate = (expression: Expression, state: any) => {value: any; error: string};
+/**
+ * Delegate to evaluate an expression.
+ */
+export type EvaluateExpressionDelegate = (expression: Expression, state: any) => { value: any; error: string };
 
+/**
+ * Delegate to lookup function information from the type.
+ */
 export type EvaluatorLookup = (type: string) => ExpressionEvaluator;
 
 /**
@@ -11,23 +20,41 @@ export type EvaluatorLookup = (type: string) => ExpressionEvaluator;
  */
 export class ExpressionEvaluator {
 
+    /**
+     * Type expected by evaluating the expression.
+     */
     public ReturnType: ReturnType;
     private readonly _validator: ValidateExpressionDelegate;
     private readonly _evaluator: EvaluateExpressionDelegate;
 
+    /**
+     * Constructor for expression information.
+     * @param evaluator Delegate to evaluate an expression.
+     * @param returnType Type expected from evaluation.
+     * @param validator Static validation of expression.
+     */
     public constructor(evaluator: EvaluateExpressionDelegate,
-                       returnType: ReturnType = ReturnType.Object,
-                       validator?: ValidateExpressionDelegate) {
-            this._evaluator = evaluator;
-            this.ReturnType = returnType;
-            this._validator = validator;
-        }
+        returnType: ReturnType = ReturnType.Object,
+        validator?: ValidateExpressionDelegate) {
+        this._evaluator = evaluator;
+        this.ReturnType = returnType;
+        this._validator = validator;
+    }
 
-    public TryEvaluate(expression: Expression, state: any): {value: any; error: string} {
+    /**
+     * Evaluate an expression.
+     * @param expression Expression to evaluate.
+     * @param state Global state information.
+     */
+    public TryEvaluate(expression: Expression, state: any): { value: any; error: string } {
         return this._evaluator(expression, state);
     }
 
-    public ValidateExpression(expression: Expression) : void {
+    /**
+     * Validate an expression.
+     * @param expression Expression to validate.
+     */
+    public ValidateExpression(expression: Expression): void {
         return this._validator(expression);
     }
 }
