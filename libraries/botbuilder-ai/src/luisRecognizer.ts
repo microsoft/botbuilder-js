@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from 'azure-cognitiveservices-luis-runtime';
+import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
 
 import { RecognizerResult, TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
-import * as msRest from "ms-rest";
+import * as msRest from "@azure/ms-rest-js";
 import * as os from 'os';
 import * as Url from 'url-parse';
 import { TelemetryConstants } from 'botbuilder-core/lib/telemetryConstants';
@@ -102,6 +102,16 @@ export interface LuisPredictionOptions {
      * (Optional) The time zone offset for resolving datetimes.
      */
     timezoneOffset?: number;
+
+    /**
+     * (Optional) Telemetry Client.
+     */
+    telemetryClient?: BotTelemetryClient;
+
+    /**
+     * (Optional) Designates whether personal information should be logged in telemetry.
+     */
+    logPersonalInformation?: boolean;
 }
 
 export interface LuisRecognizerTelemetryClient
@@ -155,9 +165,9 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
      * @param options (Optional) options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
      * @param includeApiResults (Optional) flag that if set to `true` will force the inclusion of LUIS Api call in results returned by [recognize()](#recognize). Defaults to a value of `false`.
      */
-    constructor(application: string, options?: LuisPredictionOptions, includeApiResults?: boolean, telemetryClient?: BotTelemetryClient, logPersonalInformation?: boolean);
-    constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean, telemetryClient?: BotTelemetryClient, logPersonalInformation?: boolean);
-    constructor(application: LuisApplication|string, options?: LuisPredictionOptions, includeApiResults?: boolean, telemetryClient?: BotTelemetryClient, logPersonalInformation?: boolean) {
+    constructor(application: string, options?: LuisPredictionOptions, includeApiResults?: boolean);
+    constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean);
+    constructor(application: LuisApplication|string, options?: LuisPredictionOptions, includeApiResults?: boolean) {
         if (typeof application === 'string') {
             const parsedEndpoint: Url = Url(application);
             // Use exposed querystringify to parse the query string for the endpointKey value.
@@ -183,7 +193,8 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
             includeInstanceData: true,
             log: true,
             spellCheck: false,
-            staging: false, ...options
+            staging: false, 
+            ...options
         };
         this.includeApiResults = !!includeApiResults;
 
@@ -192,8 +203,8 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
         const baseUri: string = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
         this.luisClient = new LuisClient(creds, baseUri);
 
-        this._telemetryClient = telemetryClient || new NullTelemetryClient();
-        this._logPersonalInformation = logPersonalInformation || false;
+        this._telemetryClient = this.options.telemetryClient || new NullTelemetryClient();
+        this._logPersonalInformation = this.options.logPersonalInformation || false;
     }
 
     /**
@@ -316,8 +327,8 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
      * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
      * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
      */
-    protected onRecognizerResults(recognizerResult: RecognizerResult, turnContext: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number}): Promise<void> {
-        this.fillTelemetryProperties(recognizerResult, turnContext, telemetryProperties).then(props => {
+    protected async onRecognizerResults(recognizerResult: RecognizerResult, turnContext: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number}): Promise<void> {
+        await this.fillTelemetryProperties(recognizerResult, turnContext, telemetryProperties).then(props => {
             this.telemetryClient.trackEvent(
                 { 
                   name: LuisTelemetryConstants.luisResultEvent,
@@ -419,8 +430,8 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
         // If the `error` received is a azure-cognitiveservices-luis-runtime error,
         // it may have a `response` property and `response.statusCode`.
         // If these properties exist, we should populate the error with a correct and informative error message.
-        if ((error as any).response && (error as any).response.statusCode) {
-            switch ((error as any).response.statusCode) {
+        if ((error as any).response && (error as any).response.status) {
+            switch ((error as any).response.status) {
                 case 400:
                     error.message = [
                         `Response 400: The request's body or parameters are incorrect,`,
@@ -447,7 +458,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
                     break;
                 default:
                     error.message = [
-                        `Response ${ (error as any).response.statusCode }: Unexpected status code received.`,
+                        `Response ${ (error as any).response.status }: Unexpected status code received.`,
                         `Please verify that your LUIS application is properly setup.`
                     ].join(' ');
             }
