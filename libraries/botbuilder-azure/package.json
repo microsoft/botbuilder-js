@@ -21,6 +21,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
+    "@types/documentdb": "^1.10.5",
     "@types/node": "^10.12.18",
     "azure-storage": "2.10.2",
     "botbuilder": "~4.1.6",
@@ -29,7 +30,6 @@
     "semaphore": "^1.1.0"
   },
   "devDependencies": {
-    "@types/documentdb": "^1.10.5",
     "@types/mocha": "^2.2.47",
     "@types/semaphore": "^1.1.0",
     "codelyzer": "^4.1.0",
