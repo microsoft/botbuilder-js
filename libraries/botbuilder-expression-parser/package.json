@@ -1,5 +1,5 @@
 {
-  "name": "botbuilder-expression",
+  "name": "botbuilder-expressionparser",
   "description": "Typescript version of Microsoft.Expression from C# version (https://github.com/Microsoft/botbuilder-dotnet/tree/ComposableDialog/libraries/Microsoft.CommonExpressions) ",
   "version": "1.0.0",
   "license": "MIT",
@@ -15,7 +15,9 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "typescript": "^3.2.4"
+    "botbuilder-expression": "file:../botbuilder-expression",
+    "typescript": "^3.2.4",
+    "antlr4ts": "0.5.0-alpha.1"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.5",
