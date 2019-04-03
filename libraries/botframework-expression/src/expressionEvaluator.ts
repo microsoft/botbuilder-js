@@ -20,7 +20,9 @@ export class ExpressionEvaluator extends AbstractParseTreeVisitor<any> implement
         ['>', 'greater'],
         ['>=', 'greaterOrEquals'],
         ['&&', 'and'],
-        ['||', 'or']
+        ['||', 'or'],
+        ['&','concat'],
+        ['%','mod']
     ]);
 
     public static readonly UnaryOperatorFunctions : Map<string, string> = new Map([

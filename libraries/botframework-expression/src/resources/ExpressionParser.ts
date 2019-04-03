@@ -49,11 +49,12 @@ export class ExpressionParser extends Parser {
 	public static readonly T__18 = 19;
 	public static readonly T__19 = 20;
 	public static readonly T__20 = 21;
-	public static readonly NUMBER = 22;
-	public static readonly WHITESPACE = 23;
-	public static readonly IDENTIFIER = 24;
-	public static readonly NEWLINE = 25;
-	public static readonly STRING = 26;
+	public static readonly T__21 = 22;
+	public static readonly NUMBER = 23;
+	public static readonly WHITESPACE = 24;
+	public static readonly IDENTIFIER = 25;
+	public static readonly NEWLINE = 26;
+	public static readonly STRING = 27;
 	public static readonly RULE_expression = 0;
 	public static readonly RULE_primaryExpression = 1;
 	public static readonly RULE_argsList = 2;
@@ -63,15 +64,16 @@ export class ExpressionParser extends Parser {
 	];
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
-		undefined, "'!'", "'^'", "'*'", "'/'", "'+'", "'-'", "'=='", "'!='", "'<>'", 
-		"'<'", "'<='", "'>'", "'>='", "'&&'", "'||'", "'('", "')'", "'.'", "'['", 
-		"']'", "','",
+		undefined, "'!'", "'^'", "'*'", "'/'", "'%'", "'+'", "'-'", "'=='", "'!='", 
+		"'<>'", "'<'", "'<='", "'>'", "'>='", "'&&'", "'||'", "'('", "')'", "'.'", 
+		"'['", "']'", "','",
 	];
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
 		undefined, undefined, undefined, undefined, undefined, undefined, undefined, 
 		undefined, undefined, undefined, undefined, undefined, undefined, undefined, 
 		undefined, undefined, undefined, undefined, undefined, undefined, undefined, 
-		undefined, "NUMBER", "WHITESPACE", "IDENTIFIER", "NEWLINE", "STRING",
+		undefined, undefined, "NUMBER", "WHITESPACE", "IDENTIFIER", "NEWLINE", 
+		"STRING",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(ExpressionParser._LITERAL_NAMES, ExpressionParser._SYMBOLIC_NAMES, []);
 
@@ -129,7 +131,7 @@ export class ExpressionParser extends Parser {
 				this.expression(9);
 				}
 				break;
-			case ExpressionParser.T__15:
+			case ExpressionParser.T__16:
 			case ExpressionParser.NUMBER:
 			case ExpressionParser.IDENTIFIER:
 			case ExpressionParser.STRING:
@@ -183,7 +185,7 @@ export class ExpressionParser extends Parser {
 						}
 						this.state = 16;
 						_la = this._input.LA(1);
-						if (!(_la === ExpressionParser.T__2 || _la === ExpressionParser.T__3)) {
+						if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ExpressionParser.T__2) | (1 << ExpressionParser.T__3) | (1 << ExpressionParser.T__4))) !== 0))) {
 						this._errHandler.recoverInline(this);
 						} else {
 							if (this._input.LA(1) === Token.EOF) {
@@ -208,7 +210,7 @@ export class ExpressionParser extends Parser {
 						}
 						this.state = 19;
 						_la = this._input.LA(1);
-						if (!(_la === ExpressionParser.T__4 || _la === ExpressionParser.T__5)) {
+						if (!(_la === ExpressionParser.T__5 || _la === ExpressionParser.T__6)) {
 						this._errHandler.recoverInline(this);
 						} else {
 							if (this._input.LA(1) === Token.EOF) {
@@ -233,7 +235,7 @@ export class ExpressionParser extends Parser {
 						}
 						this.state = 22;
 						_la = this._input.LA(1);
-						if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ExpressionParser.T__6) | (1 << ExpressionParser.T__7) | (1 << ExpressionParser.T__8))) !== 0))) {
+						if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ExpressionParser.T__7) | (1 << ExpressionParser.T__8) | (1 << ExpressionParser.T__9))) !== 0))) {
 						this._errHandler.recoverInline(this);
 						} else {
 							if (this._input.LA(1) === Token.EOF) {
@@ -258,7 +260,7 @@ export class ExpressionParser extends Parser {
 						}
 						this.state = 25;
 						_la = this._input.LA(1);
-						if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ExpressionParser.T__9) | (1 << ExpressionParser.T__10) | (1 << ExpressionParser.T__11) | (1 << ExpressionParser.T__12))) !== 0))) {
+						if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ExpressionParser.T__10) | (1 << ExpressionParser.T__11) | (1 << ExpressionParser.T__12) | (1 << ExpressionParser.T__13))) !== 0))) {
 						this._errHandler.recoverInline(this);
 						} else {
 							if (this._input.LA(1) === Token.EOF) {
@@ -282,7 +284,7 @@ export class ExpressionParser extends Parser {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 3)");
 						}
 						this.state = 28;
-						this.match(ExpressionParser.T__13);
+						this.match(ExpressionParser.T__14);
 						this.state = 29;
 						this.expression(4);
 						}
@@ -297,7 +299,7 @@ export class ExpressionParser extends Parser {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 2)");
 						}
 						this.state = 31;
-						this.match(ExpressionParser.T__14);
+						this.match(ExpressionParser.T__15);
 						this.state = 32;
 						this.expression(3);
 						}
@@ -348,18 +350,18 @@ export class ExpressionParser extends Parser {
 			this.state = 46;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
-			case ExpressionParser.T__15:
+			case ExpressionParser.T__16:
 				{
 				_localctx = new ParenthesisExpContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
 
 				this.state = 39;
-				this.match(ExpressionParser.T__15);
+				this.match(ExpressionParser.T__16);
 				this.state = 40;
 				this.expression(0);
 				this.state = 41;
-				this.match(ExpressionParser.T__16);
+				this.match(ExpressionParser.T__17);
 				}
 				break;
 			case ExpressionParser.NUMBER:
@@ -415,7 +417,7 @@ export class ExpressionParser extends Parser {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 3)");
 						}
 						this.state = 49;
-						this.match(ExpressionParser.T__17);
+						this.match(ExpressionParser.T__18);
 						this.state = 50;
 						this.match(ExpressionParser.IDENTIFIER);
 						}
@@ -430,11 +432,11 @@ export class ExpressionParser extends Parser {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 2)");
 						}
 						this.state = 52;
-						this.match(ExpressionParser.T__15);
+						this.match(ExpressionParser.T__16);
 						this.state = 54;
 						this._errHandler.sync(this);
 						_la = this._input.LA(1);
-						if ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ExpressionParser.T__0) | (1 << ExpressionParser.T__15) | (1 << ExpressionParser.NUMBER) | (1 << ExpressionParser.IDENTIFIER) | (1 << ExpressionParser.STRING))) !== 0)) {
+						if ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ExpressionParser.T__0) | (1 << ExpressionParser.T__16) | (1 << ExpressionParser.NUMBER) | (1 << ExpressionParser.IDENTIFIER) | (1 << ExpressionParser.STRING))) !== 0)) {
 							{
 							this.state = 53;
 							this.argsList();
@@ -442,7 +444,7 @@ export class ExpressionParser extends Parser {
 						}
 
 						this.state = 56;
-						this.match(ExpressionParser.T__16);
+						this.match(ExpressionParser.T__17);
 						}
 						break;
 
@@ -455,11 +457,11 @@ export class ExpressionParser extends Parser {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 1)");
 						}
 						this.state = 58;
-						this.match(ExpressionParser.T__18);
+						this.match(ExpressionParser.T__19);
 						this.state = 59;
 						this.expression(0);
 						this.state = 60;
-						this.match(ExpressionParser.T__19);
+						this.match(ExpressionParser.T__20);
 						}
 						break;
 					}
@@ -498,11 +500,11 @@ export class ExpressionParser extends Parser {
 			this.state = 72;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while (_la === ExpressionParser.T__20) {
+			while (_la === ExpressionParser.T__21) {
 				{
 				{
 				this.state = 68;
-				this.match(ExpressionParser.T__20);
+				this.match(ExpressionParser.T__21);
 				this.state = 69;
 				this.expression(0);
 				}
@@ -578,7 +580,7 @@ export class ExpressionParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03\x1CN\x04\x02" +
+		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03\x1DN\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x03\x02\x03\x02\x03\x02\x03\x02\x05" +
 		"\x02\r\n\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03" +
 		"\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03" +
@@ -588,7 +590,7 @@ export class ExpressionParser extends Parser {
 		"\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x07\x03A\n\x03\f" +
 		"\x03\x0E\x03D\v\x03\x03\x04\x03\x04\x03\x04\x07\x04I\n\x04\f\x04\x0E\x04" +
 		"L\v\x04\x03\x04\x02\x02\x04\x02\x04\x05\x02\x02\x04\x02\x06\x02\x02\x06" +
-		"\x03\x02\x05\x06\x03\x02\x07\b\x03\x02\t\v\x03\x02\f\x0FZ\x02\f\x03\x02" +
+		"\x03\x02\x05\x07\x03\x02\b\t\x03\x02\n\f\x03\x02\r\x10Z\x02\f\x03\x02" +
 		"\x02\x02\x040\x03\x02\x02\x02\x06E\x03\x02\x02\x02\b\t\b\x02\x01\x02\t" +
 		"\n\x07\x03\x02\x02\n\r\x05\x02\x02\v\v\r\x05\x04\x03\x02\f\b\x03\x02\x02" +
 		"\x02\f\v\x03\x02\x02\x02\r%\x03\x02\x02\x02\x0E\x0F\f\n\x02\x02\x0F\x10" +
@@ -596,21 +598,21 @@ export class ExpressionParser extends Parser {
 		"\x02\x02\x13$\x05\x02\x02\n\x14\x15\f\b\x02\x02\x15\x16\t\x03\x02\x02" +
 		"\x16$\x05\x02\x02\t\x17\x18\f\x07\x02\x02\x18\x19\t\x04\x02\x02\x19$\x05" +
 		"\x02\x02\b\x1A\x1B\f\x06\x02\x02\x1B\x1C\t\x05\x02\x02\x1C$\x05\x02\x02" +
-		"\x07\x1D\x1E\f\x05\x02\x02\x1E\x1F\x07\x10\x02\x02\x1F$\x05\x02\x02\x06" +
-		" !\f\x04\x02\x02!\"\x07\x11\x02\x02\"$\x05\x02\x02\x05#\x0E\x03\x02\x02" +
+		"\x07\x1D\x1E\f\x05\x02\x02\x1E\x1F\x07\x11\x02\x02\x1F$\x05\x02\x02\x06" +
+		" !\f\x04\x02\x02!\"\x07\x12\x02\x02\"$\x05\x02\x02\x05#\x0E\x03\x02\x02" +
 		"\x02#\x11\x03\x02\x02\x02#\x14\x03\x02\x02\x02#\x17\x03\x02\x02\x02#\x1A" +
 		"\x03\x02\x02\x02#\x1D\x03\x02\x02\x02# \x03\x02\x02\x02$\'\x03\x02\x02" +
 		"\x02%#\x03\x02\x02\x02%&\x03\x02\x02\x02&\x03\x03\x02\x02\x02\'%\x03\x02" +
-		"\x02\x02()\b\x03\x01\x02)*\x07\x12\x02\x02*+\x05\x02\x02\x02+,\x07\x13" +
-		"\x02\x02,1\x03\x02\x02\x02-1\x07\x18\x02\x02.1\x07\x1C\x02\x02/1\x07\x1A" +
+		"\x02\x02()\b\x03\x01\x02)*\x07\x13\x02\x02*+\x05\x02\x02\x02+,\x07\x14" +
+		"\x02\x02,1\x03\x02\x02\x02-1\x07\x19\x02\x02.1\x07\x1D\x02\x02/1\x07\x1B" +
 		"\x02\x020(\x03\x02\x02\x020-\x03\x02\x02\x020.\x03\x02\x02\x020/\x03\x02" +
-		"\x02\x021B\x03\x02\x02\x0223\f\x05\x02\x0234\x07\x14\x02\x024A\x07\x1A" +
-		"\x02\x0256\f\x04\x02\x0268\x07\x12\x02\x0279\x05\x06\x04\x0287\x03\x02" +
-		"\x02\x0289\x03\x02\x02\x029:\x03\x02\x02\x02:A\x07\x13\x02\x02;<\f\x03" +
-		"\x02\x02<=\x07\x15\x02\x02=>\x05\x02\x02\x02>?\x07\x16\x02\x02?A\x03\x02" +
+		"\x02\x021B\x03\x02\x02\x0223\f\x05\x02\x0234\x07\x15\x02\x024A\x07\x1B" +
+		"\x02\x0256\f\x04\x02\x0268\x07\x13\x02\x0279\x05\x06\x04\x0287\x03\x02" +
+		"\x02\x0289\x03\x02\x02\x029:\x03\x02\x02\x02:A\x07\x14\x02\x02;<\f\x03" +
+		"\x02\x02<=\x07\x16\x02\x02=>\x05\x02\x02\x02>?\x07\x17\x02\x02?A\x03\x02" +
 		"\x02\x02@2\x03\x02\x02\x02@5\x03\x02\x02\x02@;\x03\x02\x02\x02AD\x03\x02" +
 		"\x02\x02B@\x03\x02\x02\x02BC\x03\x02\x02\x02C\x05\x03\x02\x02\x02DB\x03" +
-		"\x02\x02\x02EJ\x05\x02\x02\x02FG\x07\x17\x02\x02GI\x05\x02\x02\x02HF\x03" +
+		"\x02\x02\x02EJ\x05\x02\x02\x02FG\x07\x18\x02\x02GI\x05\x02\x02\x02HF\x03" +
 		"\x02\x02\x02IL\x03\x02\x02\x02JH\x03\x02\x02\x02JK\x03\x02\x02\x02K\x07" +
 		"\x03\x02\x02\x02LJ\x03\x02\x02\x02\n\f#%08@BJ";
 	public static __ATN: ATN;
