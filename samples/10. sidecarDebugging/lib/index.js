@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const botbuilder_dialogs_1 = require("botbuilder-dialogs");
 const botbuilder_core_1 = require("botbuilder-core");
+const botbuilder_dialogs_1 = require("botbuilder-dialogs");
 const { MemoryStorage } = require('botbuilder-core');
 const restify = require('restify');
 const { default: chalk } = require('chalk');

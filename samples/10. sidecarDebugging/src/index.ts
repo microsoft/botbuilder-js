@@ -1,5 +1,5 @@
-import {BotDebugger} from 'botbuilder-dialogs';
 import {ConversationState} from "botbuilder-core";
+import {BotDebugger} from "botbuilder-dialogs";
 
 const {MemoryStorage} = require('botbuilder-core');
 

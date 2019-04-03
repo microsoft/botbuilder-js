@@ -196,7 +196,7 @@ export class BotDebugger extends BotAdapterSet {
 				trace.value.from.role = 'user'; // WebChat needs this.
 				log.push(trace);
 
-				// Log ougoing activities and changes
+				// Log outgoing activities and changes
 				context.onSendActivities((ctx, activities, next) => {
 					activities.forEach((activity) => {
 						log.push(BotDebugger.trace(Object.assign({}, activity), 'https://www.botframework.com/schemas/activity', 'SentActivity', 'Sent Activity'));
@@ -317,6 +317,13 @@ export class BotDebugger extends BotAdapterSet {
 		// Get emulator session for current conversation
 		const session = await this.getEmulatorSession(context);
 
+		// Make sure we're still connected to the emulator
+		const conversationExists = await this.verifyEmulatorConversation(session.conversation.id);
+		if (!conversationExists) {
+			const conversationId = await BotDebugger.connectToEmulator(context);
+			await this.updateMemory(context.activity.conversation.id, {id: conversationId});
+			session.conversation.id = conversationId;
+		}
 		// Create context object for debug session
 		const emulatorContext = this.createEmulatorContext(session);
 
@@ -342,5 +349,18 @@ export class BotDebugger extends BotAdapterSet {
 	private async getMemory(conversationId) {
 		const memory = await this.stateStorage.read([conversationId]);
 		return (memory[conversationId] || {[key]: {}})[key];
+	}
+
+	/**
+	 * @private
+	 */
+	private async verifyEmulatorConversation(id: string): Promise<boolean> {
+		const client = new ConnectorClient(new EmulatorServiceCredentials() as any, {baseUri: process.env.EMULATOR_URL});
+		try {
+			const result = await client.conversations.getConversations();
+			return !!result.conversations.find(conversation => conversation.id === id);
+		} catch(e) {
+			return false;
+		}
 	}
 }
