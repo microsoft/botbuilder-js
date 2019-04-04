@@ -1,7 +1,7 @@
 {
   "name": "botframework-expression",
   "description": "Typescript version of Microsoft.Expression from C# version (https://github.com/Microsoft/botbuilder-dotnet/tree/ComposableDialog/libraries/Microsoft.CommonExpressions) ",
-  "version": "1.0.0",
+  "version": "4.5.0",
   "license": "MIT",
   "keywords": [
     "botbuilder",

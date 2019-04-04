@@ -10,9 +10,12 @@
     "libraries/botbuilder-dialogs",
     "libraries/botbuilder-dialogs-adaptive",
     "libraries/botbuilder-dialogs-declarative",
+    "libraries/botbuilder-expression",
+    "libraries/botbuilder-expression-parser",
     "libraries/botbuilder-lg",
     "libraries/botframework-config",
     "libraries/botframework-connector",
+    "libraries/botframework-expression",
     "libraries/botframework-schema",
     "transcripts"
   ],
