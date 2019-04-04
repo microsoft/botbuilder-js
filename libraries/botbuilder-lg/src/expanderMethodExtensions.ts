@@ -1,24 +1,34 @@
-import { GetMethodDelegate, MethodBinder } from 'botframework-expression';
+import { BuiltInFunctions, ExpressionEvaluator } from 'botbuilder-expression';
 import { Expander } from './expander';
 
-export class GetMethodExtensions {
+export interface IGetMethod {
+    GetMethodX(name: string): ExpressionEvaluator;
+}
+
+export class GetMethodExtensions implements IGetMethod {
     private readonly expander: Expander;
 
     public constructor(expander: Expander) {
         this.expander = expander;
     }
 
-    public GetMethodX: GetMethodDelegate = (name: string) => {
+    public GetMethodX(name: string): ExpressionEvaluator {
 
+        // tslint:disable-next-line: switch-default
         switch (name) {
-            case 'count': return this.Count;
-            case 'join': return this.Join;
-            case 'foreach': return this.Foreach;
-            case 'newParameter':
+            case 'count':
+                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.Count));
+            case 'join':
+                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.Join));
+            case 'foreach':
+            case 'map':
+                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.Foreach));
+            case 'mapjoin':
             case 'humanize':
-                return this.ForeachThenJoin;
-            default: return MethodBinder.All(name);
+                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.ForeachThenJoin));
         }
+
+        return BuiltInFunctions.Lookup(name);
     }
 
     public Count(paramters: any[]): any {
