@@ -35,7 +35,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     }
 
     public EvaluateTemplate(templateName: string, scope: any): string {
-        if (!this.Context.TemplateContexts.has(templateName)) {
+        if (this.Context.TemplateContexts[templateName] === undefined) {
             throw new Error(`No such template: ${templateName}`);
         }
 
@@ -46,7 +46,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         }
 
         this.evalutationTargetStack.push(new EvaluationTarget(templateName, scope));
-        const result: string = this.visit(this.Context.TemplateContexts.get(templateName));
+        const result: string = this.visit(this.Context.TemplateContexts[templateName]);
         this.evalutationTargetStack.pop();
 
         return result;
@@ -95,7 +95,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string {
         let result: string = '';
         for (const node of ctx.children) {
-            const innerNode: TerminalNode =  <TerminalNode>node;
+            const innerNode: TerminalNode =  <TerminalNode>node;;
             switch (innerNode.symbol.type) {
                 case lp.LGFileParser.DASH: break;
                 case lp.LGFileParser.ESCAPE_CHARACTER:
@@ -127,7 +127,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
 
     public ConstructScope(templateName: string, args: any[]) : any {
         if (args.length === 1 &&
-            !this.Context.TemplateParameters.has(templateName)) {
+            this.Context.TemplateParameters[templateName] === undefined) {
             return args[0];
         }
         const paramters: string[] = this.ExtractParamters(templateName);
@@ -231,7 +231,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
 
     private ExtractParamters(templateName: string): string[] {
         const result: string[] = [];
-        const parameters: any = this.Context.TemplateParameters.get(templateName);
+        const parameters: any = this.Context.TemplateParameters[templateName];
         if (parameters === undefined || !(parameters instanceof Array)) {
             return result;
         }

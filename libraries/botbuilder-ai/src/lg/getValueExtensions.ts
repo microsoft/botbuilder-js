@@ -19,7 +19,7 @@ export class GetValueExtensions {
             return result;
         } catch (error) {
             if (typeof (property) === 'string') {
-                if (this.evaluator.Context.TemplateContexts.has(property)) {
+                if (this.evaluator.Context.TemplateContexts[property] !== undefined) {
                     return property;
                 }
             }

@@ -66,7 +66,7 @@ export class GetMethodExtensions {
             const li: any[] = paramters[0];
             const func: any = paramters[1];
 
-            if (!this.evaluator.Context.TemplateContexts.has(func)) {
+            if (this.evaluator.Context.TemplateContexts[func] === undefined) {
                 throw new Error(`No such template defined: ${func}`);
             }
 
@@ -87,7 +87,7 @@ export class GetMethodExtensions {
             const li: any[] = paramters[0];
             const func = paramters[1];
 
-            if (!this.evaluator.Context.TemplateContexts.has(func)) {
+            if (this.evaluator.Context.TemplateContexts[func] === undefined) {
                 throw new Error(`No such template defined: ${func}`);
             }
 
