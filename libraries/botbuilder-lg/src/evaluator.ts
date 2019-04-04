@@ -1,11 +1,9 @@
 
-import { AbstractParseTreeVisitor } from 'antlr4ts/tree';
-import { ExpressionEngine } from 'botframework-expression';
-import { TerminalNode } from 'botframework-expression/node_modules/antlr4ts/tree';
-import { GetMethodExtensions } from './getMethodExtensions';
-import { GetValueExtensions } from './getValueExtensions';
+import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
+import { ExpressionEngine} from 'botbuilder-expression-parser';
 import * as lp from './generator/LGFileParser';
 import { LGFileParserVisitor } from './generator/LGFileParserVisitor';
+import { GetMethodExtensions, IGetMethod } from './getMethodExtensions';
 import { EvaluationContext } from './templateEngine';
 
 export class EvaluationTarget {
@@ -22,16 +20,12 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     public readonly Context: EvaluationContext;
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
 
-    private readonly GetMethodX: GetMethodExtensions;
+    private readonly GetMethodX: IGetMethod;
 
-    private readonly GetValueX: GetValueExtensions;
-
-    constructor(context: EvaluationContext) {
+    constructor(context: EvaluationContext, getMethod: IGetMethod) {
         super();
         this.Context = context;
-        this.GetMethodX = new GetMethodExtensions(this);
-        this.GetValueX = new GetValueExtensions(this);
-
+        this.GetMethodX = getMethod === undefined ? new GetMethodExtensions(this) : getMethod;
     }
 
     public EvaluateTemplate(templateName: string, scope: any): string {
@@ -92,8 +86,6 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
                 case lp.LGFileParser.ESCAPE_CHARACTER:
                     result = result.concat(this.EvalEscapeCharacter(innerNode.text));
                     break;
-                case lp.LGFileParser.INVALID_ESCAPE:
-                    throw new Error(`escape character ${innerNode.text} is invalid`);
                 case lp.LGFileParser.EXPRESSION: {
                     result = result.concat(this.EvalExpression(innerNode.text));
                     break;
@@ -154,11 +146,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
             '\\}': '}'
         };
 
-        if (Object.keys(validCharactersDict).includes(exp)) {
-            return validCharactersDict[exp];
-        }
-
-        throw new Error(`escape character ${exp} is invalid`);
+        return validCharactersDict[exp];
     }
 
     private EvalCondition(condition: lp.IfConditionContext): boolean {
@@ -175,6 +163,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         try {
             exp = exp.replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
+
             const result: any = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
             if ((typeof (result) === 'boolean' && !result) || (typeof (result) === 'number' && result === 0)) {
                 return false;
@@ -241,6 +230,8 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     }
 
     private EvalByExpressionEngine(exp: string, scope: any) : any {
-        return ExpressionEngine.EvaluateWithString(exp, scope, this.GetValueX.GetValueX, this.GetMethodX.GetMethodX);
+        const parse = new ExpressionEngine(this.GetMethodX.GetMethodX).Parse(exp);
+
+        return parse.TryEvaluate(scope);
     }
 }

@@ -1,21 +1,22 @@
-import { AbstractParseTreeVisitor, ParseTree } from 'antlr4ts/tree';
-import { ExpressionEngine, ExpressionParser } from 'botframework-expression';
-import { TerminalNode } from 'botframework-expression//node_modules/antlr4ts/tree';
+import { AbstractParseTreeVisitor, ParseTree, TerminalNode } from 'antlr4ts/tree';
+import { Constant, Extensions, IExpressionParser } from 'botbuilder-expression';
+import { ExpressionEngine} from 'botbuilder-expression-parser';
 import { EvaluationTarget } from './evaluator';
-import { ExpressionAnalyzerVisitor } from './expressionAnalyzerVisitor';
 import * as lp from './generator/LGFileParser';
 import { LGFileParserVisitor } from './generator/LGFileParserVisitor';
+import { GetMethodExtensions } from './getMethodExtensions';
 import { EvaluationContext } from './templateEngine';
 
 // tslint:disable-next-line: max-classes-per-file
 export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFileParserVisitor<string[]> {
     public readonly Context: EvaluationContext;
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
-    private readonly _expressionParser: ExpressionParser;
+    private readonly _expressionParser: IExpressionParser;
 
     constructor(context: EvaluationContext) {
         super();
         this.Context = context;
+        this._expressionParser = new ExpressionEngine(new GetMethodExtensions(undefined).GetMethodX);
     }
 
     public AnalyzeTemplate(templateName: string): string[] {
@@ -111,16 +112,41 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
     private AnalyzeExpression(exp: string): string[] {
         exp = exp.replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
-        const parseTree: ParseTree = ExpressionEngine.Parse(exp);
+        const parse = this._expressionParser.Parse(exp);
+        let references = new Set<string>();
 
-        return this.AnalyzeParserTree(parseTree);
-    }
+        const path = Extensions.ReferenceWalk(parse, references, (expression) => {
+            let found = false;
+            if (expression instanceof Constant && typeof (expression as Constant).Value === 'string') {
+                const str: string = (expression as Constant).Value;
+                if (str.startsWith('[') && str.endsWith(']')) {
+                    found = true;
+                    let end = str.indexOf('(');
+                    if (end === -1) {
+                        end = str.length - 1;
+                    }
 
-    private AnalyzeParserTree(parserTree: ParseTree): string[] {
-        let result: string[] = [];
-        const visitor = new ExpressionAnalyzerVisitor(this.Context);
+                    const template = str.substr(1, end - 1);
+                    const analyzer = new Analyzer(this.Context);
+                    for (const reference of analyzer.AnalyzeTemplate(template)) {
+                        references.add(reference);
+                    }
+                } else if (str.startsWith('{') && str.endsWith('}')) {
+                    found = true;
+                    for (const childRef of this.AnalyzeExpression(str)) {
+                        references.add(childRef);
+                    }
+                }
+            }
 
-        return visitor.Analyzer(parserTree);
+            return found;
+        });
+
+        if (path !== undefined) {
+            references.add(path);
+        }
+
+        return Array.from(references);
     }
 
     private AnalyzeTemplateRef(exp: string): string[] {

@@ -5,7 +5,7 @@ import { TerminalNode } from 'botframework-expression//node_modules/antlr4ts/tre
 import { Analyzer } from './analyzer';
 import { LGFileLexer } from './generator/LGFileLexer';
 import { FileContext, LGFileParser, ParagraphContext, ParametersContext, TemplateDefinitionContext } from './generator/LGFileParser';
-import { TemplateErrorListener } from './TemplateErrorListener';
+import { ErrorListener } from './errorListener';
 
 // tslint:disable-next-line: no-require-imports
 import fs = require('fs');
@@ -50,7 +50,7 @@ export class MSLGTool {
             const tokens: CommonTokenStream = new CommonTokenStream(lexer);
             const parser: LGFileParser = new LGFileParser(tokens);
             parser.removeErrorListeners();
-            parser.addErrorListener(TemplateErrorListener.INSTANCE);
+            parser.addErrorListener(ErrorListener.INSTANCE);
             parser.buildParseTree = true;
             parser.errorHandler = new BailErrorStrategy();
 
