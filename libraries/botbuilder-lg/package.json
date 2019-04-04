@@ -18,7 +18,7 @@
     "typescript": "^3.2.4",
     "antlr4": "^4.7.2",
     "antlr4ts": "0.5.0-alpha.1",
-    "botframework-expression": "file:../botframework-expression",
+    "botbuilder-expression": "file:../botbuilder-expression",
     "botbuilder-expression-parser": "file:../botbuilder-expression-parser"
   },
   "devDependencies": {

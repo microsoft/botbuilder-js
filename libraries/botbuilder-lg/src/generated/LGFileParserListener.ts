@@ -1,4 +1,4 @@
-// Generated from LGFileParser.g4 by ANTLR 4.6-SNAPSHOT
+// Generated from ../LGFileParser.g4 by ANTLR 4.6-SNAPSHOT
 
 
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
@@ -16,10 +16,8 @@ import { TemplateBodyContext } from "./LGFileParser";
 import { NormalTemplateBodyContext } from "./LGFileParser";
 import { NormalTemplateStringContext } from "./LGFileParser";
 import { ConditionalTemplateBodyContext } from "./LGFileParser";
-import { CaseRuleContext } from "./LGFileParser";
-import { DefaultRuleContext } from "./LGFileParser";
-import { CaseConditionContext } from "./LGFileParser";
-import { DefaultConditionContext } from "./LGFileParser";
+import { IfConditionRuleContext } from "./LGFileParser";
+import { IfConditionContext } from "./LGFileParser";
 
 
 /**
@@ -175,47 +173,25 @@ export interface LGFileParserListener extends ParseTreeListener {
 	exitConditionalTemplateBody?: (ctx: ConditionalTemplateBodyContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `LGFileParser.caseRule`.
+	 * Enter a parse tree produced by `LGFileParser.ifConditionRule`.
 	 * @param ctx the parse tree
 	 */
-	enterCaseRule?: (ctx: CaseRuleContext) => void;
+	enterIfConditionRule?: (ctx: IfConditionRuleContext) => void;
 	/**
-	 * Exit a parse tree produced by `LGFileParser.caseRule`.
+	 * Exit a parse tree produced by `LGFileParser.ifConditionRule`.
 	 * @param ctx the parse tree
 	 */
-	exitCaseRule?: (ctx: CaseRuleContext) => void;
+	exitIfConditionRule?: (ctx: IfConditionRuleContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `LGFileParser.defaultRule`.
+	 * Enter a parse tree produced by `LGFileParser.ifCondition`.
 	 * @param ctx the parse tree
 	 */
-	enterDefaultRule?: (ctx: DefaultRuleContext) => void;
+	enterIfCondition?: (ctx: IfConditionContext) => void;
 	/**
-	 * Exit a parse tree produced by `LGFileParser.defaultRule`.
+	 * Exit a parse tree produced by `LGFileParser.ifCondition`.
 	 * @param ctx the parse tree
 	 */
-	exitDefaultRule?: (ctx: DefaultRuleContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `LGFileParser.caseCondition`.
-	 * @param ctx the parse tree
-	 */
-	enterCaseCondition?: (ctx: CaseConditionContext) => void;
-	/**
-	 * Exit a parse tree produced by `LGFileParser.caseCondition`.
-	 * @param ctx the parse tree
-	 */
-	exitCaseCondition?: (ctx: CaseConditionContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `LGFileParser.defaultCondition`.
-	 * @param ctx the parse tree
-	 */
-	enterDefaultCondition?: (ctx: DefaultConditionContext) => void;
-	/**
-	 * Exit a parse tree produced by `LGFileParser.defaultCondition`.
-	 * @param ctx the parse tree
-	 */
-	exitDefaultCondition?: (ctx: DefaultConditionContext) => void;
+	exitIfCondition?: (ctx: IfConditionContext) => void;
 }
 

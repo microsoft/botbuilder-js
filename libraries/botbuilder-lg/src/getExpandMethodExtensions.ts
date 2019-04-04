@@ -1,34 +1,24 @@
-import { ExpressionEvaluator, BuiltInFunctions } from 'botbuilder-expression';
-import { Evaluator } from './evaluator';
+import { GetMethodDelegate, MethodBinder } from 'botframework-expression';
+import { Expander } from './expander';
 
-export interface IGetMethod {
-    GetMethodX(name: string): ExpressionEvaluator;
-}
+export class GetMethodExtensions {
+    private readonly expander: Expander;
 
-export class GetMethodExtensions implements IGetMethod {
-    private readonly evaluator: Evaluator;
-
-    public constructor(evaluator: Evaluator) {
-        this.evaluator = evaluator;
+    public constructor(expander: Expander) {
+        this.expander = expander;
     }
 
-    public GetMethodX(name: string): ExpressionEvaluator {
+    public GetMethodX: GetMethodDelegate = (name: string) => {
 
-        // tslint:disable-next-line: switch-default
         switch (name) {
-            case 'count':
-                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.Count));
-            case 'join':
-                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.Join));
-            case 'foreach':
-            case 'map':
-                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.Foreach));
-            case 'mapjoin':
+            case 'count': return this.Count;
+            case 'join': return this.Join;
+            case 'foreach': return this.Foreach;
+            case 'newParameter':
             case 'humanize':
-                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.ForeachThenJoin));
+                return this.ForeachThenJoin;
+            default: return MethodBinder.All(name);
         }
-
-        return BuiltInFunctions.Lookup(name);
     }
 
     public Count(paramters: any[]): any {
@@ -76,14 +66,14 @@ export class GetMethodExtensions implements IGetMethod {
             const li: any[] = paramters[0];
             const func: any = paramters[1];
 
-            if (!this.evaluator.Context.TemplateContexts.has(func)) {
+            if (!this.expander.Context.TemplateContexts.has(func)) {
                 throw new Error(`No such template defined: ${func}`);
             }
 
             return li.map((x: any) => {
-                const newScope: any = this.evaluator.ConstructScope(func, [x]);
+                const newScope: any = this.expander.ConstructScope(func, [x]);
 
-                return this.evaluator.EvaluateTemplate(func, newScope);
+                return this.expander.ExpandTemplate(func, newScope)[0];
             });
 
         }
@@ -97,14 +87,14 @@ export class GetMethodExtensions implements IGetMethod {
             const li: any[] = paramters[0];
             const func = paramters[1];
 
-            if (!this.evaluator.Context.TemplateContexts.has(func)) {
+            if (!this.expander.Context.TemplateContexts.has(func)) {
                 throw new Error(`No such template defined: ${func}`);
             }
 
             const result = li.map((x: any) => {
-                const newScope: any = this.evaluator.ConstructScope(func, [x]);
+                const newScope: any = this.expander.ConstructScope(func, [x]);
 
-                return this.evaluator.EvaluateTemplate(func, newScope);
+                return this.expander.ExpandTemplate(func, newScope)[0];
             });
 
             const newParameter: any = paramters.slice(1);
