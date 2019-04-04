@@ -3,7 +3,7 @@ Expression migrated from C# version(https://github.com/Microsoft/botbuilder-dotn
 
 ### build
 ```
-    npm i
+    npm install
     tsc
 ```
 

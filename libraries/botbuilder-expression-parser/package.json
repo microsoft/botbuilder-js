@@ -1,5 +1,5 @@
 {
-  "name": "botbuilder-expressionparser",
+  "name": "botbuilder-expression-parser",
   "description": "Typescript version of Microsoft.Expression from C# version (https://github.com/Microsoft/botbuilder-dotnet/tree/ComposableDialog/libraries/Microsoft.CommonExpressions) ",
   "version": "1.0.0",
   "license": "MIT",
@@ -30,8 +30,10 @@
     "typescript-tslint-plugin": "^0.3.1"
   },
   "scripts": {
-    "test": "tsc && nyc mocha tests/",
-    "build": "tsc"
+    "preinstall": "cd ../botbuilder-expression && npm install && tsc",
+    "build": "tsc",
+    "test": "tsc && nyc mocha tests/ --timeout 60000",
+    "clean": "erase /q /s .\\lib"
   },
   "files": [
     "/lib",
