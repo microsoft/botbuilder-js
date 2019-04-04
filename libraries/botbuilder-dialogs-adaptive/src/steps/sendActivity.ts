@@ -67,11 +67,11 @@ export class SendActivity extends DialogCommand {
      * This is just a convenience property for setting the dialogs [outputBinding](#outputbinding). 
      */
     public set resultProperty(value: string) {
-        this.outputBinding = value;
+        this.outputProperty = value;
     }
 
     public get resultProperty(): string {
-        return this.outputBinding;
+        return this.outputProperty;
     }
 
     public configure(config: SendActivityConfiguration): this {

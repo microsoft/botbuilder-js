@@ -8,7 +8,7 @@
 import { AdaptiveDialog } from '../adaptiveDialog';
 import { InputSlot } from './inputSlot';
 import { PlanningContext, RuleDialogEventNames, RuleDialogState, PlanChangeList, PlanChangeType, PlanStepState } from '../planningContext';
-import { DialogEvent, DialogTurnResult, Dialog } from 'botbuilder-dialogs';
+import { DialogEvent, DialogTurnResult, Dialog, DialogConsultationDesire } from 'botbuilder-dialogs';
 
 export interface MultiInputDialogAction {
     tagSelector: string[];
@@ -308,7 +308,7 @@ export class MultiInputDialog<O extends object = {}> extends AdaptiveDialog<O> {
     }
 
     private createChangeList(steps: Dialog[], options?: any): PlanChangeList {
-        const changes: PlanChangeList = { changeType: PlanChangeType.doSteps, steps: [] };
+        const changes: PlanChangeList = { desire: DialogConsultationDesire.shouldProcess, changeType: PlanChangeType.doSteps, steps: [] };
         steps.forEach((step) => {
             const ss: PlanStepState = { dialogStack: [], dialogId: step.id };
             if (options) { ss.options = options }

@@ -51,12 +51,12 @@ export class TextInput extends DialogCommand implements DialogDependencies {
      * returned from the called dialog will then be copied to the bound property.
      */
     public set property(value: string) {
-        this.inputBindings['value'] = value;
-        this.outputBinding = value;
+        this.inputProperties['value'] = value;
+        this.outputProperty = value;
     }
 
     public get property(): string {
-       return this.outputBinding; 
+       return this.outputProperty; 
     }
 
     public async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {

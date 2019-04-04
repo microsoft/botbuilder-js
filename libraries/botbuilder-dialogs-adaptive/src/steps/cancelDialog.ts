@@ -36,11 +36,11 @@ export class CancelDialog extends DialogCommand {
     public eventValue: object;
 
     public set eventValueProperty(value: string) {
-        this.inputBindings['eventValue'] = value;
+        this.inputProperties['eventValue'] = value;
     }
 
     public get eventValueProperty(): string {
-        return this.inputBindings['eventValue'];
+        return this.inputProperties['eventValue'];
     }
 
     public configure(config: CancelDialogConfiguration): this {

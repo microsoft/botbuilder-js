@@ -8,7 +8,7 @@
 import { AdaptiveDialog, AdaptiveDialogConfiguration } from '../adaptiveDialog';
 import { InputSlot } from './inputSlot';
 import { PlanningContext, RuleDialogEventNames, RuleDialogState, PlanChangeList, PlanChangeType, PlanStepState } from '../planningContext';
-import { DialogEvent, DialogTurnResult, Dialog } from 'botbuilder-dialogs';
+import { DialogEvent, DialogTurnResult, Dialog, DialogConsultationDesire } from 'botbuilder-dialogs';
 import { RecognizerResult, Activity, InputHints } from 'botbuilder-core';
 import { SendActivity } from '../steps';
 
@@ -111,12 +111,12 @@ export class InputDialog<O extends object = {}> extends AdaptiveDialog<O> {
      * returned from the called dialog will then be copied to the bound property.
      */
     public set property(value: string) {
-        this.inputBindings['value'] = value;
-        this.outputBinding = value;
+        this.inputProperties['value'] = value;
+        this.outputProperty = value;
     }
 
     public get property(): string {
-        return this.outputBinding;
+        return this.outputProperty;
     }
 
     public async evaluateRules(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
@@ -362,7 +362,7 @@ export class InputDialog<O extends object = {}> extends AdaptiveDialog<O> {
 
         // Queue actions steps
         if (top) {
-            const changes: PlanChangeList = { changeType: PlanChangeType.doSteps, steps: [] };
+            const changes: PlanChangeList = { desire: DialogConsultationDesire.shouldProcess, changeType: PlanChangeType.doSteps, steps: [] };
             top.steps.forEach((step) => {
                 const stepState: PlanStepState = { dialogStack: [], dialogId: step.id };
                 if (options) { stepState.options = options }
