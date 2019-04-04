@@ -438,10 +438,13 @@ export class BuiltInFunctions {
             //Math
             [ExpressionType.Element, new ExpressionEvaluator(BuiltInFunctions.ExtractElement, ReturnType.Object,
                 (expr) => BuiltInFunctions.ValidateOrder(expr, null, ReturnType.Object, ReturnType.Number))],
-
-            [ExpressionType.Add, BuiltInFunctions.Numeric(args => args[0] + args[1])],
             [ExpressionType.Subtract, BuiltInFunctions.Numeric(args => args[0] + args[1])],
+            [ExpressionType.Add, BuiltInFunctions.Numeric(args => args[0] + args[1])],
             [ExpressionType.Multiply, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+
+            
+            
+            
             [ExpressionType.Divide, BuiltInFunctions.Numeric(args => args[0] + args[1])],
             [ExpressionType.Min, BuiltInFunctions.Numeric(args => args[0] + args[1])],
             [ExpressionType.Max, BuiltInFunctions.Numeric(args => args[0] + args[1])],
@@ -502,27 +505,31 @@ export class BuiltInFunctions {
             [ExpressionType.AddProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.SetProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.RemoveProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            
 
         ]);
-        
+
         // Math aliases
-        functions.set("add", functions[ExpressionType.Add]);
-        functions.set("div", functions[ExpressionType.Divide]);
-        functions.set("mul", functions[ExpressionType.Multiply]);
-        functions.set("sub", functions[ExpressionType.Subtract]);
-        functions.set("exp", functions[ExpressionType.Power]);
-        functions.set("mod", functions[ExpressionType.Mod]);
+        functions.set("add", functions.get(ExpressionType.Add));
+        functions.set("mul", functions.get(ExpressionType.Multiply));
+        
+        functions.set("div", functions.get(ExpressionType.Divide));
+        functions.set("mul", functions.get(ExpressionType.Multiply));
+        functions.set("sub", functions.get(ExpressionType.Subtract));
+        functions.set("exp", functions.get(ExpressionType.Power));
+        functions.set("mod", functions.get(ExpressionType.Mod));
 
         // Comparison aliases
-        functions.set("and", functions[ExpressionType.And]);
-        functions.set("equals", functions[ExpressionType.Equal]);
-        functions.set("greater", functions[ExpressionType.GreaterThan]);
-        functions.set("greaterOrEquals", functions[ExpressionType.GreaterThanOrEqual]);
-        functions.set("less", functions[ExpressionType.LessThan]);
-        functions.set("lessOrEquals", functions[ExpressionType.LessThanOrEqual]);
-        functions.set("not", functions[ExpressionType.Not]);
-        functions.set("or", functions[ExpressionType.Or]);
-        functions.set("concat", functions[ExpressionType.Concat]);
+        functions.set("and", functions.get(ExpressionType.And));
+        functions.set("equals", functions.get(ExpressionType.Equal));
+        functions.set("greater", functions.get(ExpressionType.GreaterThan));
+        functions.set("greaterOrEquals", functions.get(ExpressionType.GreaterThanOrEqual));
+        functions.set("less", functions.get(ExpressionType.LessThan));
+        functions.set("lessOrEquals", functions.get(ExpressionType.LessThanOrEqual));
+        functions.set("not", functions.get(ExpressionType.Not));
+        functions.set("or", functions.get(ExpressionType.Or));
+        functions.set("concat", functions.get(ExpressionType.Concat));
+        
 
         return functions;
     }
