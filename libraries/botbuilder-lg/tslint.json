@@ -35,6 +35,7 @@
         "no-relative-imports": false,
         "max-line-length": [true,{"limit":140,"ignore-pattern":"^\\s+\\*"}],
         "no-void-expression": false,
-        "no-unsafe-any":false
+        "no-unsafe-any":false,
+        "newline-per-chained-call":false
     }
 }

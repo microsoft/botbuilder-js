@@ -1,24 +1,46 @@
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { ExpressionEngine } from 'botframework-expression';
-import { LGReportMessage, LGReportMessageType } from './exception';
-import * as lp from './generator/LGFileParser';
-import { LGFileParserVisitor } from './generator/LGFileParserVisitor';
+import { ExpressionEngine } from 'botbuilder-expression-parser';
+import * as lp from './generated/LGFileParser';
+import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
+import { GetMethodExtensions } from './getMethodExtensions';
 import { EvaluationContext } from './templateEngine';
 
+export enum ReportEntryType {
+    ERROR,
+    WARN
+}
+
+/**
+ * Error/Warning report message entry
+ */
+export class ReportEntry {
+    public Type: ReportEntryType;
+    public Message: string;
+    public constructor(message: string, type: ReportEntryType = ReportEntryType.ERROR) {
+        this.Message = message;
+        this.Type = type;
+    }
+
+    public toString(): string {
+        const label: string = this.Type === ReportEntryType.ERROR ? '[ERROR]' : '[WARN]';
+
+        return `${label}: ${this.Message}`;
+    }
+}
 // tslint:disable-next-line: completed-docs
-export class StaticChecker extends AbstractParseTreeVisitor<LGReportMessage[]> implements LGFileParserVisitor<LGReportMessage[]> {
+export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> implements LGFileParserVisitor<ReportEntry[]> {
     public readonly Context:  EvaluationContext;
     constructor(context: EvaluationContext) {
         super();
         this.Context = context;
     }
 
-    public Check(): LGReportMessage[] {
-        let result: LGReportMessage[] = [];
+    public Check(): ReportEntry[] {
+        let result: ReportEntry[] = [];
         if (this.Context.TemplateContexts === undefined || this.Context.TemplateContexts.size <= 0) {
-            result.push(new LGReportMessage(`File must have at least one template definition`, LGReportMessageType.Warning));
+            result.push(new ReportEntry(`File must have at least one template definition`, ReportEntryType.WARN));
         } else {
-            this.Context.TemplateContexts.forEach(template => {
+            this.Context.TemplateContexts.forEach((template: lp.TemplateDefinitionContext) => {
                 result = result.concat(this.visit(template));
             });
         }
@@ -26,72 +48,74 @@ export class StaticChecker extends AbstractParseTreeVisitor<LGReportMessage[]> i
         return result;
     }
 
-    public visitTemplateDefinition(context: lp.TemplateDefinitionContext): LGReportMessage[] {
-        let result: LGReportMessage[] = [];
+    public visitTemplateDefinition(context: lp.TemplateDefinitionContext): ReportEntry[] {
+        const result: ReportEntry[] = [];
         const templateName: string = context.templateNameLine().templateName().text;
         if (context.templateBody() === undefined) {
-            result.push(new LGReportMessage(`There is no template body in template ${templateName}`));
+            result.push(new ReportEntry(`There is no template body in template ${templateName}`));
         } else {
             result.concat(this.visit(context.templateBody()));
         }
 
-        const parameters = context.templateNameLine().parameters();
+        const parameters: lp.ParametersContext = context.templateNameLine().parameters();
         if (parameters !== undefined) {
-            if (parameters.CLOSE_PARENTHESIS() === undefined|| parameters.OPEN_PARENTHESIS() === undefined) {
-                result.push(new LGReportMessage(`parameters: ${parameters.text} format error`));
+            if (parameters.CLOSE_PARENTHESIS() === undefined || parameters.OPEN_PARENTHESIS() === undefined) {
+                result.push(new ReportEntry(`parameters: ${parameters.text} format error`));
             }
 
-            const invalidSeperateCharacters = parameters.INVALID_SEPERATE_CHAR();
+            const invalidSeperateCharacters: TerminalNode[] = parameters.INVALID_SEPERATE_CHAR();
             if (invalidSeperateCharacters !== undefined || invalidSeperateCharacters.length > 0) {
-                result.push(new LGReportMessage(`Parameters for templates must be separated by comma.`));
+                result.push(new ReportEntry(`Parameters for templates must be separated by comma.`));
             }
         }
 
         return result;
     }
 
-    public visitNormalTemplateBody(context: lp.NormalTemplateBodyContext): LGReportMessage[] {
-        let result: LGReportMessage[] = [];
+    public visitNormalTemplateBody(context: lp.NormalTemplateBodyContext): ReportEntry[] {
+        const result: ReportEntry[] = [];
         for (const templateStr of context.normalTemplateString()) {
-            const item: LGReportMessage[] = this.visit(templateStr);
+            const item: ReportEntry[] = this.visit(templateStr);
             result.concat(item);
         }
 
         return result;
     }
 
-    public visitConditionalBody(context: lp.ConditionalBodyContext): LGReportMessage[] {
-        let result: LGReportMessage[] = [];
-        const ifRules = context.conditionalTemplateBody().ifConditionRule();
+    public visitConditionalBody(context: lp.ConditionalBodyContext): ReportEntry[] {
+        let result: ReportEntry[] = [];
+        const ifRules: lp.IfConditionRuleContext[] = context.conditionalTemplateBody().ifConditionRule();
 
         let idx: number = 0;
-        for(const ifRule of ifRules) {
-            const conditionLabel = ifRule.ifCondition().IFELSE().text.toLowerCase();
+        for (const ifRule of ifRules) {
+            const conditionLabel: string = ifRule.ifCondition().IFELSE().text.toLowerCase();
             if (idx === 0 && conditionLabel !== 'if:') {
-                result.push(new LGReportMessage(`condition is not start with if: '${context.conditionalTemplateBody().text}'`, LGReportMessageType.Warning));
+                result.push(new ReportEntry(`condition is not start with if: '${context.conditionalTemplateBody().text}'`,
+                                            ReportEntryType.WARN));
             }
 
             if (idx > 0 && conditionLabel === 'if:') {
-                result.push(new LGReportMessage(`condition can't have more than one if: '${context.conditionalTemplateBody().text}'`));
+                result.push(new ReportEntry(`condition can't have more than one if: '${context.conditionalTemplateBody().text}'`));
             }
 
             if (idx === ifRules.length - 1 && conditionLabel !== 'else:') {
-                result.push(new LGReportMessage(`condition is not end with else: '${context.conditionalTemplateBody().text}'`, LGReportMessageType.Warning));
+                result.push(new ReportEntry(`condition is not end with else: '${context.conditionalTemplateBody().text}'`,
+                                            ReportEntryType.WARN));
             }
 
             if (idx > 0 && idx < ifRules.length - 1 && conditionLabel !== 'elseif:') {
-                result.push(new LGReportMessage(`only elseif is allowed in middle of condition: '${context.conditionalTemplateBody().text}'`));
+                result.push(new ReportEntry(`only elseif is allowed in middle of condition: '${context.conditionalTemplateBody().text}'`));
             }
 
             if (conditionLabel !== 'else:') {
                 if (ifRule.ifCondition().EXPRESSION().length !== 1) {
-                    result.push(new LGReportMessage(`if and elseif should followed by one valid expression: '${ifRule.text}'`));
+                    result.push(new ReportEntry(`if and elseif should followed by one valid expression: '${ifRule.text}'`));
                 }
 
                 result = result.concat(this.CheckExpression(ifRule.ifCondition().EXPRESSION(0).text));
             } else {
                 if (ifRule.ifCondition().EXPRESSION().length !== 0) {
-                    result.push(new LGReportMessage(`else should not followed by any expression: '${ifRule.text}'`));
+                    result.push(new ReportEntry(`else should not followed by any expression: '${ifRule.text}'`));
                 }
             }
 
@@ -102,8 +126,8 @@ export class StaticChecker extends AbstractParseTreeVisitor<LGReportMessage[]> i
         return result;
     }
 
-    public visitNormalTemplateString(context: lp.NormalTemplateStringContext): LGReportMessage[] {
-        const result: LGReportMessage[] = [];
+    public visitNormalTemplateString(context: lp.NormalTemplateStringContext): ReportEntry[] {
+        const result: ReportEntry[] = [];
         for (const child of context.children) {
             const node: TerminalNode = child as TerminalNode;
             switch (node.symbol.type) {
@@ -111,7 +135,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<LGReportMessage[]> i
                     result.concat(this.CheckEscapeCharacter(node.text));
                     break;
                 case lp.LGFileParser.INVALID_ESCAPE:
-                    result.push(new LGReportMessage(`escape character ${node.text} is invalid`));
+                    result.push(new ReportEntry(`escape character ${node.text} is invalid`));
                     break;
                 case lp.LGFileParser.TEMPLATE_REF:
                     result.concat(this.CheckTemplateRef(node.text));
@@ -133,12 +157,12 @@ export class StaticChecker extends AbstractParseTreeVisitor<LGReportMessage[]> i
         return result;
     }
 
-    protected defaultResult(): LGReportMessage[] {
+    protected defaultResult(): ReportEntry[] {
         return [];
     }
 
-    private CheckTemplateRef(exp: string): LGReportMessage[] {
-        let result: LGReportMessage[] = [];
+    private CheckTemplateRef(exp: string): ReportEntry[] {
+        const result: ReportEntry[] = [];
         exp = exp.replace(/(^\[*)/g, '')
                 .replace(/(\]*$)/g, '')
                 .trim();
@@ -147,27 +171,27 @@ export class StaticChecker extends AbstractParseTreeVisitor<LGReportMessage[]> i
         if (argsStartPos > 0) {
             const argsEndPos: number = exp.lastIndexOf(')');
             if (argsEndPos < 0 || argsEndPos < argsStartPos + 1) {
-                result.push(new LGReportMessage(`Not a valid template ref: ${exp}`));
+                result.push(new ReportEntry(`Not a valid template ref: ${exp}`));
             } else {
                  const templateName: string = exp.substr(0, argsStartPos);
                  if (!this.Context.TemplateContexts.has(templateName)) {
-                     result.push(new LGReportMessage(`No such template: ${templateName}`));
+                     result.push(new ReportEntry(`No such template: ${templateName}`));
                  } else {
-                    var argsNumber = exp.substr(argsStartPos + 1, argsEndPos - argsStartPos - 1).split(',').length;
+                    const argsNumber: number = exp.substr(argsStartPos + 1, argsEndPos - argsStartPos - 1).split(',').length;
                     result.concat(this.CheckTemplateParameters(templateName, argsNumber));
                  }
             }
         } else {
             if (!this.Context.TemplateContexts.has(exp)) {
-                result.push(new LGReportMessage(`No such template: ${exp}`));
+                result.push(new ReportEntry(`No such template: ${exp}`));
             }
         }
 
         return result;
     }
 
-    private CheckMultiLineText(exp: string): LGReportMessage[] {
-        let result: LGReportMessage[] = [];
+    private CheckMultiLineText(exp: string): ReportEntry[] {
+        const result: ReportEntry[] = [];
         exp = exp.substr(3, exp.length - 6);
         const matches: string[] = exp.match(/@\{[^{}]+\}/g);
         for (const match of matches) {
@@ -180,44 +204,46 @@ export class StaticChecker extends AbstractParseTreeVisitor<LGReportMessage[]> i
         return result;
     }
 
-    private CheckText(exp: string): LGReportMessage[] {
-        let result: LGReportMessage[] = [];
+    private CheckText(exp: string): ReportEntry[] {
+        const result: ReportEntry[] = [];
 
-        if (exp.startsWith("```")) {
-            result.push(new LGReportMessage("Multi line variation must be enclosed in ```"));
+        if (exp.startsWith('```')) {
+            result.push(new ReportEntry('Multi line variation must be enclosed in ```'));
         }
 
         return result;
     }
 
-    private CheckTemplateParameters(templateName: string, argsNumber: number): LGReportMessage[] {
-        let result: LGReportMessage[] = [];
-        const parametersNumber = this.Context.TemplateParameters.has(templateName) ? this.Context.TemplateParameters.get(templateName).length : 0;
+    private CheckTemplateParameters(templateName: string, argsNumber: number): ReportEntry[] {
+        const result: ReportEntry[] = [];
+        const parametersNumber: number = this.Context.TemplateParameters.has(templateName)
+        ? this.Context.TemplateParameters.get(templateName).length : 0;
 
         if (argsNumber !== parametersNumber) {
-            result.push(new LGReportMessage(`Arguments count mismatch for template ref ${templateName}, expected ${parametersNumber}, actual ${argsNumber}`));
+            result.push(new ReportEntry(
+                `Arguments count mismatch for template ref ${templateName}, expected ${parametersNumber}, actual ${argsNumber}`));
         }
 
         return result;
     }
 
-    private CheckExpression(exp: string): LGReportMessage[] {
-        let result: LGReportMessage[] = [];
+    private CheckExpression(exp: string): ReportEntry[] {
+        const result: ReportEntry[] = [];
         exp = exp.replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '')
                 .trim();
 
         try {
-            ExpressionEngine.Parse(exp);
+            new ExpressionEngine(new GetMethodExtensions(undefined).GetMethodX).Parse(exp);
         } catch (e) {
-            result.push(new LGReportMessage(e));
+            result.push(new ReportEntry(e));
         }
 
         return result;
     }
 
-    private CheckEscapeCharacter(exp: string): LGReportMessage[] {
-        let result: LGReportMessage[] = [];
+    private CheckEscapeCharacter(exp: string): ReportEntry[] {
+        const result: ReportEntry[] = [];
         const validCharactersDict: any = {
             '\\r': '\r',
             '\\n': '\n',
@@ -230,7 +256,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<LGReportMessage[]> i
         };
 
         if (!Object.keys(validCharactersDict).includes(exp)) {
-            result.push(new LGReportMessage(`escape character ${exp} is invalid`));
+            result.push(new ReportEntry(`escape character ${exp} is invalid`));
         }
 
         return result;

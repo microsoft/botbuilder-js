@@ -1,11 +1,15 @@
 
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
+import { Expression } from 'botbuilder-expression';
 import { ExpressionEngine} from 'botbuilder-expression-parser';
-import * as lp from './generator/LGFileParser';
-import { LGFileParserVisitor } from './generator/LGFileParserVisitor';
+import * as lp from './generated/LGFileParser';
+import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions, IGetMethod } from './getMethodExtensions';
 import { EvaluationContext } from './templateEngine';
 
+/**
+ * Runtime template context store
+ */
 export class EvaluationTarget {
     public TemplateName: string;
     public Scope: any;
@@ -15,6 +19,9 @@ export class EvaluationTarget {
     }
 }
 
+/**
+ * Evaluation tuntime engine
+ */
 // tslint:disable-next-line: max-classes-per-file
 export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFileParserVisitor<string> {
     public readonly Context: EvaluationContext;
@@ -33,12 +40,13 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
             throw new Error(`No such template: ${templateName}`);
         }
 
-        if (this.evalutationTargetStack[templateName] !== undefined) {
+        if (this.evalutationTargetStack.find((u: EvaluationTarget) => u.TemplateName === templateName) !== undefined) {
             throw new Error(`Loop deteced: ${this.evalutationTargetStack.reverse()
                 .map((u: EvaluationTarget) => u.TemplateName)
                 .join(' => ')}`);
         }
 
+        // Using a stack to track the evalution trace
         this.evalutationTargetStack.push(new EvaluationTarget(templateName, scope));
         const result: string = this.visit(this.Context.TemplateContexts.get(templateName));
         this.evalutationTargetStack.pop();
@@ -66,7 +74,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         return this.visit(normalTemplateStrs[randomNumber]);
     }
 
-    public visitConditionalBody(ctx: lp.ConditionalBodyContext) : string{
+    public visitConditionalBody(ctx: lp.ConditionalBodyContext) : string {
         const ifRules: lp.IfConditionRuleContext[] = ctx.conditionalTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             if (this.EvalCondition(ifRule.ifCondition())) {
@@ -111,14 +119,11 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     public ConstructScope(templateName: string, args: any[]) : any {
         if (args.length === 1 &&
             !this.Context.TemplateParameters.has(templateName)) {
+            // Special case, if no parameters defined, and only one arg, don't wrap
+
             return args[0];
         }
         const paramters: string[] = this.ExtractParamters(templateName);
-
-        if (paramters.length !== args.length) {
-            throw new Error(`Arguments count mismatch for template ref ${templateName},
-            expected ${paramters.length}, actual ${args.length}`);
-        }
 
         const newScope: any = {};
         paramters.map((e: string, i: number) => newScope[e] = args[i]);
@@ -131,6 +136,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     }
 
     private currentTarget(): EvaluationTarget {
+        // just don't want to write evaluationTargetStack.Peek() everywhere
         return this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
     }
 
@@ -164,15 +170,16 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
             exp = exp.replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
 
-            const result: any = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
-            if ((typeof (result) === 'boolean' && !result) || (typeof (result) === 'number' && result === 0)) {
-                return false;
-            }
+            const {value: result, error}: {value: any; error: string} = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
+            if (error !== undefined
+                || result === undefined
+                || typeof result === 'boolean' && !Boolean(result)
+                || Number.isInteger(result) && Number(result) === 0) {
+                    return false;
+                }
 
             return true;
         } catch (error) {
-            console.log(error);
-
             return false;
         }
     }
@@ -180,21 +187,34 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         exp = exp.replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
 
-        return this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
+        const {value: result, error}: {value: any; error: string} = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
+        if (error !== undefined) {
+            throw new Error(`Error occurs when evaluating expression ${exp}: ${error}`);
+        }
+        if (result === undefined) {
+            throw new Error(`Error occurs when evaluating expression '${exp}': ${exp} is evaluated to null`);
+        }
+
+        return String(result);
     }
 
-    private EvalTemplateRef(exp: string) : any {
+    private EvalTemplateRef(exp: string) : string {
         exp = exp.replace(/(^\[*)/g, '')
                 .replace(/(\]*$)/g, '');
         const argsStartPos: number = exp.indexOf('(');
-        if (argsStartPos > 0) {
+        if (argsStartPos > 0) {// Do have args
+
+            // EvaluateTemplate all arguments using ExpressoinEngine
             const argsEndPos: number = exp.lastIndexOf(')');
             if (argsEndPos < 0 || argsEndPos < argsStartPos + 1) {
                 throw new Error(`Not a valid template ref: ${exp}`);
             }
 
             const argExpressions: string[] = exp.substr(argsStartPos + 1, argsEndPos - argsStartPos - 1).split(',');
-            const args: string[] = argExpressions.map((x: string) => this.EvalByExpressionEngine(x, this.currentTarget().Scope));
+            const args: string[] = argExpressions.map((x: string) => this.EvalByExpressionEngine(x, this.currentTarget().Scope).value);
+
+            // Construct a new Scope for this template reference
+            // Bind all arguments to parameters
             const templateName: string = exp.substr(0, argsStartPos);
 
             const newScope: any = this.ConstructScope(templateName, args);
@@ -207,30 +227,26 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
 
     private EvalMultiLineText(exp: string): string {
 
-        exp = exp.substr(3, exp.length - 6);
+        exp = exp.substr(3, exp.length - 6); //remove ``` ```
 
         return exp.replace(/@\{[^{}]+\}/g, (sub: string) => {
             const newExp: string = sub.substr(1); // remove @
             if (newExp.startsWith('{[') && newExp.endsWith(']}')) {
-                return this.EvalTemplateRef(newExp.substr(2, newExp.length - 4)); // [ ]
+                return this.EvalTemplateRef(newExp.substr(2, newExp.length - 4).replace('\"', '\'')); // [ ]
             } else {
-                return this.EvalExpression(newExp); // { }
+                return this.EvalExpression(newExp).replace('\"', '\''); // { }
             }
         });
     }
 
     private ExtractParamters(templateName: string): string[] {
-        const result: string[] = [];
-        const parameters: any = this.Context.TemplateParameters.get(templateName);
-        if (parameters === undefined || !(parameters instanceof Array)) {
-            return result;
-        }
+        const parameters: string[] = this.Context.TemplateParameters.get(templateName);
 
-        return parameters;
+        return parameters === undefined ? [] : parameters;
     }
 
-    private EvalByExpressionEngine(exp: string, scope: any) : any {
-        const parse = new ExpressionEngine(this.GetMethodX.GetMethodX).Parse(exp);
+    private EvalByExpressionEngine(exp: string, scope: any) : {value: any; error: string} {
+        const parse: Expression = new ExpressionEngine(this.GetMethodX.GetMethodX).Parse(exp);
 
         return parse.TryEvaluate(scope);
     }
