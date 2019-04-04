@@ -1,11 +1,11 @@
 import { ANTLRInputStream, CommonTokenStream } from 'antlr4ts';
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, ParseTree } from 'antlr4ts/tree';
-import { BuiltInFunctions, EvaluatorLookup, Expression, ExpressionType, IExpressionParser } from 'botbuilder-expression';
-import { Util } from './common/util';
+import { BuiltInFunctions, Constant, EvaluatorLookup, Expression, ExpressionType, IExpressionParser } from 'botbuilder-expression';
 import { ErrorListener } from './ErrorListener';
-import { ExpressionLexer, ExpressionParser, ExpressionVisitor } from './resource';
-import * as ep from './resource/ExpressionParser';
+import { ExpressionLexer, ExpressionParser, ExpressionVisitor } from './generated';
+import * as ep from './generated/ExpressionParser';
+import { Util } from './util';
 
 /**
  * Parser to turn strings into Expression
@@ -14,7 +14,7 @@ export class ExpressionEngine implements IExpressionParser {
     private readonly _lookup: EvaluatorLookup;
 
     // tslint:disable-next-line: typedef
-    private readonly ExpressionTransformer  = class extends AbstractParseTreeVisitor<Expression> implements ExpressionVisitor<Expression> {
+    private readonly ExpressionTransformer = class extends AbstractParseTreeVisitor<Expression> implements ExpressionVisitor<Expression> {
         private readonly _lookup: EvaluatorLookup = undefined;
         public constructor(lookup: EvaluatorLookup) {
             super();
@@ -26,7 +26,7 @@ export class ExpressionEngine implements IExpressionParser {
         }
 
         public visitUnaryOpExp(context: ep.UnaryOpExpContext): Expression {
-            const unaryOperationName : string = context.getChild(0).text;
+            const unaryOperationName: string = context.getChild(0).text;
             const operand: Expression = this.visit(context.expression());
 
             return this.MakeExpression(unaryOperationName, operand);
@@ -65,15 +65,15 @@ export class ExpressionEngine implements IExpressionParser {
         }
 
         public visitIdAtom(context: ep.IdAtomContext): Expression {
-            let result : Expression;
-            const symbol: string  = context.text;
+            let result: Expression;
+            const symbol: string = context.text;
 
             if (symbol === 'false') {
-                result = Expression.ConstantExpression(false);
+                result = new Constant(false);
             } else if (symbol === 'true') {
-                result = Expression.ConstantExpression(true);
+                result = new Constant(true);
             } else {
-                result = this.MakeExpression(ExpressionType.Accessor, Expression.ConstantExpression(symbol));
+                result = this.MakeExpression(ExpressionType.Accessor, new Constant(symbol));
             }
 
             return result;
@@ -89,13 +89,13 @@ export class ExpressionEngine implements IExpressionParser {
         public visitMemberAccessExp(context: ep.MemberAccessExpContext): Expression {
             const instance: Expression = this.visit(context.primaryExpression());
 
-            return this.MakeExpression(ExpressionType.Accessor, Expression.ConstantExpression(context.IDENTIFIER().text), instance);
+            return this.MakeExpression(ExpressionType.Accessor, new Constant(context.IDENTIFIER().text), instance);
         }
 
         public visitNumericAtom(context: ep.NumericAtomContext): Expression {
             const numberValue: number = parseFloat(context.text);
             if (!Number.isNaN(numberValue)) {
-                return Expression.ConstantExpression(numberValue);
+                return new Constant(numberValue);
             }
 
             throw Error(`${context.text} is not a number.`);
@@ -106,11 +106,11 @@ export class ExpressionEngine implements IExpressionParser {
         }
 
         public visitStringAtom(context: ep.StringAtomContext): Expression {
-           return Expression.ConstantExpression(unescape(Util.Trim(context.text, '\'')));
+            return new Constant(unescape(Util.Trim(context.text, '\'')));
         }
 
         protected defaultResult(): Expression {
-            return Expression.ConstantExpression('');
+            return new Constant('');
         }
         private MakeExpression(type: string, ...children: Expression[]): Expression {
             return Expression.MakeExpression(type, this._lookup(type), ...children);

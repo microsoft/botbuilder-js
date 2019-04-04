@@ -3,16 +3,16 @@
  */
 export class ExpressionType {
     // Math
-    public static readonly  Add: string = '+';
-    public static readonly  Subtract: string = '-';
-    public static readonly  Multiply: string = '*';
-    public static readonly  Divide: string = '/';
-    public static readonly  Min: string = 'min';
-    public static readonly  Max: string = 'max';
-    public static readonly  Power: string = '^';
-    public static readonly  Mod: string = '%';
-    public static readonly  Average: string = 'average';
-    public static readonly  Count: string = 'count';
+    public static readonly Add: string = '+';
+    public static readonly Subtract: string = '-';
+    public static readonly Multiply: string = '*';
+    public static readonly Divide: string = '/';
+    public static readonly Min: string = 'min';
+    public static readonly Max: string = 'max';
+    public static readonly Power: string = '^';
+    public static readonly Mod: string = '%';
+    public static readonly Average: string = 'average';
+    public static readonly Count: string = 'count';
 
     // Comparisons
     public static readonly LessThan: string = '<';
@@ -44,39 +44,39 @@ export class ExpressionType {
     public static readonly Join: string = 'join';
 
     // DateTime
-     public static readonly AddDays: string = 'addDays';
-     public static readonly AddHours: string = 'addHours';
-     public static readonly AddMinutes: string = 'addMinutes';
-     public static readonly AddSeconds: string = 'addSeconds';
-     public static readonly DayOfMonth: string = 'dayOfMonth';
-     public static readonly DayOfWeek: string = 'dayOfWeek';
-     public static readonly DayOfYear: string = 'dayOfYear';
-     public static readonly Month: string = 'month';
-     public static readonly Date: string = 'date';
-     public static readonly Year: string = 'year';
-     public static readonly UtcNow: string = 'utcNow';
-     public static readonly FormatDateTime: string = 'formatDateTime';
-     public static readonly SubtractFromTime: string = 'subtractFromTime';
-     public static readonly DateReadBack: string = 'dateReadBack';
-     public static readonly GetTimeOfDay: string = 'getTimeOfDay';
+    public static readonly AddDays: string = 'addDays';
+    public static readonly AddHours: string = 'addHours';
+    public static readonly AddMinutes: string = 'addMinutes';
+    public static readonly AddSeconds: string = 'addSeconds';
+    public static readonly DayOfMonth: string = 'dayOfMonth';
+    public static readonly DayOfWeek: string = 'dayOfWeek';
+    public static readonly DayOfYear: string = 'dayOfYear';
+    public static readonly Month: string = 'month';
+    public static readonly Date: string = 'date';
+    public static readonly Year: string = 'year';
+    public static readonly UtcNow: string = 'utcNow';
+    public static readonly FormatDateTime: string = 'formatDateTime';
+    public static readonly SubtractFromTime: string = 'subtractFromTime';
+    public static readonly DateReadBack: string = 'dateReadBack';
+    public static readonly GetTimeOfDay: string = 'getTimeOfDay';
 
-     // Conversions
-     public static readonly Float: string = 'float';
-     public static readonly Int: string = 'int';
-     public static readonly String: string = 'string';
-     public static readonly Bool: string = 'bool';
+    // Conversions
+    public static readonly Float: string = 'float';
+    public static readonly Int: string = 'int';
+    public static readonly String: string = 'string';
+    public static readonly Bool: string = 'bool';
 
-     // Memory
-     public static readonly Accessor: string = 'Accessor';
-     public static readonly Element: string = 'Element';
-     public static readonly CreateArray: string = 'createArray';
-     public static readonly First: string = 'first';
-     public static readonly Last: string = 'last';
+    // Memory
+    public static readonly Accessor: string = 'Accessor';
+    public static readonly Element: string = 'Element';
+    public static readonly CreateArray: string = 'createArray';
+    public static readonly First: string = 'first';
+    public static readonly Last: string = 'last';
 
-     // Misc
-     public static readonly Constant: string = 'Constant';
-     public static readonly Lambda: string = 'Lambda';
-     public static readonly If: string = 'if';
-     public static readonly Rand: string = 'rand';
+    // Misc
+    public static readonly Constant: string = 'Constant';
+    public static readonly Lambda: string = 'Lambda';
+    public static readonly If: string = 'if';
+    public static readonly Rand: string = 'rand';
 
 }

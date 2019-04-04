@@ -2,6 +2,8 @@
 import { Expression, ReturnType } from './expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
+import { Constant } from './constant';
+import { Extensions } from './extensions';
 
 /**
  *  <summary>
@@ -14,7 +16,7 @@ import { ExpressionType } from './expressionType';
  */
 export class BuiltInFunctions {
 
-    public static _functions: Map<string, ExpressionEvaluator> =  BuiltInFunctions.BuildFunctionLookup();
+    public static _functions: Map<string, ExpressionEvaluator> = BuiltInFunctions.BuildFunctionLookup();
     /**
      * Validate that expression has a certain number of children that are of any of the supported types.
      * @param expression Expression to validate.
@@ -248,25 +250,25 @@ export class BuiltInFunctions {
      * @returns List of child values or error message.
      */
     public static EvaluateChildren(expression: Expression, state: any, verify?: (arg0: any, arg1: Expression) => any)
-    : {args: ReadonlyArray<any>; error: string} {
+        : { args: ReadonlyArray<any>; error: string } {
         const args: any[] = [];
         let value: any;
         let error: string;
         for (const child of expression.Children) {
-           ({value, error} = child.TryEvaluate(state));
-           if (error !== undefined) {
-               break;
-           }
-           if (verify !== undefined) {
-               error = verify(value, child);
-           }
-           if (error !== undefined) {
-               break;
-           }
-           args.push(value);
+            ({ value, error } = child.TryEvaluate(state));
+            if (error !== undefined) {
+                break;
+            }
+            if (verify !== undefined) {
+                error = verify(value, child);
+            }
+            if (error !== undefined) {
+                break;
+            }
+            args.push(value);
         }
 
-        return {args, error};
+        return { args, error };
     }
 
     /**
@@ -276,17 +278,17 @@ export class BuiltInFunctions {
      * @returns Delegate for evaluating an expression.
      */
     public static Apply(func: (arg0: ReadonlyArray<any>) => any, verify?: (arg0: any, arg1: Expression) => string)
-    : EvaluateExpressionDelegate {
-        return (expression: Expression, state: any): {value: any; error: string} => {
+        : EvaluateExpressionDelegate {
+        return (expression: Expression, state: any): { value: any; error: string } => {
             let value: any;
             let error: string;
             let args: ReadonlyArray<any>;
-            ({args, error} = BuiltInFunctions.EvaluateChildren(expression, state, verify));
+            ({ args, error } = BuiltInFunctions.EvaluateChildren(expression, state, verify));
             if (error === undefined) {
                 value = func(args);
             }
 
-            return {value, error};
+            return { value, error };
         };
     }
 
@@ -297,13 +299,13 @@ export class BuiltInFunctions {
      * @returns Delegate for evaluating an expression.
      */
     public static ApplySequence(func: (arg0: ReadonlyArray<any>) => any, verify?: (arg0: any, arg1: Expression) => string)
-    : EvaluateExpressionDelegate {
+        : EvaluateExpressionDelegate {
         return BuiltInFunctions.Apply(
             (args: ReadonlyArray<any>): any => {
                 const binaryArgs: any[] = [undefined, undefined];
                 let soFar: any = args[0];
                 // tslint:disable-next-line: prefer-for-of
-                for (let i: number = 0; i < args.length; i++) {
+                for (let i: number = 1; i < args.length; i++) {
                     binaryArgs[0] = soFar;
                     binaryArgs[1] = args[i];
                     soFar = func(binaryArgs);
@@ -321,7 +323,7 @@ export class BuiltInFunctions {
      */
     public static Numeric(func: (arg0: ReadonlyArray<any>) => any): ExpressionEvaluator {
         return new ExpressionEvaluator(BuiltInFunctions.ApplySequence(func, BuiltInFunctions.VerifyNumber),
-                                       ReturnType.Number, BuiltInFunctions.ValidateNumber);
+            ReturnType.Number, BuiltInFunctions.ValidateNumber);
     }
 
     /**
@@ -330,7 +332,7 @@ export class BuiltInFunctions {
      */
     public static Comparison(func: (arg0: ReadonlyArray<any>) => any): ExpressionEvaluator {
         return new ExpressionEvaluator(BuiltInFunctions.Apply(func, BuiltInFunctions.VerifyNumberOrString),
-                                       ReturnType.Boolean, BuiltInFunctions.ValidateBinaryNumberOrString);
+            ReturnType.Boolean, BuiltInFunctions.ValidateBinaryNumberOrString);
     }
 
     /**
@@ -339,7 +341,7 @@ export class BuiltInFunctions {
      */
     public static StringTransform(func: (arg0: ReadonlyArray<any>) => any): ExpressionEvaluator {
         return new ExpressionEvaluator(BuiltInFunctions.Apply(func, BuiltInFunctions.VerifyString),
-                                       ReturnType.String, BuiltInFunctions.ValidateUnaryString);
+            ReturnType.String, BuiltInFunctions.ValidateUnaryString);
     }
 
     /**
@@ -355,15 +357,56 @@ export class BuiltInFunctions {
         return evaluator;
     }
 
+    private static ValidateAccessor(expression: Expression): void {
+        const children: Expression[] = expression.Children;
+        if(children.length === 0
+            || !(children[0] instanceof Constant)
+            || (<Constant>children[0]).ReturnType !== ReturnType.String) {
+                throw new Error(`${expression} must have a string as first argument.`);
+            }
+
+        if(children.length > 2) {
+            throw new Error(`${expression} has more than 2 children.`);
+        }
+        if(children.length === 2 && children[1].ReturnType !== ReturnType.Object) {
+            throw new Error(`${expression} must have an object as its second argument.`);
+        }
+    }
+
+    private static Accessor(expression: Expression, state: any): {value: any; error: string} {
+        let value: any;
+        let error: string;
+        let instance: any = state;
+        const children = expression.Children;
+        if(children.length === 2) {
+            ({value, error} = children[1].TryEvaluate(state));
+        }
+        else {
+            instance = state;
+        }
+
+        if(error === undefined && children[0] instanceof Constant && (<Constant>children[0]).ReturnType === ReturnType.String) {
+            ({value, error} = Extensions.AccessProperty(instance, (<Constant>children[0]).Value.toString(), expression));
+        }
+
+        return {value, error};
+    }
+
     private static BuildFunctionLookup(): Map<string, ExpressionEvaluator> {
         // tslint:disable-next-line: no-unnecessary-local-variable
-        const functions: Map<string, ExpressionEvaluator>  =  new Map<string, ExpressionEvaluator>([
+        const functions: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>([
             //TODO
             //Math
             [ExpressionType.Add, BuiltInFunctions.Numeric(args => args[0] + args[1])],
             [ExpressionType.Multiply, BuiltInFunctions.Numeric(args => args[0] * args[1])]
-        ]);
+           
 
+        ]);
+        // Math aliases
+        functions.set("add",functions.get(ExpressionType.Add));
+        functions.set("mul",functions.get(ExpressionType.Multiply));
+
+        // Comparison aliases
         return functions;
     }
 }

@@ -1,4 +1,14 @@
-import {Expression} from './expression';
+import { Expression } from './expression';
+
+/**
+ * Interface to parse a string into an Expression
+ */
 export interface IExpressionParser {
-    Parse(expression: string) : Expression;
+    
+    /**
+     * Parse a string into an Expression
+     * @param expression Expression to parse.
+     * @returns The resulting expression.
+     */
+    Parse(expression: string): Expression;
 }
