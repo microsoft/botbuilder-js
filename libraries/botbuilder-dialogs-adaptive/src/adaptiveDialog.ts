@@ -146,9 +146,9 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
             if (!consultation || consultation.desire != DialogConsultationDesire.shouldProcess) {
                 // Next evaluate rules
                 const changesQueued = await this.evaluateRules(planning, { name: RuleDialogEventNames.consultDialog, value: undefined, bubble: false });
-                if (changesQueued) {
+                if (changesQueued && (!consultation || planning.changes[0].desire == DialogConsultationDesire.shouldProcess)) {
                     consultation = {
-                        desire: DialogConsultationDesire.shouldProcess,
+                        desire: planning.changes[0].desire,
                         processor: (dc) => this.continuePlan(planning)
                     };
                 }
@@ -220,6 +220,7 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
                     if (this.steps.length > 0) {
                         // Initialize plan with steps
                         const changes: PlanChangeList = {
+                            desire: DialogConsultationDesire.shouldProcess,
                             changeType: PlanChangeType.doSteps,
                             steps: []
                         };

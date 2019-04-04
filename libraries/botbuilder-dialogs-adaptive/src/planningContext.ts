@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogContext, DialogState, DialogSet } from 'botbuilder-dialogs';
+import { DialogContext, DialogState, DialogSet, DialogConsultationDesire } from 'botbuilder-dialogs';
 
 export interface RuleDialogState<O extends Object> {
     options: O;
@@ -32,6 +32,7 @@ export interface PlanChangeList {
     intentsMatched?: string[];
     entitiesMatched?: string[];
     turnState?:  { [name:string]: any; };
+    desire?: DialogConsultationDesire;
 }
 
 export enum PlanChangeType {
@@ -80,6 +81,10 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
         return this.plans.plan;
     }
 
+    public get changes(): PlanChangeList[] {
+        return this.plans.changes || [];
+    }
+
     /**
      * Returns true if there is either an active plan or there are queued up changes
      * which will start a new plan.
@@ -104,8 +109,16 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
      * @param changes Plan changes to queue up. 
      */
     public queueChanges(changes: PlanChangeList): void {
+        if (!changes.desire) { changes.desire = DialogConsultationDesire.shouldProcess }
         if (!Array.isArray(this.plans.changes)) { this.plans.changes = [] }
-        this.plans.changes.push(changes);
+        if (this.plans.changes.length > 0 && this.plans.changes[0].desire != changes.desire) {
+            // A shouldProcess outweighs any canProcess changes
+            if (changes.desire == DialogConsultationDesire.shouldProcess) {
+                this.plans.changes = [changes];
+            }
+        } else {
+            this.plans.changes.push(changes);
+        }
     }
 
     /**
