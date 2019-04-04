@@ -12,6 +12,7 @@ export class ExpressionType {
     public static readonly Power: string = '^';
     public static readonly Mod: string = '%';
     public static readonly Average: string = 'average';
+    public static readonly Sum: string = 'sum';
     public static readonly Count: string = 'count';
 
     // Comparisons
@@ -78,5 +79,11 @@ export class ExpressionType {
     public static readonly Lambda: string = 'Lambda';
     public static readonly If: string = 'if';
     public static readonly Rand: string = 'rand';
+
+    // Object manipulation and construction functions
+    public static readonly Json: string = 'json';
+    public static readonly AddProperty: string = 'addProperty';
+    public static readonly RemoveProperty: string = 'removeProperty';
+    public static readonly SetProperty: string = 'setProperty';
 
 }

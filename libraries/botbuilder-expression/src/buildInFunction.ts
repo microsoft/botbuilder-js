@@ -359,37 +359,76 @@ export class BuiltInFunctions {
 
     private static ValidateAccessor(expression: Expression): void {
         const children: Expression[] = expression.Children;
-        if(children.length === 0
+        if (children.length === 0
             || !(children[0] instanceof Constant)
             || (<Constant>children[0]).ReturnType !== ReturnType.String) {
-                throw new Error(`${expression} must have a string as first argument.`);
-            }
+            throw new Error(`${expression} must have a string as first argument.`);
+        }
 
-        if(children.length > 2) {
+        if (children.length > 2) {
             throw new Error(`${expression} has more than 2 children.`);
         }
-        if(children.length === 2 && children[1].ReturnType !== ReturnType.Object) {
+        if (children.length === 2 && children[1].ReturnType !== ReturnType.Object) {
             throw new Error(`${expression} must have an object as its second argument.`);
         }
     }
 
-    private static Accessor(expression: Expression, state: any): {value: any; error: string} {
+    private static Accessor(expression: Expression, state: any): { value: any; error: string } {
         let value: any;
         let error: string;
         let instance: any = state;
         const children = expression.Children;
-        if(children.length === 2) {
-            ({value, error} = children[1].TryEvaluate(state));
+        if (children.length === 2) {
+            ({ value, error } = children[1].TryEvaluate(state));
         }
         else {
             instance = state;
         }
 
-        if(error === undefined && children[0] instanceof Constant && (<Constant>children[0]).ReturnType === ReturnType.String) {
-            ({value, error} = Extensions.AccessProperty(instance, (<Constant>children[0]).Value.toString(), expression));
+        if (error === undefined && children[0] instanceof Constant && (<Constant>children[0]).ReturnType === ReturnType.String) {
+            ({ value, error } = Extensions.AccessProperty(instance, (<Constant>children[0]).Value.toString(), expression));
         }
 
-        return {value, error};
+        return { value, error };
+    }
+
+    private static ExtractElement(expression: Expression, state: any): { value: any; error: string } {
+        let value: any;
+        let error: string;
+        const instance: Expression = expression.Children[0];
+        const index: Expression = expression.Children[1];
+        let inst: any;
+        ({ value: inst, error } = instance.TryEvaluate(state));
+        if (error === undefined) {
+            let idxValue: any;
+            ({ value: idxValue, error } = index.TryEvaluate(state));
+            if(error === undefined) {
+                if(Number.isInteger(idxValue)) {
+                    const idx: number = Number(idxValue);
+                    let count: number = -1;
+                    if(inst instanceof Array) {
+                        count = (<Array<any>>inst).length;
+                    } else if(inst instanceof Map) {
+                        count = (<Map<string,any>>inst).size;
+                    }
+                    const indexer: string[] = Object.keys(inst);
+                    if(count !== -1 && indexer.length > 0) {
+                        if(idx >= 0 && count > idx) {
+                            const idyn: any = inst;
+                            value = idyn[idx];
+                        } else {
+                            error = `${index}=${idx} is out of range for ${instance}`;
+                        }
+                    } else {
+                        error = `${instance} is not a collection.`;
+                    }
+                } else {
+                    error = `Could not coerce ${index} to an int.`;
+                }
+                return {value, error};
+            }
+
+        }
     }
 
     private static BuildFunctionLookup(): Map<string, ExpressionEvaluator> {
@@ -397,16 +436,101 @@ export class BuiltInFunctions {
         const functions: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>([
             //TODO
             //Math
+            [ExpressionType.Element, new ExpressionEvaluator(BuiltInFunctions.ExtractElement, ReturnType.Object,
+                (expr) => BuiltInFunctions.ValidateOrder(expr, null, ReturnType.Object, ReturnType.Number))],
+            [ExpressionType.Subtract, BuiltInFunctions.Numeric(args => args[0] + args[1])],
             [ExpressionType.Add, BuiltInFunctions.Numeric(args => args[0] + args[1])],
-            [ExpressionType.Multiply, BuiltInFunctions.Numeric(args => args[0] * args[1])]
-           
+            [ExpressionType.Multiply, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+
+            
+            
+            
+            [ExpressionType.Divide, BuiltInFunctions.Numeric(args => args[0] + args[1])],
+            [ExpressionType.Min, BuiltInFunctions.Numeric(args => args[0] + args[1])],
+            [ExpressionType.Max, BuiltInFunctions.Numeric(args => args[0] + args[1])],
+            [ExpressionType.Power, BuiltInFunctions.Numeric(args => args[0] + args[1])],
+            [ExpressionType.Mod, BuiltInFunctions.Numeric(args => args[0] + args[1])],
+            [ExpressionType.Average, BuiltInFunctions.Numeric(args => args[0] + args[1])],
+            [ExpressionType.Sum, BuiltInFunctions.Numeric(args => args[0] + args[1])],
+            [ExpressionType.Count, BuiltInFunctions.Numeric(args => args[0] + args[1])],
+            [ExpressionType.LessThan, BuiltInFunctions.Numeric(args => args[0] + args[1])],
+            [ExpressionType.LessThanOrEqual, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Equal, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.NotEqual, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.GreaterThan, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.GreaterThanOrEqual, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Exists, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.And, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Or, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Not, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Optional, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Contains, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Empty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Concat, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Length, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Replace, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.ReplaceIgnoreCase, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Split, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Substring, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.ToLower, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.ToUpper, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Trim, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Join, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.AddDays, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.AddHours, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.AddMinutes, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.AddSeconds, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.DayOfMonth, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.DayOfWeek, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.DayOfYear, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Month, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Date, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Year, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.UtcNow, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.FormatDateTime, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.SubtractFromTime, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.DateReadBack, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.GetTimeOfDay, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Float, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Int, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.String, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Bool, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Accessor, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.If, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Rand, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.CreateArray, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.First, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Last, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Json, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.AddProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.SetProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.RemoveProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            
 
         ]);
+
         // Math aliases
-        functions.set("add",functions.get(ExpressionType.Add));
-        functions.set("mul",functions.get(ExpressionType.Multiply));
+        functions.set("add", functions.get(ExpressionType.Add));
+        functions.set("mul", functions.get(ExpressionType.Multiply));
+        
+        functions.set("div", functions.get(ExpressionType.Divide));
+        functions.set("mul", functions.get(ExpressionType.Multiply));
+        functions.set("sub", functions.get(ExpressionType.Subtract));
+        functions.set("exp", functions.get(ExpressionType.Power));
+        functions.set("mod", functions.get(ExpressionType.Mod));
 
         // Comparison aliases
+        functions.set("and", functions.get(ExpressionType.And));
+        functions.set("equals", functions.get(ExpressionType.Equal));
+        functions.set("greater", functions.get(ExpressionType.GreaterThan));
+        functions.set("greaterOrEquals", functions.get(ExpressionType.GreaterThanOrEqual));
+        functions.set("less", functions.get(ExpressionType.LessThan));
+        functions.set("lessOrEquals", functions.get(ExpressionType.LessThanOrEqual));
+        functions.set("not", functions.get(ExpressionType.Not));
+        functions.set("or", functions.get(ExpressionType.Or));
+        functions.set("concat", functions.get(ExpressionType.Concat));
+        
+
         return functions;
     }
 }

@@ -18,7 +18,8 @@
     "typescript": "^3.2.4",
     "antlr4": "^4.7.2",
     "antlr4ts": "0.5.0-alpha.1",
-    "botframework-expression": "file:../botframework-expression"
+    "botframework-expression": "file:../botframework-expression",
+    "botbuilder-expression-parser": "file:../botbuilder-expression-parser"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.5",
@@ -31,8 +32,10 @@
     "typescript-tslint-plugin": "^0.3.1"
   },
   "scripts": {
-    "test": "tsc && nyc mocha tests/",
-    "build": "tsc"
+    "preinstall": "cd ../botbuilder-expression-parser && npm install && tsc",
+    "build": "tsc",
+    "test": "tsc && nyc mocha tests/ --timeout 60000",
+    "clean": "erase /q /s .\\lib"
   },
   "files": [
     "/lib",
