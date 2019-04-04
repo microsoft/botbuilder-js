@@ -73,26 +73,14 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     }
 
     public visitConditionalBody(ctx: lp.ConditionalBodyContext) : string{
-        const caseRules: lp.CaseRuleContext[] = ctx.conditionalTemplateBody()
-            .caseRule();
-        for (const caseRule of caseRules) {
-            if (caseRule.caseCondition().EXPRESSION() !== undefined
-                && caseRule.caseCondition().EXPRESSION().length > 0) {
-                const conditionExpression: string = caseRule.caseCondition()
-                    .EXPRESSION(0).text;
-                if (this.EvalCondition(conditionExpression)) {
-                    return this.visit(caseRule.normalTemplateBody());
-                }
+        const ifRules: lp.IfConditionRuleContext[] = ctx.conditionalTemplateBody().ifConditionRule();
+        for (const ifRule of ifRules) {
+            if (this.EvalCondition(ifRule.ifCondition())) {
+                return this.visit(ifRule.normalTemplateBody());
             }
         }
 
-        if (ctx !== undefined && ctx.conditionalTemplateBody() !== undefined && ctx.conditionalTemplateBody().defaultRule() !== undefined) {
-            return this.visit(ctx.conditionalTemplateBody()
-                .defaultRule()
-                .normalTemplateBody());
-        } else {
-            return undefined;
-        }
+        return undefined;
     }
 
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string {
@@ -173,7 +161,17 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         throw new Error(`escape character ${exp} is invalid`);
     }
 
-    private EvalCondition(exp: string): boolean {
+    private EvalCondition(condition: lp.IfConditionContext): boolean {
+        const expression: TerminalNode = condition.EXPRESSION(0);
+        if (expression === undefined ||                            // no expression means it's else
+            this.EvalExpressionInCondition(expression.text)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private EvalExpressionInCondition(exp: string): boolean {
         try {
             exp = exp.replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');

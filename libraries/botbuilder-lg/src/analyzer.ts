@@ -1,6 +1,6 @@
 import { AbstractParseTreeVisitor, ParseTree } from 'antlr4ts/tree';
+import { ExpressionEngine, ExpressionParser } from 'botframework-expression';
 import { TerminalNode } from 'botframework-expression//node_modules/antlr4ts/tree';
-import { ExpressionEngine } from 'botframework-expression';
 import { EvaluationTarget } from './evaluator';
 import { ExpressionAnalyzerVisitor } from './expressionAnalyzerVisitor';
 import * as lp from './generator/LGFileParser';
@@ -11,6 +11,7 @@ import { EvaluationContext } from './templateEngine';
 export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFileParserVisitor<string[]> {
     public readonly Context: EvaluationContext;
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
+    private readonly _expressionParser: ExpressionParser;
 
     constructor(context: EvaluationContext) {
         super();
@@ -62,25 +63,15 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
     public visitConditionalBody(ctx: lp.ConditionalBodyContext): string[] {
         let result: string[] = [];
 
-        const caseRules: lp.CaseRuleContext[] = ctx.conditionalTemplateBody().caseRule();
-        for (const caseRule of caseRules) {
-            if (caseRule.caseCondition().EXPRESSION() !== undefined
-                && caseRule.caseCondition().EXPRESSION().length > 0) {
-                const conditionExpression: string = caseRule.caseCondition()
-                    .EXPRESSION(0).text;
-                const childConditionResult: string[] = this.AnalyzeExpression(conditionExpression);
-                result = result.concat(childConditionResult);
+        const ifRules: lp.IfConditionRuleContext[] = ctx.conditionalTemplateBody().ifConditionRule();
+        for (const ifRule of ifRules) {
+
+            const expression: TerminalNode = ifRule.ifCondition().EXPRESSION(0);
+            if (expression !== undefined) {
+                result = result.concat(this.AnalyzeExpression(expression.text));
             }
 
-            if (caseRule.normalTemplateBody() !== undefined) {
-                const childTemplateBodyResult: string[] = this.visit(caseRule.normalTemplateBody());
-                result = result.concat(childTemplateBodyResult);
-            }
-        }
-
-        if (ctx.conditionalTemplateBody() !== undefined && ctx.conditionalTemplateBody().defaultRule() !== undefined) {
-            const childDefaultRuleResult: string[] = this.visit(ctx.conditionalTemplateBody().defaultRule().normalTemplateBody());
-            result = result.concat(childDefaultRuleResult);
+            result = result.concat(this.visit(ifRule.normalTemplateBody()));
         }
 
         return result;

@@ -41,15 +41,14 @@ export class LGFileParser extends Parser {
 	public static readonly COMMA = 11;
 	public static readonly INVALID_SEPERATE_CHAR = 12;
 	public static readonly WS_IN_BODY_IGNORED = 13;
-	public static readonly CASE = 14;
-	public static readonly DEFAULT = 15;
-	public static readonly MULTI_LINE_TEXT = 16;
-	public static readonly ESCAPE_CHARACTER = 17;
-	public static readonly INVALID_ESCAPE = 18;
-	public static readonly EXPRESSION = 19;
-	public static readonly TEMPLATE_REF = 20;
-	public static readonly TEXT_SEPARATOR = 21;
-	public static readonly TEXT = 22;
+	public static readonly IFELSE = 14;
+	public static readonly MULTI_LINE_TEXT = 15;
+	public static readonly ESCAPE_CHARACTER = 16;
+	public static readonly INVALID_ESCAPE = 17;
+	public static readonly EXPRESSION = 18;
+	public static readonly TEMPLATE_REF = 19;
+	public static readonly TEXT_SEPARATOR = 20;
+	public static readonly TEXT = 21;
 	public static readonly RULE_file = 0;
 	public static readonly RULE_paragraph = 1;
 	public static readonly RULE_newline = 2;
@@ -61,16 +60,13 @@ export class LGFileParser extends Parser {
 	public static readonly RULE_normalTemplateBody = 8;
 	public static readonly RULE_normalTemplateString = 9;
 	public static readonly RULE_conditionalTemplateBody = 10;
-	public static readonly RULE_caseRule = 11;
-	public static readonly RULE_defaultRule = 12;
-	public static readonly RULE_caseCondition = 13;
-	public static readonly RULE_defaultCondition = 14;
+	public static readonly RULE_ifConditionRule = 11;
+	public static readonly RULE_ifCondition = 12;
 	// tslint:disable:no-trailing-whitespace
 	public static readonly ruleNames: string[] = [
 		"file", "paragraph", "newline", "templateDefinition", "templateNameLine", 
 		"templateName", "parameters", "templateBody", "normalTemplateBody", "normalTemplateString", 
-		"conditionalTemplateBody", "caseRule", "defaultRule", "caseCondition", 
-		"defaultCondition",
+		"conditionalTemplateBody", "ifConditionRule", "ifCondition",
 	];
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
@@ -80,7 +76,7 @@ export class LGFileParser extends Parser {
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
 		undefined, "COMMENTS", "WS", "NEWLINE", "HASH", "DASH", "WS_IN_NAME", 
 		"IDENTIFIER", "DOT", "OPEN_PARENTHESIS", "CLOSE_PARENTHESIS", "COMMA", 
-		"INVALID_SEPERATE_CHAR", "WS_IN_BODY_IGNORED", "CASE", "DEFAULT", "MULTI_LINE_TEXT", 
+		"INVALID_SEPERATE_CHAR", "WS_IN_BODY_IGNORED", "IFELSE", "MULTI_LINE_TEXT", 
 		"ESCAPE_CHARACTER", "INVALID_ESCAPE", "EXPRESSION", "TEMPLATE_REF", "TEXT_SEPARATOR", 
 		"TEXT",
 	];
@@ -114,7 +110,7 @@ export class LGFileParser extends Parser {
 			let _alt: number;
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 31;
+			this.state = 27;
 			this._errHandler.sync(this);
 			_alt = 1 + 1;
 			do {
@@ -122,7 +118,7 @@ export class LGFileParser extends Parser {
 				case 1 + 1:
 					{
 					{
-					this.state = 30;
+					this.state = 26;
 					this.paragraph();
 					}
 					}
@@ -130,11 +126,11 @@ export class LGFileParser extends Parser {
 				default:
 					throw new NoViableAltException(this);
 				}
-				this.state = 33;
+				this.state = 29;
 				this._errHandler.sync(this);
 				_alt = this.interpreter.adaptivePredict(this._input, 0, this._ctx);
 			} while (_alt !== 1 && _alt !== ATN.INVALID_ALT_NUMBER);
-			this.state = 35;
+			this.state = 31;
 			this.match(LGFileParser.EOF);
 			}
 		}
@@ -157,21 +153,21 @@ export class LGFileParser extends Parser {
 		let _localctx: ParagraphContext = new ParagraphContext(this._ctx, this.state);
 		this.enterRule(_localctx, 2, LGFileParser.RULE_paragraph);
 		try {
-			this.state = 39;
+			this.state = 35;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case LGFileParser.EOF:
 			case LGFileParser.NEWLINE:
 				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 37;
+				this.state = 33;
 				this.newline();
 				}
 				break;
 			case LGFileParser.HASH:
 				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 38;
+				this.state = 34;
 				this.templateDefinition();
 				}
 				break;
@@ -201,7 +197,7 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 41;
+			this.state = 37;
 			_la = this._input.LA(1);
 			if (!(_la === LGFileParser.EOF || _la === LGFileParser.NEWLINE)) {
 			this._errHandler.recoverInline(this);
@@ -237,16 +233,16 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 43;
+			this.state = 39;
 			this.templateNameLine();
-			this.state = 44;
+			this.state = 40;
 			this.newline();
-			this.state = 46;
+			this.state = 42;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la === LGFileParser.DASH) {
 				{
-				this.state = 45;
+				this.state = 41;
 				this.templateBody();
 				}
 			}
@@ -275,16 +271,16 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 48;
+			this.state = 44;
 			this.match(LGFileParser.HASH);
-			this.state = 49;
+			this.state = 45;
 			this.templateName();
-			this.state = 51;
+			this.state = 47;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la === LGFileParser.IDENTIFIER || _la === LGFileParser.OPEN_PARENTHESIS) {
 				{
-				this.state = 50;
+				this.state = 46;
 				this.parameters();
 				}
 			}
@@ -313,21 +309,21 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 53;
+			this.state = 49;
 			this.match(LGFileParser.IDENTIFIER);
-			this.state = 58;
+			this.state = 54;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === LGFileParser.DOT) {
 				{
 				{
-				this.state = 54;
+				this.state = 50;
 				this.match(LGFileParser.DOT);
-				this.state = 55;
+				this.state = 51;
 				this.match(LGFileParser.IDENTIFIER);
 				}
 				}
-				this.state = 60;
+				this.state = 56;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -355,37 +351,37 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 62;
+			this.state = 58;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la === LGFileParser.OPEN_PARENTHESIS) {
 				{
-				this.state = 61;
+				this.state = 57;
 				this.match(LGFileParser.OPEN_PARENTHESIS);
 				}
 			}
 
-			this.state = 64;
+			this.state = 60;
 			this.match(LGFileParser.IDENTIFIER);
-			this.state = 70;
+			this.state = 66;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === LGFileParser.COMMA || _la === LGFileParser.INVALID_SEPERATE_CHAR) {
 				{
-				this.state = 68;
+				this.state = 64;
 				this._errHandler.sync(this);
 				switch (this._input.LA(1)) {
 				case LGFileParser.COMMA:
 					{
-					this.state = 65;
+					this.state = 61;
 					this.match(LGFileParser.COMMA);
 					}
 					break;
 				case LGFileParser.INVALID_SEPERATE_CHAR:
 					{
-					this.state = 66;
+					this.state = 62;
 					this.match(LGFileParser.INVALID_SEPERATE_CHAR);
-					this.state = 67;
+					this.state = 63;
 					this.match(LGFileParser.IDENTIFIER);
 					}
 					break;
@@ -393,16 +389,16 @@ export class LGFileParser extends Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				this.state = 72;
+				this.state = 68;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 74;
+			this.state = 70;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la === LGFileParser.CLOSE_PARENTHESIS) {
 				{
-				this.state = 73;
+				this.state = 69;
 				this.match(LGFileParser.CLOSE_PARENTHESIS);
 				}
 			}
@@ -428,14 +424,14 @@ export class LGFileParser extends Parser {
 		let _localctx: TemplateBodyContext = new TemplateBodyContext(this._ctx, this.state);
 		this.enterRule(_localctx, 14, LGFileParser.RULE_templateBody);
 		try {
-			this.state = 78;
+			this.state = 74;
 			this._errHandler.sync(this);
 			switch ( this.interpreter.adaptivePredict(this._input, 9, this._ctx) ) {
 			case 1:
 				_localctx = new NormalBodyContext(_localctx);
 				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 76;
+				this.state = 72;
 				this.normalTemplateBody();
 				}
 				break;
@@ -444,7 +440,7 @@ export class LGFileParser extends Parser {
 				_localctx = new ConditionalBodyContext(_localctx);
 				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 77;
+				this.state = 73;
 				this.conditionalTemplateBody();
 				}
 				break;
@@ -472,7 +468,7 @@ export class LGFileParser extends Parser {
 			let _alt: number;
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 83;
+			this.state = 79;
 			this._errHandler.sync(this);
 			_alt = 1;
 			do {
@@ -480,9 +476,9 @@ export class LGFileParser extends Parser {
 				case 1:
 					{
 					{
-					this.state = 80;
+					this.state = 76;
 					this.normalTemplateString();
-					this.state = 81;
+					this.state = 77;
 					this.newline();
 					}
 					}
@@ -490,7 +486,7 @@ export class LGFileParser extends Parser {
 				default:
 					throw new NoViableAltException(this);
 				}
-				this.state = 85;
+				this.state = 81;
 				this._errHandler.sync(this);
 				_alt = this.interpreter.adaptivePredict(this._input, 10, this._ctx);
 			} while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER);
@@ -518,15 +514,15 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 87;
+			this.state = 83;
 			this.match(LGFileParser.DASH);
-			this.state = 91;
+			this.state = 87;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.MULTI_LINE_TEXT) | (1 << LGFileParser.ESCAPE_CHARACTER) | (1 << LGFileParser.INVALID_ESCAPE) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEMPLATE_REF) | (1 << LGFileParser.TEXT_SEPARATOR) | (1 << LGFileParser.TEXT))) !== 0)) {
 				{
 				{
-				this.state = 88;
+				this.state = 84;
 				_la = this._input.LA(1);
 				if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.MULTI_LINE_TEXT) | (1 << LGFileParser.ESCAPE_CHARACTER) | (1 << LGFileParser.INVALID_ESCAPE) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEMPLATE_REF) | (1 << LGFileParser.TEXT_SEPARATOR) | (1 << LGFileParser.TEXT))) !== 0))) {
 				this._errHandler.recoverInline(this);
@@ -540,7 +536,7 @@ export class LGFileParser extends Parser {
 				}
 				}
 				}
-				this.state = 93;
+				this.state = 89;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -566,128 +562,22 @@ export class LGFileParser extends Parser {
 		this.enterRule(_localctx, 20, LGFileParser.RULE_conditionalTemplateBody);
 		let _la: number;
 		try {
-			let _alt: number;
-			this.state = 103;
-			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 14, this._ctx) ) {
-			case 1:
-				this.enterOuterAlt(_localctx, 1);
-				{
-				this.state = 95;
-				this._errHandler.sync(this);
-				_alt = 1;
-				do {
-					switch (_alt) {
-					case 1:
-						{
-						{
-						this.state = 94;
-						this.caseRule();
-						}
-						}
-						break;
-					default:
-						throw new NoViableAltException(this);
-					}
-					this.state = 97;
-					this._errHandler.sync(this);
-					_alt = this.interpreter.adaptivePredict(this._input, 12, this._ctx);
-				} while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER);
-				this.state = 100;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-				if (_la === LGFileParser.DASH) {
-					{
-					this.state = 99;
-					this.defaultRule();
-					}
-				}
-
-				}
-				break;
-
-			case 2:
-				this.enterOuterAlt(_localctx, 2);
-				{
-				this.state = 102;
-				this.defaultRule();
-				}
-				break;
-			}
-		}
-		catch (re) {
-			if (re instanceof RecognitionException) {
-				_localctx.exception = re;
-				this._errHandler.reportError(this, re);
-				this._errHandler.recover(this, re);
-			} else {
-				throw re;
-			}
-		}
-		finally {
-			this.exitRule();
-		}
-		return _localctx;
-	}
-	// @RuleVersion(0)
-	public caseRule(): CaseRuleContext {
-		let _localctx: CaseRuleContext = new CaseRuleContext(this._ctx, this.state);
-		this.enterRule(_localctx, 22, LGFileParser.RULE_caseRule);
-		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 105;
-			this.caseCondition();
-			this.state = 106;
-			this.newline();
-			this.state = 108;
-			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 15, this._ctx) ) {
-			case 1:
-				{
-				this.state = 107;
-				this.normalTemplateBody();
-				}
-				break;
-			}
-			}
-		}
-		catch (re) {
-			if (re instanceof RecognitionException) {
-				_localctx.exception = re;
-				this._errHandler.reportError(this, re);
-				this._errHandler.recover(this, re);
-			} else {
-				throw re;
-			}
-		}
-		finally {
-			this.exitRule();
-		}
-		return _localctx;
-	}
-	// @RuleVersion(0)
-	public defaultRule(): DefaultRuleContext {
-		let _localctx: DefaultRuleContext = new DefaultRuleContext(this._ctx, this.state);
-		this.enterRule(_localctx, 24, LGFileParser.RULE_defaultRule);
-		let _la: number;
-		try {
-			this.enterOuterAlt(_localctx, 1);
-			{
-			this.state = 110;
-			this.defaultCondition();
-			this.state = 111;
-			this.newline();
-			this.state = 113;
+			this.state = 91;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			if (_la === LGFileParser.DASH) {
+			do {
 				{
-				this.state = 112;
-				this.normalTemplateBody();
+				{
+				this.state = 90;
+				this.ifConditionRule();
 				}
-			}
-
+				}
+				this.state = 93;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+			} while (_la === LGFileParser.DASH);
 			}
 		}
 		catch (re) {
@@ -705,24 +595,61 @@ export class LGFileParser extends Parser {
 		return _localctx;
 	}
 	// @RuleVersion(0)
-	public caseCondition(): CaseConditionContext {
-		let _localctx: CaseConditionContext = new CaseConditionContext(this._ctx, this.state);
-		this.enterRule(_localctx, 26, LGFileParser.RULE_caseCondition);
+	public ifConditionRule(): IfConditionRuleContext {
+		let _localctx: IfConditionRuleContext = new IfConditionRuleContext(this._ctx, this.state);
+		this.enterRule(_localctx, 22, LGFileParser.RULE_ifConditionRule);
+		try {
+			this.enterOuterAlt(_localctx, 1);
+			{
+			this.state = 95;
+			this.ifCondition();
+			this.state = 96;
+			this.newline();
+			this.state = 98;
+			this._errHandler.sync(this);
+			switch ( this.interpreter.adaptivePredict(this._input, 13, this._ctx) ) {
+			case 1:
+				{
+				this.state = 97;
+				this.normalTemplateBody();
+				}
+				break;
+			}
+			}
+		}
+		catch (re) {
+			if (re instanceof RecognitionException) {
+				_localctx.exception = re;
+				this._errHandler.reportError(this, re);
+				this._errHandler.recover(this, re);
+			} else {
+				throw re;
+			}
+		}
+		finally {
+			this.exitRule();
+		}
+		return _localctx;
+	}
+	// @RuleVersion(0)
+	public ifCondition(): IfConditionContext {
+		let _localctx: IfConditionContext = new IfConditionContext(this._ctx, this.state);
+		this.enterRule(_localctx, 24, LGFileParser.RULE_ifCondition);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 115;
+			this.state = 100;
 			this.match(LGFileParser.DASH);
-			this.state = 116;
-			this.match(LGFileParser.CASE);
-			this.state = 120;
+			this.state = 101;
+			this.match(LGFileParser.IFELSE);
+			this.state = 105;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEXT))) !== 0)) {
 				{
 				{
-				this.state = 117;
+				this.state = 102;
 				_la = this._input.LA(1);
 				if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEXT))) !== 0))) {
 				this._errHandler.recoverInline(this);
@@ -736,37 +663,10 @@ export class LGFileParser extends Parser {
 				}
 				}
 				}
-				this.state = 122;
+				this.state = 107;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			}
-		}
-		catch (re) {
-			if (re instanceof RecognitionException) {
-				_localctx.exception = re;
-				this._errHandler.reportError(this, re);
-				this._errHandler.recover(this, re);
-			} else {
-				throw re;
-			}
-		}
-		finally {
-			this.exitRule();
-		}
-		return _localctx;
-	}
-	// @RuleVersion(0)
-	public defaultCondition(): DefaultConditionContext {
-		let _localctx: DefaultConditionContext = new DefaultConditionContext(this._ctx, this.state);
-		this.enterRule(_localctx, 28, LGFileParser.RULE_defaultCondition);
-		try {
-			this.enterOuterAlt(_localctx, 1);
-			{
-			this.state = 123;
-			this.match(LGFileParser.DASH);
-			this.state = 124;
-			this.match(LGFileParser.DEFAULT);
 			}
 		}
 		catch (re) {
@@ -785,56 +685,50 @@ export class LGFileParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03\x18\x81\x04\x02" +
+		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03\x17o\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
 		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x04\r\t\r\x04" +
-		"\x0E\t\x0E\x04\x0F\t\x0F\x04\x10\t\x10\x03\x02\x06\x02\"\n\x02\r\x02\x0E" +
-		"\x02#\x03\x02\x03\x02\x03\x03\x03\x03\x05\x03*\n\x03\x03\x04\x03\x04\x03" +
-		"\x05\x03\x05\x03\x05\x05\x051\n\x05\x03\x06\x03\x06\x03\x06\x05\x066\n" +
-		"\x06\x03\x07\x03\x07\x03\x07\x07\x07;\n\x07\f\x07\x0E\x07>\v\x07\x03\b" +
-		"\x05\bA\n\b\x03\b\x03\b\x03\b\x03\b\x07\bG\n\b\f\b\x0E\bJ\v\b\x03\b\x05" +
-		"\bM\n\b\x03\t\x03\t\x05\tQ\n\t\x03\n\x03\n\x03\n\x06\nV\n\n\r\n\x0E\n" +
-		"W\x03\v\x03\v\x07\v\\\n\v\f\v\x0E\v_\v\v\x03\f\x06\fb\n\f\r\f\x0E\fc\x03" +
-		"\f\x05\fg\n\f\x03\f\x05\fj\n\f\x03\r\x03\r\x03\r\x05\ro\n\r\x03\x0E\x03" +
-		"\x0E\x03\x0E\x05\x0Et\n\x0E\x03\x0F\x03\x0F\x03\x0F\x07\x0Fy\n\x0F\f\x0F" +
-		"\x0E\x0F|\v\x0F\x03\x10\x03\x10\x03\x10\x03\x10\x03#\x02\x02\x11\x02\x02" +
-		"\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14\x02\x16" +
-		"\x02\x18\x02\x1A\x02\x1C\x02\x1E\x02\x02\x05\x03\x03\x05\x05\x04\x02\x04" +
-		"\x04\x12\x18\x05\x02\x04\x04\x15\x15\x18\x18\x83\x02!\x03\x02\x02\x02" +
-		"\x04)\x03\x02\x02\x02\x06+\x03\x02\x02\x02\b-\x03\x02\x02\x02\n2\x03\x02" +
-		"\x02\x02\f7\x03\x02\x02\x02\x0E@\x03\x02\x02\x02\x10P\x03\x02\x02\x02" +
-		"\x12U\x03\x02\x02\x02\x14Y\x03\x02\x02\x02\x16i\x03\x02\x02\x02\x18k\x03" +
-		"\x02\x02\x02\x1Ap\x03\x02\x02\x02\x1Cu\x03\x02\x02\x02\x1E}\x03\x02\x02" +
-		"\x02 \"\x05\x04\x03\x02! \x03\x02\x02\x02\"#\x03\x02\x02\x02#$\x03\x02" +
-		"\x02\x02#!\x03\x02\x02\x02$%\x03\x02\x02\x02%&\x07\x02\x02\x03&\x03\x03" +
-		"\x02\x02\x02\'*\x05\x06\x04\x02(*\x05\b\x05\x02)\'\x03\x02\x02\x02)(\x03" +
-		"\x02\x02\x02*\x05\x03\x02\x02\x02+,\t\x02\x02\x02,\x07\x03\x02\x02\x02" +
-		"-.\x05\n\x06\x02.0\x05\x06\x04\x02/1\x05\x10\t\x020/\x03\x02\x02\x020" +
-		"1\x03\x02\x02\x021\t\x03\x02\x02\x0223\x07\x06\x02\x0235\x05\f\x07\x02" +
-		"46\x05\x0E\b\x0254\x03\x02\x02\x0256\x03\x02\x02\x026\v\x03\x02\x02\x02" +
-		"7<\x07\t\x02\x0289\x07\n\x02\x029;\x07\t\x02\x02:8\x03\x02\x02\x02;>\x03" +
-		"\x02\x02\x02<:\x03\x02\x02\x02<=\x03\x02\x02\x02=\r\x03\x02\x02\x02><" +
-		"\x03\x02\x02\x02?A\x07\v\x02\x02@?\x03\x02\x02\x02@A\x03\x02\x02\x02A" +
-		"B\x03\x02\x02\x02BH\x07\t\x02\x02CG\x07\r\x02\x02DE\x07\x0E\x02\x02EG" +
-		"\x07\t\x02\x02FC\x03\x02\x02\x02FD\x03\x02\x02\x02GJ\x03\x02\x02\x02H" +
-		"F\x03\x02\x02\x02HI\x03\x02\x02\x02IL\x03\x02\x02\x02JH\x03\x02\x02\x02" +
-		"KM\x07\f\x02\x02LK\x03\x02\x02\x02LM\x03\x02\x02\x02M\x0F\x03\x02\x02" +
-		"\x02NQ\x05\x12\n\x02OQ\x05\x16\f\x02PN\x03\x02\x02\x02PO\x03\x02\x02\x02" +
-		"Q\x11\x03\x02\x02\x02RS\x05\x14\v\x02ST\x05\x06\x04\x02TV\x03\x02\x02" +
-		"\x02UR\x03\x02\x02\x02VW\x03\x02\x02\x02WU\x03\x02\x02\x02WX\x03\x02\x02" +
-		"\x02X\x13\x03\x02\x02\x02Y]\x07\x07\x02\x02Z\\\t\x03\x02\x02[Z\x03\x02" +
-		"\x02\x02\\_\x03\x02\x02\x02][\x03\x02\x02\x02]^\x03\x02\x02\x02^\x15\x03" +
-		"\x02\x02\x02_]\x03\x02\x02\x02`b\x05\x18\r\x02a`\x03\x02\x02\x02bc\x03" +
-		"\x02\x02\x02ca\x03\x02\x02\x02cd\x03\x02\x02\x02df\x03\x02\x02\x02eg\x05" +
-		"\x1A\x0E\x02fe\x03\x02\x02\x02fg\x03\x02\x02\x02gj\x03\x02\x02\x02hj\x05" +
-		"\x1A\x0E\x02ia\x03\x02\x02\x02ih\x03\x02\x02\x02j\x17\x03\x02\x02\x02" +
-		"kl\x05\x1C\x0F\x02ln\x05\x06\x04\x02mo\x05\x12\n\x02nm\x03\x02\x02\x02" +
-		"no\x03\x02\x02\x02o\x19\x03\x02\x02\x02pq\x05\x1E\x10\x02qs\x05\x06\x04" +
-		"\x02rt\x05\x12\n\x02sr\x03\x02\x02\x02st\x03\x02\x02\x02t\x1B\x03\x02" +
-		"\x02\x02uv\x07\x07\x02\x02vz\x07\x10\x02\x02wy\t\x04\x02\x02xw\x03\x02" +
-		"\x02\x02y|\x03\x02\x02\x02zx\x03\x02\x02\x02z{\x03\x02\x02\x02{\x1D\x03" +
-		"\x02\x02\x02|z\x03\x02\x02\x02}~\x07\x07\x02\x02~\x7F\x07\x11\x02\x02" +
-		"\x7F\x1F\x03\x02\x02\x02\x14#)05<@FHLPW]cfinsz";
+		"\x0E\t\x0E\x03\x02\x06\x02\x1E\n\x02\r\x02\x0E\x02\x1F\x03\x02\x03\x02" +
+		"\x03\x03\x03\x03\x05\x03&\n\x03\x03\x04\x03\x04\x03\x05\x03\x05\x03\x05" +
+		"\x05\x05-\n\x05\x03\x06\x03\x06\x03\x06\x05\x062\n\x06\x03\x07\x03\x07" +
+		"\x03\x07\x07\x077\n\x07\f\x07\x0E\x07:\v\x07\x03\b\x05\b=\n\b\x03\b\x03" +
+		"\b\x03\b\x03\b\x07\bC\n\b\f\b\x0E\bF\v\b\x03\b\x05\bI\n\b\x03\t\x03\t" +
+		"\x05\tM\n\t\x03\n\x03\n\x03\n\x06\nR\n\n\r\n\x0E\nS\x03\v\x03\v\x07\v" +
+		"X\n\v\f\v\x0E\v[\v\v\x03\f\x06\f^\n\f\r\f\x0E\f_\x03\r\x03\r\x03\r\x05" +
+		"\re\n\r\x03\x0E\x03\x0E\x03\x0E\x07\x0Ej\n\x0E\f\x0E\x0E\x0Em\v\x0E\x03" +
+		"\x0E\x03\x1F\x02\x02\x0F\x02\x02\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E" +
+		"\x02\x10\x02\x12\x02\x14\x02\x16\x02\x18\x02\x1A\x02\x02\x05\x03\x03\x05" +
+		"\x05\x04\x02\x04\x04\x11\x17\x05\x02\x04\x04\x14\x14\x17\x17p\x02\x1D" +
+		"\x03\x02\x02\x02\x04%\x03\x02\x02\x02\x06\'\x03\x02\x02\x02\b)\x03\x02" +
+		"\x02\x02\n.\x03\x02\x02\x02\f3\x03\x02\x02\x02\x0E<\x03\x02\x02\x02\x10" +
+		"L\x03\x02\x02\x02\x12Q\x03\x02\x02\x02\x14U\x03\x02\x02\x02\x16]\x03\x02" +
+		"\x02\x02\x18a\x03\x02\x02\x02\x1Af\x03\x02\x02\x02\x1C\x1E\x05\x04\x03" +
+		"\x02\x1D\x1C\x03\x02\x02\x02\x1E\x1F\x03\x02\x02\x02\x1F \x03\x02\x02" +
+		"\x02\x1F\x1D\x03\x02\x02\x02 !\x03\x02\x02\x02!\"\x07\x02\x02\x03\"\x03" +
+		"\x03\x02\x02\x02#&\x05\x06\x04\x02$&\x05\b\x05\x02%#\x03\x02\x02\x02%" +
+		"$\x03\x02\x02\x02&\x05\x03\x02\x02\x02\'(\t\x02\x02\x02(\x07\x03\x02\x02" +
+		"\x02)*\x05\n\x06\x02*,\x05\x06\x04\x02+-\x05\x10\t\x02,+\x03\x02\x02\x02" +
+		",-\x03\x02\x02\x02-\t\x03\x02\x02\x02./\x07\x06\x02\x02/1\x05\f\x07\x02" +
+		"02\x05\x0E\b\x0210\x03\x02\x02\x0212\x03\x02\x02\x022\v\x03\x02\x02\x02" +
+		"38\x07\t\x02\x0245\x07\n\x02\x0257\x07\t\x02\x0264\x03\x02\x02\x027:\x03" +
+		"\x02\x02\x0286\x03\x02\x02\x0289\x03\x02\x02\x029\r\x03\x02\x02\x02:8" +
+		"\x03\x02\x02\x02;=\x07\v\x02\x02<;\x03\x02\x02\x02<=\x03\x02\x02\x02=" +
+		">\x03\x02\x02\x02>D\x07\t\x02\x02?C\x07\r\x02\x02@A\x07\x0E\x02\x02AC" +
+		"\x07\t\x02\x02B?\x03\x02\x02\x02B@\x03\x02\x02\x02CF\x03\x02\x02\x02D" +
+		"B\x03\x02\x02\x02DE\x03\x02\x02\x02EH\x03\x02\x02\x02FD\x03\x02\x02\x02" +
+		"GI\x07\f\x02\x02HG\x03\x02\x02\x02HI\x03\x02\x02\x02I\x0F\x03\x02\x02" +
+		"\x02JM\x05\x12\n\x02KM\x05\x16\f\x02LJ\x03\x02\x02\x02LK\x03\x02\x02\x02" +
+		"M\x11\x03\x02\x02\x02NO\x05\x14\v\x02OP\x05\x06\x04\x02PR\x03\x02\x02" +
+		"\x02QN\x03\x02\x02\x02RS\x03\x02\x02\x02SQ\x03\x02\x02\x02ST\x03\x02\x02" +
+		"\x02T\x13\x03\x02\x02\x02UY\x07\x07\x02\x02VX\t\x03\x02\x02WV\x03\x02" +
+		"\x02\x02X[\x03\x02\x02\x02YW\x03\x02\x02\x02YZ\x03\x02\x02\x02Z\x15\x03" +
+		"\x02\x02\x02[Y\x03\x02\x02\x02\\^\x05\x18\r\x02]\\\x03\x02\x02\x02^_\x03" +
+		"\x02\x02\x02_]\x03\x02\x02\x02_`\x03\x02\x02\x02`\x17\x03\x02\x02\x02" +
+		"ab\x05\x1A\x0E\x02bd\x05\x06\x04\x02ce\x05\x12\n\x02dc\x03\x02\x02\x02" +
+		"de\x03\x02\x02\x02e\x19\x03\x02\x02\x02fg\x07\x07\x02\x02gk\x07\x10\x02" +
+		"\x02hj\t\x04\x02\x02ih\x03\x02\x02\x02jm\x03\x02\x02\x02ki\x03\x02\x02" +
+		"\x02kl\x03\x02\x02\x02l\x1B\x03\x02\x02\x02mk\x03\x02\x02\x02\x11\x1F" +
+		"%,18<BDHLSY_dk";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!LGFileParser.__ATN) {
@@ -1350,17 +1244,14 @@ export class NormalTemplateStringContext extends ParserRuleContext {
 
 
 export class ConditionalTemplateBodyContext extends ParserRuleContext {
-	public caseRule(): CaseRuleContext[];
-	public caseRule(i: number): CaseRuleContext;
-	public caseRule(i?: number): CaseRuleContext | CaseRuleContext[] {
+	public ifConditionRule(): IfConditionRuleContext[];
+	public ifConditionRule(i: number): IfConditionRuleContext;
+	public ifConditionRule(i?: number): IfConditionRuleContext | IfConditionRuleContext[] {
 		if (i === undefined) {
-			return this.getRuleContexts(CaseRuleContext);
+			return this.getRuleContexts(IfConditionRuleContext);
 		} else {
-			return this.getRuleContext(i, CaseRuleContext);
+			return this.getRuleContext(i, IfConditionRuleContext);
 		}
-	}
-	public defaultRule(): DefaultRuleContext | undefined {
-		return this.tryGetRuleContext(0, DefaultRuleContext);
 	}
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
@@ -1390,9 +1281,9 @@ export class ConditionalTemplateBodyContext extends ParserRuleContext {
 }
 
 
-export class CaseRuleContext extends ParserRuleContext {
-	public caseCondition(): CaseConditionContext {
-		return this.getRuleContext(0, CaseConditionContext);
+export class IfConditionRuleContext extends ParserRuleContext {
+	public ifCondition(): IfConditionContext {
+		return this.getRuleContext(0, IfConditionContext);
 	}
 	public newline(): NewlineContext {
 		return this.getRuleContext(0, NewlineContext);
@@ -1404,23 +1295,23 @@ export class CaseRuleContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return LGFileParser.RULE_caseRule; }
+	public get ruleIndex(): number { return LGFileParser.RULE_ifConditionRule; }
 	// @Override
 	public enterRule(listener: LGFileParserListener): void {
-		if (listener.enterCaseRule) {
-			listener.enterCaseRule(this);
+		if (listener.enterIfConditionRule) {
+			listener.enterIfConditionRule(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: LGFileParserListener): void {
-		if (listener.exitCaseRule) {
-			listener.exitCaseRule(this);
+		if (listener.exitIfConditionRule) {
+			listener.exitIfConditionRule(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: LGFileParserVisitor<Result>): Result {
-		if (visitor.visitCaseRule) {
-			return visitor.visitCaseRule(this);
+		if (visitor.visitIfConditionRule) {
+			return visitor.visitIfConditionRule(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
@@ -1428,47 +1319,9 @@ export class CaseRuleContext extends ParserRuleContext {
 }
 
 
-export class DefaultRuleContext extends ParserRuleContext {
-	public defaultCondition(): DefaultConditionContext {
-		return this.getRuleContext(0, DefaultConditionContext);
-	}
-	public newline(): NewlineContext {
-		return this.getRuleContext(0, NewlineContext);
-	}
-	public normalTemplateBody(): NormalTemplateBodyContext | undefined {
-		return this.tryGetRuleContext(0, NormalTemplateBodyContext);
-	}
-	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
-		super(parent, invokingState);
-	}
-	// @Override
-	public get ruleIndex(): number { return LGFileParser.RULE_defaultRule; }
-	// @Override
-	public enterRule(listener: LGFileParserListener): void {
-		if (listener.enterDefaultRule) {
-			listener.enterDefaultRule(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: LGFileParserListener): void {
-		if (listener.exitDefaultRule) {
-			listener.exitDefaultRule(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: LGFileParserVisitor<Result>): Result {
-		if (visitor.visitDefaultRule) {
-			return visitor.visitDefaultRule(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-
-
-export class CaseConditionContext extends ParserRuleContext {
+export class IfConditionContext extends ParserRuleContext {
 	public DASH(): TerminalNode { return this.getToken(LGFileParser.DASH, 0); }
-	public CASE(): TerminalNode { return this.getToken(LGFileParser.CASE, 0); }
+	public IFELSE(): TerminalNode { return this.getToken(LGFileParser.IFELSE, 0); }
 	public WS(): TerminalNode[];
 	public WS(i: number): TerminalNode;
 	public WS(i?: number): TerminalNode | TerminalNode[] {
@@ -1500,54 +1353,23 @@ export class CaseConditionContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return LGFileParser.RULE_caseCondition; }
+	public get ruleIndex(): number { return LGFileParser.RULE_ifCondition; }
 	// @Override
 	public enterRule(listener: LGFileParserListener): void {
-		if (listener.enterCaseCondition) {
-			listener.enterCaseCondition(this);
+		if (listener.enterIfCondition) {
+			listener.enterIfCondition(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: LGFileParserListener): void {
-		if (listener.exitCaseCondition) {
-			listener.exitCaseCondition(this);
+		if (listener.exitIfCondition) {
+			listener.exitIfCondition(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: LGFileParserVisitor<Result>): Result {
-		if (visitor.visitCaseCondition) {
-			return visitor.visitCaseCondition(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-
-
-export class DefaultConditionContext extends ParserRuleContext {
-	public DASH(): TerminalNode { return this.getToken(LGFileParser.DASH, 0); }
-	public DEFAULT(): TerminalNode { return this.getToken(LGFileParser.DEFAULT, 0); }
-	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
-		super(parent, invokingState);
-	}
-	// @Override
-	public get ruleIndex(): number { return LGFileParser.RULE_defaultCondition; }
-	// @Override
-	public enterRule(listener: LGFileParserListener): void {
-		if (listener.enterDefaultCondition) {
-			listener.enterDefaultCondition(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: LGFileParserListener): void {
-		if (listener.exitDefaultCondition) {
-			listener.exitDefaultCondition(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: LGFileParserVisitor<Result>): Result {
-		if (visitor.visitDefaultCondition) {
-			return visitor.visitDefaultCondition(this);
+		if (visitor.visitIfCondition) {
+			return visitor.visitIfCondition(this);
 		} else {
 			return visitor.visitChildren(this);
 		}

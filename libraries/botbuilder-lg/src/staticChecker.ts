@@ -62,34 +62,41 @@ export class StaticChecker extends AbstractParseTreeVisitor<LGReportMessage[]> i
 
     public visitConditionalBody(context: lp.ConditionalBodyContext): LGReportMessage[] {
         let result: LGReportMessage[] = [];
-        const caseRules = context.conditionalTemplateBody().caseRule();
-        if (caseRules === undefined || caseRules.length === 0) {
-            result.push(new LGReportMessage(`Only default condition will result in a warning.`, LGReportMessageType.Warning));
-        } else {
-            for (const caseRule of caseRules) {
-                if (caseRule.caseCondition().EXPRESSION() === undefined || caseRule.caseCondition().EXPRESSION().length === 0) {
-                    result.push(new LGReportMessage(`Condition ${caseRule.caseCondition().text} MUST be enclosed in curly brackets.`));
-                } else {
-                    result.concat(this.CheckExpression(caseRule.caseCondition().EXPRESSION(0).text));
-                }
+        const ifRules = context.conditionalTemplateBody().ifConditionRule();
 
-                if (caseRule.normalTemplateBody() === undefined) {
-                    result.push(new LGReportMessage(`Case ${caseRule.text} should have template body`));
-                } else {
-                    result.concat(this.visit(caseRule.normalTemplateBody()));
-                }
+        let idx: number = 0;
+        for(const ifRule of ifRules) {
+            const conditionLabel = ifRule.ifCondition().IFELSE().text.toLowerCase();
+            if (idx === 0 && conditionLabel !== 'if:') {
+                result.push(new LGReportMessage(`condition is not start with if: '${context.conditionalTemplateBody().text}'`, LGReportMessageType.Warning));
             }
-        }
 
-        const defaultRule = context.conditionalTemplateBody().defaultRule();
-        if (defaultRule !== undefined) {
-            if (defaultRule.normalTemplateBody() === undefined) {
-                result.push(new LGReportMessage(`Default rule ${defaultRule.text} should have template body`));
+            if (idx > 0 && conditionLabel === 'if:') {
+                result.push(new LGReportMessage(`condition can't have more than one if: '${context.conditionalTemplateBody().text}'`));
+            }
+
+            if (idx === ifRules.length - 1 && conditionLabel !== 'else:') {
+                result.push(new LGReportMessage(`condition is not end with else: '${context.conditionalTemplateBody().text}'`, LGReportMessageType.Warning));
+            }
+
+            if (idx > 0 && idx < ifRules.length - 1 && conditionLabel !== 'elseif:') {
+                result.push(new LGReportMessage(`only elseif is allowed in middle of condition: '${context.conditionalTemplateBody().text}'`));
+            }
+
+            if (conditionLabel !== 'else:') {
+                if (ifRule.ifCondition().EXPRESSION().length !== 1) {
+                    result.push(new LGReportMessage(`if and elseif should followed by one valid expression: '${ifRule.text}'`));
+                }
+
+                result = result.concat(this.CheckExpression(ifRule.ifCondition().EXPRESSION(0).text));
             } else {
-                result.concat(this.visit(defaultRule.normalTemplateBody()));
+                if (ifRule.ifCondition().EXPRESSION().length !== 0) {
+                    result.push(new LGReportMessage(`else should not followed by any expression: '${ifRule.text}'`));
+                }
             }
-        } else {
-            result.push(new LGReportMessage(`It is best to use the DEFAULT field`, LGReportMessageType.Warning));
+
+            result = result.concat(this.visit(ifRule.normalTemplateBody()));
+            idx = idx + 1;
         }
 
         return result;

@@ -16,10 +16,8 @@ import { TemplateBodyContext } from "./LGFileParser";
 import { NormalTemplateBodyContext } from "./LGFileParser";
 import { NormalTemplateStringContext } from "./LGFileParser";
 import { ConditionalTemplateBodyContext } from "./LGFileParser";
-import { CaseRuleContext } from "./LGFileParser";
-import { DefaultRuleContext } from "./LGFileParser";
-import { CaseConditionContext } from "./LGFileParser";
-import { DefaultConditionContext } from "./LGFileParser";
+import { IfConditionRuleContext } from "./LGFileParser";
+import { IfConditionContext } from "./LGFileParser";
 
 
 /**
@@ -124,31 +122,17 @@ export interface LGFileParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitConditionalTemplateBody?: (ctx: ConditionalTemplateBodyContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by `LGFileParser.caseRule`.
+	 * Visit a parse tree produced by `LGFileParser.ifConditionRule`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitCaseRule?: (ctx: CaseRuleContext) => Result;
+	visitIfConditionRule?: (ctx: IfConditionRuleContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by `LGFileParser.defaultRule`.
+	 * Visit a parse tree produced by `LGFileParser.ifCondition`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitDefaultRule?: (ctx: DefaultRuleContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `LGFileParser.caseCondition`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitCaseCondition?: (ctx: CaseConditionContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `LGFileParser.defaultCondition`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitDefaultCondition?: (ctx: DefaultConditionContext) => Result;
+	visitIfCondition?: (ctx: IfConditionContext) => Result;
 }
 
