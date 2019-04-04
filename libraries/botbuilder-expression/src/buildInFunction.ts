@@ -1,8 +1,8 @@
 
+import { Constant } from './constant';
 import { Expression, ReturnType } from './expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
-import { Constant } from './constant';
 import { Extensions } from './extensions';
 
 /**
@@ -323,7 +323,7 @@ export class BuiltInFunctions {
      */
     public static Numeric(func: (arg0: ReadonlyArray<any>) => any): ExpressionEvaluator {
         return new ExpressionEvaluator(BuiltInFunctions.ApplySequence(func, BuiltInFunctions.VerifyNumber),
-            ReturnType.Number, BuiltInFunctions.ValidateNumber);
+                                       ReturnType.Number, BuiltInFunctions.ValidateNumber);
     }
 
     /**
@@ -332,7 +332,7 @@ export class BuiltInFunctions {
      */
     public static Comparison(func: (arg0: ReadonlyArray<any>) => any): ExpressionEvaluator {
         return new ExpressionEvaluator(BuiltInFunctions.Apply(func, BuiltInFunctions.VerifyNumberOrString),
-            ReturnType.Boolean, BuiltInFunctions.ValidateBinaryNumberOrString);
+                                       ReturnType.Boolean, BuiltInFunctions.ValidateBinaryNumberOrString);
     }
 
     /**
@@ -341,7 +341,7 @@ export class BuiltInFunctions {
      */
     public static StringTransform(func: (arg0: ReadonlyArray<any>) => any): ExpressionEvaluator {
         return new ExpressionEvaluator(BuiltInFunctions.Apply(func, BuiltInFunctions.VerifyString),
-            ReturnType.String, BuiltInFunctions.ValidateUnaryString);
+                                       ReturnType.String, BuiltInFunctions.ValidateUnaryString);
     }
 
     /**
@@ -377,11 +377,10 @@ export class BuiltInFunctions {
         let value: any;
         let error: string;
         let instance: any = state;
-        const children = expression.Children;
+        const children: Expression[] = expression.Children;
         if (children.length === 2) {
             ({ value, error } = children[1].TryEvaluate(state));
-        }
-        else {
+        } else {
             instance = state;
         }
 
@@ -402,18 +401,18 @@ export class BuiltInFunctions {
         if (error === undefined) {
             let idxValue: any;
             ({ value: idxValue, error } = index.TryEvaluate(state));
-            if(error === undefined) {
-                if(Number.isInteger(idxValue)) {
+            if (error === undefined) {
+                if (Number.isInteger(idxValue)) {
                     const idx: number = Number(idxValue);
                     let count: number = -1;
-                    if(inst instanceof Array) {
-                        count = (<Array<any>>inst).length;
-                    } else if(inst instanceof Map) {
-                        count = (<Map<string,any>>inst).size;
+                    if (inst instanceof Array) {
+                        count = (inst).length;
+                    } else if (inst instanceof Map) {
+                        count = (<Map<string, any>>inst).size;
                     }
                     const indexer: string[] = Object.keys(inst);
-                    if(count !== -1 && indexer.length > 0) {
-                        if(idx >= 0 && count > idx) {
+                    if (count !== -1 && indexer.length > 0) {
+                        if (idx >= 0 && count > idx) {
                             const idyn: any = inst;
                             value = idyn[idx];
                         } else {
@@ -425,44 +424,53 @@ export class BuiltInFunctions {
                 } else {
                     error = `Could not coerce ${index} to an int.`;
                 }
+
                 return {value, error};
             }
 
         }
     }
 
+// tslint:disable-next-line: max-func-body-length
     private static BuildFunctionLookup(): Map<string, ExpressionEvaluator> {
         // tslint:disable-next-line: no-unnecessary-local-variable
         const functions: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>([
             //TODO
             //Math
             [ExpressionType.Element, new ExpressionEvaluator(BuiltInFunctions.ExtractElement, ReturnType.Object,
-                (expr) => BuiltInFunctions.ValidateOrder(expr, null, ReturnType.Object, ReturnType.Number))],
-            [ExpressionType.Subtract, BuiltInFunctions.Numeric(args => args[0] + args[1])],
-            [ExpressionType.Add, BuiltInFunctions.Numeric(args => args[0] + args[1])],
-            [ExpressionType.Multiply, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+// tslint:disable-next-line: max-line-length
+                                                             (expr: Expression): void => BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.Object, ReturnType.Number))],
+            [ExpressionType.Subtract, BuiltInFunctions.Numeric((args: ReadonlyArray<any>)  => Number(args[0]) + Number(args[1]))],
+            [ExpressionType.Add, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Number(args[0]) + Number(args[1]))],
+            [ExpressionType.Multiply, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
+            [ExpressionType.Divide, new ExpressionEvaluator(BuiltInFunctions.ApplySequence((args: ReadonlyArray<any>) => args[0] / args[1],
+                                                                                           (value: any, expression: Expression) => {
+                    let error: string = BuiltInFunctions.VerifyNumber(value, expression);
+                    if (error === undefined && value === 0) {
+                        error = `Cannot divide by 0 from ${expression}`;
+                    }
 
-            
-            
-            
-            [ExpressionType.Divide, BuiltInFunctions.Numeric(args => args[0] + args[1])],
-            [ExpressionType.Min, BuiltInFunctions.Numeric(args => args[0] + args[1])],
-            [ExpressionType.Max, BuiltInFunctions.Numeric(args => args[0] + args[1])],
-            [ExpressionType.Power, BuiltInFunctions.Numeric(args => args[0] + args[1])],
-            [ExpressionType.Mod, BuiltInFunctions.Numeric(args => args[0] + args[1])],
-            [ExpressionType.Average, BuiltInFunctions.Numeric(args => args[0] + args[1])],
-            [ExpressionType.Sum, BuiltInFunctions.Numeric(args => args[0] + args[1])],
-            [ExpressionType.Count, BuiltInFunctions.Numeric(args => args[0] + args[1])],
-            [ExpressionType.LessThan, BuiltInFunctions.Numeric(args => args[0] + args[1])],
-            [ExpressionType.LessThanOrEqual, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Equal, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.NotEqual, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.GreaterThan, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.GreaterThanOrEqual, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Exists, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.And, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Or, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Not, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+                    return error;
+                }),                                         ReturnType.Number, BuiltInFunctions.ValidateNumber)],
+            [ExpressionType.Min, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.min(Number(args[0]), Number(args[1])))],
+            [ExpressionType.Max, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.max(Number(args[0]), Number(args[1])))],
+            [ExpressionType.Power, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.pow(args[0], args[1]))],
+            [ExpressionType.Mod, new ExpressionEvaluator(BuiltInFunctions.Apply(
+                                                    (args: ReadonlyArray<any>) => args[0] % args[1], BuiltInFunctions.VerifyInteger),
+                                                         ReturnType.Number, BuiltInFunctions.ValidateBinaryNumber)],
+            [ExpressionType.Average, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
+            [ExpressionType.Sum, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
+            [ExpressionType.Count, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
+            [ExpressionType.LessThan, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
+            [ExpressionType.LessThanOrEqual, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
+            [ExpressionType.Equal, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
+            [ExpressionType.NotEqual, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
+            [ExpressionType.GreaterThan, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
+            [ExpressionType.GreaterThanOrEqual, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
+            [ExpressionType.Exists, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
+            [ExpressionType.And, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
+            [ExpressionType.Or, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
+            [ExpressionType.Not, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
             [ExpressionType.Optional, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.Contains, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.Empty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
@@ -504,32 +512,31 @@ export class BuiltInFunctions {
             [ExpressionType.Json, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.AddProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.SetProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.RemoveProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            
+            [ExpressionType.RemoveProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])]
 
         ]);
 
         // Math aliases
-        functions.set("add", functions.get(ExpressionType.Add));
-        functions.set("mul", functions.get(ExpressionType.Multiply));
-        
-        functions.set("div", functions.get(ExpressionType.Divide));
-        functions.set("mul", functions.get(ExpressionType.Multiply));
-        functions.set("sub", functions.get(ExpressionType.Subtract));
-        functions.set("exp", functions.get(ExpressionType.Power));
-        functions.set("mod", functions.get(ExpressionType.Mod));
+
+        functions.set('add', functions.get(ExpressionType.Add));
+        functions.set('mul', functions.get(ExpressionType.Multiply));
+
+        functions.set('div', functions.get(ExpressionType.Divide));
+        functions.set('mul', functions.get(ExpressionType.Multiply));
+        functions.set('sub', functions.get(ExpressionType.Subtract));
+        functions.set('exp', functions.get(ExpressionType.Power));
+        functions.set('mod', functions.get(ExpressionType.Mod));
 
         // Comparison aliases
-        functions.set("and", functions.get(ExpressionType.And));
-        functions.set("equals", functions.get(ExpressionType.Equal));
-        functions.set("greater", functions.get(ExpressionType.GreaterThan));
-        functions.set("greaterOrEquals", functions.get(ExpressionType.GreaterThanOrEqual));
-        functions.set("less", functions.get(ExpressionType.LessThan));
-        functions.set("lessOrEquals", functions.get(ExpressionType.LessThanOrEqual));
-        functions.set("not", functions.get(ExpressionType.Not));
-        functions.set("or", functions.get(ExpressionType.Or));
-        functions.set("concat", functions.get(ExpressionType.Concat));
-        
+        functions.set('and', functions.get(ExpressionType.And));
+        functions.set('equals', functions.get(ExpressionType.Equal));
+        functions.set('greater', functions.get(ExpressionType.GreaterThan));
+        functions.set('greaterOrEquals', functions.get(ExpressionType.GreaterThanOrEqual));
+        functions.set('less', functions.get(ExpressionType.LessThan));
+        functions.set('lessOrEquals', functions.get(ExpressionType.LessThanOrEqual));
+        functions.set('not', functions.get(ExpressionType.Not));
+        functions.set('or', functions.get(ExpressionType.Or));
+        functions.set('concat', functions.get(ExpressionType.Concat));
 
         return functions;
     }
