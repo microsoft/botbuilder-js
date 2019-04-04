@@ -1,13 +1,16 @@
 import { AbstractParseTreeVisitor, ParseTree, TerminalNode } from 'antlr4ts/tree';
-import { Constant, Extensions, IExpressionParser } from 'botbuilder-expression';
+import { Constant, Expression, Extensions, IExpressionParser } from 'botbuilder-expression';
 import { ExpressionEngine} from 'botbuilder-expression-parser';
 import { EvaluationTarget } from './evaluator';
-import * as lp from './generator/LGFileParser';
-import { LGFileParserVisitor } from './generator/LGFileParserVisitor';
+import * as lp from './generated/LGFileParser';
+import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions } from './getMethodExtensions';
 import { EvaluationContext } from './templateEngine';
 
 // tslint:disable-next-line: max-classes-per-file
+/**
+ * Analyzer engine. To analyse which variable may be used
+ */
 export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFileParserVisitor<string[]> {
     public readonly Context: EvaluationContext;
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
@@ -24,7 +27,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
             throw new Error(`No such template: ${templateName}`);
         }
 
-        if (this.evalutationTargetStack[templateName] !== undefined) {
+        if (this.evalutationTargetStack.find((u: EvaluationTarget) => u.TemplateName === templateName) !== undefined) {
             throw new Error(`Loop deteced: ${this.evalutationTargetStack.reverse()
                 .map((u: EvaluationTarget) => u.TemplateName)
                 .join(' => ')}`);
@@ -33,7 +36,9 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         this.evalutationTargetStack.push(new EvaluationTarget(templateName, undefined));
         const rawDependencies: string[] = this.visit(this.Context.TemplateContexts.get(templateName));
         const parameters: string[] = this.ExtractParamters(templateName);
-        const dependencies = Array.from(new Set(rawDependencies.filter((element) => !parameters.includes(element))));
+
+        // we need to exclude parameters from raw dependencies
+        const dependencies: string[] = Array.from(new Set(rawDependencies.filter((element: string) => !parameters.includes(element))));
         this.evalutationTargetStack.pop();
 
         return dependencies;
@@ -42,7 +47,9 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
     public visitTemplateDefinition(ctx: lp.TemplateDefinitionContext): string[] {
         const templateNameContext: lp.TemplateNameLineContext = ctx.templateNameLine();
         if (templateNameContext.templateName().text === this.currentTarget().TemplateName) {
-            return this.visit(ctx.templateBody());
+            if (ctx.templateBody() !== undefined) {
+                return this.visit(ctx.templateBody());
+            }
         }
 
         throw Error(`template name match failed`);
@@ -112,22 +119,22 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
     private AnalyzeExpression(exp: string): string[] {
         exp = exp.replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
-        const parse = this._expressionParser.Parse(exp);
-        let references = new Set<string>();
+        const parse: Expression = this._expressionParser.Parse(exp);
+        const references: Set<string> = new Set<string>();
 
-        const path = Extensions.ReferenceWalk(parse, references, (expression) => {
-            let found = false;
-            if (expression instanceof Constant && typeof (expression as Constant).Value === 'string') {
-                const str: string = (expression as Constant).Value;
+        const path: string = Extensions.ReferenceWalk(parse, references, (expression: Expression) => {
+            let found: boolean = false;
+            if (expression instanceof Constant && typeof (expression).Value === 'string') {
+                const str: string = (expression).Value;
                 if (str.startsWith('[') && str.endsWith(']')) {
                     found = true;
-                    let end = str.indexOf('(');
+                    let end: number = str.indexOf('(');
                     if (end === -1) {
                         end = str.length - 1;
                     }
 
-                    const template = str.substr(1, end - 1);
-                    const analyzer = new Analyzer(this.Context);
+                    const template: string = str.substr(1, end - 1);
+                    const analyzer: Analyzer = new Analyzer(this.Context);
                     for (const reference of analyzer.AnalyzeTemplate(template)) {
                         references.add(reference);
                     }
@@ -153,7 +160,9 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         exp = exp.replace(/(^\[*)/g, '')
                 .replace(/(\]*$)/g, '');
         const argsStartPos: number = exp.indexOf('(');
-        if (argsStartPos > 0) {
+        if (argsStartPos > 0) { // Do have args
+
+            // EvaluateTemplate all arguments using ExpressoinEngine
             const argsEndPos: number = exp.lastIndexOf(')');
             if (argsEndPos < 0 || argsEndPos < argsStartPos + 1) {
                 throw Error(`Not a valid template ref: ${exp}`);
@@ -188,12 +197,8 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private ExtractParamters(templateName: string): string[] {
-        const result: string[] = [];
-        const parameters: any = this.Context.TemplateParameters.get(templateName);
-        if (parameters === undefined || !(parameters instanceof Array)) {
-            return result;
-        }
+        const parameters: string[] = this.Context.TemplateParameters.get(templateName);
 
-        return parameters;
+        return parameters === undefined ? [] : parameters;
     }
 }
