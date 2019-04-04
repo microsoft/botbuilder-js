@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "plugins": [
+      { "name": "typescript-tslint-plugin" }
+    ],
     "target": "ESNext",
     "module": "commonjs",
     "declaration": true,

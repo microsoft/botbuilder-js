@@ -1,0 +1,85 @@
+{
+  "query": "Please deliver February 2nd 2001",
+  "topScoringIntent": {
+    "intent": "Delivery",
+    "score": 0.88083595
+  },
+  "intents": [
+    {
+      "intent": "Delivery",
+      "score": 0.88083595
+    },
+    {
+      "intent": "Cancel",
+      "score": 0.0193132889
+    },
+    {
+      "intent": "None",
+      "score": 0.01645435
+    },
+    {
+      "intent": "Weather.GetForecast",
+      "score": 0.0128572183
+    },
+    {
+      "intent": "Help",
+      "score": 0.0109224562
+    },
+    {
+      "intent": "search",
+      "score": 0.01081034
+    },
+    {
+      "intent": "Greeting",
+      "score": 0.005683609
+    },
+    {
+      "intent": "SpecifyName",
+      "score": 0.005143363
+    },
+    {
+      "intent": "Travel",
+      "score": 0.00385920564
+    },
+    {
+      "intent": "EntityTests",
+      "score": 0.00191719388
+    }
+  ],
+  "entities": [
+    {
+      "entity": "february 2nd 2001",
+      "type": "builtin.datetimeV2.date",
+      "startIndex": 15,
+      "endIndex": 31,
+      "resolution": {
+        "values": [
+          {
+            "timex": "2001-02-02",
+            "type": "date",
+            "value": "2001-02-02"
+          }
+        ]
+      }
+    },
+    {
+      "entity": "2001",
+      "type": "builtin.number",
+      "startIndex": 28,
+      "endIndex": 31,
+      "resolution": {
+        "subtype": "integer",
+        "value": "2001"
+      }
+    },
+    {
+      "entity": "2nd",
+      "type": "builtin.ordinal",
+      "startIndex": 24,
+      "endIndex": 26,
+      "resolution": {
+        "value": "2"
+      }
+    }
+  ]
+}

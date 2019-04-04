@@ -1,0 +1,44 @@
+{
+  "name": "botbuilder-lg",
+  "description": "Typescript version of Microsoft.Expression from C# version (https://github.com/Microsoft/botbuilder-dotnet/tree/ComposableDialog/libraries/Microsoft.CommonExpressions) ",
+  "version": "1.0.0",
+  "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "botframework",
+    "expression"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
+  "dependencies": {
+    "typescript": "^3.2.4",
+    "antlr4": "^4.7.2",
+    "antlr4ts": "0.5.0-alpha.1",
+    "botbuilder-expression": "file:../botbuilder-expression",
+    "botbuilder-expression-parser": "file:../botbuilder-expression-parser"
+  },
+  "devDependencies": {
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.18",
+    "mocha": "^5.2.0",
+    "nyc": "^11.4.1",
+    "ts-node": "^4.1.0",
+    "tslint": "^5.1.0",
+    "tslint-microsoft-contrib": "^6.1.0",
+    "typescript-tslint-plugin": "^0.3.1"
+  },
+  "scripts": {
+    "preinstall": "cd ../botbuilder-expression-parser && npm install && tsc",
+    "build": "tsc",
+    "test": "tsc && nyc mocha tests/ --timeout 60000",
+    "clean": "erase /q /s .\\lib"
+  },
+  "files": [
+    "/lib",
+    "/src"
+  ]
+}

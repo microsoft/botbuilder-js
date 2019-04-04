@@ -1,0 +1,62 @@
+{
+  "query": "I want to travel on united",
+  "topScoringIntent": {
+    "intent": "Travel",
+    "score": 0.7717603
+  },
+  "intents": [
+    {
+      "intent": "Travel",
+      "score": 0.7717603
+    },
+    {
+      "intent": "Weather.GetForecast",
+      "score": 0.0224327128
+    },
+    {
+      "intent": "search",
+      "score": 0.0130998492
+    },
+    {
+      "intent": "None",
+      "score": 0.0130586373
+    },
+    {
+      "intent": "Delivery",
+      "score": 0.01043733
+    },
+    {
+      "intent": "Help",
+      "score": 0.009187382
+    },
+    {
+      "intent": "Cancel",
+      "score": 0.008433739
+    },
+    {
+      "intent": "SpecifyName",
+      "score": 0.005692391
+    },
+    {
+      "intent": "Greeting",
+      "score": 0.00383586367
+    },
+    {
+      "intent": "EntityTests",
+      "score": 0.002093814
+    }
+  ],
+  "entities": [
+    {
+      "entity": "united",
+      "type": "Airline",
+      "startIndex": 20,
+      "endIndex": 25,
+      "resolution": {
+        "values": [
+          "United"
+        ]
+      }
+    }
+  ]
+}

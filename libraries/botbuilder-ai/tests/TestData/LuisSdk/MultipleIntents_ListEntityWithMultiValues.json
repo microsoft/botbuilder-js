@@ -1,0 +1,73 @@
+{
+  "query": "I want to travel on DL",
+  "topScoringIntent": {
+    "intent": "Travel",
+    "score": 0.6193948
+  },
+  "intents": [
+    {
+      "intent": "Travel",
+      "score": 0.6193948
+    },
+    {
+      "intent": "Weather.GetForecast",
+      "score": 0.0240742136
+    },
+    {
+      "intent": "None",
+      "score": 0.0157425776
+    },
+    {
+      "intent": "search",
+      "score": 0.0133986529
+    },
+    {
+      "intent": "Delivery",
+      "score": 0.0108271679
+    },
+    {
+      "intent": "Help",
+      "score": 0.009421702
+    },
+    {
+      "intent": "Cancel",
+      "score": 0.008904019
+    },
+    {
+      "intent": "SpecifyName",
+      "score": 0.00597030437
+    },
+    {
+      "intent": "Greeting",
+      "score": 0.00414359
+    },
+    {
+      "intent": "EntityTests",
+      "score": 0.00224798918
+    }
+  ],
+  "entities": [
+    {
+      "entity": "dl",
+      "type": "builtin.dimension",
+      "startIndex": 20,
+      "endIndex": 21,
+      "resolution": {
+        "unit": "Deciliter",
+        "value": null
+      }
+    },
+    {
+      "entity": "dl",
+      "type": "Airline",
+      "startIndex": 20,
+      "endIndex": 21,
+      "resolution": {
+        "values": [
+          "Delta",
+          "Virgin"
+        ]
+      }
+    }
+  ]
+}
