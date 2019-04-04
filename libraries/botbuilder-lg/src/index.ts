@@ -7,4 +7,4 @@ export * from './generated/LGFileParserVisitor';
 export * from './getMethodExtensions';
 export * from './staticChecker';
 export * from './analyzer';
-export * from './staticChecker';
+export * from './mslgTool';

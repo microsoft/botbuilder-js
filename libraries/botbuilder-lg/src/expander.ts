@@ -1,19 +1,12 @@
 
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
+import { Expression } from 'botbuilder-expression';
 import { ExpressionEngine} from 'botbuilder-expression-parser';
+import { EvaluationTarget } from './evaluator';
 import { GetMethodExtensions, IGetMethod } from './expanderMethodExtensions';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { EvaluationContext } from './templateEngine';
-
-export class EvaluationTarget {
-    public TemplateName: string;
-    public Scope: any;
-    public constructor(templateName: string, scope: any) {
-        this.TemplateName = templateName;
-        this.Scope = scope;
-    }
-}
 
 // tslint:disable-next-line: max-classes-per-file
 export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFileParserVisitor<string[]> {
@@ -33,7 +26,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             throw new Error(`No such template: ${templateName}`);
         }
 
-        if (this.evalutationTargetStack[templateName] !== undefined) {
+        if (this.evalutationTargetStack.find((u: EvaluationTarget) => u.TemplateName === templateName) !== undefined) {
             throw new Error(`Loop deteced: ${this.evalutationTargetStack.reverse()
                 .map((u: EvaluationTarget) => u.TemplateName)
                 .join(' => ')}`);
@@ -117,12 +110,6 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             return args[0];
         }
         const paramters: string[] = this.ExtractParamters(templateName);
-
-        if (paramters.length !== args.length) {
-            throw new Error(`Arguments count mismatch for template ref ${templateName},
-            expected ${paramters.length}, actual ${args.length}`);
-        }
-
         const newScope: any = {};
         paramters.map((e: string, i: number) => newScope[e] = args[i]);
 
@@ -167,33 +154,33 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             exp = exp.replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
 
-            const result: any = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
-            if ((typeof (result) === 'boolean' && !result) || (typeof (result) === 'number' && result === 0)) {
-                return false;
-            }
+            const {value: result, error}: {value: any; error: string} = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
+            if (error !== undefined
+                || result === undefined
+                || typeof result === 'boolean' && !Boolean(result)
+                || Number.isInteger(result) && Number(result) === 0) {
+                    return false;
+                }
 
             return true;
         } catch (error) {
-            console.log(error);
-
             return false;
         }
     }
 
     private EvalExpression(exp: string): string {
         exp = exp.replace(/(^{*)/g, '')
-                .replace(/(}*$)/g, '');
+            .replace(/(}*$)/g, '');
 
-        let res: any = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
-        if (res.error !== undefined) {
-            throw new Error(`Error occurs when evaluating expression ${exp}: ${res.error}`);
+        const { value: result, error }: { value: any; error: string } = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
+        if (error !== undefined) {
+            throw new Error(`Error occurs when evaluating expression ${exp}: ${error}`);
+        }
+        if (result === undefined) {
+            throw new Error(`Error occurs when evaluating expression '${exp}': ${exp} is evaluated to null`);
         }
 
-        if (res.result === undefined) {
-            throw new Error(`Error occurs when evaluating expression '${exp}': ${exp} is evaluated to undefined`);
-        }
-
-        return res.toString();
+        return String(result);
     }
 
     private EvalTemplateRef(exp: string) : string[] {
@@ -207,9 +194,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             }
 
             const argExpressions: string[] = exp.substr(argsStartPos + 1, argsEndPos - argsStartPos - 1).split(',');
-            const args: any[] = argExpressions.map((x: string) => this.EvalByExpressionEngine(x, this.currentTarget().Scope));
+            const args: any[] = argExpressions.map((x: string) => this.EvalByExpressionEngine(x, this.currentTarget().Scope).value);
             const templateName: string = exp.substr(0, argsStartPos);
-
             const newScope: any = this.ConstructScope(templateName, args);
 
             return this.ExpandTemplate(templateName, newScope);
@@ -252,17 +238,13 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private ExtractParamters(templateName: string): string[] {
-        const result: string[] = [];
-        const parameters: any = this.Context.TemplateParameters.get(templateName);
-        if (parameters === undefined || !(parameters instanceof Array)) {
-            return result;
-        }
+        const parameters: string[] = this.Context.TemplateParameters.get(templateName);
 
-        return parameters;
+        return parameters === undefined ? [] : parameters;
     }
 
     private EvalByExpressionEngine(exp: string, scope: any) : any {
-        const parse = new ExpressionEngine(this.GetMethodX.GetMethodX).Parse(exp);
+        const parse: Expression = new ExpressionEngine(this.GetMethodX.GetMethodX).Parse(exp);
 
         return parse.TryEvaluate(scope);
     }

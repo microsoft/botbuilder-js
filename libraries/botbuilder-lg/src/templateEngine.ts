@@ -1,9 +1,7 @@
 import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
-import { BailErrorStrategy } from 'antlr4ts/BailErrorStrategy';
 import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import { TerminalNode } from 'antlr4ts/tree';
 import fs = require('fs');
-import { stringify } from 'querystring';
 import { Analyzer } from './Analyzer';
 import { ErrorListener } from './errorListener';
 import { Evaluator } from './evaluator';
@@ -99,7 +97,7 @@ export class TemplateEngine {
         const reportMessages: ReportEntry[] = checker.Check();
 
         const errorMessages: ReportEntry[] = reportMessages.filter((message: ReportEntry) => message.Type === ReportEntryType.ERROR);
-        if (errorMessages.length >= 0) {
+        if (errorMessages.length > 0) {
             throw Error(errorMessages.join('\n'));
         }
     }

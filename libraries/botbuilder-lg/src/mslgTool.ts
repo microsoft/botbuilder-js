@@ -1,30 +1,29 @@
 import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
 import { BailErrorStrategy } from 'antlr4ts/BailErrorStrategy';
 import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
-import { TerminalNode } from 'botframework-expression//node_modules/antlr4ts/tree';
+import { TerminalNode } from 'antlr4ts/tree';
 import { Analyzer } from './analyzer';
-import { LGFileLexer } from './generator/LGFileLexer';
-import { FileContext, LGFileParser, ParagraphContext, ParametersContext, TemplateDefinitionContext } from './generator/LGFileParser';
 import { ErrorListener } from './errorListener';
+import { LGFileLexer } from './generated/LGFileLexer';
+import * as lp from './generated/LGFileParser';
 
 // tslint:disable-next-line: no-require-imports
-import fs = require('fs');
-import { LGReportMessage, LGReportMessageType } from './exception';
-import { StaticChecker } from './staticChecker';
+import { Expander } from './expander';
+import { IGetMethod } from './expanderMethodExtensions';
+import { ReportEntry, StaticChecker } from './staticChecker';
 import { EvaluationContext } from './templateEngine';
 import { TemplateExtractor } from './templateExtractor';
-import { Expander } from './expander';
 
 // tslint:disable-next-line: completed-docs
 export class MSLGTool {
-    public MergerMessages: LGReportMessage[] = [];
+    public MergerMessages: ReportEntry[] = [];
     public MergedTemplates: Map<string, any> = new Map<string, any>();
     public NameCollisions: string[] = [];
 
     private templateContexts: EvaluationContext;
 
-    public ValidateFile(lgFileContent: string): LGReportMessage[] {
-        let initErrorMessages: LGReportMessage[] = [];
+    public ValidateFile(lgFileContent: string): ReportEntry[] {
+        let initErrorMessages: ReportEntry[] = [];
         this.templateContexts = this.BuiildTemplateContexts(lgFileContent, initErrorMessages);
         this.RunTemplateExtractor(this.templateContexts);
 
@@ -37,29 +36,36 @@ export class MSLGTool {
         return analyzer.AnalyzeTemplate(templateName);
     }
 
-    public ExpandTemplate(templateName: string, scope: any): string[] {
-        const expander: Expander = new Expander(this.templateContexts);
+    public ExpandTemplate(templateName: string, scope: any, methodBinder?: IGetMethod): string[] {
+        const expander: Expander = new Expander(this.templateContexts, methodBinder);
 
         return expander.ExpandTemplate(templateName, scope);
     }
 
-    private BuiildTemplateContexts(lgFileContent: string, initErrorMessages: LGReportMessage[] = []): EvaluationContext {
+    private BuiildTemplateContexts(lgFileContent: string, initErrorMessages: ReportEntry[] = []): EvaluationContext {
         try {
+            if (lgFileContent === undefined
+                || lgFileContent === ''
+                || lgFileContent === null) {
+                return new EvaluationContext();
+            }
+
             const input: ANTLRInputStream = new ANTLRInputStream(lgFileContent);
             const lexer: LGFileLexer = new LGFileLexer(input);
             const tokens: CommonTokenStream = new CommonTokenStream(lexer);
-            const parser: LGFileParser = new LGFileParser(tokens);
+            const parser: lp.LGFileParser = new lp.LGFileParser(tokens);
             parser.removeErrorListeners();
-            parser.addErrorListener(ErrorListener.INSTANCE);
+            parser.addErrorListener(new ErrorListener());
             parser.buildParseTree = true;
-            parser.errorHandler = new BailErrorStrategy();
 
-            const context: FileContext = parser.file();
-            const templateContexts: Map<string, TemplateDefinitionContext> = new Map<string, TemplateDefinitionContext>();
+            const context: lp.FileContext = parser.file();
+
+            const templateContexts: Map<string, lp.TemplateDefinitionContext> = new Map<string, lp.TemplateDefinitionContext>();
             const templateParameters: Map<string, string[]> = new Map<string, string[]>();
-            const templates: TemplateDefinitionContext[] = context.paragraph()
-                .map((p: ParagraphContext) => p.templateDefinition())
-                .filter((x: TemplateDefinitionContext) => x !== undefined);
+            const templates: lp.TemplateDefinitionContext[] = context.paragraph()
+                .map((p: lp.ParagraphContext) => p.templateDefinition())
+                .filter((x: lp.TemplateDefinitionContext) => x !== undefined);
+
             for (const template of templates) {
                 const templateName: string = template.templateNameLine()
                     .templateName().text;
@@ -67,10 +73,10 @@ export class MSLGTool {
                     templateContexts.set(templateName, template);
                 } else {
                     // tslint:disable-next-line: max-line-length
-                    initErrorMessages.push(new LGReportMessage(`Duplicate template definition with name: ${templateName}`, LGReportMessageType.Error));
+                    initErrorMessages.push(new ReportEntry(`Duplicate template definition with name: ${templateName}`));
                 }
 
-                const parameters: ParametersContext = template.templateNameLine()
+                const parameters: lp.ParametersContext = template.templateNameLine()
                     .parameters();
                 if (parameters !== undefined) {
                     templateParameters.set(templateName, parameters.IDENTIFIER().map((x: TerminalNode) => x.text));
@@ -84,13 +90,13 @@ export class MSLGTool {
     }
 
     // tslint:disable-next-line: max-line-length
-    private RunStaticCheck(evaluationContext: EvaluationContext, initExceptions: LGReportMessage[] = undefined): LGReportMessage[] {
+    private RunStaticCheck(evaluationContext: EvaluationContext, initExceptions: ReportEntry[] = undefined): ReportEntry[] {
         if (initExceptions === undefined) {
             initExceptions = [];
         }
 
         const checker: StaticChecker = new StaticChecker(evaluationContext);
-        let reportMessages: LGReportMessage[] = checker.Check();
+        let reportMessages: ReportEntry[] = checker.Check();
 
         return reportMessages.concat(initExceptions);
     }
@@ -116,7 +122,7 @@ export class MSLGTool {
                     this.MergedTemplates.set(template[0], Array.from(new Set(this.MergedTemplates.get(template[0]).concat(template[1]))));
                 } else {
                     // tslint:disable-next-line: max-line-length
-                    const mergeError: LGReportMessage = new LGReportMessage(`Template ${template[0]} occurred in both normal and condition templates`, LGReportMessageType.Error);
+                    const mergeError: ReportEntry = new ReportEntry(`Template ${template[0]} occurred in both normal and condition templates`);
                     this.MergerMessages.push(mergeError);
                 }
             } else {

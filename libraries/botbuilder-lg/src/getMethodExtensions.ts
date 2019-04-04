@@ -74,12 +74,13 @@ export class GetMethodExtensions implements IGetMethod {
             paramters[0] instanceof Array &&
             typeof (paramters[1]) === 'string') {
             const li: any[] = paramters[0];
-            const func: any = paramters[1];
+            let func: string = paramters[1];
 
-            if (!this.evaluator.Context.TemplateContexts.has(func)) {
+            if (!this.IsTemplateRef(func) || !this.evaluator.Context.TemplateContexts.has(func.substr(1, func.length - 2))) {
                 throw new Error(`No such template defined: ${func}`);
             }
 
+            func = func.substr(1, func.length - 2);
             return li.map((x: any) => {
                 const newScope: any = this.evaluator.ConstructScope(func, [x]);
 
@@ -95,8 +96,9 @@ export class GetMethodExtensions implements IGetMethod {
             paramters[0] instanceof Array &&
             typeof paramters[1] === 'string') {
             const li: any[] = paramters[0];
-            const func = paramters[1];
+            let func: string = paramters[1];
 
+            func = func.substr(1, func.length - 2);
             if (!this.evaluator.Context.TemplateContexts.has(func)) {
                 throw new Error(`No such template defined: ${func}`);
             }
@@ -114,5 +116,15 @@ export class GetMethodExtensions implements IGetMethod {
 
         }
         throw new Error('NotImplementedException');
+    }
+
+    private IsTemplateRef(templateName: string): boolean {
+        if (templateName === undefined || templateName.trim() === '') {
+            return false;
+        } else if (templateName.startsWith('[') && templateName.endsWith(']')) {
+            return true;
+        }
+
+        return false;
     }
 }

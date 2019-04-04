@@ -8,7 +8,7 @@
       "declaration": true,
       "sourceMap": true,
       "outDir": "./lib",
-      "rootDir": "./src",
+      "rootDirs": ["./src"],
       "types" : ["node"]
     },
     "include": [
