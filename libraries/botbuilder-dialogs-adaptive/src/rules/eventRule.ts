@@ -25,20 +25,13 @@ export class EventRule implements PlanningRule {
     public readonly steps: Dialog[];
 
     /**
-     * Type of plan modification to make when triggered.
-     */
-    public changeType: PlanChangeType;
-
-    /**
      * Creates a new `EventRule` instance.
      * @param events (Optional) list of events to filter to.
      * @param steps (Optional) list of steps to update the plan with when triggered.
-     * @param changeType (Optional) type of plan modification to make when triggered. Defaults to `PlanChangeType.doSteps`.
      */
-    constructor(events?: string|string[], steps?: Dialog[], changeType?: PlanChangeType) {
+    constructor(events?: string|string[], steps?: Dialog[]) {
         this.events = Array.isArray(events) ? events : (events !== undefined ? [events] : []);
         this.steps = steps || [];
-        this.changeType = changeType || PlanChangeType.doSteps;
     }
 
     public evaluate(planning: PlanningContext, event: DialogEvent, memory: object): Promise<PlanChangeList[]|undefined> {
@@ -61,7 +54,7 @@ export class EventRule implements PlanningRule {
     }
 
     protected onCreateChangeList(planning: PlanningContext, event: DialogEvent, dialogOptions?: any): PlanChangeList {
-        const changeList: PlanChangeList = { changeType: this.changeType, steps: [] };
+        const changeList: PlanChangeList = { changeType: PlanChangeType.doSteps, steps: [] };
         this.steps.forEach((step) => {
             const stepState: PlanStepState = { dialogStack: [], dialogId: step.id };
             if (dialogOptions !== undefined) {

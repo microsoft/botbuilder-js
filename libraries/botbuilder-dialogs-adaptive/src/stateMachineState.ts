@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { AdaptiveDialog } from './adaptiveDialog';
-import { StateTransitionRule, DefaultRule } from './rules';
+import { StateTransitionRule, NoMatchRule } from './rules';
 import { Dialog } from 'botbuilder-dialogs';
 
 export class StateMachineState extends AdaptiveDialog {
@@ -16,7 +16,7 @@ export class StateMachineState extends AdaptiveDialog {
 
     constructor(stateName?: string, steps?: Dialog[]) {
         super(stateName);
-        this.addRule(new DefaultRule(steps));
+        this.addRule(new NoMatchRule(steps));
         this.addRule(this.rule);
     }
 

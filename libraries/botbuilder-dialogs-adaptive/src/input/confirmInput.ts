@@ -9,7 +9,7 @@ import { Dialog, DialogTurnResult, DialogContext, ConfirmPrompt, DialogConfigura
 import { ActivityProperty } from '../activityProperty';
 import { Activity } from 'botbuilder-core';
 
-export class BoolInput extends DialogCommand implements DialogDependencies {
+export class ConfirmInput extends DialogCommand implements DialogDependencies {
     private prompt = new ConfirmPrompt();
 
     constructor(property: string, activity: string|Partial<Activity>, alwaysPrompt = false) {
@@ -49,12 +49,12 @@ export class BoolInput extends DialogCommand implements DialogDependencies {
      * returned from the called dialog will then be copied to the bound property.
      */
     public set property(value: string) {
-        this.inputBindings['value'] = value;
-        this.outputBinding = value;
+        this.inputProperties['value'] = value;
+        this.outputProperty = value;
     }
 
     public get property(): string {
-       return this.inputBindings['value']; 
+       return this.inputProperties['value']; 
     }
 
     public async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {

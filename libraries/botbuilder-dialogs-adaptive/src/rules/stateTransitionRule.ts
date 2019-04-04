@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogEvent } from 'botbuilder-dialogs';
-import { PlanningContext, PlanChangeList, PlanChangeType, PlanStepState } from '../planningContext';
+import { PlanningContext, PlanChangeList, PlanChangeType } from '../planningContext';
 import { PlanningRule } from './planningRule';
-import { GotoDialog } from '../steps';
+import { ReplaceDialog } from '../steps';
 
 /**
  * This rule is triggered when a dialog event matching a list of event names is emitted.
@@ -35,7 +35,7 @@ export class StateTransitionRule implements PlanningRule {
         for(const eventName in this.transitions) {
             const state = this.transitions[eventName];
             if (!this._steps.hasOwnProperty(state)) {
-                const step = new GotoDialog(state);
+                const step = new ReplaceDialog(state);
                 step.id = `stateTransition[${state}]`;
                 this._steps[state] = step;
                 steps.push(step);

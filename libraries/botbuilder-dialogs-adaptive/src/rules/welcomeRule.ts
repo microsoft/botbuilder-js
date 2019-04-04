@@ -30,7 +30,7 @@ export class WelcomeRule extends EventRule {
     constructor();
     constructor(steps: Dialog[], conversationProperty?: string);
     constructor(steps?: Dialog[], welcomedProperty = WELCOMED_PROPERTY) {
-        super([RuleDialogEventNames.activityReceived, RuleDialogEventNames.unhandledUtterance, RuleDialogEventNames.planStarted], steps, PlanChangeType.doSteps);
+        super([RuleDialogEventNames.activityReceived, RuleDialogEventNames.unhandledUtterance, RuleDialogEventNames.planStarted], steps);
         this.welcomedProperty = welcomedProperty;
     }
 

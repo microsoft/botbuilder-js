@@ -7,9 +7,9 @@
  */
 import { DialogTurnResult, DialogConfiguration, Dialog, DialogCommand, DialogContext } from 'botbuilder-dialogs';
 
-export interface GotoDialogConfiguration extends DialogConfiguration {
+export interface ReplaceDialogConfiguration extends DialogConfiguration {
     /**
-     * ID of the dialog to goto.
+     * ID of the dialog to replace the current one with.
      */
     dialogId: string;
 
@@ -18,15 +18,15 @@ export interface GotoDialogConfiguration extends DialogConfiguration {
      * 
      * @remarks
      * These options will be merged with any dynamic options configured as 
-     * [inputBindings](#inputbindings).
+     * [inputProperties](#inputproperties).
      */
     options?: object;
 }
 
-export class GotoDialog extends DialogCommand {
+export class ReplaceDialog extends DialogCommand {
 
     /**
-     * Creates a new `GotoDialog` instance.
+     * Creates a new `ReplaceWithDialog` instance.
      * @param dialogId ID of the dialog to goto.
      * @param options (Optional) static options to pass the dialog.
      */
@@ -39,7 +39,7 @@ export class GotoDialog extends DialogCommand {
     }
 
     protected onComputeID(): string {
-        return `goto[${this.hashedLabel(this.dialogId)}]`;
+        return `replace[${this.hashedLabel(this.dialogId)}]`;
     }
 
     /**
@@ -52,11 +52,11 @@ export class GotoDialog extends DialogCommand {
      * 
      * @remarks
      * These options will be merged with any dynamic options configured as 
-     * [inputBindings](#inputbindings).
+     * [inputProperties](#inputproperties).
      */
     public options?: object;
 
-    public configure(config: GotoDialogConfiguration): this {
+    public configure(config: ReplaceDialogConfiguration): this {
         return super.configure(config);
     }
 

@@ -41,19 +41,19 @@ export class EmitEvent extends DialogCommand {
     public bubbleEvent: boolean;
 
     public set eventValueProperty(value: string) {
-        this.inputBindings['eventValue'] = value;
+        this.inputProperties['eventValue'] = value;
     }
 
     public get eventValueProperty(): string {
-        return this.inputBindings['eventValue'];
+        return this.inputProperties['eventValue'];
     }
 
     public set resultProperty(value: string) {
-        this.outputBinding = value;
+        this.outputProperty = value;
     }
 
     public get resultProperty(): string {
-        return this.outputBinding;
+        return this.outputProperty;
     }
 
     public configure(config: EmitEventConfiguration): this {

@@ -7,15 +7,15 @@
  */
 import { DialogTurnResult, DialogCommand, DialogContext, DialogConfiguration } from 'botbuilder-dialogs';
 
-export interface ChangeListConfiguration extends DialogConfiguration {
-    changeType?: ChangeListType;
+export interface EditArrayConfiguration extends DialogConfiguration {
+    changeType?: ArrayChangeType;
 
-    listProperty?: string;
+    arrayProperty?: string;
     
     itemProperty?: string;
 }
 
-export enum ChangeListType {
+export enum ArrayChangeType {
     push = 'push',
     pop = 'pop',
     take = 'take',
@@ -23,36 +23,36 @@ export enum ChangeListType {
     clear = 'clear'
 }
 
-export class ChangeList extends DialogCommand {
+export class EditArray extends DialogCommand {
 
     constructor();
-    constructor(changeType: ChangeListType, listProperty: string, itemProperty?: string);
-    constructor(changeType?: ChangeListType, listProperty?: string, itemProperty?: string) {
+    constructor(changeType: ArrayChangeType, arrayProperty: string, itemProperty?: string);
+    constructor(changeType?: ArrayChangeType, arrayProperty?: string, itemProperty?: string) {
         super();
         if (changeType) { this.changeType = changeType }
-        if (listProperty) { this.listProperty = listProperty }
+        if (arrayProperty) { this.arrayProperty = arrayProperty }
         if (itemProperty) { this.itemProperty = itemProperty }
     }
     
     protected onComputeID(): string {
-        return `list[${this.hashedLabel(this.changeType + ': ' + this.listProperty)}]`;
+        return `array[${this.hashedLabel(this.changeType + ': ' + this.arrayProperty)}]`;
     }
 
-    public changeType: ChangeListType;
+    public changeType: ArrayChangeType;
 
-    public listProperty: string;
+    public arrayProperty: string;
     
     public itemProperty: string;
 
-    public configure(config: ChangeListConfiguration): this {
+    public configure(config: EditArrayConfiguration): this {
         return super.configure(config);
     }
 
     protected async onRunCommand(dc: DialogContext, options: object): Promise<DialogTurnResult> {
-        if (!this.listProperty) { throw new Error(`ChangeList: "${this.changeType}" operation couldn't be performed because the listProperty wasn't specified.`) }
+        if (!this.arrayProperty) { throw new Error(`EditArray: "${this.changeType}" operation couldn't be performed because the listProperty wasn't specified.`) }
 
         // Get list and ensure populated
-        let list: any[] = dc.state.getValue(this.listProperty);
+        let list: any[] = dc.state.getValue(this.arrayProperty);
         if (!Array.isArray(list)) { list = [] }
 
         // Manipulate list
@@ -60,14 +60,14 @@ export class ChangeList extends DialogCommand {
         let serialized: string;
         let lastResult: any;
         switch (this.changeType) {
-            case ChangeListType.pop:
+            case ArrayChangeType.pop:
                 item = list.pop();
                 if (this.itemProperty) {
                     dc.state.setValue(this.itemProperty, item);
                 }
                 lastResult = item;
                 break;
-            case ChangeListType.push:
+            case ArrayChangeType.push:
                 this.ensureItemProperty();
                 item = dc.state.getValue(this.itemProperty);
                 lastResult = item != undefined;
@@ -75,14 +75,14 @@ export class ChangeList extends DialogCommand {
                     list.push(item);
                 }
                 break;
-            case ChangeListType.take:
+            case ArrayChangeType.take:
                 item = list.shift();
                 if (this.itemProperty) {
                     dc.state.setValue(this.itemProperty, item);
                 }
                 lastResult = item;
                 break;
-            case ChangeListType.remove:
+            case ArrayChangeType.remove:
                 this.ensureItemProperty();
                 item = dc.state.getValue(this.itemProperty);
                 if (item != undefined) {
@@ -97,19 +97,19 @@ export class ChangeList extends DialogCommand {
                     }
                 }
                 break;
-            case ChangeListType.clear:
+            case ArrayChangeType.clear:
                 lastResult = list.length > 0;
                 list = [];
                 break;
         }
 
         // Save list and last result
-        dc.state.setValue(this.listProperty, list);
+        dc.state.setValue(this.arrayProperty, list);
         dc.state.setValue('dialog.lastResult', lastResult);
         return await dc.endDialog();
     }
 
     private ensureItemProperty(): void {
-        if (!this.itemProperty) { throw new Error(`ChangeList: "${this.changeType}" operation couldn't be performed for list "${this.listProperty}" because an itemProperty wasn't specified.`) }
+        if (!this.itemProperty) { throw new Error(`EditArray: "${this.changeType}" operation couldn't be performed for list "${this.arrayProperty}" because an itemProperty wasn't specified.`) }
     }
 }

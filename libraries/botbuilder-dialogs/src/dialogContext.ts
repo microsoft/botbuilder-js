@@ -190,9 +190,9 @@ export class DialogContext {
         // - If the stack is empty, any `dialog.` bindings will be pulled from the active dialog on
         //   the parents stack.
         options = options || {};
-        for(const option in dialog.inputBindings) {
-            if (dialog.inputBindings.hasOwnProperty(option)) {
-                const binding = dialog.inputBindings[option];
+        for(const option in dialog.inputProperties) {
+            if (dialog.inputProperties.hasOwnProperty(option)) {
+                const binding = dialog.inputProperties[option];
                 const value = this.state.getValue(binding);
                 options[option] = Array.isArray(value) || typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : value;
             }
@@ -564,8 +564,8 @@ export class DialogContext {
             // Process dialogs output binding
             // - if the stack is empty, any `dialog.` bindings will be applied to the active dialog
             //   on the parents stack.
-            if (dialog && dialog.outputBinding && result !== undefined) {
-                this.state.setValue(dialog.outputBinding, result);
+            if (dialog && dialog.outputProperty && result !== undefined) {
+                this.state.setValue(dialog.outputProperty, result);
             }
         }
     }

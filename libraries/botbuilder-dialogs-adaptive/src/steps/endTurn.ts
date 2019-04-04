@@ -8,10 +8,10 @@
 import { DialogTurnResult, Dialog, DialogContext, DialogConsultation, DialogConsultationDesire } from 'botbuilder-dialogs';
 import { ActivityTypes } from 'botbuilder-core';
 
-export class WaitForInput extends Dialog {
+export class EndTurn extends Dialog {
 
     protected onComputeID(): string {
-        return `waitForInput[]`;
+        return `endTurn[]`;
     }
 
     public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {

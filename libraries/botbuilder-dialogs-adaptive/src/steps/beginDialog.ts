@@ -7,7 +7,7 @@
  */
 import { Dialog, DialogTurnResult, DialogConfiguration, DialogContext } from 'botbuilder-dialogs';
 
-export interface CallDialogConfiguration extends DialogConfiguration {
+export interface BeginDialogConfiguration extends DialogConfiguration {
     /**
      * ID of the dialog to call.
      */
@@ -33,10 +33,10 @@ export interface CallDialogConfiguration extends DialogConfiguration {
     property?: string;
 }
 
-export class CallDialog<O extends object = {}> extends Dialog<O> {
+export class BeginDialog<O extends object = {}> extends Dialog<O> {
 
     /**
-     * Creates a new `CallDialog` instance.
+     * Creates a new `BeginDialog` instance.
      * @param dialogId ID of the dialog to call.
      * @param property (Optional) property to bind the called dialogs value to.
      * @param options (Optional) static options to pass the called dialog.
@@ -46,7 +46,7 @@ export class CallDialog<O extends object = {}> extends Dialog<O> {
     constructor(dialogId: string, property: string, options?: O)
     constructor(dialogId?: string, optionsOrProperty?: O|string, options?: O) {
         super();
-        this.outputBinding = 'dialog.lastResult';
+        this.outputProperty = 'dialog.lastResult';
 
         // Process args
         if (typeof optionsOrProperty === 'object') {
@@ -62,7 +62,7 @@ export class CallDialog<O extends object = {}> extends Dialog<O> {
         return `call[${this.hashedLabel(this.dialogId + ':' + this.bindingPath(false))}]`;
     }
 
-    public configure(config: CallDialogConfiguration): this {
+    public configure(config: BeginDialogConfiguration): this {
         return super.configure(config);
     }
 
@@ -89,12 +89,12 @@ export class CallDialog<O extends object = {}> extends Dialog<O> {
      * returned from the called dialog will then be copied to the bound property.
      */
     public set property(value: string) {
-        this.inputBindings['value'] = value;
-        this.outputBinding = value;
+        this.inputProperties['value'] = value;
+        this.outputProperty = value;
     }
 
     public get property(): string {
-       return this.inputBindings['value']; 
+       return this.inputProperties['value']; 
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

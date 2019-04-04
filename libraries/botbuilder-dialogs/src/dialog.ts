@@ -211,13 +211,13 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * (Optional) JSONPath expression for the memory slots to bind the dialogs options to on a 
      * call to `beginDialog()`. 
      */
-    public readonly inputBindings: { [option:string]: string; } = {};
+    public readonly inputProperties: { [option:string]: string; } = {};
 
     /**
      * (Optional) JSONPath expression for the memory slot to bind the dialogs result to when 
      * `endDialog()` is called.
      */
-    public outputBinding: string;
+    public outputProperty: string;
 
     /**
      * The telemetry client for logging events.
@@ -394,10 +394,10 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      */
     protected bindingPath(hashOutput = true): string {
         let output = '';
-        if (this.inputBindings.hasOwnProperty('value')) {
-            output = this.inputBindings['value'];
-        } else if (this.outputBinding && this.outputBinding.length) {
-            output = this.outputBinding;
+        if (this.inputProperties.hasOwnProperty('value')) {
+            output = this.inputProperties['value'];
+        } else if (this.outputProperty && this.outputProperty.length) {
+            output = this.outputProperty;
         }
 
         return hashOutput ? this.hashedLabel(output) : output;

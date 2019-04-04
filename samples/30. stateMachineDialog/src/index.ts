@@ -53,8 +53,8 @@ offHook.addRule(new IntentRule('PlaceCallIntent', [
 // ringing state
 const ringing = dialogs.addState('ringing', [
     new SendActivity(`☎️ ring... ring...`),
-    new BoolInput('dialog.answer', `Would you like to answer it?`, true),
-    new IfProperty('dialog.answer', [
+    new BoolInput('$answer', `Would you like to answer it?`, true),
+    new IfProperty('$answer', [
         new EmitEvent('callConnected')
     ])
 ]);
@@ -64,8 +64,8 @@ ringing.permit('callConnected', 'connected');
 // connected state
 const connected = dialogs.addState('connected', [
     new SendActivity(`📞 talk... talk... talk... ☹️`),
-    new BoolInput('dialog.hangup', `Heard enough yet?`, true),
-    new IfProperty('dialog.hangup', [
+    new BoolInput('$hangup', `Heard enough yet?`, true),
+    new IfProperty('$hangup', [
         new EmitEvent('callEnded')
     ])
 ]);

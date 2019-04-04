@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { EventRule } from './eventRule';
-import { RuleDialogEventNames, PlanChangeType } from '../planningContext';
+import { RuleDialogEventNames } from '../planningContext';
 import { Dialog } from 'botbuilder-dialogs';
 
 /**
@@ -16,14 +16,13 @@ import { Dialog } from 'botbuilder-dialogs';
  * A message is considered unhandled if there were no other rules triggered by the message and 
  * there is no active plan being executed.
  */
-export class DefaultRule extends EventRule {
+export class NoMatchRule extends EventRule {
 
     /**
      * Creates a new `DefaultResponseRule` instance.
      * @param steps (Optional) list of steps to update the plan with when triggered.
-     * @param changeType (Optional) type of plan modification to make when triggered. Defaults to `PlanChangeType.doSteps`.
      */
-    constructor(steps?: Dialog[], changeType?: PlanChangeType) {
-        super(RuleDialogEventNames.unhandledUtterance, steps, changeType);
+    constructor(steps?: Dialog[]) {
+        super(RuleDialogEventNames.unhandledUtterance, steps);
     }
 }

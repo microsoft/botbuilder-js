@@ -16,12 +16,12 @@ import {
 import { 
     RuleDialogEventNames, PlanningContext, RuleDialogState as AdaptiveDialogState, PlanChangeList, PlanChangeType 
 } from './planningContext';
-import { PlanningRule, DefaultRule } from './rules';
+import { PlanningRule, NoMatchRule } from './rules';
 import { Recognizer } from './recognizers';
 
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     /**
-     * Planning rules to evaluate for each conversational turn.
+     * (Optional) planning rules to evaluate for each conversational turn.
      */
     rules?: PlanningRule[];
 
@@ -29,6 +29,11 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
      * (Optional) recognizer used to analyze any message utterances.
      */
     recognizer?: Recognizer;
+
+    /**
+     * (Optional) steps to initialize the dialogs plan with.
+     */
+    steps?: Dialog[];
 }
 
 export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
@@ -38,23 +43,28 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     /**
      * Creates a new `AdaptiveDialog` instance.
      * @param dialogId (Optional) unique ID of the component within its parents dialog set.
-     * @param steps (Optional) set of dialog steps that should be run by default.
+     * @param steps (Optional) steps to initialize the dialogs plan with.
      */
     constructor(dialogId?: string, steps?: Dialog[]) {
         super(dialogId);
-        if (steps) { this.addRule(new DefaultRule(steps)) }
+        if (Array.isArray(steps)) { Array.prototype.push.apply(this.steps, steps) }
     }
 
     /**
-     * Rules to evaluate for each conversational turn.
+     * Planning rules to evaluate for each conversational turn.
      */
     public readonly rules: PlanningRule[] = [];
+
+    /**
+     * Steps to initialize the dialogs plan with.
+     */
+    public readonly steps: Dialog[] = [];
 
     /**
      * (Optional) recognizer used to analyze any message utterances.
      */
     public recognizer?: Recognizer;
-    
+
     public set telemetryClient(client: BotTelemetryClient) {
         super.telemetryClient = client ? client : new NullTelemetryClient();
         this.dialogs.telemetryClient = client;
@@ -75,6 +85,9 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     }
 
     protected onInstallDependencies(): void {
+        // Install any steps
+        this.steps.forEach((step) => this.dialogs.add(step));
+
         // Install each rules steps
         this.rules.forEach((rule) => {
             rule.steps.forEach((step) => this.dialogs.add(step));
@@ -201,6 +214,28 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
         let handled = false;
         switch (event.name) {
             case RuleDialogEventNames.beginDialog:
+                // Emit event
+                handled = await this.queueFirstMatch(planning, event);
+                if (!handled) {
+                    if (this.steps.length > 0) {
+                        // Initialize plan with steps
+                        const changes: PlanChangeList = {
+                            changeType: PlanChangeType.doSteps,
+                            steps: []
+                        };
+                        this.steps.forEach((step) => {
+                            changes.steps.push({
+                                dialogId: step.id,
+                                dialogStack: []
+                            });
+                        });
+                        handled = true;
+                    } else {
+                        // Dispatch activityReceived event
+                        handled = await this.evaluateRules(planning, { name: RuleDialogEventNames.activityReceived, value: undefined, bubble: false });
+                    }
+                }
+                break;
             case RuleDialogEventNames.consultDialog:
                 // Emit event
                 handled = await this.queueFirstMatch(planning, event);

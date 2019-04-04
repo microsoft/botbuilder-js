@@ -7,7 +7,7 @@
  */
 import { RecognizerResult } from 'botbuilder-core';
 import { EventRule } from './eventRule';
-import { RuleDialogEventNames, PlanningContext, PlanChangeList, PlanChangeType } from '../planningContext';
+import { RuleDialogEventNames, PlanningContext, PlanChangeList } from '../planningContext';
 import { DialogEvent, Dialog, DialogContextState } from 'botbuilder-dialogs';
 
 /**
@@ -25,10 +25,9 @@ export class IntentRule extends EventRule {
      * Creates a new `IntentRule` instance.
      * @param matches (Optional) list of intents, entities, and properties to filter to.
      * @param steps (Optional) list of steps to update the plan with when triggered.
-     * @param changeType (Optional) type of plan modification to make when triggered. Defaults to `PlanChangeType.replacePlan`.
      */
-    constructor(matches?: string|string[], steps?: Dialog[], changeType?: PlanChangeType) {
-        super(RuleDialogEventNames.utteranceRecognized, steps, changeType || PlanChangeType.replacePlan);
+    constructor(matches?: string|string[], steps?: Dialog[]) {
+        super(RuleDialogEventNames.utteranceRecognized, steps);
         this.matches = Array.isArray(matches) ? matches : (matches !== undefined ? [matches] : []);
     }
 
