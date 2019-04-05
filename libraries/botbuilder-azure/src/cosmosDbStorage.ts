@@ -161,7 +161,7 @@ export class CosmosDbStorage implements Storage {
         if (this.settings.partitionKey !== null) {
             options = {
                 partitionKey: this.settings.partitionKey
-            }
+            };
         }
 
         return this.ensureCollectionExists().then((collectionLink: string) => {
@@ -213,7 +213,7 @@ export class CosmosDbStorage implements Storage {
                 };
 
                 return new Promise((resolve: any, reject: any): void => {
-                    const handleCallback: (err: any, data: any) => void = (err: any, data: any): void => err ? reject(err) : resolve();
+                    const handleCallback: (err: any, data: any) => void = (err: any): void => err ? reject(err) : resolve();
 
                     const eTag: string = changes[k].eTag;
                     if (!eTag || eTag === '*') {
@@ -249,7 +249,7 @@ export class CosmosDbStorage implements Storage {
         if (this.settings.partitionKey !== null) {
             options = {
                 partitionKey: this.settings.partitionKey
-            }
+            };
         }
 
         return this.ensureCollectionExists().then(() =>
@@ -258,7 +258,7 @@ export class CosmosDbStorage implements Storage {
                     this.client.deleteDocument(
                         UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, CosmosDbKeyEscape.escapeKey(k)),
                         options,
-                        (err: any, data: any): void =>
+                        (err: any): void =>
                             err && err.code !== 404 ? reject(err) : resolve()
                     )
                 )
@@ -274,7 +274,7 @@ export class CosmosDbStorage implements Storage {
      */
     private ensureCollectionExists(): Promise<string> {
         if (!this.collectionExists) {
-            this.collectionExists = new Promise((resolve: Function, reject: Function): void => {
+            this.collectionExists = new Promise((resolve: Function): void => {
                 _semaphore.take(() => {
                     const result: Promise<string> = this.collectionExists ? this.collectionExists :
                         getOrCreateDatabase(this.client, this.settings.databaseId, this.databaseCreationRequestOption)
@@ -311,8 +311,8 @@ function getOrCreateDatabase(client: DocumentClient, databaseId: string, databas
             if (results.length === 1) { return resolve(results[0]._self); }
 
             // create db
-            client.createDatabase({ id: databaseId }, databaseCreationRequestOption, (db_create_err: any, databaseLink: any) => {
-                if (db_create_err) { return reject(db_create_err); }
+            client.createDatabase({ id: databaseId }, databaseCreationRequestOption, (dbCreateErr: any, databaseLink: any) => {
+                if (dbCreateErr) { return reject(dbCreateErr); }
                 resolve(databaseLink._self);
             });
         });
