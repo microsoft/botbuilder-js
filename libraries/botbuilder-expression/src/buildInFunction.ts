@@ -35,11 +35,12 @@ export class BuiltInFunctions {
 
         if (types.length > 0) {
             for (const child of expression.Children) {
+               
                 if (child.ReturnType !== ReturnType.Object && !types.includes(child.ReturnType)) {
                     if (types.length === 1) {
-                        throw new Error(`${child} is not a ${types[0]} expression in ${expression}.`);
+                        throw new Error(`${child} is not a ${types[0]} expression in ${expression.toString()}.`);
                     } else {
-                        const builder: string = `${child} in ${expression} is not any of [`;
+                        const builder: string = `${child} in ${expression.toString()} is not any of [`;
                         let first: boolean = true;
                         for (const type of types) {
                             if (first) {
@@ -455,18 +456,20 @@ export class BuiltInFunctions {
             [ExpressionType.Min, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.min(Number(args[0]), Number(args[1])))],
             [ExpressionType.Max, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.max(Number(args[0]), Number(args[1])))],
             [ExpressionType.Power, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.pow(args[0], args[1]))],
+            [ExpressionType.Accessor, new ExpressionEvaluator(BuiltInFunctions.Accessor, ReturnType.Object, BuiltInFunctions.ValidateAccessor)],
+            [ExpressionType.Equal, new ExpressionEvaluator(BuiltInFunctions.Apply(args => args[0] === args[1]), ReturnType.Boolean, BuiltInFunctions.ValidateBinary)],
+            [ExpressionType.NotEqual, new ExpressionEvaluator(BuiltInFunctions.Apply(args => args[0] !== args[1]), ReturnType.Boolean, BuiltInFunctions.ValidateBinary)],
+            [ExpressionType.GreaterThan, BuiltInFunctions.Comparison(args => args[0] > args[1]) ],
+            [ExpressionType.LessThan, BuiltInFunctions.Comparison(args => args[0] < args[1])],
+            [ExpressionType.LessThanOrEqual, BuiltInFunctions.Comparison(args => args[0] <= args[1])],
+            [ExpressionType.GreaterThanOrEqual, BuiltInFunctions.Comparison(args => args[0] >= args[1])],
+            /*
             [ExpressionType.Mod, new ExpressionEvaluator(BuiltInFunctions.Apply(
                                                     (args: ReadonlyArray<any>) => args[0] % args[1], BuiltInFunctions.VerifyInteger),
                                                          ReturnType.Number, BuiltInFunctions.ValidateBinaryNumber)],
             [ExpressionType.Average, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
             [ExpressionType.Sum, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
             [ExpressionType.Count, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
-            [ExpressionType.LessThan, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
-            [ExpressionType.LessThanOrEqual, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
-            [ExpressionType.Equal, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
-            [ExpressionType.NotEqual, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
-            [ExpressionType.GreaterThan, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
-            [ExpressionType.GreaterThanOrEqual, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
             [ExpressionType.Exists, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
             [ExpressionType.And, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
             [ExpressionType.Or, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
@@ -503,7 +506,7 @@ export class BuiltInFunctions {
             [ExpressionType.Int, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.String, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.Bool, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Accessor, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            
             [ExpressionType.If, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.Rand, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.CreateArray, BuiltInFunctions.Numeric(args => args[0] * args[1])],
@@ -513,7 +516,7 @@ export class BuiltInFunctions {
             [ExpressionType.AddProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.SetProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.RemoveProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])]
-
+            */
         ]);
 
         // Math aliases
