@@ -130,7 +130,7 @@ describe('LG', function () {
         assert.strictEqual(emptyEngine.Evaluate("Hi {name}", {name:'DL'}) , "Hi DL",emptyEngine.Evaluate("Hi {name}", {name:'DL'}));
         
         assert.strictEqual(emptyEngine.Evaluate("Hi {name.FirstName}{name.LastName}", {name:{FirstName:"D",LastName:"L"}}) , "Hi DL",emptyEngine.Evaluate("Hi {name.FirstName}{name.LastName}", {name:{FirstName:"D",LastName:"L"}}));
-        assert.strictEqual(TemplateEngine.EmptyEngine().EvaluateInline("Hi", "") ,  "Hi",TemplateEngine.EmptyEngine().Evaluate("Hi", ""));
+        assert.strictEqual(TemplateEngine.EmptyEngine().Evaluate("Hi", "") ,  "Hi",TemplateEngine.EmptyEngine().Evaluate("Hi", ""));
     });
 
     it('TestInlineTemplateWithTemplateFile',function(){

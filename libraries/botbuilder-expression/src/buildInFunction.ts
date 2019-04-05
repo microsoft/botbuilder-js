@@ -380,7 +380,7 @@ export class BuiltInFunctions {
         let instance: any = state;
         const children: Expression[] = expression.Children;
         if (children.length === 2) {
-            ({ value, error } = children[1].TryEvaluate(state));
+            ({ value:instance, error } = children[1].TryEvaluate(state));
         } else {
             instance = state;
         }
