@@ -5,7 +5,6 @@
         "postinstall": "lerna bootstrap --hoist",
         "build": "lerna run build",
         "clean": "lerna run clean",
-        "test:travis": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\" && nyc report --reporter=text-lcov | coveralls",
         "test": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\"",
         "build-docs": "lerna run build-docs",
         "eslint": "./node_modules/.bin/eslint  ./libraries/*/src/*.ts ./libraries/*/src/**/*.ts",
@@ -33,7 +32,7 @@
         "eslint": "^5.15.1",
         "eslint-plugin-only-warn": "^1.0.1",
         "lerna": "^3.2.1",
-        "mocha": "^5.2.0"
+        "mocha": "^5.2.0",
         "tslint-microsoft-contrib": "^5.2.1",
         "typescript": "^2.7.2"
     },
