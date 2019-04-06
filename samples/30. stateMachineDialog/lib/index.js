@@ -45,8 +45,8 @@ offHook.addRule(new botbuilder_dialogs_adaptive_1.IntentRule('PlaceCallIntent', 
 // ringing state
 const ringing = dialogs.addState('ringing', [
     new botbuilder_dialogs_adaptive_1.SendActivity(`☎️ ring... ring...`),
-    new botbuilder_dialogs_adaptive_1.BoolInput('dialog.answer', `Would you like to answer it?`, true),
-    new botbuilder_dialogs_adaptive_1.IfProperty('dialog.answer', [
+    new botbuilder_dialogs_adaptive_1.ConfirmInput('$answer', `Would you like to answer it?`, true),
+    new botbuilder_dialogs_adaptive_1.IfCondition('$answer', [
         new botbuilder_dialogs_adaptive_1.EmitEvent('callConnected')
     ])
 ]);
@@ -54,8 +54,8 @@ ringing.permit('callConnected', 'connected');
 // connected state
 const connected = dialogs.addState('connected', [
     new botbuilder_dialogs_adaptive_1.SendActivity(`📞 talk... talk... talk... ☹️`),
-    new botbuilder_dialogs_adaptive_1.BoolInput('dialog.hangup', `Heard enough yet?`, true),
-    new botbuilder_dialogs_adaptive_1.IfProperty('dialog.hangup', [
+    new botbuilder_dialogs_adaptive_1.ConfirmInput('$hangup', `Heard enough yet?`, true),
+    new botbuilder_dialogs_adaptive_1.IfCondition('$hangup', [
         new botbuilder_dialogs_adaptive_1.EmitEvent('callEnded')
     ])
 ]);

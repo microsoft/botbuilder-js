@@ -30,7 +30,7 @@ class RootDialog extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
         ]));
         this.addRule(new botbuilder_dialogs_adaptive_1.IntentRule(schema_1.intents.ShowToDos, [
             new showToDos_1.ShowToDos()
-        ], botbuilder_dialogs_adaptive_1.PlanChangeType.doSteps));
+        ]));
         // Define rules to handle cancel events
         this.addRule(new botbuilder_dialogs_adaptive_1.EventRule(schema_1.events.CancelAdd, [
             new botbuilder_dialogs_adaptive_1.SendActivity(`Ok... Cancelled adding new alarm.`)
@@ -43,7 +43,7 @@ class RootDialog extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
             new botbuilder_dialogs_adaptive_1.SendActivity(`Oops. An error occurred: {message}`)
         ]));
         // Define rule for default response
-        this.addRule(new botbuilder_dialogs_adaptive_1.DefaultRule([
+        this.addRule(new botbuilder_dialogs_adaptive_1.NoMatchRule([
             new botbuilder_dialogs_adaptive_1.SendActivity(`Say "add a todo named first one" to get started.`)
         ]));
     }

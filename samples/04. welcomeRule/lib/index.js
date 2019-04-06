@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const restify = require("restify");
 const botbuilder_1 = require("botbuilder");
 const botbuilder_dialogs_adaptive_1 = require("botbuilder-dialogs-adaptive");
-const lib_1 = require("../../../libraries/botbuilder-dialogs/lib");
+const botbuilder_dialogs_1 = require("botbuilder-dialogs");
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about .bot file its use and bot configuration.
 const adapter = new botbuilder_1.BotFrameworkAdapter({
@@ -20,7 +20,7 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
     console.log(`\nTo talk to your bot, open echobot.bot file in the Emulator.`);
 });
 // Create bots DialogManager and bind to state storage
-const bot = new lib_1.DialogManager();
+const bot = new botbuilder_dialogs_1.DialogManager();
 bot.storage = new botbuilder_1.MemoryStorage();
 // Listen for incoming activities.
 server.post('/api/messages', (req, res) => {
@@ -37,8 +37,8 @@ dialogs.addRule(new botbuilder_dialogs_adaptive_1.WelcomeRule([
     new botbuilder_dialogs_adaptive_1.SendActivity(`Welcome! Say "hello" to get started.`)
 ]));
 // Send Default Response
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.DefaultRule([
-    new botbuilder_dialogs_adaptive_1.IfProperty('!user.name', [
+dialogs.addRule(new botbuilder_dialogs_adaptive_1.NoMatchRule([
+    new botbuilder_dialogs_adaptive_1.IfCondition('!user.name', [
         new botbuilder_dialogs_adaptive_1.TextInput('user.name', `Hi! what's your name?`),
     ]),
     new botbuilder_dialogs_adaptive_1.SendActivity(`Hi {user.name}. It's nice to meet you.`)

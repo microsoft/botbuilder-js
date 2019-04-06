@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { SendActivity, StateMachineDialog, RegExpRecognizer, EmitEvent, BoolInput, IfProperty, IntentRule } from 'botbuilder-dialogs-adaptive';
+import { SendActivity, StateMachineDialog, RegExpRecognizer, EmitEvent, ConfirmInput, IfCondition, IntentRule } from 'botbuilder-dialogs-adaptive';
 import { DialogManager } from 'botbuilder-dialogs';
 
 // Create HTTP server.
@@ -53,8 +53,8 @@ offHook.addRule(new IntentRule('PlaceCallIntent', [
 // ringing state
 const ringing = dialogs.addState('ringing', [
     new SendActivity(`☎️ ring... ring...`),
-    new BoolInput('$answer', `Would you like to answer it?`, true),
-    new IfProperty('$answer', [
+    new ConfirmInput('$answer', `Would you like to answer it?`, true),
+    new IfCondition('$answer', [
         new EmitEvent('callConnected')
     ])
 ]);
@@ -64,8 +64,8 @@ ringing.permit('callConnected', 'connected');
 // connected state
 const connected = dialogs.addState('connected', [
     new SendActivity(`📞 talk... talk... talk... ☹️`),
-    new BoolInput('$hangup', `Heard enough yet?`, true),
-    new IfProperty('$hangup', [
+    new ConfirmInput('$hangup', `Heard enough yet?`, true),
+    new IfCondition('$hangup', [
         new EmitEvent('callEnded')
     ])
 ]);

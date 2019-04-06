@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { AdaptiveDialog, WelcomeRule, SendActivity, IntentRule, PlanChangeType, EventRule, DefaultRule } from "botbuilder-dialogs-adaptive";
+import { AdaptiveDialog, WelcomeRule, SendActivity, IntentRule, PlanChangeType, EventRule, NoMatchRule } from "botbuilder-dialogs-adaptive";
 import { getRecognizer } from "./recognizer";
 import { intents, events } from "../schema";
 import { AddToDo } from "./addToDo";
@@ -36,7 +36,7 @@ export class RootDialog extends AdaptiveDialog {
 
         this.addRule(new IntentRule(intents.ShowToDos, [
             new ShowToDos()
-        ], PlanChangeType.doSteps));
+        ]));
 
         // Define rules to handle cancel events
         this.addRule(new EventRule(events.CancelAdd, [
@@ -53,7 +53,7 @@ export class RootDialog extends AdaptiveDialog {
         ]));
 
         // Define rule for default response
-        this.addRule(new DefaultRule([
+        this.addRule(new NoMatchRule([
             new SendActivity(`Say "add a todo named first one" to get started.`)
         ]));
     }

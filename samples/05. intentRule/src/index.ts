@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { AdaptiveDialog, DefaultRule, SendActivity, TextInput, IfProperty, WelcomeRule, RegExpRecognizer, IntentRule, WaitForInput } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, NoMatchRule, SendActivity, TextInput, IfCondition, WelcomeRule, RegExpRecognizer, IntentRule, EndTurn } from 'botbuilder-dialogs-adaptive';
 import { DialogManager } from 'botbuilder-dialogs';
 
 // Create adapter.
@@ -43,8 +43,8 @@ dialogs.addRule(new WelcomeRule([
 ]));
 
 // Add a top level fallback rule to handle received messages
-dialogs.addRule(new DefaultRule([
-    new IfProperty('!user.name', [
+dialogs.addRule(new NoMatchRule([
+    new IfCondition('!user.name', [
         new TextInput('user.name', `Hi! what's your name?`)
     ]),
     new SendActivity(`Hi {user.name}. It's nice to meet you.`)
@@ -54,6 +54,6 @@ dialogs.addRule(new DefaultRule([
 dialogs.recognizer = new RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
 dialogs.addRule(new IntentRule('#JokeIntent', [
     new SendActivity(`Why did the 🐔 cross the 🛣️?`),
-    new WaitForInput(),
+    new EndTurn(),
     new SendActivity(`To get to the other side...`)
 ]));

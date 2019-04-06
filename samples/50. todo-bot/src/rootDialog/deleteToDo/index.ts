@@ -1,13 +1,23 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { AdaptiveDialog, IntentRule, CancelDialog, BeginDialogRule, SaveEntity, ChangeList, ChangeListType, SendActivity, EndDialog, IfProperty, ChoiceInput } from "botbuilder-dialogs-adaptive";
+import { AdaptiveDialog, IntentRule, CancelDialog, SaveEntity, EditArray, ArrayChangeType, SendActivity, EndDialog, IfCondition, ChoiceInput } from "botbuilder-dialogs-adaptive";
 import { intents, events, variables, entities, user } from "../../schema";
 import { getRecognizer } from "../recognizer";
 
 export class DeleteToDo extends AdaptiveDialog {
     constructor() {
-        super('DeleteToDo');
+        super('DeleteToDo', [
+            new IfCondition(`!user.todoList`, [
+                new SendActivity(`No todos to delete.`),
+                new EndDialog()
+            ]),
+            new SaveEntity(variables.title, entities.title),
+            new ChoiceInput(variables.title, `Which todo would you like to remove?`, user.todoList),
+            new EditArray(ArrayChangeType.remove, user.todoList, variables.title),
+            new SendActivity(`Deleted the todo named "${variables.print.title}". You can delete all your todos by saying "delete all todos".`)
+
+        ]);
 
         // Use parents recognizer
         this.recognizer = getRecognizer();
@@ -15,19 +25,6 @@ export class DeleteToDo extends AdaptiveDialog {
         // Add interruption rules
         this.addRule(new IntentRule(intents.Cancel, [
             new CancelDialog(events.CancelDelete)
-        ]));
-
-        // Define main conversation flow
-        this.addRule(new BeginDialogRule([
-            new IfProperty(user.todoList, [
-                new SaveEntity(variables.title, entities.title),
-                new ChoiceInput(variables.title, `Which todo would you like to remove?`, user.todoList),
-                new ChangeList(ChangeListType.remove, user.todoList, variables.title),
-                new SendActivity(`Deleted the todo named "${variables.print.title}". You can delete all your todos by saying "delete all todos".`),
-            ]).else([
-                new SendActivity(`No todos to delete.`)
-            ]),
-            new EndDialog()
         ]));
     }
 }

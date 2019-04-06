@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { AdaptiveDialog, DefaultRule, SendActivity, TextInput, IfProperty } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, NoMatchRule, SendActivity, TextInput, IfCondition } from 'botbuilder-dialogs-adaptive';
 import { DialogManager } from 'botbuilder-dialogs';
 
 // Create adapter.
@@ -38,8 +38,8 @@ const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
 // Add rules
-dialogs.addRule(new DefaultRule([
-    new IfProperty('!user.name', [
+dialogs.addRule(new NoMatchRule([
+    new IfCondition('!user.name', [
         new TextInput('user.name', `Hi! what's your name?`),
     ]),
     new SendActivity(`Hi {user.name}. It's nice to meet you.`)

@@ -7,18 +7,15 @@ const schema_1 = require("../../schema");
 const recognizer_1 = require("../recognizer");
 class ShowToDos extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
     constructor() {
-        super('ShowToDos');
+        super('ShowToDos', [
+            new botbuilder_dialogs_adaptive_1.IfCondition(`!user.todoList`, [
+                new botbuilder_dialogs_adaptive_1.SendActivity(`You have no todos.`),
+                new botbuilder_dialogs_adaptive_1.EndDialog()
+            ]),
+            new botbuilder_dialogs_adaptive_1.SendList(schema_1.user.todoList, `Here are your todos:`)
+        ]);
         // Use parents recognizer
         this.recognizer = recognizer_1.getRecognizer();
-        // Define main conversation flow
-        this.addRule(new botbuilder_dialogs_adaptive_1.BeginDialogRule([
-            new botbuilder_dialogs_adaptive_1.IfProperty(schema_1.user.todoList, [
-                new botbuilder_dialogs_adaptive_1.SendList(schema_1.user.todoList, `Here are your todos:`)
-            ]).else([
-                new botbuilder_dialogs_adaptive_1.SendActivity(`You have no todos.`)
-            ]),
-            new botbuilder_dialogs_adaptive_1.EndDialog()
-        ]));
     }
 }
 exports.ShowToDos = ShowToDos;
