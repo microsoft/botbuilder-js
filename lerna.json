@@ -15,7 +15,6 @@
     "libraries/botbuilder-lg",
     "libraries/botframework-config",
     "libraries/botframework-connector",
-    "libraries/botframework-expression",
     "libraries/botframework-schema",
     "transcripts"
   ],
