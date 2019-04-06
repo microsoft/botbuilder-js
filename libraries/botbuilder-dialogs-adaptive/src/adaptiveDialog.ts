@@ -65,6 +65,12 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
      */
     public recognizer?: Recognizer;
 
+    /**
+     * (Optional) flag that determines whether the dialog automatically ends when the plan is out
+     * of steps. Defaults to `false` for the root dialog and `true` for child dialogs.
+     */
+    public autoEnd?: boolean;
+
     public set telemetryClient(client: BotTelemetryClient) {
         super.telemetryClient = client ? client : new NullTelemetryClient();
         this.dialogs.telemetryClient = client;
@@ -464,7 +470,7 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     // Plan Execution
     //---------------------------------------------------------------------------------------------
 
-    protected async consultPlan(planning: PlanningContext): Promise<DialogConsultation> {
+    protected async consultPlan(planning: PlanningContext): Promise<DialogConsultation|undefined> {
         // Apply any queued up changes
         await planning.applyChanges();
 
@@ -475,14 +481,14 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
 
         // Delegate consultation to any active planning step
         const step = PlanningContext.createForStep(planning, this.dialogs);
-        const consultation = step ? await step.consultDialog() : undefined;
-        return {
-            desire: consultation ? consultation.desire : DialogConsultationDesire.canProcess,
-            processor: async (dc) => {
-                if (step) {
+        if (step) {
+            const consultation = await step.consultDialog();
+            return {
+                desire: consultation.desire,
+                processor: async (dc) => {
                     // Continue current step
                     console.log(`running step: ${step.plan.steps[0].dialogId}`);
-                    let result = consultation ? await consultation.processor(step) : { status: DialogTurnStatus.empty };
+                    let result = await consultation.processor(step);
                     if (result.status == DialogTurnStatus.empty && !result.parentEnded) {
                         const nextStep = step.plan.steps[0];
                         result = await step.beginDialog(nextStep.dialogId, nextStep.options);
@@ -514,10 +520,10 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
                         if (result.parentEnded) { delete result.parentEnded };
                         return result;
                     }
-                } else if (planning.activeDialog) {
-                    return await this.onEndOfPlan(planning);
                 }
             }
+        } else {
+            return undefined;
         }
     }
 
@@ -525,7 +531,11 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
         // Consult plan and execute returned processor
         try {
             const consultation = await this.consultPlan(planning);
-            return await consultation.processor(planning);
+            if (consultation) {
+                return await consultation.processor(planning);
+            } else {
+                return await this.onEndOfPlan(planning);
+            }
         } catch (err) {
             return await planning.cancelAllDialogs('error', { message: err.message, stack: err.stack });
         }
@@ -533,8 +543,16 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
 
     protected async onEndOfPlan(planning: PlanningContext): Promise<DialogTurnResult> {
         // End dialog and return result
-        const state: AdaptiveDialogState<O> = planning.activeDialog.state;
-        return await planning.endDialog(state.result);
+        if (planning.activeDialog) {
+            if (this.shouldEnd(planning)) {
+                const state: AdaptiveDialogState<O> = planning.activeDialog.state;
+                return await planning.endDialog(state.result);
+            } else {
+                return Dialog.EndOfTurn;
+            }
+        } else {
+            return { status: DialogTurnStatus.cancelled };
+        }
     }
 
     private getUniqueInstanceId(dc: DialogContext): string {
@@ -549,5 +567,13 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
         }
 
         return memory;
+    }
+
+    private shouldEnd(dc: DialogContext): boolean {
+        if (this.autoEnd == undefined) {
+            return (dc.parent != null);
+        } else {
+            return this.autoEnd;
+        }
     }
 }
