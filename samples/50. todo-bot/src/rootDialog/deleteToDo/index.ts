@@ -8,15 +8,14 @@ import { getRecognizer } from "../recognizer";
 export class DeleteToDo extends AdaptiveDialog {
     constructor() {
         super('DeleteToDo', [
-            new IfCondition(`!user.todoList`, [
-                new SendActivity(`No todos to delete.`),
-                new EndDialog()
-            ]),
-            new SaveEntity(variables.title, entities.title),
-            new ChoiceInput(variables.title, `Which todo would you like to remove?`, user.todoList),
-            new EditArray(ArrayChangeType.remove, user.todoList, variables.title),
-            new SendActivity(`Deleted the todo named "${variables.print.title}". You can delete all your todos by saying "delete all todos".`)
-
+            new IfCondition(`user.todoList != null`, [
+                new SaveEntity(variables.title, entities.title),
+                new ChoiceInput(variables.title, `Which todo would you like to remove?`, user.todoList),
+                new EditArray(ArrayChangeType.remove, user.todoList, variables.title),
+                new SendActivity(`Deleted the todo named "${variables.print.title}". You can delete all your todos by saying "delete all todos".`)
+            ]).else([
+                new SendActivity(`No todos to delete.`)
+            ])
         ]);
 
         // Use parents recognizer

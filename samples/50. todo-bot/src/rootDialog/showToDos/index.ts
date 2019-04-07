@@ -8,11 +8,11 @@ import { getRecognizer } from "../recognizer";
 export class ShowToDos extends AdaptiveDialog {
     constructor() {
         super('ShowToDos', [
-            new IfCondition(`!user.todoList`, [
-                new SendActivity(`You have no todos.`),
-                new EndDialog()
-            ]),
-            new SendList(user.todoList, `Here are your todos:`)
+            new IfCondition(`user.todoList != null`, [
+                new SendList(user.todoList, `Here are your todos:`)
+            ]).else([
+                new SendActivity(`You have no todos.`)
+            ])
         ]);
 
         // Use parents recognizer

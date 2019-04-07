@@ -6,61 +6,66 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogConfiguration, DialogContext, DialogCommand } from 'botbuilder-dialogs';
+import { ExpressionEngine } from 'botbuilder-expression-parser';
+import { Expression } from 'botbuilder-expression';
 
 export interface SetPropertyConfiguration extends DialogConfiguration {
     /**
-     * The expression to evaluate.
+     * The value expression to evaluate.
      */
-    expression?: string;
+    value?: string;
 }
 
 export class SetProperty<O extends object = {}> extends DialogCommand<O> {
+    /**
+     * The value expression to evaluate.
+     */
+    public value: Expression;
 
     /**
-     * Creates a new `CallDialog` instance.
-     * @param expression (Optional) expression to evaluate.
+     * Creates a new `SetProperty` instance.
+     * @param value (Optional) value expression to evaluate.
      */
-    constructor(expression?: string) {
+    constructor(value?: string|Expression) {
         super();
-        if (expression) { this.expression = expression }
+        if (value) { 
+            this.value = typeof value == 'string' ? engine.Parse(value) : value; 
+        }
     }
 
     protected onComputeID(): string {
-        return `setProperty[${this.hashedLabel(this.expression)}]`;
+        const label = this.value ? this.value.toString() : '';
+        return `setProperty[${this.hashedLabel(label)}]`;
     }
 
     public configure(config: SetPropertyConfiguration): this {
-        return super.configure(config);
-    }
-
-    /**
-     * The expression to evaluate.
-     */
-    public expression: string;
-
-    public async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
-        // Parse expression
-        const parts = this.expression.split('=');
-        if (parts.length !== 2) { throw new Error(`SetProperty: invalid expression of "${this.expression}".`) }
-        const left = parts[0].trim();
-        const right = parts[1].trim();
-
-        // Is right hand value a memory reference
-        const prefixes = ['user.', 'conversation.', 'dialog.', 'turn.', '$.', '$', '#', '@'];
-        for (let i = 0; i < prefixes.length; i++) {
-            const prefix = prefixes[i];
-            if (right.indexOf(prefix) == 0) {
-                // Perform memory to memory copy.
-                const value = dc.state.getValue(right);
-                dc.state.setValue(left, value);
-                return await dc.endDialog();
+        const cfg: SetPropertyConfiguration = {};
+        for (const key in config) {
+            switch(key) {
+                case 'value':
+                    this.value = engine.Parse(config.value);
+                    break;
+                default:
+                    cfg[key] = config[key];
+                    break;
             }
         }
+        return super.configure(cfg);
+    }
 
-        // Perform static value assignment
-        const quoted = right.split("'");
-        const value = quoted.length == 3 && quoted[0].length == 0 ?  quoted[1] : JSON.parse(right);
-        dc.state.setValue(left, value);
+    public async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
+        // Ensure planning context and condition
+        if (!this.value) { throw new Error(`${this.id}: no value expression specified.`) }
+
+        // Evaluate expression
+        const memory = dc.state.toJSON();
+        const { error } = this.value.TryEvaluate(memory);
+
+        // Check for error
+        if (error) { throw new Error(`${this.id}: expression error - ${error.toString()}`) }
+
         return await dc.endDialog();
     }
 }
+
+const engine = new ExpressionEngine();

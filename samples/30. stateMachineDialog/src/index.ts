@@ -54,7 +54,7 @@ offHook.addRule(new IntentRule('PlaceCallIntent', [
 const ringing = dialogs.addState('ringing', [
     new SendActivity(`☎️ ring... ring...`),
     new ConfirmInput('$answer', `Would you like to answer it?`, true),
-    new IfCondition('$answer', [
+    new IfCondition('$answer == true', [
         new EmitEvent('callConnected')
     ])
 ]);
@@ -65,7 +65,7 @@ ringing.permit('callConnected', 'connected');
 const connected = dialogs.addState('connected', [
     new SendActivity(`📞 talk... talk... talk... ☹️`),
     new ConfirmInput('$hangup', `Heard enough yet?`, true),
-    new IfCondition('$hangup', [
+    new IfCondition('$hangup == true', [
         new EmitEvent('callEnded')
     ])
 ]);

@@ -8,12 +8,12 @@ import { getRecognizer } from "../recognizer";
 export class ClearToDos extends AdaptiveDialog {
     constructor() {
         super('ClearToDos', [
-            new IfCondition(`!user.todoList`, [
-                new SendActivity(`No todos to clear.`),
-                new EndDialog()
-            ]),
-            new EditArray(ArrayChangeType.clear, user.todoList),
-            new SendActivity(`All todos removed.`)
+            new IfCondition(`user.todoList != null`, [
+                new EditArray(ArrayChangeType.clear, user.todoList),
+                new SendActivity(`All todos removed.`)
+            ]).else([
+                new SendActivity(`No todos to clear.`)
+            ])
         ]);
 
         // Use parents recognizer
