@@ -484,11 +484,11 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
         if (step) {
             const consultation = await step.consultDialog();
             return {
-                desire: consultation.desire,
+                desire: consultation ? consultation.desire : DialogConsultationDesire.canProcess,
                 processor: async (dc) => {
                     // Continue current step
                     console.log(`running step: ${step.plan.steps[0].dialogId}`);
-                    let result = await consultation.processor(step);
+                    let result = consultation ? await consultation.processor(step) : { status: DialogTurnStatus.empty };
                     if (result.status == DialogTurnStatus.empty && !result.parentEnded) {
                         const nextStep = step.plan.steps[0];
                         result = await step.beginDialog(nextStep.dialogId, nextStep.options);
