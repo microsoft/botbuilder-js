@@ -38,7 +38,7 @@ export class ExpressionEvaluator {
         validator?: ValidateExpressionDelegate) {
         this._evaluator = evaluator;
         this.ReturnType = returnType;
-        this._validator = validator;
+        this._validator = validator === undefined ? ((expr: Expression): any => { }) : validator;
     }
 
     /**
