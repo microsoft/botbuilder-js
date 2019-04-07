@@ -141,6 +141,8 @@ export class TemplateEngine {
         evaluationContext.TemplateContexts.set(fakeTemplateId, context);
         const evalutor: Evaluator = new Evaluator(evaluationContext, methodBinder);
 
+        TemplateEngine.RunStaticCheck(evaluationContext);
+
         // Step 3: evaluate
         return evalutor.EvaluateTemplate(fakeTemplateId, scope);
     }

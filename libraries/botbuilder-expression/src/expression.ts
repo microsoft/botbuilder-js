@@ -9,22 +9,22 @@ export enum ReturnType {
     /**
      * True or false boolean value.
      */
-    Boolean,
+    Boolean = "boolean",
 
     /**
      * Numerical value like int, float, double, ...
      */
-    Number,
+    Number = "number",
 
     /**
      * Any value is possible.
      */
-    Object,
+    Object = "object",
 
     /**
      * String value.
      */
-    String
+    String = "string"
 }
 
 /**
@@ -190,20 +190,20 @@ export class Expression {
     }
 
     protected ToString(name: string): string {
-        const builder: string = '';
-        builder.concat(name, '(');
+        let builder: string = '';
+        builder = builder.concat(name, '(');
+        
         let first: boolean = true;
         for (const child of this.Children) {
             if (first) {
                 first = false;
             } else {
-                builder.concat(', ');
+                builder = builder.concat(', ');
             }
 
-            builder.concat(child.toString());
+            builder = builder.concat(child.toString());
         }
-        builder.concat(')');
-
+        builder = builder.concat(')');
         return builder;
     }
 }

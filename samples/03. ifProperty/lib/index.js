@@ -34,7 +34,7 @@ const dialogs = new botbuilder_dialogs_adaptive_1.AdaptiveDialog();
 bot.rootDialog = dialogs;
 // Add rules
 dialogs.addRule(new botbuilder_dialogs_adaptive_1.NoMatchRule([
-    new botbuilder_dialogs_adaptive_1.IfCondition('!user.name', [
+    new botbuilder_dialogs_adaptive_1.IfCondition('not(user.name)', [
         new botbuilder_dialogs_adaptive_1.TextInput('user.name', `Hi! what's your name?`),
     ]),
     new botbuilder_dialogs_adaptive_1.SendActivity(`Hi {user.name}. It's nice to meet you.`)

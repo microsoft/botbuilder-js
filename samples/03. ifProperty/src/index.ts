@@ -39,7 +39,7 @@ bot.rootDialog = dialogs;
 
 // Add rules
 dialogs.addRule(new NoMatchRule([
-    new IfCondition('!user.name', [
+    new IfCondition('not(user.name)', [
         new TextInput('user.name', `Hi! what's your name?`),
     ]),
     new SendActivity(`Hi {user.name}. It's nice to meet you.`)

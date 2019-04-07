@@ -156,9 +156,15 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     }
 
     private EvalCondition(condition: lp.IfConditionContext): boolean {
-        const expression: TerminalNode = condition.EXPRESSION(0);
-        if (expression === undefined ||                            // no expression means it's else
-            this.EvalExpressionInCondition(expression.text)) {
+        const expressions: TerminalNode[] = condition.EXPRESSION(); // Here ts is diff with C#, C# use condition.EXPRESSION(0) == null
+                                                                    // to judge ELSE condition. But in ts lib this action would throw
+                                                                    // Error
+
+        if (expressions === undefined || expressions.length === 0) {
+            return true;                                            // no expression means it's else
+        }
+
+        if (this.EvalExpressionInCondition(expressions[0].text)) {
             return true;
         }
 
