@@ -516,11 +516,11 @@ export class BuiltInFunctions {
                                                     (args: ReadonlyArray<any>) => args[0] % args[1], BuiltInFunctions.VerifyInteger),
                                                          ReturnType.Number, BuiltInFunctions.ValidateBinaryNumber)],
             [ExpressionType.Average, new ExpressionEvaluator(
-                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => (args[0].reduce((x: number, y: number) => x + y)) / args[0].length, BuiltInFunctions.VerifyInteger),
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => (args[0].reduce((x: number, y: number) => x + y)) / args[0].length),
                 ReturnType.Number,
                 BuiltInFunctions.ValidateUnary)],
             [ExpressionType.Sum, new ExpressionEvaluator(
-                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].reduce((x: number, y: number) => x + y), BuiltInFunctions.VerifyInteger),
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].reduce((x: number, y: number) => x + y)),
                 ReturnType.Number,
                 BuiltInFunctions.ValidateUnary)],
             [ExpressionType.Count, new ExpressionEvaluator(
@@ -546,7 +546,7 @@ export class BuiltInFunctions {
                     if (args.every((el: any) => typeof(el) === 'string') || args[0] instanceof Array) {
                         return args[0].includes(args[1]);
                     } else { return (args[1] in args[0]); }
-                },                     BuiltInFunctions.VerifyInteger),
+                }),
                 ReturnType.Boolean,
                 BuiltInFunctions.ValidateBinary)],
             //[ExpressionType.Empty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
@@ -596,7 +596,8 @@ export class BuiltInFunctions {
 
             [ExpressionType.Float, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => parseFloat(args[0])), ReturnType.Number, BuiltInFunctions.ValidateUnary)],
             [ExpressionType.Int, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => parseInt(args[0], 10)), ReturnType.Number, BuiltInFunctions.ValidateUnary)],
-            [ExpressionType.String, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => JSON.stringify(args[0]).replace(/(^\'*)/g, '').replace(/(\'*$)/g, '')),
+            [ExpressionType.String, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => JSON.stringify(args[0]).replace(/(^\'*)/g, '')
+            .replace(/(\'*$)/g, '').replace(/(^\"*)/g, '').replace(/(\"*$)/g, '')),
                                                             ReturnType.String, BuiltInFunctions.ValidateUnary) ],
             [ExpressionType.Bool, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => Boolean(args[0])), ReturnType.Boolean, BuiltInFunctions.ValidateUnary)],
             [ExpressionType.If, new ExpressionEvaluator(
@@ -604,18 +605,20 @@ export class BuiltInFunctions {
                 ReturnType.Object,
                 (expr: Expression): void => BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.Boolean, ReturnType.Object, ReturnType.Object))],
 // tslint:disable-next-line: insecure-random
-            [ExpressionType.Rand, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => Math.floor(Math.random() * (Number(args[1]) - Number(args[0]) + Number(args[0]))),
+            [ExpressionType.Rand, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => Math.floor(Math.random() * (Number(args[1]) - Number(args[0])) + Number(args[0])),
                                                                                  BuiltInFunctions.VerifyInteger),
                                                           ReturnType.Number, BuiltInFunctions.ValidateBinaryNumber)],
             [ExpressionType.CreateArray, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => Array.from(args)), ReturnType.Object)],
             //[ExpressionType.First, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             //[ExpressionType.Last, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.Json, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => JSON.parse(args[0])), ReturnType.String, BuiltInFunctions.ValidateUnary)],
-            [ExpressionType.AddProperty, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0][String(args[1])] = args[2]))],
-            [ExpressionType.SetProperty, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0][String(args[1])] = args[2]))],
-// tslint:disable-next-line: no-dynamic-delete
-            [ExpressionType.RemoveProperty, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => delete args[0][String(args[1])]))]
+// tslint:disable-next-line: newline-before-return
+            [ExpressionType.AddProperty, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {const temp: any = args[0];  temp[String(args[1])] = args[2]; return temp; }))],
+// tslint:disable-next-line: newline-before-return
+            [ExpressionType.SetProperty, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {const temp: any = args[0];  temp[String(args[1])] = args[2]; return temp; }))],
 
+// tslint:disable-next-line: no-dynamic-delete
+            [ExpressionType.RemoveProperty, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => { const temp: any = args[0]; delete temp[String(args[1])]; return temp; }))]
         ]);
 
         // Math aliases

@@ -72,6 +72,8 @@ export class ExpressionEngine implements IExpressionParser {
                 result = new Constant(false);
             } else if (symbol === 'true') {
                 result = new Constant(true);
+            } else if (symbol === 'null') {
+                result = new Constant(undefined);
             } else {
                 result = this.MakeExpression(ExpressionType.Accessor, new Constant(symbol));
             }
