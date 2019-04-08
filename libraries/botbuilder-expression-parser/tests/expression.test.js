@@ -1,8 +1,6 @@
 const { ExpressionEngine } =  require('../');
 const assert = require('assert');
 
-
-
 const dataSource = [
   // operators test
   
@@ -231,7 +229,15 @@ const dataSource = [
 
   ["string(addProperty(json('{\"key1\":\"value1\"}'), 'key2','value2'))", "{\"key1\":\"value1\",\"key2\":\"value2\"}"],
   ["string(setProperty(json('{\"key1\":\"value1\"}'), 'key1','value2'))", "{\"key1\":\"value2\"}"],
-  ["string(removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), 'key2'))", "{\"key1\":\"value1\"}"]
+  ["string(removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), 'key2'))", "{\"key1\":\"value1\"}"],
+
+  ["@city == 'Bellevue'", false],
+  ["@city", "Seattle"],
+  ["@city == 'Seattle'", true],
+  ["#BookFlight == 'BookFlight'", true],
+  ["exists(#BookFlight)", true],
+  ["$title", "Dialog Title"],
+  ["$subTitle", "Dialog Sub Title"],
 ]
 
 const scope = {

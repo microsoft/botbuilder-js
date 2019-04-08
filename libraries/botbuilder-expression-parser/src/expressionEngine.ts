@@ -146,7 +146,7 @@ export class ExpressionEngine implements IExpressionParser {
         }
 
         private MakeShortHandExpression(name: string): Expression {
-            if (this.IsShortHandExpression(name)) {
+            if (!this.IsShortHandExpression(name)) {
                 throw new Error(`variable name:${name} is not a shorthand`);
             }
 
@@ -157,7 +157,7 @@ export class ExpressionEngine implements IExpressionParser {
             // @city == turn.entities.city
             // #BookFlight == turn.intents.BookFlight
 
-// tslint:disable-next-line: switch-default
+            // tslint:disable-next-line: switch-default
             switch (prefix) {
                     case '#':
                         return this.MakeExpression(ExpressionType.Accessor, new Constant(name),
