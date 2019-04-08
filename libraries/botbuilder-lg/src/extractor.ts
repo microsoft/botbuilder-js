@@ -3,7 +3,7 @@ import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { EvaluationContext } from './templateEngine';
 
-export class TemplateExtractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGFileParserVisitor<Map<string, any>> {
+export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGFileParserVisitor<Map<string, any>> {
     public readonly Context:  EvaluationContext;
     constructor(context: EvaluationContext) {
         super();

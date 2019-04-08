@@ -1,5 +1,4 @@
 import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
-import { BailErrorStrategy } from 'antlr4ts/BailErrorStrategy';
 import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import { TerminalNode } from 'antlr4ts/tree';
 import { Analyzer } from './analyzer';
@@ -8,11 +7,10 @@ import { LGFileLexer } from './generated/LGFileLexer';
 import * as lp from './generated/LGFileParser';
 
 // tslint:disable-next-line: no-require-imports
-import { Expander } from './expander';
-import { IGetMethod } from './expanderMethodExtensions';
+import { Expander, IGetMethod } from './expander';
+import { Extractor } from './extractor';
 import { ReportEntry, StaticChecker } from './staticChecker';
 import { EvaluationContext } from './templateEngine';
-import { TemplateExtractor } from './templateExtractor';
 
 // tslint:disable-next-line: completed-docs
 export class MSLGTool {
@@ -102,7 +100,7 @@ export class MSLGTool {
     }
 
     private RunTemplateExtractor(evaluationContext: EvaluationContext): void {
-        const extractor: TemplateExtractor = new TemplateExtractor(evaluationContext);
+        const extractor: Extractor = new Extractor(evaluationContext);
         const templates: Map<string, any>[] = extractor.Extract();
         for (const item of templates) {
             const template: any = item.entries().next().value;
