@@ -62,7 +62,7 @@ const dataSource = [
   ["(2 + 2) <= (4 - 1)", false],
   ["float(5.5) <= float(4 - 1)", false],
   ["'string'&'builder'","stringbuilder"],
-  //["\"string\"&\"builder\"","stringbuilder"],
+  ["\"string\"&\"builder\"","stringbuilder"],
   ["concat(hello,world)","helloworld"],
   ["concat('hello','world')","helloworld"],
   ["concat(\"hello\",\"world\")","helloworld"],

@@ -74,6 +74,8 @@ export class ExpressionEngine implements IExpressionParser {
                 result = new Constant(true);
             } else if (symbol === 'null') {
                 result = new Constant(undefined);
+            } else if (this.IsShortHandExpression(symbol)) {
+                result = this.MakeShortHandExpression(symbol);
             } else {
                 result = this.MakeExpression(ExpressionType.Accessor, new Constant(symbol));
             }
@@ -90,8 +92,13 @@ export class ExpressionEngine implements IExpressionParser {
 
         public visitMemberAccessExp(context: ep.MemberAccessExpContext): Expression {
             const instance: Expression = this.visit(context.primaryExpression());
+            const property: string = context.IDENTIFIER().text;
 
-            return this.MakeExpression(ExpressionType.Accessor, new Constant(context.IDENTIFIER().text), instance);
+            if (this.IsShortHandExpression(property)) {
+                throw new Error(`shorthand like ${property} is not allowed in an accessor`);
+            }
+
+            return this.MakeExpression(ExpressionType.Accessor, new Constant(property), instance);
         }
 
         public visitNumericAtom(context: ep.NumericAtomContext): Expression {
@@ -132,6 +139,44 @@ export class ExpressionEngine implements IExpressionParser {
             }
 
             return result;
+        }
+
+        private IsShortHandExpression(name: string): boolean {
+            return name.startsWith('#') || name.startsWith('@') || name.startsWith('$');
+        }
+
+        private MakeShortHandExpression(name: string): Expression {
+            if (this.IsShortHandExpression(name)) {
+                throw new Error(`variable name:${name} is not a shorthand`);
+            }
+
+            const prefix: string = name[0];
+            name = name.substring(1);
+
+            // $title == dialog.result.title
+            // @city == turn.entities.city
+            // #BookFlight == turn.intents.BookFlight
+
+// tslint:disable-next-line: switch-default
+            switch (prefix) {
+                    case '#':
+                        return this.MakeExpression(ExpressionType.Accessor, new Constant(name),
+                                                   this.MakeExpression(ExpressionType.Accessor, new Constant('intents'),
+                                                                       this.MakeExpression(ExpressionType.Accessor, new Constant('turn'))));
+
+                    case '@':
+                        return this.MakeExpression(ExpressionType.Accessor, new Constant(name),
+                                                   this.MakeExpression(ExpressionType.Accessor, new Constant('entities'),
+                                                                       this.MakeExpression(ExpressionType.Accessor, new Constant('turn'))));
+
+                    case '$':
+                        return this.MakeExpression(ExpressionType.Accessor, new Constant(name),
+                                                   this.MakeExpression(ExpressionType.Accessor, new Constant('result'),
+// tslint:disable-next-line: align
+                                                    this.MakeExpression(ExpressionType.Accessor, new Constant('dialog'))));
+                }
+
+            throw new Error(`no match for shorthand prefix: ${prefix}`);
         }
     };
 
