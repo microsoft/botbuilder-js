@@ -76,7 +76,7 @@ export class GetMethodExtensions implements IGetMethod {
             const li: any[] = paramters[0];
             let func: string = paramters[1];
 
-            if (!this.IsTemplateRef(func) || !this.evaluator.Context.TemplateContexts.has(func.substr(1, func.length - 2))) {
+            if (!this.IsTemplateRef(func) || !(func.substr(1, func.length - 2) in this.evaluator.TemplateMap)) {
                 throw new Error(`No such template defined: ${func}`);
             }
 
@@ -99,7 +99,7 @@ export class GetMethodExtensions implements IGetMethod {
             let func: string = paramters[1];
 
             func = func.substr(1, func.length - 2);
-            if (!this.evaluator.Context.TemplateContexts.has(func)) {
+            if (!(func in this.evaluator.TemplateMap)) {
                 throw new Error(`No such template defined: ${func}`);
             }
 

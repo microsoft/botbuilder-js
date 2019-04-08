@@ -5,7 +5,8 @@ import { ExpressionEngine} from 'botbuilder-expression-parser';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions, IGetMethod } from './getMethodExtensions';
-import { EvaluationContext } from './templateEngine';
+import { LGTemplate } from './lgTemplate';
+import { keyBy } from 'lodash';
 
 /**
  * Runtime template context store
@@ -24,19 +25,21 @@ export class EvaluationTarget {
  */
 // tslint:disable-next-line: max-classes-per-file
 export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFileParserVisitor<string> {
-    public readonly Context: EvaluationContext;
+    public readonly Templates: LGTemplate[];
+    public readonly TemplateMap: {[name:string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
 
     private readonly GetMethodX: IGetMethod;
 
-    constructor(context: EvaluationContext, getMethod: IGetMethod) {
+    constructor(templates: LGTemplate[], getMethod: IGetMethod) {
         super();
-        this.Context = context;
+        this.Templates = templates;
+        this.TemplateMap = keyBy(templates, t => t.Name);
         this.GetMethodX = getMethod === undefined ? new GetMethodExtensions(this) : getMethod;
     }
 
     public EvaluateTemplate(templateName: string, scope: any): string {
-        if (!this.Context.TemplateContexts.has(templateName)) {
+        if (!(templateName in this.TemplateMap)) {
             throw new Error(`No such template: ${templateName}`);
         }
 
@@ -48,7 +51,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
 
         // Using a stack to track the evalution trace
         this.evalutationTargetStack.push(new EvaluationTarget(templateName, scope));
-        const result: string = this.visit(this.Context.TemplateContexts.get(templateName));
+        const result: string = this.visit(this.TemplateMap[templateName].ParseTree);
         this.evalutationTargetStack.pop();
 
         return result;
@@ -117,13 +120,12 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     }
 
     public ConstructScope(templateName: string, args: any[]) : any {
-        if (args.length === 1 &&
-            !this.Context.TemplateParameters.has(templateName)) {
+        if (args.length === 1 && this.TemplateMap[templateName].Parameters.length == 0) {
             // Special case, if no parameters defined, and only one arg, don't wrap
-
+            // this is for directly calling an paramterized template
             return args[0];
         }
-        const paramters: string[] = this.ExtractParamters(templateName);
+        const paramters: string[] = this.TemplateMap[templateName].Parameters;
 
         const newScope: any = {};
         paramters.map((e: string, i: number) => newScope[e] = args[i]);
@@ -243,12 +245,6 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
                 return this.EvalExpression(newExp).replace('\"', '\''); // { }
             }
         });
-    }
-
-    private ExtractParamters(templateName: string): string[] {
-        const parameters: string[] = this.Context.TemplateParameters.get(templateName);
-
-        return parameters === undefined ? [] : parameters;
     }
 
     private EvalByExpressionEngine(exp: string, scope: any) : {value: any; error: string} {

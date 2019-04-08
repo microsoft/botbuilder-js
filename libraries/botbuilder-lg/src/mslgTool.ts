@@ -1,16 +1,12 @@
-import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
-import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
-import { TerminalNode } from 'antlr4ts/tree';
+
 import { Analyzer } from './analyzer';
-import { ErrorListener } from './errorListener';
-import { LGFileLexer } from './generated/LGFileLexer';
-import * as lp from './generated/LGFileParser';
 
 // tslint:disable-next-line: no-require-imports
 import { Expander, IGetMethod } from './expander';
 import { Extractor } from './extractor';
 import { ReportEntry, StaticChecker } from './staticChecker';
-import { EvaluationContext } from './templateEngine';
+import { LGTemplate } from './lgTemplate';
+import { TemplateEngine } from './templateEngine';
 
 // tslint:disable-next-line: completed-docs
 export class MSLGTool {
@@ -18,89 +14,52 @@ export class MSLGTool {
     public MergedTemplates: Map<string, any> = new Map<string, any>();
     public NameCollisions: string[] = [];
 
-    private templateContexts: EvaluationContext;
+    private Templates: LGTemplate[];
 
+
+    // TODO: @feich, we should just use Template.FromFile\FromText and then catch Error
     public ValidateFile(lgFileContent: string): ReportEntry[] {
         let initErrorMessages: ReportEntry[] = [];
-        this.templateContexts = this.BuiildTemplateContexts(lgFileContent, initErrorMessages);
-        this.RunTemplateExtractor(this.templateContexts);
+        this.Templates = this.BuildTemplates(lgFileContent, initErrorMessages);
+        this.RunTemplateExtractor(this.Templates);
 
-        return this.RunStaticCheck(this.templateContexts, initErrorMessages);
+        return this.RunStaticCheck(this.Templates, initErrorMessages);
     }
 
     public GetTemplateVariables(templateName: string): string[] {
-        const analyzer: Analyzer = new Analyzer(this.templateContexts);
+        const analyzer: Analyzer = new Analyzer(this.Templates);
 
         return analyzer.AnalyzeTemplate(templateName);
     }
 
     public ExpandTemplate(templateName: string, scope: any, methodBinder?: IGetMethod): string[] {
-        const expander: Expander = new Expander(this.templateContexts, methodBinder);
-
+        const expander: Expander = new Expander(this.Templates, methodBinder);
         return expander.ExpandTemplate(templateName, scope);
     }
 
-    private BuiildTemplateContexts(lgFileContent: string, initErrorMessages: ReportEntry[] = []): EvaluationContext {
+    private BuildTemplates(lgFileContent: string, initErrorMessages: ReportEntry[] = []): LGTemplate[] {
         try {
-            if (lgFileContent === undefined
-                || lgFileContent === ''
-                || lgFileContent === null) {
-                return new EvaluationContext();
-            }
-
-            const input: ANTLRInputStream = new ANTLRInputStream(lgFileContent);
-            const lexer: LGFileLexer = new LGFileLexer(input);
-            const tokens: CommonTokenStream = new CommonTokenStream(lexer);
-            const parser: lp.LGFileParser = new lp.LGFileParser(tokens);
-            parser.removeErrorListeners();
-            parser.addErrorListener(new ErrorListener());
-            parser.buildParseTree = true;
-
-            const context: lp.FileContext = parser.file();
-
-            const templateContexts: Map<string, lp.TemplateDefinitionContext> = new Map<string, lp.TemplateDefinitionContext>();
-            const templateParameters: Map<string, string[]> = new Map<string, string[]>();
-            const templates: lp.TemplateDefinitionContext[] = context.paragraph()
-                .map((p: lp.ParagraphContext) => p.templateDefinition())
-                .filter((x: lp.TemplateDefinitionContext) => x !== undefined);
-
-            for (const template of templates) {
-                const templateName: string = template.templateNameLine()
-                    .templateName().text;
-                if (!templateContexts.has(templateName)) {
-                    templateContexts.set(templateName, template);
-                } else {
-                    // tslint:disable-next-line: max-line-length
-                    initErrorMessages.push(new ReportEntry(`Duplicate template definition with name: ${templateName}`));
-                }
-
-                const parameters: lp.ParametersContext = template.templateNameLine()
-                    .parameters();
-                if (parameters !== undefined) {
-                    templateParameters.set(templateName, parameters.IDENTIFIER().map((x: TerminalNode) => x.text));
-                }
-            }
-
-            return new EvaluationContext(templateContexts, templateParameters);
+            const engine = TemplateEngine.FromText(lgFileContent);
+            return engine.Templates;
         } catch (e) {
             throw e;
         }
     }
 
     // tslint:disable-next-line: max-line-length
-    private RunStaticCheck(evaluationContext: EvaluationContext, initExceptions: ReportEntry[] = undefined): ReportEntry[] {
+    private RunStaticCheck(templates: LGTemplate[], initExceptions: ReportEntry[] = undefined): ReportEntry[] {
         if (initExceptions === undefined) {
             initExceptions = [];
         }
 
-        const checker: StaticChecker = new StaticChecker(evaluationContext);
+        const checker: StaticChecker = new StaticChecker(templates);
         let reportMessages: ReportEntry[] = checker.Check();
 
         return reportMessages.concat(initExceptions);
     }
 
-    private RunTemplateExtractor(evaluationContext: EvaluationContext): void {
-        const extractor: Extractor = new Extractor(evaluationContext);
+    private RunTemplateExtractor(lgtemplates: LGTemplate[]): void {
+        const extractor: Extractor = new Extractor(lgtemplates);
         const templates: Map<string, any>[] = extractor.Extract();
         for (const item of templates) {
             const template: any = item.entries().next().value;

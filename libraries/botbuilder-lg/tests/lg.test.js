@@ -127,10 +127,10 @@ describe('LG', function () {
         var emptyEngine = TemplateEngine.FromText("");
         assert.strictEqual(emptyEngine.Evaluate("Hi", "") , "Hi",emptyEngine.Evaluate("Hi", ""));
 
-        assert.strictEqual(emptyEngine.Evaluate("Hi {name}", {name:'DL'}) , "Hi DL",emptyEngine.Evaluate("Hi {name}", {name:'DL'}));
+        assert.strictEqual(emptyEngine.Evaluate("Hi {name}", {name:'DL'}) , "Hi DL");
         
-        assert.strictEqual(emptyEngine.Evaluate("Hi {name.FirstName}{name.LastName}", {name:{FirstName:"D",LastName:"L"}}) , "Hi DL",emptyEngine.Evaluate("Hi {name.FirstName}{name.LastName}", {name:{FirstName:"D",LastName:"L"}}));
-        assert.strictEqual(TemplateEngine.EmptyEngine().Evaluate("Hi", "") ,  "Hi",TemplateEngine.EmptyEngine().Evaluate("Hi", ""));
+        assert.strictEqual(emptyEngine.Evaluate("Hi {name.FirstName}{name.LastName}", {name:{FirstName:"D",LastName:"L"}}) , "Hi DL");
+        assert.strictEqual(new TemplateEngine().Evaluate("Hi", "") ,  "Hi");
     });
 
     it('TestInlineTemplateWithTemplateFile',function(){

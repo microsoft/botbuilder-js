@@ -5,23 +5,26 @@ import { ExpressionEngine} from 'botbuilder-expression-parser';
 import { EvaluationTarget } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
-import { EvaluationContext } from './templateEngine';
+import { LGTemplate } from './lgTemplate';
+import { keyBy } from 'lodash';
 
 // tslint:disable-next-line: max-classes-per-file
 export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFileParserVisitor<string[]> {
-    public readonly Context: EvaluationContext;
+    public readonly Templates: LGTemplate[];
+    public readonly TemplateMap: {[name:string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
 
     private readonly GetMethodX: IGetMethod;
 
-    constructor(context: EvaluationContext, getMethod: IGetMethod) {
+    constructor(templates: LGTemplate[], getMethod: IGetMethod) {
         super();
-        this.Context = context;
+        this.Templates = templates;
+        this.TemplateMap = keyBy(templates, t => t.Name);
         this.GetMethodX = getMethod === undefined ? new GetExpanderMethod(this) : getMethod;
     }
 
     public ExpandTemplate(templateName: string, scope: any): string[] {
-        if (!this.Context.TemplateContexts.has(templateName)) {
+        if (!(templateName in this.TemplateMap)) {
             throw new Error(`No such template: ${templateName}`);
         }
 
@@ -32,7 +35,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         }
 
         this.evalutationTargetStack.push(new EvaluationTarget(templateName, scope));
-        const result: string[] = this.visit(this.Context.TemplateContexts.get(templateName));
+        const result: string[] = this.visit(this.TemplateMap[templateName].ParseTree);
         this.evalutationTargetStack.pop();
 
         return result;
@@ -104,11 +107,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     public ConstructScope(templateName: string, args: any[]) : any {
-        if (args.length === 1 &&
-            !this.Context.TemplateParameters.has(templateName)) {
-            return args[0];
+        if (args.length === 1 && this.TemplateMap[templateName].Parameters.length === 0) {
         }
-        const paramters: string[] = this.ExtractParamters(templateName);
+        const paramters: string[] = this.TemplateMap[templateName].Parameters;
         const newScope: any = {};
         paramters.map((e: string, i: number) => newScope[e] = args[i]);
 
@@ -241,12 +242,6 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         return result;
     }
 
-    private ExtractParamters(templateName: string): string[] {
-        const parameters: string[] = this.Context.TemplateParameters.get(templateName);
-
-        return parameters === undefined ? [] : parameters;
-    }
-
     private EvalByExpressionEngine(exp: string, scope: any) : any {
         const parse: Expression = new ExpressionEngine(this.GetMethodX.GetMethodX).Parse(exp);
 
@@ -340,7 +335,7 @@ export class GetExpanderMethod implements IGetMethod {
             const li: any[] = paramters[0];
             let func: string = paramters[1];
 
-            if (!this.IsTemplateRef(func) || !this.expander.Context.TemplateContexts.has(func.substr(1, func.length - 2))) {
+            if (!this.IsTemplateRef(func) || !(func.substr(1, func.length - 2) in this.expander.TemplateMap)) {
                 throw new Error(`No such template defined: ${func}`);
             }
 
@@ -363,7 +358,7 @@ export class GetExpanderMethod implements IGetMethod {
             let func: string = paramters[1];
 
             func = func.substr(1, func.length - 2);
-            if (!this.expander.Context.TemplateContexts.has(func)) {
+            if (!(func in this.expander.TemplateMap)) {
                 throw new Error(`No such template defined: ${func}`);
             }
 

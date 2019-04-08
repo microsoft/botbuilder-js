@@ -1,19 +1,22 @@
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
-import { EvaluationContext } from './templateEngine';
+import { LGTemplate } from './lgTemplate';
+import { keyBy } from 'lodash';
 
 export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGFileParserVisitor<Map<string, any>> {
-    public readonly Context:  EvaluationContext;
-    constructor(context: EvaluationContext) {
+    public readonly Templates: LGTemplate[];
+    public readonly TemplateMap: {[name:string]: LGTemplate};
+    constructor(templates: LGTemplate[]) {
         super();
-        this.Context = context;
+        this.Templates = templates;
+        this.TemplateMap = keyBy(templates, t => t.Name);
     }
 
     public Extract(): Map<string, any>[] {
         let result: Map<string, any>[] = [];
-        this.Context.TemplateContexts.forEach(template => {
-            result.push(this.visit(template));
+        this.Templates.forEach(template => {
+            result.push(this.visit(template.ParseTree));
         });
 
         return result;

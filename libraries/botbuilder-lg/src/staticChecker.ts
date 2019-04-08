@@ -3,7 +3,8 @@ import { ExpressionEngine } from 'botbuilder-expression-parser';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions } from './getMethodExtensions';
-import { EvaluationContext } from './templateEngine';
+import { LGTemplate } from './lgTemplate';
+import { keyBy } from 'lodash';
 
 export enum ReportEntryType {
     ERROR,
@@ -29,22 +30,49 @@ export class ReportEntry {
 }
 // tslint:disable-next-line: completed-docs
 export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> implements LGFileParserVisitor<ReportEntry[]> {
-    public readonly Context:  EvaluationContext;
-    constructor(context: EvaluationContext) {
+    public readonly Templates:  LGTemplate[];
+    public TemplateMap: {[name:string]: LGTemplate};
+    constructor(templates: LGTemplate[]) {
         super();
-        this.Context = context;
+        this.Templates = templates;
     }
 
     public Check(): ReportEntry[] {
         let result: ReportEntry[] = [];
-        if (this.Context.TemplateContexts === undefined || this.Context.TemplateContexts.size <= 0) {
-            result.push(new ReportEntry(`File must have at least one template definition`, ReportEntryType.WARN));
-        } else {
-            this.Context.TemplateContexts.forEach((template: lp.TemplateDefinitionContext) => {
-                result = result.concat(this.visit(template));
-            });
+
+        // check dup, before we build up TemplateMap
+        let grouped: {[name:string]:LGTemplate[]} = {};
+        this.Templates.forEach(t => {
+            if (!(t.Name in grouped)) {
+                grouped[t.Name] = [];
+            } 
+            grouped[t.Name].push(t);
+        });
+
+        for (let key in grouped) {
+            const group = grouped[key];
+            if (group.length > 1) {
+                const sources = group.map(x => x.Source).join(":");
+                result.push(new ReportEntry(`Dup definitions found for template  ${key} in ${sources}`));
+            }
         }
 
+        if (result.length > 0) {
+            // can't check other errors if there is a dup
+            return result;
+        }
+
+        // we can safely convert now, because we know there is no dup
+        this.TemplateMap = keyBy(this.Templates, t => t.Name);
+
+        if (this.Templates.length <= 0) {
+            result.push(new ReportEntry(`File must have at least one template definition`, ReportEntryType.WARN));
+        }
+       
+        this.Templates.forEach((template: LGTemplate) => {
+            result = result.concat(this.visit(template.ParseTree));
+        });
+        
         return result;
     }
 
@@ -186,7 +214,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
                 result.push(new ReportEntry(`Not a valid template ref: ${exp}`));
             } else {
                  const templateName: string = exp.substr(0, argsStartPos);
-                 if (!this.Context.TemplateContexts.has(templateName)) {
+                 if (!(templateName in this.TemplateMap)) {
                      result.push(new ReportEntry(`No such template: ${templateName}`));
                  } else {
                     const argsNumber: number = exp.substr(argsStartPos + 1, argsEndPos - argsStartPos - 1).split(',').length;
@@ -194,7 +222,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
                  }
             }
         } else {
-            if (!this.Context.TemplateContexts.has(exp)) {
+            if (!(exp in this.TemplateMap)) {
                 result.push(new ReportEntry(`No such template: ${exp}`));
             }
         }
@@ -231,8 +259,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
 
     private CheckTemplateParameters(templateName: string, argsNumber: number): ReportEntry[] {
         const result: ReportEntry[] = [];
-        const parametersNumber: number = this.Context.TemplateParameters.has(templateName)
-        ? this.Context.TemplateParameters.get(templateName).length : 0;
+        const parametersNumber: number = this.TemplateMap[templateName].Parameters.length;
 
         if (argsNumber !== parametersNumber) {
             result.push(new ReportEntry(

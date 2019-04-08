@@ -5,25 +5,28 @@ import { EvaluationTarget } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions } from './getMethodExtensions';
-import { EvaluationContext } from './templateEngine';
+import { LGTemplate } from './lgTemplate';
+import { keyBy } from 'lodash';
 
 // tslint:disable-next-line: max-classes-per-file
 /**
  * Analyzer engine. To analyse which variable may be used
  */
 export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFileParserVisitor<string[]> {
-    public readonly Context: EvaluationContext;
+    public readonly Templates: LGTemplate[];
+    public readonly TemplateMap: {[name:string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly _expressionParser: IExpressionParser;
 
-    constructor(context: EvaluationContext) {
+    constructor(templates: LGTemplate[]) {
         super();
-        this.Context = context;
+        this.Templates = templates;
+        this.TemplateMap = keyBy(templates, t => t.Name);
         this._expressionParser = new ExpressionEngine(new GetMethodExtensions(undefined).GetMethodX);
     }
 
     public AnalyzeTemplate(templateName: string): string[] {
-        if (!this.Context.TemplateContexts.has(templateName)) {
+        if (!(templateName in this.TemplateMap)) {
             throw new Error(`No such template: ${templateName}`);
         }
 
@@ -34,11 +37,10 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         }
 
         this.evalutationTargetStack.push(new EvaluationTarget(templateName, undefined));
-        const rawDependencies: string[] = this.visit(this.Context.TemplateContexts.get(templateName));
-        const parameters: string[] = this.ExtractParamters(templateName);
+        const rawDependencies: string[] = this.visit(this.TemplateMap[templateName].ParseTree);
 
-        // we need to exclude parameters from raw dependencies
-        const dependencies: string[] = Array.from(new Set(rawDependencies.filter((element: string) => !parameters.includes(element))));
+        
+        const dependencies: string[] = Array.from(new Set(rawDependencies));
         this.evalutationTargetStack.pop();
 
         return dependencies;
@@ -134,7 +136,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
                     }
 
                     const template: string = str.substr(1, end - 1);
-                    const analyzer: Analyzer = new Analyzer(this.Context);
+                    const analyzer: Analyzer = new Analyzer(this.Templates);
                     for (const reference of analyzer.AnalyzeTemplate(template)) {
                         references.add(reference);
                     }
@@ -194,11 +196,5 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
 
     private currentTarget(): EvaluationTarget {
         return this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
-    }
-
-    private ExtractParamters(templateName: string): string[] {
-        const parameters: string[] = this.Context.TemplateParameters.get(templateName);
-
-        return parameters === undefined ? [] : parameters;
     }
 }
