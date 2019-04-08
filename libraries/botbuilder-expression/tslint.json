@@ -33,9 +33,10 @@
         "no-parameter-reassignment":false,
         "export-name":false,
         "no-relative-imports": false,
-        "max-line-length": [true,{"limit":140,"ignore-pattern":"^\\s+\\*"}],
+        "max-line-length": [true,{"limit":200,"ignore-pattern":"^\\s+\\*"}],
         "no-void-expression": false,
         "no-unsafe-any":false,
-        "no-backbone-get-set-outside-model":false
+        "no-backbone-get-set-outside-model":false,
+        "newline-per-chained-call":false
     }
 }

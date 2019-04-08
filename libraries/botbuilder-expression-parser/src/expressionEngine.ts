@@ -106,7 +106,12 @@ export class ExpressionEngine implements IExpressionParser {
         }
 
         public visitStringAtom(context: ep.StringAtomContext): Expression {
-            return new Constant(unescape(Util.Trim(context.text, '\'')));
+            const text: string = context.text;
+            if (text.startsWith('\'')) {
+                return new Constant(unescape(Util.Trim(context.text, '\'')));
+            } else { // start with ""
+                return new Constant(unescape(Util.Trim(context.text, '"')));
+            }
         }
 
         protected defaultResult(): Expression {

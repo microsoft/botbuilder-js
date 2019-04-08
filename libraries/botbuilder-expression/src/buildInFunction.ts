@@ -35,7 +35,7 @@ export class BuiltInFunctions {
 
         if (types.length > 0) {
             for (const child of expression.Children) {
-               
+
                 if (child.ReturnType !== ReturnType.Object && !types.includes(child.ReturnType)) {
                     if (types.length === 1) {
                         throw new Error(`${child} is not a ${types[0]} expression in ${expression.toString()}.`);
@@ -380,7 +380,7 @@ export class BuiltInFunctions {
         let instance: any = state;
         const children: Expression[] = expression.Children;
         if (children.length === 2) {
-            ({ value:instance, error } = children[1].TryEvaluate(state));
+            ({ value: instance, error } = children[1].TryEvaluate(state));
         } else {
             instance = state;
         }
@@ -432,19 +432,67 @@ export class BuiltInFunctions {
         }
     }
 
+    private static And(expression: Expression, state: any): { value: any; error: string } {
+        let result: boolean = true;
+        let error: string;
+        for (const child of expression.Children) {
+            ({ value: result, error } = child.TryEvaluate(state));
+            if (error === undefined) {
+                if (!(typeof result === 'boolean')) {
+                    error = `${child} is not boolean`;
+                    break;
+                } else {
+                    const boolResult: boolean = result;
+                    if (!boolResult) {
+                        //Hit a false to break
+                        break;
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+
+        return { value: result, error };
+    }
+
+    private static Or(expression: Expression, state: any): { value: any; error: string } {
+        let result: boolean = true;
+        let error: string;
+        for (const child of expression.Children) {
+            ({ value: result, error } = child.TryEvaluate(state));
+            if (error === undefined) {
+                if (!(typeof result === 'boolean')) {
+                    error = `${child} is not boolean`;
+                    break;
+                } else {
+                    const boolResult: boolean = result;
+                    if (boolResult) {
+                        //Hit a true to break
+                        break;
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+
+        return { value: result, error };
+    }
+
 // tslint:disable-next-line: max-func-body-length
     private static BuildFunctionLookup(): Map<string, ExpressionEvaluator> {
         // tslint:disable-next-line: no-unnecessary-local-variable
         const functions: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>([
-            //TODO
             //Math
             [ExpressionType.Element, new ExpressionEvaluator(BuiltInFunctions.ExtractElement, ReturnType.Object,
 // tslint:disable-next-line: max-line-length
                                                              (expr: Expression): void => BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.Object, ReturnType.Number))],
-            [ExpressionType.Subtract, BuiltInFunctions.Numeric((args: ReadonlyArray<any>)  => Number(args[0]) + Number(args[1]))],
             [ExpressionType.Add, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Number(args[0]) + Number(args[1]))],
+            [ExpressionType.Subtract, BuiltInFunctions.Numeric((args: ReadonlyArray<any>)  => Number(args[0]) - Number(args[1]))],
+
             [ExpressionType.Multiply, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
-            [ExpressionType.Divide, new ExpressionEvaluator(BuiltInFunctions.ApplySequence((args: ReadonlyArray<any>) => args[0] / args[1],
+            [ExpressionType.Divide, new ExpressionEvaluator(BuiltInFunctions.ApplySequence((args: ReadonlyArray<any>) => Math.floor((args[0] / args[1])),
                                                                                            (value: any, expression: Expression) => {
                     let error: string = BuiltInFunctions.VerifyNumber(value, expression);
                     if (error === undefined && value === 0) {
@@ -457,66 +505,117 @@ export class BuiltInFunctions {
             [ExpressionType.Max, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.max(Number(args[0]), Number(args[1])))],
             [ExpressionType.Power, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.pow(args[0], args[1]))],
             [ExpressionType.Accessor, new ExpressionEvaluator(BuiltInFunctions.Accessor, ReturnType.Object, BuiltInFunctions.ValidateAccessor)],
-            [ExpressionType.Equal, new ExpressionEvaluator(BuiltInFunctions.Apply(args => args[0] === args[1]), ReturnType.Boolean, BuiltInFunctions.ValidateBinary)],
-            [ExpressionType.NotEqual, new ExpressionEvaluator(BuiltInFunctions.Apply(args => args[0] !== args[1]), ReturnType.Boolean, BuiltInFunctions.ValidateBinary)],
-            [ExpressionType.GreaterThan, BuiltInFunctions.Comparison(args => args[0] > args[1]) ],
-            [ExpressionType.LessThan, BuiltInFunctions.Comparison(args => args[0] < args[1])],
-            [ExpressionType.LessThanOrEqual, BuiltInFunctions.Comparison(args => args[0] <= args[1])],
-            [ExpressionType.GreaterThanOrEqual, BuiltInFunctions.Comparison(args => args[0] >= args[1])],
-            /*
+            [ExpressionType.Equal, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0] === args[1]), ReturnType.Boolean, BuiltInFunctions.ValidateBinary)],
+            [ExpressionType.NotEqual, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0] !== args[1]), ReturnType.Boolean, BuiltInFunctions.ValidateBinary)],
+            [ExpressionType.GreaterThan, BuiltInFunctions.Comparison((args: ReadonlyArray<any>) => args[0] > args[1]) ],
+            [ExpressionType.LessThan, BuiltInFunctions.Comparison((args: ReadonlyArray<any>) => args[0] < args[1])],
+            [ExpressionType.LessThanOrEqual, BuiltInFunctions.Comparison((args: ReadonlyArray<any>) => args[0] <= args[1])],
+            [ExpressionType.GreaterThanOrEqual, BuiltInFunctions.Comparison((args: ReadonlyArray<any>) => args[0] >= args[1])],
+
             [ExpressionType.Mod, new ExpressionEvaluator(BuiltInFunctions.Apply(
                                                     (args: ReadonlyArray<any>) => args[0] % args[1], BuiltInFunctions.VerifyInteger),
                                                          ReturnType.Number, BuiltInFunctions.ValidateBinaryNumber)],
-            [ExpressionType.Average, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
-            [ExpressionType.Sum, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
-            [ExpressionType.Count, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
-            [ExpressionType.Exists, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
-            [ExpressionType.And, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
-            [ExpressionType.Or, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
-            [ExpressionType.Not, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
-            [ExpressionType.Optional, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Contains, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Empty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Concat, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Length, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Replace, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.ReplaceIgnoreCase, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Split, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Substring, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.ToLower, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.ToUpper, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Trim, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Join, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.AddDays, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.AddHours, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.AddMinutes, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.AddSeconds, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.DayOfMonth, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.DayOfWeek, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.DayOfYear, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Month, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Date, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Year, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.UtcNow, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.FormatDateTime, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.SubtractFromTime, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.DateReadBack, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.GetTimeOfDay, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Float, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Int, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.String, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Bool, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            
-            [ExpressionType.If, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Rand, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.CreateArray, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.First, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Last, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Json, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.AddProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.SetProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.RemoveProperty, BuiltInFunctions.Numeric(args => args[0] * args[1])]
-            */
+            [ExpressionType.Average, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => (args[0].reduce((x: number, y: number) => x + y)) / args[0].length, BuiltInFunctions.VerifyInteger),
+                ReturnType.Number,
+                BuiltInFunctions.ValidateUnary)],
+            [ExpressionType.Sum, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].reduce((x: number, y: number) => x + y), BuiltInFunctions.VerifyInteger),
+                ReturnType.Number,
+                BuiltInFunctions.ValidateUnary)],
+            [ExpressionType.Count, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    if (args[0] instanceof Array || typeof args[0] === 'string') {
+                        return args[0].length;
+                    } else if (typeof args[0] === 'object') {
+                        return (Object.keys(args[0]).length);
+                    }
+                },                     BuiltInFunctions.VerifyInteger),
+                ReturnType.Number,
+                BuiltInFunctions.ValidateUnary)],
+            [ExpressionType.Exists, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0] !== null && args[0] !== undefined),
+                                                            ReturnType.Boolean, BuiltInFunctions.ValidateUnary)],
+            [ExpressionType.And, new ExpressionEvaluator((expression: Expression, state: any): { value: any; error: string }  => BuiltInFunctions.And(expression, state),
+                                                         ReturnType.Boolean, BuiltInFunctions.ValidateBoolean)],
+            [ExpressionType.Or, new ExpressionEvaluator((expression: Expression, state: any): { value: any; error: string }  => BuiltInFunctions.Or(expression, state),
+                                                        ReturnType.Boolean, BuiltInFunctions.ValidateBoolean)],
+            [ExpressionType.Not, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => !args[0], BuiltInFunctions.VerifyBoolean),
+                                                         ReturnType.Boolean, BuiltInFunctions.ValidateUnaryBoolean)],
+            [ExpressionType.Contains, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    if (args.every((el: any) => typeof(el) === 'string') || args[0] instanceof Array) {
+                        return args[0].includes(args[1]);
+                    } else { return (args[1] in args[0]); }
+                },                     BuiltInFunctions.VerifyInteger),
+                ReturnType.Boolean,
+                BuiltInFunctions.ValidateBinary)],
+            //[ExpressionType.Empty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Concat, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    let builder: string = '';
+                    builder = builder.concat(...args);
+
+                    return builder;
+                },                     BuiltInFunctions.VerifyString),
+                ReturnType.String, BuiltInFunctions.ValidateString) ],
+            [ExpressionType.Length, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => String(args[0]).length, BuiltInFunctions.VerifyString),
+                                                            ReturnType.Number, BuiltInFunctions.ValidateUnaryString)],
+            [ExpressionType.Replace, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => String(args[0]).replace(new RegExp(args[1], 'g'), args[2]),
+                                                                                    BuiltInFunctions.VerifyString),
+                                                             ReturnType.String, (expression: Expression): void  =>
+            BuiltInFunctions.ValidateArityAndAnyType(expression, 3, 3, ReturnType.String))],
+            [ExpressionType.ReplaceIgnoreCase, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => String(args[0]).replace(new RegExp(args[1], 'gi'), args[2]),
+                                                                                              BuiltInFunctions.VerifyString),
+                                                                       ReturnType.String, (expression: Expression): void  =>
+                                                                                              BuiltInFunctions.ValidateArityAndAnyType(expression, 3, 3, ReturnType.String))],
+            [ExpressionType.Split, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => String(args[0]).split(args[1]), BuiltInFunctions.VerifyString),
+                ReturnType.Object, (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String))],
+            //[ExpressionType.Substring, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.ToLower, BuiltInFunctions.StringTransform((args: ReadonlyArray<any>) => String(args[0]).toLowerCase())],
+            [ExpressionType.ToUpper, BuiltInFunctions.StringTransform((args: ReadonlyArray<any>) => String(args[0]).toUpperCase())],
+            [ExpressionType.Trim, BuiltInFunctions.StringTransform((args: ReadonlyArray<any>) => String(args[0]).trim())],
+            //[ExpressionType.Join, BuiltInFunctions.Numeric(args => args[0] * args[1])], //already has in outter function
+
+            // datetime
+            //[ExpressionType.AddDays, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            //[ExpressionType.AddHours, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            //[ExpressionType.AddMinutes, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            //[ExpressionType.AddSeconds, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            //[ExpressionType.DayOfMonth, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            //[ExpressionType.DayOfWeek, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            //[ExpressionType.DayOfYear, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            //[ExpressionType.Month, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            //[ExpressionType.Date, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            //[ExpressionType.Year, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            //[ExpressionType.UtcNow, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            //[ExpressionType.FormatDateTime, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            //[ExpressionType.SubtractFromTime, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            //[ExpressionType.DateReadBack, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            //[ExpressionType.GetTimeOfDay, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+
+            [ExpressionType.Float, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => parseFloat(args[0])), ReturnType.Number, BuiltInFunctions.ValidateUnary)],
+            [ExpressionType.Int, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => parseInt(args[0], 10)), ReturnType.Number, BuiltInFunctions.ValidateUnary)],
+            [ExpressionType.String, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => JSON.stringify(args[0]).replace(/(^\'*)/g, '').replace(/(\'*$)/g, '')),
+                                                            ReturnType.String, BuiltInFunctions.ValidateUnary) ],
+            [ExpressionType.Bool, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => Boolean(args[0])), ReturnType.Boolean, BuiltInFunctions.ValidateUnary)],
+            [ExpressionType.If, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0] ? args[1] : args[2]),
+                ReturnType.Object,
+                (expr: Expression): void => BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.Boolean, ReturnType.Object, ReturnType.Object))],
+// tslint:disable-next-line: insecure-random
+            [ExpressionType.Rand, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => Math.floor(Math.random() * (Number(args[1]) - Number(args[0]) + Number(args[0]))),
+                                                                                 BuiltInFunctions.VerifyInteger),
+                                                          ReturnType.Number, BuiltInFunctions.ValidateBinaryNumber)],
+            [ExpressionType.CreateArray, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => Array.from(args)), ReturnType.Object)],
+            //[ExpressionType.First, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            //[ExpressionType.Last, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.Json, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => JSON.parse(args[0])), ReturnType.String, BuiltInFunctions.ValidateUnary)],
+            [ExpressionType.AddProperty, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0][String(args[1])] = args[2]))],
+            [ExpressionType.SetProperty, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0][String(args[1])] = args[2]))],
+// tslint:disable-next-line: no-dynamic-delete
+            [ExpressionType.RemoveProperty, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => delete args[0][String(args[1])]))]
+
         ]);
 
         // Math aliases
