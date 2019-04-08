@@ -284,7 +284,7 @@ describe('expression functional test', () => {
         const input = data[0].toString();
         var parsed = new ExpressionEngine().parse(input);
         assert(parsed !== undefined);
-        var {value: actual, error} = parsed.TryEvaluate(scope);
+        var {value: actual, error} = parsed.tryEvaluate(scope);
         assert(error === undefined, `input: ${input}, Has error: ${error}`);
 
         const expected = data[1];
