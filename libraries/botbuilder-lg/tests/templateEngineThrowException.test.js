@@ -27,7 +27,7 @@ const WarningDataFiles = [
 ];
 
 describe('LGExceptionTest', function () {
-    /*
+    
     it('WariningTest', function () {
         for (const testDateItem of WarningDataFiles) {
             var engine = TemplateEngine.FromFile(GetExampleFilePath(testDateItem));
@@ -44,7 +44,7 @@ describe('LGExceptionTest', function () {
             }
             catch (e)
             {
-                console.log(e.Message);
+                console.log(e.message);
             }
 
             if (isFail)
@@ -53,5 +53,5 @@ describe('LGExceptionTest', function () {
             }    
         }
     });
-    */
+    
 });

@@ -112,16 +112,20 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
             if (conditionLabel !== 'else:') {
                 if (ifRule.ifCondition().EXPRESSION().length !== 1) {
                     result.push(new ReportEntry(`if and elseif should followed by one valid expression: '${ifRule.text}'`));
+                } else {
+                    result = result.concat(this.CheckExpression(ifRule.ifCondition().EXPRESSION(0).text));
                 }
-
-                result = result.concat(this.CheckExpression(ifRule.ifCondition().EXPRESSION(0).text));
             } else {
                 if (ifRule.ifCondition().EXPRESSION().length !== 0) {
                     result.push(new ReportEntry(`else should not followed by any expression: '${ifRule.text}'`));
                 }
             }
+            if (ifRule.normalTemplateBody() !== undefined) {
+                result = result.concat(this.visit(ifRule.normalTemplateBody()));
+            } else {
+                result.push(new ReportEntry(`no normal template body in condition block: '${ifRule.text}'`));
+            }
 
-            result = result.concat(this.visit(ifRule.normalTemplateBody()));
             idx = idx + 1;
         }
 
