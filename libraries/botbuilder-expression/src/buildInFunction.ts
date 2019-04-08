@@ -443,40 +443,85 @@ export class BuiltInFunctions {
                 (expr: Expression): void => BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.Object, ReturnType.Number))],
 
             [ExpressionType.Subtract, BuiltInFunctions.Numeric((args: ReadonlyArray<any>)  => Number(args[0]) + Number(args[1]))],
-            [ExpressionType.Add, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Number(args[0]) + Number(args[1]))],
-            [ExpressionType.Multiply, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
-            [ExpressionType.Divide, 
-                new ExpressionEvaluator(BuiltInFunctions.ApplySequence((args: ReadonlyArray<any>) => args[0] / args[1],
-                (value: any, expression: Expression) => {
-                    let error: string = BuiltInFunctions.VerifyNumber(value, expression);
-                    if (error === undefined && value === 0) {
-                        error = `Cannot divide by 0 from ${expression}`;
-                    }
-                    return error;
-                }), ReturnType.Number, BuiltInFunctions.ValidateNumber)],
 
+            [ExpressionType.Add, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Number(args[0]) + Number(args[1]))],
+
+            [ExpressionType.Multiply, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
+
+            [ExpressionType.Divide, 
+                new ExpressionEvaluator(
+                    BuiltInFunctions.ApplySequence(
+                        (args: ReadonlyArray<any>) => args[0] / args[1],
+                        (value: any, expression: Expression) => {
+                            let error: string = BuiltInFunctions.VerifyNumber(value, expression);
+                            if (error === undefined && value === 0) 
+                                error = `Cannot divide by 0 from ${expression}`;    
+                            return error;
+                        }), 
+                    ReturnType.Number,
+                    BuiltInFunctions.ValidateNumber)],
 
             [ExpressionType.Min, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.min(Number(args[0]), Number(args[1])))],
+
             [ExpressionType.Max, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.max(Number(args[0]), Number(args[1])))],
+
             [ExpressionType.Power, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.pow(args[0], args[1]))],
+
+            [ExpressionType.Mod, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0] % args[1], BuiltInFunctions.VerifyInteger),
+                ReturnType.Number, 
+                BuiltInFunctions.ValidateBinaryNumber)],
+                    
+            [ExpressionType.Average, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => (args[0].reduce((x,y)=>x+y))/args[0].length, BuiltInFunctions.VerifyInteger),
+                ReturnType.Number, 
+                BuiltInFunctions.ValidateUnary)],
+
+            [ExpressionType.Sum, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].reduce((x,y)=>x+y), BuiltInFunctions.VerifyInteger),
+                ReturnType.Number, 
+                BuiltInFunctions.ValidateUnary)],
+
+            [ExpressionType.Count, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    if(args[0] instanceof Array|| typeof args[0] === 'string')
+                        return (args[0].length)
+                    else if(typeof(args[0]==='object')){
+                        return (Object.keys(args[0]).length)
+                    }
+                }, BuiltInFunctions.VerifyInteger),
+                ReturnType.Number, 
+                BuiltInFunctions.ValidateUnary)],
+                
+            [ExpressionType.Exists, new ExpressionEvaluator(BuiltInFunctions.Apply(args => args[0] != undefined), ReturnType.Boolean, BuiltInFunctions.ValidateUnary)],
+
+            [ExpressionType.And, new ExpressionEvaluator(BuiltInFunctions.Apply(args => args[0] && args[1], this.VerifyBoolean), ReturnType.Boolean, BuiltInFunctions.ValidateBoolean)],
+
+            [ExpressionType.Or, new ExpressionEvaluator(BuiltInFunctions.Apply(args => args[0] || args[1], this.VerifyBoolean), ReturnType.Boolean, BuiltInFunctions.ValidateBoolean)],
+
+            [ExpressionType.Not, new ExpressionEvaluator(BuiltInFunctions.Apply(args => !args[0], this.VerifyBoolean), ReturnType.Boolean, BuiltInFunctions.ValidateUnaryBoolean)],
+           
+            [ExpressionType.Contains, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    if(args.every(el => typeof(el)==='string') || args[0] instanceof Array){
+                        return args[0].includes(args[1])
+                    }
+                    else if(typeof(args[0]==='object')){
+                        return (args[1] in args[0])
+                    }
+                }, BuiltInFunctions.VerifyInteger),
+                ReturnType.Boolean, 
+                BuiltInFunctions.ValidateBinary)],
+
             [ExpressionType.Accessor, new ExpressionEvaluator(BuiltInFunctions.Accessor, ReturnType.Object, BuiltInFunctions.ValidateAccessor)],
             [ExpressionType.Equal, new ExpressionEvaluator(BuiltInFunctions.Apply(args => args[0] === args[1]), ReturnType.Boolean, BuiltInFunctions.ValidateBinary)],
             [ExpressionType.NotEqual, new ExpressionEvaluator(BuiltInFunctions.Apply(args => args[0] !== args[1]), ReturnType.Boolean, BuiltInFunctions.ValidateBinary)],
-            [ExpressionType.GreaterThan, BuiltInFunctions.Comparison(args => args[0] > args[1]) ],
+            [ExpressionType.GreaterThan, BuiltInFunctions.Comparison(args => args[0] > args[1])],
             [ExpressionType.LessThan, BuiltInFunctions.Comparison(args => args[0] < args[1])],
             [ExpressionType.LessThanOrEqual, BuiltInFunctions.Comparison(args => args[0] <= args[1])],
             [ExpressionType.GreaterThanOrEqual, BuiltInFunctions.Comparison(args => args[0] >= args[1])],
             /*
-            [ExpressionType.Mod, new ExpressionEvaluator(BuiltInFunctions.Apply(
-                (args: ReadonlyArray<any>) => args[0] % args[1], BuiltInFunctions.VerifyInteger),
-                    ReturnType.Number, BuiltInFunctions.ValidateBinaryNumber)],
-            [ExpressionType.Average, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
-            [ExpressionType.Sum, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
-            [ExpressionType.Count, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
-            [ExpressionType.Exists, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
-            [ExpressionType.And, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
-            [ExpressionType.Or, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
-            [ExpressionType.Not, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
+
             [ExpressionType.Optional, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.Contains, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.Empty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
