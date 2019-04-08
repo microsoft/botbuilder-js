@@ -5,7 +5,7 @@ export interface IGetMethod {
     GetMethodX(name: string): ExpressionEvaluator;
 }
 
-export class GetMethodExtensions implements IGetMethod {
+export class GetExpanderMethod implements IGetMethod {
     private readonly expander: Expander;
 
     public constructor(expander: Expander) {

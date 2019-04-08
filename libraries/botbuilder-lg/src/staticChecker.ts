@@ -64,7 +64,9 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
             }
 
             const invalidSeperateCharacters: TerminalNode[] = parameters.INVALID_SEPERATE_CHAR();
-            if (invalidSeperateCharacters !== undefined || invalidSeperateCharacters.length > 0) {
+
+            if (invalidSeperateCharacters !== undefined
+                && invalidSeperateCharacters.length > 0) {
                 result.push(new ReportEntry(`Parameters for templates must be separated by comma.`));
             }
         }

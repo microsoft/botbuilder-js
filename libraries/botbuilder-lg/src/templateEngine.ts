@@ -58,10 +58,9 @@ export class TemplateEngine {
             if (parameters !== undefined) {
                 templateParameters.set(templateName, parameters.IDENTIFIER().map((x: TerminalNode) => x.text));
             }
-
-            this.evaluationContext = new EvaluationContext(templateContexts, templateParameters);
-            TemplateEngine.RunStaticCheck(this.evaluationContext);
         }
+        this.evaluationContext = new EvaluationContext(templateContexts, templateParameters);
+        TemplateEngine.RunStaticCheck(this.evaluationContext);
     }
 
     public static EmptyEngine(): TemplateEngine {
