@@ -439,20 +439,23 @@ export class BuiltInFunctions {
             //TODO
             //Math
             [ExpressionType.Element, new ExpressionEvaluator(BuiltInFunctions.ExtractElement, ReturnType.Object,
-// tslint:disable-next-line: max-line-length
-                                                             (expr: Expression): void => BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.Object, ReturnType.Number))],
+            // tslint:disable-next-line: max-line-length
+                (expr: Expression): void => BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.Object, ReturnType.Number))],
+
             [ExpressionType.Subtract, BuiltInFunctions.Numeric((args: ReadonlyArray<any>)  => Number(args[0]) + Number(args[1]))],
             [ExpressionType.Add, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Number(args[0]) + Number(args[1]))],
             [ExpressionType.Multiply, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
-            [ExpressionType.Divide, new ExpressionEvaluator(BuiltInFunctions.ApplySequence((args: ReadonlyArray<any>) => args[0] / args[1],
-                                                                                           (value: any, expression: Expression) => {
+            [ExpressionType.Divide, 
+                new ExpressionEvaluator(BuiltInFunctions.ApplySequence((args: ReadonlyArray<any>) => args[0] / args[1],
+                (value: any, expression: Expression) => {
                     let error: string = BuiltInFunctions.VerifyNumber(value, expression);
                     if (error === undefined && value === 0) {
                         error = `Cannot divide by 0 from ${expression}`;
                     }
-
                     return error;
-                }),                                         ReturnType.Number, BuiltInFunctions.ValidateNumber)],
+                }), ReturnType.Number, BuiltInFunctions.ValidateNumber)],
+
+
             [ExpressionType.Min, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.min(Number(args[0]), Number(args[1])))],
             [ExpressionType.Max, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.max(Number(args[0]), Number(args[1])))],
             [ExpressionType.Power, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.pow(args[0], args[1]))],
@@ -465,8 +468,8 @@ export class BuiltInFunctions {
             [ExpressionType.GreaterThanOrEqual, BuiltInFunctions.Comparison(args => args[0] >= args[1])],
             /*
             [ExpressionType.Mod, new ExpressionEvaluator(BuiltInFunctions.Apply(
-                                                    (args: ReadonlyArray<any>) => args[0] % args[1], BuiltInFunctions.VerifyInteger),
-                                                         ReturnType.Number, BuiltInFunctions.ValidateBinaryNumber)],
+                (args: ReadonlyArray<any>) => args[0] % args[1], BuiltInFunctions.VerifyInteger),
+                    ReturnType.Number, BuiltInFunctions.ValidateBinaryNumber)],
             [ExpressionType.Average, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
             [ExpressionType.Sum, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
             [ExpressionType.Count, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] + args[1])],
