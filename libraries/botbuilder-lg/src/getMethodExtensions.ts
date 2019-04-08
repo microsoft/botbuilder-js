@@ -12,7 +12,7 @@ export class GetMethodExtensions implements IGetMethod {
         this.evaluator = evaluator;
     }
 
-    public GetMethodX(name: string): ExpressionEvaluator {
+    public GetMethodX = (name: string): ExpressionEvaluator => {
 
         // tslint:disable-next-line: switch-default
         switch (name) {
@@ -31,7 +31,7 @@ export class GetMethodExtensions implements IGetMethod {
         return BuiltInFunctions.Lookup(name);
     }
 
-    public Count(paramters: any[]): any {
+    public Count = (paramters: any[]): any => {
         if (paramters[0] instanceof Array) {
             const li: any = paramters[0];
 
@@ -40,7 +40,7 @@ export class GetMethodExtensions implements IGetMethod {
         throw new Error('NotImplementedException');
     }
 
-    public Join(paramters: any[]): any {
+    public Join = (paramters: any[]): any => {
         if (paramters.length === 2 &&
             paramters[0] instanceof Array &&
             typeof (paramters[1]) === 'string') {
@@ -118,7 +118,7 @@ export class GetMethodExtensions implements IGetMethod {
         throw new Error('NotImplementedException');
     }
 
-    private IsTemplateRef(templateName: string): boolean {
+    private IsTemplateRef = (templateName: string): boolean => {
         if (templateName === undefined || templateName.trim() === '') {
             return false;
         } else if (templateName.startsWith('[') && templateName.endsWith(']')) {
