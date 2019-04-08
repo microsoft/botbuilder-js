@@ -513,20 +513,38 @@ export class BuiltInFunctions {
                 ReturnType.Boolean, 
                 BuiltInFunctions.ValidateBinary)],
 
+            [ExpressionType.Empty, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    if (args[0] == undefined) return true;
+                    else if (args[0] instanceof String ) return (args[0].length === 0? true :false );
+                    else if(typeof args[0]==='object') return (Object.keys(args[0]).length === 0 ?true:false)
+                }),
+                ReturnType.Boolean, 
+                BuiltInFunctions.ValidateUnary)],
+
+            [ExpressionType.Concat, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    return (''.concat(...args))
+                }, BuiltInFunctions.VerifyString),
+                ReturnType.String, 
+                BuiltInFunctions.ValidateString)],     
+                
+                
+            [ExpressionType.Length, new ExpressionEvaluator(BuiltInFunctions.Apply(args => args[0].length,this.VerifyString), ReturnType.Number, BuiltInFunctions.ValidateUnaryString)],
+
+            //[ExpressionType.Replace, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+
+
             [ExpressionType.Accessor, new ExpressionEvaluator(BuiltInFunctions.Accessor, ReturnType.Object, BuiltInFunctions.ValidateAccessor)],
             [ExpressionType.Equal, new ExpressionEvaluator(BuiltInFunctions.Apply(args => args[0] === args[1]), ReturnType.Boolean, BuiltInFunctions.ValidateBinary)],
             [ExpressionType.NotEqual, new ExpressionEvaluator(BuiltInFunctions.Apply(args => args[0] !== args[1]), ReturnType.Boolean, BuiltInFunctions.ValidateBinary)],
             [ExpressionType.GreaterThan, BuiltInFunctions.Comparison(args => args[0] > args[1])],
             [ExpressionType.LessThan, BuiltInFunctions.Comparison(args => args[0] < args[1])],
             [ExpressionType.LessThanOrEqual, BuiltInFunctions.Comparison(args => args[0] <= args[1])],
-            [ExpressionType.GreaterThanOrEqual, BuiltInFunctions.Comparison(args => args[0] >= args[1])],
+            [ExpressionType.GreaterThanOrEqual, BuiltInFunctions.Comparison(args => args[0] >= args[1])], 
             /*
 
             [ExpressionType.Optional, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Contains, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Empty, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Concat, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Length, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.Replace, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.ReplaceIgnoreCase, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.Split, BuiltInFunctions.Numeric(args => args[0] * args[1])],
