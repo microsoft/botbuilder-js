@@ -16,8 +16,8 @@ Then back to botbuilder-ai directory
 Then 
 ```
     import {TemplateEngine} from 'botbuilder-ai';
-    let engine = TemplateEngine.FromFile("lgfilePath");
-    let evaled = engine.EvaluateTemplate("templateId", {name:"your options"});
+    let engine = TemplateEngine.fromFiles("lgfilePath");
+    let evaled = engine.evaluateTemplate("templateId", {name:"your options"});
 ```
 
 to get result
