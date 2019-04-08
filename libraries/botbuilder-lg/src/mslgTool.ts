@@ -39,8 +39,8 @@ export class MSLGTool {
 
     private BuildTemplates(lgFileContent: string, initErrorMessages: ReportEntry[] = []): LGTemplate[] {
         try {
-            const engine = TemplateEngine.FromText(lgFileContent);
-            return engine.Templates;
+            const engine = TemplateEngine.fromText(lgFileContent);
+            return engine.templates;
         } catch (e) {
             throw e;
         }

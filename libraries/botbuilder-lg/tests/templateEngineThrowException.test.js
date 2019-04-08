@@ -30,7 +30,7 @@ describe('LGExceptionTest', function () {
     
     it('WariningTest', function () {
         for (const testDateItem of WarningDataFiles) {
-            var engine = TemplateEngine.FromFile(GetExampleFilePath(testDateItem));
+            var engine = TemplateEngine.fromFiles(GetExampleFilePath(testDateItem));
         }
     });
 
@@ -39,7 +39,7 @@ describe('LGExceptionTest', function () {
             var isFail = false;
             try
             {
-                TemplateEngine.FromFile(GetExampleFilePath(testDateItem));
+                TemplateEngine.fromFiles(GetExampleFilePath(testDateItem));
                 isFail = true;
             }
             catch (e)

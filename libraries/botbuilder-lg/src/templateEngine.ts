@@ -10,36 +10,40 @@ import { FileContext, LGFileParser, ParagraphContext, ParametersContext, Templat
 import { IGetMethod } from './getMethodExtensions';
 import { ReportEntry, ReportEntryType, StaticChecker } from './staticChecker';
 import { LGTemplate } from './lgTemplate';
+import { flatten } from 'lodash';
 
 /**
  * LG parser and evaluation engine
  */
 export class TemplateEngine {
 
-    public Templates: LGTemplate[];
+    public templates: LGTemplate[];
 
     public constructor() {
-        this.Templates = [];
+        this.templates = [];
     }
 
-    public AddFile = (filePath: string) : TemplateEngine => {
-        const text = fs.readFileSync(filePath, 'utf-8');
-        const newTemplates = this.toTemplates(this.parse(text), filePath);
-        const mergedTemplates = this.Templates.concat(newTemplates);
+    public addFiles = (...filePaths: string[]) : TemplateEngine => {
+        const newTemplates = flatten(filePaths.map(filePath => {
+            const text = fs.readFileSync(filePath, 'utf-8');
+            return this.toTemplates(this.parse(text), filePath);
+        }));
+
+        const mergedTemplates = this.templates.concat(newTemplates);
         
         this.runStaticCheck(mergedTemplates);
 
-        this.Templates = mergedTemplates;
+        this.templates = mergedTemplates;
         return this;
     }
 
-    public AddText = (text: string): TemplateEngine => {
+    public addText = (text: string): TemplateEngine => {
         const newTemplates = this.toTemplates(this.parse(text), "text");
-        const mergedTemplates = this.Templates.concat(newTemplates);
+        const mergedTemplates = this.templates.concat(newTemplates);
         
         this.runStaticCheck(mergedTemplates);
 
-        this.Templates = mergedTemplates;
+        this.templates = mergedTemplates;
         return this;
     }
 
@@ -82,13 +86,12 @@ export class TemplateEngine {
     }
 
     
-
-    public static FromFile(filePath: string): TemplateEngine {
-        return new TemplateEngine().AddFile(filePath);
+    public static fromFiles(...filePaths: string[]): TemplateEngine {
+        return new TemplateEngine().addFiles(...filePaths);
     }
 
-    public static FromText(lgFileContent: string): TemplateEngine {
-       return new TemplateEngine().AddText(lgFileContent);
+    public static fromText(lgFileContent: string): TemplateEngine {
+       return new TemplateEngine().addText(lgFileContent);
     }
 
     private runStaticCheck = (templates: LGTemplate[]): void => {
@@ -101,25 +104,25 @@ export class TemplateEngine {
         }
     }
 
-    public EvaluateTemplate(templateName: string, scope: any, methodBinder?: IGetMethod) : string {
-        const evalutor: Evaluator = new Evaluator(this.Templates, methodBinder);
+    public evaluateTemplate(templateName: string, scope: any, methodBinder?: IGetMethod) : string {
+        const evalutor: Evaluator = new Evaluator(this.templates, methodBinder);
 
         return evalutor.EvaluateTemplate(templateName, scope);
     }
 
-    public AnalyzeTemplate(templateName: string): string[] {
-        const analyzer: Analyzer = new Analyzer(this.Templates);
+    public analyzeTemplate(templateName: string): string[] {
+        const analyzer: Analyzer = new Analyzer(this.templates);
 
         return analyzer.AnalyzeTemplate(templateName);
     }
 
-    public Evaluate(inlinsStr: string, scope: any, methodBinder?: IGetMethod): string {
+    public evaluate(inlinsStr: string, scope: any, methodBinder?: IGetMethod): string {
         // wrap inline string with "# name and -" to align the evaluation process
         const fakeTemplateId: string = '__temp__';
         const wrappedStr: string = `# ${fakeTemplateId} \r\n - ${inlinsStr}`;
 
         var newTemplates = this.toTemplates(this.parse(wrappedStr), "inline");
-        var mergedTemplates = this.Templates.concat(newTemplates);
+        var mergedTemplates = this.templates.concat(newTemplates);
 
         this.runStaticCheck(mergedTemplates);
 
