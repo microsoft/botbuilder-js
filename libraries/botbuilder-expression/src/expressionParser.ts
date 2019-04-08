@@ -10,5 +10,5 @@ export interface IExpressionParser {
      * @param expression Expression to parse.
      * @returns The resulting expression.
      */
-    Parse(expression: string): Expression;
+    parse(expression: string): Expression;
 }

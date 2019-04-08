@@ -256,7 +256,7 @@ export class BuiltInFunctions {
         let value: any;
         let error: string;
         for (const child of expression.Children) {
-            ({ value, error } = child.TryEvaluate(state));
+            ({ value, error } = child.tryEvaluate(state));
             if (error !== undefined) {
                 break;
             }
@@ -380,7 +380,7 @@ export class BuiltInFunctions {
         let instance: any = state;
         const children: Expression[] = expression.Children;
         if (children.length === 2) {
-            ({ value: instance, error } = children[1].TryEvaluate(state));
+            ({ value: instance, error } = children[1].tryEvaluate(state));
         } else {
             instance = state;
         }
@@ -398,10 +398,10 @@ export class BuiltInFunctions {
         const instance: Expression = expression.Children[0];
         const index: Expression = expression.Children[1];
         let inst: any;
-        ({ value: inst, error } = instance.TryEvaluate(state));
+        ({ value: inst, error } = instance.tryEvaluate(state));
         if (error === undefined) {
             let idxValue: any;
-            ({ value: idxValue, error } = index.TryEvaluate(state));
+            ({ value: idxValue, error } = index.tryEvaluate(state));
             if (error === undefined) {
                 if (Number.isInteger(idxValue)) {
                     const idx: number = Number(idxValue);
@@ -436,7 +436,7 @@ export class BuiltInFunctions {
         let result: boolean = true;
         let error: string;
         for (const child of expression.Children) {
-            ({ value: result, error } = child.TryEvaluate(state));
+            ({ value: result, error } = child.tryEvaluate(state));
             if (error === undefined) {
                 if (!(typeof result === 'boolean')) {
                     error = `${child} is not boolean`;
@@ -460,7 +460,7 @@ export class BuiltInFunctions {
         let result: boolean = true;
         let error: string;
         for (const child of expression.Children) {
-            ({ value: result, error } = child.TryEvaluate(state));
+            ({ value: result, error } = child.tryEvaluate(state));
             if (error === undefined) {
                 if (!(typeof result === 'boolean')) {
                     error = `${child} is not boolean`;

@@ -70,7 +70,7 @@ export class Expression {
      */
     public static MakeExpression(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]): Expression {
         const expr: Expression = new Expression(type, evaluator, ...children);
-        expr.Validate();
+        expr.validate();
 
         return expr;
     }
@@ -162,17 +162,17 @@ export class Expression {
     /**
      * Validate immediate expression.
      */
-    public Validate(): void {
+    public validate(): void {
         this._evaluator.ValidateExpression(this);
     }
 
     /**
      * Recursively validate the expression tree.
      */
-    public ValidateTree(): void {
-        this.Validate();
+    public validateTree(): void {
+        this.validate();
         for (const child of this.Children) {
-            child.Validate();
+            child.validate();
         }
     }
 
@@ -181,7 +181,7 @@ export class Expression {
      * Global state to evaluate accessor expressions against.  Can Dictionary be otherwise reflection is used to access property and then indexer.
      * @param state 
      */
-    public TryEvaluate(state: any): { value: any; error: string } {
+    public tryEvaluate(state: any): { value: any; error: string } {
         return this._evaluator.TryEvaluate(this, state);
     }
 

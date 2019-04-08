@@ -184,7 +184,7 @@ export class ExpressionEngine implements IExpressionParser {
         this._lookup = lookup === undefined ? BuiltInFunctions.Lookup : lookup;
     }
 
-    public Parse(expression: string): Expression {
+    public parse(expression: string): Expression {
         return new this.ExpressionTransformer(this._lookup).Transform(this.AntlrParse(expression));
     }
 

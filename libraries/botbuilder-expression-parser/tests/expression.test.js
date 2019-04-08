@@ -282,7 +282,7 @@ describe('expression functional test', () => {
   it('should get right evaluate result', () => {
     for (const data of dataSource) {
         const input = data[0].toString();
-        var parsed = new ExpressionEngine().Parse(input);
+        var parsed = new ExpressionEngine().parse(input);
         assert(parsed !== undefined);
         var {value: actual, error} = parsed.TryEvaluate(scope);
         assert(error === undefined, `input: ${input}, Has error: ${error}`);
