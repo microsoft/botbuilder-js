@@ -3,7 +3,7 @@ import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { Expression } from 'botbuilder-expression';
 import { ExpressionEngine} from 'botbuilder-expression-parser';
 import { EvaluationTarget } from './evaluator';
-import { GetMethodExtensions, IGetMethod } from './expanderMethodExtensions';
+import { GetExpanderMethod, IGetMethod } from './expanderMethodExtensions';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { EvaluationContext } from './templateEngine';
@@ -18,7 +18,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     constructor(context: EvaluationContext, getMethod: IGetMethod) {
         super();
         this.Context = context;
-        this.GetMethodX = getMethod === undefined ? new GetMethodExtensions(this) : getMethod;
+        this.GetMethodX = getMethod === undefined ? new GetExpanderMethod(this) : getMethod;
     }
 
     public ExpandTemplate(templateName: string, scope: any): string[] {
@@ -140,9 +140,12 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private EvalCondition(condition: lp.IfConditionContext): boolean {
-        const expression: TerminalNode = condition.EXPRESSION(0);
-        if (expression === undefined ||                            // no expression means it's else
-            this.EvalExpressionInCondition(expression.text)) {
+        const expressions: TerminalNode[] = condition.EXPRESSION();
+        if (expressions === undefined || expressions.length === 0) {
+            return true;    // no expression means it's else
+        }
+
+        if (this.EvalExpressionInCondition(expressions[0].text)) {
             return true;
         }
 
@@ -218,9 +221,11 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         const templateRefValues: Map<string, string[]> = new Map<string, string[]>();
         const matches: string[] = exp.match(/@\{[^{}]+\}/g);
-        for (const match of matches) {
-            const newExp: string = match.substr(1); // remove @
-            templateRefValues.set(match, this.EvalTemplateRef(newExp.substr(2, newExp.length - 4))); // [ ]
+        if (matches !== null && matches !== undefined) {
+            for (const match of matches) {
+                const newExp: string = match.substr(1); // remove @
+                templateRefValues.set(match, this.EvalTemplateRef(newExp.substr(2, newExp.length - 4))); // [ ]
+            }
         }
 
         let result: string[] = [exp];
