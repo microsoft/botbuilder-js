@@ -99,12 +99,12 @@ describe('LG', function () {
             try
             {
                 evaled = engine.EvaluateTemplate("wPhrase", "");
-                Assert.AreEqual(evaled, "你好");
+                assert.strictEqual(evaled, "你好");
             }
             catch (e)
             {
                 // Randomly this will detect a loop which is OK.
-                assert.IsTrue(e.StartsWith('loop'));
+                assert.strictEqual(e.message.startsWith('Loop'), true);
             }
     });
 
