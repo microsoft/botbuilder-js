@@ -7,6 +7,13 @@
  */
 export namespace Constants {
     /**
+     * TO CHANNEL FROM BOT: Login URL
+     * 
+     * DEPRECATED: DO NOT USE
+     */
+    export const ToChannelFromBotLoginUrl = 'https://login.microsoftonline.com/botframework.com/oauth2/v2.0/token';
+
+    /**
      * TO CHANNEL FROM BOT: Login URL prefix
      */
     export const ToChannelFromBotLoginUrlPrefix = 'https://login.microsoftonline.com/';
