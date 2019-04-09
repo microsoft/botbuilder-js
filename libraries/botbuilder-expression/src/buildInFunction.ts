@@ -4,6 +4,7 @@ import { Expression, ReturnType } from './expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
+import moment = require('moment');
 
 /**
  *  <summary>
@@ -345,6 +346,20 @@ export class BuiltInFunctions {
                                        ReturnType.String, BuiltInFunctions.ValidateUnaryString);
     }
 
+
+    /**
+     * Transform a datetime into another datetime.
+     * @param timestamp Timestamp as string.
+     * @param numOfTransformation How many times to add.
+     * @param interval Seconds,minutes,hours or days. 'ss','mm','hh','d'
+     * @param format How the format should looks like.
+     * @returns String of transformed outcome.
+     */
+    public static TimeTransform(timestamp,numOfTransformation,interval,format = "YYYY-MM-DDTHH:mm:ss.0000000[Z]"){
+        return (moment(timestamp).add(numOfTransformation,interval).format(format))
+    }
+
+
     /**
      * Lookup a built-in function information by type.
      * @param type Type to look up.
@@ -516,7 +531,7 @@ export class BuiltInFunctions {
             [ExpressionType.Empty, new ExpressionEvaluator(
                 BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
                     if (args[0] == undefined) return true;
-                    else if (args[0] instanceof String ) return (args[0].length === 0? true :false );
+                    else if (typeof args[0] == 'string' ) return (args[0].length === 0? true :false );
                     else if(typeof args[0]==='object') return (Object.keys(args[0]).length === 0 ?true:false)
                 }),
                 ReturnType.Boolean, 
@@ -531,43 +546,188 @@ export class BuiltInFunctions {
                 
                 
             [ExpressionType.Length, new ExpressionEvaluator(BuiltInFunctions.Apply(args => args[0].length,this.VerifyString), ReturnType.Number, BuiltInFunctions.ValidateUnaryString)],
-
-            //[ExpressionType.Replace, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+           
+            [ExpressionType.Replace, new ExpressionEvaluator(
+                BuiltInFunctions.Apply(args => args[0].replace(RegExp(args[1],'g'),args[2]),this.VerifyString), 
+                ReturnType.Number, 
+                (expression) => BuiltInFunctions.ValidateArityAndAnyType(expression,3,3,ReturnType.String))],
+                           
+            [ExpressionType.ReplaceIgnoreCase, new ExpressionEvaluator(
+                BuiltInFunctions.Apply(args => args[0].replace(RegExp(args[1],'gi'),args[2]),this.VerifyString), 
+                ReturnType.Number, 
+                (expression) => BuiltInFunctions.ValidateArityAndAnyType(expression,3,3,ReturnType.String))],
+                           
+            [ExpressionType.Split, new ExpressionEvaluator(
+                BuiltInFunctions.Apply(args => args[0].split(args[1]),this.VerifyString), 
+                ReturnType.Object, 
+                (expression) => BuiltInFunctions.ValidateArityAndAnyType(expression,2,2,ReturnType.String))],
 
 
             [ExpressionType.Accessor, new ExpressionEvaluator(BuiltInFunctions.Accessor, ReturnType.Object, BuiltInFunctions.ValidateAccessor)],
+
             [ExpressionType.Equal, new ExpressionEvaluator(BuiltInFunctions.Apply(args => args[0] === args[1]), ReturnType.Boolean, BuiltInFunctions.ValidateBinary)],
+
             [ExpressionType.NotEqual, new ExpressionEvaluator(BuiltInFunctions.Apply(args => args[0] !== args[1]), ReturnType.Boolean, BuiltInFunctions.ValidateBinary)],
+
             [ExpressionType.GreaterThan, BuiltInFunctions.Comparison(args => args[0] > args[1])],
+
             [ExpressionType.LessThan, BuiltInFunctions.Comparison(args => args[0] < args[1])],
+
             [ExpressionType.LessThanOrEqual, BuiltInFunctions.Comparison(args => args[0] <= args[1])],
+            
             [ExpressionType.GreaterThanOrEqual, BuiltInFunctions.Comparison(args => args[0] >= args[1])], 
+
+
+            [ExpressionType.AddDays, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    let format = (!args[2])?"YYYY-MM-DDTHH:mm:ss.0000000[Z]": args[2]
+                        return this.TimeTransform(args[0],args[1],'d',format)
+                }),
+                ReturnType.String, 
+                (expression) => BuiltInFunctions.ValidateArityAndAnyType(expression,2,3))],
+                
+            [ExpressionType.AddHours, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    let format = (!args[2])?"YYYY-MM-DDTHH:mm:ss.0000000[Z]": args[2]
+                        return this.TimeTransform(args[0],args[1],'h',format)
+                }),
+                ReturnType.String, 
+                (expression) => BuiltInFunctions.ValidateArityAndAnyType(expression,2,3))],
+
+            [ExpressionType.AddMinutes, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    let format = (!args[2])?"YYYY-MM-DDTHH:mm:ss.0000000[Z]": args[2]
+                        return this.TimeTransform(args[0],args[1],'minutes',format)
+                }),
+                ReturnType.String, 
+                (expression) => BuiltInFunctions.ValidateArityAndAnyType(expression,2,3))],
+
+            [ExpressionType.AddSeconds, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    let format = (!args[2])?"YYYY-MM-DDTHH:mm:ss.0000000[Z]": args[2]
+                        return this.TimeTransform(args[0],args[1],'seconds',format)
+                }),
+                ReturnType.String, 
+                (expression) => BuiltInFunctions.ValidateArityAndAnyType(expression,2,3))],
+
+            [ExpressionType.DayOfWeek, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    return (moment(args[0]).days())  
+                },BuiltInFunctions.VerifyString),
+                ReturnType.Number, 
+                BuiltInFunctions.ValidateUnary)],
+            
+            [ExpressionType.DayOfMonth, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    return (moment(args[0]).date())  
+                },BuiltInFunctions.VerifyString),
+                ReturnType.Number, 
+                BuiltInFunctions.ValidateUnary)],
+            
+            [ExpressionType.DayOfYear, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    return (moment(args[0]).dayOfYear())  
+                },BuiltInFunctions.VerifyString),
+                ReturnType.Number, 
+                BuiltInFunctions.ValidateUnary)],
+                            
+            [ExpressionType.Month, new ExpressionEvaluator(
+                BuiltInFunctions.Apply(args => moment(args[0]).month() + 1,BuiltInFunctions.VerifyString),
+                ReturnType.Number, 
+                BuiltInFunctions.ValidateUnaryString)],
+
+            [ExpressionType.Date, new ExpressionEvaluator(
+                BuiltInFunctions.Apply(args => moment(args[0]).format((args.length == 1 ? args[0] : "M/DD/YYYY")),BuiltInFunctions.VerifyString),
+                ReturnType.String, 
+                BuiltInFunctions.ValidateUnaryString)],
+
+            [ExpressionType.Year, new ExpressionEvaluator(
+                BuiltInFunctions.Apply(args => moment(args[0]).year(),BuiltInFunctions.VerifyString),
+                ReturnType.Number, 
+                BuiltInFunctions.ValidateUnaryString)],
+
+            [ExpressionType.UtcNow, new ExpressionEvaluator(BuiltInFunctions.Apply(
+                args => moment().utc().format((args.length == 1 ? args[0] : "YYYY-MM-DDTHH:mm:ss.0000000[Z]"))), 
+                ReturnType.String, 
+                (expression) => BuiltInFunctions.ValidateArityAndAnyType(expression, 0, Number.MAX_SAFE_INTEGER, ReturnType.String))],
+                
+            [ExpressionType.FormatDateTime, new ExpressionEvaluator(
+                BuiltInFunctions.Apply(args => moment(args[0]).format((args.length == 2 ? args[1] : "YYYY-MM-DDTHH:mm:ss.0000000[Z]")),BuiltInFunctions.VerifyString),
+                ReturnType.String, 
+                (expression) => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.String))],
+
+            [ExpressionType.SubtractFromTime, new ExpressionEvaluator(
+                (expr,state)=>
+                {
+                    let value: any
+                    let args = BuiltInFunctions.EvaluateChildren(expr,state).args
+                    let error = BuiltInFunctions.EvaluateChildren(expr,state).error
+
+                    if(error == undefined){
+                        if(typeof args[0] == 'string' && args[1].isInteger && typeof args[2] == 'string'){
+                            let format = (args.length == 4 ? args[3] : "YYYY-MM-DDTHH:mm:ss.0000000[Z]")
+                            value = moment(args[0]).subtract(args[1],args[2]).format(format)
+                        }else
+                        {
+                            error = `${expr} can't evaluate.`
+                        }
+                    }
+                    return {value,error}   
+                },ReturnType.String,
+                (expression) => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.String,ReturnType.Number,ReturnType.String))],
+                
+            [ExpressionType.DateReadBack, new ExpressionEvaluator(
+               BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    let value:any
+                    let dateFormat = 'YYYY-MM-DD'
+
+                    if(moment(args[0]).format(dateFormat) === moment(args[1]).format(dateFormat))
+                        value ='Today'
+                    else if(moment(args[0]).format(dateFormat) === moment(args[1]).subtract(1,'day').format(dateFormat))
+                        value ='Tomorrow'
+                    else if(moment(args[0]).format(dateFormat) === moment(args[1]).subtract(2,'day').format(dateFormat))
+                        value ='The day after tomorrow'
+                    else if(moment(args[1]).format(dateFormat) === moment(args[0]).subtract(1,'day').format(dateFormat))
+                        value ='Yesterday'
+                    else if(moment(args[1]).format(dateFormat) === moment(args[0]).subtract(2,'day').format(dateFormat))
+                        value ='The day before yesterday'
+
+                    return value
+                },this.VerifyString),
+                ReturnType.String, 
+                (expression) => BuiltInFunctions.ValidateOrder(expression, null, ReturnType.String, ReturnType.String))],
+                                
+            [ExpressionType.GetTimeOfDay, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                     let value:any
+                     const thisTime = moment.parseZone(args[0]).hour()*100 + moment.parseZone(args[0]).minute()
+                     if (thisTime === 0)
+                         value = 'midnight'
+                     else if (thisTime >0 && thisTime < 1200)
+                        value = 'morning'
+                     else if (thisTime === 1200)
+                        value = 'noon'
+                     else if (thisTime >1200 && thisTime < 1800)
+                        value = 'afternoon'
+                     else if (thisTime >=1800 && thisTime <= 2200)
+                        value = 'evening'
+                     else if (thisTime >2200 && thisTime <= 2359)
+                        value = 'night'
+ 
+                     return value
+                 },this.VerifyString),
+                 ReturnType.String, 
+                 (expression) => BuiltInFunctions.ValidateOrder(expression, null, ReturnType.String))],
+
             /*
 
             [ExpressionType.Optional, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Replace, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.ReplaceIgnoreCase, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.Split, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.Substring, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.ToLower, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.ToUpper, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.Trim, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.Join, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.AddDays, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.AddHours, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.AddMinutes, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.AddSeconds, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.DayOfMonth, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.DayOfWeek, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.DayOfYear, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Month, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Date, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.Year, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.UtcNow, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.FormatDateTime, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.SubtractFromTime, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.DateReadBack, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            [ExpressionType.GetTimeOfDay, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.Float, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.Int, BuiltInFunctions.Numeric(args => args[0] * args[1])],
             [ExpressionType.String, BuiltInFunctions.Numeric(args => args[0] * args[1])],
