@@ -1,6 +1,7 @@
 import { BuiltInFunctions } from './buildInFunction';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
+import { Constant } from './constant';
 
 /**
  * Type expected from evalating an expression.
@@ -9,22 +10,22 @@ export enum ReturnType {
     /**
      * True or false boolean value.
      */
-    Boolean = "boolean",
+    Boolean = 'boolean',
 
     /**
      * Numerical value like int, float, double, ...
      */
-    Number = "number",
+    Number = 'number',
 
     /**
      * Any value is possible.
      */
-    Object = "object",
+    Object = 'object',
 
     /**
      * String value.
      */
-    String = "string"
+    String = 'string'
 }
 
 /**
@@ -38,7 +39,7 @@ export class Expression {
      * Expected result of evaluating expression.
      */
     public get ReturnType(): ReturnType {
-        return this._evaluator.ReturnType;
+        return this.Evaluator.ReturnType;
     }
     public readonly Type: string;
 
@@ -47,7 +48,7 @@ export class Expression {
      */
     public Children: Expression[];
 
-    protected readonly _evaluator: ExpressionEvaluator;
+    protected readonly Evaluator: ExpressionEvaluator;
 
     /**
      * xpression constructor.
@@ -57,10 +58,9 @@ export class Expression {
      */
     public constructor(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]) {
         this.Type = type;
-        this._evaluator = evaluator === undefined ? BuiltInFunctions.Lookup(type) : evaluator;
+        this.Evaluator = evaluator === undefined ? BuiltInFunctions.Lookup(type) : evaluator;
         this.Children = children;
     }
-
 
     /**
      * Make an expression and validate it.
@@ -158,13 +158,10 @@ export class Expression {
     }
     */
 
-
     /**
      * Validate immediate expression.
      */
-    public validate(): void {
-        this._evaluator.ValidateExpression(this);
-    }
+    public validate = (): void => this.Evaluator.ValidateExpression(this);
 
     /**
      * Recursively validate the expression tree.
@@ -172,17 +169,17 @@ export class Expression {
     public validateTree(): void {
         this.validate();
         for (const child of this.Children) {
-            child.validate();
+            child.validateTree();
         }
     }
 
     /**
      * Evaluate the expression.
      * Global state to evaluate accessor expressions against.  Can Dictionary be otherwise reflection is used to access property and then indexer.
-     * @param state 
+     * @param state
      */
     public tryEvaluate(state: any): { value: any; error: string } {
-        return this._evaluator.TryEvaluate(this, state);
+        return this.Evaluator.TryEvaluate(this, state);
     }
 
     public toString(): string {
@@ -191,19 +188,38 @@ export class Expression {
 
     protected ToString(name: string): string {
         let builder: string = '';
-        builder = builder.concat(name, '(');
-        
-        let first: boolean = true;
-        for (const child of this.Children) {
-            if (first) {
-                first = false;
+        // Special support for memory paths
+        if (this.Type === ExpressionType.Accessor) {
+            const prop: any = (<Constant>(this.Children[0])).Value;
+            if (this.Children.length === 1) {
+                builder = builder.concat(prop);
             } else {
-                builder = builder.concat(', ');
+                builder = builder.concat(this.Children[1].toString(), '.', prop);
             }
-
-            builder = builder.concat(child.toString());
+        } else if (this.Type === ExpressionType.Element) {
+            builder = builder.concat(this.Children[0].toString(), '[', this.Children[1].toString(), ']');
+        } else {
+            const infix: boolean = this.Type.length > 0 && !new RegExp(/[a-z]/i).test(this.Type[0]) && this.Children.length >= 2;
+            if (!infix) {
+                builder = builder.concat(this.Type);
+            }
+            builder = builder.concat('(');
+            let first: boolean = true;
+            for (const child of this.Children) {
+                if (first) {
+                    first = false;
+                } else {
+                    if (infix) {
+                        builder = builder.concat(' ', this.Type, ' ');
+                    } else {
+                        builder = builder.concat(', ');
+                    }
+                }
+                builder = builder.concat(child.toString());
+            }
+            builder = builder.concat(')');
         }
-        builder = builder.concat(')');
+
         return builder;
     }
 }

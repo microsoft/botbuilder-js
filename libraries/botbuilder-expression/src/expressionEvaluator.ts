@@ -34,8 +34,8 @@ export class ExpressionEvaluator {
      * @param validator Static validation of expression.
      */
     public constructor(evaluator: EvaluateExpressionDelegate,
-        returnType: ReturnType = ReturnType.Object,
-        validator?: ValidateExpressionDelegate) {
+                       returnType: ReturnType = ReturnType.Object,
+                       validator?: ValidateExpressionDelegate) {
         this._evaluator = evaluator;
         this.ReturnType = returnType;
         this._validator = validator === undefined ? ((expr: Expression): any => { }) : validator;
@@ -51,5 +51,6 @@ export class ExpressionEvaluator {
      * Validate an expression.
      * @param expression Expression to validate.
      */
+    // tslint:disable-next-line: informative-docs
     public ValidateExpression = (expression: Expression): void  => this._validator(expression);
 }

@@ -15,9 +15,9 @@ export class Constant extends Expression {
     }
 
     public set Value(theValue: any) {
-        this._evaluator.ReturnType =
+        this.Evaluator.ReturnType =
             typeof theValue === 'string' ? ReturnType.String
-                : typeof theValue === 'boolean' ? ReturnType.Boolean
+                : typeof theValue === 'boolean' ? ReturnType.Boolean // boolean should in front of number, 'false' is also a number -> 0
                 : !Number.isNaN(theValue) ? ReturnType.Number
                         : ReturnType.Object;
 
@@ -35,10 +35,14 @@ export class Constant extends Expression {
     }
 
     public toString(): string {
+        if (this.Value === undefined) {
+            return 'null';
+        }
+
         if (typeof this.Value === 'string') {
             return `'${this.Value}'`;
-        } else {
-            return this.Value === undefined ? undefined : this.Value.toString();
         }
+
+        return this.Value === undefined ? undefined : this.Value.toString();
     }
 }
