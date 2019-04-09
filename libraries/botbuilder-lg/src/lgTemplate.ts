@@ -1,15 +1,30 @@
 
-import { TemplateDefinitionContext, ParametersContext } from './generated/LGFileParser';
 import { TerminalNode } from 'antlr4ts/tree';
+import { ParametersContext, TemplateDefinitionContext } from './generated/LGFileParser';
 
+/**
+ * Here is a data model that can easily understanded and used as the context or all kinds of visitors
+ * wether it's evalator, static checker, anayler.. etc
+ */
 export class LGTemplate {
+    /**
+     * Name of the template, what's followed by '#' in a LG file
+     */
     public Name: string;
+    /**
+     * Paramter list of this template
+     */
     public Parameters: string[];
+    /**
+     * Source of this template, source file path if it's from a certain file
+     */
     public Source: string;
+    /**
+     * The parse tree of this template
+     */
     public ParseTree: TemplateDefinitionContext;
 
-    constructor(parseTree: TemplateDefinitionContext, source: string)
-    {
+    constructor(parseTree: TemplateDefinitionContext, source: string) {
         this.ParseTree = parseTree;
         this.Source = source;
 
@@ -17,15 +32,16 @@ export class LGTemplate {
         this.Parameters = this.ExtractParameters(parseTree);
     }
 
-    private ExtractName = (parseTree: TemplateDefinitionContext) : string => {
+    private readonly ExtractName = (parseTree: TemplateDefinitionContext) : string => {
         return  parseTree.templateNameLine().templateName().text;
     }
 
-    private ExtractParameters = (parseTree: TemplateDefinitionContext) : string[] => {
+    private readonly ExtractParameters = (parseTree: TemplateDefinitionContext) : string[] => {
         const parameters: ParametersContext = parseTree.templateNameLine().parameters();
         if (parameters !== undefined) {
             return parameters.IDENTIFIER().map((x: TerminalNode) => x.text);
         }
+
         return [];
     }
 }

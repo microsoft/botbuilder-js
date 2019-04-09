@@ -1,4 +1,4 @@
-﻿# BasicJoin
+# BasicJoin
 - IF: {count(items) == 2}
   - {join(items, ',')}
 - ELSEIF: {count(items) > 2}

@@ -16,8 +16,6 @@ export class GetMethodExtensions implements IGetMethod {
 
         // tslint:disable-next-line: switch-default
         switch (name) {
-            case 'count':
-                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.Count));
             case 'join':
                 return new ExpressionEvaluator(BuiltInFunctions.Apply(this.Join));
             case 'foreach':
@@ -29,15 +27,6 @@ export class GetMethodExtensions implements IGetMethod {
         }
 
         return BuiltInFunctions.Lookup(name);
-    }
-
-    public Count = (paramters: any[]): any => {
-        if (paramters[0] instanceof Array) {
-            const li: any = paramters[0];
-
-            return li.length;
-        }
-        throw new Error('NotImplementedException');
     }
 
     public Join = (paramters: any[]): any => {
@@ -81,6 +70,7 @@ export class GetMethodExtensions implements IGetMethod {
             }
 
             func = func.substr(1, func.length - 2);
+            
             return li.map((x: any) => {
                 const newScope: any = this.evaluator.ConstructScope(func, [x]);
 

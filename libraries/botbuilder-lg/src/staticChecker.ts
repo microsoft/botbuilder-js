@@ -1,10 +1,10 @@
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ExpressionEngine } from 'botbuilder-expression-parser';
+import { keyBy } from 'lodash';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions } from './getMethodExtensions';
 import { LGTemplate } from './lgTemplate';
-import { keyBy } from 'lodash';
 
 export enum ReportEntryType {
     ERROR,
@@ -31,7 +31,7 @@ export class ReportEntry {
 // tslint:disable-next-line: completed-docs
 export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> implements LGFileParserVisitor<ReportEntry[]> {
     public readonly Templates:  LGTemplate[];
-    public TemplateMap: {[name:string]: LGTemplate};
+    public TemplateMap: {[name: string]: LGTemplate};
     constructor(templates: LGTemplate[]) {
         super();
         this.Templates = templates;
@@ -41,18 +41,18 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
         let result: ReportEntry[] = [];
 
         // check dup, before we build up TemplateMap
-        let grouped: {[name:string]:LGTemplate[]} = {};
+        const grouped: {[name: string]: LGTemplate[]} = {};
         this.Templates.forEach(t => {
             if (!(t.Name in grouped)) {
                 grouped[t.Name] = [];
-            } 
+            }
             grouped[t.Name].push(t);
         });
 
-        for (let key in grouped) {
+        for (const key in grouped) {
             const group = grouped[key];
             if (group.length > 1) {
-                const sources = group.map(x => x.Source).join(":");
+                const sources = group.map(x => x.Source).join(':');
                 result.push(new ReportEntry(`Dup definitions found for template  ${key} in ${sources}`));
             }
         }
@@ -68,11 +68,11 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
         if (this.Templates.length <= 0) {
             result.push(new ReportEntry(`File must have at least one template definition`, ReportEntryType.WARN));
         }
-       
+
         this.Templates.forEach((template: LGTemplate) => {
             result = result.concat(this.visit(template.ParseTree));
         });
-        
+
         return result;
     }
 
@@ -234,7 +234,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
         let result: ReportEntry[] = [];
         exp = exp.substr(3, exp.length - 6);
         const matches: string[] = exp.match(/@\{[^{}]+\}/g);
-        if(matches !== null && matches !== undefined) {
+        if (matches !== null && matches !== undefined) {
             for (const match of matches) {
                 const newExp: string = match.substr(1);
                 if (newExp.startsWith('{[') && newExp.endsWith(']}')) {
@@ -242,7 +242,6 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
                 }
             }
         }
-        
 
         return result;
     }

@@ -26,7 +26,7 @@ export class EvaluationTarget {
 // tslint:disable-next-line: max-classes-per-file
 export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFileParserVisitor<string> {
     public readonly Templates: LGTemplate[];
-    public readonly TemplateMap: {[name:string]: LGTemplate};
+    public readonly TemplateMap: {[name: string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
 
     private readonly GetMethodX: IGetMethod;
@@ -34,7 +34,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     constructor(templates: LGTemplate[], getMethod: IGetMethod) {
         super();
         this.Templates = templates;
-        this.TemplateMap = keyBy(templates, t => t.Name);
+        this.TemplateMap = keyBy(templates, (t: LGTemplate) => t.Name);
         this.GetMethodX = getMethod === undefined ? new GetMethodExtensions(this) : getMethod;
     }
 
@@ -80,7 +80,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     public visitConditionalBody(ctx: lp.ConditionalBodyContext) : string {
         const ifRules: lp.IfConditionRuleContext[] = ctx.conditionalTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
-            if (this.EvalCondition(ifRule.ifCondition())) {
+            if (this.EvalCondition(ifRule.ifCondition()) && ifRule.normalTemplateBody() !== undefined) {
                 return this.visit(ifRule.normalTemplateBody());
             }
         }
