@@ -139,7 +139,7 @@ const dataSource = [
 
   //Date and time function test
   //init dateTime: 2018-03-15T13:00:00Z
-  /*
+  
   ["addDays(timestamp, 1)", "2018-03-16T13:00:00.0000000Z"],
   ["addDays(timestamp, 1,'MM-dd-yy')", "03-16-18"],
   ["addHours(timestamp, 1)", "2018-03-15T14:00:00.0000000Z"],
@@ -159,6 +159,7 @@ const dataSource = [
   ["subtractFromTime(timestamp, 1, 'Day')", "2018-03-14T13:00:00.0000000Z"],
   ["subtractFromTime(timestamp, 1, 'Minute')", "2018-03-15T12:59:00.0000000Z"],
   ["subtractFromTime(timestamp, 1, 'Second')", "2018-03-15T12:59:59.0000000Z"],
+  ["subtractFromTime(timestamp, 1, 'Week')", "2018-03-08T13:00:00.000000Z"],
   ["dateReadBack(timestamp, addDays(timestamp, 1))", "Tomorrow"],
   ["dateReadBack(addDays(timestamp, 1),timestamp))", "Yesterday"],
   ["getTimeOfDay('2018-03-15T00:00:00Z')", "midnight"],
@@ -168,7 +169,7 @@ const dataSource = [
   ["getTimeOfDay('2018-03-15T18:00:00Z')", "evening"],
   ["getTimeOfDay('2018-03-15T22:00:00Z')", "evening"],
   ["getTimeOfDay('2018-03-15T23:00:00Z')", "night"],
-  */
+  
 
   // conversion functions test
   ["float('10.333')", 10.333],

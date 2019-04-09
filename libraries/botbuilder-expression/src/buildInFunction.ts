@@ -1,6 +1,5 @@
 
 import * as moment from 'moment';
-import { start } from 'repl';
 import { Constant } from './constant';
 import { Expression, ReturnType } from './expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from './expressionEvaluator';
@@ -17,7 +16,7 @@ import { Extensions } from './extensions';
  *  </remarks>
  */
 export class BuiltInFunctions {
-
+    public static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.0000000[Z]';
     public static _functions: Map<string, ExpressionEvaluator> = BuiltInFunctions.BuildFunctionLookup();
     /**
      * Validate that expression has a certain number of children that are of any of the supported types.
@@ -345,6 +344,17 @@ export class BuiltInFunctions {
     }
 
     /**
+     * Transform a datetime into another datetime.
+     * @param timestamp Timestamp as string.
+     * @param interval Seconds,minutes,hours or days. 'ss','mm','hh','d'
+     * @param format How the format should looks like.
+     * @returns String of transformed outcome.
+     */
+    public static TimeTransform(timestamp: string, numOfTransformation: any, interval: string, format: string = 'YYYY-MM-DDTHH:mm:ss.0000000[Z]'): string {
+        return moment(timestamp).utc().add(numOfTransformation, interval).format(BuiltInFunctions.TimestampFormatter(format));
+    }
+
+    /**
      * Comparison operators that have 2 args and work over strings or numbers.
      * @param func Function to apply.
      */
@@ -373,6 +383,23 @@ export class BuiltInFunctions {
         }
 
         return evaluator;
+    }
+
+    public static TimestampFormatter(formatter: string): string {
+        return formatter.replace(/dd/g, 'DD').replace(/yyyy/g, 'YYYY').replace(/d/g, 'D').replace(/y/g, 'Y');
+    }
+
+    public static TimeUnitTransformer(duration: number , cSharpStr: string): {duration: number; tsStr: string} {
+        switch (cSharpStr) {
+            case 'Day': return {duration, tsStr: 'days'};
+            case 'Week': return {duration : duration * 7, tsStr: 'days'};
+            case 'Second': return {duration, tsStr: 'seconds'};
+            case 'Minute': return {duration, tsStr: 'minutes'};
+            case 'Hour': return {duration, tsStr: 'hours'};
+            case 'Month': return {duration, tsStr: 'months'};
+            case 'Year': return {duration, tsStr: 'years'};
+            default : return {duration, tsStr: 'seconds'};
+        }
     }
 
     private static ValidateAccessor(expression: Expression): void {
@@ -644,21 +671,143 @@ export class BuiltInFunctions {
                 BuiltInFunctions.ValidateBinary)],
 
             // datetime
-            //[ExpressionType.AddDays, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            //[ExpressionType.AddHours, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            //[ExpressionType.AddMinutes, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            //[ExpressionType.AddSeconds, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            //[ExpressionType.DayOfMonth, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            //[ExpressionType.DayOfWeek, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            //[ExpressionType.DayOfYear, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            //[ExpressionType.Month, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            //[ExpressionType.Date, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            //[ExpressionType.Year, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            //[ExpressionType.UtcNow, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            //[ExpressionType.FormatDateTime, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            //[ExpressionType.SubtractFromTime, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            //[ExpressionType.DateReadBack, BuiltInFunctions.Numeric(args => args[0] * args[1])],
-            //[ExpressionType.GetTimeOfDay, BuiltInFunctions.Numeric(args => args[0] * args[1])],
+            [ExpressionType.AddDays, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    const format: string = (!args[2]) ? BuiltInFunctions.DefaultDateTimeFormat : args[2];
+
+                    return this.TimeTransform(args[0], args[1], 'd', format);
+                }),
+                ReturnType.String,
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 3))],
+            [ExpressionType.AddHours, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    const format: string = (!args[2]) ? BuiltInFunctions.DefaultDateTimeFormat : args[2];
+
+                    return this.TimeTransform(args[0], args[1], 'h', format);
+                }),
+                ReturnType.String,
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 3))],
+            [ExpressionType.AddMinutes, new ExpressionEvaluator(
+                 BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    const format: string = (!args[2]) ? BuiltInFunctions.DefaultDateTimeFormat : args[2];
+
+                    return this.TimeTransform(args[0], args[1], 'minutes', format);
+                }),
+                 ReturnType.String,
+                 (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 3))],
+            [ExpressionType.AddSeconds,  new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    const format: string = (!args[2]) ? BuiltInFunctions.DefaultDateTimeFormat : args[2];
+
+                    return this.TimeTransform(args[0], args[1], 'seconds', format);
+                }),
+                ReturnType.String,
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 3))],
+            [ExpressionType.DayOfMonth,  new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    return (moment(args[0]).date());
+                },                     BuiltInFunctions.VerifyString),
+                ReturnType.Number,
+                BuiltInFunctions.ValidateUnary)],
+            [ExpressionType.DayOfWeek, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    return (moment(args[0]).days());
+                },                     BuiltInFunctions.VerifyString),
+                ReturnType.Number,
+                BuiltInFunctions.ValidateUnary)],
+            [ExpressionType.DayOfYear, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    return (moment(args[0]).dayOfYear());
+                },                     BuiltInFunctions.VerifyString),
+                ReturnType.Number,
+                BuiltInFunctions.ValidateUnary)],
+            [ExpressionType.Month, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => moment(args[0]).month() + 1, BuiltInFunctions.VerifyString),
+                ReturnType.Number,
+                BuiltInFunctions.ValidateUnaryString)],
+            [ExpressionType.Date, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => moment(args[0]).utc().format('M/DD/YYYY'), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnaryString)],
+            [ExpressionType.Year, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => moment(args[0]).year(), BuiltInFunctions.VerifyString),
+                ReturnType.Number,
+                BuiltInFunctions.ValidateUnaryString)],
+            [ExpressionType.UtcNow, new ExpressionEvaluator(BuiltInFunctions.Apply(
+                (args: ReadonlyArray<any>) => moment().utc().format((args.length === 1 ? args[0] : BuiltInFunctions.DefaultDateTimeFormat))),
+                                                            ReturnType.String,
+                                                            (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 0, Number.MAX_SAFE_INTEGER, ReturnType.String))],
+            [ExpressionType.FormatDateTime, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => moment(args[0]).utc()
+                .format((args.length === 2 ? BuiltInFunctions.TimestampFormatter(args[1]) : BuiltInFunctions.DefaultDateTimeFormat)),
+                                       BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.String))],
+            [ExpressionType.SubtractFromTime, new ExpressionEvaluator(
+                (expr: Expression, state: any): {value: any; error: string} => {
+                    let value: any;
+                    let error: any;
+                    let args: ReadonlyArray<any>;
+                    ({args, error} = BuiltInFunctions.EvaluateChildren(expr, state));
+
+                    if (error === undefined) {
+                        if (typeof args[0] === 'string' && Number.isInteger(args[1]) && typeof args[2] === 'string') {
+                            const format: string = (args.length === 4 ? BuiltInFunctions.TimestampFormatter(args[3]) : BuiltInFunctions.DefaultDateTimeFormat);
+                            const {duration, tsStr} = BuiltInFunctions.TimeUnitTransformer(args[1], args[2]);
+                            const dur: any = duration;
+                            value = moment(args[0]).utc().subtract(dur, tsStr).format(format);
+                        } else {
+                            error = `${expr} can't evaluate.`;
+                        }
+                    }
+
+                    return {value, error};
+                },
+                ReturnType.String,
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.Number, ReturnType.String))],
+            [ExpressionType.DateReadBack, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                        let value: any;
+                        const dateFormat: string = 'YYYY-MM-DD';
+
+                        if (moment(args[0]).format(dateFormat) === moment(args[1]).format(dateFormat)) {
+                            value = 'Today';
+                        } else if (moment(args[0]).format(dateFormat) === moment(args[1]).subtract(1, 'day').format(dateFormat)) {
+                            value = 'Tomorrow';
+                             } else if (moment(args[0]).format(dateFormat) === moment(args[1]).subtract(2, 'day').format(dateFormat)) {
+                            value = 'The day after tomorrow';
+                             } else if (moment(args[1]).format(dateFormat) === moment(args[0]).subtract(1, 'day').format(dateFormat)) {
+                            value = 'Yesterday';
+                             } else if (moment(args[1]).format(dateFormat) === moment(args[0]).subtract(2, 'day').format(dateFormat)) {
+                            value = 'The day before yesterday';
+                             }
+
+                        return value;
+                    },                 this.VerifyString),
+                ReturnType.String,
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.String, ReturnType.String))],
+            [ExpressionType.GetTimeOfDay, new ExpressionEvaluator(
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                        let value: any;
+                        const thisTime: number  = moment.parseZone(args[0]).hour() * 100 + moment.parseZone(args[0]).minute();
+                        if (thisTime === 0) {
+                            value = 'midnight';
+                        } else if (thisTime > 0 && thisTime < 1200) {
+                        value = 'morning';
+                             } else if (thisTime === 1200) {
+                        value = 'noon';
+                             } else if (thisTime > 1200 && thisTime < 1800) {
+                        value = 'afternoon';
+                             } else if (thisTime >= 1800 && thisTime <= 2200) {
+                        value = 'evening';
+                             } else if (thisTime > 2200 && thisTime <= 2359) {
+                        value = 'night';
+                             }
+
+                        return value;
+                    },                 this.VerifyString),
+                ReturnType.String,
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.String))],
 
             [ExpressionType.Float, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => parseFloat(args[0])), ReturnType.Number, BuiltInFunctions.ValidateUnary)],
             [ExpressionType.Int, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => parseInt(args[0], 10)), ReturnType.Number, BuiltInFunctions.ValidateUnary)],
