@@ -36,10 +36,14 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
                 .join(' => ')}`);
         }
 
+        // Using a stack to track the evalution trace
         this.evalutationTargetStack.push(new EvaluationTarget(templateName, undefined));
         const rawDependencies: string[] = this.visit(this.TemplateMap[templateName].ParseTree);
 
-        
+        // we don't exclude paratemters any more
+        // because given we don't track down for templates have paramters
+        // the only scenario that we are still analyzing an paramterized template is 
+        // this template is root template to anaylze, in this we also don't have exclude paramters
         const dependencies: string[] = Array.from(new Set(rawDependencies));
         this.evalutationTargetStack.pop();
 
@@ -79,8 +83,9 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
             if (expressions !== undefined && expressions.length > 0) {
                 result = result.concat(this.AnalyzeExpression(expressions[0].text));
             }
-
-            result = result.concat(this.visit(ifRule.normalTemplateBody()));
+            if (ifRule.normalTemplateBody() !== undefined) {
+                result = result.concat(this.visit(ifRule.normalTemplateBody()));
+            }
         }
 
         return result;
@@ -129,8 +134,8 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
                 const str: string = (expression).Value;
                 if (str.startsWith('[') && str.endsWith(']')) {
                     found = true;
-                    
-                    this.AnalyzeTemplateRef(str).forEach(x => references.add(x));
+
+                    this.AnalyzeTemplateRef(str).forEach((x: string) => references.add(x));
                 } else if (str.startsWith('{') && str.endsWith('}')) {
                     found = true;
                     for (const childRef of this.AnalyzeExpression(str)) {
@@ -157,19 +162,18 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
 
             // evaluate all arguments using ExpressoinEngine
             const argsEndPos: number = exp.lastIndexOf(')');
-            
+
             if (argsEndPos < 0 || argsEndPos < argsStartPos + 1) {
                 throw Error(`Not a valid template ref: ${exp}`);
             }
 
-            const args = exp.substr(argsStartPos + 1, argsEndPos - argsStartPos - 1).split(',');
-            const refs = flatten(args.map(arg => this.AnalyzeExpression(arg)));
+            const args: string[] = exp.substr(argsStartPos + 1, argsEndPos - argsStartPos - 1).split(',');
 
-            // Before we have a matural solution to analyze paramterized template, we stop digging into 
+            // Before we have a matural solution to analyze paramterized template, we stop digging into
             // templates with paramters, we just analyze it's args.
             // With this approach we may not get a very fine-grained result
             // but the result will still be accurate
-            return refs;
+            return flatten(args.map((arg: string) => this.AnalyzeExpression(arg)));
         } else {
             return this.AnalyzeTemplate(exp);
         }
