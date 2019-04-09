@@ -1,16 +1,13 @@
-
 import { Analyzer } from './analyzer';
-
-// tslint:disable-next-line: no-require-imports
 import { Expander, IGetMethod } from './expander';
 import { Extractor } from './extractor';
 import { LGTemplate } from './lgTemplate';
-import { ReportEntry, ReportEntryType, StaticChecker } from './staticChecker';
+import { ReportEntry, StaticChecker } from './staticChecker';
 import { TemplateEngine } from './templateEngine';
 
 // tslint:disable-next-line: completed-docs
 export class MSLGTool {
-    public MergerMessages: ReportEntry[] = [];
+    public MergerMessages: string[] = [];
     public MergedTemplates: Map<string, any> = new Map<string, any>();
     public NameCollisions: string[] = [];
 
@@ -18,11 +15,15 @@ export class MSLGTool {
 
     public ValidateFile(lgFileContent: string): string[] {
         let errors: string[] = [];
-        this.Templates = this.BuildTemplates(lgFileContent, errors);
-        if (this.Templates !== undefined && this.Templates.length > 0) {
-            // run static checker to get warning messages
-            errors = errors.concat(this.RunStaticCheck(this.Templates));
-            this.RunTemplateExtractor(this.Templates);
+        try {
+            this.Templates = this.BuildTemplates(lgFileContent);
+            if (this.Templates !== undefined && this.Templates.length > 0) {
+                // run static checker to get warning messages
+                errors = this.RunStaticCheck(this.Templates);
+                this.RunTemplateExtractor(this.Templates);
+            }
+        } catch (e) {
+            errors = e.message.split('\n');
         }
 
         return errors;
@@ -40,15 +41,13 @@ export class MSLGTool {
         return expander.ExpandTemplate(templateName, scope);
     }
 
-    private BuildTemplates(lgFileContent: string, initErrorMessages: string[] = []): LGTemplate[] {
+    private BuildTemplates(lgFileContent: string): LGTemplate[] {
         try {
             const engine: TemplateEngine = TemplateEngine.fromText(lgFileContent);
 
             return engine.templates;
         } catch (e) {
-            initErrorMessages.concat(e.message.split('\n'));
-
-            return undefined;
+            throw e;
         }
     }
 
@@ -81,7 +80,7 @@ export class MSLGTool {
                 } else {
                     // tslint:disable-next-line: max-line-length
                     const mergeError: ReportEntry = new ReportEntry(`Template ${template[0]} occurred in both normal and condition templates`);
-                    this.MergerMessages.push(mergeError);
+                    this.MergerMessages.push(mergeError.toString());
                 }
             } else {
                 this.MergedTemplates.set(template[0], template[1]);
