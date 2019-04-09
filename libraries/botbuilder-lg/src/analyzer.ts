@@ -75,10 +75,9 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         const ifRules: lp.IfConditionRuleContext[] = ctx.conditionalTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
-
-            const expression: TerminalNode = ifRule.ifCondition().EXPRESSION(0);
-            if (expression !== undefined) {
-                result = result.concat(this.AnalyzeExpression(expression.text));
+            const expressions: TerminalNode[] = ifRule.ifCondition().EXPRESSION();
+            if (expressions !== undefined && expressions.length > 0) {
+                result = result.concat(this.AnalyzeExpression(expressions[0].text));
             }
 
             result = result.concat(this.visit(ifRule.normalTemplateBody()));

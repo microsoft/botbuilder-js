@@ -4,8 +4,8 @@ import { Analyzer } from './analyzer';
 // tslint:disable-next-line: no-require-imports
 import { Expander, IGetMethod } from './expander';
 import { Extractor } from './extractor';
-import { ReportEntry, StaticChecker } from './staticChecker';
 import { LGTemplate } from './lgTemplate';
+import { ReportEntry, StaticChecker } from './staticChecker';
 import { TemplateEngine } from './templateEngine';
 
 // tslint:disable-next-line: completed-docs
@@ -16,14 +16,17 @@ export class MSLGTool {
 
     private Templates: LGTemplate[];
 
-
-    // TODO: @feich, we should just use Template.FromFile\FromText and then catch Error
     public ValidateFile(lgFileContent: string): ReportEntry[] {
-        let initErrorMessages: ReportEntry[] = [];
-        this.Templates = this.BuildTemplates(lgFileContent, initErrorMessages);
-        this.RunTemplateExtractor(this.Templates);
+        let errors: ReportEntry[] = [];
+        this.Templates = this.BuildTemplates(lgFileContent, errors);
+        if (this.Templates !== undefined) {
+            errors = errors.concat(this.RunStaticCheck(this.Templates));
+            if (errors === undefined || errors.length === 0) {
+                this.RunTemplateExtractor(this.Templates);
+            }
+        }
 
-        return this.RunStaticCheck(this.Templates, initErrorMessages);
+        return errors;
     }
 
     public GetTemplateVariables(templateName: string): string[] {
@@ -42,20 +45,17 @@ export class MSLGTool {
             const engine = TemplateEngine.fromText(lgFileContent);
             return engine.templates;
         } catch (e) {
-            throw e;
+            initErrorMessages.push(new ReportEntry(e.message));
+
+            return undefined;
         }
     }
 
     // tslint:disable-next-line: max-line-length
-    private RunStaticCheck(templates: LGTemplate[], initExceptions: ReportEntry[] = undefined): ReportEntry[] {
-        if (initExceptions === undefined) {
-            initExceptions = [];
-        }
-
+    private RunStaticCheck(templates: LGTemplate[]): ReportEntry[] {
         const checker: StaticChecker = new StaticChecker(templates);
-        let reportMessages: ReportEntry[] = checker.Check();
 
-        return reportMessages.concat(initExceptions);
+        return checker.Check();
     }
 
     private RunTemplateExtractor(lgtemplates: LGTemplate[]): void {
