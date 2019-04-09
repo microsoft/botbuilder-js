@@ -100,7 +100,7 @@ export class TemplateEngine {
 
         const errorMessages: ReportEntry[] = reportMessages.filter((message: ReportEntry) => message.Type === ReportEntryType.ERROR);
         if (errorMessages.length > 0) {
-            throw Error(errorMessages.join('\n'));
+            throw Error(reportMessages.map((error: ReportEntry) => error.toString()).join('\n'));
         }
     }
 

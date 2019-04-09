@@ -5,7 +5,7 @@ import { Analyzer } from './analyzer';
 import { Expander, IGetMethod } from './expander';
 import { Extractor } from './extractor';
 import { LGTemplate } from './lgTemplate';
-import { ReportEntry, StaticChecker } from './staticChecker';
+import { ReportEntry, ReportEntryType, StaticChecker } from './staticChecker';
 import { TemplateEngine } from './templateEngine';
 
 // tslint:disable-next-line: completed-docs
@@ -16,14 +16,13 @@ export class MSLGTool {
 
     private Templates: LGTemplate[];
 
-    public ValidateFile(lgFileContent: string): ReportEntry[] {
-        let errors: ReportEntry[] = [];
+    public ValidateFile(lgFileContent: string): string[] {
+        let errors: string[] = [];
         this.Templates = this.BuildTemplates(lgFileContent, errors);
-        if (this.Templates !== undefined) {
+        if (this.Templates !== undefined && this.Templates.length > 0) {
+            // run static checker to get warning messages
             errors = errors.concat(this.RunStaticCheck(this.Templates));
-            if (errors === undefined || errors.length === 0) {
-                this.RunTemplateExtractor(this.Templates);
-            }
+            this.RunTemplateExtractor(this.Templates);
         }
 
         return errors;
@@ -37,25 +36,27 @@ export class MSLGTool {
 
     public ExpandTemplate(templateName: string, scope: any, methodBinder?: IGetMethod): string[] {
         const expander: Expander = new Expander(this.Templates, methodBinder);
+
         return expander.ExpandTemplate(templateName, scope);
     }
 
-    private BuildTemplates(lgFileContent: string, initErrorMessages: ReportEntry[] = []): LGTemplate[] {
+    private BuildTemplates(lgFileContent: string, initErrorMessages: string[] = []): LGTemplate[] {
         try {
-            const engine = TemplateEngine.fromText(lgFileContent);
+            const engine: TemplateEngine = TemplateEngine.fromText(lgFileContent);
+
             return engine.templates;
         } catch (e) {
-            initErrorMessages.push(new ReportEntry(e.message));
+            initErrorMessages.concat(e.message.split('\n'));
 
             return undefined;
         }
     }
 
     // tslint:disable-next-line: max-line-length
-    private RunStaticCheck(templates: LGTemplate[]): ReportEntry[] {
+    private RunStaticCheck(templates: LGTemplate[]): string[] {
         const checker: StaticChecker = new StaticChecker(templates);
 
-        return checker.Check();
+        return checker.Check().map((error: ReportEntry) => error.toString());
     }
 
     private RunTemplateExtractor(lgtemplates: LGTemplate[]): void {
