@@ -199,6 +199,21 @@ export class BuiltInFunctions {
     }
 
     /**
+     * Verify value is an list.
+     * @param value alue to check.
+     * @param expression Expression that led to value.
+     * @returns Error or undefined if invalid.
+     */
+    public static VerifyList(value: any, expression: Expression): string {
+        let error: string;
+        if (!(value instanceof Array)) {
+            error = `${expression} is not a list or array.`;
+        }
+
+        return error;
+    }
+
+    /**
      * Verify value is a string.
      * @param value alue to check.
      * @param expression Expression that led to value.
@@ -516,11 +531,11 @@ export class BuiltInFunctions {
                                                     (args: ReadonlyArray<any>) => args[0] % args[1], BuiltInFunctions.VerifyInteger),
                                                          ReturnType.Number, BuiltInFunctions.ValidateBinaryNumber)],
             [ExpressionType.Average, new ExpressionEvaluator(
-                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => (args[0].reduce((x: number, y: number) => x + y)) / args[0].length),
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => (args[0].reduce((x: number, y: number) => x + y)) / args[0].length, BuiltInFunctions.VerifyList),
                 ReturnType.Number,
                 BuiltInFunctions.ValidateUnary)],
             [ExpressionType.Sum, new ExpressionEvaluator(
-                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].reduce((x: number, y: number) => x + y)),
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].reduce((x: number, y: number) => x + y), BuiltInFunctions.VerifyList),
                 ReturnType.Number,
                 BuiltInFunctions.ValidateUnary)],
             [ExpressionType.Count, new ExpressionEvaluator(

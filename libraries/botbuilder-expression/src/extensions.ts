@@ -6,19 +6,46 @@ export class Extensions {
 
     /**
      * Return the static reference paths to memory.
-     * Return all static paths to memory.  If there is a computed element index, then the path is terminated there, 
+     * Return all static paths to memory.  If there is a computed element index, then the path is terminated there,
      * but you might get other paths from the computed part as well.
      * @param expression Expression to get references from.
      * @returns Hash set of the static reference paths.
      */
     public static References(expression: Expression): ReadonlyArray<string> {
-        let reference = new Set<string>();
-        let path = this.ReferenceWalk(expression, reference);
+        let reference: Set<string> = new Set<string>();
+        const path: string = this.ReferenceWalk(expression, reference);
         if (path !== undefined) {
-            reference.add(path);
+            reference = reference.add(path);
         }
 
         return Array.from(reference);
+    }
+
+    /**
+     * Do a deep equality between expressions.
+     * @param expr Base expression.
+     * @param other Other expression.
+     * @returns True if expressions are the same.
+     */
+    public static DeepEquals(expr: Expression, other: Expression): boolean {
+        let eq: boolean = true;
+        if (expr !== undefined && other !== undefined) {
+            eq = expr.Type === other.Type;
+            if (eq) {
+                if (expr.Type === ExpressionType.Constant) {
+                    const val: any = (<Constant>expr).Value;
+                    const otherVal: any = (<Constant>other).Value;
+                    eq = val === otherVal || (val !== undefined && val === otherVal);
+                } else {
+                    eq = expr.Children.length === other.Children.length;
+                    for (let i: number = 0; i < expr.Children.length; ++i) {
+                        eq = Extensions.DeepEquals(expr.Children[i], other.Children[i]);
+                    }
+                }
+            }
+        }
+
+        return eq;
     }
 
     /**
@@ -29,7 +56,7 @@ export class Extensions {
      * @returns Accessor path of expression.
      */
     public static ReferenceWalk(expression: Expression, references: Set<string>,
-        extension?: (arg0: Expression) => boolean): string {
+                                extension?: (arg0: Expression) => boolean): string {
         let path: string;
         if (extension === undefined || !extension(expression)) {
             const children: Expression[] = expression.Children;
@@ -78,7 +105,7 @@ export class Extensions {
         let error: string;
         if (instance !== undefined) {
             //TODO
-            if(instance instanceof Map && <Map<string, any>>instance.get(property) !== undefined) {
+            if (instance instanceof Map && <Map<string, any>>instance.get(property) !== undefined) {
                 value = <Map<string, any>>instance.get(property);
             } else {
                 value = instance[property];

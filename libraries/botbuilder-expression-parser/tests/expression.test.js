@@ -295,7 +295,7 @@ describe('expression functional test', () => {
           }
         }
         else {
-          assert(actual == expected,`actual is: ${actual} for case ${input}`);
+          assert(actual === expected,`actual is: ${actual} for case ${input}`);
         }
     }
   });
