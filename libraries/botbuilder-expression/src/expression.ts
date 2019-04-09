@@ -1,7 +1,7 @@
 import { BuiltInFunctions } from './buildInFunction';
+import { Constant } from './constant';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
-import { Constant } from './constant';
 
 /**
  * Type expected from evalating an expression.

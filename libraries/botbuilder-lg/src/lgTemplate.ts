@@ -1,4 +1,5 @@
 
+// tslint:disable-next-line: no-submodule-imports
 import { TerminalNode } from 'antlr4ts/tree';
 import { ParametersContext, TemplateDefinitionContext } from './generated/LGFileParser';
 

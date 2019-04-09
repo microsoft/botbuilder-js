@@ -2,6 +2,9 @@ import { Constant } from './constant';
 import { Expression } from './expression';
 import { ExpressionType } from './expressionType';
 
+/**
+ * Some util and extension functions
+ */
 export class Extensions {
 
     /**
@@ -102,9 +105,10 @@ export class Extensions {
      */
     public static AccessProperty(instance: any, property: string, expression?: Expression): { value: any; error: string } {
         let value: any;
+        // tslint:disable-next-line: prefer-const
         let error: string;
         if (instance !== undefined) {
-            //TODO
+            // todo, Is there a better way to access value, or any case is not listed below?
             if (instance instanceof Map && <Map<string, any>>instance.get(property) !== undefined) {
                 value = <Map<string, any>>instance.get(property);
             } else {

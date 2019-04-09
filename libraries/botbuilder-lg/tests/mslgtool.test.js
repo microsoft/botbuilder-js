@@ -12,7 +12,9 @@ describe('MSLGTool', function () {
         let errors = new MSLGTool().ValidateFile(GetExampleFile('StaticCheckerErrors.lg'));
         assert.strictEqual(errors.length, 2);
         assert.strictEqual(errors[0], "[ERROR]: There is no template body in template template");
-        assert.strictEqual(errors[1], "[WARN]: condition is not end with else: \'-IF:{foo == \'bar\'}\r\n-ok<EOF>\'");
+        var warnOptions = ["[WARN]: condition is not end with else: \'-IF:{foo == \'bar\'}\r\n-ok<EOF>\'",
+                            "[WARN]: condition is not end with else: \'-IF:{foo == \'bar\'}\n-ok<EOF>\'"]
+        assert(warnOptions.includes(errors[1]));
     });
 
     it('TestValidateReturnAntlrParseError', function () {

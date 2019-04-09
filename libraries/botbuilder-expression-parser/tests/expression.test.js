@@ -139,7 +139,6 @@ const dataSource = [
 
   //Date and time function test
   //init dateTime: 2018-03-15T13:00:00Z
-  
   ["addDays(timestamp, 1)", "2018-03-16T13:00:00.0000000Z"],
   ["addDays(timestamp, 1,'MM-dd-yy')", "03-16-18"],
   ["addHours(timestamp, 1)", "2018-03-15T14:00:00.0000000Z"],
@@ -152,14 +151,14 @@ const dataSource = [
   ["dayOfWeek(timestamp)", 4],//Thursday
   ["dayOfYear(timestamp)", 74],
   ["month(timestamp)", 3],
-  ["date(timestamp)", "3/15/2018"],//Dfefault. TODO
+  ["date(timestamp)", "3/15/2018"],//Default. TODO
   ["year(timestamp)", 2018],
   ["formatDateTime(timestamp)", "2018-03-15T13:00:00.0000000Z"],
   ["formatDateTime(timestamp, 'MM-dd-yy')", "03-15-18"],
   ["subtractFromTime(timestamp, 1, 'Day')", "2018-03-14T13:00:00.0000000Z"],
   ["subtractFromTime(timestamp, 1, 'Minute')", "2018-03-15T12:59:00.0000000Z"],
   ["subtractFromTime(timestamp, 1, 'Second')", "2018-03-15T12:59:59.0000000Z"],
-  ["subtractFromTime(timestamp, 1, 'Week')", "2018-03-08T13:00:00.000000Z"],
+  ["subtractFromTime(timestamp, 1, 'Week')", "2018-03-08T13:00:00.0000000Z"],
   ["dateReadBack(timestamp, addDays(timestamp, 1))", "Tomorrow"],
   ["dateReadBack(addDays(timestamp, 1),timestamp))", "Yesterday"],
   ["getTimeOfDay('2018-03-15T00:00:00Z')", "midnight"],

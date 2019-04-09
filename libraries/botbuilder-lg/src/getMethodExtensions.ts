@@ -1,4 +1,4 @@
-import { ExpressionEvaluator, BuiltInFunctions } from 'botbuilder-expression';
+import { BuiltInFunctions, ExpressionEvaluator } from 'botbuilder-expression';
 import { Evaluator } from './evaluator';
 
 export interface IGetMethod {
@@ -34,7 +34,7 @@ export class GetMethodExtensions implements IGetMethod {
             paramters[0] instanceof Array &&
             typeof (paramters[1]) === 'string') {
             const li: any = paramters[0];
-            const sep: string = paramters[1] + ' ';
+            const sep: string = paramters[1].concat(' ');
 
             return li.join(sep);
         }
@@ -42,16 +42,16 @@ export class GetMethodExtensions implements IGetMethod {
         if (paramters.length === 3 &&
             paramters[0] instanceof Array &&
             typeof (paramters[1]) === 'string' &&
-            typeof (paramters[2] === 'string')) {
+            typeof (paramters[2]) === 'string') {
             const li: any = paramters[0];
-            const sep1: string = paramters[1] + ' ';
-            const sep2: string = ' ' + paramters[2] + ' ';
+            const sep1: string = paramters[1].concat(' ');
+            const sep2: string = ' '.concat(paramters[2], ' ');
             if (li.length < 3) {
                 return li.join(sep2);
             } else {
                 const firstPart: string = li.slice(0, li.length - 1).join(sep1);
 
-                return firstPart + sep2 + li[li.length - 1];
+                return firstPart.concat(sep2, li[li.length - 1]);
             }
         }
 
@@ -70,7 +70,7 @@ export class GetMethodExtensions implements IGetMethod {
             }
 
             func = func.substr(1, func.length - 2);
-            
+
             return li.map((x: any) => {
                 const newScope: any = this.evaluator.ConstructScope(func, [x]);
 
@@ -93,7 +93,7 @@ export class GetMethodExtensions implements IGetMethod {
                 throw new Error(`No such template defined: ${func}`);
             }
 
-            const result = li.map((x: any) => {
+            const result: string[] = li.map((x: any) => {
                 const newScope: any = this.evaluator.ConstructScope(func, [x]);
 
                 return this.evaluator.EvaluateTemplate(func, newScope);
@@ -108,7 +108,7 @@ export class GetMethodExtensions implements IGetMethod {
         throw new Error('NotImplementedException');
     }
 
-    private IsTemplateRef = (templateName: string): boolean => {
+    private readonly IsTemplateRef = (templateName: string): boolean => {
         if (templateName === undefined || templateName.trim() === '') {
             return false;
         } else if (templateName.startsWith('[') && templateName.endsWith(']')) {

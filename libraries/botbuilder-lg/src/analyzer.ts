@@ -1,12 +1,13 @@
+// tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, ParseTree, TerminalNode } from 'antlr4ts/tree';
 import { Constant, Expression, Extensions, IExpressionParser } from 'botbuilder-expression';
 import { ExpressionEngine} from 'botbuilder-expression-parser';
+import { flatten, keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions } from './getMethodExtensions';
 import { LGTemplate } from './lgTemplate';
-import { keyBy, flatten } from 'lodash';
 
 // tslint:disable-next-line: max-classes-per-file
 /**
@@ -14,14 +15,14 @@ import { keyBy, flatten } from 'lodash';
  */
 export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFileParserVisitor<string[]> {
     public readonly Templates: LGTemplate[];
-    public readonly TemplateMap: {[name:string]: LGTemplate};
+    public readonly TemplateMap: {[name: string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly _expressionParser: IExpressionParser;
 
     constructor(templates: LGTemplate[]) {
         super();
         this.Templates = templates;
-        this.TemplateMap = keyBy(templates, t => t.Name);
+        this.TemplateMap = keyBy(templates, (t: LGTemplate) => t.Name);
         this._expressionParser = new ExpressionEngine(new GetMethodExtensions(undefined).GetMethodX);
     }
 
@@ -42,7 +43,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         // we don't exclude paratemters any more
         // because given we don't track down for templates have paramters
-        // the only scenario that we are still analyzing an paramterized template is 
+        // the only scenario that we are still analyzing an paramterized template is
         // this template is root template to anaylze, in this we also don't have exclude paramters
         const dependencies: string[] = Array.from(new Set(rawDependencies));
         this.evalutationTargetStack.pop();

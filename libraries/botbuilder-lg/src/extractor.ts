@@ -1,21 +1,22 @@
+// tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
+import { keyBy } from 'lodash';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
-import { keyBy } from 'lodash';
 
 export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGFileParserVisitor<Map<string, any>> {
     public readonly Templates: LGTemplate[];
-    public readonly TemplateMap: {[name:string]: LGTemplate};
+    public readonly TemplateMap: {[name: string]: LGTemplate};
     constructor(templates: LGTemplate[]) {
         super();
         this.Templates = templates;
-        this.TemplateMap = keyBy(templates, t => t.Name);
+        this.TemplateMap = keyBy(templates, (t: LGTemplate) => t.Name);
     }
 
     public Extract(): Map<string, any>[] {
-        let result: Map<string, any>[] = [];
-        this.Templates.forEach(template => {
+        const result: Map<string, any>[] = [];
+        this.Templates.forEach((template: LGTemplate) => {
             result.push(this.visit(template.ParseTree));
         });
 
@@ -23,14 +24,14 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
     }
 
     public visitTemplateDefinition(context: lp.TemplateDefinitionContext): Map<string, any> {
-        let result: Map<string, any> = new Map<string, any>();
-        const templateName = context.templateNameLine().templateName().text;
-        const templateBodies = this.visit(context.templateBody());
+        const result: Map<string, any> = new Map<string, any>();
+        const templateName: string = context.templateNameLine().templateName().text;
+        const templateBodies: Map<string, any> = this.visit(context.templateBody());
         let isNormalTemplate: boolean = true;
-        templateBodies.forEach(templateBody => isNormalTemplate = isNormalTemplate && (templateBody === undefined));
+        templateBodies.forEach((templateBody: Map<string, any>) => isNormalTemplate = isNormalTemplate && (templateBody === undefined));
 
         if (isNormalTemplate) {
-            let templates: string[] = [];
+            const templates: string[] = [];
             for (const templateBody of templateBodies) {
                 templates.push(templateBody[0]);
             }
@@ -43,8 +44,8 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
     }
 
     public visitNormalTemplateBody(context: lp.NormalTemplateBodyContext): Map<string, any> {
-        let result: Map<string, any> = new Map<string, any>();
-        for (let templateStr of context.normalTemplateString()) {
+        const result: Map<string, any> = new Map<string, any>();
+        for (const templateStr of context.normalTemplateString()) {
             result.set(templateStr.text, undefined);
         }
 
@@ -52,13 +53,13 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
     }
 
     public visitConditionalBody(context: lp.ConditionalBodyContext): Map<string, any> {
-        let result: Map<string, any> = new Map<string, any>();
+        const result: Map<string, any> = new Map<string, any>();
         const ifRules: lp.IfConditionRuleContext[] = context.conditionalTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             const expressions: TerminalNode[] = ifRule.ifCondition().EXPRESSION();
             const conditionLabel: string = ifRule.ifCondition().IFELSE().text.toLowerCase();
-            let childTemplateBodyResult: string[] = [];
-            const templateBodies = this.visit(ifRule.normalTemplateBody());
+            const childTemplateBodyResult: string[] = [];
+            const templateBodies: Map<string, any> = this.visit(ifRule.normalTemplateBody());
             for (const templateBody of templateBodies) {
                 childTemplateBodyResult.push(templateBody[0]);
             }
@@ -68,7 +69,8 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
                     result.set(conditionLabel.toUpperCase().concat(' ') + expressions[0].text, childTemplateBodyResult);
                 }
             } else {
-                result.set("ELSE:", childTemplateBodyResult);
+                // tslint:disable-next-line: no-backbone-get-set-outside-model
+                result.set('ELSE:', childTemplateBodyResult);
             }
         }
 

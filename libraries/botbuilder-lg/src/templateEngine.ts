@@ -1,6 +1,8 @@
+// tslint:disable-next-line: no-submodule-imports
 import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
+// tslint:disable-next-line: no-submodule-imports
 import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
-import fs = require('fs');
+import * as fs from 'fs';
 import { flatten } from 'lodash';
 import { Analyzer } from './Analyzer';
 import { ErrorListener } from './errorListener';
@@ -32,6 +34,7 @@ export class TemplateEngine {
 
     public addFiles = (...filePaths: string[]) : TemplateEngine => {
         const newTemplates: LGTemplate[] = flatten(filePaths.map((filePath: string) => {
+            // tslint:disable-next-line: non-literal-fs-path
             const text: string = fs.readFileSync(filePath, 'utf-8');
 
             return this.toTemplates(this.parse(text), filePath);

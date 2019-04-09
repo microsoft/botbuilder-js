@@ -1,3 +1,4 @@
+// tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ExpressionEngine } from 'botbuilder-expression-parser';
 import { keyBy } from 'lodash';
@@ -42,7 +43,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
 
         // check dup, before we build up TemplateMap
         const grouped: {[name: string]: LGTemplate[]} = {};
-        this.Templates.forEach(t => {
+        this.Templates.forEach((t: LGTemplate) => {
             if (!(t.Name in grouped)) {
                 grouped[t.Name] = [];
             }
@@ -50,9 +51,9 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
         });
 
         for (const key in grouped) {
-            const group = grouped[key];
+            const group: LGTemplate[] = grouped[key];
             if (group.length > 1) {
-                const sources = group.map(x => x.Source).join(':');
+                const sources: string = group.map(x => x.Source).join(':');
                 result.push(new ReportEntry(`Dup definitions found for template  ${key} in ${sources}`));
             }
         }
@@ -63,7 +64,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
         }
 
         // we can safely convert now, because we know there is no dup
-        this.TemplateMap = keyBy(this.Templates, t => t.Name);
+        this.TemplateMap = keyBy(this.Templates, (t: LGTemplate) => t.Name);
 
         if (this.Templates.length <= 0) {
             result.push(new ReportEntry(`File must have at least one template definition`, ReportEntryType.WARN));

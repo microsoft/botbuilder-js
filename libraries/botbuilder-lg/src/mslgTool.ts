@@ -67,7 +67,7 @@ export class MSLGTool {
                 this.NameCollisions.push(template[0]);
                 if (this.MergedTemplates.get(template[0]) instanceof Map && template[1] instanceof Map) {
                     for (const condition of (template[1] as Map<string, string[]>)) {
-                        const mergedCondtions  = this.MergedTemplates.get(template[0]) as Map<string, string[]>;
+                        const mergedCondtions: Map<string, string[]>  = this.MergedTemplates.get(template[0]) as Map<string, string[]>;
                         if (mergedCondtions.has(condition[0])) {
                             // tslint:disable-next-line: max-line-length
                             this.MergedTemplates.set(template[0], this.MergedTemplates.get(template[0]).set(condition[0], Array.from(new Set(mergedCondtions.get(condition[0]).concat(condition[1])))));

@@ -1,12 +1,13 @@
 
+// tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { Expression } from 'botbuilder-expression';
 import { ExpressionEngine} from 'botbuilder-expression-parser';
+import { keyBy } from 'lodash';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions, IGetMethod } from './getMethodExtensions';
 import { LGTemplate } from './lgTemplate';
-import { keyBy } from 'lodash';
 
 /**
  * Runtime template context store
@@ -72,6 +73,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
 
     public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext) : string {
         const normalTemplateStrs: lp.NormalTemplateStringContext[] = ctx.normalTemplateString();
+        // tslint:disable-next-line: insecure-random
         const randomNumber: number = Math.floor(Math.random() * normalTemplateStrs.length);
 
         return this.visit(normalTemplateStrs[randomNumber]);
@@ -120,7 +122,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     }
 
     public ConstructScope(templateName: string, args: any[]) : any {
-        if (args.length === 1 && this.TemplateMap[templateName].Parameters.length == 0) {
+        if (args.length === 1 && this.TemplateMap[templateName].Parameters.length === 0) {
             // Special case, if no parameters defined, and only one arg, don't wrap
             // this is for directly calling an paramterized template
             return args[0];

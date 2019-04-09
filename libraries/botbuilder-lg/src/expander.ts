@@ -1,17 +1,18 @@
 
+// tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { BuiltInFunctions, Expression, ExpressionEvaluator } from 'botbuilder-expression';
 import { ExpressionEngine} from 'botbuilder-expression-parser';
+import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
-import { keyBy } from 'lodash';
 
 // tslint:disable-next-line: max-classes-per-file
 export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFileParserVisitor<string[]> {
     public readonly Templates: LGTemplate[];
-    public readonly TemplateMap: {[name:string]: LGTemplate};
+    public readonly TemplateMap: {[name: string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
 
     private readonly GetMethodX: IGetMethod;
@@ -19,7 +20,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     constructor(templates: LGTemplate[], getMethod: IGetMethod) {
         super();
         this.Templates = templates;
-        this.TemplateMap = keyBy(templates, t => t.Name);
+        this.TemplateMap = keyBy(templates, (t: LGTemplate) => t.Name);
+        // tslint:disable-next-line: no-use-before-declare
         this.GetMethodX = getMethod === undefined ? new GetExpanderMethod(this) : getMethod;
     }
 
@@ -107,6 +109,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     public ConstructScope(templateName: string, args: any[]) : any {
+        // tslint:disable-next-line: no-empty
         if (args.length === 1 && this.TemplateMap[templateName].Parameters.length === 0) {
         }
         const paramters: string[] = this.TemplateMap[templateName].Parameters;
@@ -230,7 +233,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         let result: string[] = [exp];
         for (const templateRefValue of templateRefValues) {
-            let tempRes: string[] = [];
+            const tempRes: string[] = [];
             for (const res of result) {
                 for (const refValue of templateRefValue[1]) {
                     tempRes.push(res.replace(/@\{[^{}]+\}/, refValue.replace('\"', '\'')));
@@ -249,7 +252,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private StringArrayConcat(array1: string[], array2: string[]): string[] {
-        let result: string[] = [];
+        const result: string[] = [];
         for (const item1 of array1) {
             for (const item2 of array2) {
                 result.push(item1.concat(item2));
@@ -304,7 +307,7 @@ export class GetExpanderMethod implements IGetMethod {
             paramters[0] instanceof Array &&
             typeof (paramters[1]) === 'string') {
             const li: any = paramters[0];
-            const sep: string = paramters[1] + ' ';
+            const sep: string = paramters[1].concat(' ');
 
             return li.join(sep);
         }
@@ -312,16 +315,16 @@ export class GetExpanderMethod implements IGetMethod {
         if (paramters.length === 3 &&
             paramters[0] instanceof Array &&
             typeof (paramters[1]) === 'string' &&
-            typeof (paramters[2] === 'string')) {
+            typeof (paramters[2]) === 'string') {
             const li: any = paramters[0];
-            const sep1: string = paramters[1] + ' ';
-            const sep2: string = ' ' + paramters[2] + ' ';
+            const sep1: string = paramters[1].concat(' ');
+            const sep2: string = ' '.concat(paramters[2], ' ');
             if (li.length < 3) {
                 return li.join(sep2);
             } else {
                 const firstPart: string = li.slice(0, li.length - 1).join(sep1);
 
-                return firstPart + sep2 + li[li.length - 1];
+                return firstPart.concat(sep2, li[li.length - 1]);
             }
         }
 
@@ -340,6 +343,7 @@ export class GetExpanderMethod implements IGetMethod {
             }
 
             func = func.substr(1, func.length - 2);
+
             return li.map((x: any) => {
                 const newScope: any = this.expander.ConstructScope(func, [x]);
 
@@ -362,7 +366,7 @@ export class GetExpanderMethod implements IGetMethod {
                 throw new Error(`No such template defined: ${func}`);
             }
 
-            const result = li.map((x: any) => {
+            const result: string[] = li.map((x: any) => {
                 const newScope: any = this.expander.ConstructScope(func, [x]);
 
                 return this.expander.ExpandTemplate(func, newScope)[0];
@@ -377,7 +381,7 @@ export class GetExpanderMethod implements IGetMethod {
         throw new Error('NotImplementedException');
     }
 
-    private IsTemplateRef = (templateName: string): boolean => {
+    private readonly IsTemplateRef = (templateName: string): boolean => {
         if (templateName === undefined || templateName.trim() === '') {
             return false;
         } else if (templateName.startsWith('[') && templateName.endsWith(']')) {
