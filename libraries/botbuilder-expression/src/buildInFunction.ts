@@ -1,4 +1,5 @@
 
+import * as moment from 'moment';
 import { start } from 'repl';
 import { Constant } from './constant';
 import { Expression, ReturnType } from './expression';
