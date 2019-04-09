@@ -52,19 +52,19 @@ export interface CosmosDbStorageSettings {
 
 /**
  * @private
- * Internal data structure for storing items in DocumentDB
+ * Internal data structure for storing items in DocumentDB.
  */
 interface DocumentStoreItem {
     /**
-     * Represents the Sanitized Key and used as PartitionKey on DocumentDB
+     * Represents the Sanitized Key and used as PartitionKey on DocumentDB.
      */
     id: string;
     /**
-     * Represents the original Id/Key
+     * Represents the original Id/Key.
      */
     realId: string;
     /**
-     * The item itself + eTag information
+     * The item itself + eTag information.
      */
     document: any;
 }
