@@ -51,7 +51,7 @@ export class IfCondition extends DialogCommand {
     constructor(condition?: string|Expression, steps?: Dialog[]) {
         super();
         if (condition) { 
-            this.condition = typeof condition == 'string' ? engine.parse(condition) : condition; 
+            this.condition = typeof condition == 'string' ? engine.Parse(condition) : condition; 
         }
         if (Array.isArray(steps)) { this.steps = steps }
     }
@@ -66,7 +66,7 @@ export class IfCondition extends DialogCommand {
         for (const key in config) {
             switch(key) {
                 case 'condition':
-                    this.condition = engine.parse(config.condition);
+                    this.condition = engine.Parse(config.condition);
                     break;
                 default:
                     cfg[key] = config[key];
@@ -92,7 +92,7 @@ export class IfCondition extends DialogCommand {
 
         // Evaluate expression
         const memory = planning.state.toJSON();
-        const { value, error } = this.condition.tryEvaluate(memory);
+        const { value, error } = this.condition.TryEvaluate(memory);
 
         // Check for error
         if (error) { throw new Error(`${this.id}: expression error - ${error.toString()}`) }

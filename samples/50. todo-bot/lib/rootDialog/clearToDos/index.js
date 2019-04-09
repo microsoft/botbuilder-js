@@ -8,12 +8,12 @@ const recognizer_1 = require("../recognizer");
 class ClearToDos extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
     constructor() {
         super('ClearToDos', [
-            new botbuilder_dialogs_adaptive_1.IfCondition(`!user.todoList`, [
-                new botbuilder_dialogs_adaptive_1.SendActivity(`No todos to clear.`),
-                new botbuilder_dialogs_adaptive_1.EndDialog()
-            ]),
-            new botbuilder_dialogs_adaptive_1.EditArray(botbuilder_dialogs_adaptive_1.ArrayChangeType.clear, schema_1.user.todoList),
-            new botbuilder_dialogs_adaptive_1.SendActivity(`All todos removed.`)
+            new botbuilder_dialogs_adaptive_1.IfCondition(`user.todoList != null`, [
+                new botbuilder_dialogs_adaptive_1.EditArray(botbuilder_dialogs_adaptive_1.ArrayChangeType.clear, schema_1.user.todoList),
+                new botbuilder_dialogs_adaptive_1.SendActivity(`All todos removed.`)
+            ]).else([
+                new botbuilder_dialogs_adaptive_1.SendActivity(`No todos to clear.`)
+            ])
         ]);
         // Use parents recognizer
         this.recognizer = recognizer_1.getRecognizer();

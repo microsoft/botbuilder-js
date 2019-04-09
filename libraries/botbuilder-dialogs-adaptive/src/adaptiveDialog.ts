@@ -236,6 +236,7 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
                                 dialogStack: []
                             });
                         });
+                        planning.queueChanges(changes);
                         handled = true;
                     } else {
                         // Dispatch activityReceived event
