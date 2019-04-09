@@ -7,7 +7,7 @@ function GetExampleFile(fileName){
     return text;
 }
 
-describe.only('MSLGTool', function () {
+describe('MSLGTool', function () {
     it('TestValidateReturnStaticCheckerErrors', function () {
         let errors = new MSLGTool().ValidateFile(GetExampleFile('StaticCheckerErrors.lg'));
         assert.strictEqual(errors.length, 2);
