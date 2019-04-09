@@ -243,9 +243,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private EvalByExpressionEngine(exp: string, scope: any) : any {
-        const parse: Expression = new ExpressionEngine(this.GetMethodX.GetMethodX).Parse(exp);
+        const parse: Expression = new ExpressionEngine(this.GetMethodX.GetMethodX).parse(exp);
 
-        return parse.TryEvaluate(scope);
+        return parse.tryEvaluate(scope);
     }
 
     private StringArrayConcat(array1: string[], array2: string[]): string[] {

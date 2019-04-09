@@ -248,8 +248,8 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     }
 
     private EvalByExpressionEngine(exp: string, scope: any) : {value: any; error: string} {
-        const parse: Expression = new ExpressionEngine(this.GetMethodX.GetMethodX).Parse(exp);
+        const parse: Expression = new ExpressionEngine(this.GetMethodX.GetMethodX).parse(exp);
 
-        return parse.TryEvaluate(scope);
+        return parse.tryEvaluate(scope);
     }
 }

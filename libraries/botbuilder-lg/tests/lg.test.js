@@ -191,7 +191,7 @@ describe('LG', function () {
 
         var evaled3 = engine.analyzeTemplate("template1");
         // TODO: input.property should really be: customer.property but analyzer needs to be 
-        var evaled3Options = ["alarms", "input.property", "tasks[0]","age"];
+        var evaled3Options = ["alarms", "customer", "tasks[0]","age"];
         assert.strictEqual(evaled3.length, evaled3Options.length);
         evaled3Options.forEach(element => assert.strictEqual(evaled3.includes(element), true));
     })

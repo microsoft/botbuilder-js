@@ -276,7 +276,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
                 .trim();
 
         try {
-            new ExpressionEngine(new GetMethodExtensions(undefined).GetMethodX).Parse(exp);
+            new ExpressionEngine(new GetMethodExtensions(undefined).GetMethodX).parse(exp);
         } catch (e) {
             result.push(new ReportEntry(e));
         }

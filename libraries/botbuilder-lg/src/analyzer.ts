@@ -6,7 +6,7 @@ import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions } from './getMethodExtensions';
 import { LGTemplate } from './lgTemplate';
-import { keyBy } from 'lodash';
+import { keyBy, flatten } from 'lodash';
 
 // tslint:disable-next-line: max-classes-per-file
 /**
@@ -121,7 +121,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
     private AnalyzeExpression(exp: string): string[] {
         exp = exp.replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
-        const parse: Expression = this._expressionParser.Parse(exp);
+        const parse: Expression = this._expressionParser.parse(exp);
         const references: Set<string> = new Set<string>();
 
         const path: string = Extensions.ReferenceWalk(parse, references, (expression: Expression) => {
@@ -130,16 +130,8 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
                 const str: string = (expression).Value;
                 if (str.startsWith('[') && str.endsWith(']')) {
                     found = true;
-                    let end: number = str.indexOf('(');
-                    if (end === -1) {
-                        end = str.length - 1;
-                    }
-
-                    const template: string = str.substr(1, end - 1);
-                    const analyzer: Analyzer = new Analyzer(this.Templates);
-                    for (const reference of analyzer.AnalyzeTemplate(template)) {
-                        references.add(reference);
-                    }
+                    
+                    this.AnalyzeTemplateRef(str).forEach(x => references.add(x));
                 } else if (str.startsWith('{') && str.endsWith('}')) {
                     found = true;
                     for (const childRef of this.AnalyzeExpression(str)) {
@@ -164,15 +156,21 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         const argsStartPos: number = exp.indexOf('(');
         if (argsStartPos > 0) { // Do have args
 
-            // EvaluateTemplate all arguments using ExpressoinEngine
+            // evaluate all arguments using ExpressoinEngine
             const argsEndPos: number = exp.lastIndexOf(')');
+            
             if (argsEndPos < 0 || argsEndPos < argsStartPos + 1) {
                 throw Error(`Not a valid template ref: ${exp}`);
             }
 
-            const templateName: string = exp.substr(0, argsStartPos);
+            const args = exp.substr(argsStartPos + 1, argsEndPos - argsStartPos - 1).split(',');
+            const refs = flatten(args.map(arg => this.AnalyzeExpression(arg)));
 
-            return this.AnalyzeTemplate(templateName);
+            // Before we have a matural solution to analyze paramterized template, we stop digging into 
+            // templates with paramters, we just analyze it's args.
+            // With this approach we may not get a very fine-grained result
+            // but the result will still be accurate
+            return refs;
         } else {
             return this.AnalyzeTemplate(exp);
         }
