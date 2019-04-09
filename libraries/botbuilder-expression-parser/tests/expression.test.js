@@ -2,8 +2,8 @@ const { ExpressionEngine } =  require('../');
 const assert = require('assert');
 
 const dataSource = [
+
   // operators test
-  
   ["1 + 2", 3],
   ["1 - 2", -1],
   ["1.0 + 2.0", 3.0],
@@ -71,8 +71,8 @@ const dataSource = [
   ["replace('hello', 'L', 'k')","hello"],
   ["replaceIgnoreCase('hello', 'L', 'k')","hekko"],
   ["split('hello','e')",["h","llo"]],
-  //["substring('hello', 0, 5)", "hello"],
-  //["substring('hello', 0, 3)", "hel"],
+  ["substring('hello', 0, 5)", "hello"],
+  ["substring('hello', 0, 3)", "hel"],
   ["toLower('UpCase')", "upcase"],
   ["toUpper('lowercase')", "LOWERCASE"],
   ["toLower(toUpper('lowercase'))", "lowercase"],
@@ -175,13 +175,13 @@ const dataSource = [
   ["float('10')", 10.0],
   ["int('10')", 10],
   ["string('str')", "str"],
-  //["string(one)", "1.0"], //ts-->1
+  ["string(one)", "1"], //ts-->1, C#-->1.0
   ["string(bool(1))", "true"],
-  //["string(bag.set)", "{\"four\":4.0}"], // ts-->"{\"four\":4}"
+  ["string(bag.set)", "{\"four\":4}"], // ts-->"{\"four\":4}", C# --> "{\"four\":4.0}"
   ["bool(1)", true],
   ["bool(0)", false],
-  //["bool('false')", false],
-  //["bool('true')", true],// TODO should it true or false
+  ["bool('false')", false],
+  ["bool('true')", true],
   ["createArray('h', 'e', 'l', 'l', 'o')", ["h", "e", "l", "l", "o" ]],
   ["createArray(1, string(bool(1)))", [1, "true"]],
 
@@ -192,20 +192,20 @@ const dataSource = [
   ["contains(items, 'hi')", false],
   ["contains(bag, 'three')", true],
   ["contains(bag, 'xxx')", false],
-  //["count(split(hello,'e'))",2],
-  //["count(createArray('h', 'e', 'l', 'l', 'o'))",5],
-  //["empty('')", true],
-  //["empty('a')", false],
-  //["empty(bag)", false],
-  //["empty(items)", false],
-  //["first(items)", "zero"],
-  //["first('hello')", "h"],
-  //["first(createArray(0, 1, 2))", 0],
-  //["join(items,',')", "zero,one,two"],
-  //["join(createArray('a', 'b', 'c'), '.')", "a.b.c"],
-  //["last(items)", "two"],
-  //["last('hello')", "o"],
-  //["last(createArray(0, 1, 2))", 2],
+  ["count(split(hello,'e'))",2],
+  ["count(createArray('h', 'e', 'l', 'l', 'o'))",5],
+  ["empty('')", true],
+  ["empty('a')", false],
+  ["empty(bag)", false],
+  ["empty(items)", false],
+  ["first(items)", "zero"],
+  ["first('hello')", "h"],
+  ["first(createArray(0, 1, 2))", 0],
+  ["join(items,',')", "zero,one,two"],
+  ["join(createArray('a', 'b', 'c'), '.')", "a.b.c"],
+  ["last(items)", "two"],
+  ["last('hello')", "o"],
+  ["last(createArray(0, 1, 2))", 2],
   ["one > 0.5 && two < 2.5", true],
   ["one > 0.5 || two < 1.5", true],
   ["!true", false],
@@ -214,8 +214,6 @@ const dataSource = [
   ["not(one != null)", false],
   ["not(not(one != null))", true],
   ["not(false)", true],
-
-
   ["exists(one)", true],
   ["exists(xxx)", false],
   ["exists(one.xxx)", false],
@@ -226,11 +224,12 @@ const dataSource = [
   ["not(not(one == 1.0))", true],
   ["not(false)", true],
 
-
+  // Object manipulation and construction functions
   ["string(addProperty(json('{\"key1\":\"value1\"}'), 'key2','value2'))", "{\"key1\":\"value1\",\"key2\":\"value2\"}"],
   ["string(setProperty(json('{\"key1\":\"value1\"}'), 'key1','value2'))", "{\"key1\":\"value2\"}"],
   ["string(removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), 'key2'))", "{\"key1\":\"value1\"}"],
 
+  // Short Hand Expression
   ["@city == 'Bellevue'", false],
   ["@city", "Seattle"],
   ["@city == 'Seattle'", true],
