@@ -1,0 +1,7 @@
+﻿﻿> Error template
+# template
+
+> No match rule
+# template2
+- IF: {foo == 'bar'}
+   - ok

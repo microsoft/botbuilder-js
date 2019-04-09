@@ -1,0 +1,11 @@
+﻿﻿# Greeting
+- Hey
+- Hi
+
+# TimeOfDayWithCondition
+- IF: {time == 'morning'}
+    - [Greeting] Morning
+- ELSEIF: {time == 'evening'}
+    - [Greeting] Evening
+- ELSE:
+    - [Greeting] Afternoon

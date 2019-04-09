@@ -23,7 +23,7 @@ export class MSLGTool {
                 this.RunTemplateExtractor(this.Templates);
             }
         } catch (e) {
-            errors = e.message.split('\n');
+            errors = e.message.split('\n[').map((msg: string) => msg.startsWith('[') ? msg : '[' + msg);
         }
 
         return errors;
