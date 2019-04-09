@@ -49,15 +49,12 @@ export enum RuleDialogEventNames {
     consultDialog = 'consultDialog',
     cancelDialog = 'cancelDialog',
     activityReceived = 'activityReceived',
-    utteranceRecognized = 'utteranceRecognized',
-    unhandledUtterance = 'unhandledUtterance',
-    planStarted = 'planStarted',
-    planSaved = 'planSaved',
-    planEnded = 'planEnded',
-    planResumed = 'planResumed',
-    slotMissing = 'slotMissing',
-    slotInvalid = 'slotInvalid',
-    inputFulfilled = 'inputFulfilled'
+    recognizedIntent = 'recognizedIntent',
+    unrecognizedIntent = 'unrecognizedIntent',
+    stepsStarted = 'stepsStarted',
+    stepsSaved = 'stepsSaved',
+    stepsEnded = 'stepsEnded',
+    stepsResumed = 'stepsResumed'
 }
 
 export class PlanningContext<O extends object = {}> extends DialogContext {
@@ -194,7 +191,7 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
 
         // Emit new plan event
         if (newPlan) {
-            await this.emitEvent(RuleDialogEventNames.planStarted, undefined, false);
+            await this.emitEvent(RuleDialogEventNames.stepsStarted, undefined, false);
         }
 
         return newPlan;
@@ -236,7 +233,7 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
 
         // Emit new plan event
         if (newPlan) {
-            await this.emitEvent(RuleDialogEventNames.planStarted, undefined, false);
+            await this.emitEvent(RuleDialogEventNames.stepsStarted, undefined, false);
         }
 
         return newPlan;
@@ -258,7 +255,7 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
 
         // Emit new plan event
         if (newPlan) {
-            await this.emitEvent(RuleDialogEventNames.planStarted, undefined, false);
+            await this.emitEvent(RuleDialogEventNames.stepsStarted, undefined, false);
         }
 
         return newPlan;
@@ -283,12 +280,12 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
             }
 
             // Emit resumption event
-            await this.emitEvent(RuleDialogEventNames.planResumed, undefined, true);
+            await this.emitEvent(RuleDialogEventNames.stepsResumed, undefined, true);
         } else if (this.plans.plan) {
             delete this.plans.plan;
 
             // Emit planning ended event
-            await this.emitEvent(RuleDialogEventNames.planEnded, undefined, false);
+            await this.emitEvent(RuleDialogEventNames.stepsEnded, undefined, false);
         }
 
         return resumePlan;
@@ -332,9 +329,9 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
         
         // Emit plan change events
         if (savePlan) {
-            await this.emitEvent(RuleDialogEventNames.planSaved, undefined, false);
+            await this.emitEvent(RuleDialogEventNames.stepsSaved, undefined, false);
         }
-        await this.emitEvent(RuleDialogEventNames.planStarted, undefined, false);
+        await this.emitEvent(RuleDialogEventNames.stepsStarted, undefined, false);
 
         return savePlan;
     }
@@ -350,7 +347,7 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
         this.plans.plan = { steps: steps }
 
         // Emit plan started event
-        await this.emitEvent(RuleDialogEventNames.planStarted, undefined, false);
+        await this.emitEvent(RuleDialogEventNames.stepsStarted, undefined, false);
 
         return planReplaced;
     }

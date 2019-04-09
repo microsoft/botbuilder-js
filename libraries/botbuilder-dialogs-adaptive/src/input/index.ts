@@ -7,7 +7,6 @@
  */
 export * from './choiceInput';
 export * from './confirmInput';
-export * from './inputDialog';
 export * from './inputSlot';
 export * from './numberInput';
 export * from './numberSlot';

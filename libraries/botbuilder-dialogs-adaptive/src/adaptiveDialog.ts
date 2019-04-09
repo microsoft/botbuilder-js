@@ -262,22 +262,22 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
                         const recognized = await this.onRecognize(planning.context);
     
                         // Dispatch utteranceRecognized event
-                        handled = await this.evaluateRules(planning, { name: RuleDialogEventNames.utteranceRecognized, value: recognized, bubble: false });
+                        handled = await this.evaluateRules(planning, { name: RuleDialogEventNames.recognizedIntent, value: recognized, bubble: false });
                     } else if (activity.type === ActivityTypes.Event) {
                         // Dispatch named event that was received
                         handled = await this.evaluateRules(planning, { name: activity.name, value: activity.value, bubble: false });
                     }
                 }
                 break;
-            case RuleDialogEventNames.utteranceRecognized:
+            case RuleDialogEventNames.recognizedIntent:
                 // Emit utteranceRecognized event
                 handled = await this.queueBestMatches(planning, event);
                 if (!handled) {
                     // Dispatch fallback event
-                    handled = await this.evaluateRules(planning, { name: RuleDialogEventNames.unhandledUtterance, value: event.value, bubble: false });
+                    handled = await this.evaluateRules(planning, { name: RuleDialogEventNames.unrecognizedIntent, value: event.value, bubble: false });
                 }
                 break;
-            case RuleDialogEventNames.unhandledUtterance:
+            case RuleDialogEventNames.unrecognizedIntent:
                 if (!planning.hasPlans) {
                     // Emit fallback event
                     handled = await this.queueFirstMatch(planning, event);

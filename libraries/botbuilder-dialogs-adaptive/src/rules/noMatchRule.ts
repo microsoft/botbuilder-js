@@ -23,6 +23,6 @@ export class NoMatchRule extends EventRule {
      * @param steps (Optional) list of steps to update the plan with when triggered.
      */
     constructor(steps?: Dialog[]) {
-        super(RuleDialogEventNames.unhandledUtterance, steps);
+        super(RuleDialogEventNames.unrecognizedIntent, steps);
     }
 }
