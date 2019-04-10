@@ -205,5 +205,13 @@ describe('LG', function () {
         evaled = engine.evaluateTemplate('TemplateD', {b: "morning"});
         options = ['Hi morning', 'Hello morning'];
         assert.strictEqual(options.includes(evaled), true);
-    })
+    });
+
+    it('TestAnalyzelgTemplateFunction', function() {
+        var engine = TemplateEngine.fromFiles(GetExampleFilePath("lgTemplate.lg"));
+        var evaled = engine.analyzeTemplate('TemplateD');
+        var options = ['b'];
+        assert.strictEqual(evaled.length, options.length);
+        options.forEach(e => assert.strictEqual(evaled.includes(e), true));
+    });
 });
