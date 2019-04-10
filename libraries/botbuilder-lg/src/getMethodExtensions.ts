@@ -32,9 +32,31 @@ export class GetMethodExtensions implements IGetMethod {
             case 'mapjoin':
             case 'humanize':
                 return new ExpressionEvaluator(BuiltInFunctions.Apply(this.ForeachThenJoin));
+            case 'lgTemplate':
+                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.lgTemplate));
         }
 
         return BuiltInFunctions.Lookup(name);
+    }
+
+    public lgTemplate = (paramters: any[]): any => {
+        if (paramters.length > 0 &&
+            typeof paramters[0] === 'string') {
+            const func: string = paramters[0];
+            const templateParameters: any[] = paramters.slice(1);
+
+            if (func !== undefined &&
+                func.length > 0 &&
+                func in this.evaluator.TemplateMap) {
+                const newScope: any = this.evaluator.ConstructScope(func, templateParameters);
+
+                return this.evaluator.EvaluateTemplate(func, newScope);
+            } else {
+                throw new Error(`No such template defined: ${func.substr(1, func.length - 2)}`);
+            }
+        }
+
+        throw new Error('NotImplementedException');
     }
 
     public Join = (paramters: any[]): any => {

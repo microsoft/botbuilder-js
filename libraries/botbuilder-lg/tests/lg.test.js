@@ -194,5 +194,16 @@ describe('LG', function () {
         var evaled3Options = ["alarms", "customer", "tasks[0]","age"];
         assert.strictEqual(evaled3.length, evaled3Options.length);
         evaled3Options.forEach(element => assert.strictEqual(evaled3.includes(element), true));
+    });
+
+    it('TestlgTemplateFunction', function() {
+        var engine = TemplateEngine.fromFiles(GetExampleFilePath("lgTemplate.lg"));
+        var evaled = engine.evaluateTemplate('TemplateC', '');
+        var options = ['Hi', 'Hello'];
+        assert.strictEqual(options.includes(evaled), true);
+
+        evaled = engine.evaluateTemplate('TemplateD', {b: "morning"});
+        options = ['Hi morning', 'Hello morning'];
+        assert.strictEqual(options.includes(evaled), true);
     })
 });

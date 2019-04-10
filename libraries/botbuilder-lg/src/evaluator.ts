@@ -136,6 +136,10 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         }
         const paramters: string[] = this.TemplateMap[templateName].Parameters;
 
+        if (paramters !== undefined && (args === undefined || paramters.length !== args.length)) {
+            throw new Error(`The length of required parameters does not match the length of provided parameters.`);
+        }
+
         const newScope: any = {};
         paramters.map((e: string, i: number) => newScope[e] = args[i]);
 
