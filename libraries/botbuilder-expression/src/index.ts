@@ -1,3 +1,11 @@
+
+/**
+ * @module botbuilder-expression
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 export * from './buildInFunction';
 export * from './constant';
 export * from './expression';

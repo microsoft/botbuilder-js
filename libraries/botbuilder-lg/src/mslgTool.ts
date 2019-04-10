@@ -1,3 +1,10 @@
+/**
+ * @module botbuilder-expression-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { Analyzer } from './analyzer';
 import { Expander, IGetMethod } from './expander';
 import { Extractor } from './extractor';
