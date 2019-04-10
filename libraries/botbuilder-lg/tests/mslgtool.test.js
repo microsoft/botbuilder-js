@@ -55,4 +55,16 @@ describe('MSLGTool', function () {
             assert.strictEqual(expandedTemplate.includes(element), true);
         });
     })
+
+    it('TestExpandTemplateWithScope', function() {
+        const mslgTool = new MSLGTool();
+        let errors = mslgTool.ValidateFile(GetExampleFile('CollateFile3.lg'));
+        assert.strictEqual(errors.length, 0);
+        let expandedTemplate = mslgTool.ExpandTemplate('TimeOfDayWithCondition', { time: 'evening' });
+        assert.strictEqual(expandedTemplate.length, 2);
+        let expectedResults = ['Hi Evening', 'Hey Evening'];
+        expectedResults.forEach(element => {
+            assert.strictEqual(expandedTemplate.includes(element), true);
+        });
+    })
 })
