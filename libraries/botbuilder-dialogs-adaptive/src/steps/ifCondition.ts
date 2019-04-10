@@ -9,6 +9,7 @@ import { DialogCommand, DialogTurnResult, Dialog, DialogConfiguration } from 'bo
 import { ExpressionEngine } from 'botbuilder-expression-parser';
 import { Expression } from 'botbuilder-expression';
 import { PlanningContext, PlanStepState, PlanChangeType } from '../planningContext';
+import { ExpressionDelegate } from './setProperty';
 
 export interface IfConditionConfiguration extends DialogConfiguration {
     /**
@@ -48,10 +49,20 @@ export class IfCondition extends DialogCommand {
      * @param condition The conditional expression to evaluate.
      * @param steps The steps to run if the condition returns true. 
      */
-    constructor(condition?: string|Expression, steps?: Dialog[]) {
+    constructor(condition?: string|Expression|ExpressionDelegate<boolean>, steps?: Dialog[]) {
         super();
         if (condition) { 
-            this.condition = typeof condition == 'string' ? engine.Parse(condition) : condition; 
+            switch (typeof condition) {
+                case 'string':
+                    this.condition = engine.Parse(condition);
+                    break; 
+                case 'function':
+                    this.condition = Expression.Lambda(condition);
+                    break;
+                default:
+                    this.condition = condition as Expression;
+                    break;
+            }
         }
         if (Array.isArray(steps)) { this.steps = steps }
     }
@@ -77,7 +88,7 @@ export class IfCondition extends DialogCommand {
     }
 
     public getDependencies(): Dialog[] {
-        return this.steps;
+        return this.steps.concat(this.elseSteps);
     }
 
     public else(steps: Dialog[]): this {
@@ -98,11 +109,11 @@ export class IfCondition extends DialogCommand {
         if (error) { throw new Error(`${this.id}: expression error - ${error.toString()}`) }
 
         // Check for truthy returned value
-        const steps = value ? this.steps : this.elseSteps;
+        const triggered = value ? this.steps : this.elseSteps;
 
         // Queue up steps that should run after current step
-        if (steps.length > 0) {
-            const steps = this.steps.map((step) => {
+        if (triggered.length > 0) {
+            const steps = triggered.map((step) => {
                 return {
                     dialogStack: [],
                     dialogId: step.id,

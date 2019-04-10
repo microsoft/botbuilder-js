@@ -7,9 +7,8 @@
  */
 export * from './eventRule';
 export * from './ifPropertyRule';
-export * from './noMatchRule';
 export * from './planningRule';
 export * from './stateTransitionRule';
 export * from './intentRule';
-export * from './welcomeRule';
+export * from './unknownIntentRule';
 

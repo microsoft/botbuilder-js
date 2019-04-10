@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, DialogCommand } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogContext, DialogCommand, DialogContextState, DialogContextVisibleState } from 'botbuilder-dialogs';
 import { ExpressionEngine } from 'botbuilder-expression-parser';
 import { Expression } from 'botbuilder-expression';
 
@@ -15,6 +15,8 @@ export interface SetPropertyConfiguration extends DialogConfiguration {
      */
     value?: string;
 }
+
+export type ExpressionDelegate<T> = (state: DialogContextVisibleState) => T;
 
 export class SetProperty<O extends object = {}> extends DialogCommand<O> {
     /**
@@ -26,10 +28,20 @@ export class SetProperty<O extends object = {}> extends DialogCommand<O> {
      * Creates a new `SetProperty` instance.
      * @param value (Optional) value expression to evaluate.
      */
-    constructor(value?: string|Expression) {
+    constructor(value?: string|Expression|ExpressionDelegate<any>) {
         super();
         if (value) { 
-            this.value = typeof value == 'string' ? engine.Parse(value) : value; 
+            switch (typeof value) {
+                case 'string':
+                    this.value = engine.Parse(value);
+                    break; 
+                case 'function':
+                    this.value = Expression.Lambda(value);
+                    break;
+                default:
+                    this.value = value as Expression;
+                    break;
+            }
         }
     }
 

@@ -17,22 +17,22 @@ export interface DialogContextVisibleState {
      * All properties being persisted for the current user across all their conversations with the
      * bot.
      */
-    user: object;
+    user: any;
 
     /**
      * All properties being persisted for the current conversation the user is having with the bot.
      */
-    conversation: object;
+    conversation: any;
 
     /**
      * All properties being persisted for the current dialog that's active.
      */
-    dialog: object;
+    dialog: any;
 
     /**
      * Transient properties that are only remembered for the current turn.
      */
-    turn: object;
+    turn: any;
 }
 
 export class DialogContextState {

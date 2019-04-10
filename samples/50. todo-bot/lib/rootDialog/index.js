@@ -14,10 +14,6 @@ class RootDialog extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
         super('main');
         // Bind to production/development recognizer
         this.recognizer = recognizer_1.getRecognizer();
-        // Define welcome rule
-        this.addRule(new botbuilder_dialogs_adaptive_1.WelcomeRule([
-            new botbuilder_dialogs_adaptive_1.SendActivity(`Hi! I'm a ToDo bot. Say "add a todo named first one" to get started.`)
-        ]));
         // Handle recognized intents
         this.addRule(new botbuilder_dialogs_adaptive_1.IntentRule(schema_1.intents.AddToDo, [
             new addToDo_1.AddToDo()
@@ -31,6 +27,14 @@ class RootDialog extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
         this.addRule(new botbuilder_dialogs_adaptive_1.IntentRule(schema_1.intents.ShowToDos, [
             new showToDos_1.ShowToDos()
         ]));
+        this.addRule(new botbuilder_dialogs_adaptive_1.UnknownIntentRule([
+            new botbuilder_dialogs_adaptive_1.IfCondition(`user.greeted != true`, [
+                new botbuilder_dialogs_adaptive_1.SendActivity(`Hi! I'm a ToDo bot. Say "add a todo named first one" to get started.`),
+                new botbuilder_dialogs_adaptive_1.SetProperty((state) => state.user.greeted = true)
+            ]).else([
+                new botbuilder_dialogs_adaptive_1.SendActivity(`Say "add a todo named first one" to get started.`)
+            ])
+        ]));
         // Define rules to handle cancel events
         this.addRule(new botbuilder_dialogs_adaptive_1.EventRule(schema_1.events.CancelAdd, [
             new botbuilder_dialogs_adaptive_1.SendActivity(`Ok... Cancelled adding new alarm.`)
@@ -41,10 +45,6 @@ class RootDialog extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
         // Define rules for handling errors
         this.addRule(new botbuilder_dialogs_adaptive_1.EventRule(schema_1.events.Error, [
             new botbuilder_dialogs_adaptive_1.SendActivity(`Oops. An error occurred: {message}`)
-        ]));
-        // Define rule for default response
-        this.addRule(new botbuilder_dialogs_adaptive_1.NoMatchRule([
-            new botbuilder_dialogs_adaptive_1.SendActivity(`Say "add a todo named first one" to get started.`)
         ]));
     }
 }

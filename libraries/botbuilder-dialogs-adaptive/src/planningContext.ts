@@ -50,7 +50,7 @@ export enum RuleDialogEventNames {
     cancelDialog = 'cancelDialog',
     activityReceived = 'activityReceived',
     recognizedIntent = 'recognizedIntent',
-    unrecognizedIntent = 'unrecognizedIntent',
+    unknownIntent = 'unknownIntent',
     stepsStarted = 'stepsStarted',
     stepsSaved = 'stepsSaved',
     stepsEnded = 'stepsEnded',

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { 
-    TurnContext, BotTelemetryClient, NullTelemetryClient, Storage, ActivityTypes, 
+    TurnContext, BotTelemetryClient, NullTelemetryClient, ActivityTypes, 
     RecognizerResult
 } from 'botbuilder-core';
 import { 
@@ -16,7 +16,7 @@ import {
 import { 
     RuleDialogEventNames, PlanningContext, RuleDialogState as AdaptiveDialogState, PlanChangeList, PlanChangeType 
 } from './planningContext';
-import { PlanningRule, NoMatchRule } from './rules';
+import { PlanningRule } from './rules';
 import { Recognizer } from './recognizers';
 
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
@@ -274,10 +274,10 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
                 handled = await this.queueBestMatches(planning, event);
                 if (!handled) {
                     // Dispatch fallback event
-                    handled = await this.evaluateRules(planning, { name: RuleDialogEventNames.unrecognizedIntent, value: event.value, bubble: false });
+                    handled = await this.evaluateRules(planning, { name: RuleDialogEventNames.unknownIntent, value: event.value, bubble: false });
                 }
                 break;
-            case RuleDialogEventNames.unrecognizedIntent:
+            case RuleDialogEventNames.unknownIntent:
                 if (!planning.hasPlans) {
                     // Emit fallback event
                     handled = await this.queueFirstMatch(planning, event);
