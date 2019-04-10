@@ -32,22 +32,34 @@ server.post('/api/messages', (req, res) => {
 // Initialize bots root dialog
 const dialogs = new botbuilder_dialogs_adaptive_1.AdaptiveDialog();
 bot.rootDialog = dialogs;
-// Greet the user
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.WelcomeRule([
-    new botbuilder_dialogs_adaptive_1.SendActivity(`I'm a joke bot. To get started say "tell me a joke".`)
+//=================================================================================================
+// Rules
+//=================================================================================================
+dialogs.recognizer = new botbuilder_dialogs_adaptive_1.RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
+// Tell the user a joke
+dialogs.addRule(new botbuilder_dialogs_adaptive_1.IntentRule('#JokeIntent', [
+    new botbuilder_dialogs_adaptive_1.BeginDialog('TellJokeDialog')
 ]));
-// Add a top level fallback rule to handle received messages
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.NoMatchRule([
-    new botbuilder_dialogs_adaptive_1.IfCondition('!user.name', [
+// Handle unknown intents
+dialogs.addRule(new botbuilder_dialogs_adaptive_1.UnknownIntentRule([
+    new botbuilder_dialogs_adaptive_1.BeginDialog('AskNameDialog')
+]));
+//=================================================================================================
+// Child Dialogs
+//=================================================================================================
+const askNameDialog = new botbuilder_dialogs_adaptive_1.AdaptiveDialog('AskNameDialog', [
+    new botbuilder_dialogs_adaptive_1.IfCondition('user.name == null', [
         new botbuilder_dialogs_adaptive_1.TextInput('user.name', `Hi! what's your name?`)
     ]),
-    new botbuilder_dialogs_adaptive_1.SendActivity(`Hi {user.name}. It's nice to meet you.`)
-]));
-// Tell the user a joke
-dialogs.recognizer = new botbuilder_dialogs_adaptive_1.RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.IntentRule('#JokeIntent', [
+    new botbuilder_dialogs_adaptive_1.SendActivity(`Hi {user.name}. It's nice to meet you.`),
+    new botbuilder_dialogs_adaptive_1.EndDialog()
+]);
+dialogs.addDialog(askNameDialog);
+const tellJokeDialog = new botbuilder_dialogs_adaptive_1.AdaptiveDialog('TellJokeDialog', [
     new botbuilder_dialogs_adaptive_1.SendActivity(`Why did the 🐔 cross the 🛣️?`),
     new botbuilder_dialogs_adaptive_1.EndTurn(),
-    new botbuilder_dialogs_adaptive_1.SendActivity(`To get to the other side...`)
-]));
+    new botbuilder_dialogs_adaptive_1.SendActivity(`To get to the other side...`),
+    new botbuilder_dialogs_adaptive_1.EndDialog()
+]);
+dialogs.addDialog(tellJokeDialog);
 //# sourceMappingURL=index.js.map

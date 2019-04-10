@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { AdaptiveDialog, NoMatchRule, SendActivity, TextInput, IfCondition } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, UnknownIntentRule, SendActivity, TextInput, IfCondition, RegExpRecognizer, IntentRule, EndTurn } from 'botbuilder-dialogs-adaptive';
 import { DialogManager } from 'botbuilder-dialogs';
 
 // Create adapter.
@@ -37,10 +37,21 @@ server.post('/api/messages', (req, res) => {
 const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
-// Add rules
-dialogs.addRule(new NoMatchRule([
-    new IfCondition('not(user.name)', [
-        new TextInput('user.name', `Hi! what's your name?`),
+// Create recognizer
+dialogs.recognizer = new RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
+
+// Tell the user a joke
+dialogs.addRule(new IntentRule('#JokeIntent', [
+    new SendActivity(`Why did the 🐔 cross the 🛣️?`),
+    new EndTurn(),
+    new SendActivity(`To get to the other side...`)
+]));
+
+// Handle unknown intents
+dialogs.addRule(new UnknownIntentRule([
+    new IfCondition('user.name == null', [
+        new TextInput('user.name', `Hi! what's your name?`)
     ]),
     new SendActivity(`Hi {user.name}. It's nice to meet you.`)
 ]));
+

@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { AdaptiveDialog, NoMatchRule, SendActivity } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, UnknownIntentRule, SendActivity } from 'botbuilder-dialogs-adaptive';
 import { DialogManager } from 'botbuilder-dialogs';
 
 // Create HTTP server.
@@ -37,7 +37,7 @@ server.post('/api/messages', (req, res) => {
 const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
-// Add a default rule for handling incoming messages
-dialogs.addRule(new NoMatchRule([
+// Handle unknown intents
+dialogs.addRule(new UnknownIntentRule([
     new SendActivity('Hello World!')
 ]));

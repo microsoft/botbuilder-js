@@ -32,8 +32,8 @@ server.post('/api/messages', (req, res) => {
 // Initialize bots root dialog
 const dialogs = new botbuilder_dialogs_adaptive_1.AdaptiveDialog();
 bot.rootDialog = dialogs;
-// Add a default rule for handling incoming messages
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.NoMatchRule([
+// Handle unknown intents
+dialogs.addRule(new botbuilder_dialogs_adaptive_1.UnknownIntentRule([
     new botbuilder_dialogs_adaptive_1.SendActivity('Hello World!')
 ]));
 //# sourceMappingURL=index.js.map

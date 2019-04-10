@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { AdaptiveDialog, NoMatchRule, SendActivity, TextInput, IfCondition, WelcomeRule, RegExpRecognizer, IntentRule, EndTurn, BeginDialog, EndDialog } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, UnknownIntentRule, SendActivity, TextInput, IfCondition, RegExpRecognizer, IntentRule, EndTurn, BeginDialog, EndDialog } from 'botbuilder-dialogs-adaptive';
 import { DialogManager } from 'botbuilder-dialogs';
 
 // Create adapter.
@@ -38,27 +38,24 @@ const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
 //=================================================================================================
-// Top Level Rules
+// Rules
 //=================================================================================================
 
-// Greet the user
-dialogs.addRule(new WelcomeRule([
-    new SendActivity(`I'm a joke bot. To get started say "tell me a joke".`)
-]));
-
-// Add a top level fallback rule to handle received messages
-dialogs.addRule(new NoMatchRule([
-    new BeginDialog('AskNameDialog')
-]));
+dialogs.recognizer = new RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
 
 // Tell the user a joke
-dialogs.recognizer = new RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
 dialogs.addRule(new IntentRule('#JokeIntent', [
     new BeginDialog('TellJokeDialog')
 ]));
 
+// Handle unknown intents
+dialogs.addRule(new UnknownIntentRule([
+    new BeginDialog('AskNameDialog')
+]));
+
+
 //=================================================================================================
-// Support Dialogs
+// Child Dialogs
 //=================================================================================================
 
 const askNameDialog = new AdaptiveDialog('AskNameDialog', [

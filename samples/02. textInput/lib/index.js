@@ -32,8 +32,8 @@ server.post('/api/messages', (req, res) => {
 // Initialize bots root dialog
 const dialogs = new botbuilder_dialogs_adaptive_1.AdaptiveDialog();
 bot.rootDialog = dialogs;
-// Add rules
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.NoMatchRule([
+// Handle unknown intents
+dialogs.addRule(new botbuilder_dialogs_adaptive_1.UnknownIntentRule([
     new botbuilder_dialogs_adaptive_1.SetProperty(`user.name = ''`),
     new botbuilder_dialogs_adaptive_1.TextInput('user.name', `Hi! what's your name?`),
     new botbuilder_dialogs_adaptive_1.SendActivity(`Hi {user.name}. It's nice to meet you.`)
