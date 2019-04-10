@@ -1,3 +1,11 @@
+
+/**
+ * @module botbuilder-expression-parser
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 /**
  * util class
  */

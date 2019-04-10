@@ -1,4 +1,11 @@
 
+/**
+ * @module botbuilder-expression-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { Expression } from 'botbuilder-expression';
@@ -128,6 +135,10 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
             return args[0];
         }
         const paramters: string[] = this.TemplateMap[templateName].Parameters;
+
+        if (paramters !== undefined && (args === undefined || paramters.length !== args.length)) {
+            throw new Error(`The length of required parameters does not match the length of provided parameters.`);
+        }
 
         const newScope: any = {};
         paramters.map((e: string, i: number) => newScope[e] = args[i]);

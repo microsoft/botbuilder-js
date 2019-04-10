@@ -1,3 +1,10 @@
+/**
+ * @module botbuilder-expression-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ExpressionEngine } from 'botbuilder-expression-parser';

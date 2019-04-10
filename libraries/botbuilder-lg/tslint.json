@@ -4,15 +4,8 @@
         "tslint:recommended",
         "tslint-microsoft-contrib"
     ],
-    "linterOptions": {
-        "exclude":[
-            "libraries/botframework-connector/src/connectorApi/**/*",
-            "libraries/botframework-connector/src/oAuthApi/**/*",
-            "libraries/botframework-schema/**/*"
-        ]
-    },
     "rulesDirectory": [
-        "node_modules/tslint-microsoft-contrib"
+        "../../node_modules/tslint-microsoft-contrib"
     ],
     "jsRules": {},
     "rules": {
@@ -34,8 +27,6 @@
         "export-name":false,
         "no-relative-imports": false,
         "max-line-length": [true,{"limit":140,"ignore-pattern":"^\\s+\\*"}],
-        "no-void-expression": false,
-        "no-unsafe-any":false,
-        "newline-per-chained-call":false
+        "no-unsafe-any":false
     }
 }

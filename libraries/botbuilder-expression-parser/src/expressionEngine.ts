@@ -1,3 +1,11 @@
+
+/**
+ * @module botbuilder-expression-parser
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { ANTLRInputStream, CommonTokenStream } from 'antlr4ts';
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, ParseTree } from 'antlr4ts/tree';

@@ -1,3 +1,11 @@
+
+/**
+ * @module botbuilder-expression-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, ParseTree, TerminalNode } from 'antlr4ts/tree';
 import { Constant, Expression, Extensions, IExpressionParser } from 'botbuilder-expression';
@@ -135,13 +143,15 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
                 const str: string = (expression).Value;
                 if (str.startsWith('[') && str.endsWith(']')) {
                     found = true;
-
                     this.AnalyzeTemplateRef(str).forEach((x: string) => references.add(x));
                 } else if (str.startsWith('{') && str.endsWith('}')) {
                     found = true;
                     for (const childRef of this.AnalyzeExpression(str)) {
                         references.add(childRef);
                     }
+                } else if (str in this.TemplateMap) {
+                    found = true;
+                    this.AnalyzeTemplateRef(str).forEach((x: string) => references.add(x));
                 }
             }
 
@@ -176,7 +186,12 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
             // but the result will still be accurate
             return flatten(args.map((arg: string) => this.AnalyzeExpression(arg)));
         } else {
-            return this.AnalyzeTemplate(exp);
+            // We analyze tempalte only if the template has no formal parameters
+            if (this.TemplateMap[exp].Parameters === undefined || this.TemplateMap[exp].Parameters.length === 0) {
+                return this.AnalyzeTemplate(exp);
+            } else {
+                return [];
+            }
         }
     }
 

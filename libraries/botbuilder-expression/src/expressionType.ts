@@ -1,3 +1,12 @@
+
+/**
+ * @module botbuilder-expression
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 /**
  * Built-in expression types.
  */

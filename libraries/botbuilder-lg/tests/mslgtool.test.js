@@ -28,7 +28,7 @@ describe('MSLGTool', function () {
         assert.strictEqual(errors.length, 0);
     });
 
-    it('TestMergeTemplates', function () {
+    it('TestCollateTemplates', function () {
         const mslgTool = new MSLGTool();
         let errors = mslgTool.ValidateFile(GetExampleFile('CollateFile1.lg'));
         assert.strictEqual(errors.length, 0);
@@ -36,12 +36,12 @@ describe('MSLGTool', function () {
         assert.strictEqual(errors.length, 0);
         errors = mslgTool.ValidateFile(GetExampleFile('CollateFile3.lg'));
         assert.strictEqual(errors.length, 0);
-        assert.strictEqual(mslgTool.MergerMessages.length, 0);
+        assert.strictEqual(mslgTool.CollationMessages.length, 0);
         assert.strictEqual(mslgTool.NameCollisions.length, 3);
-        assert.strictEqual(mslgTool.MergedTemplates.size, 4);
-        assert.strictEqual(mslgTool.MergedTemplates.get('Greeting').length, 3);
-        assert.strictEqual(mslgTool.MergedTemplates.get('TimeOfDayWithCondition').size, 3);
-        assert.strictEqual(mslgTool.MergedTemplates.get('TimeOfDay').length, 3);
+        assert.strictEqual(mslgTool.CollatedTemplates.size, 4);
+        assert.strictEqual(mslgTool.CollatedTemplates.get('Greeting').length, 3);
+        assert.strictEqual(mslgTool.CollatedTemplates.get('TimeOfDayWithCondition').size, 3);
+        assert.strictEqual(mslgTool.CollatedTemplates.get('TimeOfDay').length, 3);
     });
 
     it('TestExpandTemplate', function () {
@@ -51,6 +51,18 @@ describe('MSLGTool', function () {
         let expandedTemplate = mslgTool.ExpandTemplate('FinalGreeting', undefined);
         assert.strictEqual(expandedTemplate.length, 4);
         let expectedResults = ['Hi Morning', 'Hi Evening', 'Hello Morning', 'Hello Evening'];
+        expectedResults.forEach(element => {
+            assert.strictEqual(expandedTemplate.includes(element), true);
+        });
+    })
+
+    it('TestExpandTemplateWithScope', function() {
+        const mslgTool = new MSLGTool();
+        let errors = mslgTool.ValidateFile(GetExampleFile('CollateFile3.lg'));
+        assert.strictEqual(errors.length, 0);
+        let expandedTemplate = mslgTool.ExpandTemplate('TimeOfDayWithCondition', { time: 'evening' });
+        assert.strictEqual(expandedTemplate.length, 2);
+        let expectedResults = ['Hi Evening', 'Hey Evening'];
         expectedResults.forEach(element => {
             assert.strictEqual(expandedTemplate.includes(element), true);
         });

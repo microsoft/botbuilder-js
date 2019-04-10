@@ -1,3 +1,10 @@
+/**
+ * @module botbuilder-expression-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 export * from './templateEngine';
 export * from './evaluator';
 export * from './generated/LGFileLexer';

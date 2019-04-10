@@ -1,3 +1,11 @@
+
+/**
+ * @module botbuilder-expression-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { ANTLRErrorListener, RecognitionException, Recognizer } from 'antlr4ts';
 
 // tslint:disable-next-line: completed-docs
