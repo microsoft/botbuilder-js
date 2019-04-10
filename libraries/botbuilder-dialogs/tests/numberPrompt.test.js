@@ -187,7 +187,6 @@ describe('NumberPrompt', function () {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new NumberPrompt('prompt', async (prompt) => {
             assert(prompt);
-            console.log('recognized value:', prompt.recognized.value);
             return prompt.recognized.value === 0;
         }));
 
@@ -195,6 +194,49 @@ describe('NumberPrompt', function () {
             .assertReply('Send me a zero')
             .send('100')
             .assertReply('Send 0 or zero')
+            .send('0')
+            .assertReply('0')
+            .send('Another!')
+            .assertReply('Send me a zero')
+            .send('zero')
+            .assertReply('0')
+    });
+
+    it ('should see numberOfAttempts counter increment', async function() {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt',{prompt: 'Send me a zero', retryPrompt: 'Send 0 or zero'});
+            } else if (results.status === DialogTurnStatus.complete) {
+                const reply = results.result.toString();
+                await turnContext.sendActivity(reply);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+
+        dialogs.add(new NumberPrompt('prompt', async (prompt) => {
+            if (prompt.recognized.value !== 0) {
+                prompt.context.sendActivity(`numberOfAttempts ${prompt.options.numberOfAttempts}`);
+                return false;
+            }
+            return true;
+        }));
+
+        await adapter.send('Hello')
+            .assertReply('Send me a zero')
+            .send('100')
+            .assertReply('numberOfAttempts 0')
+            .send('200')
+            .assertReply('numberOfAttempts 1')
+            .send('300')
+            .assertReply('numberOfAttempts 2')
             .send('0')
             .assertReply('0')
             .send('Another!')
