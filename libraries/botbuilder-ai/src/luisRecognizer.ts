@@ -7,11 +7,10 @@
  */
 import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
 
-import { RecognizerResult, TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
-import * as msRest from "@azure/ms-rest-js";
+import * as msRest from '@azure/ms-rest-js';
+import { BotTelemetryClient, NullTelemetryClient, RecognizerResult, TurnContext } from 'botbuilder-core';
 import * as os from 'os';
 import * as Url from 'url-parse';
-import { TelemetryConstants } from 'botbuilder-core/lib/telemetryConstants';
 import { LuisTelemetryConstants } from './luisTelemetryConstants';
 
 const pjson = require('../package.json');
@@ -67,7 +66,7 @@ export interface LuisApplication {
 /**
  * Options per LUIS prediction.
  */
-export interface LuisPredictionOptions {
+export interface LuisPredictionOptions extends LuisModels.PredictionResolveOptionalParams {
     /**
      * (Optional) Bing Spell Check subscription key.
      */

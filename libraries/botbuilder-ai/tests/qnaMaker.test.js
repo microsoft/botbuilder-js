@@ -77,10 +77,11 @@ describe('QnAMaker', function () {
         });
 
         it('should instantiate a QnAMaker class successfully with both QnAMakerEndpoint and QnAMakerOptions args', function() {
-            const options = { top: 7 };
+            const options = { top: 7, timeout: 333333 };
             const qnaWithOptions = new QnAMaker(endpoint, options);
 
             assert.strictEqual(qnaWithOptions._options.top, options.top);
+            assert.strictEqual(qnaWithOptions._options.timeout, options.timeout);
         });
 
         it('should throw an error instantiating without QnAMakerEndpoint', function() {
@@ -189,6 +190,18 @@ describe('QnAMaker', function () {
             const descendingQnaResults = qnaResults.sort((a, b) => b.score - a.score);
             
             assert.strictEqual(qnaResults, descendingQnaResults, 'answers should be sorted from greatest to least score');
+        });
+
+        it('should return answer with timeout option specified', async function() {
+            const timeoutOption = { timeout: 500000 };
+            const qna = new QnAMaker(endpoint, timeoutOption);
+            const context = new TestContext({ text: "where are the unicorns?" });
+            const expectedNumOfAns = 1;
+
+            const qnaResults = await qna.getAnswers(context, timeoutOption);
+
+            assert.strictEqual(qna._options.timeout, timeoutOption.timeout);
+            assert.strictEqual(qnaResults.length, expectedNumOfAns);
         });
         
         it('should convert legacy response property "qnaId" to "id"', async function() {
