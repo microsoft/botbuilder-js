@@ -1,4 +1,11 @@
 
+/**
+ * @module botbuilder-expression
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import * as moment from 'moment';
 import { Constant } from './constant';
 import { Expression, ReturnType } from './expression';
@@ -102,7 +109,7 @@ export class BuiltInFunctions {
      */
     public static ValidateNumber(expression: Expression): void {
 
-        return BuiltInFunctions.ValidateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.Number);
+        BuiltInFunctions.ValidateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.Number);
     }
 
     /**
@@ -110,7 +117,7 @@ export class BuiltInFunctions {
      * @param expression Expression to validate.
      */
     public static ValidateBoolean(expression: Expression): void {
-        return BuiltInFunctions.ValidateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.Boolean);
+        BuiltInFunctions.ValidateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.Boolean);
     }
 
     /**
@@ -118,7 +125,7 @@ export class BuiltInFunctions {
      * @param expression Expression to validate.
      */
     public static ValidateString(expression: Expression): void {
-        return BuiltInFunctions.ValidateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.String);
+        BuiltInFunctions.ValidateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.String);
     }
 
     /**
@@ -126,7 +133,7 @@ export class BuiltInFunctions {
      * @param expression Expression to validate.
      */
     public static ValidateBinary(expression: Expression): void {
-        return BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2);
+        BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2);
     }
 
     /**
@@ -134,7 +141,7 @@ export class BuiltInFunctions {
      * @param expression Expression to validate.
      */
     public static ValidateBinaryNumber(expression: Expression): void {
-        return BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.Number);
+        BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.Number);
     }
 
     /**
@@ -142,7 +149,7 @@ export class BuiltInFunctions {
      * @param expression Expression to validate.
      */
     public static ValidateBinaryNumberOrString(expression: Expression): void {
-        return BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.Number, ReturnType.String);
+        BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.Number, ReturnType.String);
     }
 
     /**
@@ -150,7 +157,7 @@ export class BuiltInFunctions {
      * @param expression Expression to validate.
      */
     public static ValidateUnary(expression: Expression): void {
-        return BuiltInFunctions.ValidateArityAndAnyType(expression, 1, 1);
+        BuiltInFunctions.ValidateArityAndAnyType(expression, 1, 1);
     }
 
     /**
@@ -158,7 +165,7 @@ export class BuiltInFunctions {
      * @param expression Expression to validate.
      */
     public static ValidateUnaryString(expression: Expression): void {
-        return BuiltInFunctions.ValidateArityAndAnyType(expression, 1, 1, ReturnType.String);
+        BuiltInFunctions.ValidateArityAndAnyType(expression, 1, 1, ReturnType.String);
     }
 
     /**
@@ -166,7 +173,7 @@ export class BuiltInFunctions {
      * @param expression Expression to validate.
      */
     public static ValidateUnaryBoolean(expression: Expression): void {
-        return BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.Boolean);
+        BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.Boolean);
     }
 
     /**

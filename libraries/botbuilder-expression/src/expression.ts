@@ -1,3 +1,11 @@
+
+/**
+ * @module botbuilder-expression
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { BuiltInFunctions } from './buildInFunction';
 import { Constant } from './constant';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from './expressionEvaluator';

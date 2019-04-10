@@ -1,3 +1,10 @@
+/**
+ * @module botbuilder-expression-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 // tslint:disable-next-line: no-submodule-imports
 import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
 // tslint:disable-next-line: no-submodule-imports
