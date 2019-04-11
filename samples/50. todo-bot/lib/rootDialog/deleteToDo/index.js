@@ -8,6 +8,7 @@ const recognizer_1 = require("../recognizer");
 class DeleteToDo extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
     constructor() {
         super('DeleteToDo', [
+            new botbuilder_dialogs_adaptive_1.LogStep(`DeleteToDo: todoList = {user.todoList}`),
             new botbuilder_dialogs_adaptive_1.IfCondition(`user.todoList != null`, [
                 new botbuilder_dialogs_adaptive_1.SaveEntity(schema_1.variables.title, schema_1.entities.title),
                 new botbuilder_dialogs_adaptive_1.ChoiceInput(schema_1.variables.title, `Which todo would you like to remove?`, schema_1.user.todoList),

@@ -14,6 +14,7 @@ export * from './emitEvent';
 export * from './endDialog';
 export * from './endTurn';
 export * from './ifCondition';
+export * from './logStep';
 export * from './repeatDialog';
 export * from './replaceDialog';
 export * from './saveEntity';

@@ -3,14 +3,13 @@
 // Licensed under the MIT License.
 Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_dialogs_adaptive_1 = require("botbuilder-dialogs-adaptive");
-const schema_1 = require("../../schema");
 const recognizer_1 = require("../recognizer");
 class ShowToDos extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
     constructor() {
         super('ShowToDos', [
-            new botbuilder_dialogs_adaptive_1.LogStep(`ShowToDos: todoList = {user.todoList}`, true),
-            new botbuilder_dialogs_adaptive_1.IfCondition(`user.todoList != null`, [
-                new botbuilder_dialogs_adaptive_1.SendList(schema_1.user.todoList, `Here are your todos:`)
+            new botbuilder_dialogs_adaptive_1.LogStep(`ShowToDos: todos = {user.todos}`, true),
+            new botbuilder_dialogs_adaptive_1.IfCondition(`user.todos != null`, [
+                new botbuilder_dialogs_adaptive_1.SendList(`user.todos`, `Here are your todos:`)
             ]).else([
                 new botbuilder_dialogs_adaptive_1.SendActivity(`You have no todos.`)
             ])

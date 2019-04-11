@@ -2,12 +2,11 @@
 // Licensed under the MIT License.
 
 import { AdaptiveDialog, SendActivity, IntentRule, EventRule, UnknownIntentRule, IfCondition, SetProperty  } from "botbuilder-dialogs-adaptive";
-import { getRecognizer } from "./recognizer";
-import { intents, events } from "../schema";
-import { AddToDo } from "./addToDo";
-import { DeleteToDo } from "./deleteToDo";
-import { ClearToDos } from "./clearToDos";
-import { ShowToDos } from "./showToDos";
+import { getRecognizer } from "../recognizer";
+import { AddToDo } from "../addToDo";
+import { DeleteToDo } from "../deleteToDo";
+import { ClearToDos } from "../clearToDos";
+import { ShowToDos } from "../showToDos";
 
 export class RootDialog extends AdaptiveDialog {
     constructor() {
@@ -17,19 +16,19 @@ export class RootDialog extends AdaptiveDialog {
         this.recognizer = getRecognizer();
 
         // Handle recognized intents
-        this.addRule(new IntentRule(intents.AddToDo, [
+        this.addRule(new IntentRule('#AddToDo', [
             new AddToDo()
         ]));
 
-        this.addRule(new IntentRule(intents.DeleteToDo, [
+        this.addRule(new IntentRule('#DeleteToDo', [
             new DeleteToDo()
         ]));
 
-        this.addRule(new IntentRule(intents.ClearToDos, [
+        this.addRule(new IntentRule('#ClearToDos', [
             new ClearToDos()
         ]));
 
-        this.addRule(new IntentRule(intents.ShowToDos, [
+        this.addRule(new IntentRule('#ShowToDos', [
             new ShowToDos()
         ]));
 
@@ -43,16 +42,16 @@ export class RootDialog extends AdaptiveDialog {
         ]));
 
         // Define rules to handle cancel events
-        this.addRule(new EventRule(events.CancelAdd, [
-            new SendActivity(`Ok... Cancelled adding new alarm.`)
+        this.addRule(new EventRule('cancelAdd', [
+            new SendActivity(`Ok... Cancelled adding new todo.`)
         ]));
 
-        this.addRule(new EventRule(events.CancelDelete, [
+        this.addRule(new EventRule('cancelDelete', [
             new SendActivity(`Ok...`)
         ]));
 
         // Define rules for handling errors
-        this.addRule(new EventRule(events.Error, [
+        this.addRule(new EventRule('error', [
             new SendActivity(`Oops. An error occurred: {message}`)
         ]));
     }

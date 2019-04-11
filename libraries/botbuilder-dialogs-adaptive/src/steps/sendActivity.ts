@@ -88,7 +88,7 @@ export class SendActivity extends DialogCommand {
         //   memory location.
         const data = Object.assign({
             utterance: dc.context.activity.text || ''
-        }, options);
+        }, dc.state.toJSON(),  options);
         const activity = this.activity.format(dc, data);
         const result = await dc.context.sendActivity(activity);
         return await dc.endDialog(result);

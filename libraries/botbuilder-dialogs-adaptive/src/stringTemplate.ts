@@ -86,6 +86,13 @@ function textSlot(path: string): (data: object) => string {
     path = DialogContextState.resolvePath(path);
     return (data) => {
         const value = jsonpath.value(data, path);
-        return value !== undefined ? value.toString() : '';
+        switch (typeof value) {
+            case 'object':
+                return JSON.stringify(value);
+            case 'undefined':
+                return '';
+            default:
+                return value.toString();
+        }
     }
 }
