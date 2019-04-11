@@ -10,6 +10,7 @@ export * from './cancelDialog';
 export * from './codeStep';
 export * from './deleteProperty';
 export * from './editArray';
+export * from './editSteps';
 export * from './emitEvent';
 export * from './endDialog';
 export * from './endTurn';
