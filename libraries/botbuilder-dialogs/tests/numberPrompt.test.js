@@ -210,8 +210,7 @@ describe('NumberPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt',{prompt: 'Send me a zero', retryPrompt: 'Send 0 or zero'});
             } else if (results.status === DialogTurnStatus.complete) {
-                const reply = results.result.toString();
-                await turnContext.sendActivity(reply);
+                await turnContext.sendActivity('ok');
             }
             await convoState.saveChanges(turnContext);
         });
@@ -238,10 +237,16 @@ describe('NumberPrompt', function () {
             .send('300')
             .assertReply('numberOfAttempts 2')
             .send('0')
-            .assertReply('0')
+            .assertReply('ok')
             .send('Another!')
             .assertReply('Send me a zero')
-            .send('zero')
-            .assertReply('0')
+            .send('100')
+            .assertReply('numberOfAttempts 0')
+            .send('200')
+            .assertReply('numberOfAttempts 1')
+            .send('300')
+            .assertReply('numberOfAttempts 2')
+            .send('0')
+            .assertReply('ok')
     });
 });
