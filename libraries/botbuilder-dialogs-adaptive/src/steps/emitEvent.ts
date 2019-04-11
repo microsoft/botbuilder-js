@@ -77,7 +77,7 @@ export class EmitEvent extends DialogCommand {
         }
     }
 
-    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Continue plan execution after interruption
         return await dc.endDialog(true);
     }
