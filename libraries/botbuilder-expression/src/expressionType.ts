@@ -82,6 +82,7 @@ export class ExpressionType {
     public static readonly CreateArray: string = 'createArray';
     public static readonly First: string = 'first';
     public static readonly Last: string = 'last';
+    public static readonly Foreach: string = 'foreach';
 
     // Misc
     public static readonly Constant: string = 'Constant';

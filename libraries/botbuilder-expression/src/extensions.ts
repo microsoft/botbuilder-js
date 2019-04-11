@@ -23,13 +23,24 @@ export class Extensions {
      * @returns Hash set of the static reference paths.
      */
     public static References(expression: Expression): ReadonlyArray<string> {
-        let reference: Set<string> = new Set<string>();
-        const path: string = this.ReferenceWalk(expression, reference);
+        let references: Set<string> = new Set<string>();
+        const path: string = this.ReferenceWalk(expression, references);
         if (path !== undefined) {
-            reference = reference.add(path);
+            references = references.add(path);
         }
 
-        return Array.from(reference);
+        const filteredReferences: Set<string> = new Set<string>();
+        references.forEach((x: string) => {
+            if (!x.startsWith('$local.')) {
+                if (x.startsWith('$global.')) {
+                    filteredReferences.add(x.substr(8));
+                } else {
+                    filteredReferences.add(x);
+                }
+            }
+        });
+
+        return Array.from(filteredReferences);
     }
 
     /**
@@ -72,11 +83,20 @@ export class Extensions {
         if (extension === undefined || !extension(expression)) {
             const children: Expression[] = expression.Children;
             if (expression.Type === ExpressionType.Accessor) {
+                const prop: string = <string>((<Constant>(children[0])).Value);
+
+                if (children.length === 1) {
+                    path = prop;
+                }
+
                 if (children.length === 2) {
                     path = Extensions.ReferenceWalk(children[1], references, extension);
+                    if (path !== undefined) {
+                        path = path.concat('.', prop);
+                    }
+                     // if path is null we still keep it null, won't append prop
+                     // because for example, first(items).x should not return x as refs
                 }
-                const prop: string = String((<Constant>children[0]).Value);
-                path = path === undefined ? prop : path.concat('.', prop);
             } else if (expression.Type === ExpressionType.Element) {
                 path = Extensions.ReferenceWalk(children[0], references, extension);
                 if (path !== undefined) {

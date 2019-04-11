@@ -4,6 +4,7 @@ const assert = require('assert');
 const dataSource = [
 
   // operators test
+  ["first(nestedItems).x", 1],
   ["1 + 2", 3],
   ["1 - 2", -1],
   ["1.0 + 2.0", 3.0],
@@ -237,6 +238,10 @@ const dataSource = [
   ["exists(#BookFlight)", true],
   ["$title", "Dialog Title"],
   ["$subTitle", "Dialog Sub Title"],
+  ["join(foreach(items, item, item), ',')", "zero,one,two"],
+  ["join(foreach(nestedItems, i, i.x + first(nestedItems).x), ',')", "2,3,4"],
+  ["join(foreach(items, item, concat(item, string(count(items)))), ',')", "zero3,one3,two3"]
+
 ]
 
 const scope = {
@@ -255,6 +260,12 @@ const scope = {
       index : 3
   },
   items : ["zero", "one", "two" ],
+  nestedItems : 
+  [
+    {x : 1},
+    {x : 2},
+    {x : 3},
+  ],
   timestamp : "2018-03-15T13:00:00Z",
   turn : 
   {
