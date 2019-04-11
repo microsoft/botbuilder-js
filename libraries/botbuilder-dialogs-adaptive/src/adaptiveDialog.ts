@@ -497,15 +497,22 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
 
                     // Process step results
                     if (!result.parentEnded && this.getUniqueInstanceId(planning) === instanceId) {
+                        // End the current step
+                        if (result.status != DialogTurnStatus.waiting) {
+                            // This can potentially trigger new changes being queued up
+                            await planning.endStep();
+                        }
+
+                        // Do we have any queued up changes?
+                        if (planning.changes.length > 0) {
+                            // Apply changes and continue execution
+                            return await this.continuePlan(planning);
+                        }
+
                         // Is step waiting?
                         if (result.status === DialogTurnStatus.waiting) {
                             return result;
                         }
-
-                        // End the current step
-                        // - If we intercepted a cancellation, the plan should get updated with 
-                        //   additional steps when we continue.
-                        await planning.endStep();
 
                         // Continue plan execution
                         const plan = planning.plan;

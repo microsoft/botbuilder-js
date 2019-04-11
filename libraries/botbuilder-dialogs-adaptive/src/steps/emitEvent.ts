@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogCommand, DialogContext, DialogConfiguration } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogCommand, DialogContext, DialogConfiguration, Dialog, DialogReason } from 'botbuilder-dialogs';
 
 export interface EmitEventConfiguration extends DialogConfiguration {
     eventName?: string;
@@ -68,6 +68,17 @@ export class EmitEvent extends DialogCommand {
         }, options);
 
         const handled = await dc.emitEvent(opt.eventName, opt.eventValue, opt.bubbleEvent);
-        return await dc.endDialog(handled);
+        if (handled) {
+            // Defer continuation of plan until next turn
+            return Dialog.EndOfTurn;
+        } else {
+            // Continue execution of plan
+            return await dc.endDialog(false);
+        }
+    }
+
+    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+        // Continue plan execution after interruption
+        return await dc.endDialog(true);
     }
 }

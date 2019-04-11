@@ -54,7 +54,7 @@ export class IfCondition extends DialogCommand {
         if (condition) { 
             switch (typeof condition) {
                 case 'string':
-                    this.condition = engine.parse(condition);
+                    this.condition = engine.Parse(condition);
                     break; 
                 case 'function':
                     this.condition = Expression.Lambda(condition);
@@ -77,7 +77,7 @@ export class IfCondition extends DialogCommand {
         for (const key in config) {
             switch(key) {
                 case 'condition':
-                    this.condition = engine.parse(config.condition);
+                    this.condition = engine.Parse(config.condition);
                     break;
                 default:
                     cfg[key] = config[key];
@@ -103,7 +103,7 @@ export class IfCondition extends DialogCommand {
 
         // Evaluate expression
         const memory = planning.state.toJSON();
-        const { value, error } = this.condition.tryEvaluate(memory);
+        const { value, error } = this.condition.TryEvaluate(memory);
 
         // Check for error
         if (error) { throw new Error(`${this.id}: expression error - ${error.toString()}`) }
