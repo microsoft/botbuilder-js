@@ -30,7 +30,7 @@ class RootDialog extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
         this.addRule(new botbuilder_dialogs_adaptive_1.UnknownIntentRule([
             new botbuilder_dialogs_adaptive_1.IfCondition(`user.greeted != true`, [
                 new botbuilder_dialogs_adaptive_1.SendActivity(`Hi! I'm a ToDo bot. Say "add a todo named first one" to get started.`),
-                new botbuilder_dialogs_adaptive_1.SetProperty((state) => state.user.greeted = true)
+                new botbuilder_dialogs_adaptive_1.SetProperty(`user.greeted`, `true`)
             ]).else([
                 new botbuilder_dialogs_adaptive_1.SendActivity(`Say "add a todo named first one" to get started.`)
             ])

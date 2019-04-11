@@ -11,7 +11,12 @@ import { Expression } from 'botbuilder-expression';
 
 export interface SetPropertyConfiguration extends DialogConfiguration {
     /**
-     * The value expression to evaluate.
+     * The in-memory property to set.
+     */
+    property?: string;
+
+    /**
+     * The expression value to assign to the property.
      */
     value?: string;
 }
@@ -20,16 +25,25 @@ export type ExpressionDelegate<T> = (state: DialogContextVisibleState) => T;
 
 export class SetProperty<O extends object = {}> extends DialogCommand<O> {
     /**
-     * The value expression to evaluate.
+     * The in-memory property to set.
+     */
+    public property: string;
+
+    /**
+     * The expression value to assign to the property.
      */
     public value: Expression;
 
     /**
      * Creates a new `SetProperty` instance.
-     * @param value (Optional) value expression to evaluate.
+     * @param property The in-memory property to set.
+     * @param value The expression value to assign to the property.
      */
-    constructor(value?: string|Expression|ExpressionDelegate<any>) {
+    constructor();
+    constructor(property: string, value: string|Expression|ExpressionDelegate<any>);
+    constructor(property?: string, value?: string|Expression|ExpressionDelegate<any>) {
         super();
+        if (property) { this.property = property }
         if (value) { 
             switch (typeof value) {
                 case 'string':
@@ -67,14 +81,19 @@ export class SetProperty<O extends object = {}> extends DialogCommand<O> {
 
     public async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
         // Ensure planning context and condition
-        if (!this.value) { throw new Error(`${this.id}: no value expression specified.`) }
+        if (!this.property) { throw new Error(`${this.id}: no 'property' specified.`) }
+        if (!this.value) { throw new Error(`${this.id}: no 'value' expression specified.`) }
 
         // Evaluate expression
         const memory = dc.state.toJSON();
-        const { error } = this.value.TryEvaluate(memory);
+        const { error, value } = this.value.TryEvaluate(memory);
 
         // Check for error
-        if (error) { throw new Error(`${this.id}: expression error - ${error.toString()}`) }
+        if (error) { 
+            throw new Error(`${this.id}: expression error - ${error.toString()}`);
+        } else {
+            dc.state.setValue(this.property, value);
+        }
 
         return await dc.endDialog();
     }
