@@ -2,4 +2,9 @@
 - [templateRef('p1','p2')]
 
  # templateRef(arg)
-- hi 
+- hi
+
+ # template2
+- ```
+   @{lgTemplate('templateRef')}
+ ``` 

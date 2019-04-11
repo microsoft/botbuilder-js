@@ -11,7 +11,7 @@ import { AbstractParseTreeVisitor, ParseTree, TerminalNode } from 'antlr4ts/tree
 import { Constant, Expression, Extensions, IExpressionParser } from 'botbuilder-expression';
 import { ExpressionEngine} from 'botbuilder-expression-parser';
 import { flatten, keyBy } from 'lodash';
-import { EvaluationTarget } from './evaluator';
+import { EvaluationTarget, Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions } from './getMethodExtensions';
@@ -31,7 +31,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         super();
         this.Templates = templates;
         this.TemplateMap = keyBy(templates, (t: LGTemplate) => t.Name);
-        this._expressionParser = new ExpressionEngine(new GetMethodExtensions(undefined).GetMethodX);
+        this._expressionParser = new ExpressionEngine(new GetMethodExtensions(new Evaluator(this.Templates, undefined)).GetMethodX);
     }
 
     public AnalyzeTemplate(templateName: string): string[] {
@@ -131,12 +131,26 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         return [];
     }
 
+    private GetDirectTemplateRefs(exp: Expression): string[] {
+        if (exp.Type === 'lgTemplate' && exp.Children.length === 1) {
+            return [(exp.Children[0] as Constant).Value];
+        } else {
+            return flatten(exp.Children.map((x: Expression) => this.GetDirectTemplateRefs(x)));
+        }
+    }
+
     private AnalyzeExpression(exp: string): string[] {
         exp = exp.replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
-        const parse: Expression = this._expressionParser.parse(exp);
-        const references: Set<string> = new Set<string>();
+        const parsed: Expression = this._expressionParser.parse(exp);
 
+        const references: ReadonlyArray<string> = Extensions.References(parsed);
+        const referencesInTemplates: string[] = flatten(this.GetDirectTemplateRefs(parsed).map((x: string) => this.AnalyzeTemplate(x)));
+
+        return references.concat(referencesInTemplates);
+
+        /*
+        const references: Set<string> = new Set<string>();
         const path: string = Extensions.ReferenceWalk(parse, references, (expression: Expression) => {
             let found: boolean = false;
             if (expression instanceof Constant && typeof (expression).Value === 'string') {
@@ -163,6 +177,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         }
 
         return Array.from(references);
+        */
     }
 
     private AnalyzeTemplateRef(exp: string): string[] {

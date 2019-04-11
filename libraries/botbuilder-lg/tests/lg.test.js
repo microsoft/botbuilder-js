@@ -6,7 +6,7 @@ function GetExampleFilePath(fileName){
 }
 
 
-describe('LG', function () {
+describe.only('LG', function () {
     it('TestBasic', function () {
         let engine = TemplateEngine.fromFiles(GetExampleFilePath('2.lg'));
         let evaled = engine.evaluateTemplate("wPhrase", undefined);
@@ -84,11 +84,11 @@ describe('LG', function () {
             }
         ];
 
-       //let evaled = engine.evaluate('ShowAlarmsWithForeach',{alarms:alarms});
-        //assert.strictEqual(evaled === "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow", true, `Evaled is ${evaled}`);
-
-        let evaled = engine.evaluateTemplate('ShowAlarmsWithMemberHumanize',{alarms:alarms});
+        let evaled = engine.evaluateTemplate('ShowAlarmsWithForeach',{alarms:alarms});
         assert.strictEqual(evaled === "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow", true, `Evaled is ${evaled}`);
+
+        // let evaled = engine.evaluateTemplate('ShowAlarmsWithMemberHumanize',{alarms:alarms});
+        // assert.strictEqual(evaled === "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow", true, `Evaled is ${evaled}`);
     });
 
     

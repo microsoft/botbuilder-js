@@ -9,6 +9,7 @@
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ExpressionEngine } from 'botbuilder-expression-parser';
 import { keyBy } from 'lodash';
+import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions } from './getMethodExtensions';
@@ -245,9 +246,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
         if (matches !== null && matches !== undefined) {
             for (const match of matches) {
                 const newExp: string = match.substr(1);
-                if (newExp.startsWith('{[') && newExp.endsWith(']}')) {
-                    result = result.concat(this.CheckTemplateRef(newExp.substr(2, newExp.length - 4)));
-                }
+                result = result.concat(this.CheckExpression(newExp));
             }
         }
 
@@ -283,9 +282,11 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
                 .trim();
 
         try {
-            new ExpressionEngine(new GetMethodExtensions(undefined).GetMethodX).parse(exp);
+            new ExpressionEngine(new GetMethodExtensions(new Evaluator(this.Templates, undefined)).GetMethodX).parse(exp);
         } catch (e) {
-            result.push(new ReportEntry(e));
+            result.push(new ReportEntry(e.message.concat(` in expression '${exp}'`)));
+
+            return result;
         }
 
         return result;

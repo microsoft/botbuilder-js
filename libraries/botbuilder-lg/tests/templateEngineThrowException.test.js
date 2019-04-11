@@ -1,4 +1,4 @@
-const {TemplateEngine} = require('../');
+const {TemplateEngine, StaticChecker, ReportEntryType } = require('../');
 const assert = require('assert');
 
 function GetExampleFilePath(fileName){
@@ -26,11 +26,14 @@ const WarningDataFiles = [
     "NoMatchRule.lg"
 ];
 
-describe('LGExceptionTest', function () {
+describe.only('LGExceptionTest', function () {
     
     it('WariningTest', function () {
         for (const testDateItem of WarningDataFiles) {
             var engine = TemplateEngine.fromFiles(GetExampleFilePath(testDateItem));
+            var report = new StaticChecker(engine.templates).Check();
+            assert.strictEqual(report.length > 0, true);
+            report.forEach(e => assert.strictEqual(e.Type === ReportEntryType.WARN, true));
         }
     });
 

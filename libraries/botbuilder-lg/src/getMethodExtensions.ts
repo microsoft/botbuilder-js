@@ -6,7 +6,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BuiltInFunctions, ExpressionEvaluator } from 'botbuilder-expression';
+import { BuiltInFunctions, ExpressionEvaluator, ReturnType, Expression, Constant } from 'botbuilder-expression';
 import { Evaluator } from './evaluator';
 
 export interface IGetMethod {
@@ -24,16 +24,10 @@ export class GetMethodExtensions implements IGetMethod {
 
         // tslint:disable-next-line: switch-default
         switch (name) {
+            case 'lgTemplate':
+                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.lgTemplate), ReturnType.String, this.ValidLgTemplate);
             case 'join':
                 return new ExpressionEvaluator(BuiltInFunctions.Apply(this.Join));
-            case 'foreach':
-            case 'map':
-                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.Foreach));
-            case 'mapjoin':
-            case 'humanize':
-                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.ForeachThenJoin));
-            case 'lgTemplate':
-                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.lgTemplate));
         }
 
         return BuiltInFunctions.Lookup(name);
@@ -57,6 +51,29 @@ export class GetMethodExtensions implements IGetMethod {
         }
 
         throw new Error('NotImplementedException');
+    }
+
+    public ValidLgTemplate = (expression: Expression): void  => {
+        if (expression.Children.length === 0) {
+            throw new Error('lgTemplate requires 1 or more arguments');
+        }
+
+        if (!(expression.Children[0] instanceof Constant)
+            || typeof (expression.Children[0] as Constant).Value !== 'string') {
+                throw new Error(`lgTemplate expect a string as first argument, acutal ${expression.Children[0]}`);
+        }
+
+        const templateName: string = (expression.Children[0] as Constant).Value;
+        if (!(templateName in this.evaluator.TemplateMap)) {
+            throw new Error(`no such template '${templateName}' to call in ${expression}`);
+        }
+
+        const expectedArgsCount: number = this.evaluator.TemplateMap[templateName].Parameters.length;
+        const actualArgsCount: number = expression.Children.length - 1;
+
+        if (expectedArgsCount !== actualArgsCount) {
+            throw new Error(`arguments mismatch for template ${templateName}, expect ${expectedArgsCount} actual ${actualArgsCount}`);
+        }
     }
 
     public Join = (paramters: any[]): any => {

@@ -252,11 +252,8 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
 
         return exp.replace(/@\{[^{}]+\}/g, (sub: string) => {
             const newExp: string = sub.substr(1); // remove @
-            if (newExp.startsWith('{[') && newExp.endsWith(']}')) {
-                return this.EvalTemplateRef(newExp.substr(2, newExp.length - 4).replace('\"', '\'')); // [ ]
-            } else {
-                return this.EvalExpression(newExp).replace('\"', '\''); // { }
-            }
+
+            return this.EvalExpression(newExp); // { }
         });
     }
 

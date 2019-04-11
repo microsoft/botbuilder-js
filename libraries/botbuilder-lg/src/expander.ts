@@ -225,7 +225,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         exp = exp.replace(/@\{[^{}]+\}/g, (subStr: string) => {
             const newExp: string = subStr.substr(1); // remove @
             if (newExp.startsWith('{') && newExp.endsWith('}')) {
-                return this.EvalExpression(newExp).replace('\"', '\'');
+                return this.EvalExpression(newExp);
             }
         });
 
@@ -243,7 +243,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             const tempRes: string[] = [];
             for (const res of result) {
                 for (const refValue of templateRefValue[1]) {
-                    tempRes.push(res.replace(/@\{[^{}]+\}/, refValue.replace('\"', '\'')));
+                    tempRes.push(res.replace(/@\{[^{}]+\}/, refValue));
                 }
             }
             result = tempRes;
