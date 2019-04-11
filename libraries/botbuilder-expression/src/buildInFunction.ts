@@ -483,6 +483,87 @@ export class BuiltInFunctions {
         }
     }
 
+    private static Foreach(expression: Expression, state: any): { value: any; error: string } {
+        let result: any[];
+        let error: string;
+        let collection: any;
+
+        ({value: collection, error} = expression.Children[0].tryEvaluate(state));
+
+        if (error === undefined) {
+            // 2nd parameter has been rewrite to $local.item
+            const iteratorName: string = <string>((<Constant>(expression.Children[1].Children[0])).Value);
+            if (!(collection instanceof Array)) {
+                error = `${expression.Children[0]} is not a collection to run foreach`;
+            } else {
+                result = [];
+                for (const item of collection) {
+                    const local: Map<string, any> = new Map<string, any>([
+                        [iteratorName, item]
+                    ]);
+
+                    const newScope: Map<string, any> = new Map<string, any>([
+                        ['$global', state],
+                        ['$local', local]
+                    ]);
+
+                    const {value: r, error: e} = expression.Children[2].tryEvaluate(newScope);
+                    if (e !== undefined) {
+                        return {value: undefined, error: e};
+                    }
+                    result.push(r);
+                }
+            }
+        }
+
+        return {value: result, error};
+    }
+
+    private static ValidateForeach(expression: Expression): void {
+        if (expression.Children.length !== 3) {
+            throw new Error(`foreach expect 3 parameters, acutal ${expression.Children.length}`);
+        }
+
+        const second: Expression = expression.Children[1];
+        if (!(second.Type === ExpressionType.Accessor && second.Children.length === 1)) {
+            throw new Error(`Second paramter of foreach is not an identifier : ${second}`);
+        }
+
+        const iteratorName: string  = second.toString();
+
+        // rewrite the 2nd, 3rd paramater
+        expression.Children[1] = BuiltInFunctions.RewriteAccessor(expression.Children[1], iteratorName);
+        expression.Children[2] = BuiltInFunctions.RewriteAccessor(expression.Children[2], iteratorName);
+    }
+
+    private static RewriteAccessor(expression: Expression, localVarName: string): Expression {
+        if (expression.Type === ExpressionType.Accessor) {
+            if (expression.Children.length === 2) {
+                expression.Children[1] = BuiltInFunctions.RewriteAccessor(expression.Children[1], localVarName);
+            } else {
+                const str: string = expression.toString();
+                let prefix: string = '$global';
+                if (str === localVarName || str.startsWith(localVarName.concat('.'))) {
+                    prefix = '$local';
+                }
+
+                expression.Children = [expression.Children[0],
+                Expression.MakeExpression(ExpressionType.Accessor, undefined, new Constant(prefix))];
+
+            }
+
+            return expression;
+        } else {
+            // rewite children if have any
+            for (let idx: number = 0; idx < expression.Children.length; idx ++) {
+                expression.Children[idx] = BuiltInFunctions.RewriteAccessor(expression.Children[idx], localVarName);
+            }
+
+            return expression;
+        }
+
+    }
+
     private static And(expression: Expression, state: any): { value: any; error: string } {
         let result: boolean = true;
         let error: string;
@@ -857,7 +938,8 @@ export class BuiltInFunctions {
                 // tslint:disable-next-line: no-dynamic-delete
             [ExpressionType.RemoveProperty, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => { const temp: any = args[0]; delete temp[String(args[1])];
 
-                                                                                                                           return temp; }))]
+                                                                                                                           return temp; }))],
+            [ExpressionType.Foreach, new ExpressionEvaluator(BuiltInFunctions.Foreach, ReturnType.Object, BuiltInFunctions.ValidateForeach)]
         ]);
 
         // Math aliases
