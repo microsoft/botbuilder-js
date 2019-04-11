@@ -1,10 +1,11 @@
-const { ExpressionEngine } =  require('../');
+const { ExpressionEngine} =  require('../');
+const { Extensions } = require('botbuilder-expression');
 const assert = require('assert');
 
 const dataSource = [
 
   // operators test
-  ["first(nestedItems).x", 1],
+  ["first(nestedItems).x", 1, ["nestedItems"]],
   ["1 + 2", 3],
   ["1 - 2", -1],
   ["1.0 + 2.0", 3.0],
@@ -15,23 +16,23 @@ const dataSource = [
   ["(1 + 3) / 2", 2],
   ["1 * (2 + 3)", 5],
   ["(1 + 2) * 3", 9],
-  ["(one + two) * bag.three", 9.0],
-  ["(one + two) * bag.set.four", 12.0 ],
-  ["items[2]", "two"],
-  ["bag.list[bag.index - 2]", "blue"],
-  ["min(1.0, two) + max(one, 2.0)", 3.0],
+  ["(one + two) * bag.three", 9.0, ["one", "two", "bag.three" ]],
+  ["(one + two) * bag.set.four", 12.0 ,["one", "two", "bag.set.four"]],
+  ["items[2]", "two",["items[2]"]],
+  ["bag.list[bag.index - 2]", "blue",["bag.list", "bag.index"]],
+  ["min(1.0, two) + max(one, 2.0)", 3.0,["one", "two"]],
 
   // Multiple arg tests
   ["and(1 == 1, 1 < 2, 1 > 2)", false],
   ["add(1, 2, 3)", 6],
-  ["greater(one, two)", false],
-  ["greaterOrEquals(one, one)", true],
-  ["greaterOrEquals(one, two)", false],
+  ["greater(one, two)", false, ["one", "two"]],
+  ["greaterOrEquals(one, one)", true, ["one"]],
+  ["greaterOrEquals(one, two)", false,["one", "two"]],
   ["less(5, 2)", false],
   ["less(2, 2)", false],
-  ["less(one, two)", true],
-  ["lessOrEquals(one, one)", true],
-  ["lessOrEquals(one, two)", true],
+  ["less(one, two)", true, ["one", "two"]],
+  ["lessOrEquals(one, one)", true, ["one"]],
+  ["lessOrEquals(one, two)", true, ["one", "two"]],
   ["less(one, two)", true],
   ["lessOrEquals(one, one)", true],
   ["lessOrEquals(one, two)", true],
@@ -207,8 +208,8 @@ const dataSource = [
   ["last(items)", "two"],
   ["last('hello')", "o"],
   ["last(createArray(0, 1, 2))", 2],
-  ["one > 0.5 && two < 2.5", true],
-  ["one > 0.5 || two < 1.5", true],
+  ["one > 0.5 && two < 2.5", true, ["one", "two"]],
+  ["one > 0.5 || two < 1.5", true, ["one", "two"]],
   ["!true", false],
   ["!!true", true],
   ["!(one == 1.0) || !!(two == 2.0)", true],
@@ -218,11 +219,11 @@ const dataSource = [
   ["exists(one)", true],
   ["exists(xxx)", false],
   ["exists(one.xxx)", false],
-  ["!(one == 1.0)", false],
-  ["!!(one == 1.0)", true],
-  ["!(one == 1.0) || !!(two == 2.0)", true],
-  ["not(one == 1.0)", false],
-  ["not(not(one == 1.0))", true],
+  ["!(one == 1.0)", false, ["one"]],
+  ["!!(one == 1.0)", true, ["one"]],
+  ["!(one == 1.0) || !!(two == 2.0)", true, ["one", "two"]],
+  ["not(one == 1.0)", false, ["one"]],
+  ["not(not(one == 1.0))", true, ["one"]],
   ["not(false)", true],
 
   // Object manipulation and construction functions
@@ -231,16 +232,16 @@ const dataSource = [
   ["string(removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), 'key2'))", "{\"key1\":\"value1\"}"],
 
   // Short Hand Expression
-  ["@city == 'Bellevue'", false],
-  ["@city", "Seattle"],
-  ["@city == 'Seattle'", true],
-  ["#BookFlight == 'BookFlight'", true],
-  ["exists(#BookFlight)", true],
-  ["$title", "Dialog Title"],
-  ["$subTitle", "Dialog Sub Title"],
+  ["@city == 'Bellevue'", false, ["turn.entities.city"]],
+  ["@city", "Seattle",["turn.entities.city"]],
+  ["@city == 'Seattle'", true,["turn.entities.city"]],
+  ["#BookFlight == 'BookFlight'", true,["turn.intents.BookFlight"]],
+  ["exists(#BookFlight)", true,["turn.intents.BookFlight"]],
+  ["$title", "Dialog Title",["dialog.result.title"]],
+  ["$subTitle", "Dialog Sub Title",["dialog.result.subTitle"]],
   ["join(foreach(items, item, item), ',')", "zero,one,two"],
-  ["join(foreach(nestedItems, i, i.x + first(nestedItems).x), ',')", "2,3,4"],
-  ["join(foreach(items, item, concat(item, string(count(items)))), ',')", "zero3,one3,two3"]
+  ["join(foreach(nestedItems, i, i.x + first(nestedItems).x), ',')", "2,3,4",["nestedItems"]],
+  ["join(foreach(items, item, concat(item, string(count(items)))), ',')", "zero3,one3,two3",["items"]]
 
 ]
 
@@ -298,15 +299,36 @@ describe('expression functional test', () => {
         assert(error === undefined, `input: ${input}, Has error: ${error}`);
 
         const expected = data[1];
+
+        //Assert Object Equals
         if(actual instanceof Array && expected instanceof Array) {
-          assert.strictEqual(actual.length, expected.length, `expected length: ${expected.length}, actual length: ${actual.length}`);
-          for(let i = 0; i < actual.length; i++) {
-            assert.strictEqual(actual[i], expected[i], `actual is: ${actual[i]}, expected is: ${expected[i]} for case ${input}`)
+          const [isSuccess, errorMessage] = IsArraySame(actual, expected);
+          if(!isSuccess) {
+            assert.fail(errorMessage);
           }
         }
         else {
           assert(actual === expected,`actual is: ${actual} for case ${input}`);
         }
+      
+        //Assert ExpectedRefs
+        if(data.length === 3) {
+          const actualRefs = Extensions.References(parsed);
+          const [isSuccess, errorMessage] = IsArraySame(actualRefs.sort(), data[2].sort());
+          if(!isSuccess) {
+            assert.fail(errorMessage);
+          }
+        }
     }
   });
 });
+
+var IsArraySame = (actual, expected) => { //return [isSuccess, errorMessage]
+  if(actual.length !== expected.length) return [false,`expected length: ${expected.length}, actual length: ${actual.length}`];
+
+  for(let i = 0; i < actual.length; i++) {
+    if(actual[i] !== expected[i]) return [false, `actual is: ${actual[i]}, expected is: ${expected[i]}`];
+  }
+
+  return [true, ''];
+}
