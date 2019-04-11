@@ -67,4 +67,63 @@ describe('MSLGTool', function () {
             assert.strictEqual(expandedTemplate.includes(element), true);
         });
     })
+
+    it('TestExpandTemplateWithRef', function() {
+        const mslgTool = new MSLGTool();
+        let errors = mslgTool.ValidateFile(GetExampleFile('ValidFile.lg'));
+        assert.strictEqual(errors.length, 0);
+        const alarms = [
+            {
+                time: "7 am",
+                date : "tomorrow"
+            },
+            {
+                time:"8 pm",
+                date :"tomorrow"
+            }
+        ];
+        let expandedTemplate = mslgTool.ExpandTemplate('ShowAlarmsWithLgTemplate', {alarms: alarms});
+        assert.strictEqual(expandedTemplate.length, 2);
+        assert.strictEqual(expandedTemplate[0], "You have 2 alarms, they are 8 pm at tomorrow");
+        assert.strictEqual(expandedTemplate[1], "You have 2 alarms, they are 8 pm of tomorrow");
+    })
+
+    it('TestExpandTemplateWithRefInForeach', function() {
+        const mslgTool = new MSLGTool();
+        let errors = mslgTool.ValidateFile(GetExampleFile('ValidFile.lg'));
+        assert.strictEqual(errors.length, 0);
+        const alarms = [
+            {
+                time: "7 am",
+                date : "tomorrow"
+            },
+            {
+                time:"8 pm",
+                date :"tomorrow"
+            }
+        ];
+        let expandedTemplate = mslgTool.ExpandTemplate('ShowAlarmsWithForeach', {alarms: alarms});
+        assert.strictEqual(expandedTemplate.length, 1);
+        assert.strictEqual(expandedTemplate[0], "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow")
+    })
+
+    it('TestExpandTemplateWithRefInMultiLine', function() {
+        const mslgTool = new MSLGTool();
+        let errors = mslgTool.ValidateFile(GetExampleFile('ValidFile.lg'));
+        assert.strictEqual(errors.length, 0);
+        const alarms = [
+            {
+                time: "7 am",
+                date : "tomorrow"
+            },
+            {
+                time:"8 pm",
+                date :"tomorrow"
+            }
+        ];
+        let expandedTemplate = mslgTool.ExpandTemplate('ShowAlarmsWithMultiLine', {alarms: alarms});
+        assert.strictEqual(expandedTemplate.length, 2);
+        assert.strictEqual(expandedTemplate[0], "\r\nYou have 2 alarms.\r\nThey are 8 pm at tomorrow\r\n");
+        assert.strictEqual(expandedTemplate[1], "\r\nYou have 2 alarms.\r\nThey are 8 pm of tomorrow\r\n");
+    })
 })

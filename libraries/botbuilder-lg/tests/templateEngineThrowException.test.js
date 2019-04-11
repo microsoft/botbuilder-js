@@ -26,7 +26,7 @@ const WarningDataFiles = [
     "NoMatchRule.lg"
 ];
 
-describe.only('LGExceptionTest', function () {
+describe('LGExceptionTest', function () {
     
     it('WariningTest', function () {
         for (const testDateItem of WarningDataFiles) {

@@ -8,7 +8,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { BuiltInFunctions, Expression, ExpressionEvaluator } from 'botbuilder-expression';
+import { BuiltInFunctions, ExpressionEvaluator, ReturnType, Expression, Constant } from 'botbuilder-expression';
 import { ExpressionEngine} from 'botbuilder-expression-parser';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluator';
@@ -28,7 +28,6 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         super();
         this.Templates = templates;
         this.TemplateMap = keyBy(templates, (t: LGTemplate) => t.Name);
-        // tslint:disable-next-line: no-use-before-declare
         this.GetMethodX = getMethod === undefined ? new GetExpanderMethod(this) : getMethod;
     }
 
@@ -94,7 +93,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                     result = this.StringArrayConcat(result, [this.EvalEscapeCharacter(innerNode.text)]);
                     break;
                 case lp.LGFileParser.EXPRESSION: {
-                    result = this.StringArrayConcat(result, [this.EvalExpression(innerNode.text)]);
+                    result = this.StringArrayConcat(result, this.EvalExpression(innerNode.text));
                     break;
                 }
                 case lp.LGFileParser.TEMPLATE_REF: {
@@ -116,10 +115,17 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     public ConstructScope(templateName: string, args: any[]) : any {
-        // tslint:disable-next-line: no-empty
         if (args.length === 1 && this.TemplateMap[templateName].Parameters.length === 0) {
+            // Special case, if no parameters defined, and only one arg, don't wrap
+            // this is for directly calling an paramterized template
+            return args[0];
         }
         const paramters: string[] = this.TemplateMap[templateName].Parameters;
+
+        if (paramters !== undefined && (args === undefined || paramters.length !== args.length)) {
+            throw new Error(`The length of required parameters does not match the length of provided parameters.`);
+        }
+
         const newScope: any = {};
         paramters.map((e: string, i: number) => newScope[e] = args[i]);
 
@@ -181,7 +187,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         }
     }
 
-    private EvalExpression(exp: string): string {
+    private EvalExpression(exp: string): string[] {
         exp = exp.replace(/(^{*)/g, '')
             .replace(/(}*$)/g, '');
 
@@ -193,7 +199,11 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             throw new Error(`Error occurs when evaluating expression '${exp}': ${exp} is evaluated to null`);
         }
 
-        return String(result);
+        if (result instanceof Array) {
+            return result;
+        } else {
+            return [result.toString()];
+        }
     }
 
     private EvalTemplateRef(exp: string) : string[] {
@@ -221,20 +231,12 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         exp = exp.substr(3, exp.length - 6);
 
-        exp = exp.substr(3, exp.length - 6);
-        exp = exp.replace(/@\{[^{}]+\}/g, (subStr: string) => {
-            const newExp: string = subStr.substr(1); // remove @
-            if (newExp.startsWith('{') && newExp.endsWith('}')) {
-                return this.EvalExpression(newExp);
-            }
-        });
-
         const templateRefValues: Map<string, string[]> = new Map<string, string[]>();
         const matches: string[] = exp.match(/@\{[^{}]+\}/g);
         if (matches !== null && matches !== undefined) {
             for (const match of matches) {
                 const newExp: string = match.substr(1); // remove @
-                templateRefValues.set(match, this.EvalTemplateRef(newExp.substr(2, newExp.length - 4))); // [ ]
+                templateRefValues.set(match, this.EvalExpression(newExp));
             }
         }
 
@@ -281,39 +283,67 @@ export class GetExpanderMethod implements IGetMethod {
         this.expander = expander;
     }
 
-    public GetMethodX(name: string): ExpressionEvaluator {
+    public GetMethodX = (name: string): ExpressionEvaluator => {
 
         // tslint:disable-next-line: switch-default
         switch (name) {
-            case 'count':
-                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.Count));
+            case 'lgTemplate':
+                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.lgTemplate), ReturnType.String, this.ValidLgTemplate);
             case 'join':
                 return new ExpressionEvaluator(BuiltInFunctions.Apply(this.Join));
-            case 'foreach':
-            case 'map':
-                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.Foreach));
-            case 'mapjoin':
-            case 'humanize':
-                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.ForeachThenJoin));
         }
 
         return BuiltInFunctions.Lookup(name);
     }
 
-    public Count = (paramters: any[]): any => {
-        if (paramters[0] instanceof Array) {
-            const li: any = paramters[0];
+    public lgTemplate = (paramters: any[]): any => {
+        if (paramters.length > 0 &&
+            typeof paramters[0] === 'string') {
+            const func: string = paramters[0];
+            const templateParameters: any[] = paramters.slice(1);
 
-            return li.length;
+            if (func !== undefined &&
+                func.length > 0 &&
+                func in this.expander.TemplateMap) {
+                const newScope: any = this.expander.ConstructScope(func, templateParameters);
+
+                return this.expander.ExpandTemplate(func, newScope);
+            } else {
+                throw new Error(`No such template defined: ${func.substr(1, func.length - 2)}`);
+            }
         }
+
         throw new Error('NotImplementedException');
+    }
+
+    public ValidLgTemplate = (expression: Expression): void  => {
+        if (expression.Children.length === 0) {
+            throw new Error('lgTemplate requires 1 or more arguments');
+        }
+
+        if (!(expression.Children[0] instanceof Constant)
+            || typeof (expression.Children[0] as Constant).Value !== 'string') {
+                throw new Error(`lgTemplate expect a string as first argument, acutal ${expression.Children[0]}`);
+        }
+
+        const templateName: string = (expression.Children[0] as Constant).Value;
+        if (!(templateName in this.expander.TemplateMap)) {
+            throw new Error(`no such template '${templateName}' to call in ${expression}`);
+        }
+
+        const expectedArgsCount: number = this.expander.TemplateMap[templateName].Parameters.length;
+        const actualArgsCount: number = expression.Children.length - 1;
+
+        if (expectedArgsCount !== actualArgsCount) {
+            throw new Error(`arguments mismatch for template ${templateName}, expect ${expectedArgsCount} actual ${actualArgsCount}`);
+        }
     }
 
     public Join = (paramters: any[]): any => {
         if (paramters.length === 2 &&
             paramters[0] instanceof Array &&
             typeof (paramters[1]) === 'string') {
-            const li: any = paramters[0];
+            const li: any = paramters[0].map((p: any) => p instanceof Array ? p[0] : p);
             const sep: string = paramters[1].concat(' ');
 
             return li.join(sep);
@@ -323,7 +353,7 @@ export class GetExpanderMethod implements IGetMethod {
             paramters[0] instanceof Array &&
             typeof (paramters[1]) === 'string' &&
             typeof (paramters[2]) === 'string') {
-            const li: any = paramters[0];
+            const li: any = paramters[0].map((p: any) => p instanceof Array ? p[0] : p);
             const sep1: string = paramters[1].concat(' ');
             const sep2: string = ' '.concat(paramters[2], ' ');
             if (li.length < 3) {
@@ -336,65 +366,5 @@ export class GetExpanderMethod implements IGetMethod {
         }
 
         throw new Error('NotImplementedException');
-    }
-
-    public Foreach = (paramters: any[]): any => {
-        if (paramters.length === 2 &&
-            paramters[0] instanceof Array &&
-            typeof (paramters[1]) === 'string') {
-            const li: any[] = paramters[0];
-            let func: string = paramters[1];
-
-            if (!this.IsTemplateRef(func) || !(func.substr(1, func.length - 2) in this.expander.TemplateMap)) {
-                throw new Error(`No such template defined: ${func}`);
-            }
-
-            func = func.substr(1, func.length - 2);
-
-            return li.map((x: any) => {
-                const newScope: any = this.expander.ConstructScope(func, [x]);
-
-                return this.expander.ExpandTemplate(func, newScope)[0];
-            });
-
-        }
-        throw new Error('NotImplementedException');
-    }
-
-    public ForeachThenJoin = (paramters: any[]): any => {
-        if (paramters.length >= 2 &&
-            paramters[0] instanceof Array &&
-            typeof paramters[1] === 'string') {
-            const li: any[] = paramters[0];
-            let func: string = paramters[1];
-
-            func = func.substr(1, func.length - 2);
-            if (!(func in this.expander.TemplateMap)) {
-                throw new Error(`No such template defined: ${func}`);
-            }
-
-            const result: string[] = li.map((x: any) => {
-                const newScope: any = this.expander.ConstructScope(func, [x]);
-
-                return this.expander.ExpandTemplate(func, newScope)[0];
-            });
-
-            const newParameter: any = paramters.slice(1);
-            newParameter[0] = result;
-
-            return this.Join(newParameter);
-
-        }
-        throw new Error('NotImplementedException');
-    }
-
-    private readonly IsTemplateRef = (templateName: string): boolean => {
-        if (templateName === undefined || templateName.trim() === '') {
-            return false;
-        } else if (templateName.startsWith('[') && templateName.endsWith(']')) {
-            return true;
-        }
-
-        return false;
     }
 }

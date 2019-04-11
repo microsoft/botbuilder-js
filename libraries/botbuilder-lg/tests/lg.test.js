@@ -6,7 +6,7 @@ function GetExampleFilePath(fileName){
 }
 
 
-describe.only('LG', function () {
+describe('LG', function () {
     it('TestBasic', function () {
         let engine = TemplateEngine.fromFiles(GetExampleFilePath('2.lg'));
         let evaled = engine.evaluateTemplate("wPhrase", undefined);

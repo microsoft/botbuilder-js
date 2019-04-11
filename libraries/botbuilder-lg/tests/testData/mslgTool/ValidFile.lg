@@ -1,65 +1,25 @@
-> Welcome Phrase template
-> LG runtime will pick a text value from the one-of collection list at random.
-# wPhrase
-- Hi
-- Hello
-- Hey
- 
-> Using a template in another template
-> Sometimes the bot will say 'Hi' and other times it will say 'Hi :)'
-# welcome-user(userName)
-- [wPhrase] {userName} :)
- 
-> Using entity references
-# welcome
-- IF: {userName}
-    - [welcome-user(userName)]
-- ELSE:
-    - [welcome-user('DongLei')]
-
-
-
 # ShowAlarm(alarm)
 - {alarm.time} at {alarm.date}
-
-# ShowAlarms
-- IF: {count(alarms) == 1}
-   - You have one alarm [ShowAlarm(alarms[0])]
-- ELSEIF: {count(alarms) == 2}
-  - You have {count(alarms)} alarms, {join(alarms, ',', 'and')}
-- ELSE:
-  - You don't have any alarms
+- {alarm.time} of {alarm.date}
 
 # ShowAlarmsWithForeach
 - IF: {count(alarms) == 1}
    - You have one alarm [ShowAlarm(alarms[0])]
 - ELSEIF: {count(alarms) == 2}
-  - You have {count(alarms)} alarms, {join(foreach(alarms, '[ShowAlarm]'), ',', 'and')}
+  - You have {count(alarms)} alarms, {join(foreach(alarms, alarm, lgTemplate('ShowAlarm', alarm)), ',', 'and')}
 - ELSE:
   - You don't have any alarms
 
-# ShowAlarmsWithMemberForeach
+# ShowAlarmsWithLgTemplate
 - IF: {count(alarms) == 1}
    - You have one alarm [ShowAlarm(alarms[0])]
 - ELSEIF: {count(alarms) == 2}
-  - You have {count(alarms)} alarms, {join(foreach(alarms, '[ShowAlarm]'), ',', 'and')}
+  - You have {count(alarms)} alarms, they are {lgTemplate('ShowAlarm', alarms[1])}
 - ELSE:
   - You don't have any alarms
 
-
-# ShowAlarmsWithHumanize
-- IF: {count(alarms) == 1}
-   - You have one alarm [ShowAlarm(alarms[0])]
-- ELSEIF: {count(alarms) == 2}
-  - You have {count(alarms)} alarms, {humanize(alarms, '[ShowAlarm]', ',', 'and')}
-- ELSE:
-  - You don't have any alarms
-
-
-# ShowAlarmsWithMemberHumanize
-- IF: {count(alarms) == 1}
-   - You have one alarm [ShowAlarm(alarms[0])]
-- ELSEIF: {count(alarms) == 2}
-  - You have {count(alarms)} alarms, {humanize(alarms, '[ShowAlarm]', ',', 'and')}
-- ELSE:
-  - You don't have any alarms
+# ShowAlarmsWithMultiLine
+-```
+You have @{count(alarms)} alarms.
+They are @{lgTemplate('ShowAlarm', alarms[1])}
+```
