@@ -69,7 +69,7 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
      * (Optional) flag that determines whether the dialog automatically ends when the plan is out
      * of steps. Defaults to `false` for the root dialog and `true` for child dialogs.
      */
-    public autoEnd?: boolean;
+    public autoEndDialog?: boolean;
 
     public set telemetryClient(client: BotTelemetryClient) {
         super.telemetryClient = client ? client : new NullTelemetryClient();
@@ -337,7 +337,7 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
                     }
                 }
             }
-            
+
             return recognized;
         } else {
             return noneIntent;
@@ -598,10 +598,10 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     }
 
     private shouldEnd(dc: DialogContext): boolean {
-        if (this.autoEnd == undefined) {
+        if (this.autoEndDialog == undefined) {
             return (dc.parent != null);
         } else {
-            return this.autoEnd;
+            return this.autoEndDialog;
         }
     }
 }
