@@ -69,6 +69,11 @@ export interface PromptOptions {
      * (Optional) Additional validation rules to pass the prompts validator routine.
      */
     validations?: object;
+
+    /**
+     * (Optional) Count of the number of times the prompt has retried.
+     */
+    numberOfAttempts?: number;
 }
 
 /**
@@ -195,12 +200,18 @@ export abstract class Prompt<T> extends Dialog {
         // Validate the return value
         let isValid = false;
         if (this.validator) {
+            if (state.options.numberOfAttempts === undefined) {
+                state.options.numberOfAttempts = 0;
+            }
             isValid = await this.validator({
                 context: dc.context,
                 recognized: recognized,
                 state: state.state,
                 options: state.options
             });
+            if (state.options.numberOfAttempts !== undefined) {
+                state.options.numberOfAttempts++;
+            }
         } else if (recognized.succeeded) {
             isValid = true;
         }
