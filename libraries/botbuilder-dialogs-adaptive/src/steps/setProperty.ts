@@ -47,7 +47,7 @@ export class SetProperty<O extends object = {}> extends DialogCommand<O> {
         if (value) { 
             switch (typeof value) {
                 case 'string':
-                    this.value = engine.Parse(value);
+                    this.value = engine.parse(value);
                     break; 
                 case 'function':
                     this.value = Expression.Lambda(value);
@@ -69,7 +69,7 @@ export class SetProperty<O extends object = {}> extends DialogCommand<O> {
         for (const key in config) {
             switch(key) {
                 case 'value':
-                    this.value = engine.Parse(config.value);
+                    this.value = engine.parse(config.value);
                     break;
                 default:
                     cfg[key] = config[key];
@@ -86,7 +86,7 @@ export class SetProperty<O extends object = {}> extends DialogCommand<O> {
 
         // Evaluate expression
         const memory = dc.state.toJSON();
-        const { error, value } = this.value.TryEvaluate(memory);
+        const { error, value } = this.value.tryEvaluate(memory);
 
         // Check for error
         if (error) { 
