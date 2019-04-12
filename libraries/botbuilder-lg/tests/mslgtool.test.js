@@ -123,7 +123,9 @@ describe('MSLGTool', function () {
         ];
         let expandedTemplate = mslgTool.ExpandTemplate('ShowAlarmsWithMultiLine', {alarms: alarms});
         assert.strictEqual(expandedTemplate.length, 2);
-        assert.strictEqual(expandedTemplate[0], "\r\nYou have 2 alarms.\r\nThey are 8 pm at tomorrow\r\n");
-        assert.strictEqual(expandedTemplate[1], "\r\nYou have 2 alarms.\r\nThey are 8 pm of tomorrow\r\n");
+        const eval1Options = ["\r\nYou have 2 alarms.\r\nThey are 8 pm at tomorrow\r\n", "\nYou have 2 alarms.\nThey are 8 pm at tomorrow\n"];
+        const eval2Options = ["\r\nYou have 2 alarms.\r\nThey are 8 pm of tomorrow\r\n", "\nYou have 2 alarms.\nThey are 8 pm of tomorrow\n"]
+        assert(eval1Options.includes(expandedTemplate[0]));
+        assert(eval2Options.includes(expandedTemplate[1]));
     })
 })
