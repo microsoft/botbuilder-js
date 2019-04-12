@@ -193,7 +193,11 @@ export class ExpressionEngine implements IExpressionParser {
     }
 
     public parse(expression: string): Expression {
-        return new this.ExpressionTransformer(this._lookup).Transform(this.AntlrParse(expression));
+        try {
+            return new this.ExpressionTransformer(this._lookup).Transform(this.AntlrParse(expression));
+        } catch (err) {
+            throw new Error(`Parse failed for expression '${expression}', inner error: ${err}`);
+        }
     }
 
     private AntlrParse(expression: string): ParseTree {
