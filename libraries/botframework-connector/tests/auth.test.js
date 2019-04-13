@@ -63,6 +63,14 @@ describe('Bot Framework Connector - Auth Tests', function () {
                 assert(MicrosoftAppCredentials.isTrustedServiceUrl('https://smba.trafficmanager.net/amer-client-ss.msg/'));
             });
 
+            it('Obtain MsaHeader from a user specified tenant', async () => {
+                const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F', 'microsoft.com');
+                const header = `Bearer ${ await tokenGenerator.getToken(true) }`;
+                const credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '');
+                const claims = await JwtTokenValidation.authenticateRequest({ serviceUrl: 'https://smba.trafficmanager.net/amer-client-ss.msg/' }, header, credentials, undefined);
+                assert(claims.getClaimValue("tid") == '72f988bf-86f1-41af-91ab-2d7cd011db47');
+            });
+
             it('MsaHeader with invalid ServiceUrl should not be trusted', async () => {
                 const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 const header = `Bearer ${ await tokenGenerator.getToken(true) }`;

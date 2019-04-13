@@ -133,6 +133,15 @@ function assertResponse(res, statusCode, hasBody) {
 
 describe(`BotFrameworkAdapter`, function () {
     this.timeout(5000);
+    
+    it(`should return the status of every connection the user has`, async function () {
+        const adapter = new AdapterUnderTest();
+        const context = new TurnContext(adapter, incomingMessage);
+        adapter.getTokenStatus(context)
+        .then((responses) => {
+            assert(responses.length > 0);
+        });
+    });
 
     it(`should authenticateRequest() if no appId or appPassword.`, function (done) {
         const req = new MockRequest(incomingMessage);
@@ -807,6 +816,31 @@ describe(`BotFrameworkAdapter`, function () {
         } catch (err) {
             assert(err.message === 'BotFrameworkAdapter.getAadTokens(): missing from or from.id',
                 `expected "BotFrameworkAdapter.getAadTokens(): missing from or from.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing from in getTokenStatus()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+
+            await adapter.getTokenStatus({ activity: {} });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getTokenStatus(): missing from or from.id',
+                `expected "BotFrameworkAdapter.getTokenStatus(): missing from or from.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing from.id in getTokenStatus()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getTokenStatus({ activity: { from: {} } });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getTokenStatus(): missing from or from.id',
+                `expected "BotFrameworkAdapter.getTokenStatus(): missing from or from.id" Error message, not "${ err.message }"`);
             return;
         }
         assert(false, `should have thrown an error message`);
