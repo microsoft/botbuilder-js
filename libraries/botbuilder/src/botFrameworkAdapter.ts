@@ -41,6 +41,12 @@ export interface BotFrameworkAdapterSettings {
      * Password assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
      */
     appPassword: string;
+
+    /**
+     * (Optional) The OAuth API Endpoint for your bot to use.
+     */
+    channelAuthTenant?: string;
+
     /**
      * (Optional) The OAuth API Endpoint for your bot to use.
      */
@@ -129,7 +135,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
         super();
         this.settings = { appId: '', appPassword: '', ...settings };
-        this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
+        this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '', this.settings.channelAuthTenant);
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
         this.isEmulatingOAuthCards = false;
         if (this.settings.openIdMetadata) {
