@@ -107,6 +107,12 @@ export interface QnAMakerOptions {
      * (Optional) Metadata related to query.
      */
     metadataBoost?: QnAMakerMetadata[];
+
+    /** (Optional) The time in milliseconds to wait before the request times out.
+     * 
+     * @remarks Defaults to "100000" milliseconds.
+    */
+   timeout?: number;
 }
 
 /**
@@ -223,14 +229,16 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             scoreThreshold = 0.3,
             top = 1,
             strictFilters = [] as QnAMakerMetadata[],
-            metadataBoost = [] as QnAMakerMetadata[]
+            metadataBoost = [] as QnAMakerMetadata[],
+            timeout = 100000
         } = options;
 
         this._options = {
             scoreThreshold,
             top,
             strictFilters,
-            metadataBoost
+            metadataBoost,
+            timeout
         } as QnAMakerOptions;
 
         this.validateOptions(this._options);
@@ -460,6 +468,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             url: url,
             method: 'POST',
             headers: headers,
+            timeout: queryOptions.timeout,
             json: {
                 question: question,
                 ...queryOptions

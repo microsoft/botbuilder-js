@@ -7,7 +7,7 @@
  */
 
 import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
-import { ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenApiModels } from 'botframework-connector';
+import { ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
 import * as os from 'os';
 
 /**
@@ -41,6 +41,12 @@ export interface BotFrameworkAdapterSettings {
      * Password assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
      */
     appPassword: string;
+
+    /**
+     * (Optional) The OAuth API Endpoint for your bot to use.
+     */
+    channelAuthTenant?: string;
+
     /**
      * (Optional) The OAuth API Endpoint for your bot to use.
      */
@@ -129,7 +135,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
         super();
         this.settings = { appId: '', appPassword: '', ...settings };
-        this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
+        this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '', this.settings.channelAuthTenant);
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
         this.isEmulatingOAuthCards = false;
         if (this.settings.openIdMetadata) {
@@ -402,13 +408,18 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * Signs the user out with the token server.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
+     * @param userId id of user to sign out.
+     * @returns A promise that represents the work queued to execute.
      */
-    public async signOutUser(context: TurnContext, connectionName: string): Promise<void> {
+    public async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`);
         }
+        if (!userId){
+            userId = context.activity.from.id;
+        }
+        
         this.checkEmulatingOAuthCards(context);
-        const userId: string = context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
         await client.userToken.signOut(userId, { connectionName: connectionName, channelId: context.activity.channelId } );
@@ -432,6 +443,27 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
         const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
         return (await client.botSignIn.getSignInUrl(finalState, { channelId: context.activity.channelId }))._response.bodyAsText;
+    }
+
+    /** 
+     * Retrieves the token status for each configured connection for the given user.
+     * @param context Context for the current turn of conversation with the user.
+     * @param userId The user Id for which token status is retrieved.
+     * @param includeFilter Optional comma seperated list of connection's to include. Blank will return token status for all configured connections.
+     * @returns Array of TokenStatus
+     * */ 
+    
+    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string ): Promise<TokenStatus[]>
+    {
+        if (!userId && (!context.activity.from || !context.activity.from.id)) {
+            throw new Error(`BotFrameworkAdapter.getTokenStatus(): missing from or from.id`);
+        }
+        this.checkEmulatingOAuthCards(context);
+        userId = userId || context.activity.from.id;
+        const url: string = this.oauthApiUrl(context);
+        const client: TokenApiClient = this.createTokenApiClient(url);
+        
+        return (await client.userToken.getTokenStatus(userId, {channelId: context.activity.channelId, include: includeFilter}))._response.parsedBody;
     }
 
     /**
