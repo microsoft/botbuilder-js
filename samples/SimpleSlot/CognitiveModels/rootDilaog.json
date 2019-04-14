@@ -1,0 +1,86 @@
+{
+  "intents": [
+    {
+      "name": "RestPassword"
+    },
+    {
+      "name": "None"
+    }
+  ],
+  "entities": [],
+  "composites": [],
+  "closedLists": [],
+  "regex_entities": [],
+  "model_features": [],
+  "regex_features": [],
+  "utterances": [
+    {
+      "text": "I need help resting my windows password",
+      "intent": "RestPassword",
+      "entities": []
+    },
+    {
+      "text": "Reset windows password",
+      "intent": "RestPassword",
+      "entities": []
+    },
+    {
+      "text": "reset my password",
+      "intent": "RestPassword",
+      "entities": []
+    },
+    {
+      "text": "how can i reset my password",
+      "intent": "RestPassword",
+      "entities": []
+    },
+    {
+      "text": "help me reset my password",
+      "intent": "RestPassword",
+      "entities": []
+    },
+    {
+      "text": "blue monkey",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "this is the none intent",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "find me a new home",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "where is elvis",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "how can i identify a blue monkey",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "who killed elvis?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "where is Vishwac",
+      "intent": "None",
+      "entities": []
+    }
+  ],
+  "patterns": [],
+  "patternAnyEntities": [],
+  "prebuiltEntities": [],
+  "luis_schema_version": "3.0.0",
+  "versionId": "0.1",
+  "name": "SimpleSlotRootDialog",
+  "desc": "",
+  "culture": "en-us"
+}
