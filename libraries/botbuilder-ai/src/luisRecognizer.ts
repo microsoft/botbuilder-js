@@ -7,11 +7,10 @@
  */
 import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
 
-import { RecognizerResult, TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
-import * as msRest from "@azure/ms-rest-js";
+import * as msRest from '@azure/ms-rest-js';
+import { BotTelemetryClient, NullTelemetryClient, RecognizerResult, TurnContext } from 'botbuilder-core';
 import * as os from 'os';
 import * as Url from 'url-parse';
-import { TelemetryConstants } from 'botbuilder-core/lib/telemetryConstants';
 import { LuisTelemetryConstants } from './luisTelemetryConstants';
 
 const pjson = require('../package.json');
@@ -67,7 +66,7 @@ export interface LuisApplication {
 /**
  * Options per LUIS prediction.
  */
-export interface LuisPredictionOptions {
+export interface LuisPredictionOptions extends LuisModels.PredictionResolveOptionalParams {
     /**
      * (Optional) Bing Spell Check subscription key.
      */
@@ -114,8 +113,7 @@ export interface LuisPredictionOptions {
     logPersonalInformation?: boolean;
 }
 
-export interface LuisRecognizerTelemetryClient
-{
+export interface LuisRecognizerTelemetryClient {
     /**
      * Gets a value indicating whether determines whether to log personal information that came from the user.
      */
@@ -135,7 +133,7 @@ export interface LuisRecognizerTelemetryClient
      * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
      * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
      */
-    recognize(context: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number} ): Promise<RecognizerResult>;
+    recognize(context: TurnContext, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult>;
 }
 
 
@@ -148,7 +146,7 @@ export interface LuisRecognizerTelemetryClient
  *
  * This component can be used within your bots logic by calling [recognize()](#recognize).
  */
-export class LuisRecognizer implements LuisRecognizerTelemetryClient{
+export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     private readonly _logPersonalInformation: boolean;
     private readonly _telemetryClient: BotTelemetryClient;
 
@@ -167,7 +165,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
      */
     constructor(application: string, options?: LuisPredictionOptions, includeApiResults?: boolean);
     constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean);
-    constructor(application: LuisApplication|string, options?: LuisPredictionOptions, includeApiResults?: boolean) {
+    constructor(application: LuisApplication | string, options?: LuisPredictionOptions, includeApiResults?: boolean) {
         if (typeof application === 'string') {
             const parsedEndpoint: Url = Url(application);
             // Use exposed querystringify to parse the query string for the endpointKey value.
@@ -187,13 +185,13 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
             };
         }
         this.validateLuisApplication();
-        
+
         this.options = {
             includeAllIntents: false,
             includeInstanceData: true,
             log: true,
             spellCheck: false,
-            staging: false, 
+            staging: false,
             ...options
         };
         this.includeApiResults = !!includeApiResults;
@@ -212,9 +210,9 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
      */
     public get logPersonalInformation(): boolean { return this._logPersonalInformation; }
 
-   /**
-     * Gets the currently configured botTelemetryClient that logs the events.
-     */
+    /**
+      * Gets the currently configured botTelemetryClient that logs the events.
+      */
     public get telemetryClient(): BotTelemetryClient { return this._telemetryClient; }
 
     /**
@@ -270,7 +268,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
      * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
      * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
      */
-    public recognize(context: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number} ): Promise<RecognizerResult> {
+    public recognize(context: TurnContext, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         const cached: any = context.turnState.get(this.cacheKey);
         if (!cached) {
             const utterance: string = context.activity.text || '';
@@ -327,17 +325,17 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
      * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
      * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
      */
-    protected async onRecognizerResults(recognizerResult: RecognizerResult, turnContext: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number}): Promise<void> {
+    protected async onRecognizerResults(recognizerResult: RecognizerResult, turnContext: TurnContext, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<void> {
         await this.fillTelemetryProperties(recognizerResult, turnContext, telemetryProperties).then(props => {
             this.telemetryClient.trackEvent(
-                { 
-                  name: LuisTelemetryConstants.luisResultEvent,
-                  properties: props,
-                  metrics: telemetryMetrics 
+                {
+                    name: LuisTelemetryConstants.luisResultEvent,
+                    properties: props,
+                    metrics: telemetryMetrics
                 });
         });
         return;
-    } 
+    }
 
     /**
      * Fills the event properties for LuisResult event for telemetry.
@@ -347,10 +345,10 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
      * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
      * @returns A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the LuisResult event.
      */
-    protected async fillTelemetryProperties(recognizerResult: RecognizerResult, turnContext: TurnContext, telemetryProperties?: {[key: string]:string}): Promise<{[key: string]:string}> {
+    protected async fillTelemetryProperties(recognizerResult: RecognizerResult, turnContext: TurnContext, telemetryProperties?: { [key: string]: string }): Promise<{ [key: string]: string }> {
         const topLuisIntent: string = LuisRecognizer.topIntent(recognizerResult);
         const intentScore: number = (recognizerResult.intents[topLuisIntent] && 'score' in recognizerResult.intents[topLuisIntent]) ?
-           recognizerResult.intents[topLuisIntent].score : 0;
+            recognizerResult.intents[topLuisIntent].score : 0;
 
         // Add the intent score and conversation id properties
         const properties: { [key: string]: string } = {};
@@ -372,20 +370,17 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
         }
 
         // Log entity names
-        if (recognizerResult.entities)
-        {
+        if (recognizerResult.entities) {
             properties[LuisTelemetryConstants.entitiesProperty] = JSON.stringify(recognizerResult.entities);
         }
 
         // Use the LogPersonalInformation flag to toggle logging PII data, text is a common example
-        if (this.logPersonalInformation && turnContext.activity.text)
-        {
+        if (this.logPersonalInformation && turnContext.activity.text) {
             properties[LuisTelemetryConstants.questionProperty] = turnContext.activity.text;
         }
 
         // Additional Properties can override "stock" properties.
-        if (telemetryProperties != null)
-        {
+        if (telemetryProperties != null) {
             return Object.assign({}, properties, telemetryProperties);
         }
 
@@ -393,14 +388,14 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
     }
 
 
-    private getUserAgent() : string {
+    private getUserAgent(): string {
 
         // Note when the ms-rest dependency the LuisClient uses has been updated
         // this code should be modified to use the client's addUserAgentInfo() function.
 
-        const packageUserAgent = `${ pjson.name }/${ pjson.version }`;
-        const platformUserAgent = `(${ os.arch() }-${ os.type() }-${ os.release() }; Node.js,Version=${ process.version })`;
-        const userAgent = `${ packageUserAgent } ${ platformUserAgent }`;
+        const packageUserAgent = `${pjson.name}/${pjson.version}`;
+        const platformUserAgent = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
+        const userAgent = `${packageUserAgent} ${platformUserAgent}`;
 
         return userAgent;
     }
@@ -458,7 +453,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
                     break;
                 default:
                     error.message = [
-                        `Response ${ (error as any).response.status }: Unexpected status code received.`,
+                        `Response ${(error as any).response.status}: Unexpected status code received.`,
                         `Please verify that your LUIS application is properly setup.`
                     ].join(' ');
             }
@@ -491,7 +486,8 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
     private getEntitiesAndMetadata(
         entities: LuisModels.EntityModel[],
         compositeEntities: LuisModels.CompositeEntityModel[] | undefined,
-        verbose: boolean): any {
+        verbose: boolean
+    ): any {
         const entitiesAndMetadata: any = verbose ? { $instance: {} } : {};
         let compositeEntityTypes: string[] = [];
 
@@ -540,28 +536,28 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
                 case 'builtin.number':
                 case 'builtin.ordinal': return Number(res.value);
                 case 'builtin.percentage':
-                {
-                    let svalue: string = res.value;
-                    if (svalue.endsWith('%')) {
-                        svalue = svalue.substring(0, svalue.length - 1);
-                    }
+                    {
+                        let svalue: string = res.value;
+                        if (svalue.endsWith('%')) {
+                            svalue = svalue.substring(0, svalue.length - 1);
+                        }
 
-                    return Number(svalue);
-                }
+                        return Number(svalue);
+                    }
                 case 'builtin.age':
                 case 'builtin.dimension':
                 case 'builtin.currency':
                 case 'builtin.temperature':
-                {
-                    const val: any = res.value;
-                    const obj: any = {};
-                    if (val) {
-                        obj.number = Number(val);
-                    }
-                    obj.units = res.unit;
+                    {
+                        const val: any = res.value;
+                        const obj: any = {};
+                        if (val) {
+                            obj.number = Number(val);
+                        }
+                        obj.units = res.unit;
 
-                    return obj;
-                }
+                        return obj;
+                    }
                 default:
                     return Object.keys(entity.resolution).length > 1 ?
                         entity.resolution :
@@ -702,10 +698,10 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient{
      */
     private validateLuisApplication(): void {
         if (!this.application.applicationId) {
-            throw new Error(`Invalid \`applicationId\` value detected: ${ this.application.applicationId }\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
+            throw new Error(`Invalid \`applicationId\` value detected: ${this.application.applicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
         }
         if (!this.application.endpointKey) {
-            throw new Error(`Invalid \`endpointKey\` value detected: ${ this.application.endpointKey }\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`);
+            throw new Error(`Invalid \`endpointKey\` value detected: ${this.application.endpointKey}\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`);
         }
     }
 }
