@@ -66,6 +66,12 @@ export interface PromptOptions {
     choices?: (string | Choice)[];
 
     /**
+     * (Optional) Property that can be used to override or set the value of ChoicePrompt.Style
+     * when the prompt is executed using DialogContext.prompt.
+     */
+    style?: ListStyle
+
+    /**
      * (Optional) Additional validation rules to pass the prompts validator routine.
      */
     validations?: object;
