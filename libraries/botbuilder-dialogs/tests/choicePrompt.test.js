@@ -324,13 +324,13 @@ describe('ChoicePrompt', function () {
             .assertReply('Please choose a color.');
     });
 
-    it('should render choices if PromptOptions.style & choices are passed into DialogContext.prompt()', async function() {
+    it('should render choices if PromptOptions & choices are passed into DialogContext.prompt()', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt', { prompt: 'Please choose a color.', style: ListStyle.list }, stringChoices);
+                await dc.prompt('prompt', { prompt: 'Please choose a color.', style: ListStyle.inline }, stringChoices);
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
@@ -347,7 +347,7 @@ describe('ChoicePrompt', function () {
         dialogs.add(choicePrompt);
 
         await adapter.send('Hello')
-            .assertReply('Please choose a color.')
+            .assertReply('Please choose a color. (1) red, (2) green, or (3) blue')
             .send(answerMessage)
             .assertReply('red');
     });
