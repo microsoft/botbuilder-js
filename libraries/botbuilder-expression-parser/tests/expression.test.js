@@ -2,10 +2,11 @@ const { ExpressionEngine} =  require('../');
 const { Extensions } = require('botbuilder-expression');
 const assert = require('assert');
 
-const dataSource = [
+const one = ["one"];
+const oneTwo = ["one", "two"];
 
-  // operators test
-  ["first(nestedItems).x", 1, ["nestedItems"]],
+const dataSource = [
+  // Operators tests
   ["1 + 2", 3],
   ["1 - 2", -1],
   ["1.0 + 2.0", 3.0],
@@ -16,27 +17,8 @@ const dataSource = [
   ["(1 + 3) / 2", 2],
   ["1 * (2 + 3)", 5],
   ["(1 + 2) * 3", 9],
-  ["(one + two) * bag.three", 9.0, ["one", "two", "bag.three" ]],
-  ["(one + two) * bag.set.four", 12.0 ,["one", "two", "bag.set.four"]],
-  ["items[2]", "two",["items[2]"]],
-  ["bag.list[bag.index - 2]", "blue",["bag.list", "bag.index"]],
-  ["min(1.0, two) + max(one, 2.0)", 3.0,["one", "two"]],
-
-  // Multiple arg tests
-  ["and(1 == 1, 1 < 2, 1 > 2)", false],
-  ["add(1, 2, 3)", 6],
-  ["greater(one, two)", false, ["one", "two"]],
-  ["greaterOrEquals(one, one)", true, ["one"]],
-  ["greaterOrEquals(one, two)", false,["one", "two"]],
-  ["less(5, 2)", false],
-  ["less(2, 2)", false],
-  ["less(one, two)", true, ["one", "two"]],
-  ["lessOrEquals(one, one)", true, ["one"]],
-  ["lessOrEquals(one, two)", true, ["one", "two"]],
-  ["less(one, two)", true],
-  ["lessOrEquals(one, one)", true],
-  ["lessOrEquals(one, two)", true],
-
+  ["(one + two) * bag.three", 9.0, ["one", "two", "bag.three"]],
+  ["(one + two) * bag.set.four", 12.0, ["one", "two", "bag.set.four"]],
   ["2^2", 4.0],
   ["3^2^2", 81.0],
   ["one > 0.5 && two < 2.5", true],
@@ -47,6 +29,12 @@ const dataSource = [
   ["!exists(xione) || !!exists(two)", true],
   ["(1 + 2) == (4 - 1)", true],
   ["!!exists(one) == !!exists(one)", true],
+  ["!(one == 1.0)", false, ["one"]],
+  ["!!(one == 1.0)", true, ["one"]],
+  ["!(one == 1.0) || !!(two == 2.0)", true, oneTwo],
+  ["!true", false],
+  ["!!true", true],
+  ["!(one == 1.0) || !!(two == 2.0)", true],
   ["hello == 'hello'", true],
   ["hello == 'world'", false],
   ["(1 + 2) != (4 - 1)", false],
@@ -61,18 +49,22 @@ const dataSource = [
   ["(1 + 2) <= (4 - 1)", true],
   ["(2 + 2) <= (4 - 1)", false],
   ["float(5.5) <= float(4 - 1)", false],
-  ["'string'&'builder'","stringbuilder"],
-  ["\"string\"&\"builder\"","stringbuilder"],
-  ["concat(hello,world)","helloworld"],
-  ["concat('hello','world')","helloworld"],
-  ["concat(\"hello\",\"world\")","helloworld"],
-  ["length('hello')",5],
-  ["length(\"hello\")",5],
-  ["length(concat(hello,world))",10],
-  ["replace('hello', 'l', 'k')","hekko"],
-  ["replace('hello', 'L', 'k')","hello"],
-  ["replaceIgnoreCase('hello', 'L', 'k')","hekko"],
-  ["split('hello','e')",["h","llo"]],
+  ["'string'&'builder'", "stringbuilder"],
+  ["\"string\"&\"builder\"", "stringbuilder"],
+  ["one > 0.5 && two < 2.5", true, oneTwo],
+  ["one > 0.5 || two < 1.5", true, oneTwo],
+
+  // String functions tests
+  ["concat(hello,world)", "helloworld"],
+  ["concat('hello','world')", "helloworld"],
+  ["concat(\"hello\",\"world\")", "helloworld"],
+  ["length('hello')", 5],
+  ["length(\"hello\")", 5],
+  ["length(concat(hello,world))", 10],
+  ["replace('hello', 'l', 'k')", "hekko"],
+  ["replace('hello', 'L', 'k')", "hello"],
+  ["replaceIgnoreCase('hello', 'L', 'k')", "hekko"],
+  ["split('hello','e')", ["h","llo"]],
   ["substring('hello', 0, 5)", "hello"],
   ["substring('hello', 0, 3)", "hel"],
   ["toLower('UpCase')", "upcase"],
@@ -82,42 +74,76 @@ const dataSource = [
   ["trim(' hello')", "hello"],
   ["trim('hello')", "hello"],
 
-  // logical comparison functions test
+  // Logical comparison functions tests
+  ["and(1 == 1, 1 < 2, 1 > 2)", false],
   ["and(!true, !!true)", false],//false && true
   ["and(!!true, !!true)", true],//true && true
   ["and(hello != 'world', bool('true'))", true],//true && true
   ["and(hello == 'world', bool('true'))", false],//false && true
-  ["equals(hello, 'hello')", true],
-  ["equals(bag.index, 3)", true],
-  ["equals(bag.index, 2)", false],
-  ["equals(hello == 'world', bool('true'))", false],//false, true
-  ["equals(hello == 'world', bool(0))", true],//false, false
+  ["or(!exists(one), !!exists(one))", true],//false && true
+  ["or(!exists(one), !exists(one))", false],//false && false
+  ["greater(one, two)", false, oneTwo],
   ["greater(one , 0.5) && less(two , 2.5)", true],// true && true
-  ["if(!exists(one), 'r1', 'r2')", "r2"],//false
-  ["if(!!exists(one), 'r1', 'r2')", "r1"],//true
   ["greater(one , 0.5) || less(two , 1.5)", true],//true || false
   ["greater(5, 2)", true],
   ["greater(2, 2)", false],
-  ["or(!exists(one), !!exists(one))", true],//false && true
-  ["or(!exists(one), !exists(one))", false],//false && false
   ["greater(one, two)", false],
   ["greaterOrEquals((1 + 2) , (4 - 1))", true],
   ["greaterOrEquals((2 + 2) , (4 - 1))", true],
   ["greaterOrEquals(float(5.5) , float(4 - 1))", true],
   ["greaterOrEquals(one, one)", true],
   ["greaterOrEquals(one, two)", false],
+  ["greaterOrEquals(one, one)", true, one],
+  ["greaterOrEquals(one, two)", false, oneTwo],
   ["less(5, 2)", false],
   ["less(2, 2)", false],
   ["less(one, two)", true],
+  ["less(one, two)", true, oneTwo],
+  ["lessOrEquals(one, one)", true, ["one"]],
+  ["lessOrEquals(one, two)", true, oneTwo],
   ["lessOrEquals(one, one)", true],
   ["lessOrEquals(one, two)", true],
   ["lessOrEquals((1 + 2) , (4 - 1))", true],
   ["lessOrEquals((2 + 2) , (4 - 1))", false],
   ["lessOrEquals(float(5.5) , float(4 - 1))", false],
-  ["if(bool(0), 'r1', 'r2')", "r2"],//false
-  ["if(bool('true'), 'r1', 'r2')", "r1"],//true
+  ["lessOrEquals(one, one)", true],
+  ["lessOrEquals(one, two)", true],
+  ["equals(hello, 'hello')", true],
+  ["equals(bag.index, 3)", true],
+  ["equals(bag.index, 2)", false],
+  ["equals(hello == 'world', bool('true'))", false],
+  ["equals(hello == 'world', bool(0))", true],
+  ["if(!exists(one), 'r1', 'r2')", "r2"],
+  ["if(!!exists(one), 'r1', 'r2')", "r1"],
+  ["if(bool(0), 'r1', 'r2')", "r2"],
+  ["if(bool('true'), 'r1', 'r2')", "r1"],
+  ["exists(one)", true],
+  ["exists(xxx)", false],
+  ["exists(one.xxx)", false],
+  ["not(one != null)", false],
+  ["not(not(one != null))", true],
+  ["not(false)", true],
+  ["not(one == 1.0)", false, ["one"]],
+  ["not(not(one == 1.0))", true, ["one"]],
+  ["not(false)", true],
+  
+  // Conversion functions tests
+  ["float('10.333')", 10.333],
+  ["float('10')", 10.0],
+  ["int('10')", 10],
+  ["string('str')", "str"],
+  ["string(one)", "1"], //ts-->1, C#-->1.0
+  ["string(bool(1))", "true"],
+  ["string(bag.set)", "{\"four\":4}"], // ts-->"{\"four\":4}", C# --> "{\"four\":4.0}"
+  ["bool(1)", true],
+  ["bool(0)", false],
+  ["bool('false')", false],
+  ["bool('true')", true],
+  ["createArray('h', 'e', 'l', 'l', 'o')", ["h", "e", "l", "l", "o"]],
+  ["createArray(1, bool('false'), string(bool(1)), float('10'))", [1, false, "true", 10.0]],
 
-  // math functions test
+  // Math functions tests
+  ["add(1, 2, 3)", 6],
   ["add(1, 2)", 3],
   ["add(1.0, 2.0)", 3.0],
   ["add(mul(1, 2), 3)", 5],
@@ -125,10 +151,7 @@ const dataSource = [
   ["max(4, 5) ", 5],
   ["min(mul(1, 2), 5) ", 2],
   ["min(4, 5) ", 4],
-  ["sum(createArray(1, 2))", 3],
-  ["sum(createArray(one, two, 3))", 6.0],
-  ["average(createArray(1, 2))", 1.5],
-  ["average(createArray(one, two, 3))", 2.0],
+  ["min(1.0, two) + max(one, 2.0)", 3.0, oneTwo],
   ["sub(2, 1)", 1],
   ["sub(2.0, 0.5)", 1.5],
   ["mul(2, 5)", 10],
@@ -138,9 +161,9 @@ const dataSource = [
   ["mod(5,2)", 1],
   ["rand(1, 2)", 1],
   ["rand(2, 3)", 2],
-
-  //Date and time function test
-  //init dateTime: 2018-03-15T13:00:00Z
+  
+  // Date and time function tests
+  // Init dateTime: 2018-03-15T13:00:00Z
   ["addDays(timestamp, 1)", "2018-03-16T13:00:00.0000000Z"],
   ["addDays(timestamp, 1,'MM-dd-yy')", "03-16-18"],
   ["addHours(timestamp, 1)", "2018-03-15T14:00:00.0000000Z"],
@@ -160,7 +183,6 @@ const dataSource = [
   ["subtractFromTime(timestamp, 1, 'Day')", "2018-03-14T13:00:00.0000000Z"],
   ["subtractFromTime(timestamp, 1, 'Minute')", "2018-03-15T12:59:00.0000000Z"],
   ["subtractFromTime(timestamp, 1, 'Second')", "2018-03-15T12:59:59.0000000Z"],
-  ["subtractFromTime(timestamp, 1, 'Week')", "2018-03-08T13:00:00.0000000Z"],
   ["dateReadBack(timestamp, addDays(timestamp, 1))", "Tomorrow"],
   ["dateReadBack(addDays(timestamp, 1),timestamp))", "Yesterday"],
   ["getTimeOfDay('2018-03-15T00:00:00Z')", "midnight"],
@@ -171,31 +193,19 @@ const dataSource = [
   ["getTimeOfDay('2018-03-15T22:00:00Z')", "evening"],
   ["getTimeOfDay('2018-03-15T23:00:00Z')", "night"],
   
-
-  // conversion functions test
-  ["float('10.333')", 10.333],
-  ["float('10')", 10.0],
-  ["int('10')", 10],
-  ["string('str')", "str"],
-  ["string(one)", "1"], //ts-->1, C#-->1.0
-  ["string(bool(1))", "true"],
-  ["string(bag.set)", "{\"four\":4}"], // ts-->"{\"four\":4}", C# --> "{\"four\":4.0}"
-  ["bool(1)", true],
-  ["bool(0)", false],
-  ["bool('false')", false],
-  ["bool('true')", true],
-  ["createArray('h', 'e', 'l', 'l', 'o')", ["h", "e", "l", "l", "o" ]],
-  ["createArray(1, string(bool(1)))", [1, "true"]],
-
-  // collection functions test
+  // Collection functions tests
+  ["sum(createArray(1, 2))", 3],
+  ["sum(createArray(one, two, 3))", 6.0],
+  ["average(createArray(1, 2))", 1.5],
+  ["average(createArray(one, two, 3))", 2.0],
   ["contains('hello world', 'hello')", true],
   ["contains('hello world', 'hellow')", false],
   ["contains(items, 'zero')", true],
   ["contains(items, 'hi')", false],
   ["contains(bag, 'three')", true],
   ["contains(bag, 'xxx')", false],
-  ["count(split(hello,'e'))",2],
-  ["count(createArray('h', 'e', 'l', 'l', 'o'))",5],
+  ["count(split(hello,'e'))", 2],
+  ["count(createArray('h', 'e', 'l', 'l', 'o'))", 5],
   ["empty('')", true],
   ["empty('a')", false],
   ["empty(bag)", false],
@@ -203,47 +213,34 @@ const dataSource = [
   ["first(items)", "zero"],
   ["first('hello')", "h"],
   ["first(createArray(0, 1, 2))", 0],
+  ["first(nestedItems).x", 1, ["nestedItems"]],
   ["join(items,',')", "zero,one,two"],
   ["join(createArray('a', 'b', 'c'), '.')", "a.b.c"],
+  ["join(foreach(items, item, item), ',')", "zero,one,two"],
+  ["join(foreach(nestedItems, i, i.x + first(nestedItems).x), ',')", "2,3,4", ["nestedItems"]],
+  ["join(foreach(items, item, concat(item, string(count(items)))), ',')", "zero3,one3,two3", ["items"]],
   ["last(items)", "two"],
   ["last('hello')", "o"],
   ["last(createArray(0, 1, 2))", 2],
-  ["one > 0.5 && two < 2.5", true, ["one", "two"]],
-  ["one > 0.5 || two < 1.5", true, ["one", "two"]],
-  ["!true", false],
-  ["!!true", true],
-  ["!(one == 1.0) || !!(two == 2.0)", true],
-  ["not(one != null)", false],
-  ["not(not(one != null))", true],
-  ["not(false)", true],
-  ["exists(one)", true],
-  ["exists(xxx)", false],
-  ["exists(one.xxx)", false],
-  ["!(one == 1.0)", false, ["one"]],
-  ["!!(one == 1.0)", true, ["one"]],
-  ["!(one == 1.0) || !!(two == 2.0)", true, ["one", "two"]],
-  ["not(one == 1.0)", false, ["one"]],
-  ["not(not(one == 1.0))", true, ["one"]],
-  ["not(false)", true],
 
-  // Object manipulation and construction functions
+  // Object manipulation and construction functions tests
   ["string(addProperty(json('{\"key1\":\"value1\"}'), 'key2','value2'))", "{\"key1\":\"value1\",\"key2\":\"value2\"}"],
   ["string(setProperty(json('{\"key1\":\"value1\"}'), 'key1','value2'))", "{\"key1\":\"value2\"}"],
   ["string(removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), 'key2'))", "{\"key1\":\"value1\"}"],
 
-  // Short Hand Expression
+  // Short hand expression tests
   ["@city == 'Bellevue'", false, ["turn.entities.city"]],
-  ["@city", "Seattle",["turn.entities.city"]],
-  ["@city == 'Seattle'", true,["turn.entities.city"]],
-  ["#BookFlight == 'BookFlight'", true,["turn.intents.BookFlight"]],
-  ["exists(#BookFlight)", true,["turn.intents.BookFlight"]],
-  ["$title", "Dialog Title",["dialog.result.title"]],
-  ["$subTitle", "Dialog Sub Title",["dialog.result.subTitle"]],
-  ["join(foreach(items, item, item), ',')", "zero,one,two"],
-  ["join(foreach(nestedItems, i, i.x + first(nestedItems).x), ',')", "2,3,4",["nestedItems"]],
-  ["join(foreach(items, item, concat(item, string(count(items)))), ',')", "zero3,one3,two3",["items"]]
-
-]
+  ["@city", "Seattle", ["turn.entities.city"]],
+  ["@city == 'Seattle'", true, ["turn.entities.city"]],
+  ["#BookFlight == 'BookFlight'", true, ["turn.intents.BookFlight"]],
+  ["exists(#BookFlight)", true, ["turn.intents.BookFlight"]],
+  ["$title", "Dialog Title", ["dialog.result.title"]],
+  ["$subTitle", "Dialog Sub Title", ["dialog.result.subTitle"]],
+ 
+  // Memory access tests
+  ["items[2]", "two", ["items[2]"]],
+  ["bag.list[bag.index - 2]", "blue", ["bag.list", "bag.index"]]
+];
 
 const scope = {
   one : 1.0,
@@ -258,7 +255,8 @@ const scope = {
           four : 4.0,
       },
       list : ["red", "blue" ],
-      index : 3
+      index : 3,
+      name: "mybag"
   },
   items : ["zero", "one", "two" ],
   nestedItems : 

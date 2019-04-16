@@ -111,7 +111,7 @@ export class ExpressionEngine implements IExpressionParser {
 
         public visitNumericAtom(context: ep.NumericAtomContext): Expression {
             const numberValue: number = parseFloat(context.text);
-            if (!Number.isNaN(numberValue)) {
+            if (typeof numberValue === 'number' && !Number.isNaN(numberValue)) {
                 return new Constant(numberValue);
             }
 

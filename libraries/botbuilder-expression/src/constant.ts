@@ -26,7 +26,7 @@ export class Constant extends Expression {
         this.Evaluator.ReturnType =
             typeof theValue === 'string' ? ReturnType.String
                 : typeof theValue === 'boolean' ? ReturnType.Boolean
-                : !Number.isNaN(theValue) ? ReturnType.Number
+                : typeof theValue === 'number' && !Number.isNaN(theValue) ? ReturnType.Number
                         : ReturnType.Object;
 
         this._value = theValue;

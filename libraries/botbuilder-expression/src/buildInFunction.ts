@@ -184,7 +184,7 @@ export class BuiltInFunctions {
      */
     public static VerifyNumber(value: any, expression: Expression): string {
         let error: string;
-        if (Number.isNaN(value)) {
+        if (typeof value !== 'number' || Number.isNaN(value)) {
             error = `${expression} is not a number.`;
         }
 
@@ -244,7 +244,7 @@ export class BuiltInFunctions {
      */
     public static VerifyNumberOrString(value: any, expression: Expression): string {
         let error: string;
-        if (value !== undefined && Number.isNaN(value) && typeof value !== 'string') {
+        if (value !== undefined && !(typeof value === 'number' && !Number.isNaN(value)) && typeof value !== 'string') {
             error = `${expression} is not string or number.`;
         }
 
@@ -757,7 +757,7 @@ export class BuiltInFunctions {
                     return this.TimeTransform(args[0], args[1], 'd', format);
                 }),
                 ReturnType.String,
-                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 3))],
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.Number))],
             [ExpressionType.AddHours, new ExpressionEvaluator(
                 BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
                     const format: string = args.length === 3 ? args[2] : BuiltInFunctions.DefaultDateTimeFormat;
@@ -765,7 +765,7 @@ export class BuiltInFunctions {
                     return this.TimeTransform(args[0], args[1], 'h', format);
                 }),
                 ReturnType.String,
-                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 3))],
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.Number))],
             [ExpressionType.AddMinutes, new ExpressionEvaluator(
                  BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
                     const format: string = args.length === 3 ? args[2] : BuiltInFunctions.DefaultDateTimeFormat;
@@ -773,7 +773,7 @@ export class BuiltInFunctions {
                     return this.TimeTransform(args[0], args[1], 'minutes', format);
                 }),
                  ReturnType.String,
-                 (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 3))],
+                 (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.Number))],
             [ExpressionType.AddSeconds,  new ExpressionEvaluator(
                 BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
                     const format: string = args.length === 3 ? args[2] : BuiltInFunctions.DefaultDateTimeFormat;
@@ -781,7 +781,7 @@ export class BuiltInFunctions {
                     return this.TimeTransform(args[0], args[1], 'seconds', format);
                 }),
                 ReturnType.String,
-                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 3))],
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.Number))],
             [ExpressionType.DayOfMonth,  new ExpressionEvaluator(
                 BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
                     return (moment(args[0]).date());
@@ -861,7 +861,7 @@ export class BuiltInFunctions {
                              }
 
                         return value;
-                    },                 this.VerifyString),
+                    }, this.VerifyString),
                 ReturnType.String,
                 (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.String, ReturnType.String))],
             [ExpressionType.GetTimeOfDay, new ExpressionEvaluator(
@@ -883,7 +883,7 @@ export class BuiltInFunctions {
                              }
 
                         return value;
-                    },                 this.VerifyString),
+                    }, this.VerifyString),
                 ReturnType.String,
                 (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.String))],
 
