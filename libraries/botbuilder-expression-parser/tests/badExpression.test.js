@@ -2,6 +2,15 @@ const { ExpressionEngine } = require('../');
 const { Extensions } = require('botbuilder-expression');
 const assert = require('assert');
 
+const invalidExpressions = [
+  "a+",
+  "a+b*",
+  "fun(a, b, c",
+  "func(A,b,b,)",
+  "a.#title",
+  "\"hello'"
+];
+
 const badExpressions =
   // General test
   ["func()", // no such func
@@ -50,18 +59,18 @@ const badExpressions =
 
   // Logical comparison functions test
   "and(one, hello, one < two)", //one and hello are not bool type
-  //"greater(one, hello)", // string and integer are not comparable
+  "greater(one, hello)", // string and integer are not comparable
   "greater(one)", // greater need two parameters
-  //"greaterOrEquals(one, hello)", // string and integer are not comparable
+  "greaterOrEquals(one, hello)", // string and integer are not comparable
   "greaterOrEquals(one)", // function need two parameters
-  //"less(one, hello)", // string and integer are not comparable
+  "less(one, hello)", // string and integer are not comparable
   "less(one)", // function need two parameters
-  //"lessOrEquals(one, hello)", // string and integer are not comparable
+  "lessOrEquals(one, hello)", // string and integer are not comparable
   "lessOrEquals(one)", // function need two parameters
   "not(hello)", // not can only accept bool parameter
   "equals(one)", // equals must accept two parameters
   "exists(1, 2)", // function need one parameter
-  //"if(hello, 'r1', 'r2')", // the first parameter of the if must be bool
+  "if(hello, 'r1', 'r2')", // the first parameter of the if must be bool
   //"if(!exists(one), one, hello)", // the second and third parameters of if must the same type
   //"or(hello == 'hello')", // or function needs two parameters
   "or(hello, one)", // or function only accept bool parameters
@@ -69,9 +78,9 @@ const badExpressions =
   "not(1)", //accept boolean param
 
   // Conversion functions test
-  //"float(hello)", // param shoud be float format string
+  "float(hello)", // param shoud be float format string
   "float(hello, 1)", // shold have 1 param
-  //"int(hello)", // param shoud be int format string
+  "int(hello)", // param shoud be int format string
   "int(1, 1)", // shold have 1 param
   "string(hello, 1)", // shold have 1 param
   //"bool(hello)", // param shoud be float format string
@@ -98,45 +107,45 @@ const badExpressions =
   "mod(5.5, 2)", //  param should be integer
   "mod(5, 2.1)", //  param should be integer
   "rand(5, 6.1)", //  param should be integer
-  //"rand(7, 6)", //  minvalue cannot be greater than maxValue
+  "rand(7, 6)", //  minvalue cannot be greater than maxValue
 
   // Date and time function test
-  //"addDays('errortime', 1)",// error datetime format
+  "addDays('errortime', 1)",// error datetime format
   "addDays(timestamp, 'hi')",// second param should be integer
   "addDays(timestamp)",// should have 2 or 3 params
   "addDays(timestamp, 1,'yyyy', 2)",// should have 2 or 3 params
-  //"addHours('errortime', 1)",// error datetime format
+  "addHours('errortime', 1)",// error datetime format
   "addHours(timestamp, 'hi')",// second param should be integer
   "addHours(timestamp)",// should have 2 or 3 params
   "addHours(timestamp, 1,'yyyy', 2)",// should have 2 or 3 params
-  //"addMinutes('errortime', 1)",// error datetime format
+  "addMinutes('errortime', 1)",// error datetime format
   "addMinutes(timestamp, 'hi')",// second param should be integer
   "addMinutes(timestamp)",// should have 2 or 3 params
   "addMinutes(timestamp, 1,'yyyy', 2)",// should have 2 or 3 params
-  //"addSeconds('errortime', 1)",// error datetime format
+  "addSeconds('errortime', 1)",// error datetime format
   "addSeconds(timestamp, 'hi')",// second param should be integer
   "addSeconds(timestamp)",// should have 2 or 3 params
   "addSeconds(timestamp, 1,'yyyy', 2)",// should have 2 or 3 params
-  //"dayOfMonth('errortime')", // error datetime format
+  "dayOfMonth('errortime')", // error datetime format
   "dayOfMonth(timestamp, 1)", //should have 1 param
-  //"dayOfWeek('errortime')", // error datetime format
+  "dayOfWeek('errortime')", // error datetime format
   "dayOfWeek(timestamp, 1)", //should have 1 param
-  //"dayOfYear('errortime')", // error datetime format
+  "dayOfYear('errortime')", // error datetime format
   "dayOfYear(timestamp, 1)", //should have 1 param
-  //"month('errortime')", // error datetime format
+  "month('errortime')", // error datetime format
   "month(timestamp, 1)", //should have 1 param
-  //"date('errortime')", // error datetime format
+  "date('errortime')", // error datetime format
   "date(timestamp, 1)", //should have 1 param
-  //"year('errortime')", // error datetime format
+  "year('errortime')", // error datetime format
   "year(timestamp, 1)", // should have 1 param
-  //"formatDateTime('errortime')", // error datetime format
+  "formatDateTime('errortime')", // error datetime format
   "formatDateTime(timestamp, 'yyyy', 1)", // should have 2 or 3 params
-  //"subtractFromTime('errortime', 'yyyy', 1)", // error datetime format
+  "subtractFromTime('errortime', 'yyyy', 1)", // error datetime format
   "subtractFromTime(timestamp, 'yyyy', '1')", // third param should be integer
   "subtractFromTime(timestamp, 'yyyy', 1, 1)", // should have 3 params
-  //"dateReadBack('errortime', 'errortime')", // error datetime format
+  "dateReadBack('errortime', 'errortime')", // error datetime format
   "dateReadBack(timestamp)", // shold have two params
-  //"getTimeOfDay('errortime')", // error datetime format
+  "getTimeOfDay('errortime')", // error datetime format
   "getTimeOfDay(timestamp, timestamp)", // should have 1 param
 
   // collection functions test
@@ -161,17 +170,17 @@ const badExpressions =
 
   // Object manipulation and construction functions test
   "json(1,2)", //should have 1 parameter
-  //"json(1)",//should be string parameter
+  "json(1)",//should be string parameter
   "json('{\"key1\":value1\"}')", // invalid json format string 
-  // "addProperty(json('{\"key1\":\"value1\"}'), 'key2','value2','key3')", //should have 3 parameter
-  // "addProperty(json('{\"key1\":\"value1\"}'), 1,'value2')", // second param should be string
-  // "setProperty(json('{\"key1\":\"value1\"}'), 'key2','value2','key3')", //should have 3 parameter
-  // "setProperty(json('{\"key1\":\"value1\"}'), 1,'value2')", // second param should be string
-  // "removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), 1))",// second param should be string
-  // "removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), '1', '2'))",// should have 2 parameter
+  "addProperty(json('{\"key1\":\"value1\"}'), 'key2','value2','key3')", //should have 3 parameter
+  "addProperty(json('{\"key1\":\"value1\"}'), 1,'value2')", // second param should be string
+  "setProperty(json('{\"key1\":\"value1\"}'), 'key2','value2','key3')", //should have 3 parameter
+  "setProperty(json('{\"key1\":\"value1\"}'), 1,'value2')", // second param should be string
+  "removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), 1))",// second param should be string
+  "removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), '1', '2'))",// should have 2 parameter
 
   // Memory access test
-  //"property(bag, 1)",// second param should be string
+  "property(bag, 1)",// second param should be string
   "Accessor(1)",// first param should be string
   "one[0]",  // one is not list
   "items[3]", // index out of range
@@ -224,7 +233,7 @@ const scope = {
 };
 
 describe('expression functional test', () => {
-  it('should get right evaluate result', () => {
+  it('should get exception results for bad expressions', () => {
     for (const expression of badExpressions) {
       let isFail = false;
       const input = expression;
@@ -244,4 +253,16 @@ describe('expression functional test', () => {
       }
     }
   });
+
+  it('should get exception results for invalid expressions', () => {
+    for (const expression of invalidExpressions) {
+      const input = expression;
+      try {
+        new ExpressionEngine().parse(input);
+        assert.fail(`Test expression ${input} did not throw expected exception`);
+      } catch (e) {
+        console.log(e.message);
+      }
+    }
+  })
 });
