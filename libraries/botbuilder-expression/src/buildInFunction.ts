@@ -660,6 +660,11 @@ export class BuiltInFunctions {
         let start: number;
         let length: number;
         ({value: str, error} = expression.Children[0].tryEvaluate(state));
+        if (expression.Children.length === 2) {
+            // Support just have start index
+            length = str.length;
+        }
+
         if (error === undefined) {
             const startExpr: Expression = expression.Children[1];
             ({value: start, error} = startExpr.tryEvaluate(state));
@@ -787,7 +792,7 @@ export class BuiltInFunctions {
                 ReturnType.Object, (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String))],
             [ExpressionType.Substring,                     new ExpressionEvaluator(
                 BuiltInFunctions.Substring, ReturnType.String,
-                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.String, ReturnType.Number, ReturnType.Number))],
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.Number], ReturnType.String, ReturnType.Number))],
             [ExpressionType.ToLower, BuiltInFunctions.StringTransform((args: ReadonlyArray<any>) => String(args[0]).toLowerCase())],
             [ExpressionType.ToUpper, BuiltInFunctions.StringTransform((args: ReadonlyArray<any>) => String(args[0]).toUpperCase())],
             [ExpressionType.Trim, BuiltInFunctions.StringTransform((args: ReadonlyArray<any>) => String(args[0]).trim())],
@@ -800,7 +805,7 @@ export class BuiltInFunctions {
                     throw new Error();
                 }),
                 ReturnType.String,
-                BuiltInFunctions.ValidateBinary)],
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.Object, ReturnType.String))],
 
             // datetime
             [ExpressionType.AddDays, new ExpressionEvaluator(
@@ -1042,7 +1047,9 @@ export class BuiltInFunctions {
                 }
 
                 return JSON.parse(args[0]);
-            }), ReturnType.String, BuiltInFunctions.ValidateUnary)],
+            }),
+            ReturnType.String,
+            (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.String))],
             // tslint:disable-next-line: newline-before-return
             [ExpressionType.AddProperty, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
                 const temp: any = args[0];
@@ -1052,7 +1059,7 @@ export class BuiltInFunctions {
             }),
             ReturnType.Object,
             // tslint:disable-next-line: max-line-length
-            (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.String, ReturnType.String, ReturnType.String))],
+            (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.Object, ReturnType.String, ReturnType.Object))],
             // tslint:disable-next-line: max-line-length
             [ExpressionType.SetProperty, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
                 const temp: any = args[0];
@@ -1062,8 +1069,7 @@ export class BuiltInFunctions {
             }),
             ReturnType.Object,
             // tslint:disable-next-line: max-line-length
-            (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.String, ReturnType.String, ReturnType.String))],
-
+            (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.Object, ReturnType.String, ReturnType.Object))],
             // tslint:disable-next-line: max-line-length
             [ExpressionType.RemoveProperty, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
                 const temp: any = args[0];
@@ -1073,8 +1079,7 @@ export class BuiltInFunctions {
             }),
             ReturnType.Object,
             // tslint:disable-next-line: max-line-length
-            (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.String, ReturnType.String))],
-
+            (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.Object, ReturnType.String))],
             // tslint:disable-next-line: max-line-length
             [ExpressionType.Foreach, new ExpressionEvaluator(BuiltInFunctions.Foreach, ReturnType.Object, BuiltInFunctions.ValidateForeach)]
         ]);
