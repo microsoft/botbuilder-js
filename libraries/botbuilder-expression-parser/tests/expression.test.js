@@ -244,6 +244,22 @@ const dataSource = [
   ["bag['name']","mybag"],
   ["bag[substring(concat('na','me','more'), 0, length('name'))]","mybag"],
   ["items[1+1]","two"],
+
+  // Json test
+  ["sum(jarrInt)", 6],
+  ["sum(jarrFloat)", 6.6],
+  ["average(jarrInt)", 2.0],
+  ["average(jarrFloat)", 2.2],
+  ["count(jarrInt)", 3],
+  ["count(jarrFloat)", 3],
+  ["contains(jarrString, 'first')", true],
+  ["contains(jarrInt, 1)", true],
+  ["empty(jarrString)", false],
+  ["join(jarrString, ',')", "first,second,third"],
+  ["first(jarrString)", "first"],
+  ["first(jarrInt)", 1],
+  ["last(jarrString)", "third"],
+  ["last(jarrInt)", 3],
 ];
 
 const scope = {
@@ -262,6 +278,9 @@ const scope = {
       index : 3,
       name: "mybag"
   },
+  jarrInt: [1, 2, 3],
+  jarrFloat: [1.2, 2.2, 3.2],
+  jarrString: ["first", "second", "third"],
   items : ["zero", "one", "two" ],
   nestedItems : 
   [
@@ -308,9 +327,11 @@ describe('expression functional test', () => {
           if(!isSuccess) {
             assert.fail(errorMessage);
           }
+        } else if (typeof expected === 'number'){
+            assert(Math.abs(actual - expected) < 0.0000001, `actual is: ${actual} for case ${input}`)
         }
         else {
-          assert(actual === expected,`actual is: ${actual} for case ${input}`);
+          assert(actual === expected, `actual is: ${actual} for case ${input}`);
         }
       
         //Assert ExpectedRefs

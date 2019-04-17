@@ -332,7 +332,11 @@ export class BuiltInFunctions {
             let args: ReadonlyArray<any>;
             ({ args, error } = BuiltInFunctions.EvaluateChildren(expression, state, verify));
             if (error === undefined) {
-                value = func(args);
+                try {
+                    value = func(args);
+                } catch (e) {
+                    error = e.message;
+                }
             }
 
             return { value, error };
@@ -461,7 +465,7 @@ export class BuiltInFunctions {
         }
 
         if (error === undefined && children[0] instanceof Constant && (<Constant>children[0]).ReturnType === ReturnType.String) {
-            ({ value, error } = Extensions.AccessProperty(instance, (<Constant>children[0]).Value.toString(), expression));
+            ({ value, error } = Extensions.AccessProperty(instance, (<Constant>children[0]).Value.toString()));
         }
 
         return { value, error };
@@ -496,24 +500,7 @@ export class BuiltInFunctions {
             ({ value: idxValue, error } = index.tryEvaluate(state));
             if (error === undefined) {
                 if (Number.isInteger(idxValue)) {
-                    const idx: number = Number(idxValue);
-                    let count: number = -1;
-                    if (inst instanceof Array) {
-                        count = (inst).length;
-                    } else if (inst instanceof Map) {
-                        count = (<Map<string, any>>inst).size;
-                    }
-                    const indexer: string[] = Object.keys(inst);
-                    if (count !== -1 && indexer.length > 0) {
-                        if (idx >= 0 && count > idx) {
-                            const idyn: any = inst;
-                            value = idyn[idx];
-                        } else {
-                            error = `${index}=${idx} is out of range for ${instance}`;
-                        }
-                    } else {
-                        error = `${instance} is not a collection.`;
-                    }
+                    ({value, error} = Extensions.AccessIndex(inst, Number(idxValue)));
                 } else if (typeof idxValue === 'string') {
                     ({value, error} = Extensions.AccessProperty(inst, idxValue.toString()));
                 } else {
@@ -1032,13 +1019,13 @@ export class BuiltInFunctions {
             [ExpressionType.CreateArray, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => Array.from(args)), ReturnType.Object)],
             [ExpressionType.First, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
                     if (typeof args[0] === 'string' && args[0].length > 0) { return args[0][0]; }
-                    if (args[0] instanceof Array && args[0].length > 0) { return args[0][0]; }
+                    if (args[0] instanceof Array && args[0].length > 0) { return Extensions.AccessIndex(args[0], 0).value; }
 
                     return undefined;
                 }),                                        ReturnType.Object, BuiltInFunctions.ValidateUnary) ],
             [ExpressionType.Last, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
                 if (typeof args[0] === 'string' && args[0].length > 0) { return args[0][args[0].length - 1]; }
-                if (args[0] instanceof Array && args[0].length > 0) { return args[0][args[0].length - 1]; }
+                if (args[0] instanceof Array && args[0].length > 0) { return Extensions.AccessIndex(args[0], args[0].length - 1).value; }
 
                 return undefined;
             }),                                           ReturnType.Object, BuiltInFunctions.ValidateUnary) ],

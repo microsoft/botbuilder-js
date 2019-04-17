@@ -128,20 +128,58 @@ export class Extensions {
      * Lookup a property in IDictionary, JObject or through reflection.
      * @param instance Instance with property.
      * @param property Property to lookup.
-     * @param expression Expression that generated instance.
      * @returns Value and error information if any.
      */
-    public static AccessProperty(instance: any, property: string, expression?: Expression): { value: any; error: string } {
+    public static AccessProperty(instance: any, property: string): { value: any; error: string } {
+        // NOTE: This returns null rather than an error if property is not present
+        if (instance === null || instance === undefined) {
+            return { value: undefined, error: undefined };
+        }
+
         let value: any;
         // tslint:disable-next-line: prefer-const
         let error: string;
-        if (instance !== undefined) {
-            // todo, Is there a better way to access value, or any case is not listed below?
-            if (instance instanceof Map && <Map<string, any>>instance.get(property) !== undefined) {
-                value = <Map<string, any>>instance.get(property);
+        // todo, Is there a better way to access value, or any case is not listed below?
+        if (instance instanceof Map && <Map<string, any>>instance.get(property) !== undefined) {
+            value = <Map<string, any>>instance.get(property);
+        } else {
+            value = instance[property];
+        }
+
+        return { value, error };
+    }
+
+    /**
+     * Lookup a property in IDictionary, JObject or through reflection.
+     * @param instance Instance with property.
+     * @param property Property to lookup.
+     * @returns Value and error information if any.
+     */
+    public static AccessIndex(instance: any, index: number): { value: any; error: string } {
+        // NOTE: This returns null rather than an error if property is not present
+        if (instance === null || instance === undefined) {
+            return { value: undefined, error: undefined };
+        }
+
+        let value: any;
+        let error: string;
+
+        let count: number = -1;
+        if (instance instanceof Array) {
+            count = (instance).length;
+        } else if (instance instanceof Map) {
+            count = (<Map<string, any>>instance).size;
+        }
+        const indexer: string[] = Object.keys(instance);
+        if (count !== -1 && indexer.length > 0) {
+            if (index >= 0 && count > index) {
+                const idyn: any = instance;
+                value = idyn[index];
             } else {
-                value = instance[property];
+                error = `${index} is out of range for ${instance}`;
             }
+        } else {
+            error = `${instance} is not a collection.`;
         }
 
         return { value, error };
