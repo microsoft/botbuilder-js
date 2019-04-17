@@ -145,6 +145,14 @@ export class BuiltInFunctions {
     }
 
     /**
+     * Validate more than two children.
+     * @param expression Expression to validate.
+     */
+    public static ValidateMoreThanTwoNumbers(expression: Expression): void {
+        BuiltInFunctions.ValidateArityAndAnyType(expression, 2, Number.MAX_VALUE, ReturnType.Number);
+    }
+
+    /**
      * Validate there are 2 numeric or string arguments.
      * @param expression Expression to validate.
      */
@@ -375,6 +383,15 @@ export class BuiltInFunctions {
     public static Numeric(func: (arg0: ReadonlyArray<any>) => any): ExpressionEvaluator {
         return new ExpressionEvaluator(BuiltInFunctions.ApplySequence(func, BuiltInFunctions.VerifyNumber),
                                        ReturnType.Number, BuiltInFunctions.ValidateNumber);
+    }
+
+    /**
+     * Numeric operators that can have 2 or more args.
+     * @param func Function to apply.
+     */
+    public static MultivariateNumeric(func: (arg0: ReadonlyArray<any>) => any): ExpressionEvaluator {
+        return new ExpressionEvaluator(BuiltInFunctions.ApplySequence(func, BuiltInFunctions.VerifyNumber),
+                                       ReturnType.Number, BuiltInFunctions.ValidateMoreThanTwoNumbers);
     }
 
     /**
@@ -685,25 +702,34 @@ export class BuiltInFunctions {
         const functions: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>([
             //Math
             [ExpressionType.Element, new ExpressionEvaluator(BuiltInFunctions.ExtractElement, ReturnType.Object, this.ValidateBinary)],
-            [ExpressionType.Add, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Number(args[0]) + Number(args[1]))],
-            [ExpressionType.Subtract, BuiltInFunctions.Numeric((args: ReadonlyArray<any>)  => args[0] - args[1])],
-
-            [ExpressionType.Multiply, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => args[0] * args[1])],
-            [ExpressionType.Divide, new ExpressionEvaluator(BuiltInFunctions.ApplySequence((args: ReadonlyArray<any>) => Math.floor(args[0] / args[1]),
-                                                                                           (value: any, expression: Expression) => {
-                    let error: string = BuiltInFunctions.VerifyNumber(value, expression);
-                    if (error === undefined && value === 0) {
-                        error = `Cannot divide by 0 from ${expression}`;
+            [ExpressionType.Add, BuiltInFunctions.MultivariateNumeric((args: ReadonlyArray<any>) => Number(args[0]) + Number(args[1]))],
+            // tslint:disable-next-line: max-line-length
+            [ExpressionType.Subtract, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => Number(args[0]) - Number(args[1]), BuiltInFunctions.VerifyNumber),
+                ReturnType.Number,
+                BuiltInFunctions.ValidateBinaryNumber)],
+            [ExpressionType.Multiply, BuiltInFunctions.MultivariateNumeric((args: ReadonlyArray<any>) => args[0] * args[1])],
+            // tslint:disable-next-line: max-line-length
+            [ExpressionType.Divide, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    if (Number(args[1]) - 0 < 0.0000001) {
+                        throw new Error(`Cannot divide by 0.`);
                     }
 
-                    return error;
-                }),                                         ReturnType.Number, BuiltInFunctions.ValidateNumber)],
+                    return Math.floor(args[0] / args[1]);
+                }, BuiltInFunctions.VerifyNumber),
+                ReturnType.Number,
+                BuiltInFunctions.ValidateBinaryNumber)],
             [ExpressionType.Min, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.min(args[0], args[1]))],
             [ExpressionType.Max, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.max(args[0], args[1]))],
-            [ExpressionType.Power, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.pow(args[0], args[1]))],
+            [ExpressionType.Power, BuiltInFunctions.MultivariateNumeric((args: ReadonlyArray<any>) => Math.pow(args[0], args[1]))],
             [ExpressionType.Mod, new ExpressionEvaluator(BuiltInFunctions.Apply(
-                (args: ReadonlyArray<any>) => args[0] % args[1], BuiltInFunctions.VerifyInteger),
-                     ReturnType.Number, BuiltInFunctions.ValidateBinaryNumber)],
+                (args: ReadonlyArray<any>) => {
+                    if (Number(args[1]) - 0 < 0.0000001) {
+                        throw new Error(`Cannot mod by 0.`);
+                    }
+
+                    return args[0] % args[1];
+                }, BuiltInFunctions.VerifyInteger),
+                ReturnType.Number, BuiltInFunctions.ValidateBinaryNumber)],
             [ExpressionType.Average, new ExpressionEvaluator(
                 BuiltInFunctions.Apply((args: ReadonlyArray<any>) => (args[0].reduce((x: number, y: number) => x + y)) / args[0].length, BuiltInFunctions.VerifyList),
                 ReturnType.Number,
@@ -1074,13 +1100,13 @@ export class BuiltInFunctions {
 
         // Math aliases
 
-        functions.set('add', functions.get(ExpressionType.Add));
-        functions.set('mul', functions.get(ExpressionType.Multiply));
+        functions.set('add', functions.get(ExpressionType.Add)); // more than two params
+        functions.set('mul', functions.get(ExpressionType.Multiply)); // more than two params
 
-        functions.set('div', functions.get(ExpressionType.Divide));
+        functions.set('div', functions.get(ExpressionType.Divide)); // 2 params
         functions.set('mul', functions.get(ExpressionType.Multiply));
-        functions.set('sub', functions.get(ExpressionType.Subtract));
-        functions.set('exp', functions.get(ExpressionType.Power));
+        functions.set('sub', functions.get(ExpressionType.Subtract)); // 2 params
+        functions.set('exp', functions.get(ExpressionType.Power)); // more than 2 params
         functions.set('mod', functions.get(ExpressionType.Mod));
 
         // Comparison aliases

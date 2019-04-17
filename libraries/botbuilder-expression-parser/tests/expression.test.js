@@ -8,7 +8,10 @@ const oneTwo = ["one", "two"];
 const dataSource = [
   // Operators tests
   ["1 + 2", 3],
+  ["- 1 + 2", 1],
+  ["+ 1 + 2", 3],
   ["1 - 2", -1],
+  ["1 - (-2)", 3],
   ["1.0 + 2.0", 3.0],
   ["1 * 2 + 3", 5],
   ["1 + 2 * 3", 7],
@@ -53,6 +56,7 @@ const dataSource = [
   ["\"string\"&\"builder\"", "stringbuilder"],
   ["one > 0.5 && two < 2.5", true, oneTwo],
   ["one > 0.5 || two < 1.5", true, oneTwo],
+  ["0/3", 0],
 
   // String functions tests
   ["concat(hello,world)", "helloworld"],
@@ -148,9 +152,11 @@ const dataSource = [
   ["add(1.0, 2.0)", 3.0],
   ["add(mul(1, 2), 3)", 5],
   ["max(mul(1, 2), 5) ", 5],
+  ["max(5)", 5],
   ["max(4, 5) ", 5],
   ["min(mul(1, 2), 5) ", 2],
   ["min(4, 5) ", 4],
+  ["min(4)", 4],
   ["min(1.0, two) + max(one, 2.0)", 3.0, oneTwo],
   ["sub(2, 1)", 1],
   ["sub(2.0, 0.5)", 1.5],

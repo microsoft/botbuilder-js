@@ -31,6 +31,7 @@ const badExpressions =
   "items >= 1", // params should be number or string
   "items <= 1", // params should be number or string
   "'string'&one", // $ can only accept string parameter
+  "1/0", // can not divide 0
 
   // String functions test
   "concat(one, hello)", // concat can only accept string parameter
@@ -92,21 +93,23 @@ const badExpressions =
   "add(hello, 2)", // param should be number
   "add()", // arg count doesn't match
   "add(five, six)", // no such variables
-  //"add(one)", // add function need two variables
+  "add(one)", // add function need two variables
   "sub(hello, 2)", // param should be number
   "sub()", // arg count doesn't match
   "sub(five, six)", // no such variables
-  //"sub(one)", // add function need two variables
+  "sub(one)", // add function need two variables
   "mul(hello, one)", // param should be number
-  //"mul(one)", // mul function need two parameters
+  "mul(one)", // mul function need two parameters
   "div(one, 0)", // one cannot be divided by zero
+  "div(one)", // div function need two variables
   "div(hello, one)", // string hello cannot be divided
-  //"mul(one)", // div function need two parameters
   "exp(2, hello)", // exp cannot accept parameter of string
-  //"mod(1, 0)", // mod cannot accept zero as the second parameter
+  "mod(1, 0)", // mod cannot accept zero as the second parameter
   "mod(5.5, 2)", //  param should be integer
   "mod(5, 2.1)", //  param should be integer
+  "mod(5, 2.1 ,3)", // need two params
   "rand(5, 6.1)", //  param should be integer
+  "rand(5)", // need two params
   "rand(7, 6)", //  minvalue cannot be greater than maxValue
 
   // Date and time function test

@@ -36,6 +36,9 @@ export class ExpressionEngine implements IExpressionParser {
         public visitUnaryOpExp(context: ep.UnaryOpExpContext): Expression {
             const unaryOperationName: string = context.getChild(0).text;
             const operand: Expression = this.visit(context.expression());
+            if (unaryOperationName === ExpressionType.Subtract || unaryOperationName === ExpressionType.Add) {
+                return this.MakeExpression(unaryOperationName, new Constant(0), operand);
+            }
 
             return this.MakeExpression(unaryOperationName, operand);
         }
