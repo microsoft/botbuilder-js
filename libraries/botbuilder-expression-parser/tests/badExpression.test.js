@@ -145,6 +145,7 @@ const badExpressions =
   "subtractFromTime(timestamp, 'yyyy', 1, 1)", // should have 3 params
   "dateReadBack('errortime', 'errortime')", // error datetime format
   "dateReadBack(timestamp)", // shold have two params
+  "dateReadBack(timestamp, 'errortime')", // second param is invalid timestamp format
   "getTimeOfDay('errortime')", // error datetime format
   "getTimeOfDay(timestamp, timestamp)", // should have 1 param
 

@@ -933,6 +933,7 @@ export class BuiltInFunctions {
                         let value: any;
                         const dateFormat: string = 'YYYY-MM-DD';
                         BuiltInFunctions.VerifyTimestamp(args[0]);
+                        BuiltInFunctions.VerifyTimestamp(args[1]);
 
                         if (moment(args[0]).format(dateFormat) === moment(args[1]).format(dateFormat)) {
                             value = 'Today';
