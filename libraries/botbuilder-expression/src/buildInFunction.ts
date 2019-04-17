@@ -514,8 +514,10 @@ export class BuiltInFunctions {
                     } else {
                         error = `${instance} is not a collection.`;
                     }
+                } else if (typeof idxValue === 'string') {
+                    ({value, error} = Extensions.AccessProperty(inst, idxValue.toString()));
                 } else {
-                    error = `Could not coerce ${index} to an int.`;
+                    error = `Could not coerce ${index} to an int or string.`;
                 }
 
                 return {value, error};
@@ -695,9 +697,7 @@ export class BuiltInFunctions {
         // tslint:disable-next-line: no-unnecessary-local-variable
         const functions: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>([
             //Math
-            [ExpressionType.Element, new ExpressionEvaluator(BuiltInFunctions.ExtractElement, ReturnType.Object,
-                                                             (expr: Expression): void =>
-                                                             BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.Object, ReturnType.Number))],
+            [ExpressionType.Element, new ExpressionEvaluator(BuiltInFunctions.ExtractElement, ReturnType.Object, this.ValidateBinary)],
             [ExpressionType.Add, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Number(args[0]) + Number(args[1]))],
             [ExpressionType.Subtract, BuiltInFunctions.Numeric((args: ReadonlyArray<any>)  => args[0] - args[1])],
 
