@@ -255,23 +255,7 @@ const dataSource = [
   ["bag.list[bag.index - 2]", "blue", ["bag.list", "bag.index"]],
   ["bag['name']","mybag"],
   ["bag[substring(concat('na','me','more'), 0, length('name'))]","mybag"],
-  ["items[1+1]","two"],
-
-  // Json test
-  ["sum(jarrInt)", 6],
-  ["sum(jarrFloat)", 6.6],
-  ["average(jarrInt)", 2.0],
-  ["average(jarrFloat)", 2.2],
-  ["count(jarrInt)", 3],
-  ["count(jarrFloat)", 3],
-  ["contains(jarrString, 'first')", true],
-  ["contains(jarrInt, 1)", true],
-  ["empty(jarrString)", false],
-  ["join(jarrString, ',')", "first,second,third"],
-  ["first(jarrString)", "first"],
-  ["first(jarrInt)", 1],
-  ["last(jarrString)", "third"],
-  ["last(jarrInt)", 3],
+  ["items[1+1]","two"]
 ];
 
 const scope = {
@@ -290,9 +274,6 @@ const scope = {
       index : 3,
       name: "mybag"
   },
-  jarrInt: [1, 2, 3],
-  jarrFloat: [1.2, 2.2, 3.2],
-  jarrString: ["first", "second", "third"],
   items : ["zero", "one", "two" ],
   nestedItems : 
   [

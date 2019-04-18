@@ -216,11 +216,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         const matches: string[] = exp.match(/@\{[^{}]+\}/g);
         for (const match of matches) {
             const newExp: string = match.substr(1); // remove @
-            if (newExp.startsWith('{[') && newExp.endsWith(']}')) {
-                result = result.concat(this.AnalyzeTemplateRef(newExp.substr(2, newExp.length - 4)));
-            } else {
-                result = result.concat(this.AnalyzeExpression(newExp));
-            }
+            result = result.concat(this.AnalyzeExpression(newExp));
         }
 
         return result;

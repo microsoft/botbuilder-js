@@ -194,6 +194,11 @@ describe('LG', function () {
         var evaled3Options = ["alarms", "customer", "tasks[0]","age"];
         assert.strictEqual(evaled3.length, evaled3Options.length);
         evaled3Options.forEach(element => assert.strictEqual(evaled3.includes(element), true));
+
+        var evaled4 = engine.analyzeTemplate("template4");
+        var evaled4Options = ["multiLineText", "multiLineTemplateRef"];
+        assert.strictEqual(evaled4.length, evaled4Options.length);
+        evaled4Options.forEach(element => assert.strictEqual(evaled4.includes(element), true));
     });
 
     it('TestlgTemplateFunction', function() {

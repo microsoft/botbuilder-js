@@ -1,13 +1,13 @@
-#wPhrase
+# wPhrase
 - Hi {userName}
  
-#pizzaOrderConfirmation
+# pizzaOrderConfirmation
 - Your pizza order of {base} with toppings {join(topping, ',', 'and')} is confirmed.
  
-#sandwichOrderConfirmation
+# sandwichOrderConfirmation
 - Your {bread} sandwich with {meat} is on its way. Thanks.
  
-#orderReadOut
+# orderReadOut
 - IF: {orderType == 'pizza'}
 - [wPhrase] [pizzaOrderConfirmation] 
 - ELSEIF: {orderType == 'sandwich'}
@@ -19,5 +19,13 @@
 # template2
 - {join(foreach(alarms, x, lgTemplate('template3', customer)), ',', 'and')} {tasks[0]}
 
-#template3(input)
+# template3(input)
 - {input.property}
+
+# template4
+-```
+ @{multiLineText}, @{lgTemplate('template5')}
+```
+
+# template5
+- {multiLineTemplateRef}
