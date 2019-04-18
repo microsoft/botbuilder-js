@@ -188,10 +188,16 @@ export class DialogContext {
                 (promptOrOptions as Activity).type !== undefined) ||
             typeof promptOrOptions === 'string'
         ) {
-            options = { prompt: promptOrOptions as string | Partial<Activity>, choices: choices };
+            options = { prompt: promptOrOptions as string | Partial<Activity> };
         } else {
             options = { ...promptOrOptions as PromptOptions };
         }
+
+        if (choices) 
+        {
+            options.choices = choices;
+        }
+        
         return this.beginDialog(dialogId, options);
     }
 
