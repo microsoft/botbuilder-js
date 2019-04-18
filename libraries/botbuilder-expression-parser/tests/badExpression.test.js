@@ -89,19 +89,21 @@ const badExpressions =
 
   // Math functions test
   "max(hello, one)", // param should be number
+  "max()", // function need 1 or more than 1 parameters
   "min(hello, one)", // param should be number
+  "min()", // function need 1 or more than 1 parameters
   "add(hello, 2)", // param should be number
   "add()", // arg count doesn't match
   "add(five, six)", // no such variables
-  "add(one)", // add function need two variables
+  "add(one)", // add function need two or more parameters
   "sub(hello, 2)", // param should be number
   "sub()", // arg count doesn't match
   "sub(five, six)", // no such variables
-  "sub(one)", // add function need two variables
+  "sub(one)", // sub function need two or more parameters
   "mul(hello, one)", // param should be number
-  "mul(one)", // mul function need two parameters
+  "mul(one)", // mul function need two or more parameters
   "div(one, 0)", // one cannot be divided by zero
-  "div(one)", // div function need two variables
+  "div(one)", // div function need two or more parameters
   "div(hello, one)", // string hello cannot be divided
   "exp(2, hello)", // exp cannot accept parameter of string
   "mod(1, 0)", // mod cannot accept zero as the second parameter
@@ -159,7 +161,7 @@ const badExpressions =
   "average('hello')",//first param should be list
   "contains('hello world', 'hello', 'new')",//should have 2 parameter
   "count(items, 1)", //should have 1 parameter
-  "count(1)", //first param should be list
+  "count(1)", //first param should be string, array or map
   "empty(1,2)", //should have two params
   "first(items,2)", //should have 1 param
   "last(items,2)", //should have 1 param

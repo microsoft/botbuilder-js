@@ -145,10 +145,10 @@ export class BuiltInFunctions {
     }
 
     /**
-     * Validate more than two children.
+     * Validate 2 or more than 2 numeric arguments.
      * @param expression Expression to validate.
      */
-    public static ValidateMoreThanTwoNumbers(expression: Expression): void {
+    public static ValidateTwoOrMoreThanTwoNumbers(expression: Expression): void {
         BuiltInFunctions.ValidateArityAndAnyType(expression, 2, Number.MAX_VALUE, ReturnType.Number);
     }
 
@@ -391,7 +391,7 @@ export class BuiltInFunctions {
      */
     public static MultivariateNumeric(func: (arg0: ReadonlyArray<any>) => any): ExpressionEvaluator {
         return new ExpressionEvaluator(BuiltInFunctions.ApplySequence(func, BuiltInFunctions.VerifyNumber),
-                                       ReturnType.Number, BuiltInFunctions.ValidateMoreThanTwoNumbers);
+                                       ReturnType.Number, BuiltInFunctions.ValidateTwoOrMoreThanTwoNumbers);
     }
 
     /**
@@ -704,20 +704,17 @@ export class BuiltInFunctions {
             [ExpressionType.Element, new ExpressionEvaluator(BuiltInFunctions.ExtractElement, ReturnType.Object, this.ValidateBinary)],
             [ExpressionType.Add, BuiltInFunctions.MultivariateNumeric((args: ReadonlyArray<any>) => Number(args[0]) + Number(args[1]))],
             // tslint:disable-next-line: max-line-length
-            [ExpressionType.Subtract, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => Number(args[0]) - Number(args[1]), BuiltInFunctions.VerifyNumber),
-                ReturnType.Number,
-                BuiltInFunctions.ValidateBinaryNumber)],
-            [ExpressionType.Multiply, BuiltInFunctions.MultivariateNumeric((args: ReadonlyArray<any>) => args[0] * args[1])],
+            [ExpressionType.Subtract, BuiltInFunctions.MultivariateNumeric((args: ReadonlyArray<any>) => Number(args[0]) - Number(args[1]))],
             // tslint:disable-next-line: max-line-length
-            [ExpressionType.Divide, new ExpressionEvaluator(BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+            [ExpressionType.Multiply, BuiltInFunctions.MultivariateNumeric((args: ReadonlyArray<any>) => Number(args[0]) * Number(args[1]))],
+            // tslint:disable-next-line: max-line-length
+            [ExpressionType.Divide, BuiltInFunctions.MultivariateNumeric((args: ReadonlyArray<any>) => {
                     if (Number(args[1]) - 0 < 0.0000001) {
                         throw new Error(`Cannot divide by 0.`);
                     }
 
-                    return Math.floor(args[0] / args[1]);
-                }, BuiltInFunctions.VerifyNumber),
-                ReturnType.Number,
-                BuiltInFunctions.ValidateBinaryNumber)],
+                    return Math.floor(Number(args[0]) / Number(args[1]));
+            })],
             [ExpressionType.Min, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.min(args[0], args[1]))],
             [ExpressionType.Max, BuiltInFunctions.Numeric((args: ReadonlyArray<any>) => Math.max(args[0], args[1]))],
             [ExpressionType.Power, BuiltInFunctions.MultivariateNumeric((args: ReadonlyArray<any>) => Math.pow(args[0], args[1]))],
@@ -739,7 +736,17 @@ export class BuiltInFunctions {
                 ReturnType.Number,
                 BuiltInFunctions.ValidateUnary)],
             [ExpressionType.Count, new ExpressionEvaluator(
-                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].length, BuiltInFunctions.VerifyList),
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => {
+                    if (typeof args[0] === 'string' || args[0] instanceof Array) {
+                        return args[0].length;
+                    }
+
+                    if (args[0] instanceof Map) {
+                        return args[0].size;
+                    }
+
+                    throw new Error(`Parameter ${args[0]} is not String, Array or Map.`);
+                }),
                 ReturnType.Number,
                 BuiltInFunctions.ValidateUnary)],
             [ExpressionType.LessThan, BuiltInFunctions.Comparison((args: ReadonlyArray<any>) => {
@@ -1100,13 +1107,11 @@ export class BuiltInFunctions {
 
         // Math aliases
 
-        functions.set('add', functions.get(ExpressionType.Add)); // more than two params
-        functions.set('mul', functions.get(ExpressionType.Multiply)); // more than two params
-
-        functions.set('div', functions.get(ExpressionType.Divide)); // 2 params
-        functions.set('mul', functions.get(ExpressionType.Multiply));
-        functions.set('sub', functions.get(ExpressionType.Subtract)); // 2 params
-        functions.set('exp', functions.get(ExpressionType.Power)); // more than 2 params
+        functions.set('add', functions.get(ExpressionType.Add)); // more than 1 param
+        functions.set('mul', functions.get(ExpressionType.Multiply)); // more than 1 param
+        functions.set('div', functions.get(ExpressionType.Divide)); // more than 1 param
+        functions.set('sub', functions.get(ExpressionType.Subtract)); // more than 1 param
+        functions.set('exp', functions.get(ExpressionType.Power)); // more than 1 param
         functions.set('mod', functions.get(ExpressionType.Mod));
 
         // Comparison aliases
