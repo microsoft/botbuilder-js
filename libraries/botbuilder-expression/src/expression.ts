@@ -49,7 +49,13 @@ export class Expression {
     public get ReturnType(): ReturnType {
         return this.Evaluator.ReturnType;
     }
-    public readonly Type: string;
+
+    /**
+     * Type of expression.
+     */
+    public get Type(): string {
+        return this.Evaluator.Type;
+    }
 
     /**
      * Children expressions.
@@ -65,7 +71,6 @@ export class Expression {
      * @param children Child expressions.
      */
     public constructor(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]) {
-        this.Type = type;
         this.Evaluator = evaluator === undefined ? BuiltInFunctions.Lookup(type) : evaluator;
         this.Children = children;
     }
@@ -88,7 +93,7 @@ export class Expression {
      * @param func Function to create an expression from.
      */
     public static LambaExpression(func: EvaluateExpressionDelegate): Expression {
-        return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(func));
+        return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda, func));
     }
 
     /**
@@ -98,7 +103,7 @@ export class Expression {
      * @returns New expression.
      */
     public static Lambda(func: (arg0: any) => any): Expression {
-        return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(
+        return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda,
             (expression: Expression, state: any): { value: any; error: string } => {
                 let value: any;
                 let error: string;

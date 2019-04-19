@@ -29,7 +29,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "tsc && nyc mocha tests/ --timeout 60000",
+    "test": "tsc && nyc --reporter=text mocha tests/ --timeout 60000",
     "clean": "erase /q /s .\\lib"
   },
   "files": [

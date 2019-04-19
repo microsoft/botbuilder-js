@@ -55,6 +55,13 @@ const dataSource = [
   ["'string'&'builder'", "stringbuilder"],
   ["\"string\"&\"builder\"", "stringbuilder"],
   ["one > 0.5 && two < 2.5", true, oneTwo],
+  ["float(5.5) && float(0.0)", false],
+  ["hello && \"hello\"", true],
+  ["items || ((2 + 2) <= (4 - 1))", true], // true || false
+  ["0 || false", false], // false || false
+  ["!(hello)", false], // false
+  ["!(10)", false],
+  ["!(0)", true],
   ["one > 0.5 || two < 1.5", true, oneTwo],
   ["0/3", 0],
 
@@ -133,7 +140,18 @@ const dataSource = [
   ["not(one == 1.0)", false, ["one"]],
   ["not(not(one == 1.0))", true, ["one"]],
   ["not(false)", true],
-  
+  ["and(one > 0.5, two < 2.5)", true, oneTwo],
+  ["and(float(5.5), float(0.0))", false],
+  ["and(hello, \"hello\")", true],
+  ["or(items, (2 + 2) <= (4 - 1))", true], // true || false
+  ["or(0, false)", false], // false || false
+  ["not(hello)", false], // false
+  ["not(10)", false],
+  ["not(0)", true],
+  ["if(hello, 'r1', 'r2')", "r1"],
+  ["if(0, 'r1', 'r2')", "r2"],
+  ["if(10, 'r1', 'r2')", "r1"],
+
   // Conversion functions tests
   ["float('10.333')", 10.333],
   ["float('10')", 10.0],
@@ -144,10 +162,10 @@ const dataSource = [
   ["string(bag.set)", "{\"four\":4}"], // ts-->"{\"four\":4}", C# --> "{\"four\":4.0}"
   ["bool(1)", true],
   ["bool(0)", false],
-  ["bool('false')", false],
-  ["bool('true')", true],
+  ["bool('false')", true], // we make it true, because it is not empty
+  ["bool('hi')", true],
   ["createArray('h', 'e', 'l', 'l', 'o')", ["h", "e", "l", "l", "o"]],
-  ["createArray(1, bool('false'), string(bool(1)), float('10'))", [1, false, "true", 10.0]],
+  ["createArray(1, bool(0), string(bool(1)), float('10'))", [1, false, "true", 10.0]],
 
   // Math functions tests
   ["add(1, 2, 3)", 6],
@@ -321,7 +339,7 @@ describe('expression functional test', () => {
             assert.fail(errorMessage);
           }
         } else if (typeof expected === 'number'){
-            assert(Math.abs(actual - expected) < 0.0000001, `actual is: ${actual} for case ${input}`)
+            assert(parseFloat(actual) === expected, `actual is: ${actual} for case ${input}`)
         }
         else {
           assert(actual === expected, `actual is: ${actual} for case ${input}`);

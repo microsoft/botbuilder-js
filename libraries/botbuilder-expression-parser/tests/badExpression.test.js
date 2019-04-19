@@ -25,9 +25,6 @@ const badExpressions =
   "'1' / 2", // params should be number
   "'1' % 2", // params should be number
   "'1' ^ 2", // params should be number
-  "'1' && true", // params should be boolean
-  "'1' || true", // params should be boolean
-  "!'1'", // params should be boolean
   "items >= 1", // params should be number or string
   "items <= 1", // params should be number or string
   "'string'&one", // $ can only accept string parameter
@@ -59,7 +56,6 @@ const badExpressions =
   "trim('hi', 1)", // should have 1 param
 
   // Logical comparison functions test
-  "and(one, hello, one < two)", //one and hello are not bool type
   "greater(one, hello)", // string and integer are not comparable
   "greater(one)", // greater need two parameters
   "greaterOrEquals(one, hello)", // string and integer are not comparable
@@ -68,15 +64,10 @@ const badExpressions =
   "less(one)", // function need two parameters
   "lessOrEquals(one, hello)", // string and integer are not comparable
   "lessOrEquals(one)", // function need two parameters
-  "not(hello)", // not can only accept bool parameter
   "equals(one)", // equals must accept two parameters
   "exists(1, 2)", // function need one parameter
-  "if(hello, 'r1', 'r2')", // the first parameter of the if must be bool
   //"if(!exists(one), one, hello)", // the second and third parameters of if must the same type
-  //"or(hello == 'hello')", // or function needs two parameters
-  "or(hello, one)", // or function only accept bool parameters
   "not(false, one)", // function need one parameter
-  "not(1)", //accept boolean param
 
   // Conversion functions test
   "float(hello)", // param shoud be float format string
@@ -84,7 +75,6 @@ const badExpressions =
   "int(hello)", // param shoud be int format string
   "int(1, 1)", // shold have 1 param
   "string(hello, 1)", // shold have 1 param
-  //"bool(hello)", // param shoud be float format string
   "bool(false, 1)", // shold have 1 param
 
   // Math functions test

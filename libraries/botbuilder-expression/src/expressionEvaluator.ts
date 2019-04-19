@@ -29,6 +29,10 @@ export type EvaluatorLookup = (type: string) => ExpressionEvaluator;
 export class ExpressionEvaluator {
 
     /**
+     * Expression type for evaluator.
+     */
+    public Type: string;
+    /**
      * Type expected by evaluating the expression.
      */
     public ReturnType: ReturnType;
@@ -37,13 +41,16 @@ export class ExpressionEvaluator {
 
     /**
      * Constructor for expression information.
+     * @param type Expression type.
      * @param evaluator Delegate to evaluate an expression.
      * @param returnType Type expected from evaluation.
      * @param validator Static validation of expression.
      */
-    public constructor(evaluator: EvaluateExpressionDelegate,
+    public constructor(type: string,
+                       evaluator: EvaluateExpressionDelegate,
                        returnType: ReturnType = ReturnType.Object,
                        validator?: ValidateExpressionDelegate) {
+        this.Type = type;
         this._evaluator = evaluator;
         this.ReturnType = returnType;
         this._validator = validator === undefined ? ((expr: Expression): any => { }) : validator;
