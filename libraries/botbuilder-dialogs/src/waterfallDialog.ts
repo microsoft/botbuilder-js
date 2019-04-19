@@ -7,7 +7,7 @@
  */
 import { ActivityTypes } from 'botbuilder-core';
 import { TurnContext } from 'botbuilder-core';
-import { DialogInstance, DialogConsultation, DialogConsultationDesire } from './dialog';
+import { DialogInstance } from './dialog';
 import { Dialog, DialogReason, DialogTurnResult } from './dialog';
 import { DialogContext } from './dialogContext';
 import { WaterfallStepContext } from './waterfallStepContext';
@@ -154,19 +154,14 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         return await this.runStep(dc, 0, DialogReason.beginCalled);
     }
 
-    public async consultDialog(dc: DialogContext): Promise<DialogConsultation> {
-        return {
-            desire: DialogConsultationDesire.canProcess,
-            processor: async (dc) => {
-                // Don't do anything for non-message activities
-                if (dc.context.activity.type !== ActivityTypes.Message) {
-                    return Dialog.EndOfTurn;
-                }
+    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+        // Don't do anything for non-message activities
+        if (dc.context.activity.type !== ActivityTypes.Message) {
+            return Dialog.EndOfTurn;
+        }
 
-                // Run next step with the message text as the result.
-                return await this.resumeDialog(dc, DialogReason.continueCalled, dc.context.activity.text);
-            }
-        };
+        // Run next step with the message text as the result.
+        return await this.resumeDialog(dc, DialogReason.continueCalled, dc.context.activity.text);
     }
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {

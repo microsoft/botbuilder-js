@@ -7,7 +7,7 @@
  */
 import { Activity, TurnContext } from 'botbuilder-core';
 import { Choice } from './choices';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent, DialogConsultation } from './dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
 import { StateMap } from './stateMap';
@@ -329,42 +329,31 @@ export class DialogContext {
     }
 
     /**
-     * Queries the active dialog about its desire to process the current utterance.
-     *
-     * @remarks
-     * If there's an active multi-turn dialog on the stack, the dialog will return a processor 
-     * function that can be invoked to continue execution of the multi-turn dialog.
-     *
-     * ```JavaScript
-     * const consultation = await dc.consultDialog();
-     * if (consultation) {
-     *      const result = await consultation.processor(dc);
-     * }
-     * ```
+     * Consults the current dialog stack to see if the active dialog, or any of its parents, wants
+     * to intercept the incoming activity.
      */
-    public async consultDialog(): Promise<DialogConsultation|undefined> {
-        // Check for a dialog on the stack
-        const instance: DialogInstance = this.activeDialog;
-        if (instance) {
-            // Lookup dialog
-            const dialog: Dialog<{}> = this.findDialog(instance.id);
-            if (!dialog) {
-                throw new Error(`DialogContext.consultDialog(): Can't consult dialog. A dialog with an id of '${instance.id}' wasn't found.`);
+    public async consultDialog(): Promise<boolean> {
+        // Find leaf child dialog
+        let dc: DialogContext = this;
+        while (true) {
+            const childDC = dc.child;
+            if (childDC) {
+                dc = childDC;
+            } else {
+                break;
             }
-
-            // Consult dialog
-            return await dialog.consultDialog(this);
-        } else {
-            return undefined;
         }
+
+        // Emit consultDialog event
+        return await dc.emitEvent('consultDialog');
     }
 
     /**
      * Continues execution of the active multi-turn dialog, if there is one.
      *
      * @remarks
-     * The [consultDialog()](#consultdialog) method will be called to find the preferred processor
-     * function to invoke. 
+     * The stack will be inspected and the active dialog will be retrieved using `DialogSet.find()`.
+     * The dialog will then have its `Dialog.continueDialog()` method called.
      *
      * ```JavaScript
      * const result = await dc.continueDialog();
@@ -380,11 +369,17 @@ export class DialogContext {
      * - `DialogTurnStatus.empty` if the stack was empty.
      */
     public async continueDialog(): Promise<DialogTurnResult> {
-        // Consult dialog for processor to invoke.
-        const consultation = await this.consultDialog();
-        if (consultation) {
-            // Invoke processor to continue dialog execution.
-            return await consultation.processor(this);
+        // Check for a dialog on the stack
+        const instance: DialogInstance = this.activeDialog;
+        if (instance) {
+            // Lookup dialog
+            const dialog: Dialog<{}> = this.findDialog(instance.id);
+            if (!dialog) {
+                throw new Error(`DialogContext.continue(): Can't continue dialog. A dialog with an id of '${ instance.id }' wasn't found.`);
+            }
+
+            // Continue execution of dialog
+            return await dialog.continueDialog(this);
         } else {
             return { status: DialogTurnStatus.empty };
         }

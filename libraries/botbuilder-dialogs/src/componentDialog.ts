@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogConsultation, DialogConsultationDesire } from './dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 import { DialogSet } from './dialogSet';
 import { DialogContainer } from './dialogContainer';
@@ -99,19 +99,18 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         }
     }
 
-    public async consultDialog(outerDC: DialogContext): Promise<DialogConsultation> {
-        // Consult the inner dialog.
+    public async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
+        // Continue execution of inner dialog.
         const innerDC = this.createChildContext(outerDC);
-        const innerConsultation = await this.onConsultDialog(innerDC);
+        const turnResult: DialogTurnResult<any> = await this.onContinueDialog(innerDC);
 
-        // Call onContinueDialog() with inner consultation
-        // - The default implementation of onContinueDialog() will simply invoke the inner processor 
-        //   that was returned. 
-        // - This lets legacy components that have added custom interruption logic to continue to 
-        //   operate as designed.
-        return {
-            desire: innerConsultation ? innerConsultation.desire : DialogConsultationDesire.canProcess,
-            processor: (outerDC) => this.onContinueDialog(innerDC, innerConsultation)
+        // Check for end of inner dialog
+        if (turnResult.status !== DialogTurnStatus.waiting) {
+            // Return result to calling dialog
+            return await this.endComponent(outerDC, turnResult.result);
+        } else {
+            // Just signal end of turn
+            return Dialog.EndOfTurn;
         }
     }
 
@@ -182,31 +181,15 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     /**
-     * Called anytime a multi-turn component is being consulted about its desire to process
-     * a given utterance.
+     * Called anytime a multi-turn component receives additional activities.
      *
      * @remarks
      * SHOULD be overridden by components that wish to perform custom interruption logic. The
-     * default implementation calls `innerDC.consultDialog()` and passes through any consultations
-     * with a desire of `DialogConsultationDesire.shouldProcess`.  For backwards compatibility
-     * reasons, consultations with a desire of `DialogConsultationDesire.canProcess` will have their
-     * processor function replaced with one that calls [onContinueDialog()][#oncontinuedialog].
+     * default implementation calls `innerDC.continueDialog()`.
      * @param innerDC Dialog context for the components internal `DialogSet`.
      */
-    protected async onConsultDialog(innerDC: DialogContext): Promise<DialogConsultation|undefined> {
-        return await innerDC.consultDialog();
-    } 
-
-    /**
-     * Legacy dialog continuation override.
-     *
-     * @remarks
-     * Derived classes should override [onConsultDialog()](#onconsultdialog) instead.
-     * @param innerDC Dialog context for the components internal `DialogSet`.
-     * @param consultation (Optional) consultation from [consultDialog()](#consultDialog) call. Invoking the processor on this object is more efficient the calling `innerDC.continueDialog()`.
-     */
-    protected onContinueDialog(innerDC: DialogContext, consultation?: DialogConsultation): Promise<DialogTurnResult> {
-        return consultation ? consultation.processor(innerDC) : innerDC.continueDialog();
+    protected onContinueDialog(innerDC: DialogContext): Promise<DialogTurnResult> {
+        return innerDC.continueDialog();
     }
 
     /**

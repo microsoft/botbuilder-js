@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Activity, InputHints, TurnContext, ActivityTypes } from 'botbuilder-core';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogConsultation, DialogConsultationDesire } from '../dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogEvent } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 import { StateMap } from '../stateMap';
@@ -55,34 +55,42 @@ export class ActivityPrompt extends Dialog {
         return Dialog.EndOfTurn;
     }
 
-    public async consultDialog(dc: DialogContext): Promise<DialogConsultation> {
+    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Perform base recognition
-        const state = dc.state.dialog;
-        const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS));
-        return {
-            desire: recognized.succeeded && !recognized.allowInterruption ? DialogConsultationDesire.shouldProcess : DialogConsultationDesire.canProcess,
-            processor: async (dc) => {
-                // Validate the return value
-                // - Unlike the other prompts a validator is required for an ActivityPrompt so we don't
-                //   need to check for its existence before calling it.
-                const isValid: boolean = await this.validator({
-                    context: dc.context,
-                    recognized: recognized,
-                    state: state.get(PERSISTED_STATE),
-                    options: state.get(PERSISTED_OPTIONS)
-                });
+        const state = dc.state.dialog.get(PERSISTED_STATE);
+        const options = dc.state.dialog.get(PERSISTED_OPTIONS);
+        const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(dc.context, state, options);
 
-                // Return recognized value or re-prompt
-                if (isValid) {
-                    return await dc.endDialog(recognized.value);
-                } else {
-                    if (dc.context.activity.type === ActivityTypes.Message && !dc.context.responded) {
-                        await this.onPrompt(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), true);
-                    }
+        // Validate the return value
+        // - Unlike the other prompts a validator is required for an ActivityPrompt so we don't
+        //   need to check for its existence before calling it.
+        const isValid: boolean = await this.validator({
+            context: dc.context,
+            recognized: recognized,
+            state: state,
+            options: options
+        });
 
-                    return Dialog.EndOfTurn;
-                }
+        // Return recognized value or re-prompt
+        if (isValid) {
+            return await dc.endDialog(recognized.value);
+        } else {
+            if (dc.context.activity.type === ActivityTypes.Message && !dc.context.responded) {
+                await this.onPrompt(dc.context, state, options, true);
             }
+
+            return Dialog.EndOfTurn;
+        }
+    }
+
+    public async onDialogEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
+        switch (event.name) {
+            case 'consultDialog':
+                    const state = dc.state.dialog;
+                    const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS));
+                    return recognized.succeeded && !recognized.allowInterruption;
+            default:
+                return super.onDialogEvent(dc, event);
         }
     }
 

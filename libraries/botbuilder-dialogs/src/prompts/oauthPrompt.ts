@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, TokenResponse, TurnContext, IUserTokenProvider } from 'botbuilder-core';
-import { Dialog, DialogTurnResult, DialogConsultation, DialogConsultationDesire } from '../dialog';
+import { Dialog, DialogTurnResult, DialogEvent } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
 import { channels } from '../choices/channel';
@@ -149,46 +149,53 @@ export class OAuthPrompt extends Dialog {
         }
     }
 
-    public async consultDialog(dc: DialogContext): Promise<DialogConsultation> {
+    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Recognize token
         const recognized: PromptRecognizerResult<TokenResponse> = await this.recognizeToken(dc.context);
-        return {
-            desire: recognized.succeeded && !recognized.allowInterruption ? DialogConsultationDesire.shouldProcess : DialogConsultationDesire.canProcess,
-            processor: async (dc) => {
-                // Check for timeout
-                const state = dc.state.dialog;
-                const isMessage: boolean = dc.context.activity.type === ActivityTypes.Message;
-                const hasTimedOut: boolean = isMessage && (new Date().getTime() > state.get(PERSISTED_EXPIRES));
-                if (hasTimedOut) {
-                    return await dc.endDialog(undefined);
-                } else {
-                    // Validate the return value
-                    let isValid: boolean = false;
-                    if (this.validator) {
-                        isValid = await this.validator({
-                            context: dc.context,
-                            recognized: recognized,
-                            state: state.get(PERSISTED_STATE),
-                            options: state.get(PERSISTED_OPTIONS)
-                        });
-                    } else if (recognized.succeeded) {
-                        isValid = true;
-                    }
 
-                    // Return recognized value or re-prompt
-                    if (isValid) {
-                        return await dc.endDialog(recognized.value);
-                    } else {
-                        // Send retry prompt
-                        if (!dc.context.responded && isMessage && state.get(PERSISTED_OPTIONS).retryPrompt) {
-                            await dc.context.sendActivity(state.get(PERSISTED_OPTIONS).retryPrompt);
-                        }
-
-                        return Dialog.EndOfTurn;
-                    }
-                }
+        // Check for timeout
+        const state = dc.state.dialog;
+        const isMessage: boolean = dc.context.activity.type === ActivityTypes.Message;
+        const hasTimedOut: boolean = isMessage && (new Date().getTime() > state.get(PERSISTED_EXPIRES));
+        if (hasTimedOut) {
+            return await dc.endDialog(undefined);
+        } else {
+            // Validate the return value
+            let isValid = false;
+            if (this.validator) {
+                isValid = await this.validator({
+                    context: dc.context,
+                    recognized: recognized,
+                    state: state.get(PERSISTED_STATE),
+                    options: state.get(PERSISTED_OPTIONS)
+                });
+            } else if (recognized.succeeded) {
+                isValid = true;
             }
-        };
+
+            // Return recognized value or re-prompt
+            if (isValid) {
+                return await dc.endDialog(recognized.value);
+            } else {
+                // Send retry prompt
+                const options: PromptOptions = state.get(PERSISTED_OPTIONS);
+                if (!dc.context.responded && isMessage && options.retryPrompt) {
+                    await dc.context.sendActivity(options.retryPrompt);
+                }
+
+                return Dialog.EndOfTurn;
+            }
+        }
+    }
+
+    public async onDialogEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
+        switch (event.name) {
+            case 'consultDialog':
+                const recognized: PromptRecognizerResult<TokenResponse> = await this.recognizeToken(dc.context);
+                return recognized.succeeded && !recognized.allowInterruption;
+            default:
+                return super.onDialogEvent(dc, event);
+        }
     }
 
     /**
