@@ -13,6 +13,7 @@ import { PromptOptions } from './prompts';
 import { StateMap } from './stateMap';
 import { DialogContextState } from './dialogContextState';
 import { DialogCommand } from './dialogCommand';
+import { DialogContainer } from './dialogContainer';
 
 /**
  * State information persisted by a `DialogSet`.
@@ -39,15 +40,12 @@ export interface DialogState {
 }
 
 /**
- * A context object used to manipulate a dialog stack.
+ * A context object used to start and stop dialogs within a `DialogContainer`.
  *
  * @remarks
- * This is typically created through a call to `DialogSet.createContext()` and is then passed
- * through to all of the bots dialogs and waterfall steps.
- *
- * ```JavaScript
- * const dc = await dialogs.createContext(turnContext);
- * ```
+ * Every active DialogContainer instance has its own DialogContext which can be used to start and
+ * stop dialogs within that container.  The [parent](#parent) and [child](#child) properties can 
+ * be used to navigate the bots stack of active dialog containers. 
  */
 export class DialogContext {
     private _activeTags: string[]|undefined;
@@ -71,14 +69,6 @@ export class DialogContext {
      * In-memory properties that are currently visible to the active dialog.
      */
     public readonly state: DialogContextState;
-
-    /**
-     * The parent DialogContext if any.
-     * 
-     * @remarks
-     * This will be used when searching for dialogs to start.
-     */
-    public parent: DialogContext|undefined;
 
     /**
      * Creates a new DialogContext instance.
@@ -124,6 +114,33 @@ export class DialogContext {
             };
         }
         return instance;
+    }
+
+    /**
+     * A DialogContext for manipulating the stack of current containers parent.
+     * 
+     * @remarks
+     * Returns `undefined` if the current container is the [rootParent](#rootparent).
+     */
+    public parent: DialogContext|undefined;
+
+    /**
+     * A DialogContext for manipulating the stack of a child container.
+     * 
+     * @remarks
+     * Returns `undefined` if the [activeDialog](#activedialog) isn't an instance of a 
+     * DialogContainer or the container has no active child dialogs.
+     */
+    public get child(): DialogContext|undefined {
+        const instance = this.activeDialog;
+        if (instance) {
+            const dialog = this.findDialog(instance.id);
+            if (dialog instanceof DialogContainer) {
+                return (dialog as DialogContainer).createChildContext(this);
+            }
+        }
+
+        return undefined;
     }
 
     /**

@@ -7,7 +7,7 @@
  */
 import { DialogContext, DialogState, DialogSet, DialogConsultationDesire } from 'botbuilder-dialogs';
 
-export interface RuleDialogState<O extends Object> {
+export interface AdaptiveDialogState<O extends Object> {
     options: O;
     plan?: PlanState;
     savedPlans?: PlanState[];
@@ -58,17 +58,16 @@ export enum RuleDialogEventNames {
 }
 
 export class PlanningContext<O extends object = {}> extends DialogContext {
-    private plans: RuleDialogState<O>;
+    private plans: AdaptiveDialogState<O>;
 
     /**
      * Creates a new `PlanningContext` instance.
      * @param dc The dialog context for the current turn of conversation.
      * @param info Values to initialize the planning context with.
      */
-    constructor(dc: DialogContext, parent: DialogContext, dialogs: DialogSet, state: DialogState, plans: RuleDialogState<O>) {
+    constructor(dialogs: DialogSet, dc: DialogContext, state: DialogState, plans: AdaptiveDialogState<O>) {
         super(dialogs, dc.context, state, dc.state.user, dc.state.conversation);
         this.plans = plans;
-        this.parent = parent;
     }
 
     /**
@@ -362,20 +361,5 @@ export class PlanningContext<O extends object = {}> extends DialogContext {
 
         // Update title
         this.plans.plan.title = title;
-    }
-
-
-    public static create<O extends object = {}>(dc: DialogContext, plans: RuleDialogState<O>): PlanningContext<O> {
-        return new PlanningContext<O>(dc, dc.parent, dc.dialogs, { dialogStack: dc.stack }, plans);
-    }
-
-    public static createForStep<O extends object = {}>(planning: PlanningContext<O>, dialogs: DialogSet): PlanningContext<O>|undefined {
-        const plans = planning.plans;
-        if (plans.plan && plans.plan.steps.length > 0) {
-            const state = plans.plan.steps[0];
-            return new PlanningContext<O>(planning, planning, dialogs, state, plans);
-        } else {
-            return undefined;
-        }
     }
 }

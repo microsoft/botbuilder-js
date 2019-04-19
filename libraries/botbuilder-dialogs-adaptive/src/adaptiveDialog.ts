@@ -11,13 +11,14 @@ import {
 } from 'botbuilder-core';
 import { 
     Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent,
-    DialogContext, DialogSet, StateMap, DialogConsultation, DialogConsultationDesire, DialogConfiguration, DialogContextVisibleState
+    DialogContext, StateMap, DialogConsultation, DialogConsultationDesire, DialogConfiguration, DialogContextVisibleState
 } from 'botbuilder-dialogs';
 import { 
-    RuleDialogEventNames, PlanningContext, RuleDialogState as AdaptiveDialogState, PlanChangeList, PlanChangeType 
+    RuleDialogEventNames, PlanningContext, PlanChangeList, PlanChangeType, AdaptiveDialogState 
 } from './planningContext';
 import { PlanningRule } from './rules';
 import { Recognizer } from './recognizers';
+import { DialogContainer } from 'botbuilder-dialogs/lib/dialogContainer';
 
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     /**
@@ -36,8 +37,7 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     steps?: Dialog[];
 }
 
-export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
-    private readonly dialogs: DialogSet = new DialogSet();
+export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     private installedDependencies = false;
 
     /**
@@ -76,13 +76,8 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
         this.dialogs.telemetryClient = client;
     }
 
-    public addDialog(...dialogs: Dialog[]): this {
-        dialogs.forEach((dialog) => this.dialogs.add(dialog));
-        return this;
-    }
-
-    public addRule(...rules: PlanningRule[]): this {
-        Array.prototype.push.apply(this.rules, rules);
+    public addRule(rule: PlanningRule): this {
+        this.rules.push(rule);
         return this;
     }
 
@@ -109,43 +104,35 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     }
    
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        const state: AdaptiveDialogState<O> = dc.activeDialog.state;
+        const planning = this.toPlanningContext(dc);
 
-        try {
-            // Install dependencies on first access
-            if (!this.installedDependencies) {
-                this.installedDependencies = true;
-                this.onInstallDependencies();
-            }
-            
-            // Persist options to dialog state
-            state.options = options || {} as O;
-
-            // Initialize 'result' with any initial value
-            if (state.options.hasOwnProperty('value')) {
-                const value = options['value'];
-                const clone = Array.isArray(value) || typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : value;
-                state.result = clone;
-            }
-
-            // Create a new planning context
-            const planning = PlanningContext.create(dc, state);
-
-            // Evaluate rules and queue up plan changes
-            await this.evaluateRules(planning, { name: RuleDialogEventNames.beginDialog, value: options, bubble: false });
-            
-            // Run plan
-            return await this.continuePlan(planning);
-        } catch (err) {
-            return await dc.cancelAllDialogs('error', { message: err.message, stack: err.stack });
+        // Install dependencies on first access
+        if (!this.installedDependencies) {
+            this.installedDependencies = true;
+            this.onInstallDependencies();
         }
+        
+        // Persist options to dialog state
+        const state: AdaptiveDialogState<O> = dc.activeDialog.state;
+        state.options = options || {} as O;
+
+        // Initialize 'result' with any initial value
+        if (state.options.hasOwnProperty('value')) {
+            const value = options['value'];
+            const clone = Array.isArray(value) || typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : value;
+            state.result = clone;
+        }
+
+        // Evaluate rules and queue up plan changes
+        await this.evaluateRules(planning, { name: RuleDialogEventNames.beginDialog, value: options, bubble: false });
+        
+        // Run plan
+        return await this.continuePlan(planning);
     }
 
     public async consultDialog(dc: DialogContext): Promise<DialogConsultation> {
         try {
-            // Create a new planning context
-            const state: AdaptiveDialogState<O> = dc.activeDialog.state;
-            const planning = PlanningContext.create(dc, state);
+            const planning = this.toPlanningContext(dc);
 
             // First consult plan
             let consultation = await this.consultPlan(planning);
@@ -178,9 +165,7 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     }
 
     public async onDialogEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
-        // Create a new planning context
-        const state: AdaptiveDialogState<O> = dc.activeDialog.state;
-        const planning = PlanningContext.create(dc, state);
+        const planning = this.toPlanningContext(dc);
 
         // Evaluate rules and queue up any potential changes 
         return await this.evaluateRules(planning, event);
@@ -205,6 +190,17 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
             // We need to mockup a DialogContext so that we can call repromptDialog() for the active step 
             const stepDC: DialogContext = new DialogContext(this.dialogs, context, plan.steps[0], new StateMap({}), new StateMap({}));
             await stepDC.repromptDialog();
+        }
+    }
+
+    public createChildContext(dc: DialogContext): DialogContext | undefined {
+        const state: AdaptiveDialogState<O> = dc.activeDialog.state;
+        if (state.plan && Array.isArray(state.plan.steps) && state.plan.steps.length > 0) {
+            const step = new PlanningContext(this.dialogs, dc, state.plan.steps[0], state);
+            step.parent = dc;
+            return step;
+        } else {
+            return undefined;
         }
     }
 
@@ -501,7 +497,7 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
         const instanceId = this.getUniqueInstanceId(planning);
 
         // Delegate consultation to any active planning step
-        const step = PlanningContext.createForStep(planning, this.dialogs);
+        const step = this.createChildContext(planning) as PlanningContext;
         if (step) {
             const consultation = await step.consultDialog();
             return {
@@ -603,5 +599,12 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
         } else {
             return this.autoEndDialog;
         }
+    }
+
+    private toPlanningContext(dc: DialogContext): PlanningContext {
+        const state: AdaptiveDialogState<O> = dc.activeDialog.state;
+        const planning = new PlanningContext(dc.dialogs, dc, { dialogStack: dc.stack }, state);
+        planning.parent = dc.parent;
+        return planning;
     }
 }
