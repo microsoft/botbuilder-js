@@ -25,8 +25,6 @@ const badExpressions =
   "'1' / 2", // params should be number
   "'1' % 2", // params should be number
   "'1' ^ 2", // params should be number
-  "items >= 1", // params should be number or string
-  "items <= 1", // params should be number or string
   "'string'&one", // $ can only accept string parameter
   "1/0", // can not divide 0
 

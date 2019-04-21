@@ -55,14 +55,15 @@ const dataSource = [
   ["'string'&'builder'", "stringbuilder"],
   ["\"string\"&\"builder\"", "stringbuilder"],
   ["one > 0.5 && two < 2.5", true, oneTwo],
-  ["float(5.5) && float(0.0)", false],
+  ["float(5.5) && float(0.0)", true],
   ["hello && \"hello\"", true],
   ["items || ((2 + 2) <= (4 - 1))", true], // true || false
-  ["0 || false", false], // false || false
+  ["0 || false", true], // true || false
   ["!(hello)", false], // false
   ["!(10)", false],
-  ["!(0)", true],
+  ["!(0)", false],
   ["one > 0.5 || two < 1.5", true, oneTwo],
+  ["one / 0 || two", true],
   ["0/3", 0],
 
   // String functions tests
@@ -81,6 +82,7 @@ const dataSource = [
   ["split('hello','e')", ["h","llo"]],
   ["substring('hello', 0, 5)", "hello"],
   ["substring('hello', 0, 3)", "hel"],
+  ["substring('hello', 3)", "lo"],
   ["toLower('UpCase')", "upcase"],
   ["toUpper('lowercase')", "LOWERCASE"],
   ["toLower(toUpper('lowercase'))", "lowercase"],
@@ -126,10 +128,10 @@ const dataSource = [
   ["equals(bag.index, 3)", true],
   ["equals(bag.index, 2)", false],
   ["equals(hello == 'world', bool('true'))", false],
-  ["equals(hello == 'world', bool(0))", true],
+  ["equals(hello == 'world', bool(0))", false],
   ["if(!exists(one), 'r1', 'r2')", "r2"],
   ["if(!!exists(one), 'r1', 'r2')", "r1"],
-  ["if(bool(0), 'r1', 'r2')", "r2"],
+  ["if(0, 'r1', 'r2')", "r1"],
   ["if(bool('true'), 'r1', 'r2')", "r1"],
   ["exists(one)", true],
   ["exists(xxx)", false],
@@ -141,16 +143,16 @@ const dataSource = [
   ["not(not(one == 1.0))", true, ["one"]],
   ["not(false)", true],
   ["and(one > 0.5, two < 2.5)", true, oneTwo],
-  ["and(float(5.5), float(0.0))", false],
+  ["and(float(5.5), float(0.0))", true],
   ["and(hello, \"hello\")", true],
   ["or(items, (2 + 2) <= (4 - 1))", true], // true || false
-  ["or(0, false)", false], // false || false
+  ["or(0, false)", true], // true || false
   ["not(hello)", false], // false
   ["not(10)", false],
-  ["not(0)", true],
+  ["not(0)", false],
   ["if(hello, 'r1', 'r2')", "r1"],
-  ["if(0, 'r1', 'r2')", "r2"],
-  ["if(10, 'r1', 'r2')", "r1"],
+  ["if(null, 'r1', 'r2')", "r2"],
+  ["if(hello * 5, 'r1', 'r2')", "r2"],
 
   // Conversion functions tests
   ["float('10.333')", 10.333],
@@ -161,11 +163,13 @@ const dataSource = [
   ["string(bool(1))", "true"],
   ["string(bag.set)", "{\"four\":4}"], // ts-->"{\"four\":4}", C# --> "{\"four\":4.0}"
   ["bool(1)", true],
-  ["bool(0)", false],
+  ["bool(0)", true],
+  ["bool(null)", false],
+  ["bool(hello * 5)", false],
   ["bool('false')", true], // we make it true, because it is not empty
   ["bool('hi')", true],
   ["createArray('h', 'e', 'l', 'l', 'o')", ["h", "e", "l", "l", "o"]],
-  ["createArray(1, bool(0), string(bool(1)), float('10'))", [1, false, "true", 10.0]],
+  ["createArray(1, bool(0), string(bool(1)), float('10'))", [1, true, "true", 10.0]],
 
   // Math functions tests
   ["add(1, 2, 3)", 6],
