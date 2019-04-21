@@ -83,7 +83,7 @@ export class ExpressionEngine implements IExpressionParser {
                 result = new Constant(false);
             } else if (symbol === 'true') {
                 result = new Constant(true);
-            } else if (symbol === 'null') {
+            } else if (symbol === 'null' || symbol === 'undefined') {
                 result = new Constant(undefined);
             } else if (this.IsShortHandExpression(symbol)) {
                 result = this.MakeShortHandExpression(symbol);

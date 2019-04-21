@@ -83,6 +83,7 @@ const dataSource = [
   ["substring('hello', 0, 5)", "hello"],
   ["substring('hello', 0, 3)", "hel"],
   ["substring('hello', 3)", "lo"],
+  ["substring('hello', 0, bag.index)", "hel"],
   ["toLower('UpCase')", "upcase"],
   ["toUpper('lowercase')", "LOWERCASE"],
   ["toLower(toUpper('lowercase'))", "lowercase"],
@@ -133,6 +134,7 @@ const dataSource = [
   ["if(!!exists(one), 'r1', 'r2')", "r1"],
   ["if(0, 'r1', 'r2')", "r1"],
   ["if(bool('true'), 'r1', 'r2')", "r1"],
+  ["if(istrue, 'r1', 'r2')", "r1"], // true
   ["exists(one)", true],
   ["exists(xxx)", false],
   ["exists(one.xxx)", false],
@@ -214,7 +216,9 @@ const dataSource = [
   ["year(timestamp)", 2018],
   ["formatDateTime(timestamp)", "2018-03-15T13:00:00.0000000Z"],
   ["formatDateTime(timestamp, 'MM-dd-yy')", "03-15-18"],
+  ["subtractFromTime(timestamp, 1, 'Week')", "2018-03-08T13:00:00.0000000Z"],
   ["subtractFromTime(timestamp, 1, 'Day')", "2018-03-14T13:00:00.0000000Z"],
+  ["subtractFromTime(timestamp, 1, 'Hour')", "2018-03-15T12:00:00.0000000Z"],
   ["subtractFromTime(timestamp, 1, 'Minute')", "2018-03-15T12:59:00.0000000Z"],
   ["subtractFromTime(timestamp, 1, 'Second')", "2018-03-15T12:59:59.0000000Z"],
   ["dateReadBack(timestamp, addDays(timestamp, 1))", "Tomorrow"],
@@ -247,6 +251,7 @@ const dataSource = [
   ["first(items)", "zero"],
   ["first('hello')", "h"],
   ["first(createArray(0, 1, 2))", 0],
+  ["first(1)", undefined],
   ["first(nestedItems).x", 1, ["nestedItems"]],
   ["join(items,',')", "zero,one,two"],
   ["join(createArray('a', 'b', 'c'), '.')", "a.b.c"],
@@ -256,6 +261,7 @@ const dataSource = [
   ["last(items)", "two"],
   ["last('hello')", "o"],
   ["last(createArray(0, 1, 2))", 2],
+  ["last(1)", undefined],
 
   // Object manipulation and construction functions tests
   ["string(addProperty(json('{\"key1\":\"value1\"}'), 'key2','value2'))", "{\"key1\":\"value1\",\"key2\":\"value2\"}"],
@@ -275,9 +281,11 @@ const dataSource = [
   ["property(bag, concat('na','me'))","mybag"],
   ["items[2]", "two", ["items[2]"]],
   ["bag.list[bag.index - 2]", "blue", ["bag.list", "bag.index"]],
+  ["items[nestedItems[1].x]","two", ["items", "nestedItems[1].x"]],
   ["bag['name']","mybag"],
   ["bag[substring(concat('na','me','more'), 0, length('name'))]","mybag"],
-  ["items[1+1]","two"]
+  ["property(undefined, 'p')", undefined],
+  ["(property(undefined, 'p'))[1]",undefined]
 ];
 
 const scope = {
@@ -285,6 +293,7 @@ const scope = {
   two : 2.0,
   hello : "hello",
   world : "world",
+  istrue : true,
   bag : 
   {
       three : 3.0,

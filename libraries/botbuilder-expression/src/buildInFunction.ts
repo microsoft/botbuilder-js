@@ -104,7 +104,7 @@ export class BuiltInFunctions {
             }
             const child: Expression = expression.Children[ic];
             const type: ReturnType = optional[i];
-            if (child.ReturnType !== type) {
+            if (type !== ReturnType.Object && child.ReturnType !== ReturnType.Object && child.ReturnType !== type) {
                 throw new Error(`${child} in ${expression} is not a ${type}.`);
             }
         }
@@ -480,7 +480,7 @@ export class BuiltInFunctions {
             case 'Hour': return {duration, tsStr: 'hours'};
             case 'Month': return {duration, tsStr: 'months'};
             case 'Year': return {duration, tsStr: 'years'};
-            default : return {duration, tsStr: 'seconds'};
+            default : return {duration, tsStr: undefined};
         }
     }
 
@@ -821,12 +821,22 @@ export class BuiltInFunctions {
                 BuiltInFunctions.ValidateBinaryNumber),
             new ExpressionEvaluator(
                 ExpressionType.Average,
-                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => (args[0].reduce((x: number, y: number) => x + y)) / args[0].length, BuiltInFunctions.VerifyList),
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => (args[0].reduce((x: number, y: number) => {
+                    if(typeof x !== 'number' || Number.isNaN(x) || typeof y !== 'number' || Number.isNaN(y)) {
+                        throw new  Error("should have number parameters");
+                    }
+                    return x + y;
+                })) / args[0].length, BuiltInFunctions.VerifyList),
                 ReturnType.Number,
                 BuiltInFunctions.ValidateUnary),
             new ExpressionEvaluator(
                 ExpressionType.Sum,
-                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].reduce((x: number, y: number) =>  x + y), BuiltInFunctions.VerifyList),
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].reduce((x: number, y: number) =>  {
+                    if(typeof x !== 'number' || Number.isNaN(x) || typeof y !== 'number' || Number.isNaN(y)) {
+                        throw new  Error("should have number parameters");
+                    }
+                    return x + y;
+                }), BuiltInFunctions.VerifyList),
                 ReturnType.Number,
                 BuiltInFunctions.ValidateUnary),
             new ExpressionEvaluator(
@@ -1074,9 +1084,13 @@ export class BuiltInFunctions {
                         if (typeof args[0] === 'string' && Number.isInteger(args[1]) && typeof args[2] === 'string') {
                             const format: string = (args.length === 4 ? BuiltInFunctions.TimestampFormatter(args[3]) : BuiltInFunctions.DefaultDateTimeFormat);
                             const {duration, tsStr} = BuiltInFunctions.TimeUnitTransformer(args[1], args[2]);
-                            const dur: any = duration;
+                            if(tsStr === undefined) {
+                                error = `${args[2]} is not a valid time unit.`;
+                            } else {
+                                const dur: any = duration;
 
-                            value = moment(args[0]).utc().subtract(dur, tsStr).format(format);
+                                value = moment(args[0]).utc().subtract(dur, tsStr).format(format);
+                            }
                         } else {
                             error = `${expr} can't evaluate.`;
                         }
