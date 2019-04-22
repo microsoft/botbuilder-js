@@ -7,7 +7,7 @@
  */
 
 import { Storage, StoreItems } from 'botbuilder';
-import { ConnectionPolicy, DocumentClient, RequestOptions, UriFactory } from 'documentdb';
+import { ConnectionPolicy, DocumentClient, RequestOptions, UriFactory, FeedOptions } from 'documentdb';
 import * as semaphore from 'semaphore';
 import { CosmosDbKeyEscape } from './cosmosDbKeyEscape';
 
@@ -44,23 +44,27 @@ export interface CosmosDbStorageSettings {
       * (Optional) Cosmos DB RequestOptiones that are passed when the document collection is created.
       */
     documentCollectionRequestOptions?: RequestOptions;
+    /**
+      * (Optional) partitionKey that are passed when the document CosmosDbStorage is created.
+      */
+    partitionKey?: string;
 }
 
 /**
  * @private
- * Internal data structure for storing items in DocumentDB
+ * Internal data structure for storing items in DocumentDB.
  */
 interface DocumentStoreItem {
     /**
-     * Represents the Sanitized Key and used as PartitionKey on DocumentDB
+     * Represents the Sanitized Key and used as PartitionKey on DocumentDB.
      */
     id: string;
     /**
-     * Represents the original Id/Key
+     * Represents the original Id/Key.
      */
     realId: string;
     /**
-     * The item itself + eTag information
+     * The item itself + eTag information.
      */
     document: any;
 }
@@ -124,7 +128,7 @@ export class CosmosDbStorage implements Storage {
         this.documentCollectionCreationRequestOption = settings.documentCollectionRequestOptions;
     }
 
-    public read(keys: string[]): Promise<StoreItems> {
+    public read(keys: string[]): Promise<StoreItems> {        
         if (!keys || keys.length === 0) {
             // No keys passed in, no result to return.
             return Promise.resolve({});
@@ -152,10 +156,18 @@ export class CosmosDbStorage implements Storage {
             parameters: parameterValues
         };
 
+        let options: FeedOptions;
+
+        if (this.settings.partitionKey !== null) {
+            options = {
+                partitionKey: this.settings.partitionKey
+            };
+        }
+
         return this.ensureCollectionExists().then((collectionLink: string) => {
             return new Promise<StoreItems>((resolve: any, reject: any): void => {
                 const storeItems: StoreItems = {};
-                const query: any = this.client.queryDocuments(collectionLink, querySpec);
+                const query: any = this.client.queryDocuments(collectionLink, querySpec, options);
                 const getNext: any = (q: any): any => {
                     q.nextItem((err: any, resource: any): any => {
                         if (err) {
@@ -189,7 +201,7 @@ export class CosmosDbStorage implements Storage {
 
         return this.ensureCollectionExists().then(() => {
             return Promise.all(Object.keys(changes).map((k: string) => {
-                const changesCopy:  any = {...changes[k]};
+                const changesCopy: any = {...changes[k]};
 
                 // Remove etag from JSON object that was copied from IStoreItem.
                 // The ETag information is updated as an _etag attribute in the document metadata.
@@ -201,7 +213,7 @@ export class CosmosDbStorage implements Storage {
                 };
 
                 return new Promise((resolve: any, reject: any): void => {
-                    const handleCallback: (err: any, data: any) => void = (err: any, data: any): void => err ? reject(err) : resolve();
+                    const handleCallback: (err: any, data: any) => void = (err: any): void => err ? reject(err) : resolve();
 
                     const eTag: string = changes[k].eTag;
                     if (!eTag || eTag === '*') {
@@ -232,12 +244,21 @@ export class CosmosDbStorage implements Storage {
             return Promise.resolve();
         }
 
+        let options: RequestOptions;
+
+        if (this.settings.partitionKey !== null) {
+            options = {
+                partitionKey: this.settings.partitionKey
+            };
+        }
+
         return this.ensureCollectionExists().then(() =>
             Promise.all(keys.map((k: string) =>
                 new Promise((resolve: any, reject: any): void =>
                     this.client.deleteDocument(
                         UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, CosmosDbKeyEscape.escapeKey(k)),
-                        (err: any, data: any): void =>
+                        options,
+                        (err: any): void =>
                             err && err.code !== 404 ? reject(err) : resolve()
                     )
                 )
@@ -253,7 +274,7 @@ export class CosmosDbStorage implements Storage {
      */
     private ensureCollectionExists(): Promise<string> {
         if (!this.collectionExists) {
-            this.collectionExists = new Promise((resolve: Function, reject: Function): void => {
+            this.collectionExists = new Promise((resolve: Function): void => {
                 _semaphore.take(() => {
                     const result: Promise<string> = this.collectionExists ? this.collectionExists :
                         getOrCreateDatabase(this.client, this.settings.databaseId, this.databaseCreationRequestOption)
@@ -290,8 +311,8 @@ function getOrCreateDatabase(client: DocumentClient, databaseId: string, databas
             if (results.length === 1) { return resolve(results[0]._self); }
 
             // create db
-            client.createDatabase({ id: databaseId }, databaseCreationRequestOption, (db_create_err: any, databaseLink: any) => {
-                if (db_create_err) { return reject(db_create_err); }
+            client.createDatabase({ id: databaseId }, databaseCreationRequestOption, (dbCreateErr: any, databaseLink: any) => {
+                if (dbCreateErr) { return reject(dbCreateErr); }
                 resolve(databaseLink._self);
             });
         });
