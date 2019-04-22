@@ -242,6 +242,17 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
+    it(`should migrate location of tenantId for MS Teams processActivity().`, function (done) {
+        const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', channelData: { tenant: { id: '1234' } } }, reference, true);
+        const req = new MockBodyRequest(incoming);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        adapter.processActivity(req, res, (context) => {
+            assert(context.activity.conversation.tenantId === '1234', `should have copied tenant id from channelData to conversation address`);
+            done();
+        });
+    });
+
     it(`should fail to auth on call to processActivity().`, function (done) {
         const req = new MockRequest(incomingMessage);
         const res = new MockResponse();

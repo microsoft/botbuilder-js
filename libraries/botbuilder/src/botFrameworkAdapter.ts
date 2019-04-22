@@ -139,6 +139,15 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             this.credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
             this.credentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
         }
+
+        // Relocate the tenantId field for MS Teams
+        this.use(async(context, next) => {
+            if (context.activity && context.activity.conversation && !context.activity.conversation.tenantId && context.activity.channelData && context.activity.channelData.tenant) {
+                context.activity.conversation.tenantId = context.activity.channelData.tenant.id;
+            }
+            await next();
+        });
+
     }
 
     /**
