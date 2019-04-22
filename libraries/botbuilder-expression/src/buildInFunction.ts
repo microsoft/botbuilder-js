@@ -6,6 +6,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
 import * as moment from 'moment';
 import { Constant } from './constant';
 import { Expression, ReturnType } from './expression';
@@ -1107,20 +1108,11 @@ export class BuiltInFunctions {
                     const dateFormat: string = 'YYYY-MM-DD';
                     BuiltInFunctions.VerifyTimestamp(args[0]);
                     BuiltInFunctions.VerifyTimestamp(args[1]);
+                    const timestamp1: Date = new Date(moment(args[0]).format(dateFormat));
+                    const timestamp2: string = moment(args[1]).format(dateFormat);
+                    const timex = new TimexProperty(timestamp2);
 
-                    if (moment(args[0]).format(dateFormat) === moment(args[1]).format(dateFormat)) {
-                        value = 'Today';
-                    } else if (moment(args[0]).format(dateFormat) === moment(args[1]).subtract(1, 'day').format(dateFormat)) {
-                        value = 'Tomorrow';
-                    } else if (moment(args[0]).format(dateFormat) === moment(args[1]).subtract(2, 'day').format(dateFormat)) {
-                        value = 'The day after tomorrow';
-                    } else if (moment(args[1]).format(dateFormat) === moment(args[0]).subtract(1, 'day').format(dateFormat)) {
-                        value = 'Yesterday';
-                    } else if (moment(args[1]).format(dateFormat) === moment(args[0]).subtract(2, 'day').format(dateFormat)) {
-                        value = 'The day before yesterday';
-                    }
-
-                    return value;
+                    return timex.toNaturalLanguage(timestamp1);
                 },                     this.VerifyString),
                 ReturnType.String,
                 (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.String, ReturnType.String)),
