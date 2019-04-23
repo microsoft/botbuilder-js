@@ -253,6 +253,7 @@ describe(`BotFrameworkAdapter`, function () {
 
     it(`should migrate location of tenantId for MS Teams processActivity().`, function (done) {
         const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', channelData: { tenant: { id: '1234' } } }, reference, true);
+        incoming.channelId = 'msteams';
         const req = new MockBodyRequest(incoming);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
