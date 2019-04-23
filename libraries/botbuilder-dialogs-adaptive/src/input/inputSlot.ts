@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PlanningContext, PlanChangeList } from '../planningContext';
+import { AdaptiveContext<O eepChangeList } from '../planningContext';
 import { Configurable } from 'botbuilder-dialogs';
 import { RecognizerResult } from 'botbuilder-core';
 
@@ -65,7 +65,7 @@ export class InputSlot<T = any> extends Configurable {
     // Input Recognition
     //=============================================================================================
     
-    public async recognizeInput(planning: PlanningContext, recognized: RecognizerResult, turnCount: number): Promise<RecognizedInput> {
+    public async recognizeInput(planning: AdaptiveContext<O ecognized: RecognizerResult, turnCount: number): Promise<RecognizedInput> {
         let result: RecognizedInput<T> = { succeeded: false };
         if (this.entityName) {
             if (recognized.entities && recognized.entities.hasOwnProperty(this.entityName)) {
@@ -85,16 +85,16 @@ export class InputSlot<T = any> extends Configurable {
         
     }
 
-    protected async onRecognizeEntity(planning: PlanningContext, entity: T|T[]): Promise<RecognizedInput<T>> {
+    protected async onRecognizeEntity(planning: AdaptiveContext<O etity: T|T[]): Promise<RecognizedInput<T>> {
         const value = Array.isArray(entity) ? (entity.length > 0 ? entity[0] : undefined) : entity;
         return { succeeded: true, value: value, score: 1.0 };
     }
 
-    protected async onRecognizeUtterance(planning: PlanningContext, utterance: string, locale: string): Promise<RecognizedInput<T>> {
+    protected async onRecognizeUtterance(planning: AdaptiveContext<O eterance: string, locale: string): Promise<RecognizedInput<T>> {
         return { succeeded: false };
     }
 
-    protected async onFormatValue(planning: PlanningContext, value: T): Promise<T> {
+    protected async onFormatValue(planning: AdaptiveContext<O elue: T): Promise<T> {
         return value;
     }
 
@@ -102,15 +102,15 @@ export class InputSlot<T = any> extends Configurable {
     // Validation
     //=============================================================================================
 
-    public validateValue(planning: PlanningContext, value: T): Promise<boolean> {
+    public validateValue(planning: AdaptiveContext<O elue: T): Promise<boolean> {
         return this.onValidateValue(planning, value);
     }
     
-    protected async onValidateValue(planning: PlanningContext, value: T): Promise<boolean> {
+    protected async onValidateValue(planning: AdaptiveContext<O elue: T): Promise<boolean> {
         return true;
     }
 
-    protected getValidationOption<O>(planning: PlanningContext, option: O|undefined, optionProperty: string|undefined): O|undefined {
+    protected getValidationOption<O>(planning: AdaptiveContext<O etion: O|undefined, optionProperty: string|undefined): O|undefined {
         if (optionProperty && optionProperty.length > 0) {
             const setting = planning.state.getValue(optionProperty);
             return setting !== undefined ? setting : option;

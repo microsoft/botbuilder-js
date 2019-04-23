@@ -6,13 +6,13 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogEvent } from 'botbuilder-dialogs';
-import { PlanningContext, PlanChangeList, PlanChangeType, PlanStepState } from '../planningContext';
-import { PlanningRule } from './planningRule';
+import { SequenceContext, StepChangeList, StepChangeType, StepState } from '../sequenceContext';
+import { Rule } from './rule';
 
 /**
  * This rule is triggered when a dialog event matching a list of event names is emitted.
  */
-export class EventRule implements PlanningRule {
+export class EventRule implements Rule {
 
     /**
      * List of events to filter to.
@@ -34,29 +34,29 @@ export class EventRule implements PlanningRule {
         this.steps = steps || [];
     }
 
-    public evaluate(planning: PlanningContext, event: DialogEvent, memory: object): Promise<PlanChangeList[]|undefined> {
+    public evaluate(sequence: SequenceContext, event: DialogEvent, memory: object): Promise<StepChangeList[]|undefined> {
         // Limit evaluation to only supported events
         if (this.events.indexOf(event.name) >= 0) {
-            return this.onEvaluate(planning, event, memory);
+            return this.onEvaluate(sequence, event, memory);
         } else {
             return undefined;
         }
     }
 
-    protected async onEvaluate(planning: PlanningContext, event: DialogEvent, memory: object): Promise<PlanChangeList[]|undefined> {
-        if (await this.onIsTriggered(planning, event, memory)) {
-            return [this.onCreateChangeList(planning, event)];
+    protected async onEvaluate(sequence: SequenceContext, event: DialogEvent, memory: object): Promise<StepChangeList[]|undefined> {
+        if (await this.onIsTriggered(sequence, event, memory)) {
+            return [this.onCreateChangeList(sequence, event)];
         }
     }
 
-    protected async onIsTriggered(planning: PlanningContext, event: DialogEvent, memory: object): Promise<boolean> {
+    protected async onIsTriggered(sequence: SequenceContext, event: DialogEvent, memory: object): Promise<boolean> {
         return true;
     }
 
-    protected onCreateChangeList(planning: PlanningContext, event: DialogEvent, dialogOptions?: any): PlanChangeList {
-        const changeList: PlanChangeList = { changeType: PlanChangeType.doSteps, steps: [] };
+    protected onCreateChangeList(sequence: SequenceContext, event: DialogEvent, dialogOptions?: any): StepChangeList {
+        const changeList: StepChangeList = { changeType: StepChangeType.insertSteps, steps: [] };
         this.steps.forEach((step) => {
-            const stepState: PlanStepState = { dialogStack: [], dialogId: step.id };
+            const stepState: StepState = { dialogStack: [], dialogId: step.id };
             if (dialogOptions !== undefined) {
                 stepState.options = dialogOptions;
             }

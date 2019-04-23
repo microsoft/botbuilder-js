@@ -7,7 +7,7 @@
  */
 import { RecognizerResult } from 'botbuilder-core';
 import { EventRule } from './eventRule';
-import { RuleDialogEventNames, PlanningContext, PlanChangeList } from '../planningContext';
+import { AdaptiveEventNames, SequenceContext , StepChangeList } from '../sequenceContext';
 import { DialogEvent, Dialog, DialogContextState } from 'botbuilder-dialogs';
 
 /**
@@ -27,11 +27,11 @@ export class IntentRule extends EventRule {
      * @param steps (Optional) list of steps to update the plan with when triggered.
      */
     constructor(matches?: string|string[], steps?: Dialog[]) {
-        super(RuleDialogEventNames.recognizedIntent, steps);
+        super(AdaptiveEventNames.recognizedIntent, steps);
         this.matches = Array.isArray(matches) ? matches : (matches !== undefined ? [matches] : []);
     }
 
-    protected async onIsTriggered(planning: PlanningContext, event: DialogEvent<RecognizerResult>, memory: object): Promise<boolean> {
+    protected async onIsTriggered(sequence: SequenceContext, event: DialogEvent<RecognizerResult>, memory: object): Promise<boolean> {
         // Ensure all intents, entities, and properties exist.
         for(let i = 0; i < this.matches.length; i++) {
             const value = DialogContextState.queryMemory(memory, this.matches[i], 1);
@@ -43,8 +43,8 @@ export class IntentRule extends EventRule {
         return true;
     }
 
-    protected onCreateChangeList(planning: PlanningContext, event: DialogEvent<RecognizerResult>, dialogOptions?: any): PlanChangeList {
-        const changes = super.onCreateChangeList(planning, event, dialogOptions);
+    protected onCreateChangeList(sequence: SequenceContext, event: DialogEvent<RecognizerResult>, dialogOptions?: any): StepChangeList {
+        const changes = super.onCreateChangeList(sequence, event, dialogOptions);
 
         // Sort matches by type
         const intents: string[] = [];

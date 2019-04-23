@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PlanningContext } from '../planningContext';
+import { AdaptiveContext<O erom '../planningContext';
 import { InputSlot, RecognizedInput, InputSlotConfiguration } from './inputSlot';
 
 export interface TextSlotConfiguration extends InputSlotConfiguration {
@@ -43,7 +43,7 @@ export class TextSlot extends InputSlot<string> {
         return super.configure(config);
     }
 
-    protected async onFormatValue(planning: PlanningContext, value: string): Promise<string> {
+    protected async onFormatValue(planning: AdaptiveContext<O elue: string): Promise<string> {
         if (this.formatValue !== TextSlotFormat.none) {
             value = value.trim();
             switch (this.formatValue) {
@@ -62,7 +62,7 @@ export class TextSlot extends InputSlot<string> {
         return value;
     }
 
-    protected async onRecognizeUtterance(planning: PlanningContext, utterance: string, locale: string): Promise<RecognizedInput<string>> {
+    protected async onRecognizeUtterance(planning: AdaptiveContext<O eterance: string, locale: string): Promise<RecognizedInput<string>> {
         if (utterance && utterance.length > 0) {
             return { succeeded: true, value: utterance };
         }
@@ -70,7 +70,7 @@ export class TextSlot extends InputSlot<string> {
         return { succeeded: false };
     }
 
-    protected async onValidateValue(planning: PlanningContext, value: string): Promise<boolean> {
+    protected async onValidateValue(planning: AdaptiveContext<O elue: string): Promise<boolean> {
         // Check minimum length
         const minLength = this.getValidationOption(planning, this.minLength, this.minLengthProperty);
         if (typeof minLength == 'number' && minLength > 0 && value.length < minLength) {

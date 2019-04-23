@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PlanningContext } from '../planningContext';
+import { AdaptiveContext<O erom '../planningContext';
 import { InputSlot, RecognizedInput, InputSlotConfiguration } from './inputSlot';
 import * as Recognizers from '@microsoft/recognizers-text-number';
 
@@ -34,7 +34,7 @@ export class NumberSlot extends InputSlot<number> {
         return super.configure(config);
     }
 
-    protected async onRecognizeEntity(planning: PlanningContext, entity: number|number[]): Promise<RecognizedInput<number>|undefined> {
+    protected async onRecognizeEntity(planning: AdaptiveContext<O etity: number|number[]): Promise<RecognizedInput<number>|undefined> {
         const result = await super.onRecognizeEntity(planning, entity);
         if (result) {
             // Ensure result is a number
@@ -50,7 +50,7 @@ export class NumberSlot extends InputSlot<number> {
         return result;
     }
 
-    protected async onRecognizeUtterance(planning: PlanningContext, utterance: string, locale: string): Promise<RecognizedInput<number>|undefined> {
+    protected async onRecognizeUtterance(planning: AdaptiveContext<O eterance: string, locale: string): Promise<RecognizedInput<number>|undefined> {
         if (utterance && utterance.length > 0) {
             const recognized: any = Recognizers.recognizeNumber(utterance, locale);
             if (recognized.length > 0 && recognized[0].resolution) {
@@ -62,7 +62,7 @@ export class NumberSlot extends InputSlot<number> {
         return { succeeded: false };
     }
 
-    protected async onFormatValue(planning: PlanningContext, value: number): Promise<number> {
+    protected async onFormatValue(planning: AdaptiveContext<O elue: number): Promise<number> {
         if (this.formatValue == NumberSlotFormat.integer) {
             value = Math.floor(value);
         }
@@ -70,7 +70,7 @@ export class NumberSlot extends InputSlot<number> {
         return value;
     }
 
-    protected async onValidateValue(planning: PlanningContext, value: number): Promise<boolean> {
+    protected async onValidateValue(planning: AdaptiveContext<O elue: number): Promise<boolean> {
         // Check minimum value
         const minValue = this.getValidationOption(planning, this.minValue, this.minValueProperty);
         if (typeof minValue == 'number' && value < minValue) {
