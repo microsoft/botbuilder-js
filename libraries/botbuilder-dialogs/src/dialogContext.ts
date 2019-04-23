@@ -50,8 +50,6 @@ export interface DialogState {
  * ```
  */
 export class DialogContext {
-    private _activeTags: string[]|undefined;
-
     /**
      * Set of dialogs that can be called from this dialog context.
      */
@@ -127,44 +125,6 @@ export class DialogContext {
     }
 
     /**
-     * Returns a list of all `Dialog.tags` that are currently on the dialog stack.
-     * 
-     * @remarks
-     * Any duplicate tags are removed from the returned list and the order of the tag reflects the
-     * order of the dialogs on the stack. 
-     * 
-     * The returned list will also include any tags applied as "globalTags". These tags are 
-     * retrieved by calling `context.turnState.get('globalTags')` and will therefore need to be
-     * assigned for every turn of conversation using `context.turnState.set('globalTags', ['myTag'])`.
-     */
-    public get activeTags(): string[] {
-        // Cache tags on first request
-        if (this._activeTags == undefined) {
-            // Get parent tags that are active
-            if (this.parent) {
-                this._activeTags = this.parent.activeTags;
-            } else {
-                this._activeTags = this.context.turnState.get('globalTags') || [];
-            }
-
-            // Add tags for current dialog stack
-            const stack = this.stack;
-            for (let i = 0; i < stack.length; i++) {
-                const dialog = this.findDialog(stack[i].id);
-                if (dialog && dialog.tags.length > 0) {
-                    dialog.tags.forEach((tag) => {
-                        if (this._activeTags.indexOf(tag) < 0) {
-                            this._activeTags.push(tag);
-                        }
-                    });
-                }
-            }
-        }
-
-        return this._activeTags;
-    }
-
-    /**
      * Pushes a new dialog onto the dialog stack.
      *
      * @remarks
@@ -225,7 +185,6 @@ export class DialogContext {
             state: state
         };
         this.stack.push(instance);
-        this._activeTags = undefined;
 
         // Call dialogs begin() method.
         return await dialog.beginDialog(this, options);
@@ -237,7 +196,6 @@ export class DialogContext {
      * @param eventValue (Optional) value to pass with event.
      */
     public async cancelAllDialogs(eventName = 'cancelDialog', eventValue?: any): Promise<DialogTurnResult> {
-        this._activeTags = undefined;
         if (this.stack.length > 0 || this.parent) {
             // Cancel all local and parent dialogs while checking for interception
             let notify = false;
@@ -438,7 +396,6 @@ export class DialogContext {
     public async endDialog(result?: any): Promise<DialogTurnResult> {
         // End the active dialog
         await this.endActiveDialog(DialogReason.endCalled, result);
-        this._activeTags = undefined;
 
         // Resume parent dialog
         const instance: DialogInstance = this.activeDialog;
@@ -523,29 +480,6 @@ export class DialogContext {
                 await dialog.repromptDialog(this.context, instance);
             }
         }
-    }
-
-    /**
-     * Evaluates a selector expression to see if it matches the current set of active tags.
-     * 
-     * @remarks
-     * The syntax for the selector is simply a do separated list of tags. So `profile.namePrompt` 
-     * would return `true` if both the "profile" and "namePrompt" were found to exist in the
-     * current list of [activeTags](#activetags).  
-     * @param selector Selector expression to evaluate. 
-     * @param additionalTags (Optional) additional list of tags that should be considered active.
-     */
-    public tagSelectorMatched(selector: string, additionalTags?: string[]): boolean {
-        const selected = selector.split('.');
-        const activeTags = this.activeTags;
-        additionalTags = additionalTags || [];
-        for (let i = 0; i < selected.length; i++) {
-            const tag = selected[i];
-            if (tag.length > 0 && activeTags.indexOf(tag) < 0 && additionalTags.indexOf(tag) < 0) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private async endActiveDialog(reason: DialogReason, result?: any): Promise<void> {
