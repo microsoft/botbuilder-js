@@ -519,7 +519,7 @@ export class BuiltInFunctions {
         return { value, error };
     }
 
-    private static Property(expression: Expression, state: any): { value: any; error: string } {
+    private static GetProperty(expression: Expression, state: any): { value: any; error: string } {
         let value: any;
         let error: string;
         let instance: any;
@@ -1178,8 +1178,8 @@ export class BuiltInFunctions {
                 BuiltInFunctions.ValidateUnary),
             new ExpressionEvaluator(ExpressionType.Accessor, BuiltInFunctions.Accessor, ReturnType.Object, BuiltInFunctions.ValidateAccessor),
             new ExpressionEvaluator(
-                ExpressionType.Property,
-                BuiltInFunctions.Property,
+                ExpressionType.GetProperty,
+                BuiltInFunctions.GetProperty,
                 ReturnType.Object,
                 (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.Object, ReturnType.String)),
             new ExpressionEvaluator(

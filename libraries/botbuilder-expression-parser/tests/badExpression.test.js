@@ -186,7 +186,7 @@ const badExpressions =
   "removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), '1', '2'))",// should have 2 parameter
 
   // Memory access test
-  "property(bag, 1)",// second param should be string
+  "getProperty(bag, 1)",// second param should be string
   "Accessor(1)",// first param should be string
   "Accessor(bag, 1)", // second should be object
   "one[0]",  // one is not list

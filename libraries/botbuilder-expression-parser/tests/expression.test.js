@@ -278,14 +278,14 @@ const dataSource = [
   ["$subTitle", "Dialog Sub Title", ["dialog.result.subTitle"]],
  
   // Memory access tests
-  ["property(bag, concat('na','me'))","mybag"],
+  ["getProperty(bag, concat('na','me'))","mybag"],
   ["items[2]", "two", ["items[2]"]],
   ["bag.list[bag.index - 2]", "blue", ["bag.list", "bag.index"]],
   ["items[nestedItems[1].x]","two", ["items", "nestedItems[1].x"]],
   ["bag['name']","mybag"],
   ["bag[substring(concat('na','me','more'), 0, length('name'))]","mybag"],
-  ["property(undefined, 'p')", undefined],
-  ["(property(undefined, 'p'))[1]",undefined]
+  ["getProperty(undefined, 'p')", undefined],
+  ["(getProperty(undefined, 'p'))[1]",undefined]
 ];
 
 const scope = {
