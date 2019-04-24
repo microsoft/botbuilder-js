@@ -1,7 +1,7 @@
-const QnATelemetryConstants = require('../lib/qnaTelemetryConstants');
+const QnATelemetryConstants = require('../../botbuilder-ai/lib/qnaTelemetryConstants');
 const assert = require('assert');
-const { TestAdapter, TurnContext, NullTelemetryClient } = require('botbuilder-core');
-const { QnAMaker } = require('../');
+const { TestAdapter, TurnContext, NullTelemetryClient } = require('../../botbuilder-core');
+const { QnAMaker } = require('../../botbuilder-ai');
 const nock = require('nock');
 const fs = require('fs');
 

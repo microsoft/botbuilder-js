@@ -7,8 +7,7 @@
 var path = require('path');
 var fs = require('fs');
 var assert = require('assert');
-
-require('dotenv').config({ path: 'tests/.env' });
+const nock = require('nock');
 
 // function to encode file data to base64 encoded string
 function base64_encode(file) {
@@ -18,7 +17,7 @@ function base64_encode(file) {
   return Buffer.from(bitmap);
 }
 
-const BotConnector = require('../lib');
+const BotConnector = require('../../botframework-connector/lib');
 
 const ConnectorClient = BotConnector.ConnectorClient;
 const OAuthApiClient = BotConnector.OAuthApiClient;
@@ -74,7 +73,7 @@ var readStreamToBuffer = function(stream, callback) {
   stream.on('error', (err) => callback(error, null));
 }
 
-xdescribe('Bot Framework Connector SDK', function() {
+xdescribe('Bot Framework Connector SDK', function() {  
   before(function (done) {
     suite = new SuiteBase(this, testPrefix, requiredEnvironment, libraryPath);
     suite.setupSuite(function () {

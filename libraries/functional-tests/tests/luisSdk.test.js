@@ -4,16 +4,16 @@ const nock = require('nock');
 const { LUISRuntimeClient, LUISRuntimeModels } = require('@azure/cognitiveservices-luis-runtime');
 const msRest = require("@azure/ms-rest-js");
 
-const applicationId = '756de20e-f1e6-4dca-b80a-406a31d7054b';
+let applicationId = process.env.LUISSDKAPPID;  
 // This can be any endpoint key for calling LUIS
-const endpointKey = process.env.LUISAPPKEY || "77fe817cc79f48bd9323a0b4eafef9fa";
+const endpointKey = process.env.LUISSDKENDPOINTKEY || 'MockedKey';
 
 // If this is true, then LUIS responses will come from oracle files.
 // If it is false, the LUIS service will be called and if there are changes you will get a new oracle file.
 const mockLuis = true;
 
 
-var baseUrl = 'https://westus.api.cognitive.microsoft.com';
+var baseUrl = process.env.LUISENDPOINT;
 const creds = new msRest.TokenCredentials(endpointKey);
 
 function ExpectedPath(file) {
