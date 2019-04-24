@@ -141,13 +141,13 @@ export class TranscriptLoggerMiddleware implements Middleware {
     private transcriptLoggerErrorHandler(err: Error|any): void {
         // tslint:disable:no-console
         if (err instanceof Error) {
-          console.error(`TranscriptLoggerMiddleware logActivity failed: "${ err.message }"`);
-          console.error(err.stack);
+            console.error(`TranscriptLoggerMiddleware logActivity failed: "${ err.message }"`);
+            console.error(err.stack);
         } else {
-          console.error(`TranscriptLoggerMiddleware logActivity failed: "${ JSON.stringify(err) }"`);
+            console.error(`TranscriptLoggerMiddleware logActivity failed: "${ JSON.stringify(err) }"`);
         }
         // tslint:enable:no-console
-      }
+    }
 }
 
 /**

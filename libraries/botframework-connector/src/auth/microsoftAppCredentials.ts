@@ -28,15 +28,19 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
     public appPassword: string;
     public appId: string;
 
-    public oAuthEndpoint: string = Constants.ToChannelFromBotLoginUrl;
+    public oAuthEndpoint: string;
     public oAuthScope: string = Constants.ToChannelFromBotOAuthScope;
     public readonly tokenCacheKey: string;
     private refreshingToken: Promise<Response> | null = null;
 
-    constructor(appId: string, appPassword: string) {
+    constructor(appId: string, appPassword: string, channelAuthTenant?: string) {
         this.appId = appId;
         this.appPassword = appPassword;
-        this.tokenCacheKey = `${appId}-cache`;
+        const tenant = channelAuthTenant && channelAuthTenant.length > 0
+            ? channelAuthTenant
+            : Constants.DefaultChannelAuthTenant;
+        this.oAuthEndpoint = Constants.ToChannelFromBotLoginUrlPrefix + tenant + Constants.ToChannelFromBotTokenEndpointPath;
+        this.tokenCacheKey = `${ appId }-cache`;
     }
 
     /**

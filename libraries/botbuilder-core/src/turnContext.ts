@@ -212,8 +212,8 @@ export class TurnContext {
      * ```
      * @param activities One or more activities to send to the user.
      */
-     public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
-        let sentNonTraceActivity: boolean = false;
+    public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+        let sentNonTraceActivity = false;
         const ref: Partial<ConversationReference> = TurnContext.getConversationReference(this.activity);
         const output: Partial<Activity>[] = activities.map((a: Partial<Activity>) => {
             const o: Partial<Activity> = TurnContext.applyConversationReference({...a}, ref);

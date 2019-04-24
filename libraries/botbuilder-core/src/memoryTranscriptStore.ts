@@ -172,7 +172,7 @@ const timestampSorter: (a: Activity, b: Activity) => number = (a: Activity, b: A
  * @private
  */
 const skipWhileExpression: (expression: any) => (item: any) => boolean = (expression: any): (item: any) => boolean => {
-    let skipping: boolean = true;
+    let skipping = true;
 
     return (item: any): boolean => {
         if (!skipping) { return true; }

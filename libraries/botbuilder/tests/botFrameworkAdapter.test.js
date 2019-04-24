@@ -133,6 +133,15 @@ function assertResponse(res, statusCode, hasBody) {
 
 describe(`BotFrameworkAdapter`, function () {
     this.timeout(5000);
+    
+    it(`should return the status of every connection the user has`, async function () {
+        const adapter = new AdapterUnderTest();
+        const context = new TurnContext(adapter, incomingMessage);
+        adapter.getTokenStatus(context)
+        .then((responses) => {
+            assert(responses.length > 0);
+        });
+    });
 
     it(`should authenticateRequest() if no appId or appPassword.`, function (done) {
         const req = new MockRequest(incomingMessage);
@@ -238,6 +247,18 @@ describe(`BotFrameworkAdapter`, function () {
         }, (err) => {
             assert(err, `error not returned.`);
             assertResponse(res, 400, true);
+            done();
+        });
+    });
+
+    it(`should migrate location of tenantId for MS Teams processActivity().`, function (done) {
+        const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', channelData: { tenant: { id: '1234' } } }, reference, true);
+        incoming.channelId = 'msteams';
+        const req = new MockBodyRequest(incoming);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        adapter.processActivity(req, res, (context) => {
+            assert(context.activity.conversation.tenantId === '1234', `should have copied tenant id from channelData to conversation address`);
             done();
         });
     });
@@ -788,7 +809,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing from in signOutUser()`, async function () {
+    it(`should throw error if missing from in getAadTokens()`, async function () {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.getAadTokens({ activity: {} });
@@ -807,6 +828,31 @@ describe(`BotFrameworkAdapter`, function () {
         } catch (err) {
             assert(err.message === 'BotFrameworkAdapter.getAadTokens(): missing from or from.id',
                 `expected "BotFrameworkAdapter.getAadTokens(): missing from or from.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing from in getTokenStatus()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+
+            await adapter.getTokenStatus({ activity: {} });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getTokenStatus(): missing from or from.id',
+                `expected "BotFrameworkAdapter.getTokenStatus(): missing from or from.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing from.id in getTokenStatus()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getTokenStatus({ activity: { from: {} } });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getTokenStatus(): missing from or from.id',
+                `expected "BotFrameworkAdapter.getTokenStatus(): missing from or from.id" Error message, not "${ err.message }"`);
             return;
         }
         assert(false, `should have thrown an error message`);

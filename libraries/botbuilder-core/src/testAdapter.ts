@@ -257,7 +257,7 @@ export class TestAdapter extends BotAdapter implements IUserTokenProvider {
         return activities.reduce(
             (flow: TestFlow, activity: Partial<Activity>) => {
                 // tslint:disable-next-line:prefer-template
-                const assertDescription: string = `reply ${(description ? ' from ' + description : '')}`;
+                const assertDescription: string = `reply ${ (description ? ' from ' + description : '') }`;
 
                 return this.isReply(activity)
                     ? flow.assertReply(activityInspector(activity, description), assertDescription, timeout)
@@ -297,7 +297,7 @@ export class TestAdapter extends BotAdapter implements IUserTokenProvider {
         }
     }
 
-     /**
+    /**
      * Retrieves the OAuth token for a user that is in a sign-in flow.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
@@ -366,7 +366,7 @@ export class TestAdapter extends BotAdapter implements IUserTokenProvider {
      * @param connectionName Name of the auth connection to use.
      */
     public async getSignInLink(context: TurnContext, connectionName: string): Promise<string> {
-        return `https://fake.com/oauthsignin/${connectionName}/${context.activity.channelId}/${context.activity.from.id}`;
+        return `https://fake.com/oauthsignin/${ connectionName }/${ context.activity.channelId }/${ context.activity.from.id }`;
     }
 
     /**
@@ -465,7 +465,7 @@ export class TestFlow {
         timeout?: number
     ): TestFlow {
         return this.send(userSays)
-            .assertReply(expected, description || `test("${userSays}", "${expected}")`, timeout);
+            .assertReply(expected, description || `test("${ userSays }", "${ expected }")`, timeout);
     }
 
     /**
@@ -487,8 +487,8 @@ export class TestFlow {
             if (typeof expected === 'object') {
                 validateActivity(reply, expected);
             } else {
-                assert.equal(reply.type, ActivityTypes.Message, `${description2} type === '${reply.type}'. `);
-                assert.equal(reply.text, expected, `${description2} text === "${reply.text}"`);
+                assert.equal(reply.type, ActivityTypes.Message, `${ description2 } type === '${ reply.type }'. `);
+                assert.equal(reply.text, expected, `${ description2 } text === "${ reply.text }"`);
             }
         }
 
@@ -511,17 +511,17 @@ export class TestFlow {
                             switch (typeof expected) {
                                 case 'string':
                                 default:
-                                    expecting = `"${expected.toString()}"`;
+                                    expecting = `"${ expected.toString() }"`;
                                     break;
                                 case 'object':
-                                    expecting = `"${(expected as Activity).text}`;
+                                    expecting = `"${ (expected as Activity).text }`;
                                     break;
                                 case 'function':
                                     expecting = expected.toString();
                                     break;
                             }
                             reject(
-                                new Error(`TestAdapter.assertReply(${expecting}): ${description} Timed out after ${current - start}ms.`)
+                                new Error(`TestAdapter.assertReply(${ expecting }): ${ description } Timed out after ${ current - start }ms.`)
                             );
                         } else if (adapter.activityBuffer.length > 0) {
                             // Activity received
@@ -556,7 +556,7 @@ export class TestFlow {
                         return;
                     }
                 }
-                assert.fail(`TestAdapter.assertReplyOneOf(): ${description2 || ''} FAILED, Expected one of :${JSON.stringify(candidates)}`);
+                assert.fail(`TestAdapter.assertReplyOneOf(): ${ description2 || '' } FAILED, Expected one of :${ JSON.stringify(candidates) }`);
             },
             description,
             timeout
@@ -595,7 +595,7 @@ export class TestFlow {
     /**
      * Start the test sequence, returning a promise to await
      */
-    public startTest() : Promise<void> {
+    public startTest(): Promise<void> {
         return this.previous;
     }
 }
@@ -621,8 +621,8 @@ function validateActivity(activity: Partial<Activity>, expected: Partial<Activit
  * - suggestedActions
  */
 function validateTranscriptActivity(activity: Partial<Activity>, expected: Partial<Activity>, description: string): void {
-    assert.equal(activity.type, expected.type, `failed "type" assert on ${description}`);
-    assert.equal(activity.text, expected.text, `failed "text" assert on ${description}`);
-    assert.equal(activity.speak, expected.speak, `failed "speak" assert on ${description}`);
-    assert.deepEqual(activity.suggestedActions, expected.suggestedActions, `failed "suggestedActions" assert on ${description}`);
+    assert.equal(activity.type, expected.type, `failed "type" assert on ${ description }`);
+    assert.equal(activity.text, expected.text, `failed "text" assert on ${ description }`);
+    assert.equal(activity.speak, expected.speak, `failed "speak" assert on ${ description }`);
+    assert.deepEqual(activity.suggestedActions, expected.suggestedActions, `failed "suggestedActions" assert on ${ description }`);
 }

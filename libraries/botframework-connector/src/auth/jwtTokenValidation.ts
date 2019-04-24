@@ -15,7 +15,7 @@ import { GovernmentChannelValidation } from './governmentChannelValidation';
 import { GovernmentConstants } from './governmentConstants';
 import { MicrosoftAppCredentials } from './microsoftAppCredentials';
 
-export module JwtTokenValidation {
+export namespace JwtTokenValidation {
 
     /**
      * Authenticates the request and sets the service url in the set of trusted urls.
