@@ -158,8 +158,8 @@ export class OAuthPrompt extends Dialog {
             return await dc.endDialog(undefined);
         } else {
 
-            if (state.state['numberOfAttempts'] === undefined) {
-                state.state['numberOfAttempts'] = 0;
+            if (state.state['attemptCount'] === undefined) {
+                state.state['attemptCount'] = 0;
             }
 
             // Validate the return value
@@ -170,7 +170,7 @@ export class OAuthPrompt extends Dialog {
                     recognized: recognized,
                     state: state.state,
                     options: state.options,
-                    numberOfAttempts: state.state['numberOfAttempts']
+                    attemptCount: state.state['attemptCount']
                 });
             } else if (recognized.succeeded) {
                 isValid = true;

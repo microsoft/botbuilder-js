@@ -202,7 +202,7 @@ describe('NumberPrompt', function () {
             .assertReply('0')
     });
 
-    it ('should see numberOfAttempts counter increment', async function() {
+    it ('should see attemptCount increment', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -222,7 +222,7 @@ describe('NumberPrompt', function () {
 
         dialogs.add(new NumberPrompt('prompt', async (prompt) => {
             if (prompt.recognized.value !== 0) {
-                prompt.context.sendActivity(`numberOfAttempts ${prompt.numberOfAttempts}`);
+                prompt.context.sendActivity(`attemptCount ${prompt.attemptCount}`);
                 return false;
             }
             return true;
@@ -231,21 +231,21 @@ describe('NumberPrompt', function () {
         await adapter.send('Hello')
             .assertReply('Send me a zero')
             .send('100')
-            .assertReply('numberOfAttempts 0')
+            .assertReply('attemptCount 1')
             .send('200')
-            .assertReply('numberOfAttempts 1')
+            .assertReply('attemptCount 2')
             .send('300')
-            .assertReply('numberOfAttempts 2')
+            .assertReply('attemptCount 3')
             .send('0')
             .assertReply('ok')
             .send('Another!')
             .assertReply('Send me a zero')
             .send('100')
-            .assertReply('numberOfAttempts 0')
+            .assertReply('attemptCount 1')
             .send('200')
-            .assertReply('numberOfAttempts 1')
+            .assertReply('attemptCount 2')
             .send('300')
-            .assertReply('numberOfAttempts 2')
+            .assertReply('attemptCount 3')
             .send('0')
             .assertReply('ok')
     });

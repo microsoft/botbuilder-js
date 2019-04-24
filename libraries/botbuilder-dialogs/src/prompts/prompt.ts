@@ -153,11 +153,11 @@ export interface PromptValidatorContext<T> {
     readonly options: PromptOptions;
 
     /**
-     * Gets the number of times the prompt has been executed.
+     * A count of the number of times the prompt has been executed.
      * 
      * A number indicating how many times the prompt was invoked (starting at 1 for the first time it was invoked).
      */
-    readonly numberOfAttempts: number;
+    readonly attemptCount: number;
 }
 
 /**
@@ -208,18 +208,18 @@ export abstract class Prompt<T> extends Dialog {
         // Validate the return value
         let isValid = false;
         if (this.validator) {
-            if (state.state['numberOfAttempts'] === undefined) {
-                state.state['numberOfAttempts'] = 0;
+            if (state.state['attemptCount'] === undefined) {
+                state.state['attemptCount'] = 1;
             }
             isValid = await this.validator({
                 context: dc.context,
                 recognized: recognized,
                 state: state.state,
                 options: state.options,
-                numberOfAttempts: state.state['numberOfAttempts']
+                attemptCount: state.state['attemptCount']
             });
-            if (state.state['numberOfAttempts'] !== undefined) {
-                state.state['numberOfAttempts']++;
+            if (state.state['attemptCount'] !== undefined) {
+                state.state['attemptCount']++;
             }
         } else if (recognized.succeeded) {
             isValid = true;

@@ -55,8 +55,8 @@ export class ActivityPrompt extends Dialog {
         const state: any = dc.activeDialog.state as ActivityPromptState;
         const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(dc.context, state.state, state.options);
 
-        if (state.state['numberOfAttempts'] === undefined) {
-            state.state['numberOfAttempts'] = 0;
+        if (state.state['attemptCount'] === undefined) {
+            state.state['attemptCount'] = 0;
         }
 
         // Validate the return value
@@ -67,7 +67,7 @@ export class ActivityPrompt extends Dialog {
             recognized: recognized,
             state: state.state,
             options: state.options,
-            numberOfAttempts: state.state['numberOfAttempts']
+            attemptCount: state.state['attemptCount']
         });
 
         // Return recognized value or re-prompt
