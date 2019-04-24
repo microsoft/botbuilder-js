@@ -14,7 +14,7 @@
 - [sandwichOrderConfirmation] 
 
 # template1
-- [template2] {age}
+- [template2] {age} [template4] [template6(age)]
 
 # template2
 - {join(foreach(alarms, x, lgTemplate('template3', customer)), ',', 'and')} {tasks[0]}
@@ -23,9 +23,12 @@
 - {input.property}
 
 # template4
--```
- @{multiLineText}, @{lgTemplate('template5')}
+- ```
+@{city} {lgTemplate('template5')}
 ```
 
 # template5
-- {multiLineTemplateRef}
+- hi
+
+# template6(input)
+- hi

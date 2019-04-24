@@ -1,3 +1,14 @@
 # template
 - IF: hi
     - hello
+- ELSE: {false}
+    - hi
+
+> only elseif is allowed in middle of condition
+# template4
+- IF: {true}
+  - hi
+- IF: {true}
+  - hi
+- ELSE: 
+ - hi 

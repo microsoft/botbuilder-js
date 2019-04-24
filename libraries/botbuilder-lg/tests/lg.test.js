@@ -67,8 +67,14 @@ describe('LG', function () {
     it('TestBasicListSupport',function(){
         let engine = TemplateEngine.fromFiles(GetExampleFilePath('BasicList.lg'));
 
-        let evaled = engine.evaluateTemplate("BasicJoin", {items : ["1","2"]});
+        let evaled = engine.evaluateTemplate("BasicJoin", {items : ["1"]});
+        assert.strictEqual(evaled, "1", `Evaled is ${evaled}`);
+
+        evaled = engine.evaluateTemplate("BasicJoin", {items : ["1","2"]});
         assert.strictEqual(evaled, "1, 2", `Evaled is ${evaled}`);
+
+        evaled = engine.evaluateTemplate("BasicJoin", {items : ["1","2","3"]});
+        assert.strictEqual(evaled, "1, 2 and 3", `Evaled is ${evaled}`);
     });
 
     it('TestBasicExtendedFunctions', function () {
@@ -89,23 +95,6 @@ describe('LG', function () {
 
         // let evaled = engine.evaluateTemplate('ShowAlarmsWithMemberHumanize',{alarms:alarms});
         // assert.strictEqual(evaled === "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow", true, `Evaled is ${evaled}`);
-    });
-
-    
-
-    it('TestBasicLoopRef',function(){
-        var engine = TemplateEngine.fromFiles(GetExampleFilePath("7.lg"));
-        let evaled = "";
-            try
-            {
-                evaled = engine.evaluateTemplate("wPhrase", "");
-                assert.strictEqual(evaled, "你好");
-            }
-            catch (e)
-            {
-                // Randomly this will detect a loop which is OK.
-                assert.strictEqual(e.message.startsWith('Loop'), true);
-            }
     });
 
     it('TestListWithOnlyOneElement',function(){
@@ -191,14 +180,9 @@ describe('LG', function () {
 
         var evaled3 = engine.analyzeTemplate("template1");
         // TODO: input.property should really be: customer.property but analyzer needs to be 
-        var evaled3Options = ["alarms", "customer", "tasks[0]","age"];
+        var evaled3Options = ["alarms", "customer", "tasks[0]", "age", "city"];
         assert.strictEqual(evaled3.length, evaled3Options.length);
         evaled3Options.forEach(element => assert.strictEqual(evaled3.includes(element), true));
-
-        var evaled4 = engine.analyzeTemplate("template4");
-        var evaled4Options = ["multiLineText", "multiLineTemplateRef"];
-        assert.strictEqual(evaled4.length, evaled4Options.length);
-        evaled4Options.forEach(element => assert.strictEqual(evaled4.includes(element), true));
     });
 
     it('TestlgTemplateFunction', function() {

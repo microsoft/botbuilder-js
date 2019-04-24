@@ -174,10 +174,6 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
         for (const child of context.children) {
             const node: TerminalNode = child as TerminalNode;
             switch (node.symbol.type) {
-                case lp.LGFileParser.ESCAPE_CHARACTER: {
-                    result = result.concat(this.CheckEscapeCharacter(node.text));
-                    break;
-                }
                 case lp.LGFileParser.INVALID_ESCAPE: {
                     result.push(new ReportEntry(`escape character ${node.text} is invalid`));
                     break;
@@ -287,26 +283,6 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
             result.push(new ReportEntry(e.message.concat(` in expression '${exp}'`)));
 
             return result;
-        }
-
-        return result;
-    }
-
-    private CheckEscapeCharacter(exp: string): ReportEntry[] {
-        const result: ReportEntry[] = [];
-        const validCharactersDict: any = {
-            '\\r': '\r',
-            '\\n': '\n',
-            '\\t': '\t',
-            '\\\\': '\\',
-            '\\[': '[',
-            '\\]': ']',
-            '\\{': '{',
-            '\\}': '}'
-        };
-
-        if (!Object.keys(validCharactersDict).includes(exp)) {
-            result.push(new ReportEntry(`escape character ${exp} is invalid`));
         }
 
         return result;
