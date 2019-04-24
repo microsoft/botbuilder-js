@@ -145,6 +145,17 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             this.credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
             this.credentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
         }
+
+        // Relocate the tenantId field used by MS Teams to a new location (from channelData to conversation)
+        // This will only occur on actities from teams that include tenant info in channelData but NOT in conversation,
+        // thus should be future friendly.  However, once the the transition is complete. we can remove this.
+        this.use(async(context, next) => {
+            if (context.activity.channelId === 'msteams' && context.activity && context.activity.conversation && !context.activity.conversation.tenantId && context.activity.channelData && context.activity.channelData.tenant) {
+                context.activity.conversation.tenantId = context.activity.channelData.tenant.id;
+            }
+            await next();
+        });
+
     }
 
     /**
