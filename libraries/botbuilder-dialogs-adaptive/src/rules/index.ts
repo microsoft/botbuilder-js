@@ -6,9 +6,7 @@
  * Licensed under the MIT License.
  */
 export * from './eventRule';
-export * from './ifPropertyRule';
 export * from './planningRule';
-export * from './stateTransitionRule';
 export * from './intentRule';
 export * from './unknownIntentRule';
 
