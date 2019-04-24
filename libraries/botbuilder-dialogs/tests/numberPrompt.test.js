@@ -222,7 +222,7 @@ describe('NumberPrompt', function () {
 
         dialogs.add(new NumberPrompt('prompt', async (prompt) => {
             if (prompt.recognized.value !== 0) {
-                prompt.context.sendActivity(`numberOfAttempts ${prompt.options.numberOfAttempts}`);
+                prompt.context.sendActivity(`numberOfAttempts ${prompt.numberOfAttempts}`);
                 return false;
             }
             return true;
