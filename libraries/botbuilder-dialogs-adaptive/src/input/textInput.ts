@@ -7,10 +7,9 @@
  */
 import { Activity } from "botbuilder-core";
 import { DialogCommand, DialogDependencies, TextPrompt, Dialog, DialogConfiguration, DialogContext, DialogTurnResult } from "botbuilder-dialogs";
-import { TextSlotConfiguration } from "./textSlot";
 import { ActivityProperty } from "../activityProperty";
 
-export interface TextInputConfiguration extends DialogConfiguration, TextSlotConfiguration {
+export interface TextInputConfiguration extends DialogConfiguration {
 
 }
 
