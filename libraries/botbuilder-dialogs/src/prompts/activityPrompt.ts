@@ -55,6 +55,10 @@ export class ActivityPrompt extends Dialog {
         const state: any = dc.activeDialog.state as ActivityPromptState;
         const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(dc.context, state.state, state.options);
 
+        if (state.state['attemptCount'] === undefined) {
+            state.state['attemptCount'] = 1;
+        }
+
         // Validate the return value
         // - Unlike the other prompts a validator is required for an ActivityPrompt so we don't
         //   need to check for its existence before calling it.
@@ -62,7 +66,8 @@ export class ActivityPrompt extends Dialog {
             context: dc.context,
             recognized: recognized,
             state: state.state,
-            options: state.options
+            options: state.options,
+            attemptCount: state.state['attemptCount']
         });
 
         // Return recognized value or re-prompt
