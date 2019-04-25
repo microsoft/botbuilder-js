@@ -1,0 +1,371 @@
+/**
+ * @module botbuilder
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+import { Activity, ActivityTypes, ConversationReference } from 'botframework-schema';
+import { MicrosoftAppCredentials, ConnectorClient } from 'botframework-connector';
+import { Middleware } from './middlewareSet';
+import { TurnContext } from './turnContext';
+import { BotState } from './botState';
+import { UserState } from './userState';
+import { ConversationState } from './conversationState';
+import { Storage } from './storage';
+
+class TraceActivity {
+
+    public static fromActivity(activity: Activity|Partial<Activity>, name: string, label: string): Partial<Activity> {
+        return {
+            type: ActivityTypes.Trace,
+            timestamp: new Date(),
+            name: name,
+            label: label,
+            value: activity,
+            valueType: 'https://www.botframework.com/schemas/activity'
+        };
+    }
+
+    public static fromState(botState: BotState, turnContext: TurnContext): Partial<Activity> {
+
+        var name = botState.constructor.name;
+        var cachedState = turnContext.turnState.get(name);
+        var obj = cachedState['State'];
+        return {
+            type: ActivityTypes.Trace,
+            timestamp: new Date(),
+            name: 'Bot State',
+            label: 'BotState',
+            value: obj,
+            valueType: 'https://www.botframework.com/schemas/botState'
+        };
+    }
+
+    public static fromConversationReference(conversationReference: Partial<ConversationReference>): Partial<Activity> {
+        return {
+            type: ActivityTypes.Trace,
+            timestamp: new Date(),
+            name: 'Deleted Message',
+            label: 'MessageDelete',
+            value: conversationReference,
+            valueType: 'https://www.botframework.com/schemas/conversationReference'
+        };
+    }
+
+    public static fromError(errorMessage: string): Partial<Activity> {
+        return {
+            type: ActivityTypes.Trace,
+            timestamp: new Date(),
+            name: 'Turn Error',
+            label: 'TurnError',
+            value: errorMessage,
+            valueType: 'https://www.botframework.com/schemas/error'
+        };
+    }
+}
+
+/** @private */
+abstract class InterceptionMiddleware implements Middleware {
+
+    /** Implement middleware signature
+     * @param context {TurnContext} An incoming TurnContext object.
+     * @param next {function} The next delegate function.
+     */
+    public async onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void> {
+
+        var { shouldForwardToApplication, shouldIntercept } = await this.invokeInbound(turnContext, TraceActivity.fromActivity(turnContext.activity, 'ReceivedActivity', 'Received Activity'));
+
+        if (shouldIntercept) {
+
+            turnContext.onSendActivities(async (ctx, activities, nextSend) => {
+
+                var traceActivities: Partial<Activity>[] = [];
+                activities.forEach(activity => {
+                    traceActivities.push(TraceActivity.fromActivity(activity, 'SentActivity', 'Sent Activity'));
+                });
+                await this.invokeOutbound(ctx, traceActivities);
+                return await nextSend();
+            });
+
+            turnContext.onUpdateActivity(async (ctx, activity, nextUpdate) => {
+                var traceActivity = TraceActivity.fromActivity(activity, 'MessageUpdate', 'Updated Message');
+                await this.invokeOutbound(ctx, [ traceActivity ]);
+                return await nextUpdate();
+            });
+
+            turnContext.onDeleteActivity(async (ctx, reference, nextDelete) => {
+                var traceActivity = TraceActivity.fromConversationReference(reference);
+                await this.invokeOutbound(ctx, [ traceActivity ]);
+                return await nextDelete();
+            });
+
+            await this.invokeTraceState(turnContext);
+        }
+        
+        if (shouldForwardToApplication) {
+            try {
+                await next();
+            }
+            catch (err) {
+                var traceActivity = TraceActivity.fromError(err.toString());
+                await this.invokeOutbound(turnContext, [ traceActivity ]);
+                throw err;
+            }
+        }
+    }
+
+    protected abstract inbound(turnContext: TurnContext, traceActivity: Partial<Activity>): Promise<any>;
+
+    protected abstract outbound(turnContext: TurnContext, traceActivities: Partial<Activity>[]): Promise<any>;
+
+    protected abstract traceState(turnContext: TurnContext): Promise<any>;
+
+    private async invokeInbound(turnContext: TurnContext, traceActivity: Partial<Activity>): Promise<any> {
+        try {
+            await this.inbound(turnContext, traceActivity);
+        } catch (err) {
+            console.warn(`Exception in inbound interception ${err}`);
+            return { shouldForwardToApplication: true, shouldIntercept: false };
+        }
+    }
+
+    private async invokeOutbound(turnContext: TurnContext, traceActivities: Partial<Activity>[]): Promise<any> {
+        try {
+            await this.outbound(turnContext, traceActivities);
+        } catch (err) {
+            console.warn(`Exception in outbound interception ${err}`);
+        }
+    }
+
+    private async invokeTraceState(turnContext: TurnContext): Promise<any> {
+        try {
+            await this.traceState(turnContext);
+        } catch (err) {
+            console.warn(`Exception in state interception ${err}`);
+        }
+    }
+}
+
+export class InspectionMiddleware extends InterceptionMiddleware {
+
+    private static readonly command = "/INSPECT";
+
+    private readonly inspectionState: InspectionState;
+    private readonly userState: UserState;
+    private readonly conversationState: ConversationState;
+    private readonly credentials: MicrosoftAppCredentials;
+
+
+    /**
+     * Create the Inspection middleware for sending trace activities out to an emulator session
+     */
+    constructor(inspectionState: InspectionState, userState: UserState|undefined, conversationState: ConversationState|undefined, credentials: MicrosoftAppCredentials|undefined) {
+        super();
+
+        this.inspectionState = inspectionState;
+        this.userState = userState;
+        this.conversationState = conversationState;
+        this.credentials = credentials || new MicrosoftAppCredentials(undefined, undefined);
+    }
+
+    public async processCommand(turnContext: TurnContext): Promise<any> {
+
+        if (turnContext.activity.type == 'Message') {
+
+            var command = turnContext.activity.text.split(' ');
+            if (command.length > 1 && command[0] == InspectionMiddleware.command) {
+
+                if (command.length == 2 && command[1] == 'open') {
+                    await this.processOpenCommand(turnContext);
+                    return true;
+                }
+
+                if (command.length == 3 && command[1] == 'attach') {
+                    await this.processAttachCommand(turnContext, command[2]);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected async inbound(turnContext: TurnContext, traceActivity: Partial<Activity>): Promise<any> {
+
+        if (await this.processCommand(turnContext)) {
+            return { shouldForwardToApplication: false, shouldIntercept: false };
+        }
+
+        var session = await this.findSession(turnContext);
+        if (session !== undefined) {
+            
+            if (await this.invokeSend(turnContext, session, traceActivity)) {
+                return { shouldForwardToApplication: true, shouldIntercept: true };
+            } else {
+                return { shouldForwardToApplication: true, shouldIntercept: false };
+            }
+        } else {
+            return { shouldForwardToApplication: true, shouldIntercept: false };
+        }
+    }
+
+    protected async outbound(turnContext: TurnContext, traceActivities: Partial<Activity>[]): Promise<any> {
+
+        var session = await this.findSession(turnContext);
+        if (session !== undefined) {
+            for (var i=0; i<traceActivities.length; i++) {
+                var traceActivity = traceActivities[i];
+                if (!await this.invokeSend(turnContext, session, traceActivity))
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    protected async traceState(turnContext: TurnContext): Promise<any> {
+
+        var session = await this.findSession(turnContext);
+        if (session !== undefined) {
+            
+            if (this.userState !== undefined) {
+                await this.userState.load(turnContext, false);
+            }
+            if (this.conversationState != undefined) {
+                await this.conversationState.load(turnContext, false);
+            }
+
+            if (this.userState !== undefined) {
+                await this.invokeSend(turnContext, session, TraceActivity.fromState(this.userState, turnContext));
+            }
+            if (this.conversationState !== undefined) {
+                await this.invokeSend(turnContext, session, TraceActivity.fromState(this.conversationState, turnContext));
+            }
+        }
+    }
+
+    private async processOpenCommand(turnContext: TurnContext): Promise<any> {
+        var accessor = this.inspectionState.createProperty('InspectionSessionByStatus');
+        var sessions = await accessor.get(turnContext, () => new InspectionSessionByStatus());
+        var sessionId = this.openCommand(sessions, TurnContext.getConversationReference(turnContext.activity));
+        await turnContext.sendActivity(`${InspectionMiddleware.command} attach ${sessionId}`);
+        await this.inspectionState.saveChanges(turnContext, false);
+    }
+
+    private async processAttachCommand(turnContext: TurnContext, sessionId: string): Promise<any> {
+        var accessor = this.inspectionState.createProperty('InspectionSessionByStatus');
+        var sessions = await accessor.get(turnContext, () => new InspectionSessionByStatus());
+
+        if (this.attachComamnd(turnContext.activity.conversation.id, sessions, sessionId)) {
+            await turnContext.sendActivity('Attached to session, all traffic is being relicated for inspection.');
+        }
+        else {
+            await turnContext.sendActivity(`Open session with id ${sessionId} does not exist.`);
+        }
+
+        await this.inspectionState.saveChanges(turnContext, false);
+    }
+
+    private openCommand(sessions: InspectionSessionByStatus, conversationReference: Partial<ConversationReference>): string {
+        function generate_guid() {
+            function s4() {
+                return Math.floor((1 + Math.random()) * 0x10000)
+                    .toString(16)
+                    .substring(1);
+            }
+            return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+              s4() + '-' + s4() + s4() + s4();
+        }
+    
+        var sessionId = generate_guid();
+        sessions.openedSessions[sessionId] = conversationReference;
+        return sessionId;
+    }
+
+    private attachComamnd(conversationId: string, sessions: InspectionSessionByStatus, sessionId: string): boolean {
+
+        var inspectionSessionState = sessions.openedSessions[sessionId];
+        if (inspectionSessionState !== undefined) {
+            sessions.attachedSessions[sessionId] = inspectionSessionState;
+            delete sessions.openedSessions[sessionId];
+            return true;
+        }
+
+        return false;
+    }
+
+    private async findSession(turnContext: TurnContext): Promise<any> {
+        var accessor = this.inspectionState.createProperty('InspectionSessionByStatus');
+        var sessions = await accessor.get(turnContext, () => new InspectionSessionByStatus());
+
+        var conversationReference = sessions.attachedSessions[turnContext.activity.conversation.id];
+        if (conversationReference !== undefined) {
+            return new InspectionSession(conversationReference, this.credentials);
+        }
+
+        return undefined;
+    }
+
+    private async invokeSend(turnContext: TurnContext, session: InspectionSession, activity: Partial<Activity>): Promise<any> {
+
+        if (await session.send(activity)) {
+            return true;
+        } else {
+            await this.cleanUpSession(turnContext);
+            return false;
+        }
+    }
+
+    private async cleanUpSession(turnContext: TurnContext): Promise<any> {
+        var accessor = this.inspectionState.createProperty('InspectionSessionByStatus');
+        var sessions = await accessor.get(turnContext, () => new InspectionSessionByStatus());
+
+        delete sessions.attachedSessions[turnContext.activity.conversation.id];
+        await this.inspectionState.saveChanges(turnContext, false);
+    }
+}
+
+class InspectionSession {
+
+    private readonly conversationReference: Partial<ConversationReference>;
+    private readonly connectorClient: ConnectorClient;
+
+    constructor(conversationReference: Partial<ConversationReference>, credentials: MicrosoftAppCredentials) {
+        this.conversationReference = conversationReference;
+        this.connectorClient = new ConnectorClient(credentials, { baseUri: conversationReference.serviceUrl });
+    }
+
+    public async send(activity: Partial<Activity>): Promise<any> {
+
+        TurnContext.applyConversationReference(activity, this.conversationReference);
+
+        try {
+            await this.connectorClient.conversations.sendToConversation(activity.conversation.id, activity as Activity);
+        } catch (err) {
+            return false;
+        }
+
+        return true;
+    }
+}
+
+class InspectionSessionByStatus {
+
+    public openedSessions: { [id: string]: Partial<ConversationReference>; } = {};
+
+    public attachedSessions: { [id: string]: Partial<ConversationReference>; } = {};
+}
+
+export class InspectionState extends BotState {
+
+    constructor(storage: Storage) {
+        super(storage, (context: TurnContext) => {
+            return Promise.resolve(this.getStorageKey(context));
+        });
+    }
+    
+    protected getStorageKey(turnContext: TurnContext) {
+        return 'InspectionState';
+    }
+} 
