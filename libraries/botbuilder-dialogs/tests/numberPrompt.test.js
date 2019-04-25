@@ -229,7 +229,7 @@ describe('NumberPrompt', function () {
         }));
 
         await adapter.send('Hello')
-            .assertReply('Send me a one')
+            .assertReply('Send me a zero')
             .send('100')
             .assertReply('attemptCount 1')
             .send('200')
@@ -239,7 +239,7 @@ describe('NumberPrompt', function () {
             .send('0')
             .assertReply('ok')
             .send('Another!')
-            .assertReply('Send me a one')
+            .assertReply('Send me a zero')
             .send('100')
             .assertReply('attemptCount 1')
             .send('200')
