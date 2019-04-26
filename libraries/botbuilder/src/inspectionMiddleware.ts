@@ -7,13 +7,7 @@
  */
 import { Activity, ActivityTypes, ConversationReference } from 'botframework-schema';
 import { MicrosoftAppCredentials, ConnectorClient } from 'botframework-connector';
-import { Middleware } from './middlewareSet';
-import { TurnContext } from './turnContext';
-import { BotState } from './botState';
-import { StatePropertyAccessor } from './botStatePropertyAccessor';
-import { UserState } from './userState';
-import { ConversationState } from './conversationState';
-import { Storage } from './storage';
+import { Middleware, TurnContext, BotState, StatePropertyAccessor, UserState, ConversationState, Storage } from 'botbuilder-core';
 
 /** @private */
 class TraceActivity {
