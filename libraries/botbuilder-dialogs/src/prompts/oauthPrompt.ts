@@ -157,6 +157,11 @@ export class OAuthPrompt extends Dialog {
         if (hasTimedOut) {
             return await dc.endDialog(undefined);
         } else {
+
+            if (state.state['attemptCount'] === undefined) {
+                state.state['attemptCount'] = 1;
+            }
+
             // Validate the return value
             let isValid = false;
             if (this.validator) {
@@ -164,7 +169,8 @@ export class OAuthPrompt extends Dialog {
                     context: dc.context,
                     recognized: recognized,
                     state: state.state,
-                    options: state.options
+                    options: state.options,
+                    attemptCount: state.state['attemptCount']
                 });
             } else if (recognized.succeeded) {
                 isValid = true;
