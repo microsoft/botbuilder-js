@@ -10,10 +10,12 @@ import { MicrosoftAppCredentials, ConnectorClient } from 'botframework-connector
 import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
 import { BotState } from './botState';
+import { StatePropertyAccessor } from './botStatePropertyAccessor';
 import { UserState } from './userState';
 import { ConversationState } from './conversationState';
 import { Storage } from './storage';
 
+/** @private */
 class TraceActivity {
 
     public static fromActivity(activity: Activity|Partial<Activity>, name: string, label: string): Partial<Activity> {
@@ -27,16 +29,13 @@ class TraceActivity {
         };
     }
 
-    public static fromState(botState: BotState, turnContext: TurnContext): Partial<Activity> {
-
-        var name = botState.constructor.name;
-        var cachedState = turnContext.turnState.get(name);
-        var obj = cachedState['State'];
+    public static fromState(botState: BotState, turnContext: TurnContext, name: string, label: string): Partial<Activity> {
+        var obj = botState.get(turnContext);
         return {
             type: ActivityTypes.Trace,
             timestamp: new Date(),
-            name: 'Bot State',
-            label: 'BotState',
+            name: name,
+            label: label,
             value: obj,
             valueType: 'https://www.botframework.com/schemas/botState'
         };
@@ -123,7 +122,7 @@ abstract class InterceptionMiddleware implements Middleware {
 
     private async invokeInbound(turnContext: TurnContext, traceActivity: Partial<Activity>): Promise<any> {
         try {
-            await this.inbound(turnContext, traceActivity);
+            return await this.inbound(turnContext, traceActivity);
         } catch (err) {
             console.warn(`Exception in inbound interception ${err}`);
             return { shouldForwardToApplication: true, shouldIntercept: false };
@@ -147,11 +146,19 @@ abstract class InterceptionMiddleware implements Middleware {
     }
 }
 
+/**
+ * InspectionMiddleware for emulator inspection of runtime Activities and BotState.
+ *
+ * @remarks
+ * InspectionMiddleware for emulator inspection of runtime Activities and BotState.
+ * 
+ */
 export class InspectionMiddleware extends InterceptionMiddleware {
 
     private static readonly command = "/INSPECT";
 
     private readonly inspectionState: InspectionState;
+    private readonly inspectionStateAccessor: StatePropertyAccessor<InspectionSessionByStatus>;
     private readonly userState: UserState;
     private readonly conversationState: ConversationState;
     private readonly credentials: MicrosoftAppCredentials;
@@ -164,6 +171,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         super();
 
         this.inspectionState = inspectionState;
+        this.inspectionStateAccessor = inspectionState.createProperty('InspectionSessionByStatus');
         this.userState = userState;
         this.conversationState = conversationState;
         this.credentials = credentials || new MicrosoftAppCredentials(undefined, undefined);
@@ -171,7 +179,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     public async processCommand(turnContext: TurnContext): Promise<any> {
 
-        if (turnContext.activity.type == 'Message') {
+        if (turnContext.activity.type == ActivityTypes.Message) {
 
             var command = turnContext.activity.text.split(' ');
             if (command.length > 1 && command[0] == InspectionMiddleware.command) {
@@ -237,25 +245,23 @@ export class InspectionMiddleware extends InterceptionMiddleware {
             }
 
             if (this.userState !== undefined) {
-                await this.invokeSend(turnContext, session, TraceActivity.fromState(this.userState, turnContext));
+                await this.invokeSend(turnContext, session, TraceActivity.fromState(this.userState, turnContext, 'UserState', 'User State'));
             }
             if (this.conversationState !== undefined) {
-                await this.invokeSend(turnContext, session, TraceActivity.fromState(this.conversationState, turnContext));
+                await this.invokeSend(turnContext, session, TraceActivity.fromState(this.conversationState, turnContext, 'ConversationState', 'Conversation State'));
             }
         }
     }
 
     private async processOpenCommand(turnContext: TurnContext): Promise<any> {
-        var accessor = this.inspectionState.createProperty('InspectionSessionByStatus');
-        var sessions = await accessor.get(turnContext, () => new InspectionSessionByStatus());
+        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
         var sessionId = this.openCommand(sessions, TurnContext.getConversationReference(turnContext.activity));
         await turnContext.sendActivity(`${InspectionMiddleware.command} attach ${sessionId}`);
         await this.inspectionState.saveChanges(turnContext, false);
     }
 
     private async processAttachCommand(turnContext: TurnContext, sessionId: string): Promise<any> {
-        var accessor = this.inspectionState.createProperty('InspectionSessionByStatus');
-        var sessions = await accessor.get(turnContext, () => new InspectionSessionByStatus());
+        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
 
         if (this.attachComamnd(turnContext.activity.conversation.id, sessions, sessionId)) {
             await turnContext.sendActivity('Attached to session, all traffic is being relicated for inspection.');
@@ -287,7 +293,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
         var inspectionSessionState = sessions.openedSessions[sessionId];
         if (inspectionSessionState !== undefined) {
-            sessions.attachedSessions[sessionId] = inspectionSessionState;
+            sessions.attachedSessions[conversationId] = inspectionSessionState;
             delete sessions.openedSessions[sessionId];
             return true;
         }
@@ -296,8 +302,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     }
 
     private async findSession(turnContext: TurnContext): Promise<any> {
-        var accessor = this.inspectionState.createProperty('InspectionSessionByStatus');
-        var sessions = await accessor.get(turnContext, () => new InspectionSessionByStatus());
+        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
 
         var conversationReference = sessions.attachedSessions[turnContext.activity.conversation.id];
         if (conversationReference !== undefined) {
@@ -318,14 +323,14 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     }
 
     private async cleanUpSession(turnContext: TurnContext): Promise<any> {
-        var accessor = this.inspectionState.createProperty('InspectionSessionByStatus');
-        var sessions = await accessor.get(turnContext, () => new InspectionSessionByStatus());
+        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
 
         delete sessions.attachedSessions[turnContext.activity.conversation.id];
         await this.inspectionState.saveChanges(turnContext, false);
     }
 }
 
+/** @private */
 class InspectionSession {
 
     private readonly conversationReference: Partial<ConversationReference>;
@@ -350,13 +355,23 @@ class InspectionSession {
     }
 }
 
+/** @private */
 class InspectionSessionByStatus {
+
+    public static DefaultValue: InspectionSessionByStatus = new InspectionSessionByStatus();
 
     public openedSessions: { [id: string]: Partial<ConversationReference>; } = {};
 
     public attachedSessions: { [id: string]: Partial<ConversationReference>; } = {};
 }
 
+/**
+ * InspectionState for use by the InspectionMiddleware for emulator inspection of runtime Activities and BotState.
+ *
+ * @remarks
+ * InspectionState for use by the InspectionMiddleware for emulator inspection of runtime Activities and BotState.
+ * 
+ */
 export class InspectionState extends BotState {
 
     constructor(storage: Storage) {
