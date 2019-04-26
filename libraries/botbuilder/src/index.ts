@@ -8,4 +8,5 @@
 
 export * from './botFrameworkAdapter';
 export * from './fileTranscriptStore';
+export * from './inspectionMiddleware';
 export * from 'botbuilder-core';

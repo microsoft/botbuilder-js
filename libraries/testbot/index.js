@@ -3,12 +3,22 @@
 
 const restify = require('restify');
 
-const { BotFrameworkAdapter, ActivityHandler } = require('botbuilder');
+const { BotFrameworkAdapter, ActivityHandler, MemoryStorage, UserState, ConversationState, InspectionState, InspectionMiddleware } = require('botbuilder');
 
 const adapter = new BotFrameworkAdapter({
     appId: process.env.MicrosoftAppId,
     appPassword: process.env.MicrosoftAppPassword
 });
+
+var memoryStorage = new MemoryStorage();
+var inspectionState = new InspectionState(memoryStorage);
+
+var userState = new UserState(memoryStorage);
+var conversationState = new ConversationState(memoryStorage);
+
+var conversationStateAccessor = conversationState.createProperty('test');
+
+adapter.use(new InspectionMiddleware(inspectionState, userState, conversationState));
 
 adapter.onTurnError = async (context, error) => {
     console.error(`\n [onTurnError]: ${ error }`);
@@ -19,7 +29,14 @@ class TestBot extends ActivityHandler {
     constructor() {
         super();
         this.onMessage(async (context, next) => {
-            await context.sendActivity(`you said "${ context.activity.text }"`);
+
+            var state = await conversationStateAccessor.get(context, { count: 0 });
+
+            await context.sendActivity(`you said "${ context.activity.text }" ${ state.count }`);
+
+            state.count++;
+            await conversationState.saveChanges(context, false);
+
             await next();
         });
         this.onMembersAdded(async (context, next) => {
