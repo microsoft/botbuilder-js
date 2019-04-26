@@ -272,21 +272,28 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         const cached: any = context.turnState.get(this.cacheKey);
         if (!cached) {
             const utterance: string = context.activity.text || '';
+            let recognizerPromise: Promise<RecognizerResult>;
 
-            return this.luisClient.prediction.resolve(
-                this.application.applicationId, utterance,
-                {
-                    verbose: this.options.includeAllIntents,
-                    customHeaders: {
-                        'Ocp-Apim-Subscription-Key': this.application.endpointKey,
-                        'User-Agent': this.getUserAgent()
-                    },
-                    ...this.options
-                }
-            )
-                .then((luisResult: LuisModels.LuisResult) => {
+            if (!utterance.trim()) {
+                // Bypass LUIS if the activity's text is null or whitespace
+                recognizerPromise = Promise.resolve({
+                    text: utterance,
+                    intents: { '': { score: 1 } },
+                    entities: {},
+                });
+            } else {
+                recognizerPromise = this.luisClient.prediction.resolve(
+                    this.application.applicationId, utterance,
+                    {
+                        verbose: this.options.includeAllIntents,
+                        customHeaders: {
+                            'Ocp-Apim-Subscription-Key': this.application.endpointKey,
+                            'User-Agent': this.getUserAgent()
+                        },
+                        ...this.options
+                    })
                     // Map results
-                    const recognizerResult: RecognizerResult = {
+                    .then((luisResult: LuisModels.LuisResult) => ({
                         text: luisResult.query,
                         alteredText: luisResult.alteredQuery,
                         intents: this.getIntents(luisResult),
@@ -296,16 +303,19 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                             this.options.includeInstanceData === undefined || this.options.includeInstanceData
                         ),
                         sentiment: this.getSentiment(luisResult),
-                        luisResult: this.includeApiResults ? luisResult : null
-                    };
+                        luisResult: (this.includeApiResults ? luisResult : null)
+                    }));
+            }
 
+            return recognizerPromise
+                .then((recognizerResult: RecognizerResult) => {
                     // Write to cache
                     context.turnState.set(this.cacheKey, recognizerResult);
 
                     // Log telemetry
                     this.onRecognizerResults(recognizerResult, context, telemetryProperties, telemetryMetrics);
 
-                    return this.emitTraceInfo(context, luisResult, recognizerResult).then(() => {
+                    return this.emitTraceInfo(context, recognizerResult.luisResult || null, recognizerResult).then(() => {
                         return recognizerResult;
                     });
                 })
