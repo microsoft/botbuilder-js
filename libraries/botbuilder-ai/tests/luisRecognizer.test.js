@@ -328,10 +328,12 @@ describe('LuisRecognizer', function () {
         }, true, false);
     });
 
-    it('should only return "None" intent for undefined text', done => {
+    it('should only return empty intent for empty text', done => {
         TestJson("EmptyText.json", res => {
             const top = LuisRecognizer.topIntent(res);
-            assert(top === 'None');
+            assert(top === 'None'); // topIntent() converts '' to 'None'
+            assert(Object.keys(res.intents).length == 1)
+            assert('' in res.intents);
             done();
         });
     });
