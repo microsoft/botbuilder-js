@@ -161,29 +161,30 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     /**
      * Create the Inspection middleware for sending trace activities out to an emulator session
      */
-    constructor(inspectionState: InspectionState, userState: UserState|undefined, conversationState: ConversationState|undefined, credentials: MicrosoftAppCredentials|undefined) {
+    constructor(inspectionState: InspectionState, userState?: UserState, conversationState?: ConversationState, credentials?: Partial<MicrosoftAppCredentials>) {
         super();
 
         this.inspectionState = inspectionState;
         this.inspectionStateAccessor = inspectionState.createProperty('InspectionSessionByStatus');
         this.userState = userState;
         this.conversationState = conversationState;
-        this.credentials = credentials || new MicrosoftAppCredentials(undefined, undefined);
+        credentials = { appId: '', appPassword: '', ...credentials };
+        this.credentials = new MicrosoftAppCredentials(credentials.appId, credentials.appPassword);
     }
 
     public async processCommand(turnContext: TurnContext): Promise<any> {
 
         if (turnContext.activity.type == ActivityTypes.Message) {
 
-            var command = turnContext.activity.text.split(' ');
-            if (command.length > 1 && command[0] == InspectionMiddleware.command) {
+            var command = turnContext.activity.text.trim().split(' ');
+            if (command.length > 1 && command[0] === InspectionMiddleware.command) {
 
-                if (command.length == 2 && command[1] == 'open') {
+                if (command.length === 2 && command[1] === 'open') {
                     await this.processOpenCommand(turnContext);
                     return true;
                 }
 
-                if (command.length == 3 && command[1] == 'attach') {
+                if (command.length === 3 && command[1] === 'attach') {
                     await this.processAttachCommand(turnContext, command[2]);
                     return true;
                 }
