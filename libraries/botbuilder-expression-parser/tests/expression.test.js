@@ -217,6 +217,8 @@ const dataSource = [
   ["year(timestamp)", 2018],
   ["formatDateTime(timestamp)", "2018-03-15T13:00:00.0000000Z"],
   ["formatDateTime(timestamp, 'MM-dd-yy')", "03-15-18"],
+  ["subtractFromTime(timestamp, 1, 'Year')", "2017-03-15T13:00:00.0000000Z"],
+  ["subtractFromTime(timestamp, 1, 'Month')", "2018-02-15T13:00:00.0000000Z"],
   ["subtractFromTime(timestamp, 1, 'Week')", "2018-03-08T13:00:00.0000000Z"],
   ["subtractFromTime(timestamp, 1, 'Day')", "2018-03-14T13:00:00.0000000Z"],
   ["subtractFromTime(timestamp, 1, 'Hour')", "2018-03-15T12:00:00.0000000Z"],
