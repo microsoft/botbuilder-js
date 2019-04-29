@@ -55,6 +55,7 @@ const dataSource = [
   ["'string'&'builder'", "stringbuilder"],
   ["\"string\"&\"builder\"", "stringbuilder"],
   ["one > 0.5 && two < 2.5", true, oneTwo],
+  ["notThere > 4", false], 
   ["float(5.5) && float(0.0)", true],
   ["hello && \"hello\"", true],
   ["items || ((2 + 2) <= (4 - 1))", true], // true || false

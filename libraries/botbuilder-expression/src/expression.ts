@@ -150,13 +150,13 @@ export class Expression {
     * @param children Child clauses.
     * @returns New expression.
     */
-   /* deprecated
-    public static ConstantExpression(value: any): Expression {
-        // TODO this make Circular reference and could make error in typescript
-        return new Constant(value);
-        //return undefined;
-    }
-*/
+    /* deprecated
+     public static ConstantExpression(value: any): Expression {
+         // TODO this make Circular reference and could make error in typescript
+         return new Constant(value);
+         //return undefined;
+     }
+ */
     //Please direct use it
     /**
      * Construct and validate a property accessor.
@@ -201,17 +201,27 @@ export class Expression {
 
     protected ToString(name: string): string {
         let builder: string = '';
+        let valid: boolean = false;
         // Special support for memory paths
-        if (this.Type === ExpressionType.Accessor) {
-            const prop: any = (<Constant>(this.Children[0])).Value;
-            if (this.Children.length === 1) {
-                builder = builder.concat(prop);
-            } else {
-                builder = builder.concat(this.Children[1].toString(), '.', prop);
+        if (this.Type === ExpressionType.Accessor && this.Children.length >= 1) {
+            if (this.Children[0] instanceof Constant) {
+                const prop: any = (<Constant>(this.Children[0])).Value;
+                if (typeof prop === 'string') {
+                    if (this.Children.length === 1) {
+                        valid = true;
+                        builder = builder.concat(prop);
+                    } else if (this.Children.length === 2) {
+                        valid = true;
+                        builder = builder.concat(this.Children[1].toString(), '.', prop);
+                    }
+                }
             }
-        } else if (this.Type === ExpressionType.Element) {
+        } else if (this.Type === ExpressionType.Element && this.Children.length === 2) {
+            valid = true;
             builder = builder.concat(this.Children[0].toString(), '[', this.Children[1].toString(), ']');
-        } else {
+        }
+
+        if (!valid) {
             const infix: boolean = this.Type.length > 0 && !new RegExp(/[a-z]/i).test(this.Type[0]) && this.Children.length >= 2;
             if (!infix) {
                 builder = builder.concat(this.Type);

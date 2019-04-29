@@ -29,9 +29,7 @@ export class ExpressionEngine implements IExpressionParser {
             this._lookup = lookup;
         }
 
-        public Transform(context: ParseTree): Expression {
-            return this.visit(context);
-        }
+        public Transform = (context: ParseTree): Expression => this.visit(context);
 
         public visitUnaryOpExp(context: ep.UnaryOpExpContext): Expression {
             const unaryOperationName: string = context.getChild(0).text;
@@ -121,9 +119,7 @@ export class ExpressionEngine implements IExpressionParser {
             throw Error(`${context.text} is not a number.`);
         }
 
-        public visitParenthesisExp(context: ep.ParenthesisExpContext): Expression {
-            return this.visit(context.expression());
-        }
+        public visitParenthesisExp = (context: ep.ParenthesisExpContext): Expression => this.visit(context.expression());
 
         public visitStringAtom(context: ep.StringAtomContext): Expression {
             const text: string = context.text;
@@ -134,12 +130,10 @@ export class ExpressionEngine implements IExpressionParser {
             }
         }
 
-        protected defaultResult(): Expression {
-            return new Constant('');
-        }
-        private MakeExpression(type: string, ...children: Expression[]): Expression {
-            return Expression.MakeExpression(type, this._lookup(type), ...children);
-        }
+        protected defaultResult = (): Expression => new Constant('');
+
+        private MakeExpression = (type: string, ...children: Expression[]): Expression =>
+            Expression.MakeExpression(type, this._lookup(type), ...children);
 
         private ProcessArgsList(context: ep.ArgsListContext): Expression[] {
             const result: Expression[] = [];
@@ -152,9 +146,7 @@ export class ExpressionEngine implements IExpressionParser {
             return result;
         }
 
-        private IsShortHandExpression(name: string): boolean {
-            return name.startsWith('#') || name.startsWith('@') || name.startsWith('$');
-        }
+        private IsShortHandExpression = (name: string): boolean => name.startsWith('#') || name.startsWith('@') || name.startsWith('$');
 
         private MakeShortHandExpression(name: string): Expression {
             if (!this.IsShortHandExpression(name)) {
@@ -170,22 +162,21 @@ export class ExpressionEngine implements IExpressionParser {
 
             // tslint:disable-next-line: switch-default
             switch (prefix) {
-                    case '#':
-                        return this.MakeExpression(ExpressionType.Accessor, new Constant(name),
-                                                   this.MakeExpression(ExpressionType.Accessor, new Constant('intents'),
-                                                                       this.MakeExpression(ExpressionType.Accessor, new Constant('turn'))));
+                case '#':
+                    return this.MakeExpression(ExpressionType.Accessor, new Constant(name),
+                                               this.MakeExpression(ExpressionType.Accessor, new Constant('intents'),
+                                                                   this.MakeExpression(ExpressionType.Accessor, new Constant('turn'))));
 
-                    case '@':
-                        return this.MakeExpression(ExpressionType.Accessor, new Constant(name),
-                                                   this.MakeExpression(ExpressionType.Accessor, new Constant('entities'),
-                                                                       this.MakeExpression(ExpressionType.Accessor, new Constant('turn'))));
+                case '@':
+                    return this.MakeExpression(ExpressionType.Accessor, new Constant(name),
+                                               this.MakeExpression(ExpressionType.Accessor, new Constant('entities'),
+                                                                   this.MakeExpression(ExpressionType.Accessor, new Constant('turn'))));
 
-                    case '$':
-                        return this.MakeExpression(ExpressionType.Accessor, new Constant(name),
-                                                   this.MakeExpression(ExpressionType.Accessor, new Constant('result'),
-// tslint:disable-next-line: align
-                                                    this.MakeExpression(ExpressionType.Accessor, new Constant('dialog'))));
-                }
+                case '$':
+                    return this.MakeExpression(ExpressionType.Accessor, new Constant(name),
+                                               this.MakeExpression(ExpressionType.Accessor, new Constant('result'),
+                                                                   this.MakeExpression(ExpressionType.Accessor, new Constant('dialog'))));
+            }
 
             throw new Error(`no match for shorthand prefix: ${prefix}`);
         }
