@@ -274,7 +274,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
 
         if (this.attachComamnd(turnContext.activity.conversation.id, sessions, sessionId)) {
-            await turnContext.sendActivity('Attached to session, all traffic is being relicated for inspection.');
+            await turnContext.sendActivity('Attached to session, all traffic is being replicated for inspection.');
         }
         else {
             await turnContext.sendActivity(`Open session with id ${sessionId} does not exist.`);
