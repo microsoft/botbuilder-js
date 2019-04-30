@@ -12,6 +12,17 @@ import { Middleware, TurnContext, BotState, StatePropertyAccessor, UserState, Co
 /** @private */
 class TraceActivity {
 
+    public static makeCommandActivity(command: string): Partial<Activity> {
+        return {
+            type: ActivityTypes.Trace,
+            timestamp: new Date(),
+            name: 'Command',
+            label: 'Command',
+            value: command,
+            valueType: 'https://www.botframework.com/schemas/command'
+        };
+    }
+
     public static fromActivity(activity: Activity|Partial<Activity>, name: string, label: string): Partial<Activity> {
         return {
             type: ActivityTypes.Trace,
@@ -23,14 +34,13 @@ class TraceActivity {
         };
     }
 
-    public static fromState(botState: BotState, turnContext: TurnContext, name: string, label: string): Partial<Activity> {
-        var obj = botState.get(turnContext);
+    public static fromState(botState: BotState): Partial<Activity> {
         return {
             type: ActivityTypes.Trace,
             timestamp: new Date(),
-            name: name,
-            label: label,
-            value: obj,
+            name: 'BotState',
+            label: 'Bot State',
+            value: botState,
             valueType: 'https://www.botframework.com/schemas/botState'
         };
     }
@@ -239,19 +249,24 @@ export class InspectionMiddleware extends InterceptionMiddleware {
                 await this.conversationState.load(turnContext, false);
             }
 
+            var botState: any = {};
+
             if (this.userState !== undefined) {
-                await this.invokeSend(turnContext, session, TraceActivity.fromState(this.userState, turnContext, 'UserState', 'User State'));
+                botState.userState = this.userState.get(turnContext);
             }
+
             if (this.conversationState !== undefined) {
-                await this.invokeSend(turnContext, session, TraceActivity.fromState(this.conversationState, turnContext, 'ConversationState', 'Conversation State'));
+                botState.conversationState = this.conversationState.get(turnContext);
             }
+
+            await this.invokeSend(turnContext, session, TraceActivity.fromState(botState));
         }
     }
 
     private async processOpenCommand(turnContext: TurnContext): Promise<any> {
         var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
         var sessionId = this.openCommand(sessions, TurnContext.getConversationReference(turnContext.activity));
-        await turnContext.sendActivity(`${InspectionMiddleware.command} attach ${sessionId}`);
+        await turnContext.sendActivity(TraceActivity.makeCommandActivity(`${InspectionMiddleware.command} attach ${sessionId}`));
         await this.inspectionState.saveChanges(turnContext, false);
     }
 
