@@ -545,6 +545,15 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
             switch (entity.type) {
                 case 'builtin.number':
                 case 'builtin.ordinal': return Number(res.value);
+                case "builtin.ordinal.relative":
+                    {
+                        let offset: any = Number(res.offset);
+                        let relativeTo: any = res.relativeTo;
+                        return {
+                            offset,
+                            relativeTo
+                        };
+                    }
                 case 'builtin.percentage':
                     {
                         let svalue: string = res.value;
@@ -569,11 +578,16 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                         return obj;
                     }
                 default:
-                    return Object.keys(entity.resolution).length > 1 ?
-                        entity.resolution :
-                        entity.resolution.value ?
-                            entity.resolution.value :
-                            entity.resolution.values;
+                    {
+                        if (Object.keys(entity.resolution).length > 1)
+                        {
+                            return entity.resolution;
+                        }
+
+                        return entity.resolution.value ||
+                            entity.resolution.values ||
+                            entity.resolution;
+                    }
             }
         }
     }

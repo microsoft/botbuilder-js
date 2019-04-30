@@ -857,6 +857,7 @@ describe('LuisRecognizer', function () {
         });
     });
 
+    it('should parse unknown resolution', done => TestJson("UnknownResolution.json", res => done()));
 });
 
 class telemetryOverrideRecognizer extends LuisRecognizer {

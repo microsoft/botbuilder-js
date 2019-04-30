@@ -1,0 +1,43 @@
+﻿{
+  "text": "unknown",
+  "intents": {
+    "None": {
+      "score": 0.8575135
+    }
+  },
+  "entities": {
+    "$instance": {
+      "something_unknown": [
+        {
+          "startIndex": 0,
+          "endIndex": 7,
+          "text": "unknown",
+          "type": "builtin.something.unknown"
+        }
+      ]
+    },
+    "something_unknown": [
+      {
+        "unknown": "unknown"
+      }
+    ]
+  },
+  "luisResult": {
+    "query": "unknown",
+    "topScoringIntent": {
+      "intent": "None",
+      "score": 0.8575135
+    },
+    "entities": [
+      {
+        "entity": "unknown",
+        "type": "builtin.something.unknown",
+        "startIndex": 0,
+        "endIndex": 6,
+        "resolution": {
+          "unknown": "unknown"
+        }
+      }
+    ]
+  }
+}
