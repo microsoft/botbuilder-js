@@ -127,26 +127,48 @@ export class StaticChecker extends AbstractParseTreeVisitor<ReportEntry[]> imple
 
         let idx: number = 0;
         for (const ifRule of ifRules) {
-            const conditionLabel: string = ifRule.ifCondition().IFELSE().text.toLowerCase();
-            if (idx === 0 && conditionLabel !== 'if:') {
+            //const ifExpr = ifRule.ifCondition().IF() != null;
+            //const elseIfExpr = ifRule.ifCondition().ELSEIF() != null;
+            //const elseExpr = ifRule.ifCondition().ELSE() != null;
+            const conditionNode = ifRule.ifCondition();
+            const ifExpr = conditionNode.IF() != null;
+            const elseIfExpr = conditionNode.ELSEIF() != null;
+            const elseExpr = conditionNode.ELSE() != null;
+
+            const node = ifExpr ? conditionNode.IF():
+                         elseIfExpr ? conditionNode.ELSEIF():
+                         conditionNode.ELSE();
+
+            
+            if (node.text.split(" ").length - 1 > 1)
+            {
+                result.push(new ReportEntry(`At most 1 whitespace is allowed between IF/ELSEIF/ELSE and :. expression: '${context.conditionalTemplateBody().text}'`, ReportEntryType.ERROR));
+            }
+
+            if (idx === 0 && !ifExpr)
+            {
                 result.push(new ReportEntry(`condition is not start with if: '${context.conditionalTemplateBody().text}'`,
                                             ReportEntryType.WARN));
             }
 
-            if (idx > 0 && conditionLabel === 'if:') {
-                result.push(new ReportEntry(`condition can't have more than one if: '${context.conditionalTemplateBody().text}'`));
+            if (idx > 0 && ifExpr)
+            {
+            result.push(new ReportEntry(`condition can't have more than one if: '${context.conditionalTemplateBody().text}'`));
             }
 
-            if (idx === ifRules.length - 1 && conditionLabel !== 'else:') {
+            if (idx === ifRules.length - 1 && !elseExpr )   
+            { 
                 result.push(new ReportEntry(`condition is not end with else: '${context.conditionalTemplateBody().text}'`,
                                             ReportEntryType.WARN));
             }
 
-            if (idx > 0 && idx < ifRules.length - 1 && conditionLabel !== 'elseif:') {
+            if (idx > 0 && idx < ifRules.length - 1 && !elseIfExpr)    
+            {
                 result.push(new ReportEntry(`only elseif is allowed in middle of condition: '${context.conditionalTemplateBody().text}'`));
             }
 
-            if (conditionLabel !== 'else:') {
+            if (!elseExpr)
+            {
                 if (ifRule.ifCondition().EXPRESSION().length !== 1) {
                     result.push(new ReportEntry(`if and elseif should followed by one valid expression: '${ifRule.text}'`));
                 } else {

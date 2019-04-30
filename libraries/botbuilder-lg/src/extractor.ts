@@ -65,7 +65,14 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         const ifRules: lp.IfConditionRuleContext[] = context.conditionalTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             const expressions: TerminalNode[] = ifRule.ifCondition().EXPRESSION();
-            const conditionLabel: string = ifRule.ifCondition().IFELSE().text.toLowerCase();
+            const conditionNode = ifRule.ifCondition();
+            const ifExpr = conditionNode.IF() != null;
+            const elseIfExpr = conditionNode.ELSEIF() != null;
+            const elseExpr = conditionNode.ELSE() != null;
+            const node = ifExpr ? conditionNode.IF():
+                         elseIfExpr ? conditionNode.ELSEIF():
+                         conditionNode.ELSE();
+            const conditionLabel: string = node.text.toLowerCase();
             const childTemplateBodyResult: string[] = [];
             const templateBodies: Map<string, any> = this.visit(ifRule.normalTemplateBody());
             for (const templateBody of templateBodies) {
