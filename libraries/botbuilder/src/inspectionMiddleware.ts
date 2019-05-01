@@ -361,7 +361,7 @@ class InspectionSession {
         try {
             await this.connectorClient.conversations.sendToConversation(activity.conversation.id, activity as Activity);
         } catch (err) {
-            console.warn('Exception while attempting to call emulator for inspection, check it is running, and you have correct credentials in the Emulator and the inspectionMiddleware.');
+            console.warn(`Exception '${ err }' while attempting to call Emulator for inspection, check it is running, and you have correct credentials in the Emulator and the InspectionMiddleware.`);
             return false;
         }
 
