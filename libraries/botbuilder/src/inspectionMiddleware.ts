@@ -102,8 +102,6 @@ abstract class InterceptionMiddleware implements Middleware {
                 await this.invokeOutbound(ctx, [ traceActivity ]);
                 return await nextDelete();
             });
-
-            await this.invokeTraceState(turnContext);
         }
         
         if (shouldForwardToApplication) {
@@ -115,6 +113,11 @@ abstract class InterceptionMiddleware implements Middleware {
                 await this.invokeOutbound(turnContext, [ traceActivity ]);
                 throw err;
             }
+        }
+
+        if (shouldIntercept) {
+        
+            await this.invokeTraceState(turnContext);
         }
     }
 
@@ -358,6 +361,7 @@ class InspectionSession {
         try {
             await this.connectorClient.conversations.sendToConversation(activity.conversation.id, activity as Activity);
         } catch (err) {
+            console.warn(`Exception '${ err }' while attempting to call Emulator for inspection, check it is running, and you have correct credentials in the Emulator and the InspectionMiddleware.`);
             return false;
         }
 
