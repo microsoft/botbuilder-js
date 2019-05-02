@@ -354,14 +354,27 @@ export const Attachment: msRest.CompositeMapper = {
 export const Entity: msRest.CompositeMapper = {
   serializedName: "Entity",
   type: {
-    name: "Composite",
-    className: "Entity",
-    modelProperties: {
+      name: "Composite",
+      className: "Entity",
+      modelProperties: {
       type: {
-        serializedName: "type",
-        type: {
+          serializedName: "type",
+          type: {
           name: "String"
-        }
+          }
+      },
+      text: {
+          serializedName: "text",
+          type: {
+              name: "String"
+          }
+      },
+      mentioned: {
+          serializedName: "mentioned",
+          type: {
+              name: "Composite",
+              className: "ChannelAccount"
+          }
       }
     }
   }
