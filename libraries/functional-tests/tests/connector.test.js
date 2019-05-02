@@ -73,7 +73,7 @@ var readStreamToBuffer = function(stream, callback) {
   stream.on('error', (err) => callback(error, null));
 }
 
-xdescribe('Bot Framework Connector SDK', function() {  
+xdescribe('Bot Framework Connector SDK', function() {
   before(function (done) {
     suite = new SuiteBase(this, testPrefix, requiredEnvironment, libraryPath);
     suite.setupSuite(function () {
