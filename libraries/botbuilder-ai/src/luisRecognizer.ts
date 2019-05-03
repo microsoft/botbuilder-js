@@ -515,9 +515,12 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                 return;
             }
 
-            this.addProperty(entitiesAndMetadata, this.getNormalizedEntityName(entity), this.getEntityValue(entity));
-            if (verbose) {
-                this.addProperty(entitiesAndMetadata.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
+            let val = this.getEntityValue(entity);
+            if (val != null) {
+                this.addProperty(entitiesAndMetadata, this.getNormalizedEntityName(entity), val);
+                if (verbose) {
+                    this.addProperty(entitiesAndMetadata.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
+                }
             }
         });
 
@@ -569,11 +572,10 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                         return obj;
                     }
                 default:
-                    return Object.keys(entity.resolution).length > 1 ?
-                        entity.resolution :
-                        entity.resolution.value ?
-                            entity.resolution.value :
-                            entity.resolution.values;
+                    // This will return null if there is no value/values which can happen when a new prebuilt is introduced
+                    return entity.resolution.value ?
+                        entity.resolution.value :
+                        entity.resolution.values;
             }
         }
     }
@@ -651,10 +653,13 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
 
                     // Add to the set to ensure that we don't consider the same child entity more than once per composite
                     coveredSet.add(i);
-                    this.addProperty(childrenEntites, this.getNormalizedEntityName(entity), this.getEntityValue(entity));
 
-                    if (verbose) {
-                        this.addProperty(childrenEntites.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
+                    let val = this.getEntityValue(entity);
+                    if (val != null) {
+                        this.addProperty(childrenEntites, this.getNormalizedEntityName(entity), val);
+                        if (verbose) {
+                            this.addProperty(childrenEntites.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
+                        }
                     }
                 }
             }

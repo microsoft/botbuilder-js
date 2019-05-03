@@ -2,34 +2,37 @@
   "text": "I want to travel on united",
   "intents": {
     "Travel": {
-      "score": 0.76965636
+      "score": 0.778995454
+    },
+    "Roles": {
+      "score": 0.0436668731
     },
     "Weather_GetForecast": {
-      "score": 0.0243125279
-    },
-    "None": {
-      "score": 0.0130586373
-    },
-    "Delivery": {
-      "score": 0.01043733
-    },
-    "Help": {
-      "score": 0.009187382
-    },
-    "Cancel": {
-      "score": 0.008433739
+      "score": 0.01527163
     },
     "search": {
-      "score": 0.00767625
+      "score": 0.009627009
+    },
+    "None": {
+      "score": 0.00849792
+    },
+    "Delivery": {
+      "score": 0.00756497774
+    },
+    "Help": {
+      "score": 0.0063340934
     },
     "SpecifyName": {
-      "score": 0.005364695
+      "score": 0.005855627
+    },
+    "Cancel": {
+      "score": 0.00583504
     },
     "Greeting": {
-      "score": 0.00383586367
+      "score": 0.00246399455
     },
     "EntityTests": {
-      "score": 0.00216149073
+      "score": 0.00223398115
     }
   },
   "entities": {
@@ -57,48 +60,52 @@
     "query": "I want to travel on united",
     "topScoringIntent": {
       "intent": "Travel",
-      "score": 0.76965636
+      "score": 0.778995454
     },
     "intents": [
       {
         "intent": "Travel",
-        "score": 0.76965636
+        "score": 0.778995454
+      },
+      {
+        "intent": "Roles",
+        "score": 0.0436668731
       },
       {
         "intent": "Weather.GetForecast",
-        "score": 0.0243125279
-      },
-      {
-        "intent": "None",
-        "score": 0.0130586373
-      },
-      {
-        "intent": "Delivery",
-        "score": 0.01043733
-      },
-      {
-        "intent": "Help",
-        "score": 0.009187382
-      },
-      {
-        "intent": "Cancel",
-        "score": 0.008433739
+        "score": 0.01527163
       },
       {
         "intent": "search",
-        "score": 0.00767625
+        "score": 0.009627009
+      },
+      {
+        "intent": "None",
+        "score": 0.00849792
+      },
+      {
+        "intent": "Delivery",
+        "score": 0.00756497774
+      },
+      {
+        "intent": "Help",
+        "score": 0.0063340934
       },
       {
         "intent": "SpecifyName",
-        "score": 0.005364695
+        "score": 0.005855627
+      },
+      {
+        "intent": "Cancel",
+        "score": 0.00583504
       },
       {
         "intent": "Greeting",
-        "score": 0.00383586367
+        "score": 0.00246399455
       },
       {
         "intent": "EntityTests",
-        "score": 0.00216149073
+        "score": 0.00223398115
       }
     ],
     "entities": [
