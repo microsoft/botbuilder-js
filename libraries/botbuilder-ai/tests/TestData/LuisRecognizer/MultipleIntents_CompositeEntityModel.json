@@ -2,34 +2,37 @@
   "text": "Please deliver it to 98033 WA",
   "intents": {
     "Delivery": {
-      "score": 0.9585951
+      "score": 0.953645349
+    },
+    "Roles": {
+      "score": 0.0129101127
     },
     "Weather_GetForecast": {
-      "score": 0.0151362987
+      "score": 0.0123111764
     },
     "Cancel": {
-      "score": 0.0146958372
-    },
-    "None": {
-      "score": 0.009877626
+      "score": 0.0121123884
     },
     "search": {
-      "score": 0.007133263
+      "score": 0.0106669758
     },
-    "Help": {
-      "score": 0.00476914737
-    },
-    "Greeting": {
-      "score": 0.00417633541
+    "None": {
+      "score": 0.0076863626
     },
     "Travel": {
-      "score": 0.00407868437
+      "score": 0.00609561335
     },
     "SpecifyName": {
-      "score": 0.00352112949
+      "score": 0.00545336958
+    },
+    "Help": {
+      "score": 0.003606656
+    },
+    "Greeting": {
+      "score": 0.00287445565
     },
     "EntityTests": {
-      "score": 0.00260476768
+      "score": 0.00268877461
     }
   },
   "entities": {
@@ -38,7 +41,7 @@
         {
           "startIndex": 21,
           "endIndex": 29,
-          "score": 0.9807632,
+          "score": 0.9665226,
           "text": "98033 wa",
           "type": "Address"
         }
@@ -47,15 +50,6 @@
     "Address": [
       {
         "$instance": {
-          "State": [
-            {
-              "startIndex": 27,
-              "endIndex": 29,
-              "score": 0.9781381,
-              "text": "wa",
-              "type": "State"
-            }
-          ],
           "number": [
             {
               "startIndex": 21,
@@ -64,13 +58,22 @@
               "type": "builtin.number",
               "subtype": "integer"
             }
+          ],
+          "State": [
+            {
+              "startIndex": 27,
+              "endIndex": 29,
+              "score": 0.9819666,
+              "text": "wa",
+              "type": "State"
+            }
           ]
         },
-        "State": [
-          "wa"
-        ],
         "number": [
           98033
+        ],
+        "State": [
+          "wa"
         ]
       }
     ]
@@ -83,48 +86,52 @@
     "query": "Please deliver it to 98033 WA",
     "topScoringIntent": {
       "intent": "Delivery",
-      "score": 0.9585951
+      "score": 0.953645349
     },
     "intents": [
       {
         "intent": "Delivery",
-        "score": 0.9585951
+        "score": 0.953645349
+      },
+      {
+        "intent": "Roles",
+        "score": 0.0129101127
       },
       {
         "intent": "Weather.GetForecast",
-        "score": 0.0151362987
+        "score": 0.0123111764
       },
       {
         "intent": "Cancel",
-        "score": 0.0146958372
-      },
-      {
-        "intent": "None",
-        "score": 0.009877626
+        "score": 0.0121123884
       },
       {
         "intent": "search",
-        "score": 0.007133263
+        "score": 0.0106669758
       },
       {
-        "intent": "Help",
-        "score": 0.00476914737
-      },
-      {
-        "intent": "Greeting",
-        "score": 0.00417633541
+        "intent": "None",
+        "score": 0.0076863626
       },
       {
         "intent": "Travel",
-        "score": 0.00407868437
+        "score": 0.00609561335
       },
       {
         "intent": "SpecifyName",
-        "score": 0.00352112949
+        "score": 0.00545336958
+      },
+      {
+        "intent": "Help",
+        "score": 0.003606656
+      },
+      {
+        "intent": "Greeting",
+        "score": 0.00287445565
       },
       {
         "intent": "EntityTests",
-        "score": 0.00260476768
+        "score": 0.00268877461
       }
     ],
     "entities": [
@@ -133,14 +140,14 @@
         "type": "State",
         "startIndex": 27,
         "endIndex": 28,
-        "score": 0.9781381
+        "score": 0.9819666
       },
       {
         "entity": "98033 wa",
         "type": "Address",
         "startIndex": 21,
         "endIndex": 28,
-        "score": 0.9807632
+        "score": 0.9665226
       },
       {
         "entity": "98033",
@@ -159,12 +166,12 @@
         "value": "98033 wa",
         "children": [
           {
-            "type": "State",
-            "value": "wa"
-          },
-          {
             "type": "builtin.number",
             "value": "98033"
+          },
+          {
+            "type": "State",
+            "value": "wa"
           }
         ]
       }
