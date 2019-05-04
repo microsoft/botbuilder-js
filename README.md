@@ -11,6 +11,9 @@ This repo is part the [Microsoft Bot Framework](https://github.com/microsoft/bot
 
 > See [here][build-2019-whats-new] for a summary of all new features announced at //BUILD 2019
 
+[build-2019-whats-new]:https://github.com/Microsoft/botframework-sdk/blob/master/README.md#bot-framework-sdk-v4---new---version-45-preview
+[whats-new]:https://github.com/Microsoft/botframework-sdk/blob/master/README.md#bot-framework-sdk-v4---new---version-45-preview
+
  | Branch | Description        | Build Status | Coverage Status |
  |----|---------------|--------------|-----------------|
 |Master | 4.5.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/BotBuilder-JS-master-daily)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=460)|[![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=master)
