@@ -1,15 +1,13 @@
 
 # ![Bot Framework SDK v4 for JavaScript](./docs/media/FrameWorkJavaScript.png)
 
+### [Click here to find out what's new for //build2019!](https://github.com/Microsoft/botframework/blob/master/whats-new.md#whats-new)
+
 # Bot Framework SDK v4 for JavaScript
 
 This repository contains code for the JavaScript version of the Microsoft Bot Framework SDK. The Bot Framework SDK v4 enable developers to model conversation and build sophisticated bot applications.
 
 This repo is part the [Microsoft Bot Framework](https://github.com/microsoft/botframework) - a comprehensive framework for building enterprise-grade conversational AI experiences.
-
-> See [here][whats-new] to learn more about the new preview features for Bot Framework V4 SDK. 
-
-> See [here][build-2019-whats-new] for a summary of all new features announced at //BUILD 2019
 
 [build-2019-whats-new]:https://github.com/Microsoft/botframework-sdk/blob/master/README.md#bot-framework-sdk-v4---new---version-45-preview
 [whats-new]:https://github.com/Microsoft/botframework-sdk/blob/master/README.md#bot-framework-sdk-v4---new---version-45-preview
