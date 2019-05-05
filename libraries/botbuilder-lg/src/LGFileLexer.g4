@@ -95,9 +95,16 @@ NEWLINE_IN_BODY
   : '\r'? '\n' {this.ignoreWS = true;} -> type(NEWLINE), popMode
   ;
 
-// only if/else makes ignoreWS = true
-IFELSE
-  : ('if:' | 'IF:' | 'elseif:' | 'ELSEIF:' | 'else:' | 'ELSE:') {this.expectIfElse}? { this.ignoreWS = true;}
+IF
+  : ('if'|'IF') WHITESPACE* ':'  {this.expectIfElse}? { this.ignoreWS = true;}
+  ;
+
+ELSEIF
+  : ('elseif'|'ELSEIF') WHITESPACE* ':' {this.expectIfElse}? { this.ignoreWS = true;}
+  ;
+
+ELSE
+   : ('else'|'ELSE') WHITESPACE* ':' {this.expectIfElse}? { this.ignoreWS = true;}
   ;
 
 MULTI_LINE_TEXT
