@@ -1,5 +1,5 @@
 
-# ![Bot Framework SDK v4 for JavaScript](./docs/media/FrameWorkJavaScript.png)
+# ![Bot Framework SDK v4 for JavaScript](./docs/media/BotFrameworkJavaScript_header.png)
 
 ### [Click here to find out what's new for //build2019!](https://github.com/Microsoft/botframework/blob/master/whats-new.md#whats-new)
 
@@ -76,6 +76,5 @@ email to ensure we received your original message. Further information, includin
 [MSRC PGP](https://technet.microsoft.com/en-us/security/dn606155) key, can be found in
 the [Security TechCenter](https://technet.microsoft.com/en-us/security/default).
 
-## License
 
 Copyright (c) Microsoft Corporation. All rights reserved.
