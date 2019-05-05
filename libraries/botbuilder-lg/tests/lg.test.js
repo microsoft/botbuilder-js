@@ -99,7 +99,7 @@ describe('LG', function () {
 
     it('TestListWithOnlyOneElement',function(){
         var engine = TemplateEngine.fromFiles(GetExampleFilePath("8.lg"));
-        var evaled = engine.evaluateTemplate("RecentTasks", {recentTasks:['Task1']});
+        var evaled = engine.evaluateTemplate("ShowTasks", {recentTasks:['Task1']});
         assert.strictEqual(evaled === "Your most recent task is Task1. You can let me know if you want to add or complete a task.", true,`Evaled is ${evaled}`);
     });
 
