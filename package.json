@@ -6,6 +6,7 @@
         "build": "lerna run build",
         "clean": "lerna run clean",
         "test": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\"",
+        "functional-test": "lerna run build && nyc mocha \"libraries/**/tests/*.test.js\"",
         "test:coveralls": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\" && nyc report --reporter=text-lcov | coveralls",
         "build-docs": "lerna run build-docs",
         "eslint": "./node_modules/.bin/eslint  ./libraries/*/src/*.ts ./libraries/*/src/**/*.ts",
