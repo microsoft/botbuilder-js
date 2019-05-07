@@ -7,6 +7,6 @@
  * Licensed under the MIT License.
  */
 export * from './errorListener';
-export * from './ExpressionEngine';
+export * from './expressionEngine';
 export * from './util';
 export * from './generated';
