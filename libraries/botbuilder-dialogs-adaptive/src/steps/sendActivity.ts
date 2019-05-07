@@ -46,19 +46,30 @@ export class SendActivity extends DialogCommand {
     constructor(activityOrText: Partial<Activity>|string, speak?: string, inputHint?: InputHints);
     constructor(activityOrText?: Partial<Activity>|string, speak?: string, inputHint?: InputHints) {
         super();
-        if (activityOrText) { this.activity.value = activityOrText }
-        if (speak) { this.activity.speak = speak }
-        this.activity.inputHint = inputHint || InputHints.AcceptingInput;
+        if (activityOrText) { this.activityProperty.value = activityOrText }
+        if (speak) { this.activityProperty.speak = speak }
+        this.activityProperty.inputHint = inputHint || InputHints.AcceptingInput;
     }
 
     protected onComputeID(): string {
-        return `send[${this.hashedLabel(this.activity.displayLabel)}]`;
+        return `send[${this.hashedLabel(this.activityProperty.displayLabel)}]`;
     }
 
     /**
      * Activity to send the user.
      */
-    public activity = new ActivityProperty();
+    private activityProperty = new ActivityProperty();
+
+    /**
+     * Public getter and setter for declarative activity configuration
+     */
+    public get activity(): Partial<Activity>|string {
+        return this.activityProperty.value;
+    }
+
+    public set activity(value: Partial<Activity>|string) {
+        this.activityProperty.value = value;
+    }
 
     /**
      * (Optional) in-memory state property that the result of the send should be saved to.
@@ -79,7 +90,7 @@ export class SendActivity extends DialogCommand {
     }
     
     protected async onRunCommand(dc: DialogContext, options: object): Promise<DialogTurnResult> {
-        if (!this.activity.hasValue()) {
+        if (!this.activityProperty.hasValue()) {
             throw new Error(`SendActivity: no activity assigned for step '${this.id}'.`) 
         } 
 
@@ -89,7 +100,7 @@ export class SendActivity extends DialogCommand {
         const data = Object.assign({
             utterance: dc.context.activity.text || ''
         }, dc.state.toJSON(),  options);
-        const activity = this.activity.format(dc, data);
+        const activity = this.activityProperty.format(dc, data);
         const result = await dc.context.sendActivity(activity);
         return await dc.endDialog(result);
     }

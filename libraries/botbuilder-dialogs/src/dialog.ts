@@ -394,7 +394,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      */
     protected bindingPath(hashOutput = true): string {
         let output = '';
-        if (this.inputProperties.hasOwnProperty('value')) {
+        if (this.inputProperties.hasOwnProperty('value') && this.inputProperties['value']) {
             output = this.inputProperties['value'];
         } else if (this.outputProperty && this.outputProperty.length) {
             output = this.outputProperty;

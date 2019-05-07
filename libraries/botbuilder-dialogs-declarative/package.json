@@ -1,7 +1,7 @@
 {
   "name": "botbuilder-dialogs-declarative",
   "author": "Microsoft Corp.",
-  "description": "Rule system for the Microsoft BotBuilder dialog system.",
+  "description": "Declarative library for the Microsoft BotBuilder dialog system.",
   "version": "4.1.6",
   "license": "MIT",
   "keywords": [
@@ -29,6 +29,7 @@
     "@types/node": "^10.12.18",
     "botbuilder-core": "~4.1.6",
     "botbuilder-dialogs": "~4.1.6",
+    "botbuilder-dialogs-adaptive": "~4.1.6",
     "botframework-connector": "~4.1.6",
     "botframework-schema": "~4.1.6",
     "jsonpath": "^1.0.0"

@@ -1,0 +1,6 @@
+{
+    "$schema": "../../app.schema",
+    "$type": "Microsoft.TextInput",
+    "prompt": "Hello, I'm Zoidberg. What is your name?",
+    "property": "user.name"
+}

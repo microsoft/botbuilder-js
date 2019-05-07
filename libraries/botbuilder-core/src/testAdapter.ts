@@ -488,7 +488,7 @@ export class TestFlow {
                 validateActivity(reply, expected);
             } else {
                 assert.equal(reply.type, ActivityTypes.Message, `${description2} type === '${reply.type}'. `);
-                assert.equal(reply.text, expected, `${description2} text === "${reply.text}"`);
+                assert.equal(reply.text, expected, `${description2} expected "${expected}" === reply "${reply.text}"`);
             }
         }
 

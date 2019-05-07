@@ -10,9 +10,9 @@ import { ActivityProperty } from '../activityProperty';
 import { Activity } from 'botbuilder-core';
 
 export class ChoiceInput extends DialogCommand implements DialogDependencies {
-    private prompt = new ChoicePrompt();
+    private choicePrompt = new ChoicePrompt();
 
-    constructor(property: string, activity: string|Partial<Activity>, choices: string|string[]) {
+    constructor(property?: string, activity?: string|Partial<Activity>, choices?: string|string[]) {
         super();
         this.property = property;
         this.activity.value = activity;
@@ -29,8 +29,8 @@ export class ChoiceInput extends DialogCommand implements DialogDependencies {
 
     public getDependencies(): Dialog[] {
         // Update prompts ID before returning.
-        this.prompt.id = this.id + ':prompt';
-        return [this.prompt];
+        this.choicePrompt.id = this.id + ':prompt';
+        return [this.choicePrompt];
     }
 
     public configure(config: DialogConfiguration): this {
@@ -40,6 +40,14 @@ export class ChoiceInput extends DialogCommand implements DialogDependencies {
     /**
      * Activity to send the user.
      */
+    public set prompt(value: string|Partial<Activity>) {
+        this.activity.value = value;
+    }
+
+    public get prompt(): string|Partial<Activity> {
+        return this.activity.value;
+    }
+    
     public activity = new ActivityProperty();
 
     public choices: string[];
@@ -91,7 +99,7 @@ export class ChoiceInput extends DialogCommand implements DialogDependencies {
 
             // Send prompt
             const activity = this.activity.format(dc, { utterance: dc.context.activity.text || '' });
-            return await dc.prompt(this.prompt.id, activity, choices);
+            return await dc.prompt(this.choicePrompt.id, activity, choices);
         } else {
             return await dc.endDialog();
         }

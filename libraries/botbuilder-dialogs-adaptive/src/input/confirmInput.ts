@@ -10,9 +10,9 @@ import { ActivityProperty } from '../activityProperty';
 import { Activity } from 'botbuilder-core';
 
 export class ConfirmInput extends DialogCommand implements DialogDependencies {
-    private prompt = new ConfirmPrompt();
+    private confirmPrompt = new ConfirmPrompt();
 
-    constructor(property: string, activity: string|Partial<Activity>, alwaysPrompt = false) {
+    constructor(property?: string, activity?: string|Partial<Activity>, alwaysPrompt = false) {
         super();
         this.property = property;
         this.activity.value = activity;
@@ -25,8 +25,8 @@ export class ConfirmInput extends DialogCommand implements DialogDependencies {
 
     public getDependencies(): Dialog[] {
         // Update prompts ID before returning.
-        this.prompt.id = this.id + ':prompt';
-        return [this.prompt];
+        this.confirmPrompt.id = this.id + ':prompt';
+        return [this.confirmPrompt];
     }
 
     public configure(config: DialogConfiguration): this {
@@ -38,6 +38,14 @@ export class ConfirmInput extends DialogCommand implements DialogDependencies {
     /**
      * Activity to send the user.
      */
+    public set prompt(value: string|Partial<Activity>) {
+        this.activity.value = value;
+    }
+
+    public get prompt(): string|Partial<Activity> {
+        return this.activity.value;
+    }
+    
     public activity = new ActivityProperty();
 
     /**
@@ -62,7 +70,7 @@ export class ConfirmInput extends DialogCommand implements DialogDependencies {
         const value = dc.state.getValue(this.property);
         if (typeof value !== 'boolean' || this.allwaysPrompt) {
             const activity = this.activity.format(dc, { utterance: dc.context.activity.text || '' });
-            return await dc.prompt(this.prompt.id, activity);
+            return await dc.prompt(this.confirmPrompt.id, activity);
         } else {
             return await dc.endDialog();
         }

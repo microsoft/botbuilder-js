@@ -14,9 +14,9 @@ export interface TextInputConfiguration extends DialogConfiguration {
 }
 
 export class TextInput extends DialogCommand implements DialogDependencies {
-    private prompt = new TextPrompt();
+    private textPrompt = new TextPrompt();
 
-    constructor(property: string, activity: string|Partial<Activity>) {
+    constructor(property?: string, activity?: string|Partial<Activity>) {
         super();
         this.property = property;
         this.activity.value = activity;
@@ -28,8 +28,8 @@ export class TextInput extends DialogCommand implements DialogDependencies {
 
     public getDependencies(): Dialog[] {
         // Update prompts ID before returning.
-        this.prompt.id = this.id + ':prompt';
-        return [this.prompt];
+        this.textPrompt.id = this.id + ':prompt';
+        return [this.textPrompt];
     }
 
     public configure(config: TextInputConfiguration): this {
@@ -39,7 +39,15 @@ export class TextInput extends DialogCommand implements DialogDependencies {
     /**
      * Activity to send the user.
      */
-    public activity = new ActivityProperty();
+    public set prompt(value: string|Partial<Activity>) {
+        this.activity.value = value;
+    }
+
+    public get prompt(): string|Partial<Activity> {
+        return this.activity.value;
+    }
+
+    private activity = new ActivityProperty();
 
     /**
      * (Optional) data binds the called dialogs input & output to the given property.
@@ -63,7 +71,7 @@ export class TextInput extends DialogCommand implements DialogDependencies {
         const value = dc.state.getValue(this.property);
         if (typeof value !== 'string' || value.length == 0) {
             const activity = this.activity.format(dc, { utterance: dc.context.activity.text || '' });
-            return await dc.prompt(this.prompt.id, activity);
+            return await dc.prompt(this.textPrompt.id, activity);
         } else {
             return await dc.endDialog();
         }
