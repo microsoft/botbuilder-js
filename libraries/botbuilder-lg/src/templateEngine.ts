@@ -11,7 +11,7 @@ import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
 import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import * as fs from 'fs';
 import { flatten } from 'lodash';
-import { Analyzer } from './Analyzer';
+import { Analyzer } from './analyzer';
 import { ErrorListener } from './errorListener';
 import { Evaluator } from './evaluator';
 import { LGFileLexer } from './generated/LGFileLexer';
