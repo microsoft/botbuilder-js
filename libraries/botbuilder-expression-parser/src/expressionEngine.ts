@@ -10,7 +10,7 @@ import { ANTLRInputStream, CommonTokenStream } from 'antlr4ts';
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, ParseTree } from 'antlr4ts/tree';
 import { BuiltInFunctions, Constant, EvaluatorLookup, Expression, ExpressionType, IExpressionParser } from 'botbuilder-expression';
-import { ErrorListener } from './ErrorListener';
+import { ErrorListener } from './errorListener';
 import { ExpressionLexer, ExpressionParser, ExpressionVisitor } from './generated';
 import * as ep from './generated/ExpressionParser';
 import { Util } from './util';
