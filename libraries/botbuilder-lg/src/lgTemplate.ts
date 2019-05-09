@@ -27,6 +27,10 @@ export class LGTemplate {
      */
     public Source: string;
     /**
+     * Text format of Body of this template. All content except Name and Parameters.
+     */
+    public Body: string;
+    /**
      * The parse tree of this template
      */
     public ParseTree: TemplateDefinitionContext;
@@ -37,6 +41,7 @@ export class LGTemplate {
 
         this.Name = this.ExtractName(parseTree);
         this.Parameters = this.ExtractParameters(parseTree);
+        this.Body = this.ExtractBody(parseTree);
     }
 
     private readonly ExtractName = (parseTree: TemplateDefinitionContext) : string => {
@@ -50,5 +55,13 @@ export class LGTemplate {
         }
 
         return [];
+    }
+
+    private readonly ExtractBody = (parseTree: TemplateDefinitionContext): string => {
+        if (parseTree.templateBody() !== undefined) {
+            return parseTree.templateBody().text;
+        }
+
+        return '';
     }
 }
