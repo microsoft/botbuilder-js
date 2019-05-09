@@ -5,22 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// tslint:disable-next-line: no-submodule-imports
-import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
-// tslint:disable-next-line: no-submodule-imports
-import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import * as fs from 'fs';
 import { flatten } from 'lodash';
 import { Analyzer } from './analyzer';
-import { ErrorListener } from './errorListener';
 import { Evaluator } from './evaluator';
-import { LGFileLexer } from './generated/LGFileLexer';
-import { FileContext, LGFileParser, ParagraphContext, ParametersContext, TemplateDefinitionContext } from './generated/LGFileParser';
 import { IGetMethod } from './getMethodExtensions';
+import { LGExtension } from './LGExtension';
+import { LGFileParser } from './LGFileParser';
 import { LGTemplate } from './lgTemplate';
 import { ReportEntry, ReportEntryType, StaticChecker } from './staticChecker';
-import { LGParser } from './LGParser';
-import { LGExtension } from './LGExtension';
 
 /**
  * LG parser and evaluation engine
@@ -29,8 +22,11 @@ export class TemplateEngine {
 
     public templates: LGTemplate[];
 
+    private lgFileParser: LGFileParser;
+
     public constructor() {
         this.templates = [];
+        this.lgFileParser = LGFileParser.prototype;
     }
 
     public static fromFiles(...filePaths: string[]): TemplateEngine {
@@ -46,7 +42,7 @@ export class TemplateEngine {
             // tslint:disable-next-line: non-literal-fs-path
             const text: string = fs.readFileSync(filePath, 'utf-8');
 
-            return LGExtension.MarkSource(LGParser.Parse(text), filePath);
+            return LGExtension.MarkSource(this.lgFileParser.Parse(text), filePath);
         }));
 
         const mergedTemplates: LGTemplate[] = this.templates.concat(newTemplates);
@@ -59,7 +55,7 @@ export class TemplateEngine {
     }
 
     public addText = (text: string): TemplateEngine => {
-        const newTemplates: LGTemplate[] = LGExtension.MarkSource(LGParser.Parse(text), 'text');
+        const newTemplates: LGTemplate[] = LGExtension.MarkSource(this.lgFileParser.Parse(text), 'text');
         const mergedTemplates: LGTemplate[] = this.templates.concat(newTemplates);
 
         this.runStaticCheck(mergedTemplates);
@@ -86,7 +82,7 @@ export class TemplateEngine {
         const fakeTemplateId: string = '__temp__';
         const wrappedStr: string = `# ${fakeTemplateId} \r\n - ${inlinsStr}`;
 
-        const newTemplates: LGTemplate[] = LGExtension.MarkSource(LGParser.Parse(wrappedStr), 'inline');
+        const newTemplates: LGTemplate[] = LGExtension.MarkSource(this.lgFileParser.Parse(wrappedStr), 'inline');
         const mergedTemplates: LGTemplate[] = this.templates.concat(newTemplates);
 
         this.runStaticCheck(mergedTemplates);

@@ -13,10 +13,14 @@ import { LGTemplate } from './lgTemplate';
  */
 export class LGExtension {
     public static MarkSource(lgTemplates: LGTemplate[], source: string): LGTemplate[] {
-        return lgTemplates.map((x: LGTemplate) => {
-            x.Source = source;
+        if (lgTemplates === undefined) {
+            return [];
+        } else {
+            return lgTemplates.map((x: LGTemplate) => {
+                x.Source = source;
 
-            return x;
-        });
+                return x;
+            });
+        }
     }
 }
