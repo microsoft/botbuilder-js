@@ -10,8 +10,9 @@ import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
 // tslint:disable-next-line: no-submodule-imports
 import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import { ErrorListener } from './errorListener';
+import { Extension } from './Extension';
 import { LGFileLexer } from './generated/LGFileLexer';
-import { FileContext, LGFileParser, ParagraphContext, TemplateDefinitionContext } from './generated/LGFileParser';
+import { FileContext, LGFileParser } from './generated/LGFileParser';
 import { LGTemplate} from './lgTemplate';
 
 /**
@@ -20,11 +21,17 @@ import { LGTemplate} from './lgTemplate';
 
 declare module './generated/LGFileParser' {
     interface LGFileParser {
-        Parse(text: string): LGTemplate[];
+        Parse(text: string, source: string): LGTemplate[];
     }
 }
 
-LGFileParser.prototype.Parse = (text: string): LGTemplate[] => {
+LGFileParser.prototype.Parse = (text: string, source: string = ''): LGTemplate[] => {
+    const fileContext: FileContext = GetFileContentContext(text);
+
+    return Extension.ToLGTemplates(fileContext, source);
+};
+
+function GetFileContentContext(text: string): FileContext {
     if (text === undefined
         || text === ''
         || text === null) {
@@ -38,18 +45,8 @@ LGFileParser.prototype.Parse = (text: string): LGTemplate[] => {
     parser.removeErrorListeners();
     parser.addErrorListener(new ErrorListener());
     parser.buildParseTree = true;
-    const file: FileContext = parser.file();
 
-    if (file === undefined
-        || file === null) {
-        return [];
-    }
-
-    const templates: TemplateDefinitionContext[] = file.paragraph()
-                                                      .map((x: ParagraphContext) => x.templateDefinition())
-                                                      .filter((x: TemplateDefinitionContext) => x !== undefined);
-
-    return templates.map((x: TemplateDefinitionContext) => new LGTemplate(x));
-};
+    return parser.file();
+}
 
 export * from './generated/LGFileParser';

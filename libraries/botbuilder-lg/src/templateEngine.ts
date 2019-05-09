@@ -10,7 +10,6 @@ import { flatten } from 'lodash';
 import { Analyzer } from './analyzer';
 import { Evaluator } from './evaluator';
 import { IGetMethod } from './getMethodExtensions';
-import { LGExtension } from './LGExtension';
 import { LGFileParser } from './LGFileParser';
 import { LGTemplate } from './lgTemplate';
 import { ReportEntry, ReportEntryType, StaticChecker } from './staticChecker';
@@ -42,7 +41,7 @@ export class TemplateEngine {
             // tslint:disable-next-line: non-literal-fs-path
             const text: string = fs.readFileSync(filePath, 'utf-8');
 
-            return LGExtension.MarkSource(this.lgFileParser.Parse(text), filePath);
+            return this.lgFileParser.Parse(text, filePath);
         }));
 
         const mergedTemplates: LGTemplate[] = this.templates.concat(newTemplates);
@@ -55,7 +54,7 @@ export class TemplateEngine {
     }
 
     public addText = (text: string): TemplateEngine => {
-        const newTemplates: LGTemplate[] = LGExtension.MarkSource(this.lgFileParser.Parse(text), 'text');
+        const newTemplates: LGTemplate[] = this.lgFileParser.Parse(text, 'text');
         const mergedTemplates: LGTemplate[] = this.templates.concat(newTemplates);
 
         this.runStaticCheck(mergedTemplates);
@@ -82,7 +81,7 @@ export class TemplateEngine {
         const fakeTemplateId: string = '__temp__';
         const wrappedStr: string = `# ${fakeTemplateId} \r\n - ${inlinsStr}`;
 
-        const newTemplates: LGTemplate[] = LGExtension.MarkSource(this.lgFileParser.Parse(wrappedStr), 'inline');
+        const newTemplates: LGTemplate[] = this.lgFileParser.Parse(wrappedStr, 'inline');
         const mergedTemplates: LGTemplate[] = this.templates.concat(newTemplates);
 
         this.runStaticCheck(mergedTemplates);
