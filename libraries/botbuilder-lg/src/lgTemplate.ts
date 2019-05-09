@@ -58,6 +58,10 @@ export class LGTemplate {
     }
 
     private readonly ExtractBody = (parseTree: TemplateDefinitionContext): string => {
-        return parseTree.templateBody().text;
+        if (parseTree.templateBody() !== undefined) {
+            return parseTree.templateBody().text;
+        }
+
+        return '';
     }
 }
