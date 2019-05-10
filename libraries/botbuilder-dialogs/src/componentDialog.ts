@@ -24,7 +24,7 @@ const PERSISTED_DIALOG_STATE = 'dialogs';
  * the classes constructor:
  *
  * ```JavaScript
- * const { ComponentDialog, WaterfallDialog, TextPrompt, NumberPrompt } = require('botbuilder-dialogs);
+ * const { ComponentDialog, WaterfallDialog, TextPrompt, NumberPrompt } = require('botbuilder-dialogs');
  *
  * class FillProfileDialog extends ComponentDialog {
  *     constructor(dialogId) {
