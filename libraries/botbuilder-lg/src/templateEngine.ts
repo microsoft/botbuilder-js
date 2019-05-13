@@ -5,18 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// tslint:disable-next-line: no-submodule-imports
-import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
-// tslint:disable-next-line: no-submodule-imports
-import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import * as fs from 'fs';
 import { flatten } from 'lodash';
 import { Analyzer } from './analyzer';
-import { ErrorListener } from './errorListener';
 import { Evaluator } from './evaluator';
-import { LGFileLexer } from './generated/LGFileLexer';
-import { FileContext, LGFileParser, ParagraphContext, ParametersContext, TemplateDefinitionContext } from './generated/LGFileParser';
 import { IGetMethod } from './getMethodExtensions';
+import { LGParser } from './LGParser';
 import { LGTemplate } from './lgTemplate';
 import { ReportEntry, ReportEntryType, StaticChecker } from './staticChecker';
 
@@ -44,7 +38,7 @@ export class TemplateEngine {
             // tslint:disable-next-line: non-literal-fs-path
             const text: string = fs.readFileSync(filePath, 'utf-8');
 
-            return this.toTemplates(this.parse(text), filePath);
+            return LGParser.Parse(text, filePath);
         }));
 
         const mergedTemplates: LGTemplate[] = this.templates.concat(newTemplates);
@@ -57,7 +51,7 @@ export class TemplateEngine {
     }
 
     public addText = (text: string): TemplateEngine => {
-        const newTemplates: LGTemplate[] = this.toTemplates(this.parse(text), 'text');
+        const newTemplates: LGTemplate[] = LGParser.Parse(text, 'text');
         const mergedTemplates: LGTemplate[] = this.templates.concat(newTemplates);
 
         this.runStaticCheck(mergedTemplates);
@@ -84,7 +78,7 @@ export class TemplateEngine {
         const fakeTemplateId: string = '__temp__';
         const wrappedStr: string = `# ${fakeTemplateId} \r\n - ${inlinsStr}`;
 
-        const newTemplates: LGTemplate[] = this.toTemplates(this.parse(wrappedStr), 'inline');
+        const newTemplates: LGTemplate[] = LGParser.Parse(wrappedStr, 'inline');
         const mergedTemplates: LGTemplate[] = this.templates.concat(newTemplates);
 
         this.runStaticCheck(mergedTemplates);
@@ -99,38 +93,6 @@ export class TemplateEngine {
 
     }
     */
-
-    // Parse text as a LG file using antlr
-    private readonly parse = (text: string): FileContext => {
-        if (text === undefined
-            || text === ''
-            || text === null) {
-            return undefined;
-        }
-
-        const input: ANTLRInputStream = new ANTLRInputStream(text);
-        const lexer: LGFileLexer = new LGFileLexer(input);
-        const tokens: CommonTokenStream = new CommonTokenStream(lexer);
-        const parser: LGFileParser = new LGFileParser(tokens);
-        parser.removeErrorListeners();
-        parser.addErrorListener(new ErrorListener());
-        parser.buildParseTree = true;
-
-        return parser.file();
-    }
-
-    private readonly toTemplates = (file: FileContext, source: string): LGTemplate[] => {
-        if (file === undefined
-            || file === null) {
-            return [];
-        }
-
-        const templates: TemplateDefinitionContext[] = file.paragraph()
-                                                          .map((x: ParagraphContext) => x.templateDefinition())
-                                                          .filter((x: TemplateDefinitionContext) => x !== undefined);
-
-        return templates.map((x: TemplateDefinitionContext) => new LGTemplate(x, source));
-    }
 
     private readonly runStaticCheck = (templates: LGTemplate[]): void => {
         const checker: StaticChecker = new StaticChecker(templates);

@@ -35,7 +35,7 @@ export class LGTemplate {
      */
     public ParseTree: TemplateDefinitionContext;
 
-    constructor(parseTree: TemplateDefinitionContext, source: string) {
+    constructor(parseTree: TemplateDefinitionContext, source: string = '') {
         this.ParseTree = parseTree;
         this.Source = source;
 
@@ -44,11 +44,11 @@ export class LGTemplate {
         this.Body = this.ExtractBody(parseTree);
     }
 
-    private readonly ExtractName = (parseTree: TemplateDefinitionContext) : string => {
+    private readonly ExtractName = (parseTree: TemplateDefinitionContext): string => {
         return  parseTree.templateNameLine().templateName().text;
     }
 
-    private readonly ExtractParameters = (parseTree: TemplateDefinitionContext) : string[] => {
+    private readonly ExtractParameters = (parseTree: TemplateDefinitionContext): string[] => {
         const parameters: ParametersContext = parseTree.templateNameLine().parameters();
         if (parameters !== undefined) {
             return parameters.IDENTIFIER().map((x: TerminalNode) => x.text);
