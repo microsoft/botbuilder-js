@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import { Activity, TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
-import * as entities from 'html-entities';
 import * as os from 'os';
 const pjson: any = require('../package.json');
 const request = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
@@ -16,11 +15,6 @@ import { QnATelemetryConstants } from './qnaTelemetryConstants';
 const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
 const QNAMAKER_TRACE_NAME = 'QnAMaker';
 const QNAMAKER_TRACE_LABEL = 'QnAMaker Trace';
-
-/**
- * @private
- */
-const htmlentities: entities.AllHtmlEntities = new entities.AllHtmlEntities();
 
 /**
  * An individual answer returned by a call to the QnA Maker Service.
@@ -581,7 +575,6 @@ export class QnAMaker implements QnAMakerTelemetryClient {
     private formatQnaResult(qnaResult: any): QnAMakerResult[] {
         return qnaResult.answers.map((ans: any) => {
             ans.score = ans.score / 100;
-            ans.answer = htmlentities.decode(ans.answer);
 
             if (ans.qnaId) {
                 ans.id = ans.qnaId;
