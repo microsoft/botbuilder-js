@@ -9,6 +9,7 @@
 import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
 // tslint:disable-next-line: no-submodule-imports
 import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
+import { Diagnostic } from './diagnostic';
 import { ErrorListener } from './errorListener';
 import { LGFileLexer } from './generated/LGFileLexer';
 import { FileContext, LGFileParser, ParagraphContext, TemplateDefinitionContext } from './generated/LGFileParser';
@@ -19,9 +20,31 @@ import { LGTemplate } from './lgTemplate';
  */
 export class LGParser {
     public static Parse(text: string, source: string = ''): LGTemplate[] {
-        const fileContext: FileContext = LGParser.GetFileContentContext(text);
+        const parseResult: any = this.TryParse(text, source);
+        if (!parseResult.isValid) {
+            throw new Error(parseResult.error.toString());
+        }
 
-        return LGParser.ToLGTemplates(fileContext, source);
+        return parseResult.templates;
+    }
+
+    public static TryParse(text: string, source: string = '')
+        : { isValid: boolean; templates: LGTemplate[]; error: Diagnostic } {
+        let fileContext: FileContext;
+        let isValid: boolean = true;
+        let error: Diagnostic;
+        let templates: LGTemplate[] = [];
+
+        try {
+            fileContext = this.GetFileContentContext(text);
+        } catch (e) {
+            error = Object.assign(new Diagnostic(undefined, undefined), JSON.parse(e.message));
+            isValid = false;
+        }
+
+        templates = this.ToLGTemplates(fileContext, source);
+
+        return { isValid, templates, error };
     }
 
     private static GetFileContentContext(text: string): FileContext {

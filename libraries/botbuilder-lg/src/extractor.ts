@@ -13,6 +13,7 @@ import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
 
+// tslint:disable-next-line: completed-docs
 export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGFileParserVisitor<Map<string, any>> {
     public readonly Templates: LGTemplate[];
     public readonly TemplateMap: {[name: string]: LGTemplate};

@@ -1,4 +1,4 @@
-const {TemplateEngine, StaticChecker, ReportEntryType } = require('../');
+const { TemplateEngine, StaticChecker, DiagnosticSeverity } = require('../');
 const assert = require('assert');
 
 function GetExampleFilePath(fileName){
@@ -48,7 +48,7 @@ describe('LGExceptionTest', function () {
             var engine = TemplateEngine.fromFiles(GetExampleFilePath(testDateItem));
             var report = new StaticChecker(engine.templates).Check();
             assert.strictEqual(report.length > 0, true);
-            report.forEach(e => assert.strictEqual(e.Type === ReportEntryType.WARN, true));
+            report.forEach(e => assert.strictEqual(e.Severity === DiagnosticSeverity.Warning, true));
         }
     });
 

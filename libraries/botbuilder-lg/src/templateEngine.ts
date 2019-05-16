@@ -8,11 +8,12 @@
 import * as fs from 'fs';
 import { flatten } from 'lodash';
 import { Analyzer } from './analyzer';
+import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Evaluator } from './evaluator';
 import { IGetMethod } from './getMethodExtensions';
-import { LGParser } from './LGParser';
+import { LGParser } from './lgParser';
 import { LGTemplate } from './lgTemplate';
-import { ReportEntry, ReportEntryType, StaticChecker } from './staticChecker';
+import { StaticChecker } from './staticChecker';
 
 /**
  * LG parser and evaluation engine
@@ -96,11 +97,11 @@ export class TemplateEngine {
 
     private readonly runStaticCheck = (templates: LGTemplate[]): void => {
         const checker: StaticChecker = new StaticChecker(templates);
-        const reportMessages: ReportEntry[] = checker.Check();
+        const diagnostics: Diagnostic[] = checker.Check();
 
-        const errorMessages: ReportEntry[] = reportMessages.filter((message: ReportEntry) => message.Type === ReportEntryType.ERROR);
-        if (errorMessages.length > 0) {
-            throw Error(reportMessages.map((error: ReportEntry) => error.toString()).join('\n'));
+        const errors: Diagnostic[] = diagnostics.filter((u: Diagnostic) => u.Severity === DiagnosticSeverity.Error);
+        if (errors.length > 0) {
+            throw new Error(errors.map((error: Diagnostic) => error.toString()).join('\n'));
         }
     }
 }
