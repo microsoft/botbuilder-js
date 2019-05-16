@@ -6,11 +6,12 @@
  * Licensed under the MIT License.
  */
 import { Analyzer } from './analyzer';
+import { Diagnostic, Position, Range } from './diagnostic';
 import { Expander, IGetMethod } from './expander';
 import { Extractor } from './extractor';
+import { LGParser } from './lgParser';
 import { LGTemplate } from './lgTemplate';
-import { ReportEntry, StaticChecker } from './staticChecker';
-import { TemplateEngine } from './templateEngine';
+import { StaticChecker } from './staticChecker';
 
 // tslint:disable-next-line: completed-docs
 export class MSLGTool {
@@ -22,15 +23,29 @@ export class MSLGTool {
 
     public ValidateFile(lgFileContent: string): string[] {
         let errors: string[] = [];
-        try {
-            this.Templates = this.BuildTemplates(lgFileContent);
+
+        const parseResult: { isValid: boolean; templates: LGTemplate[]; error: Diagnostic } = LGParser.TryParse(lgFileContent);
+        if (parseResult.isValid) {
+            this.Templates = parseResult.templates;
             if (this.Templates !== undefined && this.Templates.length > 0) {
                 // run static checker to get warning messages
                 errors = this.RunStaticCheck(this.Templates);
-                this.RunTemplateExtractor(this.Templates);
+                if (errors === undefined || errors.length === 0) {
+                    this.RunTemplateExtractor(this.Templates);
+                }
             }
-        } catch (e) {
-            errors = e.message.split('\n[').map((msg: string) => msg.startsWith('[') ? msg : '[' + msg);
+        } else {
+            const start: Position = parseResult.error.Range.Start;
+            const end: Position = parseResult.error.Range.End;
+            const error: Diagnostic = new Diagnostic(
+                new Range(
+                    new Position(start.Line, start.Character),
+                    new Position(end.Line, end.Character)),
+                parseResult.error.Message,
+                parseResult.error.Severity);
+
+            console.log(error.toString());
+            errors = errors.concat(error.toString());
         }
 
         return errors;
@@ -76,21 +91,11 @@ export class MSLGTool {
         return result;
     }
 
-    private BuildTemplates(lgFileContent: string): LGTemplate[] {
-        try {
-            const engine: TemplateEngine = TemplateEngine.fromText(lgFileContent);
-
-            return engine.templates;
-        } catch (e) {
-            throw e;
-        }
-    }
-
     // tslint:disable-next-line: max-line-length
     private RunStaticCheck(templates: LGTemplate[]): string[] {
         const checker: StaticChecker = new StaticChecker(templates);
 
-        return checker.Check().map((error: ReportEntry) => error.toString());
+        return checker.Check().map((error: Diagnostic) => error.toString());
     }
 
     private RunTemplateExtractor(lgtemplates: LGTemplate[]): void {
@@ -115,8 +120,9 @@ export class MSLGTool {
                     // tslint:disable-next-line: max-line-length
                     this.CollatedTemplates.set(template[0], Array.from(new Set(this.CollatedTemplates.get(template[0]).concat(template[1]))));
                 } else {
+                    const range: Range = new Range(new Position(0, 0), new Position(0, 0));
                     // tslint:disable-next-line: max-line-length
-                    const mergeError: ReportEntry = new ReportEntry(`Template ${template[0]} occurred in both normal and condition templates`);
+                    const mergeError: Diagnostic = new Diagnostic(range, `Template ${template[0]} occurred in both normal and condition templates`);
                     this.CollationMessages.push(mergeError.toString());
                 }
             } else {
