@@ -49,7 +49,7 @@ function getConversationId(client) {
 }
 
 describe('Test Azure Bot', function(){
-    this.timeout(30000);    
+    this.timeout(60000);    
     it('Check deployed bot answer', async function(){
         const directLineClient = await getDirectLineClient();    
         const conversationId = await getConversationId(directLineClient);
