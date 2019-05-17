@@ -7,6 +7,8 @@
  */
 import { InputHints, TurnContext } from 'botbuilder-core';
 import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
+import { DialogContext } from '../dialogContext';
+import { DialogEvent } from '../dialog';
 
 /**
  * Prompts a user to enter some text.
@@ -40,6 +42,10 @@ export class TextPrompt extends Prompt<string> {
     protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<string>> {
         const value: string = context.activity.text;
 
-        return typeof value === 'string' && value.length > 0 ? { succeeded: true, value: value, allowInterruption: true } : { succeeded: false };
+        return typeof value === 'string' && value.length > 0 ? { succeeded: true, value: value } : { succeeded: false };
+    }
+
+    protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
+        return false;
     }
 }
