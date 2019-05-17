@@ -27,12 +27,13 @@ export class IntentRule extends EventRule {
      * @param steps (Optional) list of steps to update the plan with when triggered.
      */
     constructor(matches?: string|string[], steps?: Dialog[]) {
-        super(AdaptiveEventNames.recognizedIntent, steps);
+        super(AdaptiveEventNames.RecognizedIntent, steps, true);
         this.matches = Array.isArray(matches) ? matches : (matches !== undefined ? [matches] : []);
     }
 
-    protected async onIsTriggered(sequence: SequenceContext, event: DialogEvent<RecognizerResult>, memory: object): Promise<boolean> {
+    protected async onIsTriggered(sequence: SequenceContext, event: DialogEvent<RecognizerResult>): Promise<boolean> {
         // Ensure all intents, entities, and properties exist.
+        const memory = sequence.state.toJSON();
         for(let i = 0; i < this.matches.length; i++) {
             const value = DialogContextState.queryMemory(memory, this.matches[i], 1);
             if (!Array.isArray(value) || value.length == 0 || value[0] == undefined) {
@@ -41,25 +42,5 @@ export class IntentRule extends EventRule {
         }
 
         return true;
-    }
-
-    protected onCreateChangeList(sequence: SequenceContext, event: DialogEvent<RecognizerResult>, dialogOptions?: any): StepChangeList {
-        const changes = super.onCreateChangeList(sequence, event, dialogOptions);
-
-        // Sort matches by type
-        const intents: string[] = [];
-        const entities: string[] = [];
-        this.matches.forEach((match) => {
-            if (match[0] == '#') {
-                intents.push(match);
-            } else {
-                entities.push(match);
-            }
-        })
-
-        // Add recognized intents and entities to change list
-        changes.intentsMatched = intents;
-        changes.entitiesMatched = entities;
-        return changes;
     }
 }

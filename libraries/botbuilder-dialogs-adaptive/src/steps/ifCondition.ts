@@ -120,7 +120,7 @@ export class IfCondition extends DialogCommand {
                     options: options
                 } as StepState
             });
-            await planning.queueChanges({ changeType: StepChangeType.insertSteps, steps: steps });
+            await planning.queueChanges({ changeType: StepChangeType.InsertSteps, steps: steps });
         } 
 
         return await planning.endDialog();

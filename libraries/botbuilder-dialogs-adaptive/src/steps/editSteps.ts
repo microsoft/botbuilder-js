@@ -79,7 +79,7 @@ export class EditSteps extends DialogCommand {
                 return { dialogId: step.id, dialogStack: [] } as StepState
             })
         };
-        if (this.changeType == StepChangeType.insertStepsBeforeTags) {
+        if (this.changeType == StepChangeType.InsertStepsBeforeTags) {
             changes.tags = this.tags;
         }
         sequence.queueChanges(changes);

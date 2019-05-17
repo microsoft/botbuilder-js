@@ -19,7 +19,7 @@ export interface Rule {
      * current plan.
      * @param planning Planning context object for the current conversation.
      * @param event The current event being evaluated.
-     * @param memory Memory projection for the current turn.
+     * @param preBubble If `true`, the leading edge of the event is being evaluated.
      */
-    evaluate(planning: SequenceContext, event: DialogEvent, memory: object): Promise<StepChangeList[]|undefined>;
+    evaluate(planning: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<StepChangeList[]|undefined>;
 }
