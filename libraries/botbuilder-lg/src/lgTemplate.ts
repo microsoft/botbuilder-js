@@ -27,28 +27,41 @@ export class LGTemplate {
      */
     public Source: string;
     /**
+     * Text format of Body of this template. All content except Name and Parameters.
+     */
+    public Body: string;
+    /**
      * The parse tree of this template
      */
     public ParseTree: TemplateDefinitionContext;
 
-    constructor(parseTree: TemplateDefinitionContext, source: string) {
+    constructor(parseTree: TemplateDefinitionContext, source: string = '') {
         this.ParseTree = parseTree;
         this.Source = source;
 
         this.Name = this.ExtractName(parseTree);
         this.Parameters = this.ExtractParameters(parseTree);
+        this.Body = this.ExtractBody(parseTree);
     }
 
-    private readonly ExtractName = (parseTree: TemplateDefinitionContext) : string => {
+    private readonly ExtractName = (parseTree: TemplateDefinitionContext): string => {
         return  parseTree.templateNameLine().templateName().text;
     }
 
-    private readonly ExtractParameters = (parseTree: TemplateDefinitionContext) : string[] => {
+    private readonly ExtractParameters = (parseTree: TemplateDefinitionContext): string[] => {
         const parameters: ParametersContext = parseTree.templateNameLine().parameters();
         if (parameters !== undefined) {
             return parameters.IDENTIFIER().map((x: TerminalNode) => x.text);
         }
 
         return [];
+    }
+
+    private readonly ExtractBody = (parseTree: TemplateDefinitionContext): string => {
+        if (parseTree.templateBody() !== undefined) {
+            return parseTree.templateBody().text;
+        }
+
+        return '';
     }
 }

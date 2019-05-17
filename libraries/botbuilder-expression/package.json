@@ -15,6 +15,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
+    "@microsoft/recognizers-text-data-types-timex-expression": "^1.1.4",
     "moment": "2.24.0"
   },
   "devDependencies": {

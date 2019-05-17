@@ -1,11 +1,11 @@
-const {TemplateEngine, StaticChecker, ReportEntryType } = require('../');
+const { TemplateEngine, StaticChecker, DiagnosticSeverity } = require('../');
 const assert = require('assert');
 
 function GetExampleFilePath(fileName){
     return `${ __dirname }/testData/exceptionExamples/`+ fileName;
 }
 
-const ExceptionDataFiles = [
+const StaticCheckExceptionData  = [
     "EmptyTemplate.lg",
     "ErrorTemplateParameters.lg",
     "NoNormalTemplateBody.lg",
@@ -17,44 +17,110 @@ const ExceptionDataFiles = [
     "ErrorSeperateChar2.lg",
     "MultilineVariation.lg",
     "InvalidTemplateName.lg",
-    "InvalidTemplateName2.lg"
+    "InvalidTemplateName2.lg",
+    "DuplicatedTemplates.lg",
+    "LgTemplateFunctionError.lg"
     ];
 
-const WarningDataFiles = [
+const StaticCheckWariningData  = [
     "EmptyLGFile.lg",
     "OnlyNoMatchRule.lg",
     "NoMatchRule.lg"
 ];
 
+const AnalyzerExceptionData   = [
+    ["LoopDetected.lg","NotExistTemplateName"],
+    ["LoopDetected.lg","wPhrase"],
+];
+
+
+const EvaluatorExceptionData    = [
+    ["ErrorExpression.lg","template1"],
+    ["LoopDetected.lg","wPhrase"],
+    ["LoopDetected.lg","NotExistTemplate"],
+];
+
+
 describe('LGExceptionTest', function () {
     
     it('WariningTest', function () {
-        for (const testDateItem of WarningDataFiles) {
+        for (const testDateItem of StaticCheckWariningData ) {
             var engine = TemplateEngine.fromFiles(GetExampleFilePath(testDateItem));
             var report = new StaticChecker(engine.templates).Check();
             assert.strictEqual(report.length > 0, true);
-            report.forEach(e => assert.strictEqual(e.Type === ReportEntryType.WARN, true));
+            report.forEach(e => assert.strictEqual(e.Severity === DiagnosticSeverity.Warning, true));
         }
     });
 
     it('ThrowExceptionTest', function () {
-        for (const testDateItem of ExceptionDataFiles) {
+        for (const testDateItem of StaticCheckExceptionData ) {
             var isFail = false;
-            try
-            {
+            try {
                 TemplateEngine.fromFiles(GetExampleFilePath(testDateItem));
                 isFail = true;
-            }
-            catch (e)
-            {
+            } catch (e) {
                 console.log(e.message);
             }
 
-            if (isFail)
-            {
+            if (isFail) {
                 assert.fail("should throw error.");
             }    
         }
     });
+
+    it('AnalyzerThrowExceptionTest', function () {
+        for (const testDateItem of AnalyzerExceptionData ) {
+            var isFail = false;
+            var errorMessage = "";
+            var engine;
+            try {
+                engine = TemplateEngine.fromFiles(GetExampleFilePath(testDateItem[0]));
+            } catch (e) {
+                isFail = true;
+                errorMessage = "error occurs when parsing file";
+            }
+
+            if(!isFail) {
+                try {
+                    engine.AnalyzeTemplate(testDateItem[1]);
+                    isFail = true;
+                    errorMessage = "No exception is thrown.";
+                } catch (e) {
+                    errorMessage = e.message;
+                }
+            }
+
+            if (isFail) {
+                assert.fail(errorMessage);
+            }    
+        }
+    });
     
+    it('EvaluatorThrowExceptionTest', function () {
+        for (const testDateItem of EvaluatorExceptionData ) {
+            var isFail = false;
+            var errorMessage = "";
+            var engine;
+            try {
+                engine = TemplateEngine.fromFiles(GetExampleFilePath(testDateItem[0]));
+            } catch (e) {
+                isFail = true;
+                errorMessage = "error occurs when parsing file";
+            }
+
+            if(!isFail) {
+                try {
+                    engine.EvaluateTemplate(testDateItem[1], null);
+                    isFail = true;
+                    errorMessage = "No exception is thrown.";
+                } catch (e) {
+                    errorMessage = e.message;
+                }
+            }
+
+            if (isFail) {
+                assert.fail(errorMessage);
+            }    
+        }
+    });
 });

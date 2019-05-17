@@ -1,4 +1,4 @@
-// Generated from LGFileParser.g4 by ANTLR 4.6-SNAPSHOT
+// Generated from ../LGFileParser.g4 by ANTLR 4.6-SNAPSHOT
 
 
 import { ATN } from "antlr4ts/atn/ATN";
@@ -33,22 +33,25 @@ export class LGFileParser extends Parser {
 	public static readonly NEWLINE = 3;
 	public static readonly HASH = 4;
 	public static readonly DASH = 5;
-	public static readonly WS_IN_NAME = 6;
-	public static readonly IDENTIFIER = 7;
-	public static readonly DOT = 8;
-	public static readonly OPEN_PARENTHESIS = 9;
-	public static readonly CLOSE_PARENTHESIS = 10;
-	public static readonly COMMA = 11;
-	public static readonly INVALID_SEPERATE_CHAR = 12;
-	public static readonly WS_IN_BODY_IGNORED = 13;
-	public static readonly IFELSE = 14;
-	public static readonly MULTI_LINE_TEXT = 15;
-	public static readonly ESCAPE_CHARACTER = 16;
-	public static readonly INVALID_ESCAPE = 17;
-	public static readonly EXPRESSION = 18;
-	public static readonly TEMPLATE_REF = 19;
-	public static readonly TEXT_SEPARATOR = 20;
-	public static readonly TEXT = 21;
+	public static readonly INVALID_TOKEN_DEFAULT_MODE = 6;
+	public static readonly WS_IN_NAME = 7;
+	public static readonly IDENTIFIER = 8;
+	public static readonly DOT = 9;
+	public static readonly OPEN_PARENTHESIS = 10;
+	public static readonly CLOSE_PARENTHESIS = 11;
+	public static readonly COMMA = 12;
+	public static readonly INVALID_SEPERATE_CHAR = 13;
+	public static readonly WS_IN_BODY_IGNORED = 14;
+	public static readonly IF = 15;
+	public static readonly ELSEIF = 16;
+	public static readonly ELSE = 17;
+	public static readonly MULTI_LINE_TEXT = 18;
+	public static readonly ESCAPE_CHARACTER = 19;
+	public static readonly INVALID_ESCAPE = 20;
+	public static readonly EXPRESSION = 21;
+	public static readonly TEMPLATE_REF = 22;
+	public static readonly TEXT_SEPARATOR = 23;
+	public static readonly TEXT = 24;
 	public static readonly RULE_file = 0;
 	public static readonly RULE_paragraph = 1;
 	public static readonly RULE_newline = 2;
@@ -71,14 +74,14 @@ export class LGFileParser extends Parser {
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
 		undefined, undefined, undefined, undefined, "'#'", undefined, undefined, 
-		undefined, "'.'", "'('", "')'", "','",
+		undefined, undefined, "'.'", "'('", "')'", "','",
 	];
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
-		undefined, "COMMENTS", "WS", "NEWLINE", "HASH", "DASH", "WS_IN_NAME", 
-		"IDENTIFIER", "DOT", "OPEN_PARENTHESIS", "CLOSE_PARENTHESIS", "COMMA", 
-		"INVALID_SEPERATE_CHAR", "WS_IN_BODY_IGNORED", "IFELSE", "MULTI_LINE_TEXT", 
-		"ESCAPE_CHARACTER", "INVALID_ESCAPE", "EXPRESSION", "TEMPLATE_REF", "TEXT_SEPARATOR", 
-		"TEXT",
+		undefined, "COMMENTS", "WS", "NEWLINE", "HASH", "DASH", "INVALID_TOKEN_DEFAULT_MODE", 
+		"WS_IN_NAME", "IDENTIFIER", "DOT", "OPEN_PARENTHESIS", "CLOSE_PARENTHESIS", 
+		"COMMA", "INVALID_SEPERATE_CHAR", "WS_IN_BODY_IGNORED", "IF", "ELSEIF", 
+		"ELSE", "MULTI_LINE_TEXT", "ESCAPE_CHARACTER", "INVALID_ESCAPE", "EXPRESSION", 
+		"TEMPLATE_REF", "TEXT_SEPARATOR", "TEXT",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(LGFileParser._LITERAL_NAMES, LGFileParser._SYMBOLIC_NAMES, []);
 
@@ -638,7 +641,17 @@ export class LGFileParser extends Parser {
 			this.state = 99;
 			this.match(LGFileParser.DASH);
 			this.state = 100;
-			this.match(LGFileParser.IFELSE);
+			_la = this._input.LA(1);
+			if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.IF) | (1 << LGFileParser.ELSEIF) | (1 << LGFileParser.ELSE))) !== 0))) {
+			this._errHandler.recoverInline(this);
+			} else {
+				if (this._input.LA(1) === Token.EOF) {
+					this.matchedEOF = true;
+				}
+
+				this._errHandler.reportMatch(this);
+				this.consume();
+			}
 			this.state = 104;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
@@ -681,7 +694,7 @@ export class LGFileParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03\x17n\x04\x02" +
+		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03\x1An\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
 		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x04\r\t\r\x04" +
 		"\x0E\t\x0E\x03\x02\x06\x02\x1E\n\x02\r\x02\x0E\x02\x1F\x03\x02\x03\x02" +
@@ -693,25 +706,25 @@ export class LGFileParser extends Parser {
 		"\v\x0E\vZ\v\v\x03\f\x06\f]\n\f\r\f\x0E\f^\x03\r\x03\r\x03\r\x05\rd\n\r" +
 		"\x03\x0E\x03\x0E\x03\x0E\x07\x0Ei\n\x0E\f\x0E\x0E\x0El\v\x0E\x03\x0E\x03" +
 		"\x1F\x02\x02\x0F\x02\x02\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x10" +
-		"\x02\x12\x02\x14\x02\x16\x02\x18\x02\x1A\x02\x02\x06\x03\x03\x05\x05\x03" +
-		"\x02\r\x0E\x04\x02\x04\x04\x11\x17\x05\x02\x04\x04\x14\x14\x17\x17n\x02" +
-		"\x1D\x03\x02\x02\x02\x04%\x03\x02\x02\x02\x06\'\x03\x02\x02\x02\b)\x03" +
-		"\x02\x02\x02\n.\x03\x02\x02\x02\f3\x03\x02\x02\x02\x0E<\x03\x02\x02\x02" +
-		"\x10K\x03\x02\x02\x02\x12P\x03\x02\x02\x02\x14T\x03\x02\x02\x02\x16\\" +
-		"\x03\x02\x02\x02\x18`\x03\x02\x02\x02\x1Ae\x03\x02\x02\x02\x1C\x1E\x05" +
-		"\x04\x03\x02\x1D\x1C\x03\x02\x02\x02\x1E\x1F\x03\x02\x02\x02\x1F \x03" +
-		"\x02\x02\x02\x1F\x1D\x03\x02\x02\x02 !\x03\x02\x02\x02!\"\x07\x02\x02" +
-		"\x03\"\x03\x03\x02\x02\x02#&\x05\x06\x04\x02$&\x05\b\x05\x02%#\x03\x02" +
-		"\x02\x02%$\x03\x02\x02\x02&\x05\x03\x02\x02\x02\'(\t\x02\x02\x02(\x07" +
-		"\x03\x02\x02\x02)*\x05\n\x06\x02*,\x05\x06\x04\x02+-\x05\x10\t\x02,+\x03" +
-		"\x02\x02\x02,-\x03\x02\x02\x02-\t\x03\x02\x02\x02./\x07\x06\x02\x02/1" +
-		"\x05\f\x07\x0202\x05\x0E\b\x0210\x03\x02\x02\x0212\x03\x02\x02\x022\v" +
-		"\x03\x02\x02\x0238\x07\t\x02\x0245\x07\n\x02\x0257\x07\t\x02\x0264\x03" +
-		"\x02\x02\x027:\x03\x02\x02\x0286\x03\x02\x02\x0289\x03\x02\x02\x029\r" +
-		"\x03\x02\x02\x02:8\x03\x02\x02\x02;=\x07\v\x02\x02<;\x03\x02\x02\x02<" +
-		"=\x03\x02\x02\x02=>\x03\x02\x02\x02>C\x07\t\x02\x02?@\t\x03\x02\x02@B" +
-		"\x07\t\x02\x02A?\x03\x02\x02\x02BE\x03\x02\x02\x02CA\x03\x02\x02\x02C" +
-		"D\x03\x02\x02\x02DG\x03\x02\x02\x02EC\x03\x02\x02\x02FH\x07\f\x02\x02" +
+		"\x02\x12\x02\x14\x02\x16\x02\x18\x02\x1A\x02\x02\x07\x03\x03\x05\x05\x03" +
+		"\x02\x0E\x0F\x04\x02\x04\x04\x14\x1A\x03\x02\x11\x13\x05\x02\x04\x04\x17" +
+		"\x17\x1A\x1An\x02\x1D\x03\x02\x02\x02\x04%\x03\x02\x02\x02\x06\'\x03\x02" +
+		"\x02\x02\b)\x03\x02\x02\x02\n.\x03\x02\x02\x02\f3\x03\x02\x02\x02\x0E" +
+		"<\x03\x02\x02\x02\x10K\x03\x02\x02\x02\x12P\x03\x02\x02\x02\x14T\x03\x02" +
+		"\x02\x02\x16\\\x03\x02\x02\x02\x18`\x03\x02\x02\x02\x1Ae\x03\x02\x02\x02" +
+		"\x1C\x1E\x05\x04\x03\x02\x1D\x1C\x03\x02\x02\x02\x1E\x1F\x03\x02\x02\x02" +
+		"\x1F \x03\x02\x02\x02\x1F\x1D\x03\x02\x02\x02 !\x03\x02\x02\x02!\"\x07" +
+		"\x02\x02\x03\"\x03\x03\x02\x02\x02#&\x05\x06\x04\x02$&\x05\b\x05\x02%" +
+		"#\x03\x02\x02\x02%$\x03\x02\x02\x02&\x05\x03\x02\x02\x02\'(\t\x02\x02" +
+		"\x02(\x07\x03\x02\x02\x02)*\x05\n\x06\x02*,\x05\x06\x04\x02+-\x05\x10" +
+		"\t\x02,+\x03\x02\x02\x02,-\x03\x02\x02\x02-\t\x03\x02\x02\x02./\x07\x06" +
+		"\x02\x02/1\x05\f\x07\x0202\x05\x0E\b\x0210\x03\x02\x02\x0212\x03\x02\x02" +
+		"\x022\v\x03\x02\x02\x0238\x07\n\x02\x0245\x07\v\x02\x0257\x07\n\x02\x02" +
+		"64\x03\x02\x02\x027:\x03\x02\x02\x0286\x03\x02\x02\x0289\x03\x02\x02\x02" +
+		"9\r\x03\x02\x02\x02:8\x03\x02\x02\x02;=\x07\f\x02\x02<;\x03\x02\x02\x02" +
+		"<=\x03\x02\x02\x02=>\x03\x02\x02\x02>C\x07\n\x02\x02?@\t\x03\x02\x02@" +
+		"B\x07\n\x02\x02A?\x03\x02\x02\x02BE\x03\x02\x02\x02CA\x03\x02\x02\x02" +
+		"CD\x03\x02\x02\x02DG\x03\x02\x02\x02EC\x03\x02\x02\x02FH\x07\r\x02\x02" +
 		"GF\x03\x02\x02\x02GH\x03\x02\x02\x02H\x0F\x03\x02\x02\x02IL\x05\x12\n" +
 		"\x02JL\x05\x16\f\x02KI\x03\x02\x02\x02KJ\x03\x02\x02\x02L\x11\x03\x02" +
 		"\x02\x02MN\x05\x14\v\x02NO\x05\x06\x04\x02OQ\x03\x02\x02\x02PM\x03\x02" +
@@ -721,9 +734,9 @@ export class LGFileParser extends Parser {
 		"ZX\x03\x02\x02\x02[]\x05\x18\r\x02\\[\x03\x02\x02\x02]^\x03\x02\x02\x02" +
 		"^\\\x03\x02\x02\x02^_\x03\x02\x02\x02_\x17\x03\x02\x02\x02`a\x05\x1A\x0E" +
 		"\x02ac\x05\x06\x04\x02bd\x05\x12\n\x02cb\x03\x02\x02\x02cd\x03\x02\x02" +
-		"\x02d\x19\x03\x02\x02\x02ef\x07\x07\x02\x02fj\x07\x10\x02\x02gi\t\x05" +
-		"\x02\x02hg\x03\x02\x02\x02il\x03\x02\x02\x02jh\x03\x02\x02\x02jk\x03\x02" +
-		"\x02\x02k\x1B\x03\x02\x02\x02lj\x03\x02\x02\x02\x10\x1F%,18<CGKRX^cj";
+		"\x02d\x19\x03\x02\x02\x02ef\x07\x07\x02\x02fj\t\x05\x02\x02gi\t\x06\x02" +
+		"\x02hg\x03\x02\x02\x02il\x03\x02\x02\x02jh\x03\x02\x02\x02jk\x03\x02\x02" +
+		"\x02k\x1B\x03\x02\x02\x02lj\x03\x02\x02\x02\x10\x1F%,18<CGKRX^cj";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!LGFileParser.__ATN) {
@@ -1316,7 +1329,9 @@ export class IfConditionRuleContext extends ParserRuleContext {
 
 export class IfConditionContext extends ParserRuleContext {
 	public DASH(): TerminalNode { return this.getToken(LGFileParser.DASH, 0); }
-	public IFELSE(): TerminalNode { return this.getToken(LGFileParser.IFELSE, 0); }
+	public IF(): TerminalNode | undefined { return this.tryGetToken(LGFileParser.IF, 0); }
+	public ELSE(): TerminalNode | undefined { return this.tryGetToken(LGFileParser.ELSE, 0); }
+	public ELSEIF(): TerminalNode | undefined { return this.tryGetToken(LGFileParser.ELSEIF, 0); }
 	public WS(): TerminalNode[];
 	public WS(i: number): TerminalNode;
 	public WS(i?: number): TerminalNode | TerminalNode[] {

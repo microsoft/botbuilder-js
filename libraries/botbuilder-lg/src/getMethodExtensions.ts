@@ -25,9 +25,9 @@ export class GetMethodExtensions implements IGetMethod {
         // tslint:disable-next-line: switch-default
         switch (name) {
             case 'lgTemplate':
-                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.lgTemplate), ReturnType.String, this.ValidLgTemplate);
+                return new ExpressionEvaluator('lgTemplate', BuiltInFunctions.Apply(this.lgTemplate), ReturnType.String, this.ValidLgTemplate);
             case 'join':
-                return new ExpressionEvaluator(BuiltInFunctions.Apply(this.Join));
+                return new ExpressionEvaluator('join', BuiltInFunctions.Apply(this.Join));
         }
 
         return BuiltInFunctions.Lookup(name);

@@ -26,7 +26,7 @@
         "no-parameter-reassignment":false,
         "export-name":false,
         "no-relative-imports": false,
-        "max-line-length": [true,{"limit":140,"ignore-pattern":"^\\s+\\*"}],
+        "max-line-length": [true,{"limit":180,"ignore-pattern":"^\\s+\\*"}],
         "no-unsafe-any": false
     }
 }

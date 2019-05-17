@@ -55,7 +55,16 @@ const dataSource = [
   ["'string'&'builder'", "stringbuilder"],
   ["\"string\"&\"builder\"", "stringbuilder"],
   ["one > 0.5 && two < 2.5", true, oneTwo],
+  ["notThere > 4", false], 
+  ["float(5.5) && float(0.0)", true],
+  ["hello && \"hello\"", true],
+  ["items || ((2 + 2) <= (4 - 1))", true], // true || false
+  ["0 || false", true], // true || false
+  ["!(hello)", false], // false
+  ["!(10)", false],
+  ["!(0)", false],
   ["one > 0.5 || two < 1.5", true, oneTwo],
+  ["one / 0 || two", true],
   ["0/3", 0],
 
   // String functions tests
@@ -74,6 +83,8 @@ const dataSource = [
   ["split('hello','e')", ["h","llo"]],
   ["substring('hello', 0, 5)", "hello"],
   ["substring('hello', 0, 3)", "hel"],
+  ["substring('hello', 3)", "lo"],
+  ["substring('hello', 0, bag.index)", "hel"],
   ["toLower('UpCase')", "upcase"],
   ["toUpper('lowercase')", "LOWERCASE"],
   ["toLower(toUpper('lowercase'))", "lowercase"],
@@ -119,11 +130,12 @@ const dataSource = [
   ["equals(bag.index, 3)", true],
   ["equals(bag.index, 2)", false],
   ["equals(hello == 'world', bool('true'))", false],
-  ["equals(hello == 'world', bool(0))", true],
+  ["equals(hello == 'world', bool(0))", false],
   ["if(!exists(one), 'r1', 'r2')", "r2"],
   ["if(!!exists(one), 'r1', 'r2')", "r1"],
-  ["if(bool(0), 'r1', 'r2')", "r2"],
+  ["if(0, 'r1', 'r2')", "r1"],
   ["if(bool('true'), 'r1', 'r2')", "r1"],
+  ["if(istrue, 'r1', 'r2')", "r1"], // true
   ["exists(one)", true],
   ["exists(xxx)", false],
   ["exists(one.xxx)", false],
@@ -133,7 +145,18 @@ const dataSource = [
   ["not(one == 1.0)", false, ["one"]],
   ["not(not(one == 1.0))", true, ["one"]],
   ["not(false)", true],
-  
+  ["and(one > 0.5, two < 2.5)", true, oneTwo],
+  ["and(float(5.5), float(0.0))", true],
+  ["and(hello, \"hello\")", true],
+  ["or(items, (2 + 2) <= (4 - 1))", true], // true || false
+  ["or(0, false)", true], // true || false
+  ["not(hello)", false], // false
+  ["not(10)", false],
+  ["not(0)", false],
+  ["if(hello, 'r1', 'r2')", "r1"],
+  ["if(null, 'r1', 'r2')", "r2"],
+  ["if(hello * 5, 'r1', 'r2')", "r2"],
+
   // Conversion functions tests
   ["float('10.333')", 10.333],
   ["float('10')", 10.0],
@@ -143,11 +166,13 @@ const dataSource = [
   ["string(bool(1))", "true"],
   ["string(bag.set)", "{\"four\":4}"], // ts-->"{\"four\":4}", C# --> "{\"four\":4.0}"
   ["bool(1)", true],
-  ["bool(0)", false],
-  ["bool('false')", false],
-  ["bool('true')", true],
+  ["bool(0)", true],
+  ["bool(null)", false],
+  ["bool(hello * 5)", false],
+  ["bool('false')", true], // we make it true, because it is not empty
+  ["bool('hi')", true],
   ["createArray('h', 'e', 'l', 'l', 'o')", ["h", "e", "l", "l", "o"]],
-  ["createArray(1, bool('false'), string(bool(1)), float('10'))", [1, false, "true", 10.0]],
+  ["createArray(1, bool(0), string(bool(1)), float('10'))", [1, true, "true", 10.0]],
 
   // Math functions tests
   ["add(1, 2, 3)", 6],
@@ -192,11 +217,15 @@ const dataSource = [
   ["year(timestamp)", 2018],
   ["formatDateTime(timestamp)", "2018-03-15T13:00:00.0000000Z"],
   ["formatDateTime(timestamp, 'MM-dd-yy')", "03-15-18"],
+  ["subtractFromTime(timestamp, 1, 'Year')", "2017-03-15T13:00:00.0000000Z"],
+  ["subtractFromTime(timestamp, 1, 'Month')", "2018-02-15T13:00:00.0000000Z"],
+  ["subtractFromTime(timestamp, 1, 'Week')", "2018-03-08T13:00:00.0000000Z"],
   ["subtractFromTime(timestamp, 1, 'Day')", "2018-03-14T13:00:00.0000000Z"],
+  ["subtractFromTime(timestamp, 1, 'Hour')", "2018-03-15T12:00:00.0000000Z"],
   ["subtractFromTime(timestamp, 1, 'Minute')", "2018-03-15T12:59:00.0000000Z"],
   ["subtractFromTime(timestamp, 1, 'Second')", "2018-03-15T12:59:59.0000000Z"],
-  ["dateReadBack(timestamp, addDays(timestamp, 1))", "Tomorrow"],
-  ["dateReadBack(addDays(timestamp, 1),timestamp))", "Yesterday"],
+  ["dateReadBack(timestamp, addDays(timestamp, 1))", "tomorrow"],
+  ["dateReadBack(addDays(timestamp, 1),timestamp))", "yesterday"],
   ["getTimeOfDay('2018-03-15T00:00:00Z')", "midnight"],
   ["getTimeOfDay('2018-03-15T08:00:00Z')", "morning"],
   ["getTimeOfDay('2018-03-15T12:00:00Z')", "noon"],
@@ -225,6 +254,7 @@ const dataSource = [
   ["first(items)", "zero"],
   ["first('hello')", "h"],
   ["first(createArray(0, 1, 2))", 0],
+  ["first(1)", undefined],
   ["first(nestedItems).x", 1, ["nestedItems"]],
   ["join(items,',')", "zero,one,two"],
   ["join(createArray('a', 'b', 'c'), '.')", "a.b.c"],
@@ -234,6 +264,7 @@ const dataSource = [
   ["last(items)", "two"],
   ["last('hello')", "o"],
   ["last(createArray(0, 1, 2))", 2],
+  ["last(1)", undefined],
 
   // Object manipulation and construction functions tests
   ["string(addProperty(json('{\"key1\":\"value1\"}'), 'key2','value2'))", "{\"key1\":\"value1\",\"key2\":\"value2\"}"],
@@ -250,12 +281,14 @@ const dataSource = [
   ["$subTitle", "Dialog Sub Title", ["dialog.result.subTitle"]],
  
   // Memory access tests
-  ["property(bag, concat('na','me'))","mybag"],
+  ["getProperty(bag, concat('na','me'))","mybag"],
   ["items[2]", "two", ["items[2]"]],
   ["bag.list[bag.index - 2]", "blue", ["bag.list", "bag.index"]],
+  ["items[nestedItems[1].x]","two", ["items", "nestedItems[1].x"]],
   ["bag['name']","mybag"],
   ["bag[substring(concat('na','me','more'), 0, length('name'))]","mybag"],
-  ["items[1+1]","two"]
+  ["getProperty(undefined, 'p')", undefined],
+  ["(getProperty(undefined, 'p'))[1]",undefined]
 ];
 
 const scope = {
@@ -263,6 +296,7 @@ const scope = {
   two : 2.0,
   hello : "hello",
   world : "world",
+  istrue : true,
   bag : 
   {
       three : 3.0,
@@ -321,7 +355,7 @@ describe('expression functional test', () => {
             assert.fail(errorMessage);
           }
         } else if (typeof expected === 'number'){
-            assert(Math.abs(actual - expected) < 0.0000001, `actual is: ${actual} for case ${input}`)
+            assert(parseFloat(actual) === expected, `actual is: ${actual} for case ${input}`)
         }
         else {
           assert(actual === expected, `actual is: ${actual} for case ${input}`);

@@ -6,7 +6,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-export * from './ErrorListener';
-export * from './ExpressionEngine';
+export * from './errorListener';
+export * from './expressionEngine';
 export * from './util';
 export * from './generated';

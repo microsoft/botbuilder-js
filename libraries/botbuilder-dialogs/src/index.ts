@@ -7,7 +7,6 @@
  */
 export * from './choices';
 export * from './prompts';
-export * from './botDebugger';
 export * from './componentDialog';
 export * from './configurable';
 export * from './dialog';

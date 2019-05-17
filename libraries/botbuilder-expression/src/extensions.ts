@@ -44,33 +44,6 @@ export class Extensions {
     }
 
     /**
-     * Do a deep equality between expressions.
-     * @param expr Base expression.
-     * @param other Other expression.
-     * @returns True if expressions are the same.
-     */
-    public static DeepEquals(expr: Expression, other: Expression): boolean {
-        let eq: boolean = true;
-        if (expr !== undefined && other !== undefined) {
-            eq = expr.Type === other.Type;
-            if (eq) {
-                if (expr.Type === ExpressionType.Constant) {
-                    const val: any = (<Constant>expr).Value;
-                    const otherVal: any = (<Constant>other).Value;
-                    eq = val === otherVal || (val !== undefined && val === otherVal);
-                } else {
-                    eq = expr.Children.length === other.Children.length;
-                    for (let i: number = 0; i < expr.Children.length; ++i) {
-                        eq = Extensions.DeepEquals(expr.Children[i], other.Children[i]);
-                    }
-                }
-            }
-        }
-
-        return eq;
-    }
-
-    /**
      * Walking function for identifying static memory references in an expression.
      * @param expression Expression to analyze.
      * @param references Tracking for references found.

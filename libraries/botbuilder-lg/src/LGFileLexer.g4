@@ -18,12 +18,16 @@ lexer grammar LGFileLexer;
 fragment LETTER: 'a'..'z' | 'A'..'Z';
 fragment NUMBER: '0'..'9';
 
+fragment WHITESPACE
+  : ' '|'\t'|'\ufeff'|'\u00a0'
+  ;
+
 COMMENTS
   : ('>'|'$') ~('\r'|'\n')+ -> skip
   ;
 
 WS
-  : (' '|'\t')+ -> skip
+  : WHITESPACE+ -> skip
   ;
 
 NEWLINE
@@ -38,10 +42,14 @@ DASH
   : '-' {this.expectIfElse = true;} -> pushMode(TEMPLATE_BODY_MODE)
   ;
 
+INVALID_TOKEN_DEFAULT_MODE
+  : .
+  ;
+
 mode TEMPLATE_NAME_MODE;
 
 WS_IN_NAME
-  : (' '|'\t')+ -> skip
+  : WHITESPACE+ -> skip
   ;
 
 NEWLINE_IN_NAME
@@ -76,20 +84,27 @@ mode TEMPLATE_BODY_MODE;
 
 // a little tedious on the rules, a big improvement on portability
 WS_IN_BODY_IGNORED
-  : (' '|'\t')+  {this.ignoreWS}? -> skip
+  : WHITESPACE+  {this.ignoreWS}? -> skip
   ;
 
 WS_IN_BODY
-  : (' '|'\t')+  -> type(WS)
+  : WHITESPACE+  -> type(WS)
   ;
 
 NEWLINE_IN_BODY
   : '\r'? '\n' {this.ignoreWS = true;} -> type(NEWLINE), popMode
   ;
 
-// only if/else makes ignoreWS = true
-IFELSE
-  : ('if:' | 'IF:' | 'elseif:' | 'ELSEIF:' | 'else:' | 'ELSE:') {this.expectIfElse}? { this.ignoreWS = true;}
+IF
+  : ('if'|'IF') WHITESPACE* ':'  {this.expectIfElse}? { this.ignoreWS = true;}
+  ;
+
+ELSEIF
+  : ('elseif'|'ELSEIF') WHITESPACE* ':' {this.expectIfElse}? { this.ignoreWS = true;}
+  ;
+
+ELSE
+   : ('else'|'ELSE') WHITESPACE* ':' {this.expectIfElse}? { this.ignoreWS = true;}
   ;
 
 MULTI_LINE_TEXT

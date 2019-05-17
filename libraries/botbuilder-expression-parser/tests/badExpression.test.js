@@ -14,6 +14,7 @@ const invalidExpressions = [
 const badExpressions =
   // General test
   ["func()", // no such func
+  "length(func())", //no such function in children
   "a.func()", // no such function
   "(1.foreach)()",// error func
   "('str'.foreach)()",// error func
@@ -25,17 +26,13 @@ const badExpressions =
   "'1' / 2", // params should be number
   "'1' % 2", // params should be number
   "'1' ^ 2", // params should be number
-  "'1' && true", // params should be boolean
-  "'1' || true", // params should be boolean
-  "!'1'", // params should be boolean
-  "items >= 1", // params should be number or string
-  "items <= 1", // params should be number or string
   "'string'&one", // $ can only accept string parameter
   "1/0", // can not divide 0
 
   // String functions test
   "concat(one, hello)", // concat can only accept string parameter
   "length(one, 1)", // length can only have one param
+  "length(concat(one, hello))", //children func error
   "replace(hello)", // replace need three parameters
   "replace(one, 'l', 'k')", // replace only accept string parameter
   "replace('hi', 1, 'k')", // replace only accept string parameter
@@ -50,6 +47,8 @@ const badExpressions =
   "substring(hello, 0.5)", // the second parameter of substring must be integer
   "substring(one, 0)", // the first parameter of substring must be string
   "substring(hello, 10)", // the start index is out of the range of the string length
+  "substring(hello, 0, hello)", // length is not integer
+  "substring(hello, 0, 'hello')", // length is not integer
   "substring(hello, 0, 10)", // the length of substring is out of the range of the original string
   "toLower(one)", // the parameter of toLower must be string
   "toLower('hi', 1)", // should have 1 param
@@ -59,24 +58,19 @@ const badExpressions =
   "trim('hi', 1)", // should have 1 param
 
   // Logical comparison functions test
-  "and(one, hello, one < two)", //one and hello are not bool type
   "greater(one, hello)", // string and integer are not comparable
   "greater(one)", // greater need two parameters
   "greaterOrEquals(one, hello)", // string and integer are not comparable
   "greaterOrEquals(one)", // function need two parameters
+  "less(false, true)", //string or number parameters are needed
   "less(one, hello)", // string and integer are not comparable
   "less(one)", // function need two parameters
   "lessOrEquals(one, hello)", // string and integer are not comparable
   "lessOrEquals(one)", // function need two parameters
-  "not(hello)", // not can only accept bool parameter
   "equals(one)", // equals must accept two parameters
   "exists(1, 2)", // function need one parameter
-  "if(hello, 'r1', 'r2')", // the first parameter of the if must be bool
   //"if(!exists(one), one, hello)", // the second and third parameters of if must the same type
-  //"or(hello == 'hello')", // or function needs two parameters
-  "or(hello, one)", // or function only accept bool parameters
   "not(false, one)", // function need one parameter
-  "not(1)", //accept boolean param
 
   // Conversion functions test
   "float(hello)", // param shoud be float format string
@@ -84,7 +78,6 @@ const badExpressions =
   "int(hello)", // param shoud be int format string
   "int(1, 1)", // shold have 1 param
   "string(hello, 1)", // shold have 1 param
-  //"bool(hello)", // param shoud be float format string
   "bool(false, 1)", // shold have 1 param
 
   // Math functions test
@@ -113,6 +106,7 @@ const badExpressions =
   "rand(5, 6.1)", //  param should be integer
   "rand(5)", // need two params
   "rand(7, 6)", //  minvalue cannot be greater than maxValue
+  "sum(items)", // should have number parameters
 
   // Date and time function test
   "addDays('errortime', 1)",// error datetime format
@@ -146,6 +140,8 @@ const badExpressions =
   "formatDateTime('errortime')", // error datetime format
   "formatDateTime(timestamp, 'yyyy', 1)", // should have 2 or 3 params
   "subtractFromTime('errortime', 'yyyy', 1)", // error datetime format
+  "subtractFromTime(timestamp, 1, 'W')", // error time unit
+  "subtractFromTime(timestamp, timestamp, 'W')", // error parameters format
   "subtractFromTime(timestamp, 'yyyy', '1')", // third param should be integer
   "subtractFromTime(timestamp, 'yyyy', 1, 1)", // should have 3 params
   "dateReadBack('errortime', 'errortime')", // error datetime format
@@ -159,6 +155,7 @@ const badExpressions =
   "sum('hello')",//first param should be list
   "average(items, 'hello')",//should have 1 parameter
   "average('hello')",//first param should be list
+  "average(hello)", // first param should be list
   "contains('hello world', 'hello', 'new')",//should have 2 parameter
   "count(items, 1)", //should have 1 parameter
   "count(1)", //first param should be string, array or map
@@ -169,10 +166,13 @@ const badExpressions =
   //method extension should have 2-3 params
   "join(hello, 'hi')",// first param must list
   "join(items, 1)",// second param must string 
+  "join(items, 1)",// second param must string 
   "foreach(hello, item, item)",// first arg is not list
   "foreach(items, item)",//should have three parameters
   "foreach(items, item, item2, item3)",//should have three parameters
   "foreach(items, add(1), item)",// Second paramter of foreach is not an identifier
+  "foreach(items, 1, item)", // Second paramter error
+  "foreach(items, x, sum(x))", // third paramter error
 
   // Object manipulation and construction functions test
   "json(1,2)", //should have 1 parameter
@@ -186,8 +186,9 @@ const badExpressions =
   "removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), '1', '2'))",// should have 2 parameter
 
   // Memory access test
-  "property(bag, 1)",// second param should be string
+  "getProperty(bag, 1)",// second param should be string
   "Accessor(1)",// first param should be string
+  "Accessor(bag, 1)", // second should be object
   "one[0]",  // one is not list
   "items[3]", // index out of range
   "items[one+0.5]", // index is not integer
@@ -198,6 +199,7 @@ const scope = {
   two: 2.0,
   hello: "hello",
   world: "world",
+  istrue: true,
   bag:
   {
     three: 3.0,

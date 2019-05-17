@@ -83,7 +83,6 @@ export class ExpressionType {
     public static readonly First: string = 'first';
     public static readonly Last: string = 'last';
     public static readonly Foreach: string = 'foreach';
-    public static readonly Property: string = 'property';
 
     // Misc
     public static readonly Constant: string = 'Constant';
@@ -96,5 +95,6 @@ export class ExpressionType {
     public static readonly AddProperty: string = 'addProperty';
     public static readonly RemoveProperty: string = 'removeProperty';
     public static readonly SetProperty: string = 'setProperty';
+    public static readonly GetProperty: string = 'getProperty';
 
 }

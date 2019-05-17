@@ -10,17 +10,15 @@ function GetExampleFile(fileName){
 describe('MSLGTool', function () {
     it('TestValidateReturnStaticCheckerErrors', function () {
         let errors = new MSLGTool().ValidateFile(GetExampleFile('StaticCheckerErrors.lg'));
-        assert.strictEqual(errors.length, 2);
-        assert.strictEqual(errors[0], "[ERROR]: There is no template body in template template");
-        var warnOptions = ["[WARN]: condition is not end with else: \'-IF:{foo == \'bar\'}\r\n-ok<EOF>\'",
-                            "[WARN]: condition is not end with else: \'-IF:{foo == \'bar\'}\n-ok<EOF>\'"]
-        assert(warnOptions.includes(errors[1]));
+        assert.strictEqual(errors.length, 2)
+        assert.strictEqual(errors[0], "[Error] line 1:0 - line 1:2: There is no template body in template template");
+        assert.strictEqual(errors[1], "[Warning] line 5:0 - line 5:6: condition is not end with else: \'-IF:{foo == \'bar\'}\r\n-ok<EOF>\'")
     });
 
     it('TestValidateReturnAntlrParseError', function () {
         let errors = new MSLGTool().ValidateFile(GetExampleFile('AntlrParseError.lg'));
         assert.strictEqual(errors.length, 1);
-        assert.strictEqual(errors[0], "[ERROR]: syntax error at line 2:18 mismatched input 'param2' expecting {<EOF>, NEWLINE}");
+        assert.strictEqual(errors[0], "[Error] line 2:18 - line 2:24: syntax error at mismatched input 'param2' expecting {<EOF>, NEWLINE}");
     });
 
     it('TestValidateReturnNoErrors', function () {

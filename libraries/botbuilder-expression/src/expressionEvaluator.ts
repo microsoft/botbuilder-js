@@ -10,11 +10,13 @@ import { Expression, ReturnType } from './expression';
 
 /**
  * Delegate for doing static validation on an expression.
+ * Validators can and should throw exceptions if the expression is not valid.
  */
 export type ValidateExpressionDelegate = (expression: Expression) => any;
 
 /**
  * Delegate to evaluate an expression.
+ * Evaluators should verify runtime arguments when appropriate and return an error rather than throw exceptions if possible.
  */
 export type EvaluateExpressionDelegate = (expression: Expression, state: any) => { value: any; error: string };
 
@@ -29,6 +31,10 @@ export type EvaluatorLookup = (type: string) => ExpressionEvaluator;
 export class ExpressionEvaluator {
 
     /**
+     * Gets the expression type for evaluator.
+     */
+    public Type: string;
+    /**
      * Type expected by evaluating the expression.
      */
     public ReturnType: ReturnType;
@@ -36,14 +42,18 @@ export class ExpressionEvaluator {
     private readonly _evaluator: EvaluateExpressionDelegate;
 
     /**
-     * Constructor for expression information.
+     * Initializes a new instance of the <see cref="ExpressionEvaluator"/> class.
+     * @param type Expression type.
      * @param evaluator Delegate to evaluate an expression.
      * @param returnType Type expected from evaluation.
      * @param validator Static validation of expression.
      */
-    public constructor(evaluator: EvaluateExpressionDelegate,
-                       returnType: ReturnType = ReturnType.Object,
-                       validator?: ValidateExpressionDelegate) {
+    public constructor(
+        type: string,
+        evaluator: EvaluateExpressionDelegate,
+        returnType: ReturnType = ReturnType.Object,
+        validator?: ValidateExpressionDelegate) {
+        this.Type = type;
         this._evaluator = evaluator;
         this.ReturnType = returnType;
         this._validator = validator === undefined ? ((expr: Expression): any => { }) : validator;
@@ -60,5 +70,5 @@ export class ExpressionEvaluator {
      * @param expression Expression to validate.
      */
     // tslint:disable-next-line: informative-docs
-    public ValidateExpression = (expression: Expression): void  => this._validator(expression);
+    public ValidateExpression = (expression: Expression): void => this._validator(expression);
 }
