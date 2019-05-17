@@ -246,8 +246,9 @@ export class DialogContext {
      * @param name Name of the event to raise.
      * @param value (Optional) value to send along with the event.
      * @param bubble (Optional) flag to control whether the event should be bubbled to its parent if not handled locally. Defaults to a value of `true`.
+     * @param fromLeaf (Optional) if `true` the event will be emitted starting with the leaf most child dialog. Defaults to a value of `false`.
      */
-    public async emitEvent(name: string, value?: any, bubble = true): Promise<boolean> {
+    public async emitEvent(name: string, value?: any, bubble = true, fromLeaf = false): Promise<boolean> {
         // Initialize event
         const event: DialogEvent = {
             bubble: bubble,
@@ -255,11 +256,24 @@ export class DialogContext {
             value: value
         };
 
+        // Find starting dialog
+        let dc: DialogContext = this;
+        if (fromLeaf) {
+            while (true) {
+                const childDC = dc.child;
+                if (childDC) {
+                    dc = childDC;
+                } else {
+                    break;
+                }
+            }
+        }
+
         // Dispatch to active dialog
         // - The dialog is responsible for bubbling the event to its parent
-        const instance = this.activeDialog;
+        const instance = dc.activeDialog;
         if (instance) {
-            const dialog = this.findDialog(instance.id);
+            const dialog = dc.findDialog(instance.id);
             if (dialog) {
                 return await dialog.onDialogEvent(this, event);
             }
@@ -316,26 +330,6 @@ export class DialogContext {
             options = { ...promptOrOptions as PromptOptions };
         }
         return this.beginDialog(dialogId, options);
-    }
-
-    /**
-     * Consults the current dialog stack to see if the active dialog, or any of its parents, wants
-     * to intercept the incoming activity.
-     */
-    public async consultDialog(): Promise<boolean> {
-        // Find leaf child dialog
-        let dc: DialogContext = this;
-        while (true) {
-            const childDC = dc.child;
-            if (childDC) {
-                dc = childDC;
-            } else {
-                break;
-            }
-        }
-
-        // Emit consultDialog event
-        return await dc.emitEvent('consultDialog');
     }
 
     /**

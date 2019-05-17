@@ -127,9 +127,9 @@ export class DialogManager extends Configurable  {
         const conversationState = new StateMap(newState.conversationState);
         const dc = new DialogContext(this.main, context, newState.conversationState._dialogs, userState, conversationState);
 
-        // Execute consultation phase
+        // Dispatch "ActivityReceived" event
         // - This will queue up any interruptions.
-        await dc.consultDialog();
+        await dc.emitEvent('ActivityReceived', undefined, true, true);
 
         // Continue execution
         // - This will apply any queued up interruptions and execute the current/next step(s).
