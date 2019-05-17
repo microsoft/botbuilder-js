@@ -9,7 +9,6 @@ import { Activity, ActivityTypes, InputHints, MessageFactory, TurnContext } from
 import { Choice, ChoiceFactory, ChoiceFactoryOptions } from '../choices';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogEvent } from '../dialog';
 import { DialogContext } from '../dialogContext';
-import { StateMap } from '../stateMap';
 
 /**
  * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
@@ -67,6 +66,12 @@ export interface PromptOptions {
     choices?: (string | Choice)[];
 
     /**
+     * (Optional) Property that can be used to override or set the value of ChoicePrompt.Style
+     * when the prompt is executed using DialogContext.prompt.
+     */
+    style?: ListStyle
+
+    /**
      * (Optional) Additional validation rules to pass the prompts validator routine.
      */
     validations?: object;
@@ -87,12 +92,6 @@ export interface PromptRecognizerResult<T> {
      * Value that was recognized if [succeeded](#succeeded) is `true`.
      */
     value?: T;
-
-    /**
-     * (Optional) flag indicating whether or not parent dialogs should be allowed to interrupt the 
-     * prompt. The default value is `false`.
-     */
-    allowInterruption?: boolean;
 }
 
 /**
@@ -152,6 +151,13 @@ export interface PromptValidatorContext<T> {
      * The validator can extend this interface to support additional prompt options.
      */
     readonly options: PromptOptions;
+
+    /**
+     * A count of the number of times the prompt has been executed.
+     * 
+     * A number indicating how many times the prompt was invoked (starting at 1 for the first time it was invoked).
+     */
+    readonly attemptCount: number;
 }
 
 /**
@@ -161,10 +167,10 @@ export interface PromptValidatorContext<T> {
 export abstract class Prompt<T> extends Dialog {
     /**
      * Creates a new Prompt instance.
-     * @param dialogId (Optional) unique ID of the prompt within its parent `DialogSet` or `ComponentDialog`.
+     * @param dialogId Unique ID of the prompt within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) custom validator used to provide additional validation and re-prompting logic for the prompt.
      */
-    constructor(dialogId?: string, private validator?: PromptValidator<T>) {
+    protected constructor(dialogId: string, private validator?: PromptValidator<T>) {
         super(dialogId);
     }
 
@@ -179,12 +185,12 @@ export abstract class Prompt<T> extends Dialog {
         }
 
         // Initialize prompt state
-        const state = dc.state.dialog;
-        state.set(PERSISTED_OPTIONS, opt);
-        state.set(PERSISTED_STATE, {});
+        const state: PromptState = dc.activeDialog.state as PromptState;
+        state.options = opt;
+        state.state = {};
 
         // Send initial prompt
-        await this.onPrompt(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), false);
+        await this.onPrompt(dc.context, state.state, state.options, false);
 
         return Dialog.EndOfTurn;
     }
@@ -196,19 +202,25 @@ export abstract class Prompt<T> extends Dialog {
         }
 
         // Perform base recognition
-        const state = dc.state.dialog.get(PERSISTED_STATE);
-        const options = dc.state.dialog.get(PERSISTED_OPTIONS);
-        const recognized: PromptRecognizerResult<T> = await this.onRecognize(dc.context, state, options);
+        const state: PromptState = dc.activeDialog.state as PromptState;
+        const recognized: PromptRecognizerResult<T> = await this.onRecognize(dc.context, state.state, state.options);
 
         // Validate the return value
         let isValid = false;
         if (this.validator) {
+            if (state.state['attemptCount'] === undefined) {
+                state.state['attemptCount'] = 1;
+            }
             isValid = await this.validator({
                 context: dc.context,
                 recognized: recognized,
                 state: state.state,
-                options: state.options
+                options: state.options,
+                attemptCount: state.state['attemptCount']
             });
+            if (state.state['attemptCount'] !== undefined) {
+                state.state['attemptCount']++;
+            }
         } else if (recognized.succeeded) {
             isValid = true;
         }
@@ -225,15 +237,15 @@ export abstract class Prompt<T> extends Dialog {
         }
     }
 
-    public async onDialogEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
-        switch (event.name) {
-            case 'consultDialog':
-                const state = dc.state.dialog;
-                const recognized: PromptRecognizerResult<T> = await this.onRecognize(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS));
-                return recognized.succeeded && !recognized.allowInterruption;
-            default:
-                return super.onDialogEvent(dc, event);
+    protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
+        if (event.name == 'ActivityReceived' && dc.context.activity.type == ActivityTypes.Message) {
+            // Perform base recognition
+            const state: PromptState = dc.activeDialog.state as PromptState;
+            const recognized: PromptRecognizerResult<T> = await this.onRecognize(dc.context, state.state, state.options);
+            return recognized.succeeded;
         }
+
+        return false;
     }
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
@@ -248,8 +260,8 @@ export abstract class Prompt<T> extends Dialog {
     }
 
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
-        const state = new StateMap(instance.state);
-        await this.onPrompt(context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), false);
+        const state: PromptState = instance.state as PromptState;
+        await this.onPrompt(context, state.state, state.options, false);
     }
 
     /**
@@ -289,7 +301,7 @@ export abstract class Prompt<T> extends Dialog {
         options?: ChoiceFactoryOptions
     ): Partial<Activity> {
         // Get base prompt text (if any)
-        let text: string = '';
+        let text = '';
         if (typeof prompt === 'string') {
             text = prompt;
         } else if (prompt && prompt.text) {
@@ -349,9 +361,7 @@ export abstract class Prompt<T> extends Dialog {
 /**
  * @private
  */
-const PERSISTED_STATE = 'state';
-
-/**
- * @private
- */
-const PERSISTED_OPTIONS = 'options';
+interface PromptState {
+    state: object;
+    options: PromptOptions;
+}

@@ -290,14 +290,31 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     }
 
     /**
-     * Called when an event has been raised, using `DialogContext.emitEvent()`, by either the current 
-     * dialog or a dialog that the current dialog started. 
+     * Called when an event has been raised, using `DialogContext.emitEvent()`.
+     * 
+     * @remarks
+     * The dialog is responsible for bubbling the event up to its parent dialog. In most cases
+     * developers should override `onPreBubbleEvent()` or `onPostBubbleEvent()` versus 
+     * overriding `onDialogEvent()` directly.
      * @param dc The dialog context for the current turn of conversation.
      * @param event The event being raised.
      * @returns `true` if the event is handled by the current dialog and bubbling should stop.
      */
-    public onDialogEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
-        return Promise.resolve(false);
+    public async onDialogEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
+        // Before bubble
+        let handled = await this.onPreBubbleEvent(dc, event);
+        
+        // Bubble as needed
+        if (!handled && event.bubble && dc.parent) {
+            handled = await dc.parent.emitEvent(event.name, event.value, true);
+        }
+        
+        // Post bubble
+        if (!handled) {
+            handled = await this.onPostBubbleEvent(dc, event);
+        }
+
+        return handled;
     }
 
     /**
@@ -336,6 +353,35 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      */
     protected onComputeID(): string {
         return `dialog[${this.bindingPath()}]`;
+    }
+
+    /**
+     * Called before an event is bubbled to its parent.
+     * 
+     * @remarks
+     * This is a good place to perform interception of an event as returning `true` will prevent
+     * any further bubbling of the event to the dialogs parents and will also prevent any child
+     * dialogs from performing their default processing.
+     * @param dc The dialog context for the current turn of conversation.
+     * @param event The event being raised.
+     * @returns `true` if the event is handled by the current dialog and further processing should stop.
+     */
+    protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
+        return false;
+    }
+
+    /**
+     * Called after an event was bubbled to all parents and wasn't handled.
+     * 
+     * @remarks
+     * This is a good place to perform default processing logic for an event. Returning `true` will
+     * prevent any processing of the event by child dialogs.
+     * @param dc The dialog context for the current turn of conversation.
+     * @param event The event being raised.
+     * @returns `true` if the event is handled by the current dialog and further processing should stop.
+     */
+    protected async onPostBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
+        return false;
     }
 
     /**

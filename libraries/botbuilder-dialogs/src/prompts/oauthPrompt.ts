@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { Token } from '@microsoft/recognizers-text-date-time';
 import { Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, TokenResponse, TurnContext, IUserTokenProvider } from 'botbuilder-core';
 import { Dialog, DialogTurnResult, DialogEvent } from '../dialog';
 import { DialogContext } from '../dialogContext';
@@ -107,16 +108,12 @@ export class OAuthPrompt extends Dialog {
 
     /**
      * Creates a new OAuthPrompt instance.
-     * @param dialogId (Optional) unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
-     * @param settings (Optional) settings used to configure the prompt.
+     * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
+     * @param settings Settings used to configure the prompt.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
-    constructor(dialogId?: string, private settings?: OAuthPromptSettings, private validator?: PromptValidator<TokenResponse>) {
+    constructor(dialogId: string, private settings: OAuthPromptSettings, private validator?: PromptValidator<TokenResponse>) {
         super(dialogId);
-    }
-
-    protected onComputeID(): string {
-        return `oauthPrompt[${this.bindingPath()}]`;
     }
 
     public async beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
@@ -131,10 +128,10 @@ export class OAuthPrompt extends Dialog {
 
         // Initialize prompt state
         const timeout: number = typeof this.settings.timeout === 'number' ? this.settings.timeout : 900000;
-        const state = dc.state.dialog;
-        state.set(PERSISTED_STATE, {});
-        state.set(PERSISTED_OPTIONS, o);
-        state.set(PERSISTED_EXPIRES, new Date().getTime() + timeout);
+        const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
+        state.state = {};
+        state.options = o;
+        state.expires = new Date().getTime() + timeout;
 
         // Attempt to get the users token
         const output: TokenResponse = await this.getUserToken(dc.context);
@@ -143,7 +140,7 @@ export class OAuthPrompt extends Dialog {
             return await dc.endDialog(output);
         } else {
             // Prompt user to login
-            await this.sendOAuthCardAsync(dc.context, state.get(PERSISTED_OPTIONS).prompt);
+            await this.sendOAuthCardAsync(dc.context, state.options.prompt);
 
             return Dialog.EndOfTurn;
         }
@@ -154,20 +151,26 @@ export class OAuthPrompt extends Dialog {
         const recognized: PromptRecognizerResult<TokenResponse> = await this.recognizeToken(dc.context);
 
         // Check for timeout
-        const state = dc.state.dialog;
+        const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
         const isMessage: boolean = dc.context.activity.type === ActivityTypes.Message;
-        const hasTimedOut: boolean = isMessage && (new Date().getTime() > state.get(PERSISTED_EXPIRES));
+        const hasTimedOut: boolean = isMessage && (new Date().getTime() > state.expires);
         if (hasTimedOut) {
             return await dc.endDialog(undefined);
         } else {
+
+            if (state.state['attemptCount'] === undefined) {
+                state.state['attemptCount'] = 1;
+            }
+
             // Validate the return value
             let isValid = false;
             if (this.validator) {
                 isValid = await this.validator({
                     context: dc.context,
                     recognized: recognized,
-                    state: state.get(PERSISTED_STATE),
-                    options: state.get(PERSISTED_OPTIONS)
+                    state: state.state,
+                    options: state.options,
+                    attemptCount: state.state['attemptCount']
                 });
             } else if (recognized.succeeded) {
                 isValid = true;
@@ -178,23 +181,12 @@ export class OAuthPrompt extends Dialog {
                 return await dc.endDialog(recognized.value);
             } else {
                 // Send retry prompt
-                const options: PromptOptions = state.get(PERSISTED_OPTIONS);
-                if (!dc.context.responded && isMessage && options.retryPrompt) {
-                    await dc.context.sendActivity(options.retryPrompt);
+                if (!dc.context.responded && isMessage && state.options.retryPrompt) {
+                    await dc.context.sendActivity(state.options.retryPrompt);
                 }
 
                 return Dialog.EndOfTurn;
             }
-        }
-    }
-
-    public async onDialogEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
-        switch (event.name) {
-            case 'consultDialog':
-                const recognized: PromptRecognizerResult<TokenResponse> = await this.recognizeToken(dc.context);
-                return recognized.succeeded && !recognized.allowInterruption;
-            default:
-                return super.onDialogEvent(dc, event);
         }
     }
 
@@ -328,15 +320,8 @@ export class OAuthPrompt extends Dialog {
 /**
  * @private
  */
-const PERSISTED_STATE = 'state';
-
-/**
- * @private
- */
-const PERSISTED_OPTIONS = 'options';
-
-/**
- * @private
- * Timestamp of when the prompt will timeout.
- */
-const PERSISTED_EXPIRES = 'expires';
+interface OAuthPromptState  {
+    state: object;
+    options: PromptOptions;
+    expires: number;        // Timestamp of when the prompt will timeout.
+}

@@ -255,27 +255,17 @@ export class DialogContext {
             value: value
         };
 
-        // Dispatch to active dialog first
-        let handled = false;
-        let dc: DialogContext = this;
-        while (true) {
-            const instance = dc.activeDialog;
-            if (instance) {
-                const dialog = dc.findDialog(instance.id);
-                if (dialog) {
-                    handled = await dialog.onDialogEvent(dc, event);
-                }
-            }
-
-            // Break out if not bubbling or no parent
-            if (!handled && event.bubble && this.parent) {
-                dc = this.parent;
-            } else {
-                break;
+        // Dispatch to active dialog
+        // - The dialog is responsible for bubbling the event to its parent
+        const instance = this.activeDialog;
+        if (instance) {
+            const dialog = this.findDialog(instance.id);
+            if (dialog) {
+                return await dialog.onDialogEvent(this, event);
             }
         }
 
-        return handled;
+        return false;
     }
 
     /**

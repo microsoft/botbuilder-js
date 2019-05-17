@@ -6,10 +6,9 @@
  * Licensed under the MIT License.
  */
 import { Activity, InputHints, TurnContext, ActivityTypes } from 'botbuilder-core';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogEvent } from '../dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
-import { StateMap } from '../stateMap';
 
 /**
  * Waits for an activity to be received.
@@ -23,15 +22,11 @@ export class ActivityPrompt extends Dialog {
 
     /**
      * Creates a new ActivityPrompt instance.
-     * @param dialogId (Optional) unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
-     * @param validator (Optional) validator that will be called each time a new activity is received.
+     * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
+     * @param validator Validator that will be called each time a new activity is received.
      */
-    constructor(dialogId?: string, private validator?: PromptValidator<Activity>) {
+    constructor(dialogId: string, private validator: PromptValidator<Activity>) {
         super(dialogId);
-    }
-
-    protected onComputeID(): string {
-        return `activityPrompt[${this.bindingPath()}]`;
     }
 
     public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
@@ -45,21 +40,24 @@ export class ActivityPrompt extends Dialog {
         }
 
         // Initialize prompt state
-        const state = dc.state.dialog;
-        state.set(PERSISTED_OPTIONS, opt);
-        state.set(PERSISTED_STATE, {});
+        const state: any = dc.activeDialog.state as ActivityPromptState;
+        state.options = opt;
+        state.state = {};
 
         // Send initial prompt
-        await this.onPrompt(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), false);
+        await this.onPrompt(dc.context, state.state, state.options, false);
 
         return Dialog.EndOfTurn;
     }
 
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Perform base recognition
-        const state = dc.state.dialog.get(PERSISTED_STATE);
-        const options = dc.state.dialog.get(PERSISTED_OPTIONS);
-        const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(dc.context, state, options);
+        const state: any = dc.activeDialog.state as ActivityPromptState;
+        const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(dc.context, state.state, state.options);
+
+        if (state.state['attemptCount'] === undefined) {
+            state.state['attemptCount'] = 1;
+        }
 
         // Validate the return value
         // - Unlike the other prompts a validator is required for an ActivityPrompt so we don't
@@ -67,8 +65,9 @@ export class ActivityPrompt extends Dialog {
         const isValid: boolean = await this.validator({
             context: dc.context,
             recognized: recognized,
-            state: state,
-            options: options
+            state: state.state,
+            options: state.options,
+            attemptCount: state.state['attemptCount']
         });
 
         // Return recognized value or re-prompt
@@ -76,21 +75,10 @@ export class ActivityPrompt extends Dialog {
             return await dc.endDialog(recognized.value);
         } else {
             if (dc.context.activity.type === ActivityTypes.Message && !dc.context.responded) {
-                await this.onPrompt(dc.context, state, options, true);
+                await this.onPrompt(dc.context, state.state, state.options, true);
             }
 
             return Dialog.EndOfTurn;
-        }
-    }
-
-    public async onDialogEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
-        switch (event.name) {
-            case 'consultDialog':
-                    const state = dc.state.dialog;
-                    const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(dc.context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS));
-                    return recognized.succeeded && !recognized.allowInterruption;
-            default:
-                return super.onDialogEvent(dc, event);
         }
     }
 
@@ -106,8 +94,8 @@ export class ActivityPrompt extends Dialog {
     }
 
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
-        const state = new StateMap(instance.state);
-        await this.onPrompt(context, state.get(PERSISTED_STATE), state.get(PERSISTED_OPTIONS), true);
+        const state: ActivityPromptState = instance.state as ActivityPromptState;
+        await this.onPrompt(context, state.state, state.options, true);
     }
 
     protected async onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void> {
@@ -119,16 +107,14 @@ export class ActivityPrompt extends Dialog {
     }
 
     protected async onRecognize(context: TurnContext, state: object, options: PromptOptions): Promise<PromptRecognizerResult<Activity>> {
-        return { succeeded: true, value: context.activity, allowInterruption: true };
+        return { succeeded: true, value: context.activity };
     }
 }
 
 /**
  * @private
  */
-const PERSISTED_OPTIONS = 'options';
-
-/**
- * @private
- */
-const PERSISTED_STATE = 'state';
+interface ActivityPromptState {
+    state: object;
+    options: PromptOptions;
+}
