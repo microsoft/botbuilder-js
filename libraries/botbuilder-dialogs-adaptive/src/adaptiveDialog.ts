@@ -11,14 +11,13 @@ import {
 } from 'botbuilder-core';
 import { 
     Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent,
-    DialogContext, StateMap, DialogConfiguration
+    DialogContext, StateMap, DialogConfiguration, DialogContainer
 } from 'botbuilder-dialogs';
 import { 
     AdaptiveEventNames, SequenceContext, StepChangeList, StepChangeType, AdaptiveDialogState 
 } from './sequenceContext';
 import { Rule } from './rules';
 import { Recognizer } from './recognizers';
-import { DialogContainer } from 'botbuilder-dialogs/lib/dialogContainer';
 
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     /**
@@ -268,20 +267,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return handled;
     }
 
-    /**
-     * Ends the active step for the current sequence.
-     */
-    public async endCurrentStep(sequence: SequenceContext): Promise<boolean> {
-        if (sequence.steps.length > 0) {
-            sequence.steps.shift();
-            if (sequence.steps.length == 0) {
-                return await sequence.emitEvent(AdaptiveEventNames.SequenceEnded, undefined, false);
-            }
-        }
-
-        return false;
-    }
-
     protected async onRecognize(context: TurnContext): Promise<RecognizerResult> {
         const { text, value } = context.activity;
         const noneIntent: RecognizerResult = {
@@ -369,18 +354,18 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             let result = await step.continueDialog();
 
             // Start step if not continued
-            if (result.status == DialogTurnStatus.empty && this.getUniqueInstanceId(sequence) != instanceId) {
+            if (result.status == DialogTurnStatus.empty && this.getUniqueInstanceId(sequence) == instanceId) {
                 const nextStep = step.steps[0];
                 result = await step.beginDialog(nextStep.dialogId, nextStep.options);
             }
 
             // Is the step waiting for input or were we cancelled?
-            if (result.status == DialogTurnStatus.waiting || this.getUniqueInstanceId(sequence) === instanceId) {
+            if (result.status == DialogTurnStatus.waiting || this.getUniqueInstanceId(sequence) != instanceId) {
                 return result;
             }
 
             // End current step
-            sequence.steps.pop();
+            await this.endCurrentStep(sequence);
 
             // Execute next step
             // - We call continueDialog() on the root dialog to ensure any changes queued up
@@ -393,6 +378,17 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         } else {
             return await this.onEndOfSteps(sequence);
         }
+    }
+
+    protected async endCurrentStep(sequence: SequenceContext): Promise<boolean> {
+        if (sequence.steps.length > 0) {
+            sequence.steps.shift();
+            if (sequence.steps.length == 0) {
+                return await sequence.emitEvent(AdaptiveEventNames.SequenceEnded, undefined, false);
+            }
+        }
+
+        return false;
     }
 
     protected async onEndOfSteps(sequence: SequenceContext): Promise<DialogTurnResult> {
@@ -423,7 +419,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     private toSequenceContext(dc: DialogContext): SequenceContext<O> {
         const state: AdaptiveDialogState<O> = dc.activeDialog.state;
-        const sequence = new SequenceContext(this.dialogs, dc, { dialogStack: dc.stack }, state.steps, this.changeKey);
+        if (!Array.isArray(state.steps)) { state.steps = [] }
+        const sequence = new SequenceContext(dc.dialogs, dc, { dialogStack: dc.stack }, state.steps, this.changeKey);
         sequence.parent = dc.parent;
         return sequence;
     }

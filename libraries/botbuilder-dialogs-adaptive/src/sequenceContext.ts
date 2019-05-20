@@ -89,7 +89,7 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
      */
     public async applyChanges(): Promise<boolean> {
         const queue: StepChangeList[] = this.context.turnState.get(this.changeKey) || [];;
-        if (Array.isArray(queue)) {
+        if (Array.isArray(queue) && queue.length > 0) {
             this.context.turnState.delete(this.changeKey);
 
             // Apply each queued set of changes
