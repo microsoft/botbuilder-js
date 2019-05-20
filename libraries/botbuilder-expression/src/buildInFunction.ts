@@ -943,6 +943,104 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
+    private static Skip(expression: Expression, state: any): { value: any; error: string } {
+        let result: any;
+        let error: any;
+        let arr: any;
+        ({ value: arr, error } = expression.Children[0].tryEvaluate(state));
+
+        if (error === undefined) {
+            if (arr instanceof Array) {
+                let start: number;
+
+                const startExpr: Expression = expression.Children[1];
+                ({ value: start, error } = startExpr.tryEvaluate(state));
+                if (error === undefined && !Number.isInteger(start)) {
+                    error = `${startExpr} is not an integer.`;
+                } else if (start < 0 || start >= arr.length) {
+                    error = `${startExpr}=${start} which is out of range for ${arr}`;
+                }
+                if (error === undefined) {
+                   result = arr.slice(start);
+                }
+            } else {
+                error = `${expression.Children[0]} is not array.`;
+            }
+        }
+
+        return { value: result, error };
+    }
+
+    private static Take(expression: Expression, state: any): { value: any; error: string } {
+        let result: any;
+        let error: any;
+        let arr: any;
+        ({ value: arr, error } = expression.Children[0].tryEvaluate(state));
+
+        if (error === undefined) {
+            if (arr instanceof Array || typeof arr === 'string') {
+                let start: number;
+
+                const startExpr: Expression = expression.Children[1];
+                ({ value: start, error } = startExpr.tryEvaluate(state));
+                if (error === undefined && !Number.isInteger(start)) {
+                    error = `${startExpr} is not an integer.`;
+                } else if (start < 0 || start >= arr.length) {
+                    error = `${startExpr}=${start} which is out of range for ${arr}`;
+                }
+                if (error === undefined) {
+                    result = arr.slice(0, start);
+                }
+            } else {
+                error = `${expression.Children[0]} is not array or string.`;
+            }
+        }
+
+        return { value: result, error };
+    }
+
+    private static SubArray(expression: Expression, state: any): { value: any; error: string } {
+        let result: any;
+        let error: any;
+        let arr: any;
+        ({ value: arr, error } = expression.Children[0].tryEvaluate(state));
+
+        if (error === undefined) {
+            if (arr instanceof Array) {
+                let start: number;
+
+                const startExpr: Expression = expression.Children[1];
+                ({ value: start, error } = startExpr.tryEvaluate(state));
+                if (error === undefined && !Number.isInteger(start)) {
+                    error = `${startExpr} is not an integer.`;
+                } else if (start < 0 || start >= arr.length) {
+                    error = `${startExpr}=${start} which is out of range for ${arr}`;
+                }
+                if (error === undefined) {
+                    let end: number;
+                    if (expression.Children.length === 2) {
+                        end = arr.length;
+                    } else {
+                        const endExpr: Expression = expression.Children[2];
+                        ({ value: end, error } = endExpr.tryEvaluate(state));
+                        if (error === undefined && !Number.isInteger(end)) {
+                            error = `${endExpr} is not an integer`;
+                        } else if (end < 0 || end > arr.length) {
+                            error = `${endExpr}=${end} which is out of range for ${arr}`;
+                        }
+                    }
+                    if (error === undefined) {
+                        result = arr.slice(start, end);
+                    }
+                }
+            } else {
+                error = `${expression.Children[0]} is not array.`;
+            }
+        }
+
+        return { value: result, error };
+    }
+
     // tslint:disable-next-line: max-func-body-length
     private static BuildFunctionLookup(): Map<string, ExpressionEvaluator> {
         // tslint:disable-next-line: no-unnecessary-local-variable
@@ -1044,6 +1142,24 @@ export class BuiltInFunctions {
                     BuiltInFunctions.VerifyList),
                 ReturnType.Object,
                 BuiltInFunctions.ValidateAtLeastOne
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.Skip,
+                BuiltInFunctions.Skip,
+                ReturnType.Object,
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [], ReturnType.Object, ReturnType.Number),
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.Take,
+                BuiltInFunctions.Take,
+                ReturnType.Object,
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String, ReturnType.Object, ReturnType.Number),
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.SubArray,
+                BuiltInFunctions.SubArray,
+                ReturnType.Object,
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.Number], ReturnType.Object, ReturnType.Number),
             ),
             BuiltInFunctions.Comparison(
                 ExpressionType.LessThan,

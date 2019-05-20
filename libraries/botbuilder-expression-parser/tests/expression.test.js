@@ -299,6 +299,11 @@ const dataSource = [
   ["count(union(createArray('a', 'b'), createArray('b', 'c'), createArray('b', 'd')))", 4],
   ["count(intersection(createArray('a', 'b')))", 2],
   ["count(intersection(createArray('a', 'b'), createArray('b', 'c'), createArray('b', 'd')))", 1],
+  ["skip(createArray('a', 'b', 'c', 'd'), 2)", ['c', 'd']],
+  ["take(hello, two)", 'he'],
+  ["take(createArray('a', 'b', 'c', 'd'), one)", ['a']],
+  ["subArray(createArray('a', 'b', 'c', 'd'), 1, 3)", ['b', 'c']],
+  ["subArray(createArray('a', 'b', 'c', 'd'), 1)", ['b', 'c', 'd']],
 
   // Object manipulation and construction functions tests
   ["string(addProperty(json('{\"key1\":\"value1\"}'), 'key2','value2'))", "{\"key1\":\"value1\",\"key2\":\"value2\"}"],

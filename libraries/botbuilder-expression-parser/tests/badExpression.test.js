@@ -72,12 +72,10 @@ const badExpressions =
   "indexOf(hello, world, one)", // should have two parameters
   "indexOf(hello, one)", // both parameters should be string
   "indexOf(one, hello)", // both parameters should be string
-  "indexOf(one, two)", // both parameters should be string
   "lastIndexOf(hello)",// should have two parameters
   "lastIndexOf(hello, world, one)", // should have two parameters
   "lastIndexOf(hello, one)", // both parameters should be string
   "lastIndexOf(one, hello)", // both parameters should be string
-  "lastIndexOf(one, two)", // both parameters should be string
 
   // Logical comparison functions test
   "greater(one, hello)", // string and integer are not comparable
@@ -205,6 +203,21 @@ const badExpressions =
   "foreach(items, x, sum(x))", // third paramter error
   "union(one, two)",// should have collection param
   "intersection(one, two)",// should have collection param
+  "skip(hello)", // should have two parameters
+  "ship(hello, world, one)", //should have two parameters
+  "skip(hello, one)", // first param should be array
+  "skip(items, hello)", // second param should be integer
+  "skip(items, one + 0.5)", // second param should be integer
+  "take(hello)", // should have two parameters
+  "take(hello, world, one)", //should have two parameters
+  "take(one, two)", // first param should be array or string
+  "take(items, hello)", // second param should be integer
+  "take(hello, one + 0.5)", // second param should be integer
+  "subArray(hello)", // should have 2 or 3 params
+  "subArray(one, two, hello, world)", // should have 2 or 3 params
+  "subArray(hello, two)", // first param should be array
+  "subArray(items, hello)", // second param should be integer
+  "subArray(items, one, hello)", // third param should be integer
 
   // Object manipulation and construction functions test
   "json(1,2)", //should have 1 parameter

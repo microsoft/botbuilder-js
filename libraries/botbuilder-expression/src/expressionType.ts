@@ -94,6 +94,10 @@ export class ExpressionType {
     public static readonly Foreach: string = 'foreach';
     public static readonly Union: string = 'union';
     public static readonly Intersection: string = 'intersection';
+    public static readonly Skip: string = 'skip';
+    public static readonly Take: string = 'take';
+    public static readonly FilterNotEqual: string = 'filterNotEqual';
+    public static readonly SubArray: string = 'subArray';
 
     // Misc
     public static readonly Constant: string = 'Constant';
