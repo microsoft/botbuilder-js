@@ -10,7 +10,7 @@
             "type": "Bool"
         },
         "serverFarmLocation": {
-            "defaultValue": "West US",
+            "defaultValue": "Central US",
             "type": "String"
         },
         "serverFarmSku": {
@@ -43,7 +43,7 @@
             "type": "String"
         },
         "zipUrl": {
-            "defaultValue": "https://bot-framework.azureedge.net/static/55880-71cb3dea03/bot-packages/v1.3.15/node.js-abs-webapp-v4_basic.zip",
+            "defaultValue": "https://bot-framework.azureedge.net/static/59409-2a1ed9f3ee/bot-packages/v1.3.18/node.js-abs-webapp-v4_echobot.zip",
             "type": "String"
         },
         "botId": {
@@ -115,14 +115,7 @@
                             "name": "LuisAPIHostName",
                             "value": "westus.api.cognitive.microsoft.com"
                         }
-                    ],
-                    "cors": {
-                        "allowedOrigins": [
-                            "https://botservice.hosting.portal.azure.net",
-                            "https://botservice-ms.hosting.portal.azure.net",
-                            "https://hosting.onecloud.azure-test.net/"
-                        ]
-                    }
+                    ]
                 }
             },
             "resources": [

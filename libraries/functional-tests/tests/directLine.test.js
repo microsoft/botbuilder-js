@@ -3,7 +3,7 @@ const directLineSpec = require('./directline-swagger.json');
 const Swagger = require('swagger-client');
 
 const directLineClientName = 'DirectLineClient';
-const botExpectedMessage = 'To what city would you like to travel?';
+const userMessage = 'Contoso';
 const directLineSecret = process.env.DIRECT_LINE_KEY || null;
 
 const auths = {
@@ -25,7 +25,7 @@ async function sendMessage(client, conversationId) {
             conversationId: conversationId,
             message: {
                 from: directLineClientName,
-                text: 'hi bot'
+                text: userMessage
             }
         }).then((result) => {
             status = result.status;
@@ -55,6 +55,6 @@ describe('Test Azure Bot', function(){
         const conversationId = await getConversationId(directLineClient);
         await sendMessage(directLineClient, conversationId);
         const messages = await getMessages(directLineClient, conversationId); 
-        assert(messages[1].text == botExpectedMessage, `test fail`);    
+        assert(messages[1].text == `you said "${ userMessage }" 0`, `test fail`);    
     });
 });
