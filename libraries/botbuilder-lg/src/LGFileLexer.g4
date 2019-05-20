@@ -12,7 +12,7 @@ lexer grammar LGFileLexer;
 
 @lexer::members {
   ignoreWS = true;             // usually we ignore whitespace, but inside template, whitespace is significant
-  expectIfElse = false;        // whether we are expecting IF/ELSEIF/ELSE
+  expectConditions = false;        // whether we are expecting IF/ELSEIF/ELSE
 }
 
 fragment LETTER: 'a'..'z' | 'A'..'Z';
@@ -39,7 +39,7 @@ HASH
   ;
 
 DASH
-  : '-' {this.expectIfElse = true;} -> pushMode(TEMPLATE_BODY_MODE)
+  : '-' {this.expectConditions = true;} -> pushMode(TEMPLATE_BODY_MODE)
   ;
 
 INVALID_TOKEN_DEFAULT_MODE
@@ -96,23 +96,23 @@ NEWLINE_IN_BODY
   ;
 
 IF
-  : ('if'|'IF') WHITESPACE* ':'  {this.expectIfElse}? { this.ignoreWS = true;}
+  : ('if'|'IF') WHITESPACE* ':'  {this.expectConditions}? { this.ignoreWS = true;}
   ;
 
 ELSEIF
-  : ('elseif'|'ELSEIF') WHITESPACE* ':' {this.expectIfElse}? { this.ignoreWS = true;}
+  : ('elseif'|'ELSEIF') WHITESPACE* ':' {this.expectConditions}? { this.ignoreWS = true;}
   ;
 
 ELSE
-   : ('else'|'ELSE') WHITESPACE* ':' {this.expectIfElse}? { this.ignoreWS = true;}
+  : ('else'|'ELSE') WHITESPACE* ':' {this.expectConditions}? { this.ignoreWS = true;}
   ;
 
 MULTI_LINE_TEXT
-  : '```' .*? '```' { this.ignoreWS = false; this.expectIfElse = false;}
+  : '```' .*? '```' { this.ignoreWS = false; this.expectConditions = false;}
   ;
 
 ESCAPE_CHARACTER
-  : '\\{' | '\\[' | '\\\\' | '\\'[rtn\]}]  { this.ignoreWS = false; this.expectIfElse = false;}
+  : '\\{' | '\\[' | '\\\\' | '\\'[rtn\]}]  { this.ignoreWS = false; this.expectConditions = false;}
   ;
 
 INVALID_ESCAPE
@@ -120,17 +120,29 @@ INVALID_ESCAPE
   ;
 
 EXPRESSION
-  : '{' ~[\r\n{}]* '}'  { this.ignoreWS = false; this.expectIfElse = false;}
+  : '{' ~[\r\n{}]* '}'  { this.ignoreWS = false; this.expectConditions = false;}
   ;
 
 TEMPLATE_REF
-  : '[' (~[\r\n\]] | TEMPLATE_REF)* ']'  { this.ignoreWS = false; this.expectIfElse = false;}
+  : '[' (~[\r\n\]] | TEMPLATE_REF)* ']'  { this.ignoreWS = false; this.expectConditions = false;}
   ;
 
 TEXT_SEPARATOR
-  : [ \t\r\n{}[\]()]  { this.ignoreWS = false; this.expectIfElse = false;}
+  : [ \t\r\n{}[\]()]  { this.ignoreWS = false; this.expectConditions = false;}
   ;
 
 TEXT
-  : ~[ \\\t\r\n{}[\]()]+  { this.ignoreWS = false; this.expectIfElse = false;}
+  : ~[ \\\t\r\n{}[\]()]+  { this.ignoreWS = false; this.expectConditions = false;}
+  ;
+
+SWITCH
+  : ('switch'|'SWITCH') WHITESPACE* ':' {this.expectConditions}? {this.ignoreWS = true;}
+  ;
+
+CASE
+  : ('case'|'CASE') WHITESPACE* ':' {this.expectConditions}? {this.ignoreWS = true;}
+  ;
+
+DEFAULT
+  : ('default'|'DEFAULT') WHITESPACE* ':' {this.expectConditions}? {this.ignoreWS = true;}
   ;

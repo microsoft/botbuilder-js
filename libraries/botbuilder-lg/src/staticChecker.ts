@@ -16,6 +16,7 @@ import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions } from './getMethodExtensions';
 import { LGTemplate } from './lgTemplate';
+import { type } from 'os';
 
 // tslint:disable-next-line: completed-docs
 export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implements LGFileParserVisitor<Diagnostic[]> {
@@ -196,6 +197,62 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
         return result;
     }
+
+    public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Diagnostic[] {
+        let result :Diagnostic[] = [];
+        const switchCaseTemplateBody : lp.SwitchCaseTemplateBodyContext = context.switchCaseTemplateBody()
+        const switchNode : lp.SwitchStatementContext = switchCaseTemplateBody.switchStatement();
+        const caseRuleNodes : lp.CaseConditionRuleContext[] = switchCaseTemplateBody.caseConditionRule();
+        const defaultNode : lp.DefaultConditionRuleContext = switchCaseTemplateBody.defaultConditionRule();
+
+        if (switchNode.EXPRESSION.length !== 1){
+            result.push(this.BuildLGDiagnostic({
+                message: `Switch statement should be followed by one valid expression: '${switchNode.text}'`,
+                context: switchNode
+            }));
+        } else {
+            result = result.concat(this.CheckExpression(switchNode.EXPRESSION[0].text, switchNode));
+        }
+
+        for (const caseRuleNode of caseRuleNodes) {
+            if (caseRuleNode.caseCondition().EXPRESSION.length !== 1) {
+                result.push(this.BuildLGDiagnostic({
+                    message: `Case statement should be followed by one valid expression: '${caseRuleNode.text}'`,
+                    context: caseRuleNode
+                }));
+            } else {
+                result = result.concat(this.CheckExpression(caseRuleNode.caseCondition().EXPRESSION[0].text, caseRuleNode));
+            }
+
+            if (caseRuleNode.normalTemplateBody !== undefined){
+                result = result.concat(this.visit(caseRuleNode.normalTemplateBody()));
+            } else {
+                result.push(this.BuildLGDiagnostic({
+                    message: `No normal template body in case block: '${caseRuleNode.text}'`,
+                    context: caseRuleNode
+                }));
+            }
+        }
+
+        if (defaultNode !== undefined) {
+            if (defaultNode.normalTemplateBody !==undefined) {
+                result = result.concat(this.visit(defaultNode.normalTemplateBody()));
+            } else {
+                result.push(this.BuildLGDiagnostic({
+                    message: `No normal template body in default block: '${defaultNode.text}'`,
+                    context: defaultNode
+                }));
+            }
+        } else {
+            result.push(this.BuildLGDiagnostic({
+                message: `No normal template body in default block: '${defaultNode.text}'`,
+                severity: DiagnosticSeverity.Warning,
+                context: defaultNode    
+            }));
+        }
+        return result;
+    }
+
 
     public visitNormalTemplateString(context: lp.NormalTemplateStringContext): Diagnostic[] {
         let result: Diagnostic[] = [];

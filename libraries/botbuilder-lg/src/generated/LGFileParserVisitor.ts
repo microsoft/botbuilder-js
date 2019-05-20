@@ -3,6 +3,7 @@
 
 import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
+import { SwitchCaseBodyContext } from "./LGFileParser";
 import { NormalBodyContext } from "./LGFileParser";
 import { ConditionalBodyContext } from "./LGFileParser";
 import { FileContext } from "./LGFileParser";
@@ -18,6 +19,12 @@ import { NormalTemplateStringContext } from "./LGFileParser";
 import { ConditionalTemplateBodyContext } from "./LGFileParser";
 import { IfConditionRuleContext } from "./LGFileParser";
 import { IfConditionContext } from "./LGFileParser";
+import { SwitchCaseTemplateBodyContext } from "./LGFileParser";
+import { CaseConditionRuleContext } from "./LGFileParser";
+import { DefaultConditionRuleContext } from "./LGFileParser";
+import { SwitchStatementContext } from "./LGFileParser";
+import { CaseConditionContext } from "./LGFileParser";
+import { DefaultConditionContext } from "./LGFileParser";
 
 
 /**
@@ -28,6 +35,14 @@ import { IfConditionContext } from "./LGFileParser";
  * operations with no return type.
  */
 export interface LGFileParserVisitor<Result> extends ParseTreeVisitor<Result> {
+	/**
+	 * Visit a parse tree produced by the `switchCaseBody`
+	 * labeled alternative in `LGFileParser.templateBody`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitSwitchCaseBody?: (ctx: SwitchCaseBodyContext) => Result;
+
 	/**
 	 * Visit a parse tree produced by the `normalBody`
 	 * labeled alternative in `LGFileParser.templateBody`.
@@ -134,5 +149,47 @@ export interface LGFileParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitIfCondition?: (ctx: IfConditionContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `LGFileParser.switchCaseTemplateBody`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitSwitchCaseTemplateBody?: (ctx: SwitchCaseTemplateBodyContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `LGFileParser.caseConditionRule`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitCaseConditionRule?: (ctx: CaseConditionRuleContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `LGFileParser.defaultConditionRule`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitDefaultConditionRule?: (ctx: DefaultConditionRuleContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `LGFileParser.switchStatement`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitSwitchStatement?: (ctx: SwitchStatementContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `LGFileParser.caseCondition`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitCaseCondition?: (ctx: CaseConditionContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `LGFileParser.defaultCondition`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitDefaultCondition?: (ctx: DefaultConditionContext) => Result;
 }
 

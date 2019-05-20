@@ -38,6 +38,7 @@ parameters
 templateBody
 	: normalTemplateBody						#normalBody
 	| conditionalTemplateBody					#conditionalBody
+    | switchCaseTemplateBody                    #switchCaseBody
 	;
 
 normalTemplateBody
@@ -59,3 +60,28 @@ ifConditionRule
 ifCondition
     : DASH (IF|ELSE|ELSEIF) (WS|TEXT|EXPRESSION)*
     ;
+
+switchCaseTemplateBody
+    : switchStatement caseConditionRule+ defaultConditionRule?
+    ;
+
+caseConditionRule
+    : caseCondition newline normalTemplateBody?
+    ;
+    
+defaultConditionRule
+    : defaultCondition newline normalTemplateBody?
+    ;
+
+switchStatement
+    : DASH SWITCH EXPRESSION
+    ; 
+
+caseCondition
+    : DASH CASE EXPRESSION
+    ; 
+
+defaultCondition
+    : DASH DEFAULT
+    ; 
+    

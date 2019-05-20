@@ -3,6 +3,7 @@
 
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
+import { SwitchCaseBodyContext } from "./LGFileParser";
 import { NormalBodyContext } from "./LGFileParser";
 import { ConditionalBodyContext } from "./LGFileParser";
 import { FileContext } from "./LGFileParser";
@@ -18,6 +19,12 @@ import { NormalTemplateStringContext } from "./LGFileParser";
 import { ConditionalTemplateBodyContext } from "./LGFileParser";
 import { IfConditionRuleContext } from "./LGFileParser";
 import { IfConditionContext } from "./LGFileParser";
+import { SwitchCaseTemplateBodyContext } from "./LGFileParser";
+import { CaseConditionRuleContext } from "./LGFileParser";
+import { DefaultConditionRuleContext } from "./LGFileParser";
+import { SwitchStatementContext } from "./LGFileParser";
+import { CaseConditionContext } from "./LGFileParser";
+import { DefaultConditionContext } from "./LGFileParser";
 
 
 /**
@@ -25,6 +32,19 @@ import { IfConditionContext } from "./LGFileParser";
  * `LGFileParser`.
  */
 export interface LGFileParserListener extends ParseTreeListener {
+	/**
+	 * Enter a parse tree produced by the `switchCaseBody`
+	 * labeled alternative in `LGFileParser.templateBody`.
+	 * @param ctx the parse tree
+	 */
+	enterSwitchCaseBody?: (ctx: SwitchCaseBodyContext) => void;
+	/**
+	 * Exit a parse tree produced by the `switchCaseBody`
+	 * labeled alternative in `LGFileParser.templateBody`.
+	 * @param ctx the parse tree
+	 */
+	exitSwitchCaseBody?: (ctx: SwitchCaseBodyContext) => void;
+
 	/**
 	 * Enter a parse tree produced by the `normalBody`
 	 * labeled alternative in `LGFileParser.templateBody`.
@@ -193,5 +213,71 @@ export interface LGFileParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitIfCondition?: (ctx: IfConditionContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LGFileParser.switchCaseTemplateBody`.
+	 * @param ctx the parse tree
+	 */
+	enterSwitchCaseTemplateBody?: (ctx: SwitchCaseTemplateBodyContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGFileParser.switchCaseTemplateBody`.
+	 * @param ctx the parse tree
+	 */
+	exitSwitchCaseTemplateBody?: (ctx: SwitchCaseTemplateBodyContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LGFileParser.caseConditionRule`.
+	 * @param ctx the parse tree
+	 */
+	enterCaseConditionRule?: (ctx: CaseConditionRuleContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGFileParser.caseConditionRule`.
+	 * @param ctx the parse tree
+	 */
+	exitCaseConditionRule?: (ctx: CaseConditionRuleContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LGFileParser.defaultConditionRule`.
+	 * @param ctx the parse tree
+	 */
+	enterDefaultConditionRule?: (ctx: DefaultConditionRuleContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGFileParser.defaultConditionRule`.
+	 * @param ctx the parse tree
+	 */
+	exitDefaultConditionRule?: (ctx: DefaultConditionRuleContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LGFileParser.switchStatement`.
+	 * @param ctx the parse tree
+	 */
+	enterSwitchStatement?: (ctx: SwitchStatementContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGFileParser.switchStatement`.
+	 * @param ctx the parse tree
+	 */
+	exitSwitchStatement?: (ctx: SwitchStatementContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LGFileParser.caseCondition`.
+	 * @param ctx the parse tree
+	 */
+	enterCaseCondition?: (ctx: CaseConditionContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGFileParser.caseCondition`.
+	 * @param ctx the parse tree
+	 */
+	exitCaseCondition?: (ctx: CaseConditionContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LGFileParser.defaultCondition`.
+	 * @param ctx the parse tree
+	 */
+	enterDefaultCondition?: (ctx: DefaultConditionContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGFileParser.defaultCondition`.
+	 * @param ctx the parse tree
+	 */
+	exitDefaultCondition?: (ctx: DefaultConditionContext) => void;
 }
 

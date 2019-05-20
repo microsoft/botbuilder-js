@@ -210,6 +210,28 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
             return false;
         }
     }
+
+    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext) : string {
+        const switchNode: lp.SwitchStatementContext = ctx.switchCaseTemplateBody().switchStatement();
+        const caseNodes: lp.CaseConditionRuleContext[] = ctx.switchCaseTemplateBody().caseConditionRule();
+        const defaultNode: lp.DefaultConditionRuleContext = ctx.switchCaseTemplateBody().defaultConditionRule();
+
+        const switchExpression: TerminalNode = switchNode.EXPRESSION();
+        const {value:switchExpressionResult, error} : {value: any, error: string} = this.EvalByExpressionEngine(switchExpression.text, this.currentTarget().Scope);
+        for (const caseNode of caseNodes){
+            const caseExpression: TerminalNode = caseNode.caseCondition().EXPRESSION();
+            const {value:caseExpressionResult, error} : {value: any, error: string} = this.EvalByExpressionEngine(caseExpression.text, this.currentTarget().Scope);
+            if(switchExpressionResult === caseExpressionResult) {
+                return this.visit(caseNode.normalTemplateBody());
+            }
+        }
+        if (defaultNode !== undefined) {
+            return this.visit(defaultNode.normalTemplateBody());
+        }
+
+        return undefined;
+    }
+
     private EvalExpression(exp: string): string {
         exp = exp.replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');

@@ -12,6 +12,7 @@ import { keyBy } from 'lodash';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
+import { stringify } from 'querystring';
 
 // tslint:disable-next-line: completed-docs
 export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGFileParserVisitor<Map<string, any>> {
@@ -92,6 +93,32 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         }
 
         return result;
+    }
+
+    public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Map<string, any> {
+        const result: Map<string, any> = new Map<string, any>();
+        const caseNodes: lp.CaseConditionRuleContext[] = context.switchCaseTemplateBody().caseConditionRule();
+        for (const caseNode of caseNodes) {
+            const expression: TerminalNode = caseNode.caseCondition().EXPRESSION();
+            const childTemplateBodyResult: string[] = [];
+            const templateBodies: Map<string, any> = this.visit(caseNode.normalTemplateBody());
+            for (const templateBody of templateBodies) {
+                childTemplateBodyResult.push(templateBody[0]);
+            }
+            if (expression !== undefined) {
+                result.set(expression.text, childTemplateBodyResult);
+            }
+        }
+
+        const defaultNode: lp.DefaultConditionRuleContext = context.switchCaseTemplateBody().defaultConditionRule();
+        const childTemplateBodyResult: string[] = [];
+            const templateBodies: Map<string, any> = this.visit(defaultNode.normalTemplateBody());
+            for (const templateBody of templateBodies) {
+                childTemplateBodyResult.push(templateBody[0]);
+            }
+        result.set('DEFAULT', childTemplateBodyResult);
+        
+        return result; 
     }
 
     protected defaultResult(): Map<string, any> {
