@@ -630,6 +630,15 @@ export class BuiltInFunctions {
         return ordinalResult;
     }
 
+    private static newGuid() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any) => {
+            const r: number = Math.random() * 16 | 0;
+            const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
+
+            return v.toString(16);
+        });
+    }
+
     private static ValidateAccessor(expression: Expression): void {
         const children: Expression[] = expression.Children;
         if (children.length === 0
@@ -1157,6 +1166,24 @@ export class BuiltInFunctions {
                 BuiltInFunctions.Apply((args: ReadonlyArray<any>) => this.AddOrdinal(args[0]), BuiltInFunctions.VerifyInteger),
                 ReturnType.Number,
                 (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 1, 1, ReturnType.Number),
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.Guid,
+                BuiltInFunctions.Apply(() => BuiltInFunctions.newGuid()),
+                ReturnType.String,
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 0, 0, ReturnType.String),
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.IndexOf,
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].indexOf(args[1]), BuiltInFunctions.VerifyString),
+                ReturnType.Number,
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String),
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.LastIndexOf,
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].lastIndexOf(args[1]), BuiltInFunctions.VerifyString),
+                ReturnType.Number,
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String),
             ),
             new ExpressionEvaluator(
                 ExpressionType.Join,

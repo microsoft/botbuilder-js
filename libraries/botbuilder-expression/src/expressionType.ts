@@ -56,6 +56,9 @@ export class ExpressionType {
     public static readonly StartsWith: string = 'startsWith';
     public static readonly CountWord: string = 'countWord';
     public static readonly AddOrdinal: string = 'addOrdinal';
+    public static readonly Guid: string = 'guid';
+    public static readonly IndexOf: string = 'indexOf';
+    public static readonly LastIndexOf: string = 'lastIndexOf';
 
     // DateTime
     public static readonly AddDays: string = 'addDays';

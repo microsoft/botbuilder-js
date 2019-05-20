@@ -67,6 +67,17 @@ const badExpressions =
   "countWord(one)",// should have string param
   "addOrdinal(one + 0.5)",// should have Integer param
   "addOrdinal(one, two)",// should have one param
+  "guid(one)",// should have no parameters
+  "indexOf(hello)",// should have two parameters
+  "indexOf(hello, world, one)", // should have two parameters
+  "indexOf(hello, one)", // both parameters should be string
+  "indexOf(one, hello)", // both parameters should be string
+  "indexOf(one, two)", // both parameters should be string
+  "lastIndexOf(hello)",// should have two parameters
+  "lastIndexOf(hello, world, one)", // should have two parameters
+  "lastIndexOf(hello, one)", // both parameters should be string
+  "lastIndexOf(one, hello)", // both parameters should be string
+  "lastIndexOf(one, two)", // both parameters should be string
 
   // Logical comparison functions test
   "greater(one, hello)", // string and integer are not comparable
