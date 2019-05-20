@@ -52,6 +52,10 @@ export class ExpressionType {
     public static readonly ToUpper: string = 'toUpper';
     public static readonly Trim: string = 'trim';
     public static readonly Join: string = 'join';
+    public static readonly EndsWith: string = 'endsWith';
+    public static readonly StartsWith: string = 'startsWith';
+    public static readonly CountWord: string = 'countWord';
+    public static readonly AddOrdinal: string = 'addOrdinal';
 
     // DateTime
     public static readonly AddDays: string = 'addDays';
@@ -69,6 +73,8 @@ export class ExpressionType {
     public static readonly SubtractFromTime: string = 'subtractFromTime';
     public static readonly DateReadBack: string = 'dateReadBack';
     public static readonly GetTimeOfDay: string = 'getTimeOfDay';
+    public static readonly GetFutureTime: string = 'getFutureTime';
+    public static readonly GetPastTime: string = 'getPastTime';
 
     // Conversions
     public static readonly Float: string = 'float';
@@ -83,6 +89,8 @@ export class ExpressionType {
     public static readonly First: string = 'first';
     public static readonly Last: string = 'last';
     public static readonly Foreach: string = 'foreach';
+    public static readonly Union: string = 'union';
+    public static readonly Intersection: string = 'intersection';
 
     // Misc
     public static readonly Constant: string = 'Constant';

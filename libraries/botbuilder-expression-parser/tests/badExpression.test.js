@@ -56,6 +56,17 @@ const badExpressions =
   "toUpper('hi', 1)", // should have 1 param
   "trim(one)", // the parameter of trim must be string
   "trim('hi', 1)", // should have 1 param
+  "endsWith(hello, one)",// should have string params
+  "endsWith(one, hello)",// should have string params
+  "endsWith(hello)",// should have two params
+  "startsWith(hello, one)",// should have string params
+  "startsWith(one, hello)",// should have string params
+  "startsWith(hello)",// should have two params
+  "countWord(hello, 1)",// should have one param
+  "countWord(one)",// should have string param
+  "countWord(one)",// should have string param
+  "addOrdinal(one + 0.5)",// should have Integer param
+  "addOrdinal(one, two)",// should have one param
 
   // Logical comparison functions test
   "greater(one, hello)", // string and integer are not comparable
@@ -143,12 +154,20 @@ const badExpressions =
   "subtractFromTime(timestamp, 1, 'W')", // error time unit
   "subtractFromTime(timestamp, timestamp, 'W')", // error parameters format
   "subtractFromTime(timestamp, 'yyyy', '1')", // third param should be integer
-  "subtractFromTime(timestamp, 'yyyy', 1, 1)", // should have 3 params
+  "subtractFromTime(timestamp, 'yyyy')", // should have 3 or4 params
   "dateReadBack('errortime', 'errortime')", // error datetime format
   "dateReadBack(timestamp)", // shold have two params
   "dateReadBack(timestamp, 'errortime')", // second param is invalid timestamp format
   "getTimeOfDay('errortime')", // error datetime format
   "getTimeOfDay(timestamp, timestamp)", // should have 1 param
+  "getPastTime(1, 'W')",// error time unit
+  "getPastTime(timestamp, 'W')",// error parameters format
+  "getPastTime('yyyy', '1')",// second param should be integer
+  "getPastTime('yyyy')",// should have 2 or 3 params
+  "getFutureTime(1, 'W')",// error time unit
+  "getFutureTime(timestamp, 'W')",// error parameters format
+  "getFutureTime('yyyy', '1')",// second param should be integer
+  "getFutureTime('yyyy')",// should have 2 or 3 params
 
   // collection functions test
   "sum(items, 'hello')",//should have 1 parameter
@@ -173,6 +192,8 @@ const badExpressions =
   "foreach(items, add(1), item)",// Second paramter of foreach is not an identifier
   "foreach(items, 1, item)", // Second paramter error
   "foreach(items, x, sum(x))", // third paramter error
+  "union(one, two)",// should have collection param
+  "intersection(one, two)",// should have collection param
 
   // Object manipulation and construction functions test
   "json(1,2)", //should have 1 parameter
