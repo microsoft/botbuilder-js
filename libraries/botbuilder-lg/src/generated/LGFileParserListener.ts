@@ -20,11 +20,8 @@ import { ConditionalTemplateBodyContext } from "./LGFileParser";
 import { IfConditionRuleContext } from "./LGFileParser";
 import { IfConditionContext } from "./LGFileParser";
 import { SwitchCaseTemplateBodyContext } from "./LGFileParser";
-import { CaseConditionRuleContext } from "./LGFileParser";
-import { DefaultConditionRuleContext } from "./LGFileParser";
-import { SwitchStatementContext } from "./LGFileParser";
-import { CaseConditionContext } from "./LGFileParser";
-import { DefaultConditionContext } from "./LGFileParser";
+import { SwitchCaseRuleContext } from "./LGFileParser";
+import { SwitchCaseStatContext } from "./LGFileParser";
 
 
 /**
@@ -226,58 +223,25 @@ export interface LGFileParserListener extends ParseTreeListener {
 	exitSwitchCaseTemplateBody?: (ctx: SwitchCaseTemplateBodyContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `LGFileParser.caseConditionRule`.
+	 * Enter a parse tree produced by `LGFileParser.switchCaseRule`.
 	 * @param ctx the parse tree
 	 */
-	enterCaseConditionRule?: (ctx: CaseConditionRuleContext) => void;
+	enterSwitchCaseRule?: (ctx: SwitchCaseRuleContext) => void;
 	/**
-	 * Exit a parse tree produced by `LGFileParser.caseConditionRule`.
+	 * Exit a parse tree produced by `LGFileParser.switchCaseRule`.
 	 * @param ctx the parse tree
 	 */
-	exitCaseConditionRule?: (ctx: CaseConditionRuleContext) => void;
+	exitSwitchCaseRule?: (ctx: SwitchCaseRuleContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `LGFileParser.defaultConditionRule`.
+	 * Enter a parse tree produced by `LGFileParser.switchCaseStat`.
 	 * @param ctx the parse tree
 	 */
-	enterDefaultConditionRule?: (ctx: DefaultConditionRuleContext) => void;
+	enterSwitchCaseStat?: (ctx: SwitchCaseStatContext) => void;
 	/**
-	 * Exit a parse tree produced by `LGFileParser.defaultConditionRule`.
+	 * Exit a parse tree produced by `LGFileParser.switchCaseStat`.
 	 * @param ctx the parse tree
 	 */
-	exitDefaultConditionRule?: (ctx: DefaultConditionRuleContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `LGFileParser.switchStatement`.
-	 * @param ctx the parse tree
-	 */
-	enterSwitchStatement?: (ctx: SwitchStatementContext) => void;
-	/**
-	 * Exit a parse tree produced by `LGFileParser.switchStatement`.
-	 * @param ctx the parse tree
-	 */
-	exitSwitchStatement?: (ctx: SwitchStatementContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `LGFileParser.caseCondition`.
-	 * @param ctx the parse tree
-	 */
-	enterCaseCondition?: (ctx: CaseConditionContext) => void;
-	/**
-	 * Exit a parse tree produced by `LGFileParser.caseCondition`.
-	 * @param ctx the parse tree
-	 */
-	exitCaseCondition?: (ctx: CaseConditionContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `LGFileParser.defaultCondition`.
-	 * @param ctx the parse tree
-	 */
-	enterDefaultCondition?: (ctx: DefaultConditionContext) => void;
-	/**
-	 * Exit a parse tree produced by `LGFileParser.defaultCondition`.
-	 * @param ctx the parse tree
-	 */
-	exitDefaultCondition?: (ctx: DefaultConditionContext) => void;
+	exitSwitchCaseStat?: (ctx: SwitchCaseStatContext) => void;
 }
 

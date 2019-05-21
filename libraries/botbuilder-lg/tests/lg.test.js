@@ -64,6 +64,12 @@ describe('LG', function () {
         assert.strictEqual(options2.includes(evaled), true, `Evaled is ${evaled}`);
     });
 
+    it('TestBasicSwitchCaseTemplate', function () {
+        let engine = TemplateEngine.fromFiles(GetExampleFilePath('switchcase.lg'));
+        let evaled = engine.evaluateTemplate('CASESWITCH', {day: "Saturday"});
+        assert.strictEqual(evaled === "Happy Saturday!", true, `Evaled is ${evaled}`);
+    });
+
     it('TestBasicListSupport',function(){
         let engine = TemplateEngine.fromFiles(GetExampleFilePath('BasicList.lg'));
 

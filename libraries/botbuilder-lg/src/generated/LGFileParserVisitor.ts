@@ -20,11 +20,8 @@ import { ConditionalTemplateBodyContext } from "./LGFileParser";
 import { IfConditionRuleContext } from "./LGFileParser";
 import { IfConditionContext } from "./LGFileParser";
 import { SwitchCaseTemplateBodyContext } from "./LGFileParser";
-import { CaseConditionRuleContext } from "./LGFileParser";
-import { DefaultConditionRuleContext } from "./LGFileParser";
-import { SwitchStatementContext } from "./LGFileParser";
-import { CaseConditionContext } from "./LGFileParser";
-import { DefaultConditionContext } from "./LGFileParser";
+import { SwitchCaseRuleContext } from "./LGFileParser";
+import { SwitchCaseStatContext } from "./LGFileParser";
 
 
 /**
@@ -158,38 +155,17 @@ export interface LGFileParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitSwitchCaseTemplateBody?: (ctx: SwitchCaseTemplateBodyContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by `LGFileParser.caseConditionRule`.
+	 * Visit a parse tree produced by `LGFileParser.switchCaseRule`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitCaseConditionRule?: (ctx: CaseConditionRuleContext) => Result;
+	visitSwitchCaseRule?: (ctx: SwitchCaseRuleContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by `LGFileParser.defaultConditionRule`.
+	 * Visit a parse tree produced by `LGFileParser.switchCaseStat`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitDefaultConditionRule?: (ctx: DefaultConditionRuleContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `LGFileParser.switchStatement`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitSwitchStatement?: (ctx: SwitchStatementContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `LGFileParser.caseCondition`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitCaseCondition?: (ctx: CaseConditionContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `LGFileParser.defaultCondition`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitDefaultCondition?: (ctx: DefaultConditionContext) => Result;
+	visitSwitchCaseStat?: (ctx: SwitchCaseStatContext) => Result;
 }
 

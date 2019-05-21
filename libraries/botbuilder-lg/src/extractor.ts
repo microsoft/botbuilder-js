@@ -95,6 +95,7 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         return result;
     }
 
+    /*
     public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Map<string, any> {
         const result: Map<string, any> = new Map<string, any>();
         const caseNodes: lp.CaseConditionRuleContext[] = context.switchCaseTemplateBody().caseConditionRule();
@@ -120,6 +121,7 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         
         return result; 
     }
+*/
 
     protected defaultResult(): Map<string, any> {
         return new Map<string, any>();

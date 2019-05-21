@@ -212,23 +212,32 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     }
 
     public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext) : string {
-        const switchNode: lp.SwitchStatementContext = ctx.switchCaseTemplateBody().switchStatement();
-        const caseNodes: lp.CaseConditionRuleContext[] = ctx.switchCaseTemplateBody().caseConditionRule();
-        const defaultNode: lp.DefaultConditionRuleContext = ctx.switchCaseTemplateBody().defaultConditionRule();
-
-        const switchExpression: TerminalNode = switchNode.EXPRESSION();
-        const {value:switchExpressionResult, error} : {value: any, error: string} = this.EvalByExpressionEngine(switchExpression.text, this.currentTarget().Scope);
-        for (const caseNode of caseNodes){
-            const caseExpression: TerminalNode = caseNode.caseCondition().EXPRESSION();
-            const {value:caseExpressionResult, error} : {value: any, error: string} = this.EvalByExpressionEngine(caseExpression.text, this.currentTarget().Scope);
-            if(switchExpressionResult === caseExpressionResult) {
+        const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
+        const length: number = switchcaseNodes.length;
+        const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0]
+        const switchExprs: TerminalNode[] = switchNode.switchCaseStat().EXPRESSION();
+        const {value:switchExprResult, error}: {value: any, error: string} = this.EvalByExpressionEngine(switchExprs[0].text,this.currentTarget().Scope);
+        let idx: number = 0
+        for(const caseNode of switchcaseNodes){ 
+            if (idx === 0) {
+                idx = idx + 1;
+                continue; //skip the first node which is a switch statement
+            }
+            if (idx === length - 1){
+                const defaultBody: lp.NormalTemplateBodyContext = caseNode.normalTemplateBody();
+                if (defaultBody !== undefined){
+                    return this.visit(defaultBody);
+                } else {
+                    return undefined;
+                }
+            }
+            const caseExprs: TerminalNode[] = caseNode.switchCaseStat().EXPRESSION();
+            const {value:caseExprResult, error}: {value: any, error: string} = this.EvalByExpressionEngine(caseExprs[0].text,this.currentTarget().Scope);
+            if (switchExprResult === caseExprResult) {
                 return this.visit(caseNode.normalTemplateBody());
             }
+            idx = idx + 1;
         }
-        if (defaultNode !== undefined) {
-            return this.visit(defaultNode.normalTemplateBody());
-        }
-
         return undefined;
     }
 

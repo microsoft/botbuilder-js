@@ -12,7 +12,7 @@ lexer grammar LGFileLexer;
 
 @lexer::members {
   ignoreWS = true;             // usually we ignore whitespace, but inside template, whitespace is significant
-  expectConditions = false;        // whether we are expecting IF/ELSEIF/ELSE
+  expectKeywords = false;        // whether we are expecting IF/ELSEIF/ELSE or Switch/Case/Default keywords
 }
 
 fragment LETTER: 'a'..'z' | 'A'..'Z';
@@ -39,7 +39,7 @@ HASH
   ;
 
 DASH
-  : '-' {this.expectConditions = true;} -> pushMode(TEMPLATE_BODY_MODE)
+  : '-' {this.expectKeywords = true;} -> pushMode(TEMPLATE_BODY_MODE)
   ;
 
 INVALID_TOKEN_DEFAULT_MODE
@@ -96,23 +96,35 @@ NEWLINE_IN_BODY
   ;
 
 IF
-  : ('if'|'IF') WHITESPACE* ':'  {this.expectConditions}? { this.ignoreWS = true;}
+  : ('if'|'IF') WHITESPACE* ':'  {this.expectKeywords}? { this.ignoreWS = true;}
   ;
 
 ELSEIF
-  : ('elseif'|'ELSEIF') WHITESPACE* ':' {this.expectConditions}? { this.ignoreWS = true;}
+  : ('elseif'|'ELSEIF') WHITESPACE* ':' {this.expectKeywords}? { this.ignoreWS = true;}
   ;
 
 ELSE
-  : ('else'|'ELSE') WHITESPACE* ':' {this.expectConditions}? { this.ignoreWS = true;}
+  : ('else'|'ELSE') WHITESPACE* ':' {this.expectKeywords}? { this.ignoreWS = true;}
+  ;
+
+SWITCH
+  : ('switch'|'SWITCH') WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
+  ;
+
+CASE
+  : ('case'|'CASE') WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
+  ;
+
+DEFAULT
+  : ('default'|'DEFAULT') WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
   ;
 
 MULTI_LINE_TEXT
-  : '```' .*? '```' { this.ignoreWS = false; this.expectConditions = false;}
+  : '```' .*? '```' { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 ESCAPE_CHARACTER
-  : '\\{' | '\\[' | '\\\\' | '\\'[rtn\]}]  { this.ignoreWS = false; this.expectConditions = false;}
+  : '\\{' | '\\[' | '\\\\' | '\\'[rtn\]}]  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 INVALID_ESCAPE
@@ -120,29 +132,18 @@ INVALID_ESCAPE
   ;
 
 EXPRESSION
-  : '{' ~[\r\n{}]* '}'  { this.ignoreWS = false; this.expectConditions = false;}
+  : '{' ~[\r\n{}]* '}'  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 TEMPLATE_REF
-  : '[' (~[\r\n\]] | TEMPLATE_REF)* ']'  { this.ignoreWS = false; this.expectConditions = false;}
+  : '[' (~[\r\n\]] | TEMPLATE_REF)* ']'  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 TEXT_SEPARATOR
-  : [ \t\r\n{}[\]()]  { this.ignoreWS = false; this.expectConditions = false;}
+  : [ \t\r\n{}[\]()]  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 TEXT
-  : ~[ \\\t\r\n{}[\]()]+  { this.ignoreWS = false; this.expectConditions = false;}
+  : ~[ \\\t\r\n{}[\]()]+  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
-SWITCH
-  : ('switch'|'SWITCH') WHITESPACE* ':' {this.expectConditions}? {this.ignoreWS = true;}
-  ;
-
-CASE
-  : ('case'|'CASE') WHITESPACE* ':' {this.expectConditions}? {this.ignoreWS = true;}
-  ;
-
-DEFAULT
-  : ('default'|'DEFAULT') WHITESPACE* ':' {this.expectConditions}? {this.ignoreWS = true;}
-  ;

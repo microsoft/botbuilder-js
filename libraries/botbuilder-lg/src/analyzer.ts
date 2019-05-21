@@ -99,7 +99,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         return result;
     }
-
+/*
     public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): string[] {
         let result : string[] = [];
 
@@ -127,7 +127,8 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
             result = result.concat(this.visit(defaultNode.normalTemplateBody()));
         }
         return result;
-    }
+    } 
+*/
 
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string[] {
         let result: string[] = [];

@@ -62,26 +62,13 @@ ifCondition
     ;
 
 switchCaseTemplateBody
-    : switchStatement caseConditionRule+ defaultConditionRule?
+    : switchCaseRule+
     ;
 
-caseConditionRule
-    : caseCondition newline normalTemplateBody?
-    ;
-    
-defaultConditionRule
-    : defaultCondition newline normalTemplateBody?
+switchCaseRule
+    : switchCaseStat newline normalTemplateBody?
     ;
 
-switchStatement
-    : DASH SWITCH EXPRESSION
-    ; 
-
-caseCondition
-    : DASH CASE EXPRESSION
-    ; 
-
-defaultCondition
-    : DASH DEFAULT
-    ; 
-    
+switchCaseStat
+    : DASH (SWITCH|CASE|DEFAULT) (WS|TEXT|EXPRESSION)*
+    ;
