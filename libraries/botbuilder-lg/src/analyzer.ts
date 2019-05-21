@@ -99,36 +99,22 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         return result;
     }
-/*
+
     public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): string[] {
         let result : string[] = [];
-
-        const switchCaseTemplateBody = ctx.switchCaseTemplateBody();
-        const switchNode : lp.SwitchStatementContext = switchCaseTemplateBody .switchStatement();
-
-        const expression : TerminalNode = switchNode.EXPRESSION();
-        if (expression !== undefined) {
-            result = result.concat(this.AnalyzeExpression(expression.text));
-        } 
-        
-        const caseNodes : lp.CaseConditionRuleContext[] = switchCaseTemplateBody .caseConditionRule();
-        for (const caseNode of caseNodes) {
-            const expression : TerminalNode = caseNode.caseCondition().EXPRESSION();
-            if (expression !== undefined) {
-                result = result.concat(this.AnalyzeExpression(expression.text));
+        const switchCaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
+        for (const iterNode of switchCaseNodes){
+            const expressions: TerminalNode[] = iterNode.switchCaseStat().EXPRESSION();
+            if (expressions !== undefined && expressions.length > 0) {
+                result = result.concat(this.AnalyzeExpression(expressions[0].text));
             }
-            if (caseNode.normalTemplateBody() !== undefined){
-                result = result.concat(this.visit(caseNode.normalTemplateBody()));
+            if (iterNode.normalTemplateBody() !== undefined) {
+                result = result.concat(this.visit(iterNode.normalTemplateBody()));
             }
-        }
-
-        const defaultNode : lp.DefaultConditionRuleContext = switchCaseTemplateBody .defaultConditionRule();
-        if (defaultNode.normalTemplateBody !== undefined) {
-            result = result.concat(this.visit(defaultNode.normalTemplateBody()));
         }
         return result;
     } 
-*/
+
 
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string[] {
         let result: string[] = [];
