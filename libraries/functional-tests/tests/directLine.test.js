@@ -54,7 +54,8 @@ describe('Test Azure Bot', function(){
         const directLineClient = await getDirectLineClient();    
         const conversationId = await getConversationId(directLineClient);
         await sendMessage(directLineClient, conversationId);
-        const messages = await getMessages(directLineClient, conversationId); 
-        assert(messages[1].text == `you said "${ userMessage }" 0`, `test fail`);    
+        const messages = await getMessages(directLineClient, conversationId);
+        const result = messages.filter((message) => message.text.includes('you said'));                
+        assert(result[0].text == `you said "${ userMessage }" 0`, `test fail`);
     });
 });
