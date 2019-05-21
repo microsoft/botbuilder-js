@@ -1,0 +1,47 @@
+{
+  "extends": [
+    "tslint-microsoft-contrib"
+  ],
+  "rules": {
+    "max-line-length": [
+      false,
+      140
+    ],
+    "no-any": false,
+    "variable-name": false,
+    "no-internal-module": false,
+    "prefer-const": false,
+    "typedef": [
+      false
+    ],
+    "no-inferrable-types": [
+      false
+    ],
+    "no-unused-variable": true,
+    "linebreak-style": false,
+    "interface-name": false,
+    "missing-jsdoc": false,
+    "completed-docs": false,
+    "no-unnecessary-class": false,
+    "no-unsafe-any": false,
+    "no-default-export": false,
+    "match-default-export-name": false,
+    "import-name": false,
+    "export-name": false,
+    "no-relative-imports": false,
+    "strict-boolean-expressions": false,
+    "no-increment-decrement": false,
+    "no-function-expression": false,
+    "no-implicit-dependencies": true,
+    "no-submodule-imports": false,
+    "function-name": [true, {
+        "method-regex": "^\\*?\\[?[_a-z][\\w\\d\\.]*\\]?$",
+        "private-method-regex": "^\\*?\\[?[a-zA-Z][\\w\\d\\.]*\\]?$",
+        "protected-method-regex": "^\\*?\\[?[a-zA-Z][\\w\\d\\.]*\\]?$",
+        "static-method-regex": "^\\*?\\[?[a-zA-Z][\\w\\d\\.]*\\]?$",
+        "function-regex": "^\\*?\\[?[a-zA-Z][\\w\\d\\.]*\\]?$"
+    }]
+  }
+}
+
+

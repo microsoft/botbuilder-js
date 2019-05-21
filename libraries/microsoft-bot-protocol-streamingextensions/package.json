@@ -1,0 +1,39 @@
+{
+  "name": "microsoft-bot-protocol-streamingextensions",
+  "version": "0.0.1",
+  "description": "",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.js",
+  "scripts": {
+    "build": "tsc --outDir lib",
+    "watch": "tsc -w --outDir lib",
+    "build-all": "..\\..\\node_modules\\.bin\\lerna run build",
+    "test": "jest",
+    "tslint": "tslint -c tslint.json -t stylish --project tsconfig.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^24.0.11",
+    "@types/node": "^11.13.2",
+    "@types/ws": "^6.0.1",
+    "jest": "^24.7.1",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.15.0",
+    "tslint-microsoft-contrib": "^6.1.0",
+    "typescript": "3.2.4"
+  },
+  "dependencies": {
+    "@azure/ms-rest-js": "1.2.6",
+    "botbuilder": "^4.3.4",
+    "botframework-connector": "^4.3.4",
+    "microsoft-bot-protocol": "^0.0.1",
+    "microsoft-bot-protocol-namedpipe": "^0.0.1",
+    "microsoft-bot-protocol-websocket": "^0.0.1",
+    "watershed": "^0.4.0"
+  },
+  "files": [
+    "/lib",
+    "/src"
+  ]
+}
