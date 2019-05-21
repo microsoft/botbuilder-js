@@ -16,7 +16,6 @@ import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions } from './getMethodExtensions';
 import { LGTemplate } from './lgTemplate';
-import { type } from 'os';
 
 // tslint:disable-next-line: completed-docs
 export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implements LGFileParserVisitor<Diagnostic[]> {
@@ -199,57 +198,101 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     }
 
     public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Diagnostic[] {
-        let result :Diagnostic[] = [];
-        const switchCaseTemplateBody : lp.SwitchCaseTemplateBodyContext = context.switchCaseTemplateBody()
-        const switchNode : lp.SwitchStatementContext = switchCaseTemplateBody.switchStatement();
-        const caseRuleNodes : lp.CaseConditionRuleContext[] = switchCaseTemplateBody.caseConditionRule();
-        const defaultNode : lp.DefaultConditionRuleContext = switchCaseTemplateBody.defaultConditionRule();
+        let result: Diagnostic[] = [];
+        
+        const switchCaseNodes: lp.SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
+        let idx: number = 0;
+        const length = switchCaseNodes.length;
 
-        if (switchNode.EXPRESSION.length !== 1){
-            result.push(this.BuildLGDiagnostic({
-                message: `Switch statement should be followed by one valid expression: '${switchNode.text}'`,
-                context: switchNode
-            }));
-        } else {
-            result = result.concat(this.CheckExpression(switchNode.EXPRESSION[0].text, switchNode));
-        }
-
-        for (const caseRuleNode of caseRuleNodes) {
-            if (caseRuleNode.caseCondition().EXPRESSION.length !== 1) {
+        for (const iterNode of switchCaseNodes){
+            const switchCaseStat: lp.SwitchCaseStatContext = iterNode.switchCaseStat();
+            const switchExpr: boolean = switchCaseStat.SWITCH() !== undefined;
+            const caseExpr: boolean = switchCaseStat.CASE() !== undefined;
+            const defaultExpr: boolean = switchCaseStat.DEFAULT() !== undefined;
+            let hasCaseFlag: boolean = false;
+            const node: TerminalNode = switchExpr? switchCaseStat.SWITCH():
+                        caseExpr? switchCaseStat.CASE():
+                        switchCaseStat.DEFAULT();
+        
+            if (node.text.split(" ").length -1 > 1){
                 result.push(this.BuildLGDiagnostic({
-                    message: `Case statement should be followed by one valid expression: '${caseRuleNode.text}'`,
-                    context: caseRuleNode
-                }));
-            } else {
-                result = result.concat(this.CheckExpression(caseRuleNode.caseCondition().EXPRESSION[0].text, caseRuleNode));
-            }
-
-            if (caseRuleNode.normalTemplateBody !== undefined){
-                result = result.concat(this.visit(caseRuleNode.normalTemplateBody()));
-            } else {
-                result.push(this.BuildLGDiagnostic({
-                    message: `No normal template body in case block: '${caseRuleNode.text}'`,
-                    context: caseRuleNode
+                    message: `At most 1 whitespace is allowed between SWITCH/CASE/DEFAULT and :. expression: '${context.switchCaseTemplateBody().text}'`,
+                    context: switchCaseStat
                 }));
             }
-        }
 
-        if (defaultNode !== undefined) {
-            if (defaultNode.normalTemplateBody !==undefined) {
-                result = result.concat(this.visit(defaultNode.normalTemplateBody()));
-            } else {
+            if(idx === 0 && !switchExpr){
                 result.push(this.BuildLGDiagnostic({
-                    message: `No normal template body in default block: '${defaultNode.text}'`,
-                    context: defaultNode
+                    message: `control flow is not starting with switch : '${context.switchCaseTemplateBody().text}'`,
+                    context: switchCaseStat
                 }));
             }
-        } else {
-            result.push(this.BuildLGDiagnostic({
-                message: `No normal template body in default block: '${defaultNode.text}'`,
-                severity: DiagnosticSeverity.Warning,
-                context: defaultNode    
-            }));
+
+            if (idx > 0 && switchExpr){
+                result.push(this.BuildLGDiagnostic({
+                    message: `control flow cannot have more than switch statement: '${context.switchCaseTemplateBody().text}'`,
+                    context: switchCaseStat
+                }));
+            }
+
+            if (idx > 0 && idx < length - 1 && !caseExpr){
+                result.push(this.BuildLGDiagnostic({
+                    message: `only case statement is allowed in the middle of control flow: '${context.switchCaseTemplateBody().text}'`,
+                    context: switchCaseStat
+                }));
+            } else {
+                hasCaseFlag = true;
+            }
+
+            if (idx === length - 1 && !defaultExpr){
+                result.push(this.BuildLGDiagnostic({
+                    message: `control flow is not ending with default statement: '${context.switchCaseTemplateBody().text}'`,
+                    severity: DiagnosticSeverity.Warning,
+                    context: switchCaseStat
+                }));
+            } else {
+                if (!hasCaseFlag){
+                    result.push(this.BuildLGDiagnostic({
+                        message: `control flow should have at least one case statement: '${context.switchCaseTemplateBody().text}'`,
+                        severity: DiagnosticSeverity.Warning,
+                        context: switchCaseStat
+                    }));
+                }
+            }
+            
+            if (switchExpr || caseExpr){
+                if (switchCaseStat.EXPRESSION().length !== 1){
+                    result.push(this.BuildLGDiagnostic({
+                        message: `switch and case should followed by one valid expression: '${switchCaseStat.text}'`,
+                        context: switchCaseStat
+                    }));
+                } else {
+                    result = result.concat(this.CheckExpression(switchCaseStat.EXPRESSION(0).text,switchCaseStat));
+                }
+            } else {
+                if (switchCaseStat.EXPRESSION().length !== 0) {
+                    result.push(this.BuildLGDiagnostic({
+                        message: `default should not followed by any expression: '${switchCaseStat.text}'`,
+                        context: switchCaseStat
+                    }));
+                }
+            }
+
+            if(idx > 0 && iterNode.normalTemplateBody != undefined){
+                result = result.concat(this.visit(iterNode.normalTemplateBody()));
+            } else {
+                result.push(this.BuildLGDiagnostic({
+                    message: `no normal template body in case or default block: '${iterNode.text}'`,
+                    context: switchCaseStat
+                }));
+            }
+            idx = idx + 1;
         }
+
+
+
+
+
         return result;
     }
 
