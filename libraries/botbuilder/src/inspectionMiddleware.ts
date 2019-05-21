@@ -12,6 +12,17 @@ import { Middleware, TurnContext, BotState, StatePropertyAccessor, UserState, Co
 /** @private */
 class TraceActivity {
 
+    public static fromCommand(command: string): Partial<Activity> {
+        return {
+            type: ActivityTypes.Trace,
+            timestamp: new Date(),
+            name: 'Command',
+            label: 'Command',
+            value: command,
+            valueType: 'https://www.botframework.com/schemas/command'
+        };
+    }
+
     public static fromActivity(activity: Activity|Partial<Activity>, name: string, label: string): Partial<Activity> {
         return {
             type: ActivityTypes.Trace,
@@ -251,7 +262,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     private async processOpenCommand(turnContext: TurnContext): Promise<any> {
         var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
         var sessionId = this.openCommand(sessions, TurnContext.getConversationReference(turnContext.activity));
-        await turnContext.sendActivity(`${InspectionMiddleware.command} attach ${sessionId}`);
+        await turnContext.sendActivity(TraceActivity.fromCommand(`${InspectionMiddleware.command} attach ${sessionId}`));
         await this.inspectionState.saveChanges(turnContext, false);
     }
 
