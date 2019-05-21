@@ -418,7 +418,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         else
         {
             properties[QnATelemetryConstants.matchedQuestionProperty] = "No Qna Question matched";
-            properties[QnATelemetryConstants.questionIdProperty] = "No QnA Question Id matched";
+            properties[QnATelemetryConstants.questionIdProperty] = "No Qna Question Id matched";
             properties[QnATelemetryConstants.answerProperty] =  "No Qna Answer matched";
             properties[QnATelemetryConstants.articleFoundProperty] = "false";
         }
