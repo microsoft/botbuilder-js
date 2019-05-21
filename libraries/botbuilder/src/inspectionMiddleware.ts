@@ -103,8 +103,6 @@ abstract class InterceptionMiddleware implements Middleware {
                 await this.invokeOutbound(ctx, [ traceActivity ]);
                 return await nextDelete();
             });
-
-            await this.invokeTraceState(turnContext);
         }
         
         if (shouldForwardToApplication) {
@@ -116,6 +114,11 @@ abstract class InterceptionMiddleware implements Middleware {
                 await this.invokeOutbound(turnContext, [ traceActivity ]);
                 throw err;
             }
+        }
+
+        if (shouldIntercept) {
+        
+            await this.invokeTraceState(turnContext);
         }
     }
 
@@ -270,7 +273,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
 
         if (this.attachComamnd(turnContext.activity.conversation.id, sessions, sessionId)) {
-            await turnContext.sendActivity('Attached to session, all traffic is being relicated for inspection.');
+            await turnContext.sendActivity('Attached to session, all traffic is being replicated for inspection.');
         }
         else {
             await turnContext.sendActivity(`Open session with id ${sessionId} does not exist.`);
