@@ -17,20 +17,21 @@ export class HeaderSerializer {
   public static readonly IdDelimeterOffset = 45;
   public static readonly EndOffset = 46;
   public static readonly TerminatorOffset = 47;
+  public static readonly Encoding = 'utf8';
 
   public static serialize(header: Header, buffer: Buffer): void {
-    buffer.write(header.PayloadType, 'utf8');
-    buffer.write(this.Delimiter, HeaderSerializer.TypeDelimiterOffset, 'utf8');
-    buffer.write(this.headerLengthPadder(header.PayloadLength, this.LengthLength, '0'), HeaderSerializer.LengthOffset, 'utf8');
-    buffer.write(this.Delimiter, HeaderSerializer.LengthDelimeterOffset, 'utf8');
-    buffer.write(header.Id, HeaderSerializer.IdOffset);
-    buffer.write(this.Delimiter, HeaderSerializer.IdDelimeterOffset, 'utf8');
-    buffer.write(header.End ? this.End : this.NotEnd, HeaderSerializer.EndOffset);
-    buffer.write(this.Terminator, HeaderSerializer.TerminatorOffset);
+    buffer.write(header.PayloadType, this.TypeOffset, 1,  this.Encoding);
+    buffer.write(this.Delimiter, this.TypeDelimiterOffset, 1, this.Encoding);
+    buffer.write(this.headerLengthPadder(header.PayloadLength, this.LengthLength, '0'), this.LengthOffset, this.LengthLength, this.Encoding);
+    buffer.write(this.Delimiter, this.LengthDelimeterOffset, 1, this.Encoding);
+    buffer.write(header.Id, this.IdOffset);
+    buffer.write(this.Delimiter, this.IdDelimeterOffset, 1, this.Encoding);
+    buffer.write(header.End ? this.End : this.NotEnd, this.EndOffset);
+    buffer.write(this.Terminator, this.TerminatorOffset);
   }
 
   public static deserialize(buffer: Buffer): Header {
-    let jsonBuffer = buffer.toString('utf8');
+    let jsonBuffer = buffer.toString(this.Encoding);
     let headerArray = jsonBuffer.split(this.Delimiter);
 
     if (headerArray.length !== 4) {
