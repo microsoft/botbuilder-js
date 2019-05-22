@@ -364,6 +364,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                 result = await step.beginDialog(nextStep.dialogId, nextStep.options);
             }
 
+            // Increment turns step count
+            // - This helps dialogs being resumed from an interruption to determine if they
+            //   should re-prompt or not.
+            const stepCount = sequence.state.getValue('turn.stepCount');
+            sequence.state.setValue('turn.stepCount', typeof stepCount == 'number' ? stepCount + 1 : 1);
+
             // Is the step waiting for input or were we cancelled?
             if (result.status == DialogTurnStatus.waiting || this.getUniqueInstanceId(sequence) != instanceId) {
                 return result;
