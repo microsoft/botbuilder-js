@@ -277,8 +277,8 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                 }
             }
             
-            if (idx>0){
-                if(iterNode.normalTemplateBody != undefined){
+            if (caseExpr || defaultExpr){
+                if(iterNode.normalTemplateBody() !== undefined){
                     result = result.concat(this.visit(iterNode.normalTemplateBody()));
                 } else {
                     result.push(this.BuildLGDiagnostic({

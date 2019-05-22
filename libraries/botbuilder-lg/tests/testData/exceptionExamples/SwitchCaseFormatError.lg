@@ -1,13 +1,21 @@
->switch case errors examples
+#template0
+-SWITCH  :{case}
+- CASE: {'case1'}
+    - output1
+- CASE: {'case2'}
+    - output2
+- DEFAULT:
+    -output3 
+
 #tempalte1
 -SWITCH:{case1}
 -SWITCH:{case2}
 
 #template2
 -CASE:{'case1'}
--Oh No!
+-  Oh No!
 -DEFAULT:
--exit
+    -exit
 
 #template3
 -SWITCH:{case}
@@ -19,25 +27,24 @@
     - output2
 
 #template4
--SWITCH:{'case'}
+-SWITCH:{case}
 - CASE: {'case1'}
     - output1
 - CASE: {'case2'}
     - output2
 - DEFAULT:{'default'}
    - final output
-   
+
 #template5
--SWITCH:{'case'}
+-SWITCH:{case}
 - CASE: {'case1'}
 - DEFAULT:
    - final output
 
 #template6
--SWITCH:{'case'}
+-SWITCH:{case}
 - CASE: {'case1'}
     - output1
 - CASE: {'case2'}
     - output2
 - DEFAULT:{'default'}
-

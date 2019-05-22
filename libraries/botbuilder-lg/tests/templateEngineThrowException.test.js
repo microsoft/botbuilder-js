@@ -20,7 +20,7 @@ const StaticCheckExceptionData  = [
     "InvalidTemplateName2.lg",
     "DuplicatedTemplates.lg",
     "LgTemplateFunctionError.lg",
-    "SwitcCaseFormatError.lg"
+    "SwitchCaseFormatError.lg"
     ];
 
 const StaticCheckWariningData  = [
