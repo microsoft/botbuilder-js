@@ -11,6 +11,10 @@
     "libraries/botframework-connector",
     "libraries/botframework-schema",
     "libraries/testbot",
+    "libraries/microsoft-bot-protocol",
+    "libraries/microsoft-bot-protocol-streamingextensions",
+    "libraries/microsoft-bot-protocol-namedpipe",
+    "libraries/microsoft-bot-protocol-websocket",
     "transcripts"
   ],
   "version": "independent",
