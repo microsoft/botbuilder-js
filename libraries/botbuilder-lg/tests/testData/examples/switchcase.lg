@@ -1,4 +1,4 @@
-# CASESWITCH
+# greet-in-a-week
 - SWITCH: {day}
     - CASE: {'Saturday'}
         - Happy Saturday!

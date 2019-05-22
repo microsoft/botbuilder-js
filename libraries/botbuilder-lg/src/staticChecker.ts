@@ -209,7 +209,6 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             const switchExpr: boolean = switchCaseStat.SWITCH() !== undefined;
             const caseExpr: boolean = switchCaseStat.CASE() !== undefined;
             const defaultExpr: boolean = switchCaseStat.DEFAULT() !== undefined;
-            let hasCaseFlag: boolean = false;
             const node: TerminalNode = switchExpr? switchCaseStat.SWITCH():
                         caseExpr? switchCaseStat.CASE():
                         switchCaseStat.DEFAULT();
@@ -223,7 +222,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
             if(idx === 0 && !switchExpr){
                 result.push(this.BuildLGDiagnostic({
-                    message: `control flow is not starting with switch : '${context.switchCaseTemplateBody().text}'`,
+                    message: `control flow is not starting with switch: '${context.switchCaseTemplateBody().text}'`,
                     context: switchCaseStat
                 }));
             }
@@ -240,23 +239,23 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                     message: `only case statement is allowed in the middle of control flow: '${context.switchCaseTemplateBody().text}'`,
                     context: switchCaseStat
                 }));
-            } else {
-                hasCaseFlag = true;
             }
 
-            if (idx === length - 1 && !defaultExpr){
-                result.push(this.BuildLGDiagnostic({
-                    message: `control flow is not ending with default statement: '${context.switchCaseTemplateBody().text}'`,
-                    severity: DiagnosticSeverity.Warning,
-                    context: switchCaseStat
-                }));
-            } else {
-                if (!hasCaseFlag){
+            if (idx === length - 1 && (caseExpr || defaultExpr)){
+                if (caseExpr) {
                     result.push(this.BuildLGDiagnostic({
-                        message: `control flow should have at least one case statement: '${context.switchCaseTemplateBody().text}'`,
+                        message: `control flow is not ending with default statement: '${context.switchCaseTemplateBody().text}'`,
                         severity: DiagnosticSeverity.Warning,
                         context: switchCaseStat
                     }));
+                } else {
+                    if(length === 2) {
+                        result.push(this.BuildLGDiagnostic({
+                            message: `control flow should have at least one case statement: '${context.switchCaseTemplateBody().text}'`,
+                            severity: DiagnosticSeverity.Warning,
+                            context: switchCaseStat
+                        }));
+                    }
                 }
             }
             
@@ -277,25 +276,22 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                     }));
                 }
             }
-
-            if(idx > 0 && iterNode.normalTemplateBody != undefined){
-                result = result.concat(this.visit(iterNode.normalTemplateBody()));
-            } else {
-                result.push(this.BuildLGDiagnostic({
-                    message: `no normal template body in case or default block: '${iterNode.text}'`,
-                    context: switchCaseStat
-                }));
+            
+            if (idx>0){
+                if(iterNode.normalTemplateBody != undefined){
+                    result = result.concat(this.visit(iterNode.normalTemplateBody()));
+                } else {
+                    result.push(this.BuildLGDiagnostic({
+                        message: `no normal template body in case or default block: '${iterNode.text}'`,
+                        context: switchCaseStat
+                    }));
+                }
             }
             idx = idx + 1;
         }
 
-
-
-
-
         return result;
     }
-
 
     public visitNormalTemplateString(context: lp.NormalTemplateStringContext): Diagnostic[] {
         let result: Diagnostic[] = [];
