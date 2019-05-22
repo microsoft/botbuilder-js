@@ -251,8 +251,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                     // Clear any recognizer results
                     sequence.state.setValue('turn.recognized', undefined);
 
-                    // Emit trailing UnknownIntent event
-                    handled = await this.processEvent(sequence, { name: AdaptiveEventNames.UnknownIntent, bubble: false }, false);
+                    // Do we have an empty sequence?
+                    if (sequence.steps.length == 0) {
+                        // Emit trailing UnknownIntent event
+                        handled = await this.processEvent(sequence, { name: AdaptiveEventNames.UnknownIntent, bubble: false }, false);
+                    } else {
+                        handled = false;
+                    }
                 } else if (activity.type === ActivityTypes.Event) {
                     // Emit trailing edge of named event that was received
                     handled = await this.processEvent(sequence, { name: activity.name, value: activity.value, bubble: false }, false);

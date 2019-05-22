@@ -275,7 +275,7 @@ export class DialogContext {
         if (instance) {
             const dialog = dc.findDialog(instance.id);
             if (dialog) {
-                return await dialog.onDialogEvent(this, event);
+                return await dialog.onDialogEvent(dc, event);
             }
         }
 
