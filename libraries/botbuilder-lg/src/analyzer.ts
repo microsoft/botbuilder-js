@@ -112,6 +112,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
                 result = result.concat(this.visit(iterNode.normalTemplateBody()));
             }
         }
+        
         return result;
     } 
 

@@ -223,6 +223,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
                 idx = idx + 1;
                 continue; //skip the first node which is a switch statement
             }
+
             if (idx === length - 1){
                 const defaultBody: lp.NormalTemplateBodyContext = caseNode.normalTemplateBody();
                 if (defaultBody !== undefined){
@@ -231,13 +232,16 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
                     return undefined;
                 }
             }
+
             const caseExprs: TerminalNode[] = caseNode.switchCaseStat().EXPRESSION();
             const {value:caseExprResult, error}: {value: any, error: string} = this.EvalByExpressionEngine(caseExprs[0].text,this.currentTarget().Scope);
             if (switchExprResult === caseExprResult) {
                 return this.visit(caseNode.normalTemplateBody());
             }
+            
             idx = idx + 1;
         }
+
         return undefined;
     }
 

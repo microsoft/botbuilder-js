@@ -199,7 +199,6 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
     public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
-        
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
         let idx: number = 0;
         const length = switchCaseNodes.length;
