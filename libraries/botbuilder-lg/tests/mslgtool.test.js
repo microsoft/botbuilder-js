@@ -57,7 +57,7 @@ describe('MSLGTool', function () {
         });
     })
 
-    it.only('TestExpandTemplateWithScope', function() {
+    it('TestExpandTemplateWithScope', function() {
         const mslgTool = new MSLGTool();
         let errors = mslgTool.ValidateFile(GetExampleFile('CollateFile3.lg'));
         assert.strictEqual(errors.length, 0);
