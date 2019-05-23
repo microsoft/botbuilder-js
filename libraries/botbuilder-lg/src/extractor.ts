@@ -12,7 +12,6 @@ import { keyBy } from 'lodash';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
-import { stringify } from 'querystring';
 
 // tslint:disable-next-line: completed-docs
 export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGFileParserVisitor<Map<string, any>> {
