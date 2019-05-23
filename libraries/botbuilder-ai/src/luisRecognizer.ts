@@ -197,9 +197,12 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         this.includeApiResults = !!includeApiResults;
 
         // Create client
+        // - We have to cast "creds as any" to avoid a build break relating to different versions
+        //   of autorest being used by our various components.  This is just a build issue and
+        //   shouldn't effect production bots.
         const creds: msRest.TokenCredentials = new msRest.TokenCredentials(this.application.endpointKey);
         const baseUri: string = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
-        this.luisClient = new LuisClient(creds, baseUri);
+        this.luisClient = new LuisClient(creds as any, baseUri);
 
         this._telemetryClient = this.options.telemetryClient || new NullTelemetryClient();
         this._logPersonalInformation = this.options.logPersonalInformation || false;

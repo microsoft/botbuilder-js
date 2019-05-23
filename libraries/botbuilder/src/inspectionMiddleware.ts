@@ -12,6 +12,17 @@ import { Middleware, TurnContext, BotState, StatePropertyAccessor, UserState, Co
 /** @private */
 class TraceActivity {
 
+    public static makeCommandActivity(command: string): Partial<Activity> {
+        return {
+            type: ActivityTypes.Trace,
+            timestamp: new Date(),
+            name: 'Command',
+            label: 'Command',
+            value: command,
+            valueType: 'https://www.botframework.com/schemas/command'
+        };
+    }
+
     public static fromActivity(activity: Activity|Partial<Activity>, name: string, label: string): Partial<Activity> {
         return {
             type: ActivityTypes.Trace,
@@ -92,8 +103,6 @@ abstract class InterceptionMiddleware implements Middleware {
                 await this.invokeOutbound(ctx, [ traceActivity ]);
                 return await nextDelete();
             });
-
-            await this.invokeTraceState(turnContext);
         }
         
         if (shouldForwardToApplication) {
@@ -105,6 +114,11 @@ abstract class InterceptionMiddleware implements Middleware {
                 await this.invokeOutbound(turnContext, [ traceActivity ]);
                 throw err;
             }
+        }
+
+        if (shouldIntercept) {
+        
+            await this.invokeTraceState(turnContext);
         }
     }
 
@@ -251,7 +265,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     private async processOpenCommand(turnContext: TurnContext): Promise<any> {
         var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
         var sessionId = this.openCommand(sessions, TurnContext.getConversationReference(turnContext.activity));
-        await turnContext.sendActivity(`${InspectionMiddleware.command} attach ${sessionId}`);
+        await turnContext.sendActivity(TraceActivity.makeCommandActivity(`${InspectionMiddleware.command} attach ${sessionId}`));
         await this.inspectionState.saveChanges(turnContext, false);
     }
 
@@ -259,7 +273,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
 
         if (this.attachComamnd(turnContext.activity.conversation.id, sessions, sessionId)) {
-            await turnContext.sendActivity('Attached to session, all traffic is being relicated for inspection.');
+            await turnContext.sendActivity('Attached to session, all traffic is being replicated for inspection.');
         }
         else {
             await turnContext.sendActivity(`Open session with id ${sessionId} does not exist.`);
