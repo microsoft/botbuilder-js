@@ -39,7 +39,7 @@ describe('MSLGTool', function () {
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(mslgTool.CollationMessages.length, 0);
         assert.strictEqual(mslgTool.NameCollisions.length, 3);
-        assert.strictEqual(mslgTool.CollatedTemplates.size, 4);
+        assert.strictEqual(mslgTool.CollatedTemplates.size, 5);
         assert.strictEqual(mslgTool.CollatedTemplates.get('Greeting').length, 3);
         assert.strictEqual(mslgTool.CollatedTemplates.get('TimeOfDayWithCondition').size, 3);
         assert.strictEqual(mslgTool.CollatedTemplates.get('TimeOfDay').length, 3);
