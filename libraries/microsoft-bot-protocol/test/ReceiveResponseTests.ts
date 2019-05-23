@@ -2,13 +2,19 @@ import { MockStreamManager } from '../__mocks__/MockStreamManager';
 import { ContentStream } from '../src/ContentStream';
 import { ContentStreamAssembler } from '../src/Payloads/Assemblers/ContentStreamAssembler';
 import { ReceiveResponse } from '../src/ReceiveResponse';
+import { expect } from "chai";
 
-describe('ReceiveResponse Tests', () => {
+describe('ReceiveResponse', () => {
 
   it('assigns an empty array to streams when constructed', () => {
     let rr = new ReceiveResponse();
     expect(rr.Streams)
-      .toEqual([]);
+      .to
+      .be
+      .an('array')
+      .that
+      .is
+      .empty;
   });
 
   it('can update the value of statuscode', () => {
@@ -16,7 +22,7 @@ describe('ReceiveResponse Tests', () => {
     rr.StatusCode = 200;
 
     expect(rr.StatusCode)
-      .toEqual(200);
+      .equal(200);
   });
 
   it('can update the value of streams', () => {
@@ -24,8 +30,25 @@ describe('ReceiveResponse Tests', () => {
     let stream1 = new ContentStream('1', new ContentStreamAssembler(new MockStreamManager(), '1', undefined, undefined));
     let stream2 = new ContentStream('2', new ContentStreamAssembler(new MockStreamManager(), '2', undefined, undefined));
     rr.Streams = [stream1, stream2];
+    
+    expect(rr.Streams)
+    .to
+    .be
+    .an('array');
 
     expect(rr.Streams)
-      .toEqual([{ assembler: { _streamManager: {}, contentLength: undefined, contentType: undefined, id: '1' }, id: '1' }, { assembler: { _streamManager: {}, contentLength: undefined, contentType: undefined, id: '2' }, id: '2' }]);
+    .to
+    .have
+    .lengthOf(2);
+
+    expect(rr.Streams[0])
+      .to
+      .deep
+      .equal(stream1);
+
+    expect(rr.Streams[1])
+    .to
+    .deep
+    .equal(stream2);
   });
 });

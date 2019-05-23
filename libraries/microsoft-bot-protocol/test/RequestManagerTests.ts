@@ -1,26 +1,29 @@
 import { RequestManager } from '../src/Payloads/RequestManager';
 import { ReceiveResponse } from '../src/ReceiveResponse';
+import { expect } from "chai";
 
-describe('RequestManagerTests', () => {
+describe('RequestManager', () => {
 
   it('RequestManager starts empty', () => {
     let rm = new RequestManager();
 
     let count = rm.pendingRequestCount();
     expect(count)
-      .toBe(0);
+      .to
+      .equal(0);
   });
 
   it('RequestManager.getResponseAsync called twice throws', async () => {
     let rm = new RequestManager();
     let requestId = '123';
 
-    expect.assertions(1);
+  //  expect.assertions(1);
     rm.getResponseAsync(requestId, undefined);
 
     rm.getResponseAsync(requestId, undefined)
       .catch((reason) => expect(reason)
-        .toBe('requestId already exists in RequestManager'));
+        .to
+        .equal('requestId already exists in RequestManager'));
 
   });
 
@@ -32,7 +35,8 @@ describe('RequestManagerTests', () => {
     let result = await rm.signalResponse(requestId, response);
 
     expect(result)
-      .toBe(false);
+      .to
+      .equal(false);
   });
 
   it('RequestManager end to end success', async () => {
@@ -44,14 +48,17 @@ describe('RequestManagerTests', () => {
 
     let result = await rm.signalResponse(requestId, response);
     expect(result)
-      .toBe(true);
+      .to
+      .equal(true);
 
     let receiveResponse = await promise;
 
     expect(receiveResponse)
-      .toBe(response);
+      .to
+      .equal(response);
     expect(rm.pendingRequestCount())
-      .toBe(0);
+      .to
+      .equal(0);
   });
 
 });

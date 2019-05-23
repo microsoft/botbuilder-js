@@ -3,47 +3,51 @@ import { ContentStream } from '../src/ContentStream';
 import { ContentStreamAssembler } from '../src/Payloads/Assemblers/ContentStreamAssembler';
 import { StreamManager } from '../src/Payloads/StreamManager';
 import { Stream } from '../src/Stream';
+import { expect } from "chai";
 
-describe('ContentStream Tests', () => {
+describe('ContentStream ', () => {
   it('assigns ID when constructed', () => {
     let cs = new ContentStream('1', new ContentStreamAssembler(new MockStreamManager(), 'csa1', 'stream', 42));
 
     expect(cs.id)
-      .toEqual('1');
+      .equal('1');
   });
 
   it('throws if no assembler is passed in on construction', () => {
-    expect.assertions(1);
+   // expect.assertions(1);
     expect(() => new ContentStream('1', undefined))
-      .toThrowError('Null Argument Exception');
+      .throws('Null Argument Exception');
   });
 
   it('can return payload type', () => {
     let cs = new ContentStream('1', new ContentStreamAssembler(new MockStreamManager(), 'csa1', 'stream', 42));
 
     expect(cs.payloadType)
-      .toEqual('stream');
+      .equal('stream');
   });
 
   it('can return length', () => {
     let cs = new ContentStream('1', new ContentStreamAssembler(new MockStreamManager(), 'csa1', 'stream', 42));
 
     expect(cs.length)
-      .toEqual(42);
+      .equal(42);
   });
 
   it('can return ID', () => {
     let cs = new ContentStream('1', new ContentStreamAssembler(new MockStreamManager(), 'csa1', 'stream', 42));
 
     expect(cs.id)
-      .toEqual('1');
+      .equal('1');
   });
 
-  it('returns the payload stream when stream is undefined', () => {
+  it('does not return the stream when it is is undefined', () => {
     let cs = new ContentStream('1', new ContentStreamAssembler(new MockStreamManager(), 'csa1', 'stream', 42));
 
     expect(cs.getStream())
-      .toBeInstanceOf(Stream);
+      .to
+      .not
+      .be
+      .undefined;
   });
 
   it('reads a stream of length 0 and returns an empty string', () => {
@@ -52,12 +56,12 @@ describe('ContentStream Tests', () => {
     return cs.readAsString()
       .then(data => {
         expect(data)
-          .toBe('');
+          .equal('');
       });
-  }, 5000);
+  });
 
   it('throws when reading an empty stream as JSON', () => {
-    expect.assertions(1);
+  //  expect.assertions(1);
     let cs = new ContentStream('1', new ContentStreamAssembler(new MockStreamManager(), 'csa1', 'stream', 0));
 
     return cs.readAsJson()
@@ -67,7 +71,8 @@ describe('ContentStream Tests', () => {
       })
       .catch(err => {
         expect(err.toString())
-          .toBe('SyntaxError: Unexpected end of JSON input');
+          .to
+          .equal('SyntaxError: Unexpected end of JSON input');
       });
-  }, 5000);
+  });
 });

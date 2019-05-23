@@ -1,35 +1,41 @@
 import { ReceiveRequest, Request, HttpContent, HttpContentHeaders, Stream, HttpContentStream } from '../lib';
+import { expect } from "chai";
 
-describe('ReceiveRequest tester:', function () {
+describe('ReceiveRequest', function () {
   it('constructs a new ReceiveRequest without streams', () => {
     let r = new ReceiveRequest();
     expect(r.Streams)
-      .toEqual([]);
+      .to
+      .be
+      .an('array')
+      .that
+      .is
+      .empty;
   });
 
   it('constructs a new ReceiveRequest with undefined properties', () => {
     let r = new ReceiveRequest();
     expect(r.Path)
-      .toBe(undefined);
+      .equal(undefined);
     expect(r.Verb)
-      .toBe(undefined);
+      .equal(undefined);
   });
 });
 
-describe('Request tester:', () => {
+describe('Request', () => {
   it('creates a new request with undefined properties', () => {
     let r = new Request();
     expect(r.Path)
-      .toBe(undefined);
+      .equal(undefined);
     expect(r.Verb)
-      .toBe(undefined);
+      .equal(undefined);
   });
 
   it('throws when attempting to add undefined streams', () => {
     let r = new Request();
 
     expect(() => { r.addStream(undefined); })
-      .toThrow();
+      .throws;
   });
 
   it('is able to add streams to the request', () => {
@@ -41,23 +47,23 @@ describe('Request tester:', () => {
     r.addStream(c);
 
     expect(r.Streams.length)
-      .toBe(1);
+      .equals(1);
     expect(r.Streams[0].content.getStream())
-      .toBe(c.getStream());
+      .equals(c.getStream());
   });
 
   it('creates the right verb', () => {
     let r = Request.create('GET');
 
     expect(r.Verb)
-      .toBe('GET');
+      .equals('GET');
   });
 
   it('creates the right path', () => {
     let r = Request.create('GET', 'happy');
 
     expect(r.Path)
-      .toBe('happy');
+      .equals('happy');
   });
 
   it('gets the unaltered stream', () => {
@@ -70,7 +76,7 @@ describe('Request tester:', () => {
     r.addStream(b);
 
     expect(b.getStream())
-      .toBe(s);
+      .equals(s);
   });
 
   it('can create a request with a body', () => {
@@ -85,6 +91,6 @@ describe('Request tester:', () => {
     let c = new HttpContentStream(b);
 
     expect(r.Streams[0].content.getStream())
-      .toBe(b.getStream());
+      .equals(b.getStream());
   });
 });
