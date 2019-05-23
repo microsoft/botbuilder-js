@@ -7,9 +7,7 @@ const recognizer_1 = require("../recognizer");
 class AddToDo extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
     constructor() {
         super('AddToDo', [
-            new botbuilder_dialogs_adaptive_1.LogStep(`AddToDo: entities = {turn.entities}`, true),
-            new botbuilder_dialogs_adaptive_1.SaveEntity('$title', '@title'),
-            new botbuilder_dialogs_adaptive_1.TextInput('$title', `What would you like to call your new todo?`),
+            new botbuilder_dialogs_adaptive_1.TextInput('$title', '@title', `What would you like to call your new todo?`),
             new botbuilder_dialogs_adaptive_1.EditArray(botbuilder_dialogs_adaptive_1.ArrayChangeType.push, 'user.todos', '$title'),
             new botbuilder_dialogs_adaptive_1.SendActivity(`Added a todo named "{$title}". You can delete it by saying "delete todo named {$title}".`),
             new botbuilder_dialogs_adaptive_1.IfCondition(`user.tips.showToDos != true`, [

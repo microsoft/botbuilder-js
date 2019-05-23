@@ -7,9 +7,7 @@ import { getRecognizer } from "../recognizer";
 export class AddToDo extends AdaptiveDialog {
     constructor() {
         super('AddToDo', [
-            new LogStep(`AddToDo: entities = {turn.entities}`, true),
-            new SaveEntity('$title', '@title'),
-            new TextInput('$title', `What would you like to call your new todo?`),
+            new TextInput('$title', '@title', `What would you like to call your new todo?`),
             new EditArray(ArrayChangeType.push, 'user.todos', '$title'),
             new SendActivity(`Added a todo named "{$title}". You can delete it by saying "delete todo named {$title}".`),
             new IfCondition(`user.tips.showToDos != true`, [

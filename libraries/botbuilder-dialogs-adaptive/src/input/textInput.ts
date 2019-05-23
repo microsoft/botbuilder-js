@@ -1,71 +1,143 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState } from "./inputDialog";
+import { DialogContext } from "botbuilder-dialogs";
 import { Activity } from "botbuilder-core";
-import { DialogCommand, DialogDependencies, TextPrompt, Dialog, DialogConfiguration, DialogContext, DialogTurnResult } from "botbuilder-dialogs";
-import { ActivityProperty } from "../activityProperty";
 
-export interface TextInputConfiguration extends DialogConfiguration {
-
+export interface TextInputConfiguration extends InputDialogConfiguration {
+    pattern?: string|RegExp;
+    minLength?: number;
+    maxLength?: number;
+    outputFormat?: TextOutputFormat;
 }
 
-export class TextInput extends DialogCommand implements DialogDependencies {
-    private prompt = new TextPrompt();
+export interface TextInputOptions extends InputDialogOptions {
+    minLength?: number;
+    maxLength?: number;
+}
 
-    constructor(property: string, activity: string|Partial<Activity>) {
+export enum TextOutputFormat {
+    none = 'none',
+    trim = 'trim',
+    lowercase = 'lowercase',
+    uppercase = 'uppercase'
+}
+
+export class TextInput extends InputDialog<TextInputOptions> {
+
+    public pattern?: RegExp;
+
+    public minLength?: number;
+
+    public maxLength?: number;
+
+    public outputFormat = TextOutputFormat.none;
+    
+    constructor();
+    constructor(property: string, prompt: string|Partial<Activity>);
+    constructor(property: string, entityName: string, prompt: string|Partial<Activity>);
+    constructor(property?: string, entityName?: string|Partial<Activity>, prompt?: string|Partial<Activity>) {
         super();
-        this.property = property;
-        this.activity.value = activity;
+        if (property) {
+            this.property = property;
+            if(!prompt) {
+                this.prompt.value = entityName;
+            } else {
+                this.entityName = entityName as string;
+                this.prompt.value = prompt;
+            }
+        }
+    }
+
+    public set minLengthProperty(value: string) {
+        this.inputProperties['minLength'] = value;
+    }
+
+    public get minLengthProperty(): string {
+        return this.inputProperties['minLength'];
+    }
+
+    public set maxLengthProperty(value: string) {
+        this.inputProperties['maxLength'] = value;
+    }
+
+    public get maxLengthProperty(): string {
+        return this.inputProperties['maxLength'];
+    }
+
+    public configure(config: TextInputConfiguration): this {
+        for(const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'pattern':
+                        this.pattern = typeof value == 'string' ? new RegExp(value, 'i') : value;
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     protected onComputeID(): string {
         return `textInput[${this.bindingPath()}]`;
     }
 
-    public getDependencies(): Dialog[] {
-        // Update prompts ID before returning.
-        this.prompt.id = this.id + ':prompt';
-        return [this.prompt];
+    protected onInitializeOptions(options: TextInputOptions): TextInputOptions {
+        if (options.minLength == undefined && this.minLength != undefined) { options.minLength = this.minLength }
+        if (options.maxLength == undefined && this.maxLength != undefined) { options.maxLength = this.maxLength }
+        return super.onInitializeOptions(options);
     }
-
-    public configure(config: TextInputConfiguration): this {
-        return super.configure(config);
-    }
-
-    /**
-     * Activity to send the user.
-     */
-    public activity = new ActivityProperty();
-
-    /**
-     * (Optional) data binds the called dialogs input & output to the given property.
-     * 
-     * @remarks
-     * The bound properties current value will be passed to the called dialog as part of its 
-     * options and will be accessible within the dialog via `dialog.options.value`. The result
-     * returned from the called dialog will then be copied to the bound property.
-     */
-    public set property(value: string) {
-        this.inputProperties['value'] = value;
-        this.outputProperty = value;
-    }
-
-    public get property(): string {
-       return this.outputProperty; 
-    }
-
-    public async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
-        // Check value and only call if missing
-        const value = dc.state.getValue(this.property);
-        if (typeof value !== 'string' || value.length == 0) {
-            const activity = this.activity.format(dc, { utterance: dc.context.activity.text || '' });
-            return await dc.prompt(this.prompt.id, activity);
-        } else {
-            return await dc.endDialog();
+    
+    protected async onRecognizeInput(dc: DialogContext, options: TextInputOptions, consultation: boolean): Promise<InputState> {
+        // Check for consultation
+        if (consultation && !this.pattern) {
+            // Without a pattern defined we want to let other dialogs potentially interrupt 
+            // the text prompt.
+            // - It doesn't matter what we return here as long as it isn't "InputState.valid".
+            return InputState.unrecognized;
         }
+
+        // Treat input as a string
+        let input: string = dc.state.getValue(InputDialog.INPUT_PROPERTY).toString();
+
+        // Format input
+        switch (this.outputFormat) {
+            case TextOutputFormat.trim:
+                input = input.trim();
+                break;
+            case TextOutputFormat.lowercase:
+                input = input.trim().toLowerCase();
+                break;
+            case TextOutputFormat.uppercase:
+                input = input.trim().toUpperCase();
+                break;
+        }
+
+        // Perform validations
+        if (this.pattern && !this.pattern.test(input)) {
+            return InputState.invalid;
+        }
+
+        if (typeof options.minLength == 'number' && input.length < options.minLength) {
+            return InputState.invalid;
+        }
+
+        if (typeof options.maxLength == 'number' && input.length > options.maxLength) {
+            return InputState.invalid;
+        }
+
+        // Save formated value and return success
+        dc.state.setValue(InputDialog.INPUT_PROPERTY, input);
+        return InputState.valid;
     }
 }
