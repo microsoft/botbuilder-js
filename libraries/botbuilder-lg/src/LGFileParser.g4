@@ -37,7 +37,7 @@ parameters
 
 templateBody
 	: normalTemplateBody						#normalBody
-	| conditionalTemplateBody					#conditionalBody
+	| ifElseTemplateBody					    #ifElseBody
     | switchCaseTemplateBody                    #switchCaseBody
 	;
 
@@ -49,7 +49,7 @@ normalTemplateString
 	: DASH (WS|TEXT|EXPRESSION|TEMPLATE_REF|TEXT_SEPARATOR|MULTI_LINE_TEXT|ESCAPE_CHARACTER|INVALID_ESCAPE)*
 	;
 
-conditionalTemplateBody
+ifElseTemplateBody
     : ifConditionRule+
     ;
 

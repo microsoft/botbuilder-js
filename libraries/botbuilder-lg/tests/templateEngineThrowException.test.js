@@ -45,7 +45,7 @@ const EvaluatorExceptionData    = [
 
 describe('LGExceptionTest', function () {
     
-    it.only('WariningTest', function () {
+    it('WariningTest', function () {
         for (const testDateItem of StaticCheckWariningData ) {
             var engine = TemplateEngine.fromFiles(GetExampleFilePath(testDateItem));
             var report = new StaticChecker(engine.templates).Check();

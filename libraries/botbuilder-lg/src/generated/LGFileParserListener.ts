@@ -5,7 +5,7 @@ import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
 import { SwitchCaseBodyContext } from "./LGFileParser";
 import { NormalBodyContext } from "./LGFileParser";
-import { ConditionalBodyContext } from "./LGFileParser";
+import { IfElseBodyContext } from "./LGFileParser";
 import { FileContext } from "./LGFileParser";
 import { ParagraphContext } from "./LGFileParser";
 import { NewlineContext } from "./LGFileParser";
@@ -16,7 +16,7 @@ import { ParametersContext } from "./LGFileParser";
 import { TemplateBodyContext } from "./LGFileParser";
 import { NormalTemplateBodyContext } from "./LGFileParser";
 import { NormalTemplateStringContext } from "./LGFileParser";
-import { ConditionalTemplateBodyContext } from "./LGFileParser";
+import { IfElseTemplateBodyContext } from "./LGFileParser";
 import { IfConditionRuleContext } from "./LGFileParser";
 import { IfConditionContext } from "./LGFileParser";
 import { SwitchCaseTemplateBodyContext } from "./LGFileParser";
@@ -56,17 +56,17 @@ export interface LGFileParserListener extends ParseTreeListener {
 	exitNormalBody?: (ctx: NormalBodyContext) => void;
 
 	/**
-	 * Enter a parse tree produced by the `conditionalBody`
+	 * Enter a parse tree produced by the `ifElseBody`
 	 * labeled alternative in `LGFileParser.templateBody`.
 	 * @param ctx the parse tree
 	 */
-	enterConditionalBody?: (ctx: ConditionalBodyContext) => void;
+	enterIfElseBody?: (ctx: IfElseBodyContext) => void;
 	/**
-	 * Exit a parse tree produced by the `conditionalBody`
+	 * Exit a parse tree produced by the `ifElseBody`
 	 * labeled alternative in `LGFileParser.templateBody`.
 	 * @param ctx the parse tree
 	 */
-	exitConditionalBody?: (ctx: ConditionalBodyContext) => void;
+	exitIfElseBody?: (ctx: IfElseBodyContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `LGFileParser.file`.
@@ -179,15 +179,15 @@ export interface LGFileParserListener extends ParseTreeListener {
 	exitNormalTemplateString?: (ctx: NormalTemplateStringContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `LGFileParser.conditionalTemplateBody`.
+	 * Enter a parse tree produced by `LGFileParser.ifElseTemplateBody`.
 	 * @param ctx the parse tree
 	 */
-	enterConditionalTemplateBody?: (ctx: ConditionalTemplateBodyContext) => void;
+	enterIfElseTemplateBody?: (ctx: IfElseTemplateBodyContext) => void;
 	/**
-	 * Exit a parse tree produced by `LGFileParser.conditionalTemplateBody`.
+	 * Exit a parse tree produced by `LGFileParser.ifElseTemplateBody`.
 	 * @param ctx the parse tree
 	 */
-	exitConditionalTemplateBody?: (ctx: ConditionalTemplateBodyContext) => void;
+	exitIfElseTemplateBody?: (ctx: IfElseTemplateBodyContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `LGFileParser.ifConditionRule`.

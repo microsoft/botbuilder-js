@@ -112,9 +112,9 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         return result;
     }
 
-    public visitConditionalBody(context: lp.ConditionalBodyContext): Diagnostic[] {
+    public visitIfElseBody(context: lp.IfElseBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
-        const ifRules: lp.IfConditionRuleContext[] = context.conditionalTemplateBody().ifConditionRule();
+        const ifRules: lp.IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
 
         let idx: number = 0;
         for (const ifRule of ifRules) {
@@ -130,14 +130,14 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             if (node.text.split(' ').length - 1 > 1) {
                 result.push(this.BuildLGDiagnostic({
                     // tslint:disable-next-line: max-line-length
-                    message: `At most 1 whitespace is allowed between IF/ELSEIF/ELSE and :. expression: '${context.conditionalTemplateBody().text}'`,
+                    message: `At most 1 whitespace is allowed between IF/ELSEIF/ELSE and :. expression: '${context.ifElseTemplateBody().text}'`,
                     context: conditionNode
                 }));
             }
 
             if (idx === 0 && !ifExpr) {
                 result.push(this.BuildLGDiagnostic({
-                    message: `condition is not start with if: '${context.conditionalTemplateBody().text}'`,
+                    message: `condition is not start with if: '${context.ifElseTemplateBody().text}'`,
                     severity: DiagnosticSeverity.Warning,
                     context: conditionNode
                 }));
@@ -145,14 +145,14 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
             if (idx > 0 && ifExpr) {
                 result.push(this.BuildLGDiagnostic({
-                    message: `condition can't have more than one if: '${context.conditionalTemplateBody().text}'`,
+                    message: `condition can't have more than one if: '${context.ifElseTemplateBody().text}'`,
                     context: conditionNode
                 }));
             }
 
             if (idx === ifRules.length - 1 && !elseExpr) {
                 result.push(this.BuildLGDiagnostic({
-                    message: `condition is not end with else: '${context.conditionalTemplateBody().text}'`,
+                    message: `condition is not end with else: '${context.ifElseTemplateBody().text}'`,
                     severity: DiagnosticSeverity.Warning,
                     context: conditionNode
                 }));
@@ -160,7 +160,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
             if (idx > 0 && idx < ifRules.length - 1 && !elseIfExpr) {
                 result.push(this.BuildLGDiagnostic({
-                    message: `only elseif is allowed in middle of condition: '${context.conditionalTemplateBody().text}'`,
+                    message: `only elseif is allowed in middle of condition: '${context.ifElseTemplateBody().text}'`,
                     context: conditionNode
                 }));
             }

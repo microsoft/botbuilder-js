@@ -65,7 +65,7 @@ export class LGFileParser extends Parser {
 	public static readonly RULE_templateBody = 7;
 	public static readonly RULE_normalTemplateBody = 8;
 	public static readonly RULE_normalTemplateString = 9;
-	public static readonly RULE_conditionalTemplateBody = 10;
+	public static readonly RULE_ifElseTemplateBody = 10;
 	public static readonly RULE_ifConditionRule = 11;
 	public static readonly RULE_ifCondition = 12;
 	public static readonly RULE_switchCaseTemplateBody = 13;
@@ -75,7 +75,7 @@ export class LGFileParser extends Parser {
 	public static readonly ruleNames: string[] = [
 		"file", "paragraph", "newline", "templateDefinition", "templateNameLine", 
 		"templateName", "parameters", "templateBody", "normalTemplateBody", "normalTemplateString", 
-		"conditionalTemplateBody", "ifConditionRule", "ifCondition", "switchCaseTemplateBody", 
+		"ifElseTemplateBody", "ifConditionRule", "ifCondition", "switchCaseTemplateBody", 
 		"switchCaseRule", "switchCaseStat",
 	];
 
@@ -443,11 +443,11 @@ export class LGFileParser extends Parser {
 				break;
 
 			case 2:
-				_localctx = new ConditionalBodyContext(_localctx);
+				_localctx = new IfElseBodyContext(_localctx);
 				this.enterOuterAlt(_localctx, 2);
 				{
 				this.state = 78;
-				this.conditionalTemplateBody();
+				this.ifElseTemplateBody();
 				}
 				break;
 
@@ -572,9 +572,9 @@ export class LGFileParser extends Parser {
 		return _localctx;
 	}
 	// @RuleVersion(0)
-	public conditionalTemplateBody(): ConditionalTemplateBodyContext {
-		let _localctx: ConditionalTemplateBodyContext = new ConditionalTemplateBodyContext(this._ctx, this.state);
-		this.enterRule(_localctx, 20, LGFileParser.RULE_conditionalTemplateBody);
+	public ifElseTemplateBody(): IfElseTemplateBodyContext {
+		let _localctx: IfElseTemplateBodyContext = new IfElseTemplateBodyContext(this._ctx, this.state);
+		this.enterRule(_localctx, 20, LGFileParser.RULE_ifElseTemplateBody);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
@@ -1263,9 +1263,9 @@ export class NormalBodyContext extends TemplateBodyContext {
 		}
 	}
 }
-export class ConditionalBodyContext extends TemplateBodyContext {
-	public conditionalTemplateBody(): ConditionalTemplateBodyContext {
-		return this.getRuleContext(0, ConditionalTemplateBodyContext);
+export class IfElseBodyContext extends TemplateBodyContext {
+	public ifElseTemplateBody(): IfElseTemplateBodyContext {
+		return this.getRuleContext(0, IfElseTemplateBodyContext);
 	}
 	constructor(ctx: TemplateBodyContext) {
 		super(ctx.parent, ctx.invokingState);
@@ -1273,20 +1273,20 @@ export class ConditionalBodyContext extends TemplateBodyContext {
 	}
 	// @Override
 	public enterRule(listener: LGFileParserListener): void {
-		if (listener.enterConditionalBody) {
-			listener.enterConditionalBody(this);
+		if (listener.enterIfElseBody) {
+			listener.enterIfElseBody(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: LGFileParserListener): void {
-		if (listener.exitConditionalBody) {
-			listener.exitConditionalBody(this);
+		if (listener.exitIfElseBody) {
+			listener.exitIfElseBody(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: LGFileParserVisitor<Result>): Result {
-		if (visitor.visitConditionalBody) {
-			return visitor.visitConditionalBody(this);
+		if (visitor.visitIfElseBody) {
+			return visitor.visitIfElseBody(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
@@ -1443,7 +1443,7 @@ export class NormalTemplateStringContext extends ParserRuleContext {
 }
 
 
-export class ConditionalTemplateBodyContext extends ParserRuleContext {
+export class IfElseTemplateBodyContext extends ParserRuleContext {
 	public ifConditionRule(): IfConditionRuleContext[];
 	public ifConditionRule(i: number): IfConditionRuleContext;
 	public ifConditionRule(i?: number): IfConditionRuleContext | IfConditionRuleContext[] {
@@ -1457,23 +1457,23 @@ export class ConditionalTemplateBodyContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return LGFileParser.RULE_conditionalTemplateBody; }
+	public get ruleIndex(): number { return LGFileParser.RULE_ifElseTemplateBody; }
 	// @Override
 	public enterRule(listener: LGFileParserListener): void {
-		if (listener.enterConditionalTemplateBody) {
-			listener.enterConditionalTemplateBody(this);
+		if (listener.enterIfElseTemplateBody) {
+			listener.enterIfElseTemplateBody(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: LGFileParserListener): void {
-		if (listener.exitConditionalTemplateBody) {
-			listener.exitConditionalTemplateBody(this);
+		if (listener.exitIfElseTemplateBody) {
+			listener.exitIfElseTemplateBody(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: LGFileParserVisitor<Result>): Result {
-		if (visitor.visitConditionalTemplateBody) {
-			return visitor.visitConditionalTemplateBody(this);
+		if (visitor.visitIfElseTemplateBody) {
+			return visitor.visitIfElseTemplateBody(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
