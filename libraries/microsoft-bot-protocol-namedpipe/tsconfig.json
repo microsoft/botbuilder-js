@@ -15,7 +15,6 @@
     "skipLibCheck": true,
     "target": "ESNext",
     "types": [
-      "jest",
       "node"
     ],
     "sourceMap": true
