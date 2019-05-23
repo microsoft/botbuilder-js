@@ -66,13 +66,13 @@ describe('LG', function () {
 
     it('TestBasicSwitchCaseTemplate', function () {
         let engine = TemplateEngine.fromFiles(GetExampleFilePath('switchcase.lg'));
-        let evaled1 = engine.evaluateTemplate('greet-in-a-week', {day: "Saturday"});
+        let evaled1 = engine.evaluateTemplate('greetInAWeek', {day: "Saturday"});
         assert.strictEqual(evaled1 === "Happy Saturday!", true, `Evaled is ${evaled1}`);
 
-        let evaled2 = engine.evaluateTemplate('greet-in-a-week', {day: "Sunday"});
+        let evaled2 = engine.evaluateTemplate('greetInAWeek', {day: "Sunday"});
         assert.strictEqual(evaled2 === "Happy Sunday!", true, `Evaled is ${evaled2}`);
 
-        let evaled3 = engine.evaluateTemplate('greet-in-a-week', {day: "Monday"});
+        let evaled3 = engine.evaluateTemplate('greetInAWeek', {day: "Monday"});
         assert.strictEqual(evaled3 === "Work Hard!", true, `Evaled is ${evaled3}`);
     });
 

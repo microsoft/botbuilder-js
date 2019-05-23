@@ -57,7 +57,7 @@ describe('MSLGTool', function () {
         });
     })
 
-    it('TestExpandTemplateWithScope', function() {
+    it.only('TestExpandTemplateWithScope', function() {
         const mslgTool = new MSLGTool();
         let errors = mslgTool.ValidateFile(GetExampleFile('CollateFile3.lg'));
         assert.strictEqual(errors.length, 0);
@@ -67,6 +67,13 @@ describe('MSLGTool', function () {
         expectedResults.forEach(element => {
             assert.strictEqual(expandedTemplate.includes(element), true);
         });
+        let expandedTemplate2 = mslgTool.ExpandTemplate('greetInAWeek', { day: 'Sunday' });
+        assert.strictEqual(expandedTemplate.length, 2);
+        let expected2Results = ['Nice Sunday!', 'Happy Sunday!'];
+        expected2Results.forEach(element => {
+            assert.strictEqual(expandedTemplate2.includes(element), true);
+        });
+
     })
 
     it('TestExpandTemplateWithRef', function() {
