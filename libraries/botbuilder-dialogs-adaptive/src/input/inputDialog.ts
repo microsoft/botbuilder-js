@@ -5,9 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogConfiguration, Dialog, DialogContext, DialogTurnResult, DialogEvent } from "botbuilder-dialogs";
+import { DialogConfiguration, Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason } from "botbuilder-dialogs";
 import { ActivityTypes, Activity, InputHints } from "botbuilder-core";
 import { ActivityProperty } from "../activityProperty";
+import { ExpressionEngine } from 'botbuilder-expression-parser';
+import { Expression } from 'botbuilder-expression';
+import { ExpressionDelegate } from '../steps/setProperty';
 
 export interface InputDialogConfiguration extends DialogConfiguration {
     allowInterruptions?: boolean;
@@ -17,6 +20,9 @@ export interface InputDialogConfiguration extends DialogConfiguration {
     unrecognizedPrompt?: string|Partial<Activity>;
     invalidPrompt?: string|Partial<Activity>;
     property?: string;
+    validations?: string[];
+    maxTurnCount?: number;
+    defaultValue?: any;
 }
 
 export interface InputDialogOptions {
@@ -31,9 +37,9 @@ export enum InputState {
 }
 
 export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O> {
-    static OPTIONS_PROPERTY = 'dialog.options';
-    static INITIAL_VALUE_PROPERTY = 'dialog.options.value';
-    static TURN_COUNT_PROPERTY = 'dialog.turnCount';
+    static OPTIONS_PROPERTY = 'dialog._input';
+    static INITIAL_VALUE_PROPERTY = 'dialog._input.value';
+    static TURN_COUNT_PROPERTY = 'dialog._input.turnCount';
     static INPUT_PROPERTY = 'turn.input';
 
     public allowInterruptions = true;
@@ -48,8 +54,17 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
 
     public invalidPrompt = new ActivityProperty();
 
+    public readonly validations: Expression[] = [];
+
+    public maxTurnCount?: number;
+
+    public defaultValue?: any;
+
     constructor() {
         super();
+
+        // Inherit parents state
+        this.inheritState = true;
 
         // Initialize input hints
         this.prompt.inputHint = InputHints.ExpectingInput;
@@ -119,10 +134,33 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
             // Return input
             const input = dc.state.getValue(InputDialog.INPUT_PROPERTY);
             return await dc.endDialog(input);
-        } else {
+        } else if (this.maxTurnCount == undefined || turnCount < this.maxTurnCount) {
             // Prompt user
             return await this.promptUser(dc, state);
+        } else {
+            // Return default value
+            return await dc.endDialog(this.defaultValue);
         }
+    }
+
+    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+        // Re-send initial prompt
+        return await this.promptUser(dc, InputState.missing);
+    }
+
+    public addValidation(validation: string|Expression|ExpressionDelegate<boolean>): this {
+        switch (typeof validation) {
+            case 'string':
+                this.validations.push(engine.parse(validation));
+                break; 
+            case 'function':
+                this.validations.push(Expression.Lambda(validation));
+                break;
+            default:
+                this.validations.push(validation as Expression);
+                break;
+        }
+        return this;
     }
 
     public configure(config: InputDialogConfiguration): this {
@@ -138,6 +176,9 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
                         break;
                     case 'invalidPrompt':
                         this.invalidPrompt.value = value;
+                        break;
+                    case 'validations':
+                        (value as string[]).forEach((exp) => this.validations.push(engine.parse(exp)));
                         break;
                     default:
                         super.configure({ [key]: value });
@@ -164,7 +205,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         return false;
     }
 
-    protected abstract onRecognizeInput(dc: DialogContext, options: O, consultation: boolean): Promise<InputState>;
+    protected abstract onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState>;
 
     protected onInitializeOptions(options: O): O {
         return Object.assign({}, options);
@@ -219,8 +260,22 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         dc.state.setValue(InputDialog.INPUT_PROPERTY, input);
         if (input != undefined) {
             // Recognize input
-            const options = dc.state.getValue(InputDialog.OPTIONS_PROPERTY) as O;
-            return await this.onRecognizeInput(dc, options, consultation);
+            const state = await this.onRecognizeInput(dc, consultation);
+            if (state == InputState.valid) {
+                // Run through validations
+                const memory = dc.state.toJSON();
+                for (let i = 0; i < this.validations.length; i++) {
+                    const { value, error } = this.validations[i].tryEvaluate(memory);
+                    if (error) { throw error }
+                    if (!value) {
+                        return InputState.invalid;
+                    }
+                }
+
+                return InputState.valid;
+            } else {
+                return state;
+            }
         } else {
             return InputState.missing;
         }
@@ -232,3 +287,5 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         return Dialog.EndOfTurn;
     }
 }
+
+const engine = new ExpressionEngine();

@@ -10,15 +10,7 @@ import { DialogContext } from "botbuilder-dialogs";
 import { Activity } from "botbuilder-core";
 
 export interface TextInputConfiguration extends InputDialogConfiguration {
-    pattern?: string|RegExp;
-    minLength?: number;
-    maxLength?: number;
     outputFormat?: TextOutputFormat;
-}
-
-export interface TextInputOptions extends InputDialogOptions {
-    minLength?: number;
-    maxLength?: number;
 }
 
 export enum TextOutputFormat {
@@ -28,13 +20,7 @@ export enum TextOutputFormat {
     uppercase = 'uppercase'
 }
 
-export class TextInput extends InputDialog<TextInputOptions> {
-
-    public pattern?: RegExp;
-
-    public minLength?: number;
-
-    public maxLength?: number;
+export class TextInput extends InputDialog<InputDialogOptions> {
 
     public outputFormat = TextOutputFormat.none;
     
@@ -54,55 +40,18 @@ export class TextInput extends InputDialog<TextInputOptions> {
         }
     }
 
-    public set minLengthProperty(value: string) {
-        this.inputProperties['minLength'] = value;
-    }
-
-    public get minLengthProperty(): string {
-        return this.inputProperties['minLength'];
-    }
-
-    public set maxLengthProperty(value: string) {
-        this.inputProperties['maxLength'] = value;
-    }
-
-    public get maxLengthProperty(): string {
-        return this.inputProperties['maxLength'];
-    }
-
     public configure(config: TextInputConfiguration): this {
-        for(const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'pattern':
-                        this.pattern = typeof value == 'string' ? new RegExp(value, 'i') : value;
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
+        return super.configure(config);
     }
 
     protected onComputeID(): string {
         return `textInput[${this.bindingPath()}]`;
     }
-
-    protected onInitializeOptions(options: TextInputOptions): TextInputOptions {
-        if (options.minLength == undefined && this.minLength != undefined) { options.minLength = this.minLength }
-        if (options.maxLength == undefined && this.maxLength != undefined) { options.maxLength = this.maxLength }
-        return super.onInitializeOptions(options);
-    }
     
-    protected async onRecognizeInput(dc: DialogContext, options: TextInputOptions, consultation: boolean): Promise<InputState> {
+    protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
         // Check for consultation
-        if (consultation && !this.pattern) {
-            // Without a pattern defined we want to let other dialogs potentially interrupt 
-            // the text prompt.
+        if (consultation) {
+            // Text inputs by default allow .
             // - It doesn't matter what we return here as long as it isn't "InputState.valid".
             return InputState.unrecognized;
         }
@@ -123,21 +72,8 @@ export class TextInput extends InputDialog<TextInputOptions> {
                 break;
         }
 
-        // Perform validations
-        if (this.pattern && !this.pattern.test(input)) {
-            return InputState.invalid;
-        }
-
-        if (typeof options.minLength == 'number' && input.length < options.minLength) {
-            return InputState.invalid;
-        }
-
-        if (typeof options.maxLength == 'number' && input.length > options.maxLength) {
-            return InputState.invalid;
-        }
-
-        // Save formated value and return success
+        // Save formated value and ensure length > 0
         dc.state.setValue(InputDialog.INPUT_PROPERTY, input);
-        return InputState.valid;
+        return input.length > 0 ? InputState.valid : InputState.unrecognized;
     }
 }

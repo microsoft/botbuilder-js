@@ -184,6 +184,11 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     public readonly tags: string[] = [];
 
     /**
+     * (Optional) if true, the dialog will inherit its parents state.
+     */
+    public inheritState = false;
+
+    /**
      * (Optional) JSONPath expression for the memory slots to bind the dialogs options to on a 
      * call to `beginDialog()`. 
      */
