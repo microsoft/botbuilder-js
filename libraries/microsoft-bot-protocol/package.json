@@ -8,7 +8,8 @@
     "build": "tsc --outDir lib",
     "watch": "tsc -w --outDir lib",
     "build-all": "..\\..\\node_modules\\.bin\\lerna run build",
-    "tslint": "tslint -c tslint.json -t stylish --project tsconfig.json"
+    "tslint": "tslint -c tslint.json -t stylish --project tsconfig.json",
+    "test": "nyc mocha --exit"
   },
   "keywords": [],
   "author": "",
