@@ -117,10 +117,8 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
                 childTemplateBodyResult.push(templateBody[0]);
             }
 
-            if (expressions !== undefined && expressions.length > 0) {
-                if (expressions[0].text !== undefined) {
+            if (caseExpr) {
                     result.set(conditionLabel.toUpperCase().concat(' ') + expressions[0].text, childTemplateBodyResult);
-                }
             } else {
                 // tslint:disable-next-line: no-backbone-get-set-outside-model
                 result.set('DEFALUT:', childTemplateBodyResult);
