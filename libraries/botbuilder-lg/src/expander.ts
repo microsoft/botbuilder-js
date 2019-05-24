@@ -72,12 +72,46 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         return result;
     }
 
-    public visitConditionalBody(ctx: lp.ConditionalBodyContext) : string[] {
-        const ifRules: lp.IfConditionRuleContext[] = ctx.conditionalTemplateBody().ifConditionRule();
+    public visitIfElseBody(ctx: lp.IfElseBodyContext) : string[] {
+        const ifRules: lp.IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             if (this.EvalCondition(ifRule.ifCondition())) {
                 return this.visit(ifRule.normalTemplateBody());
             }
+        }
+
+        return undefined;
+    }
+
+    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext) : string[] {
+        const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
+        const length: number = switchcaseNodes.length;
+        const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0]
+        const switchExprs: TerminalNode[] = switchNode.switchCaseStat().EXPRESSION();
+        const {value:switchExprResult, error}: {value: any, error: string} = this.EvalByExpressionEngine(switchExprs[0].text,this.currentTarget().Scope);
+        let idx: number = 0
+        for(const caseNode of switchcaseNodes){ 
+            if (idx === 0) {
+                idx = idx + 1;
+                continue; //skip the first node which is a switch statement
+            }
+
+            if (idx === length - 1 && caseNode.switchCaseStat().DEFAULT()){
+                const defaultBody: lp.NormalTemplateBodyContext = caseNode.normalTemplateBody();
+                if (defaultBody !== undefined){
+                    return this.visit(defaultBody);
+                } else {
+                    return undefined;
+                }
+            }
+
+            const caseExprs: TerminalNode[] = caseNode.switchCaseStat().EXPRESSION();
+            const {value:caseExprResult, error}: {value: any, error: string} = this.EvalByExpressionEngine(caseExprs[0].text,this.currentTarget().Scope);
+            if (switchExprResult === caseExprResult) {
+                return this.visit(caseNode.normalTemplateBody());
+            }
+            
+            idx = idx + 1;
         }
 
         return undefined;

@@ -61,9 +61,9 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         return result;
     }
 
-    public visitConditionalBody(context: lp.ConditionalBodyContext): Map<string, any> {
+    public visitIfElseBody(context: lp.IfElseBodyContext): Map<string, any> {
         const result: Map<string, any> = new Map<string, any>();
-        const ifRules: lp.IfConditionRuleContext[] = context.conditionalTemplateBody().ifConditionRule();
+        const ifRules: lp.IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             const expressions: TerminalNode[] = ifRule.ifCondition().EXPRESSION();
             const  conditionNode : lp.IfConditionContext = ifRule.ifCondition();
@@ -93,6 +93,41 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
 
         return result;
     }
+
+    
+    public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Map<string, any> {
+        const result: Map<string, any> = new Map<string, any>();
+        const switchCaseNodes: lp.SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
+        for (const iterNode of switchCaseNodes) {
+            const expressions: TerminalNode[] = iterNode.switchCaseStat().EXPRESSION();
+            const switchCaseStat: lp.SwitchCaseStatContext = iterNode.switchCaseStat();
+            const switchExpr: boolean = switchCaseStat.SWITCH() !== undefined;
+            const caseExpr: boolean = switchCaseStat.CASE() !== undefined;
+            const defaultExpr: boolean = switchCaseStat.DEFAULT() !== undefined;
+            const node: TerminalNode = switchExpr? switchCaseStat.SWITCH():
+                        caseExpr? switchCaseStat.CASE():
+                        switchCaseStat.DEFAULT();
+            if (switchExpr){
+                continue;
+            }
+            const conditionLabel: string = node.text.toLowerCase();
+            const childTemplateBodyResult: string[] = [];
+            const templateBodies: Map<string, any> = this.visit(iterNode.normalTemplateBody());
+            for (const templateBody of templateBodies) {
+                childTemplateBodyResult.push(templateBody[0]);
+            }
+
+            if (caseExpr) {
+                    result.set(conditionLabel.toUpperCase().concat(' ') + expressions[0].text, childTemplateBodyResult);
+            } else {
+                // tslint:disable-next-line: no-backbone-get-set-outside-model
+                result.set('DEFALUT:', childTemplateBodyResult);
+            } 
+        }
+        
+        return result; 
+    }
+
 
     protected defaultResult(): Map<string, any> {
         return new Map<string, any>();

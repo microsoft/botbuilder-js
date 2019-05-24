@@ -64,6 +64,18 @@ describe('LG', function () {
         assert.strictEqual(options2.includes(evaled), true, `Evaled is ${evaled}`);
     });
 
+    it('TestBasicSwitchCaseTemplate', function () {
+        let engine = TemplateEngine.fromFiles(GetExampleFilePath('switchcase.lg'));
+        let evaled1 = engine.evaluateTemplate('greetInAWeek', {day: "Saturday"});
+        assert.strictEqual(evaled1 === "Happy Saturday!", true, `Evaled is ${evaled1}`);
+
+        let evaled2 = engine.evaluateTemplate('greetInAWeek', {day: "Sunday"});
+        assert.strictEqual(evaled2 === "Happy Sunday!", true, `Evaled is ${evaled2}`);
+
+        let evaled3 = engine.evaluateTemplate('greetInAWeek', {day: "Monday"});
+        assert.strictEqual(evaled3 === "Work Hard!", true, `Evaled is ${evaled3}`);
+    });
+
     it('TestBasicListSupport',function(){
         let engine = TemplateEngine.fromFiles(GetExampleFilePath('BasicList.lg'));
 
@@ -183,6 +195,11 @@ describe('LG', function () {
         var evaled3Options = ["alarms", "customer", "tasks[0]", "age", "city"];
         assert.strictEqual(evaled3.length, evaled3Options.length);
         evaled3Options.forEach(element => assert.strictEqual(evaled3.includes(element), true));
+
+        var evaled4 = engine.analyzeTemplate('coffee-to-go-order')
+        var evaled4Options = ['coffee','userName','size','price']
+        assert.strictEqual(evaled4.length,evaled4Options.length);
+        evaled4Options.forEach(element => assert.strictEqual(evaled4.includes(element), true));
     });
 
     it('TestlgTemplateFunction', function() {

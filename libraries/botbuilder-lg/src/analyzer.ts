@@ -83,10 +83,10 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         return result;
     }
 
-    public visitConditionalBody(ctx: lp.ConditionalBodyContext): string[] {
+    public visitIfElseBody(ctx: lp.IfElseBodyContext): string[] {
         let result: string[] = [];
 
-        const ifRules: lp.IfConditionRuleContext[] = ctx.conditionalTemplateBody().ifConditionRule();
+        const ifRules: lp.IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             const expressions: TerminalNode[] = ifRule.ifCondition().EXPRESSION();
             if (expressions !== undefined && expressions.length > 0) {
@@ -99,6 +99,23 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         return result;
     }
+
+    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): string[] {
+        let result : string[] = [];
+        const switchCaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
+        for (const iterNode of switchCaseNodes){
+            const expressions: TerminalNode[] = iterNode.switchCaseStat().EXPRESSION();
+            if ( expressions.length > 0) {
+                result = result.concat(this.AnalyzeExpression(expressions[0].text));
+            }
+            if (iterNode.normalTemplateBody() !== undefined) {
+                result = result.concat(this.visit(iterNode.normalTemplateBody()));
+            }
+        }
+        
+        return result;
+    } 
+
 
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string[] {
         let result: string[] = [];
