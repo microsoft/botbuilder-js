@@ -27,7 +27,7 @@ describe('ResponsePayload', () => {
     expect(rp.streams)
     .to
     .deep
-    .contain({id: 'streamDescription1'});
+    .include({id: 'streamDescription1'});
      // .equal([{ id: 'streamDescription1' }]);
   });
 });

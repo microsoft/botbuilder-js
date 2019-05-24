@@ -34,7 +34,7 @@ describe('RequestPayload', () => {
       expect(rp.streams)
       .to
       .deep
-      .contain({id: 'streamDescription1'});
+      .include({id: 'streamDescription1'});
   })
 
 });

@@ -67,7 +67,10 @@ describe('ContentStream ', () => {
     return cs.readAsJson()
       .then(data => {
         expect(data)
-          .toBeDefined();
+          .to
+          .not
+          .be
+          .undefined;
       })
       .catch(err => {
         expect(err.toString())

@@ -1,8 +1,8 @@
+import { expect } from 'chai';
 import { HeaderSerializer } from '../lib/Payloads/HeaderSerializer';
 import { Header } from '../lib/Payloads/Models/Header';
 import { PayloadTypes } from '../lib/Payloads/Models/PayloadTypes';
 import { TransportContants } from '../lib/Transport/TransportConstants';
-import { expect } from "chai";
 
 describe('HeaderSerializer', () => {
 

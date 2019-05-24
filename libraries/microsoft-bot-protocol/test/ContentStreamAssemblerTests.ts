@@ -1,7 +1,7 @@
-import { ContentStreamAssembler } from "../src/Payloads/Assemblers/ContentStreamAssembler";
-import { MockStreamManager } from "../__mocks__/MockStreamManager";
-import { Stream } from "stream";
-import { expect } from "chai";
+import { expect } from 'chai';
+import { Stream } from 'stream';
+import { MockStreamManager } from '../__mocks__/MockStreamManager';
+import { ContentStreamAssembler } from '../src/Payloads/Assemblers/ContentStreamAssembler';
 
 describe('ContentStreamAssembler', () => {
   it('assigns values when constructed', () => {
