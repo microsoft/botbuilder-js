@@ -211,7 +211,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             const node: TerminalNode = switchExpr? switchCaseStat.SWITCH():
                         caseExpr? switchCaseStat.CASE():
                         switchCaseStat.DEFAULT();
-        
+            console.log(switchCaseStat.EXPRESSION());
             if (node.text.split(" ").length -1 > 1){
                 result.push(this.BuildLGDiagnostic({
                     message: `At most 1 whitespace is allowed between SWITCH/CASE/DEFAULT and :. expression: '${context.switchCaseTemplateBody().text}'`,
@@ -259,7 +259,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             }
             
             if (switchExpr || caseExpr){
-                if (switchCaseStat.EXPRESSION().length !== 1){
+                if (switchCaseStat.EXPRESSION().length !== 1 ){
                     result.push(this.BuildLGDiagnostic({
                         message: `switch and case should followed by one valid expression: '${switchCaseStat.text}'`,
                         context: switchCaseStat
@@ -268,9 +268,9 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                     result = result.concat(this.CheckExpression(switchCaseStat.EXPRESSION(0).text,switchCaseStat));
                 }
             } else {
-                if (switchCaseStat.EXPRESSION().length !== 0) {
+                if (switchCaseStat.EXPRESSION().length !== 0 || switchCaseStat.TEXT().length !== 0  ) {
                     result.push(this.BuildLGDiagnostic({
-                        message: `default should not followed by any expression: '${switchCaseStat.text}'`,
+                        message: `default should not followed by any expression or any text: '${switchCaseStat.text}'`,
                         context: switchCaseStat
                     }));
                 }

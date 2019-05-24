@@ -48,3 +48,21 @@
 - CASE: {'case2'}
     - output2
 - DEFAULT:{'default'}
+
+#template7
+-SWITCH: cases
+- CASE: {'case1'}
+    - output1
+- CASE: {'case2'}
+    - output2
+- DEFAULT:
+    - text
+
+#template8
+-SWITCH:{case}
+- CASE: {'case1'}
+    - output1
+- CASE: {'case2'}
+    - output2
+- DEFAULT: default2
+    -output 3

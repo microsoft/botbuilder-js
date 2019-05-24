@@ -216,7 +216,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         const length: number = switchcaseNodes.length;
         const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0]
         const switchExprs: TerminalNode[] = switchNode.switchCaseStat().EXPRESSION();
-        const {value:switchExprResult, error}: {value: any, error: string} = this.EvalByExpressionEngine(switchExprs[0].text,this.currentTarget().Scope);
+        const switchExprResult = this.EvalExpression(switchExprs[0].text);
         let idx: number = 0
         for(const caseNode of switchcaseNodes){ 
             if (idx === 0) {
@@ -234,7 +234,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
             }
 
             const caseExprs: TerminalNode[] = caseNode.switchCaseStat().EXPRESSION();
-            const {value:caseExprResult, error}: {value: any, error: string} = this.EvalByExpressionEngine(caseExprs[0].text,this.currentTarget().Scope);
+            const caseExprResult = this.EvalExpression(caseExprs[0].text);
             if (switchExprResult === caseExprResult) {
                 return this.visit(caseNode.normalTemplateBody());
             }
