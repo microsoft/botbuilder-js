@@ -165,7 +165,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     private static readonly command = "/INSPECT";
 
     private readonly inspectionState: InspectionState;
-    private readonly inspectionStateAccessor: StatePropertyAccessor<InspectionSessionByStatus>;
+    private readonly inspectionStateAccessor: StatePropertyAccessor<InspectionSessionsByStatus>;
     private readonly userState: UserState;
     private readonly conversationState: ConversationState;
     private readonly credentials: MicrosoftAppCredentials;
@@ -267,14 +267,14 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     }
 
     private async processOpenCommand(turnContext: TurnContext): Promise<any> {
-        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
+        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
         var sessionId = this.openCommand(sessions, TurnContext.getConversationReference(turnContext.activity));
         await turnContext.sendActivity(TraceActivity.makeCommandActivity(`${InspectionMiddleware.command} attach ${sessionId}`));
         await this.inspectionState.saveChanges(turnContext, false);
     }
 
     private async processAttachCommand(turnContext: TurnContext, sessionId: string): Promise<any> {
-        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
+        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
 
         if (this.attachComamnd(turnContext.activity.conversation.id, sessions, sessionId)) {
             await turnContext.sendActivity('Attached to session, all traffic is being replicated for inspection.');
@@ -286,7 +286,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         await this.inspectionState.saveChanges(turnContext, false);
     }
 
-    private openCommand(sessions: InspectionSessionByStatus, conversationReference: Partial<ConversationReference>): string {
+    private openCommand(sessions: InspectionSessionsByStatus, conversationReference: Partial<ConversationReference>): string {
         function generate_guid() {
             function s4() {
                 return Math.floor((1 + Math.random()) * 0x10000)
@@ -302,7 +302,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         return sessionId;
     }
 
-    private attachComamnd(conversationId: string, sessions: InspectionSessionByStatus, sessionId: string): boolean {
+    private attachComamnd(conversationId: string, sessions: InspectionSessionsByStatus, sessionId: string): boolean {
 
         var inspectionSessionState = sessions.openedSessions[sessionId];
         if (inspectionSessionState !== undefined) {
@@ -315,7 +315,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     }
 
     private async findSession(turnContext: TurnContext): Promise<any> {
-        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
+        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
 
         var conversationReference = sessions.attachedSessions[turnContext.activity.conversation.id];
         if (conversationReference !== undefined) {
@@ -336,7 +336,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     }
 
     private async cleanUpSession(turnContext: TurnContext): Promise<any> {
-        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
+        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
 
         delete sessions.attachedSessions[turnContext.activity.conversation.id];
         await this.inspectionState.saveChanges(turnContext, false);
@@ -369,9 +369,9 @@ class InspectionSession {
 }
 
 /** @private */
-class InspectionSessionByStatus {
+class InspectionSessionsByStatus {
 
-    public static DefaultValue: InspectionSessionByStatus = new InspectionSessionByStatus();
+    public static DefaultValue: InspectionSessionsByStatus = new InspectionSessionsByStatus();
 
     public openedSessions: { [id: string]: Partial<ConversationReference>; } = {};
 
