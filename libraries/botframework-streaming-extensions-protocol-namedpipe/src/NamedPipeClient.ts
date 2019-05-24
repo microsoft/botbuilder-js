@@ -10,7 +10,7 @@ import {
   Request,
   RequestHandler,
   RequestManager
-} from 'microsoft-bot-protocol';
+} from 'botframework-streaming-extensions-protocol';
 import { connect } from 'net';
 import { Transport } from './Transport';
 

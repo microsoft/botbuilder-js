@@ -1,4 +1,4 @@
-import { ITransportReceiver, ITransportSender } from 'microsoft-bot-protocol';
+import { ITransportReceiver, ITransportSender } from 'botframework-streaming-extensions-protocol';
 import { Socket } from './Socket';
 
 export class Transport implements ITransportSender, ITransportReceiver {

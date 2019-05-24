@@ -10,7 +10,7 @@ import {
   SimpleCredentialProvider
 } from 'botframework-connector';
 
-import { NodeSocket, Server } from 'microsoft-bot-protocol-websocket';
+import { NodeSocket, Server } from 'botframework-streaming-extensions-protocol-websocket';
 import { StreamingRequestHandler } from './StreamingRequestHandler';
 
 // tslint:disable-next-line:no-var-requires no-require-imports

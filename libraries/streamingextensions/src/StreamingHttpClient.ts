@@ -1,5 +1,5 @@
 import { HttpClient, HttpOperationResponse, WebResource } from '@azure/ms-rest-js';
-import { IStreamingTransportServer, Request } from 'microsoft-bot-protocol';
+import { IStreamingTransportServer, Request } from 'botframework-streaming-extensions-protocol';
 
 export class StreamingHttpClient implements HttpClient {
   private readonly server: IStreamingTransportServer;

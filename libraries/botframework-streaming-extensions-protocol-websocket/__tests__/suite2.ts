@@ -1,4 +1,4 @@
-import {abcd} from 'microsoft-bot-protocol'
+import {abcd} from 'botframework-streaming-extensions-protocol'
 
 test('simple test 1', () => {
         expect('abc').toBe('abc');

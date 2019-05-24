@@ -9,7 +9,7 @@ import {
   Response,
   ContentStream,
   Stream
-} from 'microsoft-bot-protocol';
+} from 'botframework-streaming-extensions-protocol';
 const uuidv4 = require('uuid/v4');
 
 class MockRequestHandler implements RequestHandler {

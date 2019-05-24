@@ -6,7 +6,7 @@ import {
   InvokeResponse,
   TurnContext
 } from 'botbuilder';
-import { IStreamingTransportServer, ReceiveRequest, RequestHandler, Response, Request } from 'microsoft-bot-protocol';
+import { IStreamingTransportServer, ReceiveRequest, RequestHandler, Response, Request } from 'botframework-streaming-extensions-protocol';
 import { BotFrameworkStreamingAdapter } from './BotFrameworkStreamingAdapter';
 
 export class StreamingRequestHandler implements RequestHandler {

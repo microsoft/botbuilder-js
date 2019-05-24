@@ -1,6 +1,6 @@
 import { BotFrameworkAdapter, BotFrameworkAdapterSettings, TurnContext } from 'botbuilder';
 import { ConnectorClient } from 'botframework-connector';
-import { IStreamingTransportServer } from 'microsoft-bot-protocol';
+import { IStreamingTransportServer } from 'botframework-streaming-extensions-protocol';
 import { StreamingHttpClient } from './StreamingHttpClient';
 
 export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter {
