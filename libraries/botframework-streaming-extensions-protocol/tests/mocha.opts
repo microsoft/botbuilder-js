@@ -1,3 +1,2 @@
 # mocha.opts
---require ts-node/register
-test/*.ts
+tests/*.js
