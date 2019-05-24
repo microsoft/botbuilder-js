@@ -5,20 +5,22 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogConfiguration, Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason } from "botbuilder-dialogs";
-import { ActivityTypes, Activity, InputHints } from "botbuilder-core";
+import { DialogConfiguration, Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory } from "botbuilder-dialogs";
+import { ActivityTypes, Activity, InputHints, MessageFactory } from "botbuilder-core";
 import { ActivityProperty } from "../activityProperty";
 import { ExpressionEngine } from 'botbuilder-expression-parser';
 import { Expression } from 'botbuilder-expression';
-import { ExpressionDelegate } from '../steps/setProperty';
+import { ExpressionArgument } from '../steps/setProperty';
+
+export type PromptType = string|Partial<Activity>;
 
 export interface InputDialogConfiguration extends DialogConfiguration {
     allowInterruptions?: boolean;
     alwaysPrompt?: boolean;
     entityName?: string;
-    prompt?: string|Partial<Activity>;
-    unrecognizedPrompt?: string|Partial<Activity>;
-    invalidPrompt?: string|Partial<Activity>;
+    prompt?: PromptType;
+    unrecognizedPrompt?: PromptType;
+    invalidPrompt?: PromptType;
     property?: string;
     validations?: string[];
     maxTurnCount?: number;
@@ -40,7 +42,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
     static OPTIONS_PROPERTY = 'dialog._input';
     static INITIAL_VALUE_PROPERTY = 'dialog._input.value';
     static TURN_COUNT_PROPERTY = 'dialog._input.turnCount';
-    static INPUT_PROPERTY = 'turn.input';
+    static INPUT_PROPERTY = 'turn._input';
 
     public allowInterruptions = true;
 
@@ -95,7 +97,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         dc.state.setValue(InputDialog.INPUT_PROPERTY, undefined);
 
         // Initialize and persist options
-        const opts = this.onInitializeOptions(options || {} as O);
+        const opts = this.onInitializeOptions(dc, options || {} as O);
         dc.state.setValue(InputDialog.OPTIONS_PROPERTY, opts);
 
         // Recognize input
@@ -148,7 +150,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         return await this.promptUser(dc, InputState.missing);
     }
 
-    public addValidation(validation: string|Expression|ExpressionDelegate<boolean>): this {
+    public addValidation(validation: ExpressionArgument<boolean>): this {
         switch (typeof validation) {
             case 'string':
                 this.validations.push(engine.parse(validation));
@@ -207,11 +209,11 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
 
     protected abstract onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState>;
 
-    protected onInitializeOptions(options: O): O {
+    protected onInitializeOptions(dc: DialogContext, options: O): O {
         return Object.assign({}, options);
     }
 
-    protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
+    protected onRenderPrompt(dc: DialogContext, state: InputState): Partial<Activity> {
         switch (state) {
             case InputState.unrecognized:
                 if (this.unrecognizedPrompt.hasValue) {
@@ -231,6 +233,69 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
 
         return this.prompt.format(dc);
     } 
+
+        /**
+     * Helper function to compose an output activity containing a set of choices.
+     * @param prompt The prompt to append the users choices to.
+     * @param channelId ID of the channel the prompt is being sent to.
+     * @param choices List of choices to append.
+     * @param style Configured style for the list of choices.
+     * @param options (Optional) options to configure the underlying ChoiceFactory call.
+     */
+    protected appendChoices(
+        prompt: Partial<Activity>,
+        channelId: string,
+        choices: (string | Choice)[],
+        style: ListStyle,
+        options?: ChoiceFactoryOptions
+    ): Partial<Activity> {
+        // Create temporary msg
+        let msg: Partial<Activity>;
+        const text = prompt.text || '';
+        switch (style) {
+            case ListStyle.inline:
+                msg = ChoiceFactory.inline(choices, text, null, options);
+                break;
+
+            case ListStyle.list:
+                msg = ChoiceFactory.list(choices, text, null, options);
+                break;
+
+            case ListStyle.suggestedAction:
+                msg = ChoiceFactory.suggestedAction(choices, text);
+                break;
+
+            case ListStyle.heroCard:
+                msg = ChoiceFactory.heroCard(choices as Choice[], text);
+                break;
+
+            case ListStyle.none:
+            case ListStyle.lg:
+                msg = MessageFactory.text(text);
+                break;
+
+            default:
+                msg = ChoiceFactory.forChannel(channelId, choices, text, null, options);
+                break;
+        }
+
+        // Update clone of prompt with text, actions and attachments
+        const clone = JSON.parse(JSON.stringify(prompt)) as Activity;
+        clone.text = msg.text;
+        if (msg.suggestedActions && Array.isArray(msg.suggestedActions.actions) && msg.suggestedActions.actions.length > 0) {
+            clone.suggestedActions = msg.suggestedActions;
+        }
+
+        if (msg.attachments) {
+            clone.attachments = msg.attachments;
+        }
+
+        if (!clone.inputHint) { 
+            clone.inputHint = InputHints.ExpectingInput; 
+        }
+
+        return clone;
+    }
 
     private async recognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
         // Check for named entity first
@@ -282,7 +347,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
     }
 
     private async promptUser(dc: DialogContext, state: InputState): Promise<DialogTurnResult> {
-        const prompt = await this.onRenderPrompt(dc, state);
+        const prompt = this.onRenderPrompt(dc, state);
         await dc.context.sendActivity(prompt);
         return Dialog.EndOfTurn;
     }

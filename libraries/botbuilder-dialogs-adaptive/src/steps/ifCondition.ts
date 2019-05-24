@@ -8,7 +8,7 @@
 import { DialogCommand, DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
 import { ExpressionEngine } from 'botbuilder-expression-parser';
 import { Expression } from 'botbuilder-expression';
-import { ExpressionDelegate } from './setProperty';
+import { ExpressionArgument } from './setProperty';
 import { SequenceContext, StepState, StepChangeType } from '../sequenceContext';
 
 export interface IfConditionConfiguration extends DialogConfiguration {
@@ -49,7 +49,7 @@ export class IfCondition extends DialogCommand {
      * @param condition The conditional expression to evaluate.
      * @param steps The steps to run if the condition returns true. 
      */
-    constructor(condition?: string|Expression|ExpressionDelegate<boolean>, steps?: Dialog[]) {
+    constructor(condition?: ExpressionArgument<boolean>, steps?: Dialog[]) {
         super();
         if (condition) { 
             switch (typeof condition) {

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState } from "./inputDialog";
+import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState, PromptType } from "./inputDialog";
 import { DialogContext } from "botbuilder-dialogs";
 import { Activity } from "botbuilder-core";
 
@@ -25,18 +25,18 @@ export class TextInput extends InputDialog<InputDialogOptions> {
     public outputFormat = TextOutputFormat.none;
     
     constructor();
-    constructor(property: string, prompt: string|Partial<Activity>);
-    constructor(property: string, entityName: string, prompt: string|Partial<Activity>);
-    constructor(property?: string, entityName?: string|Partial<Activity>, prompt?: string|Partial<Activity>) {
+    constructor(property: string, prompt: PromptType);
+    constructor(property: string, entityName: string, prompt: PromptType);
+    constructor(property?: string, entityName?: string|PromptType, prompt?: PromptType) {
         super();
         if (property) {
-            this.property = property;
             if(!prompt) {
-                this.prompt.value = entityName;
-            } else {
-                this.entityName = entityName as string;
-                this.prompt.value = prompt;
+                prompt = entityName;
+                entityName = undefined;
             }
+            this.property = property;
+            if (typeof entityName == 'string') { this.entityName = entityName }
+            this.prompt.value = prompt;
         }
     }
 
@@ -59,7 +59,7 @@ export class TextInput extends InputDialog<InputDialogOptions> {
         // Treat input as a string
         let input: string = dc.state.getValue(InputDialog.INPUT_PROPERTY).toString();
 
-        // Format input
+        // Format output
         switch (this.outputFormat) {
             case TextOutputFormat.trim:
                 input = input.trim();
