@@ -1,64 +1,65 @@
-import { RequestManager } from '../src/Payloads/RequestManager';
-import { ReceiveResponse } from '../src/ReceiveResponse';
-import { expect } from "chai";
+const RequestManager = require( '../lib/Payloads/RequestManager');
+const ReceiveResponse = require( '../lib/ReceiveResponse');
+const chai = require( 'chai');
+var expect = chai.expect;
 
 describe('RequestManager', () => {
 
-  it('RequestManager starts empty', () => {
-    let rm = new RequestManager();
+    it('RequestManager starts empty', () => {
+        let rm = new RequestManager.RequestManager();
 
-    let count = rm.pendingRequestCount();
-    expect(count)
-      .to
-      .equal(0);
-  });
+        let count = rm.pendingRequestCount();
+        expect(count)
+            .to
+            .equal(0);
+    });
 
-  it('RequestManager.getResponseAsync called twice throws', async () => {
-    let rm = new RequestManager();
-    let requestId = '123';
+    it('RequestManager.getResponseAsync called twice throws', async () => {
+        let rm = new RequestManager.RequestManager();
+        let requestId = '123';
 
-  //  expect.assertions(1);
-    rm.getResponseAsync(requestId, undefined);
+        //  expect.assertions(1);
+        rm.getResponseAsync(requestId, undefined);
 
-    rm.getResponseAsync(requestId, undefined)
-      .catch((reason) => expect(reason)
-        .to
-        .equal('requestId already exists in RequestManager'));
+        rm.getResponseAsync(requestId, undefined)
+            .catch((reason) => expect(reason)
+                .to
+                .equal('requestId already exists in RequestManager'));
 
-  });
+    });
 
-  it('RequestManager.signalResponse with no requestId returns false', async () => {
-    let rm = new RequestManager();
-    let requestId = '123';
-    let response = new ReceiveResponse();
+    it('RequestManager.signalResponse with no requestId returns false', async () => {
+        let rm = new RequestManager.RequestManager();
+        let requestId = '123';
+        let response = new ReceiveResponse.ReceiveResponse();
 
-    let result = await rm.signalResponse(requestId, response);
+        let result = await rm.signalResponse(requestId, response);
 
-    expect(result)
-      .to
-      .equal(false);
-  });
+        expect(result)
+            .to
+            .equal(false);
+    });
 
-  it('RequestManager end to end success', async () => {
-    let rm = new RequestManager();
-    let requestId = '123';
-    let response = new ReceiveResponse();
+    it('RequestManager end to end success', async () => {
+        let rm = new RequestManager.RequestManager();
+        let requestId = '123';
+        let response = new ReceiveResponse.ReceiveResponse();
 
-    let promise = rm.getResponseAsync(requestId, undefined);
+        let promise = rm.getResponseAsync(requestId, undefined);
 
-    let result = await rm.signalResponse(requestId, response);
-    expect(result)
-      .to
-      .equal(true);
+        let result = await rm.signalResponse(requestId, response);
+        expect(result)
+            .to
+            .equal(true);
 
-    let receiveResponse = await promise;
+        let receiveResponse = await promise;
 
-    expect(receiveResponse)
-      .to
-      .equal(response);
-    expect(rm.pendingRequestCount())
-      .to
-      .equal(0);
-  });
+        expect(receiveResponse)
+            .to
+            .equal(response);
+        expect(rm.pendingRequestCount())
+            .to
+            .equal(0);
+    });
 
 });

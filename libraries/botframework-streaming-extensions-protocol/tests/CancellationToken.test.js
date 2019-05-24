@@ -1,18 +1,18 @@
-// tslint:disable-next-line: no-implicit-dependencies
-import { expect } from 'chai';
-import CancellationTokenSource, { CancellationToken } from '../src/CancellationToken';
+const  chai  = require('chai');
+const { CancellationTokenSource, CancellationToken }  = require('../lib/CancellationToken');
+var expect = chai.expect;
 
 describe('CancellationToken', () => {
     it('Is not cancelled when created.', () => {
         let ct = new CancellationToken();
 
         expect(ct)
-        .instanceOf(CancellationToken);
+            .instanceOf(CancellationToken);
 
         expect(ct.isCancelled())
-        .to
-        .be
-        .false;
+            .to
+            .be
+            .false;
 
     });
 
@@ -21,49 +21,49 @@ describe('CancellationToken', () => {
         ct.cancel();
 
         expect(() => ct.throwIfCancelled())
-        .to
-        .throw('cancelled');
+            .to
+            .throw('cancelled');
     });
 
     it('can be cancelled', () => {
         let ct = new CancellationToken();
 
         expect(ct.isCancelled())
-        .to
-        .be
-        .false;
+            .to
+            .be
+            .false;
 
         ct.cancel();
 
         expect(ct.isCancelled())
-        .to
-        .be
-        .true;
+            .to
+            .be
+            .true;
     });
 });
 
 describe('CancellationTokenSource', () => {
     it('creates a new instance', () => {
-        let cts = new CancellationTokenSource();
+        let cts = new CancellationTokenSource.CancellationTokenSource();
 
         expect(cts)
-        .instanceOf(CancellationTokenSource);
+            .instanceOf(CancellationTokenSource);
 
         expect(cts.token)
-        .instanceOf(CancellationToken);
+            .instanceOf(CancellationToken);
     });
 
     it('cancels the token', () => {
-        let cts = new CancellationTokenSource();
+        let cts = new CancellationToken.CancellationTokenSource();
         let cancelled = cts.token.isCancelled();
         expect(cancelled)
-        .equal(false);
+            .equal(false);
 
         cts.cancel();
 
         expect(cts.token.isCancelled())
-        .to
-        .be
-        .true;
-    })
+            .to
+            .be
+            .true;
+    });
 });

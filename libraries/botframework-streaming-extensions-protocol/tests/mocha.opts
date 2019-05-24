@@ -1,2 +1,5 @@
 # mocha.opts
-tests/*.js
+--require ts-node/register
+--require source-map-support/register
+--recursive
+**/*.js
