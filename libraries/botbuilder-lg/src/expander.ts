@@ -86,19 +86,19 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext) : string[] {
         const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
         const length: number = switchcaseNodes.length;
-        const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0]
+        const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0];
         const switchExprs: TerminalNode[] = switchNode.switchCaseStat().EXPRESSION();
-        const {value:switchExprResult, error}: {value: any, error: string} = this.EvalByExpressionEngine(switchExprs[0].text,this.currentTarget().Scope);
-        let idx: number = 0
-        for(const caseNode of switchcaseNodes){ 
+        const switchExprResult: string[] = this.EvalExpression(switchExprs[0].text);
+        let idx: number = 0;
+        for (const caseNode of switchcaseNodes) {
             if (idx === 0) {
                 idx = idx + 1;
                 continue; //skip the first node which is a switch statement
             }
 
-            if (idx === length - 1 && caseNode.switchCaseStat().DEFAULT()){
+            if (idx === length - 1 && caseNode.switchCaseStat().DEFAULT() !== undefined) {
                 const defaultBody: lp.NormalTemplateBodyContext = caseNode.normalTemplateBody();
-                if (defaultBody !== undefined){
+                if (defaultBody !== undefined) {
                     return this.visit(defaultBody);
                 } else {
                     return undefined;
@@ -106,11 +106,12 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             }
 
             const caseExprs: TerminalNode[] = caseNode.switchCaseStat().EXPRESSION();
-            const {value:caseExprResult, error}: {value: any, error: string} = this.EvalByExpressionEngine(caseExprs[0].text,this.currentTarget().Scope);
-            if (switchExprResult === caseExprResult) {
+            const caseExprResult: string[] = this.EvalExpression(caseExprs[0].text);
+            //condition: check whether two string array have same elements
+            if (switchExprResult.sort().toString() === caseExprResult.sort().toString()) {
                 return this.visit(caseNode.normalTemplateBody());
             }
-            
+
             idx = idx + 1;
         }
 

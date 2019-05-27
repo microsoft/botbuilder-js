@@ -152,6 +152,39 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         return newScope;
     }
 
+    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext) : string {
+        const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
+        const length: number = switchcaseNodes.length;
+        const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0];
+        const switchExprs: TerminalNode[] = switchNode.switchCaseStat().EXPRESSION();
+        const switchExprResult: string = this.EvalExpression(switchExprs[0].text);
+        let idx: number = 0;
+        for (const caseNode of switchcaseNodes) {
+            if (idx === 0) {
+                idx = idx + 1;
+                continue; //skip the first node which is a switch statement
+            }
+            if (idx === length - 1 && caseNode.switchCaseStat().DEFAULT() !== undefined) {
+                const defaultBody: lp.NormalTemplateBodyContext = caseNode.normalTemplateBody();
+                if (defaultBody !== undefined) {
+                    return this.visit(defaultBody);
+                } else {
+                    return undefined;
+                }
+            }
+
+            const caseExprs: TerminalNode[] = caseNode.switchCaseStat().EXPRESSION();
+            const caseExprResult: string = this.EvalExpression(caseExprs[0].text);
+            if (switchExprResult === caseExprResult) {
+                return this.visit(caseNode.normalTemplateBody());
+            }
+
+            idx = idx + 1;
+        }
+
+        return undefined;
+    }
+
     protected defaultResult(): string {
         return '';
     }
@@ -209,40 +242,6 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         } catch (error) {
             return false;
         }
-    }
-
-    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext) : string {
-        const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
-        const length: number = switchcaseNodes.length;
-        const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0]
-        const switchExprs: TerminalNode[] = switchNode.switchCaseStat().EXPRESSION();
-        const switchExprResult = this.EvalExpression(switchExprs[0].text);
-        let idx: number = 0
-        for(const caseNode of switchcaseNodes){ 
-            if (idx === 0) {
-                idx = idx + 1;
-                continue; //skip the first node which is a switch statement
-            }
-
-            if (idx === length - 1 && caseNode.switchCaseStat().DEFAULT() !== undefined){
-                const defaultBody: lp.NormalTemplateBodyContext = caseNode.normalTemplateBody();
-                if (defaultBody !== undefined){
-                    return this.visit(defaultBody);
-                } else {
-                    return undefined;
-                }
-            }
-
-            const caseExprs: TerminalNode[] = caseNode.switchCaseStat().EXPRESSION();
-            const caseExprResult = this.EvalExpression(caseExprs[0].text);
-            if (switchExprResult === caseExprResult) {
-                return this.visit(caseNode.normalTemplateBody());
-            }
-            
-            idx = idx + 1;
-        }
-
-        return undefined;
     }
 
     private EvalExpression(exp: string): string {
