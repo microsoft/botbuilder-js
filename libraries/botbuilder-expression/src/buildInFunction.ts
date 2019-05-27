@@ -1138,6 +1138,28 @@ export class BuiltInFunctions {
                 ReturnType.Number,
                 BuiltInFunctions.ValidateUnary),
             new ExpressionEvaluator(
+                ExpressionType.Range,
+                BuiltInFunctions.ApplyWithError(
+                    (args: ReadonlyArray<any>) => {
+                        let error: string;
+                        if (args[1] < 1) {
+                            error = 'Second paramter must be more than zero';
+                        }
+
+                        let num: number;
+                        let result: number[] = [];
+                        for (num = 0; num < args[1]; num++) {
+                            result = result.concat(Number(args[0]) + num);
+                        }
+
+                        return { value: result, error };
+                    },
+                    BuiltInFunctions.VerifyInteger
+                ),
+                ReturnType.Object,
+                BuiltInFunctions.ValidateBinaryNumber
+            ),
+            new ExpressionEvaluator(
                 ExpressionType.Union,
                 BuiltInFunctions.Apply(
                     (args: ReadonlyArray<any>) => {

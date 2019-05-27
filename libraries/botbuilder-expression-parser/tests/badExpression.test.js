@@ -160,6 +160,11 @@ const badExpressions =
   "rand(5)", // need two params
   "rand(7, 6)", //  minvalue cannot be greater than maxValue
   "sum(items)", // should have number parameters
+  "range(one)", // should have two params
+  "range(one, two, three)", // should have two params
+  "range(one, hello)", // params should be integer
+  "range(hello, one)", // params should be integer
+  "range(one, 0)", // second param should be more than 0
 
   // Date and time function test
   "addDays('errortime', 1)",// error datetime format

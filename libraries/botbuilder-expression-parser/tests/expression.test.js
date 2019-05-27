@@ -315,6 +315,8 @@ const dataSource = [
   ["take(createArray('a', 'b', 'c', 'd'), one)", ['a']],
   ["subArray(createArray('a', 'b', 'c', 'd'), 1, 3)", ['b', 'c']],
   ["subArray(createArray('a', 'b', 'c', 'd'), 1)", ['b', 'c', 'd']],
+  ["range(1, 4)", [1, 2, 3, 4]],
+  ["range(-1, 3)", [-1, 0, 1]],
 
   // Object manipulation and construction functions tests
   ["string(addProperty(json('{\"key1\":\"value1\"}'), 'key2','value2'))", "{\"key1\":\"value1\",\"key2\":\"value2\"}"],

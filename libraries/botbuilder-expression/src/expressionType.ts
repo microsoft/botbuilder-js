@@ -23,6 +23,7 @@ export class ExpressionType {
     public static readonly Average: string = 'average';
     public static readonly Sum: string = 'sum';
     public static readonly Count: string = 'count';
+    public static readonly Range: string = 'range';
 
     // Comparisons
     public static readonly LessThan: string = '<';
