@@ -195,6 +195,17 @@ const dataSource = [
   ["bool('hi')", true],
   ["createArray('h', 'e', 'l', 'l', 'o')", ["h", "e", "l", "l", "o"]],
   ["createArray(1, bool(0), string(bool(1)), float('10'))", [1, true, "true", 10.0]],
+  ["array(hello)", ['hello']],
+  ["binary(hello)", '0110100001100101011011000110110001101111'],
+  ["dataUri(hello)", 'data:text/plain;charset=utf-8;base64,aGVsbG8='],
+  ["dataUriToBinary(dataUri(hello))", '011001000110000101110100011000010011101001110100011001010111100001110100001011110111000001101100011000010110100101101110001110110110001101101000011000010111001001110011011001010111010000111101011101010111010001100110001011010011100000111011011000100110000101110011011001010011011000110100001011000110000101000111010101100111001101100010010001110011100000111101'],
+  ["dataUriToString(dataUri(hello))", 'hello'],
+  ["decodeUriComponent('http%3A%2F%2Fcontoso.com')", 'http://contoso.com'],
+  ["base64(hello)", 'aGVsbG8='],
+  ["base64ToBinary(base64(hello))", '0110000101000111010101100111001101100010010001110011100000111101'],
+  ["base64ToString(base64(hello))", 'hello'],
+  ["uriComponent('http://contoso.com')", 'http%3A%2F%2Fcontoso.com'],
+  ["xml('{\"person\": {\"name\": \"Sophia Owen\", \"city\": \"Seattle\"}}')", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<person>\n  <name>Sophia Owen</name>\n  <city>Seattle</city>\n</person>'],
 
   // Math functions tests
   ["add(1, 2, 3)", 6],

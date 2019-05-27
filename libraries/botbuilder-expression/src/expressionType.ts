@@ -84,6 +84,17 @@ export class ExpressionType {
     public static readonly Int: string = 'int';
     public static readonly String: string = 'string';
     public static readonly Bool: string = 'bool';
+    public static readonly Array: string = 'array';
+    public static readonly Binary: string = 'binary';
+    public static readonly DataUri: string = 'dataUri';
+    public static readonly DataUriToBinary: string = 'dataUriToBinary';
+    public static readonly DataUriToString: string = 'dataUriToString';
+    public static readonly DecodeUriComponent: string = 'decodeUriComponent';
+    public static readonly Base64: string = 'base64';
+    public static readonly Base64ToBinary: string = 'base64ToBinary';
+    public static readonly Base64ToString: string = 'base64ToString';
+    public static readonly UriComponent: string = 'uriComponent';
+    public static readonly Xml: string = 'xml';
 
     // Memory
     public static readonly Accessor: string = 'Accessor';

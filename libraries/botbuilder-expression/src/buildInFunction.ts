@@ -8,6 +8,7 @@
  */
 import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
 import * as moment from 'moment';
+import { Builder } from 'xml2js';
 import { Constant } from './constant';
 import { Expression, ReturnType } from './expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDelegate } from './expressionEvaluator';
@@ -1041,6 +1042,29 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
+    private static ToBinary(stringToConvert: string): string {
+        let result: string = '';
+        for (const element of stringToConvert) {
+            const binaryElement: string = element.charCodeAt(0).toString(2);
+            result += new Array(9 - binaryElement.length).join('0').concat(binaryElement);
+        }
+
+        return result;
+    }
+
+    private static ToXml(contentToConvert: any): { value: any; error: string } {
+        let result: string;
+        let error: string;
+        try {
+            const jsonObj: any = typeof contentToConvert === 'string' ? JSON.parse(contentToConvert) : contentToConvert;
+            result = new Builder().buildObject(jsonObj);
+        } catch {
+            error = 'Invalid json';
+        }
+
+        return { value: result, error };
+    }
+
     // tslint:disable-next-line: max-func-body-length
     private static BuildFunctionLookup(): Map<string, ExpressionEvaluator> {
         // tslint:disable-next-line: no-unnecessary-local-variable
@@ -1580,6 +1604,62 @@ export class BuiltInFunctions {
                 ReturnType.Number,
                 BuiltInFunctions.ValidateBinaryNumber),
             new ExpressionEvaluator(ExpressionType.CreateArray, BuiltInFunctions.Apply((args: ReadonlyArray<any>) => Array.from(args)), ReturnType.Object),
+            new ExpressionEvaluator(
+                ExpressionType.Array,
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => [args[0]], BuiltInFunctions.VerifyString),
+                ReturnType.Object,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.Binary,
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => this.ToBinary(args[0]), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.DataUri,
+                BuiltInFunctions.Apply(
+                    (args: Readonly<any>) => 'data:text/plain;charset=utf-8;base64,'.concat(Buffer.from(args[0]).toString('base64')), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.DataUriToBinary,
+                BuiltInFunctions.Apply((args: Readonly<any>) => this.ToBinary(args[0]), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.DataUriToString,
+                BuiltInFunctions.Apply((args: Readonly<any>) => Buffer.from(args[0].slice(args[0].lastIndexOf(',') + 1), 'base64').toString(), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.DecodeUriComponent,
+                BuiltInFunctions.Apply((args: Readonly<any>) => decodeURIComponent(args[0]), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.Base64,
+                BuiltInFunctions.Apply((args: Readonly<any>) => Buffer.from(args[0]).toString('base64'), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.Base64ToBinary,
+                BuiltInFunctions.Apply((args: Readonly<any>) => this.ToBinary(args[0]), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.Base64ToString,
+                BuiltInFunctions.Apply((args: Readonly<any>) => Buffer.from(args[0], 'base64').toString(), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.UriComponent,
+                BuiltInFunctions.Apply((args: Readonly<any>) => encodeURIComponent(args[0]), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.Xml,
+                BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.ToXml(args[0]), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
             new ExpressionEvaluator(
                 ExpressionType.First,
                 BuiltInFunctions.Apply(
