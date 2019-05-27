@@ -224,7 +224,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
                 continue; //skip the first node which is a switch statement
             }
 
-            if (idx === length - 1 && caseNode.switchCaseStat().DEFAULT()){
+            if (idx === length - 1 && caseNode.switchCaseStat().DEFAULT() !== undefined){
                 const defaultBody: lp.NormalTemplateBodyContext = caseNode.normalTemplateBody();
                 if (defaultBody !== undefined){
                     return this.visit(defaultBody);
