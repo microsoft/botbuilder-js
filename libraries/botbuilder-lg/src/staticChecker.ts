@@ -438,7 +438,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         // tslint:disable-next-line: max-line-length
         const startPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.start.line - 1, context.start.charPositionInLine);
         // tslint:disable-next-line: max-line-length
-        const stopPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.stop.line - 1, context.stop.charPositionInLine);
+        const stopPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.stop.line - 1, context.stop.charPositionInLine + context.stop.text.length);
         const range: Range = new Range(startPosition, stopPosition);
 
         return new Diagnostic(range, message, severity);
