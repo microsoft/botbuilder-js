@@ -197,50 +197,51 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         return result;
     }
 
+    // tslint:disable-next-line: cyclomatic-complexity
     public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
         let idx: number = 0;
-        const length = switchCaseNodes.length;
+        const length: number = switchCaseNodes.length;
 
-        for (const iterNode of switchCaseNodes){
+        for (const iterNode of switchCaseNodes) {
             const switchCaseStat: lp.SwitchCaseStatContext = iterNode.switchCaseStat();
             const switchExpr: boolean = switchCaseStat.SWITCH() !== undefined;
             const caseExpr: boolean = switchCaseStat.CASE() !== undefined;
             const defaultExpr: boolean = switchCaseStat.DEFAULT() !== undefined;
-            const node: TerminalNode = switchExpr? switchCaseStat.SWITCH():
-                        caseExpr? switchCaseStat.CASE():
+            const node: TerminalNode = switchExpr ? switchCaseStat.SWITCH() :
+                        caseExpr ? switchCaseStat.CASE() :
                         switchCaseStat.DEFAULT();
-            console.log(switchCaseStat.EXPRESSION());
-            if (node.text.split(" ").length -1 > 1){
+            if (node.text.split(' ').length - 1 > 1) {
                 result.push(this.BuildLGDiagnostic({
+                    // tslint:disable-next-line: max-line-length
                     message: `At most 1 whitespace is allowed between SWITCH/CASE/DEFAULT and :. expression: '${context.switchCaseTemplateBody().text}'`,
                     context: switchCaseStat
                 }));
             }
 
-            if(idx === 0 && !switchExpr){
+            if (idx === 0 && !switchExpr) {
                 result.push(this.BuildLGDiagnostic({
                     message: `control flow is not starting with switch: '${context.switchCaseTemplateBody().text}'`,
                     context: switchCaseStat
                 }));
             }
 
-            if (idx > 0 && switchExpr){
+            if (idx > 0 && switchExpr) {
                 result.push(this.BuildLGDiagnostic({
-                    message: `control flow cannot have more than switch statement: '${context.switchCaseTemplateBody().text}'`,
+                    message: `control flow cannot have more than one switch statement: '${context.switchCaseTemplateBody().text}'`,
                     context: switchCaseStat
                 }));
             }
 
-            if (idx > 0 && idx < length - 1 && !caseExpr){
+            if (idx > 0 && idx < length - 1 && !caseExpr) {
                 result.push(this.BuildLGDiagnostic({
                     message: `only case statement is allowed in the middle of control flow: '${context.switchCaseTemplateBody().text}'`,
                     context: switchCaseStat
                 }));
             }
 
-            if (idx === length - 1 && (caseExpr || defaultExpr)){
+            if (idx === length - 1 && (caseExpr || defaultExpr)) {
                 if (caseExpr) {
                     result.push(this.BuildLGDiagnostic({
                         message: `control flow is not ending with default statement: '${context.switchCaseTemplateBody().text}'`,
@@ -248,7 +249,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                         context: switchCaseStat
                     }));
                 } else {
-                    if(length === 2) {
+                    if (length === 2) {
                         result.push(this.BuildLGDiagnostic({
                             message: `control flow should have at least one case statement: '${context.switchCaseTemplateBody().text}'`,
                             severity: DiagnosticSeverity.Warning,
@@ -257,27 +258,25 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                     }
                 }
             }
-            
-            if (switchExpr || caseExpr){
-                if (switchCaseStat.EXPRESSION().length !== 1 ){
+            if (switchExpr || caseExpr) {
+                if (switchCaseStat.EXPRESSION().length !== 1) {
                     result.push(this.BuildLGDiagnostic({
                         message: `switch and case should followed by one valid expression: '${switchCaseStat.text}'`,
                         context: switchCaseStat
                     }));
                 } else {
-                    result = result.concat(this.CheckExpression(switchCaseStat.EXPRESSION(0).text,switchCaseStat));
+                    result = result.concat(this.CheckExpression(switchCaseStat.EXPRESSION(0).text, switchCaseStat));
                 }
             } else {
-                if (switchCaseStat.EXPRESSION().length !== 0 || switchCaseStat.TEXT().length !== 0  ) {
+                if (switchCaseStat.EXPRESSION().length !== 0 || switchCaseStat.TEXT().length !== 0) {
                     result.push(this.BuildLGDiagnostic({
                         message: `default should not followed by any expression or any text: '${switchCaseStat.text}'`,
                         context: switchCaseStat
                     }));
                 }
             }
-            
-            if (caseExpr || defaultExpr){
-                if(iterNode.normalTemplateBody() !== undefined){
+            if (caseExpr || defaultExpr) {
+                if (iterNode.normalTemplateBody() !== undefined) {
                     result = result.concat(this.visit(iterNode.normalTemplateBody()));
                 } else {
                     result.push(this.BuildLGDiagnostic({

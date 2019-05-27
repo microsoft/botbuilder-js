@@ -103,19 +103,18 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
     public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): string[] {
         let result : string[] = [];
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
-        for (const iterNode of switchCaseNodes){
+        for (const iterNode of switchCaseNodes) {
             const expressions: TerminalNode[] = iterNode.switchCaseStat().EXPRESSION();
-            if ( expressions.length > 0) {
+            if (expressions.length > 0) {
                 result = result.concat(this.AnalyzeExpression(expressions[0].text));
             }
             if (iterNode.normalTemplateBody() !== undefined) {
                 result = result.concat(this.visit(iterNode.normalTemplateBody()));
             }
         }
-        
-        return result;
-    } 
 
+        return result;
+    }
 
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string[] {
         let result: string[] = [];

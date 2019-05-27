@@ -94,7 +94,6 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         return result;
     }
 
-    
     public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Map<string, any> {
         const result: Map<string, any> = new Map<string, any>();
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
@@ -104,10 +103,10 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
             const switchExpr: boolean = switchCaseStat.SWITCH() !== undefined;
             const caseExpr: boolean = switchCaseStat.CASE() !== undefined;
             const defaultExpr: boolean = switchCaseStat.DEFAULT() !== undefined;
-            const node: TerminalNode = switchExpr? switchCaseStat.SWITCH():
-                        caseExpr? switchCaseStat.CASE():
+            const node: TerminalNode = switchExpr ? switchCaseStat.SWITCH() :
+                        caseExpr ? switchCaseStat.CASE() :
                         switchCaseStat.DEFAULT();
-            if (switchExpr){
+            if (switchExpr) {
                 continue;
             }
             const conditionLabel: string = node.text.toLowerCase();
@@ -122,12 +121,11 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
             } else {
                 // tslint:disable-next-line: no-backbone-get-set-outside-model
                 result.set('DEFALUT:', childTemplateBodyResult);
-            } 
+            }
         }
-        
-        return result; 
-    }
 
+        return result;
+    }
 
     protected defaultResult(): Map<string, any> {
         return new Map<string, any>();
