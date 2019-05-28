@@ -19,16 +19,3 @@ export class CancellationToken {
     this.cancelled = true;
   }
 }
-
-export default class CancellationTokenSource {
-  public readonly token: CancellationToken;
-
-  constructor() {
-    this.token = new CancellationToken();
-  }
-
-  public cancel(): void {
-    this.token.cancel();
-  }
-
-}

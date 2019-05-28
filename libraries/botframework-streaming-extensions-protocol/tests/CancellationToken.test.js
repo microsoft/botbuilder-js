@@ -1,5 +1,6 @@
 const  chai  = require('chai');
-const { CancellationTokenSource, CancellationToken }  = require('../lib/CancellationToken');
+const { CancellationToken }  = require('../lib/CancellationToken');
+const { CancellationTokenSource } = require('../lib/CancellationTokenSource');
 var expect = chai.expect;
 
 describe('CancellationToken', () => {
@@ -44,7 +45,7 @@ describe('CancellationToken', () => {
 
 describe('CancellationTokenSource', () => {
     it('creates a new instance', () => {
-        let cts = new CancellationTokenSource.CancellationTokenSource();
+        let cts = new CancellationTokenSource();
 
         expect(cts)
             .instanceOf(CancellationTokenSource);
@@ -54,7 +55,7 @@ describe('CancellationTokenSource', () => {
     });
 
     it('cancels the token', () => {
-        let cts = new CancellationToken.CancellationTokenSource();
+        let cts = new CancellationTokenSource();
         let cancelled = cts.token.isCancelled();
         expect(cancelled)
             .equal(false);
