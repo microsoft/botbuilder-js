@@ -1199,7 +1199,7 @@ export class BuiltInFunctions {
                 ExpressionType.Take,
                 BuiltInFunctions.Take,
                 ReturnType.Object,
-                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String, ReturnType.Object, ReturnType.Number),
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [], ReturnType.Object, ReturnType.Number),
             ),
             new ExpressionEvaluator(
                 ExpressionType.SubArray,
@@ -1326,14 +1326,14 @@ export class BuiltInFunctions {
             new ExpressionEvaluator(
                 ExpressionType.AddOrdinal,
                 BuiltInFunctions.Apply((args: ReadonlyArray<any>) => this.AddOrdinal(args[0]), BuiltInFunctions.VerifyInteger),
-                ReturnType.Number,
+                ReturnType.String,
                 (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 1, 1, ReturnType.Number),
             ),
             new ExpressionEvaluator(
                 ExpressionType.Guid,
                 BuiltInFunctions.Apply(() => BuiltInFunctions.newGuid()),
                 ReturnType.String,
-                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 0, 0, ReturnType.String),
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 0, 0),
             ),
             new ExpressionEvaluator(
                 ExpressionType.IndexOf,
