@@ -1,4 +1,4 @@
-const MockStreamManager = require( '../lib/__mocks__/MockStreamManager');
+const StreamManager = require('../lib/Payloads/StreamManager');
 const ContentStream = require( '../lib/ContentStream');
 const ContentStreamAssembler = require( '../lib/Payloads/Assemblers/ContentStreamAssembler');
 const ReceiveResponse = require( '../lib/ReceiveResponse');
@@ -28,8 +28,8 @@ describe('ReceiveResponse', () => {
 
     it('can update the value of streams', () => {
         let rr = new ReceiveResponse.ReceiveResponse();
-        let stream1 = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(MockStreamManager, '1', undefined, undefined));
-        let stream2 = new ContentStream.ContentStream('2', new ContentStreamAssembler.ContentStreamAssembler(MockStreamManager, '2', undefined, undefined));
+        let stream1 = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), '1', undefined, undefined));
+        let stream2 = new ContentStream.ContentStream('2', new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), '2', undefined, undefined));
         rr.Streams = [stream1, stream2];
     
         expect(rr.Streams)

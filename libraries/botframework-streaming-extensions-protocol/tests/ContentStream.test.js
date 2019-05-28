@@ -1,12 +1,12 @@
-const  MockStreamManager  = require('../lib/__mocks__/MockStreamManager');
 const  ContentStream  = require('../lib/ContentStream');
 const  ContentStreamAssembler  = require('../lib/Payloads/Assemblers/ContentStreamAssembler');
 const  chai  = require('chai');
+const StreamManager = require('../lib/Payloads/StreamManager');
 var expect = chai.expect;
 
 describe('ContentStream ', () => {
     it('assigns ID when constructed', () => {
-      let csa = new ContentStreamAssembler.ContentStreamAssembler(MockStreamManager, 'csa1', 'stream', 42);
+      let csa = new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 42);
         let cs = new ContentStream.ContentStream('1', csa);
 
         expect(cs.id)
@@ -20,28 +20,28 @@ describe('ContentStream ', () => {
     });
 
     it('can return payload type', () => {
-        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(MockStreamManager, 'csa1', 'stream', 42));
+        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 42));
 
         expect(cs.payloadType)
             .equal('stream');
     });
 
     it('can return length', () => {
-        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(MockStreamManager, 'csa1', 'stream', 42));
+        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 42));
 
         expect(cs.length)
             .equal(42);
     });
 
     it('can return ID', () => {
-        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(MockStreamManager, 'csa1', 'stream', 42));
+        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 42));
 
         expect(cs.id)
             .equal('1');
     });
 
     it('does not return the stream when it is is undefined', () => {
-        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(MockStreamManager, 'csa1', 'stream', 42));
+        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 42));
 
         expect(cs.getStream())
             .to
@@ -51,7 +51,7 @@ describe('ContentStream ', () => {
     });
 
     it('reads a stream of length 0 and returns an empty string', () => {
-        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(MockStreamManager, 'csa1', 'stream', 0));
+        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 0));
 
         return cs.readAsString()
             .then(data => {
@@ -62,7 +62,7 @@ describe('ContentStream ', () => {
 
     it('throws when reading an empty stream as JSON', () => {
         //  expect.assertions(1);
-        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(MockStreamManager, 'csa1', 'stream', 0));
+        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 0));
 
         return cs.readAsJson()
             .then(data => {
