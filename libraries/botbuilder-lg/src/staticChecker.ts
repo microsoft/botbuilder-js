@@ -375,8 +375,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         const matches: string[] = exp.match(/@\{[^{}]+\}/g);
         if (matches !== null && matches !== undefined) {
             for (const match of matches) {
-                const newExp: string = match.substr(1);
-                result = result.concat(this.CheckExpression(newExp, context));
+                result = result.concat(this.CheckExpression(match, context));
             }
         }
 
@@ -412,7 +411,8 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
     private CheckExpression(exp: string, context: ParserRuleContext): Diagnostic[] {
         const result: Diagnostic[] = [];
-        exp = exp.replace(/(^{*)/g, '')
+        exp = exp.replace(/(^@*)/g, '')
+                .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '')
                 .trim();
 

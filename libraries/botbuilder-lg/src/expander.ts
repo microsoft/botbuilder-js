@@ -205,7 +205,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
     private EvalExpressionInCondition(exp: string): boolean {
         try {
-            exp = exp.replace(/(^{*)/g, '')
+            exp = exp.replace(/(^@*)/g, '')
+                .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
 
             const {value: result, error}: {value: any; error: string} = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
@@ -223,7 +224,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private EvalExpression(exp: string): string[] {
-        exp = exp.replace(/(^{*)/g, '')
+        exp = exp.replace(/(^@*)/g, '')
+            .replace(/(^{*)/g, '')
             .replace(/(}*$)/g, '');
 
         const { value: result, error }: { value: any; error: string } = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
@@ -270,8 +272,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         const matches: string[] = exp.match(/@\{[^{}]+\}/g);
         if (matches !== null && matches !== undefined) {
             for (const match of matches) {
-                const newExp: string = match.substr(1); // remove @
-                templateRefValues.set(match, this.EvalExpression(newExp));
+                templateRefValues.set(match, this.EvalExpression(match));
             }
         }
 
