@@ -22,6 +22,19 @@ fragment WHITESPACE
   : ' '|'\t'|'\ufeff'|'\u00a0'
   ;
 
+fragment A: 'a' | 'A';
+fragment C: 'c' | 'C';
+fragment D: 'd' | 'D';
+fragment E: 'e' | 'E';
+fragment F: 'f' | 'F';
+fragment H: 'h' | 'H';
+fragment I: 'i' | 'I';
+fragment L: 'l' | 'L';
+fragment S: 's' | 'S';
+fragment T: 't' | 'T';
+fragment U: 'u' | 'U';
+fragment W: 'w' | 'W';
+
 COMMENTS
   : ('>'|'$') ~('\r'|'\n')+ -> skip
   ;
@@ -96,27 +109,27 @@ NEWLINE_IN_BODY
   ;
 
 IF
-  : ('if'|'IF') WHITESPACE* ':'  {this.expectKeywords}? { this.ignoreWS = true;}
+  : I F WHITESPACE* ':'  {this.expectKeywords}? { this.ignoreWS = true;}
   ;
 
 ELSEIF
-  : ('elseif'|'ELSEIF') WHITESPACE* ':' {this.expectKeywords}? { this.ignoreWS = true;}
+  : E L S E I F WHITESPACE* ':' {this.expectKeywords}? { this.ignoreWS = true;}
   ;
 
 ELSE
-  : ('else'|'ELSE') WHITESPACE* ':' {this.expectKeywords}? { this.ignoreWS = true;}
+  : E L S E WHITESPACE* ':' {this.expectKeywords}? { this.ignoreWS = true;}
   ;
 
 SWITCH
-  : ('switch'|'SWITCH') WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
+  : S W I T C (H) WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
   ;
 
 CASE
-  : ('case'|'CASE') WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
+  : C A S E WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
   ;
 
 DEFAULT
-  : ('default'|'DEFAULT') WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
+  : D E F A U L T WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
   ;
 
 MULTI_LINE_TEXT

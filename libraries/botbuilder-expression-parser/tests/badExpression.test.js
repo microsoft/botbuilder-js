@@ -242,7 +242,7 @@ const badExpressions =
   "union(one, two)",// should have collection param
   "intersection(one, two)",// should have collection param
   "skip(hello)", // should have two parameters
-  "ship(hello, world, one)", //should have two parameters
+  "skip(hello, world, one)", //should have two parameters
   "skip(hello, one)", // first param should be array
   "skip(items, hello)", // second param should be integer
   "skip(items, one + 0.5)", // second param should be integer

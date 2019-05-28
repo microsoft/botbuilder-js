@@ -109,6 +109,26 @@ describe('LG', function () {
         // assert.strictEqual(evaled === "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow", true, `Evaled is ${evaled}`);
     });
 
+    it('TestCaseInsensitive', function () {
+        let engine = TemplateEngine.fromFiles(GetExampleFilePath('CaseInsensitive.lg'));
+        const alarms = [
+            {
+                time: "7 am",
+                date: "tomorrow"
+            },
+            {
+                time: "8 pm",
+                date: "tomorrow"
+            }
+        ];
+
+        let evaled = engine.evaluateTemplate('ShowAlarms', { alarms: alarms });
+        assert.strictEqual(evaled === "You have two alarms", true, `Evaled is ${evaled}`);
+
+        let evaled1 = engine.evaluateTemplate('greetInAWeek', { day: "Saturday" });
+        assert.strictEqual(evaled1 === "Happy Saturday!", true, `Evaled is ${evaled1}`);
+    });
+
     it('TestListWithOnlyOneElement', function () {
         var engine = TemplateEngine.fromFiles(GetExampleFilePath("8.lg"));
         var evaled = engine.evaluateTemplate("ShowTasks", { recentTasks: ['Task1'] });
