@@ -1142,15 +1142,11 @@ export class BuiltInFunctions {
                 BuiltInFunctions.ApplyWithError(
                     (args: ReadonlyArray<any>) => {
                         let error: string;
-                        if (args[1] < 1) {
+                        if (args[1] <= 0) {
                             error = 'Second paramter must be more than zero';
                         }
 
-                        let num: number;
-                        let result: number[] = [];
-                        for (num = 0; num < args[1]; num++) {
-                            result = result.concat(Number(args[0]) + num);
-                        }
+                        const result: number[] = [...Array(args[1]).keys()].map((u: number) => u + Number(args[0]));
 
                         return { value: result, error };
                     },
@@ -1649,7 +1645,7 @@ export class BuiltInFunctions {
                 BuiltInFunctions.ValidateUnary),
             new ExpressionEvaluator(
                 ExpressionType.DataUriToString,
-                BuiltInFunctions.Apply((args: Readonly<any>) => Buffer.from(args[0].slice(args[0].lastIndexOf(',') + 1), 'base64').toString(), BuiltInFunctions.VerifyString),
+                BuiltInFunctions.Apply((args: Readonly<any>) => Buffer.from(args[0].slice(args[0].indexOf(',') + 1), 'base64').toString(), BuiltInFunctions.VerifyString),
                 ReturnType.String,
                 BuiltInFunctions.ValidateUnary),
             new ExpressionEvaluator(
