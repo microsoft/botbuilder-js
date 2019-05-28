@@ -121,7 +121,7 @@ ELSE
   ;
 
 SWITCH
-  : S W I T C (H) WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
+  : S W I T C H WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
   ;
 
 CASE
