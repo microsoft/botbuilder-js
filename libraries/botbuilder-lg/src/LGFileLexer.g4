@@ -132,7 +132,7 @@ INVALID_ESCAPE
   ;
 
 EXPRESSION
-  : '{' ~[\r\n{}]* '}'  { this.ignoreWS = false; this.expectKeywords = false;}
+  : '@'? '{' ~[\r\n{}]* '}'  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 TEMPLATE_REF

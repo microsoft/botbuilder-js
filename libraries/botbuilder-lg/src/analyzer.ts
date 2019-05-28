@@ -156,7 +156,8 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private AnalyzeExpression(exp: string): string[] {
-        exp = exp.replace(/(^{*)/g, '')
+        exp = exp.replace(/(^@*)/g, '')
+                .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
         const parsed: Expression = this._expressionParser.parse(exp);
 
@@ -231,8 +232,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         exp = exp.substr(3, exp.length - 6);
         const matches: string[] = exp.match(/@\{[^{}]+\}/g);
         for (const match of matches) {
-            const newExp: string = match.substr(1); // remove @
-            result = result.concat(this.AnalyzeExpression(newExp));
+            result = result.concat(this.AnalyzeExpression(match));
         }
 
         return result;

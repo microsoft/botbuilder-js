@@ -227,7 +227,8 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
 
     private EvalExpressionInCondition(exp: string): boolean {
         try {
-            exp = exp.replace(/(^{*)/g, '')
+            exp = exp.replace(/(^@*)/g, '')
+                .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
 
             const {value: result, error}: {value: any; error: string} = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
@@ -245,7 +246,8 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     }
 
     private EvalExpression(exp: string): string {
-        exp = exp.replace(/(^{*)/g, '')
+        exp = exp.replace(/(^@*)/g, '')
+                .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
 
         const {value: result, error}: {value: any; error: string} = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
@@ -290,11 +292,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
 
         exp = exp.substr(3, exp.length - 6); //remove ``` ```
 
-        return exp.replace(/@\{[^{}]+\}/g, (sub: string) => {
-            const newExp: string = sub.substr(1); // remove @
-
-            return this.EvalExpression(newExp); // { }
-        });
+        return exp.replace(/@\{[^{}]+\}/g, (sub: string) => this.EvalExpression(sub));
     }
 
     private EvalByExpressionEngine(exp: string, scope: any) : {value: any; error: string} {
