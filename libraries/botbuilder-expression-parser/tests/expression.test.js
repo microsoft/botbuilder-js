@@ -111,8 +111,10 @@ const dataSource = [
   ["count(guid())", 36],
   ["guid().indexOf('-')", 8],
   ["indexOf(guid(), '-')", 8],
+  ["indexOf(hello, '-')", -1],
   ["guid().lastIndexOf('-')", 23],
   ["lastIndexOf(guid(), '-')", 23],
+  ["lastIndexOf(hello, '-')", -1],
 
   // Logical comparison functions tests
   ["and(1 == 1, 1 < 2, 1 > 2)", false],
