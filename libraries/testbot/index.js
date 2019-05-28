@@ -4,7 +4,7 @@
 const restify = require('restify');
 
 const { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState, InspectionState, InspectionMiddleware } = require('botbuilder');
-const { EchoBot } = require('./bots/echoBot')
+const { MyBot } = require('./bots/myBot')
 
 const adapter = new BotFrameworkAdapter({
     appId: process.env.MicrosoftAppId,
@@ -24,7 +24,7 @@ adapter.onTurnError = async (context, error) => {
     await context.sendActivity(`Oops. Something went wrong!`);
 };
 
-var bot = new EchoBot(conversationState);
+var bot = new MyBot(conversationState);
 
 console.log('welcome to test bot - a local test tool for working with the emulator');
 
@@ -33,7 +33,7 @@ server.listen(process.env.port || process.env.PORT || 3978, function() {
     console.log(`\n${ server.name } listening to ${ server.url }`);
 });
 
-server.post('/api/testbot', (req, res) => {
+server.post('/api/mybot', (req, res) => {
     adapter.processActivity(req, res, async (turnContext) => {
         await bot.run(turnContext);
     });

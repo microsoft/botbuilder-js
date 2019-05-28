@@ -1,6 +1,6 @@
 const { ActivityHandler } = require('botbuilder');
 
-class EchoBot extends ActivityHandler {
+class MyBot extends ActivityHandler {
     constructor(conversationState) {
         super();
         this.conversationState = conversationState;
@@ -28,4 +28,4 @@ class EchoBot extends ActivityHandler {
     }
 }
 
-exports.EchoBot = EchoBot;
+exports.MyBot = MyBot;
