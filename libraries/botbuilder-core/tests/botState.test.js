@@ -122,19 +122,4 @@ describe(`BotState`, function () {
         assert(count !== undefined, `did not successfully create PropertyAccessor.`);
         done();
     });
-
-    it(`should not allow registering of PropertyAccessors with the same name`, function (done) {
-        const duplicateName = 'test';
-        let testA = botState.createProperty(duplicateName, 0);
-        try {
-            let testB = botState.createProperty(duplicateName, 0);
-        } catch (e) {
-            // Checking the error message because JavaScript does not have specific Error types like Python, e.g. ValueError.
-            // This message check verifies that the bot threw the correct error, and that not something else is breaking.
-            assert(e.message === `BotState.createProperty(): a property named '${duplicateName}' already exists.`, `another error was thrown: "${e.message}".`);
-            done();
-        }
-        throw new Error(`Should have raised a duplicate property name error.`);
-        done();
-    });
 });
