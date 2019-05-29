@@ -4,6 +4,7 @@ const PayloadSender = require('../lib/PayloadTransport/PayloadSender');
 const PaylaodReceiver = require('../lib/PayloadTransport/PayloadReceiver');
 const RequestHandler = require('../lib/RequestHandler');
 const Response = require('../lib/Response');
+const Request = require('../lib/Request');
 const ReceiveResponse = require('../lib/ReceiveResponse');
 const  chai  = require('chai');
 var expect = chai.expect;
@@ -91,4 +92,18 @@ describe('ProtocolAdapter', () => {
                 done();
     });
 
+    it('sends requests.', (done) => {
+        let requestHandler = new TestRequestHandler();
+        let requestManager = new RequestManager.RequestManager();
+        let payloadSender = new PayloadSender.PayloadSender();
+        let paylaodReceiver = new PaylaodReceiver.PayloadReceiver();
+        let protocolAdapter = new ProtocolAdapter.ProtocolAdapter(
+            requestHandler,
+            requestManager,
+            payloadSender,
+            paylaodReceiver);
+
+        protocolAdapter.sendRequestAsync(new Request.Request());
+        done();
+});
 });
