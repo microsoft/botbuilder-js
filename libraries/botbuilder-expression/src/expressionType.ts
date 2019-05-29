@@ -90,7 +90,7 @@ export class ExpressionType {
     public static readonly DataUri: string = 'dataUri';
     public static readonly DataUriToBinary: string = 'dataUriToBinary';
     public static readonly DataUriToString: string = 'dataUriToString';
-    public static readonly DecodeUriComponent: string = 'decodeUriComponent';
+    public static readonly UriComponentToString: string = 'uriComponentToString';
     public static readonly Base64: string = 'base64';
     public static readonly Base64ToBinary: string = 'base64ToBinary';
     public static readonly Base64ToString: string = 'base64ToString';

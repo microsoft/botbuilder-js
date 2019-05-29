@@ -114,9 +114,9 @@ const badExpressions =
   "DataUriToString()", // should have 1 param
   "DataUriToString(hello, world)", // should have 1 param
   "DataUriToString(false)", // param should be string
-  "DecodeUriComponent()", // should have 1 param
-  "DecodeUriComponent(hello, world)", // should have 1 param
-  "DecodeUriComponent(false)", // param should be string
+  "UriComponentToString()", // should have 1 param
+  "UriComponentToString(hello, world)", // should have 1 param
+  "UriComponentToString(false)", // param should be string
   "Base64()", // should have 1 param
   "Base64(hello, world)", // should have 1 param
   "Base64(false)", // param should be string

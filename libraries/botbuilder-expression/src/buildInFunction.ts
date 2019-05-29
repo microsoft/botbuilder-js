@@ -1649,7 +1649,7 @@ export class BuiltInFunctions {
                 ReturnType.String,
                 BuiltInFunctions.ValidateUnary),
             new ExpressionEvaluator(
-                ExpressionType.DecodeUriComponent,
+                ExpressionType.UriComponentToString,
                 BuiltInFunctions.Apply((args: Readonly<any>) => decodeURIComponent(args[0]), BuiltInFunctions.VerifyString),
                 ReturnType.String,
                 BuiltInFunctions.ValidateUnary),
