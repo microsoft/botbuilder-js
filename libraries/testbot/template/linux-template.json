@@ -22,7 +22,7 @@
         },
         "location": {
             "type": "string",
-            "defaultValue": "[resourceGroup().location]",
+            "defaultValue": "West US",
             "metadata": {
                 "description": "Location for all resources."
             }
