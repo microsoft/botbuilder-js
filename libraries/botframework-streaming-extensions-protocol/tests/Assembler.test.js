@@ -7,6 +7,10 @@ const  ContentStreamAssembler = require( '../lib/Payloads/Assemblers/ContentStre
 const ReceiveRequestAssembler = require('../lib/Payloads/Assemblers/ReceiveRequestAssembler');
 const ReceiveResponseAssembler = require('../lib/Payloads/Assemblers/ReceiveResponseAssembler');
 const PayloadAssembler = require('../lib/Payloads/Assemblers/PayloadAssembler');
+const StreamDescription = require('../lib/Payloads/Models/StreamDescription');
+const ResponsePayload = require('../lib/Payloads/Models/ResponsePayload');
+const RequestPayload = require('../lib/Payloads/Models/RequestPayload');
+
 var expect = chai.expect;
 
 describe('PayloadAssembler', () => {
@@ -22,13 +26,93 @@ describe('ReceiveRequestAssembler', () => {
 
         expect(rra.id).equals('100');
         expect(rra._streamManager).equals(sm);
-    })
+    });
+
+    it('throws instead of closing.', () => {
+        let header = new Header.Header(PayloadTypes.PayloadTypes.request, '42', '100', true);
+        let sm = new StreamManager.StreamManager();
+
+        let rra = new ReceiveRequestAssembler.ReceiveRequestAssembler(header, sm, undefined);
+
+        expect(() => {rra.close();}).to.throw('Method not implemented.');
+    });
+
+    it('converts json to a RequestPayload.', () => {
+        let header = new Header.Header(PayloadTypes.PayloadTypes.request, '42', '100', true);
+        let sm = new StreamManager.StreamManager();
+
+        let rra = new ReceiveRequestAssembler.ReceiveRequestAssembler(header, sm, undefined);
+        let rp = new RequestPayload.RequestPayload('POST', '/some/path');
+        let json = JSON.stringify(rp);
+        let result = rra.requestPayloadfromJson(json);
+
+        expect(result.verb).to.equal('POST');
+        expect(result.path).to.equal('/some/path');
+    });
+
+    it('processes a Request without throwing.', (done) => {
+        let header = new Header.Header(PayloadTypes.PayloadTypes.request, '5', '100', true);
+        let sm = new StreamManager.StreamManager();
+        let s = new Stream.Stream();
+        s.write('12345');
+        let rp = new RequestPayload.RequestPayload('POST', '/some/path');
+        rp.streams = s;
+        let rra = new ReceiveRequestAssembler.ReceiveRequestAssembler(header, sm, undefined);
+        rra.processRequest(s).then(done());     
+    });
 });
 
 describe('ReceiveResponseAssembler', () => {
     it('constructs correctly.', () => {
+        let header = new Header.Header(PayloadTypes.PayloadTypes.response, '42', '100', true);
+        let sm = new StreamManager.StreamManager();
 
-    })
+        let rra = new ReceiveResponseAssembler.ReceiveResponseAssembler(header, sm, undefined);
+
+        expect(rra.id).equals('100');
+        expect(rra._streamManager).equals(sm);
+    });
+
+    it('returns a new stream.', () => {
+        let header = new Header.Header(PayloadTypes.PayloadTypes.response, '42', '100', true);
+        let sm = new StreamManager.StreamManager();
+
+        let rra = new ReceiveResponseAssembler.ReceiveResponseAssembler(header, sm, undefined);
+
+        expect(rra.createPayloadStream()).to.be.instanceOf(Stream.Stream);
+    });
+
+    it('converts json to a ResponsePayload.', () => {
+        let header = new Header.Header(PayloadTypes.PayloadTypes.response, '42', '100', true);
+        let sm = new StreamManager.StreamManager();
+
+        let rra = new ReceiveResponseAssembler.ReceiveResponseAssembler(header, sm, undefined);
+        let rp = new ResponsePayload.ResponsePayload(200);
+        let json = JSON.stringify(rp);
+
+        expect(rra.responsePayloadfromJson(json).statusCode).to.equal(200);
+    });
+
+    it('throws instead of closing.', () => {
+        let header = new Header.Header(PayloadTypes.PayloadTypes.response, '42', '100', true);
+        let sm = new StreamManager.StreamManager();
+
+        let rra = new ReceiveResponseAssembler.ReceiveResponseAssembler(header, sm, undefined);
+
+        expect(() => {rra.close();}).to.throw('Method not implemented.');
+    });
+
+    it('processes a Response without throwing.', (done) => {
+        let header = new Header.Header(PayloadTypes.PayloadTypes.response, '5', '100', true);
+        let sm = new StreamManager.StreamManager();
+        let s = new Stream.Stream();
+        s.write('12345');
+        let rp = new ResponsePayload.ResponsePayload(200);
+        rp.streams = s;
+        let rra = new ReceiveResponseAssembler.ReceiveResponseAssembler(header, sm, done());
+        rra.onReceive(header, s, 5);        
+    });
+
 });
 
 describe('ContentStreamAssembler', () => {
