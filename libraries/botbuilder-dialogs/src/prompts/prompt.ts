@@ -43,15 +43,7 @@ export enum ListStyle {
     /**
      * Add choices to prompt as a HeroCard with buttons.
      */
-    heroCard,
-
-    /**
-     * Let the LG system format the choices.
-     * 
-     * @remarks
-     * This will be equivalent to [ListStyle.none](#none) for prompts that don't support LG.
-     */
-    lg
+    heroCard
 }
 
 /**

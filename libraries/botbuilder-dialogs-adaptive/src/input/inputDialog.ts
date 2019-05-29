@@ -270,7 +270,6 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
                 break;
 
             case ListStyle.none:
-            case ListStyle.lg:
                 msg = MessageFactory.text(text);
                 break;
 
