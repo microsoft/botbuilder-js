@@ -10,12 +10,7 @@ const PayloadAssembler = require('../lib/Payloads/Assemblers/PayloadAssembler');
 const StreamDescription = require('../lib/Payloads/Models/StreamDescription');
 const ResponsePayload = require('../lib/Payloads/Models/ResponsePayload');
 const RequestPayload = require('../lib/Payloads/Models/RequestPayload');
-
 var expect = chai.expect;
-
-describe('PayloadAssembler', () => {
-
-});
 
 describe('ReceiveRequestAssembler', () => {
     it('constructs correctly.', () => {
