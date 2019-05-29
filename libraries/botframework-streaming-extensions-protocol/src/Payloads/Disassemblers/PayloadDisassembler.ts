@@ -21,8 +21,13 @@ export abstract class PayloadDisassembler {
   protected static async getStreamDescription(stream: HttpContentStream): Promise<StreamDescription> {
     let description: StreamDescription = new StreamDescription(stream.id);
 
-    description.payloadType = stream.content.headers.contentType;
-    description.length = stream.content.headers.contentLength;
+    if (stream.content.headers) {
+      description.payloadType = stream.content.headers.contentType;
+      description.length = stream.content.headers.contentLength;
+    } else {
+      description.payloadType = 'unknown';
+      description.length = 0;
+    }
 
     return description;
   }
