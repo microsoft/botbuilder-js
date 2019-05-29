@@ -6,6 +6,7 @@ const RequestHandler = require('../lib/RequestHandler');
 const Response = require('../lib/Response');
 const Request = require('../lib/Request');
 const ReceiveResponse = require('../lib/ReceiveResponse');
+const CancellationToken  = require('../lib/CancellationToken')
 const  chai  = require('chai');
 var expect = chai.expect;
 
@@ -103,7 +104,8 @@ describe('ProtocolAdapter', () => {
             payloadSender,
             paylaodReceiver);
 
-        protocolAdapter.sendRequestAsync(new Request.Request());
+        let rr = protocolAdapter.sendRequestAsync(new Request.Request(), new CancellationToken.CancellationToken());
+        expect(rr).to.not.be.undefined;
         done();
 });
 });
