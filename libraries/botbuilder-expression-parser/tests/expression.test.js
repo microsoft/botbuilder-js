@@ -235,14 +235,17 @@ const dataSource = [
   ["rand(2, 3)", 2],
 
   // Date and time function tests
-  // Init dateTime: 2018-03-15T13:00:00Z
-  ["addDays(timestamp, 1)", "2018-03-16T13:00:00.0000000Z"],
+  // All the timestamp strings passed in must be in ISO format of YYYY-MM-DDTHH:mm:ss.sssZ
+  // Otherwise exceptions will be thrown out
+  // All the output timestamp strings are in ISO format of YYYY-MM-DDTHH:mm:ss.sssZ
+  // Init dateTime: 2018-03-15T13:00:00:111Z
+  ["addDays(timestamp, 1)", "2018-03-16T13:00:00.111Z"],
   ["addDays(timestamp, 1,'MM-dd-yy')", "03-16-18"],
-  ["addHours(timestamp, 1)", "2018-03-15T14:00:00.0000000Z"],
+  ["addHours(timestamp, 1)", "2018-03-15T14:00:00.111Z"],
   ["addHours(timestamp, 1,'MM-dd-yy hh-mm')", "03-15-18 02-00"],
-  ["addMinutes(timestamp, 1)", "2018-03-15T13:01:00.0000000Z"],
+  ["addMinutes(timestamp, 1)", "2018-03-15T13:01:00.111Z"],
   ["addMinutes(timestamp, 1, 'MM-dd-yy hh-mm')", "03-15-18 01-01"],
-  ["addSeconds(timestamp, 1)", "2018-03-15T13:00:01.0000000Z"],
+  ["addSeconds(timestamp, 1)", "2018-03-15T13:00:01.111Z"],
   ["addSeconds(timestamp, 1, 'MM-dd-yy hh-mm-ss')", "03-15-18 01-00-01"],
   ["dayOfMonth(timestamp)", 15],
   ["dayOfWeek(timestamp)", 4],//Thursday
@@ -250,24 +253,26 @@ const dataSource = [
   ["month(timestamp)", 3],
   ["date(timestamp)", "3/15/2018"],//Default. TODO
   ["year(timestamp)", 2018],
-  ["formatDateTime(timestamp)", "2018-03-15T13:00:00.0000000Z"],
+  ["length(utcNow())", 24],
+  ["utcNow('MM-DD-YY')", moment(new Date().toISOString()).format('MM-DD-YY')],
+  ["formatDateTime(timestamp)", "2018-03-15T13:00:00.111Z"],
   ["formatDateTime(timestamp, 'MM-dd-yy')", "03-15-18"],
-  ["subtractFromTime(timestamp, 1, 'Year')", "2017-03-15T13:00:00.0000000Z"],
-  ["subtractFromTime(timestamp, 1, 'Month')", "2018-02-15T13:00:00.0000000Z"],
-  ["subtractFromTime(timestamp, 1, 'Week')", "2018-03-08T13:00:00.0000000Z"],
-  ["subtractFromTime(timestamp, 1, 'Day')", "2018-03-14T13:00:00.0000000Z"],
-  ["subtractFromTime(timestamp, 1, 'Hour')", "2018-03-15T12:00:00.0000000Z"],
-  ["subtractFromTime(timestamp, 1, 'Minute')", "2018-03-15T12:59:00.0000000Z"],
-  ["subtractFromTime(timestamp, 1, 'Second')", "2018-03-15T12:59:59.0000000Z"],
+  ["subtractFromTime(timestamp, 1, 'Year')", "2017-03-15T13:00:00.111Z"],
+  ["subtractFromTime(timestamp, 1, 'Month')", "2018-02-15T13:00:00.111Z"],
+  ["subtractFromTime(timestamp, 1, 'Week')", "2018-03-08T13:00:00.111Z"],
+  ["subtractFromTime(timestamp, 1, 'Day')", "2018-03-14T13:00:00.111Z"],
+  ["subtractFromTime(timestamp, 1, 'Hour')", "2018-03-15T12:00:00.111Z"],
+  ["subtractFromTime(timestamp, 1, 'Minute')", "2018-03-15T12:59:00.111Z"],
+  ["subtractFromTime(timestamp, 1, 'Second')", "2018-03-15T12:59:59.111Z"],
   ["dateReadBack(timestamp, addDays(timestamp, 1))", "tomorrow"],
   ["dateReadBack(addDays(timestamp, 1),timestamp))", "yesterday"],
-  ["getTimeOfDay('2018-03-15T00:00:00Z')", "midnight"],
-  ["getTimeOfDay('2018-03-15T08:00:00Z')", "morning"],
-  ["getTimeOfDay('2018-03-15T12:00:00Z')", "noon"],
-  ["getTimeOfDay('2018-03-15T13:00:00Z')", "afternoon"],
-  ["getTimeOfDay('2018-03-15T18:00:00Z')", "evening"],
-  ["getTimeOfDay('2018-03-15T22:00:00Z')", "evening"],
-  ["getTimeOfDay('2018-03-15T23:00:00Z')", "night"],
+  ["getTimeOfDay('2018-03-15T00:00:00.000Z')", "midnight"],
+  ["getTimeOfDay('2018-03-15T08:00:00.000Z')", "morning"],
+  ["getTimeOfDay('2018-03-15T12:00:00.000Z')", "noon"],
+  ["getTimeOfDay('2018-03-15T13:00:00.000Z')", "afternoon"],
+  ["getTimeOfDay('2018-03-15T18:00:00.000Z')", "evening"],
+  ["getTimeOfDay('2018-03-15T22:00:00.000Z')", "evening"],
+  ["getTimeOfDay('2018-03-15T23:00:00.000Z')", "night"],
   ["getPastTime(1, 'Year', 'MM-dd-yy')", moment(new Date().toISOString()).subtract(1, 'years').format('MM-DD-YY')],
   ["getPastTime(1, 'Month', 'MM-dd-yy')", moment(new Date().toISOString()).subtract(1, 'months').format('MM-DD-YY')],
   ["getPastTime(1, 'Week', 'MM-dd-yy')", moment(new Date().toISOString()).subtract(7, 'days').format('MM-DD-YY')],
@@ -369,7 +374,7 @@ const scope = {
       { x: 2 },
       { x: 3 },
     ],
-  timestamp: "2018-03-15T13:00:00Z",
+  timestamp: "2018-03-15T13:00:00.111Z",
   turn:
   {
     entities:

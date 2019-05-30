@@ -38,7 +38,7 @@ export type VerifyExpression = (value: any, expression: Expression, child: numbe
  *  </remarks>
  */
 export class BuiltInFunctions {
-    public static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.0000000[Z]';
+    public static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.sssZ';
     public static _functions: Map<string, ExpressionEvaluator> = BuiltInFunctions.BuildFunctionLookup();
     /**
      * Validate that expression has a certain number of children that are of any of the supported types.
@@ -328,14 +328,21 @@ export class BuiltInFunctions {
     }
 
     /**
-     * Verify a timestamp string is valid timestamp format.
+     * Verify a timestamp string is valid ISO timestamp format.
      * @param value timestamp string to check.
      * @returns Error or undefined if invalid.
      */
-    public static VerifyTimestamp(value: any): string {
+    public static VerifyISOTimestamp(value: any): string {
         let error: string;
-        if (Number.isNaN((new Date(value)).getTime())) {
-            error = `Could not parse ${value}.`;
+        try {
+            const parsedData: Date = new Date(value);
+            if (Number.isNaN(parsedData.getTime())) {
+                error = `${value} is not a valid datetime string.`;
+            } else if (parsedData.toISOString() !== value) {
+                error = `${value} is not a ISO format datetime string.`;
+            }
+        } catch {
+            error = `${value} is not a valid datetime string.`;
         }
 
         return error;
@@ -538,10 +545,13 @@ export class BuiltInFunctions {
                 ({ args, error } = BuiltInFunctions.EvaluateChildren(expression, state));
                 if (error === undefined) {
                     if (typeof args[0] === 'string' && typeof args[1] === 'number') {
-                        const formatString: string = (args.length === 3 && typeof args[2] === 'string') ? args[2] : BuiltInFunctions.DefaultDateTimeFormat;
                         ({ value, error } = BuiltInFunctions.ParseTimestamp(args[0]));
                         if (error === undefined) {
-                            result = func(value.utc(), args[1]).format(BuiltInFunctions.TimestampFormatter(formatString));
+                            if (args.length === 3 && typeof args[2] === 'string') {
+                                result = func(value, args[1]).format(BuiltInFunctions.TimestampFormatter(args[2]));
+                            } else {
+                                result = func(value, args[1]).toISOString();
+                            }
                         }
                     } else {
                         error = `${expression} could not be evaluated`;
@@ -556,9 +566,9 @@ export class BuiltInFunctions {
 
     public static ParseTimestamp(timeStamp: string, transform?: (arg0: moment.Moment) => any): { value: any; error: string } {
         let value: any;
-        const error: string = this.VerifyTimestamp(timeStamp);
+        const error: string = this.VerifyISOTimestamp(timeStamp);
         if (error === undefined) {
-            const parsed: moment.Moment = moment(timeStamp);
+            const parsed: moment.Moment = moment(timeStamp).utc();
             value = transform !== undefined ? transform(parsed) : parsed;
         }
 
@@ -1398,7 +1408,7 @@ export class BuiltInFunctions {
             new ExpressionEvaluator(
                 ExpressionType.Date,
                 BuiltInFunctions.ApplyWithError(
-                    (args: ReadonlyArray<any>) => BuiltInFunctions.ParseTimestamp(args[0], (dt: moment.Moment) => dt.utc().format('M/DD/YYYY')),
+                    (args: ReadonlyArray<any>) => BuiltInFunctions.ParseTimestamp(args[0], (dt: moment.Moment) => dt.format('M/DD/YYYY')),
                     BuiltInFunctions.VerifyString),
                 ReturnType.String,
                 BuiltInFunctions.ValidateUnaryString),
@@ -1411,8 +1421,8 @@ export class BuiltInFunctions {
                 BuiltInFunctions.ValidateUnaryString),
             new ExpressionEvaluator(
                 ExpressionType.UtcNow,
-                BuiltInFunctions.ApplyWithError(
-                    (args: ReadonlyArray<any>) => moment().utc().format(args.length === 1 ? args[0] : BuiltInFunctions.DefaultDateTimeFormat),
+                BuiltInFunctions.Apply(
+                    (args: ReadonlyArray<any>) => args.length === 1 ? moment(new Date().toISOString()).utc().format(args[0]) : new Date().toISOString(),
                     BuiltInFunctions.VerifyString),
                 ReturnType.String),
             new ExpressionEvaluator(
@@ -1420,7 +1430,7 @@ export class BuiltInFunctions {
                 BuiltInFunctions.ApplyWithError(
                     (args: ReadonlyArray<any>) =>
                         BuiltInFunctions.ParseTimestamp(args[0], (dt: moment.Moment) =>
-                            dt.utc().format(args.length === 2 ? BuiltInFunctions.TimestampFormatter(args[1]) : BuiltInFunctions.DefaultDateTimeFormat)),
+                            args.length === 2 ? dt.format(BuiltInFunctions.TimestampFormatter(args[1])) : dt.toISOString()),
                     BuiltInFunctions.VerifyString),
                 ReturnType.String,
                 (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.String)),
@@ -1439,7 +1449,8 @@ export class BuiltInFunctions {
                                 error = `${args[2]} is not a valid time unit.`;
                             } else {
                                 const dur: any = duration;
-                                ({ value, error } = BuiltInFunctions.ParseTimestamp(args[0], dt => dt.utc().subtract(dur, tsStr).format(format)));
+                                ({ value, error } = BuiltInFunctions.ParseTimestamp(args[0], dt => args.length === 4 ?
+                                    dt.subtract(dur, tsStr).format(format) : dt.subtract(dur, tsStr).toISOString()));
                             }
                         } else {
                             error = `${expr} can't evaluate.`;
@@ -1475,7 +1486,7 @@ export class BuiltInFunctions {
                 BuiltInFunctions.ApplyWithError(
                     (args: ReadonlyArray<any>) => {
                         let value: any;
-                        let error: string = BuiltInFunctions.VerifyTimestamp(args[0]);
+                        const error: string = BuiltInFunctions.VerifyISOTimestamp(args[0]);
                         if (error === undefined) {
                             const thisTime: number = moment.parseZone(args[0]).hour() * 100 + moment.parseZone(args[0]).minute();
                             if (thisTime === 0) {
