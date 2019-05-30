@@ -88,7 +88,7 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
      * @returns true if there were any changes to apply. 
      */
     public async applyChanges(): Promise<boolean> {
-        const queue: StepChangeList[] = this.context.turnState.get(this.changeKey) || [];;
+        const queue: StepChangeList[] = this.context.turnState.get(this.changeKey) || [];
         if (Array.isArray(queue) && queue.length > 0) {
             this.context.turnState.delete(this.changeKey);
 
@@ -163,8 +163,11 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
             case StepChangeType.insertStepsBeforeTags:
                 let inserted = false;
                 if (Array.isArray(change.tags)) {
+                    // Walk list of steps to find point at which to insert new steps
                     for (let i = 0; i < this.steps.length; i++) {
+                        // Does step have one of the tags we're looking for?
                         if (this.stepHasTags(this.steps[i], change.tags)) {
+                            // Insert steps before the current step.
                             const args = ([i, 0] as any[]).concat(change.steps);
                             Array.prototype.splice.apply(this.steps, args);
                             inserted = true;
@@ -173,6 +176,8 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
                     }
                 }
                 
+                // If we didn't find any of the tags we were looking for then just append
+                // the steps to the end of the current sequence.
                 if (!inserted) {
                     Array.prototype.push.apply(this.steps, change.steps);
                 }
