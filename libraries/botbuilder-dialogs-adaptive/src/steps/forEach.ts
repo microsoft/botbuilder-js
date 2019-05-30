@@ -122,7 +122,7 @@ export class ForEach extends DialogCommand {
             sequence.state.setValue(this.valueProperty, item);
             sequence.state.setValue(this.indexProperty, offset);
             const changes: StepChangeList = {
-                changeType: StepChangeType.InsertSteps,
+                changeType: StepChangeType.insertSteps,
                 steps: []
             };
             this.steps.forEach((step) => changes.steps.push({ dialogStack: [], dialogId: step.id }));

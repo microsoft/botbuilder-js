@@ -132,7 +132,7 @@ export class ForEachPage extends DialogCommand {
         if (page.length > 0) {
             sequence.state.setValue(this.valueProperty, page);
             const changes: StepChangeList = {
-                changeType: StepChangeType.InsertSteps,
+                changeType: StepChangeType.insertSteps,
                 steps: []
             };
             this.steps.forEach((step) => changes.steps.push({ dialogStack: [], dialogId: step.id }));
