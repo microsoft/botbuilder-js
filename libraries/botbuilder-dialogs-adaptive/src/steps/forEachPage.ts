@@ -7,25 +7,26 @@
  */
 import { DialogCommand, DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
 import { SequenceContext, StepChangeType, StepChangeList } from '../sequenceContext';
+import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
 
 /**
  * Configuration info passed to a `ForEachPage` step.
  */
 export interface ForEachPageConfiguration extends DialogConfiguration {
     /**
-     * In-memory property containing list or collection to be enumerated.
+     * Expression used to compute the list that should be enumerated.
      */
-    sourceProperty?: string;
+    list?: ExpressionPropertyValue<any[]|object>;
+
+    /**
+     * (Optional) expression to compute number of items per page. Defaults to "10".
+     */
+    pageSize?: ExpressionPropertyValue<number>;
 
     /**
      * In-memory property that will contain the current items value. Defaults to `dialog.value`.
      */
     valueProperty?: string;
-
-    /**
-     * (Optional) number of items per page. Defaults to a value of 10.
-     */
-    pageSize?: number;
 
     /**
      * Steps to be run for each page of items.
@@ -46,32 +47,38 @@ export class ForEachPage extends DialogCommand {
 
     /**
      * Creates a new `ForEachPage` instance.
-     * @param property In-memory property containing list or collection to be enumerated.
+     * @param list Expression used to compute the list that should be enumerated.
      * @param pageSize (Optional) number of items per page. Defaults to a value of 10.
      * @param steps Steps to be run for each page of items. 
      */
     constructor();
-    constructor(sourceProperty: string, steps: Dialog[]);
-    constructor(sourceProperty: string, pageSize: number, steps: Dialog[]);
-    constructor(sourceProperty?: string, pageSizeOrSteps?: number|Dialog[], steps?: Dialog[]) {
+    constructor(list: ExpressionPropertyValue<any[]|object>, steps: Dialog[]);
+    constructor(list: ExpressionPropertyValue<any[]|object>, pageSize: ExpressionPropertyValue<number>, steps: Dialog[]);
+    constructor(list?: ExpressionPropertyValue<any[]|object>, pageSizeOrSteps?: ExpressionPropertyValue<number>|Dialog[], steps?: Dialog[]) {
         super();
         if (Array.isArray(pageSizeOrSteps)) {
             steps = pageSizeOrSteps;
             pageSizeOrSteps = undefined;
         }
-        if (sourceProperty) { this.sourceProperty = sourceProperty }
-        if (pageSizeOrSteps) { this.pageSize = pageSizeOrSteps as number }
+        if (list) { this.list = new ExpressionProperty(list) }
+        if (pageSizeOrSteps) { this.pageSize = new ExpressionProperty(pageSizeOrSteps as any) }
         if (steps) { this.steps = steps } 
     }
 
     protected onComputeID(): string {
-        return `forEachPage[${this.bindingPath}]`;
+        const label = this.list ? this.list.toString() : '';
+        return `forEachPage[${this.hashedLabel(label)}]`;
     }
 
     /**
-     * In-memory property containing list or collection to be enumerated.
+     * Expression used to compute the list that should be enumerated.
      */
-    public sourceProperty: string;
+    public list: ExpressionProperty<any[]|object>;
+
+    /**
+     * Number of items per page. Defaults to a value of 10.
+     */
+    public pageSize: ExpressionProperty<number> = new ExpressionProperty("10");
 
     /**
      * In-memory property that will contain the current items value. Defaults to `dialog.value`.
@@ -79,17 +86,26 @@ export class ForEachPage extends DialogCommand {
     public valueProperty: string = 'dialog.value';
 
     /**
-     * Number of items per page. Defaults to a value of 10.
-     */
-    public pageSize: number = 10;
-
-    /**
      * Steps to be run for each page of items.
      */
     public steps: Dialog[] = [];
 
     public configure(config: ForEachPageConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch(key) {
+                    case 'list':
+                        this.list = new ExpressionProperty(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     public getDependencies(): Dialog[] {
@@ -98,11 +114,19 @@ export class ForEachPage extends DialogCommand {
 
     protected async onRunCommand(sequence: SequenceContext, options: ForEachPageOptions): Promise<DialogTurnResult> {
         // Ensure planning context
-        if (!(sequence instanceof SequenceContext)) { throw new Error(`ForEachPage: should only be used within an AdaptiveDialog.`) }
+        if (!(sequence instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within an AdaptiveDialog.`) }
+        if (!this.list) { throw new Error(`${this.id}: no list expression specified.`) }
+        if (!this.pageSize) { throw new Error(`${this.id}: no pageSize expression specified.`) }
+
+        // Unpack options
+        let { list, offset, pageSize } = options;
+        const memory = sequence.state.toJSON();
+        if (list == undefined) { list = this.list.evaluate(this.id, memory) }
+        if (pageSize == undefined) { pageSize = this.pageSize.evaluate(this.id, memory) }
+        if (offset == undefined) { offset = 0 }
 
         // Get next page of items
-        const offset = options && typeof options.offset == 'number' ? options.offset : 0;
-        const page = this.getPage(sequence, offset);
+        const page = this.getPage(list, offset, pageSize);
 
         // Update current plan
         if (page.length > 0) {
@@ -112,10 +136,18 @@ export class ForEachPage extends DialogCommand {
                 steps: []
             };
             this.steps.forEach((step) => changes.steps.push({ dialogStack: [], dialogId: step.id }));
-            if (page.length == this.pageSize) {
+            if (page.length == pageSize) {
                 // Add a call back into forEachPage() at the end of repeated steps.
                 // - A new offset is passed in which causes the next page of results to be returned.
-                changes.steps.push({ dialogStack: [], dialogId: this.id, options: { offset: offset + this.pageSize }});
+                changes.steps.push({ 
+                    dialogStack: [], 
+                    dialogId: this.id, 
+                    options: {
+                        list: list,
+                        offset: offset + pageSize,
+                        pageSize: pageSize
+                    }
+                });
             }
             sequence.queueChanges(changes);
         }
@@ -123,20 +155,19 @@ export class ForEachPage extends DialogCommand {
         return await sequence.endDialog();
     }
 
-    private getPage(sequence: SequenceContext, offset: number): any[] {
+    private getPage(list: any[]|object, offset: number, pageSize: number): any[] {
         const page: any[] = [];
-        const end = offset + this.pageSize;
-        const value = sequence.state.getValue(this.sourceProperty);
-        if (Array.isArray(value)) {
+        const end = offset + pageSize;
+        if (Array.isArray(list)) {
             for (let i = offset; i >= offset && i < end; i++) {
-                page.push(value[i]);
+                page.push(list[i]);
             }
-        } else if (typeof value === 'object') {
+        } else if (typeof list === 'object') {
             let i = 0;
-            for (const key in value) {
-                if (value.hasOwnProperty(key)) {
+            for (const key in list) {
+                if (list.hasOwnProperty(key)) {
                     if (i >= offset && i < end) {
-                        page.push(value[key]);
+                        page.push(list[key]);
                     }
                     i++;
                 }
@@ -147,5 +178,7 @@ export class ForEachPage extends DialogCommand {
 }
 
 interface ForEachPageOptions {
+    list: any[]|object;
     offset?: number;
+    pageSize?: number;
 }

@@ -7,15 +7,16 @@
  */
 import { DialogCommand, DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
 import { SequenceContext, StepChangeList, StepChangeType } from '../sequenceContext';
+import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
 
 /**
  * Configuration info passed to a `ForEach` step.
  */
 export interface ForEachConfiguration extends DialogConfiguration {
     /**
-     * In-memory property containing list or collection to be enumerated.
+     * Expression used to compute the list that should be enumerated.
      */
-    sourceProperty?: string;
+    list?: ExpressionPropertyValue<any[]|object>;
 
     /**
      * In-memory property that will contain the current items index. Defaults to `dialog.index`.
@@ -45,25 +46,26 @@ export class ForEach extends DialogCommand {
 
     /**
      * Creates a new `ForEach` instance.
-     * @param property In-memory property containing list or collection to be enumerated.
+     * @param list Expression used to compute the list that should be enumerated.
      * @param steps Steps to be run for each page of items. 
      */
     constructor();
-    constructor(sourceProperty: string, steps: Dialog[]);
-    constructor(sourceProperty?: string, steps?: Dialog[]) {
+    constructor(list: ExpressionPropertyValue<any[]|object>, steps: Dialog[]);
+    constructor(list?: ExpressionPropertyValue<any[]|object>, steps?: Dialog[]) {
         super();
-        if (sourceProperty) { this.sourceProperty = sourceProperty }
+        if (list) { this.list = new ExpressionProperty(list) }
         if (steps) { this.steps = steps } 
     }
 
     protected onComputeID(): string {
-        return `forEach[${this.bindingPath}]`;
+        const label = this.list ? this.list.toString() : '';
+        return `forEach[${this.hashedLabel(label)}]`;
     }
 
     /**
-     * In-memory property containing list or collection to be enumerated.
+     * Expression used to compute the list that should be enumerated.
      */
-    public sourceProperty: string;
+    public list: ExpressionProperty<any[]|object>;
 
     /**
      * In-memory property that will contain the current items index. Defaults to `dialog.index`.
@@ -81,7 +83,21 @@ export class ForEach extends DialogCommand {
     public steps: Dialog[] = [];
 
     public configure(config: ForEachConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch(key) {
+                    case 'list':
+                        this.list = new ExpressionProperty(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     public getDependencies(): Dialog[] {
@@ -90,16 +106,21 @@ export class ForEach extends DialogCommand {
 
     protected async onRunCommand(sequence: SequenceContext, options: ForEachOptions): Promise<DialogTurnResult> {
         // Ensure planning context
-        if (!(sequence instanceof SequenceContext)) { throw new Error(`ForEach: should only be used within an AdaptiveDialog.`) }
+        if (!(sequence instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within an AdaptiveDialog.`) }
+        if (!this.list) { throw new Error(`${this.id}: no list expression specified.`) }
+
+        // Unpack options
+        let { list, offset } = options;
+        if (list == undefined) { list = this.list.evaluate(this.id, sequence.state.toJSON()) }
+        if (offset == undefined) { offset = 0 }
 
         // Get next page of items
-        const nextItem = options && typeof options.nextItem == 'number' ? options.nextItem : 0;
-        const item = this.getItem(sequence, nextItem);
+        const item = this.getItem(list, offset);
 
         // Update current plan
         if (item !== undefined) {
             sequence.state.setValue(this.valueProperty, item);
-            sequence.state.setValue(this.indexProperty, nextItem);
+            sequence.state.setValue(this.indexProperty, offset);
             const changes: StepChangeList = {
                 changeType: StepChangeType.InsertSteps,
                 steps: []
@@ -108,25 +129,31 @@ export class ForEach extends DialogCommand {
 
             // Add a call back into forEachPage() at the end of repeated steps.
             // - A new offset is passed in which causes the next page of results to be returned.
-            changes.steps.push({ dialogStack: [], dialogId: this.id, options: { nextItem: nextItem + 1 }});
+            changes.steps.push({ 
+                dialogStack: [], 
+                dialogId: this.id, 
+                options: { 
+                    list: list,
+                    offset: offset + 1
+                }
+            });
             sequence.queueChanges(changes);
         }
 
         return await sequence.endDialog();
     }
 
-    private getItem(sequence: SequenceContext, index: number): any {
-        const value = sequence.state.getValue(this.sourceProperty);
-        if (Array.isArray(value)) {
-            if (index < value.length) {
-                return value[index];
+    private getItem(list: any[]|object, index: number): any {
+        if (Array.isArray(list)) {
+            if (index < list.length) {
+                return list[index];
             }
-        } else if (typeof value === 'object') {
+        } else if (typeof list === 'object') {
             let i = 0;
-            for (const key in value) {
-                if (value.hasOwnProperty(key)) {
+            for (const key in list) {
+                if (list.hasOwnProperty(key)) {
                     if (i == index) {
-                        return value[key];
+                        return list[key];
                     }
                     i++;
                 }
@@ -137,5 +164,6 @@ export class ForEach extends DialogCommand {
 }
 
 interface ForEachOptions {
-    nextItem?: number;
+    list?: any[]|object;
+    offset?: number;
 }
