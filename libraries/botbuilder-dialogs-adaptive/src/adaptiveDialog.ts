@@ -119,7 +119,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
 
         // Evaluate rules and queue up step changes
-        const event: DialogEvent = { name: AdaptiveEventNames.BeginDialog, value: options, bubble: false };
+        const event: DialogEvent = { name: AdaptiveEventNames.beginDialog, value: options, bubble: false };
         await this.onDialogEvent(dc, event);
 
         // Continue step execution
@@ -195,11 +195,11 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         // Perform default processing
         if (preBubble) {
             switch (event.name) {
-            case AdaptiveEventNames.BeginDialog:
+            case AdaptiveEventNames.beginDialog:
                 if (this.steps.length > 0) {
                     // Initialize plan with steps
                     const changes: StepChangeList = {
-                        changeType: StepChangeType.InsertSteps,
+                        changeType: StepChangeType.insertSteps,
                         steps: []
                     };
                     this.steps.forEach((step) => {
@@ -212,10 +212,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                     handled = true;
                 } else {
                     // Emit leading ActivityReceived event 
-                    handled = await this.processEvent(sequence, { name: AdaptiveEventNames.ActivityReceived, bubble: false }, true);
+                    handled = await this.processEvent(sequence, { name: AdaptiveEventNames.activityReceived, bubble: false }, true);
                 }
                 break;
-            case AdaptiveEventNames.ActivityReceived:
+            case AdaptiveEventNames.activityReceived:
                 const activity = sequence.context.activity;
                 if (activity.type === ActivityTypes.Message) {
                     // Recognize utterance
@@ -223,7 +223,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                     sequence.state.setValue('turn.recognized', recognized);
 
                     // Emit leading RecognizedIntent event
-                    handled = await this.processEvent(sequence, { name: AdaptiveEventNames.RecognizedIntent, value: recognized, bubble: false }, true);
+                    handled = await this.processEvent(sequence, { name: AdaptiveEventNames.recognizedIntent, value: recognized, bubble: false }, true);
                 } else if (activity.type === ActivityTypes.Event) {
                     // Emit leading edge named event that was received
                     handled = await this.processEvent(sequence, { name: activity.name, value: activity.value, bubble: false }, true);
@@ -233,18 +233,18 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                     if (membersAdded.length > 0) {
                         // Emit leading ConversationMembersAdded event
                         sequence.state.setValue('turn.membersAdded', membersAdded);
-                        handled = await this.processEvent(sequence, { name: AdaptiveEventNames.ConversationMembersAdded, value: membersAdded, bubble: false}, true);
+                        handled = await this.processEvent(sequence, { name: AdaptiveEventNames.conversationMembersAdded, value: membersAdded, bubble: false}, true);
                     }
                 }
                 break;
             }
         } else {
             switch (event.name) {
-            case AdaptiveEventNames.BeginDialog:
+            case AdaptiveEventNames.beginDialog:
                 // Emit trailing ActivityReceived event 
-                handled = await this.processEvent(sequence, { name: AdaptiveEventNames.ActivityReceived, bubble: false }, false);
+                handled = await this.processEvent(sequence, { name: AdaptiveEventNames.activityReceived, bubble: false }, false);
                 break;
-            case AdaptiveEventNames.ActivityReceived:
+            case AdaptiveEventNames.activityReceived:
                 const activity = sequence.context.activity;
                 const membersAdded = sequence.state.getValue('turn.membersAdded');
                 if (activity.type === ActivityTypes.Message) {
@@ -254,7 +254,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                     // Do we have an empty sequence?
                     if (sequence.steps.length == 0) {
                         // Emit trailing UnknownIntent event
-                        handled = await this.processEvent(sequence, { name: AdaptiveEventNames.UnknownIntent, bubble: false }, false);
+                        handled = await this.processEvent(sequence, { name: AdaptiveEventNames.unknownIntent, bubble: false }, false);
                     } else {
                         handled = false;
                     }
@@ -263,7 +263,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                     handled = await this.processEvent(sequence, { name: activity.name, value: activity.value, bubble: false }, false);
                 } else if (activity.type === ActivityTypes.ConversationUpdate && Array.isArray(membersAdded)) {
                     // Emit trailing ConversationMembersAdded event
-                    handled = await this.processEvent(sequence, { name: AdaptiveEventNames.ConversationMembersAdded, value: membersAdded, bubble: false}, false);
+                    handled = await this.processEvent(sequence, { name: AdaptiveEventNames.conversationMembersAdded, value: membersAdded, bubble: false}, false);
                 }
                 break;
             }
@@ -395,7 +395,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         if (sequence.steps.length > 0) {
             sequence.steps.shift();
             if (sequence.steps.length == 0) {
-                return await sequence.emitEvent(AdaptiveEventNames.SequenceEnded, undefined, false);
+                return await sequence.emitEvent(AdaptiveEventNames.sequenceEnded, undefined, false);
             }
         }
 

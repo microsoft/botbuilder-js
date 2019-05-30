@@ -58,7 +58,7 @@ export class EventRule implements Rule {
     }
 
     protected onCreateChangeList(sequence: SequenceContext, event: DialogEvent, dialogOptions?: any): StepChangeList {
-        const changeList: StepChangeList = { changeType: StepChangeType.InsertSteps, steps: [] };
+        const changeList: StepChangeList = { changeType: StepChangeType.insertSteps, steps: [] };
         this.steps.forEach((step) => {
             const stepState: StepState = { dialogStack: [], dialogId: step.id };
             if (dialogOptions !== undefined) {
