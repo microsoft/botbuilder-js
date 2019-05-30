@@ -64,32 +64,59 @@ if [[ ! -n "$KUDU_SYNC_CMD" ]]; then
   fi
 fi
 
-if [ "x$DEPLOYMENT_TEMP" = x ]; then
-    DEPLOYMENT_TEMP=/tmp/`date +%s`
-    CLEAN_LOCAL_DEPLOYMENT_TEMP=true
-fi
+# Node Helpers
+# ------------
 
-if [ "x$CLEAN_LOCAL_DEPLOYMENT_TEMP" = xtrue ]; then
-    rm -rf "$DEPLOYMENT_TEMP"
-    mkdir "$DEPLOYMENT_TEMP"
-fi
+selectNodeVersion () {
+  if [[ -n "$KUDU_SELECT_NODE_VERSION_CMD" ]]; then
+    SELECT_NODE_VERSION="$KUDU_SELECT_NODE_VERSION_CMD \"$DEPLOYMENT_SOURCE\" \"$DEPLOYMENT_TARGET\" \"$DEPLOYMENT_TEMP\""
+    eval $SELECT_NODE_VERSION
+    exitWithMessageOnError "select node version failed"
+
+    if [[ -e "$DEPLOYMENT_TEMP/__nodeVersion.tmp" ]]; then
+      NODE_EXE=`cat "$DEPLOYMENT_TEMP/__nodeVersion.tmp"`
+      exitWithMessageOnError "getting node version failed"
+    fi
+    
+    if [[ -e "$DEPLOYMENT_TEMP/__npmVersion.tmp" ]]; then
+      NPM_JS_PATH=`cat "$DEPLOYMENT_TEMP/__npmVersion.tmp"`
+      exitWithMessageOnError "getting npm version failed"
+    fi
+
+    if [[ ! -n "$NODE_EXE" ]]; then
+      NODE_EXE=node
+    fi
+
+    NPM_CMD="\"$NODE_EXE\" \"$NPM_JS_PATH\""
+  else
+    NPM_CMD=npm
+    NODE_EXE=node
+  fi
+}
 
 ##################################################################################################################################
 # Deployment
 # ----------
 
-echo Handling ASP.NET Core Web Application deployment.
+echo Handling node.js deployment.
 
 # 1. KuduSync
-"$KUDU_SYNC_CMD" -v 50 -f "./publishedbot" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh"
-exitWithMessageOnError "Kudu Sync failed"
+if [[ "$IN_PLACE_DEPLOYMENT" -ne "1" ]]; then
+  "$KUDU_SYNC_CMD" -v 50 -f "$DEPLOYMENT_SOURCE" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh"
+  exitWithMessageOnError "Kudu Sync failed"
+fi
 
-if [[ ! -n "$DEPLOYMENT_TARGET\package.json" ]]; then
-    echo Installing package.json
-    cd "DEPLOYMENT_TARGET"
-    npm install --production
-    exitWithMessageOnError "npm install production failed"
-else
+# 2. Select node version
+selectNodeVersion
+
+# 3. Install npm packages
+if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
+  cd "$DEPLOYMENT_TARGET"
+  echo "Running $NPM_CMD install --production"
+  eval $NPM_CMD install --production
+  exitWithMessageOnError "npm failed"
+  cd - > /dev/null
+fi
 
 ##################################################################################################################################
 echo "Finished successfully."
