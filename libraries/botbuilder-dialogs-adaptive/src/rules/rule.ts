@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogEvent } from 'botbuilder-dialogs';
-import { PlanningContext, PlanChangeList } from '../planningContext';
+import { SequenceContext, StepChangeList } from '../sequenceContext';
  
-export interface PlanningRule {
+export interface Rule {
     /**
      * Array of steps that should be registered with the `PlanningDialog` when the rule is added.
      */
@@ -19,7 +19,7 @@ export interface PlanningRule {
      * current plan.
      * @param planning Planning context object for the current conversation.
      * @param event The current event being evaluated.
-     * @param memory Memory projection for the current turn.
+     * @param preBubble If `true`, the leading edge of the event is being evaluated.
      */
-    evaluate(planning: PlanningContext, event: DialogEvent, memory: object): Promise<PlanChangeList[]|undefined>;
+    evaluate(planning: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<StepChangeList[]|undefined>;
 }

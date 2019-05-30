@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { EventRule } from './eventRule';
-import { RuleDialogEventNames } from '../planningContext';
+import { AdaptiveEventNames } from '../sequenceContext';
 import { Dialog } from 'botbuilder-dialogs';
 
 /**
@@ -23,6 +23,6 @@ export class UnknownIntentRule extends EventRule {
      * @param steps (Optional) list of steps to update the plan with when triggered.
      */
     constructor(steps?: Dialog[]) {
-        super(RuleDialogEventNames.unknownIntent, steps);
+        super(AdaptiveEventNames.unknownIntent, steps, false);
     }
 }

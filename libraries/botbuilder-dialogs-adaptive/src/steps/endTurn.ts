@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogContext, DialogConsultation, DialogConsultationDesire } from 'botbuilder-dialogs';
+import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { ActivityTypes } from 'botbuilder-core';
 
 export class EndTurn extends Dialog {
@@ -18,17 +18,12 @@ export class EndTurn extends Dialog {
         return Dialog.EndOfTurn;
     }
 
-    public async consultDialog(dc: DialogContext): Promise<DialogConsultation> {
-        return {
-            desire: DialogConsultationDesire.canProcess,
-            processor: async (dc) => {
-                const activity = dc.context.activity;
-                if (activity.type === ActivityTypes.Message) {
-                    return await dc.endDialog();
-                } else {
-                    return Dialog.EndOfTurn;
-                }
-            }
-        };
+    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+        const activity = dc.context.activity;
+        if (activity.type === ActivityTypes.Message) {
+            return await dc.endDialog();
+        } else {
+            return Dialog.EndOfTurn;
+        }
     }
 }

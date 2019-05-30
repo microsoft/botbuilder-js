@@ -10,17 +10,18 @@ function GetExampleFile(fileName){
 describe('MSLGTool', function () {
     it('TestValidateReturnStaticCheckerErrors', function () {
         let errors = new MSLGTool().ValidateFile(GetExampleFile('StaticCheckerErrors.lg'));
-        assert.strictEqual(errors.length, 2);
-        assert.strictEqual(errors[0], "[ERROR]: There is no template body in template template");
-        var warnOptions = ["[WARN]: condition is not end with else: \'-IF:{foo == \'bar\'}\r\n-ok<EOF>\'",
-                            "[WARN]: condition is not end with else: \'-IF:{foo == \'bar\'}\n-ok<EOF>\'"]
-        assert(warnOptions.includes(errors[1]));
+        assert.strictEqual(errors.length,5)
+        assert.strictEqual(errors[0], "[Error] line 1:0 - line 1:10: There is no template body in template template");
+        assert.strictEqual(errors[1], "[Warning] line 5:0 - line 5:20: condition is not end with else: \'-IF:{foo == \'bar\'}\r\n-ok\r\n\'")
+        assert.strictEqual(errors[2], "[Error] line 9:0 - line 9:14: control flow is not starting with switch: \'-CASE:{\'bar\'}\r\n-bar   \r\n\'")
+        assert.strictEqual(errors[3], "[Warning] line 9:0 - line 9:14: control flow is not ending with default statement: \'-CASE:{\'bar\'}\r\n-bar   \r\n\'")
+        assert.strictEqual(errors[4], "[Warning] line 14:0 - line 14:10: control flow should have at least one case statement: \'-SWITCH:{foo}\r\n-default:\r\n-bar<EOF>\'")
     });
 
     it('TestValidateReturnAntlrParseError', function () {
         let errors = new MSLGTool().ValidateFile(GetExampleFile('AntlrParseError.lg'));
         assert.strictEqual(errors.length, 1);
-        assert.strictEqual(errors[0], "[ERROR]: syntax error at line 2:18 mismatched input 'param2' expecting {<EOF>, NEWLINE}");
+        assert.strictEqual(errors[0], "[Error] line 1:18 - line 1:24: syntax error at mismatched input 'param2' expecting {<EOF>, NEWLINE}");
     });
 
     it('TestValidateReturnNoErrors', function () {
@@ -38,7 +39,7 @@ describe('MSLGTool', function () {
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(mslgTool.CollationMessages.length, 0);
         assert.strictEqual(mslgTool.NameCollisions.length, 3);
-        assert.strictEqual(mslgTool.CollatedTemplates.size, 4);
+        assert.strictEqual(mslgTool.CollatedTemplates.size, 5);
         assert.strictEqual(mslgTool.CollatedTemplates.get('Greeting').length, 3);
         assert.strictEqual(mslgTool.CollatedTemplates.get('TimeOfDayWithCondition').size, 3);
         assert.strictEqual(mslgTool.CollatedTemplates.get('TimeOfDay').length, 3);
@@ -66,6 +67,13 @@ describe('MSLGTool', function () {
         expectedResults.forEach(element => {
             assert.strictEqual(expandedTemplate.includes(element), true);
         });
+        let expandedTemplate2 = mslgTool.ExpandTemplate('greetInAWeek', { day: 'Sunday' });
+        assert.strictEqual(expandedTemplate.length, 2);
+        let expected2Results = ['Nice Sunday!', 'Happy Sunday!'];
+        expected2Results.forEach(element => {
+            assert.strictEqual(expandedTemplate2.includes(element), true);
+        });
+
     })
 
     it('TestExpandTemplateWithRef', function() {

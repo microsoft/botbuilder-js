@@ -7,12 +7,13 @@
  */
 import { Activity, TurnContext } from 'botbuilder-core';
 import { Choice } from './choices';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent, DialogConsultation } from './dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
 import { StateMap } from './stateMap';
 import { DialogContextState } from './dialogContextState';
 import { DialogCommand } from './dialogCommand';
+import { DialogContainer } from './dialogContainer';
 
 /**
  * State information persisted by a `DialogSet`.
@@ -39,15 +40,12 @@ export interface DialogState {
 }
 
 /**
- * A context object used to manipulate a dialog stack.
+ * A context object used to start and stop dialogs within a `DialogContainer`.
  *
  * @remarks
- * This is typically created through a call to `DialogSet.createContext()` and is then passed
- * through to all of the bots dialogs and waterfall steps.
- *
- * ```JavaScript
- * const dc = await dialogs.createContext(turnContext);
- * ```
+ * Every active DialogContainer instance has its own DialogContext which can be used to start and
+ * stop dialogs within that container.  The [parent](#parent) and [child](#child) properties can 
+ * be used to navigate the bots stack of active dialog containers. 
  */
 export class DialogContext {
     /**
@@ -69,14 +67,6 @@ export class DialogContext {
      * In-memory properties that are currently visible to the active dialog.
      */
     public readonly state: DialogContextState;
-
-    /**
-     * The parent DialogContext if any.
-     * 
-     * @remarks
-     * This will be used when searching for dialogs to start.
-     */
-    public parent: DialogContext|undefined;
 
     /**
      * Creates a new DialogContext instance.
@@ -122,6 +112,33 @@ export class DialogContext {
             };
         }
         return instance;
+    }
+
+    /**
+     * A DialogContext for manipulating the stack of current containers parent.
+     * 
+     * @remarks
+     * Returns `undefined` if the current container is the [rootParent](#rootparent).
+     */
+    public parent: DialogContext|undefined;
+
+    /**
+     * A DialogContext for manipulating the stack of a child container.
+     * 
+     * @remarks
+     * Returns `undefined` if the [activeDialog](#activedialog) isn't an instance of a 
+     * DialogContainer or the container has no active child dialogs.
+     */
+    public get child(): DialogContext|undefined {
+        const instance = this.activeDialog;
+        if (instance) {
+            const dialog = this.findDialog(instance.id);
+            if (dialog instanceof DialogContainer) {
+                return (dialog as DialogContainer).createChildContext(this);
+            }
+        }
+
+        return undefined;
     }
 
     /**
@@ -231,8 +248,9 @@ export class DialogContext {
      * @param name Name of the event to raise.
      * @param value (Optional) value to send along with the event.
      * @param bubble (Optional) flag to control whether the event should be bubbled to its parent if not handled locally. Defaults to a value of `true`.
+     * @param fromLeaf (Optional) if `true` the event will be emitted starting with the leaf most child dialog. Defaults to a value of `false`.
      */
-    public async emitEvent(name: string, value?: any, bubble = true): Promise<boolean> {
+    public async emitEvent(name: string, value?: any, bubble = true, fromLeaf = false): Promise<boolean> {
         // Initialize event
         const event: DialogEvent = {
             bubble: bubble,
@@ -240,27 +258,30 @@ export class DialogContext {
             value: value
         };
 
-        // Dispatch to active dialog first
-        let handled = false;
+        // Find starting dialog
         let dc: DialogContext = this;
-        while (true) {
-            const instance = dc.activeDialog;
-            if (instance) {
-                const dialog = dc.findDialog(instance.id);
-                if (dialog) {
-                    handled = await dialog.onDialogEvent(dc, event);
+        if (fromLeaf) {
+            while (true) {
+                const childDC = dc.child;
+                if (childDC) {
+                    dc = childDC;
+                } else {
+                    break;
                 }
-            }
-
-            // Break out if not bubbling or no parent
-            if (!handled && event.bubble && this.parent) {
-                dc = this.parent;
-            } else {
-                break;
             }
         }
 
-        return handled;
+        // Dispatch to active dialog
+        // - The dialog is responsible for bubbling the event to its parent
+        const instance = dc.activeDialog;
+        if (instance) {
+            const dialog = dc.findDialog(instance.id);
+            if (dialog) {
+                return await dialog.onDialogEvent(dc, event);
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -314,42 +335,11 @@ export class DialogContext {
     }
 
     /**
-     * Queries the active dialog about its desire to process the current utterance.
-     *
-     * @remarks
-     * If there's an active multi-turn dialog on the stack, the dialog will return a processor 
-     * function that can be invoked to continue execution of the multi-turn dialog.
-     *
-     * ```JavaScript
-     * const consultation = await dc.consultDialog();
-     * if (consultation) {
-     *      const result = await consultation.processor(dc);
-     * }
-     * ```
-     */
-    public async consultDialog(): Promise<DialogConsultation|undefined> {
-        // Check for a dialog on the stack
-        const instance: DialogInstance = this.activeDialog;
-        if (instance) {
-            // Lookup dialog
-            const dialog: Dialog<{}> = this.findDialog(instance.id);
-            if (!dialog) {
-                throw new Error(`DialogContext.consultDialog(): Can't consult dialog. A dialog with an id of '${instance.id}' wasn't found.`);
-            }
-
-            // Consult dialog
-            return await dialog.consultDialog(this);
-        } else {
-            return undefined;
-        }
-    }
-
-    /**
      * Continues execution of the active multi-turn dialog, if there is one.
      *
      * @remarks
-     * The [consultDialog()](#consultdialog) method will be called to find the preferred processor
-     * function to invoke. 
+     * The stack will be inspected and the active dialog will be retrieved using `DialogSet.find()`.
+     * The dialog will then have its `Dialog.continueDialog()` method called.
      *
      * ```JavaScript
      * const result = await dc.continueDialog();
@@ -365,11 +355,17 @@ export class DialogContext {
      * - `DialogTurnStatus.empty` if the stack was empty.
      */
     public async continueDialog(): Promise<DialogTurnResult> {
-        // Consult dialog for processor to invoke.
-        const consultation = await this.consultDialog();
-        if (consultation) {
-            // Invoke processor to continue dialog execution.
-            return await consultation.processor(this);
+        // Check for a dialog on the stack
+        const instance: DialogInstance = this.activeDialog;
+        if (instance) {
+            // Lookup dialog
+            const dialog: Dialog<{}> = this.findDialog(instance.id);
+            if (!dialog) {
+                throw new Error(`DialogContext.continue(): Can't continue dialog. A dialog with an id of '${ instance.id }' wasn't found.`);
+            }
+
+            // Continue execution of dialog
+            return await dialog.continueDialog(this);
         } else {
             return { status: DialogTurnStatus.empty };
         }

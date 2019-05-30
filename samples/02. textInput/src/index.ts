@@ -39,7 +39,7 @@ bot.rootDialog = dialogs;
 
 // Handle unknown intents
 dialogs.addRule(new UnknownIntentRule([
-    new SetProperty(`user.name = ''`),
+    new SetProperty('user.name', 'null'),
     new TextInput('user.name', `Hi! what's your name?`),
     new SendActivity(`Hi {user.name}. It's nice to meet you.`)
 ]));

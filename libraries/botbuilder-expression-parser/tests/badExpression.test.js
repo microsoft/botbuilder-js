@@ -56,6 +56,26 @@ const badExpressions =
   "toUpper('hi', 1)", // should have 1 param
   "trim(one)", // the parameter of trim must be string
   "trim('hi', 1)", // should have 1 param
+  "endsWith(hello, one)",// should have string params
+  "endsWith(one, hello)",// should have string params
+  "endsWith(hello)",// should have two params
+  "startsWith(hello, one)",// should have string params
+  "startsWith(one, hello)",// should have string params
+  "startsWith(hello)",// should have two params
+  "countWord(hello, 1)",// should have one param
+  "countWord(one)",// should have string param
+  "countWord(one)",// should have string param
+  "addOrdinal(one + 0.5)",// should have Integer param
+  "addOrdinal(one, two)",// should have one param
+  "guid(one)",// should have no parameters
+  "indexOf(hello)",// should have two parameters
+  "indexOf(hello, world, one)", // should have two parameters
+  "indexOf(hello, one)", // both parameters should be string
+  "indexOf(one, hello)", // both parameters should be string
+  "lastIndexOf(hello)",// should have two parameters
+  "lastIndexOf(hello, world, one)", // should have two parameters
+  "lastIndexOf(hello, one)", // both parameters should be string
+  "lastIndexOf(one, hello)", // both parameters should be string
 
   // Logical comparison functions test
   "greater(one, hello)", // string and integer are not comparable
@@ -79,6 +99,39 @@ const badExpressions =
   "int(1, 1)", // shold have 1 param
   "string(hello, 1)", // shold have 1 param
   "bool(false, 1)", // shold have 1 param
+  "array()", // should have 1 param
+  "array(hello, world)", // should have 1 param
+  "array(false)", // param should be string
+  "Binary()", // should have 1 param
+  "Binary(hello, world)", // should have 1 param
+  "Binary(false)", // param should be string
+  "DataUri()", // should have 1 param
+  "DataUri(hello, world)", // should have 1 param
+  "DataUri(false)", // param should be string
+  "DataUriToBinary()", // should have 1 param
+  "DataUriToBinary(hello, world)", // should have 1 param
+  "DataUriToBinary(false)", // param should be string
+  "DataUriToString()", // should have 1 param
+  "DataUriToString(hello, world)", // should have 1 param
+  "DataUriToString(false)", // param should be string
+  "DecodeUriComponent()", // should have 1 param
+  "DecodeUriComponent(hello, world)", // should have 1 param
+  "DecodeUriComponent(false)", // param should be string
+  "Base64()", // should have 1 param
+  "Base64(hello, world)", // should have 1 param
+  "Base64(false)", // param should be string
+  "Base64ToBinary()", // should have 1 param
+  "Base64ToBinary(hello, world)", // should have 1 param
+  "Base64ToBinary(false)", // param should be string
+  "Base64ToString()", // should have 1 param
+  "Base64ToString(hello, world)", // should have 1 param
+  "Base64ToString(false)", // param should be string
+  "UriComponent()", // should have 1 param
+  "UriComponent(hello, world)", // should have 1 param
+  "UriComponent(false)", // param should be string
+  "Xml()", // should have 1 param
+  "Xml(hello, world)", // should have 1 param
+  "Xml(false)", // param should be string
 
   // Math functions test
   "max(hello, one)", // param should be number
@@ -107,6 +160,11 @@ const badExpressions =
   "rand(5)", // need two params
   "rand(7, 6)", //  minvalue cannot be greater than maxValue
   "sum(items)", // should have number parameters
+  "range(one)", // should have two params
+  "range(one, two, three)", // should have two params
+  "range(one, hello)", // params should be integer
+  "range(hello, one)", // params should be integer
+  "range(one, 0)", // second param should be more than 0
 
   // Date and time function test
   "addDays('errortime', 1)",// error datetime format
@@ -143,12 +201,20 @@ const badExpressions =
   "subtractFromTime(timestamp, 1, 'W')", // error time unit
   "subtractFromTime(timestamp, timestamp, 'W')", // error parameters format
   "subtractFromTime(timestamp, 'yyyy', '1')", // third param should be integer
-  "subtractFromTime(timestamp, 'yyyy', 1, 1)", // should have 3 params
+  "subtractFromTime(timestamp, 'yyyy')", // should have 3 or4 params
   "dateReadBack('errortime', 'errortime')", // error datetime format
   "dateReadBack(timestamp)", // shold have two params
   "dateReadBack(timestamp, 'errortime')", // second param is invalid timestamp format
   "getTimeOfDay('errortime')", // error datetime format
   "getTimeOfDay(timestamp, timestamp)", // should have 1 param
+  "getPastTime(1, 'W')",// error time unit
+  "getPastTime(timestamp, 'W')",// error parameters format
+  "getPastTime('yyyy', '1')",// second param should be integer
+  "getPastTime('yyyy')",// should have 2 or 3 params
+  "getFutureTime(1, 'W')",// error time unit
+  "getFutureTime(timestamp, 'W')",// error parameters format
+  "getFutureTime('yyyy', '1')",// second param should be integer
+  "getFutureTime('yyyy')",// should have 2 or 3 params
 
   // collection functions test
   "sum(items, 'hello')",//should have 1 parameter
@@ -173,6 +239,23 @@ const badExpressions =
   "foreach(items, add(1), item)",// Second paramter of foreach is not an identifier
   "foreach(items, 1, item)", // Second paramter error
   "foreach(items, x, sum(x))", // third paramter error
+  "union(one, two)",// should have collection param
+  "intersection(one, two)",// should have collection param
+  "skip(hello)", // should have two parameters
+  "skip(hello, world, one)", //should have two parameters
+  "skip(hello, one)", // first param should be array
+  "skip(items, hello)", // second param should be integer
+  "skip(items, one + 0.5)", // second param should be integer
+  "take(hello)", // should have two parameters
+  "take(hello, world, one)", //should have two parameters
+  "take(one, two)", // first param should be array or string
+  "take(items, hello)", // second param should be integer
+  "take(hello, one + 0.5)", // second param should be integer
+  "subArray(hello)", // should have 2 or 3 params
+  "subArray(one, two, hello, world)", // should have 2 or 3 params
+  "subArray(hello, two)", // first param should be array
+  "subArray(items, hello)", // second param should be integer
+  "subArray(items, one, hello)", // third param should be integer
 
   // Object manipulation and construction functions test
   "json(1,2)", //should have 1 parameter

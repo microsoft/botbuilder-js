@@ -176,9 +176,9 @@ export class DialogContextState {
             if (pathExpression[0] == '$') {
                 return '$.dialog.result.' + pathExpression.substr(1);
             } else if (pathExpression[0] == '@') {
-                return '$.turn.entities.' + pathExpression.substr(1);
+                return '$.turn.recognized.entities.' + pathExpression.substr(1);
             } else if (pathExpression[0] == '#') {
-                return '$.turn.intents.' + pathExpression.substr(1);
+                return '$.turn.recognized.intents.' + pathExpression.substr(1);
             }
 
             // Add JSONPath selector prefix

@@ -5,3 +5,12 @@
 # template2
 - IF: {foo == 'bar'}
    - ok
+
+# template3
+-CASE: {'bar'}
+   - bar   
+
+# template4 
+- SWITCH:{foo}
+- default:
+   -bar

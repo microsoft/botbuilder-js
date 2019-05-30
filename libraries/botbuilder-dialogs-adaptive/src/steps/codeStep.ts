@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogCommand, DialogContext } from 'botbuilder-dialogs';
-import { PlanningContext } from '../planningContext';
+import { SequenceContext } from '../sequenceContext';
 
-export type CodeStepHandler<T extends DialogContext = PlanningContext> = (context: T, options?: object) => Promise<DialogTurnResult>;
+export type CodeStepHandler<T extends DialogContext = SequenceContext> = (context: T, options?: object) => Promise<DialogTurnResult>;
 
-export class CodeStep<T extends DialogContext = PlanningContext> extends DialogCommand {
+export class CodeStep<T extends DialogContext = SequenceContext> extends DialogCommand {
     private handler: CodeStepHandler<T>;
 
     constructor(handler: CodeStepHandler<T>);

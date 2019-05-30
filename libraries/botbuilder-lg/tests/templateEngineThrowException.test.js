@@ -1,4 +1,4 @@
-const {TemplateEngine, StaticChecker, ReportEntryType } = require('../');
+const { TemplateEngine, StaticChecker, DiagnosticSeverity } = require('../');
 const assert = require('assert');
 
 function GetExampleFilePath(fileName){
@@ -19,13 +19,15 @@ const StaticCheckExceptionData  = [
     "InvalidTemplateName.lg",
     "InvalidTemplateName2.lg",
     "DuplicatedTemplates.lg",
-    "LgTemplateFunctionError.lg"
+    "LgTemplateFunctionError.lg",
+    "SwitchCaseFormatError.lg"
     ];
 
 const StaticCheckWariningData  = [
     "EmptyLGFile.lg",
     "OnlyNoMatchRule.lg",
-    "NoMatchRule.lg"
+    "NoMatchRule.lg",
+    "SwitchCaseWarning.lg"
 ];
 
 const AnalyzerExceptionData   = [
@@ -48,7 +50,7 @@ describe('LGExceptionTest', function () {
             var engine = TemplateEngine.fromFiles(GetExampleFilePath(testDateItem));
             var report = new StaticChecker(engine.templates).Check();
             assert.strictEqual(report.length > 0, true);
-            report.forEach(e => assert.strictEqual(e.Type === ReportEntryType.WARN, true));
+            report.forEach(e => assert.strictEqual(e.Severity === DiagnosticSeverity.Warning, true));
         }
     });
 
