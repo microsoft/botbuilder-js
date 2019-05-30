@@ -8,9 +8,7 @@
 import { DialogConfiguration, Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory } from "botbuilder-dialogs";
 import { ActivityTypes, Activity, InputHints, MessageFactory } from "botbuilder-core";
 import { ActivityProperty } from "../activityProperty";
-import { ExpressionEngine } from 'botbuilder-expression-parser';
-import { Expression } from 'botbuilder-expression';
-import { ExpressionArgument } from '../steps/setProperty';
+import { ExpressionPropertyValue, ExpressionProperty } from "../expressionProperty";
 
 export type PromptType = string|Partial<Activity>;
 
@@ -22,7 +20,7 @@ export interface InputDialogConfiguration extends DialogConfiguration {
     unrecognizedPrompt?: PromptType;
     invalidPrompt?: PromptType;
     property?: string;
-    validations?: string[];
+    validations?: ExpressionPropertyValue<boolean>[];
     maxTurnCount?: number;
     defaultValue?: any;
 }
@@ -56,7 +54,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
 
     public invalidPrompt = new ActivityProperty();
 
-    public readonly validations: Expression[] = [];
+    public readonly validations: ExpressionProperty<boolean>[] = [];
 
     public maxTurnCount?: number;
 
@@ -150,18 +148,8 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         return await this.promptUser(dc, InputState.missing);
     }
 
-    public addValidation(validation: ExpressionArgument<boolean>): this {
-        switch (typeof validation) {
-            case 'string':
-                this.validations.push(engine.parse(validation));
-                break; 
-            case 'function':
-                this.validations.push(Expression.Lambda(validation));
-                break;
-            default:
-                this.validations.push(validation as Expression);
-                break;
-        }
+    public addValidation(validation: ExpressionPropertyValue<boolean>): this {
+        this.validations.push(new ExpressionProperty(validation));
         return this;
     }
 
@@ -180,7 +168,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
                         this.invalidPrompt.value = value;
                         break;
                     case 'validations':
-                        (value as string[]).forEach((exp) => this.validations.push(engine.parse(exp)));
+                        (value as any[]).forEach((exp) => this.validations.push(new ExpressionProperty(exp)));
                         break;
                     default:
                         super.configure({ [key]: value });
@@ -234,7 +222,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         return this.prompt.format(dc);
     } 
 
-        /**
+    /**
      * Helper function to compose an output activity containing a set of choices.
      * @param prompt The prompt to append the users choices to.
      * @param channelId ID of the channel the prompt is being sent to.
@@ -329,8 +317,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
                 // Run through validations
                 const memory = dc.state.toJSON();
                 for (let i = 0; i < this.validations.length; i++) {
-                    const { value, error } = this.validations[i].tryEvaluate(memory);
-                    if (error) { throw error }
+                    const value = this.validations[i].evaluate(this.id, memory);
                     if (!value) {
                         return InputState.invalid;
                     }
@@ -351,5 +338,3 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         return Dialog.EndOfTurn;
     }
 }
-
-const engine = new ExpressionEngine();

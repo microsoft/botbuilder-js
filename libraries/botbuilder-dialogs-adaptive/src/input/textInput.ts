@@ -7,7 +7,6 @@
  */
 import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState, PromptType } from "./inputDialog";
 import { DialogContext } from "botbuilder-dialogs";
-import { Activity } from "botbuilder-core";
 
 export interface TextInputConfiguration extends InputDialogConfiguration {
     outputFormat?: TextOutputFormat;

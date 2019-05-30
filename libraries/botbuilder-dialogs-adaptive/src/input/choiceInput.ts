@@ -7,15 +7,12 @@
  */
 import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState, PromptType } from "./inputDialog";
 import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions, ChoiceFactory, recognizeChoices, ModelResult, FoundChoice } from "botbuilder-dialogs";
-import { ExpressionEngine } from 'botbuilder-expression-parser';
-import { Expression } from 'botbuilder-expression';
-import { ExpressionArgument } from '../steps/setProperty';
 import { Activity } from "botbuilder-core";
+import { ExpressionPropertyValue, ExpressionProperty } from "../expressionProperty";
 
 export interface ChoiceInputConfiguration extends InputDialogConfiguration {
     outputFormat?: ChoiceOutputFormat;
-    choices?: ChoicesArgument;
-    choicesExpression?: string;
+    choices?: ChoiceList|ExpressionPropertyValue<ChoiceList>;
     appendChoices?: boolean;
     defaultLocale?: string;
     style?: ListStyle;
@@ -30,10 +27,10 @@ export enum ChoiceOutputFormat {
 }
 
 export interface ChoiceInputOptions extends InputDialogOptions {
-    choices: ChoicesArgument;
+    choices: ChoiceList;
 }
 
-export type ChoicesArgument = (string|Choice)[];
+export type ChoiceList = (string|Choice)[];
 
 export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
     /**
@@ -52,9 +49,7 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
 
     public outputFormat = ChoiceOutputFormat.value;
 
-    public choices?: ChoicesArgument;
-
-    public choicesExpression?: Expression;
+    public choices: ExpressionProperty<ChoiceList>;
 
     /**
      * The prompts default locale that should be recognized.
@@ -81,34 +76,25 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
     public recognizerOptions?: FindChoicesOptions;
 
     constructor();
-    constructor(property: string, prompt: PromptType, choices: ChoicesArgument|ExpressionArgument<any[]>);
-    constructor(property: string, entityName: string, prompt: PromptType, choices: ChoicesArgument|ExpressionArgument<any[]>);
-    constructor(property?: string, entityName?: string|PromptType, prompt?: PromptType|ChoicesArgument|ExpressionArgument<any[]>, choices?: ChoicesArgument|ExpressionArgument<any[]>) {
+    constructor(property: string, prompt: PromptType, choices: ChoiceList|ExpressionPropertyValue<ChoiceList>);
+    constructor(property: string, entityName: string, prompt: PromptType, choices: ChoiceList|ExpressionPropertyValue<ChoiceList>);
+    constructor(property?: string, entityName?: string|PromptType, prompt?: PromptType|ChoiceList|ExpressionPropertyValue<ChoiceList>, choices?: ChoiceList|ExpressionPropertyValue<ChoiceList>) {
         super();
         if (property) {
             if(choices == undefined) {
-                choices = prompt as ChoicesArgument|ExpressionArgument<any[]>;
+                choices = prompt as ChoiceList|ExpressionPropertyValue<any[]>;
                 prompt = entityName;
                 entityName = undefined;
             }
+
+            // Initialize properties
             this.property = property;
             if (typeof entityName == 'string') { this.entityName = entityName }
             this.prompt.value = prompt as PromptType;
-            if (Array.isArray(choices)) {
-                this.choices = choices;
-            } else {
-                switch (typeof choices) {
-                    case 'string':
-                        this.choicesExpression = engine.parse(choices);
-                        break; 
-                    case 'function':
-                        this.choicesExpression = Expression.Lambda(choices);
-                        break;
-                    default:
-                        this.choicesExpression = choices as Expression;
-                        break;
-                }
-            }
+
+            // If we were passed in a choice list then create a lambda that returns the list.
+            const expression = Array.isArray(choices) ? _ => choices : choices;
+            this.choices = new ExpressionProperty(expression as ExpressionPropertyValue<ChoiceList>);
         }
     }
 
@@ -117,8 +103,10 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
             if (config.hasOwnProperty(key)) {
                 const value = config[key];
                 switch (key) {
-                    case 'choiceExpression':
-                        this.choicesExpression = engine.parse(value);
+                    case 'choice':
+                        // If we were passed in a choice list then create a lambda that returns the list.
+                        const expression = Array.isArray(value) ? _ => value : value;
+                        this.choices = new ExpressionProperty(expression);
                         break;
                     default:
                         super.configure({ [key]: value });
@@ -136,17 +124,15 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
 
     protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): ChoiceInputOptions {
         if (!Array.isArray(options.choices)) {
-            if (this.choicesExpression) {
+            if (this.choices) {
+                // Compute list of choices
                 const memory = dc.state.toJSON();
-                const { value, error } = this.choicesExpression.tryEvaluate(memory);
-                if (error) { throw error; }
+                const value = this.choices.evaluate(this.id, memory);
                 if (Array.isArray(value)) {
                     options.choices = value;
                 } else {
                     throw new Error(`${this.id}: no choices returned by expression.`);
                 }
-            } else if (Array.isArray(this.choices)) {
-                options.choices = this.choices;
             } else {
                 throw new Error(`${this.id}: no choices specified.`);
             }
@@ -209,5 +195,3 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
         return this.appendChoices(prompt, channelId, choices, this.style, choiceOptions);
     }
 }
-
-const engine = new ExpressionEngine();
