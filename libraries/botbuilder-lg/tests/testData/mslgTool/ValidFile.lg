@@ -23,3 +23,12 @@
 You have @{count(alarms)} alarms.
 They are @{lgTemplate('ShowAlarm', alarms[1])}
 ```
+
+# bookTransportTicket
+-SWITCH:{pass}
+- CASE: {'Flight'}
+    - Flight ticket booked
+- CASE: {'Train'}
+    - Train ticket booked
+- DEFAULT:
+   - Shuttle ticket booked

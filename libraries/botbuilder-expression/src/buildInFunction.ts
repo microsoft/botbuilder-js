@@ -8,6 +8,7 @@
  */
 import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
 import * as moment from 'moment';
+import { Builder } from 'xml2js';
 import { Constant } from './constant';
 import { Expression, ReturnType } from './expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDelegate } from './expressionEvaluator';
@@ -594,6 +595,51 @@ export class BuiltInFunctions {
         }
     }
 
+    private static AddOrdinal(num: number): string {
+        let hasResult: boolean = false;
+        let ordinalResult: string = num.toString();
+        if (num > 0) {
+            switch (num % 100) {
+                case 11:
+                case 12:
+                case 13:
+                    ordinalResult += 'th';
+                    hasResult = true;
+                    break;
+                default:
+                    break;
+            }
+
+            if (!hasResult) {
+                switch (num % 10) {
+                    case 1:
+                        ordinalResult += 'st';
+                        break;
+                    case 2:
+                        ordinalResult += 'nd';
+                        break;
+                    case 3:
+                        ordinalResult += 'rd';
+                        break;
+                    default:
+                        ordinalResult += 'th';
+                        break;
+                }
+            }
+        }
+
+        return ordinalResult;
+    }
+
+    private static newGuid() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any) => {
+            const r: number = Math.random() * 16 | 0;
+            const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
+
+            return v.toString(16);
+        });
+    }
+
     private static ValidateAccessor(expression: Expression): void {
         const children: Expression[] = expression.Children;
         if (children.length === 0
@@ -898,6 +944,127 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
+    private static Skip(expression: Expression, state: any): { value: any; error: string } {
+        let result: any;
+        let error: any;
+        let arr: any;
+        ({ value: arr, error } = expression.Children[0].tryEvaluate(state));
+
+        if (error === undefined) {
+            if (arr instanceof Array) {
+                let start: number;
+
+                const startExpr: Expression = expression.Children[1];
+                ({ value: start, error } = startExpr.tryEvaluate(state));
+                if (error === undefined && !Number.isInteger(start)) {
+                    error = `${startExpr} is not an integer.`;
+                } else if (start < 0 || start >= arr.length) {
+                    error = `${startExpr}=${start} which is out of range for ${arr}`;
+                }
+                if (error === undefined) {
+                   result = arr.slice(start);
+                }
+            } else {
+                error = `${expression.Children[0]} is not array.`;
+            }
+        }
+
+        return { value: result, error };
+    }
+
+    private static Take(expression: Expression, state: any): { value: any; error: string } {
+        let result: any;
+        let error: any;
+        let arr: any;
+        ({ value: arr, error } = expression.Children[0].tryEvaluate(state));
+
+        if (error === undefined) {
+            if (arr instanceof Array || typeof arr === 'string') {
+                let start: number;
+
+                const startExpr: Expression = expression.Children[1];
+                ({ value: start, error } = startExpr.tryEvaluate(state));
+                if (error === undefined && !Number.isInteger(start)) {
+                    error = `${startExpr} is not an integer.`;
+                } else if (start < 0 || start >= arr.length) {
+                    error = `${startExpr}=${start} which is out of range for ${arr}`;
+                }
+                if (error === undefined) {
+                    result = arr.slice(0, start);
+                }
+            } else {
+                error = `${expression.Children[0]} is not array or string.`;
+            }
+        }
+
+        return { value: result, error };
+    }
+
+    private static SubArray(expression: Expression, state: any): { value: any; error: string } {
+        let result: any;
+        let error: any;
+        let arr: any;
+        ({ value: arr, error } = expression.Children[0].tryEvaluate(state));
+
+        if (error === undefined) {
+            if (arr instanceof Array) {
+                let start: number;
+
+                const startExpr: Expression = expression.Children[1];
+                ({ value: start, error } = startExpr.tryEvaluate(state));
+                if (error === undefined && !Number.isInteger(start)) {
+                    error = `${startExpr} is not an integer.`;
+                } else if (start < 0 || start >= arr.length) {
+                    error = `${startExpr}=${start} which is out of range for ${arr}`;
+                }
+                if (error === undefined) {
+                    let end: number;
+                    if (expression.Children.length === 2) {
+                        end = arr.length;
+                    } else {
+                        const endExpr: Expression = expression.Children[2];
+                        ({ value: end, error } = endExpr.tryEvaluate(state));
+                        if (error === undefined && !Number.isInteger(end)) {
+                            error = `${endExpr} is not an integer`;
+                        } else if (end < 0 || end > arr.length) {
+                            error = `${endExpr}=${end} which is out of range for ${arr}`;
+                        }
+                    }
+                    if (error === undefined) {
+                        result = arr.slice(start, end);
+                    }
+                }
+            } else {
+                error = `${expression.Children[0]} is not array.`;
+            }
+        }
+
+        return { value: result, error };
+    }
+
+    private static ToBinary(stringToConvert: string): string {
+        let result: string = '';
+        for (const element of stringToConvert) {
+            const binaryElement: string = element.charCodeAt(0).toString(2);
+            result += new Array(9 - binaryElement.length).join('0').concat(binaryElement);
+        }
+
+        return result;
+    }
+
+    private static ToXml(contentToConvert: any): { value: any; error: string } {
+        let result: string;
+        let error: string;
+        try {
+            const jsonObj: any = typeof contentToConvert === 'string' ? JSON.parse(contentToConvert) : contentToConvert;
+            result = new Builder().buildObject(jsonObj);
+        } catch {
+            error = 'Invalid json';
+        }
+
+        return { value: result, error };
+    }
+
     // tslint:disable-next-line: max-func-body-length
     private static BuildFunctionLookup(): Map<string, ExpressionEvaluator> {
         // tslint:disable-next-line: no-unnecessary-local-variable
@@ -970,6 +1137,72 @@ export class BuiltInFunctions {
                     BuiltInFunctions.VerifyContainer),
                 ReturnType.Number,
                 BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.Range,
+                BuiltInFunctions.ApplyWithError(
+                    (args: ReadonlyArray<any>) => {
+                        let error: string;
+                        if (args[1] <= 0) {
+                            error = 'Second paramter must be more than zero';
+                        }
+
+                        const result: number[] = [...Array(args[1]).keys()].map((u: number) => u + Number(args[0]));
+
+                        return { value: result, error };
+                    },
+                    BuiltInFunctions.VerifyInteger
+                ),
+                ReturnType.Object,
+                BuiltInFunctions.ValidateBinaryNumber
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.Union,
+                BuiltInFunctions.Apply(
+                    (args: ReadonlyArray<any>) => {
+                        let result: any[] = [];
+                        for (const arg of args) {
+                            result = result.concat(arg);
+                        }
+
+                        return Array.from(new Set(result));
+                    },
+                    BuiltInFunctions.VerifyList),
+                ReturnType.Object,
+                BuiltInFunctions.ValidateAtLeastOne
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.Intersection,
+                BuiltInFunctions.Apply(
+                    (args: ReadonlyArray<any>) => {
+                        let result: any[] = args[0];
+                        for (const arg of args) {
+                            result = result.filter((e: any) => arg.indexOf(e) > -1);
+                        }
+
+                        return Array.from(new Set(result));
+                    },
+                    BuiltInFunctions.VerifyList),
+                ReturnType.Object,
+                BuiltInFunctions.ValidateAtLeastOne
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.Skip,
+                BuiltInFunctions.Skip,
+                ReturnType.Object,
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [], ReturnType.Object, ReturnType.Number),
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.Take,
+                BuiltInFunctions.Take,
+                ReturnType.Object,
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [], ReturnType.Object, ReturnType.Number),
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.SubArray,
+                BuiltInFunctions.SubArray,
+                ReturnType.Object,
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.Number], ReturnType.Object, ReturnType.Number),
+            ),
             BuiltInFunctions.Comparison(
                 ExpressionType.LessThan,
                 (args: ReadonlyArray<any>) => args[0] < args[1], BuiltInFunctions.ValidateBinaryNumberOrString, BuiltInFunctions.VerifyNumberOrString),
@@ -1068,6 +1301,48 @@ export class BuiltInFunctions {
             BuiltInFunctions.StringTransform(ExpressionType.ToLower, (args: ReadonlyArray<any>) => String(args[0]).toLowerCase()),
             BuiltInFunctions.StringTransform(ExpressionType.ToUpper, (args: ReadonlyArray<any>) => String(args[0]).toUpperCase()),
             BuiltInFunctions.StringTransform(ExpressionType.Trim, (args: ReadonlyArray<any>) => String(args[0]).trim()),
+            new ExpressionEvaluator(
+                ExpressionType.StartsWith,
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].startsWith(args[1]), BuiltInFunctions.VerifyString),
+                ReturnType.Boolean,
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String),
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.EndsWith,
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].endsWith(args[1]), BuiltInFunctions.VerifyString),
+                ReturnType.Boolean,
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String),
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.CountWord,
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].trim().split(/\s+/).length, BuiltInFunctions.VerifyString),
+                ReturnType.Number,
+                BuiltInFunctions.ValidateUnaryString
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.AddOrdinal,
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => this.AddOrdinal(args[0]), BuiltInFunctions.VerifyInteger),
+                ReturnType.String,
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 1, 1, ReturnType.Number),
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.Guid,
+                BuiltInFunctions.Apply(() => BuiltInFunctions.newGuid()),
+                ReturnType.String,
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 0, 0),
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.IndexOf,
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].indexOf(args[1]), BuiltInFunctions.VerifyString),
+                ReturnType.Number,
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String),
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.LastIndexOf,
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].lastIndexOf(args[1]), BuiltInFunctions.VerifyString),
+                ReturnType.Number,
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String),
+            ),
             new ExpressionEvaluator(
                 ExpressionType.Join,
                 (expression: Expression, state: any): { value: any; error: string } => {
@@ -1224,6 +1499,60 @@ export class BuiltInFunctions {
                 ReturnType.String,
                 (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.String)),
             new ExpressionEvaluator(
+                ExpressionType.GetFutureTime,
+                (expr: Expression, state: any): { value: any; error: string } => {
+                    let value: any;
+                    let error: any;
+                    let args: ReadonlyArray<any>;
+                    ({ args, error } = BuiltInFunctions.EvaluateChildren(expr, state));
+                    if (error === undefined) {
+                        if (Number.isInteger(args[0]) && typeof args[1] === 'string') {
+                            const format: string = (args.length === 3 ? BuiltInFunctions.TimestampFormatter(args[2]) : BuiltInFunctions.DefaultDateTimeFormat);
+                            const { duration, tsStr } = BuiltInFunctions.TimeUnitTransformer(args[0], args[1]);
+                            if (tsStr === undefined) {
+                                error = `${args[2]} is not a valid time unit.`;
+                            } else {
+                                const dur: any = duration;
+                                ({ value, error } = BuiltInFunctions.ParseTimestamp(new Date().toISOString(), dt => dt.add(dur, tsStr).format(format)));
+                            }
+                        } else {
+                            error = `${expr} can't evaluate.`;
+                        }
+                    }
+
+                    return { value, error };
+                },
+                ReturnType.String,
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.Number, ReturnType.String)
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.GetPastTime,
+                (expr: Expression, state: any): { value: any; error: string } => {
+                    let value: any;
+                    let error: any;
+                    let args: ReadonlyArray<any>;
+                    ({ args, error } = BuiltInFunctions.EvaluateChildren(expr, state));
+                    if (error === undefined) {
+                        if (Number.isInteger(args[0]) && typeof args[1] === 'string') {
+                            const format: string = (args.length === 3 ? BuiltInFunctions.TimestampFormatter(args[2]) : BuiltInFunctions.DefaultDateTimeFormat);
+                            const { duration, tsStr } = BuiltInFunctions.TimeUnitTransformer(args[0], args[1]);
+                            if (tsStr === undefined) {
+                                error = `${args[2]} is not a valid time unit.`;
+                            } else {
+                                const dur: any = duration;
+                                ({ value, error } = BuiltInFunctions.ParseTimestamp(new Date().toISOString(), dt => dt.subtract(dur, tsStr).format(format)));
+                            }
+                        } else {
+                            error = `${expr} can't evaluate.`;
+                        }
+                    }
+
+                    return { value, error };
+                },
+                ReturnType.String,
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.Number, ReturnType.String)
+            ),
+            new ExpressionEvaluator(
                 ExpressionType.Float,
                 BuiltInFunctions.ApplyWithError(
                     (args: ReadonlyArray<any>) => {
@@ -1293,6 +1622,62 @@ export class BuiltInFunctions {
                 ReturnType.Number,
                 BuiltInFunctions.ValidateBinaryNumber),
             new ExpressionEvaluator(ExpressionType.CreateArray, BuiltInFunctions.Apply((args: ReadonlyArray<any>) => Array.from(args)), ReturnType.Object),
+            new ExpressionEvaluator(
+                ExpressionType.Array,
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => [args[0]], BuiltInFunctions.VerifyString),
+                ReturnType.Object,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.Binary,
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => this.ToBinary(args[0]), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.DataUri,
+                BuiltInFunctions.Apply(
+                    (args: Readonly<any>) => 'data:text/plain;charset=utf-8;base64,'.concat(Buffer.from(args[0]).toString('base64')), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.DataUriToBinary,
+                BuiltInFunctions.Apply((args: Readonly<any>) => this.ToBinary(args[0]), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.DataUriToString,
+                BuiltInFunctions.Apply((args: Readonly<any>) => Buffer.from(args[0].slice(args[0].indexOf(',') + 1), 'base64').toString(), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.DecodeUriComponent,
+                BuiltInFunctions.Apply((args: Readonly<any>) => decodeURIComponent(args[0]), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.Base64,
+                BuiltInFunctions.Apply((args: Readonly<any>) => Buffer.from(args[0]).toString('base64'), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.Base64ToBinary,
+                BuiltInFunctions.Apply((args: Readonly<any>) => this.ToBinary(args[0]), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.Base64ToString,
+                BuiltInFunctions.Apply((args: Readonly<any>) => Buffer.from(args[0], 'base64').toString(), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.UriComponent,
+                BuiltInFunctions.Apply((args: Readonly<any>) => encodeURIComponent(args[0]), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.Xml,
+                BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.ToXml(args[0]), BuiltInFunctions.VerifyString),
+                ReturnType.String,
+                BuiltInFunctions.ValidateUnary),
             new ExpressionEvaluator(
                 ExpressionType.First,
                 BuiltInFunctions.Apply(

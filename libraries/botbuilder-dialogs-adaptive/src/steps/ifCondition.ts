@@ -106,7 +106,7 @@ export class IfCondition extends DialogCommand {
                     options: options
                 } as StepState
             });
-            await sequence.queueChanges({ changeType: StepChangeType.InsertSteps, steps: steps });
+            await sequence.queueChanges({ changeType: StepChangeType.insertSteps, steps: steps });
         } 
 
         return await sequence.endDialog();

@@ -23,6 +23,6 @@ export class UnknownIntentRule extends EventRule {
      * @param steps (Optional) list of steps to update the plan with when triggered.
      */
     constructor(steps?: Dialog[]) {
-        super(AdaptiveEventNames.UnknownIntent, steps, false);
+        super(AdaptiveEventNames.unknownIntent, steps, false);
     }
 }
