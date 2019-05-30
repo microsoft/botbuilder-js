@@ -11,19 +11,19 @@ import {
 } from 'botbuilder-core';
 import { 
     Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent,
-    DialogContext, DialogSet, StateMap, DialogConsultation, DialogConsultationDesire, DialogConfiguration, DialogContextVisibleState
+    DialogContext, StateMap, DialogConfiguration, DialogContainer
 } from 'botbuilder-dialogs';
 import { 
-    RuleDialogEventNames, PlanningContext, RuleDialogState as AdaptiveDialogState, PlanChangeList, PlanChangeType 
-} from './planningContext';
-import { PlanningRule } from './rules';
+    AdaptiveEventNames, SequenceContext, StepChangeList, StepChangeType, AdaptiveDialogState 
+} from './sequenceContext';
+import { Rule } from './rules';
 import { Recognizer } from './recognizers';
 
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     /**
      * (Optional) planning rules to evaluate for each conversational turn.
      */
-    rules?: PlanningRule[];
+    rules?: Rule[];
 
     /**
      * (Optional) recognizer used to analyze any message utterances.
@@ -36,8 +36,9 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     steps?: Dialog[];
 }
 
-export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
-    private readonly dialogs: DialogSet = new DialogSet();
+export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
+    private readonly changeKey = Symbol('changes');
+
     private installedDependencies = false;
 
     /**
@@ -53,7 +54,7 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     /**
      * Planning rules to evaluate for each conversational turn.
      */
-    public readonly rules: PlanningRule[] = [];
+    public readonly rules: Rule[] = [];
 
     /**
      * Steps to initialize the dialogs plan with.
@@ -76,18 +77,9 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
         this.dialogs.telemetryClient = client;
     }
 
-    public addDialog(...dialogs: Dialog[]): this {
-        dialogs.forEach((dialog) => this.dialogs.add(dialog));
+    public addRule(rule: Rule): this {
+        this.rules.push(rule);
         return this;
-    }
-
-    public addRule(...rules: PlanningRule[]): this {
-        Array.prototype.push.apply(this.rules, rules);
-        return this;
-    }
-
-    public findDialog(dialogId: string): Dialog | undefined {
-        return this.dialogs.find(dialogId);
     }
 
     protected onInstallDependencies(): void {
@@ -109,81 +101,48 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     }
    
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        const state: AdaptiveDialogState<O> = dc.activeDialog.state;
-
-        try {
-            // Install dependencies on first access
-            if (!this.installedDependencies) {
-                this.installedDependencies = true;
-                this.onInstallDependencies();
-            }
-            
-            // Persist options to dialog state
-            state.options = options || {} as O;
-
-            // Initialize 'result' with any initial value
-            if (state.options.hasOwnProperty('value')) {
-                const value = options['value'];
-                const clone = Array.isArray(value) || typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : value;
-                state.result = clone;
-            }
-
-            // Create a new planning context
-            const planning = PlanningContext.create(dc, state);
-
-            // Evaluate rules and queue up plan changes
-            await this.evaluateRules(planning, { name: RuleDialogEventNames.beginDialog, value: options, bubble: false });
-            
-            // Run plan
-            return await this.continuePlan(planning);
-        } catch (err) {
-            return await dc.cancelAllDialogs('error', { message: err.message, stack: err.stack });
+        // Install dependencies on first access
+        if (!this.installedDependencies) {
+            this.installedDependencies = true;
+            this.onInstallDependencies();
         }
+        
+        // Persist options to dialog state
+        const state: AdaptiveDialogState<O> = dc.activeDialog.state;
+        state.options = options || {} as O;
+
+        // Initialize 'result' with any initial value
+        if (state.options.hasOwnProperty('value')) {
+            const value = options['value'];
+            const clone = Array.isArray(value) || typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : value;
+            state.result = clone;
+        }
+
+        // Evaluate rules and queue up step changes
+        const event: DialogEvent = { name: AdaptiveEventNames.beginDialog, value: options, bubble: false };
+        await this.onDialogEvent(dc, event);
+
+        // Continue step execution
+        return await this.continueSteps(dc);
     }
 
-    public async consultDialog(dc: DialogContext): Promise<DialogConsultation> {
-        try {
-            // Create a new planning context
-            const state: AdaptiveDialogState<O> = dc.activeDialog.state;
-            const planning = PlanningContext.create(dc, state);
-
-            // First consult plan
-            let consultation = await this.consultPlan(planning);
-            if (!consultation || consultation.desire != DialogConsultationDesire.shouldProcess) {
-                // Next evaluate rules
-                const changesQueued = await this.evaluateRules(planning, { name: RuleDialogEventNames.consultDialog, value: undefined, bubble: false });
-                if (changesQueued && (!consultation || planning.changes[0].desire == DialogConsultationDesire.shouldProcess)) {
-                    consultation = {
-                        desire: planning.changes[0].desire,
-                        processor: (dc) => this.continuePlan(planning)
-                    };
-                }
-
-                // Fallback to just continuing the plan
-                if (!consultation) {
-                    consultation = {
-                        desire: DialogConsultationDesire.canProcess,
-                        processor: (dc) => this.continuePlan(planning)
-                    };
-                }
-            }
-
-            return consultation;
-        } catch (err) {
-            return {
-                desire: DialogConsultationDesire.shouldProcess,
-                processor: (dc) => dc.cancelAllDialogs('error', { message: err.message, stack: err.stack })
-            };
-        }
+    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+        // Continue step execution
+        return await this.continueSteps(dc);
     }
 
-    public async onDialogEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
-        // Create a new planning context
-        const state: AdaptiveDialogState<O> = dc.activeDialog.state;
-        const planning = PlanningContext.create(dc, state);
+    protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
+        const sequence = this.toSequenceContext(dc);
 
-        // Evaluate rules and queue up any potential changes 
-        return await this.evaluateRules(planning, event);
+        // Process event and queue up any potential interruptions 
+        return await this.processEvent(sequence, event, true);
+    }
+
+    protected async onPostBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
+        const sequence = this.toSequenceContext(dc);
+
+        // Process event and queue up any potential interruptions 
+        return await this.processEvent(sequence, event, false);
     }
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
@@ -200,11 +159,21 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Forward to current sequence step
         const state = instance.state as AdaptiveDialogState<O>;
-        const plan = state.plan;
-        if (plan && plan.steps.length > 0) {
+        if (state.steps && state.steps.length > 0) {
             // We need to mockup a DialogContext so that we can call repromptDialog() for the active step 
-            const stepDC: DialogContext = new DialogContext(this.dialogs, context, plan.steps[0], new StateMap({}), new StateMap({}));
+            const stepDC: DialogContext = new DialogContext(this.dialogs, context, state.steps[0], new StateMap({}), new StateMap({}));
             await stepDC.repromptDialog();
+        }
+    }
+
+    public createChildContext(dc: DialogContext): DialogContext | undefined {
+        const state: AdaptiveDialogState<O> = dc.activeDialog.state;
+        if (Array.isArray(state.steps) && state.steps.length > 0) {
+            const step = new SequenceContext(this.dialogs, dc, state.steps[0], state.steps, this.changeKey);
+            step.parent = dc;
+            return step;
+        } else {
+            return undefined;
         }
     }
 
@@ -213,80 +182,92 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
     }
  
     //---------------------------------------------------------------------------------------------
-    // Rule Processing
+    // Event Processing
     //---------------------------------------------------------------------------------------------
 
-    protected async evaluateRules(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
-        let handled = false;
-        switch (event.name) {
-            case RuleDialogEventNames.beginDialog:
-                // Emit event
-                handled = await this.queueFirstMatch(planning, event);
-                if (!handled) {
-                    if (this.steps.length > 0) {
-                        // Initialize plan with steps
-                        const changes: PlanChangeList = {
-                            desire: DialogConsultationDesire.shouldProcess,
-                            changeType: PlanChangeType.doSteps,
-                            steps: []
-                        };
-                        this.steps.forEach((step) => {
-                            changes.steps.push({
-                                dialogId: step.id,
-                                dialogStack: []
-                            });
+    protected async processEvent(sequence: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<boolean> {
+        // Look for triggered rule
+        let handled = await this.queueFirstMatch(sequence, event, preBubble);
+        if (handled) {
+            return true;
+        }
+
+        // Perform default processing
+        if (preBubble) {
+            switch (event.name) {
+            case AdaptiveEventNames.beginDialog:
+                if (this.steps.length > 0) {
+                    // Initialize plan with steps
+                    const changes: StepChangeList = {
+                        changeType: StepChangeType.insertSteps,
+                        steps: []
+                    };
+                    this.steps.forEach((step) => {
+                        changes.steps.push({
+                            dialogId: step.id,
+                            dialogStack: []
                         });
-                        planning.queueChanges(changes);
-                        handled = true;
-                    } else {
-                        // Dispatch activityReceived event
-                        handled = await this.evaluateRules(planning, { name: RuleDialogEventNames.activityReceived, value: undefined, bubble: false });
+                    });
+                    sequence.queueChanges(changes);
+                    handled = true;
+                } else {
+                    // Emit leading ActivityReceived event 
+                    handled = await this.processEvent(sequence, { name: AdaptiveEventNames.activityReceived, bubble: false }, true);
+                }
+                break;
+            case AdaptiveEventNames.activityReceived:
+                const activity = sequence.context.activity;
+                if (activity.type === ActivityTypes.Message) {
+                    // Recognize utterance
+                    const recognized = await this.onRecognize(sequence.context);
+                    sequence.state.setValue('turn.recognized', recognized);
+
+                    // Emit leading RecognizedIntent event
+                    handled = await this.processEvent(sequence, { name: AdaptiveEventNames.recognizedIntent, value: recognized, bubble: false }, true);
+                } else if (activity.type === ActivityTypes.Event) {
+                    // Emit leading edge named event that was received
+                    handled = await this.processEvent(sequence, { name: activity.name, value: activity.value, bubble: false }, true);
+                } else if (activity.type === ActivityTypes.ConversationUpdate && Array.isArray(activity.membersAdded)) {
+                    // Filter members added
+                    const membersAdded = activity.membersAdded.filter((value) => value.id !== activity.recipient.id);
+                    if (membersAdded.length > 0) {
+                        // Emit leading ConversationMembersAdded event
+                        sequence.state.setValue('turn.membersAdded', membersAdded);
+                        handled = await this.processEvent(sequence, { name: AdaptiveEventNames.conversationMembersAdded, value: membersAdded, bubble: false}, true);
                     }
                 }
                 break;
-            case RuleDialogEventNames.consultDialog:
-                // Emit event
-                handled = await this.queueFirstMatch(planning, event);
-                if (!handled) {
-                    // Dispatch activityReceived event
-                    handled = await this.evaluateRules(planning, { name: RuleDialogEventNames.activityReceived, value: undefined, bubble: false });
-                }
-                break;
-            case RuleDialogEventNames.activityReceived:
-                // Emit event
-                handled = await this.queueFirstMatch(planning, event);
-                if (!handled) {
-                    const activity = planning.context.activity;
-                    if (activity.type === ActivityTypes.Message) {
-                        // Recognize utterance
-                        const recognized = await this.onRecognize(planning.context);
-    
-                        // Dispatch utteranceRecognized event
-                        handled = await this.evaluateRules(planning, { name: RuleDialogEventNames.recognizedIntent, value: recognized, bubble: false });
-                    } else if (activity.type === ActivityTypes.Event) {
-                        // Dispatch named event that was received
-                        handled = await this.evaluateRules(planning, { name: activity.name, value: activity.value, bubble: false });
-                    }
-                }
-                break;
-            case RuleDialogEventNames.recognizedIntent:
-                // Emit utteranceRecognized event
-                handled = await this.queueBestMatches(planning, event);
-                if (!handled) {
-                    // Dispatch fallback event
-                    handled = await this.evaluateRules(planning, { name: RuleDialogEventNames.unknownIntent, value: event.value, bubble: false });
-                }
-                break;
-            case RuleDialogEventNames.unknownIntent:
-                if (!planning.hasPlans) {
-                    // Emit fallback event
-                    handled = await this.queueFirstMatch(planning, event);
-                }
-                break;
-            default:
-                // Emit event received
-                handled = await this.queueFirstMatch(planning, event);
             }
+        } else {
+            switch (event.name) {
+            case AdaptiveEventNames.beginDialog:
+                // Emit trailing ActivityReceived event 
+                handled = await this.processEvent(sequence, { name: AdaptiveEventNames.activityReceived, bubble: false }, false);
+                break;
+            case AdaptiveEventNames.activityReceived:
+                const activity = sequence.context.activity;
+                const membersAdded = sequence.state.getValue('turn.membersAdded');
+                if (activity.type === ActivityTypes.Message) {
+                    // Clear any recognizer results
+                    sequence.state.setValue('turn.recognized', undefined);
+
+                    // Do we have an empty sequence?
+                    if (sequence.steps.length == 0) {
+                        // Emit trailing UnknownIntent event
+                        handled = await this.processEvent(sequence, { name: AdaptiveEventNames.unknownIntent, bubble: false }, false);
+                    } else {
+                        handled = false;
+                    }
+                } else if (activity.type === ActivityTypes.Event) {
+                    // Emit trailing edge of named event that was received
+                    handled = await this.processEvent(sequence, { name: activity.name, value: activity.value, bubble: false }, false);
+                } else if (activity.type === ActivityTypes.ConversationUpdate && Array.isArray(membersAdded)) {
+                    // Emit trailing ConversationMembersAdded event
+                    handled = await this.processEvent(sequence, { name: AdaptiveEventNames.conversationMembersAdded, value: membersAdded, bubble: false}, false);
+                }
+                break;
+            }
+        }
 
         return handled;
     }
@@ -344,13 +325,11 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
         }
     }
 
-    private async queueFirstMatch(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
-        const memory = this.getMemoryForEvent(planning, event);
+    private async queueFirstMatch(sequence: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<boolean> {
         for (let i = 0; i < this.rules.length; i++) {
-            const changes = await this.rules[i].evaluate(planning, event, memory);
+            const changes = await this.rules[i].evaluate(sequence, event, preBubble);
             if (changes && changes.length > 0) {
-                changes[0].turnState = memory.turn;
-                planning.queueChanges(changes[0]);
+                sequence.queueChanges(changes[0]);
                 return true;
             }
         }
@@ -358,223 +337,77 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
         return false;
     }
 
-    private async queueBestMatches(planning: PlanningContext, event: DialogEvent): Promise<boolean> {
-        // Get list of proposed changes
-        const allChanges: PlanChangeList[] = [];
-        const memory = this.getMemoryForEvent(planning, event);
-        for (let i = 0; i < this.rules.length; i++) {
-            const changes = await this.rules[i].evaluate(planning, event, memory);
-            if (changes) { 
-                changes.forEach((change) => {
-                    change.turnState = memory.turn;
-                    allChanges.push(change);
-                });
-            } 
-        }
-
-        // Find changes with most coverage
-        const appliedChanges: { index: number; change: PlanChangeList; }[] = [];
-        if (allChanges.length > 0) {
-            while (true) {
-                // Find the change that has the most intents and entities covered.
-                const index = this.findBestChange(allChanges);
-                if (index >= 0) {
-                    // Add change to apply list
-                    const change = allChanges[index];
-                    appliedChanges.push({ index: index, change: change });
-
-                    // Remove applied changes
-                    allChanges.splice(index, 1);
-
-                    // Remove changes with overlapping intents.
-                    for (let i = allChanges.length - 1; i >= 0; i--) {
-                        if (this.intentsOverlap(change, allChanges[i])) {
-                            allChanges.splice(i, 1);
-                        }
-                    }
-                } else {
-                    // Exit loop
-                    break;
-                }
-            }
-        }
-
-        // Queue changes
-        if (appliedChanges.length > 0) {
-            const sorted = appliedChanges.sort((a, b) => a.index - b.index);
-            if (sorted.length > 1) {
-                // Look for the first change that starts a new plan 
-                for (let i = 0; i < sorted.length; i++) {
-                    const changeType = sorted[i].change.changeType;
-                    if (changeType == PlanChangeType.newPlan || changeType == PlanChangeType.replacePlan) {
-                        // Queue change and remove from list
-                        planning.queueChanges(sorted[i].change);
-                        sorted.splice(i, 1);
-                        break;
-                    }
-                    
-                }
-
-                // Queue additional changes
-                // - Additional newPlan or replacePlan steps will be changed to a `doStepsLater`
-                //   changeType so that they're appended to teh new plan.
-                for (let i = 0; i < sorted.length; i++) {
-                    const change = sorted[i].change;
-                    switch (change.changeType) {
-                        case PlanChangeType.doSteps:
-                        case PlanChangeType.doStepsBeforeTags:
-                        case PlanChangeType.doStepsLater:
-                            planning.queueChanges(change);
-                            break;
-                        case PlanChangeType.newPlan:
-                        case PlanChangeType.replacePlan:
-                            change.changeType = PlanChangeType.doStepsLater;
-                            planning.queueChanges(change);
-                            break;
-                    }
-                }
-            } else {
-                // Just queue the change
-                planning.queueChanges(sorted[0].change);
-            }
-            
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private findBestChange(changes: PlanChangeList[]): number {
-        let top: PlanChangeList;
-        let topIndex = -1;
-        for (let i = 0; i < changes.length; i++) {
-            const change = changes[i];
-            let better = false;
-            if (!top) {
-                better = true;
-            } else {
-                const topIntents = top.intentsMatched || [];
-                const intents = change.intentsMatched || [];
-                if (intents.length > topIntents.length) {
-                    better = true;
-                } else if (intents.length == topIntents.length) {
-                    const topEntities = top.entitiesMatched || [];
-                    const entities = change.entitiesMatched || [];
-                    better = entities.length > topEntities.length;
-                }
-            }
-
-            if (better) {
-                top = change;
-                topIndex = i;
-            }
-        }
-        return topIndex;
-    }
-
-    private intentsOverlap(c1: PlanChangeList, c2: PlanChangeList): boolean {
-        const i1 = c1.intentsMatched || [];
-        const i2 = c2.intentsMatched || [];
-        if (i2.length > 0 && i1.length > 0) {
-            for (let i = 0; i < i2.length; i++) {
-                if (i1.indexOf(i2[i]) >= 0) {
-                    return true;
-                }
-            }
-        } else if (i2.length == i1.length) {
-            return true;
-        }
-        return false;
-    }
-
     //---------------------------------------------------------------------------------------------
-    // Plan Execution
+    // Step Execution
     //---------------------------------------------------------------------------------------------
 
-    protected async consultPlan(planning: PlanningContext): Promise<DialogConsultation|undefined> {
+    protected async continueSteps(dc: DialogContext): Promise<DialogTurnResult> {
         // Apply any queued up changes
-        await planning.applyChanges();
+        const sequence = this.toSequenceContext(dc);
+        await sequence.applyChanges();
 
         // Get a unique instance ID for the current stack entry.
         // - We need to do this because things like cancellation can cause us to be removed
         //   from the stack and we want to detect this so we can stop processing steps.
-        const instanceId = this.getUniqueInstanceId(planning);
+        const instanceId = this.getUniqueInstanceId(sequence);
 
-        // Delegate consultation to any active planning step
-        const step = PlanningContext.createForStep(planning, this.dialogs);
+        // Create context for active step
+        const step = this.createChildContext(sequence) as SequenceContext;
         if (step) {
-            const consultation = await step.consultDialog();
-            return {
-                desire: consultation ? consultation.desire : DialogConsultationDesire.canProcess,
-                processor: async (dc) => {
-                    // Continue current step
-                    console.log(`running step: ${step.plan.steps[0].dialogId}`);
-                    let result = consultation ? await consultation.processor(step) : { status: DialogTurnStatus.empty };
-                    if (result.status == DialogTurnStatus.empty && !result.parentEnded) {
-                        const nextStep = step.plan.steps[0];
-                        result = await step.beginDialog(nextStep.dialogId, nextStep.options);
-                    }
+            // Continue current step
+            console.log(`running step: ${step.steps[0].dialogId}`);
+            let result = await step.continueDialog();
 
-                    // Process step results
-                    if (!result.parentEnded && this.getUniqueInstanceId(planning) === instanceId) {
-                        // End the current step
-                        if (result.status != DialogTurnStatus.waiting) {
-                            // This can potentially trigger new changes being queued up
-                            await planning.endStep();
-                        }
-
-                        // Do we have any queued up changes?
-                        if (planning.changes.length > 0) {
-                            // Apply changes and continue execution
-                            return await this.continuePlan(planning);
-                        }
-
-                        // Is step waiting?
-                        if (result.status === DialogTurnStatus.waiting) {
-                            return result;
-                        }
-
-                        // Continue plan execution
-                        const plan = planning.plan;
-                        if (plan && plan.steps.length > 0 && plan.steps[0].dialogStack && plan.steps[0].dialogStack.length > 0) {
-                            // Tell step to re-prompt
-                            await this.repromptDialog(dc.context, dc.activeDialog);
-                            return { status: DialogTurnStatus.waiting };
-                        } else {
-                            return await this.continuePlan(planning);
-                        }
-                    } else {
-                        // Remove parent ended flag and return result.
-                        if (result.parentEnded) { delete result.parentEnded };
-                        return result;
-                    }
-                }
+            // Start step if not continued
+            if (result.status == DialogTurnStatus.empty && this.getUniqueInstanceId(sequence) == instanceId) {
+                const nextStep = step.steps[0];
+                result = await step.beginDialog(nextStep.dialogId, nextStep.options);
             }
+
+            // Increment turns step count
+            // - This helps dialogs being resumed from an interruption to determine if they
+            //   should re-prompt or not.
+            const stepCount = sequence.state.getValue('turn.stepCount');
+            sequence.state.setValue('turn.stepCount', typeof stepCount == 'number' ? stepCount + 1 : 1);
+
+            // Is the step waiting for input or were we cancelled?
+            if (result.status == DialogTurnStatus.waiting || this.getUniqueInstanceId(sequence) != instanceId) {
+                return result;
+            }
+
+            // End current step
+            await this.endCurrentStep(sequence);
+
+            // Execute next step
+            // - We call continueDialog() on the root dialog to ensure any changes queued up
+            //   by the previous steps are applied.
+            let root: DialogContext = sequence;
+            while (root.parent) {
+                root = root.parent;
+            }
+            return await root.continueDialog();
         } else {
-            return undefined;
+            return await this.onEndOfSteps(sequence);
         }
     }
 
-    protected async continuePlan(planning: PlanningContext): Promise<DialogTurnResult> {
-        // Consult plan and execute returned processor
-        try {
-            const consultation = await this.consultPlan(planning);
-            if (consultation) {
-                return await consultation.processor(planning);
-            } else {
-                return await this.onEndOfPlan(planning);
+    protected async endCurrentStep(sequence: SequenceContext): Promise<boolean> {
+        if (sequence.steps.length > 0) {
+            sequence.steps.shift();
+            if (sequence.steps.length == 0) {
+                return await sequence.emitEvent(AdaptiveEventNames.sequenceEnded, undefined, false);
             }
-        } catch (err) {
-            return await planning.cancelAllDialogs('error', { message: err.message, stack: err.stack });
         }
+
+        return false;
     }
 
-    protected async onEndOfPlan(planning: PlanningContext): Promise<DialogTurnResult> {
+    protected async onEndOfSteps(sequence: SequenceContext): Promise<DialogTurnResult> {
         // End dialog and return result
-        if (planning.activeDialog) {
-            if (this.shouldEnd(planning)) {
-                const state: AdaptiveDialogState<O> = planning.activeDialog.state;
-                return await planning.endDialog(state.result);
+        if (sequence.activeDialog) {
+            if (this.shouldEnd(sequence)) {
+                const state: AdaptiveDialogState<O> = sequence.activeDialog.state;
+                return await sequence.endDialog(state.result);
             } else {
                 return Dialog.EndOfTurn;
             }
@@ -587,21 +420,19 @@ export class AdaptiveDialog<O extends object = {}> extends Dialog<O> {
         return dc.stack.length > 0 ? `${dc.stack.length}:${dc.activeDialog.id}` : '';
     }
 
-    private getMemoryForEvent(dc: DialogContext, event: DialogEvent): DialogContextVisibleState {
-        // Add event value fields to turn state
-        const memory = dc.state.toJSON();
-        if (typeof event.value == 'object') {
-            memory.turn = Object.assign({}, memory.turn, event.value);
-        }
-
-        return memory;
-    }
-
     private shouldEnd(dc: DialogContext): boolean {
         if (this.autoEndDialog == undefined) {
             return (dc.parent != null);
         } else {
             return this.autoEndDialog;
         }
+    }
+
+    private toSequenceContext(dc: DialogContext): SequenceContext<O> {
+        const state: AdaptiveDialogState<O> = dc.activeDialog.state;
+        if (!Array.isArray(state.steps)) { state.steps = [] }
+        const sequence = new SequenceContext(dc.dialogs, dc, { dialogStack: dc.stack }, state.steps, this.changeKey);
+        sequence.parent = dc.parent;
+        return sequence;
     }
 }

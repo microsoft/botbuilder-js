@@ -11,6 +11,7 @@ export * from './componentDialog';
 export * from './configurable';
 export * from './dialog';
 export * from './dialogCommand';
+export * from './dialogContainer';
 export * from './dialogContext';
 export * from './dialogContextState';
 export * from './dialogManager';

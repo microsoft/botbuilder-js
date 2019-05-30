@@ -6,9 +6,11 @@
  * Licensed under the MIT License.
  */
 import { TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogConsultation, DialogConsultationDesire } from './dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 import { DialogSet } from './dialogSet';
+import { DialogContainer } from './dialogContainer';
+import { StateMap } from './stateMap';
 
 const PERSISTED_DIALOG_STATE: string = 'dialogs';
 
@@ -68,7 +70,7 @@ const PERSISTED_DIALOG_STATE: string = 'dialogs';
  * ```
  * @param O (Optional) options that can be passed into the `DialogContext.beginDialog()` method.
  */
-export class ComponentDialog<O extends object = {}> extends Dialog<O> {
+export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * ID of the child dialog that should be started anytime the component is started.
@@ -77,7 +79,6 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
      * This defaults to the ID of the first child dialog added using [addDialog()](#adddialog).
      */
     protected initialDialogId: string;
-    private readonly dialogs: DialogSet = new DialogSet(null);
 
     protected onComputeID(): string {
         return `component[${this.bindingPath()}]`;
@@ -85,10 +86,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
 
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Start the inner dialog.
-        const dialogState: DialogState = { dialogStack: [] };
-        outerDC.activeDialog.state[PERSISTED_DIALOG_STATE] = dialogState;
-        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState);
-        innerDC.parent = outerDC;
+        const innerDC = this.createChildContext(outerDC);
         const turnResult: DialogTurnResult<any> = await this.onBeginDialog(innerDC, options);
 
         // Check for end of inner dialog
@@ -101,21 +99,18 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
         }
     }
 
-    public async consultDialog(outerDC: DialogContext): Promise<DialogConsultation> {
-        // Consult the inner dialog.
-        const dialogState: any = outerDC.activeDialog.state[PERSISTED_DIALOG_STATE];
-        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState);
-        innerDC.parent = outerDC;
-        const innerConsultation = await this.onConsultDialog(innerDC);
+    public async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
+        // Continue execution of inner dialog.
+        const innerDC = this.createChildContext(outerDC);
+        const turnResult: DialogTurnResult<any> = await this.onContinueDialog(innerDC);
 
-        // Call onContinueDialog() with inner consultation
-        // - The default implementation of onContinueDialog() will simply invoke the inner processor 
-        //   that was returned. 
-        // - This lets legacy components that have added custom interruption logic to continue to 
-        //   operate as designed.
-        return {
-            desire: innerConsultation ? innerConsultation.desire : DialogConsultationDesire.canProcess,
-            processor: (outerDC) => this.onContinueDialog(innerDC, innerConsultation)
+        // Check for end of inner dialog
+        if (turnResult.status !== DialogTurnStatus.waiting) {
+            // Return result to calling dialog
+            return await this.endComponent(outerDC, turnResult.result);
+        } else {
+            // Just signal end of turn
+            return Dialog.EndOfTurn;
         }
     }
 
@@ -132,8 +127,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
 
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Forward to inner dialogs
-        const dialogState: any = instance.state[PERSISTED_DIALOG_STATE];
-        const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
+        const innerDC = this.createInnerDC(context, instance);
         await innerDC.repromptDialog();
 
         // Notify component.
@@ -143,13 +137,18 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // Forward cancel to inner dialogs
         if (reason === DialogReason.cancelCalled) {
-            const dialogState: any = instance.state[PERSISTED_DIALOG_STATE];
-            const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
+            const innerDC = this.createInnerDC(context, instance);
             await innerDC.cancelAllDialogs();
         }
 
         // Notify component
         await this.onEndDialog(context, instance, reason);
+    }
+
+    public createChildContext(dc: DialogContext): DialogContext | undefined {
+        const childDC = this.createInnerDC(dc.context, dc.activeDialog, dc.state.user, dc.state.conversation);
+        childDC.parent = dc;
+        return childDC.stack.length > 0 ? childDC : undefined;
     }
 
     /**
@@ -161,19 +160,10 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
      * @param dialog The child dialog or prompt to add.
      */
     public addDialog(dialog: Dialog): this {
-        this.dialogs.add(dialog);
+        super.addDialog(dialog);
         if (this.initialDialogId === undefined) { this.initialDialogId = dialog.id; }
 
         return this;
-    }
-
-    /**
-     * Finds a child dialog that was previously added to the component using
-     * [addDialog()](#adddialog).
-     * @param dialogId ID of the dialog or prompt to lookup.
-     */
-    public findDialog(dialogId: string): Dialog | undefined {
-        return this.dialogs.find(dialogId);
     }
 
     /**
@@ -191,31 +181,15 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     }
 
     /**
-     * Called anytime a multi-turn component is being consulted about its desire to process
-     * a given utterance.
+     * Called anytime a multi-turn component receives additional activities.
      *
      * @remarks
      * SHOULD be overridden by components that wish to perform custom interruption logic. The
-     * default implementation calls `innerDC.consultDialog()` and passes through any consultations
-     * with a desire of `DialogConsultationDesire.shouldProcess`.  For backwards compatibility
-     * reasons, consultations with a desire of `DialogConsultationDesire.canProcess` will have their
-     * processor function replaced with one that calls [onContinueDialog()][#oncontinuedialog].
+     * default implementation calls `innerDC.continueDialog()`.
      * @param innerDC Dialog context for the components internal `DialogSet`.
      */
-    protected async onConsultDialog(innerDC: DialogContext): Promise<DialogConsultation|undefined> {
-        return await innerDC.consultDialog();
-    } 
-
-    /**
-     * Legacy dialog continuation override.
-     *
-     * @remarks
-     * Derived classes should override [onConsultDialog()](#onconsultdialog) instead.
-     * @param innerDC Dialog context for the components internal `DialogSet`.
-     * @param consultation (Optional) consultation from [consultDialog()](#consultDialog) call. Invoking the processor on this object is more efficient the calling `innerDC.continueDialog()`.
-     */
-    protected onContinueDialog(innerDC: DialogContext, consultation?: DialogConsultation): Promise<DialogTurnResult> {
-        return consultation ? consultation.processor(innerDC) : innerDC.continueDialog();
+    protected onContinueDialog(innerDC: DialogContext): Promise<DialogTurnResult> {
+        return innerDC.continueDialog();
     }
 
     /**
@@ -272,5 +246,12 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
      */
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
+    }
+
+    private createInnerDC(context: TurnContext, instance: DialogInstance, userState?: StateMap, conversationState?: StateMap): DialogContext {
+        const state: DialogState = instance.state[PERSISTED_DIALOG_STATE];
+        if (!Array.isArray(state.dialogStack)) { state.dialogStack = [] }
+        const innerDC: DialogContext = new DialogContext(this.dialogs, context, state, userState || new StateMap({}), conversationState || new StateMap({}));
+        return innerDC;
     }
 }

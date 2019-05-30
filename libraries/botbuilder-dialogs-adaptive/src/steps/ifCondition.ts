@@ -8,8 +8,8 @@
 import { DialogCommand, DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
 import { ExpressionEngine } from 'botbuilder-expression-parser';
 import { Expression } from 'botbuilder-expression';
-import { PlanningContext, PlanStepState, PlanChangeType } from '../planningContext';
 import { ExpressionDelegate } from './setProperty';
+import { SequenceContext, StepState, StepChangeType } from '../sequenceContext';
 
 export interface IfConditionConfiguration extends DialogConfiguration {
     /**
@@ -96,9 +96,9 @@ export class IfCondition extends DialogCommand {
         return this;
     }
 
-    protected async onRunCommand(planning: PlanningContext, options: object): Promise<DialogTurnResult> {
+    protected async onRunCommand(planning: SequenceContext, options: object): Promise<DialogTurnResult> {
         // Ensure planning context and condition
-        if (!(planning instanceof PlanningContext)) { throw new Error(`${this.id}: should only be used within a planning or sequence dialog.`) }
+        if (!(planning instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within a planning or sequence dialog.`) }
         if (!this.condition) { throw new Error(`${this.id}: no conditional expression specified.`) }
 
         // Evaluate expression
@@ -118,9 +118,9 @@ export class IfCondition extends DialogCommand {
                     dialogStack: [],
                     dialogId: step.id,
                     options: options
-                } as PlanStepState
+                } as StepState
             });
-            await planning.queueChanges({ changeType: PlanChangeType.doSteps, steps: steps });
+            await planning.queueChanges({ changeType: StepChangeType.insertSteps, steps: steps });
         } 
 
         return await planning.endDialog();
