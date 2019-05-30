@@ -18,7 +18,7 @@
         },
         "linuxFxVersion": {
             "type": "string",
-            "defaultValue": "php|7.0"
+            "defaultValue": "NODE|10.14"
         },
         "location": {
             "type": "string",
@@ -132,7 +132,7 @@
                 "phpVersion": "",
                 "pythonVersion": "",
                 "nodeVersion": "",
-                "linuxFxVersion": "DOTNETCORE|2.2",
+                "linuxFxVersion": "[parameters('linuxFxVersion')]",
                 "requestTracingEnabled": false,
                 "remoteDebuggingEnabled": false,
                 "httpLoggingEnabled": false,
