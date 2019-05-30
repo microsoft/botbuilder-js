@@ -11,6 +11,8 @@ export * from './codeStep';
 export * from './deleteProperty';
 export * from './editArray';
 export * from './editSteps';
+export * from './forEach';
+export * from './forEachPage';
 export * from './emitEvent';
 export * from './endDialog';
 export * from './endTurn';
