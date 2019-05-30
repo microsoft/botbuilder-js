@@ -222,6 +222,12 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         return this.prompt.format(dc);
     } 
 
+    protected getDefaultInput(dc: DialogContext): any {
+        const text = dc.context.activity.text;
+        return typeof text == 'string' && text.length > 0 ? text : undefined;
+    }
+
+
     /**
      * Helper function to compose an output activity containing a set of choices.
      * @param prompt The prompt to append the users choices to.
@@ -303,8 +309,8 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
             const turnCount = dc.state.getValue(InputDialog.TURN_COUNT_PROPERTY);
             if (turnCount == 0) {
                 input = dc.state.getValue(InputDialog.INITIAL_VALUE_PROPERTY);
-            } else if (activity.text) {
-                input = activity.text;
+            } else {
+                input = this.getDefaultInput(dc);
             }
         }
 
