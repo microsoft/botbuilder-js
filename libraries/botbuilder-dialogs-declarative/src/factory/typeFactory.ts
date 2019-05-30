@@ -31,6 +31,16 @@ export class DefaultTypeBuilder implements ITypeBuilder {
     }
 }
 
+export class ConfigurableTypeBuilder implements ITypeBuilder {
+
+    constructor(private factory: (config: object) => object) {}
+
+    public build(config: object) : object {
+        let built = this.factory(config);
+        let configurable = <Configurable>built;
+        return configurable.configure(config);
+    }
+}
  /**
   * Declarative type factory
   */

@@ -7,4 +7,5 @@
  */
 
 export * from './typeLoader';
-export * from './typeFactory';
+export * from './factory/typeFactory';
+export * from './resources/resourceExplorer';

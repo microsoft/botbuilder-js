@@ -7,22 +7,23 @@
  */
 
 import { Configurable } from "botbuilder-dialogs";
-import { TypeFactory } from "./typeFactory";
+import { TypeFactory } from "./factory/typeFactory";
+import { IResourceProvider } from ".";
 
 export class TypeLoader {
 
-    constructor(private factory?: TypeFactory) { 
-        if (!factory) {
-            factory = new TypeFactory();
+    constructor(private factory?: TypeFactory, private resourceProvider?: IResourceProvider) { 
+        if (!this.factory) {
+            this.factory = new TypeFactory();
         }
     }
 
-    public load(json: string): object {
+    public async load(json: string): Promise<object> {
         const jsonObj = typeof json === 'string' ? JSON.parse(json) : json;
-        return TypeLoader.loadObjectTree(this.factory, jsonObj);
+        return await this.loadObjectTree(jsonObj);
     }
 
-    private static loadObjectTree(factory: TypeFactory, jsonObj: object) : object {
+    private async loadObjectTree(jsonObj: object) : Promise<object> {
         if (!jsonObj) {
             return null;
         }
@@ -30,7 +31,7 @@ export class TypeLoader {
         // Recursively load object tree leaves to root, calling the factory to build objects from json tokens
         if (jsonObj['$type']) {
             const type = jsonObj['$type'];
-            const obj = factory.build(type, jsonObj);
+            const obj = this.factory.build(type, jsonObj);
 
             if(!obj) {
                 return obj;
@@ -42,20 +43,30 @@ export class TypeLoader {
                     if (Array.isArray(setting)) {
                         if (Array.isArray(obj[key])) {
                             // Apply as an array update
-                            setting.forEach((item) => obj[key].push(this.loadObjectTree(factory, item)));
+                            setting.forEach(async (item) => {
+                                let loadedItem = await this.loadObjectTree(item);
+                                obj[key].push(loadedItem);
+                            });
                         } else {
                             obj[key] = setting;
                         }
                     } else if (typeof setting == 'object' && setting.hasOwnProperty('$type')) {
-                            obj[key] = this.loadObjectTree(factory, setting);
-                    } else if (setting !== undefined) {
+                        obj[key] = await this.loadObjectTree(setting);
+                    } else if (setting && typeof setting == 'string' && this.resourceProvider) {
+                        let resource = await this.resourceProvider.getResource(`${setting}.dialog`)
+                        if (resource) {
+                            const text = await resource.readText();
+                            obj[key] = JSON.parse(text);
+                        } else {
+                            obj[key] = setting;
+                        }
+                    } else {
                         obj[key] = setting; 
                     }
                 }
             }
             return obj;
         }
-
         return null;
     }
 }
