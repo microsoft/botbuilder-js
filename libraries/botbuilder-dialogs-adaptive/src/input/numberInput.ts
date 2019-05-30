@@ -9,7 +9,6 @@ import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState, 
 import { DialogContext } from "botbuilder-dialogs";
 import * as Recognizers from '@microsoft/recognizers-text-number';
 import { Activity } from "botbuilder-core";
-import { ModelResult } from "@microsoft/recognizers-text";
 
 export interface NumberInputConfiguration extends InputDialogConfiguration {
     outputFormat?: NumberOutputFormat;
@@ -63,7 +62,7 @@ export class NumberInput extends InputDialog<InputDialogOptions> {
             const locale = activity.locale || this.defaultLocale || 'en-us';
 
             // Recognize input
-            const results: ModelResult[] = Recognizers.recognizeNumber(input, locale);
+            const results: any = Recognizers.recognizeNumber(input, locale);
             if (results.length > 0 && results[0].resolution) {
                 input = parseFloat(results[0].resolution.value);
             } else {
