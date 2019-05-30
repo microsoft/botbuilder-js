@@ -50,7 +50,7 @@ export class TextInput extends InputDialog<InputDialogOptions> {
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
         // Check for consultation
         if (consultation) {
-            // Text inputs by default allow .
+            // Text inputs by default allow other dialogs to interrupt them.
             // - It doesn't matter what we return here as long as it isn't "InputState.valid".
             return InputState.unrecognized;
         }
