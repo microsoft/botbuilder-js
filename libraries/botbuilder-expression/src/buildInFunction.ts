@@ -328,6 +328,25 @@ export class BuiltInFunctions {
     }
 
     /**
+     * Verify a timestamp string is valid timestamp format.
+     * @param value timestamp string to check.
+     * @returns Error or undefined if invalid.
+     */
+    public static VerifyTimestamp(value: any): string {
+        let error: string;
+        try {
+            const parsedData: Date = new Date(value);
+            if (Number.isNaN(parsedData.getTime())) {
+                error = `${value} is not a valid datetime string.`;
+            }
+        } catch {
+            error = `${value} is not a valid datetime string.`;
+        }
+
+        return error;
+    }
+
+    /**
      * Verify a timestamp string is valid ISO timestamp format.
      * @param value timestamp string to check.
      * @returns Error or undefined if invalid.
@@ -1428,9 +1447,16 @@ export class BuiltInFunctions {
             new ExpressionEvaluator(
                 ExpressionType.FormatDateTime,
                 BuiltInFunctions.ApplyWithError(
-                    (args: ReadonlyArray<any>) =>
-                        BuiltInFunctions.ParseTimestamp(args[0], (dt: moment.Moment) =>
-                            args.length === 2 ? dt.format(BuiltInFunctions.TimestampFormatter(args[1])) : dt.toISOString()),
+                    (args: ReadonlyArray<any>) => {
+                        const error: string = BuiltInFunctions.VerifyTimestamp(args[0]);
+                        const dateString: string = new Date(args[0]).toISOString();
+                        let value: any;
+                        if (error === undefined) {
+                            value = args.length === 2 ? moment(dateString).format(BuiltInFunctions.TimestampFormatter(args[1])) : dateString;
+                        }
+
+                        return { value, error };
+                    },
                     BuiltInFunctions.VerifyString),
                 ReturnType.String,
                 (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.String)),

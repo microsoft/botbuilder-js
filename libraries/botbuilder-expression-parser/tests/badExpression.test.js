@@ -207,7 +207,6 @@ const badExpressions =
   "year(noISOTimestamp)", // not ISO datetime format
   "formatDateTime('errortime')", // error datetime format
   "formatDateTime(timestamp, 'yyyy', 1)", // should have 2 or 3 params
-  "formatDateTime(noISOTimestamp)", // not ISO datetime format
   "subtractFromTime('errortime', 1, 'yyyy')", // error datetime format
   "subtractFromTime(timestamp, 1, 'W')", // error time unit
   "subtractFromTime(timestamp, timestamp, 'W')", // error parameters format
