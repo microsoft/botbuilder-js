@@ -3,8 +3,9 @@
 
 import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
+import { SwitchCaseBodyContext } from "./LGFileParser";
 import { NormalBodyContext } from "./LGFileParser";
-import { ConditionalBodyContext } from "./LGFileParser";
+import { IfElseBodyContext } from "./LGFileParser";
 import { FileContext } from "./LGFileParser";
 import { ParagraphContext } from "./LGFileParser";
 import { NewlineContext } from "./LGFileParser";
@@ -15,9 +16,12 @@ import { ParametersContext } from "./LGFileParser";
 import { TemplateBodyContext } from "./LGFileParser";
 import { NormalTemplateBodyContext } from "./LGFileParser";
 import { NormalTemplateStringContext } from "./LGFileParser";
-import { ConditionalTemplateBodyContext } from "./LGFileParser";
+import { IfElseTemplateBodyContext } from "./LGFileParser";
 import { IfConditionRuleContext } from "./LGFileParser";
 import { IfConditionContext } from "./LGFileParser";
+import { SwitchCaseTemplateBodyContext } from "./LGFileParser";
+import { SwitchCaseRuleContext } from "./LGFileParser";
+import { SwitchCaseStatContext } from "./LGFileParser";
 
 
 /**
@@ -29,6 +33,14 @@ import { IfConditionContext } from "./LGFileParser";
  */
 export interface LGFileParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	/**
+	 * Visit a parse tree produced by the `switchCaseBody`
+	 * labeled alternative in `LGFileParser.templateBody`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitSwitchCaseBody?: (ctx: SwitchCaseBodyContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by the `normalBody`
 	 * labeled alternative in `LGFileParser.templateBody`.
 	 * @param ctx the parse tree
@@ -37,12 +49,12 @@ export interface LGFileParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitNormalBody?: (ctx: NormalBodyContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `conditionalBody`
+	 * Visit a parse tree produced by the `ifElseBody`
 	 * labeled alternative in `LGFileParser.templateBody`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitConditionalBody?: (ctx: ConditionalBodyContext) => Result;
+	visitIfElseBody?: (ctx: IfElseBodyContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `LGFileParser.file`.
@@ -115,11 +127,11 @@ export interface LGFileParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitNormalTemplateString?: (ctx: NormalTemplateStringContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by `LGFileParser.conditionalTemplateBody`.
+	 * Visit a parse tree produced by `LGFileParser.ifElseTemplateBody`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitConditionalTemplateBody?: (ctx: ConditionalTemplateBodyContext) => Result;
+	visitIfElseTemplateBody?: (ctx: IfElseTemplateBodyContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `LGFileParser.ifConditionRule`.
@@ -134,5 +146,26 @@ export interface LGFileParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitIfCondition?: (ctx: IfConditionContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `LGFileParser.switchCaseTemplateBody`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitSwitchCaseTemplateBody?: (ctx: SwitchCaseTemplateBodyContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `LGFileParser.switchCaseRule`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitSwitchCaseRule?: (ctx: SwitchCaseRuleContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `LGFileParser.switchCaseStat`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitSwitchCaseStat?: (ctx: SwitchCaseStatContext) => Result;
 }
 

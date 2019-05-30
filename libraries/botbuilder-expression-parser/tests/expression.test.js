@@ -1,6 +1,7 @@
-const { ExpressionEngine} =  require('../');
+const { ExpressionEngine } = require('../');
 const { Extensions } = require('botbuilder-expression');
 const assert = require('assert');
+const moment = require('moment');
 
 const one = ["one"];
 const oneTwo = ["one", "two"];
@@ -55,7 +56,7 @@ const dataSource = [
   ["'string'&'builder'", "stringbuilder"],
   ["\"string\"&\"builder\"", "stringbuilder"],
   ["one > 0.5 && two < 2.5", true, oneTwo],
-  ["notThere > 4", false], 
+  ["notThere > 4", false],
   ["float(5.5) && float(0.0)", true],
   ["hello && \"hello\"", true],
   ["items || ((2 + 2) <= (4 - 1))", true], // true || false
@@ -74,13 +75,13 @@ const dataSource = [
   ["length('hello')", 5],
   ["length(\"hello\")", 5],
   ["length(concat(hello,world))", 10],
-  ["count('hello')",5],
-  ["count(\"hello\")",5],
-  ["count(concat(hello,world))",10],
+  ["count('hello')", 5],
+  ["count(\"hello\")", 5],
+  ["count(concat(hello,world))", 10],
   ["replace('hello', 'l', 'k')", "hekko"],
   ["replace('hello', 'L', 'k')", "hello"],
   ["replaceIgnoreCase('hello', 'L', 'k')", "hekko"],
-  ["split('hello','e')", ["h","llo"]],
+  ["split('hello','e')", ["h", "llo"]],
   ["substring('hello', 0, 5)", "hello"],
   ["substring('hello', 0, 3)", "hel"],
   ["substring('hello', 3)", "lo"],
@@ -91,6 +92,29 @@ const dataSource = [
   ["trim(' hello ')", "hello"],
   ["trim(' hello')", "hello"],
   ["trim('hello')", "hello"],
+  ["endsWith('hello','o')", true],
+  ["endsWith('hello','a')", false],
+  ["endsWith(hello,'o')", true],
+  ["endsWith(hello,'a')", false],
+  ["startsWith('hello','h')", true],
+  ["startsWith('hello','a')", false],
+  ["countWord(hello)", 1],
+  ["countWord(concat(hello, ' ', world))", 2],
+  ["addOrdinal(11)", "11th"],
+  ["addOrdinal(11 + 1)", "12th"],
+  ["addOrdinal(11 + 2)", "13th"],
+  ["addOrdinal(11 + 10)", "21st"],
+  ["addOrdinal(11 + 11)", "22nd"],
+  ["addOrdinal(11 + 12)", "23rd"],
+  ["addOrdinal(11 + 13)", "24th"],
+  ["addOrdinal(-1)", "-1"],//original string value
+  ["count(guid())", 36],
+  ["guid().indexOf('-')", 8],
+  ["indexOf(guid(), '-')", 8],
+  ["indexOf(hello, '-')", -1],
+  ["guid().lastIndexOf('-')", 23],
+  ["lastIndexOf(guid(), '-')", 23],
+  ["lastIndexOf(hello, '-')", -1],
 
   // Logical comparison functions tests
   ["and(1 == 1, 1 < 2, 1 > 2)", false],
@@ -173,6 +197,17 @@ const dataSource = [
   ["bool('hi')", true],
   ["createArray('h', 'e', 'l', 'l', 'o')", ["h", "e", "l", "l", "o"]],
   ["createArray(1, bool(0), string(bool(1)), float('10'))", [1, true, "true", 10.0]],
+  ["array(hello)", ['hello']],
+  ["binary(hello)", '0110100001100101011011000110110001101111'],
+  ["dataUri(hello)", 'data:text/plain;charset=utf-8;base64,aGVsbG8='],
+  ["dataUriToBinary(dataUri(hello))", '011001000110000101110100011000010011101001110100011001010111100001110100001011110111000001101100011000010110100101101110001110110110001101101000011000010111001001110011011001010111010000111101011101010111010001100110001011010011100000111011011000100110000101110011011001010011011000110100001011000110000101000111010101100111001101100010010001110011100000111101'],
+  ["dataUriToString(dataUri(hello))", 'hello'],
+  ["decodeUriComponent('http%3A%2F%2Fcontoso.com')", 'http://contoso.com'],
+  ["base64(hello)", 'aGVsbG8='],
+  ["base64ToBinary(base64(hello))", '0110000101000111010101100111001101100010010001110011100000111101'],
+  ["base64ToString(base64(hello))", 'hello'],
+  ["uriComponent('http://contoso.com')", 'http%3A%2F%2Fcontoso.com'],
+  ["xml('{\"person\": {\"name\": \"Sophia Owen\", \"city\": \"Seattle\"}}')", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<person>\n  <name>Sophia Owen</name>\n  <city>Seattle</city>\n</person>'],
 
   // Math functions tests
   ["add(1, 2, 3)", 6],
@@ -198,7 +233,7 @@ const dataSource = [
   ["mod(5,2)", 1],
   ["rand(1, 2)", 1],
   ["rand(2, 3)", 2],
-  
+
   // Date and time function tests
   // Init dateTime: 2018-03-15T13:00:00Z
   ["addDays(timestamp, 1)", "2018-03-16T13:00:00.0000000Z"],
@@ -233,7 +268,15 @@ const dataSource = [
   ["getTimeOfDay('2018-03-15T18:00:00Z')", "evening"],
   ["getTimeOfDay('2018-03-15T22:00:00Z')", "evening"],
   ["getTimeOfDay('2018-03-15T23:00:00Z')", "night"],
-  
+  ["getPastTime(1, 'Year', 'MM-dd-yy')", moment(new Date().toISOString()).subtract(1, 'years').format('MM-DD-YY')],
+  ["getPastTime(1, 'Month', 'MM-dd-yy')", moment(new Date().toISOString()).subtract(1, 'months').format('MM-DD-YY')],
+  ["getPastTime(1, 'Week', 'MM-dd-yy')", moment(new Date().toISOString()).subtract(7, 'days').format('MM-DD-YY')],
+  ["getPastTime(1, 'Day', 'MM-dd-yy')", moment(new Date().toISOString()).subtract(1, 'days').format('MM-DD-YY')],
+  ["getFutureTime(1, 'Year', 'MM-dd-yy')", moment(new Date().toISOString()).add(1, 'years').format('MM-DD-YY')],
+  ["getFutureTime(1, 'Month', 'MM-dd-yy')", moment(new Date().toISOString()).add(1, 'months').format('MM-DD-YY')],
+  ["getFutureTime(1, 'Week', 'MM-dd-yy')", moment(new Date().toISOString()).add(7, 'days').format('MM-DD-YY')],
+  ["getFutureTime(1, 'Day', 'MM-dd-yy')", moment(new Date().toISOString()).add(1, 'days').format('MM-DD-YY')],
+
   // Collection functions tests
   ["sum(createArray(1, 2))", 3],
   ["sum(createArray(one, two, 3))", 6.0],
@@ -265,6 +308,17 @@ const dataSource = [
   ["last('hello')", "o"],
   ["last(createArray(0, 1, 2))", 2],
   ["last(1)", undefined],
+  ["count(union(createArray('a', 'b')))", 2],
+  ["count(union(createArray('a', 'b'), createArray('b', 'c'), createArray('b', 'd')))", 4],
+  ["count(intersection(createArray('a', 'b')))", 2],
+  ["count(intersection(createArray('a', 'b'), createArray('b', 'c'), createArray('b', 'd')))", 1],
+  ["skip(createArray('a', 'b', 'c', 'd'), 2)", ['c', 'd']],
+  ["take(hello, two)", 'he'],
+  ["take(createArray('a', 'b', 'c', 'd'), one)", ['a']],
+  ["subArray(createArray('a', 'b', 'c', 'd'), 1, 3)", ['b', 'c']],
+  ["subArray(createArray('a', 'b', 'c', 'd'), 1)", ['b', 'c', 'd']],
+  ["range(1, 4)", [1, 2, 3, 4]],
+  ["range(-1, 3)", [-1, 0, 1]],
 
   // Object manipulation and construction functions tests
   ["string(addProperty(json('{\"key1\":\"value1\"}'), 'key2','value2'))", "{\"key1\":\"value1\",\"key2\":\"value2\"}"],
@@ -279,105 +333,105 @@ const dataSource = [
   ["exists(#BookFlight)", true, ["turn.intents.BookFlight"]],
   ["$title", "Dialog Title", ["dialog.result.title"]],
   ["$subTitle", "Dialog Sub Title", ["dialog.result.subTitle"]],
- 
+
   // Memory access tests
-  ["getProperty(bag, concat('na','me'))","mybag"],
+  ["getProperty(bag, concat('na','me'))", "mybag"],
   ["items[2]", "two", ["items[2]"]],
   ["bag.list[bag.index - 2]", "blue", ["bag.list", "bag.index"]],
-  ["items[nestedItems[1].x]","two", ["items", "nestedItems[1].x"]],
-  ["bag['name']","mybag"],
-  ["bag[substring(concat('na','me','more'), 0, length('name'))]","mybag"],
+  ["items[nestedItems[1].x]", "two", ["items", "nestedItems[1].x"]],
+  ["bag['name']", "mybag"],
+  ["bag[substring(concat('na','me','more'), 0, length('name'))]", "mybag"],
   ["getProperty(undefined, 'p')", undefined],
-  ["(getProperty(undefined, 'p'))[1]",undefined]
+  ["(getProperty(undefined, 'p'))[1]", undefined]
 ];
 
 const scope = {
-  one : 1.0,
-  two : 2.0,
-  hello : "hello",
-  world : "world",
-  istrue : true,
-  bag : 
+  one: 1.0,
+  two: 2.0,
+  hello: "hello",
+  world: "world",
+  istrue: true,
+  bag:
   {
-      three : 3.0,
-      set : 
-      {
-          four : 4.0,
-      },
-      list : ["red", "blue" ],
-      index : 3,
-      name: "mybag"
+    three: 3.0,
+    set:
+    {
+      four: 4.0,
+    },
+    list: ["red", "blue"],
+    index: 3,
+    name: "mybag"
   },
-  items : ["zero", "one", "two" ],
-  nestedItems : 
-  [
-    {x : 1},
-    {x : 2},
-    {x : 3},
-  ],
-  timestamp : "2018-03-15T13:00:00Z",
-  turn : 
+  items: ["zero", "one", "two"],
+  nestedItems:
+    [
+      { x: 1 },
+      { x: 2 },
+      { x: 3 },
+    ],
+  timestamp: "2018-03-15T13:00:00Z",
+  turn:
   {
-      entities : 
-      {
-          city : "Seattle"
-      },
-      intents : 
-      {
-          BookFlight : "BookFlight"
-      }
+    entities:
+    {
+      city: "Seattle"
+    },
+    intents:
+    {
+      BookFlight: "BookFlight"
+    }
   },
-  dialog : 
+  dialog:
   {
-      result : 
-      {
-          title : "Dialog Title",
-          subTitle : "Dialog Sub Title"
-      }
+    result:
+    {
+      title: "Dialog Title",
+      subTitle: "Dialog Sub Title"
+    }
   },
 };
 
 describe('expression functional test', () => {
   it('should get right evaluate result', () => {
     for (const data of dataSource) {
-        const input = data[0].toString();
-        var parsed = new ExpressionEngine().parse(input);
-        assert(parsed !== undefined);
-        var {value: actual, error} = parsed.tryEvaluate(scope);
-        assert(error === undefined, `input: ${input}, Has error: ${error}`);
+      const input = data[0].toString();
+      var parsed = new ExpressionEngine().parse(input);
+      assert(parsed !== undefined);
+      var { value: actual, error } = parsed.tryEvaluate(scope);
+      assert(error === undefined, `input: ${input}, Has error: ${error}`);
 
-        const expected = data[1];
+      const expected = data[1];
 
-        //Assert Object Equals
-        if(actual instanceof Array && expected instanceof Array) {
-          const [isSuccess, errorMessage] = IsArraySame(actual, expected);
-          if(!isSuccess) {
-            assert.fail(errorMessage);
-          }
-        } else if (typeof expected === 'number'){
-            assert(parseFloat(actual) === expected, `actual is: ${actual} for case ${input}`)
+      //Assert Object Equals
+      if (actual instanceof Array && expected instanceof Array) {
+        const [isSuccess, errorMessage] = IsArraySame(actual, expected);
+        if (!isSuccess) {
+          assert.fail(errorMessage);
         }
-        else {
-          assert(actual === expected, `actual is: ${actual} for case ${input}`);
+      } else if (typeof expected === 'number') {
+        assert(parseFloat(actual) === expected, `actual is: ${actual} for case ${input}`)
+      }
+      else {
+        assert(actual === expected, `actual is: ${actual} for case ${input}`);
+      }
+
+      //Assert ExpectedRefs
+      if (data.length === 3) {
+        const actualRefs = Extensions.References(parsed);
+        const [isSuccess, errorMessage] = IsArraySame(actualRefs.sort(), data[2].sort());
+        if (!isSuccess) {
+          assert.fail(errorMessage);
         }
-      
-        //Assert ExpectedRefs
-        if(data.length === 3) {
-          const actualRefs = Extensions.References(parsed);
-          const [isSuccess, errorMessage] = IsArraySame(actualRefs.sort(), data[2].sort());
-          if(!isSuccess) {
-            assert.fail(errorMessage);
-          }
-        }
+      }
     }
   });
 });
 
 var IsArraySame = (actual, expected) => { //return [isSuccess, errorMessage]
-  if(actual.length !== expected.length) return [false,`expected length: ${expected.length}, actual length: ${actual.length}`];
+  if (actual.length !== expected.length) return [false, `expected length: ${expected.length}, actual length: ${actual.length}`];
 
-  for(let i = 0; i < actual.length; i++) {
-    if(actual[i] !== expected[i]) return [false, `actual is: ${actual[i]}, expected is: ${expected[i]}`];
+  for (let i = 0; i < actual.length; i++) {
+    if (actual[i] !== expected[i]) return [false, `actual is: ${actual[i]}, expected is: ${expected[i]}`];
   }
 
   return [true, ''];

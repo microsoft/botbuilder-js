@@ -25,22 +25,22 @@ export interface StepChangeList {
 }
 
 export enum StepChangeType {
-    InsertSteps = 'InsertSteps',
-    InsertStepsBeforeTags = 'InsertStepsBeforeTags',
-    AppendSteps = 'AppendSteps',
-    EndSequence = 'EndSequence',
-    ReplaceSequence = 'ReplaceSequence'
+    insertSteps = 'insertSteps',
+    insertStepsBeforeTags = 'insertStepsBeforeTags',
+    appendSteps = 'appendSteps',
+    endSequence = 'endSequence',
+    replaceSequence = 'replaceSequence'
 }
 
 export enum AdaptiveEventNames {
-    BeginDialog = 'BeginDialog',
-    ActivityReceived = 'ActivityReceived',
-    RecognizedIntent = 'RecognizedIntent',
-    UnknownIntent = 'UnknownIntent',
-    ConversationMembersAdded = 'ConversationMembersAdded',
-    SequenceStarted = 'SequenceStarted',
-    SequenceEnded = 'SequenceEnded',
-    CancelDialog = 'CancelDialog'
+    beginDialog = 'beginDialog',
+    activityReceived = 'activityReceived',
+    recognizedIntent = 'recognizedIntent',
+    unknownIntent = 'unknownIntent',
+    conversationMembersAdded = 'conversationMembersAdded',
+    sequenceStarted = 'sequenceStarted',
+    sequenceEnded = 'sequenceEnded',
+    cancelDialog = 'cancelDialog'
 }
 
 export class SequenceContext<O extends object = {}> extends DialogContext {
@@ -88,7 +88,7 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
      * @returns true if there were any changes to apply. 
      */
     public async applyChanges(): Promise<boolean> {
-        const queue: StepChangeList[] = this.context.turnState.get(this.changeKey) || [];;
+        const queue: StepChangeList[] = this.context.turnState.get(this.changeKey) || [];
         if (Array.isArray(queue) && queue.length > 0) {
             this.context.turnState.delete(this.changeKey);
 
@@ -98,18 +98,18 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
                 // Apply plan changes
                 const change = queue[i];
                 switch (change.changeType) {
-                    case StepChangeType.InsertSteps:
-                    case StepChangeType.InsertStepsBeforeTags:
-                    case StepChangeType.AppendSteps:
+                    case StepChangeType.insertSteps:
+                    case StepChangeType.insertStepsBeforeTags:
+                    case StepChangeType.appendSteps:
                         await this.updateSequence(change);
                         break;
-                    case StepChangeType.EndSequence:
+                    case StepChangeType.endSequence:
                         if (this.steps.length > 0) {
                             this.steps.splice(0, this.steps.length);
-                            await this.emitEvent(AdaptiveEventNames.SequenceEnded, undefined, false);
+                            await this.emitEvent(AdaptiveEventNames.sequenceEnded, undefined, false);
                         }
                         break;
-                    case StepChangeType.ReplaceSequence:
+                    case StepChangeType.replaceSequence:
                         if (this.steps.length > 0) {
                             this.steps.splice(0, this.steps.length);
                         }
@@ -127,27 +127,27 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
     }
 
     public insertSteps(steps: StepState[]): this {
-        this.queueChanges({ changeType: StepChangeType.InsertSteps, steps: steps });
+        this.queueChanges({ changeType: StepChangeType.insertSteps, steps: steps });
         return this;
     }
 
     public insertStepsBeforeTags(tags: string[], steps: StepState[]): this {
-        this.queueChanges({ changeType: StepChangeType.InsertStepsBeforeTags, steps: steps, tags: tags });
+        this.queueChanges({ changeType: StepChangeType.insertStepsBeforeTags, steps: steps, tags: tags });
         return this;
     }
 
     public appendSteps(steps: StepState[]): this {
-        this.queueChanges({ changeType: StepChangeType.AppendSteps, steps: steps });
+        this.queueChanges({ changeType: StepChangeType.appendSteps, steps: steps });
         return this;
     }
 
     public endSequence(): this {
-        this.queueChanges({ changeType: StepChangeType.EndSequence });
+        this.queueChanges({ changeType: StepChangeType.endSequence });
         return this;
     }
 
     public replaceSequence(steps: StepState[]): this {
-        this.queueChanges({ changeType: StepChangeType.ReplaceSequence, steps: steps });
+        this.queueChanges({ changeType: StepChangeType.replaceSequence, steps: steps });
         return this;
     }
 
@@ -157,14 +157,17 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
 
         // Update sequence
         switch (change.changeType) {
-            case StepChangeType.InsertSteps:
+            case StepChangeType.insertSteps:
                 Array.prototype.unshift.apply(this.steps, change.steps);
                 break;
-            case StepChangeType.InsertStepsBeforeTags:
+            case StepChangeType.insertStepsBeforeTags:
                 let inserted = false;
                 if (Array.isArray(change.tags)) {
+                    // Walk list of steps to find point at which to insert new steps
                     for (let i = 0; i < this.steps.length; i++) {
+                        // Does step have one of the tags we're looking for?
                         if (this.stepHasTags(this.steps[i], change.tags)) {
+                            // Insert steps before the current step.
                             const args = ([i, 0] as any[]).concat(change.steps);
                             Array.prototype.splice.apply(this.steps, args);
                             inserted = true;
@@ -173,18 +176,20 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
                     }
                 }
                 
+                // If we didn't find any of the tags we were looking for then just append
+                // the steps to the end of the current sequence.
                 if (!inserted) {
                     Array.prototype.push.apply(this.steps, change.steps);
                 }
                 break;
-            case StepChangeType.AppendSteps:
+            case StepChangeType.appendSteps:
                 Array.prototype.push.apply(this.steps, change.steps);
                 break;
         }
 
         // Emit sequenceStarted event
         if (newSequence) {
-            await this.emitEvent(AdaptiveEventNames.SequenceStarted, undefined, false);
+            await this.emitEvent(AdaptiveEventNames.sequenceStarted, undefined, false);
         }
     }
 

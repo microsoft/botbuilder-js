@@ -112,9 +112,9 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         return result;
     }
 
-    public visitConditionalBody(context: lp.ConditionalBodyContext): Diagnostic[] {
+    public visitIfElseBody(context: lp.IfElseBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
-        const ifRules: lp.IfConditionRuleContext[] = context.conditionalTemplateBody().ifConditionRule();
+        const ifRules: lp.IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
 
         let idx: number = 0;
         for (const ifRule of ifRules) {
@@ -130,14 +130,14 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             if (node.text.split(' ').length - 1 > 1) {
                 result.push(this.BuildLGDiagnostic({
                     // tslint:disable-next-line: max-line-length
-                    message: `At most 1 whitespace is allowed between IF/ELSEIF/ELSE and :. expression: '${context.conditionalTemplateBody().text}'`,
+                    message: `At most 1 whitespace is allowed between IF/ELSEIF/ELSE and :. expression: '${context.ifElseTemplateBody().text}'`,
                     context: conditionNode
                 }));
             }
 
             if (idx === 0 && !ifExpr) {
                 result.push(this.BuildLGDiagnostic({
-                    message: `condition is not start with if: '${context.conditionalTemplateBody().text}'`,
+                    message: `condition is not start with if: '${context.ifElseTemplateBody().text}'`,
                     severity: DiagnosticSeverity.Warning,
                     context: conditionNode
                 }));
@@ -145,14 +145,14 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
             if (idx > 0 && ifExpr) {
                 result.push(this.BuildLGDiagnostic({
-                    message: `condition can't have more than one if: '${context.conditionalTemplateBody().text}'`,
+                    message: `condition can't have more than one if: '${context.ifElseTemplateBody().text}'`,
                     context: conditionNode
                 }));
             }
 
             if (idx === ifRules.length - 1 && !elseExpr) {
                 result.push(this.BuildLGDiagnostic({
-                    message: `condition is not end with else: '${context.conditionalTemplateBody().text}'`,
+                    message: `condition is not end with else: '${context.ifElseTemplateBody().text}'`,
                     severity: DiagnosticSeverity.Warning,
                     context: conditionNode
                 }));
@@ -160,7 +160,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
             if (idx > 0 && idx < ifRules.length - 1 && !elseIfExpr) {
                 result.push(this.BuildLGDiagnostic({
-                    message: `only elseif is allowed in middle of condition: '${context.conditionalTemplateBody().text}'`,
+                    message: `only elseif is allowed in middle of condition: '${context.ifElseTemplateBody().text}'`,
                     context: conditionNode
                 }));
             }
@@ -191,6 +191,100 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                 }));
             }
 
+            idx = idx + 1;
+        }
+
+        return result;
+    }
+
+    // tslint:disable-next-line: cyclomatic-complexity
+    public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Diagnostic[] {
+        let result: Diagnostic[] = [];
+        const switchCaseNodes: lp.SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
+        let idx: number = 0;
+        const length: number = switchCaseNodes.length;
+
+        for (const iterNode of switchCaseNodes) {
+            const switchCaseStat: lp.SwitchCaseStatContext = iterNode.switchCaseStat();
+            const switchExpr: boolean = switchCaseStat.SWITCH() !== undefined;
+            const caseExpr: boolean = switchCaseStat.CASE() !== undefined;
+            const defaultExpr: boolean = switchCaseStat.DEFAULT() !== undefined;
+            const node: TerminalNode = switchExpr ? switchCaseStat.SWITCH() :
+                        caseExpr ? switchCaseStat.CASE() :
+                        switchCaseStat.DEFAULT();
+            if (node.text.split(' ').length - 1 > 1) {
+                result.push(this.BuildLGDiagnostic({
+                    // tslint:disable-next-line: max-line-length
+                    message: `At most 1 whitespace is allowed between SWITCH/CASE/DEFAULT and :. expression: '${context.switchCaseTemplateBody().text}'`,
+                    context: switchCaseStat
+                }));
+            }
+
+            if (idx === 0 && !switchExpr) {
+                result.push(this.BuildLGDiagnostic({
+                    message: `control flow is not starting with switch: '${context.switchCaseTemplateBody().text}'`,
+                    context: switchCaseStat
+                }));
+            }
+
+            if (idx > 0 && switchExpr) {
+                result.push(this.BuildLGDiagnostic({
+                    message: `control flow cannot have more than one switch statement: '${context.switchCaseTemplateBody().text}'`,
+                    context: switchCaseStat
+                }));
+            }
+
+            if (idx > 0 && idx < length - 1 && !caseExpr) {
+                result.push(this.BuildLGDiagnostic({
+                    message: `only case statement is allowed in the middle of control flow: '${context.switchCaseTemplateBody().text}'`,
+                    context: switchCaseStat
+                }));
+            }
+
+            if (idx === length - 1 && (caseExpr || defaultExpr)) {
+                if (caseExpr) {
+                    result.push(this.BuildLGDiagnostic({
+                        message: `control flow is not ending with default statement: '${context.switchCaseTemplateBody().text}'`,
+                        severity: DiagnosticSeverity.Warning,
+                        context: switchCaseStat
+                    }));
+                } else {
+                    if (length === 2) {
+                        result.push(this.BuildLGDiagnostic({
+                            message: `control flow should have at least one case statement: '${context.switchCaseTemplateBody().text}'`,
+                            severity: DiagnosticSeverity.Warning,
+                            context: switchCaseStat
+                        }));
+                    }
+                }
+            }
+            if (switchExpr || caseExpr) {
+                if (switchCaseStat.EXPRESSION().length !== 1) {
+                    result.push(this.BuildLGDiagnostic({
+                        message: `switch and case should followed by one valid expression: '${switchCaseStat.text}'`,
+                        context: switchCaseStat
+                    }));
+                } else {
+                    result = result.concat(this.CheckExpression(switchCaseStat.EXPRESSION(0).text, switchCaseStat));
+                }
+            } else {
+                if (switchCaseStat.EXPRESSION().length !== 0 || switchCaseStat.TEXT().length !== 0) {
+                    result.push(this.BuildLGDiagnostic({
+                        message: `default should not followed by any expression or any text: '${switchCaseStat.text}'`,
+                        context: switchCaseStat
+                    }));
+                }
+            }
+            if (caseExpr || defaultExpr) {
+                if (iterNode.normalTemplateBody() !== undefined) {
+                    result = result.concat(this.visit(iterNode.normalTemplateBody()));
+                } else {
+                    result.push(this.BuildLGDiagnostic({
+                        message: `no normal template body in case or default block: '${iterNode.text}'`,
+                        context: switchCaseStat
+                    }));
+                }
+            }
             idx = idx + 1;
         }
 
@@ -281,8 +375,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         const matches: string[] = exp.match(/@\{[^{}]+\}/g);
         if (matches !== null && matches !== undefined) {
             for (const match of matches) {
-                const newExp: string = match.substr(1);
-                result = result.concat(this.CheckExpression(newExp, context));
+                result = result.concat(this.CheckExpression(match, context));
             }
         }
 
@@ -318,7 +411,8 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
     private CheckExpression(exp: string, context: ParserRuleContext): Diagnostic[] {
         const result: Diagnostic[] = [];
-        exp = exp.replace(/(^{*)/g, '')
+        exp = exp.replace(/(^@*)/g, '')
+                .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '')
                 .trim();
 
@@ -343,7 +437,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         // tslint:disable-next-line: max-line-length
         const startPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.start.line - 1, context.start.charPositionInLine);
         // tslint:disable-next-line: max-line-length
-        const stopPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.stop.line - 1, context.stop.charPositionInLine);
+        const stopPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.stop.line - 1, context.stop.charPositionInLine + context.stop.text.length);
         const range: Range = new Range(startPosition, stopPosition);
 
         return new Diagnostic(range, message, severity);

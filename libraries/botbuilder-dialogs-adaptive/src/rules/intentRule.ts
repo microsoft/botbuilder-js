@@ -27,7 +27,7 @@ export class IntentRule extends EventRule {
      * @param steps (Optional) list of steps to update the plan with when triggered.
      */
     constructor(matches?: string|string[], steps?: Dialog[]) {
-        super(AdaptiveEventNames.RecognizedIntent, steps, true);
+        super(AdaptiveEventNames.recognizedIntent, steps, true);
         this.matches = Array.isArray(matches) ? matches : (matches !== undefined ? [matches] : []);
     }
 

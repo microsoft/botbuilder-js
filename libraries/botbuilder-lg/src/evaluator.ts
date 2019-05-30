@@ -86,8 +86,8 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         return this.visit(normalTemplateStrs[randomNumber]);
     }
 
-    public visitConditionalBody(ctx: lp.ConditionalBodyContext) : string {
-        const ifRules: lp.IfConditionRuleContext[] = ctx.conditionalTemplateBody().ifConditionRule();
+    public visitIfElseBody(ctx: lp.IfElseBodyContext) : string {
+        const ifRules: lp.IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             if (this.EvalCondition(ifRule.ifCondition()) && ifRule.normalTemplateBody() !== undefined) {
                 return this.visit(ifRule.normalTemplateBody());
@@ -152,6 +152,39 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         return newScope;
     }
 
+    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext) : string {
+        const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
+        const length: number = switchcaseNodes.length;
+        const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0];
+        const switchExprs: TerminalNode[] = switchNode.switchCaseStat().EXPRESSION();
+        const switchExprResult: string = this.EvalExpression(switchExprs[0].text);
+        let idx: number = 0;
+        for (const caseNode of switchcaseNodes) {
+            if (idx === 0) {
+                idx = idx + 1;
+                continue; //skip the first node which is a switch statement
+            }
+            if (idx === length - 1 && caseNode.switchCaseStat().DEFAULT() !== undefined) {
+                const defaultBody: lp.NormalTemplateBodyContext = caseNode.normalTemplateBody();
+                if (defaultBody !== undefined) {
+                    return this.visit(defaultBody);
+                } else {
+                    return undefined;
+                }
+            }
+
+            const caseExprs: TerminalNode[] = caseNode.switchCaseStat().EXPRESSION();
+            const caseExprResult: string = this.EvalExpression(caseExprs[0].text);
+            if (switchExprResult === caseExprResult) {
+                return this.visit(caseNode.normalTemplateBody());
+            }
+
+            idx = idx + 1;
+        }
+
+        return undefined;
+    }
+
     protected defaultResult(): string {
         return '';
     }
@@ -194,7 +227,8 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
 
     private EvalExpressionInCondition(exp: string): boolean {
         try {
-            exp = exp.replace(/(^{*)/g, '')
+            exp = exp.replace(/(^@*)/g, '')
+                .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
 
             const {value: result, error}: {value: any; error: string} = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
@@ -210,8 +244,10 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
             return false;
         }
     }
+
     private EvalExpression(exp: string): string {
-        exp = exp.replace(/(^{*)/g, '')
+        exp = exp.replace(/(^@*)/g, '')
+                .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
 
         const {value: result, error}: {value: any; error: string} = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
@@ -256,11 +292,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
 
         exp = exp.substr(3, exp.length - 6); //remove ``` ```
 
-        return exp.replace(/@\{[^{}]+\}/g, (sub: string) => {
-            const newExp: string = sub.substr(1); // remove @
-
-            return this.EvalExpression(newExp); // { }
-        });
+        return exp.replace(/@\{[^{}]+\}/g, (sub: string) => this.EvalExpression(sub));
     }
 
     private EvalByExpressionEngine(exp: string, scope: any) : {value: any; error: string} {

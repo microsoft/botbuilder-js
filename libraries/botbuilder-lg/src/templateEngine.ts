@@ -74,10 +74,12 @@ export class TemplateEngine {
         return analyzer.AnalyzeTemplate(templateName);
     }
 
-    public evaluate(inlinsStr: string, scope: any, methodBinder?: IGetMethod): string {
+    public evaluate(inlineStr: string, scope: any, methodBinder?: IGetMethod): string {
         // wrap inline string with "# name and -" to align the evaluation process
         const fakeTemplateId: string = '__temp__';
-        const wrappedStr: string = `# ${fakeTemplateId} \r\n - ${inlinsStr}`;
+        inlineStr = !inlineStr.trim().startsWith('```') && inlineStr.indexOf('\n') >= 0
+                   ? '```'.concat(inlineStr).concat('```') : inlineStr;
+        const wrappedStr: string = `# ${fakeTemplateId} \r\n - ${inlineStr}`;
 
         const newTemplates: LGTemplate[] = LGParser.Parse(wrappedStr, 'inline');
         const mergedTemplates: LGTemplate[] = this.templates.concat(newTemplates);

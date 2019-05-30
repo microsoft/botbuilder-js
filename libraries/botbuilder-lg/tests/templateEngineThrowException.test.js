@@ -19,13 +19,15 @@ const StaticCheckExceptionData  = [
     "InvalidTemplateName.lg",
     "InvalidTemplateName2.lg",
     "DuplicatedTemplates.lg",
-    "LgTemplateFunctionError.lg"
+    "LgTemplateFunctionError.lg",
+    "SwitchCaseFormatError.lg"
     ];
 
 const StaticCheckWariningData  = [
     "EmptyLGFile.lg",
     "OnlyNoMatchRule.lg",
-    "NoMatchRule.lg"
+    "NoMatchRule.lg",
+    "SwitchCaseWarning.lg"
 ];
 
 const AnalyzerExceptionData   = [

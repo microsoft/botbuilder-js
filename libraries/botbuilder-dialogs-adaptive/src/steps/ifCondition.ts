@@ -6,16 +6,14 @@
  * Licensed under the MIT License.
  */
 import { DialogCommand, DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
-import { ExpressionEngine } from 'botbuilder-expression-parser';
-import { Expression } from 'botbuilder-expression';
-import { ExpressionArgument } from './setProperty';
 import { SequenceContext, StepState, StepChangeType } from '../sequenceContext';
+import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
 
 export interface IfConditionConfiguration extends DialogConfiguration {
     /**
      * The conditional expression to evaluate.
      */
-    condition?: string;
+    condition?: ExpressionPropertyValue<boolean>;
     
     /**
      * The steps to run if [condition](#condition) returns true.
@@ -32,7 +30,7 @@ export class IfCondition extends DialogCommand {
     /**
      * The conditional expression to evaluate.
      */
-    public condition: Expression;
+    public condition: ExpressionProperty<boolean>;
 
     /**
      * The steps to run if [condition](#condition) returns true.
@@ -49,21 +47,9 @@ export class IfCondition extends DialogCommand {
      * @param condition The conditional expression to evaluate.
      * @param steps The steps to run if the condition returns true. 
      */
-    constructor(condition?: ExpressionArgument<boolean>, steps?: Dialog[]) {
+    constructor(condition?: ExpressionPropertyValue<boolean>, steps?: Dialog[]) {
         super();
-        if (condition) { 
-            switch (typeof condition) {
-                case 'string':
-                    this.condition = engine.parse(condition);
-                    break; 
-                case 'function':
-                    this.condition = Expression.Lambda(condition);
-                    break;
-                default:
-                    this.condition = condition as Expression;
-                    break;
-            }
-        }
+        if (condition) { this.condition = new ExpressionProperty(condition) }
         if (Array.isArray(steps)) { this.steps = steps }
     }
 
@@ -73,18 +59,21 @@ export class IfCondition extends DialogCommand {
     }
 
     public configure(config: IfConditionConfiguration): this {
-        const cfg: IfConditionConfiguration = {};
         for (const key in config) {
-            switch(key) {
-                case 'condition':
-                    this.condition = engine.parse(config.condition);
-                    break;
-                default:
-                    cfg[key] = config[key];
-                    break;
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch(key) {
+                    case 'condition':
+                        this.condition = new ExpressionProperty(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
             }
         }
-        return super.configure(cfg);
+
+        return this;
     }
 
     public getDependencies(): Dialog[] {
@@ -96,17 +85,14 @@ export class IfCondition extends DialogCommand {
         return this;
     }
 
-    protected async onRunCommand(planning: SequenceContext, options: object): Promise<DialogTurnResult> {
+    protected async onRunCommand(sequence: SequenceContext, options: object): Promise<DialogTurnResult> {
         // Ensure planning context and condition
-        if (!(planning instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within a planning or sequence dialog.`) }
+        if (!(sequence instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within an AdaptiveDialog.`) }
         if (!this.condition) { throw new Error(`${this.id}: no conditional expression specified.`) }
 
         // Evaluate expression
-        const memory = planning.state.toJSON();
-        const { value, error } = this.condition.tryEvaluate(memory);
-
-        // Check for error
-        if (error) { throw new Error(`${this.id}: expression error - ${error.toString()}`) }
+        const memory = sequence.state.toJSON();
+        const value = this.condition.evaluate(this.id, memory);
 
         // Check for truthy returned value
         const triggered = value ? this.steps : this.elseSteps;
@@ -120,11 +106,9 @@ export class IfCondition extends DialogCommand {
                     options: options
                 } as StepState
             });
-            await planning.queueChanges({ changeType: StepChangeType.InsertSteps, steps: steps });
+            await sequence.queueChanges({ changeType: StepChangeType.insertSteps, steps: steps });
         } 
 
-        return await planning.endDialog();
+        return await sequence.endDialog();
     }
 }
-
-const engine = new ExpressionEngine();

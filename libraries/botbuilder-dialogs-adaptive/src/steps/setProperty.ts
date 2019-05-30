@@ -5,9 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, DialogCommand, DialogContextVisibleState } from 'botbuilder-dialogs';
-import { ExpressionEngine } from 'botbuilder-expression-parser';
-import { Expression } from 'botbuilder-expression';
+import { DialogTurnResult, DialogConfiguration, DialogContext, DialogCommand } from 'botbuilder-dialogs';
+import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
 
 export interface SetPropertyConfiguration extends DialogConfiguration {
     /**
@@ -18,11 +17,8 @@ export interface SetPropertyConfiguration extends DialogConfiguration {
     /**
      * The expression value to assign to the property.
      */
-    value?: string;
+    value?: ExpressionPropertyValue<any>;
 }
-
-export type ExpressionDelegate<T> = (state: DialogContextVisibleState) => T;
-export type ExpressionArgument<T> = string|Expression|ExpressionDelegate<T>;
 
 export class SetProperty<O extends object = {}> extends DialogCommand<O> {
     /**
@@ -31,9 +27,9 @@ export class SetProperty<O extends object = {}> extends DialogCommand<O> {
     public property: string;
 
     /**
-     * The expression value to assign to the property.
+     * The value to assign to the property.
      */
-    public value: Expression;
+    public value: ExpressionProperty<any>;
 
     /**
      * Creates a new `SetProperty` instance.
@@ -41,23 +37,11 @@ export class SetProperty<O extends object = {}> extends DialogCommand<O> {
      * @param value The expression value to assign to the property.
      */
     constructor();
-    constructor(property: string, value: ExpressionArgument<any>);
-    constructor(property?: string, value?: ExpressionArgument<any>) {
+    constructor(property: string, value: ExpressionPropertyValue<any>);
+    constructor(property?: string, value?: ExpressionPropertyValue<any>) {
         super();
         if (property) { this.property = property }
-        if (value) { 
-            switch (typeof value) {
-                case 'string':
-                    this.value = engine.parse(value);
-                    break; 
-                case 'function':
-                    this.value = Expression.Lambda(value);
-                    break;
-                default:
-                    this.value = value as Expression;
-                    break;
-            }
-        }
+        if (value) { this.value = new ExpressionProperty(value) }
     }
 
     protected onComputeID(): string {
@@ -66,18 +50,22 @@ export class SetProperty<O extends object = {}> extends DialogCommand<O> {
     }
 
     public configure(config: SetPropertyConfiguration): this {
-        const cfg: SetPropertyConfiguration = {};
         for (const key in config) {
-            switch(key) {
-                case 'value':
-                    this.value = engine.parse(config.value);
-                    break;
-                default:
-                    cfg[key] = config[key];
-                    break;
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch(key) {
+                    case 'value':
+                        this.value = new ExpressionProperty(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+    
             }
         }
-        return super.configure(cfg);
+
+        return this;
     }
 
     public async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
@@ -85,19 +73,11 @@ export class SetProperty<O extends object = {}> extends DialogCommand<O> {
         if (!this.property) { throw new Error(`${this.id}: no 'property' specified.`) }
         if (!this.value) { throw new Error(`${this.id}: no 'value' expression specified.`) }
 
-        // Evaluate expression
+        // Evaluate expression and save value
         const memory = dc.state.toJSON();
-        const { error, value } = this.value.tryEvaluate(memory);
-
-        // Check for error
-        if (error) { 
-            throw new Error(`${this.id}: expression error - ${error.toString()}`);
-        } else {
-            dc.state.setValue(this.property, value);
-        }
+        const value = this.value.evaluate(this.id, memory);
+        dc.state.setValue(this.property, value);
 
         return await dc.endDialog();
     }
 }
-
-const engine = new ExpressionEngine();

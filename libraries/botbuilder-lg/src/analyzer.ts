@@ -83,10 +83,10 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         return result;
     }
 
-    public visitConditionalBody(ctx: lp.ConditionalBodyContext): string[] {
+    public visitIfElseBody(ctx: lp.IfElseBodyContext): string[] {
         let result: string[] = [];
 
-        const ifRules: lp.IfConditionRuleContext[] = ctx.conditionalTemplateBody().ifConditionRule();
+        const ifRules: lp.IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             const expressions: TerminalNode[] = ifRule.ifCondition().EXPRESSION();
             if (expressions !== undefined && expressions.length > 0) {
@@ -94,6 +94,22 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
             }
             if (ifRule.normalTemplateBody() !== undefined) {
                 result = result.concat(this.visit(ifRule.normalTemplateBody()));
+            }
+        }
+
+        return result;
+    }
+
+    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): string[] {
+        let result : string[] = [];
+        const switchCaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
+        for (const iterNode of switchCaseNodes) {
+            const expressions: TerminalNode[] = iterNode.switchCaseStat().EXPRESSION();
+            if (expressions.length > 0) {
+                result = result.concat(this.AnalyzeExpression(expressions[0].text));
+            }
+            if (iterNode.normalTemplateBody() !== undefined) {
+                result = result.concat(this.visit(iterNode.normalTemplateBody()));
             }
         }
 
@@ -140,7 +156,8 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private AnalyzeExpression(exp: string): string[] {
-        exp = exp.replace(/(^{*)/g, '')
+        exp = exp.replace(/(^@*)/g, '')
+                .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
         const parsed: Expression = this._expressionParser.parse(exp);
 
@@ -215,8 +232,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         exp = exp.substr(3, exp.length - 6);
         const matches: string[] = exp.match(/@\{[^{}]+\}/g);
         for (const match of matches) {
-            const newExp: string = match.substr(1); // remove @
-            result = result.concat(this.AnalyzeExpression(newExp));
+            result = result.concat(this.AnalyzeExpression(match));
         }
 
         return result;

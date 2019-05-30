@@ -72,12 +72,47 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         return result;
     }
 
-    public visitConditionalBody(ctx: lp.ConditionalBodyContext) : string[] {
-        const ifRules: lp.IfConditionRuleContext[] = ctx.conditionalTemplateBody().ifConditionRule();
+    public visitIfElseBody(ctx: lp.IfElseBodyContext) : string[] {
+        const ifRules: lp.IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             if (this.EvalCondition(ifRule.ifCondition())) {
                 return this.visit(ifRule.normalTemplateBody());
             }
+        }
+
+        return undefined;
+    }
+
+    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext) : string[] {
+        const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
+        const length: number = switchcaseNodes.length;
+        const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0];
+        const switchExprs: TerminalNode[] = switchNode.switchCaseStat().EXPRESSION();
+        const switchExprResult: string[] = this.EvalExpression(switchExprs[0].text);
+        let idx: number = 0;
+        for (const caseNode of switchcaseNodes) {
+            if (idx === 0) {
+                idx = idx + 1;
+                continue; //skip the first node which is a switch statement
+            }
+
+            if (idx === length - 1 && caseNode.switchCaseStat().DEFAULT() !== undefined) {
+                const defaultBody: lp.NormalTemplateBodyContext = caseNode.normalTemplateBody();
+                if (defaultBody !== undefined) {
+                    return this.visit(defaultBody);
+                } else {
+                    return undefined;
+                }
+            }
+
+            const caseExprs: TerminalNode[] = caseNode.switchCaseStat().EXPRESSION();
+            const caseExprResult: string[] = this.EvalExpression(caseExprs[0].text);
+            //condition: check whether two string array have same elements
+            if (switchExprResult.sort().toString() === caseExprResult.sort().toString()) {
+                return this.visit(caseNode.normalTemplateBody());
+            }
+
+            idx = idx + 1;
         }
 
         return undefined;
@@ -170,7 +205,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
     private EvalExpressionInCondition(exp: string): boolean {
         try {
-            exp = exp.replace(/(^{*)/g, '')
+            exp = exp.replace(/(^@*)/g, '')
+                .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
 
             const {value: result, error}: {value: any; error: string} = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
@@ -188,7 +224,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private EvalExpression(exp: string): string[] {
-        exp = exp.replace(/(^{*)/g, '')
+        exp = exp.replace(/(^@*)/g, '')
+            .replace(/(^{*)/g, '')
             .replace(/(}*$)/g, '');
 
         const { value: result, error }: { value: any; error: string } = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
@@ -235,8 +272,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         const matches: string[] = exp.match(/@\{[^{}]+\}/g);
         if (matches !== null && matches !== undefined) {
             for (const match of matches) {
-                const newExp: string = match.substr(1); // remove @
-                templateRefValues.set(match, this.EvalExpression(newExp));
+                templateRefValues.set(match, this.EvalExpression(match));
             }
         }
 

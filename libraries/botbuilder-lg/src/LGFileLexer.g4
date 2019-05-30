@@ -12,7 +12,7 @@ lexer grammar LGFileLexer;
 
 @lexer::members {
   ignoreWS = true;             // usually we ignore whitespace, but inside template, whitespace is significant
-  expectIfElse = false;        // whether we are expecting IF/ELSEIF/ELSE
+  expectKeywords = false;        // whether we are expecting IF/ELSEIF/ELSE or Switch/Case/Default keywords
 }
 
 fragment LETTER: 'a'..'z' | 'A'..'Z';
@@ -21,6 +21,19 @@ fragment NUMBER: '0'..'9';
 fragment WHITESPACE
   : ' '|'\t'|'\ufeff'|'\u00a0'
   ;
+
+fragment A: 'a' | 'A';
+fragment C: 'c' | 'C';
+fragment D: 'd' | 'D';
+fragment E: 'e' | 'E';
+fragment F: 'f' | 'F';
+fragment H: 'h' | 'H';
+fragment I: 'i' | 'I';
+fragment L: 'l' | 'L';
+fragment S: 's' | 'S';
+fragment T: 't' | 'T';
+fragment U: 'u' | 'U';
+fragment W: 'w' | 'W';
 
 COMMENTS
   : ('>'|'$') ~('\r'|'\n')+ -> skip
@@ -39,7 +52,7 @@ HASH
   ;
 
 DASH
-  : '-' {this.expectIfElse = true;} -> pushMode(TEMPLATE_BODY_MODE)
+  : '-' {this.expectKeywords = true;} -> pushMode(TEMPLATE_BODY_MODE)
   ;
 
 INVALID_TOKEN_DEFAULT_MODE
@@ -96,23 +109,35 @@ NEWLINE_IN_BODY
   ;
 
 IF
-  : ('if'|'IF') WHITESPACE* ':'  {this.expectIfElse}? { this.ignoreWS = true;}
+  : I F WHITESPACE* ':'  {this.expectKeywords}? { this.ignoreWS = true;}
   ;
 
 ELSEIF
-  : ('elseif'|'ELSEIF') WHITESPACE* ':' {this.expectIfElse}? { this.ignoreWS = true;}
+  : E L S E I F WHITESPACE* ':' {this.expectKeywords}? { this.ignoreWS = true;}
   ;
 
 ELSE
-   : ('else'|'ELSE') WHITESPACE* ':' {this.expectIfElse}? { this.ignoreWS = true;}
+  : E L S E WHITESPACE* ':' {this.expectKeywords}? { this.ignoreWS = true;}
+  ;
+
+SWITCH
+  : S W I T C H WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
+  ;
+
+CASE
+  : C A S E WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
+  ;
+
+DEFAULT
+  : D E F A U L T WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
   ;
 
 MULTI_LINE_TEXT
-  : '```' .*? '```' { this.ignoreWS = false; this.expectIfElse = false;}
+  : '```' .*? '```' { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 ESCAPE_CHARACTER
-  : '\\{' | '\\[' | '\\\\' | '\\'[rtn\]}]  { this.ignoreWS = false; this.expectIfElse = false;}
+  : '\\{' | '\\[' | '\\\\' | '\\'[rtn\]}]  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 INVALID_ESCAPE
@@ -120,17 +145,18 @@ INVALID_ESCAPE
   ;
 
 EXPRESSION
-  : '{' ~[\r\n{}]* '}'  { this.ignoreWS = false; this.expectIfElse = false;}
+  : '@'? '{' ~[\r\n{}]* '}'  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 TEMPLATE_REF
-  : '[' (~[\r\n\]] | TEMPLATE_REF)* ']'  { this.ignoreWS = false; this.expectIfElse = false;}
+  : '[' (~[\r\n\]] | TEMPLATE_REF)* ']'  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 TEXT_SEPARATOR
-  : [ \t\r\n{}[\]()]  { this.ignoreWS = false; this.expectIfElse = false;}
+  : [ \t\r\n{}[\]()]  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 TEXT
-  : ~[ \\\t\r\n{}[\]()]+  { this.ignoreWS = false; this.expectIfElse = false;}
+  : ~[ \\\t\r\n{}[\]()]+  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
+

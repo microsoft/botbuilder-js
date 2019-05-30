@@ -23,6 +23,7 @@ export class ExpressionType {
     public static readonly Average: string = 'average';
     public static readonly Sum: string = 'sum';
     public static readonly Count: string = 'count';
+    public static readonly Range: string = 'range';
 
     // Comparisons
     public static readonly LessThan: string = '<';
@@ -52,6 +53,13 @@ export class ExpressionType {
     public static readonly ToUpper: string = 'toUpper';
     public static readonly Trim: string = 'trim';
     public static readonly Join: string = 'join';
+    public static readonly EndsWith: string = 'endsWith';
+    public static readonly StartsWith: string = 'startsWith';
+    public static readonly CountWord: string = 'countWord';
+    public static readonly AddOrdinal: string = 'addOrdinal';
+    public static readonly Guid: string = 'guid';
+    public static readonly IndexOf: string = 'indexOf';
+    public static readonly LastIndexOf: string = 'lastIndexOf';
 
     // DateTime
     public static readonly AddDays: string = 'addDays';
@@ -69,12 +77,25 @@ export class ExpressionType {
     public static readonly SubtractFromTime: string = 'subtractFromTime';
     public static readonly DateReadBack: string = 'dateReadBack';
     public static readonly GetTimeOfDay: string = 'getTimeOfDay';
+    public static readonly GetFutureTime: string = 'getFutureTime';
+    public static readonly GetPastTime: string = 'getPastTime';
 
     // Conversions
     public static readonly Float: string = 'float';
     public static readonly Int: string = 'int';
     public static readonly String: string = 'string';
     public static readonly Bool: string = 'bool';
+    public static readonly Array: string = 'array';
+    public static readonly Binary: string = 'binary';
+    public static readonly DataUri: string = 'dataUri';
+    public static readonly DataUriToBinary: string = 'dataUriToBinary';
+    public static readonly DataUriToString: string = 'dataUriToString';
+    public static readonly DecodeUriComponent: string = 'decodeUriComponent';
+    public static readonly Base64: string = 'base64';
+    public static readonly Base64ToBinary: string = 'base64ToBinary';
+    public static readonly Base64ToString: string = 'base64ToString';
+    public static readonly UriComponent: string = 'uriComponent';
+    public static readonly Xml: string = 'xml';
 
     // Memory
     public static readonly Accessor: string = 'Accessor';
@@ -83,6 +104,12 @@ export class ExpressionType {
     public static readonly First: string = 'first';
     public static readonly Last: string = 'last';
     public static readonly Foreach: string = 'foreach';
+    public static readonly Union: string = 'union';
+    public static readonly Intersection: string = 'intersection';
+    public static readonly Skip: string = 'skip';
+    public static readonly Take: string = 'take';
+    public static readonly FilterNotEqual: string = 'filterNotEqual';
+    public static readonly SubArray: string = 'subArray';
 
     // Misc
     public static readonly Constant: string = 'Constant';

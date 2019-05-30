@@ -9,3 +9,15 @@
     - [Greeting] Evening
 - ELSE:
     - [Greeting] Afternoon
+
+# greetInAWeek
+- SWITCH: {day}
+    - CASE: {'Saturday'}
+        - Happy Saturday!
+        - Nice Saturday!
+    - CASE: {'Sunday'}
+        - Happy Sunday!
+        - Nice Sunday!
+    - DEFAULT:
+        - Work Hard!
+        - Weekend soon!
