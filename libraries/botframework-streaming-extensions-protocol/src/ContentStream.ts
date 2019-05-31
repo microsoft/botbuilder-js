@@ -34,38 +34,6 @@ export class ContentStream {
     this.assembler.close();
   }
 
-  private async readAll(): Promise<Object> {
-    // do a read-all
-    let allData: Buffer[] = [];
-    let count = 0;
-    let stream = this.getStream();
-
-    // populate the array with any existing buffers
-    while (count < stream.length) {
-      let chunk = stream.read(stream.length);
-      allData.push(chunk);
-      count += (<Buffer>chunk).length;
-    }
-
-    if (count < this.length) {
-      let readToEnd = new Promise<boolean>((resolve) => {
-        let callback = (cs: ContentStream) => (chunk: any) => {
-          allData.push(chunk);
-          count += (<Buffer>chunk).length;
-          if (count === cs.length) {
-            resolve(true);
-          }
-        };
-
-        stream.subscribe(callback(this));
-      });
-
-      await readToEnd;
-    }
-
-    return {bufferArray: allData, size: count};
-  }
-
   public async readAsString(): Promise<string> {
     let obj = await this.readAll();
     let allData = obj['bufferArray']
@@ -104,5 +72,37 @@ export class ContentStream {
 
     return <T>JSON.parse(s);
   }
-}
 
+  private async readAll(): Promise<Object> {
+    // do a read-all
+    let allData: Buffer[] = [];
+    let count = 0;
+    let stream = this.getStream();
+
+    // populate the array with any existing buffers
+    while (count < stream.length) {
+      let chunk = stream.read(stream.length);
+      allData.push(chunk);
+      count += (<Buffer>chunk).length;
+    }
+
+    if (count < this.length) {
+      let readToEnd = new Promise<boolean>((resolve) => {
+        let callback = (cs: ContentStream) => (chunk: any) => {
+          allData.push(chunk);
+          count += (<Buffer>chunk).length;
+          if (count === cs.length) {
+            resolve(true);
+          }
+        };
+
+        stream.subscribe(callback(this));
+      });
+
+      await readToEnd;
+    }
+
+    return {bufferArray: allData, size: count};
+  }
+
+}
