@@ -14,7 +14,7 @@ export class ContentStream {
     this.assembler = assembler;
   }
 
-  public get payloadType(): string {
+  public get type(): string {
     return this.assembler.contentType;
   }
 
