@@ -34,7 +34,7 @@ export class ContentStream {
     this.assembler.close();
   }
 
-  public async readAsString(): Promise<string> {
+  private async readAll(): Promise<Object> {
     // do a read-all
     let allData: Buffer[] = [];
     let count = 0;
@@ -63,10 +63,37 @@ export class ContentStream {
       await readToEnd;
     }
 
+    return {bufferArray: allData, size: count};
+  }
+
+  public async readAsString(): Promise<string> {
+    let obj = await this.readAll();
+    let allData = obj['bufferArray']
     let s: string = '';
     // tslint:disable-next-line: prefer-for-of
     for (let i = 0; i < allData.length; i++) {
       s += allData[i].toString('utf8');
+    }
+
+    return s;
+  }
+
+  public async readAsBuffer(): Promise<Buffer> {
+    // do a read-all
+    let obj = await this.readAll();
+    let allData = obj['bufferArray']
+    let count = obj['size'];
+
+    // TODO: There's got to be a better way to do this.
+    // Will revisit this after the big attachment problem is resolved.
+    let s = new Buffer(count);
+    let ptr = 0;
+    for(var i = 0; i< allData.length; i++)
+    {
+      for (var j = 0 ; j < allData[i].length; j++)
+      {
+        s[ptr++] = allData[i][j];
+      }
     }
 
     return s;
@@ -78,3 +105,4 @@ export class ContentStream {
     return <T>JSON.parse(s);
   }
 }
+
