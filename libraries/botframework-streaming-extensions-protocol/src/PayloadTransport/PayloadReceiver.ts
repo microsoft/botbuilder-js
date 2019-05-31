@@ -1,3 +1,4 @@
+import { TransportDisconnectedEventHandler } from '..';
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
 import { Header } from '../Payloads/Models/Header';
 import { PayloadTypes } from '../Payloads/Models/PayloadTypes';
@@ -9,7 +10,7 @@ import { TransportDisconnectedEventArgs } from './TransportDisconnectedEventArgs
 
 export class PayloadReceiver implements IPayloadReceiver {
   public isConnected: boolean;
-  public disconnected: (sender: object, args: any) => void;
+  public disconnected?: TransportDisconnectedEventHandler;
   private _receiver: ITransportReceiver;
   private _receiveHeaderBuffer: Buffer;
   private _receivePayloadBuffer: Buffer;
@@ -33,7 +34,7 @@ export class PayloadReceiver implements IPayloadReceiver {
     this._receiveAction = receiveAction;
   }
 
-  public disconnect(disconnectArgs: any) {
+  public disconnect(e: TransportDisconnectedEventArgs) {
     let didDisconnect = false;
     try {
       if (this.isConnected) {
@@ -43,13 +44,13 @@ export class PayloadReceiver implements IPayloadReceiver {
       }
     } catch (error) {
       this.isConnected = false;
-      this.disconnected(error.message, disconnectArgs);
+      this.disconnected(error.message, e);
     }
     this._receiver = undefined;
     this.isConnected = false;
 
     if (didDisconnect) {
-      this.disconnected(Object('PayloadReceiver has been disconnected.'), disconnectArgs);
+      this.disconnected(this, e || TransportDisconnectedEventArgs.Empty);
     }
   }
 

@@ -1,3 +1,4 @@
+import { TransportDisconnectedEventHandler } from '..';
 import { Header } from '../Payloads/Models/Header';
 import { Stream } from '../Stream';
 import { ITransportReceiver } from '../Transport/ITransportReceiver';
@@ -5,8 +6,7 @@ import { ITransportReceiver } from '../Transport/ITransportReceiver';
 export interface IPayloadReceiver {
   isConnected: boolean;
 
-  // tslint:disable-next-line: prefer-method-signature
-  disconnected: (sender: object, args: any) => void;
+  disconnected?: TransportDisconnectedEventHandler;
 
   connect(receiver: ITransportReceiver);
 
