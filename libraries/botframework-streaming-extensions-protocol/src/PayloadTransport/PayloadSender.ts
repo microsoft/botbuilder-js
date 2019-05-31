@@ -38,12 +38,7 @@ export class PayloadSender implements IPayloadSender {
   private writePacket(packet: SendPacket): void {
     try {
       HeaderSerializer.serialize(packet.header, this.sendHeaderBuffer);
-
-      let length = this.sender.send(this.sendHeaderBuffer);
-
-      if (length === 0) {
-        throw new Error('Failed to send header');
-      }
+      this.sender.send(this.sendHeaderBuffer);
 
       if (packet.header.PayloadLength > 0 && packet.payload) {
         let count = packet.header.PayloadLength;
