@@ -22,7 +22,7 @@ describe('ContentStream ', () => {
     it('can return payload type', () => {
         let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 42));
 
-        expect(cs.payloadType)
+        expect(cs.type)
             .equal('stream');
     });
 
