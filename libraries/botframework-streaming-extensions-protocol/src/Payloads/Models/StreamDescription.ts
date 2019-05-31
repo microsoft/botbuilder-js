@@ -1,6 +1,6 @@
 export class StreamDescription {
   public id: string;
-  public payloadType: string;
+  public type: string;
   public length?: number;
 
   constructor(id: string) {

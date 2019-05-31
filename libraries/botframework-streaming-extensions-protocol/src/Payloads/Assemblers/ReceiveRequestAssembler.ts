@@ -47,7 +47,7 @@ export class ReceiveRequestAssembler extends PayloadAssembler {
     if (rp.streams) {
       rp.streams.forEach(s => {
         let a: ContentStreamAssembler = this._streamManager.getPayloadAssembler(s.id);
-        a.contentType = s.payloadType;
+        a.contentType = s.type;
         a.contentLength = s.length;
         rr.Streams.push(new ContentStream(s.id, a));
       });
