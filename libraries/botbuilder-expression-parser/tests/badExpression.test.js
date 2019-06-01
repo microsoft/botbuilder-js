@@ -102,36 +102,36 @@ const badExpressions =
   "array()", // should have 1 param
   "array(hello, world)", // should have 1 param
   "array(false)", // param should be string
-  "Binary()", // should have 1 param
-  "Binary(hello, world)", // should have 1 param
-  "Binary(false)", // param should be string
-  "DataUri()", // should have 1 param
-  "DataUri(hello, world)", // should have 1 param
-  "DataUri(false)", // param should be string
-  "DataUriToBinary()", // should have 1 param
-  "DataUriToBinary(hello, world)", // should have 1 param
-  "DataUriToBinary(false)", // param should be string
-  "DataUriToString()", // should have 1 param
-  "DataUriToString(hello, world)", // should have 1 param
-  "DataUriToString(false)", // param should be string
-  "UriComponentToString()", // should have 1 param
-  "UriComponentToString(hello, world)", // should have 1 param
-  "UriComponentToString(false)", // param should be string
-  "Base64()", // should have 1 param
-  "Base64(hello, world)", // should have 1 param
-  "Base64(false)", // param should be string
-  "Base64ToBinary()", // should have 1 param
-  "Base64ToBinary(hello, world)", // should have 1 param
-  "Base64ToBinary(false)", // param should be string
-  "Base64ToString()", // should have 1 param
-  "Base64ToString(hello, world)", // should have 1 param
-  "Base64ToString(false)", // param should be string
-  "UriComponent()", // should have 1 param
-  "UriComponent(hello, world)", // should have 1 param
-  "UriComponent(false)", // param should be string
-  "Xml()", // should have 1 param
-  "Xml(hello, world)", // should have 1 param
-  "Xml(false)", // param should be string
+  "binary()", // should have 1 param
+  "binary(hello, world)", // should have 1 param
+  "binary(false)", // param should be string
+  "dataUri()", // should have 1 param
+  "dataUri(hello, world)", // should have 1 param
+  "dataUri(false)", // param should be string
+  "dataUriToBinary()", // should have 1 param
+  "dataUriToBinary(hello, world)", // should have 1 param
+  "dataUriToBinary(false)", // param should be string
+  "dataUriToString()", // should have 1 param
+  "dataUriToString(hello, world)", // should have 1 param
+  "dataUriToString(false)", // param should be string
+  "uriComponentToString()", // should have 1 param
+  "uriComponentToString(hello, world)", // should have 1 param
+  "uriComponentToString(false)", // param should be string
+  "base64()", // should have 1 param
+  "base64(hello, world)", // should have 1 param
+  "base64(false)", // param should be string
+  "base64ToBinary()", // should have 1 param
+  "base64ToBinary(hello, world)", // should have 1 param
+  "base64ToBinary(false)", // param should be string
+  "base64ToString()", // should have 1 param
+  "base64ToString(hello, world)", // should have 1 param
+  "base64ToString(false)", // param should be string
+  "uriComponent()", // should have 1 param
+  "uriComponent(hello, world)", // should have 1 param
+  "uriComponent(false)", // param should be string
+  "xml()", // should have 1 param
+  "xml(hello, world)", // should have 1 param
+  "xml(false)", // param should be string
 
   // Math functions test
   "max(hello, one)", // param should be number
