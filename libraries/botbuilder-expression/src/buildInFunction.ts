@@ -1448,18 +1448,24 @@ export class BuiltInFunctions {
                 ExpressionType.FormatDateTime,
                 BuiltInFunctions.ApplyWithError(
                     (args: ReadonlyArray<any>) => {
-                        const error: string = BuiltInFunctions.VerifyTimestamp(args[0]);
-                        const dateString: string = new Date(args[0]).toISOString();
+                        let error: string;
+                        let arg: any = args[0];
+                        if (typeof arg === 'number') {
+                            arg = arg * 1000;
+                        } else {
+                            error = BuiltInFunctions.VerifyTimestamp(arg.toString());
+                        }
+
                         let value: any;
                         if (error === undefined) {
+                            const dateString: string = new Date(arg).toISOString();
                             value = args.length === 2 ? moment(dateString).format(BuiltInFunctions.TimestampFormatter(args[1])) : dateString;
                         }
 
                         return { value, error };
-                    },
-                    BuiltInFunctions.VerifyString),
+                    }),
                 ReturnType.String,
-                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.String)),
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.Object)),
             new ExpressionEvaluator(
                 ExpressionType.SubtractFromTime,
                 (expr: Expression, state: any): { value: any; error: string } => {

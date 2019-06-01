@@ -255,9 +255,11 @@ const dataSource = [
   ["year(timestamp)", 2018],
   ["length(utcNow())", 24],
   ["utcNow('MM-DD-YY')", moment(new Date().toISOString()).format('MM-DD-YY')],
-  ["formatDateTime('2018-03-15T13:00:00.111+00:00')", "2018-03-15T13:00:00.111Z"],
-  ["formatDateTime(timestamp, 'MM-dd-yy')", "03-15-18"],
+  ["formatDateTime(notISOTimestamp)", "2018-03-15T13:00:00.000Z"],
+  ["formatDateTime(notISOTimestamp, 'MM-dd-yy')", "03-15-18"],
   ["formatDateTime('2018-03-15')", "2018-03-15T00:00:00.000Z"],
+  ["formatDateTime(timestampObj)", "2018-03-15T13:00:00.000Z"],
+  ["formatDateTime(unixTimestamp)", "2018-03-15T13:00:00.000Z"],
   ["subtractFromTime(timestamp, 1, 'Year')", "2017-03-15T13:00:00.111Z"],
   ["subtractFromTime(timestamp, 1, 'Month')", "2018-02-15T13:00:00.111Z"],
   ["subtractFromTime(timestamp, 1, 'Week')", "2018-03-08T13:00:00.111Z"],
@@ -376,6 +378,9 @@ const scope = {
       { x: 3 },
     ],
   timestamp: "2018-03-15T13:00:00.111Z",
+  notISOTimestamp: "2018-03-15T13:00:00Z",
+  timestampObj: new Date("2018-03-15T13:00:00.000Z"),
+  unixTimestamp: 1521118800,
   turn:
   {
     entities:
