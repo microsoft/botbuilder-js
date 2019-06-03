@@ -67,7 +67,10 @@ export class PayloadReceiver implements IPayloadReceiver {
         let readSoFar = 0;
         while (readSoFar < TransportContants.MaxHeaderLength) {
           this._receiveHeaderBuffer = await this._receiver.receiveAsync(TransportContants.MaxHeaderLength - readSoFar);
-          readSoFar += this._receiveHeaderBuffer.length;
+
+          if(this._receiveHeaderBuffer) {
+            readSoFar += this._receiveHeaderBuffer.length;
+          }
         }
 
         let header = HeaderSerializer.deserialize(this._receiveHeaderBuffer);
