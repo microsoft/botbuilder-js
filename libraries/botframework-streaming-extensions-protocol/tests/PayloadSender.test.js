@@ -124,7 +124,7 @@ describe('PayloadTransport', () => {
             expect(pr.isConnected).to.be.true;
         });
 
-         it('connects to and reads a header with a stream the transport.', () => {
+        it('connects to and reads a header with a stream the transport.', (done) => {
             let pr = new protocol.PayloadReceiver();
             expect(pr.isConnected).to.be.undefined;
 
@@ -138,10 +138,12 @@ describe('PayloadTransport', () => {
                 (id, request) => onReceiveRequest(id, request)
             );
 
-            expect(pr.connect(sock)).to.not.throw;
             pr.subscribe((header) =>  assemblerManager.getPayloadStream(header),
-            (header, contentStream, contentLength) => assemblerManager.onReceive(header, contentStream, contentLength));
+                (header, contentStream, contentLength) => assemblerManager.onReceive(header, contentStream, contentLength));
 
+            expect(pr.connect(sock)).to.not.throw;
+   
+            pr.disconnected = () => done();
             expect(pr.isConnected).to.be.true;
         });
     });
