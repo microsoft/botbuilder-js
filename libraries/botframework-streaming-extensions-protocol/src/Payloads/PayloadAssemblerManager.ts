@@ -12,7 +12,7 @@ export class PayloadAssembleManager {
   private readonly streamManager: IStreamManager;
   private readonly activeAssemblers: { [id: string]: PayloadAssembler } = {};
 
-  constructor(streamManager: IStreamManager, onReceiveResponse: Function, onReceiveRequest) {
+  constructor(streamManager: IStreamManager, onReceiveResponse: Function, onReceiveRequest: Function) {
     this.streamManager = streamManager;
     this.onReceiveRequest = onReceiveRequest;
     this.onReceiveResponse = onReceiveResponse;
@@ -54,11 +54,9 @@ export class PayloadAssembleManager {
     switch (header.PayloadType) {
       case PayloadTypes.request:
         return new ReceiveRequestAssembler(header, this.streamManager, this.onReceiveRequest);
-        break;
 
       case PayloadTypes.response:
         return new ReceiveResponseAssembler(header, this.streamManager, this.onReceiveResponse);
-        break;
 
       default:
     }
