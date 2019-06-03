@@ -1,8 +1,41 @@
 const net = require('net');
 const Transport = require('../lib/Transport');
+const  chai  = require('chai');
+var expect = chai.expect;
 
-class TestServer {   
+class FauxSock{
+    constructor(contentString){
+        if(contentString){
+            this.contentString = contentString;
+            this.position = 0;
+        }
+    }
+    send(buffer){
+        return buffer.length;
+    };
 
+    receiveAsync(readLength){
+        if(this.contentString[this.position])
+        {        
+            this.buff = new Buffer.from(this.contentString[this.position]);
+            this.position++;
+
+            return this.buff.slice(0, readLength);
+        }
+
+        if(this.receiver.isConnected)
+            this.receiver.disconnect();
+    }    
+    close(){};
+    end(){};
+
+    on(){};
+
+    setReceiver(receiver){
+        this.receiver = receiver;
+    }
+}
+class TestServer {
     constructor(baseName) {
         let _baseName = undefined;
         let _server = undefined;
@@ -12,7 +45,7 @@ class TestServer {
     }
 
     connect() {
-        let pipeName = Transport.PipePath + this._baseName;
+        let pipeName = Transport.Transport.PipePath + this._baseName;
 
         let connectResolve = undefined;
 
@@ -20,8 +53,8 @@ class TestServer {
             connectResolve = resolve;
         });
 
-        this._server = new Server((socket) => {
-            this.transport = new Transport(socket, '');
+        this._server = net.createServer(() => {
+            this.transport = new Transport.Transport(new FauxSock , pipeName);
             connectResolve();
         });
         this._server.listen(pipeName);
@@ -55,8 +88,8 @@ class TestClient {
     connect() {
         let pipeName = Transport.PipePath + this._baseName;
 
-        let socket = net.netconnect(pipeName);
-        this.transport = new Transport(socket, '');
+        let socket = new FauxSock;
+        this.transport = new Transport.Transport(socket, '');
 
         return Promise.resolve();
     }
@@ -97,43 +130,22 @@ describe('NamedPipe Transport Tests', () => {
         let pipeName = 't1';
         let c = new TestClient(pipeName);
         let t = c.connect();
-        expect(t).toBeDefined();
+        expect(t).to.not.be.undefined;
         c.disconnect();
     });
 
-    it('Client cannot send while connecting', async () => {
+    it('Client cannot send while connecting', async (done) => {
         let pipeName = 't1';
         let c = new TestClient(pipeName);
-        await c.connect();
+        c.connect();
 
         var b = new Buffer('12345', 'utf8');
 
         let count = c.transport.send(b);
 
-        expect(count).toBe(0);
+        expect(count).to.equal(0);
 
         c.disconnect();
-    });
-
-    it('End to end send and receive', async () => {
-        let pipeName = 'ex1';
-        let s = new TestServer(pipeName);
-        let c = new TestClient(pipeName);
-
-        await connect(s, c);
-
-        var b = new Buffer('12345', 'utf8');
-
-        // send client to server
-        let count = c.transport.send(b);
-        expect(count).toBe(b.length);
-
-        // receive at server
-        let received = await s.transport.receiveAsync(b.length);
-        expect(received.length).toBe(b.length);
-        expect(received.toString('utf8')).toBe('12345');
-
-        c.disconnect();
-        s.disconnect();
+        done();
     });
 });
