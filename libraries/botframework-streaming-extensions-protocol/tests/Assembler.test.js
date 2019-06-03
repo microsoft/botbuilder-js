@@ -52,8 +52,8 @@ describe('ReceiveRequestAssembler', () => {
         s.write('12345');
         let rp = new RequestPayload.RequestPayload('POST', '/some/path');
         rp.streams = s;
-        let rra = new ReceiveRequestAssembler.ReceiveRequestAssembler(header, sm, undefined);
-        rra.processRequest(s).then(done());     
+        let rra = new ReceiveRequestAssembler.ReceiveRequestAssembler(header, sm, () => done() );
+        rra.processRequest(s);     
     });
 });
 
@@ -104,7 +104,7 @@ describe('ReceiveResponseAssembler', () => {
         s.write('12345');
         let rp = new ResponsePayload.ResponsePayload(200);
         rp.streams = s;
-        let rra = new ReceiveResponseAssembler.ReceiveResponseAssembler(header, sm, done());
+        let rra = new ReceiveResponseAssembler.ReceiveResponseAssembler(header, sm, () => done());
         rra.onReceive(header, s, 5);        
     });
 
