@@ -350,7 +350,15 @@ const dataSource = [
   ["bag['name']", "mybag"],
   ["bag[substring(concat('na','me','more'), 0, length('name'))]", "mybag"],
   ["getProperty(undefined, 'p')", undefined],
-  ["(getProperty(undefined, 'p'))[1]", undefined]
+  ["(getProperty(undefined, 'p'))[1]", undefined],
+
+  // Dialog tests
+  ["user.lists.todo[int(@ordinal[0]) - 1] != null", true],
+  ["user.lists.todo[int(@ordinal[0]) + 3] != null", false],
+  ["count(user.lists.todo) > int(@ordinal[0]))", true],
+  ["count(user.lists.todo) >= int(@ordinal[0]))", true],
+  ["user.lists.todo[int(@ordinal[0]) - 1]", "todo1"],
+  ["user.lists[user.listType][int(@ordinal[0]) - 1]", "todo1"]
 ];
 
 const scope = {
@@ -381,11 +389,20 @@ const scope = {
   notISOTimestamp: "2018-03-15T13:00:00Z",
   timestampObj: new Date("2018-03-15T13:00:00.000Z"),
   unixTimestamp: 1521118800,
+  user: 
+  {
+    lists:
+    {
+      todo: ["todo1", "todo2", "todo3"]
+    },
+    listType: "todo"
+  },
   turn:
   {
     entities:
     {
-      city: "Seattle"
+      city: "Seattle",
+      ordinal: ["1", "2", "3"]
     },
     intents:
     {

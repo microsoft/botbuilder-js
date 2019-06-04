@@ -208,6 +208,8 @@ const badExpressions =
   "formatDateTime('errortime')", // error datetime format
   "formatDateTime(timestamp, 'yyyy', 1)", // should have 2 or 3 params
   "formatDateTime(notValidTimestamp)", // not valid timestamp
+  "formatDateTime(notValidTimestamp2)", // not valid timestamp
+  "formatDateTime(notValidTimestamp3)", // not valid timestamp
   "subtractFromTime('errortime', 1, 'yyyy')", // error datetime format
   "subtractFromTime(timestamp, 1, 'W')", // error time unit
   "subtractFromTime(timestamp, timestamp, 'W')", // error parameters format
@@ -318,6 +320,8 @@ const scope = {
   timestamp: "2018-03-15T13:00:00.111Z",
   noISOTimestamp: "2018-03-15T13:00:00Z",
   notValidTimestamp: "2018timestmap",
+  notValidTimestamp2: "1521118800",
+  notValidTimestamp3: "20181115",
   turn:
   {
     entities:
