@@ -38,10 +38,10 @@ export class NamedPipeServer implements IStreamingTransportServer {
     this._isDisconnecting = false;
     this._sender.disconnected = (x: object, y: any) => {
       this.onConnectionDisconnected(this, x, y);
-    }
+    };
     this._receiver.disconnected = (x: object, y: any) => {
       this.onConnectionDisconnected(this, x, y);
-    }
+    };
   }
 
   /* tslint:disable:promise-function-async promise-must-complete */
