@@ -1,5 +1,6 @@
 const net = require('net');
-const Transport = require('../lib/Transport');
+const np = require('../lib');
+const protocol = require('botframework-streaming-extensions-protocol');
 const  chai  = require('chai');
 var expect = chai.expect;
 
@@ -45,7 +46,7 @@ class TestServer {
     }
 
     connect() {
-        let pipeName = Transport.Transport.PipePath + this._baseName;
+        let pipeName = np.Transport.PipePath + this._baseName;
 
         let connectResolve = undefined;
 
@@ -54,7 +55,7 @@ class TestServer {
         });
 
         this._server = net.createServer(() => {
-            this.transport = new Transport.Transport(new FauxSock , pipeName);
+            this.transport = new np.Transport(new FauxSock , pipeName);
             connectResolve();
         });
         this._server.listen(pipeName);
@@ -86,10 +87,10 @@ class TestClient {
     }
 
     connect() {
-        let pipeName = Transport.PipePath + this._baseName;
+        let pipeName = np.Transport.PipePath + this._baseName;
 
         let socket = new FauxSock;
-        this.transport = new Transport.Transport(socket, '');
+        this.transport = new np.Transport(socket, '');
 
         return Promise.resolve();
     }
@@ -147,5 +148,44 @@ describe('NamedPipe Transport Tests', () => {
 
         c.disconnect();
         done();
+    });
+
+    it('creates a new transport', () => {
+        let transport = new np.Transport(new FauxSock, 'fakeSocket');
+        expect(transport).to.be.instanceOf(np.Transport);
+    });
+});
+
+describe('NamedPipe Client Tests', () => {
+    it('creates a new client', () => {
+        let client = new np.NamedPipeClient('pipeA', new protocol.RequestHandler(), false);
+        expect(client).to.be.instanceOf(np.NamedPipeClient);
+    });
+
+    it('connects without throwing', () => {
+        let client = new np.NamedPipeClient('pipeA', new protocol.RequestHandler(), false);
+        expect(client.connectAsync()).to.not.throw;
+        expect(client.disconnect()).to.not.throw;
+    });
+
+    it('disconnects without throwing', () => {
+        let client = new np.NamedPipeClient('pipeA', new protocol.RequestHandler(), false);
+        expect(client.disconnect()).to.not.throw;
+    });
+
+    it('sends without throwing', () => {
+        let client = new np.NamedPipeClient('pipeA', new protocol.RequestHandler(), false);
+        let request = new protocol.Request();
+        let token = new protocol.CancellationToken();
+        expect( () => client.sendAsync(request, token)).to.not.throw;
+        expect(client.disconnect()).to.not.throw;
+    });
+
+});
+
+describe('NamedPipe Server Tests', () => {
+    it('creates a new server', () => {
+        let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
+        expect(server).to.be.instanceOf(np.NamedPipeServer);
     });
 });
