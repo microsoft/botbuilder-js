@@ -10,7 +10,14 @@ class FauxSock{
             this.contentString = contentString;
             this.position = 0;
         }
+        this.connecting = false;
+        this.exists = true;       
     }
+
+    write(buffer){
+        this.buffer = buffer;
+    }
+
     send(buffer){
         return buffer.length;
     };
@@ -28,8 +35,12 @@ class FauxSock{
             this.receiver.disconnect();
     }    
     close(){};
-    end(){};
-
+    end(){ 
+        this.exists = false;
+    };
+    destroyed(){ 
+        return this.exists;
+    };
     on(){};
 
     setReceiver(receiver){
@@ -126,66 +137,163 @@ function connect(s, c) {
     return p;
 }
 
-describe('NamedPipe Transport Tests', () => {
-    it('Client connect', () => {
-        let pipeName = 't1';
-        let c = new TestClient(pipeName);
-        let t = c.connect();
-        expect(t).to.not.be.undefined;
-        c.disconnect();
+describe('Streaming Extensions NamedPipe Library Tests', () => {
+    describe('NamedPipe Transport Tests', () => {
+        it('Client connect', () => {
+            let pipeName = 't1';
+            let c = new TestClient(pipeName);
+            let t = c.connect();
+            expect(t).to.not.be.undefined;
+            c.disconnect();
+        });
+
+        it('Client cannot send while connecting', async (done) => {
+            let pipeName = 't1';
+            let c = new TestClient(pipeName);
+            c.connect();
+
+            var b = new Buffer('12345', 'utf8');
+
+            let count = c.transport.send(b);
+
+            expect(count).to.equal(0);
+
+            c.disconnect();
+            done();
+        });
+
+        it('creates a new transport', () => {
+            let sock = new FauxSock();
+            sock.destroyed = false;
+            sock.connecting = false;
+            sock.writable = true;
+            let transport = new np.Transport(sock, 'fakeSocket1');
+            expect(transport).to.be.instanceOf(np.Transport);
+            expect( () => transport.close()).to.not.throw;
+        });
+
+        it('creates a new transport and connects', () => {
+            let sock = new FauxSock();
+            sock.destroyed = false;
+            sock.connecting = false;
+            sock.writable = true;
+            let transport = new np.Transport(sock, 'fakeSocket2');
+            expect(transport).to.be.instanceOf(np.Transport);
+            expect(transport.isConnected()).to.be.true;
+            expect( () => transport.close()).to.not.throw;
+        });
+
+        it('closes the transport without throwing', () => {
+            let sock = new FauxSock();
+            sock.destroyed = false;
+            sock.connecting = false;
+            sock.writable = true;
+            let transport = new np.Transport(sock, 'fakeSocket3');
+            expect(transport).to.be.instanceOf(np.Transport);
+            expect( transport.close()).to.not.throw;
+            let exists = transport.isConnected();
+            expect(exists).to.be.false;
+        });
+
+        it('writes to the socket', () => {
+            let sock = new FauxSock();
+            sock.destroyed = false;
+            sock.connecting = false;
+            sock.writable = true;
+            let transport = new np.Transport(sock, 'fakeSocket4');
+            expect(transport).to.be.instanceOf(np.Transport);
+            expect(transport.isConnected()).to.be.true;
+            let buff = new Buffer('hello', 'utf8');
+            let sent = transport.send(buff);
+            expect(sent).to.equal(5);
+            expect( () => transport.close()).to.not.throw;
+        });
+        
+        it('returns 0 when attepmting to write to a closed socket', () => {
+            let sock = new FauxSock();
+            sock.destroyed = false;
+            sock.connecting = false;
+            sock.writable = true;
+            let transport = new np.Transport(sock, 'fakeSocket5');
+            expect(transport).to.be.instanceOf(np.Transport);
+            expect(transport.isConnected()).to.be.true;
+            sock.writable = false;
+            let buff = new Buffer('hello', 'utf8');
+            let sent = transport.send(buff);
+            expect(sent).to.equal(0);
+            expect( () => transport.close()).to.not.throw;
+        });
+
+        it('throws when reading from a dead socket', () => {
+            let sock = new FauxSock();
+            sock.destroyed = false;
+            sock.connecting = false;
+            sock.writable = true;
+            let transport = new np.Transport(sock, 'fakeSocket5');
+            expect(transport).to.be.instanceOf(np.Transport);
+            expect(transport.isConnected()).to.be.true;
+            expect(transport.receiveAsync(5)).to.throw;
+            expect( () => transport.close()).to.not.throw;
+        });
     });
 
-    it('Client cannot send while connecting', async (done) => {
-        let pipeName = 't1';
-        let c = new TestClient(pipeName);
-        c.connect();
+    describe('NamedPipe Client Tests', () => {
+        it('creates a new client', () => {
+            let client = new np.NamedPipeClient('pipeA', new protocol.RequestHandler(), false);
+            expect(client).to.be.instanceOf(np.NamedPipeClient);
+            expect(client.disconnect()).to.not.throw;
+        });
 
-        var b = new Buffer('12345', 'utf8');
+        it('connects without throwing', () => {
+            let client = new np.NamedPipeClient('pipeA', new protocol.RequestHandler(), false);
+            expect(client.connectAsync()).to.not.throw;
+            expect(client.disconnect()).to.not.throw;
+        });
 
-        let count = c.transport.send(b);
+        it('disconnects without throwing', () => {
+            let client = new np.NamedPipeClient('pipeA', new protocol.RequestHandler(), false);
+            expect(client.disconnect()).to.not.throw;
+        });
 
-        expect(count).to.equal(0);
+        it('sends without throwing', () => {
+            let client = new np.NamedPipeClient('pipeA', new protocol.RequestHandler(), false);
+            let request = new protocol.Request();
+            let token = new protocol.CancellationToken();
+            expect( () => client.sendAsync(request, token)).to.not.throw;
+            expect(client.disconnect()).to.not.throw;
+        });
 
-        c.disconnect();
-        done();
     });
 
-    it('creates a new transport', () => {
-        let transport = new np.Transport(new FauxSock, 'fakeSocket');
-        expect(transport).to.be.instanceOf(np.Transport);
-    });
-});
+    describe('NamedPipe Server Tests', () => {
+        it('creates a new server', () => {
+            let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
+            expect(server).to.be.instanceOf(np.NamedPipeServer);
+            expect(() => server.disconnect()).to.not.throw;
+        });
 
-describe('NamedPipe Client Tests', () => {
-    it('creates a new client', () => {
-        let client = new np.NamedPipeClient('pipeA', new protocol.RequestHandler(), false);
-        expect(client).to.be.instanceOf(np.NamedPipeClient);
-    });
+        it('starts the server without throwing', () => {
+            let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
+            expect(server).to.be.instanceOf(np.NamedPipeServer);
 
-    it('connects without throwing', () => {
-        let client = new np.NamedPipeClient('pipeA', new protocol.RequestHandler(), false);
-        expect(client.connectAsync()).to.not.throw;
-        expect(client.disconnect()).to.not.throw;
-    });
+            expect( () => server.startAsync()).to.not.throw;
+            expect(() => server.disconnect()).to.not.throw;
+        });
 
-    it('disconnects without throwing', () => {
-        let client = new np.NamedPipeClient('pipeA', new protocol.RequestHandler(), false);
-        expect(client.disconnect()).to.not.throw;
-    });
+        it('disconnects without throwing', () => {
+            let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
+            expect(server).to.be.instanceOf(np.NamedPipeServer);
+            expect( () => server.startAsync()).to.not.throw;
+            expect(() => server.disconnect()).to.not.throw;
+        });
 
-    it('sends without throwing', () => {
-        let client = new np.NamedPipeClient('pipeA', new protocol.RequestHandler(), false);
-        let request = new protocol.Request();
-        let token = new protocol.CancellationToken();
-        expect( () => client.sendAsync(request, token)).to.not.throw;
-        expect(client.disconnect()).to.not.throw;
-    });
+        it('sends without throwing', () => {
+            let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
+            expect(server).to.be.instanceOf(np.NamedPipeServer);
+            expect( () => server.startAsync()).to.not.throw;
+            expect(() => server.sendAsync(new protocol.Request(), new protocol.CancellationToken()));
+            expect(() => server.disconnect()).to.not.throw;
+        });
 
-});
-
-describe('NamedPipe Server Tests', () => {
-    it('creates a new server', () => {
-        let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
-        expect(server).to.be.instanceOf(np.NamedPipeServer);
     });
 });
