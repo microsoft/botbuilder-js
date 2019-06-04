@@ -109,10 +109,10 @@ const dataSource = [
   ["addOrdinal(11 + 13)", "24th"],
   ["addOrdinal(-1)", "-1"],//original string value
   ["count(guid())", 36],
-  ["guid().indexOf('-')", 8],
+  ["indexOf(guid(), '-')", 8],
   ["indexOf(guid(), '-')", 8],
   ["indexOf(hello, '-')", -1],
-  ["guid().lastIndexOf('-')", 23],
+  ["lastIndexOf(guid(), '-')", 23],
   ["lastIndexOf(guid(), '-')", 23],
   ["lastIndexOf(hello, '-')", -1],
 
