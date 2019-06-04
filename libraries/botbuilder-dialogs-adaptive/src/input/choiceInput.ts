@@ -21,7 +21,6 @@ export interface ChoiceInputConfiguration extends InputDialogConfiguration {
 }
 
 export enum ChoiceOutputFormat {
-    resolution = 'resolution',
     value = 'value',
     index = 'index'
 }
@@ -168,9 +167,6 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
                 break;
             case ChoiceOutputFormat.index:
                 dc.state.setValue(InputDialog.INPUT_PROPERTY, foundChoice.index);
-                break;
-            case ChoiceOutputFormat.resolution:
-                dc.state.setValue(InputDialog.INPUT_PROPERTY, foundChoice);
                 break;
         }
 
