@@ -45,7 +45,12 @@ export class Transport implements ITransportSender, ITransportReceiver {
   }
 
   public isConnected(): boolean {
-    return this._socket && !this._socket.destroyed && !this._socket.connecting;
+    if (!this._socket)
+    {
+      return false;
+    }
+
+    return !this._socket.destroyed && !this._socket.connecting;
   }
 
   public close() {
