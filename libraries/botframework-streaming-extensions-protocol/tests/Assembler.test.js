@@ -129,6 +129,13 @@ describe('ContentStreamAssembler', () => {
         expect(csa.createPayloadStream())
             .instanceOf(Stream.Stream);
     });
+
+    it('closes a Stream', () => {
+        let csa = new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), '1', 'stream', 50);
+        expect(csa.createPayloadStream())
+            .instanceOf(Stream.Stream);
+        expect(csa.close()).to.not.throw;
+    });
 });
 
 describe('PayloadAssemblerManager', () => {
