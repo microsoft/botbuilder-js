@@ -8,7 +8,7 @@
 
 import { Configurable } from "botbuilder-dialogs";
 import { TypeFactory } from "./factory/typeFactory";
-import { IResourceProvider } from ".";
+import { IResourceProvider } from "./resources/resourceProvider";
 
 export class TypeLoader {
 
@@ -38,35 +38,51 @@ export class TypeLoader {
             }
 
             for (const key in jsonObj) {
-                if (jsonObj.hasOwnProperty(key)) {
+                if (jsonObj.hasOwnProperty(key) && key != "$type") {
                     const setting = jsonObj[key];
                     if (Array.isArray(setting)) {
                         if (Array.isArray(obj[key])) {
-                            // Apply as an array update
-                            setting.forEach(async (item) => {
+                            obj[key] = [];
+
+                            for (let item of setting) {
                                 let loadedItem = await this.loadObjectTree(item);
                                 obj[key].push(loadedItem);
-                            });
+                            }
                         } else {
                             obj[key] = setting;
                         }
                     } else if (typeof setting == 'object' && setting.hasOwnProperty('$type')) {
                         obj[key] = await this.loadObjectTree(setting);
-                    } else if (setting && typeof setting == 'string' && this.resourceProvider) {
+                    } else if (setting && typeof setting == 'string' && !setting.includes('=') && obj.hasOwnProperty(key) && typeof obj[key] != 'string' && this.resourceProvider) {
                         let resource = await this.resourceProvider.getResource(`${setting}.dialog`)
+
                         if (resource) {
                             const text = await resource.readText();
                             obj[key] = JSON.parse(text);
-                        } else {
+                        } else if (!obj[key]){
                             obj[key] = setting;
                         }
-                    } else {
-                        obj[key] = setting; 
+                    } 
+                    else {
+                        if (!obj[key]) {
+                            obj[key] = setting; 
+                        }
+                        
                     }
                 }
             }
             return obj;
+        } 
+        // Implicit copy
+        else if (typeof jsonObj == 'string') {
+            let resource = await this.resourceProvider.getResource(`${jsonObj}.dialog`)
+            if (resource) {
+                const text = await resource.readText();
+
+                return await this.loadObjectTree(JSON.parse(text));
+            } 
         }
+        
         return null;
     }
 }

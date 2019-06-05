@@ -9,18 +9,29 @@ const path = require('path');
 describe('FileResourceProvider', function () {
     this.timeout(5000);
 
-    it('FileResourceProvider load multi-level directory, get by id', async function () {
+    it('FileResourceProvider load multi-level directory, get by id', async () => {
         let resourceProvider = new FileResourceProvider();
         resourceProvider.registerDirectory('tests/resources');
 
         let simplePromptResource = await resourceProvider.getResource('SimplePrompt.main.dialog');
-
         assert.equal(simplePromptResource.id(), 'SimplePrompt.main.dialog');
         const text = await simplePromptResource.readText();
+
+        assert.equal(text[0], '{');        
+    });
+
+    it('FileResourceProvider load single-level directory, get by id', async () => {
+        let resourceProvider = new FileResourceProvider();
+        resourceProvider.registerDirectory('tests/resources/07 - BeginDialog');
+        let simplePromptResource = await resourceProvider.getResource('BeginDialog.main.dialog');
+
+        assert.equal(simplePromptResource.id(), 'BeginDialog.main.dialog');
+        const text = await simplePromptResource.readText();
+
         assert.equal(text[0], '{');
     });
 
-    it('FileResourceProvider load multi-level directory, get by type', async function () {
+    it('FileResourceProvider load multi-level directory, get by type', async () => {
         let resourceProvider = new FileResourceProvider();
         resourceProvider.registerDirectory('tests/resources');
 

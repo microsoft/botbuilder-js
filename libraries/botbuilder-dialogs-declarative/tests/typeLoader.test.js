@@ -35,15 +35,15 @@ describe('TypeLoader', function () {
         });
     });
 
-    // // it('TypeLoader TextInput: should prompt for name and then use name in response. Next time prompt should not ask for property that is already in memory', async function () {
-    // //     declarativeTestCase('04 - TextInput\\TextInput.main.dialog', async function(adapter){
-    // //         await adapter
-    // //         .send('hi')
-    // //             .assertReply('Hello, I\'m Zoidberg. What is your name?')
-    // //         .send('Carlos')
-    // //             .assertReply('Hello Carlos, nice to talk to you!')
-    // //     });
-    // // });
+    it('TypeLoader TextInput: should prompt for name and then use name in response. Next time prompt should not ask for property that is already in memory', async function () {
+        declarativeTestCase('04 - TextInput\\TextInput.main.dialog', null, async function(adapter){
+            await adapter
+            .send('hi')
+                .assertReply('Hello, I\'m Zoidberg. What is your name?')
+            .send('Carlos')
+                .assertReply('Hello Carlos, nice to talk to you!')
+        });
+    });
 
     it('TypeLoader IntentRule: intent rule should route according to intent defined in recognizer', async function () {
         declarativeTestCase('07 - BeginDialog/BeginDialog.main.dialog', '07 - BeginDialog', async function(adapter){
@@ -52,10 +52,8 @@ describe('TypeLoader', function () {
                 .assertReply('Hello, I\'m Zoidberg. What is your name?')
             .send('Carlos')
                 .assertReply('Hello Carlos, nice to talk to you!')
-            // .send('hi')
-            //     .assertReply('Hello Carlos, nice to talk to you!')
-            // .send('tell me a joke')
-            //     .assertReply('Why did the chicken cross the road?')
+            // .send('tell me a joke') 
+            //     .assertReply('Why did the chicken cross the road?') // This fails, need to discuss with stevenic
             // .send('to tell a bad joke on the other side?')
             //     .assertReply('To get to the other side')
             // .send('tell my fortune')
@@ -67,6 +65,7 @@ describe('TypeLoader', function () {
 });
 
 function declarativeTestCase(path, resourcesFolder, callback) {
+
     readPackageJson(`tests/resources/${path}`,
         async function (err, json) {
             if (err) {
@@ -77,7 +76,7 @@ function declarativeTestCase(path, resourcesFolder, callback) {
 
             if (resourcesFolder) {
                 let resourceProvider = new FileResourceProvider();
-                resourceProvider.registerDirectory(`tests/resources/${resourcesFolder}`);
+                resourceProvider.registerDirectory(`tests/resources`);
                 loader = new TypeLoader(null, resourceProvider)
             }
             

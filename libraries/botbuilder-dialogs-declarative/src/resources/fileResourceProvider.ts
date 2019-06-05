@@ -1,4 +1,7 @@
 import { debug } from "util";
+import { IResourceProvider } from "./resourceProvider";
+import { IResource } from "./resource";
+import { FileResource } from "./fileResource";
 
 /**
  * @module botbuilder-dialogs-declarative
@@ -10,12 +13,6 @@ import { debug } from "util";
 
 const path = require('path');
 const fs = require('fs');
-const { readdir, stat } = require('fs').promises;
-
-
-export interface IResourceProvider {
-    getResource(id: string) : Promise<IResource>;
-}
 
 export class FileResourceProvider implements IResourceProvider {
     
@@ -42,7 +39,7 @@ export class FileResourceProvider implements IResourceProvider {
         let resources: IResource[] = [];
 
         for(const dir of this.directories) {
-            const files: string[] = await this.getFilesRecursive(dir);
+            const files: string[] = this.getFilesRecursive(dir);
 
             for(const file of files) {
                 if (path.extname(file) == fileExtension) {
@@ -70,48 +67,24 @@ export class FileResourceProvider implements IResourceProvider {
 
         return null;
     }
-
-    private async getFilesRecursive(dir: string) : Promise<string[]> {
-        const subdirs = await readdir(dir);
-        const files = await Promise.all(subdirs.map(async (subdir) => {
-          const res = path.resolve(dir, subdir);
-          return (await stat(res)).isDirectory() ? this.getFilesRecursive(res) : res;
-        }));
-        return Array.prototype.concat(...files);
-    }
-}
-
-export interface IResource {
-    id(): string;
-    readText() : Promise<string>;
-}
-
-export class FileResource implements IResource {
-
-    private resourceId: string; 
-    private path: string;
-
-    constructor(path: string) {
-        if (!path) {
-            throw new Error("path");
+    
+    // TODO: Implement async but without using fs.promise since it is still marked experimental
+    // TODO: Cache
+    // TODO: Change notification
+    private getFilesRecursive(dir: string) : string[] {
+        var results = [];
+        var list = fs.readdirSync(dir);
+        for(let file of list) {
+            file = path.resolve(dir, file);
+            var stat = fs.statSync(file);
+            if (stat && stat.isDirectory()) { 
+                // Subdirectory, recurse
+                results = results.concat(this.getFilesRecursive(file));
+            } else { 
+                // File
+                results.push(file);
+            }
         }
-
-        this.path = path;
-        
-        // The id will be the file name, without the path
-        this.resourceId = this.path.replace(/^.*[\\\/]/, '');
-    }
-
-    public id(): string {
-        return this.resourceId;
-    }
-
-    public readText() : Promise<string> {
-        const filePath = this.path;
-        return new Promise<string>(function(resolve, reject) {
-            fs.readFile(filePath, 'utf8', (err, data) => {
-                err ? reject(err) : resolve(data)
-            });
-        });
+        return results;
     }
 }

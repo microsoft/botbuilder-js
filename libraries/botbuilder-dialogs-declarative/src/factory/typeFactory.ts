@@ -7,40 +7,12 @@
  */
 
 import { Configurable, TextPrompt } from 'botbuilder-dialogs';
-import { AdaptiveDialog, BeginDialog, SendActivity, TextInput, ConfirmInput, NumberInput, ChoiceInput, EndTurn, IfCondition, RegExpRecognizer, IntentRule, UnknownIntentRule } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, BeginDialog, SendActivity, TextInput, ConfirmInput, NumberInput, ChoiceInput, EndTurn, IfCondition, RegExpRecognizer, IntentRule, UnknownIntentRule, CancelDialog, DeleteProperty, EditArray, EditSteps, EmitEvent, EndDialog, ForEach, ForEachPage, LogStep, RepeatDialog, ReplaceDialog, SaveEntity, SendList, SetProperty } from 'botbuilder-dialogs-adaptive';
+import { ConfigurableTypeBuilder } from './configurableTypeBuilder';
+import { DefaultTypeBuilder } from './defaultTypeBuilder';
+import { ITypeBuilder } from './typeBuilder';
+import { CustomTypeBuilder } from './customTypeBuilder';
 
-export interface ITypeBuilder {
-    build(config: object) : object;
-}
-
-export class CustomTypeBuilder implements ITypeBuilder {
-
-    constructor(private factory: (config: object) => object) {}
-
-    public build(config: object) : object {
-        return this.factory(config);
-    }
-}
-
-export class DefaultTypeBuilder implements ITypeBuilder {
-
-    constructor(private factory: new () => any) {}
-
-    public build(config: object) : object {
-        return new this.factory();
-    }
-}
-
-export class ConfigurableTypeBuilder implements ITypeBuilder {
-
-    constructor(private factory: (config: object) => object) {}
-
-    public build(config: object) : object {
-        let built = this.factory(config);
-        let configurable = <Configurable>built;
-        return configurable.configure(config);
-    }
-}
  /**
   * Declarative type factory
   */
@@ -90,19 +62,33 @@ export class ConfigurableTypeBuilder implements ITypeBuilder {
 
     private registerBuiltIns(): void {
         // Input
-        this.register('Microsoft.TextInput', new DefaultTypeBuilder(TextInput));
-        this.register('Microsoft.ConfirmInput', new DefaultTypeBuilder(ConfirmInput));
-        this.register('Microsoft.FloatInput', new DefaultTypeBuilder(NumberInput));
-        this.register('Microsoft.IntegerInput', new DefaultTypeBuilder(NumberInput));
-        this.register('Microsoft.ChoiceInput', new DefaultTypeBuilder(ChoiceInput));
+        this.register('Microsoft.TextInput', new ConfigurableTypeBuilder(TextInput));
+        this.register('Microsoft.ConfirmInput', new ConfigurableTypeBuilder(ConfirmInput));
+        this.register('Microsoft.FloatInput', new ConfigurableTypeBuilder(NumberInput));
+        this.register('Microsoft.IntegerInput', new ConfigurableTypeBuilder(NumberInput));
+        this.register('Microsoft.ChoiceInput', new ConfigurableTypeBuilder(ChoiceInput));
         
         // Steps
-        this.register('Microsoft.SendActivity', new DefaultTypeBuilder(SendActivity));
-        this.register('Microsoft.EndTurn', new DefaultTypeBuilder(EndTurn));
-        this.register('Microsoft.IfCondition', new DefaultTypeBuilder(IfCondition));
+        this.register('Microsoft.IfCondition', new ConfigurableTypeBuilder(IfCondition));
+        this.register('Microsoft.CancelDialog', new ConfigurableTypeBuilder(CancelDialog));
+        this.register('Microsoft.DeleteProperty', new ConfigurableTypeBuilder(DeleteProperty));
+        this.register('Microsoft.EditArray', new ConfigurableTypeBuilder(EditArray));
+        this.register('Microsoft.EditSteps', new ConfigurableTypeBuilder(EditSteps));
+        this.register('Microsoft.EmitEvent', new ConfigurableTypeBuilder(EmitEvent));
+        this.register('Microsoft.EndDialog', new ConfigurableTypeBuilder(EndDialog));
+        this.register('Microsoft.EndTurn', new ConfigurableTypeBuilder(EndTurn));
+        this.register('Microsoft.ForEach', new ConfigurableTypeBuilder(ForEach));
+        this.register('Microsoft.ForEachPage', new ConfigurableTypeBuilder(ForEachPage));
+        this.register('Microsoft.LogStep', new ConfigurableTypeBuilder(LogStep));
+        this.register('Microsoft.RepeatDialog', new ConfigurableTypeBuilder(RepeatDialog));
+        this.register('Microsoft.ReplaceDialog', new ConfigurableTypeBuilder(ReplaceDialog));
+        this.register('Microsoft.SaveEntity', new ConfigurableTypeBuilder(SaveEntity));
+        this.register('Microsoft.SendActivity', new ConfigurableTypeBuilder(SendActivity));
+        this.register('Microsoft.SendList', new ConfigurableTypeBuilder(SendList));
+        this.register('Microsoft.SetProperty', new ConfigurableTypeBuilder(SetProperty));
         
         // Dialogs
-        this.register('Microsoft.AdaptiveDialog', new DefaultTypeBuilder(AdaptiveDialog));
+        this.register('Microsoft.AdaptiveDialog', new ConfigurableTypeBuilder(AdaptiveDialog));
 
         // Rules
         this.register('Microsoft.UnknownIntentRule', new DefaultTypeBuilder(UnknownIntentRule));
@@ -118,7 +104,7 @@ export class ConfigurableTypeBuilder implements ITypeBuilder {
                             
                 if (intents) {
                     for (const [key, value] of Object.entries(intents)) {
-                        recognizer.addIntent(key, new RegExp(value));
+                        recognizer.addIntent(key, new RegExp(value, 'i'));
                     }
                 }
             }
