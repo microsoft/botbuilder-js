@@ -29,18 +29,10 @@ export class ProtocolAdapter {
     this.requestManager = requestManager;
     this.payloadSender = sender;
     this.payloadReceiver = receiver;
-
     this.sendOperations = new SendOperations(this.payloadSender);
     this.streamManager = new StreamManager(this.onCancelStream);
-    this.assemblerManager = new PayloadAssembleManager(
-      this.streamManager,
-      (id: string, response: ReceiveResponse) => this.onReceiveResponse(id, response),
-      (id: string, request: ReceiveRequest) => this.onReceiveRequest(id, request));
-
-    this.payloadReceiver.subscribe(
-      (header: Header) => this.assemblerManager.getPayloadStream(header),
-      // tslint:disable-next-line: no-void-expression
-      (header: Header, contentStream: Stream, contentLength: number) => this.assemblerManager.onReceive(header, contentStream, contentLength));
+    this.assemblerManager = new PayloadAssembleManager(this.streamManager,(id: string, response: ReceiveResponse) => this.onReceiveResponse(id, response),(id: string, request: ReceiveRequest) => this.onReceiveRequest(id, request));
+    this.payloadReceiver.subscribe((header: Header) => this.assemblerManager.getPayloadStream(header),(header: Header, contentStream: Stream, contentLength: number) => this.assemblerManager.onReceive(header, contentStream, contentLength));
   }
 
   public async sendRequestAsync(request: Request, cancellationToken?: CancellationToken): Promise<ReceiveResponse> {

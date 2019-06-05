@@ -2,7 +2,7 @@ const Stream = require( '../lib/Stream');
 const chai = require( 'chai');
 var expect = chai.expect;
 
-describe('Stream', () => {
+describe('Streaming Extensions Stream Tests', () => {
     it('throws on invalid encoding types', () => {
         //  expect.assertions(1);
         let s = new Stream.Stream();
@@ -23,4 +23,11 @@ describe('Stream', () => {
             .throw();
 
     });
+
+    it('subscribes to data events', (done) => {
+        let s = new Stream.Stream();
+        s.subscribe((data) => done());
+
+        s._write('hello', 'utf8', () => {});
+    })
 });
