@@ -18,6 +18,7 @@ const badExpressions =
   "a.func()", // no such function
   "(1.foreach)()",// error func
   "('str'.foreach)()",// error func
+  "'hello'.length()",// not support currently
 
   // Operators test
   "'1' + 2", // params should be number
