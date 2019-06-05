@@ -330,8 +330,6 @@ describe('QnAMaker', function () {
                     assert(telemetry, 'telemetry is null');
                     switch(++callCount) {
                         case 1:
-                            // console.warn('Call number:' + callCount);
-                            // console.warn(telemetry);
                             assert(telemetry.name === "QnaMessage");
                             assert(telemetry.properties);
                             assert('knowledgeBaseId' in telemetry.properties);
