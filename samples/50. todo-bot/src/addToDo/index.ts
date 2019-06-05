@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { AdaptiveDialog, IntentRule, CancelDialog, SaveEntity, TextInput, EditArray, ArrayChangeType, SendActivity, LogStep, IfCondition, SetProperty } from "botbuilder-dialogs-adaptive";
+import { AdaptiveDialog, IntentRule, CancelDialog, TextInput, EditArray, ArrayChangeType, SendActivity, LogStep, IfCondition, SetProperty } from "botbuilder-dialogs-adaptive";
 import { getRecognizer } from "../recognizer";
 
 export class AddToDo extends AdaptiveDialog {
