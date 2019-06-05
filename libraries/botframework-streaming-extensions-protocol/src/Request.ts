@@ -37,14 +37,21 @@ export class Request {
     }
     this.Streams.push(new HttpContentStream(content));
   }
+
   public setBody(body: any): void {
-    let stream = new Stream();
-    stream.write(body, 'utf8');
-    this.addStream(new HttpContent({
-      contentType: 'application/json; charset=utf-8',
-      contentLength: stream.length
-    },
-      // tslint:disable-next-line: align
-      stream));
+    if (typeof body === 'string') {
+      let stream = new Stream();
+      stream.write(body, 'utf8');
+      this.addStream(new HttpContent({
+        contentType: 'application/json; charset=utf-8',
+        contentLength: stream.length
+      },
+        // tslint:disable-next-line: align
+        stream));
+    } else {
+      if (typeof body === 'object') {
+        this.addStream(body);
+      }
+    }
   }
 }
