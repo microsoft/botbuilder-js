@@ -348,8 +348,6 @@ describe('QnAMaker', function () {
                             break;
 
                         default:
-                            console.warn('Call number:' + callCount);
-                            console.warn(telemetry);
                             assert(false);
                             break;
                     }
