@@ -37,13 +37,18 @@ export class TypeLoader {
                 return obj;
             }
 
+            // Iterate through json object properties and check whether 
+            // there are typed objects that require factory calls
             for (const key in jsonObj) {
                 if (jsonObj.hasOwnProperty(key) && key != "$type") {
                     const setting = jsonObj[key];
+
+                    // Process arrays
                     if (Array.isArray(setting)) {
                         if (Array.isArray(obj[key])) {
                             obj[key] = [];
 
+                            // Recursively check for factory 
                             for (let item of setting) {
                                 let loadedItem = await this.loadObjectTree(item);
                                 obj[key].push(loadedItem);
@@ -51,8 +56,10 @@ export class TypeLoader {
                         } else {
                             obj[key] = setting;
                         }
+                    // Process objects in case recursion is needed
                     } else if (typeof setting == 'object' && setting.hasOwnProperty('$type')) {
                         obj[key] = await this.loadObjectTree(setting);
+                    // Process string references where an object is expected using resourceProvider
                     } else if (setting && typeof setting == 'string' && !setting.includes('=') && obj.hasOwnProperty(key) && typeof obj[key] != 'string' && this.resourceProvider) {
                         let resource = await this.resourceProvider.getResource(`${setting}.dialog`)
 
@@ -63,17 +70,14 @@ export class TypeLoader {
                             obj[key] = setting;
                         }
                     } 
-                    else {
-                        if (!obj[key]) {
-                            obj[key] = setting; 
-                        }
-                        
+                    else if (!obj[key]) {
+                        obj[key] = setting; 
                     }
                 }
             }
             return obj;
         } 
-        // Implicit copy
+        // Implicit copy: we receive a string in a leaf node but actually expect an object.
         else if (typeof jsonObj == 'string') {
             let resource = await this.resourceProvider.getResource(`${jsonObj}.dialog`)
             if (resource) {
