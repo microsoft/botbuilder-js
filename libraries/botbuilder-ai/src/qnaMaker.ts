@@ -458,11 +458,11 @@ export class QnAMaker implements QnAMakerTelemetryClient {
 
         this.validateOptions(queryOptions);
 
-        const qnaResult: any = await request( url, {
+        const qnaResult: any = await request(url, {
             method: 'POST',
             headers: headers,
             timeout: queryOptions.timeout,
-            body: JSON.stringify( {
+            body: JSON.stringify({
                 question: question,
                 ...queryOptions
             })
