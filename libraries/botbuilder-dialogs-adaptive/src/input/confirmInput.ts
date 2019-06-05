@@ -10,6 +10,7 @@ import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, 
 import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { Activity } from "botbuilder-core";
 import { ChoiceList } from "./choiceInput";
+import { ExpressionPropertyValue, ExpressionProperty } from "../expressionProperty";
 
 export interface ConfirmInputConfiguration extends InputDialogConfiguration {
     defaultLocale?: string;
@@ -59,20 +60,18 @@ export class ConfirmInput extends InputDialog<InputDialogOptions> {
     public confirmChoices?: ChoiceList;
 
     constructor();
-    constructor(property: string, prompt: PromptType);
-    constructor(property: string, entityName: string, prompt: PromptType);
-    constructor(property?: string, entityName?: string|PromptType, prompt?: PromptType) {
+    constructor(valueProperty: string, prompt: PromptType);
+    constructor(valueProperty: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
+    constructor(valueProperty?: string, value?: ExpressionPropertyValue<any>|PromptType, prompt?: PromptType) {
         super();
-        if (property) {
-            if(prompt == undefined) {
-                prompt = entityName;
-                entityName = undefined;
+        if (valueProperty) {
+            if(!prompt) {
+                prompt = value as PromptType;
+                value = undefined;
             }
-
-            // Initialize properties
-            this.property = property;
-            if (typeof entityName == 'string') { this.entityName = entityName }
-            this.prompt.value = prompt as PromptType;
+            this.valueProperty = valueProperty;
+            if (value !== undefined) { this.value = new ExpressionProperty(value as any) }
+            this.prompt.value = prompt;
         }
     }
 

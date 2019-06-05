@@ -15,14 +15,14 @@ export type PromptType = string|Partial<Activity>;
 export interface InputDialogConfiguration extends DialogConfiguration {
     allowInterruptions?: boolean;
     alwaysPrompt?: boolean;
-    entityName?: string;
+    value?: ExpressionPropertyValue<any>;
     prompt?: PromptType;
     unrecognizedPrompt?: PromptType;
     invalidPrompt?: PromptType;
-    property?: string;
+    valueProperty?: string;
     validations?: ExpressionPropertyValue<boolean>[];
     maxTurnCount?: number;
-    defaultValue?: any;
+    defaultValue?: ExpressionPropertyValue<any>;
 }
 
 export interface InputDialogOptions {
@@ -46,7 +46,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
 
     public alwaysPrompt = false;
 
-    public entityName?: string;
+    public value?: ExpressionProperty<any>;
 
     public prompt = new ActivityProperty();
 
@@ -58,7 +58,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
 
     public maxTurnCount?: number;
 
-    public defaultValue?: any;
+    public defaultValue?: ExpressionProperty<any>;
 
     constructor() {
         super();
@@ -80,23 +80,23 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
      * options and will be accessible within the dialog via `dialog.options.value`. The result
      * returned from the called dialog will then be copied to the bound property.
      */
-    public set property(value: string) {
+    public set valueProperty(value: string) {
         this.inputProperties['value'] = value;
         this.outputProperty = value;
     }
 
-    public get property(): string {
+    public get valueProperty(): string {
        return this.outputProperty; 
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        // Initialize turn count & input
-        dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, 0);
-        dc.state.setValue(InputDialog.INPUT_PROPERTY, undefined);
-
         // Initialize and persist options
         const opts = this.onInitializeOptions(dc, options || {} as O);
         dc.state.setValue(InputDialog.OPTIONS_PROPERTY, opts);
+
+        // Initialize turn count & input
+        dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, 0);
+        dc.state.setValue(InputDialog.INPUT_PROPERTY, undefined);
 
         // Recognize input
         const state = this.alwaysPrompt ? InputState.missing : await this.recognizeInput(dc, false);
@@ -139,7 +139,8 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
             return await this.promptUser(dc, state);
         } else {
             // Return default value
-            return await dc.endDialog(this.defaultValue);
+            const result = this.defaultValue ? this.defaultValue.evaluate(this.id, dc.state.toJSON()) : undefined;
+            return await dc.endDialog(result);
         }
     }
 
@@ -170,6 +171,10 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
                     case 'validations':
                         (value as any[]).forEach((exp) => this.validations.push(new ExpressionProperty(exp)));
                         break;
+                    case 'value':
+                        this.value = new ExpressionProperty(value);
+                    case 'defaultValue':
+                        this.defaultValue = new ExpressionProperty(value);
                     default:
                         super.configure({ [key]: value });
                         break;
@@ -292,20 +297,13 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
 
     private async recognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
         // Check for named entity first
-        let input: string;
-        if (this.entityName) {
-            const entityName = this.entityName.indexOf('@') == 0 ? this.entityName : '@' + this.entityName;
-            const value = dc.state.getValue(entityName);
-            if (Array.isArray(value)) {
-                input = value.length > 0 ? value[0] : undefined;
-            } else if (value != undefined) {
-                input = value;
-            }
+        let input: any;
+        if (this.value) {
+            input = this.value.evaluate(this.id, dc.state.toJSON());
         }
 
         // Use utterance or value passed in
         if (input == undefined) {
-            const activity = dc.context.activity;
             const turnCount = dc.state.getValue(InputDialog.TURN_COUNT_PROPERTY);
             if (turnCount == 0) {
                 input = dc.state.getValue(InputDialog.INITIAL_VALUE_PROPERTY);

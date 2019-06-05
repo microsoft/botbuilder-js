@@ -75,20 +75,20 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
     public recognizerOptions?: FindChoicesOptions;
 
     constructor();
-    constructor(property: string, prompt: PromptType, choices: ChoiceList|ExpressionPropertyValue<ChoiceList>);
-    constructor(property: string, entityName: string, prompt: PromptType, choices: ChoiceList|ExpressionPropertyValue<ChoiceList>);
-    constructor(property?: string, entityName?: string|PromptType, prompt?: PromptType|ChoiceList|ExpressionPropertyValue<ChoiceList>, choices?: ChoiceList|ExpressionPropertyValue<ChoiceList>) {
+    constructor(valueProperty: string, prompt: PromptType, choices: ChoiceList|ExpressionPropertyValue<ChoiceList>);
+    constructor(valueProperty: string, value: ExpressionPropertyValue<any>, prompt: PromptType, choices: ChoiceList|ExpressionPropertyValue<ChoiceList>);
+    constructor(valueProperty?: string, value?: ExpressionPropertyValue<any>|PromptType, prompt?: PromptType|ChoiceList|ExpressionPropertyValue<ChoiceList>, choices?: ChoiceList|ExpressionPropertyValue<ChoiceList>) {
         super();
-        if (property) {
+        if (valueProperty) {
             if(choices == undefined) {
                 choices = prompt as ChoiceList|ExpressionPropertyValue<any[]>;
-                prompt = entityName;
-                entityName = undefined;
+                prompt = value;
+                value = undefined;
             }
 
             // Initialize properties
-            this.property = property;
-            if (typeof entityName == 'string') { this.entityName = entityName }
+            this.valueProperty = valueProperty;
+            if (value !== undefined) { this.value = new ExpressionProperty(value as any) }
             this.prompt.value = prompt as PromptType;
 
             // If we were passed in a choice list then create a lambda that returns the list.

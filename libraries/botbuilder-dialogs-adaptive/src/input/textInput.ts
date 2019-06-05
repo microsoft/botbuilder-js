@@ -7,6 +7,7 @@
  */
 import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState, PromptType } from "./inputDialog";
 import { DialogContext } from "botbuilder-dialogs";
+import { ExpressionPropertyValue, ExpressionProperty } from "../expressionProperty";
 
 export interface TextInputConfiguration extends InputDialogConfiguration {
     outputFormat?: TextOutputFormat;
@@ -24,17 +25,17 @@ export class TextInput extends InputDialog<InputDialogOptions> {
     public outputFormat = TextOutputFormat.none;
     
     constructor();
-    constructor(property: string, prompt: PromptType);
-    constructor(property: string, entityName: string, prompt: PromptType);
-    constructor(property?: string, entityName?: string|PromptType, prompt?: PromptType) {
+    constructor(valueProperty: string, prompt: PromptType);
+    constructor(valueProperty: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
+    constructor(valueProperty?: string, value?: ExpressionPropertyValue<any>|PromptType, prompt?: PromptType) {
         super();
-        if (property) {
+        if (valueProperty) {
             if(!prompt) {
-                prompt = entityName;
-                entityName = undefined;
+                prompt = value as PromptType;
+                value = undefined;
             }
-            this.property = property;
-            if (typeof entityName == 'string') { this.entityName = entityName }
+            this.valueProperty = valueProperty;
+            if (value !== undefined) { this.value = new ExpressionProperty(value as any) }
             this.prompt.value = prompt;
         }
     }
