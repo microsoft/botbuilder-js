@@ -14,6 +14,7 @@ export class ContentStream {
     this.assembler = assembler;
   }
 
+// tslint:disable-next-line: no-reserved-keywords
   public get type(): string {
     return this.assembler.contentType;
   }
@@ -36,7 +37,8 @@ export class ContentStream {
 
   public async readAsString(): Promise<string> {
     let obj = await this.readAll();
-    let allData = obj['bufferArray']
+// tslint:disable-next-line: no-string-literal
+    let allData = obj['bufferArray'];
     let s: string = '';
     // tslint:disable-next-line: prefer-for-of
     for (let i = 0; i < allData.length; i++) {
@@ -49,17 +51,19 @@ export class ContentStream {
   public async readAsBuffer(): Promise<Buffer> {
     // do a read-all
     let obj = await this.readAll();
-    let allData = obj['bufferArray']
+// tslint:disable-next-line: no-string-literal
+    let allData = obj['bufferArray'];
+// tslint:disable-next-line: no-string-literal
     let count = obj['size'];
 
     // TODO: There's got to be a better way to do this.
     // Will revisit this after the big attachment problem is resolved.
     let s = new Buffer(count);
     let ptr = 0;
-    for(var i = 0; i< allData.length; i++)
-    {
-      for (var j = 0 ; j < allData[i].length; j++)
-      {
+// tslint:disable-next-line: prefer-for-of
+    for (let i = 0; i < allData.length; i++) {
+// tslint:disable-next-line: prefer-for-of
+      for (let j = 0 ; j < allData[i].length; j++) {
         s[ptr++] = allData[i][j];
       }
     }
