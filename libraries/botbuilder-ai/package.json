@@ -22,17 +22,16 @@
   "dependencies": {
     "@microsoft/recognizers-text-date-time": "1.1.2",
     "@types/node": "^10.12.18",
-    "@types/request-promise-native": "^1.0.10",
     "@azure/cognitiveservices-luis-runtime": "2.0.0",
     "botbuilder-core": "~4.1.6",
     "moment": "^2.20.1",
     "@azure/ms-rest-js": "~1.8.2",
-    "request": "^2.87.0",
-    "request-promise-native": "1.0.5",
+    "node-fetch": "^2.3.0",
     "url-parse": "^1.4.4"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
+    "@types/node-fetch": "^2.3.2",
     "codelyzer": "^4.1.0",
     "fs-extra": "^7.0.1",
     "mocha": "^5.2.0",
