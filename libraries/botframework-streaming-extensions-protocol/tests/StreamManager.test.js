@@ -72,8 +72,8 @@ describe('Streaming Protocol StreamManager Tests', () => {
         expect(sm.onReceive(head, stream1, 5)).to.not.throw;
     });
 
-    it('can close a stream', () => {
-        let sm = new protocol.StreamManager(undefined);
+    it('can close a stream', (done) => {
+        let sm = new protocol.StreamManager(done());
         expect(sm).to.be.instanceOf(protocol.StreamManager);
         let head = new protocol.Header(protocol.PayloadTypes.request, 0, 'bob', true);
         let pa = sm.getPayloadAssembler('bob');
@@ -84,8 +84,8 @@ describe('Streaming Protocol StreamManager Tests', () => {
         expect(sm.closeStream(pa.id)).to.not.throw;
     });
 
-    it('does not throw when asked to close a stream that does not exist', () => {
-        let sm = new protocol.StreamManager(undefined);
+    it('does not throw when asked to close a stream that does not exist', (done) => {
+        let sm = new protocol.StreamManager(done());
         expect(sm).to.be.instanceOf(protocol.StreamManager);
         let head = new protocol.Header(protocol.PayloadTypes.request, 0, 'bob', true);
         expect(sm.closeStream(head.id)).to.not.throw;
