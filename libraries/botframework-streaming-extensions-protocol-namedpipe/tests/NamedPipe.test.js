@@ -25,7 +25,7 @@ class FauxSock{
     receiveAsync(readLength){
         if(this.contentString[this.position])
         {        
-            this.buff = new Buffer.from(this.contentString[this.position]);
+            this.buff = Buffer.from(this.contentString[this.position]);
             this.position++;
 
             return this.buff.slice(0, readLength);
@@ -164,7 +164,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             let c = new TestClient(pipeName);
             c.connect();
 
-            var b = new Buffer('12345', 'utf8');
+            var b = Buffer.from('12345', 'utf8');
 
             let count = c.transport.send(b);
 
@@ -215,7 +215,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             let transport = new np.Transport(sock, 'fakeSocket4');
             expect(transport).to.be.instanceOf(np.Transport);
             expect(transport.isConnected()).to.be.true;
-            let buff = new Buffer('hello', 'utf8');
+            let buff = Buffer.from('hello', 'utf8');
             let sent = transport.send(buff);
             expect(sent).to.equal(5);
             expect( () => transport.close()).to.not.throw;
@@ -230,7 +230,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(transport).to.be.instanceOf(np.Transport);
             expect(transport.isConnected()).to.be.true;
             sock.writable = false;
-            let buff = new Buffer('hello', 'utf8');
+            let buff = Buffer.from('hello', 'utf8');
             let sent = transport.send(buff);
             expect(sent).to.equal(0);
             expect( () => transport.close()).to.not.throw;
@@ -291,7 +291,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             let transport = new np.Transport(sock, 'fakeSocket6');
             expect(transport).to.be.instanceOf(np.Transport);
             expect(transport.isConnected()).to.be.true;
-            let buff = new Buffer('hello', 'utf8');
+            let buff = Buffer.from('hello', 'utf8');
             expect(transport.socketReceive(buff)).to.not.throw;
         });
     });

@@ -66,7 +66,7 @@ export class Transport implements ITransportSender, ITransportReceiver {
 
   public onReceive(data: Buffer) {
     if (this._queue && data && data.byteLength > 0) {
-      this._queue.push(new Buffer(data));
+      this._queue.push(Buffer.from(data));
       this.trySignalData();
     }
   }
@@ -106,9 +106,9 @@ export class Transport implements ITransportSender, ITransportReceiver {
 
           this._activeReceiveResolve(buffer);
         } else {
-          // create a new buffer and copy some of the contents into it
+          // create a Buffer.from and copy some of the contents into it
           let available = Math.min(this._activeReceiveCount, this._active.length - this._activeOffset);
-          let buffer = new Buffer(available);
+          let buffer = Buffer.alloc(available);
           this._active.copy(buffer, 0, this._activeOffset, this._activeOffset + available);
           this._activeOffset += available;
 

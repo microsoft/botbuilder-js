@@ -58,7 +58,7 @@ export class ContentStream {
 
     // TODO: There's got to be a better way to do this.
     // Will revisit this after the big attachment problem is resolved.
-    let s = new Buffer(count);
+    let s = Buffer.from(count);
     let ptr = 0;
 // tslint:disable-next-line: prefer-for-of
     for (let i = 0; i < allData.length; i++) {

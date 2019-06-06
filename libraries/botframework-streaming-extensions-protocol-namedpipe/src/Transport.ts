@@ -79,7 +79,7 @@ export class Transport implements ITransportSender, ITransportReceiver {
 
     return promise;
   }
-  
+
   public socketReceive(data: Buffer) {
     if (this._queue && data && data.length > 0) {
       this._queue.push(data);
@@ -124,7 +124,7 @@ export class Transport implements ITransportSender, ITransportReceiver {
         } else {
           // create a new buffer and copy some of the contents into it
           let available = Math.min(this._activeReceiveCount, this._active.length - this._activeOffset);
-          let buffer = new Buffer(available);
+          let buffer = Buffer.alloc(available);
           this._active.copy(buffer, 0, this._activeOffset, this._activeOffset + available);
           this._activeOffset += available;
 
