@@ -79,6 +79,33 @@ export class Transport implements ITransportSender, ITransportReceiver {
 
     return promise;
   }
+  
+  public socketReceive(data: Buffer) {
+    if (this._queue && data && data.length > 0) {
+      this._queue.push(data);
+      this.trySignalData();
+    }
+  }
+
+  public socketClose() {
+    if (this._activeReceiveReject) {
+      this._activeReceiveReject(new Error('Socket was closed.'));
+    }
+
+    this._active = undefined;
+    this._activeOffset = 0;
+    this._activeReceiveResolve = undefined;
+    this._activeReceiveReject = undefined;
+    this._activeReceiveCount = 0;
+    this._socket = undefined;
+  }
+
+  public socketError(err: Error) {
+    if (this._activeReceiveReject) {
+      this._activeReceiveReject(err);
+    }
+    this.socketClose();
+  }
 
   private trySignalData(): void {
     if (this._activeReceiveResolve) {
@@ -119,32 +146,5 @@ export class Transport implements ITransportSender, ITransportReceiver {
     }
 
     return;
-  }
-
-  private socketReceive(data: Buffer) {
-    if (this._queue && data && data.length > 0) {
-      this._queue.push(data);
-      this.trySignalData();
-    }
-  }
-
-  private socketClose() {
-    if (this._activeReceiveReject) {
-      this._activeReceiveReject(new Error('Socket was closed.'));
-    }
-
-    this._active = undefined;
-    this._activeOffset = 0;
-    this._activeReceiveResolve = undefined;
-    this._activeReceiveResolve = undefined;
-    this._activeReceiveCount = 0;
-    this._socket = undefined;
-  }
-
-  private socketError(err: Error) {
-    if (this._activeReceiveReject) {
-      this._activeReceiveReject(err);
-    }
-    this.socketClose();
   }
 }

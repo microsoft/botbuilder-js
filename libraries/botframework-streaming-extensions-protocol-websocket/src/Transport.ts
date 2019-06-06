@@ -71,6 +71,26 @@ export class Transport implements ITransportSender, ITransportReceiver {
     }
   }
 
+  public onClose() {
+    if (this._activeReceiveReject) {
+      this._activeReceiveReject(new Error('Socket was closed.'));
+    }
+
+    this._active = undefined;
+    this._activeOffset = 0;
+    this._activeReceiveResolve = undefined;
+    this._activeReceiveReject = undefined;
+    this._activeReceiveCount = 0;
+    this._socket = undefined;
+  }
+
+  public onError(err: Error) {
+    if (this._activeReceiveReject) {
+      this._activeReceiveReject(err);
+    }
+    this.onClose();
+  }
+
   private trySignalData(): void {
     if (this._activeReceiveResolve) {
       if (!this._active && this._queue.length > 0) {
@@ -110,25 +130,5 @@ export class Transport implements ITransportSender, ITransportReceiver {
     }
 
     return;
-  }
-
-  private onClose() {
-    if (this._activeReceiveReject) {
-      this._activeReceiveReject(new Error('Socket was closed.'));
-    }
-
-    this._active = undefined;
-    this._activeOffset = 0;
-    this._activeReceiveResolve = undefined;
-    this._activeReceiveResolve = undefined;
-    this._activeReceiveCount = 0;
-    this._socket = undefined;
-  }
-
-  private onError(err: Error) {
-    if (this._activeReceiveReject) {
-      this._activeReceiveReject(err);
-    }
-    this.onClose();
   }
 }
