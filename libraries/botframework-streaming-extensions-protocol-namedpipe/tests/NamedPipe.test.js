@@ -266,6 +266,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
     });
 
     describe('NamedPipe Server Tests', () => {
+        
         it('creates a new server', () => {
             let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
             expect(server).to.be.instanceOf(np.NamedPipeServer);
