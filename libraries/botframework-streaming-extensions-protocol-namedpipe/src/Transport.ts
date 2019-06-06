@@ -13,7 +13,7 @@ export class Transport implements ITransportSender, ITransportReceiver {
   private _activeReceiveResolve: (resolve: Buffer) => void;
   private _activeReceiveReject: (reason?: any) => void;
   private _activeReceiveCount: number;
-  private _name: string;
+  private readonly _name: string;
 
   constructor(socket: Socket, name: string) {
     this._socket = socket;
@@ -25,8 +25,8 @@ export class Transport implements ITransportSender, ITransportReceiver {
       this._socket.on('data', (data) => {
         this.socketReceive(data);
       });
-      this._socket.on('close', (hadError) => {
-        this.socketClose(hadError);
+      this._socket.on('close', () => {
+        this.socketClose();
       });
       this._socket.on('error', (err) => {
         this.socketError(err);
@@ -45,8 +45,7 @@ export class Transport implements ITransportSender, ITransportReceiver {
   }
 
   public isConnected(): boolean {
-    if (!this._socket)
-    {
+    if (!this._socket) {
       return false;
     }
 
@@ -81,7 +80,7 @@ export class Transport implements ITransportSender, ITransportReceiver {
     return promise;
   }
 
-  private trySignalData(): boolean {
+  private trySignalData(): void {
     if (this._activeReceiveResolve) {
       if (!this._active && this._queue.length > 0) {
         this._active = this._queue.shift();
@@ -115,11 +114,11 @@ export class Transport implements ITransportSender, ITransportReceiver {
         this._activeReceiveReject = undefined;
         this._activeReceiveResolve = undefined;
 
-        return true;
+        return;
       }
     }
 
-    return false;
+    return;
   }
 
   private socketReceive(data: Buffer) {
@@ -129,7 +128,7 @@ export class Transport implements ITransportSender, ITransportReceiver {
     }
   }
 
-  private socketClose(hadError?: boolean) {
+  private socketClose() {
     if (this._activeReceiveReject) {
       this._activeReceiveReject(new Error('Socket was closed.'));
     }
@@ -146,12 +145,6 @@ export class Transport implements ITransportSender, ITransportReceiver {
     if (this._activeReceiveReject) {
       this._activeReceiveReject(err);
     }
-
-    this._active = undefined;
-    this._activeOffset = 0;
-    this._activeReceiveResolve = undefined;
-    this._activeReceiveResolve = undefined;
-    this._activeReceiveCount = 0;
-    this._socket = undefined;
+    this.socketClose();
   }
 }

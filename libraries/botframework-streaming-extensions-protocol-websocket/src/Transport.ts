@@ -13,18 +13,22 @@ export class Transport implements ITransportSender, ITransportReceiver {
 
   constructor(ws: Socket) {
     this._socket = ws;
-
     this._queue = [];
     this._activeOffset = 0;
     this._activeReceiveCount = 0;
-
-    this._socket.setOnMessageHandler((d) => this.onReceive(this, d));
-    this._socket.setOnErrorHandler((d) => this.onError(this, d));
-    this._socket.setOnCloseHandler((d) => this.onClose(this, d));
+    this._socket.setOnMessageHandler((data) => {
+      this.onReceive(data);
+    });
+    this._socket.setOnErrorHandler((err) => {
+      this.onError(err);
+    });
+    this._socket.setOnCloseHandler(() => {
+      this.onClose();
+    });
   }
 
   public send(buffer: Buffer): number {
-    if (this._socket) {
+    if (this._socket && this._socket.isConnected()) {
       this._socket.write(buffer);
 
       return buffer.length;
@@ -38,12 +42,12 @@ export class Transport implements ITransportSender, ITransportReceiver {
   }
 
   public close() {
-    if (this._socket.isConnected()) {
+    if (this._socket && this._socket.isConnected()) {
       this._socket.closeAsync();
     }
   }
 
-  public receiveAsync(count: number): Promise<Buffer> {
+  public async receiveAsync(count: number): Promise<Buffer> {
     if (this._activeReceiveResolve) {
       throw new Error('Cannot call receiveAsync more than once before it has returned.');
     }
@@ -60,14 +64,14 @@ export class Transport implements ITransportSender, ITransportReceiver {
     return promise;
   }
 
-  public onReceive(thisObject, data: Buffer) {
-    if (thisObject._queue && data && data.byteLength > 0) {
-      thisObject._queue.push(new Buffer(data));
-      thisObject.trySignalData();
+  public onReceive(data: Buffer) {
+    if (this._queue && data && data.byteLength > 0) {
+      this._queue.push(new Buffer(data));
+      this.trySignalData();
     }
   }
 
-  private trySignalData(): boolean {
+  private trySignalData(): void {
     if (this._activeReceiveResolve) {
       if (!this._active && this._queue.length > 0) {
         this._active = this._queue.shift();
@@ -101,36 +105,30 @@ export class Transport implements ITransportSender, ITransportReceiver {
         this._activeReceiveReject = undefined;
         this._activeReceiveResolve = undefined;
 
-        return true;
+        return;
       }
     }
 
-    return false;
+    return;
   }
 
-  private onClose(thisObject, hadError?: boolean) {
-    if (thisObject._activeReceiveReject) {
-      thisObject._activeReceiveReject(new Error('Socket was closed.'));
+  private onClose() {
+    if (this._activeReceiveReject) {
+      this._activeReceiveReject(new Error('Socket was closed.'));
     }
 
-    thisObject._active = undefined;
-    thisObject._activeOffset = 0;
-    thisObject._activeReceiveResolve = undefined;
-    thisObject._activeReceiveResolve = undefined;
-    thisObject._activeReceiveCount = 0;
-    thisObject._socket = undefined;
+    this._active = undefined;
+    this._activeOffset = 0;
+    this._activeReceiveResolve = undefined;
+    this._activeReceiveResolve = undefined;
+    this._activeReceiveCount = 0;
+    this._socket = undefined;
   }
 
-  private onError(thisObject, err: Error) {
-    if (thisObject._activeReceiveReject) {
-      thisObject._activeReceiveReject(err);
+  private onError(err: Error) {
+    if (this._activeReceiveReject) {
+      this._activeReceiveReject(err);
     }
-
-    thisObject._active = undefined;
-    thisObject._activeOffset = 0;
-    thisObject._activeReceiveResolve = undefined;
-    thisObject._activeReceiveResolve = undefined;
-    thisObject._activeReceiveCount = 0;
-    thisObject._socket = undefined;
+    this.onClose();
   }
 }

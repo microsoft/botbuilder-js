@@ -14,7 +14,7 @@ export class BrowserSocket implements Socket {
 
     this.socket = new WebSocket(this.url);
     this.socket.onerror = (e) => {
-      rejector(e)
+      rejector(e);
     };
 
     this.socket.onopen = (e) => {
