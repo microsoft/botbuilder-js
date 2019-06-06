@@ -184,6 +184,18 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             expect(transport._activeReceiveCount).to.equal(0);
         });
 
+        it('does not throw when socketReceive is fired', () => {
+            let sock = new FauxSock();
+            sock.destroyed = false;
+            sock.connecting = false;
+            sock.writable = true;
+            let transport = new ws.Transport(sock);
+            expect(transport).to.be.instanceOf(ws.Transport);
+            expect(transport.isConnected()).to.be.true;
+            let buff = new Buffer('hello', 'utf8');
+            expect(transport.onReceive(buff)).to.not.throw;
+        });
+
 
     });
 

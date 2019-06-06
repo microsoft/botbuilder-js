@@ -282,6 +282,18 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(transport._activeOffset).to.equal(0);
             expect(transport._activeReceiveCount).to.equal(0);
         });
+
+        it('does not throw when socketReceive is fired', () => {
+            let sock = new FauxSock();
+            sock.destroyed = false;
+            sock.connecting = false;
+            sock.writable = true;
+            let transport = new np.Transport(sock, 'fakeSocket6');
+            expect(transport).to.be.instanceOf(np.Transport);
+            expect(transport.isConnected()).to.be.true;
+            let buff = new Buffer('hello', 'utf8');
+            expect(transport.socketReceive(buff)).to.not.throw;
+        });
     });
 
     describe('NamedPipe Client Tests', () => {
