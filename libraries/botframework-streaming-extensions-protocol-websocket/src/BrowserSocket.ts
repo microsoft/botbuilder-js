@@ -1,18 +1,25 @@
-import { Socket } from "./Socket";
+import { Socket } from './Socket';
 
 export class BrowserSocket implements Socket {
   private url: string;
   private socket: WebSocket;
 
-  constructor(url: string) {
+  constructor(url: string, socket?: WebSocket) {
     this.url = url;
+
+    if (socket){
+      this.socket = socket;
+    }
   }
 
-  public connectAsync(): Promise<void> {
+  public async connectAsync(): Promise<void> {
     let resolver;
     let rejector;
 
-    this.socket = new WebSocket(this.url);
+    if (!this.socket) {
+      this.socket = new WebSocket(this.url);
+    }
+
     this.socket.onerror = (e) => {
       rejector(e);
     };
@@ -32,30 +39,30 @@ export class BrowserSocket implements Socket {
     return this.socket.readyState === WebSocket.OPEN;
   }
 
-  write(buffer: Buffer) {
+  public write(buffer: Buffer) {
     this.socket.send(buffer);
   }
 
-  closeAsync() {
+  public closeAsync() {
     return this.socket.close();
   }
 
-  setOnMessageHandler(handler: (x: any) => void) {
+  public setOnMessageHandler(handler: (x: any) => void) {
     this.socket.onmessage = (evt) => {
-      var fileReader = new FileReader();
+      let fileReader = new FileReader();
       fileReader.onload = (e) => {
         let t: FileReader = e.target as FileReader;
-        console.log(t.result);
         handler(t.result);
       };
       fileReader.readAsArrayBuffer(evt.data);
     };
   }
 
-  setOnErrorHandler(handler: (x: any) => void) {
-    this.socket.onerror = (error) => { if (error) handler(error); };
+  public setOnErrorHandler(handler: (x: any) => void) {
+    this.socket.onerror = (error) => { if (error) { handler(error); } };
   }
-  setOnCloseHandler(handler: (x: any) => void) {
-    this.socket.onclose = (data) => handler(data);
+
+  public setOnCloseHandler(handler: (x: any) => void) {
+    this.socket.onclose = handler;
   }
 }
