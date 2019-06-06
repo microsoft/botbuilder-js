@@ -28,7 +28,6 @@ export class ReceiveRequestAssembler extends PayloadAssembler {
       .catch();
   }
 
-
   public requestPayloadfromJson(json: string): RequestPayload {
     return <RequestPayload>JSON.parse((json.charCodeAt(0) === 0xFEFF) ? json.slice(1) : json);
   }
@@ -38,7 +37,11 @@ export class ReceiveRequestAssembler extends PayloadAssembler {
   }
 
   private async processRequest(stream: Stream): Promise<void> {
-    let ps: string = (<Buffer>stream.read(stream.length)).toString('utf8');
+    let s: Buffer = <Buffer>stream.read(stream.length);
+    if (!s) {
+      return;
+    }
+    let ps = s.toString('utf8');
     let rp: RequestPayload = this.requestPayloadfromJson(ps);
     let rr: ReceiveRequest = new ReceiveRequest();
     rr.Path = rp.path;

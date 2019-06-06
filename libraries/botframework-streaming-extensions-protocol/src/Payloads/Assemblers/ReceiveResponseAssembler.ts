@@ -41,7 +41,11 @@ export class ReceiveResponseAssembler extends PayloadAssembler {
   }
 
   private async processResponse(stream: Stream): Promise<void> {
-    let ps: string = (<Buffer>stream.read(stream.length)).toString('utf8');
+    let s: Buffer = <Buffer>stream.read(stream.length);
+    if (!s) {
+      return;
+    }
+    let ps = s.toString('utf8');
     let rp: ResponsePayload = this.responsePayloadfromJson(this.stripBOM(ps));
     let rr: ReceiveResponse = new ReceiveResponse();
     rr.StatusCode = rp.statusCode;
