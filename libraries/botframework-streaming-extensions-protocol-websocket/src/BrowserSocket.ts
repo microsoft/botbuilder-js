@@ -7,7 +7,7 @@ export class BrowserSocket implements Socket {
   constructor(url: string, socket?: WebSocket) {
     this.url = url;
 
-    if (socket){
+    if (socket) {
       this.socket = socket;
     }
   }
