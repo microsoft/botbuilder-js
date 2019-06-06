@@ -58,7 +58,7 @@ export class ContentStream {
 
     // TODO: There's got to be a better way to do this.
     // Will revisit this after the big attachment problem is resolved.
-    let s = Buffer.from(count);
+    let s = Buffer.alloc(count);
     let ptr = 0;
 // tslint:disable-next-line: prefer-for-of
     for (let i = 0; i < allData.length; i++) {
@@ -73,8 +73,11 @@ export class ContentStream {
 
   public async readAsJson<T>(): Promise<T> {
     let s = await this.readAsString();
-
-    return <T>JSON.parse(s);
+    try {
+      return <T>JSON.parse(s);
+    } catch (error) {
+      throw error;
+    }
   }
 
   private async readAll(): Promise<Object> {

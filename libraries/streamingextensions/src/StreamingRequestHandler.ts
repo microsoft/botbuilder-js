@@ -85,12 +85,13 @@ export class StreamingRequestHandler implements RequestHandler {
   public async readRequestBodyAsString(request: ReceiveRequest): Promise<Activity> {
     if (request.Streams !== undefined && request.Streams[0] !== undefined) {
       let contentStream =  request.Streams[0];
-// tslint:disable-next-line: no-unnecessary-local-variable
-      let streamAsString = await contentStream.readAsJson<Activity>();
-
-      return streamAsString;
+      try {
+        return await contentStream.readAsJson<Activity>();
+      } catch (error) {
+        this.logger.log(error);
+      }
     }
 
-    return undefined;
+    return;
   }
 }
