@@ -15,7 +15,7 @@ class TestRequestHandler extends RequestHandler.RequestHandler {
     constructor(){
         super();
     }
-    async processRequestAsync(request, logger) {
+    processRequestAsync(request, logger) {
         let response = new Response.Response();
         response.statusCode = 111;
         response.setBody("Test body.");
@@ -27,11 +27,20 @@ class TestRequestHandler extends RequestHandler.RequestHandler {
 class TestRequestManager {
     constructor(){ }
     getResponseAsync() {
-        return new protocol.ReceiveResponse();
+        let response = new protocol.ReceiveResponse();
+        response.StatusCode = 200;
+        return response;
     }
 }
 
-describe('ProtocolAdapter', () => {
+class TestPayloadSender {
+    constructor() {}
+    sendPayload(){
+        return;
+    }
+}
+
+describe('Streaming Extensions ProtocolAdapter', () => {
     it('constructs properly.', () => {
         let requestHandler = new RequestHandler.RequestHandler();
         let requestManager = new RequestManager.RequestManager();
@@ -103,7 +112,7 @@ describe('ProtocolAdapter', () => {
     it('sends requests.', async (done) => {
         let requestHandler = new TestRequestHandler();
         let requestManager = new TestRequestManager();
-        let payloadSender = new PayloadSender.PayloadSender();
+        let payloadSender = new TestPayloadSender();
         let paylaodReceiver = new PaylaodReceiver.PayloadReceiver();
         let protocolAdapter = new ProtocolAdapter.ProtocolAdapter(
             requestHandler,
@@ -111,8 +120,9 @@ describe('ProtocolAdapter', () => {
             payloadSender,
             paylaodReceiver);
 
-        let rr = protocolAdapter.sendRequestAsync(new Request.Request(), new CancellationToken.CancellationToken()).then(done());
-        expect(rr).to.be.instanceOf(protocol.ReceiveResponse);
+        expect(protocolAdapter.sendRequestAsync(new Request.Request(), new CancellationToken.CancellationToken()))
+        .to.not.throw;
+        done();
     });
 
     it('cancels a stream', () => {
