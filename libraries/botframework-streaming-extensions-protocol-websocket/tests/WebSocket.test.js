@@ -150,17 +150,39 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             expect( () => transport.close()).to.not.throw;
         });
 
-        // it('does something', () => {
-        //     let sock = new FauxSock();
-        //     sock.destroyed = false;
-        //     sock.connecting = false;
-        //     sock.writable = true;
-        //     let transport = new ws.Transport(sock);
-        //     expect(transport).to.be.instanceOf(ws.Transport);
-        //     expect(transport.isConnected()).to.be.true;
-        //     sock.closeHandler;
-        //     expect(transport._socket).to.be.undefined;
-        // });
+        it('cleans up when onClose is fired', () => {
+            let sock = new FauxSock();
+            sock.destroyed = false;
+            sock.connecting = false;
+            sock.writable = true;
+            let transport = new ws.Transport(sock);
+            expect(transport).to.be.instanceOf(ws.Transport);
+            expect(transport.isConnected()).to.be.true;
+            transport.onClose();
+            expect(transport._active).to.be.undefined;
+            expect(transport._activeReceiveResolve).to.be.undefined;
+            expect(transport._activeReceiveReject).to.be.undefined;
+            expect(transport._socket).to.be.undefined;
+            expect(transport._activeOffset).to.equal(0);
+            expect(transport._activeReceiveCount).to.equal(0);
+        });
+
+        it('cleans up when onError is fired', () => {
+            let sock = new FauxSock();
+            sock.destroyed = false;
+            sock.connecting = false;
+            sock.writable = true;
+            let transport = new ws.Transport(sock);
+            expect(transport).to.be.instanceOf(ws.Transport);
+            expect(transport.isConnected()).to.be.true;
+            transport.onError();
+            expect(transport._active).to.be.undefined;
+            expect(transport._activeReceiveResolve).to.be.undefined;
+            expect(transport._activeReceiveReject).to.be.undefined;
+            expect(transport._socket).to.be.undefined;
+            expect(transport._activeOffset).to.equal(0);
+            expect(transport._activeReceiveCount).to.equal(0);
+        });
 
 
     });

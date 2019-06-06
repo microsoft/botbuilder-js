@@ -41,11 +41,23 @@ class FauxSock{
     destroyed(){ 
         return this.exists;
     };
-    on(){};
 
     setReceiver(receiver){
         this.receiver = receiver;
     }
+
+    on(action, handler){
+        if(action === 'error'){
+            this.errorHandler = handler;
+        }
+        if(action === 'data'){
+            this.messageHandler = handler;
+        }
+        if(action === 'close'){
+            this.closeHandler = handler;
+        }
+        
+    };
 }
 class TestServer {
     constructor(baseName) {
@@ -235,6 +247,41 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(transport.receiveAsync(5)).to.throw;
             expect( () => transport.close()).to.not.throw;
         });
+
+        
+        it('cleans up when onClose is fired', () => {
+            let sock = new FauxSock();
+            sock.destroyed = false;
+            sock.connecting = false;
+            sock.writable = true;
+            let transport = new np.Transport(sock, 'fakeSocket6');
+            expect(transport).to.be.instanceOf(np.Transport);
+            expect(transport.isConnected()).to.be.true;
+            transport.socketClose();
+            expect(transport._active).to.be.undefined;
+            expect(transport._activeReceiveResolve).to.be.undefined;
+            expect(transport._activeReceiveReject).to.be.undefined;
+            expect(transport._socket).to.be.undefined;
+            expect(transport._activeOffset).to.equal(0);
+            expect(transport._activeReceiveCount).to.equal(0);
+        });
+
+        it('cleans up when socketError is fired', () => {
+            let sock = new FauxSock();
+            sock.destroyed = false;
+            sock.connecting = false;
+            sock.writable = true;
+            let transport = new np.Transport(sock, 'fakeSocket6');
+            expect(transport).to.be.instanceOf(np.Transport);
+            expect(transport.isConnected()).to.be.true;
+            transport.socketError();
+            expect(transport._active).to.be.undefined;
+            expect(transport._activeReceiveResolve).to.be.undefined;
+            expect(transport._activeReceiveReject).to.be.undefined;
+            expect(transport._socket).to.be.undefined;
+            expect(transport._activeOffset).to.equal(0);
+            expect(transport._activeReceiveCount).to.equal(0);
+        });
     });
 
     describe('NamedPipe Client Tests', () => {
@@ -266,7 +313,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
     });
 
     describe('NamedPipe Server Tests', () => {
-        
+
         it('creates a new server', () => {
             let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
             expect(server).to.be.instanceOf(np.NamedPipeServer);
