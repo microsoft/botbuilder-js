@@ -6,9 +6,14 @@ const protocol = require('../lib');
 var expect = chai.expect;
 
 class TestContentStreamAssembler{
-    constructor(){
+    constructor(content){
         this.stream1 = new protocol.Stream();
-        this.stream1.write('hello');
+        if(content){
+            this.stream1.write(content);
+        } else {
+            this.stream1.write('hello');
+        }
+        
         this.contentType = 'application/text';
         this.contentLength = 5;
     }
@@ -25,7 +30,7 @@ class TestContentStreamAssembler{
 
 describe('Streaming Extensions ContentStream Tests ', () => {
     it('assigns ID when constructed', () => {
-      let csa = new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 42);
+        let csa = new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 42);
         let cs = new ContentStream.ContentStream('1', csa);
 
         expect(cs.id)
@@ -103,17 +108,17 @@ describe('Streaming Extensions ContentStream Tests ', () => {
         let result = cs.readAsString();
 
         result.then(function(data) {
-        expect(data).to.equal('hello');
+            expect(data).to.equal('hello');
         
         });
     });
 
-        it('reads a stream as a json',  () => {
-        let cs = new protocol.ContentStream('cs1', new TestContentStreamAssembler());
+    it('reads a stream as a json',  () => {
+        let cs = new protocol.ContentStream('cs1', new TestContentStreamAssembler('{"message":"hello"}'));
         let result = cs.readAsJson();
 
         result.then(function(data) {
-        expect(data).to.equal('hello');
+            expect(data.message).to.equal('hello');
         
         });
     });
@@ -125,7 +130,7 @@ describe('Streaming Extensions ContentStream Tests ', () => {
         let result = cs.readAsString();
 
         result.then(function(data) {
-        expect(data).to.equal('hello');
+            expect(data).to.equal('hello');
         
         });
     });
@@ -135,7 +140,7 @@ describe('Streaming Extensions ContentStream Tests ', () => {
         let result = cs.readAsBuffer();
 
         result.then(function(data) {
-        expect(data).to.equal('hello');
+            expect(data).to.be.instanceOf(Buffer);
         
         });
     });
