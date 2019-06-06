@@ -140,8 +140,6 @@ export class Transport implements ITransportSender, ITransportReceiver {
         this._activeReceiveCount = 0;
         this._activeReceiveReject = undefined;
         this._activeReceiveResolve = undefined;
-
-        return;
       }
     }
 

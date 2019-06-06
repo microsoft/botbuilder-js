@@ -36,7 +36,7 @@ export class BrowserSocket implements Socket {
   }
 
   public isConnected(): boolean {
-    return this.socket.readyState === WebSocket.OPEN;
+    return this.socket.readyState === 1;
   }
 
   public write(buffer: Buffer) {
@@ -44,7 +44,7 @@ export class BrowserSocket implements Socket {
   }
 
   public closeAsync() {
-    return this.socket.close();
+    this.socket.close();
   }
 
   public setOnMessageHandler(handler: (x: any) => void) {
