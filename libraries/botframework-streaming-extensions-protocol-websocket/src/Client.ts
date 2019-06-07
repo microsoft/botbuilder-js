@@ -48,10 +48,19 @@ export class Client implements IStreamingTransportClient {
       this._receiver.connect(transport);
     } else {
       const ws = new NodeSocket({ url: this._url });
-      await ws.connectAsync();
-      const transport = new Transport(ws);
-      this._sender.connect(transport);
-      this._receiver.connect(transport);
+      await ws.connectAsync()
+      .catch((err) => {
+        throw(new Error(`Unable to connect client. Error: ${err.message}`));
+      })
+      .then(() => {
+        try {
+          const transport = new Transport(ws);
+          this._sender.connect(transport);
+          this._receiver.connect(transport);
+        } catch (error) {
+          throw(new Error(`Unable to connect client to transport.`));
+        }
+      });
     }
   }
 
