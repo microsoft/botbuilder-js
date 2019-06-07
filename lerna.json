@@ -12,7 +12,6 @@
     "libraries/botframework-schema",
     "libraries/testbot",
     "libraries/botframework-streaming-extensions-protocol",
-    "libraries/botframework-streaming-extensions-protocol-streamingextensions",
     "libraries/botframework-streaming-extensions-protocol-namedpipe",
     "libraries/botframework-streaming-extensions-protocol-websocket",
     "transcripts"
