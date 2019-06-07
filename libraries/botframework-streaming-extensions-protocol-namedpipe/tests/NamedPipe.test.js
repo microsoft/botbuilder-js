@@ -248,6 +248,20 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect( () => transport.close()).to.not.throw;
         });
 
+        it('can read from the socket', () => {
+            let sock = new FauxSock();
+            sock.destroyed = false;
+            sock.connecting = false;
+            sock.writable = true;
+            let transport = new np.Transport(sock);
+            expect(transport).to.be.instanceOf(np.Transport);
+            expect(transport.isConnected()).to.be.true;
+            transport.receiveAsync(12).catch();
+            transport.socketReceive(Buffer.from('Hello World!', 'utf8'));
+            
+            expect( () => transport.close()).to.not.throw;
+        });
+
         
         it('cleans up when onClose is fired', () => {
             let sock = new FauxSock();
@@ -314,12 +328,13 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(client.disconnect()).to.not.throw;
         });
 
-        it('sends without throwing', () => {
+        it('sends without throwing', (done) => {
             let client = new np.NamedPipeClient('pipeA', new protocol.RequestHandler(), false);
-            let request = new protocol.Request();
-            let token = new protocol.CancellationToken();
-            expect( () => client.sendAsync(request, token)).to.not.throw;
-            expect(client.disconnect()).to.not.throw;
+            let req = new protocol.Request();
+            req.Verb = 'POST';
+            req.Path = 'some/path';
+            req.setBody('Hello World!');
+            client.sendAsync(req, new protocol.CancellationToken).catch(err => {expect(err).to.be.undefined;}).then(done());  
         });
 
     });
@@ -347,11 +362,15 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(() => server.disconnect()).to.not.throw;
         });
 
-        it('sends without throwing', () => {
+        it('sends without throwing', (done) => {
             let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
             expect(server).to.be.instanceOf(np.NamedPipeServer);
             expect( () => server.startAsync()).to.not.throw;
-            expect(() => server.sendAsync(new protocol.Request(), new protocol.CancellationToken()));
+            let req = new protocol.Request();
+            req.Verb = 'POST';
+            req.Path = 'some/path';
+            req.setBody('Hello World!');
+            server.sendAsync(req, new protocol.CancellationToken).catch(err => {expect(err).to.be.undefined;}).then(done());  
             expect(() => server.disconnect()).to.not.throw;
         });
 

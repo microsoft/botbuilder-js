@@ -178,6 +178,20 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             expect( () => transport.close()).to.not.throw;
         });
 
+        it('can read from the socket', () => {
+            let sock = new FauxSock();
+            sock.destroyed = false;
+            sock.connecting = false;
+            sock.writable = true;
+            let transport = new ws.Transport(sock);
+            expect(transport).to.be.instanceOf(ws.Transport);
+            expect(transport.isConnected()).to.be.true;
+            transport.receiveAsync(12).catch();
+            transport.onReceive(Buffer.from('{"VERB":"POST", "PATH":"somewhere/something"}', 'utf8'));
+            
+            expect( () => transport.close()).to.not.throw;
+        });
+
         it('cleans up when onClose is fired', () => {
             let sock = new FauxSock();
             sock.destroyed = false;
@@ -234,18 +248,25 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             expect(client.disconnect()).to.not.throw;
         });
 
-        it('connects', (done) => {
+        it('selects the right websocket and attempts to connect to the transport layer', (done) => {
             let client = new ws.Client('fakeURL', new protocol.RequestHandler(), false);
             expect(client).to.be.instanceOf(ws.Client);
-            expect(client.connectAsync()).to.not.throw;
-            done();
+            client.connectAsync()
+                .catch(
+                    (err) => 
+                    { expect(err.message).to
+                        .equal('Unable to connect client to transport.');}) //We don't want to really open a connection.
+                .then(done());
         });
 
         it('sends', (done) => {
             let client = new ws.Client('fakeURL', new protocol.RequestHandler(), false);
             expect(client).to.be.instanceOf(ws.Client);
-            expect(client.sendAsync()).to.not.throw;
-            done();
+            let req = new protocol.Request();
+            req.Verb = 'POST';
+            req.Path = 'some/path';
+            req.setBody('Hello World!');
+            client.sendAsync(req, new protocol.CancellationToken).catch(err => {expect(err).to.be.undefined;}).then(done());           
         });
 
         it('disconnects', (done) => {
@@ -264,21 +285,24 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
         });
 
         it('connects', (done) => {
-            let server = new ws.Server(new FauxSock, new protocol.RequestHandler(), false);
+            let server = new ws.Server(new FauxSock, new protocol.RequestHandler());
             expect(server).to.be.instanceOf(ws.Server);
             expect(server.startAsync()).to.not.throw;
             done();
         });
 
         it('sends', (done) => {
-            let server = new ws.Server(new FauxSock, new protocol.RequestHandler(), false);
+            let server = new ws.Server(new FauxSock, new protocol.RequestHandler());
             expect(server).to.be.instanceOf(ws.Server);
-            expect(server.sendAsync()).to.not.throw;
-            done();
+            let req = new protocol.Request();
+            req.Verb = 'POST';
+            req.Path = 'some/path';
+            req.setBody('Hello World!');
+            server.sendAsync(req, new protocol.CancellationToken).catch(err => {expect(err).to.be.undefined;}).then(done());              
         });
 
         it('disconnects', (done) => {
-            let server = new ws.Server(new FauxSock, new protocol.RequestHandler(), false);
+            let server = new ws.Server(new FauxSock, new protocol.RequestHandler());
             expect(server).to.be.instanceOf(ws.Server);
             expect(server.disconnect()).to.not.throw;
             done();
