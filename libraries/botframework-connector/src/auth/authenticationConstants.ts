@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-export namespace Constants {
+export namespace AuthenticationConstants {
     /**
      * TO CHANNEL FROM BOT: Login URL
      * 
@@ -37,6 +37,21 @@ export namespace Constants {
      * TO BOT FROM CHANNEL: Token issuer
      */
     export const ToBotFromChannelTokenIssuer = 'https://api.botframework.com';
+
+    /**
+     * Application Setting Key for the OpenIdMetadataUrl value.
+     */
+    export const BotOpenIdMetadataKey = 'BotOpenIdMetadata';
+
+    /**
+     * Application Setting Key for the OAuthUrl value.
+     */
+    export const OAuthUrlKey = 'OAuthApiEndpoint';
+
+    /**
+     * Application Settings Key for whether to emulate OAuthCards when using the emulator.
+     */
+    export const EmulateOAuthCardsKey = 'EmulateOAuthCards';
 
     /**
      * TO BOT FROM CHANNEL: OpenID metadata document for tokens coming from MSA
