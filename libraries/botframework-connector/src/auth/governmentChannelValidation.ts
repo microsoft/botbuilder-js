@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import { VerifyOptions } from 'jsonwebtoken';
-import { ChannelValidation } from './channelValidation';
 import { ClaimsIdentity } from './claimsIdentity';
 import { AuthenticationConstants } from './authenticationConstants';
 import { ICredentialProvider } from './credentialProvider';
@@ -14,6 +13,8 @@ import { GovernmentConstants } from './governmentConstants';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 
 export namespace GovernmentChannelValidation {
+
+    export let OpenIdMetadataEndpoint: string;
 
     /**
      * TO BOT FROM GOVERNMENT CHANNEL: Token validation parameters when connecting to a bot
@@ -66,8 +67,8 @@ export namespace GovernmentChannelValidation {
 
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromGovernmentChannelTokenValidationParameters,
-            ChannelValidation.OpenIdMetadataEndpoint ?
-                ChannelValidation.OpenIdMetadataEndpoint : GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl,
+            OpenIdMetadataEndpoint ?
+                OpenIdMetadataEndpoint : GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms);
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);

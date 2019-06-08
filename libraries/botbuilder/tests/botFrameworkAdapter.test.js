@@ -133,6 +133,17 @@ function assertResponse(res, statusCode, hasBody) {
 
 describe(`BotFrameworkAdapter`, function () {
     this.timeout(5000);
+
+    it(`should read ChannelService and BotOpenIdMetadata env var if they exist`, function () {
+        process.env.ChannelService = 'https://botframework.azure.us';
+        process.env.BotOpenIdMetadata = 'https://someEndpoint.com';
+        const adapter = new AdapterUnderTest();
+
+        assert(adapter.settings.channelService === 'https://botframework.azure.us', `Adapter should have read process.env.ChannelService`);
+        assert(adapter.settings.openIdMetadata === 'https://someEndpoint.com', `Adapter should have read process.env.ChannelService`);
+        delete process.env.ChannelService;
+        delete process.env.BotOpenIdMetadata;
+    });
     
     it(`should return the status of every connection the user has`, async function () {
         const adapter = new AdapterUnderTest();
@@ -578,6 +589,16 @@ describe(`BotFrameworkAdapter`, function () {
         const adapter = new BotFrameworkAdapter({openIdMetadata: testEndpoint});
         assert(testEndpoint === connector.ChannelValidation.OpenIdMetadataEndpoint, `ChannelValidation.OpenIdMetadataEndpoint was not set.`);
 	    connector.ChannelValidation.OpenIdMetadataEndpoint = original;
+        done();
+    });
+
+    it(`should set openIdMetadata property on GovernmentChannelValidation`, function (done) {
+        const testEndpoint = "http://azure.com/configuration";
+        console.error(connector.GovernmentChannelValidation);
+        const original = connector.GovernmentChannelValidation.OpenIdMetadataEndpoint;
+        const adapter = new BotFrameworkAdapter({openIdMetadata: testEndpoint});
+        assert(testEndpoint === connector.GovernmentChannelValidation.OpenIdMetadataEndpoint, `GovernmentChannelValidation.OpenIdMetadataEndpoint was not set.`);
+	    connector.GovernmentChannelValidation.OpenIdMetadataEndpoint = original;
         done();
     });
 

@@ -44,6 +44,11 @@ export namespace AuthenticationConstants {
     export const BotOpenIdMetadataKey = 'BotOpenIdMetadata';
 
     /**
+     * Application Setting Key for the ChannelService value.
+     */
+    export const ChannelService = 'ChannelService';
+
+    /**
      * Application Setting Key for the OAuthUrl value.
      */
     export const OAuthUrlKey = 'OAuthApiEndpoint';
