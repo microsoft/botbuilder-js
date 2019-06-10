@@ -36,11 +36,11 @@ export class NamedPipeServer implements IStreamingTransportServer {
     this._receiver = new PayloadReceiver();
     this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
     this._isDisconnecting = false;
-    this._sender.disconnected = (x: object, y: any) => {
-      this.onConnectionDisconnected(this, x, y);
+    this._sender.disconnected = () => {
+      this.onConnectionDisconnected();
     };
-    this._receiver.disconnected = (x: object, y: any) => {
-      this.onConnectionDisconnected(this, x, y);
+    this._receiver.disconnected = () => {
+      this.onConnectionDisconnected();
     };
   }
 
@@ -52,6 +52,10 @@ export class NamedPipeServer implements IStreamingTransportServer {
       this._onClose = resolve;
     });
 
+    if (this._receiver.isConnected || this._sender.isConnected || this._incomingServer || this._outgoingServer) {
+      this.disconnect();
+    }
+
     let incomingPipeName: string = Transport.PipePath + this._baseName + Transport.ServerIncomingPath;
     this._incomingServer = new Server((socket: Socket) => {
       this._receiver.connect(new Transport(socket, 'serverReceiver'));
@@ -60,8 +64,8 @@ export class NamedPipeServer implements IStreamingTransportServer {
         this._onClose('connected');
       }
     });
-    this._incomingServer.listen(incomingPipeName);
 
+    this._incomingServer.listen(incomingPipeName);
     let outgoingPipeName: string = Transport.PipePath + this._baseName + Transport.ServerOutgoingPath;
     this._outgoingServer = new Server((socket: Socket) => {
       this._sender.connect(new Transport(socket, 'serverSender'));
@@ -70,6 +74,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
         this._onClose('connected');
       }
     });
+
     this._outgoingServer.listen(outgoingPipeName);
 
     return result;
@@ -94,29 +99,25 @@ export class NamedPipeServer implements IStreamingTransportServer {
     return this._protocolAdapter.sendRequestAsync(request, cancellationToken);
   }
 
-  private onConnectionDisconnected(s: NamedPipeServer, sender: object, args: any) {
-    if (!s._isDisconnecting) {
-      s._isDisconnecting = true;
-      //s._onClose("close");
+  public onConnectionDisconnected() {
+    if (!this._isDisconnecting) {
+      this._isDisconnecting = true;
       try {
-        if (s._sender.isConnected) {
-          s._sender.disconnect(undefined);
+        if (this._sender.isConnected) {
+          this._sender.disconnect(undefined);
         }
 
-        if (s._receiver.isConnected) {
-          s._receiver.disconnect(undefined);
+        if (this._receiver.isConnected) {
+          this._receiver.disconnect(undefined);
         }
 
-        if (s._autoReconnect) {
-          /* tslint:disable:no-floating-promises */
-          s.startAsync()
-            .then(() => {
-              // started
-            });
+        if (this._autoReconnect) {
+          this.startAsync()
+            .catch((err) => { throw(new Error(`Unable to reconnect: ${err.message}`)); });
         }
       }
       finally {
-        s._isDisconnecting = false;
+        this._isDisconnecting = false;
       }
     }
   }
