@@ -28,7 +28,7 @@ export class ErrorListener implements ANTLRErrorListener<any> {
             const range: Range = new Range(startPosition, stopPosition);
             msg = `syntax error message: ${msg}`;
             if (this.source !== undefined && this.source !== '') {
-                msg = `source: ${this.source}. ${msg}`;
+                msg = `source: ${this.source}, ${msg}`;
             }
             const diagnostic: Diagnostic = new Diagnostic(range, msg);
 
