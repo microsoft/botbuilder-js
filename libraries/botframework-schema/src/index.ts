@@ -289,6 +289,10 @@ export interface SemanticAction {
    */
   id: string;
   /**
+   * State of this action. Allowed values: 'start', 'continue', 'done'
+   */
+  state: SemanticActionStateTypes | string;
+  /**
    * Entities associated with this action
    */
   entities: { [propertyName: string]: Entity };
@@ -314,14 +318,12 @@ export interface Activity {
    */
   timestamp?: Date;
   /**
-   * Contains the date and time that the message was sent, in local time, expressed in ISO-8601
-   * format.
+   * Contains the local date and time of the message, expressed in ISO-8601 format.
    * For example, 2016-09-23T13:07:49.4714686-07:00.
    */
   localTimestamp?: Date;
   /**
-   * Contains the name of the timezone in which the message, in local time, expressed in IANA Time
-   * Zone database format.
+   * Contains the name of the local timezone of the message, expressed in IANA Time Zone database format.
    * For example, America/Los_Angeles.
    */
   localTimezone: string;
@@ -1213,6 +1215,10 @@ export interface TokenRequest {
  */
 export interface TokenResponse {
   /**
+   * @member {string} [channelId]
+   */
+  channelId?: string;
+  /**
    * The connection name
    */
   connectionName: string;
@@ -1744,5 +1750,17 @@ export enum ContactRelationUpdateActionTypes {
 export enum InstallationUpdateActionTypes {
   Add = 'add',
   Remove = 'remove',
+}
+
+/**
+ * Defines values for SemanticActionStateTypes.
+ * Possible values include: 'start', 'continue', 'done'
+ * @readonly
+ * @enum {string}
+ */
+export enum SemanticActionStateTypes {
+  Start = 'start',
+  Continue = 'continue',
+  Done = 'done'
 }
 

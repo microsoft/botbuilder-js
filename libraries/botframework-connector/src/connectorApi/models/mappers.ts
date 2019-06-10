@@ -205,6 +205,12 @@ export const ConversationAccount: msRest.CompositeMapper = {
         type: {
           name: "String"
         }
+      },
+      tenantId: {
+        serializedName: "tenantId",
+        type: {
+          name: "String"
+        }
       }
     }
   }
@@ -446,6 +452,12 @@ export const SemanticAction: msRest.CompositeMapper = {
     modelProperties: {
       id: {
         serializedName: "id",
+        type: {
+          name: "String"
+        }
+      },
+      state: {
+        serializedName: "state",
         type: {
           name: "String"
         }
@@ -808,6 +820,12 @@ export const ConversationParameters: msRest.CompositeMapper = {
       },
       topicName: {
         serializedName: "topicName",
+        type: {
+          name: "String"
+        }
+      },
+      tenantId: {
+        serializedName: "tenantId",
         type: {
           name: "String"
         }
@@ -2038,6 +2056,12 @@ export const TokenResponse: msRest.CompositeMapper = {
     name: "Composite",
     className: "TokenResponse",
     modelProperties: {
+      channelId: {
+        serializedName: "channelId",
+        type: {
+          name: "String"
+        }
+      },
       connectionName: {
         serializedName: "connectionName",
         type: {
