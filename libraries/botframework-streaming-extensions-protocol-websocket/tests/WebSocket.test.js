@@ -255,7 +255,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
                 .catch(
                     (err) => 
                     { expect(err.message).to
-                        .equal('Unable to connect client to transport.');}) //We don't want to really open a connection.
+                        .equal('Unable to connect client to Node transport.');}) //We don't want to really open a connection.
                 .then(done());
         });
 
@@ -361,12 +361,15 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
         it('creates a new NodeSocket', () => {
             let ns = new ws.NodeSocket({url: undefined, serverSocket: new FauxSock});
             expect(ns).to.be.instanceOf(ws.NodeSocket);
-            expect(() => ns.closeAsync()).to.not.be.undefined;
+            expect(ns.closeAsync()).to.not.be.undefined;
         });
 
         it('requires a valid URL', () => {
-            expect(() => new ws.NodeSocket({url: 'fakeURL', serverSocket: new FauxSock})).to.throw;
-            expect(() => ns.closeAsync()).to.not.be.undefined;
+            try {
+                let ns = new ws.NodeSocket({url: 'fakeURL', serverSocket: new FauxSock});
+            } catch (error) {
+                expect(error.message).to.equal('Invalid URL: fakeURL');
+            }
         });
 
         it('always thinks its connected', () => {
