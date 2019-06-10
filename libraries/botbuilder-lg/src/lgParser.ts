@@ -36,7 +36,7 @@ export class LGParser {
         let templates: LGTemplate[] = [];
 
         try {
-            fileContext = this.GetFileContentContext(text);
+            fileContext = this.GetFileContentContext(text, source);
         } catch (e) {
             error = Object.assign(new Diagnostic(undefined, undefined), JSON.parse(e.message));
             isValid = false;
@@ -47,7 +47,7 @@ export class LGParser {
         return { isValid, templates, error };
     }
 
-    private static GetFileContentContext(text: string): FileContext {
+    private static GetFileContentContext(text: string, source: string): FileContext {
         if (text === undefined
             || text === ''
             || text === null) {
@@ -59,7 +59,7 @@ export class LGParser {
         const tokens: CommonTokenStream = new CommonTokenStream(lexer);
         const parser: LGFileParser = new LGFileParser(tokens);
         parser.removeErrorListeners();
-        parser.addErrorListener(new ErrorListener());
+        parser.addErrorListener(new ErrorListener(source));
         parser.buildParseTree = true;
 
         return parser.file();
