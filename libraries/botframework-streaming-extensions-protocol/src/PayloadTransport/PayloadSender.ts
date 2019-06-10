@@ -24,6 +24,7 @@ export class PayloadSender implements IPayloadSender {
   public sendPayload(header: Header, payload: Stream, sentCallback: () => Promise<void>): void {
     this.writePacket(new SendPacket(header, payload, sentCallback));
   }
+
   public disconnect(e: TransportDisconnectedEventArgs) {
     if (this.isConnected) {
       this.sender.close();
