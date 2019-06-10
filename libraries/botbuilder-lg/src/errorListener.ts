@@ -10,6 +10,10 @@ import { Diagnostic, Position, Range } from './diagnostic';
 
 // tslint:disable-next-line: completed-docs
 export class ErrorListener implements ANTLRErrorListener<any> {
+    private source: string;
+    public constructor(errorSource: string) {
+        this.source = errorSource;
+    }
 
     public syntaxError<T>(
         recognizer: Recognizer<T, any>,
@@ -22,7 +26,10 @@ export class ErrorListener implements ANTLRErrorListener<any> {
             // tslint:disable-next-line: max-line-length
             const stopPosition: Position = new Position(line - 1, charPositionInLine + offendingSymbol.stopIndex - offendingSymbol.startIndex + 1);
             const range: Range = new Range(startPosition, stopPosition);
-            msg = 'syntax error at '.concat(msg);
+            msg = `syntax error message: ${msg}`;
+            if (this.source !== undefined && this.source !== '') {
+                msg = `source: ${this.source}, ${msg}`;
+            }
             const diagnostic: Diagnostic = new Diagnostic(range, msg);
 
             throw new Error(JSON.stringify(diagnostic));
