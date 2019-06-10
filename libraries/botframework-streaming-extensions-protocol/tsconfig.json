@@ -1,36 +1,13 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "declarationDir": "lib",
-    "emitDeclarationOnly": false,
-    "lib": [
-      "es6",
-      "es2015",
-      "scripthost"
-    ],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "pretty": true,
-    "skipLibCheck": true,
     "target": "ESNext",
-    "types": [
-      "node",
-      "mocha"
-    ],
-    "typeRoots": [
-      "../../node_modules/@types"
-    ],
-    "sourceMap": true
+    "module": "commonjs",
+    "declaration": true,
+    "sourceMap": true,
+    "outDir": "./lib",
+    "rootDir": "./src",
+    "types" : ["node"]
   },
-  "exclude": [
-    "src/**/*.spec.js",
-    "src/**/*.spec.ts",
-    "src/**/*.test.js",
-    "src/**/*.test.ts",
-    "src/__tests__/**/*.js",
-    "src/__tests__/**/*.ts"
-  ],
   "include": [
     "src/**/*"
   ]
