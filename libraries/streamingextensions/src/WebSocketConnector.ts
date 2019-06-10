@@ -11,10 +11,8 @@ import {
 } from 'botframework-connector';
 
 import { NodeSocket, Server } from 'botframework-streaming-extensions-protocol-websocket';
+import { Watershed } from 'watershed';
 import { StreamingRequestHandler } from './StreamingRequestHandler';
-
-// tslint:disable-next-line:no-var-requires no-require-imports
-const Watershed = require('watershed').Watershed;
 
 export class WebSocketConnector {
   private readonly logger;
@@ -88,16 +86,6 @@ export class WebSocketConnector {
 
       return;
     }
-
-    // let adapter = new BotFrameworkStreamingAdapter();
-    // let handler = new StreamingRequestHandler(
-    //   adapter.processActivity(
-    //     req,
-    //     res,
-    //     async (turnContext) => {
-    //       // route to bot activity handler.
-    //       await bot.run(turnContext);
-    //     }));
 
     const upgrade = res.claimUpgrade();
     const ws = new Watershed();

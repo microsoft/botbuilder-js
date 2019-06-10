@@ -1,17 +1,9 @@
-import * as WebSocket from 'ws';
 import { Socket } from './Socket';
 
 export class NodeSocket implements Socket {
-  private url: string;
-  private socket: any;
-  constructor({ url = undefined, serverSocket = undefined }) {
-    if (url) {
-      this.url = url;
-      this.socket = new WebSocket(this.url);
-    }
-    if (serverSocket) {
-      this.socket = serverSocket;
-    }
+  private readonly socket: any;
+  constructor({ waterShedSocket }) {
+    this.socket = waterShedSocket;
   }
 
   public isConnected(): boolean {
@@ -36,7 +28,6 @@ export class NodeSocket implements Socket {
   }
 
   public setOnErrorHandler(handler: (x: any) => void) {
-    // Got from error handling best practives from https://github.com/websockets/ws
     this.socket.on('error', (error) => { if (error) { handler(error); } });
   }
 
