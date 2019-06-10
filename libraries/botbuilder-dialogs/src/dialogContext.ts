@@ -179,7 +179,7 @@ export class DialogContext {
         // - Local stack references are positive numbers and negative numbers are references on the
         //   parents stack.
         let state: number|object;
-        if (dialog instanceof DialogCommand) {
+        if (dialog.inheritState) {
             if (this.stack.length > 0) {
                 state = this.stack.length - 1;
             } else if (this.parent) {

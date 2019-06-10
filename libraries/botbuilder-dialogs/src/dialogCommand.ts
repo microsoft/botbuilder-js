@@ -12,6 +12,11 @@ import { DialogDependencies } from './dialogSet';
 export abstract class DialogCommand<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     protected abstract onRunCommand(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
 
+    constructor(dialogId?: string) {
+        super(dialogId);
+        this.inheritState = true;
+    }
+    
     public getDependencies(): Dialog[] {
         return [];
     }

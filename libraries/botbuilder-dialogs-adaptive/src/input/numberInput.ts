@@ -1,67 +1,87 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogTurnResult, DialogContext, DialogConfiguration, DialogDependencies, DialogCommand, NumberPrompt } from 'botbuilder-dialogs';
-import { ActivityProperty } from '../activityProperty';
-import { Activity } from 'botbuilder-core';
+import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState, PromptType } from "./inputDialog";
+import { DialogContext } from "botbuilder-dialogs";
+import * as Recognizers from '@microsoft/recognizers-text-number';
+import { Activity } from "botbuilder-core";
+import { ExpressionProperty, ExpressionPropertyValue } from "../expressionProperty";
 
-export class NumberInput extends DialogCommand implements DialogDependencies {
-    private prompt = new NumberPrompt();
+export interface NumberInputConfiguration extends InputDialogConfiguration {
+    outputFormat?: NumberOutputFormat;
+    defaultLocale?: string;
+}
 
-    constructor(property: string, activity: string|Partial<Activity>) {
+export enum NumberOutputFormat {
+    float = 'float',
+    integer = 'integer'
+}
+
+export class NumberInput extends InputDialog<InputDialogOptions> {
+
+    public outputFormat = NumberOutputFormat.float;
+
+    /**
+     * The prompts default locale that should be recognized.
+     */
+    public defaultLocale?: string;
+    
+    constructor();
+    constructor(valueProperty: string, prompt: PromptType);
+    constructor(valueProperty: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
+    constructor(valueProperty?: string, value?: ExpressionPropertyValue<any>|PromptType, prompt?: PromptType) {
         super();
-        this.property = property;
-        this.activity.value = activity;
+        if (valueProperty) {
+            if(!prompt) {
+                prompt = value as PromptType;
+                value = undefined;
+            }
+            this.valueProperty = valueProperty;
+            if (value !== undefined) { this.value = new ExpressionProperty(value as any) }
+            this.prompt.value = prompt;
+        }
     }
 
-    protected onComputeID(): string {
-        return `numberInput[${this.bindingPath()}]`;
-    }
-
-    public getDependencies(): Dialog[] {
-        // Update prompts ID before returning.
-        this.prompt.id = this.id + ':prompt';
-        return [this.prompt];
-    }
-
-    public configure(config: DialogConfiguration): this {
+    public configure(config: NumberInputConfiguration): this {
         return super.configure(config);
     }
 
-    /**
-     * Activity to send the user.
-     */
-    public activity = new ActivityProperty();
-
-    /**
-     * (Optional) data binds the called dialogs input & output to the given property.
-     * 
-     * @remarks
-     * The bound properties current value will be passed to the called dialog as part of its 
-     * options and will be accessible within the dialog via `dialog.options.value`. The result
-     * returned from the called dialog will then be copied to the bound property.
-     */
-    public set property(value: string) {
-        this.inputProperties['value'] = value;
-        this.outputProperty = value;
+    protected onComputeID(): string {
+        return `NumberInput[${this.bindingPath()}]`;
     }
+    
+    protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
+        // Recognize input if needed
+        let input: any = dc.state.getValue(InputDialog.INPUT_PROPERTY);
+        if (typeof input !== 'number') {
+            // Find locale to use
+            const activity: Activity = dc.context.activity;
+            const locale = activity.locale || this.defaultLocale || 'en-us';
 
-    public get property(): string {
-       return this.inputProperties['value']; 
-    }
-
-    public async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
-        // Check value and only call if missing
-        const value = dc.state.getValue(this.property);
-        if (typeof value !== 'number') {
-            const activity = this.activity.format(dc, { utterance: dc.context.activity.text || '' });
-            return await dc.prompt(this.prompt.id, activity);
-        } else {
-            return await dc.endDialog();
+            // Recognize input
+            const results: any = Recognizers.recognizeNumber(input, locale);
+            if (results.length > 0 && results[0].resolution) {
+                input = parseFloat(results[0].resolution.value);
+            } else {
+                return InputState.unrecognized;
+            }
         }
+    
+        // Format output and return success
+        switch (this.outputFormat) {
+            case NumberOutputFormat.float:
+            default:
+                dc.state.setValue(InputDialog.INPUT_PROPERTY, input);
+                break;
+            case NumberOutputFormat.integer:
+                dc.state.setValue(InputDialog.INPUT_PROPERTY, Math.floor(input));
+                break;
+        }
+        
+        return InputState.valid;
     }
 }
