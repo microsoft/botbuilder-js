@@ -11,9 +11,9 @@ import {
   RequestHandler,
   RequestManager
 } from 'botframework-streaming-extensions-protocol';
-import { Transport } from './Transport';
 import { BrowserSocket } from './BrowserSocket';
 import { NodeSocket } from './NodeSocket';
+import { Transport } from './Transport';
 
 export class Client implements IStreamingTransportClient {
   private readonly _url: string;
@@ -48,19 +48,16 @@ export class Client implements IStreamingTransportClient {
       this._receiver.connect(transport);
     } else {
       const ws = new NodeSocket({ url: this._url });
+      try {
       await ws.connectAsync()
-      .catch((err) => {
-        throw(new Error(`Unable to connect client. Error: ${err.message}`));
-      })
       .then(() => {
-        try {
           const transport = new Transport(ws);
           this._sender.connect(transport);
           this._receiver.connect(transport);
+        });
         } catch (error) {
-          throw(new Error(`Unable to connect client to transport.`));
+          throw(new Error(`Unable to connect client to Node transport.`));
         }
-      });
     }
   }
 
