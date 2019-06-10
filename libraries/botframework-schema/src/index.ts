@@ -9,11 +9,11 @@ export * from './activityInterfaces';
  */
 export interface AttachmentView {
   /**
-   * Content type of the attachment
+   * Id of the attachment
    */
   viewId: string;
   /**
-   * Name of the attachment
+   * Size of the attachment
    */
   size: number;
 }
@@ -327,6 +327,12 @@ export interface Activity {
    * For example, America/Los_Angeles.
    */
   localTimezone: string;
+  /**
+   * A string containing an IRI identifying the caller of a bot. This field is not intended to be transmitted over 
+   * the wire, but is instead populated by bots and clients based on cryptographically verifiable data that asserts 
+   * the identity of the callers (e.g. tokens).
+   */
+  callerId: string;
   /**
    * Contains the URL that specifies the channel's service endpoint. Set by the channel.
    */

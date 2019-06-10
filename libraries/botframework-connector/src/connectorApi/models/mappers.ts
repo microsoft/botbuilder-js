@@ -514,6 +514,12 @@ export const Activity: msRest.CompositeMapper = {
           name: "String"
         }
       },
+      callerId: {
+        serializedName: "callerId",
+        type: {
+          name: "String"
+        }
+      },
       serviceUrl: {
         serializedName: "serviceUrl",
         type: {
