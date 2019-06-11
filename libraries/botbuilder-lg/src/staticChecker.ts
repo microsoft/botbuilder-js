@@ -21,6 +21,7 @@ import { LGTemplate } from './lgTemplate';
 export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implements LGFileParserVisitor<Diagnostic[]> {
     public readonly Templates:  LGTemplate[];
     public TemplateMap: {[name: string]: LGTemplate};
+    private currentSource: string = '';
     constructor(templates: LGTemplate[]) {
         super();
         this.Templates = templates;
@@ -62,6 +63,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         }
 
         this.Templates.forEach((template: LGTemplate) => {
+            this.currentSource = template.Source;
             result = result.concat(this.visit(template.ParseTree));
         });
 
@@ -431,7 +433,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     }
 
     private BuildLGDiagnostic(parameters: { message: string; severity?: DiagnosticSeverity; context?: ParserRuleContext }): Diagnostic {
-        const message: string = parameters.message;
+        let message: string = parameters.message;
         const severity: DiagnosticSeverity = parameters.severity === undefined ? DiagnosticSeverity.Error : parameters.severity;
         const context: ParserRuleContext = parameters.context;
         // tslint:disable-next-line: max-line-length
@@ -439,6 +441,10 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         // tslint:disable-next-line: max-line-length
         const stopPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.stop.line - 1, context.stop.charPositionInLine + context.stop.text.length);
         const range: Range = new Range(startPosition, stopPosition);
+        message = `error message: ${message}`;
+        if (this.currentSource !== undefined && this.currentSource !== '') {
+            message = `source: ${this.currentSource}. ${message}`;
+        }
 
         return new Diagnostic(range, message, severity);
     }

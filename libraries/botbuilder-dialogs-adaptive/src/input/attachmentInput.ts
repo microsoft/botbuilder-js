@@ -7,22 +7,21 @@
  */
 import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState, PromptType } from "./inputDialog";
 import { DialogContext } from "botbuilder-dialogs";
+import { Attachment } from "botbuilder-core";
 import { ExpressionPropertyValue, ExpressionProperty } from "../expressionProperty";
 
-export interface TextInputConfiguration extends InputDialogConfiguration {
-    outputFormat?: TextOutputFormat;
+export interface AttachmentInputConfiguration extends InputDialogConfiguration {
+    outputFormat?: AttachmentOutputFormat;
 }
 
-export enum TextOutputFormat {
-    none = 'none',
-    trim = 'trim',
-    lowercase = 'lowercase',
-    uppercase = 'uppercase'
+export enum AttachmentOutputFormat {
+    all = 'all',
+    first = 'first'
 }
 
-export class TextInput extends InputDialog<InputDialogOptions> {
+export class AttachmentInput extends InputDialog<InputDialogOptions> {
 
-    public outputFormat = TextOutputFormat.none;
+    public outputFormat = AttachmentOutputFormat.first;
     
     constructor();
     constructor(valueProperty: string, prompt: PromptType);
@@ -40,40 +39,38 @@ export class TextInput extends InputDialog<InputDialogOptions> {
         }
     }
 
-    public configure(config: TextInputConfiguration): this {
+    public configure(config: AttachmentInputConfiguration): this {
         return super.configure(config);
     }
 
     protected onComputeID(): string {
         return `textInput[${this.bindingPath()}]`;
     }
+
+    protected getDefaultInput(dc: DialogContext): any {
+        const attachments = dc.context.activity.attachments;
+        return Array.isArray(attachments) && attachments.length > 0 ? attachments : undefined;
+    }
     
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
-        // Check for consultation
-        if (consultation) {
-            // Text inputs by default allow other dialogs to interrupt them.
-            // - It doesn't matter what we return here as long as it isn't "InputState.valid".
+        // Recognize input and filter out non-attachments
+        let input: Attachment|Attachment[] = dc.state.getValue(InputDialog.INPUT_PROPERTY);
+        const attachments = Array.isArray(input) ? input : [input];
+        const first = attachments.length > 0 ? attachments[0] : undefined;
+        if (typeof first != 'object' || (!first.contentUrl && !first.content)) {
             return InputState.unrecognized;
         }
 
-        // Treat input as a string
-        let input: string = dc.state.getValue(InputDialog.INPUT_PROPERTY).toString();
-
-        // Format output
+        // Format output and return success
         switch (this.outputFormat) {
-            case TextOutputFormat.trim:
-                input = input.trim();
+            case AttachmentOutputFormat.all:
+                dc.state.setValue(InputDialog.INPUT_PROPERTY, attachments);
                 break;
-            case TextOutputFormat.lowercase:
-                input = input.trim().toLowerCase();
-                break;
-            case TextOutputFormat.uppercase:
-                input = input.trim().toUpperCase();
+            case AttachmentOutputFormat.first:
+                dc.state.setValue(InputDialog.INPUT_PROPERTY, first);
                 break;
         }
 
-        // Save formated value and ensure length > 0
-        dc.state.setValue(InputDialog.INPUT_PROPERTY, input);
-        return input.length > 0 ? InputState.valid : InputState.unrecognized;
+        return InputState.valid;
     }
 }

@@ -52,7 +52,7 @@ export class ExpressionEngine implements IExpressionParser {
         public visitFuncInvokeExp(context: ep.FuncInvokeExpContext): Expression {
             const parameters: Expression[] = this.ProcessArgsList(context.argsList());
 
-            // if context.primaryExpression() is idAtom --> normal function
+            // Current only IdAtom is supported as function name
             if (context.primaryExpression() instanceof ep.IdAtomContext) {
                 const idAtom: ep.IdAtomContext = <ep.IdAtomContext>(context.primaryExpression());
                 const functionName: string = idAtom.text;
@@ -60,17 +60,7 @@ export class ExpressionEngine implements IExpressionParser {
                 return this.MakeExpression(functionName, ...parameters);
             }
 
-            //if context.primaryExpression() is memberaccessExp --> lamda function
-            if (context.primaryExpression() instanceof ep.MemberAccessExpContext) {
-                const memberAccessExp: ep.MemberAccessExpContext = <ep.MemberAccessExpContext>(context.primaryExpression());
-                const instance: Expression = this.visit(memberAccessExp.primaryExpression());
-                const functionName: string = memberAccessExp.IDENTIFIER().text;
-                parameters.splice(0, 0, instance);
-
-                return this.MakeExpression(functionName, ...parameters);
-            }
-
-            throw Error('This format is wrong.');
+            throw Error(`This format is wrong in expression ${context.text}.`);
         }
 
         public visitIdAtom(context: ep.IdAtomContext): Expression {

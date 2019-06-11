@@ -248,7 +248,7 @@ export abstract class Prompt<T> extends Dialog {
     }
 
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
-        if (event.name == 'ActivityReceived' && dc.context.activity.type == ActivityTypes.Message) {
+        if (event.name == 'activityReceived' && dc.context.activity.type == ActivityTypes.Message) {
             // Perform base recognition
             const state: PromptState = dc.activeDialog.state as PromptState;
             const recognized: PromptRecognizerResult<T> = await this.onRecognize(dc.context, state.state, state.options);
