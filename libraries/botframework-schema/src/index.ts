@@ -488,7 +488,7 @@ export interface Activity {
   /**
    * An optional programmatic action accompanying this request
    */
-  semanticAction: SemanticAction;
+  semanticAction?: SemanticAction;
 }
 
 /**
@@ -1767,6 +1767,6 @@ export enum InstallationUpdateActionTypes {
 export enum SemanticActionStateTypes {
   Start = 'start',
   Continue = 'continue',
-  Done = 'done'
+  Done = 'done',
 }
 

@@ -5,9 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, ConversationReference } from 'botframework-schema';
 import { MicrosoftAppCredentials, ConnectorClient } from 'botframework-connector';
-import { Middleware, TurnContext, BotState, StatePropertyAccessor, UserState, ConversationState, Storage } from 'botbuilder-core';
+import { Activity, ActivityTypes, Middleware, TurnContext, BotState, ConversationReference, StatePropertyAccessor, UserState, ConversationState, Storage } from 'botbuilder-core';
 
 /** @private */
 class TraceActivity {
