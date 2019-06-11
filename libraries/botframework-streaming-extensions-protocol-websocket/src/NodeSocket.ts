@@ -4,12 +4,14 @@ import { Socket } from './Socket';
 
 export class NodeSocket implements Socket {
   private readonly socket: any;
+  private connected: boolean;
   constructor(waterShedSocket?) {
     this.socket = waterShedSocket;
+    this.connected = false;
   }
 
   public isConnected(): boolean {
-    return true;
+    return this.connected;
   }
 
   public write(buffer: Buffer) {
@@ -35,11 +37,12 @@ export class NodeSocket implements Socket {
       let wsc = shed.connect(res, socket, head, wskey);
     });
 
+    this.connected = true;
+
     return new Promise((resolve, reject) => {
       req.on('close', resolve);
       req.on('error', reject);
     });
-
   }
 
   public setOnMessageHandler(handler: (x: any) => void) {
@@ -48,6 +51,8 @@ export class NodeSocket implements Socket {
   }
 
   public closeAsync() {
+    this.connected = false;
+
     return this.socket.end();
   }
 
