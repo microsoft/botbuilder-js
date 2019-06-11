@@ -1,8 +1,9 @@
+import { WaterShed } from 'watershed';
 import { Socket } from './Socket';
 
 export class NodeSocket implements Socket {
   private readonly socket: any;
-  constructor({ waterShedSocket }) {
+  constructor(waterShedSocket?) {
     this.socket = waterShedSocket;
   }
 
@@ -14,8 +15,12 @@ export class NodeSocket implements Socket {
     this.socket.send(buffer);
   }
 
-  public async connectAsync(): Promise<void> {
-    return Promise.resolve();
+  public async connectAsync(serverAddress): Promise<void> {
+    let shed = new WaterShed();
+    let wskey = shed.generateKey();
+    let options = {
+
+    }
   }
 
   public setOnMessageHandler(handler: (x: any) => void) {

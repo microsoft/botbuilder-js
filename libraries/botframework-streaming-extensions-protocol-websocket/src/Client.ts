@@ -24,7 +24,7 @@ export class Client implements IStreamingTransportClient {
   private readonly _protocolAdapter: ProtocolAdapter;
   private readonly _autoReconnect: boolean;
 
-  constructor({ url = undefined, requestHandler = undefined, autoReconnect = true }) {
+  constructor({ url, requestHandler, autoReconnect = true }) {
     this._url = url;
     this._requestHandler = requestHandler;
     this._autoReconnect = autoReconnect;
@@ -32,32 +32,30 @@ export class Client implements IStreamingTransportClient {
     this._requestManager = new RequestManager();
 
     this._sender = new PayloadSender();
-    this._sender.disconnected = this.onConnectionDisocnnected;
+    this._sender.disconnected = this.onConnectionDisconnected;
     this._receiver = new PayloadReceiver();
-    this._receiver.disconnected = this.onConnectionDisocnnected;
+    this._receiver.disconnected = this.onConnectionDisconnected;
 
     this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
   }
 
   public async connectAsync(): Promise<void> {
     if (typeof WebSocket !== 'undefined') {
-      const ws = new BrowserSocket(this._url);
-      await ws.connectAsync();
+      const ws = new BrowserSocket();
+      await ws.connectAsync(this._url);
       const transport = new Transport(ws);
       this._sender.connect(transport);
       this._receiver.connect(transport);
     } else {
-      const ws = new NodeSocket({ url: this._url });
+      const ws = new NodeSocket();
       try {
-      await ws.connectAsync()
-      .then(() => {
-          const transport = new Transport(ws);
-          this._sender.connect(transport);
-          this._receiver.connect(transport);
-        });
-        } catch (error) {
-          throw(new Error(`Unable to connect client to Node transport.`));
-        }
+        await ws.connectAsync(this._url);
+        const transport = new Transport(ws);
+        this._sender.connect(transport);
+        this._receiver.connect(transport);
+      } catch (error) {
+        throw(new Error(`Unable to connect client to Node transport.`));
+      }
     }
   }
 
@@ -70,6 +68,11 @@ export class Client implements IStreamingTransportClient {
     return this._protocolAdapter.sendRequestAsync(request, cancellationToken);
   }
 
-  private onConnectionDisocnnected(sender: object, args: any) {
+  private onConnectionDisconnected(sender: object, args: any) {
+    if (this._autoReconnect) {
+      this.connectAsync()
+      .catch(() => { throw(new Error(`Unable to re-connect client to Node transport.`)); });
+    }
   }
+
 }

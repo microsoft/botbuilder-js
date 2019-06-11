@@ -1,23 +1,20 @@
 import { Socket } from './Socket';
 
 export class BrowserSocket implements Socket {
-  private url: string;
   private socket: WebSocket;
 
-  constructor(url: string, socket?: WebSocket) {
-    this.url = url;
-
+  constructor(socket?: WebSocket) {
     if (socket) {
       this.socket = socket;
     }
   }
 
-  public async connectAsync(): Promise<void> {
+  public async connectAsync(serverAddress): Promise<void> {
     let resolver;
     let rejector;
 
     if (!this.socket) {
-      this.socket = new WebSocket(this.url);
+      this.socket = new WebSocket(serverAddress);
     }
 
     this.socket.onerror = (e) => {

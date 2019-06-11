@@ -1,7 +1,7 @@
 export interface Socket {
   isConnected(): boolean;
   write(buffer: Buffer);
-  connectAsync(): Promise<void>;
+  connectAsync(serverAddress: string): Promise<void>;
   closeAsync();
   setOnMessageHandler(handler: (x: any) => void);
   setOnErrorHandler(handler: (x: any) => void);
