@@ -263,6 +263,30 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
+    it(`receive a semanticAction with a state property on the activity in processActivity().`, function (done) {
+        const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', semanticAction: { state: 'start' } }, reference, true);
+        incoming.channelId = 'msteams';
+        const req = new MockBodyRequest(incoming);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        adapter.processActivity(req, res, (context) => {
+            assert(context.activity.semanticAction.state === 'start');
+            done();
+        });
+    });
+
+    it(`receive a callerId property on the activity in processActivity().`, function (done) {
+        const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', callerId: 'foo' }, reference, true);
+        incoming.channelId = 'msteams';
+        const req = new MockBodyRequest(incoming);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        adapter.processActivity(req, res, (context) => {
+            assert(context.activity.callerId === 'foo');
+            done();
+        });
+    });
+
     it(`should fail to auth on call to processActivity().`, function (done) {
         const req = new MockRequest(incomingMessage);
         const res = new MockResponse();
