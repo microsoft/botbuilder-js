@@ -7,7 +7,7 @@
  */
 import * as jwt from 'jsonwebtoken';
 import { ClaimsIdentity } from './claimsIdentity';
-import { Constants } from './constants';
+import { AuthenticationConstants } from './authenticationConstants';
 import { GovernmentConstants } from './governmentConstants';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
@@ -105,12 +105,12 @@ export namespace EmulatorValidation {
     ): Promise<ClaimsIdentity> {
         const openIdMetadataUrl = (channelService !== undefined && JwtTokenValidation.isGovernment(channelService)) ?
             GovernmentConstants.ToBotFromEmulatorOpenIdMetadataUrl :
-            Constants.ToBotFromEmulatorOpenIdMetadataUrl;
+            AuthenticationConstants.ToBotFromEmulatorOpenIdMetadataUrl;
 
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromEmulatorTokenValidationParameters,
             openIdMetadataUrl,
-            Constants.AllowedSigningAlgorithms);
+            AuthenticationConstants.AllowedSigningAlgorithms);
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
         if (!identity) {
@@ -127,7 +127,7 @@ export namespace EmulatorValidation {
         // what we're looking for. Note that in a multi-tenant bot, this value
         // comes from developer code that may be reaching out to a service, hence the
         // Async validation.
-        const versionClaim: string = identity.getClaimValue(Constants.VersionClaim);
+        const versionClaim: string = identity.getClaimValue(AuthenticationConstants.VersionClaim);
         if (versionClaim === null) {
             throw new Error('Unauthorized. "ver" claim is required on Emulator Tokens.');
         }
@@ -139,7 +139,7 @@ export namespace EmulatorValidation {
         if (!versionClaim || versionClaim === '1.0') {
             // either no Version or a version of "1.0" means we should look for
             // the claim in the "appid" claim.
-            const appIdClaim: string = identity.getClaimValue(Constants.AppIdClaim);
+            const appIdClaim: string = identity.getClaimValue(AuthenticationConstants.AppIdClaim);
             if (!appIdClaim) {
                 // No claim around AppID. Not Authorized.
                 throw new Error('Unauthorized. "appid" claim is required on Emulator Token version "1.0".');
@@ -148,7 +148,7 @@ export namespace EmulatorValidation {
             appId = appIdClaim;
         } else if (versionClaim === '2.0') {
             // Emulator, "2.0" puts the AppId in the "azp" claim.
-            const appZClaim: string = identity.getClaimValue(Constants.AuthorizedParty);
+            const appZClaim: string = identity.getClaimValue(AuthenticationConstants.AuthorizedParty);
             if (!appZClaim) {
                 // No claim around AppID. Not Authorized.
                 throw new Error('Unauthorized. "azp" claim is required on Emulator Token version "2.0".');
