@@ -311,30 +311,31 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
 
     describe('BrowserSocket Tests', () => {
         it('creates a new BrowserSocket', () => {
-            let bs = new ws.BrowserSocket('fakeURL',  new FauxSock());
+            let bs = new ws.BrowserSocket( new FauxSock());
             expect(bs).to.be.instanceOf(ws.BrowserSocket);
             expect(() => bs.closeAsync()).to.not.throw;
         });
 
         it('knows its connected', () => {
-            let ns = new ws.BrowserSocket('fakeURL',  new FauxSock());
+            let ns = new ws.BrowserSocket( new FauxSock());
+            ns.connectAsync('fakeUrl');
             expect(ns.isConnected()).to.be.true;
         });
 
         it('writes to the socket', () => {
-            let ns = new ws.BrowserSocket('fakeURL',  new FauxSock());
+            let ns = new ws.BrowserSocket( new FauxSock());
             let buff = Buffer.from('hello');
             expect(ns.write(buff)).to.not.throw;
         });
 
         it('always thinks it connects', () => {
-            let ns = new ws.BrowserSocket('fakeurl', new FauxSock());
+            let ns = new ws.BrowserSocket( new FauxSock());
             expect(ns.connectAsync()).to.not.throw;
         });
 
         it('can set message handlers on the socket', () => {
             let sock = new FauxSock();
-            let ns = new ws.BrowserSocket('fakeurl', sock);
+            let ns = new ws.BrowserSocket( sock);
             expect(sock.onmessage).to.be.undefined;
             expect(ns.setOnMessageHandler(() => {})).to.not.throw;
             expect(sock.onmessage).to.not.be.undefined;
@@ -342,7 +343,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
 
         it('can set error handler on the socket', () => {
             let sock = new FauxSock();
-            let ns = new ws.BrowserSocket('fakeurl', sock);
+            let ns = new ws.BrowserSocket( sock);
             expect(sock.onerror).to.be.undefined;
             expect(ns.setOnErrorHandler(() => {})).to.not.throw;
             expect(sock.onerror).to.not.be.undefined;
@@ -350,7 +351,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
 
         it('can set end handler on the socket', () => {
             let sock = new FauxSock();
-            let ns = new ws.BrowserSocket('fakeURL', sock);
+            let ns = new ws.BrowserSocket( sock);
             expect(sock.onclose).to.be.undefined;
             expect(ns.setOnCloseHandler(() => {})).to.not.throw;
             expect(sock.onclose).to.not.be.undefined;
@@ -359,38 +360,38 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
 
     describe('NodeSocket Tests', () => {
         it('creates a new NodeSocket', () => {
-            let ns = new ws.NodeSocket({serverSocket: new FauxSock});
+            let ns = new ws.NodeSocket(new FauxSock);
             expect(ns).to.be.instanceOf(ws.NodeSocket);
             expect(ns.closeAsync()).to.not.be.undefined;
         });
 
         it('requires a valid URL', () => {
             try {
-                let ns = new ws.NodeSocket({serverSocket: new FauxSock});
+                let ns = new ws.NodeSocket(new FauxSock);
             } catch (error) {
                 expect(error.message).to.equal('Invalid URL: fakeURL');
             }
         });
 
-        it('always thinks its connected', () => {
-            let ns = new ws.NodeSocket({serverSocket: new FauxSock});
-            expect(ns.isConnected()).to.be.true;
+        it('starts out disconnected', () => {
+            let ns = new ws.NodeSocket(new FauxSock);
+            expect(ns.isConnected()).to.be.false;
         });
 
         it('writes to the socket', () => {
-            let ns = new ws.NodeSocket({serverSocket: new FauxSock});
+            let ns = new ws.NodeSocket(new FauxSock);
             let buff = Buffer.from('hello');
             expect(ns.write(buff)).to.not.throw;
         });
 
         it('always thinks it connects', () => {
-            let ns = new ws.NodeSocket({serverSocket: new FauxSock});
+            let ns = new ws.NodeSocket(new FauxSock);
             expect(ns.connectAsync()).to.not.throw;
         });
 
         it('can set message handlers on the socket', () => {
             let sock = new FauxSock();
-            let ns = new ws.NodeSocket({serverSocket: sock});
+            let ns = new ws.NodeSocket( sock);
             expect(sock.textHandler).to.be.undefined;
             expect(sock.binaryHandler).to.be.undefined;
             expect(ns.setOnMessageHandler(() => {})).to.not.throw;
@@ -400,7 +401,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
 
         it('can set error handler on the socket', () => {
             let sock = new FauxSock();
-            let ns = new ws.NodeSocket({serverSocket: sock});
+            let ns = new ws.NodeSocket( sock);
             expect(sock.errorHandler).to.be.undefined;
             expect(ns.setOnErrorHandler(() => {})).to.not.throw;
             expect(sock.errorHandler).to.not.be.undefined;
@@ -408,7 +409,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
 
         it('can set end handler on the socket', () => {
             let sock = new FauxSock();
-            let ns = new ws.NodeSocket({serverSocket: sock});
+            let ns = new ws.NodeSocket( sock);
             expect(sock.endHandler).to.be.undefined;
             expect(ns.setOnCloseHandler(() => {})).to.not.throw;
             expect(sock.endHandler).to.not.be.undefined;

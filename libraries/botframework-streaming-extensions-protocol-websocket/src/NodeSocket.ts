@@ -20,7 +20,7 @@ export class NodeSocket implements Socket {
 
   public async connectAsync(serverAddress): Promise<void> {
     // following template from https://github.com/joyent/node-watershed#readme
-    let shed = new WaterShed();
+    let shed = new WaterShed.WaterShed();
     let wskey = shed.generateKey();
     let options = {
       port: 8082,
