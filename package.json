@@ -5,7 +5,7 @@
     "postinstall": "lerna bootstrap --hoist",
     "build": "lerna run build",
     "clean": "lerna run clean",
-    "functional-test": "lerna run build && nyc mocha \"libraries/**/tests/*.test.js\"",
+    "functional-test": "lerna run build && nyc mocha \"libraries/functional-tests/tests/*.test.js\"",
     "test": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\"",
     "test:coveralls": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\" && nyc report --reporter=text-lcov | coveralls",
     "test-coverage": "nyc mocha \"libraries/bot*/tests/*.test.js\" ",

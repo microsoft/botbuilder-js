@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 const assert = require('assert');
 const directLineSpec = require('./directline-swagger.json');
 const Swagger = require('swagger-client');

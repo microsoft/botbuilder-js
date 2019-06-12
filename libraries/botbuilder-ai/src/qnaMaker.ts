@@ -8,7 +8,7 @@
 import { Activity, TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 import * as os from 'os';
 const pjson: any = require('../package.json');
-import * as request from 'request-promise-native';
+const request = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
 import { constants } from 'http2';
 import { QnATelemetryConstants } from './qnaTelemetryConstants';
 
@@ -458,18 +458,19 @@ export class QnAMaker implements QnAMakerTelemetryClient {
 
         this.validateOptions(queryOptions);
 
-        const qnaResult: any = await request({
-            url: url,
+        const qnaResult: any = await request(url, {
             method: 'POST',
             headers: headers,
             timeout: queryOptions.timeout,
-            json: {
+            body: JSON.stringify({
                 question: question,
                 ...queryOptions
-            }
+            })
         });
-
-        return this.formatQnaResult(qnaResult);
+        
+        const qnaResultJson: any = await qnaResult.json();
+        
+        return this.formatQnaResult(qnaResultJson);
     }
 
     /**
@@ -533,6 +534,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         }
 
         headers['User-Agent'] = this.getUserAgent();
+        headers['Content-Type'] = 'application/json';
 
         return headers;
     }

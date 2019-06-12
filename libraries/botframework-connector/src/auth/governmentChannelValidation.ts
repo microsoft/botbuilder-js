@@ -6,14 +6,15 @@
  * Licensed under the MIT License.
  */
 import { VerifyOptions } from 'jsonwebtoken';
-import { ChannelValidation } from './channelValidation';
 import { ClaimsIdentity } from './claimsIdentity';
-import { Constants } from './constants';
+import { AuthenticationConstants } from './authenticationConstants';
 import { ICredentialProvider } from './credentialProvider';
 import { GovernmentConstants } from './governmentConstants';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 
 export namespace GovernmentChannelValidation {
+
+    export let OpenIdMetadataEndpoint: string;
 
     /**
      * TO BOT FROM GOVERNMENT CHANNEL: Token validation parameters when connecting to a bot
@@ -42,7 +43,7 @@ export namespace GovernmentChannelValidation {
 
         const identity: ClaimsIdentity = await authenticateChannelToken(authHeader, credentials, channelId);
 
-        const serviceUrlClaim: string = identity.getClaimValue(Constants.ServiceUrlClaim);
+        const serviceUrlClaim: string = identity.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
         if (serviceUrlClaim !== serviceUrl) {
             // Claim must match. Not Authorized.
             throw new Error('Unauthorized. ServiceUrl claim do not match.');
@@ -66,9 +67,9 @@ export namespace GovernmentChannelValidation {
 
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromGovernmentChannelTokenValidationParameters,
-            ChannelValidation.OpenIdMetadataEndpoint ?
-                ChannelValidation.OpenIdMetadataEndpoint : GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl,
-            Constants.AllowedSigningAlgorithms);
+            OpenIdMetadataEndpoint ?
+                OpenIdMetadataEndpoint : GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl,
+            AuthenticationConstants.AllowedSigningAlgorithms);
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
 
@@ -101,14 +102,14 @@ export namespace GovernmentChannelValidation {
         // Async validation.
 
         // Look for the "aud" claim, but only if issued from the Bot Framework
-        if (identity.getClaimValue(Constants.IssuerClaim) !== GovernmentConstants.ToBotFromChannelTokenIssuer) {
+        if (identity.getClaimValue(AuthenticationConstants.IssuerClaim) !== GovernmentConstants.ToBotFromChannelTokenIssuer) {
             // The relevant Audiance Claim MUST be present. Not Authorized.
             throw new Error('Unauthorized. Issuer Claim MUST be present.');
         }
 
         // The AppId from the claim in the token must match the AppId specified by the developer.
         // In this case, the token is destined for the app, so we find the app ID in the audience claim.
-        const audClaim: string = identity.getClaimValue(Constants.AudienceClaim);
+        const audClaim: string = identity.getClaimValue(AuthenticationConstants.AudienceClaim);
         if (!(await credentials.isValidAppId(audClaim || ''))) {
             // The AppId is not valid or not present. Not Authorized.
             throw new Error(`Unauthorized. Invalid AppId passed on token: ${ audClaim }`);
