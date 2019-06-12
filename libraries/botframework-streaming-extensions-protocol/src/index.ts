@@ -51,4 +51,15 @@ export * from './Transport/ITransportReceiver';
 export * from './Transport/ITransportSender';
 export * from './Transport/TransportConstants';
 
+export * from './Transport/NamedPipe/NamedPipeClient';
+export * from './Transport/NamedPipe/NamedPipeServer';
+export * from './Transport/NamedPipe/NamedPipeTransport';
+
+export * from './Transport/WebSocket/WebSocketClient';
+export * from './Transport/WebSocket/WebSocketServer';
+export * from './Transport/WebSocket/BrowserWebSocket';
+export * from './Transport/WebSocket/NodeWebSocket';
+export * from './Transport/WebSocket/ISocket';
+export * from './Transport/WebSocket/WebSocketTransport';
+
 export * from './Utilities/protocol-base';

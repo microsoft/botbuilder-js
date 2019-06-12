@@ -9,7 +9,7 @@ export class BrowserWebSocket implements ISocket {
     }
   }
 
-  public async connectAsync(serverAddress): Promise<void> {
+  public async connectAsync(serverAddress: string): Promise<void> {
     let resolver;
     let rejector;
 

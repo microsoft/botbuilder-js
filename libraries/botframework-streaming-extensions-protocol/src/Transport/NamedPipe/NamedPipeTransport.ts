@@ -1,4 +1,4 @@
-import { ITransportReceiver, ITransportSender } from 'botframework-streaming-extensions-protocol';
+import { ITransportReceiver, ITransportSender } from '../../';
 import { Socket } from 'net';
 
 export class NamedPipeTransport implements ITransportSender, ITransportReceiver {

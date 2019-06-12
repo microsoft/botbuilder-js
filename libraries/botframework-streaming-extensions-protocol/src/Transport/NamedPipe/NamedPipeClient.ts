@@ -1,3 +1,4 @@
+import { connect } from 'net';
 import {
   CancellationToken,
   IPayloadReceiver,
@@ -10,8 +11,7 @@ import {
   Request,
   RequestHandler,
   RequestManager
-} from 'botframework-streaming-extensions-protocol';
-import { connect } from 'net';
+} from '../../';
 import { NamedPipeTransport as NamedPipeTransport } from './NamedPipeTransport';
 
 export class NamedPipeClient implements IStreamingTransportClient {

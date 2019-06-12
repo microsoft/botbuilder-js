@@ -10,7 +10,7 @@ import {
   Request,
   RequestHandler,
   RequestManager
-} from 'botframework-streaming-extensions-protocol';
+} from '../../';
 import { Server, Socket } from 'net';
 import { NamedPipeTransport } from './NamedPipeTransport';
 

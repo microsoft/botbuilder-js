@@ -10,7 +10,7 @@ import {
   Request,
   RequestHandler,
   RequestManager
-} from 'botframework-streaming-extensions-protocol';
+} from '../../';
 import { BrowserWebSocket } from './BrowserWebSocket';
 import { NodeWebSocket } from './NodeWebSocket';
 import { WebSocketTransport } from './WebSocketTransport';

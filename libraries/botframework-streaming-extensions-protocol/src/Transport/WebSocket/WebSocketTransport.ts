@@ -1,4 +1,4 @@
-import { ITransportReceiver, ITransportSender } from 'botframework-streaming-extensions-protocol';
+import { ITransportReceiver, ITransportSender } from '../../';
 import { ISocket } from './ISocket';
 
 export class WebSocketTransport implements ITransportSender, ITransportReceiver {

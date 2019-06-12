@@ -1,6 +1,6 @@
 const net = require('net');
 const np = require('../lib');
-const protocol = require('botframework-streaming-extensions-protocol');
+const protocol = require('../lib');
 const  chai  = require('chai');
 var expect = chai.expect;
 
