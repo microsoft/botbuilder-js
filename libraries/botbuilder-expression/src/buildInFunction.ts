@@ -722,6 +722,16 @@ export class BuiltInFunctions {
         return { value, error };
     }
 
+    private static Coalesce(objetcList: object[]): any {
+        for (const obj of objetcList) {
+            if (obj !== undefined){
+                return obj;
+            } else {
+                return undefined;
+            }
+        }
+    }
+
     private static ExtractElement(expression: Expression, state: any): { value: any; error: string } {
         let value: any;
         let error: string;
@@ -1092,6 +1102,85 @@ export class BuiltInFunctions {
         }
 
         return { value: result, error };
+    }
+
+    // Uri Parsing Function
+    private static UriHost(uri: string): {value: any; error: string} {
+        let result: string;
+        let error: string;
+        try {
+            const uriObj: URL = new URL(uri);
+            result = uriObj.hostname;
+        } catch{
+            error = 'Invalid URI';
+        }
+
+        return {value: result, error};
+    }
+
+    private static UriPath(uri: string): {value: any; error: string} {
+        let result: string;
+        let error: string;
+        try {
+            const uriObj: URL = new URL(uri);
+            result = uriObj.pathname;
+        } catch{
+            error = 'Invalid URI';
+        }
+
+        return {value: result, error};
+    }
+
+    private static UriPathAndQuery(uri: string): {value: any; error: string} {
+        let result: string;
+        let error: string;
+        try {
+            const uriObj: URL = new URL(uri);
+            result = uriObj.pathname + uriObj.search;
+        } catch{
+            error = 'Invalid URI';
+        }
+
+        return {value: result, error};
+    }
+
+    private static UriPort(uri: string): {value: any; error: string} {
+        let result: string;
+        let error: string;
+        try {
+            const uriObj: URL = new URL(uri);
+            result = uriObj.port;
+        } catch{
+            error = 'Invalid URI';
+        }
+
+        return {value: result, error};
+    }
+
+    private static UriQuery(uri: string): {value: any; error: string} {
+        let result: string;
+        let error: string;
+        try {
+            const uriObj: URL = new URL(uri);
+            result = uriObj.search;
+        } catch{
+            error = 'Invalid URI';
+        }
+
+        return {value: result, error};
+    }
+
+    private static UriScheme(uri: string): {value: any; error: string} {
+        let result: string;
+        let error: string;
+        try {
+            const uriObj: URL = new URL(uri);
+            result = uriObj.protocol;
+        } catch{
+            error = 'Invalid URI';
+        }
+
+        return {value: result, error};
     }
 
     // tslint:disable-next-line: max-func-body-length
@@ -1793,7 +1882,24 @@ export class BuiltInFunctions {
                     }),
                 ReturnType.Object,
                 (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.Object, ReturnType.String)),
-            new ExpressionEvaluator(ExpressionType.Foreach, BuiltInFunctions.Foreach, ReturnType.Object, BuiltInFunctions.ValidateForeach)
+            new ExpressionEvaluator(ExpressionType.Foreach, BuiltInFunctions.Foreach, ReturnType.Object, BuiltInFunctions.ValidateForeach),
+
+            //URI Parsing Functions
+            new ExpressionEvaluator(ExpressionType.UriHost, BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriHost(args[0]), BuiltInFunctions.VerifyString),
+                                    ReturnType.String, BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(ExpressionType.UriPath, BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriPath(args[0]), BuiltInFunctions.VerifyString),
+                                    ReturnType.String, BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(ExpressionType.UriPathAndQuery,
+                                    BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriPathAndQuery(args[0]), BuiltInFunctions.VerifyString),
+                                    ReturnType.String, BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(ExpressionType.UriQuery, BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriQuery(args[0]), BuiltInFunctions.VerifyString), 
+                                    ReturnType.String, BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(ExpressionType.UriPort, BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriPort(args[0]), BuiltInFunctions.VerifyString), 
+                                    ReturnType.String, BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(ExpressionType.UriScheme, BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriScheme(args[0]), BuiltInFunctions.VerifyString), 
+                                    ReturnType.String, BuiltInFunctions.ValidateUnary),
+            new ExpressionEvaluator(ExpressionType.Coalesce, BuiltInFunctions.Apply((args: Readonly<any>[]) => this.Coalesce(args)),
+                                    ReturnType.Object, BuiltInFunctions.ValidateAtLeastOne)
         ];
 
         const lookup: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>();

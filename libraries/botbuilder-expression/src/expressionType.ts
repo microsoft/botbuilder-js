@@ -123,5 +123,15 @@ export class ExpressionType {
     public static readonly RemoveProperty: string = 'removeProperty';
     public static readonly SetProperty: string = 'setProperty';
     public static readonly GetProperty: string = 'getProperty';
+    public static readonly Coalesce: any = 'coalesce';
+    public static readonly XPath: any = 'xPath';
+
+    // URI parsing functions
+    public static readonly UriHost: string = 'uriHost';
+    public static readonly UriPath: string = 'uriPath';
+    public static readonly UriPathAndQuery: string = 'uriPathAndQuery';
+    public static readonly UriPort: string = 'uriPort';
+    public static readonly UriQuery: string = 'uriQuery';
+    public static readonly UriScheme: string = 'uriScheme';
 
 }

@@ -13,3 +13,4 @@ export * from './expressionEvaluator';
 export * from './expressionParser';
 export * from './expressionType';
 export * from './extensions';
+export * from './TimeZoneConverter';
