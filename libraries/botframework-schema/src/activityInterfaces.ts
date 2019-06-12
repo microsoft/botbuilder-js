@@ -23,8 +23,8 @@ export interface IActivity {
     timestamp?: Date;
 
     /**
-     * Contains the date and time that the message was sent, in local time, expressed in ISO-8601
-     * format.
+     * Contains the local date and time of the message, expressed in ISO-8601 format.
+     * 
      * For example, 2016-09-23T13:07:49.4714686-07:00.
      */
     localTimestamp?: Date;
