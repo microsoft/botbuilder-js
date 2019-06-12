@@ -18,12 +18,12 @@ export class NodeSocket implements Socket {
     this.socket.send(buffer);
   }
 
-  public async connectAsync(serverAddress): Promise<void> {
+  public async connectAsync(serverAddress, port = 8082): Promise<void> {
     // following template from https://github.com/joyent/node-watershed#readme
     let shed = new WaterShed.Watershed();
     let wskey = shed.generateKey();
     let options = {
-      port: 8082,
+      port: port,
       hostname: serverAddress,
       headers: {
       'connection': 'upgrade',
