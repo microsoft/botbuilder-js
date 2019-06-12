@@ -1,7 +1,7 @@
 import { ITransportReceiver, ITransportSender } from 'botframework-streaming-extensions-protocol';
 import { Socket } from 'net';
 
-export class Transport implements ITransportSender, ITransportReceiver {
+export class NamedPipeTransport implements ITransportSender, ITransportReceiver {
   public static readonly PipePath: string = '\\\\.\\pipe\\';
   public static readonly ServerIncomingPath: string = '.incoming';
   public static readonly ServerOutgoingPath: string = '.outgoing';

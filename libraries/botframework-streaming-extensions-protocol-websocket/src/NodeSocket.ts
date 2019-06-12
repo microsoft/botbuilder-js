@@ -26,7 +26,7 @@ export class NodeSocket implements Socket {
       port: port,
       hostname: serverAddress,
       headers: {
-      'connection': 'upgrade',
+      connection: 'upgrade',
       'Sec-WebSocket-Key': wskey,
       'Sec-WebSocket-Version': '13'
       }

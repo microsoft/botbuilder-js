@@ -12,7 +12,7 @@ import {
   RequestManager
 } from 'botframework-streaming-extensions-protocol';
 import { Server, Socket } from 'net';
-import { Transport } from './Transport';
+import { NamedPipeTransport } from './NamedPipeTransport';
 
 export class NamedPipeServer implements IStreamingTransportServer {
   private _outgoingServer: Server;
@@ -56,9 +56,9 @@ export class NamedPipeServer implements IStreamingTransportServer {
       this.disconnect();
     }
 
-    let incomingPipeName: string = Transport.PipePath + this._baseName + Transport.ServerIncomingPath;
+    let incomingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerIncomingPath;
     this._incomingServer = new Server((socket: Socket) => {
-      this._receiver.connect(new Transport(socket, 'serverReceiver'));
+      this._receiver.connect(new NamedPipeTransport(socket, 'serverReceiver'));
       incomingConnect = true;
       if (incomingConnect && outgoingConnect) {
         this._onClose('connected');
@@ -66,9 +66,9 @@ export class NamedPipeServer implements IStreamingTransportServer {
     });
 
     this._incomingServer.listen(incomingPipeName);
-    let outgoingPipeName: string = Transport.PipePath + this._baseName + Transport.ServerOutgoingPath;
+    let outgoingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerOutgoingPath;
     this._outgoingServer = new Server((socket: Socket) => {
-      this._sender.connect(new Transport(socket, 'serverSender'));
+      this._sender.connect(new NamedPipeTransport(socket, 'serverSender'));
       outgoingConnect = true;
       if (incomingConnect && outgoingConnect) {
         this._onClose('connected');

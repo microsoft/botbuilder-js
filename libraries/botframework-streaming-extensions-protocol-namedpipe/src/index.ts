@@ -1,3 +1,3 @@
 export * from './NamedPipeClient';
 export * from './NamedPipeServer';
-export * from './Transport';
+export * from './NamedPipeTransport';

@@ -12,7 +12,7 @@ import {
   RequestManager
 } from 'botframework-streaming-extensions-protocol';
 import { connect } from 'net';
-import { Transport } from './Transport';
+import { NamedPipeTransport as NamedPipeTransport } from './NamedPipeTransport';
 
 export class NamedPipeClient implements IStreamingTransportClient {
   private readonly _baseName: string;
@@ -42,14 +42,14 @@ export class NamedPipeClient implements IStreamingTransportClient {
   }
 
   public async connectAsync(): Promise<void> {
-    let outgoingPipeName: string = Transport.PipePath + this._baseName + Transport.ServerIncomingPath;
+    let outgoingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerIncomingPath;
     let outgoing = connect(outgoingPipeName);
 
-    let incomingPipeName: string = Transport.PipePath + this._baseName + Transport.ServerOutgoingPath;
+    let incomingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerOutgoingPath;
     let incoming = connect(incomingPipeName);
 
-    this._sender.connect(new Transport(outgoing, 'clientSender'));
-    this._receiver.connect(new Transport(incoming, 'clientReceiver'));
+    this._sender.connect(new NamedPipeTransport(outgoing, 'clientSender'));
+    this._receiver.connect(new NamedPipeTransport(incoming, 'clientReceiver'));
   }
 
   public disconnect(): void {
@@ -74,11 +74,11 @@ export class NamedPipeClient implements IStreamingTransportClient {
         }
 
         if (c._autoReconnect) {
-          /* tslint:disable:no-floating-promises */
           c.connectAsync()
             .then(() => {
-              // connected
-            });
+              return;
+            })
+            .catch((error) => { throw new Error(`Failed to reconnect. Reason: ${error.message} `); });
         }
       }
       finally {
