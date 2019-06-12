@@ -384,9 +384,11 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             expect(ns.write(buff)).to.not.throw;
         });
 
-        it('always thinks it connects', () => {
+        it('attempts to open a connection', () => {
             let ns = new ws.NodeSocket(new FauxSock);
-            expect(ns.connectAsync()).to.not.throw;
+            expect(ns.connectAsync().catch( (error) => {
+                expect(error.message).to.equal('connect ECONNREFUSED 127.0.0.1:8082');
+            }));
         });
 
         it('can set message handlers on the socket', () => {
