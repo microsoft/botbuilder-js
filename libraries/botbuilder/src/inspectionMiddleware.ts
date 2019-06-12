@@ -186,7 +186,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     public async processCommand(turnContext: TurnContext): Promise<any> {
 
-        if (turnContext.activity.type == ActivityTypes.Message) {
+        if (turnContext.activity.type == ActivityTypes.Message && turnContext.activity.text !== undefined) {
 
             var command = turnContext.activity.text.trim().split(' ');
             if (command.length > 1 && command[0] === InspectionMiddleware.command) {
