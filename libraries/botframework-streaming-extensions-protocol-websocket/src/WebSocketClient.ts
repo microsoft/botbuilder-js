@@ -11,11 +11,11 @@ import {
   RequestHandler,
   RequestManager
 } from 'botframework-streaming-extensions-protocol';
-import { BrowserSocket } from './BrowserSocket';
-import { NodeSocket } from './NodeSocket';
-import { Transport } from './Transport';
+import { BrowserWebSocket } from './BrowserWebSocket';
+import { NodeWebSocket } from './NodeWebSocket';
+import { WebSocketTransport } from './WebSocketTransport';
 
-export class Client implements IStreamingTransportClient {
+export class WebSocketClient implements IStreamingTransportClient {
   private readonly _url: string;
   private readonly _requestHandler: RequestHandler;
   private readonly _sender: IPayloadSender;
@@ -41,16 +41,16 @@ export class Client implements IStreamingTransportClient {
 
   public async connectAsync(): Promise<void> {
     if (typeof WebSocket !== 'undefined') {
-      const ws = new BrowserSocket();
+      const ws = new BrowserWebSocket();
       await ws.connectAsync(this._url);
-      const transport = new Transport(ws);
+      const transport = new WebSocketTransport(ws);
       this._sender.connect(transport);
       this._receiver.connect(transport);
     } else {
-      const ws = new NodeSocket();
+      const ws = new NodeWebSocket();
       try {
         await ws.connectAsync(this._url);
-        const transport = new Transport(ws);
+        const transport = new WebSocketTransport(ws);
         this._sender.connect(transport);
         this._receiver.connect(transport);
       } catch (error) {

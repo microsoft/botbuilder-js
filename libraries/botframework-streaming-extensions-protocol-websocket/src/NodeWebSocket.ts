@@ -1,12 +1,12 @@
 import * as http from 'http';
 import * as WaterShed from 'watershed';
-import { Socket } from './Socket';
+import { ISocket } from './ISocket';
 
-export class NodeSocket implements Socket {
-  private readonly socket: any;
+export class NodeWebSocket implements ISocket {
+  private readonly waterShedSocket: any;
   private connected: boolean;
   constructor(waterShedSocket?) {
-    this.socket = waterShedSocket;
+    this.waterShedSocket = waterShedSocket;
     this.connected = false;
   }
 
@@ -15,7 +15,7 @@ export class NodeSocket implements Socket {
   }
 
   public write(buffer: Buffer) {
-    this.socket.send(buffer);
+    this.waterShedSocket.send(buffer);
   }
 
   public async connectAsync(serverAddress, port = 8082): Promise<void> {
@@ -46,21 +46,21 @@ export class NodeSocket implements Socket {
   }
 
   public setOnMessageHandler(handler: (x: any) => void) {
-    this.socket.on('text', handler);
-    this.socket.on('binary', handler);
+    this.waterShedSocket.on('text', handler);
+    this.waterShedSocket.on('binary', handler);
   }
 
   public closeAsync() {
     this.connected = false;
 
-    return this.socket.end();
+    return this.waterShedSocket.end();
   }
 
-  public setOnErrorHandler(handler: (x: any) => void) {
-    this.socket.on('error', (error) => { if (error) { handler(error); } });
+  public setOnCloseHandler(handler: (x: any) => void): void {
+    this.waterShedSocket.on('end', handler);
   }
 
-  public setOnCloseHandler(handler: (x: any) => void) {
-    this.socket.on('end', handler);
+  public setOnErrorHandler(handler: (x: any) => void): void {
+    this.waterShedSocket.on('error', (error) => { if (error) { handler(error); } });
   }
 }

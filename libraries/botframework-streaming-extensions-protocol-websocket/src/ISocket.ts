@@ -1,4 +1,4 @@
-export interface Socket {
+export interface ISocket {
   isConnected(): boolean;
   write(buffer: Buffer);
   connectAsync(serverAddress: string): Promise<void>;

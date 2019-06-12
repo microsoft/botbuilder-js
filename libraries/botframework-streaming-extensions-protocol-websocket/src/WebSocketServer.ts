@@ -11,21 +11,21 @@ import {
   RequestHandler,
   RequestManager
 } from 'botframework-streaming-extensions-protocol';
-import { Socket } from './Socket';
-import { Transport } from './Transport';
+import { ISocket } from './ISocket';
+import { WebSocketTransport } from './WebSocketTransport';
 
-export class Server implements IStreamingTransportServer {
+export class WebSocketServer implements IStreamingTransportServer {
   private readonly _url: string;
   private readonly _requestHandler: RequestHandler;
   private readonly _sender: IPayloadSender;
   private readonly _receiver: IPayloadReceiver;
   private readonly _requestManager: RequestManager;
   private readonly _protocolAdapter: ProtocolAdapter;
-  private readonly _webSocketTransport: Transport;
+  private readonly _webSocketTransport: WebSocketTransport;
   private _closedSignal;
 
-  constructor(socket: Socket, requestHandler?: RequestHandler) {
-    this._webSocketTransport = new Transport(socket);
+  constructor(socket: ISocket, requestHandler?: RequestHandler) {
+    this._webSocketTransport = new WebSocketTransport(socket);
     this._requestHandler = requestHandler;
 
     this._requestManager = new RequestManager();
@@ -54,7 +54,7 @@ export class Server implements IStreamingTransportServer {
     this._receiver.disconnect(null);
   }
 
-  private onConnectionDisocnnected(s: Server, sender: object, args: any) {
+  private onConnectionDisocnnected(s: WebSocketServer, sender: object, args: any) {
     s._closedSignal("close");
   }
 }

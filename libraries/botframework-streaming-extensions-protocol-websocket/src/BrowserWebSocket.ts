@@ -1,11 +1,11 @@
-import { Socket } from './Socket';
+import { ISocket } from './ISocket';
 
-export class BrowserSocket implements Socket {
-  private socket: WebSocket;
+export class BrowserWebSocket implements ISocket {
+  private webSocket: WebSocket;
 
   constructor(socket?: WebSocket) {
     if (socket) {
-      this.socket = socket;
+      this.webSocket = socket;
     }
   }
 
@@ -13,15 +13,15 @@ export class BrowserSocket implements Socket {
     let resolver;
     let rejector;
 
-    if (!this.socket) {
-      this.socket = new WebSocket(serverAddress);
+    if (!this.webSocket) {
+      this.webSocket = new WebSocket(serverAddress);
     }
 
-    this.socket.onerror = (e) => {
+    this.webSocket.onerror = (e) => {
       rejector(e);
     };
 
-    this.socket.onopen = (e) => {
+    this.webSocket.onopen = (e) => {
       resolver(e);
     };
 
@@ -33,19 +33,19 @@ export class BrowserSocket implements Socket {
   }
 
   public isConnected(): boolean {
-    return this.socket.readyState === 1;
+    return this.webSocket.readyState === 1;
   }
 
   public write(buffer: Buffer) {
-    this.socket.send(buffer);
+    this.webSocket.send(buffer);
   }
 
   public closeAsync() {
-    this.socket.close();
+    this.webSocket.close();
   }
 
   public setOnMessageHandler(handler: (x: any) => void) {
-    this.socket.onmessage = (evt) => {
+    this.webSocket.onmessage = (evt) => {
       let fileReader = new FileReader();
       fileReader.onload = (e) => {
         let t: FileReader = e.target as FileReader;
@@ -56,10 +56,10 @@ export class BrowserSocket implements Socket {
   }
 
   public setOnErrorHandler(handler: (x: any) => void) {
-    this.socket.onerror = (error) => { if (error) { handler(error); } };
+    this.webSocket.onerror = (error) => { if (error) { handler(error); } };
   }
 
   public setOnCloseHandler(handler: (x: any) => void) {
-    this.socket.onclose = handler;
+    this.webSocket.onclose = handler;
   }
 }

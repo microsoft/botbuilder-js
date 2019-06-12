@@ -1,8 +1,8 @@
 import { ITransportReceiver, ITransportSender } from 'botframework-streaming-extensions-protocol';
-import { Socket } from './Socket';
+import { ISocket } from './ISocket';
 
-export class Transport implements ITransportSender, ITransportReceiver {
-  private _socket: Socket;
+export class WebSocketTransport implements ITransportSender, ITransportReceiver {
+  private _socket: ISocket;
 
   private readonly _queue: Buffer[];
   private _active: Buffer;
@@ -11,7 +11,7 @@ export class Transport implements ITransportSender, ITransportReceiver {
   private _activeReceiveReject: (reason?: any) => void;
   private _activeReceiveCount: number;
 
-  constructor(ws: Socket) {
+  constructor(ws: ISocket) {
     this._socket = ws;
     this._queue = [];
     this._activeOffset = 0;
