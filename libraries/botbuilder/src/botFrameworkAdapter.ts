@@ -7,7 +7,7 @@
  */
 
 import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
-import { ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
+import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
 import * as os from 'os';
 
 /**
@@ -138,8 +138,15 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '', this.settings.channelAuthTenant);
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
         this.isEmulatingOAuthCards = false;
+
+        // If no channelService or openIdMetadata values were passed in the settings, check the process' Environment Variables for values.
+        // These values may be set when a bot is provisioned on Azure and if so are required for the bot to properly work in Public Azure or a National Cloud.
+        this.settings.channelService = this.settings.channelService || process.env[AuthenticationConstants.ChannelService];
+        this.settings.openIdMetadata = this.settings.openIdMetadata || process.env[AuthenticationConstants.BotOpenIdMetadataKey];
+
         if (this.settings.openIdMetadata) {
             ChannelValidation.OpenIdMetadataEndpoint = this.settings.openIdMetadata;
+            GovernmentChannelValidation.OpenIdMetadataEndpoint = this.settings.openIdMetadata;
         }
         if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
             this.credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;

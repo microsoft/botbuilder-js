@@ -7,7 +7,6 @@
  */
 import * as jwt from 'jsonwebtoken';
 import { Claim,  ClaimsIdentity } from './claimsIdentity';
-import { Constants } from './constants';
 import { EndorsementsValidator } from './endorsementsValidator';
 import { OpenIdMetadata } from './openIdMetadata';
 
