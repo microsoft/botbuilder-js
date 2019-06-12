@@ -7,7 +7,7 @@
  */
 import { VerifyOptions } from 'jsonwebtoken';
 import { ClaimsIdentity } from './claimsIdentity';
-import { Constants } from './constants';
+import { AuthenticationConstants } from './authenticationConstants';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 
@@ -19,7 +19,7 @@ export namespace ChannelValidation {
      * TO BOT FROM CHANNEL: Token validation parameters when connecting to a bot
      */
     export const ToBotFromChannelTokenValidationParameters: VerifyOptions = {
-        issuer: [Constants.ToBotFromChannelTokenIssuer],
+        issuer: [AuthenticationConstants.ToBotFromChannelTokenIssuer],
         audience: undefined,                                 // Audience validation takes place manually in code.
         clockTolerance: 5 * 60,
         ignoreExpiration: false
@@ -42,7 +42,7 @@ export namespace ChannelValidation {
 
         const identity: ClaimsIdentity = await authenticateChannelToken(authHeader, credentials, channelId);
 
-        const serviceUrlClaim: string = identity.getClaimValue(Constants.ServiceUrlClaim);
+        const serviceUrlClaim: string = identity.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
         if (serviceUrlClaim !== serviceUrl) {
             // Claim must match. Not Authorized.
             throw new Error('Unauthorized. ServiceUrl claim do not match.');
@@ -66,8 +66,8 @@ export namespace ChannelValidation {
 
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromChannelTokenValidationParameters,
-            OpenIdMetadataEndpoint ? OpenIdMetadataEndpoint : Constants.ToBotFromChannelOpenIdMetadataUrl,
-            Constants.AllowedSigningAlgorithms);
+            OpenIdMetadataEndpoint ? OpenIdMetadataEndpoint : AuthenticationConstants.ToBotFromChannelOpenIdMetadataUrl,
+            AuthenticationConstants.AllowedSigningAlgorithms);
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
 
@@ -95,14 +95,14 @@ export namespace ChannelValidation {
         // Async validation.
 
         // Look for the "aud" claim, but only if issued from the Bot Framework
-        if (identity.getClaimValue(Constants.IssuerClaim) !== Constants.ToBotFromChannelTokenIssuer) {
+        if (identity.getClaimValue(AuthenticationConstants.IssuerClaim) !== AuthenticationConstants.ToBotFromChannelTokenIssuer) {
             // The relevant Audiance Claim MUST be present. Not Authorized.
             throw new Error('Unauthorized. Issuer Claim MUST be present.');
         }
 
         // The AppId from the claim in the token must match the AppId specified by the developer.
         // In this case, the token is destined for the app, so we find the app ID in the audience claim.
-        const audClaim: string = identity.getClaimValue(Constants.AudienceClaim);
+        const audClaim: string = identity.getClaimValue(AuthenticationConstants.AudienceClaim);
         if (!(await credentials.isValidAppId(audClaim || ''))) {
             // The AppId is not valid or not present. Not Authorized.
             throw new Error(`Unauthorized. Invalid AppId passed on token: ${ audClaim }`);
