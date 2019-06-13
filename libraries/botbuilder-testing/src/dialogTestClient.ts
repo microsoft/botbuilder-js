@@ -8,7 +8,7 @@
 
 
 import { Activity, TestAdapter, TestFlow, Middleware, ConversationState, MemoryStorage, AutoSaveStateMiddleware, StatePropertyAccessor, TurnContext } from 'botbuilder-core';
-import { Dialog, DialogSet, DialogTurnStatus } from 'botbuilder-dialogs';
+import { Dialog, DialogSet, DialogTurnStatus, DialogTurnResult } from 'botbuilder-dialogs';
 
 /**
  * A client for testing dialogs in isolation.
@@ -17,6 +17,7 @@ export class DialogTestClient {
 
     private readonly _callback: (turnContext: TurnContext) => Promise<void>;
     private readonly _testAdapter: TestAdapter;
+    public dialogTurnResult: DialogTurnResult;
 
     /**
      * 
@@ -48,8 +49,13 @@ export class DialogTestClient {
      * DialogTest.send('hello').assertReply('hello yourself').then(done);
      * ```
      */
-    public sendActivity(activity: Partial<Activity> | string): TestFlow {
-        return this._testAdapter.send(activity);
+    public async sendActivity(activity: Partial<Activity> | string): Promise<any> {
+        await this._testAdapter.receiveActivity(activity);
+        return this._testAdapter.activityBuffer.shift();
+    }
+
+    public async getNextReply(): Promise<any> {
+        return this._testAdapter.activityBuffer.shift();
     }
 
     private getDefaultCallback(targetDialog: Dialog, initialDialogOptions: any, dialogState: StatePropertyAccessor) {
@@ -60,8 +66,8 @@ export class DialogTestClient {
           dialogSet.add(targetDialog);
 
           const dialogContext = await dialogSet.createContext(turnContext);
-          const results = await dialogContext.continueDialog();
-          if (results.status === DialogTurnStatus.empty) {
+          this.dialogTurnResult = await dialogContext.continueDialog();
+          if (this.dialogTurnResult.status === DialogTurnStatus.empty) {
               await dialogContext.beginDialog(targetDialog.id, initialDialogOptions);
           }
         }
