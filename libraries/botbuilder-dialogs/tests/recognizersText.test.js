@@ -65,8 +65,14 @@ describe('Unit test suite for `Recognizers-Text` module', function() {
     });
     it('should recognize a datetime', function(done) {
         const result = Recognizers.recognizeDateTime('Ill go back at 8pm today', culture);
-        assert(result[0].resolution.values[0].value === '2019-06-12 20:00:00');
-        assert(result[0].resolution.values[0].timex === '2019-06-12T20');
+        const d = new Date();
+        const year = d.getFullYear();
+        let month = d.getMonth() + 1;
+        let date = d.getDate();
+        if (month.toString().length < 2) month = '0' + month;
+        if (date.toString().length < 2) date = '0' + date;
+        assert(result[0].resolution.values[0].value === `${year}-${month}-${date} 20:00:00`);
+        assert(result[0].resolution.values[0].timex === `${year}-${month}-${date}T20`);
         assert(result[0].resolution.values[0].type === 'datetime');
         assert(result[0].text === '8pm today');
         assert(result[0].typeName === 'datetimeV2.datetime');
