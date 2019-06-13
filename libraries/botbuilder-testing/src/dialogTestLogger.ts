@@ -1,6 +1,23 @@
+/**
+ * @module botbuilder-testing
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 import { Middleware, TurnContext, ResourceResponse, ActivityTypes } from "botbuilder-core";
 import * as mlog from 'mocha-logger';
 
+/**
+ * Log a transcript of messages from a dialog to the console, along with additional diagnostic information.
+ * For use with the `DialogTestClient` class.
+ * 
+ * Example:
+ * ```javascript
+ * let client = new DialogTestClient(DIALOG, OPTIONS, [new DialogTestLogger()]);
+ * ```
+ */
 export class DialogTestLogger implements Middleware {
     private _logger = mlog;
     private _stopwatchStateKey = Symbol('stopwatch');
@@ -13,7 +30,6 @@ export class DialogTestLogger implements Middleware {
 
     public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         // log incoming
-        // todo: catch timestamp, etc
         if (context.activity.type == ActivityTypes.Message) {
             this._logger.log(`User: Text = ${ context.activity.text }`);
         } else {

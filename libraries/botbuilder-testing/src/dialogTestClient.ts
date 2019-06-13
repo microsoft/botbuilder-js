@@ -7,7 +7,7 @@
  */
 
 
-import { Activity, TestAdapter, TestFlow, Middleware, ConversationState, MemoryStorage, AutoSaveStateMiddleware, StatePropertyAccessor, TurnContext } from 'botbuilder-core';
+import { Activity, TestAdapter, Middleware, ConversationState, MemoryStorage, AutoSaveStateMiddleware, StatePropertyAccessor, TurnContext } from 'botbuilder-core';
 import { Dialog, DialogSet, DialogTurnStatus, DialogTurnResult } from 'botbuilder-dialogs';
 
 /**
@@ -20,6 +20,13 @@ export class DialogTestClient {
     public dialogTurnResult: DialogTurnResult;
 
     /**
+     * Create a DialogTestClient to test a dialog without having to create a full-fledged adapter.
+     * 
+     * ```javascript
+     * let client = new DialogTestClient(MY_DIALOG, MY_OPTIONS);
+     * let reply = client.sendActivity('first message');
+     * assert(reply.text == 'first reply','reply failed');
+     * ```
      * 
      * @param targetDialog The dialog to be tested. This will be the root dialog for the test client.
      * @param initialDialogOptions (Optional) additional argument(s) to pass to the dialog being started.
@@ -43,7 +50,7 @@ export class DialogTestClient {
     /**
      * Send an activity into the dialog.
      * @returns a TestFlow that can be used to assert replies etc
-     * @param activity 
+     * @param activity an activity potentially with text
      * 
      * ```javascript
      * DialogTest.send('hello').assertReply('hello yourself').then(done);
@@ -54,6 +61,9 @@ export class DialogTestClient {
         return this._testAdapter.activityBuffer.shift();
     }
 
+    /**
+     * Get the next reply waiting to be delivered (if one exists)
+     */
     public async getNextReply(): Promise<any> {
         return this._testAdapter.activityBuffer.shift();
     }
