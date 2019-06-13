@@ -32,6 +32,7 @@ describe('DialogTestClient', function() {
         let dialog = new WaterfallDialog('waterfall', [
             async(step) => {
                 await step.context.sendActivity('hello');
+                await step.context.sendActivity({type: 'typing'});
                 return step.next();
             },
             async(step) => {
@@ -40,9 +41,12 @@ describe('DialogTestClient', function() {
             },
         ]);
 
-        let client = new DialogTestClient(dialog);
+        let client = new DialogTestClient(dialog, null, [new DialogTestLogger()]);
         let reply = await client.sendActivity('hello');
         assert(reply.text == 'hello', 'dialog responded with incorrect message');
+        // get typing
+        reply = await client.getNextReply();
+        assert(reply.type == 'typing', 'dialog responded with incorrect message');
         reply = await client.getNextReply();
         assert(reply.text == 'hello 2', 'dialog responded with incorrect 2nd message');
         assert(client.dialogTurnResult.status == DialogTurnStatus.empty, 'dialog did not end properly');
