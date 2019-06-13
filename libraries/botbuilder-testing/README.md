@@ -54,6 +54,8 @@ assert(reply.text == 'second message', 'second message as wrong');
 assert(client.dialogTurnResult.status == 'empty', 'dialog is not empty');
 ```
 
+[Additional examples are available here](tests/)
+
 ### DialogTestLogger
 
 This additional helper class will cause the messages in your dialog to be logged to the console.
