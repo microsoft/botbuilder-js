@@ -1,4 +1,4 @@
-const { DialogTestClient } = require('../');
+const { DialogTestClient, DialogTestLogger } = require('../');
 const { ComponentDialog, TextPrompt, WaterfallDialog, DialogTurnStatus, DialogSet } = require('botbuilder-dialogs');
 const assert = require('assert');
 
@@ -84,7 +84,7 @@ describe('DialogTestClient', function() {
 
         let component = new MainDialog('component');
 
-        let client = new DialogTestClient(component);
+        let client = new DialogTestClient(component,null, [new DialogTestLogger()]);
         let reply = await client.sendActivity('hello');
         assert(reply.text == 'Tell me something','dialog responded with incorrect message');
         reply = await client.sendActivity('foo');
