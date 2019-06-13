@@ -10,6 +10,12 @@ describe('DialogTestClient', function() {
         assert(client instanceof DialogTestClient, 'Created an invalid object');
     });
 
+    it('should create a DialogTestClient with a custom channelId', async function() {
+        let client = new DialogTestClient(null, null, null, null, null, {channelId: 'custom'});
+        assert(client._testAdapter.template.channelId == 'custom', 'Created with wrong channel id');
+    });
+
+
     it('should process a single turn waterfall dialog', async function() {
 
         let dialog = new WaterfallDialog('waterfall', [
@@ -19,12 +25,14 @@ describe('DialogTestClient', function() {
             }
         ]);
 
-        let client = new DialogTestClient(dialog);
+        let client = new DialogTestClient(dialog, null, null, null, null, {channelId: 'custom'});
         let reply = await client.sendActivity('hello');
         assert(reply.text == 'hello', 'dialog responded with incorrect message');
+        assert(reply.channelId == 'custom', 'custom channel id didnt get set');
         assert(client.dialogTurnResult.status == DialogTurnStatus.empty, 'dialog did not end properly');
 
     });
+
 
 
     it('should process a 2 turn waterfall dialog', async function() {
@@ -41,7 +49,7 @@ describe('DialogTestClient', function() {
             },
         ]);
 
-        let client = new DialogTestClient(dialog, null, [new DialogTestLogger()]);
+        let client = new DialogTestClient(dialog, null, [new DialogTestLogger()], null, null, {channelId: 'custom'});
         let reply = await client.sendActivity('hello');
         assert(reply.text == 'hello', 'dialog responded with incorrect message');
         // get typing
