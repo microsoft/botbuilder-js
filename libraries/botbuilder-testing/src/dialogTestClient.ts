@@ -34,7 +34,7 @@ export class DialogTestClient {
      * @param testAdapter (Optional) A list of middlewares to be added to the test adapter.
      * @param callback (Optional) The bot turn processing logic for the test. If this value is not provided, the test client will create a default BotCallbackHandler
      */
-    constructor(targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], testAdapter?: TestAdapter, callback?: (turnContext: TurnContext) => Promise<void>) {
+    public constructor(targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], testAdapter?: TestAdapter, callback?: (turnContext: TurnContext) => Promise<void>) {
         let convoState = new ConversationState(new MemoryStorage());
 
         let dialogState = convoState.createProperty('DialogState');
@@ -68,19 +68,19 @@ export class DialogTestClient {
         return this._testAdapter.activityBuffer.shift();
     }
 
-    private getDefaultCallback(targetDialog: Dialog, initialDialogOptions: any, dialogState: StatePropertyAccessor) {
+    private getDefaultCallback(targetDialog: Dialog, initialDialogOptions: any, dialogState: StatePropertyAccessor): (turnContext: TurnContext) => Promise<void> {
 
-        return async(turnContext: TurnContext) => {
+        return async (turnContext: TurnContext) => {
 
-          const dialogSet = new DialogSet(dialogState);
-          dialogSet.add(targetDialog);
+            const dialogSet = new DialogSet(dialogState);
+            dialogSet.add(targetDialog);
 
-          const dialogContext = await dialogSet.createContext(turnContext);
-          this.dialogTurnResult = await dialogContext.continueDialog();
-          if (this.dialogTurnResult.status === DialogTurnStatus.empty) {
-              await dialogContext.beginDialog(targetDialog.id, initialDialogOptions);
-          }
-        }
+            const dialogContext = await dialogSet.createContext(turnContext);
+            this.dialogTurnResult = await dialogContext.continueDialog();
+            if (this.dialogTurnResult.status === DialogTurnStatus.empty) {
+                await dialogContext.beginDialog(targetDialog.id, initialDialogOptions);
+            }
+        };
     }
 
     private addUserMiddlewares(middlewares: Middleware[]): void {
