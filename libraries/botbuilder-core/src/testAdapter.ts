@@ -482,13 +482,17 @@ export class TestFlow {
      * @param description (Optional) Description of the test case. If not provided one will be generated.
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
-    public assertReply(expected: string | Partial<Activity> | TestActivityInspector, description?: string, timeout?: number): TestFlow {
+    public assertReply(expected: string | Partial<Activity> | TestActivityInspector, description?: string, timeout?: number, isSubstring: boolean = false): TestFlow {
         function defaultInspector(reply: Partial<Activity>, description2?: string): void {
             if (typeof expected === 'object') {
                 validateActivity(reply, expected);
             } else {
                 assert.equal(reply.type, ActivityTypes.Message, `${ description2 } type === '${ reply.type }'. `);
-                assert.equal(reply.text, expected, `${ description2 } text === "${ reply.text }"`);
+                if (isSubstring) {
+                    assert.ok(reply.text.includes(expected), `${ description2 } text === "${ reply.text }"`)
+                }else{
+                    assert.equal(reply.text, expected, `${ description2 } text === "${ reply.text }"`);
+                }
             }
         }
 
