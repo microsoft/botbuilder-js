@@ -1,6 +1,7 @@
 const assert = require('assert');
 const fs = require('fs-extra');
 const nock = require('nock');
+const sinon = require('sinon');
 const { TestAdapter, TurnContext } = require('botbuilder-core');
 const { LuisRecognizer } = require('../');
 const luisAppId = '38330cad-f768-4619-96f9-69ea333e594b';
@@ -867,6 +868,35 @@ describe('LuisRecognizer', function () {
             assert(res.entities.$instance.Name[0].endIndex === 15);
             assert(res.entities.$instance.Name[0].score > 0 && res.entities.$instance.Name[0].score <= 1);
         });
+    });
+
+    it('should accept LuisPredictionOptions passed into recognizer "recognize" method', done => {
+        const luisPredictionDefaultOptions = {
+            includeAllIntents: true,
+            includeInstanceData: true
+        };
+        const luisPredictionUserOptions = {
+            includeAllIntents: false,
+            includeInstanceData: false
+        };
+        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, luisPredictionDefaultOptions, true);
+        const mergedOptions = luisPredictionUserOptions ? recognizer.setLuisPredictionOptions(recognizer.options, luisPredictionUserOptions) : recognizer.options;
+        assert(mergedOptions.includeAllIntents === false);
+        assert(mergedOptions.includeInstanceData === false);
+        throttle(done);
+    });
+
+    it('should use default Luis prediction options if no user options passed in', done => {
+        const luisPredictionDefaultOptions = {
+            includeAllIntents: true,
+            includeInstanceData: true
+        };
+        const luisPredictionUserOptions = null;
+        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, luisPredictionDefaultOptions, true);
+        const mergedOptions = luisPredictionUserOptions ? recognizer.setLuisPredictionOptions(recognizer.options, luisPredictionUserOptions) : recognizer.options;
+        assert(mergedOptions.includeAllIntents === true);
+        assert(mergedOptions.includeInstanceData === true);
+        throttle(done);
     });
 
 });
