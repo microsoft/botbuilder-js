@@ -92,7 +92,14 @@ import { CustomTypeBuilder } from './customTypeBuilder';
 
         // Rules
         this.register('Microsoft.UnknownIntentRule', new DefaultTypeBuilder(UnknownIntentRule));
-        this.register('Microsoft.IntentRule', new DefaultTypeBuilder(IntentRule));
+        this.register('Microsoft.IntentRule', new CustomTypeBuilder((config) => {
+            let intentRule = new IntentRule();
+            
+            if(config && config['intent']) {
+                intentRule.matches.push(config['intent']);
+            }
+            return intentRule;
+        }));
         
         // Recognizers
         this.register('Microsoft.RegexRecognizer', new CustomTypeBuilder((config) => {

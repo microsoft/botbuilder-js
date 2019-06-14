@@ -29,14 +29,14 @@
     "rules": [
         {
             "$type": "Microsoft.IntentRule",
-            "intent": "JokeIntent",
+            "intent": "#JokeIntent",
             "steps": [
                 "BeginDialog.TellJokeDialog"
             ]
         },
         {
             "$type": "Microsoft.IntentRule",
-            "intent": "FortuneTellerIntent",
+            "intent": "#FortuneTellerIntent",
             "steps": [
                 "BeginDialog.FortuneTellerDialog"
             ]

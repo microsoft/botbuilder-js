@@ -50,16 +50,16 @@ describe('TypeLoader', function () {
             await adapter
             .send('hi')
                 .assertReply('Hello, I\'m Zoidberg. What is your name?')
-            .send('Carlos')
-                .assertReply('Hello Carlos, nice to talk to you!')
-            // .send('tell me a joke') 
-            //     .assertReply('Why did the chicken cross the road?') // This fails, need to discuss with stevenic
-            // .send('to tell a bad joke on the other side?')
-            //     .assertReply('To get to the other side')
-            // .send('tell my fortune')
-            //     .assertReply('Seeing into the future...')
-            //     .assertReply('I see great things happening...')
-            //     .assertReply('Perhaps even a successful bot demo')
+            .send('Bender')
+                .assertReply('Hello Bender, nice to talk to you!')
+            .send('tell me a joke') 
+                .assertReply('Why did the chicken cross the road?') 
+            .send('why?')
+                .assertReply('To get to the other side')
+            .send('tell my fortune')
+                .assertReply('Seeing into the future...')
+                .assertReply('I see great things in your future...')
+                .assertReply('Potentially a successful demo')
         });
     });
 });

@@ -186,7 +186,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
     }
 
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
-        if (event.name == 'ActivityReceived' && dc.context.activity.type == ActivityTypes.Message) {
+        if (event.name == 'activityReceived' && dc.context.activity.type == ActivityTypes.Message) {
             if (this.allowInterruptions) {
                 // By default we'll intercept ActivityReceived if we recognize the users input.
                 const state = await this.recognizeInput(dc, true);
