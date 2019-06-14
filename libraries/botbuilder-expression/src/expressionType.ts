@@ -79,6 +79,14 @@ export class ExpressionType {
     public static readonly GetTimeOfDay: string = 'getTimeOfDay';
     public static readonly GetFutureTime: string = 'getFutureTime';
     public static readonly GetPastTime: string = 'getPastTime';
+    public static readonly ConvertFromUTC: string = 'convertFromUTC';
+    public static readonly ConvertToUTC: string = 'convertToUTC';
+    public static readonly AddToTime: string = 'addToTime';
+    public static readonly ConvertTimeZone: string = 'convertTimeZone';
+    public static readonly StartOfDay: string = 'startOfDay';
+    public static readonly StartOfHour: string = 'startOfHour';
+    public static readonly StartOfMonth: string = 'startOfMonth';
+    public static readonly Ticks: string = 'ticks';
 
     // Conversions
     public static readonly Float: string = 'float';

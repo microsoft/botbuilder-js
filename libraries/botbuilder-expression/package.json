@@ -17,11 +17,14 @@
   "dependencies": {
     "@microsoft/recognizers-text-data-types-timex-expression": "^1.1.4",
     "moment": "2.24.0",
+    "moment-timezone": "^0.5.25",
+    "readline-sync": "^1.4.9",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.18",
+    "@types/readline-sync": "^1.4.3",
     "@types/xml2js": "^0.4.4",
     "nyc": "^11.4.1",
     "ts-node": "^4.1.0",

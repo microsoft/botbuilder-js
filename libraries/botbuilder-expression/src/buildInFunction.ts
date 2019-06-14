@@ -14,6 +14,8 @@ import { Expression, ReturnType } from './expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDelegate } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
+import * as timezone from 'moment-timezone';
+import { TimeZoneConverter } from './TimeZoneConverter';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -1104,6 +1106,109 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
+    // DateTime Functions
+    private static AddToTime(timeStamp: string, interval: number, timeUnit: string, format?: string): {value: any; error: string}{
+        let result: string;
+        let error: string;
+        let value: any;
+            ({value, error} = BuiltInFunctions.ParseTimestamp(timeStamp));
+            if (format === undefined) {
+                format = this.DefaultDateTimeFormat;
+            }
+    
+            if (error === undefined) {
+                let ts: moment.Moment = value;
+                switch (timeUnit) {
+                    case 'Second': {
+                        ts = ts.add(interval, 's');
+                        break;
+                    }
+    
+                    case 'Minute': {
+                        ts = ts.add(interval, 'm');
+                        break;
+                    }
+    
+                    case 'Hour': {
+                        ts = ts.add(interval, 'h');
+                        break;
+                    }
+    
+                    case 'Day': {
+                        ts = ts.add(interval, 'd');
+                        break;
+                    }
+    
+                    case 'Week': {
+                        ts = ts.add(interval, 'week');
+                        break;
+                    }
+    
+                    case 'Month': {
+                        ts = ts.add(interval, 'month');
+                        break;
+                    }
+    
+                    case 'Year': {
+                        ts = ts.add(interval, 'year');
+                        break;
+                    }
+    
+                    default:{
+                        error = `${timeUnit} is not valid time unit`;
+                        break;
+                    }
+                }
+    
+                if (error === undefined){
+                    ({value: result, error} = this.ReturnFormattedTimeStampStr(ts, format));
+                }
+        }
+
+        return {value: result, error};
+    }
+
+    private static ReturnFormattedTimeStampStr(timedata: moment.Moment, format: string): {value: any; error: string } {
+        let result: string;
+        let error: string;
+        try{
+            result = timedata.format(format);
+        } catch {
+            error = `${format} is not a valid timestamp format`
+        }
+
+        return {value: result, error};
+    }
+
+    private static ConvetFromUTC(timeStamp: string, destinationTimeZone: string, format?: string): {value: any; error: string} {
+        let result: string;
+        let error: string;
+        let value: any;
+        ({value, error} = this.ParseTimestamp(timeStamp));
+        const timeZone = TimeZoneConverter.WindowsToIana(destinationTimeZone);
+        if (!TimeZoneConverter.VerifyTimeZoneStr(timeZone)) {
+            error = `${destinationTimeZone} is not a valid timezone`;
+        }
+
+        if (error === undefined) {
+            try{
+                result = value.tz(timeZone).format(format);
+            } catch {
+                error = `${format} is not a valid timestamp format`
+            }
+            
+        }
+
+        return {value: result, error};
+    }
+    
+    private static convertToUTC(timestamp: string, sourceTimezone: string, format?: string)  {value: any; error: string} {
+        let value: any;
+        let result: string;
+        let error: string;
+        
+    }
+
     // Uri Parsing Function
     private static UriHost(uri: string): {value: any; error: string} {
         let result: string;
@@ -1683,6 +1788,12 @@ export class BuiltInFunctions {
                 },
                 ReturnType.String,
                 (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.Number, ReturnType.String)
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.AddToTime,
+                BuiltInFunctions.ApplyWithError(
+                    (args,)
+                )
             ),
             new ExpressionEvaluator(
                 ExpressionType.Float,
