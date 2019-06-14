@@ -1,50 +1,52 @@
 {
-    "private": true,
-    "name": "botbuilder-packages",
-    "scripts": {
-        "postinstall": "lerna bootstrap --hoist",
-        "build": "lerna run build",
-        "clean": "lerna run clean",
-        "test": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\"",
-        "functional-test": "lerna run build && nyc mocha \"libraries/**/tests/*.test.js\"",
-        "test:coveralls": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\" && nyc report --reporter=text-lcov | coveralls",
-        "build-docs": "lerna run build-docs",
-        "eslint": "./node_modules/.bin/eslint  ./libraries/*/src/*.ts ./libraries/*/src/**/*.ts",
-        "eslint-fix": "./node_modules/.bin/eslint  ./libraries/*/src/*.ts ./libraries/*/src/**/*.ts --fix",
-        "set-dependency-versions": "node tools/util/updateDependenciesInPackageJsons.js ./libraries ^${Version} botbuilder botbuilder-choices botbuilder-core botbuilder-prompts botframework-connector botframework-config botframework-schema && node tools/util/updateDependenciesInPackageJsons.js ./transcripts ^${Version} botbuilder botbuilder-ai botbuilder-dialogs",
-        "update-versions": "lerna run set-version && npm run set-dependency-versions"
-    },
-    "dependencies": {
-        "ms-rest-azure": "^2.5.9",
-        "ms-rest-js": "^1.0.1",
-        "read-text-file": "^1.1.0",
-        "replace-in-file": "^3.4.2",
-        "sinon": "^6.3.4",
-        "typedoc": "^0.12.0",
-        "typedoc-plugin-external-module-name": "^1.1.3",
-        "typedoc-plugin-markdown": "^1.1.15",
-        "typescript": "^3.1.1"
-    },
-    "devDependencies": {
-        "@types/jsonwebtoken": "7.2.8",
-        "@types/lodash": "^4.14.116",
-        "@typescript-eslint/eslint-plugin": "^1.4.2",
-        "@typescript-eslint/parser": "^1.4.2",
-        "coveralls": "^3.0.2",
-        "eslint": "^5.15.1",
-        "eslint-plugin-only-warn": "^1.0.1",
-        "lerna": "^3.2.1",
-        "mocha": "^5.2.0",
-        "tslint-microsoft-contrib": "^5.2.1",
-        "typescript": "^2.7.2"
-    },
-    "nyc": {
-        "exclude": [
-            "**/botframework*/**/generated/**",
-            "**/botframework-luis/**",
-            "**/tests/**",
-            "**/tools/**",
-            "**/internal.*"
-        ]
-    }
+  "private": true,
+  "name": "botbuilder-packages",
+  "scripts": {
+    "postinstall": "lerna bootstrap --hoist",
+    "build": "lerna run build",
+    "clean": "lerna run clean",
+    "functional-test": "lerna run build && nyc mocha \"libraries/functional-tests/tests/*.test.js\"",
+    "test": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\"",
+    "test:coveralls": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\" && nyc report --reporter=text-lcov | coveralls",
+    "test-coverage": "nyc mocha \"libraries/bot*/tests/*.test.js\" ",
+    "upload-coverage": "nyc report --reporter=text-lcov | coveralls",
+    "build-docs": "lerna run build-docs",
+    "eslint": "eslint  ./libraries/*/src/*.ts ./libraries/*/src/**/*.ts",
+    "eslint-fix": "eslint  ./libraries/*/src/*.ts ./libraries/*/src/**/*.ts --fix",
+    "set-dependency-versions": "node tools/util/updateDependenciesInPackageJsons.js ./libraries ^${Version} botbuilder botbuilder-choices botbuilder-core botbuilder-prompts botframework-connector botframework-config botframework-schema && node tools/util/updateDependenciesInPackageJsons.js ./transcripts ^${Version} botbuilder botbuilder-ai botbuilder-dialogs",
+    "update-versions": "lerna run set-version && npm run set-dependency-versions"
+  },
+  "dependencies": {
+    "ms-rest-azure": "^2.5.9",
+    "ms-rest-js": "^1.0.1",
+    "read-text-file": "^1.1.0",
+    "replace-in-file": "^3.4.2",
+    "sinon": "^6.3.4",
+    "typedoc": "^0.12.0",
+    "typedoc-plugin-external-module-name": "^1.1.3",
+    "typedoc-plugin-markdown": "^1.1.15",
+    "typescript": "^3.1.1"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "7.2.8",
+    "@types/lodash": "^4.14.116",
+    "@typescript-eslint/eslint-plugin": "^1.4.2",
+    "@typescript-eslint/parser": "^1.4.2",
+    "coveralls": "^3.0.2",
+    "eslint": "^5.15.1",
+    "eslint-plugin-only-warn": "^1.0.1",
+    "lerna": "^3.2.1",
+    "mocha": "^5.2.0",
+    "tslint-microsoft-contrib": "^5.2.1",
+    "typescript": "^2.7.2"
+  },
+  "nyc": {
+    "exclude": [
+      "**/botframework*/**/generated/**",
+      "**/botframework-luis/**",
+      "**/tests/**",
+      "**/tools/**",
+      "**/internal.*"
+    ]
+  }
 }

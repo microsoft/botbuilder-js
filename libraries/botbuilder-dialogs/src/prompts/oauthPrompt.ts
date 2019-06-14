@@ -279,8 +279,18 @@ export class OAuthPrompt extends Dialog {
             token = context.activity.value as TokenResponse;
         } else if (this.isTeamsVerificationInvoke(context)) {
             const code: any = context.activity.value.state;
-            await context.sendActivity({ type: 'invokeResponse', value: { status: 200 }});
-            token = await this.getUserToken(context, code);
+            try {
+                token = await this.getUserToken(context, code);
+                if (token !== undefined) {
+                    await context.sendActivity({ type: 'invokeResponse', value: { status: 200 }});
+                } else {
+                    await context.sendActivity({ type: 'invokeResponse', value: { status: 404 }});
+                }
+            }
+            catch
+            {
+                await context.sendActivity({ type: 'invokeResponse', value: { status: 500 }});
+            }
         } else if (context.activity.type === ActivityTypes.Message) {
             const matched: RegExpExecArray = /(\d{6})/.exec(context.activity.text);
             if (matched && matched.length > 1) {

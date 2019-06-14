@@ -322,6 +322,49 @@ describe('QnAMaker', function () {
 
         });
 
+        it('should log telemetry when no answer found in kb', async function() {
+            // Arrange
+            var callCount = 0;
+            var telemetryClient = {
+                trackEvent: (telemetry) => {
+                    assert(telemetry, 'telemetry is null');
+                    switch(++callCount) {
+                        case 1:
+                            assert(telemetry.name === "QnaMessage");
+                            assert(telemetry.properties);
+                            assert('knowledgeBaseId' in telemetry.properties);
+                            assert('question' in telemetry.properties);
+                            assert(telemetry.properties.question === 'where are the unicorns?');
+                            assert('questionId' in telemetry.properties);
+                            assert(telemetry.properties.questionId === 'No Qna Question Id matched');
+                            assert('matchedQuestion' in telemetry.properties);
+                            assert(telemetry.properties.matchedQuestion === 'No Qna Question matched')
+                            assert('username' in telemetry.properties);
+                            assert('answer' in telemetry.properties);
+                            assert('articleFound' in telemetry.properties);
+                            assert(telemetry.properties.articleFound === 'false');
+                            break;
+
+                        default:
+                            assert(false);
+                            break;
+                    }
+                }
+            }
+    
+            const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient=telemetryClient, logPersonalInformation=true);
+            const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: "testname"}  })
+            const defaultNumberOfAnswers = 0;
+
+            // Act
+            const resultsWithoutOptions = await noOptionsQnA.getAnswers(noOptionsContext);
+            const numberOfResults = resultsWithoutOptions.length;
+            // Assert
+            assert.strictEqual(noOptionsQnA.logPersonalInformation, true);
+            assert.strictEqual(numberOfResults, defaultNumberOfAnswers, 'Results should have 0 answers if no match found in KB');
+
+        });
+
         it('should not log telemetry pii', async function() {
             // Arrange
             var callCount = 0;
