@@ -7,8 +7,8 @@
  */
 
 
-import { Activity, TestAdapter, Middleware, ConversationState, MemoryStorage, AutoSaveStateMiddleware, StatePropertyAccessor, TurnContext } from 'botbuilder-core';
-import { Dialog, DialogState, DialogSet, DialogTurnStatus, DialogTurnResult } from 'botbuilder-dialogs';
+import { Activity, TestAdapter, Middleware, ConversationState, MemoryStorage, AutoSaveStateMiddleware, TurnContext } from 'botbuilder-core';
+import { Dialog,  DialogSet, DialogTurnStatus, DialogTurnResult } from 'botbuilder-dialogs';
 
 /**
  * A client for testing dialogs in isolation.
@@ -69,7 +69,7 @@ export class DialogTestClient {
         return this._testAdapter.activityBuffer.shift();
     }
 
-    private getDefaultCallback(targetDialog: Dialog, initialDialogOptions: any, dialogState: StatePropertyAccessor<DialogState>): (turnContext: TurnContext) => Promise<void> {
+    private getDefaultCallback(targetDialog: Dialog, initialDialogOptions: any, dialogState: any): (turnContext: TurnContext) => Promise<void> {
 
         return async (turnContext: TurnContext) => {
 
