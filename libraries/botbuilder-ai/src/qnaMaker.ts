@@ -6,21 +6,15 @@
  * Licensed under the MIT License.
  */
 import { Activity, TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
-import * as entities from 'html-entities';
 import * as os from 'os';
 const pjson: any = require('../package.json');
-import * as request from 'request-promise-native';
+const request = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
 import { constants } from 'http2';
 import { QnATelemetryConstants } from './qnaTelemetryConstants';
 
 const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
 const QNAMAKER_TRACE_NAME = 'QnAMaker';
 const QNAMAKER_TRACE_LABEL = 'QnAMaker Trace';
-
-/**
- * @private
- */
-const htmlentities: entities.AllHtmlEntities = new entities.AllHtmlEntities();
 
 /**
  * An individual answer returned by a call to the QnA Maker Service.
@@ -424,7 +418,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         else
         {
             properties[QnATelemetryConstants.matchedQuestionProperty] = "No Qna Question matched";
-            properties[QnATelemetryConstants.questionIdProperty] = "No QnA Question Id matched";
+            properties[QnATelemetryConstants.questionIdProperty] = "No Qna Question Id matched";
             properties[QnATelemetryConstants.answerProperty] =  "No Qna Answer matched";
             properties[QnATelemetryConstants.articleFoundProperty] = "false";
         }
@@ -464,18 +458,19 @@ export class QnAMaker implements QnAMakerTelemetryClient {
 
         this.validateOptions(queryOptions);
 
-        const qnaResult: any = await request({
-            url: url,
+        const qnaResult: any = await request(url, {
             method: 'POST',
             headers: headers,
             timeout: queryOptions.timeout,
-            json: {
+            body: JSON.stringify({
                 question: question,
                 ...queryOptions
-            }
+            })
         });
-
-        return this.formatQnaResult(qnaResult);
+        
+        const qnaResultJson: any = await qnaResult.json();
+        
+        return this.formatQnaResult(qnaResultJson);
     }
 
     /**
@@ -539,6 +534,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         }
 
         headers['User-Agent'] = this.getUserAgent();
+        headers['Content-Type'] = 'application/json';
 
         return headers;
     }
@@ -579,7 +575,6 @@ export class QnAMaker implements QnAMakerTelemetryClient {
     private formatQnaResult(qnaResult: any): QnAMakerResult[] {
         return qnaResult.answers.map((ans: any) => {
             ans.score = ans.score / 100;
-            ans.answer = htmlentities.decode(ans.answer);
 
             if (ans.qnaId) {
                 ans.id = ans.qnaId;
