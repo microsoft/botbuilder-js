@@ -10,6 +10,8 @@
     "libraries/botframework-config",
     "libraries/botframework-connector",
     "libraries/botframework-schema",
+    "libraries/functional-tests",
+    "libraries/testbot",
     "transcripts"
   ],
   "version": "independent",

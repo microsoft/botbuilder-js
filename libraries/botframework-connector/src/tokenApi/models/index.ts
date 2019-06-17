@@ -10,6 +10,13 @@ import * as msRest from "@azure/ms-rest-js";
  * An interface representing TokenResponse.
  */
 export interface TokenResponse {
+  /**
+   * @member {string} [channelId]
+   */
+  channelId?: string;
+  /**
+   * @member {string} [connectionName]
+   */
   connectionName?: string;
   token?: string;
   expiration?: string;
@@ -51,7 +58,12 @@ export interface AadResourceUrls {
  */
 export interface TokenStatus {
   /**
-   * The name of the connection the token status pertains to
+   * @member {string} [channelId] The channelId of the token status pertains to
+   */
+  channelId?: string;
+  /**
+   * @member {string} [connectionName] The name of the connection the token
+   * status pertains to
    */
   connectionName?: string;
   /**
@@ -84,20 +96,54 @@ export interface BotSignInGetSignInUrlOptionalParams extends msRest.RequestOptio
  * Optional Parameters.
  */
 export interface UserTokenGetTokenOptionalParams extends msRest.RequestOptionsBase {
+  /**
+   * @member {string} [channelId]
+   */
+  channelId?: string;
+  /**
+   * @member {string} [code]
+   */
   code?: string;
 }
 
 /**
+ * @interface
+ * An interface representing UserTokenGetAadTokensOptionalParams.
+ * Optional Parameters.
+ *
+ * @extends RequestOptionsBase
+ */
+export interface UserTokenGetAadTokensOptionalParams extends msRest.RequestOptionsBase {
+  /**
+   * @member {string} [channelId]
+   */
+  channelId?: string;
+}
+
+/**
+ * @interface
+ * An interface representing UserTokenSignOutOptionalParams.
  * Optional Parameters.
  */
 export interface UserTokenSignOutOptionalParams extends msRest.RequestOptionsBase {
   connectionName?: string;
+  /**
+   * @member {string} [channelId]
+   */
+  channelId?: string;
 }
 
 /**
  * Optional Parameters.
  */
 export interface UserTokenGetTokenStatusOptionalParams extends msRest.RequestOptionsBase {
+  /**
+   * @member {string} [channelId]
+   */
+  channelId?: string;
+  /**
+   * @member {string} [include]
+   */
   include?: string;
 }
 

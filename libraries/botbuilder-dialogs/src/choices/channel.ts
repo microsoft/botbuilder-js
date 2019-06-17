@@ -11,20 +11,22 @@ import { TurnContext } from 'botbuilder-core';
  * @private
  */
 export const channels: any = {
-    facebook: 'facebook',
-    skype: 'skype',
-    msteams: 'msteams',
-    telegram: 'telegram',
-    kik: 'kik',
-    email: 'email',
-    slack: 'slack',
-    groupme: 'groupme',
-    sms: 'sms',
-    emulator: 'emulator',
-    directline: 'directline',
-    webchat: 'webchat',
     console: 'console',
-    cortana: 'cortana'
+    cortana: 'cortana',
+    directline: 'directline',
+    email: 'email',
+    emulator: 'emulator',
+    facebook: 'facebook',
+    groupme: 'groupme',
+    kik: 'kik',
+    line: 'line',
+    msteams: 'msteams',
+    skype: 'skype',
+    skypeforbusiness: 'skypeforbusiness',
+    slack: 'slack',
+    sms: 'sms',
+    telegram: 'telegram',
+    webchat: 'webchat'
 };
 
 /**
@@ -37,6 +39,8 @@ export function supportsSuggestedActions(channelId: string, buttonCnt: number = 
         case channels.facebook:
         case channels.skype:
             return (buttonCnt <= 10);
+        case channels.line:
+            return (buttonCnt <= 13);
         case channels.kik:
             return (buttonCnt <= 20);
         case channels.slack:
@@ -61,6 +65,8 @@ export function supportsCardActions(channelId: string, buttonCnt: number = 100):
         case channels.skype:
         case channels.msteams:
             return (buttonCnt <= 3);
+        case channels.line:
+            return (buttonCnt <= 99);
         case channels.slack:
         case channels.emulator:
         case channels.directline:

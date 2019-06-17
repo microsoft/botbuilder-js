@@ -1,0 +1,131 @@
+{
+  "query": "Deliver from 12345 VA to 12346 WA",
+  "topScoringIntent": {
+    "intent": "Delivery",
+    "score": 0.999999642
+  },
+  "intents": [
+    {
+      "intent": "Delivery",
+      "score": 0.999999642
+    },
+    {
+      "intent": "search",
+      "score": 0.0000168553852
+    },
+    {
+      "intent": "None",
+      "score": 0.00000197937743
+    },
+    {
+      "intent": "EntityTests",
+      "score": 0.00000176767367
+    },
+    {
+      "intent": "Travel",
+      "score": 0.00000176767367
+    },
+    {
+      "intent": "Weather.GetForecast",
+      "score": 5.997471e-7
+    },
+    {
+      "intent": "SpecifyName",
+      "score": 1.75e-9
+    },
+    {
+      "intent": "Greeting",
+      "score": 5.9375e-10
+    },
+    {
+      "intent": "Cancel",
+      "score": 5.529412e-10
+    },
+    {
+      "intent": "Help",
+      "score": 5.529412e-10
+    }
+  ],
+  "entities": [
+    {
+      "entity": "12345",
+      "type": "builtin.number",
+      "startIndex": 13,
+      "endIndex": 17,
+      "resolution": {
+        "subtype": "integer",
+        "value": "12345"
+      }
+    },
+    {
+      "entity": "12346",
+      "type": "builtin.number",
+      "startIndex": 25,
+      "endIndex": 29,
+      "resolution": {
+        "subtype": "integer",
+        "value": "12346"
+      }
+    },
+    {
+      "entity": "va",
+      "type": "State",
+      "startIndex": 19,
+      "endIndex": 20,
+      "score": 0.8453893
+    },
+    {
+      "entity": "wa",
+      "type": "State",
+      "startIndex": 31,
+      "endIndex": 32,
+      "score": 0.9857455
+    },
+    {
+      "entity": "12345 va",
+      "type": "Address",
+      "startIndex": 13,
+      "endIndex": 20,
+      "score": 0.7942108,
+      "role": "Source"
+    },
+    {
+      "entity": "12346 wa",
+      "type": "Address",
+      "startIndex": 25,
+      "endIndex": 32,
+      "score": 0.97531575,
+      "role": "Destination"
+    }
+  ],
+  "compositeEntities": [
+    {
+      "parentType": "Address",
+      "value": "12345 va",
+      "children": [
+        {
+          "type": "builtin.number",
+          "value": "12345"
+        },
+        {
+          "type": "State",
+          "value": "va"
+        }
+      ]
+    },
+    {
+      "parentType": "Address",
+      "value": "12346 wa",
+      "children": [
+        {
+          "type": "builtin.number",
+          "value": "12346"
+        },
+        {
+          "type": "State",
+          "value": "wa"
+        }
+      ]
+    }
+  ]
+}

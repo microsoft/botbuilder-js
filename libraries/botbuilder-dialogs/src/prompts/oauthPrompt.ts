@@ -6,10 +6,11 @@
  * Licensed under the MIT License.
  */
 import { Token } from '@microsoft/recognizers-text-date-time';
-import {  Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, TokenResponse, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, TokenResponse, TurnContext, IUserTokenProvider } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
+import { channels } from '../choices/channel';
 
 /**
  * Settings used to configure an `OAuthPrompt` instance.
@@ -32,7 +33,7 @@ export interface OAuthPromptSettings {
 
     /**
      * (Optional) number of milliseconds the prompt will wait for the user to authenticate.
-     * Defaults to a value `54,000,000` (15 minutes.)
+     * Defaults to a value `900,000` (15 minutes.)
      */
     timeout?: number;
 }
@@ -126,7 +127,7 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Initialize prompt state
-        const timeout: number = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000;
+        const timeout: number = typeof this.settings.timeout === 'number' ? this.settings.timeout : 900000;
         const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
         state.state = {};
         state.options = o;
@@ -156,14 +157,20 @@ export class OAuthPrompt extends Dialog {
         if (hasTimedOut) {
             return await dc.endDialog(undefined);
         } else {
+
+            if (state.state['attemptCount'] === undefined) {
+                state.state['attemptCount'] = 1;
+            }
+
             // Validate the return value
-            let isValid: boolean = false;
+            let isValid = false;
             if (this.validator) {
                 isValid = await this.validator({
                     context: dc.context,
                     recognized: recognized,
                     state: state.state,
-                    options: state.options
+                    options: state.options,
+                    attemptCount: state.state['attemptCount']
                 });
             } else if (recognized.succeeded) {
                 isValid = true;
@@ -195,7 +202,7 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Get the token and call validator
-        const adapter: any = context.adapter as any; // cast to BotFrameworkAdapter
+        const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
 
         return await adapter.getUserToken(context, this.settings.connectionName, code);
     }
@@ -222,7 +229,7 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Sign out user
-        const adapter: any = context.adapter as any; // cast to BotFrameworkAdapter
+        const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
 
         return adapter.signOutUser(context, this.settings.connectionName);
     }
@@ -272,8 +279,18 @@ export class OAuthPrompt extends Dialog {
             token = context.activity.value as TokenResponse;
         } else if (this.isTeamsVerificationInvoke(context)) {
             const code: any = context.activity.value.state;
-            await context.sendActivity({ type: 'invokeResponse', value: { status: 200 }});
-            token = await this.getUserToken(context, code);
+            try {
+                token = await this.getUserToken(context, code);
+                if (token !== undefined) {
+                    await context.sendActivity({ type: 'invokeResponse', value: { status: 200 }});
+                } else {
+                    await context.sendActivity({ type: 'invokeResponse', value: { status: 404 }});
+                }
+            }
+            catch
+            {
+                await context.sendActivity({ type: 'invokeResponse', value: { status: 500 }});
+            }
         } else if (context.activity.type === ActivityTypes.Message) {
             const matched: RegExpExecArray = /(\d{6})/.exec(context.activity.text);
             if (matched && matched.length > 1) {
@@ -298,10 +315,10 @@ export class OAuthPrompt extends Dialog {
 
     private channelSupportsOAuthCard(channelId: string): boolean {
         switch (channelId) {
-            case 'msteams':
-            case 'cortana':
-            case 'skype':
-            case 'skypeforbusiness':
+            case channels.msteams:
+            case channels.cortana:
+            case channels.skype:
+            case channels.skypeforbusiness:
                 return false;
             default:
         }

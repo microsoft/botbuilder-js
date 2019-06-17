@@ -2,54 +2,41 @@
   "text": "Please deliver February 2nd 2001 in room 201",
   "intents": {
     "Delivery": {
-      "score": 0.7287446
+      "score": 0.6622358
+    },
+    "Roles": {
+      "score": 0.0399782136
     },
     "None": {
-      "score": 0.0483125746
+      "score": 0.0348676443
     },
     "Weather_GetForecast": {
-      "score": 0.01991026
+      "score": 0.0214544013
     },
     "search": {
-      "score": 0.0128230788
-    },
-    "Cancel": {
-      "score": 0.006956813
-    },
-    "EntityTests": {
-      "score": 0.00668122852
-    },
-    "SpecifyName": {
-      "score": 0.005081289
+      "score": 0.0123604042
     },
     "Travel": {
-      "score": 0.005067997
+      "score": 0.00675333524
+    },
+    "EntityTests": {
+      "score": 0.005465451
+    },
+    "SpecifyName": {
+      "score": 0.005312069
+    },
+    "Cancel": {
+      "score": 0.00438869931
     },
     "Help": {
-      "score": 0.004835693
+      "score": 0.00296988664
     },
     "Greeting": {
-      "score": 0.002140487
+      "score": 0.00122421747
     }
   },
   "entities": {
     "$instance": {
-      "datetime": [
-        {
-          "startIndex": 15,
-          "endIndex": 32,
-          "text": "february 2nd 2001",
-          "type": "builtin.datetimeV2.date"
-        }
-      ],
-      "dimension": [
-        {
-          "startIndex": 28,
-          "endIndex": 35,
-          "text": "2001 in",
-          "type": "builtin.dimension"
-        }
-      ],
       "number": [
         {
           "startIndex": 28,
@@ -66,6 +53,22 @@
           "subtype": "integer"
         }
       ],
+      "datetime": [
+        {
+          "startIndex": 15,
+          "endIndex": 32,
+          "text": "february 2nd 2001",
+          "type": "builtin.datetimeV2.date"
+        }
+      ],
+      "dimension": [
+        {
+          "startIndex": 28,
+          "endIndex": 35,
+          "text": "2001 in",
+          "type": "builtin.dimension"
+        }
+      ],
       "ordinal": [
         {
           "startIndex": 24,
@@ -75,6 +78,10 @@
         }
       ]
     },
+    "number": [
+      2001,
+      201
+    ],
     "datetime": [
       {
         "type": "date",
@@ -89,10 +96,6 @@
         "units": "Inch"
       }
     ],
-    "number": [
-      2001,
-      201
-    ],
     "ordinal": [
       2
     ]
@@ -105,51 +108,75 @@
     "query": "Please deliver February 2nd 2001 in room 201",
     "topScoringIntent": {
       "intent": "Delivery",
-      "score": 0.7287446
+      "score": 0.6622358
     },
     "intents": [
       {
         "intent": "Delivery",
-        "score": 0.7287446
+        "score": 0.6622358
+      },
+      {
+        "intent": "Roles",
+        "score": 0.0399782136
       },
       {
         "intent": "None",
-        "score": 0.0483125746
+        "score": 0.0348676443
       },
       {
         "intent": "Weather.GetForecast",
-        "score": 0.01991026
+        "score": 0.0214544013
       },
       {
         "intent": "search",
-        "score": 0.0128230788
-      },
-      {
-        "intent": "Cancel",
-        "score": 0.006956813
-      },
-      {
-        "intent": "EntityTests",
-        "score": 0.00668122852
-      },
-      {
-        "intent": "SpecifyName",
-        "score": 0.005081289
+        "score": 0.0123604042
       },
       {
         "intent": "Travel",
-        "score": 0.005067997
+        "score": 0.00675333524
+      },
+      {
+        "intent": "EntityTests",
+        "score": 0.005465451
+      },
+      {
+        "intent": "SpecifyName",
+        "score": 0.005312069
+      },
+      {
+        "intent": "Cancel",
+        "score": 0.00438869931
       },
       {
         "intent": "Help",
-        "score": 0.004835693
+        "score": 0.00296988664
       },
       {
         "intent": "Greeting",
-        "score": 0.002140487
+        "score": 0.00122421747
       }
     ],
     "entities": [
+      {
+        "entity": "2001",
+        "type": "builtin.number",
+        "startIndex": 28,
+        "endIndex": 31,
+        "resolution": {
+          "subtype": "integer",
+          "value": "2001"
+        }
+      },
+      {
+        "entity": "201",
+        "type": "builtin.number",
+        "startIndex": 41,
+        "endIndex": 43,
+        "resolution": {
+          "subtype": "integer",
+          "value": "201"
+        }
+      },
       {
         "entity": "february 2nd 2001",
         "type": "builtin.datetimeV2.date",
@@ -173,26 +200,6 @@
         "resolution": {
           "unit": "Inch",
           "value": "2001"
-        }
-      },
-      {
-        "entity": "2001",
-        "type": "builtin.number",
-        "startIndex": 28,
-        "endIndex": 31,
-        "resolution": {
-          "subtype": "integer",
-          "value": "2001"
-        }
-      },
-      {
-        "entity": "201",
-        "type": "builtin.number",
-        "startIndex": 41,
-        "endIndex": 43,
-        "resolution": {
-          "subtype": "integer",
-          "value": "201"
         }
       },
       {

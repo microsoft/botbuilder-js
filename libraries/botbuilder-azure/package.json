@@ -21,21 +21,21 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
+    "@types/documentdb": "^1.10.5",
     "@types/node": "^10.12.18",
-    "azure-storage": "^2.10.2",
+    "azure-storage": "2.10.2",
     "botbuilder": "~4.1.6",
     "documentdb": "1.14.5",
     "flat": "^4.0.0",
     "semaphore": "^1.1.0"
   },
   "devDependencies": {
-    "@types/documentdb": "^1.10.5",
     "@types/mocha": "^2.2.47",
     "@types/semaphore": "^1.1.0",
     "codelyzer": "^4.1.0",
     "mocha": "^5.2.0",
     "nyc": "^11.4.1",
-    "nock": "^10.0.1",
+    "nock": "^10.0.3",
     "source-map-support": "^0.5.3",
     "ts-node": "^4.1.0"
   },
@@ -45,5 +45,9 @@
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-azure --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-azure .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Azure\" --readme none",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}"
-  }
+  },
+  "files": [
+    "/lib",
+    "/src"   
+  ]
 }

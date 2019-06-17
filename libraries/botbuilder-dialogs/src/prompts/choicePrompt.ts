@@ -21,7 +21,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
     /**
      * Default options for rendering the choices to the user based on locale.
      */
-    public static defaultChoiceOptions: { [locale: string]: ChoiceFactoryOptions } = {
+    private static defaultChoiceOptions: { [locale: string]: ChoiceFactoryOptions } = {
         'es-es': { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true },
         'nl-nl': { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true },
         'en-us': { inlineSeparator: ', ', inlineOr: ' or ', inlineOrMore: ', or ', includeNumbers: true },
@@ -80,10 +80,11 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices) || [];
         const channelId: string = context.activity.channelId;
         const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ChoicePrompt.defaultChoiceOptions[locale];
+        const choiceStyle: ListStyle = options.style || this.style;
         if (isRetry && options.retryPrompt) {
-            prompt = this.appendChoices(options.retryPrompt, channelId, choices, this.style, choiceOptions);
+            prompt = this.appendChoices(options.retryPrompt, channelId, choices, choiceStyle, choiceOptions);
         } else {
-            prompt = this.appendChoices(options.prompt, channelId, choices, this.style, choiceOptions);
+            prompt = this.appendChoices(options.prompt, channelId, choices, choiceStyle, choiceOptions);
         }
 
         // Send prompt

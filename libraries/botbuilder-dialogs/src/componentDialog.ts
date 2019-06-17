@@ -10,7 +10,7 @@ import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatu
 import { DialogContext, DialogState } from './dialogContext';
 import { DialogSet } from './dialogSet';
 
-const PERSISTED_DIALOG_STATE: string = 'dialogs';
+const PERSISTED_DIALOG_STATE = 'dialogs';
 
 /**
  * Base class for a dialog that contains other child dialogs.
@@ -24,7 +24,7 @@ const PERSISTED_DIALOG_STATE: string = 'dialogs';
  * the classes constructor:
  *
  * ```JavaScript
- * const { ComponentDialog, WaterfallDialog, TextPrompt, NumberPrompt } = require('botbuilder-dialogs);
+ * const { ComponentDialog, WaterfallDialog, TextPrompt, NumberPrompt } = require('botbuilder-dialogs');
  *
  * class FillProfileDialog extends ComponentDialog {
  *     constructor(dialogId) {
@@ -84,6 +84,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
         const dialogState: DialogState = { dialogStack: [] };
         outerDC.activeDialog.state[PERSISTED_DIALOG_STATE] = dialogState;
         const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState);
+        innerDC.parent = outerDC;
         const turnResult: DialogTurnResult<any> = await this.onBeginDialog(innerDC, options);
 
         // Check for end of inner dialog
@@ -100,6 +101,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
         // Continue execution of inner dialog.
         const dialogState: any = outerDC.activeDialog.state[PERSISTED_DIALOG_STATE];
         const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState);
+        innerDC.parent = outerDC;
         const turnResult: DialogTurnResult<any> = await this.onContinueDialog(innerDC);
 
         // Check for end of inner dialog
@@ -244,7 +246,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
         this.dialogs.telemetryClient = client;
     }
 
-     /**
+    /**
      * Get the current telemetry client.
      */
     public get telemetryClient(): BotTelemetryClient {

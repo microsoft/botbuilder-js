@@ -21,8 +21,9 @@ export class ConfirmPrompt extends Prompt<boolean> {
 
     /**
      * Default confirm choices for a range of locales.
+     * @deprecated since version 4.3
      */
-    public static defaultConfirmChoices: { [locale: string]: (string | Choice)[] } = {
+    private static defaultConfirmChoices: { [locale: string]: (string | Choice)[] } = {
         'es-es': ['Sí', 'No'],
         'nl-nl': ['Ja', 'Nee'],
         'en-us': ['Yes', 'No'],
@@ -36,15 +37,15 @@ export class ConfirmPrompt extends Prompt<boolean> {
     /**
      * Default options for rendering the choices to the user based on locale.
      */
-    public static defaultChoiceOptions: { [locale: string]: ChoiceFactoryOptions } = {
-        'es-es': { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true },
-        'nl-nl': { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true },
-        'en-us': { inlineSeparator: ', ', inlineOr: ' or ', inlineOrMore: ', or ', includeNumbers: true },
-        'fr-fr': { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true },
-        'de-de': { inlineSeparator: ', ', inlineOr: ' oder ', inlineOrMore: ', oder ', includeNumbers: true },
-        'ja-jp': { inlineSeparator: '、 ', inlineOr: ' または ', inlineOrMore: '、 または ', includeNumbers: true },
-        'pt-br': { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true },
-        'zh-cn': { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true }
+    private static defaultChoiceOptions: { [locale: string]: { choices: (string|Choice)[]; options: ChoiceFactoryOptions }} = {
+        'es-es': { choices: ['Sí', 'No'], options: { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true }},
+        'nl-nl': { choices: ['Ja', 'Nee'], options: { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true }},
+        'en-us': { choices: ['Yes', 'No'], options: { inlineSeparator: ', ', inlineOr: ' or ', inlineOrMore: ', or ', includeNumbers: true }},
+        'fr-fr': { choices: ['Oui', 'Non'], options: { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true }},
+        'de-de': { choices: ['Ja', 'Nein'], options: { inlineSeparator: ', ', inlineOr: ' oder ', inlineOrMore: ', oder ', includeNumbers: true }},
+        'ja-jp': { choices: ['はい', 'いいえ'], options: { inlineSeparator: '、 ', inlineOr: ' または ', inlineOrMore: '、 または ', includeNumbers: true }},
+        'pt-br': { choices: ['Sim', 'Não'], options: { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true }},
+        'zh-cn': { choices: ['是的', '不'], options: { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true }}
     };
     /**
      * The prompts default locale that should be recognized.
@@ -88,8 +89,8 @@ export class ConfirmPrompt extends Prompt<boolean> {
         let prompt: Partial<Activity>;
         const channelId: string = context.activity.channelId;
         const culture: string = this.determineCulture(context.activity);
-        const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ConfirmPrompt.defaultChoiceOptions[culture];
-        const choices: any[] = this.confirmChoices || ConfirmPrompt.defaultConfirmChoices[culture];
+        const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ConfirmPrompt.defaultChoiceOptions[culture].options;
+        const choices: any[] = this.confirmChoices || ConfirmPrompt.defaultChoiceOptions[culture].choices;
         if (isRetry && options.retryPrompt) {
             prompt = this.appendChoices(options.retryPrompt, channelId, choices, this.style, choiceOptions);
         } else {
@@ -111,10 +112,10 @@ export class ConfirmPrompt extends Prompt<boolean> {
             result.value = results[0].resolution.value;
         } else {
             // If the prompt text was sent to the user with numbers, the prompt should recognize number choices.
-            const choiceOptions = this.choiceOptions || ConfirmPrompt.defaultChoiceOptions[culture];
+            const choiceOptions = this.choiceOptions || ConfirmPrompt.defaultChoiceOptions[culture].options;
 
             if (typeof choiceOptions.includeNumbers !== 'boolean' || choiceOptions.includeNumbers) {
-                const confirmChoices = this.confirmChoices || ConfirmPrompt.defaultConfirmChoices[culture];
+                const confirmChoices = this.confirmChoices || ConfirmPrompt.defaultChoiceOptions[culture].choices;
                 const choices = [confirmChoices[0], confirmChoices[1]];
                 const secondOrMoreAttemptResults = recognizeChoices(utterance, choices);
                 if (secondOrMoreAttemptResults.length > 0) {

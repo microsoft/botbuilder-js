@@ -1,0 +1,19 @@
+{
+    "answers": [
+      {
+        "score": 48.54820341616869,
+        "Id": 20,
+        "answer": "They're frolicking merrily in the verdant garden!",
+        "source": "Custom Editorial",
+        "questions": [
+          "where are the unicorns?"
+        ],
+        "metadata": [
+          {
+            "name": "mythical",
+            "value": "unicorns"
+          }
+        ]
+      }
+    ]
+  }

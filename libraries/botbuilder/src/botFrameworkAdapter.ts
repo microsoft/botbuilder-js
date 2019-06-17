@@ -6,10 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, ResourceResponse, TurnContext } from 'botbuilder-core';
-import { ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenApiModels } from 'botframework-connector';
+import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
+import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
 import * as os from 'os';
-
 
 /**
  * Express or Restify Request object.
@@ -42,6 +41,12 @@ export interface BotFrameworkAdapterSettings {
      * Password assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
      */
     appPassword: string;
+
+    /**
+     * (Optional) The OAuth API Endpoint for your bot to use.
+     */
+    channelAuthTenant?: string;
+
     /**
      * (Optional) The OAuth API Endpoint for your bot to use.
      */
@@ -79,10 +84,10 @@ const NODE_VERSION: any = process.version;
 
 // tslint:disable-next-line:no-var-requires no-require-imports
 const pjson: any = require('../package.json');
-const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${pjson.version} ` +
-    `(Node.js,Version=${NODE_VERSION}; ${TYPE} ${RELEASE}; ${ARCHITECTURE})`;
-const OAUTH_ENDPOINT: string = 'https://api.botframework.com';
-const US_GOV_OAUTH_ENDPOINT: string = 'https://api.botframework.azure.us';
+const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${ pjson.version } ` +
+    `(Node.js,Version=${ NODE_VERSION }; ${ TYPE } ${ RELEASE }; ${ ARCHITECTURE })`;
+const OAUTH_ENDPOINT = 'https://api.botframework.com';
+const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
 const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 
 /**
@@ -105,7 +110,7 @@ const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
  * });
  * ```
  */
-export class BotFrameworkAdapter extends BotAdapter {
+export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvider {
     protected readonly credentials: MicrosoftAppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
     protected readonly settings: BotFrameworkAdapterSettings;
@@ -130,16 +135,34 @@ export class BotFrameworkAdapter extends BotAdapter {
     constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
         super();
         this.settings = { appId: '', appPassword: '', ...settings };
-        this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
+        this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '', this.settings.channelAuthTenant);
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
         this.isEmulatingOAuthCards = false;
+
+        // If no channelService or openIdMetadata values were passed in the settings, check the process' Environment Variables for values.
+        // These values may be set when a bot is provisioned on Azure and if so are required for the bot to properly work in Public Azure or a National Cloud.
+        this.settings.channelService = this.settings.channelService || process.env[AuthenticationConstants.ChannelService];
+        this.settings.openIdMetadata = this.settings.openIdMetadata || process.env[AuthenticationConstants.BotOpenIdMetadataKey];
+
         if (this.settings.openIdMetadata) {
             ChannelValidation.OpenIdMetadataEndpoint = this.settings.openIdMetadata;
+            GovernmentChannelValidation.OpenIdMetadataEndpoint = this.settings.openIdMetadata;
         }
         if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
             this.credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
             this.credentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
         }
+
+        // Relocate the tenantId field used by MS Teams to a new location (from channelData to conversation)
+        // This will only occur on actities from teams that include tenant info in channelData but NOT in conversation,
+        // thus should be future friendly.  However, once the the transition is complete. we can remove this.
+        this.use(async(context, next) => {
+            if (context.activity.channelId === 'msteams' && context.activity && context.activity.conversation && !context.activity.conversation.tenantId && context.activity.channelData && context.activity.channelData.tenant) {
+                context.activity.conversation.tenantId = context.activity.channelData.tenant.id;
+            }
+            await next();
+        });
+
     }
 
     /**
@@ -226,8 +249,19 @@ export class BotFrameworkAdapter extends BotAdapter {
         if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`); }
 
         // Create conversation
-        const parameters: ConversationParameters = { bot: reference.bot, members: [reference.user] } as ConversationParameters;
+        const parameters: ConversationParameters = { bot: reference.bot, members: [reference.user], isGroup: false, activity: null, channelData: null };
         const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
+
+        // Mix in the tenant ID if specified. This is required for MS Teams.
+        if (reference.conversation && reference.conversation.tenantId) {
+            // Putting tenantId in channelData is a temporary solution while we wait for the Teams API to be updated
+            parameters.channelData = { tenant: { id: reference.conversation.tenantId } };
+
+            // Permanent solution is to put tenantId in parameters.tenantId
+            parameters.tenantId = reference.conversation.tenantId;
+
+        }
+
         const response = await client.conversations.createConversation(parameters);
 
         // Initialize request and copy over new conversation ID and updated serviceUrl.
@@ -236,7 +270,16 @@ export class BotFrameworkAdapter extends BotAdapter {
             reference,
             true
         );
-        request.conversation = { id: response.id } as ConversationAccount;
+
+        const conversation: ConversationAccount = {
+            id: response.id,
+            isGroup: false,
+            conversationType: null,
+            tenantId: null,
+            name: null,
+        };
+        request.conversation = conversation;
+
         if (response.serviceUrl) { request.serviceUrl = response.serviceUrl; }
 
         // Create context and run middleware
@@ -359,20 +402,23 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
      */
-    public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenApiModels.TokenResponse> {
+    public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`);
+        }
+        if (!connectionName) {
+        	throw new Error('getUserToken() requires a connectionName but none was provided.');
         }
         this.checkEmulatingOAuthCards(context);
         const userId: string = context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
 
-        const result: TokenApiModels.UserTokenGetTokenResponse = await client.userToken.getToken(userId, connectionName, { code: magicCode });
+        const result: TokenApiModels.UserTokenGetTokenResponse = await client.userToken.getToken(userId, connectionName, { code: magicCode, channelId: context.activity.channelId });
         if (!result || !result.token || result._response.status == 404) {
             return undefined;
         } else {
-            return result;
+            return result as TokenResponse;
         }
     }
 
@@ -380,16 +426,21 @@ export class BotFrameworkAdapter extends BotAdapter {
      * Signs the user out with the token server.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
+     * @param userId id of user to sign out.
+     * @returns A promise that represents the work queued to execute.
      */
-    public async signOutUser(context: TurnContext, connectionName: string): Promise<void> {
+    public async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`);
         }
+        if (!userId){
+            userId = context.activity.from.id;
+        }
+        
         this.checkEmulatingOAuthCards(context);
-        const userId: string = context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
-        await client.userToken.signOut(userId, { connectionName: connectionName } );
+        await client.userToken.signOut(userId, { connectionName: connectionName, channelId: context.activity.channelId } );
     }
 
     /**
@@ -409,7 +460,28 @@ export class BotFrameworkAdapter extends BotAdapter {
         };
 
         const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
-        return (await client.botSignIn.getSignInUrl(finalState, null))._response.bodyAsText;
+        return (await client.botSignIn.getSignInUrl(finalState, { channelId: context.activity.channelId }))._response.bodyAsText;
+    }
+
+    /** 
+     * Retrieves the token status for each configured connection for the given user.
+     * @param context Context for the current turn of conversation with the user.
+     * @param userId The user Id for which token status is retrieved.
+     * @param includeFilter Optional comma seperated list of connection's to include. Blank will return token status for all configured connections.
+     * @returns Array of TokenStatus
+     * */ 
+    
+    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string ): Promise<TokenStatus[]>
+    {
+        if (!userId && (!context.activity.from || !context.activity.from.id)) {
+            throw new Error(`BotFrameworkAdapter.getTokenStatus(): missing from or from.id`);
+        }
+        this.checkEmulatingOAuthCards(context);
+        userId = userId || context.activity.from.id;
+        const url: string = this.oauthApiUrl(context);
+        const client: TokenApiClient = this.createTokenApiClient(url);
+        
+        return (await client.userToken.getTokenStatus(userId, {channelId: context.activity.channelId, include: includeFilter}))._response.parsedBody;
     }
 
     /**
@@ -418,7 +490,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param connectionName Name of the auth connection to use.
      */
     public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{
-        [propertyName: string]: TokenApiModels.TokenResponse;
+        [propertyName: string]: TokenResponse;
     }> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getAadTokens(): missing from or from.id`);
@@ -428,7 +500,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
 
-        return (await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }))._response.parsedBody;
+        return (await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody as {[propertyName: string]: TokenResponse };
     }
 
     /**
@@ -534,12 +606,12 @@ export class BotFrameworkAdapter extends BotAdapter {
 
         // Return status 
         res.status(status);
-        if (body) { res.send(body) }
+        if (body) { res.send(body); }
         res.end();
 
         // Check for an error
         if (status >= 400) {
-            console.warn(`BotFrameworkAdapter.processActivity(): ${status} ERROR - ${body.toString()}`);
+            console.warn(`BotFrameworkAdapter.processActivity(): ${ status } ERROR - ${ body.toString() }`);
             throw new Error(body.toString());
         }
     }
@@ -572,7 +644,7 @@ export class BotFrameworkAdapter extends BotAdapter {
                     responses.push({} as ResourceResponse);
                     break;
                 case 'invokeResponse':
-                    // Cache response to context object. This will be retrieved when turn completes.
+                // Cache response to context object. This will be retrieved when turn completes.
                     context.turnState.set(INVOKE_RESPONSE_KEY, activity);
                     responses.push({} as ResourceResponse);
                     break;
@@ -583,7 +655,7 @@ export class BotFrameworkAdapter extends BotAdapter {
                     }
                     const client: ConnectorClient = this.createConnectorClient(activity.serviceUrl);
                     if (activity.type === 'trace' && activity.channelId !== 'emulator') {
-                        // Just eat activity
+                    // Just eat activity
                         responses.push({} as ResourceResponse);
                     } else if (activity.replyToId) {
                         responses.push(await client.conversations.replyToActivity(
@@ -669,7 +741,7 @@ export class BotFrameworkAdapter extends BotAdapter {
             (typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl) :
             (this.settings.oAuthEndpoint ? this.settings.oAuthEndpoint : 
                 JwtTokenValidation.isGovernment(this.settings.channelService) ?
-                US_GOV_OAUTH_ENDPOINT : OAUTH_ENDPOINT);
+                    US_GOV_OAUTH_ENDPOINT : OAUTH_ENDPOINT);
     }
 
     /**
@@ -716,7 +788,7 @@ function parseRequest(req: WebRequest): Promise<Activity> {
                 reject(err);
             }
         } else {
-            let requestData: string = '';
+            let requestData = '';
             req.on('data', (chunk: string) => {
                 requestData += chunk;
             });
@@ -733,7 +805,7 @@ function parseRequest(req: WebRequest): Promise<Activity> {
 }
 
 function delay(timeout: number): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         setTimeout(resolve, timeout);
     });
 }

@@ -38,7 +38,12 @@ export enum ListStyle {
     /**
      * Add choices to prompt as suggested actions.
      */
-    suggestedAction
+    suggestedAction,
+
+    /**
+     * Add choices to prompt as a HeroCard with buttons.
+     */
+    heroCard
 }
 
 /**
@@ -48,17 +53,23 @@ export interface PromptOptions {
     /**
      * (Optional) Initial prompt to send the user.
      */
-    prompt?: string|Partial<Activity>;
+    prompt?: string | Partial<Activity>;
 
     /**
      * (Optional) Retry prompt to send the user.
      */
-    retryPrompt?: string|Partial<Activity>;
+    retryPrompt?: string | Partial<Activity>;
 
     /**
      * (Optional) List of choices associated with the prompt.
      */
-    choices?: (string|Choice)[];
+    choices?: (string | Choice)[];
+
+    /**
+     * (Optional) Property that can be used to override or set the value of ChoicePrompt.Style
+     * when the prompt is executed using DialogContext.prompt.
+     */
+    style?: ListStyle
 
     /**
      * (Optional) Additional validation rules to pass the prompts validator routine.
@@ -140,6 +151,13 @@ export interface PromptValidatorContext<T> {
      * The validator can extend this interface to support additional prompt options.
      */
     readonly options: PromptOptions;
+
+    /**
+     * A count of the number of times the prompt has been executed.
+     * 
+     * A number indicating how many times the prompt was invoked (starting at 1 for the first time it was invoked).
+     */
+    readonly attemptCount: number;
 }
 
 /**
@@ -152,7 +170,7 @@ export abstract class Prompt<T> extends Dialog {
      * @param dialogId Unique ID of the prompt within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) custom validator used to provide additional validation and re-prompting logic for the prompt.
      */
-    constructor(dialogId: string, private validator?: PromptValidator<T>) {
+    protected constructor(dialogId: string, private validator?: PromptValidator<T>) {
         super(dialogId);
     }
 
@@ -188,14 +206,21 @@ export abstract class Prompt<T> extends Dialog {
         const recognized: PromptRecognizerResult<T> = await this.onRecognize(dc.context, state.state, state.options);
 
         // Validate the return value
-        let isValid: boolean = false;
+        let isValid = false;
         if (this.validator) {
+            if (state.state['attemptCount'] === undefined) {
+                state.state['attemptCount'] = 1;
+            }
             isValid = await this.validator({
                 context: dc.context,
                 recognized: recognized,
                 state: state.state,
-                options: state.options
+                options: state.options,
+                attemptCount: state.state['attemptCount']
             });
+            if (state.state['attemptCount'] !== undefined) {
+                state.state['attemptCount']++;
+            }
         } else if (recognized.succeeded) {
             isValid = true;
         }
@@ -258,14 +283,14 @@ export abstract class Prompt<T> extends Dialog {
      * @param options (Optional) options to configure the underlying ChoiceFactory call.
      */
     protected appendChoices(
-        prompt: string|Partial<Activity>,
+        prompt: string | Partial<Activity>,
         channelId: string,
-        choices: (string|Choice)[],
+        choices: (string | Choice)[],
         style: ListStyle,
         options?: ChoiceFactoryOptions
     ): Partial<Activity> {
         // Get base prompt text (if any)
-        let text: string = '';
+        let text = '';
         if (typeof prompt === 'string') {
             text = prompt;
         } else if (prompt && prompt.text) {
@@ -287,6 +312,10 @@ export abstract class Prompt<T> extends Dialog {
                 msg = ChoiceFactory.suggestedAction(choices, text);
                 break;
 
+            case ListStyle.heroCard:
+                msg = ChoiceFactory.heroCard(choices as Choice[], text);
+                break;
+
             case ListStyle.none:
                 msg = MessageFactory.text(text);
                 break;
@@ -296,13 +325,17 @@ export abstract class Prompt<T> extends Dialog {
                 break;
         }
 
-        // Update prompt with text and actions
+        // Update prompt with text, actions and attachments
         if (typeof prompt === 'object') {
             // Clone the prompt Activity as to not modify the original prompt.
             prompt = JSON.parse(JSON.stringify(prompt)) as Activity;
             prompt.text = msg.text;
             if (msg.suggestedActions && Array.isArray(msg.suggestedActions.actions) && msg.suggestedActions.actions.length > 0) {
                 prompt.suggestedActions = msg.suggestedActions;
+            }
+
+            if (msg.attachments) {
+                prompt.attachments = msg.attachments;
             }
 
             return prompt;

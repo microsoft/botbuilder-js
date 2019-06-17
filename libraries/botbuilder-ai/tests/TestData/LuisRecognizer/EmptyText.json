@@ -1,10 +1,5 @@
 {
-  "intents": {},
-  "entities": {
-    "$instance": {}
-  },
-  "luisResult": {
-    "intents": [],
-    "entities": []
-  }
+  "text": "",
+  "intents": { "": { "score": 1 }},
+  "entities": {}
 }

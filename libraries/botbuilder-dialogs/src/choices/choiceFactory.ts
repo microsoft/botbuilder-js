@@ -6,7 +6,15 @@
  * Licensed under the MIT License.
  */
 
-import { ActionTypes, Activity, CardAction, InputHints, MessageFactory, TurnContext } from 'botbuilder-core';
+import {
+    ActionTypes,
+    Activity,
+    CardAction,
+    CardFactory,
+    InputHints,
+    MessageFactory,
+    TurnContext
+} from 'botbuilder-core';
 import * as channel from './channel';
 import { Choice } from './findChoices';
 
@@ -97,7 +105,7 @@ export class ChoiceFactory {
         const list: Choice[] = ChoiceFactory.toChoices(choices);
 
         // Find maximum title length
-        let maxTitleLength: number = 0;
+        let maxTitleLength = 0;
         list.forEach((choice: Choice) => {
             const l: number = choice.action && choice.action.title ? choice.action.title.length : choice.value.length;
             if (l > maxTitleLength) {
@@ -107,11 +115,14 @@ export class ChoiceFactory {
 
         // Determine list style
         const supportsSuggestedActions: boolean = channel.supportsSuggestedActions(channelId, choices.length);
-        const supportsCardActions: boolean = channel.supportsCardActions(channelId, choices.length);
         const maxActionTitleLength: number = channel.maxActionTitleLength(channelId);
-        const hasMessageFeed: boolean = channel.hasMessageFeed(channelId);
+        const supportsCardActions = channel.supportsCardActions(channelId, choices.length);
         const longTitles: boolean = maxTitleLength > maxActionTitleLength;
-        if (!longTitles && (supportsSuggestedActions || (!hasMessageFeed && supportsCardActions))) {
+        if (!longTitles && !supportsSuggestedActions && supportsCardActions) {
+            // SuggestedActions is the preferred approach, but for channels that don't
+            // support them (e.g. Teams, Cortana) we should use a HeroCard with CardActions
+            return ChoiceFactory.heroCard(list, text, speak);
+        } else if (!longTitles && supportsSuggestedActions) {
             // We always prefer showing choices using suggested actions. If the titles are too long, however,
             // we'll have to show them as a text list.
             return ChoiceFactory.suggestedAction(list, text, speak);
@@ -123,6 +134,18 @@ export class ChoiceFactory {
             return ChoiceFactory.list(list, text, speak, options);
         }
     }
+
+    public static heroCard(choices: Choice[] = [], text = '', speak = ''): Activity {
+        const buttons: CardAction[] = choices.map(choice => ({
+            title: choice.value,
+            type: ActionTypes.ImBack,
+            value: choice.value
+        } as CardAction));
+        const attachment = CardFactory.heroCard(null, text, null, buttons);
+
+        return MessageFactory.attachment(attachment, null, speak, InputHints.ExpectingInput) as Activity;
+    }
+
 
     /**
      * Returns a 'message' activity containing a list of choices that has been formatted as an
@@ -150,13 +173,13 @@ export class ChoiceFactory {
         } as ChoiceFactoryOptions;
 
         // Format list of choices
-        let connector: string = '';
+        let connector = '';
         let txt: string = (text || '');
         txt += ' ';
         ChoiceFactory.toChoices(choices).forEach((choice: any, index: number) => {
             const title: string = choice.action && choice.action.title ? choice.action.title : choice.value;
             // tslint:disable-next-line:prefer-template
-            txt += `${connector}${opt.includeNumbers ? '(' + (index + 1).toString() + ') ' : ''}${title}`;
+            txt += `${ connector }${ opt.includeNumbers ? '(' + (index + 1).toString() + ') ' : '' }${ title }`;
             if (index === (choices.length - 2)) {
                 connector = (index === 0 ? opt.inlineOr : opt.inlineOrMore) || '';
             } else {
@@ -192,13 +215,13 @@ export class ChoiceFactory {
         } as ChoiceFactoryOptions;
 
         // Format list of choices
-        let connector: string = '';
+        let connector = '';
         let txt: string = (text || '');
         txt += '\n\n   ';
         ChoiceFactory.toChoices(choices).forEach((choice: any, index: number) => {
             const title: string = choice.action && choice.action.title ? choice.action.title : choice.value;
             // tslint:disable-next-line:prefer-template
-            txt += `${connector}${opt.includeNumbers ? (index + 1).toString() + '. ' : '- '}${title}`;
+            txt += `${ connector }${ opt.includeNumbers ? (index + 1).toString() + '. ' : '- ' }${ title }`;
             connector = '\n   ';
         });
 
@@ -227,7 +250,7 @@ export class ChoiceFactory {
             if (choice.action) {
                 return choice.action;
             } else {
-                return { type: ActionTypes.ImBack, value: choice.value, title: choice.value, channelData: undefined };
+                return {type: ActionTypes.ImBack, value: choice.value, title: choice.value, channelData: undefined};
             }
         });
 
@@ -240,7 +263,7 @@ export class ChoiceFactory {
      *
      * @remarks
      * This example converts a simple array of string based choices to a properly formated `Choice[]`.
-     * 
+     *
      * If the `Choice` has a `Partial<CardAction>` for `Choice.action`, `.toChoices()` will attempt to
      * fill the `Choice.action`.
      *
@@ -251,7 +274,7 @@ export class ChoiceFactory {
      */
     public static toChoices(choices: (string | Choice)[] | undefined): Choice[] {
         return (choices || []).map(
-            (choice: Choice) => typeof choice === 'string' ? { value: choice } : choice
+            (choice: Choice) => typeof choice === 'string' ? {value: choice} : choice
         ).map((choice: Choice) => {
             const action: CardAction = choice.action;
             // If the choice.action is incomplete, populate the missing fields.

@@ -348,4 +348,114 @@ describe(`TestAdapter`, function () {
         }
         throw new Error(`TestAdapter.testActivities() should not have succeeded without activities argument.`);
     });
+
+    it(`getUserToken returns null`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            context.adapter.getUserToken(context, 'myConnection').then(token => {
+                assert(!token);
+                done();
+            });
+        });
+        adapter.send('hi');
+    });
+
+    it(`getUserToken returns null with code`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            context.adapter.getUserToken(context, 'myConnection', '123456').then(token => {
+                assert(!token);
+                done();
+            });
+        });
+        adapter.send('hi');
+    });
+
+    it(`getUserToken returns token`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            context.adapter.getUserToken(context, 'myConnection').then(token => {
+                assert(token);
+                assert(token.token);
+                assert(token.connectionName);
+                done();
+            });
+        });
+        adapter.addUserToken('myConnection', 'test', 'user', '123abc');
+        adapter.send('hi');
+    });
+
+    it(`getUserToken returns token with code`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            context.adapter.getUserToken(context, 'myConnection').then(token => {
+                assert(!token);
+                context.adapter.getUserToken(context, 'myConnection', '888777').then(token2 => {
+                    assert(token2);
+                    assert(token2.token);
+                    assert(token2.connectionName);
+                    context.adapter.getUserToken(context, 'myConnection').then(token3 => {
+                        assert(token3);
+                        assert(token3.token);
+                        assert(token3.connectionName);
+                        done();
+                    });
+                });
+            });
+        });
+        adapter.addUserToken('myConnection', 'test', 'user', '123abc', '888777');
+        adapter.send('hi');
+    });
+
+    it(`getSignInLink returns token with code`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            context.adapter.getSignInLink(context, 'myConnection').then(link => {
+                assert(link);
+                done();
+            });
+        });
+        adapter.send('hi');
+    });
+
+    it(`signOutUser is noop`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            context.adapter.signOutUser(context, 'myConnection').then(x => {
+                done();
+            });
+        });
+        adapter.send('hi');
+    });
+
+    it(`signOutUser logs out user`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            context.adapter.getUserToken(context, 'myConnection').then(token => {
+                assert(token);
+                assert(token.token);
+                assert(token.connectionName);
+                context.adapter.signOutUser(context, 'myConnection').then(x => {
+                    context.adapter.getUserToken(context, 'myConnection').then(token2 => {
+                        assert(!token2);
+                        done();
+                    });
+                });
+            });
+        });
+        adapter.addUserToken('myConnection', 'test', 'user', '123abc');
+        adapter.send('hi');
+    });
+
+    it(`signOutUser with no connectionName signs all out`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            context.adapter.getUserToken(context, 'myConnection').then(token => {
+                assert(token);
+                assert(token.token);
+                assert(token.connectionName);
+                context.adapter.signOutUser(context, undefined).then(x => {
+                    context.adapter.getUserToken(context, 'myConnection').then(token2 => {
+                        assert(!token2);
+                        done();
+                    });
+                });
+            });
+        });
+        adapter.addUserToken('myConnection', 'test', 'user', '123abc');
+        adapter.addUserToken('myConnection2', 'test', 'user', 'def456');
+        adapter.send('hi');
+    });
 });
