@@ -138,7 +138,7 @@ export interface ConversationAccount {
    */
   role?: RoleTypes;
   /**
-   * Cusrom properties
+   * Custom properties object (optional)
   */
   properties?: any
 }
