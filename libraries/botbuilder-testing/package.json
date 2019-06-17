@@ -2,7 +2,7 @@
   "name": "botbuilder-testing",
   "author": "Microsoft Corp.",
   "description": "Helpers for testing Bot Framework bots",
-  "version": "4.5.0",
+  "version": "4.1.6",
   "license": "MIT",
   "keywords": [
     "botbuilder",
