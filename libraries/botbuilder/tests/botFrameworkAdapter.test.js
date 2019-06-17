@@ -10,7 +10,12 @@ const reference = {
     serviceUrl: 'https://example.org/channel',
     user: { id: 'user', name: 'User Name' },
     bot: { id: 'bot', name: 'Bot Name' },
-    conversation: { id: 'convo1' }
+    conversation: { 
+        id: 'convo1',
+        properties: {
+            'foo': 'bar'
+        }
+    }
 };
 const incomingMessage = TurnContext.applyConversationReference({ text: 'test', type: 'message' }, reference, true);
 const outgoingMessage = TurnContext.applyConversationReference({ text: 'test', type: 'message' }, reference);
@@ -294,6 +299,18 @@ describe(`BotFrameworkAdapter`, function () {
         const adapter = new AdapterUnderTest();
         adapter.processActivity(req, res, (context) => {
             assert(context.activity.callerId === 'foo');
+            done();
+        });
+    });
+
+    it(`should receive a properties property on the conversation object in processActivity().`, function (done) {
+        const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', callerId: 'foo' }, reference, true);
+        incoming.channelId = 'msteams';
+        const req = new MockBodyRequest(incoming);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        adapter.processActivity(req, res, (context) => {
+            assert(context.activity.conversation.properties.foo === 'bar');
             done();
         });
     });

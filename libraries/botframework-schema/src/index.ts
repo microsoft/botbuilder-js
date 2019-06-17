@@ -137,6 +137,10 @@ export interface ConversationAccount {
    * 'user', 'bot'
    */
   role?: RoleTypes;
+  /**
+   * Cusrom properties
+  */
+  properties?: any
 }
 
 /**
