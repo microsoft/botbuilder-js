@@ -1202,13 +1202,35 @@ export class BuiltInFunctions {
         return {value: result, error};
     }
     
-    private static convertToUTC(timestamp: string, sourceTimezone: string, format?: string)  {value: any; error: string} {
+    private static convertToUTC(timeStamp: string, sourceTimezone: string, format?: string):  {value: any; error: string} {
         let value: any;
         let result: string;
         let error: string;
-        
+        if (format === undefined) {
+            format = this.DefaultDateTimeFormat;
+        }
+
+        ({value, error} = BuiltInFunctions.ParseTimestamp(timeStamp));
+        if (error === undefined){
+            let utcTimeStamp: moment.Moment = value.utc();
+            ({value: result, error} = this.ReturnFormattedTimeStampStr(utcTimeStamp, format));
+        }
+
+        return {value: result, error};      
     }
 
+    private static Ticks(timeStamp: string): {value: any; error: string} {
+        let value: any;
+        let result: number;
+        let error: string;
+        ({value, error} = BuiltInFunctions.ParseTimestamp(timeStamp));
+        if (error === undefined){
+            let result = value.Ticks();
+        }
+
+        return {value: result, error};
+    }
+    
     // Uri Parsing Function
     private static UriHost(uri: string): {value: any; error: string} {
         let result: string;
