@@ -270,6 +270,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * @param context Context for the current turn of conversation with the use.
      * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
      * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
+     * @param options (Optional) options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
      */
     public recognize(context: TurnContext, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }, options?: LuisPredictionOptions): Promise<RecognizerResult> {
         const cached: any = context.turnState.get(this.cacheKey);
