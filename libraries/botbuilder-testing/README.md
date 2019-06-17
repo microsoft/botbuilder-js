@@ -65,3 +65,4 @@ your own logger:
 ```javascript
 let testlogger = new DialogTestLogger(console);
 ```
+
