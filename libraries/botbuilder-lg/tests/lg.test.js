@@ -9,7 +9,7 @@ function GetExampleFilePath(fileName) {
 describe('LG', function () {
     it('TestBasic', function () {
         let engine = TemplateEngine.fromFiles(GetExampleFilePath('2.lg'));
-        let evaled = engine.evaluateTemplate("wPhrase", undefined);
+        let evaled = engine.evaluateTemplate("wPhrase");
         const options = ['Hi', 'Hello', 'Hiya'];
         assert.strictEqual(options.includes(evaled), true, `The result ${evaled} is not in those options [${options.join(",")}]`);
     });
@@ -146,6 +146,7 @@ describe('LG', function () {
 
     it('TestBasicInlineTemplate', function () {
         var emptyEngine = TemplateEngine.fromText("");
+        assert.strictEqual(emptyEngine.evaluate("Hi"), "Hi", emptyEngine.evaluate("Hi"));
         assert.strictEqual(emptyEngine.evaluate("Hi", ""), "Hi", emptyEngine.evaluate("Hi", ""));
 
         assert.strictEqual(emptyEngine.evaluate("Hi {name}", { name: 'DL' }), "Hi DL");
@@ -159,6 +160,7 @@ describe('LG', function () {
 
     it('TestInlineTemplateWithTemplateFile', function () {
         var emptyEngine = TemplateEngine.fromFiles(GetExampleFilePath("8.lg"));
+        assert.strictEqual(emptyEngine.evaluate("Hi"), "Hi", emptyEngine.evaluate("Hi"));
         assert.strictEqual(emptyEngine.evaluate("Hi", ""), "Hi", emptyEngine.evaluate("Hi", ""));
 
         assert.strictEqual(emptyEngine.evaluate("Hi {name}", { name: 'DL' }), "Hi DL", emptyEngine.evaluate("Hi {name}", { name: 'DL' }));

@@ -12,10 +12,10 @@ describe('MSLGTool', function () {
         let errors = new MSLGTool().ValidateFile(GetExampleFile('StaticCheckerErrors.lg'));
         assert.strictEqual(errors.length,5)
         assert.strictEqual(errors[0], "[Error] line 1:0 - line 1:10: error message: There is no template body in template template");
-        assert.strictEqual(errors[1], "[Warning] line 5:0 - line 5:20: error message: condition is not end with else: \'-IF:{foo == \'bar\'}\r\n-ok\r\n\'")
-        assert.strictEqual(errors[2], "[Error] line 9:0 - line 9:14: error message: control flow is not starting with switch: \'-CASE:{\'bar\'}\r\n-bar   \r\n\'")
-        assert.strictEqual(errors[3], "[Warning] line 9:0 - line 9:14: error message: control flow is not ending with default statement: \'-CASE:{\'bar\'}\r\n-bar   \r\n\'")
-        assert.strictEqual(errors[4], "[Warning] line 14:0 - line 14:10: error message: control flow should have at least one case statement: \'-SWITCH:{foo}\r\n-default:\r\n-bar<EOF>\'")
+        assert.strictEqual(errors[1].replace('\r\n','\n'), "[Warning] line 5:0 - line 5:20: error message: condition is not end with else: \'-IF:{foo == \'bar\'}\n-ok\n\'")
+        assert.strictEqual(errors[2].replace('\r\n','\n'), "[Error] line 9:0 - line 9:14: error message: control flow is not starting with switch: \'-CASE:{\'bar\'}\n-bar   \n\'")
+        assert.strictEqual(errors[3].replace('\r\n','\n'), "[Warning] line 9:0 - line 9:14: error message: control flow is not ending with default statement: \'-CASE:{\'bar\'}\n-bar   \n\'")
+        assert.strictEqual(errors[4].replace('\r\n','\n'), "[Warning] line 14:0 - line 14:10: error message: control flow should have at least one case statement: \'-SWITCH:{foo}\n-default:\n-bar<EOF>\'")
     });
 
     it('TestValidateReturnAntlrParseError', function () {
