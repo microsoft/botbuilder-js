@@ -24,19 +24,19 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|2bd42dab6f88d845b193dd2d449158aa.1e8cf234_',
+  '|69c44da32b25a8409122d50645953617.3d8f46a2_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Fri, 14 Jun 2019 23:19:41 GMT',
+  'Fri, 14 Jun 2019 23:19:34 GMT',
   'Connection',
   'close' ]);
  return result; },
 function (nock) { 
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
-  .post('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/activities', {"type":"message","from":{"id":"BKGSYSTFG:TKGSUQHQE"},"recipient":{"id":"UK8CH2281:TKGSUQHQE"},"text":"test activity"})
-  .reply(200, {"id":"1560554382.003700"}, [ 'Cache-Control',
+  .post('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/activities', {"type":"message","from":{"id":"BKGSYSTFG:TKGSUQHQE"},"recipient":{"id":"UK8CH2281:TKGSUQHQE"},"text":"test activity","entities":[{"type":"mention","text":"<at>User1</at>","mentioned":{"id":"UK8CH2281:TKGSUQHQE_1","name":"User1"}},{"type":"mention","text":"<at>User2</at>","mentioned":{"id":"UK8CH2281:TKGSUQHQE_2","name":"User2"}}]})
+  .reply(200, {"id":"1560554376.003300"}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
   'no-cache',
@@ -49,36 +49,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|676440b40fde6647a9446e8ccaf42376.3d8f46a9_',
+  '|c19695c84c838a41868a4ac789b4b952.1e8cf22c_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Fri, 14 Jun 2019 23:19:41 GMT',
-  'Connection',
-  'close' ]);
- return result; },
-function (nock) { 
-var result = 
-nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
-  .post('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/activities/1560554382.003700', {"type":"message","from":{"id":"BKGSYSTFG:TKGSUQHQE"},"recipient":{"id":"UK8CH2281:TKGSUQHQE"},"text":"reply"})
-  .reply(200, {"id":"1560554383.003800"}, [ 'Cache-Control',
-  'no-cache',
-  'Pragma',
-  'no-cache',
-  'Content-Length',
-  '33',
-  'Content-Type',
-  'application/json; charset=utf-8',
-  'Expires',
-  '-1',
-  'Server',
-  'Microsoft-IIS/10.0',
-  'x-ms-request-id',
-  '|7ed3798dabe02949b3f42e41e6941d94.3d8f46aa_',
-  'Strict-Transport-Security',
-  'max-age=31536000',
-  'Date',
-  'Fri, 14 Jun 2019 23:19:42 GMT',
+  'Fri, 14 Jun 2019 23:19:35 GMT',
   'Connection',
   'close' ]);
  return result; }]];
