@@ -12,39 +12,43 @@ import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import { Diagnostic } from './diagnostic';
 import { ErrorListener } from './errorListener';
 import { LGFileLexer } from './generated/LGFileLexer';
-import { FileContext, LGFileParser, ParagraphContext, TemplateDefinitionContext } from './generated/LGFileParser';
+import { FileContext, LGFileParser, ParagraphContext, TemplateDefinitionContext, ImportDefinitionContext } from './generated/LGFileParser';
+import { LGImport } from './LGImport';
+import { LGResource } from './LGResource';
 import { LGTemplate } from './lgTemplate';
 
 /**
  * LG Parser
  */
 export class LGParser {
-    public static Parse(text: string, source: string = ''): LGTemplate[] {
-        const parseResult: any = this.TryParse(text, source);
+    public static Parse(text: string, id: string = ''): LGResource {
+        const parseResult: any = this.TryParse(text, id);
         if (!parseResult.isValid) {
             throw new Error(parseResult.error.toString());
         }
 
-        return parseResult.templates;
+        return new LGResource(parseResult.templates, parseResult.imports, id);
     }
 
-    public static TryParse(text: string, source: string = '')
-        : { isValid: boolean; templates: LGTemplate[]; error: Diagnostic } {
+    public static TryParse(text: string, id: string = '')
+        : { isValid: boolean; templates: LGTemplate[]; imports: LGImport[]; error: Diagnostic } {
         let fileContext: FileContext;
         let isValid: boolean = true;
         let error: Diagnostic;
         let templates: LGTemplate[] = [];
+        let imports: LGImport[] = [];
 
         try {
-            fileContext = this.GetFileContentContext(text, source);
+            fileContext = this.GetFileContentContext(text, id);
         } catch (e) {
             error = Object.assign(new Diagnostic(undefined, undefined), JSON.parse(e.message));
             isValid = false;
         }
 
-        templates = this.ToLGTemplates(fileContext, source);
+        templates = this.ExtractLGTemplates(fileContext, id);
+        imports = this.ExtractLGImports(fileContext, id);
 
-        return { isValid, templates, error };
+        return { isValid, templates, imports, error };
     }
 
     private static GetFileContentContext(text: string, source: string): FileContext {
@@ -65,7 +69,7 @@ export class LGParser {
         return parser.file();
     }
 
-    private static ToLGTemplates(file: FileContext, source: string = ''): LGTemplate[] {
+    private static ExtractLGTemplates(file: FileContext, source: string = ''): LGTemplate[] {
         if (file === undefined
             || file === null) {
             return [];
@@ -76,5 +80,18 @@ export class LGParser {
             .filter((x: TemplateDefinitionContext) => x !== undefined);
 
         return templates.map((x: TemplateDefinitionContext) => new LGTemplate(x, source));
+    }
+
+    private static ExtractLGImports(file: FileContext, source: string = ''): LGImport[] {
+        if (file === undefined
+            || file === null) {
+            return [];
+        }
+
+        const imports: ImportDefinitionContext[] = file.paragraph()
+            .map((x: ParagraphContext) => x.importDefinition())
+            .filter((x: ImportDefinitionContext) => x !== undefined);
+
+        return imports.map((x: ImportDefinitionContext) => new LGImport(x, source));
     }
 }

@@ -10,12 +10,13 @@ function GetExampleFile(fileName){
 describe('MSLGTool', function () {
     it('TestValidateReturnStaticCheckerErrors', function () {
         let errors = new MSLGTool().ValidateFile(GetExampleFile('StaticCheckerErrors.lg'));
+        let regexp = new RegExp('\r\n', 'g');
         assert.strictEqual(errors.length,5)
         assert.strictEqual(errors[0], "[Error] line 1:0 - line 1:10: error message: There is no template body in template template");
-        assert.strictEqual(errors[1].replace('\r\n','\n'), "[Warning] line 5:0 - line 5:20: error message: condition is not end with else: \'-IF:{foo == \'bar\'}\n-ok\n\'")
-        assert.strictEqual(errors[2].replace('\r\n','\n'), "[Error] line 9:0 - line 9:14: error message: control flow is not starting with switch: \'-CASE:{\'bar\'}\n-bar   \n\'")
-        assert.strictEqual(errors[3].replace('\r\n','\n'), "[Warning] line 9:0 - line 9:14: error message: control flow is not ending with default statement: \'-CASE:{\'bar\'}\n-bar   \n\'")
-        assert.strictEqual(errors[4].replace('\r\n','\n'), "[Warning] line 14:0 - line 14:10: error message: control flow should have at least one case statement: \'-SWITCH:{foo}\n-default:\n-bar<EOF>\'")
+        assert.strictEqual(errors[1].replace(regexp, '\n'), "[Warning] line 5:0 - line 5:20: error message: condition is not end with else: \'-IF:{foo == \'bar\'}\n-ok\n\'")
+        assert.strictEqual(errors[2].replace(regexp, '\n'), "[Error] line 9:0 - line 9:14: error message: control flow is not starting with switch: \'-CASE:{\'bar\'}\n-bar   \n\'")
+        assert.strictEqual(errors[3].replace(regexp, '\n'), "[Warning] line 9:0 - line 9:14: error message: control flow is not ending with default statement: \'-CASE:{\'bar\'}\n-bar   \n\'")
+        assert.strictEqual(errors[4].replace(regexp, '\n'), "[Warning] line 14:0 - line 14:10: error message: control flow should have at least one case statement: \'-SWITCH:{foo}\n-default:\n-bar<EOF>\'")
     });
 
     it('TestValidateReturnAntlrParseError', function () {

@@ -20,7 +20,8 @@ const StaticCheckExceptionData  = [
     "InvalidTemplateName2.lg",
     "DuplicatedTemplates.lg",
     "LgTemplateFunctionError.lg",
-    "SwitchCaseFormatError.lg"
+    "SwitchCaseFormatError.lg",
+    "InvalidLGFileImportPath.lg"
     ];
 
 const StaticCheckWariningData  = [
@@ -47,7 +48,7 @@ describe('LGExceptionTest', function () {
     
     it('WariningTest', function () {
         for (const testDateItem of StaticCheckWariningData ) {
-            var engine = TemplateEngine.fromFiles(GetExampleFilePath(testDateItem));
+            var engine = new TemplateEngine().addFile(GetExampleFilePath(testDateItem));
             var report = new StaticChecker(engine.templates).Check();
             assert.strictEqual(report.length > 0, true);
             report.forEach(e => assert.strictEqual(e.Severity === DiagnosticSeverity.Warning, true));
@@ -58,7 +59,7 @@ describe('LGExceptionTest', function () {
         for (const testDateItem of StaticCheckExceptionData ) {
             var isFail = false;
             try {
-                TemplateEngine.fromFiles(GetExampleFilePath(testDateItem));
+                new TemplateEngine().addFile(GetExampleFilePath(testDateItem));
                 isFail = true;
             } catch (e) {
                 console.log(e.message);
@@ -76,7 +77,7 @@ describe('LGExceptionTest', function () {
             var errorMessage = "";
             var engine;
             try {
-                engine = TemplateEngine.fromFiles(GetExampleFilePath(testDateItem[0]));
+                engine = new TemplateEngine().addFile(GetExampleFilePath(testDateItem[0]));
             } catch (e) {
                 isFail = true;
                 errorMessage = "error occurs when parsing file";
@@ -104,7 +105,7 @@ describe('LGExceptionTest', function () {
             var errorMessage = "";
             var engine;
             try {
-                engine = TemplateEngine.fromFiles(GetExampleFilePath(testDateItem[0]));
+                engine = new TemplateEngine().addFile(GetExampleFilePath(testDateItem[0]));
             } catch (e) {
                 isFail = true;
                 errorMessage = "error occurs when parsing file";
@@ -112,7 +113,7 @@ describe('LGExceptionTest', function () {
 
             if(!isFail) {
                 try {
-                    engine.EvaluateTemplate(testDateItem[1], null);
+                    engine.EvaluateTemplate(testDateItem[1]);
                     isFail = true;
                     errorMessage = "No exception is thrown.";
                 } catch (e) {
