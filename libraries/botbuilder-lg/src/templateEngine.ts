@@ -95,12 +95,6 @@ export class TemplateEngine {
         return evalutor.EvaluateTemplate(fakeTemplateId, scope);
     }
 
-    /*
-    public AddFiles = (...filePaths: string[]): TemplateEngine => {
-
-    }
-    */
-
     private readonly runStaticCheck = (templates: LGTemplate[]): void => {
         const checker: StaticChecker = new StaticChecker(templates);
         const diagnostics: Diagnostic[] = checker.Check();
