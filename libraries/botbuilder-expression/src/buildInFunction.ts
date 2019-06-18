@@ -18,7 +18,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDele
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { TimeZoneConverter } from './TimeZoneConverter';
-
+import { CommonRegex } from './CommonRegex';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -2415,7 +2415,27 @@ export class BuiltInFunctions {
             new ExpressionEvaluator(ExpressionType.Coalesce, BuiltInFunctions.Apply((args: ReadonlyArray<any>[]) => this.Coalesce(<object []>args)),
                                     ReturnType.Object, BuiltInFunctions.ValidateAtLeastOne),
             new ExpressionEvaluator(ExpressionType.XPath, BuiltInFunctions.ApplyWithError((args: ReadonlyArray<any>[]) => this.XPath(args[0].toString(), args[1].toString())),
-                                    ReturnType.Object, (expr:Expression): void => BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.String, ReturnType.String))
+                                    ReturnType.Object, (expr:Expression): void => BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.String, ReturnType.String)),
+            
+            // Regex expression functions
+            new ExpressionEvaluator(
+                ExpressionType.IsMatch,
+                BuiltInFunctions.ApplyWithError(
+                    (args: ReadonlyArray<any>) => {
+                       let value: boolean = false;
+                       let error: string;
+                       if (args[0] === undefined || args[0] === '') {
+                           value = false;
+                           error = 'regular expression is empty.';
+                       } else {
+                           const regex: RegExp = CommonRegex.CreateRegex(args[1]);
+                           value = regex.test(args[0]);
+                       }
+
+                       return {value, error};
+                    }),
+                ReturnType.Boolean,
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String)),
         ];
 
         const lookup: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>();

@@ -318,6 +318,12 @@ const badExpressions =
   "one[0]",  // one is not list
   "items[3]", // index out of range
   "items[one+0.5]", // index is not integer
+
+  // regex test
+  "isMatch('^[a-z]+$')",// should have 2 parameter
+  "isMatch('abC', one)",// second param should be string
+  "isMatch(1, '^[a-z]+$')", // first param should be string
+  "isMatch('abC', '^[a-z+$')",// bad regular expression
 ];
 
 const scope = {
