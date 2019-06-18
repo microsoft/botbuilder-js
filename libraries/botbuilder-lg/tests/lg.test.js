@@ -343,7 +343,7 @@ describe('LG', function () {
     });
 
     it('TestRegex', function () {
-        var engine = TemplateEngine.fromFiles(GetExampleFilePath("Regex.lg"));
+        var engine = new TemplateEngine().addFile(GetExampleFilePath("Regex.lg"));
         var evaled = engine.evaluateTemplate('wPhrase');
         assert.strictEqual(evaled, 'Hi');
 
