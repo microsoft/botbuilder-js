@@ -45,11 +45,20 @@ export class BrowserWebSocket implements ISocket {
   }
 
   public setOnMessageHandler(handler: (x: any) => void) {
+    let packets = [];
     this.webSocket.onmessage = (evt) => {
       let fileReader = new FileReader();
+      let queueEntry = {buffer: null};
+      packets.push(queueEntry);
       fileReader.onload = (e) => {
         let t: FileReader = e.target as FileReader;
-        handler(t.result);
+        queueEntry['buffer'] = t.result;
+        if (packets[0] === queueEntry) {
+          while(0 < packets.length && packets[0]['buffer']) {
+            handler(packets[0]['buffer']);
+            packets.splice(0, 1);
+          }
+        }
       };
       fileReader.readAsArrayBuffer(evt.data);
     };
