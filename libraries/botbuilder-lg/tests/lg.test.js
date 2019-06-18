@@ -227,7 +227,7 @@ describe('LG', function () {
             },
         ]
         for (const testItem of testData) {
-            var engine = TemplateEngine.fromFiles(GetExampleFilePath("Analyzer.lg"));
+            var engine = new TemplateEngine().addFile(GetExampleFilePath("Analyzer.lg"));
             var evaled1 = engine.analyzeTemplate(testItem.name);
             var variableEvaled = evaled1.Variables;
             var variableEvaledOptions = testItem.variableOptions;
