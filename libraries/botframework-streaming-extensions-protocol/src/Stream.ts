@@ -26,7 +26,13 @@ export class Stream extends Duplex {
       // tslint:disable-next-line:no-null-keyword
       this.push(null);
     } else {
-      this.push(this.bufferList.shift());
+      let total = 0;
+      while(total < size && this.bufferList.length > 0) {
+        let buffer=this.bufferList[0];
+        this.push(buffer);
+        this.bufferList.splice(0, 1);
+        total+=buffer.length;
+      }
     }
   }
 
