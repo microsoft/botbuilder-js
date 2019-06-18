@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { ChannelValidation, ClaimsIdentity, EndorsementsValidator, EnterpriseChannelValidation,
-    GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider } = require('../lib');
-const Connector = require('../lib');
+    GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider } = require('../../botframework-connector/lib');
+const Connector = require('../../botframework-connector/lib');
 
 describe('Bot Framework Connector - Auth Tests', function() {
 
