@@ -17,11 +17,28 @@ import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions } from './getMethodExtensions';
 import { LGTemplate } from './lgTemplate';
 
+export class AnalyzerOutputItem {
+    public Variables: string[];
+    public TemplateRefNames: string[];
+
+    public constructor(variables: string[] = [], templateRefNames: string[] = []) {
+        this.Variables = Array.from(new Set(variables));
+        this.TemplateRefNames = Array.from(new Set(templateRefNames));
+    }
+
+    public append(outputItem: AnalyzerOutputItem): this {
+        this.Variables = Array.from(new Set(this.Variables.concat(outputItem.Variables)));
+        this.TemplateRefNames = Array.from(new Set(this.TemplateRefNames.concat(outputItem.TemplateRefNames)));
+
+        return this;
+    }
+}
+
 // tslint:disable-next-line: max-classes-per-file
 /**
  * Analyzer engine. To analyse which variable may be used
  */
-export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFileParserVisitor<string[]> {
+export class Analyzer extends AbstractParseTreeVisitor<AnalyzerOutputItem> implements LGFileParserVisitor<AnalyzerOutputItem> {
     public readonly Templates: LGTemplate[];
     public readonly TemplateMap: {[name: string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
@@ -34,7 +51,7 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         this._expressionParser = new ExpressionEngine(new GetMethodExtensions(new Evaluator(this.Templates, undefined)).GetMethodX);
     }
 
-    public AnalyzeTemplate(templateName: string): string[] {
+    public AnalyzeTemplate(templateName: string): AnalyzerOutputItem {
         if (!(templateName in this.TemplateMap)) {
             throw new Error(`No such template: ${templateName}`);
         }
@@ -47,19 +64,18 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         // Using a stack to track the evalution trace
         this.evalutationTargetStack.push(new EvaluationTarget(templateName, undefined));
-        const rawDependencies: string[] = this.visit(this.TemplateMap[templateName].ParseTree);
 
         // we don't exclude paratemters any more
         // because given we don't track down for templates have paramters
         // the only scenario that we are still analyzing an paramterized template is
         // this template is root template to anaylze, in this we also don't have exclude paramters
-        const dependencies: string[] = Array.from(new Set(rawDependencies));
+        const dependencies: AnalyzerOutputItem = this.visit(this.TemplateMap[templateName].ParseTree);
         this.evalutationTargetStack.pop();
 
         return dependencies;
     }
 
-    public visitTemplateDefinition(ctx: lp.TemplateDefinitionContext): string[] {
+    public visitTemplateDefinition(ctx: lp.TemplateDefinitionContext): AnalyzerOutputItem {
         const templateNameContext: lp.TemplateNameLineContext = ctx.templateNameLine();
         if (templateNameContext.templateName().text === this.currentTarget().TemplateName) {
             if (ctx.templateBody() !== undefined) {
@@ -70,68 +86,68 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         throw Error(`template name match failed`);
     }
 
-    public visitNormalBody(ctx: lp.NormalBodyContext): string[] {
+    public visitNormalBody(ctx: lp.NormalBodyContext): AnalyzerOutputItem {
         return this.visit(ctx.normalTemplateBody());
     }
 
-    public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext) : string[] {
-        let result: string[] = [];
+    public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext) : AnalyzerOutputItem {
+        const result: AnalyzerOutputItem = new AnalyzerOutputItem();
         for (const templateStr of ctx.normalTemplateString()) {
-            result = result.concat(this.visit(templateStr));
+            result.append(this.visit(templateStr));
         }
 
         return result;
     }
 
-    public visitIfElseBody(ctx: lp.IfElseBodyContext): string[] {
-        let result: string[] = [];
+    public visitIfElseBody(ctx: lp.IfElseBodyContext): AnalyzerOutputItem {
+        const result: AnalyzerOutputItem = new AnalyzerOutputItem();
 
         const ifRules: lp.IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             const expressions: TerminalNode[] = ifRule.ifCondition().EXPRESSION();
             if (expressions !== undefined && expressions.length > 0) {
-                result = result.concat(this.AnalyzeExpression(expressions[0].text));
+                result.append(this.AnalyzeExpression(expressions[0].text));
             }
             if (ifRule.normalTemplateBody() !== undefined) {
-                result = result.concat(this.visit(ifRule.normalTemplateBody()));
+                result.append(this.visit(ifRule.normalTemplateBody()));
             }
         }
 
         return result;
     }
 
-    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): string[] {
-        let result : string[] = [];
+    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): AnalyzerOutputItem {
+        const result: AnalyzerOutputItem = new AnalyzerOutputItem();
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
         for (const iterNode of switchCaseNodes) {
             const expressions: TerminalNode[] = iterNode.switchCaseStat().EXPRESSION();
             if (expressions.length > 0) {
-                result = result.concat(this.AnalyzeExpression(expressions[0].text));
+                result.append(this.AnalyzeExpression(expressions[0].text));
             }
             if (iterNode.normalTemplateBody() !== undefined) {
-                result = result.concat(this.visit(iterNode.normalTemplateBody()));
+                result.append(this.visit(iterNode.normalTemplateBody()));
             }
         }
 
         return result;
     }
 
-    public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string[] {
-        let result: string[] = [];
+    public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): AnalyzerOutputItem {
+        const result: AnalyzerOutputItem = new AnalyzerOutputItem();
         for (const node of ctx.children) {
             const innerNode: TerminalNode =  node as TerminalNode;
             switch (innerNode.symbol.type) {
                 case lp.LGFileParser.DASH: break;
                 case lp.LGFileParser.EXPRESSION: {
-                    result = result.concat(this.AnalyzeExpression(innerNode.text));
+                    result.append(this.AnalyzeExpression(innerNode.text));
                     break;
                 }
                 case lp.LGFileParser.TEMPLATE_REF: {
-                    result = result.concat(this.AnalyzeTemplateRef(innerNode.text));
+                    result.append(this.AnalyzeTemplateRef(innerNode.text));
                     break;
                 }
                 case lp.LGFileParser.MULTI_LINE_TEXT: {
-                    result = result.concat(this.AnalyzeMultiLineText(innerNode.text));
+                    result.append(this.AnalyzeMultiLineText(innerNode.text));
                     break;
                 }
                 default: {
@@ -143,61 +159,50 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
         return result;
     }
 
-    protected defaultResult(): string[] {
-        return [];
+    protected defaultResult(): AnalyzerOutputItem {
+        return new AnalyzerOutputItem();
     }
 
-    private GetDirectTemplateRefs(exp: Expression): string[] {
-        if (exp.Type === 'lgTemplate' && exp.Children.length === 1) {
-            return [(exp.Children[0] as Constant).Value];
+    private AnalyzerExpressionDirectly(exp: Expression): AnalyzerOutputItem {
+        const result: AnalyzerOutputItem =  new AnalyzerOutputItem();
+        if (exp.Type === 'lgTemplate') {
+            const templateName: string = (exp.Children[0] as Constant).Value;
+            result.append(new AnalyzerOutputItem([], [templateName]));
+
+            if (exp.Children.length === 1) {
+                result.append(this.AnalyzeTemplate((exp.Children[0] as Constant).Value));
+            } else {
+                // only get template ref name
+                const templaterefNames: string[] = this.AnalyzeTemplate((exp.Children[0] as Constant).Value).TemplateRefNames;
+                result.append(new AnalyzerOutputItem([], templaterefNames));
+
+                // analyzer other children
+                exp.Children.forEach((e: Expression) => result.append(this.AnalyzerExpressionDirectly(e)));
+            }
         } else {
-            return flatten(exp.Children.map((x: Expression) => this.GetDirectTemplateRefs(x)));
+            // analyzer all children
+            exp.Children.forEach((e: Expression) => result.append(this.AnalyzerExpressionDirectly(e)));
         }
+
+        return result;
     }
 
-    private AnalyzeExpression(exp: string): string[] {
+    private AnalyzeExpression(exp: string): AnalyzerOutputItem {
+        const result: AnalyzerOutputItem =  new AnalyzerOutputItem();
         exp = exp.replace(/(^@*)/g, '')
                 .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
         const parsed: Expression = this._expressionParser.parse(exp);
 
         const references: ReadonlyArray<string> = Extensions.References(parsed);
-        const referencesInTemplates: string[] = flatten(this.GetDirectTemplateRefs(parsed).map((x: string) => this.AnalyzeTemplate(x)));
+        result.append(new AnalyzerOutputItem(references.slice(), []));
+        result.append(this.AnalyzerExpressionDirectly(parsed));
 
-        return references.concat(referencesInTemplates);
-
-        /*
-        const references: Set<string> = new Set<string>();
-        const path: string = Extensions.ReferenceWalk(parse, references, (expression: Expression) => {
-            let found: boolean = false;
-            if (expression instanceof Constant && typeof (expression).Value === 'string') {
-                const str: string = (expression).Value;
-                if (str.startsWith('[') && str.endsWith(']')) {
-                    found = true;
-                    this.AnalyzeTemplateRef(str).forEach((x: string) => references.add(x));
-                } else if (str.startsWith('{') && str.endsWith('}')) {
-                    found = true;
-                    for (const childRef of this.AnalyzeExpression(str)) {
-                        references.add(childRef);
-                    }
-                } else if (str in this.TemplateMap) {
-                    found = true;
-                    this.AnalyzeTemplateRef(str).forEach((x: string) => references.add(x));
-                }
-            }
-
-            return found;
-        });
-
-        if (path !== undefined) {
-            references.add(path);
-        }
-
-        return Array.from(references);
-        */
+        return  result;
     }
 
-    private AnalyzeTemplateRef(exp: string): string[] {
+    private AnalyzeTemplateRef(exp: string): AnalyzerOutputItem {
+        const result: AnalyzerOutputItem = new AnalyzerOutputItem();
         exp = exp.replace(/(^\[*)/g, '')
                 .replace(/(\]*$)/g, '');
         const argsStartPos: number = exp.indexOf('(');
@@ -216,23 +221,34 @@ export class Analyzer extends AbstractParseTreeVisitor<string[]> implements LGFi
             // templates with paramters, we just analyze it's args.
             // With this approach we may not get a very fine-grained result
             // but the result will still be accurate
-            return flatten(args.map((arg: string) => this.AnalyzeExpression(arg)));
+
+            const templateAnalyzerResult: AnalyzerOutputItem[] = args.map((arg: string) => this.AnalyzeExpression(arg));
+            const templateName: string = exp.substr(0, argsStartPos);
+
+            // add this template
+            result.append(new AnalyzerOutputItem([], [templateName]));
+            templateAnalyzerResult.forEach((e: AnalyzerOutputItem) => result.append(e));
         } else {
+            result.append(new AnalyzerOutputItem([], [exp]));
+
             // We analyze tempalte only if the template has no formal parameters
+            // But we should analyzer template reference names for all situation
             if (this.TemplateMap[exp].Parameters === undefined || this.TemplateMap[exp].Parameters.length === 0) {
-                return this.AnalyzeTemplate(exp);
+                result.append(this.AnalyzeTemplate(exp));
             } else {
-                return [];
+                result.append(new AnalyzerOutputItem([], this.AnalyzeTemplate(exp).TemplateRefNames));
             }
         }
+
+        return result;
     }
 
-    private AnalyzeMultiLineText(exp: string): string[] {
-        let result: string[] = [];
+    private AnalyzeMultiLineText(exp: string): AnalyzerOutputItem {
+        const result: AnalyzerOutputItem =  new AnalyzerOutputItem();
         exp = exp.substr(3, exp.length - 6);
         const matches: string[] = exp.match(/@\{[^{}]+\}/g);
         for (const match of matches) {
-            result = result.concat(this.AnalyzeExpression(match));
+            result.append(this.AnalyzeExpression(match));
         }
 
         return result;

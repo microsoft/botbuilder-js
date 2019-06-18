@@ -54,7 +54,7 @@ export class MSLGTool {
     public GetTemplateVariables(templateName: string): string[] {
         const analyzer: Analyzer = new Analyzer(this.Templates);
 
-        return analyzer.AnalyzeTemplate(templateName);
+        return analyzer.AnalyzeTemplate(templateName).Variables;
     }
 
     public ExpandTemplate(templateName: string, scope: any, methodBinder?: IGetMethod): string[] {
