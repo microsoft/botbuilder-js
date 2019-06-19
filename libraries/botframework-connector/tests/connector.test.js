@@ -57,15 +57,15 @@ var requiredEnvironment = [
     'HOST_URL'
 ];
 
-const clientId = process.env['CLIENT_ID'] || 'UK8CH2281:TKGSUQHQE';
-const clientSecret = process.env['CLIENT_SECRET'] || 'BKGSYSTFG:TKGSUQHQE';
+const clientId = process.env['CLIENT_ID'];
+const clientSecret = process.env['CLIENT_SECRET'];
 const hostURL = process.env['HOST_URL'] || 'https://slack.botframework.com';
 
 const user = {
-    id: process.env['USER_ID']
+    id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE'
 };
 const bot = {
-    id: process.env['BOT_ID']
+    id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE'
 };
 
 const testPrefix = 'botFramework-connector-tests';
@@ -90,7 +90,7 @@ var createConversation = () => ({
 var createAttachment = () => ({
     name: 'bot-framework.png',
     type: 'image/png',
-    originalBase64: base64_encode('tests/bot-framework.png')
+    originalBase64: base64_encode(__dirname + '\\bot-framework.png')
 });
 
 var readStreamToBuffer = function(stream, callback) {
