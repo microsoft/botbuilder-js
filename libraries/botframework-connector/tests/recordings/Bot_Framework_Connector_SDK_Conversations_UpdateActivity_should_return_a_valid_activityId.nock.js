@@ -25,11 +25,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|fec57beed2d1814181b8f5bc1458a965.81c13790_',
+  '|d06c8742efd52f428d711052cdc345a7.81c13e6a_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:23:17 GMT',
+  'Wed, 19 Jun 2019 20:51:46 GMT',
   'Connection',
   'close' ]);
  return result; },
@@ -38,7 +38,7 @@ var result =
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   .filteringRequestBody(function (path) { return '*';})
 .post('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/activities', '*')
-  .reply(200, {"id":"1560975798.001300"}, [ 'Cache-Control',
+  .reply(200, {"id":"1560977506.001300"}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
   'no-cache',
@@ -51,11 +51,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|d6110c9f57a39d458a1ebe7c1f8653b8.81c13791_',
+  '|c96a7ec978591c438f7ab2c360168d37.81c13e6b_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:23:18 GMT',
+  'Wed, 19 Jun 2019 20:51:45 GMT',
   'Connection',
   'close' ]);
  return result; },
@@ -63,8 +63,8 @@ function (nock) {
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   .filteringRequestBody(function (path) { return '*';})
-.put('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/activities/1560975798.001300', '*')
-  .reply(200, {"id":"1560975798.001300"}, [ 'Cache-Control',
+.put('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/activities/1560977506.001300', '*')
+  .reply(200, {"id":"1560977506.001300"}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
   'no-cache',
@@ -77,11 +77,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|7c6dc23d29d1f04ebac93618d08c467f.81c13792_',
+  '|14f487f83838a244811b2027e7c6a3d5.81c13e6c_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:23:18 GMT',
+  'Wed, 19 Jun 2019 20:51:46 GMT',
   'Connection',
   'close' ]);
  return result; }]];

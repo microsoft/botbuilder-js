@@ -21,7 +21,7 @@
 *    2. Ensure appId has Slack channel enabled and you've installed the bot in Slack
 *
 *   To re-record:
-*    1. All from live/unmocked, and AZURE_NOCK_RECORD=true
+*    1. All from live/unmocked, except NOCK_OFF=false and AZURE_NOCK_RECORD=true
 *    2. GetAttachment should work fine, provided SuiteBase appropriately replaces the encoded stream with fs.createReadStream('tests/bot-framework.png')
 *       * You shouldn't need to adjust/change anything unless the test image or path changes.
 *

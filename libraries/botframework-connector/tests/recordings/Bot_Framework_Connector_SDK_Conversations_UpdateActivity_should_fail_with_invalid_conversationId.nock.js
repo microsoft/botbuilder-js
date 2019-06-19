@@ -25,11 +25,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|b3eccc3e23252341b87c8b8281f76f9b.81c13793_',
+  '|d602f169693c2e4cbe9ab84ce1d1aaae.81c13e6e_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:23:18 GMT',
+  'Wed, 19 Jun 2019 20:51:45 GMT',
   'Connection',
   'close' ]);
  return result; },
@@ -38,7 +38,7 @@ var result =
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   .filteringRequestBody(function (path) { return '*';})
 .post('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/activities', '*')
-  .reply(200, {"id":"1560975799.001500"}, [ 'Cache-Control',
+  .reply(200, {"id":"1560977506.001500"}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
   'no-cache',
@@ -51,11 +51,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|7c15c54d4e2ca2498746cef4b8767ae4.81c13794_',
+  '|0c8e5f5c171cff4da3832b311f5f741c.81c13e6f_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:23:18 GMT',
+  'Wed, 19 Jun 2019 20:51:46 GMT',
   'Connection',
   'close' ]);
  return result; },
@@ -63,7 +63,7 @@ function (nock) {
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   .filteringRequestBody(function (path) { return '*';})
-.put('/v3/conversations/invalid-id/activities/1560975799.001500', '*')
+.put('/v3/conversations/invalid-id/activities/1560977506.001500', '*')
   .reply(400, {"error":{"code":"ServiceError","message":"Invalid ConversationId: invalid-id"}}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
@@ -77,11 +77,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|4c3f900e0042894bb9812a24d493523d.81c13795_81c13796_',
+  '|562a3befe892ae418c2d6cace657d2a5.81c13e70_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:23:18 GMT',
+  'Wed, 19 Jun 2019 20:51:47 GMT',
   'Connection',
   'close' ]);
  return result; }]];

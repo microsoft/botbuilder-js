@@ -12,7 +12,7 @@ var result =
 nock('https://token.botframework.com:443', {"encodedQueryParams":true})
   .get('/api/botsignin/GetSignInUrl')
   .query({"state":"eyJDb25uZWN0aW9uTmFtZSI6ImdpdGh1YiIsIkNvbnZlcnNhdGlvbiI6eyJtZW1iZXJzIjpbeyJpZCI6IlVLOENIMjI4MTpUS0dTVVFIUUUifV0sImJvdCI6eyJpZCI6IkJLR1NZU1RGRzpUS0dTVVFIUUUifSwidXNlciI6eyJpZCI6IlVLOENIMjI4MTpUS0dTVVFIUUUifX0sIk1zQXBwSWQiOiI5NGVhMmIwNC1jY2JhLTQzN2UtYjNmMS0zZjAzNzZmY2JjOTgifQ%3D%3D"})
-  .reply(200, "https://token.botframework.com/api/oauth/signin?signin=921d46120fde25e0ec86454af38397ae3f0e56b0c4", [ 'Cache-Control',
+  .reply(200, "https://token.botframework.com/api/oauth/signin?signin=921d46120f2957d6086c8a480eadf3b31ebbdca554", [ 'Cache-Control',
   'no-cache',
   'Pragma',
   'no-cache',
@@ -25,7 +25,7 @@ nock('https://token.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|cb9d011a74f45345822822363f24d669.6a3d5561_',
+  '|56d0ef82ac3b60448b95e8890ab4ae1f.6a3d5d1a_',
   'X-Content-Type-Options',
   'nosniff',
   'Strict-Transport-Security',
@@ -33,7 +33,7 @@ nock('https://token.botframework.com:443', {"encodedQueryParams":true})
   'Set-Cookie',
   'ARRAffinity=7b75bbc2c049c7500ee5bb62a735ecc68ee15036b21d010282a620d9bca6368a;Path=/;HttpOnly;Domain=token.botframework.com',
   'Date',
-  'Wed, 19 Jun 2019 20:23:20 GMT',
+  'Wed, 19 Jun 2019 20:51:48 GMT',
   'Connection',
   'close' ]);
  return result; }]];

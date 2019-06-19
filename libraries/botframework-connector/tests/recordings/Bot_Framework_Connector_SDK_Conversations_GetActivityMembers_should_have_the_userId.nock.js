@@ -12,7 +12,7 @@ var result =
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   .filteringRequestBody(function (path) { return '*';})
 .post('/v3/conversations', '*')
-  .reply(200, {"activityId":"1560975795.000500","id":"BKGSYSTFG:TKGSUQHQE:DKE8NUG92"}, [ 'Cache-Control',
+  .reply(200, {"activityId":"1560977503.000500","id":"BKGSYSTFG:TKGSUQHQE:DKE8NUG92"}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
   'no-cache',
@@ -25,18 +25,18 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|b8656261d344b84a84fa7df4dd4c2c80.81c1377d_',
+  '|8b4c76b80e6e374eb8f837e7c2b196ac.81c13e56_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:23:14 GMT',
+  'Wed, 19 Jun 2019 20:51:42 GMT',
   'Connection',
   'close' ]);
  return result; },
 function (nock) { 
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
-  .get('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/activities/1560975795.000500/members')
+  .get('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/activities/1560977503.000500/members')
   .reply(200, [{"id":"BKGSYSTFG:TKGSUQHQE","name":"vmicricbot"},{"id":"UK8CH2281:TKGSUQHQE","name":"v-micric"}], [ 'Cache-Control',
   'no-cache',
   'Pragma',
@@ -50,11 +50,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|84893b0028af3a4f94a35edbf6e20973.81c1377e_',
+  '|9d473b6f3805f44e91ea513bbd3a92b8.81c13e57_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:23:14 GMT',
+  'Wed, 19 Jun 2019 20:51:43 GMT',
   'Connection',
   'close' ]);
  return result; }]];

@@ -25,11 +25,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|6f8e2b10031b7f4fbec95505ccb0e4aa.81c1379b_',
+  '|ab3f5748159d204086b8237e54b07af2.81c13e73_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:23:19 GMT',
+  'Wed, 19 Jun 2019 20:51:47 GMT',
   'Connection',
   'close' ]);
  return result; },
@@ -38,7 +38,7 @@ var result =
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   .filteringRequestBody(function (path) { return '*';})
 .post('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/attachments', '*')
-  .reply(200, {"id":"at26757-B7b9g6jxQQx-e"}, [ 'Cache-Control',
+  .reply(200, {"id":"at26757-LxQEP8am7JF-e"}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
   'no-cache',
@@ -51,18 +51,18 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|cccd12da1268a94fbfb1554a862f113f.81c1379c_81c1379d_',
+  '|29837c972491f244be51389dfb459197.81c13e74_81c13e75_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:23:20 GMT',
+  'Wed, 19 Jun 2019 20:51:47 GMT',
   'Connection',
   'close' ]);
  return result; },
 function (nock) { 
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
-  .get('/v3/attachments/at26757-B7b9g6jxQQx-e')
+  .get('/v3/attachments/at26757-LxQEP8am7JF-e')
   .reply(200, {"name":"bot-framework.png","type":"image/png","views":[{"viewId":"original","size":8369}]}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
@@ -76,11 +76,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|82360b2c430fb5418f890af24965f971.81c1379f_',
+  '|ae0ba9aff34de049b66fde825ad86085.81c13e77_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:23:20 GMT',
+  'Wed, 19 Jun 2019 20:51:47 GMT',
   'Connection',
   'close' ]);
  return result; }]];

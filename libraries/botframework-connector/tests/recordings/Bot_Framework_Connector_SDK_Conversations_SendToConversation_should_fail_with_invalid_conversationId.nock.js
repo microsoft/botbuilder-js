@@ -25,11 +25,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|c934c5af9bf9f1488dcd3de46867fe2e.81c13778_81c13779_',
+  '|e911d92bb0e1974aa3f4b51fb05c6e7a.81c13e52_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:23:13 GMT',
+  'Wed, 19 Jun 2019 20:51:41 GMT',
   'Connection',
   'close' ]);
  return result; },
@@ -51,11 +51,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|76cc2bc157e92f449c5704a8a8a9f704.81c1377a_',
+  '|e3beb4822ba9e54dad8821869a61f3f0.81c13e53_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:23:14 GMT',
+  'Wed, 19 Jun 2019 20:51:42 GMT',
   'Connection',
   'close' ]);
  return result; }]];
