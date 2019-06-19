@@ -1,6 +1,8 @@
 import {
   ActivityHandler,
   BotFrameworkAdapterSettings,
+  Middleware,
+  MiddlewareHandler,
   WebRequest
 } from 'botbuilder';
 
@@ -10,15 +12,16 @@ import {
   SimpleCredentialProvider
 } from 'botframework-connector';
 
-import { NodeSocket, Server } from 'botframework-streaming-extensions-protocol-websocket';
+import { NodeWebSocket, WebSocketServer } from 'botframework-streaming-extensions-protocol';
 import { Watershed } from 'watershed';
 import { StreamingRequestHandler } from './StreamingRequestHandler';
 
 export class WebSocketConnector {
   private readonly logger;
   private readonly bot: ActivityHandler;
+  private readonly middleWare: (MiddlewareHandler|Middleware)[];
 
-  constructor(bot: ActivityHandler, logger?) {
+  constructor(bot: ActivityHandler, logger?, middleWare?: (MiddlewareHandler|Middleware)[]) {
     if (logger === undefined) {
       this.logger = console;
     }
@@ -28,6 +31,8 @@ export class WebSocketConnector {
     } else {
       this.bot = bot;
     }
+
+    this.middleWare = middleWare;
   }
 
   public async authenticateConnection(req: WebRequest, appId?: string, appPassword?: string, channelService?: string): Promise<Boolean> {
@@ -91,11 +96,11 @@ export class WebSocketConnector {
     const ws = new Watershed();
     const socket = ws.accept(req, upgrade.socket, upgrade.head);
 
-    let handler = new StreamingRequestHandler(this.bot);
+    let handler = new StreamingRequestHandler(this.bot, this.logger, settings, this.middleWare);
     this.logger.log('Creating socket for WebSocket connection.');
-    let nodeSocket = new NodeSocket({ serverSocket: socket });
+    let nodeSocket = new NodeWebSocket({ serverSocket: socket });
     this.logger.log('Creating server for WebSocket connection.');
-    let server = new Server(nodeSocket, handler);
+    let server = new WebSocketServer(nodeSocket, handler);
     handler.setServer(server);
     handler.adapterSettings = settings;
     this.logger.log('Listening on WebSocket server.');
