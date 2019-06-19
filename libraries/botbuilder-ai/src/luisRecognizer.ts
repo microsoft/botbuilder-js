@@ -270,9 +270,11 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * @param context Context for the current turn of conversation with the use.
      * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
      * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
+     * @param options (Optional) options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
      */
-    public recognize(context: TurnContext, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
+    public recognize(context: TurnContext, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }, options?: LuisPredictionOptions): Promise<RecognizerResult> {
         const cached: any = context.turnState.get(this.cacheKey);
+        const luisPredictionOptions = options ? this.setLuisPredictionOptions(this.options, options) : this.options;
         if (!cached) {
             const utterance: string = context.activity.text || '';
             let recognizerPromise: Promise<RecognizerResult>;
@@ -288,12 +290,12 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                 recognizerPromise = this.luisClient.prediction.resolve(
                     this.application.applicationId, utterance,
                     {
-                        verbose: this.options.includeAllIntents,
+                        verbose: luisPredictionOptions.includeAllIntents,
                         customHeaders: {
                             'Ocp-Apim-Subscription-Key': this.application.endpointKey,
                             'User-Agent': this.getUserAgent()
                         },
-                        ...this.options
+                        ...luisPredictionOptions
                     })
                     // Map results
                     .then((luisResult: LuisModels.LuisResult) => ({
@@ -303,7 +305,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                         entities: this.getEntitiesAndMetadata(
                             luisResult.entities,
                             luisResult.compositeEntities,
-                            this.options.includeInstanceData === undefined || this.options.includeInstanceData
+                            luisPredictionOptions.includeInstanceData === undefined || luisPredictionOptions.includeInstanceData
                         ),
                         sentiment: this.getSentiment(luisResult),
                         luisResult: (this.includeApiResults ? luisResult : null)
@@ -707,6 +709,13 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         }
 
         return result;
+    }
+
+    /**
+     * Merges the default options set by the Recognizer contructor with the 'user' options passed into the 'recognize' method
+    */
+    private setLuisPredictionOptions(defaultOptions: LuisPredictionOptions, userOptions: LuisPredictionOptions): any {
+      return Object.assign(defaultOptions, userOptions);
     }
 
     /**
