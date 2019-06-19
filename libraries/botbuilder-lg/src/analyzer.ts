@@ -19,16 +19,16 @@ import { LGTemplate } from './lgTemplate';
 
 export class AnalyzerResult {
     public Variables: string[];
-    public TemplateRefNames: string[];
+    public TemplateReferences: string[];
 
     public constructor(variables: string[] = [], templateRefNames: string[] = []) {
         this.Variables = Array.from(new Set(variables));
-        this.TemplateRefNames = Array.from(new Set(templateRefNames));
+        this.TemplateReferences = Array.from(new Set(templateRefNames));
     }
 
     public union(outputItem: AnalyzerResult): this {
         this.Variables = Array.from(new Set(this.Variables.concat(outputItem.Variables)));
-        this.TemplateRefNames = Array.from(new Set(this.TemplateRefNames.concat(outputItem.TemplateRefNames)));
+        this.TemplateReferences = Array.from(new Set(this.TemplateReferences.concat(outputItem.TemplateReferences)));
 
         return this;
     }
@@ -173,7 +173,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
                 result.union(this.AnalyzeTemplate((exp.Children[0] as Constant).Value));
             } else {
                 // only get template ref names
-                const templaterefNames: string[] = this.AnalyzeTemplate((exp.Children[0] as Constant).Value).TemplateRefNames;
+                const templaterefNames: string[] = this.AnalyzeTemplate((exp.Children[0] as Constant).Value).TemplateReferences;
                 result.union(new AnalyzerResult([], templaterefNames));
 
                 // analyzer other children
@@ -236,7 +236,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
             if (this.TemplateMap[exp].Parameters === undefined || this.TemplateMap[exp].Parameters.length === 0) {
                 result.union(this.AnalyzeTemplate(exp));
             } else {
-                result.union(new AnalyzerResult([], this.AnalyzeTemplate(exp).TemplateRefNames));
+                result.union(new AnalyzerResult([], this.AnalyzeTemplate(exp).TemplateReferences));
             }
         }
 

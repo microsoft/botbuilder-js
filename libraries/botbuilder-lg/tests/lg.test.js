@@ -233,7 +233,7 @@ describe('LG', function () {
             var variableEvaledOptions = testItem.variableOptions;
             assert.strictEqual(variableEvaled.length, variableEvaledOptions.length);
             variableEvaledOptions.forEach(element => assert.strictEqual(variableEvaled.includes(element), true));
-            var templateEvaled = evaled1.TemplateRefNames;
+            var templateEvaled = evaled1.TemplateReferences;
             var templateEvaledOptions = testItem.templateRefOptions;
             assert.strictEqual(templateEvaled.length, templateEvaledOptions.length);
             templateEvaledOptions.forEach(element => assert.strictEqual(templateEvaled.includes(element), true));
