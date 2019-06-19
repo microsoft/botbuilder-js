@@ -17,7 +17,7 @@ import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions } from './getMethodExtensions';
 import { LGTemplate } from './lgTemplate';
 
-export class AnalyzerOutputItem {
+export class AnalyzerResult {
     public Variables: string[];
     public TemplateRefNames: string[];
 
@@ -26,7 +26,7 @@ export class AnalyzerOutputItem {
         this.TemplateRefNames = Array.from(new Set(templateRefNames));
     }
 
-    public append(outputItem: AnalyzerOutputItem): this {
+    public append(outputItem: AnalyzerResult): this {
         this.Variables = Array.from(new Set(this.Variables.concat(outputItem.Variables)));
         this.TemplateRefNames = Array.from(new Set(this.TemplateRefNames.concat(outputItem.TemplateRefNames)));
 
@@ -38,7 +38,7 @@ export class AnalyzerOutputItem {
 /**
  * Analyzer engine. To analyse which variable may be used
  */
-export class Analyzer extends AbstractParseTreeVisitor<AnalyzerOutputItem> implements LGFileParserVisitor<AnalyzerOutputItem> {
+export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implements LGFileParserVisitor<AnalyzerResult> {
     public readonly Templates: LGTemplate[];
     public readonly TemplateMap: {[name: string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
@@ -51,7 +51,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerOutputItem> imple
         this._expressionParser = new ExpressionEngine(new GetMethodExtensions(new Evaluator(this.Templates, undefined)).GetMethodX);
     }
 
-    public AnalyzeTemplate(templateName: string): AnalyzerOutputItem {
+    public AnalyzeTemplate(templateName: string): AnalyzerResult {
         if (!(templateName in this.TemplateMap)) {
             throw new Error(`No such template: ${templateName}`);
         }
@@ -69,13 +69,13 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerOutputItem> imple
         // because given we don't track down for templates have paramters
         // the only scenario that we are still analyzing an paramterized template is
         // this template is root template to anaylze, in this we also don't have exclude paramters
-        const dependencies: AnalyzerOutputItem = this.visit(this.TemplateMap[templateName].ParseTree);
+        const dependencies: AnalyzerResult = this.visit(this.TemplateMap[templateName].ParseTree);
         this.evalutationTargetStack.pop();
 
         return dependencies;
     }
 
-    public visitTemplateDefinition(ctx: lp.TemplateDefinitionContext): AnalyzerOutputItem {
+    public visitTemplateDefinition(ctx: lp.TemplateDefinitionContext): AnalyzerResult {
         const templateNameContext: lp.TemplateNameLineContext = ctx.templateNameLine();
         if (templateNameContext.templateName().text === this.currentTarget().TemplateName) {
             if (ctx.templateBody() !== undefined) {
@@ -86,12 +86,12 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerOutputItem> imple
         throw Error(`template name match failed`);
     }
 
-    public visitNormalBody(ctx: lp.NormalBodyContext): AnalyzerOutputItem {
+    public visitNormalBody(ctx: lp.NormalBodyContext): AnalyzerResult {
         return this.visit(ctx.normalTemplateBody());
     }
 
-    public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext) : AnalyzerOutputItem {
-        const result: AnalyzerOutputItem = new AnalyzerOutputItem();
+    public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext) : AnalyzerResult {
+        const result: AnalyzerResult = new AnalyzerResult();
         for (const templateStr of ctx.normalTemplateString()) {
             result.append(this.visit(templateStr));
         }
@@ -99,8 +99,8 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerOutputItem> imple
         return result;
     }
 
-    public visitIfElseBody(ctx: lp.IfElseBodyContext): AnalyzerOutputItem {
-        const result: AnalyzerOutputItem = new AnalyzerOutputItem();
+    public visitIfElseBody(ctx: lp.IfElseBodyContext): AnalyzerResult {
+        const result: AnalyzerResult = new AnalyzerResult();
 
         const ifRules: lp.IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
@@ -116,8 +116,8 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerOutputItem> imple
         return result;
     }
 
-    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): AnalyzerOutputItem {
-        const result: AnalyzerOutputItem = new AnalyzerOutputItem();
+    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): AnalyzerResult {
+        const result: AnalyzerResult = new AnalyzerResult();
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
         for (const iterNode of switchCaseNodes) {
             const expressions: TerminalNode[] = iterNode.switchCaseStat().EXPRESSION();
@@ -132,8 +132,8 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerOutputItem> imple
         return result;
     }
 
-    public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): AnalyzerOutputItem {
-        const result: AnalyzerOutputItem = new AnalyzerOutputItem();
+    public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): AnalyzerResult {
+        const result: AnalyzerResult = new AnalyzerResult();
         for (const node of ctx.children) {
             const innerNode: TerminalNode =  node as TerminalNode;
             switch (innerNode.symbol.type) {
@@ -159,50 +159,50 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerOutputItem> imple
         return result;
     }
 
-    protected defaultResult(): AnalyzerOutputItem {
-        return new AnalyzerOutputItem();
+    protected defaultResult(): AnalyzerResult {
+        return new AnalyzerResult();
     }
 
-    private AnalyzerExpressionDirectly(exp: Expression): AnalyzerOutputItem {
-        const result: AnalyzerOutputItem =  new AnalyzerOutputItem();
+    private AnalyzeExpressionDirectly(exp: Expression): AnalyzerResult {
+        const result: AnalyzerResult =  new AnalyzerResult();
         if (exp.Type === 'lgTemplate') {
             const templateName: string = (exp.Children[0] as Constant).Value;
-            result.append(new AnalyzerOutputItem([], [templateName]));
+            result.append(new AnalyzerResult([], [templateName]));
 
             if (exp.Children.length === 1) {
                 result.append(this.AnalyzeTemplate((exp.Children[0] as Constant).Value));
             } else {
-                // only get template ref name
+                // only get template ref names
                 const templaterefNames: string[] = this.AnalyzeTemplate((exp.Children[0] as Constant).Value).TemplateRefNames;
-                result.append(new AnalyzerOutputItem([], templaterefNames));
+                result.append(new AnalyzerResult([], templaterefNames));
 
                 // analyzer other children
-                exp.Children.forEach((e: Expression) => result.append(this.AnalyzerExpressionDirectly(e)));
+                exp.Children.forEach((e: Expression) => result.append(this.AnalyzeExpressionDirectly(e)));
             }
         } else {
             // analyzer all children
-            exp.Children.forEach((e: Expression) => result.append(this.AnalyzerExpressionDirectly(e)));
+            exp.Children.forEach((e: Expression) => result.append(this.AnalyzeExpressionDirectly(e)));
         }
 
         return result;
     }
 
-    private AnalyzeExpression(exp: string): AnalyzerOutputItem {
-        const result: AnalyzerOutputItem =  new AnalyzerOutputItem();
+    private AnalyzeExpression(exp: string): AnalyzerResult {
+        const result: AnalyzerResult =  new AnalyzerResult();
         exp = exp.replace(/(^@*)/g, '')
                 .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
         const parsed: Expression = this._expressionParser.parse(exp);
 
         const references: ReadonlyArray<string> = Extensions.References(parsed);
-        result.append(new AnalyzerOutputItem(references.slice(), []));
-        result.append(this.AnalyzerExpressionDirectly(parsed));
+        result.append(new AnalyzerResult(references.slice(), []));
+        result.append(this.AnalyzeExpressionDirectly(parsed));
 
         return  result;
     }
 
-    private AnalyzeTemplateRef(exp: string): AnalyzerOutputItem {
-        const result: AnalyzerOutputItem = new AnalyzerOutputItem();
+    private AnalyzeTemplateRef(exp: string): AnalyzerResult {
+        const result: AnalyzerResult = new AnalyzerResult();
         exp = exp.replace(/(^\[*)/g, '')
                 .replace(/(\]*$)/g, '');
         const argsStartPos: number = exp.indexOf('(');
@@ -222,29 +222,29 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerOutputItem> imple
             // With this approach we may not get a very fine-grained result
             // but the result will still be accurate
 
-            const templateAnalyzerResult: AnalyzerOutputItem[] = args.map((arg: string) => this.AnalyzeExpression(arg));
+            const templateAnalyzerResult: AnalyzerResult[] = args.map((arg: string) => this.AnalyzeExpression(arg));
             const templateName: string = exp.substr(0, argsStartPos);
 
             // add this template
-            result.append(new AnalyzerOutputItem([], [templateName]));
-            templateAnalyzerResult.forEach((e: AnalyzerOutputItem) => result.append(e));
+            result.append(new AnalyzerResult([], [templateName]));
+            templateAnalyzerResult.forEach((e: AnalyzerResult) => result.append(e));
         } else {
-            result.append(new AnalyzerOutputItem([], [exp]));
+            result.append(new AnalyzerResult([], [exp]));
 
             // We analyze tempalte only if the template has no formal parameters
             // But we should analyzer template reference names for all situation
             if (this.TemplateMap[exp].Parameters === undefined || this.TemplateMap[exp].Parameters.length === 0) {
                 result.append(this.AnalyzeTemplate(exp));
             } else {
-                result.append(new AnalyzerOutputItem([], this.AnalyzeTemplate(exp).TemplateRefNames));
+                result.append(new AnalyzerResult([], this.AnalyzeTemplate(exp).TemplateRefNames));
             }
         }
 
         return result;
     }
 
-    private AnalyzeMultiLineText(exp: string): AnalyzerOutputItem {
-        const result: AnalyzerOutputItem =  new AnalyzerOutputItem();
+    private AnalyzeMultiLineText(exp: string): AnalyzerResult {
+        const result: AnalyzerResult =  new AnalyzerResult();
         exp = exp.substr(3, exp.length - 6);
         const matches: string[] = exp.match(/@\{[^{}]+\}/g);
         for (const match of matches) {

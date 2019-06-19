@@ -7,7 +7,7 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
-import { Analyzer, AnalyzerOutputItem } from './analyzer';
+import { Analyzer, AnalyzerResult } from './analyzer';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Evaluator } from './evaluator';
 import { IGetMethod } from './getMethodExtensions';
@@ -75,7 +75,7 @@ export class TemplateEngine {
         return evalutor.EvaluateTemplate(templateName, scope);
     }
 
-    public analyzeTemplate(templateName: string): AnalyzerOutputItem {
+    public analyzeTemplate(templateName: string): AnalyzerResult {
         const analyzer: Analyzer = new Analyzer(this.templates);
 
         return analyzer.AnalyzeTemplate(templateName);
