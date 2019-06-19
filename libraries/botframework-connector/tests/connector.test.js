@@ -57,8 +57,8 @@ var requiredEnvironment = [
     'HOST_URL'
 ];
 
-const clientId = process.env['CLIENT_ID'];
-const clientSecret = process.env['CLIENT_SECRET'];
+const clientId = process.env['CLIENT_ID'] || 'UK8CH2281:TKGSUQHQE';
+const clientSecret = process.env['CLIENT_SECRET'] || 'BKGSYSTFG:TKGSUQHQE';
 const hostURL = process.env['HOST_URL'] || 'https://slack.botframework.com';
 
 const user = {
