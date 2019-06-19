@@ -10,7 +10,8 @@ exports.setEnvironment = function() {
 exports.scopes = [[function (nock) { 
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
-  .post('/v3/conversations', {"bot":{"id":"invalid-id"},"members":[{"id":"UK8CH2281:TKGSUQHQE"}]})
+  .filteringRequestBody(function (path) { return '*';})
+.post('/v3/conversations', '*')
   .reply(400, {"error":{"code":"ServiceError","message":"Invalid userId: invalid-id"}}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
@@ -24,11 +25,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|f0761dc1cc60e44eb2acd4cc26e7c6a5.1e8cf226_',
+  '|35a08d971922cb4cb7584078b931d5b1.3d9174f4_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Fri, 14 Jun 2019 23:19:28 GMT',
+  'Wed, 19 Jun 2019 19:17:03 GMT',
   'Connection',
   'close' ]);
  return result; }]];

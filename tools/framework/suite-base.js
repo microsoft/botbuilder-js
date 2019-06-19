@@ -463,12 +463,12 @@ _.extend(SuiteBase.prototype, {
                         // apply fixups of nock generated mocks
 
                         // do not filter on body as they usual have time related stamps
-                        line = line.replace(/(\.post\('.*?')\s*,\s*"[^]+[^\\]"\)/, '.filteringRequestBody(function (path) { return \'*\';})\n$1, \'*\')');
-                        line = line.replace(/(\.get\('.*?')\s*,\s*"[^]+[^\\]"\)/, '.filteringRequestBody(function (path) { return \'*\';})\n$1, \'*\')');
-                        line = line.replace(/(\.put\('.*?')\s*,\s*"[^]+[^\\]"\)/, '.filteringRequestBody(function (path) { return \'*\';})\n$1, \'*\')');
-                        line = line.replace(/(\.delete\('.*?')\s*,\s*"[^]+[^\\]"\)/, '.filteringRequestBody(function (path) { return \'*\';})\n$1, \'*\')');
-                        line = line.replace(/(\.merge\('.*?')\s*,\s*"[^]+[^\\]"\)/, '.filteringRequestBody(function (path) { return \'*\';})\n$1, \'*\')');
-                        line = line.replace(/(\.patch\('.*?')\s*,\s*"[^]+[^\\]"\)/, '.filteringRequestBody(function (path) { return \'*\';})\n$1, \'*\')');
+                        line = line.replace(/(\.post\('.*?')\s*,\s*[^]*?\)(?!.reply)/, '.filteringRequestBody(function (path) { return \'*\';})\n$1, \'*\')');
+                        line = line.replace(/(\.get\('.*?')\s*,\s*[^]*?\)(?!.reply)/, '.filteringRequestBody(function (path) { return \'*\';})\n$1, \'*\')');
+                        line = line.replace(/(\.put\('.*?')\s*,\s*[^]*?\)(?!.reply)/, '.filteringRequestBody(function (path) { return \'*\';})\n$1, \'*\')');
+                        line = line.replace(/(\.delete\('.*?')\s*,\s*[^]*?\)(?!.reply)/, '.filteringRequestBody(function (path) { return \'*\';})\n$1, \'*\')');
+                        line = line.replace(/(\.merge\('.*?')\s*,\s*[^]*?\)(?!.reply)/, '.filteringRequestBody(function (path) { return \'*\';})\n$1, \'*\')');
+                        line = line.replace(/(\.patch\('.*?')\s*,\s*[^]*?\)(?!.reply)/, '.filteringRequestBody(function (path) { return \'*\';})\n$1, \'*\')');
 
                         // put deployment have a timestamp in the url
                         line = line.replace(/(\.put\('\/deployment-templates\/\d{8}T\d{6}')/,
@@ -502,7 +502,7 @@ _.extend(SuiteBase.prototype, {
                     if (importFsInRecording) {
                         var data = fs.readFileSync(file);
                         var fd = fs.openSync(file, 'w+');
-                        var buffer = new Buffer(`var fs = require('fs');\n\n`);
+                        var buffer = Buffer.from(`var fs = require('fs');\n\n`);
 
                         fs.writeSync(fd, buffer, 0, buffer.length, 0);
                         fs.writeSync(fd, data, 0, data.length, buffer.length);

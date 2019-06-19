@@ -10,7 +10,8 @@ exports.setEnvironment = function() {
 exports.scopes = [[function (nock) { 
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
-  .post('/v3/conversations', {"bot":{"id":"BKGSYSTFG:TKGSUQHQE"},"members":[{"id":"UK8CH2281:TKGSUQHQE"}]})
+  .filteringRequestBody(function (path) { return '*';})
+.post('/v3/conversations', '*')
   .reply(200, {"id":"BKGSYSTFG:TKGSUQHQE:DKE8NUG92"}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
@@ -24,19 +25,20 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|c6aabd3948295545ae037d93f66156e3.3d8f46ae_',
+  '|cf49ef1ed9e4e24f91835b9b070391cd.3d917504_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Fri, 14 Jun 2019 23:19:43 GMT',
+  'Wed, 19 Jun 2019 19:17:07 GMT',
   'Connection',
   'close' ]);
  return result; },
 function (nock) { 
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
-  .post('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/activities', {"type":"message","from":{"id":"BKGSYSTFG:TKGSUQHQE"},"recipient":{"id":"UK8CH2281:TKGSUQHQE"},"text":"test activity"})
-  .reply(200, {"id":"1560554384.003900"}, [ 'Cache-Control',
+  .filteringRequestBody(function (path) { return '*';})
+.post('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/activities', '*')
+  .reply(200, {"id":"1560971828.002400"}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
   'no-cache',
@@ -49,18 +51,19 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|919fb020d70bd44bbac406265981ada4.1e8cf235_',
+  '|e5ae012d96585b4aa712ac19e25e63eb.1e8f2158_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Fri, 14 Jun 2019 23:19:44 GMT',
+  'Wed, 19 Jun 2019 19:17:07 GMT',
   'Connection',
   'close' ]);
  return result; },
 function (nock) { 
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
-  .post('/v3/conversations/invalid-id/activities/1560554384.003900', {"type":"message","from":{"id":"BKGSYSTFG:TKGSUQHQE"},"recipient":{"id":"UK8CH2281:TKGSUQHQE"},"text":"test activity"})
+  .filteringRequestBody(function (path) { return '*';})
+.post('/v3/conversations/invalid-id/activities/1560971828.002400', '*')
   .reply(400, {"error":{"code":"ServiceError","message":"Invalid ConversationId: invalid-id"}}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
@@ -74,11 +77,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|68fe201a0085074980e08ba1a33739e1.3d8f46af_',
+  '|bcc60e87dd83db42911b75199fcd74d9.3d917505_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Fri, 14 Jun 2019 23:19:44 GMT',
+  'Wed, 19 Jun 2019 19:17:07 GMT',
   'Connection',
   'close' ]);
  return result; }]];

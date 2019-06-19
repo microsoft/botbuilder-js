@@ -10,8 +10,9 @@ exports.setEnvironment = function() {
 exports.scopes = [[function (nock) { 
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
-  .post('/v3/conversations', {"bot":{"id":"BKGSYSTFG:TKGSUQHQE"},"members":[{"id":"UK8CH2281:TKGSUQHQE"}],"activity":{"type":"message","from":{"id":"BKGSYSTFG:TKGSUQHQE"},"recipient":{"id":"UK8CH2281:TKGSUQHQE"},"text":"test activity"}})
-  .reply(200, {"activityId":"1560554385.004000","id":"BKGSYSTFG:TKGSUQHQE:DKE8NUG92"}, [ 'Cache-Control',
+  .filteringRequestBody(function (path) { return '*';})
+.post('/v3/conversations', '*')
+  .reply(200, {"activityId":"1560971828.002500","id":"BKGSYSTFG:TKGSUQHQE:DKE8NUG92"}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
   'no-cache',
@@ -24,18 +25,18 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|677e2e2dbec6464e9bb101ec4a4b577f.3d8f46b0_',
+  '|c17e9e626d63f64b934a3dbe9a29cf7b.1e8f215a_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Fri, 14 Jun 2019 23:19:45 GMT',
+  'Wed, 19 Jun 2019 19:17:08 GMT',
   'Connection',
   'close' ]);
  return result; },
 function (nock) { 
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
-  .delete('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/activities/1560554385.004000')
+  .delete('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/activities/1560971828.002500')
   .reply(200, {}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
@@ -49,11 +50,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|a10b5d9fc43e4c42b3b5b93ec8258244.1e8cf237_',
+  '|3fab60e6826a0b48944a4437b75fe37c.3d917506_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Fri, 14 Jun 2019 23:19:45 GMT',
+  'Wed, 19 Jun 2019 19:17:08 GMT',
   'Connection',
   'close' ]);
  return result; }]];

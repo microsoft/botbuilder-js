@@ -10,8 +10,9 @@ exports.setEnvironment = function() {
 exports.scopes = [[function (nock) { 
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
-  .post('/v3/conversations', {"bot":{"id":"BKGSYSTFG:TKGSUQHQE"},"members":[{"id":"UK8CH2281:TKGSUQHQE"}],"activity":{"type":"message","from":{"id":"BKGSYSTFG:TKGSUQHQE"},"recipient":{"id":"UK8CH2281:TKGSUQHQE"},"text":"test activity"}})
-  .reply(200, {"activityId":"1560554380.003600","id":"BKGSYSTFG:TKGSUQHQE:DKE8NUG92"}, [ 'Cache-Control',
+  .filteringRequestBody(function (path) { return '*';})
+.post('/v3/conversations', '*')
+  .reply(200, {"activityId":"1560971827.002100","id":"BKGSYSTFG:TKGSUQHQE:DKE8NUG92"}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
   'no-cache',
@@ -24,18 +25,18 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|85eb07a34f608b4eb6a968cceaf46d44.1e8cf232_',
+  '|b1809c9b8dc6484a9f484927c4711a0f.3d9174ff_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Fri, 14 Jun 2019 23:19:39 GMT',
+  'Wed, 19 Jun 2019 19:17:06 GMT',
   'Connection',
   'close' ]);
  return result; },
 function (nock) { 
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
-  .get('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92M/activities/1560554380.003600/members')
+  .get('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92M/activities/1560971827.002100/members')
   .reply(400, {"error":{"code":"BadArgument","message":"Slack API error","innerHttpError":{"statusCode":200,"body":{"ok":false,"error":"channel_not_found"}}}}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
@@ -49,11 +50,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|3eaa4990c8bc6940bda01577602eda04.3d8f46a8_',
+  '|028ee7f4fb2d5948afbcd1cbec813a77.1e8f2156_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Fri, 14 Jun 2019 23:19:41 GMT',
+  'Wed, 19 Jun 2019 19:17:07 GMT',
   'Connection',
   'close' ]);
  return result; }]];

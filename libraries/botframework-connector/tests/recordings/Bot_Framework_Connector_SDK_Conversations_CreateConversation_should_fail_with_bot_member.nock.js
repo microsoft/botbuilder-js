@@ -10,7 +10,8 @@ exports.setEnvironment = function() {
 exports.scopes = [[function (nock) { 
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
-  .post('/v3/conversations', {"bot":{"id":"BKGSYSTFG:TKGSUQHQE"},"members":[{"id":"BKGSYSTFG:TKGSUQHQE"}]})
+  .filteringRequestBody(function (path) { return '*';})
+.post('/v3/conversations', '*')
   .reply(400, {"error":{"code":"BadArgument","message":"Bots cannot IM other bots"}}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
@@ -24,11 +25,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|dfdd1418025a5a42ad0db1036f2af3b6.1e8cf229_',
+  '|4800958a97788c4fbcad378baab762e2.1e8f214e_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Fri, 14 Jun 2019 23:19:30 GMT',
+  'Wed, 19 Jun 2019 19:17:03 GMT',
   'Connection',
   'close' ]);
  return result; }]];

@@ -10,7 +10,8 @@ exports.setEnvironment = function() {
 exports.scopes = [[function (nock) { 
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
-  .post('/v3/conversations', {"bot":{"id":"BKGSYSTFG:TKGSUQHQE"},"members":[]})
+  .filteringRequestBody(function (path) { return '*';})
+.post('/v3/conversations', '*')
   .reply(400, {"error":{"code":"BadArgument","message":"Conversations must be to a single member"}}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
@@ -24,11 +25,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|24753e9f78dc1a48b7aea81476b71c7d.1e8cf228_',
+  '|95804f8628cefb4083556db9851b07f3.1e8f214d_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Fri, 14 Jun 2019 23:19:29 GMT',
+  'Wed, 19 Jun 2019 19:17:03 GMT',
   'Connection',
   'close' ]);
  return result; }]];
