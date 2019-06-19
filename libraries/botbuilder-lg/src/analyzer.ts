@@ -26,7 +26,7 @@ export class AnalyzerResult {
         this.TemplateRefNames = Array.from(new Set(templateRefNames));
     }
 
-    public append(outputItem: AnalyzerResult): this {
+    public union(outputItem: AnalyzerResult): this {
         this.Variables = Array.from(new Set(this.Variables.concat(outputItem.Variables)));
         this.TemplateRefNames = Array.from(new Set(this.TemplateRefNames.concat(outputItem.TemplateRefNames)));
 
@@ -93,7 +93,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext) : AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
         for (const templateStr of ctx.normalTemplateString()) {
-            result.append(this.visit(templateStr));
+            result.union(this.visit(templateStr));
         }
 
         return result;
@@ -106,10 +106,10 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         for (const ifRule of ifRules) {
             const expressions: TerminalNode[] = ifRule.ifCondition().EXPRESSION();
             if (expressions !== undefined && expressions.length > 0) {
-                result.append(this.AnalyzeExpression(expressions[0].text));
+                result.union(this.AnalyzeExpression(expressions[0].text));
             }
             if (ifRule.normalTemplateBody() !== undefined) {
-                result.append(this.visit(ifRule.normalTemplateBody()));
+                result.union(this.visit(ifRule.normalTemplateBody()));
             }
         }
 
@@ -122,10 +122,10 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         for (const iterNode of switchCaseNodes) {
             const expressions: TerminalNode[] = iterNode.switchCaseStat().EXPRESSION();
             if (expressions.length > 0) {
-                result.append(this.AnalyzeExpression(expressions[0].text));
+                result.union(this.AnalyzeExpression(expressions[0].text));
             }
             if (iterNode.normalTemplateBody() !== undefined) {
-                result.append(this.visit(iterNode.normalTemplateBody()));
+                result.union(this.visit(iterNode.normalTemplateBody()));
             }
         }
 
@@ -139,15 +139,15 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
             switch (innerNode.symbol.type) {
                 case lp.LGFileParser.DASH: break;
                 case lp.LGFileParser.EXPRESSION: {
-                    result.append(this.AnalyzeExpression(innerNode.text));
+                    result.union(this.AnalyzeExpression(innerNode.text));
                     break;
                 }
                 case lp.LGFileParser.TEMPLATE_REF: {
-                    result.append(this.AnalyzeTemplateRef(innerNode.text));
+                    result.union(this.AnalyzeTemplateRef(innerNode.text));
                     break;
                 }
                 case lp.LGFileParser.MULTI_LINE_TEXT: {
-                    result.append(this.AnalyzeMultiLineText(innerNode.text));
+                    result.union(this.AnalyzeMultiLineText(innerNode.text));
                     break;
                 }
                 default: {
@@ -167,21 +167,21 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         const result: AnalyzerResult =  new AnalyzerResult();
         if (exp.Type === 'lgTemplate') {
             const templateName: string = (exp.Children[0] as Constant).Value;
-            result.append(new AnalyzerResult([], [templateName]));
+            result.union(new AnalyzerResult([], [templateName]));
 
             if (exp.Children.length === 1) {
-                result.append(this.AnalyzeTemplate((exp.Children[0] as Constant).Value));
+                result.union(this.AnalyzeTemplate((exp.Children[0] as Constant).Value));
             } else {
                 // only get template ref names
                 const templaterefNames: string[] = this.AnalyzeTemplate((exp.Children[0] as Constant).Value).TemplateRefNames;
-                result.append(new AnalyzerResult([], templaterefNames));
+                result.union(new AnalyzerResult([], templaterefNames));
 
                 // analyzer other children
-                exp.Children.forEach((e: Expression) => result.append(this.AnalyzeExpressionDirectly(e)));
+                exp.Children.forEach((e: Expression) => result.union(this.AnalyzeExpressionDirectly(e)));
             }
         } else {
             // analyzer all children
-            exp.Children.forEach((e: Expression) => result.append(this.AnalyzeExpressionDirectly(e)));
+            exp.Children.forEach((e: Expression) => result.union(this.AnalyzeExpressionDirectly(e)));
         }
 
         return result;
@@ -195,8 +195,8 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         const parsed: Expression = this._expressionParser.parse(exp);
 
         const references: ReadonlyArray<string> = Extensions.References(parsed);
-        result.append(new AnalyzerResult(references.slice(), []));
-        result.append(this.AnalyzeExpressionDirectly(parsed));
+        result.union(new AnalyzerResult(references.slice(), []));
+        result.union(this.AnalyzeExpressionDirectly(parsed));
 
         return  result;
     }
@@ -226,17 +226,17 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
             const templateName: string = exp.substr(0, argsStartPos);
 
             // add this template
-            result.append(new AnalyzerResult([], [templateName]));
-            templateAnalyzerResult.forEach((e: AnalyzerResult) => result.append(e));
+            result.union(new AnalyzerResult([], [templateName]));
+            templateAnalyzerResult.forEach((e: AnalyzerResult) => result.union(e));
         } else {
-            result.append(new AnalyzerResult([], [exp]));
+            result.union(new AnalyzerResult([], [exp]));
 
             // We analyze tempalte only if the template has no formal parameters
             // But we should analyzer template reference names for all situation
             if (this.TemplateMap[exp].Parameters === undefined || this.TemplateMap[exp].Parameters.length === 0) {
-                result.append(this.AnalyzeTemplate(exp));
+                result.union(this.AnalyzeTemplate(exp));
             } else {
-                result.append(new AnalyzerResult([], this.AnalyzeTemplate(exp).TemplateRefNames));
+                result.union(new AnalyzerResult([], this.AnalyzeTemplate(exp).TemplateRefNames));
             }
         }
 
@@ -248,7 +248,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         exp = exp.substr(3, exp.length - 6);
         const matches: string[] = exp.match(/@\{[^{}]+\}/g);
         for (const match of matches) {
-            result.append(this.AnalyzeExpression(match));
+            result.union(this.AnalyzeExpression(match));
         }
 
         return result;
