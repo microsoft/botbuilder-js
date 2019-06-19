@@ -17,7 +17,7 @@ export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter {
       this.credentials,
       {
         baseUri: serviceUrl,
-        userAgent: 'TODO',
+        userAgent: super['USER_AGENT'],
         httpClient: new StreamingHttpClient(this.server)
       });
   }
