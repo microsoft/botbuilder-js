@@ -1,5 +1,5 @@
 import { ActivityHandler, BotFrameworkAdapterSettings } from 'botbuilder';
-import { NamedPipeServer } from 'botframework-streaming-extensions-protocol-namedpipe';
+import { NamedPipeServer } from 'botframework-streaming-extensions-protocol';
 import { StreamingRequestHandler } from './StreamingRequestHandler';
 
 export class NamedPipeConnector {

@@ -41,7 +41,7 @@ export class WebSocketServer implements IStreamingTransportServer {
   public async startAsync(): Promise<string> {
     this._sender.connect(this._webSocketTransport);
     this._receiver.connect(this._webSocketTransport);
-    return new Promise(resolve =>
+    return new Promise<string>(resolve =>
       this._closedSignal = resolve);
   }
 

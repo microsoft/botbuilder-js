@@ -25,7 +25,7 @@ export class BrowserWebSocket implements ISocket {
       resolver(e);
     };
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       resolver = resolve;
       rejector = reject;
     });

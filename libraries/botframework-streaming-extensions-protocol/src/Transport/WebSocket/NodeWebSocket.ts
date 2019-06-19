@@ -39,7 +39,7 @@ export class NodeWebSocket implements ISocket {
 
     this.connected = true;
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       req.on('close', resolve);
       req.on('error', reject);
     });
