@@ -27,8 +27,6 @@
 *
 *   Notes: tokenApiClient.userToken.get*Token has to be mocked/stubbed because the bot can't be logged in to create a valid token
 */
-
-var path = require('path');
 var fs = require('fs');
 var assert = require('assert');
 

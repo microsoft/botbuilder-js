@@ -457,7 +457,7 @@ _.extend(SuiteBase.prototype, {
                 // play nock recording
                 var scope = '[';
                 var lineWritten;
-                var importFsInRecording = false;
+                var importFsAndPathInRecording = false;
                 nockHelper.nock.recorder.play().forEach(function(line) {
                     if (line.indexOf('nock') >= 0) {
                         // apply fixups of nock generated mocks
@@ -476,8 +476,8 @@ _.extend(SuiteBase.prototype, {
 
                         // Replace attachment encoding with a readableStream
                         if (line.match(/\/views\/original[\w\W]*\.reply\(200,[\w\W]"\w*",[\w\W]*'image\/png',/ig)) {
-                            line = line.replace(/\.reply\(200,\W"\w*"/ig, `.reply(200, () => {\n    return fs.createReadStream('tests/bot-framework.png');\n}`);
-                            importFsInRecording = true;
+                            line = line.replace(/\.reply\(200,\W"\w*"/ig, `.reply(200, () => {\n    return fs.createReadStream(path.join(__dirname, '../bot-framework.png'));\n}`);
+                            importFsAndPathInRecording = true;
                         };
 
                         // Requests to logging service contain timestamps in url query params, filter them out too
@@ -499,10 +499,10 @@ _.extend(SuiteBase.prototype, {
                 const file = this.getTestRecordingsFile();
                 fs.appendFile(file, scope, () => {
                     // Add import fs to top of recording file if necessary (for attachment recording)
-                    if (importFsInRecording) {
+                    if (importFsAndPathInRecording) {
                         var data = fs.readFileSync(file);
                         var fd = fs.openSync(file, 'w+');
-                        var buffer = Buffer.from(`var fs = require('fs');\n\n`);
+                        var buffer = Buffer.from(`var fs = require('fs');\nvar path = require('path');\n\n`);
 
                         fs.writeSync(fd, buffer, 0, buffer.length, 0);
                         fs.writeSync(fd, data, 0, data.length, buffer.length);

@@ -25,11 +25,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|cb34e7021846bd41bb647739776ce85b.81c13e66_',
+  '|369309b7b6215f4d87f0dba46926464e.81c1500b_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:51:44 GMT',
+  'Wed, 19 Jun 2019 22:23:43 GMT',
   'Connection',
   'close' ]);
  return result; },
@@ -38,7 +38,7 @@ var result =
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   .filteringRequestBody(function (path) { return '*';})
 .post('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/activities', '*')
-  .reply(200, {"id":"1560977505.001200"}, [ 'Cache-Control',
+  .reply(200, {"id":"1560983024.002700"}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
   'no-cache',
@@ -51,18 +51,18 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|e3f87a62d8d06d4d8fa2ed8f85099fbf.81c13e67_',
+  '|f2c84fb0e4e8c64f9ac0d1d8301f689f.81c1500d_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:51:45 GMT',
+  'Wed, 19 Jun 2019 22:23:43 GMT',
   'Connection',
   'close' ]);
  return result; },
 function (nock) { 
 var result = 
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
-  .delete('/v3/conversations/invalid-id/activities/1560977505.001200')
+  .delete('/v3/conversations/invalid-id/activities/1560983024.002700')
   .reply(400, {"error":{"code":"ServiceError","message":"Invalid ConversationId: invalid-id"}}, [ 'Cache-Control',
   'no-cache',
   'Pragma',
@@ -76,11 +76,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|cf22b60395ffab47ab7170cdfa6903f1.81c13e69_',
+  '|f794e52b12c1b24f957a8842a4fe4060.81c1500f_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:51:45 GMT',
+  'Wed, 19 Jun 2019 22:23:44 GMT',
   'Connection',
   'close' ]);
  return result; }]];

@@ -25,11 +25,11 @@ nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   'Server',
   'Microsoft-IIS/10.0',
   'x-ms-request-id',
-  '|d7a6b004be2d5a4c9fba79d35a42d82b.81c13e43_',
+  '|877321920078194db3dfd229d49fb293.81c14fed_',
   'Strict-Transport-Security',
   'max-age=31536000',
   'Date',
-  'Wed, 19 Jun 2019 20:51:40 GMT',
+  'Wed, 19 Jun 2019 22:23:38 GMT',
   'Connection',
   'close' ]);
  return result; }]];
