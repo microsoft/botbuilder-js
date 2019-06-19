@@ -90,7 +90,7 @@ var createConversation = () => ({
 var createAttachment = () => ({
     name: 'bot-framework.png',
     type: 'image/png',
-    originalBase64: base64_encode(__dirname + '\\bot-framework.png')
+    originalBase64: base64_encode(__dirname + '/bot-framework.png')
 });
 
 var readStreamToBuffer = function(stream, callback) {
