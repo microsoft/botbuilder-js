@@ -10,3 +10,8 @@ export * from './botFrameworkAdapter';
 export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
 export * from 'botbuilder-core';
+export * from './BotFrameworkStreamingAdapter';
+export * from './NamedPipeConnector';
+export * from './StreamingHttpClient';
+export * from './StreamingRequestHandler';
+export * from './WebSocketConnector';

@@ -8,7 +8,7 @@ import {
   MiddlewareHandler,
   TurnContext
 } from 'botbuilder';
-import { IStreamingTransportServer, ReceiveRequest, RequestHandler, Response, Request } from 'botframework-streaming-extensions-protocol';
+import { IStreamingTransportServer, ReceiveRequest, RequestHandler, Response } from 'botframework-streaming-extensions-protocol';
 import * as os from 'os';
 // tslint:disable-next-line: no-require-imports
 const pjson: any = require('../package.json');

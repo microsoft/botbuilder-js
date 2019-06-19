@@ -22,7 +22,7 @@ export class StreamingHttpClient implements HttpClient {
   }
 
   private mapHttpRequestToProtocolRequest(httpRequest: WebResource): Request {
-    // TODO: check url -> path mapping
+
     return Request.create(httpRequest.method, httpRequest.url, httpRequest.body);
   }
 }
