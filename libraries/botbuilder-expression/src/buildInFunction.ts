@@ -44,6 +44,7 @@ export type VerifyExpression = (value: any, expression: Expression, child: numbe
  */
 export class BuiltInFunctions {
     public static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.sssZ';
+    public static readonly UnixMilliSecondToTicksConstant: number = 621355968000000000;  //constant of converting unix timestamp to ticks
     public static _functions: Map<string, ExpressionEvaluator> = BuiltInFunctions.BuildFunctionLookup();
     /**
      * Validate that expression has a certain number of children that are of any of the supported types.
@@ -1147,40 +1148,41 @@ export class BuiltInFunctions {
         let parsed: any;
         ({value: parsed, error} = BuiltInFunctions.ParseTimestamp(timeStamp));
         if (error === undefined) {
-            let ts: moment.Moment = parsed;
+            let addedTime: moment.Moment = parsed;
+            let timeUnitMark: string;
             switch (timeUnit) {
                 case 'Second': {
-                    ts = ts.add(interval, 's');
+                    timeUnitMark = 's';
                     break;
                 }
 
                 case 'Minute': {
-                    ts = ts.add(interval, 'm');
+                    timeUnitMark = 'm';
                     break;
                 }
 
                 case 'Hour': {
-                    ts = ts.add(interval, 'h');
+                    timeUnitMark = 'h';
                     break;
                 }
 
                 case 'Day': {
-                    ts = ts.add(interval, 'd');
+                    timeUnitMark = 'd';
                     break;
                 }
 
                 case 'Week': {
-                    ts = ts.add(interval, 'week');
+                    timeUnitMark = 'week';
                     break;
                 }
 
                 case 'Month': {
-                    ts = ts.add(interval, 'month');
+                    timeUnitMark = 'month';
                     break;
                 }
 
                 case 'Year': {
-                    ts = ts.add(interval, 'year');
+                    timeUnitMark = 'year';
                     break;
                 }
 
@@ -1191,7 +1193,8 @@ export class BuiltInFunctions {
             }
 
             if (error === undefined) {
-                ({value: result, error} = this.ReturnFormattedTimeStampStr(ts, format));
+                addedTime = parsed.add(interval, timeUnitMark);
+                ({value: result, error} = this.ReturnFormattedTimeStampStr(addedTime, format));
             }
     }
 
@@ -1277,11 +1280,10 @@ export class BuiltInFunctions {
         let parsed: any;
         let result: number;
         let error: string;
-        const tickConstant: number = 621355968000000000;
         ({value: parsed, error} = BuiltInFunctions.ParseTimestamp(timeStamp));
         if (error === undefined) {
             const unixMilliSec: number = parseInt(parsed.format('x'), 10);
-            result = tickConstant + unixMilliSec * 10000;
+            result = this.UnixMilliSecondToTicksConstant + unixMilliSec * 10000;
         }
 
         return {value: result, error};

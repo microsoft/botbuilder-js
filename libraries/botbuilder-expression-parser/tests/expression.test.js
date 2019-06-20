@@ -285,6 +285,7 @@ const dataSource = [
   ["getFutureTime(1, 'Week', 'MM-dd-yy')", moment(new Date().toISOString()).add(7, 'days').format('MM-DD-YY')],
   ["getFutureTime(1, 'Day', 'MM-dd-yy')", moment(new Date().toISOString()).add(1, 'days').format('MM-DD-YY')],
   ["addToTime('2018-01-01T08:00:00.000Z', 1, 'Day')", "2018-01-02T08:00:00.000+00:00"],
+  ["addToTime('2018-01-01T08:00:00.000Z', sub(3,1), 'Week')", "2018-01-15T08:00:00.000+00:00"],
   ["addToTime('2018-01-01T08:00:00.000Z', 1, 'Month', 'MM-DD-YY')", "02-01-18"],
   ["convertFromUTC('2018-02-02T02:00:00.000Z', 'Pacific Standard Time')", "2018-02-01T18:00:00.000-08:00"],
   ["convertFromUTC('2018-02-02T02:00:00.000Z', 'Pacific Standard Time', 'MM-DD-YY')", "02-01-18"],

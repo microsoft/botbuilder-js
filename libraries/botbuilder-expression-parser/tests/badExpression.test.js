@@ -250,7 +250,7 @@ const badExpressions =
   // collection functions test
   "sum(items, 'hello')",//should have 1 parameter
   "sum('hello')",//first param should be list
-  "average(items, 'hello')",//should have 1 parameter111111
+  "average(items, 'hello')",//should have 1 parameter
   "average('hello')",//first param should be list
   "average(hello)", // first param should be list
   "contains('hello world', 'hello', 'new')",//should have 2 parameter
