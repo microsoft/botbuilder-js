@@ -224,9 +224,9 @@ export class AdaptiveCardPrompt extends Dialog {
 
     protected async onRecognize(context: TurnContext): Promise<PromptRecognizerResult<object>> {
         // Ignore user input that doesn't come from adaptive card
-        if (context.activity.channelData && context.activity.channelData[ActionTypes.PostBack]) {
+        if (!context.activity.text.trim() && context.activity.value) {
             // Validate it comes from the correct card - This is only a worry while the prompt/dialog has not ended
-            if (context.activity.value && context.activity.value['promptId'] != this._promptId) {
+            if (context.activity.value['promptId'] != this._promptId) {
                 return { succeeded: false };
             }
             // Check for required input data, if specified in AdaptiveCardPromptOptions
