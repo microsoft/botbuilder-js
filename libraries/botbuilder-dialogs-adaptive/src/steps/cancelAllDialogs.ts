@@ -7,13 +7,13 @@
  */
 import { DialogTurnResult, DialogCommand, DialogContext, DialogConfiguration } from 'botbuilder-dialogs';
 
-export interface CancelDialogConfiguration extends DialogConfiguration {
+export interface CancelAllDialogsConfiguration extends DialogConfiguration {
     eventName?: string;
     eventValue?: string;
     eventValueProperty?: string;
 }
 
-export class CancelDialog extends DialogCommand {
+export class CancelAllDialogs extends DialogCommand {
 
     constructor();
     constructor(eventName: string, eventValue?: string|object);
@@ -28,7 +28,7 @@ export class CancelDialog extends DialogCommand {
     }
     
     protected onComputeID(): string {
-        return `cancelDialog[${this.hashedLabel(this.eventName || '')}]`;
+        return `cancelAllDialogs[${this.hashedLabel(this.eventName || '')}]`;
     }
 
     public eventName: string;
@@ -43,7 +43,7 @@ export class CancelDialog extends DialogCommand {
         return this.inputProperties['eventValue'];
     }
 
-    public configure(config: CancelDialogConfiguration): this {
+    public configure(config: CancelAllDialogsConfiguration): this {
         return super.configure(config);
     }
     

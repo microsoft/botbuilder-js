@@ -43,7 +43,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             const group: LGTemplate[] = grouped[key];
             if (group.length > 1) {
                 const sources: string = group.map(x => x.Source).join(':');
-                result.push(this.BuildLGDiagnostic({ message: `Dup definitions found for template  ${key} in ${sources}` }));
+                result.push(this.BuildLGDiagnostic({ message: `Dup definitions found for template ${key} in ${sources}` }));
             }
         }
 

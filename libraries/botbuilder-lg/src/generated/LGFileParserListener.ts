@@ -22,6 +22,7 @@ import { IfConditionContext } from "./LGFileParser";
 import { SwitchCaseTemplateBodyContext } from "./LGFileParser";
 import { SwitchCaseRuleContext } from "./LGFileParser";
 import { SwitchCaseStatContext } from "./LGFileParser";
+import { ImportDefinitionContext } from "./LGFileParser";
 
 
 /**
@@ -243,5 +244,16 @@ export interface LGFileParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitSwitchCaseStat?: (ctx: SwitchCaseStatContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LGFileParser.importDefinition`.
+	 * @param ctx the parse tree
+	 */
+	enterImportDefinition?: (ctx: ImportDefinitionContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGFileParser.importDefinition`.
+	 * @param ctx the parse tree
+	 */
+	exitImportDefinition?: (ctx: ImportDefinitionContext) => void;
 }
 

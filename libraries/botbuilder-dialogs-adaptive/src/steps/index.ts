@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 export * from './beginDialog';
-export * from './cancelDialog';
+export * from './cancelAllDialogs';
 export * from './codeStep';
 export * from './deleteProperty';
 export * from './editArray';
