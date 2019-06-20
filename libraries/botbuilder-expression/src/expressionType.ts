@@ -82,7 +82,6 @@ export class ExpressionType {
     public static readonly ConvertFromUTC: string = 'convertFromUTC';
     public static readonly ConvertToUTC: string = 'convertToUTC';
     public static readonly AddToTime: string = 'addToTime';
-    public static readonly ConvertTimeZone: string = 'convertTimeZone';
     public static readonly StartOfDay: string = 'startOfDay';
     public static readonly StartOfHour: string = 'startOfHour';
     public static readonly StartOfMonth: string = 'startOfMonth';
@@ -131,8 +130,8 @@ export class ExpressionType {
     public static readonly RemoveProperty: string = 'removeProperty';
     public static readonly SetProperty: string = 'setProperty';
     public static readonly GetProperty: string = 'getProperty';
-    public static readonly Coalesce: any = 'coalesce';
-    public static readonly XPath: any = 'xPath';
+    public static readonly Coalesce: string = 'coalesce';
+    public static readonly XPath: string = 'xPath';
 
     // URI parsing functions
     public static readonly UriHost: string = 'uriHost';

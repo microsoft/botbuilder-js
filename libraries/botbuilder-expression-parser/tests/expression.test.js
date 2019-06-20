@@ -5,7 +5,7 @@ const moment = require('moment');
 
 const one = ["one"];
 const oneTwo = ["one", "two"];
-
+const nullObj = undefined;
 const dataSource = [
   // Operators tests
   ["1 + 2", 3],
@@ -284,6 +284,24 @@ const dataSource = [
   ["getFutureTime(1, 'Month', 'MM-dd-yy')", moment(new Date().toISOString()).add(1, 'months').format('MM-DD-YY')],
   ["getFutureTime(1, 'Week', 'MM-dd-yy')", moment(new Date().toISOString()).add(7, 'days').format('MM-DD-YY')],
   ["getFutureTime(1, 'Day', 'MM-dd-yy')", moment(new Date().toISOString()).add(1, 'days').format('MM-DD-YY')],
+  ["addToTime('2018-01-01T08:00:00.000Z', 1, 'Day')", "2018-01-02T08:00:00.000+00:00"],
+  ["addToTime('2018-01-01T08:00:00.000Z', 1, 'Month', 'MM-DD-YY')", "02-01-18"],
+  ["convertFromUTC('2018-02-02T02:00:00.000Z', 'Pacific Standard Time')", "2018-02-01T18:00:00.000-08:00"],
+  ["convertFromUTC('2018-02-02T02:00:00.000Z', 'Pacific Standard Time', 'MM-DD-YY')", "02-01-18"],
+  ["convertToUTC('2018-01-01T18:00:00.000', 'Pacific Standard Time')", "2018-01-02T02:00:00.000+00:00"],
+  ["convertToUTC('2018-01-01T18:00:00.000', 'Pacific Standard Time', 'MM-DD-YY')", "01-02-18"],
+  ["startOfDay('2018-03-15T13:30:30.000Z')", "2018-03-15T00:00:00.000+00:00"],
+  ["startOfHour('2018-03-15T13:30:30.000Z')", "2018-03-15T13:00:00.000+00:00"],
+  ["startOfMonth('2018-03-15T13:30:30.000Z')", "2018-03-01T00:00:00.000+00:00"],
+  ["ticks('2018-01-01T08:00:00.000Z')", 636503904000000000],
+
+  //URI parsing functions tests
+  ["uriHost('https://www.localhost.com:8080')", "www.localhost.com"],
+  ["uriPath('http://www.contoso.com/catalog/shownew.htm?date=today')", "/catalog/shownew.htm"],
+  ["uriPathAndQuery('http://www.contoso.com/catalog/shownew.htm?date=today')", "/catalog/shownew.htm?date=today"],
+  ["uriPort('http://www.localhost:8080')", 8080],
+  ["uriQuery('http://www.contoso.com/catalog/shownew.htm?date=today')", "?date=today"],
+  ["uriScheme('http://www.contoso.com/catalog/shownew.htm?date=today')", "http"],
 
   // Collection functions tests
   ["sum(createArray(1, 2))", 3],
@@ -332,6 +350,9 @@ const dataSource = [
   ["string(addProperty(json('{\"key1\":\"value1\"}'), 'key2','value2'))", "{\"key1\":\"value1\",\"key2\":\"value2\"}"],
   ["string(setProperty(json('{\"key1\":\"value1\"}'), 'key1','value2'))", "{\"key1\":\"value2\"}"],
   ["string(removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), 'key2'))", "{\"key1\":\"value1\"}"],
+  ["coalesce(nullObj,'hello',nullObj)", "hello"],
+  ["xPath(xmlStr,'sum(/produce/item/count)')", 30],
+  ["xPath(xmlStr,'/produce/item/name')",  ["<name>Gala</name>", "<name>Honeycrisp</name>"]],
 
   // Short hand expression tests
   ["@city == 'Bellevue'", false, ["turn.entities.city"]],
@@ -367,6 +388,7 @@ const scope = {
   hello: "hello",
   world: "world",
   istrue: true,
+  nullObj: undefined,
   bag:
   {
     three: 3.0,
@@ -389,6 +411,7 @@ const scope = {
   notISOTimestamp: "2018-03-15T13:00:00Z",
   timestampObj: new Date("2018-03-15T13:00:00.000Z"),
   unixTimestamp: 1521118800,
+  xmlStr: "<?xml version='1.0'?> <produce> <item> <name>Gala</name> <type>apple</type> <count>20</count> </item> <item> <name>Honeycrisp</name> <type>apple</type> <count>10</count> </item> </produce>",
   user: 
   {
     lists:

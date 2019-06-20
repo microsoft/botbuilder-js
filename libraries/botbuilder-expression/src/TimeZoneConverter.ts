@@ -6,16 +6,13 @@
  * Licensed under the MIT License.
  */
 import * as fs from 'fs';
-import * as readline from 'readline';
-import * as readlineSync from 'readline-sync';
-
 /**
  * Convert TimeZone between Windows and Iana.
  */
 export class TimeZoneConverter {
     private static ianaToWindows: Map<string, string> = new Map<string, string>();
     private static windowsToIana: Map<string, string> = new Map<string, string>();
-    private static validTimezonStr: Array<string> = new Array<string>();
+    private static validTimezonStr: string [] = new Array<string>();
 
     public static InnaToWindows(ianaTimeZoneId: string): string {
         this.LoadData();
@@ -28,7 +25,6 @@ export class TimeZoneConverter {
 
     public static WindowsToIana(windowsTimeZoneId: string): string {
         this.LoadData();
-        console.log(this.windowsToIana.has(`001|${windowsTimeZoneId}`));
         if (this.windowsToIana.has(`001|${windowsTimeZoneId}`)) {
             return this.windowsToIana.get(`001|${windowsTimeZoneId}`);
         }
@@ -38,12 +34,13 @@ export class TimeZoneConverter {
 
     public static VerifyTimeZoneStr(timezoneStr: string): boolean {
         this.LoadData();
+
         return this.validTimezonStr.includes(timezoneStr);
     }
 
     private static LoadData(): void {
-        const data:string = fs.readFileSync('./src/WindowsIanaMapping', 'utf-8');
-        const lines = data.split('\n');
+        const data: string = fs.readFileSync('../botbuilder-expression/lib/WindowsIanaMapping', 'utf-8');
+        const lines: string [] = data.split('\r\n');
         for (const line of lines) {
             const tokens: string[] = line.split(',');
             const windowsID: string = tokens[0];
@@ -67,9 +64,5 @@ export class TimeZoneConverter {
                 this.validTimezonStr.push(windowsID);
             }
         }
-        
     }
-
-    
 }
-
