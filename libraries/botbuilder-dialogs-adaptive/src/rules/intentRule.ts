@@ -32,6 +32,7 @@ export class IntentRule extends EventRule {
     }
 
     protected async onIsTriggered(sequence: SequenceContext, event: DialogEvent<RecognizerResult>): Promise<boolean> {
+
         // Ensure all intents, entities, and properties exist.
         const memory = sequence.state.toJSON();
         for(let i = 0; i < this.matches.length; i++) {

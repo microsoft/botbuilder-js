@@ -170,8 +170,10 @@ export class DialogContext {
         for(const option in dialog.inputProperties) {
             if (dialog.inputProperties.hasOwnProperty(option)) {
                 const binding = dialog.inputProperties[option];
-                const value = this.state.getValue(binding);
-                options[option] = Array.isArray(value) || typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : value;
+                if (binding) {
+                    const value = this.state.getValue(binding);
+                    options[option] = Array.isArray(value) || typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : value;
+                }
             }
         }
 

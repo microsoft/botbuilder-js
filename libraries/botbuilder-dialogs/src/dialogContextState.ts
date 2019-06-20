@@ -144,7 +144,12 @@ export class DialogContextState {
      * @param defaultValue (Optional) value to return if the path can't be found. Defaults to `undefined`.
      */
     public getValue<T = any>(pathExpression: string, defaultValue?: T): T {
-        const value = jsonpath.value(this.toJSON(), DialogContextState.resolvePath(pathExpression));
+
+        let value: T;
+        if (pathExpression) {
+            value = jsonpath.value(this.toJSON(), DialogContextState.resolvePath(pathExpression));
+        }
+         
         return value !== undefined ? value : defaultValue;
     }
 
@@ -162,6 +167,7 @@ export class DialogContextState {
     }
    
     static resolvePath(pathExpression: string): string {
+
         // Check for JSONPath selector
         if (pathExpression.indexOf('$.') == 0) {
             return pathExpression;
