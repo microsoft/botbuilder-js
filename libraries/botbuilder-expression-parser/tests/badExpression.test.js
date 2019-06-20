@@ -232,11 +232,25 @@ const badExpressions =
   "getFutureTime(timestamp, 'W')",// error parameters format
   "getFutureTime('yyyy', '1')",// second param should be integer
   "getFutureTime('yyyy')",// should have 2 or 3 params
+  "convertFromUTC(notValidTimestamp, 'Pacific Standard Time')", // invalid timestamp
+  "convertFromUTC('2018-02-02T02:00:00.000Z', 'Pacific Time')", // invalid timezone
+  "convertToUTC(notValidTimestamp, 'Pacific Standard Time')",  // invalid timestamp
+  "convertToUTC('2018-02-02T02:00:00.000', 'Pacific Time')", // invalid timezone
+  "startOfDay(timeStamp, 'A')", // invalid format
+  "startOfDay(notValidTimeStamp)", // invalid timestamp
+  "startOfHour(timeStamp, 'A')", // invalid format
+  "startOfHour(notValidTimeStamp)", // invalid timestamp
+  "startOfMonth(timeStamp, 'A')", // invalid format
+  "startOfMonth(notValidTimeStamp)", // invalid timestamp
+  "ticks(notValidTimeStamp)", // not valid timestamp
+  "ticks()", // should have one parameters
 
+
+  
   // collection functions test
   "sum(items, 'hello')",//should have 1 parameter
   "sum('hello')",//first param should be list
-  "average(items, 'hello')",//should have 1 parameter
+  "average(items, 'hello')",//should have 1 parameter111111
   "average('hello')",//first param should be list
   "average(hello)", // first param should be list
   "contains('hello world', 'hello', 'new')",//should have 2 parameter
@@ -274,6 +288,14 @@ const badExpressions =
   "subArray(items, hello)", // second param should be integer
   "subArray(items, one, hello)", // third param should be integer
 
+  //uri parsing functions
+  "uriHost(relativeUri)", 
+  "uriPath(relativeUri)",
+  "uriPathAndQuery(relatibeUri)",
+  "uriPort(relatibeUri)",
+  "uriQuery(relatibeUri)",
+  "uriScheme(relatibeUri)",
+
   // Object manipulation and construction functions test
   "json(1,2)", //should have 1 parameter
   "json(1)",//should be string parameter
@@ -284,6 +306,10 @@ const badExpressions =
   "setProperty(json('{\"key1\":\"value1\"}'), 1,'value2')", // second param should be string
   "removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), 1))",// second param should be string
   "removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), '1', '2'))",// should have 2 parameter
+  "coalesce()", // should have at least 1 parameter
+  "xPath(invalidXml, ''sum(/produce/item/count)')", //not valid xml
+  "xPath(xmlStr)", // should have two params
+  "xPath(xmlStr, 'getTotal')", // invalid xpath query
 
   // Memory access test
   "getProperty(bag, 1)",// second param should be string
@@ -323,6 +349,7 @@ const scope = {
   notValidTimestamp: "2018timestmap",
   notValidTimestamp2: "1521118800",
   notValidTimestamp3: "20181115",
+  relativeUri: "../catalog/shownew.htm?date=today",
   turn:
   {
     entities:
