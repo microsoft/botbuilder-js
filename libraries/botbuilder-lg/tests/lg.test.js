@@ -203,28 +203,41 @@ describe('LG', function () {
     });
 
     it('TestAnalyzer', function () {
-        var engine = new TemplateEngine().addFile(GetExampleFilePath("Analyzer.lg"));
-        var evaled1 = engine.analyzeTemplate("orderReadOut");
-        var evaled1Options = ["orderType", "userName", "base", "topping", "bread", "meat"];
-        console.log(evaled1[0]);
-        assert.strictEqual(evaled1.length, evaled1Options.length);
-        evaled1Options.forEach(element => assert.strictEqual(evaled1.includes(element), true));
-
-        var evaled2 = engine.analyzeTemplate("sandwichOrderConfirmation");
-        var evaled2Options = ["bread", "meat"];
-        assert.strictEqual(evaled2.length, evaled2Options.length);
-        evaled2Options.forEach(element => assert.strictEqual(evaled2.includes(element), true));
-
-        var evaled3 = engine.analyzeTemplate("template1");
-        // TODO: input.property should really be: customer.property but analyzer needs to be 
-        var evaled3Options = ["alarms", "customer", "tasks[0]", "age", "city"];
-        assert.strictEqual(evaled3.length, evaled3Options.length);
-        evaled3Options.forEach(element => assert.strictEqual(evaled3.includes(element), true));
-
-        var evaled4 = engine.analyzeTemplate('coffee-to-go-order')
-        var evaled4Options = ['coffee', 'userName', 'size', 'price']
-        assert.strictEqual(evaled4.length, evaled4Options.length);
-        evaled4Options.forEach(element => assert.strictEqual(evaled4.includes(element), true));
+        var testData = [
+            {
+                name:'orderReadOut',
+                variableOptions:["orderType", "userName", "base", "topping", "bread", "meat"],
+                templateRefOptions:["wPhrase", "pizzaOrderConfirmation", "sandwichOrderConfirmation"]
+            },
+            {
+                name:'sandwichOrderConfirmation',
+                variableOptions:["bread", "meat"],
+                templateRefOptions:[]
+            },
+            {
+                name:'template1',
+                 // TODO: input.property should really be: customer.property but analyzer needs to be 
+                variableOptions:["alarms", "customer", "tasks[0]", "age", "city"],
+                templateRefOptions:["template2", "template3", "template4", "template5","template6"]
+            },
+            {
+                name:'coffee-to-go-order',
+                variableOptions:['coffee', 'userName', 'size', 'price'],
+                templateRefOptions:["wPhrase", "LatteOrderConfirmation", "MochaOrderConfirmation","CuppuccinoOrderConfirmation"]
+            },
+        ]
+        for (const testItem of testData) {
+            var engine = new TemplateEngine().addFile(GetExampleFilePath("Analyzer.lg"));
+            var evaled1 = engine.analyzeTemplate(testItem.name);
+            var variableEvaled = evaled1.Variables;
+            var variableEvaledOptions = testItem.variableOptions;
+            assert.strictEqual(variableEvaled.length, variableEvaledOptions.length);
+            variableEvaledOptions.forEach(element => assert.strictEqual(variableEvaled.includes(element), true));
+            var templateEvaled = evaled1.TemplateReferences;
+            var templateEvaledOptions = testItem.templateRefOptions;
+            assert.strictEqual(templateEvaled.length, templateEvaledOptions.length);
+            templateEvaledOptions.forEach(element => assert.strictEqual(templateEvaled.includes(element), true));
+        }
     });
 
     it('TestlgTemplateFunction', function () {
@@ -241,9 +254,10 @@ describe('LG', function () {
     it('TestAnalyzelgTemplateFunction', function () {
         var engine = new TemplateEngine().addFile(GetExampleFilePath("lgTemplate.lg"));
         var evaled = engine.analyzeTemplate('TemplateD');
+        var variableEvaled = evaled.Variables;
         var options = ['b'];
-        assert.strictEqual(evaled.length, options.length);
-        options.forEach(e => assert.strictEqual(evaled.includes(e), true));
+        assert.strictEqual(variableEvaled.length, options.length);
+        options.forEach(e => assert.strictEqual(variableEvaled.includes(e), true));
     });
 
     it('TestExceptionCatch', function () {
