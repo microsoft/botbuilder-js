@@ -277,9 +277,15 @@ describe('LG', function () {
             GetExampleFilePath("MultiFile-Part3.lg"),
         ];
 
-        var engine = new TemplateEngine().addFiles([file123[2], file123[1], file123[0]]);
-
         var msg = "hello from t1, ref template2: 'hello from t2, ref template3: hello from t3' and ref template3: 'hello from t3'";
+
+        var engine = new TemplateEngine().addFiles([file123[0], file123[1], file123[2]]);
+        assert.strictEqual(engine.evaluateTemplate("template1"), msg);
+
+        engine = new TemplateEngine().addFiles([file123[1], file123[0], file123[2]]);
+        assert.strictEqual(engine.evaluateTemplate("template1"), msg);
+
+        engine = new TemplateEngine().addFiles([file123[2], file123[1], file123[0]]);
         assert.strictEqual(engine.evaluateTemplate("template1"), msg);
     })
 
