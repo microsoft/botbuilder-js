@@ -49,7 +49,8 @@ export class TemplateEngine {
 
             filePath = path.normalize(filePath);
             const fileContent: string = fs.readFileSync(filePath, 'utf-8');
-            this.addText(fileContent, filePath, importResolver);
+            this.templates = this.templates.concat(this.parseContent(fileContent, filePath, importResolver));
+
         });
 
         this.runStaticCheck(this.templates);
@@ -61,9 +62,8 @@ export class TemplateEngine {
         this.addFiles([filePath], importResolver)
 
     public addText = (content: string, name: string, importResolver: ImportResolverDelegate): TemplateEngine => {
-        const sources: Map<string, LGResource> = new Map<string, LGResource>();
-        this.LoopLGText(content, name, sources, importResolver);
-        sources.forEach((s: LGResource) => this.templates = this.templates.concat(s.Templates));
+        const parsedTemplates: LGTemplate[] = this.parseContent(content, name, importResolver);
+        this.templates = this.templates.concat(parsedTemplates);
         this.runStaticCheck(this.templates);
 
         return this;
@@ -105,17 +105,17 @@ export class TemplateEngine {
         }
     }
 
-    private ImportIds(ids: string[], sources: Map<string, LGResource>, importResolver: ImportResolverDelegate): void {
+    private importIds(ids: string[], sources: Map<string, LGResource>, importResolver: ImportResolverDelegate): void {
         if (importResolver === undefined) {
             // default to fileResolver...
-            importResolver = this.FileResolver;
+            importResolver = this.fileResolver;
         }
 
         ids.forEach((id: string) => {
             try {
                 const {content, absoluteFilePath} = importResolver(id);
                 if (!sources.has(absoluteFilePath)) {
-                    this.LoopLGText(content, absoluteFilePath, sources, importResolver);
+                    this.loopLGText(content, absoluteFilePath, sources, importResolver);
                 }
             } catch (e) {
                 throw new Error(`${id}:${e.message}`);
@@ -123,13 +123,13 @@ export class TemplateEngine {
         });
     }
 
-    private LoopLGText(content: string, name: string, sources: Map<string, LGResource>, importResolver: ImportResolverDelegate): void {
+    private loopLGText(content: string, name: string, sources: Map<string, LGResource>, importResolver: ImportResolverDelegate): void {
         const source: LGResource = LGParser.Parse(content, name);
         sources.set(name, source);
-        this.ImportIds(source.Imports.map((lg: LGImport) => lg.Id), sources, importResolver);
+        this.importIds(source.Imports.map((lg: LGImport) => lg.Id), sources, importResolver);
     }
 
-    private FileResolver = (filePath: string): { content: string; absoluteFilePath: string } => {
+    private fileResolver = (filePath: string): { content: string; absoluteFilePath: string } => {
         filePath = path.resolve(filePath);
 
         return { content: fs.readFileSync(filePath, 'utf-8'), absoluteFilePath: filePath };
@@ -141,5 +141,14 @@ export class TemplateEngine {
         } else {
             return ambigiousPath.replace('\\', '/');
         }
+    }
+
+    private parseContent(content: string, name: string, importResolver: ImportResolverDelegate): LGTemplate[] {
+        let parsedTemplates: LGTemplate[] = [];
+        const sources: Map<string, LGResource> = new Map<string, LGResource>();
+        this.loopLGText(content, name, sources, importResolver);
+        sources.forEach((s: LGResource) => parsedTemplates = parsedTemplates.concat(s.Templates));
+
+        return parsedTemplates;
     }
 }
