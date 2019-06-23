@@ -23,7 +23,7 @@
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.10.2",
     "coveralls": "^3.0.4",
-    "eslint": "^5.1.1",
+    "eslint": "^5.16.0",
     "eslint-plugin-only-warn": "^1.0.1",
     "lerna": "^3.2.1",
     "mocha": "^6.1.4",
