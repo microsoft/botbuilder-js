@@ -9,10 +9,12 @@
         "test": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\"",
         "build-docs": "lerna run build-docs",
         "tslint": "tslint ./libraries/*/src/*.ts ./libraries/*/src/**/*.ts  -t verbose",
-        "set-dependency-versions": "node tools/util/updateDependenciesInPackageJsons.js ./libraries ^${Version} botbuilder botbuilder-core botframework-connector botframework-config botframework-schema botbuilder-ai botbuilder-dialogs botbuilder-dialogs-adaptive botbuilder-dialogs-declarative botbuilder-lg && node tools/util/updateDependenciesInPackageJsons.js ./transcripts ^${Version} botbuilder botbuilder-ai botbuilder-dialogs",                                                  
+        "set-dependency-versions": "node tools/util/updateDependenciesInPackageJsons.js ./libraries ^${Version} botbuilder botbuilder-core botframework-connector botframework-config botframework-schema botbuilder-ai botbuilder-dialogs botbuilder-dialogs-adaptive botbuilder-dialogs-declarative botbuilder-lg && node tools/util/updateDependenciesInPackageJsons.js ./transcripts ^${Version} botbuilder botbuilder-ai botbuilder-dialogs",
         "update-versions": "lerna run set-version && npm run set-dependency-versions"
     },
     "dependencies": {
+        "@types/moment-timezone": "^0.5.12",
+        "moment-timezone": "^0.5.25",
         "ms-rest-azure": "^2.5.9",
         "ms-rest-js": "^1.0.1",
         "read-text-file": "^1.1.0",

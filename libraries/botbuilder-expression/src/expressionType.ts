@@ -79,6 +79,13 @@ export class ExpressionType {
     public static readonly GetTimeOfDay: string = 'getTimeOfDay';
     public static readonly GetFutureTime: string = 'getFutureTime';
     public static readonly GetPastTime: string = 'getPastTime';
+    public static readonly ConvertFromUTC: string = 'convertFromUTC';
+    public static readonly ConvertToUTC: string = 'convertToUTC';
+    public static readonly AddToTime: string = 'addToTime';
+    public static readonly StartOfDay: string = 'startOfDay';
+    public static readonly StartOfHour: string = 'startOfHour';
+    public static readonly StartOfMonth: string = 'startOfMonth';
+    public static readonly Ticks: string = 'ticks';
 
     // Conversions
     public static readonly Float: string = 'float';
@@ -123,5 +130,15 @@ export class ExpressionType {
     public static readonly RemoveProperty: string = 'removeProperty';
     public static readonly SetProperty: string = 'setProperty';
     public static readonly GetProperty: string = 'getProperty';
+    public static readonly Coalesce: string = 'coalesce';
+    public static readonly XPath: string = 'xPath';
+
+    // URI parsing functions
+    public static readonly UriHost: string = 'uriHost';
+    public static readonly UriPath: string = 'uriPath';
+    public static readonly UriPathAndQuery: string = 'uriPathAndQuery';
+    public static readonly UriPort: string = 'uriPort';
+    public static readonly UriQuery: string = 'uriQuery';
+    public static readonly UriScheme: string = 'uriScheme';
 
 }
