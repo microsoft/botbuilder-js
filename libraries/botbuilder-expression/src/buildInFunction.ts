@@ -18,7 +18,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDele
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { TimeZoneConverter } from './TimeZoneConverter';
-import { CommonRegex } from './CommonRegex';
+import { CommonRegex } from './commonRegex';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -845,6 +845,15 @@ export class BuiltInFunctions {
         // rewrite the 2nd, 3rd paramater
         expression.Children[1] = BuiltInFunctions.RewriteAccessor(expression.Children[1], iteratorName);
         expression.Children[2] = BuiltInFunctions.RewriteAccessor(expression.Children[2], iteratorName);
+    }
+
+    private static ValidateIsMatch(expression: Expression): void {
+        BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String);
+
+        const second: Expression = expression.Children[1];
+        if (second.ReturnType === ReturnType.String && second.Type === ExpressionType.Constant) {
+            CommonRegex.CreateRegex((<Constant>second).Value + '');
+        }
     }
 
     private static RewriteAccessor(expression: Expression, localVarName: string): Expression {
@@ -2415,8 +2424,8 @@ export class BuiltInFunctions {
             new ExpressionEvaluator(ExpressionType.Coalesce, BuiltInFunctions.Apply((args: ReadonlyArray<any>[]) => this.Coalesce(<object []>args)),
                                     ReturnType.Object, BuiltInFunctions.ValidateAtLeastOne),
             new ExpressionEvaluator(ExpressionType.XPath, BuiltInFunctions.ApplyWithError((args: ReadonlyArray<any>[]) => this.XPath(args[0].toString(), args[1].toString())),
-                                    ReturnType.Object, (expr:Expression): void => BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.String, ReturnType.String)),
-            
+                                    ReturnType.Object, (expr: Expression): void => BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.String, ReturnType.String)),
+
             // Regex expression functions
             new ExpressionEvaluator(
                 ExpressionType.IsMatch,
@@ -2435,7 +2444,7 @@ export class BuiltInFunctions {
                        return {value, error};
                     }),
                 ReturnType.Boolean,
-                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String)),
+                BuiltInFunctions.ValidateIsMatch)
         ];
 
         const lookup: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>();

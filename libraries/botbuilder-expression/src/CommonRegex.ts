@@ -8,13 +8,29 @@
  */
 import { ANTLRErrorListener, ANTLRInputStream, CommonTokenStream, RecognitionException, Recognizer } from 'antlr4ts';
 import { ParseTree } from "antlr4ts/tree/ParseTree";
+import * as LRUCache from 'lru-cache';
 import { CommonRegexLexer, CommonRegexParser } from './generated';
 
 export class CommonRegex {
+    public static regexCache: LRUCache<string, RegExp> = new LRUCache<string, RegExp>(15);
     public static CreateRegex(pattern: string): RegExp {
-        if (pattern === undefined || pattern === '' || !this.IsCommonRegex(pattern)) {
-            throw new Error(`A regular expression parsing error occurred.`);
+
+        let result: RegExp;
+        if (pattern !== undefined && pattern !== '' && this.regexCache.has(pattern)) {
+            result = this.regexCache.get(pattern);
+        } else {
+            if (pattern === undefined || pattern === '' || !this.IsCommonRegex(pattern)) {
+                throw new Error(`A regular expression parsing error occurred.`);
+            }
+
+            result = this.GetRegExpFromString(pattern);
+            this.regexCache.set(pattern, result);
         }
+
+        return result;
+    }
+
+    private static GetRegExpFromString(pattern: string): RegExp {
         const flags: string[] = ['(?i)', '(?J)', '(?m)', '(?s)', '(?U)', '(?x)'];
         let flag: string = '';
         flags.forEach((e: string) => {
