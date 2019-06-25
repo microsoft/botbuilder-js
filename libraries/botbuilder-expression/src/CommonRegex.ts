@@ -31,7 +31,7 @@ export class CommonRegex {
     }
 
     private static GetRegExpFromString(pattern: string): RegExp {
-        const flags: string[] = ['(?i)', '(?J)', '(?m)', '(?s)', '(?U)', '(?x)'];
+        const flags: string[] = ['(?i)', '(?m)', '(?s)'];
         let flag: string = '';
         flags.forEach((e: string) => {
             if (pattern.includes(e)) {

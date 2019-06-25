@@ -38,109 +38,100 @@ export class CommonRegexParser extends Parser {
 	public static readonly Backslash = 8;
 	public static readonly HexChar = 9;
 	public static readonly Dot = 10;
-	public static readonly OneDataUnit = 11;
-	public static readonly DecimalDigit = 12;
-	public static readonly NotDecimalDigit = 13;
-	public static readonly HorizontalWhiteSpace = 14;
-	public static readonly NotHorizontalWhiteSpace = 15;
-	public static readonly NotNewLine = 16;
-	public static readonly CharWithProperty = 17;
-	public static readonly CharWithoutProperty = 18;
-	public static readonly NewLineSequence = 19;
-	public static readonly WhiteSpace = 20;
-	public static readonly NotWhiteSpace = 21;
-	public static readonly VerticalWhiteSpace = 22;
-	public static readonly NotVerticalWhiteSpace = 23;
-	public static readonly WordChar = 24;
-	public static readonly NotWordChar = 25;
-	public static readonly ExtendedUnicodeChar = 26;
-	public static readonly CharacterClassStart = 27;
-	public static readonly CharacterClassEnd = 28;
-	public static readonly Caret = 29;
-	public static readonly Hyphen = 30;
-	public static readonly QuestionMark = 31;
-	public static readonly Plus = 32;
-	public static readonly Star = 33;
-	public static readonly OpenBrace = 34;
-	public static readonly CloseBrace = 35;
-	public static readonly Comma = 36;
-	public static readonly StartOfSubject = 37;
-	public static readonly EndOfSubjectOrLine = 38;
-	public static readonly Pipe = 39;
-	public static readonly OpenParen = 40;
-	public static readonly CloseParen = 41;
-	public static readonly LessThan = 42;
-	public static readonly GreaterThan = 43;
-	public static readonly SingleQuote = 44;
-	public static readonly Underscore = 45;
-	public static readonly Colon = 46;
-	public static readonly Hash = 47;
-	public static readonly Equals = 48;
-	public static readonly Exclamation = 49;
-	public static readonly Ampersand = 50;
-	public static readonly ALC = 51;
-	public static readonly BLC = 52;
-	public static readonly CLC = 53;
-	public static readonly DLC = 54;
-	public static readonly ELC = 55;
-	public static readonly FLC = 56;
-	public static readonly GLC = 57;
-	public static readonly HLC = 58;
-	public static readonly ILC = 59;
-	public static readonly JLC = 60;
-	public static readonly KLC = 61;
-	public static readonly LLC = 62;
-	public static readonly MLC = 63;
-	public static readonly NLC = 64;
-	public static readonly OLC = 65;
-	public static readonly PLC = 66;
-	public static readonly QLC = 67;
-	public static readonly RLC = 68;
-	public static readonly SLC = 69;
-	public static readonly TLC = 70;
-	public static readonly ULC = 71;
-	public static readonly VLC = 72;
-	public static readonly WLC = 73;
-	public static readonly XLC = 74;
-	public static readonly YLC = 75;
-	public static readonly ZLC = 76;
-	public static readonly AUC = 77;
-	public static readonly BUC = 78;
-	public static readonly CUC = 79;
-	public static readonly DUC = 80;
-	public static readonly EUC = 81;
-	public static readonly FUC = 82;
-	public static readonly GUC = 83;
-	public static readonly HUC = 84;
-	public static readonly IUC = 85;
-	public static readonly JUC = 86;
-	public static readonly KUC = 87;
-	public static readonly LUC = 88;
-	public static readonly MUC = 89;
-	public static readonly NUC = 90;
-	public static readonly OUC = 91;
-	public static readonly PUC = 92;
-	public static readonly QUC = 93;
-	public static readonly RUC = 94;
-	public static readonly SUC = 95;
-	public static readonly TUC = 96;
-	public static readonly UUC = 97;
-	public static readonly VUC = 98;
-	public static readonly WUC = 99;
-	public static readonly XUC = 100;
-	public static readonly YUC = 101;
-	public static readonly ZUC = 102;
-	public static readonly D1 = 103;
-	public static readonly D2 = 104;
-	public static readonly D3 = 105;
-	public static readonly D4 = 106;
-	public static readonly D5 = 107;
-	public static readonly D6 = 108;
-	public static readonly D7 = 109;
-	public static readonly D8 = 110;
-	public static readonly D9 = 111;
-	public static readonly D0 = 112;
-	public static readonly OtherChar = 113;
+	public static readonly DecimalDigit = 11;
+	public static readonly NotDecimalDigit = 12;
+	public static readonly CharWithProperty = 13;
+	public static readonly CharWithoutProperty = 14;
+	public static readonly WhiteSpace = 15;
+	public static readonly NotWhiteSpace = 16;
+	public static readonly WordChar = 17;
+	public static readonly NotWordChar = 18;
+	public static readonly CharacterClassStart = 19;
+	public static readonly CharacterClassEnd = 20;
+	public static readonly Caret = 21;
+	public static readonly Hyphen = 22;
+	public static readonly QuestionMark = 23;
+	public static readonly Plus = 24;
+	public static readonly Star = 25;
+	public static readonly OpenBrace = 26;
+	public static readonly CloseBrace = 27;
+	public static readonly Comma = 28;
+	public static readonly EndOfSubject = 29;
+	public static readonly Pipe = 30;
+	public static readonly OpenParen = 31;
+	public static readonly CloseParen = 32;
+	public static readonly LessThan = 33;
+	public static readonly GreaterThan = 34;
+	public static readonly SingleQuote = 35;
+	public static readonly Underscore = 36;
+	public static readonly Colon = 37;
+	public static readonly Hash = 38;
+	public static readonly Equals = 39;
+	public static readonly Exclamation = 40;
+	public static readonly Ampersand = 41;
+	public static readonly ALC = 42;
+	public static readonly BLC = 43;
+	public static readonly CLC = 44;
+	public static readonly DLC = 45;
+	public static readonly ELC = 46;
+	public static readonly FLC = 47;
+	public static readonly GLC = 48;
+	public static readonly HLC = 49;
+	public static readonly ILC = 50;
+	public static readonly JLC = 51;
+	public static readonly KLC = 52;
+	public static readonly LLC = 53;
+	public static readonly MLC = 54;
+	public static readonly NLC = 55;
+	public static readonly OLC = 56;
+	public static readonly PLC = 57;
+	public static readonly QLC = 58;
+	public static readonly RLC = 59;
+	public static readonly SLC = 60;
+	public static readonly TLC = 61;
+	public static readonly ULC = 62;
+	public static readonly VLC = 63;
+	public static readonly WLC = 64;
+	public static readonly XLC = 65;
+	public static readonly YLC = 66;
+	public static readonly ZLC = 67;
+	public static readonly AUC = 68;
+	public static readonly BUC = 69;
+	public static readonly CUC = 70;
+	public static readonly DUC = 71;
+	public static readonly EUC = 72;
+	public static readonly FUC = 73;
+	public static readonly GUC = 74;
+	public static readonly HUC = 75;
+	public static readonly IUC = 76;
+	public static readonly JUC = 77;
+	public static readonly KUC = 78;
+	public static readonly LUC = 79;
+	public static readonly MUC = 80;
+	public static readonly NUC = 81;
+	public static readonly OUC = 82;
+	public static readonly PUC = 83;
+	public static readonly QUC = 84;
+	public static readonly RUC = 85;
+	public static readonly SUC = 86;
+	public static readonly TUC = 87;
+	public static readonly UUC = 88;
+	public static readonly VUC = 89;
+	public static readonly WUC = 90;
+	public static readonly XUC = 91;
+	public static readonly YUC = 92;
+	public static readonly ZUC = 93;
+	public static readonly D1 = 94;
+	public static readonly D2 = 95;
+	public static readonly D3 = 96;
+	public static readonly D4 = 97;
+	public static readonly D5 = 98;
+	public static readonly D6 = 99;
+	public static readonly D7 = 100;
+	public static readonly D8 = 101;
+	public static readonly D9 = 102;
+	public static readonly D0 = 103;
+	public static readonly OtherChar = 104;
 	public static readonly RULE_parse = 0;
 	public static readonly RULE_alternation = 1;
 	public static readonly RULE_expr = 2;
@@ -179,35 +170,32 @@ export class CommonRegexParser extends Parser {
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
 		undefined, "'\\a'", "'\\c'", "'\\e'", "'\\f'", "'\\n'", "'\\r'", "'\\t'", 
-		"'\\'", undefined, "'.'", "'\\C'", "'\\d'", "'\\D'", "'\\h'", "'\\H'", 
-		"'\\N'", undefined, undefined, "'\\R'", "'\\s'", "'\\S'", "'\\v'", "'\\V'", 
-		"'\\w'", "'\\W'", "'\\X'", "'['", "']'", "'^'", "'-'", "'?'", "'+'", "'*'", 
-		"'{'", "'}'", "','", "'\\A'", "'$'", "'|'", "'('", "')'", "'<'", "'>'", 
-		"'''", "'_'", "':'", "'#'", "'='", "'!'", "'&'", "'a'", "'b'", "'c'", 
-		"'d'", "'e'", "'f'", "'g'", "'h'", "'i'", "'j'", "'k'", "'l'", "'m'", 
-		"'n'", "'o'", "'p'", "'q'", "'r'", "'s'", "'t'", "'u'", "'v'", "'w'", 
-		"'x'", "'y'", "'z'", "'A'", "'B'", "'C'", "'D'", "'E'", "'F'", "'G'", 
-		"'H'", "'I'", "'J'", "'K'", "'L'", "'M'", "'N'", "'O'", "'P'", "'Q'", 
-		"'R'", "'S'", "'T'", "'U'", "'V'", "'W'", "'X'", "'Y'", "'Z'", "'1'", 
-		"'2'", "'3'", "'4'", "'5'", "'6'", "'7'", "'8'", "'9'", "'0'",
+		"'\\'", undefined, "'.'", "'\\d'", "'\\D'", undefined, undefined, "'\\s'", 
+		"'\\S'", "'\\w'", "'\\W'", "'['", "']'", "'^'", "'-'", "'?'", "'+'", "'*'", 
+		"'{'", "'}'", "','", "'$'", "'|'", "'('", "')'", "'<'", "'>'", "'''", 
+		"'_'", "':'", "'#'", "'='", "'!'", "'&'", "'a'", "'b'", "'c'", "'d'", 
+		"'e'", "'f'", "'g'", "'h'", "'i'", "'j'", "'k'", "'l'", "'m'", "'n'", 
+		"'o'", "'p'", "'q'", "'r'", "'s'", "'t'", "'u'", "'v'", "'w'", "'x'", 
+		"'y'", "'z'", "'A'", "'B'", "'C'", "'D'", "'E'", "'F'", "'G'", "'H'", 
+		"'I'", "'J'", "'K'", "'L'", "'M'", "'N'", "'O'", "'P'", "'Q'", "'R'", 
+		"'S'", "'T'", "'U'", "'V'", "'W'", "'X'", "'Y'", "'Z'", "'1'", "'2'", 
+		"'3'", "'4'", "'5'", "'6'", "'7'", "'8'", "'9'", "'0'",
 	];
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
 		undefined, "BellChar", "ControlChar", "EscapeChar", "FormFeed", "NewLine", 
-		"CarriageReturn", "Tab", "Backslash", "HexChar", "Dot", "OneDataUnit", 
-		"DecimalDigit", "NotDecimalDigit", "HorizontalWhiteSpace", "NotHorizontalWhiteSpace", 
-		"NotNewLine", "CharWithProperty", "CharWithoutProperty", "NewLineSequence", 
-		"WhiteSpace", "NotWhiteSpace", "VerticalWhiteSpace", "NotVerticalWhiteSpace", 
-		"WordChar", "NotWordChar", "ExtendedUnicodeChar", "CharacterClassStart", 
-		"CharacterClassEnd", "Caret", "Hyphen", "QuestionMark", "Plus", "Star", 
-		"OpenBrace", "CloseBrace", "Comma", "StartOfSubject", "EndOfSubjectOrLine", 
-		"Pipe", "OpenParen", "CloseParen", "LessThan", "GreaterThan", "SingleQuote", 
-		"Underscore", "Colon", "Hash", "Equals", "Exclamation", "Ampersand", "ALC", 
-		"BLC", "CLC", "DLC", "ELC", "FLC", "GLC", "HLC", "ILC", "JLC", "KLC", 
-		"LLC", "MLC", "NLC", "OLC", "PLC", "QLC", "RLC", "SLC", "TLC", "ULC", 
-		"VLC", "WLC", "XLC", "YLC", "ZLC", "AUC", "BUC", "CUC", "DUC", "EUC", 
-		"FUC", "GUC", "HUC", "IUC", "JUC", "KUC", "LUC", "MUC", "NUC", "OUC", 
-		"PUC", "QUC", "RUC", "SUC", "TUC", "UUC", "VUC", "WUC", "XUC", "YUC", 
-		"ZUC", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D0", "OtherChar",
+		"CarriageReturn", "Tab", "Backslash", "HexChar", "Dot", "DecimalDigit", 
+		"NotDecimalDigit", "CharWithProperty", "CharWithoutProperty", "WhiteSpace", 
+		"NotWhiteSpace", "WordChar", "NotWordChar", "CharacterClassStart", "CharacterClassEnd", 
+		"Caret", "Hyphen", "QuestionMark", "Plus", "Star", "OpenBrace", "CloseBrace", 
+		"Comma", "EndOfSubject", "Pipe", "OpenParen", "CloseParen", "LessThan", 
+		"GreaterThan", "SingleQuote", "Underscore", "Colon", "Hash", "Equals", 
+		"Exclamation", "Ampersand", "ALC", "BLC", "CLC", "DLC", "ELC", "FLC", 
+		"GLC", "HLC", "ILC", "JLC", "KLC", "LLC", "MLC", "NLC", "OLC", "PLC", 
+		"QLC", "RLC", "SLC", "TLC", "ULC", "VLC", "WLC", "XLC", "YLC", "ZLC", 
+		"AUC", "BUC", "CUC", "DUC", "EUC", "FUC", "GUC", "HUC", "IUC", "JUC", 
+		"KUC", "LUC", "MUC", "NUC", "OUC", "PUC", "QUC", "RUC", "SUC", "TUC", 
+		"UUC", "VUC", "WUC", "XUC", "YUC", "ZUC", "D1", "D2", "D3", "D4", "D5", 
+		"D6", "D7", "D8", "D9", "D0", "OtherChar",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(CommonRegexParser._LITERAL_NAMES, CommonRegexParser._SYMBOLIC_NAMES, []);
 
@@ -311,7 +299,7 @@ export class CommonRegexParser extends Parser {
 			this.state = 68;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << CommonRegexParser.BellChar) | (1 << CommonRegexParser.ControlChar) | (1 << CommonRegexParser.EscapeChar) | (1 << CommonRegexParser.FormFeed) | (1 << CommonRegexParser.NewLine) | (1 << CommonRegexParser.CarriageReturn) | (1 << CommonRegexParser.Tab) | (1 << CommonRegexParser.Backslash) | (1 << CommonRegexParser.HexChar) | (1 << CommonRegexParser.Dot) | (1 << CommonRegexParser.OneDataUnit) | (1 << CommonRegexParser.DecimalDigit) | (1 << CommonRegexParser.NotDecimalDigit) | (1 << CommonRegexParser.HorizontalWhiteSpace) | (1 << CommonRegexParser.NotHorizontalWhiteSpace) | (1 << CommonRegexParser.NotNewLine) | (1 << CommonRegexParser.CharWithProperty) | (1 << CommonRegexParser.CharWithoutProperty) | (1 << CommonRegexParser.NewLineSequence) | (1 << CommonRegexParser.WhiteSpace) | (1 << CommonRegexParser.NotWhiteSpace) | (1 << CommonRegexParser.VerticalWhiteSpace) | (1 << CommonRegexParser.NotVerticalWhiteSpace) | (1 << CommonRegexParser.WordChar) | (1 << CommonRegexParser.NotWordChar) | (1 << CommonRegexParser.ExtendedUnicodeChar) | (1 << CommonRegexParser.CharacterClassStart) | (1 << CommonRegexParser.CharacterClassEnd) | (1 << CommonRegexParser.Caret) | (1 << CommonRegexParser.Hyphen))) !== 0) || ((((_la - 34)) & ~0x1F) === 0 && ((1 << (_la - 34)) & ((1 << (CommonRegexParser.OpenBrace - 34)) | (1 << (CommonRegexParser.CloseBrace - 34)) | (1 << (CommonRegexParser.Comma - 34)) | (1 << (CommonRegexParser.StartOfSubject - 34)) | (1 << (CommonRegexParser.EndOfSubjectOrLine - 34)) | (1 << (CommonRegexParser.OpenParen - 34)) | (1 << (CommonRegexParser.LessThan - 34)) | (1 << (CommonRegexParser.GreaterThan - 34)) | (1 << (CommonRegexParser.SingleQuote - 34)) | (1 << (CommonRegexParser.Underscore - 34)) | (1 << (CommonRegexParser.Colon - 34)) | (1 << (CommonRegexParser.Hash - 34)) | (1 << (CommonRegexParser.Equals - 34)) | (1 << (CommonRegexParser.Exclamation - 34)) | (1 << (CommonRegexParser.Ampersand - 34)) | (1 << (CommonRegexParser.ALC - 34)) | (1 << (CommonRegexParser.BLC - 34)) | (1 << (CommonRegexParser.CLC - 34)) | (1 << (CommonRegexParser.DLC - 34)) | (1 << (CommonRegexParser.ELC - 34)) | (1 << (CommonRegexParser.FLC - 34)) | (1 << (CommonRegexParser.GLC - 34)) | (1 << (CommonRegexParser.HLC - 34)) | (1 << (CommonRegexParser.ILC - 34)) | (1 << (CommonRegexParser.JLC - 34)) | (1 << (CommonRegexParser.KLC - 34)) | (1 << (CommonRegexParser.LLC - 34)) | (1 << (CommonRegexParser.MLC - 34)) | (1 << (CommonRegexParser.NLC - 34)) | (1 << (CommonRegexParser.OLC - 34)))) !== 0) || ((((_la - 66)) & ~0x1F) === 0 && ((1 << (_la - 66)) & ((1 << (CommonRegexParser.PLC - 66)) | (1 << (CommonRegexParser.QLC - 66)) | (1 << (CommonRegexParser.RLC - 66)) | (1 << (CommonRegexParser.SLC - 66)) | (1 << (CommonRegexParser.TLC - 66)) | (1 << (CommonRegexParser.ULC - 66)) | (1 << (CommonRegexParser.VLC - 66)) | (1 << (CommonRegexParser.WLC - 66)) | (1 << (CommonRegexParser.XLC - 66)) | (1 << (CommonRegexParser.YLC - 66)) | (1 << (CommonRegexParser.ZLC - 66)) | (1 << (CommonRegexParser.AUC - 66)) | (1 << (CommonRegexParser.BUC - 66)) | (1 << (CommonRegexParser.CUC - 66)) | (1 << (CommonRegexParser.DUC - 66)) | (1 << (CommonRegexParser.EUC - 66)) | (1 << (CommonRegexParser.FUC - 66)) | (1 << (CommonRegexParser.GUC - 66)) | (1 << (CommonRegexParser.HUC - 66)) | (1 << (CommonRegexParser.IUC - 66)) | (1 << (CommonRegexParser.JUC - 66)) | (1 << (CommonRegexParser.KUC - 66)) | (1 << (CommonRegexParser.LUC - 66)) | (1 << (CommonRegexParser.MUC - 66)) | (1 << (CommonRegexParser.NUC - 66)) | (1 << (CommonRegexParser.OUC - 66)) | (1 << (CommonRegexParser.PUC - 66)) | (1 << (CommonRegexParser.QUC - 66)) | (1 << (CommonRegexParser.RUC - 66)) | (1 << (CommonRegexParser.SUC - 66)) | (1 << (CommonRegexParser.TUC - 66)) | (1 << (CommonRegexParser.UUC - 66)))) !== 0) || ((((_la - 98)) & ~0x1F) === 0 && ((1 << (_la - 98)) & ((1 << (CommonRegexParser.VUC - 98)) | (1 << (CommonRegexParser.WUC - 98)) | (1 << (CommonRegexParser.XUC - 98)) | (1 << (CommonRegexParser.YUC - 98)) | (1 << (CommonRegexParser.ZUC - 98)) | (1 << (CommonRegexParser.D1 - 98)) | (1 << (CommonRegexParser.D2 - 98)) | (1 << (CommonRegexParser.D3 - 98)) | (1 << (CommonRegexParser.D4 - 98)) | (1 << (CommonRegexParser.D5 - 98)) | (1 << (CommonRegexParser.D6 - 98)) | (1 << (CommonRegexParser.D7 - 98)) | (1 << (CommonRegexParser.D8 - 98)) | (1 << (CommonRegexParser.D9 - 98)) | (1 << (CommonRegexParser.D0 - 98)) | (1 << (CommonRegexParser.OtherChar - 98)))) !== 0)) {
+			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << CommonRegexParser.BellChar) | (1 << CommonRegexParser.ControlChar) | (1 << CommonRegexParser.EscapeChar) | (1 << CommonRegexParser.FormFeed) | (1 << CommonRegexParser.NewLine) | (1 << CommonRegexParser.CarriageReturn) | (1 << CommonRegexParser.Tab) | (1 << CommonRegexParser.Backslash) | (1 << CommonRegexParser.HexChar) | (1 << CommonRegexParser.Dot) | (1 << CommonRegexParser.DecimalDigit) | (1 << CommonRegexParser.NotDecimalDigit) | (1 << CommonRegexParser.CharWithProperty) | (1 << CommonRegexParser.CharWithoutProperty) | (1 << CommonRegexParser.WhiteSpace) | (1 << CommonRegexParser.NotWhiteSpace) | (1 << CommonRegexParser.WordChar) | (1 << CommonRegexParser.NotWordChar) | (1 << CommonRegexParser.CharacterClassStart) | (1 << CommonRegexParser.CharacterClassEnd) | (1 << CommonRegexParser.Caret) | (1 << CommonRegexParser.Hyphen) | (1 << CommonRegexParser.OpenBrace) | (1 << CommonRegexParser.CloseBrace) | (1 << CommonRegexParser.Comma) | (1 << CommonRegexParser.EndOfSubject) | (1 << CommonRegexParser.OpenParen))) !== 0) || ((((_la - 33)) & ~0x1F) === 0 && ((1 << (_la - 33)) & ((1 << (CommonRegexParser.LessThan - 33)) | (1 << (CommonRegexParser.GreaterThan - 33)) | (1 << (CommonRegexParser.SingleQuote - 33)) | (1 << (CommonRegexParser.Underscore - 33)) | (1 << (CommonRegexParser.Colon - 33)) | (1 << (CommonRegexParser.Hash - 33)) | (1 << (CommonRegexParser.Equals - 33)) | (1 << (CommonRegexParser.Exclamation - 33)) | (1 << (CommonRegexParser.Ampersand - 33)) | (1 << (CommonRegexParser.ALC - 33)) | (1 << (CommonRegexParser.BLC - 33)) | (1 << (CommonRegexParser.CLC - 33)) | (1 << (CommonRegexParser.DLC - 33)) | (1 << (CommonRegexParser.ELC - 33)) | (1 << (CommonRegexParser.FLC - 33)) | (1 << (CommonRegexParser.GLC - 33)) | (1 << (CommonRegexParser.HLC - 33)) | (1 << (CommonRegexParser.ILC - 33)) | (1 << (CommonRegexParser.JLC - 33)) | (1 << (CommonRegexParser.KLC - 33)) | (1 << (CommonRegexParser.LLC - 33)) | (1 << (CommonRegexParser.MLC - 33)) | (1 << (CommonRegexParser.NLC - 33)) | (1 << (CommonRegexParser.OLC - 33)) | (1 << (CommonRegexParser.PLC - 33)) | (1 << (CommonRegexParser.QLC - 33)) | (1 << (CommonRegexParser.RLC - 33)) | (1 << (CommonRegexParser.SLC - 33)) | (1 << (CommonRegexParser.TLC - 33)) | (1 << (CommonRegexParser.ULC - 33)) | (1 << (CommonRegexParser.VLC - 33)) | (1 << (CommonRegexParser.WLC - 33)))) !== 0) || ((((_la - 65)) & ~0x1F) === 0 && ((1 << (_la - 65)) & ((1 << (CommonRegexParser.XLC - 65)) | (1 << (CommonRegexParser.YLC - 65)) | (1 << (CommonRegexParser.ZLC - 65)) | (1 << (CommonRegexParser.AUC - 65)) | (1 << (CommonRegexParser.BUC - 65)) | (1 << (CommonRegexParser.CUC - 65)) | (1 << (CommonRegexParser.DUC - 65)) | (1 << (CommonRegexParser.EUC - 65)) | (1 << (CommonRegexParser.FUC - 65)) | (1 << (CommonRegexParser.GUC - 65)) | (1 << (CommonRegexParser.HUC - 65)) | (1 << (CommonRegexParser.IUC - 65)) | (1 << (CommonRegexParser.JUC - 65)) | (1 << (CommonRegexParser.KUC - 65)) | (1 << (CommonRegexParser.LUC - 65)) | (1 << (CommonRegexParser.MUC - 65)) | (1 << (CommonRegexParser.NUC - 65)) | (1 << (CommonRegexParser.OUC - 65)) | (1 << (CommonRegexParser.PUC - 65)) | (1 << (CommonRegexParser.QUC - 65)) | (1 << (CommonRegexParser.RUC - 65)) | (1 << (CommonRegexParser.SUC - 65)) | (1 << (CommonRegexParser.TUC - 65)) | (1 << (CommonRegexParser.UUC - 65)) | (1 << (CommonRegexParser.VUC - 65)) | (1 << (CommonRegexParser.WUC - 65)) | (1 << (CommonRegexParser.XUC - 65)) | (1 << (CommonRegexParser.YUC - 65)) | (1 << (CommonRegexParser.ZUC - 65)) | (1 << (CommonRegexParser.D1 - 65)) | (1 << (CommonRegexParser.D2 - 65)) | (1 << (CommonRegexParser.D3 - 65)))) !== 0) || ((((_la - 97)) & ~0x1F) === 0 && ((1 << (_la - 97)) & ((1 << (CommonRegexParser.D4 - 97)) | (1 << (CommonRegexParser.D5 - 97)) | (1 << (CommonRegexParser.D6 - 97)) | (1 << (CommonRegexParser.D7 - 97)) | (1 << (CommonRegexParser.D8 - 97)) | (1 << (CommonRegexParser.D9 - 97)) | (1 << (CommonRegexParser.D0 - 97)) | (1 << (CommonRegexParser.OtherChar - 97)))) !== 0)) {
 				{
 				{
 				this.state = 65;
@@ -507,22 +495,14 @@ export class CommonRegexParser extends Parser {
 			case CommonRegexParser.Backslash:
 			case CommonRegexParser.HexChar:
 			case CommonRegexParser.Dot:
-			case CommonRegexParser.OneDataUnit:
 			case CommonRegexParser.DecimalDigit:
 			case CommonRegexParser.NotDecimalDigit:
-			case CommonRegexParser.HorizontalWhiteSpace:
-			case CommonRegexParser.NotHorizontalWhiteSpace:
-			case CommonRegexParser.NotNewLine:
 			case CommonRegexParser.CharWithProperty:
 			case CommonRegexParser.CharWithoutProperty:
-			case CommonRegexParser.NewLineSequence:
 			case CommonRegexParser.WhiteSpace:
 			case CommonRegexParser.NotWhiteSpace:
-			case CommonRegexParser.VerticalWhiteSpace:
-			case CommonRegexParser.NotVerticalWhiteSpace:
 			case CommonRegexParser.WordChar:
 			case CommonRegexParser.NotWordChar:
-			case CommonRegexParser.ExtendedUnicodeChar:
 			case CommonRegexParser.CharacterClassStart:
 			case CommonRegexParser.CharacterClassEnd:
 			case CommonRegexParser.Caret:
@@ -530,8 +510,7 @@ export class CommonRegexParser extends Parser {
 			case CommonRegexParser.OpenBrace:
 			case CommonRegexParser.CloseBrace:
 			case CommonRegexParser.Comma:
-			case CommonRegexParser.StartOfSubject:
-			case CommonRegexParser.EndOfSubjectOrLine:
+			case CommonRegexParser.EndOfSubject:
 			case CommonRegexParser.Pipe:
 			case CommonRegexParser.OpenParen:
 			case CommonRegexParser.CloseParen:
@@ -659,7 +638,7 @@ export class CommonRegexParser extends Parser {
 					this.state = 111;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
-				} while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << CommonRegexParser.BellChar) | (1 << CommonRegexParser.ControlChar) | (1 << CommonRegexParser.EscapeChar) | (1 << CommonRegexParser.FormFeed) | (1 << CommonRegexParser.NewLine) | (1 << CommonRegexParser.CarriageReturn) | (1 << CommonRegexParser.Tab) | (1 << CommonRegexParser.Backslash) | (1 << CommonRegexParser.HexChar) | (1 << CommonRegexParser.Dot) | (1 << CommonRegexParser.DecimalDigit) | (1 << CommonRegexParser.NotDecimalDigit) | (1 << CommonRegexParser.HorizontalWhiteSpace) | (1 << CommonRegexParser.NotHorizontalWhiteSpace) | (1 << CommonRegexParser.NotNewLine) | (1 << CommonRegexParser.CharWithProperty) | (1 << CommonRegexParser.CharWithoutProperty) | (1 << CommonRegexParser.NewLineSequence) | (1 << CommonRegexParser.WhiteSpace) | (1 << CommonRegexParser.NotWhiteSpace) | (1 << CommonRegexParser.VerticalWhiteSpace) | (1 << CommonRegexParser.NotVerticalWhiteSpace) | (1 << CommonRegexParser.WordChar) | (1 << CommonRegexParser.NotWordChar) | (1 << CommonRegexParser.CharacterClassStart) | (1 << CommonRegexParser.Caret) | (1 << CommonRegexParser.Hyphen) | (1 << CommonRegexParser.QuestionMark))) !== 0) || ((((_la - 32)) & ~0x1F) === 0 && ((1 << (_la - 32)) & ((1 << (CommonRegexParser.Plus - 32)) | (1 << (CommonRegexParser.Star - 32)) | (1 << (CommonRegexParser.OpenBrace - 32)) | (1 << (CommonRegexParser.CloseBrace - 32)) | (1 << (CommonRegexParser.Comma - 32)) | (1 << (CommonRegexParser.EndOfSubjectOrLine - 32)) | (1 << (CommonRegexParser.Pipe - 32)) | (1 << (CommonRegexParser.OpenParen - 32)) | (1 << (CommonRegexParser.CloseParen - 32)) | (1 << (CommonRegexParser.LessThan - 32)) | (1 << (CommonRegexParser.GreaterThan - 32)) | (1 << (CommonRegexParser.SingleQuote - 32)) | (1 << (CommonRegexParser.Underscore - 32)) | (1 << (CommonRegexParser.Colon - 32)) | (1 << (CommonRegexParser.Hash - 32)) | (1 << (CommonRegexParser.Equals - 32)) | (1 << (CommonRegexParser.Exclamation - 32)) | (1 << (CommonRegexParser.Ampersand - 32)) | (1 << (CommonRegexParser.ALC - 32)) | (1 << (CommonRegexParser.BLC - 32)) | (1 << (CommonRegexParser.CLC - 32)) | (1 << (CommonRegexParser.DLC - 32)) | (1 << (CommonRegexParser.ELC - 32)) | (1 << (CommonRegexParser.FLC - 32)) | (1 << (CommonRegexParser.GLC - 32)) | (1 << (CommonRegexParser.HLC - 32)) | (1 << (CommonRegexParser.ILC - 32)) | (1 << (CommonRegexParser.JLC - 32)) | (1 << (CommonRegexParser.KLC - 32)) | (1 << (CommonRegexParser.LLC - 32)) | (1 << (CommonRegexParser.MLC - 32)))) !== 0) || ((((_la - 64)) & ~0x1F) === 0 && ((1 << (_la - 64)) & ((1 << (CommonRegexParser.NLC - 64)) | (1 << (CommonRegexParser.OLC - 64)) | (1 << (CommonRegexParser.PLC - 64)) | (1 << (CommonRegexParser.QLC - 64)) | (1 << (CommonRegexParser.RLC - 64)) | (1 << (CommonRegexParser.SLC - 64)) | (1 << (CommonRegexParser.TLC - 64)) | (1 << (CommonRegexParser.ULC - 64)) | (1 << (CommonRegexParser.VLC - 64)) | (1 << (CommonRegexParser.WLC - 64)) | (1 << (CommonRegexParser.XLC - 64)) | (1 << (CommonRegexParser.YLC - 64)) | (1 << (CommonRegexParser.ZLC - 64)) | (1 << (CommonRegexParser.AUC - 64)) | (1 << (CommonRegexParser.BUC - 64)) | (1 << (CommonRegexParser.CUC - 64)) | (1 << (CommonRegexParser.DUC - 64)) | (1 << (CommonRegexParser.EUC - 64)) | (1 << (CommonRegexParser.FUC - 64)) | (1 << (CommonRegexParser.GUC - 64)) | (1 << (CommonRegexParser.HUC - 64)) | (1 << (CommonRegexParser.IUC - 64)) | (1 << (CommonRegexParser.JUC - 64)) | (1 << (CommonRegexParser.KUC - 64)) | (1 << (CommonRegexParser.LUC - 64)) | (1 << (CommonRegexParser.MUC - 64)) | (1 << (CommonRegexParser.NUC - 64)) | (1 << (CommonRegexParser.OUC - 64)) | (1 << (CommonRegexParser.PUC - 64)) | (1 << (CommonRegexParser.QUC - 64)) | (1 << (CommonRegexParser.RUC - 64)) | (1 << (CommonRegexParser.SUC - 64)))) !== 0) || ((((_la - 96)) & ~0x1F) === 0 && ((1 << (_la - 96)) & ((1 << (CommonRegexParser.TUC - 96)) | (1 << (CommonRegexParser.UUC - 96)) | (1 << (CommonRegexParser.VUC - 96)) | (1 << (CommonRegexParser.WUC - 96)) | (1 << (CommonRegexParser.XUC - 96)) | (1 << (CommonRegexParser.YUC - 96)) | (1 << (CommonRegexParser.ZUC - 96)) | (1 << (CommonRegexParser.D1 - 96)) | (1 << (CommonRegexParser.D2 - 96)) | (1 << (CommonRegexParser.D3 - 96)) | (1 << (CommonRegexParser.D4 - 96)) | (1 << (CommonRegexParser.D5 - 96)) | (1 << (CommonRegexParser.D6 - 96)) | (1 << (CommonRegexParser.D7 - 96)) | (1 << (CommonRegexParser.D8 - 96)) | (1 << (CommonRegexParser.D9 - 96)) | (1 << (CommonRegexParser.D0 - 96)) | (1 << (CommonRegexParser.OtherChar - 96)))) !== 0));
+				} while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << CommonRegexParser.BellChar) | (1 << CommonRegexParser.ControlChar) | (1 << CommonRegexParser.EscapeChar) | (1 << CommonRegexParser.FormFeed) | (1 << CommonRegexParser.NewLine) | (1 << CommonRegexParser.CarriageReturn) | (1 << CommonRegexParser.Tab) | (1 << CommonRegexParser.Backslash) | (1 << CommonRegexParser.HexChar) | (1 << CommonRegexParser.Dot) | (1 << CommonRegexParser.DecimalDigit) | (1 << CommonRegexParser.NotDecimalDigit) | (1 << CommonRegexParser.CharWithProperty) | (1 << CommonRegexParser.CharWithoutProperty) | (1 << CommonRegexParser.WhiteSpace) | (1 << CommonRegexParser.NotWhiteSpace) | (1 << CommonRegexParser.WordChar) | (1 << CommonRegexParser.NotWordChar) | (1 << CommonRegexParser.CharacterClassStart) | (1 << CommonRegexParser.Caret) | (1 << CommonRegexParser.Hyphen) | (1 << CommonRegexParser.QuestionMark) | (1 << CommonRegexParser.Plus) | (1 << CommonRegexParser.Star) | (1 << CommonRegexParser.OpenBrace) | (1 << CommonRegexParser.CloseBrace) | (1 << CommonRegexParser.Comma) | (1 << CommonRegexParser.EndOfSubject) | (1 << CommonRegexParser.Pipe) | (1 << CommonRegexParser.OpenParen))) !== 0) || ((((_la - 32)) & ~0x1F) === 0 && ((1 << (_la - 32)) & ((1 << (CommonRegexParser.CloseParen - 32)) | (1 << (CommonRegexParser.LessThan - 32)) | (1 << (CommonRegexParser.GreaterThan - 32)) | (1 << (CommonRegexParser.SingleQuote - 32)) | (1 << (CommonRegexParser.Underscore - 32)) | (1 << (CommonRegexParser.Colon - 32)) | (1 << (CommonRegexParser.Hash - 32)) | (1 << (CommonRegexParser.Equals - 32)) | (1 << (CommonRegexParser.Exclamation - 32)) | (1 << (CommonRegexParser.Ampersand - 32)) | (1 << (CommonRegexParser.ALC - 32)) | (1 << (CommonRegexParser.BLC - 32)) | (1 << (CommonRegexParser.CLC - 32)) | (1 << (CommonRegexParser.DLC - 32)) | (1 << (CommonRegexParser.ELC - 32)) | (1 << (CommonRegexParser.FLC - 32)) | (1 << (CommonRegexParser.GLC - 32)) | (1 << (CommonRegexParser.HLC - 32)) | (1 << (CommonRegexParser.ILC - 32)) | (1 << (CommonRegexParser.JLC - 32)) | (1 << (CommonRegexParser.KLC - 32)) | (1 << (CommonRegexParser.LLC - 32)) | (1 << (CommonRegexParser.MLC - 32)) | (1 << (CommonRegexParser.NLC - 32)) | (1 << (CommonRegexParser.OLC - 32)) | (1 << (CommonRegexParser.PLC - 32)) | (1 << (CommonRegexParser.QLC - 32)) | (1 << (CommonRegexParser.RLC - 32)) | (1 << (CommonRegexParser.SLC - 32)) | (1 << (CommonRegexParser.TLC - 32)) | (1 << (CommonRegexParser.ULC - 32)) | (1 << (CommonRegexParser.VLC - 32)))) !== 0) || ((((_la - 64)) & ~0x1F) === 0 && ((1 << (_la - 64)) & ((1 << (CommonRegexParser.WLC - 64)) | (1 << (CommonRegexParser.XLC - 64)) | (1 << (CommonRegexParser.YLC - 64)) | (1 << (CommonRegexParser.ZLC - 64)) | (1 << (CommonRegexParser.AUC - 64)) | (1 << (CommonRegexParser.BUC - 64)) | (1 << (CommonRegexParser.CUC - 64)) | (1 << (CommonRegexParser.DUC - 64)) | (1 << (CommonRegexParser.EUC - 64)) | (1 << (CommonRegexParser.FUC - 64)) | (1 << (CommonRegexParser.GUC - 64)) | (1 << (CommonRegexParser.HUC - 64)) | (1 << (CommonRegexParser.IUC - 64)) | (1 << (CommonRegexParser.JUC - 64)) | (1 << (CommonRegexParser.KUC - 64)) | (1 << (CommonRegexParser.LUC - 64)) | (1 << (CommonRegexParser.MUC - 64)) | (1 << (CommonRegexParser.NUC - 64)) | (1 << (CommonRegexParser.OUC - 64)) | (1 << (CommonRegexParser.PUC - 64)) | (1 << (CommonRegexParser.QUC - 64)) | (1 << (CommonRegexParser.RUC - 64)) | (1 << (CommonRegexParser.SUC - 64)) | (1 << (CommonRegexParser.TUC - 64)) | (1 << (CommonRegexParser.UUC - 64)) | (1 << (CommonRegexParser.VUC - 64)) | (1 << (CommonRegexParser.WUC - 64)) | (1 << (CommonRegexParser.XUC - 64)) | (1 << (CommonRegexParser.YUC - 64)) | (1 << (CommonRegexParser.ZUC - 64)) | (1 << (CommonRegexParser.D1 - 64)) | (1 << (CommonRegexParser.D2 - 64)))) !== 0) || ((((_la - 96)) & ~0x1F) === 0 && ((1 << (_la - 96)) & ((1 << (CommonRegexParser.D3 - 96)) | (1 << (CommonRegexParser.D4 - 96)) | (1 << (CommonRegexParser.D5 - 96)) | (1 << (CommonRegexParser.D6 - 96)) | (1 << (CommonRegexParser.D7 - 96)) | (1 << (CommonRegexParser.D8 - 96)) | (1 << (CommonRegexParser.D9 - 96)) | (1 << (CommonRegexParser.D0 - 96)) | (1 << (CommonRegexParser.OtherChar - 96)))) !== 0));
 				this.state = 113;
 				this.match(CommonRegexParser.CharacterClassEnd);
 				}
@@ -683,7 +662,7 @@ export class CommonRegexParser extends Parser {
 					this.state = 119;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
-				} while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << CommonRegexParser.BellChar) | (1 << CommonRegexParser.ControlChar) | (1 << CommonRegexParser.EscapeChar) | (1 << CommonRegexParser.FormFeed) | (1 << CommonRegexParser.NewLine) | (1 << CommonRegexParser.CarriageReturn) | (1 << CommonRegexParser.Tab) | (1 << CommonRegexParser.Backslash) | (1 << CommonRegexParser.HexChar) | (1 << CommonRegexParser.Dot) | (1 << CommonRegexParser.DecimalDigit) | (1 << CommonRegexParser.NotDecimalDigit) | (1 << CommonRegexParser.HorizontalWhiteSpace) | (1 << CommonRegexParser.NotHorizontalWhiteSpace) | (1 << CommonRegexParser.NotNewLine) | (1 << CommonRegexParser.CharWithProperty) | (1 << CommonRegexParser.CharWithoutProperty) | (1 << CommonRegexParser.NewLineSequence) | (1 << CommonRegexParser.WhiteSpace) | (1 << CommonRegexParser.NotWhiteSpace) | (1 << CommonRegexParser.VerticalWhiteSpace) | (1 << CommonRegexParser.NotVerticalWhiteSpace) | (1 << CommonRegexParser.WordChar) | (1 << CommonRegexParser.NotWordChar) | (1 << CommonRegexParser.CharacterClassStart) | (1 << CommonRegexParser.Caret) | (1 << CommonRegexParser.Hyphen) | (1 << CommonRegexParser.QuestionMark))) !== 0) || ((((_la - 32)) & ~0x1F) === 0 && ((1 << (_la - 32)) & ((1 << (CommonRegexParser.Plus - 32)) | (1 << (CommonRegexParser.Star - 32)) | (1 << (CommonRegexParser.OpenBrace - 32)) | (1 << (CommonRegexParser.CloseBrace - 32)) | (1 << (CommonRegexParser.Comma - 32)) | (1 << (CommonRegexParser.EndOfSubjectOrLine - 32)) | (1 << (CommonRegexParser.Pipe - 32)) | (1 << (CommonRegexParser.OpenParen - 32)) | (1 << (CommonRegexParser.CloseParen - 32)) | (1 << (CommonRegexParser.LessThan - 32)) | (1 << (CommonRegexParser.GreaterThan - 32)) | (1 << (CommonRegexParser.SingleQuote - 32)) | (1 << (CommonRegexParser.Underscore - 32)) | (1 << (CommonRegexParser.Colon - 32)) | (1 << (CommonRegexParser.Hash - 32)) | (1 << (CommonRegexParser.Equals - 32)) | (1 << (CommonRegexParser.Exclamation - 32)) | (1 << (CommonRegexParser.Ampersand - 32)) | (1 << (CommonRegexParser.ALC - 32)) | (1 << (CommonRegexParser.BLC - 32)) | (1 << (CommonRegexParser.CLC - 32)) | (1 << (CommonRegexParser.DLC - 32)) | (1 << (CommonRegexParser.ELC - 32)) | (1 << (CommonRegexParser.FLC - 32)) | (1 << (CommonRegexParser.GLC - 32)) | (1 << (CommonRegexParser.HLC - 32)) | (1 << (CommonRegexParser.ILC - 32)) | (1 << (CommonRegexParser.JLC - 32)) | (1 << (CommonRegexParser.KLC - 32)) | (1 << (CommonRegexParser.LLC - 32)) | (1 << (CommonRegexParser.MLC - 32)))) !== 0) || ((((_la - 64)) & ~0x1F) === 0 && ((1 << (_la - 64)) & ((1 << (CommonRegexParser.NLC - 64)) | (1 << (CommonRegexParser.OLC - 64)) | (1 << (CommonRegexParser.PLC - 64)) | (1 << (CommonRegexParser.QLC - 64)) | (1 << (CommonRegexParser.RLC - 64)) | (1 << (CommonRegexParser.SLC - 64)) | (1 << (CommonRegexParser.TLC - 64)) | (1 << (CommonRegexParser.ULC - 64)) | (1 << (CommonRegexParser.VLC - 64)) | (1 << (CommonRegexParser.WLC - 64)) | (1 << (CommonRegexParser.XLC - 64)) | (1 << (CommonRegexParser.YLC - 64)) | (1 << (CommonRegexParser.ZLC - 64)) | (1 << (CommonRegexParser.AUC - 64)) | (1 << (CommonRegexParser.BUC - 64)) | (1 << (CommonRegexParser.CUC - 64)) | (1 << (CommonRegexParser.DUC - 64)) | (1 << (CommonRegexParser.EUC - 64)) | (1 << (CommonRegexParser.FUC - 64)) | (1 << (CommonRegexParser.GUC - 64)) | (1 << (CommonRegexParser.HUC - 64)) | (1 << (CommonRegexParser.IUC - 64)) | (1 << (CommonRegexParser.JUC - 64)) | (1 << (CommonRegexParser.KUC - 64)) | (1 << (CommonRegexParser.LUC - 64)) | (1 << (CommonRegexParser.MUC - 64)) | (1 << (CommonRegexParser.NUC - 64)) | (1 << (CommonRegexParser.OUC - 64)) | (1 << (CommonRegexParser.PUC - 64)) | (1 << (CommonRegexParser.QUC - 64)) | (1 << (CommonRegexParser.RUC - 64)) | (1 << (CommonRegexParser.SUC - 64)))) !== 0) || ((((_la - 96)) & ~0x1F) === 0 && ((1 << (_la - 96)) & ((1 << (CommonRegexParser.TUC - 96)) | (1 << (CommonRegexParser.UUC - 96)) | (1 << (CommonRegexParser.VUC - 96)) | (1 << (CommonRegexParser.WUC - 96)) | (1 << (CommonRegexParser.XUC - 96)) | (1 << (CommonRegexParser.YUC - 96)) | (1 << (CommonRegexParser.ZUC - 96)) | (1 << (CommonRegexParser.D1 - 96)) | (1 << (CommonRegexParser.D2 - 96)) | (1 << (CommonRegexParser.D3 - 96)) | (1 << (CommonRegexParser.D4 - 96)) | (1 << (CommonRegexParser.D5 - 96)) | (1 << (CommonRegexParser.D6 - 96)) | (1 << (CommonRegexParser.D7 - 96)) | (1 << (CommonRegexParser.D8 - 96)) | (1 << (CommonRegexParser.D9 - 96)) | (1 << (CommonRegexParser.D0 - 96)) | (1 << (CommonRegexParser.OtherChar - 96)))) !== 0));
+				} while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << CommonRegexParser.BellChar) | (1 << CommonRegexParser.ControlChar) | (1 << CommonRegexParser.EscapeChar) | (1 << CommonRegexParser.FormFeed) | (1 << CommonRegexParser.NewLine) | (1 << CommonRegexParser.CarriageReturn) | (1 << CommonRegexParser.Tab) | (1 << CommonRegexParser.Backslash) | (1 << CommonRegexParser.HexChar) | (1 << CommonRegexParser.Dot) | (1 << CommonRegexParser.DecimalDigit) | (1 << CommonRegexParser.NotDecimalDigit) | (1 << CommonRegexParser.CharWithProperty) | (1 << CommonRegexParser.CharWithoutProperty) | (1 << CommonRegexParser.WhiteSpace) | (1 << CommonRegexParser.NotWhiteSpace) | (1 << CommonRegexParser.WordChar) | (1 << CommonRegexParser.NotWordChar) | (1 << CommonRegexParser.CharacterClassStart) | (1 << CommonRegexParser.Caret) | (1 << CommonRegexParser.Hyphen) | (1 << CommonRegexParser.QuestionMark) | (1 << CommonRegexParser.Plus) | (1 << CommonRegexParser.Star) | (1 << CommonRegexParser.OpenBrace) | (1 << CommonRegexParser.CloseBrace) | (1 << CommonRegexParser.Comma) | (1 << CommonRegexParser.EndOfSubject) | (1 << CommonRegexParser.Pipe) | (1 << CommonRegexParser.OpenParen))) !== 0) || ((((_la - 32)) & ~0x1F) === 0 && ((1 << (_la - 32)) & ((1 << (CommonRegexParser.CloseParen - 32)) | (1 << (CommonRegexParser.LessThan - 32)) | (1 << (CommonRegexParser.GreaterThan - 32)) | (1 << (CommonRegexParser.SingleQuote - 32)) | (1 << (CommonRegexParser.Underscore - 32)) | (1 << (CommonRegexParser.Colon - 32)) | (1 << (CommonRegexParser.Hash - 32)) | (1 << (CommonRegexParser.Equals - 32)) | (1 << (CommonRegexParser.Exclamation - 32)) | (1 << (CommonRegexParser.Ampersand - 32)) | (1 << (CommonRegexParser.ALC - 32)) | (1 << (CommonRegexParser.BLC - 32)) | (1 << (CommonRegexParser.CLC - 32)) | (1 << (CommonRegexParser.DLC - 32)) | (1 << (CommonRegexParser.ELC - 32)) | (1 << (CommonRegexParser.FLC - 32)) | (1 << (CommonRegexParser.GLC - 32)) | (1 << (CommonRegexParser.HLC - 32)) | (1 << (CommonRegexParser.ILC - 32)) | (1 << (CommonRegexParser.JLC - 32)) | (1 << (CommonRegexParser.KLC - 32)) | (1 << (CommonRegexParser.LLC - 32)) | (1 << (CommonRegexParser.MLC - 32)) | (1 << (CommonRegexParser.NLC - 32)) | (1 << (CommonRegexParser.OLC - 32)) | (1 << (CommonRegexParser.PLC - 32)) | (1 << (CommonRegexParser.QLC - 32)) | (1 << (CommonRegexParser.RLC - 32)) | (1 << (CommonRegexParser.SLC - 32)) | (1 << (CommonRegexParser.TLC - 32)) | (1 << (CommonRegexParser.ULC - 32)) | (1 << (CommonRegexParser.VLC - 32)))) !== 0) || ((((_la - 64)) & ~0x1F) === 0 && ((1 << (_la - 64)) & ((1 << (CommonRegexParser.WLC - 64)) | (1 << (CommonRegexParser.XLC - 64)) | (1 << (CommonRegexParser.YLC - 64)) | (1 << (CommonRegexParser.ZLC - 64)) | (1 << (CommonRegexParser.AUC - 64)) | (1 << (CommonRegexParser.BUC - 64)) | (1 << (CommonRegexParser.CUC - 64)) | (1 << (CommonRegexParser.DUC - 64)) | (1 << (CommonRegexParser.EUC - 64)) | (1 << (CommonRegexParser.FUC - 64)) | (1 << (CommonRegexParser.GUC - 64)) | (1 << (CommonRegexParser.HUC - 64)) | (1 << (CommonRegexParser.IUC - 64)) | (1 << (CommonRegexParser.JUC - 64)) | (1 << (CommonRegexParser.KUC - 64)) | (1 << (CommonRegexParser.LUC - 64)) | (1 << (CommonRegexParser.MUC - 64)) | (1 << (CommonRegexParser.NUC - 64)) | (1 << (CommonRegexParser.OUC - 64)) | (1 << (CommonRegexParser.PUC - 64)) | (1 << (CommonRegexParser.QUC - 64)) | (1 << (CommonRegexParser.RUC - 64)) | (1 << (CommonRegexParser.SUC - 64)) | (1 << (CommonRegexParser.TUC - 64)) | (1 << (CommonRegexParser.UUC - 64)) | (1 << (CommonRegexParser.VUC - 64)) | (1 << (CommonRegexParser.WUC - 64)) | (1 << (CommonRegexParser.XUC - 64)) | (1 << (CommonRegexParser.YUC - 64)) | (1 << (CommonRegexParser.ZUC - 64)) | (1 << (CommonRegexParser.D1 - 64)) | (1 << (CommonRegexParser.D2 - 64)))) !== 0) || ((((_la - 96)) & ~0x1F) === 0 && ((1 << (_la - 96)) & ((1 << (CommonRegexParser.D3 - 96)) | (1 << (CommonRegexParser.D4 - 96)) | (1 << (CommonRegexParser.D5 - 96)) | (1 << (CommonRegexParser.D6 - 96)) | (1 << (CommonRegexParser.D7 - 96)) | (1 << (CommonRegexParser.D8 - 96)) | (1 << (CommonRegexParser.D9 - 96)) | (1 << (CommonRegexParser.D0 - 96)) | (1 << (CommonRegexParser.OtherChar - 96)))) !== 0));
 				this.state = 121;
 				this.match(CommonRegexParser.CharacterClassEnd);
 				}
@@ -764,40 +743,18 @@ export class CommonRegexParser extends Parser {
 		let _localctx: Non_captureContext = new Non_captureContext(this._ctx, this.state);
 		this.enterRule(_localctx, 16, CommonRegexParser.RULE_non_capture);
 		try {
-			this.state = 151;
-			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 9, this._ctx) ) {
-			case 1:
-				this.enterOuterAlt(_localctx, 1);
-				{
-				this.state = 139;
-				this.match(CommonRegexParser.OpenParen);
-				this.state = 140;
-				this.match(CommonRegexParser.QuestionMark);
-				this.state = 141;
-				this.match(CommonRegexParser.Colon);
-				this.state = 142;
-				this.alternation();
-				this.state = 143;
-				this.match(CommonRegexParser.CloseParen);
-				}
-				break;
-
-			case 2:
-				this.enterOuterAlt(_localctx, 2);
-				{
-				this.state = 145;
-				this.match(CommonRegexParser.OpenParen);
-				this.state = 146;
-				this.match(CommonRegexParser.QuestionMark);
-				this.state = 147;
-				this.match(CommonRegexParser.Pipe);
-				this.state = 148;
-				this.alternation();
-				this.state = 149;
-				this.match(CommonRegexParser.CloseParen);
-				}
-				break;
+			this.enterOuterAlt(_localctx, 1);
+			{
+			this.state = 139;
+			this.match(CommonRegexParser.OpenParen);
+			this.state = 140;
+			this.match(CommonRegexParser.QuestionMark);
+			this.state = 141;
+			this.match(CommonRegexParser.Colon);
+			this.state = 142;
+			this.alternation();
+			this.state = 143;
+			this.match(CommonRegexParser.CloseParen);
 			}
 		}
 		catch (re) {
@@ -822,25 +779,25 @@ export class CommonRegexParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 153;
+			this.state = 145;
 			this.match(CommonRegexParser.OpenParen);
-			this.state = 154;
+			this.state = 146;
 			this.match(CommonRegexParser.QuestionMark);
-			this.state = 156;
+			this.state = 148;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 155;
+				this.state = 147;
 				this.option_flag();
 				}
 				}
-				this.state = 158;
+				this.state = 150;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-			} while (((((_la - 59)) & ~0x1F) === 0 && ((1 << (_la - 59)) & ((1 << (CommonRegexParser.ILC - 59)) | (1 << (CommonRegexParser.MLC - 59)) | (1 << (CommonRegexParser.SLC - 59)) | (1 << (CommonRegexParser.XLC - 59)) | (1 << (CommonRegexParser.JUC - 59)))) !== 0) || _la === CommonRegexParser.UUC);
-			this.state = 160;
+			} while (((((_la - 50)) & ~0x1F) === 0 && ((1 << (_la - 50)) & ((1 << (CommonRegexParser.ILC - 50)) | (1 << (CommonRegexParser.MLC - 50)) | (1 << (CommonRegexParser.SLC - 50)))) !== 0));
+			this.state = 152;
 			this.match(CommonRegexParser.CloseParen);
 			}
 		}
@@ -866,9 +823,9 @@ export class CommonRegexParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 162;
+			this.state = 154;
 			_la = this._input.LA(1);
-			if (!(((((_la - 59)) & ~0x1F) === 0 && ((1 << (_la - 59)) & ((1 << (CommonRegexParser.ILC - 59)) | (1 << (CommonRegexParser.MLC - 59)) | (1 << (CommonRegexParser.SLC - 59)) | (1 << (CommonRegexParser.XLC - 59)) | (1 << (CommonRegexParser.JUC - 59)))) !== 0) || _la === CommonRegexParser.UUC)) {
+			if (!(((((_la - 50)) & ~0x1F) === 0 && ((1 << (_la - 50)) & ((1 << (CommonRegexParser.ILC - 50)) | (1 << (CommonRegexParser.MLC - 50)) | (1 << (CommonRegexParser.SLC - 50)))) !== 0))) {
 			this._errHandler.recoverInline(this);
 			} else {
 				if (this._input.LA(1) === Token.EOF) {
@@ -899,13 +856,13 @@ export class CommonRegexParser extends Parser {
 		let _localctx: AtomContext = new AtomContext(this._ctx, this.state);
 		this.enterRule(_localctx, 22, CommonRegexParser.RULE_atom);
 		try {
-			this.state = 176;
+			this.state = 165;
 			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 11, this._ctx) ) {
+			switch ( this.interpreter.adaptivePredict(this._input, 10, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 164;
+				this.state = 156;
 				this.shared_atom();
 				}
 				break;
@@ -913,7 +870,7 @@ export class CommonRegexParser extends Parser {
 			case 2:
 				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 165;
+				this.state = 157;
 				this.literal();
 				}
 				break;
@@ -921,7 +878,7 @@ export class CommonRegexParser extends Parser {
 			case 3:
 				this.enterOuterAlt(_localctx, 3);
 				{
-				this.state = 166;
+				this.state = 158;
 				this.character_class();
 				}
 				break;
@@ -929,7 +886,7 @@ export class CommonRegexParser extends Parser {
 			case 4:
 				this.enterOuterAlt(_localctx, 4);
 				{
-				this.state = 167;
+				this.state = 159;
 				this.capture();
 				}
 				break;
@@ -937,7 +894,7 @@ export class CommonRegexParser extends Parser {
 			case 5:
 				this.enterOuterAlt(_localctx, 5);
 				{
-				this.state = 168;
+				this.state = 160;
 				this.non_capture();
 				}
 				break;
@@ -945,7 +902,7 @@ export class CommonRegexParser extends Parser {
 			case 6:
 				this.enterOuterAlt(_localctx, 6);
 				{
-				this.state = 169;
+				this.state = 161;
 				this.option();
 				}
 				break;
@@ -953,7 +910,7 @@ export class CommonRegexParser extends Parser {
 			case 7:
 				this.enterOuterAlt(_localctx, 7);
 				{
-				this.state = 170;
+				this.state = 162;
 				this.match(CommonRegexParser.Dot);
 				}
 				break;
@@ -961,7 +918,7 @@ export class CommonRegexParser extends Parser {
 			case 8:
 				this.enterOuterAlt(_localctx, 8);
 				{
-				this.state = 171;
+				this.state = 163;
 				this.match(CommonRegexParser.Caret);
 				}
 				break;
@@ -969,32 +926,8 @@ export class CommonRegexParser extends Parser {
 			case 9:
 				this.enterOuterAlt(_localctx, 9);
 				{
-				this.state = 172;
-				this.match(CommonRegexParser.StartOfSubject);
-				}
-				break;
-
-			case 10:
-				this.enterOuterAlt(_localctx, 10);
-				{
-				this.state = 173;
-				this.match(CommonRegexParser.EndOfSubjectOrLine);
-				}
-				break;
-
-			case 11:
-				this.enterOuterAlt(_localctx, 11);
-				{
-				this.state = 174;
-				this.match(CommonRegexParser.OneDataUnit);
-				}
-				break;
-
-			case 12:
-				this.enterOuterAlt(_localctx, 12);
-				{
-				this.state = 175;
-				this.match(CommonRegexParser.ExtendedUnicodeChar);
+				this.state = 164;
+				this.match(CommonRegexParser.EndOfSubject);
 				}
 				break;
 			}
@@ -1018,17 +951,17 @@ export class CommonRegexParser extends Parser {
 		let _localctx: Cc_atomContext = new Cc_atomContext(this._ctx, this.state);
 		this.enterRule(_localctx, 24, CommonRegexParser.RULE_cc_atom);
 		try {
-			this.state = 184;
+			this.state = 173;
 			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 12, this._ctx) ) {
+			switch ( this.interpreter.adaptivePredict(this._input, 11, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 178;
+				this.state = 167;
 				this.cc_literal();
-				this.state = 179;
+				this.state = 168;
 				this.match(CommonRegexParser.Hyphen);
-				this.state = 180;
+				this.state = 169;
 				this.cc_literal();
 				}
 				break;
@@ -1036,7 +969,7 @@ export class CommonRegexParser extends Parser {
 			case 2:
 				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 182;
+				this.state = 171;
 				this.shared_atom();
 				}
 				break;
@@ -1044,7 +977,7 @@ export class CommonRegexParser extends Parser {
 			case 3:
 				this.enterOuterAlt(_localctx, 3);
 				{
-				this.state = 183;
+				this.state = 172;
 				this.cc_literal();
 				}
 				break;
@@ -1072,9 +1005,9 @@ export class CommonRegexParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 186;
+			this.state = 175;
 			_la = this._input.LA(1);
-			if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << CommonRegexParser.ControlChar) | (1 << CommonRegexParser.DecimalDigit) | (1 << CommonRegexParser.NotDecimalDigit) | (1 << CommonRegexParser.HorizontalWhiteSpace) | (1 << CommonRegexParser.NotHorizontalWhiteSpace) | (1 << CommonRegexParser.NotNewLine) | (1 << CommonRegexParser.CharWithProperty) | (1 << CommonRegexParser.CharWithoutProperty) | (1 << CommonRegexParser.NewLineSequence) | (1 << CommonRegexParser.WhiteSpace) | (1 << CommonRegexParser.NotWhiteSpace) | (1 << CommonRegexParser.VerticalWhiteSpace) | (1 << CommonRegexParser.NotVerticalWhiteSpace) | (1 << CommonRegexParser.WordChar) | (1 << CommonRegexParser.NotWordChar))) !== 0))) {
+			if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << CommonRegexParser.ControlChar) | (1 << CommonRegexParser.DecimalDigit) | (1 << CommonRegexParser.NotDecimalDigit) | (1 << CommonRegexParser.CharWithProperty) | (1 << CommonRegexParser.CharWithoutProperty) | (1 << CommonRegexParser.WhiteSpace) | (1 << CommonRegexParser.NotWhiteSpace) | (1 << CommonRegexParser.WordChar) | (1 << CommonRegexParser.NotWordChar))) !== 0))) {
 			this._errHandler.recoverInline(this);
 			} else {
 				if (this._input.LA(1) === Token.EOF) {
@@ -1105,7 +1038,7 @@ export class CommonRegexParser extends Parser {
 		let _localctx: LiteralContext = new LiteralContext(this._ctx, this.state);
 		this.enterRule(_localctx, 28, CommonRegexParser.RULE_literal);
 		try {
-			this.state = 190;
+			this.state = 179;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case CommonRegexParser.BellChar:
@@ -1194,14 +1127,14 @@ export class CommonRegexParser extends Parser {
 			case CommonRegexParser.OtherChar:
 				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 188;
+				this.state = 177;
 				this.shared_literal();
 				}
 				break;
 			case CommonRegexParser.CharacterClassEnd:
 				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 189;
+				this.state = 178;
 				this.match(CommonRegexParser.CharacterClassEnd);
 				}
 				break;
@@ -1228,7 +1161,7 @@ export class CommonRegexParser extends Parser {
 		let _localctx: Cc_literalContext = new Cc_literalContext(this._ctx, this.state);
 		this.enterRule(_localctx, 30, CommonRegexParser.RULE_cc_literal);
 		try {
-			this.state = 203;
+			this.state = 192;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case CommonRegexParser.BellChar:
@@ -1317,77 +1250,77 @@ export class CommonRegexParser extends Parser {
 			case CommonRegexParser.OtherChar:
 				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 192;
+				this.state = 181;
 				this.shared_literal();
 				}
 				break;
 			case CommonRegexParser.Dot:
 				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 193;
+				this.state = 182;
 				this.match(CommonRegexParser.Dot);
 				}
 				break;
 			case CommonRegexParser.CharacterClassStart:
 				this.enterOuterAlt(_localctx, 3);
 				{
-				this.state = 194;
+				this.state = 183;
 				this.match(CommonRegexParser.CharacterClassStart);
 				}
 				break;
 			case CommonRegexParser.Caret:
 				this.enterOuterAlt(_localctx, 4);
 				{
-				this.state = 195;
+				this.state = 184;
 				this.match(CommonRegexParser.Caret);
 				}
 				break;
 			case CommonRegexParser.QuestionMark:
 				this.enterOuterAlt(_localctx, 5);
 				{
-				this.state = 196;
+				this.state = 185;
 				this.match(CommonRegexParser.QuestionMark);
 				}
 				break;
 			case CommonRegexParser.Plus:
 				this.enterOuterAlt(_localctx, 6);
 				{
-				this.state = 197;
+				this.state = 186;
 				this.match(CommonRegexParser.Plus);
 				}
 				break;
 			case CommonRegexParser.Star:
 				this.enterOuterAlt(_localctx, 7);
 				{
-				this.state = 198;
+				this.state = 187;
 				this.match(CommonRegexParser.Star);
 				}
 				break;
-			case CommonRegexParser.EndOfSubjectOrLine:
+			case CommonRegexParser.EndOfSubject:
 				this.enterOuterAlt(_localctx, 8);
 				{
-				this.state = 199;
-				this.match(CommonRegexParser.EndOfSubjectOrLine);
+				this.state = 188;
+				this.match(CommonRegexParser.EndOfSubject);
 				}
 				break;
 			case CommonRegexParser.Pipe:
 				this.enterOuterAlt(_localctx, 9);
 				{
-				this.state = 200;
+				this.state = 189;
 				this.match(CommonRegexParser.Pipe);
 				}
 				break;
 			case CommonRegexParser.OpenParen:
 				this.enterOuterAlt(_localctx, 10);
 				{
-				this.state = 201;
+				this.state = 190;
 				this.match(CommonRegexParser.OpenParen);
 				}
 				break;
 			case CommonRegexParser.CloseParen:
 				this.enterOuterAlt(_localctx, 11);
 				{
-				this.state = 202;
+				this.state = 191;
 				this.match(CommonRegexParser.CloseParen);
 				}
 				break;
@@ -1414,13 +1347,13 @@ export class CommonRegexParser extends Parser {
 		let _localctx: Shared_literalContext = new Shared_literalContext(this._ctx, this.state);
 		this.enterRule(_localctx, 32, CommonRegexParser.RULE_shared_literal);
 		try {
-			this.state = 229;
+			this.state = 218;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case CommonRegexParser.Backslash:
 				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 205;
+				this.state = 194;
 				this.octal_char();
 				}
 				break;
@@ -1478,7 +1411,7 @@ export class CommonRegexParser extends Parser {
 			case CommonRegexParser.ZUC:
 				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 206;
+				this.state = 195;
 				this.letter();
 				}
 				break;
@@ -1494,154 +1427,154 @@ export class CommonRegexParser extends Parser {
 			case CommonRegexParser.D0:
 				this.enterOuterAlt(_localctx, 3);
 				{
-				this.state = 207;
+				this.state = 196;
 				this.digit();
 				}
 				break;
 			case CommonRegexParser.BellChar:
 				this.enterOuterAlt(_localctx, 4);
 				{
-				this.state = 208;
+				this.state = 197;
 				this.match(CommonRegexParser.BellChar);
 				}
 				break;
 			case CommonRegexParser.EscapeChar:
 				this.enterOuterAlt(_localctx, 5);
 				{
-				this.state = 209;
+				this.state = 198;
 				this.match(CommonRegexParser.EscapeChar);
 				}
 				break;
 			case CommonRegexParser.FormFeed:
 				this.enterOuterAlt(_localctx, 6);
 				{
-				this.state = 210;
+				this.state = 199;
 				this.match(CommonRegexParser.FormFeed);
 				}
 				break;
 			case CommonRegexParser.NewLine:
 				this.enterOuterAlt(_localctx, 7);
 				{
-				this.state = 211;
+				this.state = 200;
 				this.match(CommonRegexParser.NewLine);
 				}
 				break;
 			case CommonRegexParser.CarriageReturn:
 				this.enterOuterAlt(_localctx, 8);
 				{
-				this.state = 212;
+				this.state = 201;
 				this.match(CommonRegexParser.CarriageReturn);
 				}
 				break;
 			case CommonRegexParser.Tab:
 				this.enterOuterAlt(_localctx, 9);
 				{
-				this.state = 213;
+				this.state = 202;
 				this.match(CommonRegexParser.Tab);
 				}
 				break;
 			case CommonRegexParser.HexChar:
 				this.enterOuterAlt(_localctx, 10);
 				{
-				this.state = 214;
+				this.state = 203;
 				this.match(CommonRegexParser.HexChar);
 				}
 				break;
 			case CommonRegexParser.OpenBrace:
 				this.enterOuterAlt(_localctx, 11);
 				{
-				this.state = 215;
+				this.state = 204;
 				this.match(CommonRegexParser.OpenBrace);
 				}
 				break;
 			case CommonRegexParser.CloseBrace:
 				this.enterOuterAlt(_localctx, 12);
 				{
-				this.state = 216;
+				this.state = 205;
 				this.match(CommonRegexParser.CloseBrace);
 				}
 				break;
 			case CommonRegexParser.Comma:
 				this.enterOuterAlt(_localctx, 13);
 				{
-				this.state = 217;
+				this.state = 206;
 				this.match(CommonRegexParser.Comma);
 				}
 				break;
 			case CommonRegexParser.Hyphen:
 				this.enterOuterAlt(_localctx, 14);
 				{
-				this.state = 218;
+				this.state = 207;
 				this.match(CommonRegexParser.Hyphen);
 				}
 				break;
 			case CommonRegexParser.LessThan:
 				this.enterOuterAlt(_localctx, 15);
 				{
-				this.state = 219;
+				this.state = 208;
 				this.match(CommonRegexParser.LessThan);
 				}
 				break;
 			case CommonRegexParser.GreaterThan:
 				this.enterOuterAlt(_localctx, 16);
 				{
-				this.state = 220;
+				this.state = 209;
 				this.match(CommonRegexParser.GreaterThan);
 				}
 				break;
 			case CommonRegexParser.SingleQuote:
 				this.enterOuterAlt(_localctx, 17);
 				{
-				this.state = 221;
+				this.state = 210;
 				this.match(CommonRegexParser.SingleQuote);
 				}
 				break;
 			case CommonRegexParser.Underscore:
 				this.enterOuterAlt(_localctx, 18);
 				{
-				this.state = 222;
+				this.state = 211;
 				this.match(CommonRegexParser.Underscore);
 				}
 				break;
 			case CommonRegexParser.Colon:
 				this.enterOuterAlt(_localctx, 19);
 				{
-				this.state = 223;
+				this.state = 212;
 				this.match(CommonRegexParser.Colon);
 				}
 				break;
 			case CommonRegexParser.Hash:
 				this.enterOuterAlt(_localctx, 20);
 				{
-				this.state = 224;
+				this.state = 213;
 				this.match(CommonRegexParser.Hash);
 				}
 				break;
 			case CommonRegexParser.Equals:
 				this.enterOuterAlt(_localctx, 21);
 				{
-				this.state = 225;
+				this.state = 214;
 				this.match(CommonRegexParser.Equals);
 				}
 				break;
 			case CommonRegexParser.Exclamation:
 				this.enterOuterAlt(_localctx, 22);
 				{
-				this.state = 226;
+				this.state = 215;
 				this.match(CommonRegexParser.Exclamation);
 				}
 				break;
 			case CommonRegexParser.Ampersand:
 				this.enterOuterAlt(_localctx, 23);
 				{
-				this.state = 227;
+				this.state = 216;
 				this.match(CommonRegexParser.Ampersand);
 				}
 				break;
 			case CommonRegexParser.OtherChar:
 				this.enterOuterAlt(_localctx, 24);
 				{
-				this.state = 228;
+				this.state = 217;
 				this.match(CommonRegexParser.OtherChar);
 				}
 				break;
@@ -1670,7 +1603,7 @@ export class CommonRegexParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 231;
+			this.state = 220;
 			this.digits();
 			}
 		}
@@ -1696,16 +1629,16 @@ export class CommonRegexParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 242;
+			this.state = 231;
 			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 16, this._ctx) ) {
+			switch ( this.interpreter.adaptivePredict(this._input, 15, this._ctx) ) {
 			case 1:
 				{
-				this.state = 233;
+				this.state = 222;
 				this.match(CommonRegexParser.Backslash);
-				this.state = 234;
+				this.state = 223;
 				_la = this._input.LA(1);
-				if (!(((((_la - 103)) & ~0x1F) === 0 && ((1 << (_la - 103)) & ((1 << (CommonRegexParser.D1 - 103)) | (1 << (CommonRegexParser.D2 - 103)) | (1 << (CommonRegexParser.D3 - 103)) | (1 << (CommonRegexParser.D0 - 103)))) !== 0))) {
+				if (!(((((_la - 94)) & ~0x1F) === 0 && ((1 << (_la - 94)) & ((1 << (CommonRegexParser.D1 - 94)) | (1 << (CommonRegexParser.D2 - 94)) | (1 << (CommonRegexParser.D3 - 94)) | (1 << (CommonRegexParser.D0 - 94)))) !== 0))) {
 				this._errHandler.recoverInline(this);
 				} else {
 					if (this._input.LA(1) === Token.EOF) {
@@ -1715,20 +1648,20 @@ export class CommonRegexParser extends Parser {
 					this._errHandler.reportMatch(this);
 					this.consume();
 				}
-				this.state = 235;
+				this.state = 224;
 				this.octal_digit();
-				this.state = 236;
+				this.state = 225;
 				this.octal_digit();
 				}
 				break;
 
 			case 2:
 				{
-				this.state = 238;
+				this.state = 227;
 				this.match(CommonRegexParser.Backslash);
-				this.state = 239;
+				this.state = 228;
 				this.octal_digit();
-				this.state = 240;
+				this.state = 229;
 				this.octal_digit();
 				}
 				break;
@@ -1757,9 +1690,9 @@ export class CommonRegexParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 244;
+			this.state = 233;
 			_la = this._input.LA(1);
-			if (!(((((_la - 103)) & ~0x1F) === 0 && ((1 << (_la - 103)) & ((1 << (CommonRegexParser.D1 - 103)) | (1 << (CommonRegexParser.D2 - 103)) | (1 << (CommonRegexParser.D3 - 103)) | (1 << (CommonRegexParser.D4 - 103)) | (1 << (CommonRegexParser.D5 - 103)) | (1 << (CommonRegexParser.D6 - 103)) | (1 << (CommonRegexParser.D7 - 103)) | (1 << (CommonRegexParser.D0 - 103)))) !== 0))) {
+			if (!(((((_la - 94)) & ~0x1F) === 0 && ((1 << (_la - 94)) & ((1 << (CommonRegexParser.D1 - 94)) | (1 << (CommonRegexParser.D2 - 94)) | (1 << (CommonRegexParser.D3 - 94)) | (1 << (CommonRegexParser.D4 - 94)) | (1 << (CommonRegexParser.D5 - 94)) | (1 << (CommonRegexParser.D6 - 94)) | (1 << (CommonRegexParser.D7 - 94)) | (1 << (CommonRegexParser.D0 - 94)))) !== 0))) {
 			this._errHandler.recoverInline(this);
 			} else {
 				if (this._input.LA(1) === Token.EOF) {
@@ -1793,20 +1726,20 @@ export class CommonRegexParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 247;
+			this.state = 236;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 246;
+				this.state = 235;
 				this.digit();
 				}
 				}
-				this.state = 249;
+				this.state = 238;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-			} while (((((_la - 103)) & ~0x1F) === 0 && ((1 << (_la - 103)) & ((1 << (CommonRegexParser.D1 - 103)) | (1 << (CommonRegexParser.D2 - 103)) | (1 << (CommonRegexParser.D3 - 103)) | (1 << (CommonRegexParser.D4 - 103)) | (1 << (CommonRegexParser.D5 - 103)) | (1 << (CommonRegexParser.D6 - 103)) | (1 << (CommonRegexParser.D7 - 103)) | (1 << (CommonRegexParser.D8 - 103)) | (1 << (CommonRegexParser.D9 - 103)) | (1 << (CommonRegexParser.D0 - 103)))) !== 0));
+			} while (((((_la - 94)) & ~0x1F) === 0 && ((1 << (_la - 94)) & ((1 << (CommonRegexParser.D1 - 94)) | (1 << (CommonRegexParser.D2 - 94)) | (1 << (CommonRegexParser.D3 - 94)) | (1 << (CommonRegexParser.D4 - 94)) | (1 << (CommonRegexParser.D5 - 94)) | (1 << (CommonRegexParser.D6 - 94)) | (1 << (CommonRegexParser.D7 - 94)) | (1 << (CommonRegexParser.D8 - 94)) | (1 << (CommonRegexParser.D9 - 94)) | (1 << (CommonRegexParser.D0 - 94)))) !== 0));
 			}
 		}
 		catch (re) {
@@ -1831,9 +1764,9 @@ export class CommonRegexParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 251;
+			this.state = 240;
 			_la = this._input.LA(1);
-			if (!(((((_la - 103)) & ~0x1F) === 0 && ((1 << (_la - 103)) & ((1 << (CommonRegexParser.D1 - 103)) | (1 << (CommonRegexParser.D2 - 103)) | (1 << (CommonRegexParser.D3 - 103)) | (1 << (CommonRegexParser.D4 - 103)) | (1 << (CommonRegexParser.D5 - 103)) | (1 << (CommonRegexParser.D6 - 103)) | (1 << (CommonRegexParser.D7 - 103)) | (1 << (CommonRegexParser.D8 - 103)) | (1 << (CommonRegexParser.D9 - 103)) | (1 << (CommonRegexParser.D0 - 103)))) !== 0))) {
+			if (!(((((_la - 94)) & ~0x1F) === 0 && ((1 << (_la - 94)) & ((1 << (CommonRegexParser.D1 - 94)) | (1 << (CommonRegexParser.D2 - 94)) | (1 << (CommonRegexParser.D3 - 94)) | (1 << (CommonRegexParser.D4 - 94)) | (1 << (CommonRegexParser.D5 - 94)) | (1 << (CommonRegexParser.D6 - 94)) | (1 << (CommonRegexParser.D7 - 94)) | (1 << (CommonRegexParser.D8 - 94)) | (1 << (CommonRegexParser.D9 - 94)) | (1 << (CommonRegexParser.D0 - 94)))) !== 0))) {
 			this._errHandler.recoverInline(this);
 			} else {
 				if (this._input.LA(1) === Token.EOF) {
@@ -1866,7 +1799,7 @@ export class CommonRegexParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 253;
+			this.state = 242;
 			this.alpha_nums();
 			}
 		}
@@ -1892,7 +1825,7 @@ export class CommonRegexParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 257;
+			this.state = 246;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case CommonRegexParser.ALC:
@@ -1948,25 +1881,25 @@ export class CommonRegexParser extends Parser {
 			case CommonRegexParser.YUC:
 			case CommonRegexParser.ZUC:
 				{
-				this.state = 255;
+				this.state = 244;
 				this.letter();
 				}
 				break;
 			case CommonRegexParser.Underscore:
 				{
-				this.state = 256;
+				this.state = 245;
 				this.match(CommonRegexParser.Underscore);
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
-			this.state = 264;
+			this.state = 253;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while (((((_la - 45)) & ~0x1F) === 0 && ((1 << (_la - 45)) & ((1 << (CommonRegexParser.Underscore - 45)) | (1 << (CommonRegexParser.ALC - 45)) | (1 << (CommonRegexParser.BLC - 45)) | (1 << (CommonRegexParser.CLC - 45)) | (1 << (CommonRegexParser.DLC - 45)) | (1 << (CommonRegexParser.ELC - 45)) | (1 << (CommonRegexParser.FLC - 45)) | (1 << (CommonRegexParser.GLC - 45)) | (1 << (CommonRegexParser.HLC - 45)) | (1 << (CommonRegexParser.ILC - 45)) | (1 << (CommonRegexParser.JLC - 45)) | (1 << (CommonRegexParser.KLC - 45)) | (1 << (CommonRegexParser.LLC - 45)) | (1 << (CommonRegexParser.MLC - 45)) | (1 << (CommonRegexParser.NLC - 45)) | (1 << (CommonRegexParser.OLC - 45)) | (1 << (CommonRegexParser.PLC - 45)) | (1 << (CommonRegexParser.QLC - 45)) | (1 << (CommonRegexParser.RLC - 45)) | (1 << (CommonRegexParser.SLC - 45)) | (1 << (CommonRegexParser.TLC - 45)) | (1 << (CommonRegexParser.ULC - 45)) | (1 << (CommonRegexParser.VLC - 45)) | (1 << (CommonRegexParser.WLC - 45)) | (1 << (CommonRegexParser.XLC - 45)) | (1 << (CommonRegexParser.YLC - 45)) | (1 << (CommonRegexParser.ZLC - 45)))) !== 0) || ((((_la - 77)) & ~0x1F) === 0 && ((1 << (_la - 77)) & ((1 << (CommonRegexParser.AUC - 77)) | (1 << (CommonRegexParser.BUC - 77)) | (1 << (CommonRegexParser.CUC - 77)) | (1 << (CommonRegexParser.DUC - 77)) | (1 << (CommonRegexParser.EUC - 77)) | (1 << (CommonRegexParser.FUC - 77)) | (1 << (CommonRegexParser.GUC - 77)) | (1 << (CommonRegexParser.HUC - 77)) | (1 << (CommonRegexParser.IUC - 77)) | (1 << (CommonRegexParser.JUC - 77)) | (1 << (CommonRegexParser.KUC - 77)) | (1 << (CommonRegexParser.LUC - 77)) | (1 << (CommonRegexParser.MUC - 77)) | (1 << (CommonRegexParser.NUC - 77)) | (1 << (CommonRegexParser.OUC - 77)) | (1 << (CommonRegexParser.PUC - 77)) | (1 << (CommonRegexParser.QUC - 77)) | (1 << (CommonRegexParser.RUC - 77)) | (1 << (CommonRegexParser.SUC - 77)) | (1 << (CommonRegexParser.TUC - 77)) | (1 << (CommonRegexParser.UUC - 77)) | (1 << (CommonRegexParser.VUC - 77)) | (1 << (CommonRegexParser.WUC - 77)) | (1 << (CommonRegexParser.XUC - 77)) | (1 << (CommonRegexParser.YUC - 77)) | (1 << (CommonRegexParser.ZUC - 77)) | (1 << (CommonRegexParser.D1 - 77)) | (1 << (CommonRegexParser.D2 - 77)) | (1 << (CommonRegexParser.D3 - 77)) | (1 << (CommonRegexParser.D4 - 77)) | (1 << (CommonRegexParser.D5 - 77)) | (1 << (CommonRegexParser.D6 - 77)))) !== 0) || ((((_la - 109)) & ~0x1F) === 0 && ((1 << (_la - 109)) & ((1 << (CommonRegexParser.D7 - 109)) | (1 << (CommonRegexParser.D8 - 109)) | (1 << (CommonRegexParser.D9 - 109)) | (1 << (CommonRegexParser.D0 - 109)))) !== 0)) {
+			while (((((_la - 36)) & ~0x1F) === 0 && ((1 << (_la - 36)) & ((1 << (CommonRegexParser.Underscore - 36)) | (1 << (CommonRegexParser.ALC - 36)) | (1 << (CommonRegexParser.BLC - 36)) | (1 << (CommonRegexParser.CLC - 36)) | (1 << (CommonRegexParser.DLC - 36)) | (1 << (CommonRegexParser.ELC - 36)) | (1 << (CommonRegexParser.FLC - 36)) | (1 << (CommonRegexParser.GLC - 36)) | (1 << (CommonRegexParser.HLC - 36)) | (1 << (CommonRegexParser.ILC - 36)) | (1 << (CommonRegexParser.JLC - 36)) | (1 << (CommonRegexParser.KLC - 36)) | (1 << (CommonRegexParser.LLC - 36)) | (1 << (CommonRegexParser.MLC - 36)) | (1 << (CommonRegexParser.NLC - 36)) | (1 << (CommonRegexParser.OLC - 36)) | (1 << (CommonRegexParser.PLC - 36)) | (1 << (CommonRegexParser.QLC - 36)) | (1 << (CommonRegexParser.RLC - 36)) | (1 << (CommonRegexParser.SLC - 36)) | (1 << (CommonRegexParser.TLC - 36)) | (1 << (CommonRegexParser.ULC - 36)) | (1 << (CommonRegexParser.VLC - 36)) | (1 << (CommonRegexParser.WLC - 36)) | (1 << (CommonRegexParser.XLC - 36)) | (1 << (CommonRegexParser.YLC - 36)) | (1 << (CommonRegexParser.ZLC - 36)))) !== 0) || ((((_la - 68)) & ~0x1F) === 0 && ((1 << (_la - 68)) & ((1 << (CommonRegexParser.AUC - 68)) | (1 << (CommonRegexParser.BUC - 68)) | (1 << (CommonRegexParser.CUC - 68)) | (1 << (CommonRegexParser.DUC - 68)) | (1 << (CommonRegexParser.EUC - 68)) | (1 << (CommonRegexParser.FUC - 68)) | (1 << (CommonRegexParser.GUC - 68)) | (1 << (CommonRegexParser.HUC - 68)) | (1 << (CommonRegexParser.IUC - 68)) | (1 << (CommonRegexParser.JUC - 68)) | (1 << (CommonRegexParser.KUC - 68)) | (1 << (CommonRegexParser.LUC - 68)) | (1 << (CommonRegexParser.MUC - 68)) | (1 << (CommonRegexParser.NUC - 68)) | (1 << (CommonRegexParser.OUC - 68)) | (1 << (CommonRegexParser.PUC - 68)) | (1 << (CommonRegexParser.QUC - 68)) | (1 << (CommonRegexParser.RUC - 68)) | (1 << (CommonRegexParser.SUC - 68)) | (1 << (CommonRegexParser.TUC - 68)) | (1 << (CommonRegexParser.UUC - 68)) | (1 << (CommonRegexParser.VUC - 68)) | (1 << (CommonRegexParser.WUC - 68)) | (1 << (CommonRegexParser.XUC - 68)) | (1 << (CommonRegexParser.YUC - 68)) | (1 << (CommonRegexParser.ZUC - 68)) | (1 << (CommonRegexParser.D1 - 68)) | (1 << (CommonRegexParser.D2 - 68)) | (1 << (CommonRegexParser.D3 - 68)) | (1 << (CommonRegexParser.D4 - 68)) | (1 << (CommonRegexParser.D5 - 68)) | (1 << (CommonRegexParser.D6 - 68)))) !== 0) || ((((_la - 100)) & ~0x1F) === 0 && ((1 << (_la - 100)) & ((1 << (CommonRegexParser.D7 - 100)) | (1 << (CommonRegexParser.D8 - 100)) | (1 << (CommonRegexParser.D9 - 100)) | (1 << (CommonRegexParser.D0 - 100)))) !== 0)) {
 				{
-				this.state = 262;
+				this.state = 251;
 				this._errHandler.sync(this);
 				switch (this._input.LA(1)) {
 				case CommonRegexParser.ALC:
@@ -2022,13 +1955,13 @@ export class CommonRegexParser extends Parser {
 				case CommonRegexParser.YUC:
 				case CommonRegexParser.ZUC:
 					{
-					this.state = 259;
+					this.state = 248;
 					this.letter();
 					}
 					break;
 				case CommonRegexParser.Underscore:
 					{
-					this.state = 260;
+					this.state = 249;
 					this.match(CommonRegexParser.Underscore);
 					}
 					break;
@@ -2043,7 +1976,7 @@ export class CommonRegexParser extends Parser {
 				case CommonRegexParser.D9:
 				case CommonRegexParser.D0:
 					{
-					this.state = 261;
+					this.state = 250;
 					this.digit();
 					}
 					break;
@@ -2051,7 +1984,7 @@ export class CommonRegexParser extends Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				this.state = 266;
+				this.state = 255;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -2079,20 +2012,20 @@ export class CommonRegexParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 268;
+			this.state = 257;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 267;
+				this.state = 256;
 				this.non_close_paren();
 				}
 				}
-				this.state = 270;
+				this.state = 259;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-			} while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << CommonRegexParser.BellChar) | (1 << CommonRegexParser.ControlChar) | (1 << CommonRegexParser.EscapeChar) | (1 << CommonRegexParser.FormFeed) | (1 << CommonRegexParser.NewLine) | (1 << CommonRegexParser.CarriageReturn) | (1 << CommonRegexParser.Tab) | (1 << CommonRegexParser.Backslash) | (1 << CommonRegexParser.HexChar) | (1 << CommonRegexParser.Dot) | (1 << CommonRegexParser.OneDataUnit) | (1 << CommonRegexParser.DecimalDigit) | (1 << CommonRegexParser.NotDecimalDigit) | (1 << CommonRegexParser.HorizontalWhiteSpace) | (1 << CommonRegexParser.NotHorizontalWhiteSpace) | (1 << CommonRegexParser.NotNewLine) | (1 << CommonRegexParser.CharWithProperty) | (1 << CommonRegexParser.CharWithoutProperty) | (1 << CommonRegexParser.NewLineSequence) | (1 << CommonRegexParser.WhiteSpace) | (1 << CommonRegexParser.NotWhiteSpace) | (1 << CommonRegexParser.VerticalWhiteSpace) | (1 << CommonRegexParser.NotVerticalWhiteSpace) | (1 << CommonRegexParser.WordChar) | (1 << CommonRegexParser.NotWordChar) | (1 << CommonRegexParser.ExtendedUnicodeChar) | (1 << CommonRegexParser.CharacterClassStart) | (1 << CommonRegexParser.CharacterClassEnd) | (1 << CommonRegexParser.Caret) | (1 << CommonRegexParser.Hyphen) | (1 << CommonRegexParser.QuestionMark))) !== 0) || ((((_la - 32)) & ~0x1F) === 0 && ((1 << (_la - 32)) & ((1 << (CommonRegexParser.Plus - 32)) | (1 << (CommonRegexParser.Star - 32)) | (1 << (CommonRegexParser.OpenBrace - 32)) | (1 << (CommonRegexParser.CloseBrace - 32)) | (1 << (CommonRegexParser.Comma - 32)) | (1 << (CommonRegexParser.StartOfSubject - 32)) | (1 << (CommonRegexParser.EndOfSubjectOrLine - 32)) | (1 << (CommonRegexParser.Pipe - 32)) | (1 << (CommonRegexParser.OpenParen - 32)) | (1 << (CommonRegexParser.LessThan - 32)) | (1 << (CommonRegexParser.GreaterThan - 32)) | (1 << (CommonRegexParser.SingleQuote - 32)) | (1 << (CommonRegexParser.Underscore - 32)) | (1 << (CommonRegexParser.Colon - 32)) | (1 << (CommonRegexParser.Hash - 32)) | (1 << (CommonRegexParser.Equals - 32)) | (1 << (CommonRegexParser.Exclamation - 32)) | (1 << (CommonRegexParser.Ampersand - 32)) | (1 << (CommonRegexParser.ALC - 32)) | (1 << (CommonRegexParser.BLC - 32)) | (1 << (CommonRegexParser.CLC - 32)) | (1 << (CommonRegexParser.DLC - 32)) | (1 << (CommonRegexParser.ELC - 32)) | (1 << (CommonRegexParser.FLC - 32)) | (1 << (CommonRegexParser.GLC - 32)) | (1 << (CommonRegexParser.HLC - 32)) | (1 << (CommonRegexParser.ILC - 32)) | (1 << (CommonRegexParser.JLC - 32)) | (1 << (CommonRegexParser.KLC - 32)) | (1 << (CommonRegexParser.LLC - 32)) | (1 << (CommonRegexParser.MLC - 32)))) !== 0) || ((((_la - 64)) & ~0x1F) === 0 && ((1 << (_la - 64)) & ((1 << (CommonRegexParser.NLC - 64)) | (1 << (CommonRegexParser.OLC - 64)) | (1 << (CommonRegexParser.PLC - 64)) | (1 << (CommonRegexParser.QLC - 64)) | (1 << (CommonRegexParser.RLC - 64)) | (1 << (CommonRegexParser.SLC - 64)) | (1 << (CommonRegexParser.TLC - 64)) | (1 << (CommonRegexParser.ULC - 64)) | (1 << (CommonRegexParser.VLC - 64)) | (1 << (CommonRegexParser.WLC - 64)) | (1 << (CommonRegexParser.XLC - 64)) | (1 << (CommonRegexParser.YLC - 64)) | (1 << (CommonRegexParser.ZLC - 64)) | (1 << (CommonRegexParser.AUC - 64)) | (1 << (CommonRegexParser.BUC - 64)) | (1 << (CommonRegexParser.CUC - 64)) | (1 << (CommonRegexParser.DUC - 64)) | (1 << (CommonRegexParser.EUC - 64)) | (1 << (CommonRegexParser.FUC - 64)) | (1 << (CommonRegexParser.GUC - 64)) | (1 << (CommonRegexParser.HUC - 64)) | (1 << (CommonRegexParser.IUC - 64)) | (1 << (CommonRegexParser.JUC - 64)) | (1 << (CommonRegexParser.KUC - 64)) | (1 << (CommonRegexParser.LUC - 64)) | (1 << (CommonRegexParser.MUC - 64)) | (1 << (CommonRegexParser.NUC - 64)) | (1 << (CommonRegexParser.OUC - 64)) | (1 << (CommonRegexParser.PUC - 64)) | (1 << (CommonRegexParser.QUC - 64)) | (1 << (CommonRegexParser.RUC - 64)) | (1 << (CommonRegexParser.SUC - 64)))) !== 0) || ((((_la - 96)) & ~0x1F) === 0 && ((1 << (_la - 96)) & ((1 << (CommonRegexParser.TUC - 96)) | (1 << (CommonRegexParser.UUC - 96)) | (1 << (CommonRegexParser.VUC - 96)) | (1 << (CommonRegexParser.WUC - 96)) | (1 << (CommonRegexParser.XUC - 96)) | (1 << (CommonRegexParser.YUC - 96)) | (1 << (CommonRegexParser.ZUC - 96)) | (1 << (CommonRegexParser.D1 - 96)) | (1 << (CommonRegexParser.D2 - 96)) | (1 << (CommonRegexParser.D3 - 96)) | (1 << (CommonRegexParser.D4 - 96)) | (1 << (CommonRegexParser.D5 - 96)) | (1 << (CommonRegexParser.D6 - 96)) | (1 << (CommonRegexParser.D7 - 96)) | (1 << (CommonRegexParser.D8 - 96)) | (1 << (CommonRegexParser.D9 - 96)) | (1 << (CommonRegexParser.D0 - 96)) | (1 << (CommonRegexParser.OtherChar - 96)))) !== 0));
+			} while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << CommonRegexParser.BellChar) | (1 << CommonRegexParser.ControlChar) | (1 << CommonRegexParser.EscapeChar) | (1 << CommonRegexParser.FormFeed) | (1 << CommonRegexParser.NewLine) | (1 << CommonRegexParser.CarriageReturn) | (1 << CommonRegexParser.Tab) | (1 << CommonRegexParser.Backslash) | (1 << CommonRegexParser.HexChar) | (1 << CommonRegexParser.Dot) | (1 << CommonRegexParser.DecimalDigit) | (1 << CommonRegexParser.NotDecimalDigit) | (1 << CommonRegexParser.CharWithProperty) | (1 << CommonRegexParser.CharWithoutProperty) | (1 << CommonRegexParser.WhiteSpace) | (1 << CommonRegexParser.NotWhiteSpace) | (1 << CommonRegexParser.WordChar) | (1 << CommonRegexParser.NotWordChar) | (1 << CommonRegexParser.CharacterClassStart) | (1 << CommonRegexParser.CharacterClassEnd) | (1 << CommonRegexParser.Caret) | (1 << CommonRegexParser.Hyphen) | (1 << CommonRegexParser.QuestionMark) | (1 << CommonRegexParser.Plus) | (1 << CommonRegexParser.Star) | (1 << CommonRegexParser.OpenBrace) | (1 << CommonRegexParser.CloseBrace) | (1 << CommonRegexParser.Comma) | (1 << CommonRegexParser.EndOfSubject) | (1 << CommonRegexParser.Pipe) | (1 << CommonRegexParser.OpenParen))) !== 0) || ((((_la - 33)) & ~0x1F) === 0 && ((1 << (_la - 33)) & ((1 << (CommonRegexParser.LessThan - 33)) | (1 << (CommonRegexParser.GreaterThan - 33)) | (1 << (CommonRegexParser.SingleQuote - 33)) | (1 << (CommonRegexParser.Underscore - 33)) | (1 << (CommonRegexParser.Colon - 33)) | (1 << (CommonRegexParser.Hash - 33)) | (1 << (CommonRegexParser.Equals - 33)) | (1 << (CommonRegexParser.Exclamation - 33)) | (1 << (CommonRegexParser.Ampersand - 33)) | (1 << (CommonRegexParser.ALC - 33)) | (1 << (CommonRegexParser.BLC - 33)) | (1 << (CommonRegexParser.CLC - 33)) | (1 << (CommonRegexParser.DLC - 33)) | (1 << (CommonRegexParser.ELC - 33)) | (1 << (CommonRegexParser.FLC - 33)) | (1 << (CommonRegexParser.GLC - 33)) | (1 << (CommonRegexParser.HLC - 33)) | (1 << (CommonRegexParser.ILC - 33)) | (1 << (CommonRegexParser.JLC - 33)) | (1 << (CommonRegexParser.KLC - 33)) | (1 << (CommonRegexParser.LLC - 33)) | (1 << (CommonRegexParser.MLC - 33)) | (1 << (CommonRegexParser.NLC - 33)) | (1 << (CommonRegexParser.OLC - 33)) | (1 << (CommonRegexParser.PLC - 33)) | (1 << (CommonRegexParser.QLC - 33)) | (1 << (CommonRegexParser.RLC - 33)) | (1 << (CommonRegexParser.SLC - 33)) | (1 << (CommonRegexParser.TLC - 33)) | (1 << (CommonRegexParser.ULC - 33)) | (1 << (CommonRegexParser.VLC - 33)) | (1 << (CommonRegexParser.WLC - 33)))) !== 0) || ((((_la - 65)) & ~0x1F) === 0 && ((1 << (_la - 65)) & ((1 << (CommonRegexParser.XLC - 65)) | (1 << (CommonRegexParser.YLC - 65)) | (1 << (CommonRegexParser.ZLC - 65)) | (1 << (CommonRegexParser.AUC - 65)) | (1 << (CommonRegexParser.BUC - 65)) | (1 << (CommonRegexParser.CUC - 65)) | (1 << (CommonRegexParser.DUC - 65)) | (1 << (CommonRegexParser.EUC - 65)) | (1 << (CommonRegexParser.FUC - 65)) | (1 << (CommonRegexParser.GUC - 65)) | (1 << (CommonRegexParser.HUC - 65)) | (1 << (CommonRegexParser.IUC - 65)) | (1 << (CommonRegexParser.JUC - 65)) | (1 << (CommonRegexParser.KUC - 65)) | (1 << (CommonRegexParser.LUC - 65)) | (1 << (CommonRegexParser.MUC - 65)) | (1 << (CommonRegexParser.NUC - 65)) | (1 << (CommonRegexParser.OUC - 65)) | (1 << (CommonRegexParser.PUC - 65)) | (1 << (CommonRegexParser.QUC - 65)) | (1 << (CommonRegexParser.RUC - 65)) | (1 << (CommonRegexParser.SUC - 65)) | (1 << (CommonRegexParser.TUC - 65)) | (1 << (CommonRegexParser.UUC - 65)) | (1 << (CommonRegexParser.VUC - 65)) | (1 << (CommonRegexParser.WUC - 65)) | (1 << (CommonRegexParser.XUC - 65)) | (1 << (CommonRegexParser.YUC - 65)) | (1 << (CommonRegexParser.ZUC - 65)) | (1 << (CommonRegexParser.D1 - 65)) | (1 << (CommonRegexParser.D2 - 65)) | (1 << (CommonRegexParser.D3 - 65)))) !== 0) || ((((_la - 97)) & ~0x1F) === 0 && ((1 << (_la - 97)) & ((1 << (CommonRegexParser.D4 - 97)) | (1 << (CommonRegexParser.D5 - 97)) | (1 << (CommonRegexParser.D6 - 97)) | (1 << (CommonRegexParser.D7 - 97)) | (1 << (CommonRegexParser.D8 - 97)) | (1 << (CommonRegexParser.D9 - 97)) | (1 << (CommonRegexParser.D0 - 97)) | (1 << (CommonRegexParser.OtherChar - 97)))) !== 0));
 			}
 		}
 		catch (re) {
@@ -2117,7 +2050,7 @@ export class CommonRegexParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 272;
+			this.state = 261;
 			_la = this._input.LA(1);
 			if (_la <= 0 || (_la === CommonRegexParser.CloseParen)) {
 			this._errHandler.recoverInline(this);
@@ -2153,9 +2086,9 @@ export class CommonRegexParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 274;
+			this.state = 263;
 			_la = this._input.LA(1);
-			if (!(((((_la - 51)) & ~0x1F) === 0 && ((1 << (_la - 51)) & ((1 << (CommonRegexParser.ALC - 51)) | (1 << (CommonRegexParser.BLC - 51)) | (1 << (CommonRegexParser.CLC - 51)) | (1 << (CommonRegexParser.DLC - 51)) | (1 << (CommonRegexParser.ELC - 51)) | (1 << (CommonRegexParser.FLC - 51)) | (1 << (CommonRegexParser.GLC - 51)) | (1 << (CommonRegexParser.HLC - 51)) | (1 << (CommonRegexParser.ILC - 51)) | (1 << (CommonRegexParser.JLC - 51)) | (1 << (CommonRegexParser.KLC - 51)) | (1 << (CommonRegexParser.LLC - 51)) | (1 << (CommonRegexParser.MLC - 51)) | (1 << (CommonRegexParser.NLC - 51)) | (1 << (CommonRegexParser.OLC - 51)) | (1 << (CommonRegexParser.PLC - 51)) | (1 << (CommonRegexParser.QLC - 51)) | (1 << (CommonRegexParser.RLC - 51)) | (1 << (CommonRegexParser.SLC - 51)) | (1 << (CommonRegexParser.TLC - 51)) | (1 << (CommonRegexParser.ULC - 51)) | (1 << (CommonRegexParser.VLC - 51)) | (1 << (CommonRegexParser.WLC - 51)) | (1 << (CommonRegexParser.XLC - 51)) | (1 << (CommonRegexParser.YLC - 51)) | (1 << (CommonRegexParser.ZLC - 51)) | (1 << (CommonRegexParser.AUC - 51)) | (1 << (CommonRegexParser.BUC - 51)) | (1 << (CommonRegexParser.CUC - 51)) | (1 << (CommonRegexParser.DUC - 51)) | (1 << (CommonRegexParser.EUC - 51)) | (1 << (CommonRegexParser.FUC - 51)))) !== 0) || ((((_la - 83)) & ~0x1F) === 0 && ((1 << (_la - 83)) & ((1 << (CommonRegexParser.GUC - 83)) | (1 << (CommonRegexParser.HUC - 83)) | (1 << (CommonRegexParser.IUC - 83)) | (1 << (CommonRegexParser.JUC - 83)) | (1 << (CommonRegexParser.KUC - 83)) | (1 << (CommonRegexParser.LUC - 83)) | (1 << (CommonRegexParser.MUC - 83)) | (1 << (CommonRegexParser.NUC - 83)) | (1 << (CommonRegexParser.OUC - 83)) | (1 << (CommonRegexParser.PUC - 83)) | (1 << (CommonRegexParser.QUC - 83)) | (1 << (CommonRegexParser.RUC - 83)) | (1 << (CommonRegexParser.SUC - 83)) | (1 << (CommonRegexParser.TUC - 83)) | (1 << (CommonRegexParser.UUC - 83)) | (1 << (CommonRegexParser.VUC - 83)) | (1 << (CommonRegexParser.WUC - 83)) | (1 << (CommonRegexParser.XUC - 83)) | (1 << (CommonRegexParser.YUC - 83)) | (1 << (CommonRegexParser.ZUC - 83)))) !== 0))) {
+			if (!(((((_la - 42)) & ~0x1F) === 0 && ((1 << (_la - 42)) & ((1 << (CommonRegexParser.ALC - 42)) | (1 << (CommonRegexParser.BLC - 42)) | (1 << (CommonRegexParser.CLC - 42)) | (1 << (CommonRegexParser.DLC - 42)) | (1 << (CommonRegexParser.ELC - 42)) | (1 << (CommonRegexParser.FLC - 42)) | (1 << (CommonRegexParser.GLC - 42)) | (1 << (CommonRegexParser.HLC - 42)) | (1 << (CommonRegexParser.ILC - 42)) | (1 << (CommonRegexParser.JLC - 42)) | (1 << (CommonRegexParser.KLC - 42)) | (1 << (CommonRegexParser.LLC - 42)) | (1 << (CommonRegexParser.MLC - 42)) | (1 << (CommonRegexParser.NLC - 42)) | (1 << (CommonRegexParser.OLC - 42)) | (1 << (CommonRegexParser.PLC - 42)) | (1 << (CommonRegexParser.QLC - 42)) | (1 << (CommonRegexParser.RLC - 42)) | (1 << (CommonRegexParser.SLC - 42)) | (1 << (CommonRegexParser.TLC - 42)) | (1 << (CommonRegexParser.ULC - 42)) | (1 << (CommonRegexParser.VLC - 42)) | (1 << (CommonRegexParser.WLC - 42)) | (1 << (CommonRegexParser.XLC - 42)) | (1 << (CommonRegexParser.YLC - 42)) | (1 << (CommonRegexParser.ZLC - 42)) | (1 << (CommonRegexParser.AUC - 42)) | (1 << (CommonRegexParser.BUC - 42)) | (1 << (CommonRegexParser.CUC - 42)) | (1 << (CommonRegexParser.DUC - 42)) | (1 << (CommonRegexParser.EUC - 42)) | (1 << (CommonRegexParser.FUC - 42)))) !== 0) || ((((_la - 74)) & ~0x1F) === 0 && ((1 << (_la - 74)) & ((1 << (CommonRegexParser.GUC - 74)) | (1 << (CommonRegexParser.HUC - 74)) | (1 << (CommonRegexParser.IUC - 74)) | (1 << (CommonRegexParser.JUC - 74)) | (1 << (CommonRegexParser.KUC - 74)) | (1 << (CommonRegexParser.LUC - 74)) | (1 << (CommonRegexParser.MUC - 74)) | (1 << (CommonRegexParser.NUC - 74)) | (1 << (CommonRegexParser.OUC - 74)) | (1 << (CommonRegexParser.PUC - 74)) | (1 << (CommonRegexParser.QUC - 74)) | (1 << (CommonRegexParser.RUC - 74)) | (1 << (CommonRegexParser.SUC - 74)) | (1 << (CommonRegexParser.TUC - 74)) | (1 << (CommonRegexParser.UUC - 74)) | (1 << (CommonRegexParser.VUC - 74)) | (1 << (CommonRegexParser.WUC - 74)) | (1 << (CommonRegexParser.XUC - 74)) | (1 << (CommonRegexParser.YUC - 74)) | (1 << (CommonRegexParser.ZUC - 74)))) !== 0))) {
 			this._errHandler.recoverInline(this);
 			} else {
 				if (this._input.LA(1) === Token.EOF) {
@@ -2183,7 +2116,7 @@ export class CommonRegexParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03s\u0117\x04\x02" +
+		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03j\u010C\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
 		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x04\r\t\r\x04" +
 		"\x0E\t\x0E\x04\x0F\t\x0F\x04\x10\t\x10\x04\x11\t\x11\x04\x12\t\x12\x04" +
@@ -2197,124 +2130,119 @@ export class CommonRegexParser extends Parser {
 		"f\n\x06\x03\x07\x03\x07\x03\x07\x05\x07k\n\x07\x03\b\x03\b\x03\b\x06\b" +
 		"p\n\b\r\b\x0E\bq\x03\b\x03\b\x03\b\x03\b\x06\bx\n\b\r\b\x0E\by\x03\b\x03" +
 		"\b\x05\b~\n\b\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03" +
-		"\t\x03\t\x03\t\x05\t\x8C\n\t\x03\n\x03\n\x03\n\x03\n\x03\n\x03\n\x03\n" +
-		"\x03\n\x03\n\x03\n\x03\n\x03\n\x05\n\x9A\n\n\x03\v\x03\v\x03\v\x06\v\x9F" +
-		"\n\v\r\v\x0E\v\xA0\x03\v\x03\v\x03\f\x03\f\x03\r\x03\r\x03\r\x03\r\x03" +
-		"\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x05\r\xB3\n\r\x03\x0E\x03" +
-		"\x0E\x03\x0E\x03\x0E\x03\x0E\x03\x0E\x05\x0E\xBB\n\x0E\x03\x0F\x03\x0F" +
-		"\x03\x10\x03\x10\x05\x10\xC1\n\x10\x03\x11\x03\x11\x03\x11\x03\x11\x03" +
-		"\x11\x03\x11\x03\x11\x03\x11\x03\x11\x03\x11\x03\x11\x05\x11\xCE\n\x11" +
-		"\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12" +
-		"\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12" +
-		"\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x05\x12\xE8\n\x12\x03" +
-		"\x13\x03\x13\x03\x14\x03\x14\x03\x14\x03\x14\x03\x14\x03\x14\x03\x14\x03" +
-		"\x14\x03\x14\x05\x14\xF5\n\x14\x03\x15\x03\x15\x03\x16\x06\x16\xFA\n\x16" +
-		"\r\x16\x0E\x16\xFB\x03\x17\x03\x17\x03\x18\x03\x18\x03\x19\x03\x19\x05" +
-		"\x19\u0104\n\x19\x03\x19\x03\x19\x03\x19\x07\x19\u0109\n\x19\f\x19\x0E" +
-		"\x19\u010C\v\x19\x03\x1A\x06\x1A\u010F\n\x1A\r\x1A\x0E\x1A\u0110\x03\x1B" +
+		"\t\x03\t\x03\t\x05\t\x8C\n\t\x03\n\x03\n\x03\n\x03\n\x03\n\x03\n\x03\v" +
+		"\x03\v\x03\v\x06\v\x97\n\v\r\v\x0E\v\x98\x03\v\x03\v\x03\f\x03\f\x03\r" +
+		"\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x05\r\xA8\n\r\x03\x0E" +
+		"\x03\x0E\x03\x0E\x03\x0E\x03\x0E\x03\x0E\x05\x0E\xB0\n\x0E\x03\x0F\x03" +
+		"\x0F\x03\x10\x03\x10\x05\x10\xB6\n\x10\x03\x11\x03\x11\x03\x11\x03\x11" +
+		"\x03\x11\x03\x11\x03\x11\x03\x11\x03\x11\x03\x11\x03\x11\x05\x11\xC3\n" +
+		"\x11\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03" +
+		"\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03" +
+		"\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x05\x12\xDD\n\x12" +
+		"\x03\x13\x03\x13\x03\x14\x03\x14\x03\x14\x03\x14\x03\x14\x03\x14\x03\x14" +
+		"\x03\x14\x03\x14\x05\x14\xEA\n\x14\x03\x15\x03\x15\x03\x16\x06\x16\xEF" +
+		"\n\x16\r\x16\x0E\x16\xF0\x03\x17\x03\x17\x03\x18\x03\x18\x03\x19\x03\x19" +
+		"\x05\x19\xF9\n\x19\x03\x19\x03\x19\x03\x19\x07\x19\xFE\n\x19\f\x19\x0E" +
+		"\x19\u0101\v\x19\x03\x1A\x06\x1A\u0104\n\x1A\r\x1A\x0E\x1A\u0105\x03\x1B" +
 		"\x03\x1B\x03\x1C\x03\x1C\x03\x1C\x02\x02\x02\x1D\x02\x02\x04\x02\x06\x02" +
 		"\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14\x02\x16\x02\x18\x02\x1A" +
 		"\x02\x1C\x02\x1E\x02 \x02\"\x02$\x02&\x02(\x02*\x02,\x02.\x020\x022\x02" +
-		"4\x026\x02\x02\t\b\x02==AAGGLLXXcc\x04\x02\x04\x04\x0E\x1B\x04\x02ikr" +
-		"r\x04\x02iorr\x03\x02ir\x03\x02++\x03\x025h\u0141\x028\x03\x02\x02\x02" +
-		"\x04;\x03\x02\x02\x02\x06F\x03\x02\x02\x02\bI\x03\x02\x02\x02\ne\x03\x02" +
-		"\x02\x02\fj\x03\x02\x02\x02\x0E}\x03\x02\x02\x02\x10\x8B\x03\x02\x02\x02" +
-		"\x12\x99\x03\x02\x02\x02\x14\x9B\x03\x02\x02\x02\x16\xA4\x03\x02\x02\x02" +
-		"\x18\xB2\x03\x02\x02\x02\x1A\xBA\x03\x02\x02\x02\x1C\xBC\x03\x02\x02\x02" +
-		"\x1E\xC0\x03\x02\x02\x02 \xCD\x03\x02\x02\x02\"\xE7\x03\x02\x02\x02$\xE9" +
-		"\x03\x02\x02\x02&\xF4\x03\x02\x02\x02(\xF6\x03\x02\x02\x02*\xF9\x03\x02" +
-		"\x02\x02,\xFD\x03\x02\x02\x02.\xFF\x03\x02\x02\x020\u0103\x03\x02\x02" +
-		"\x022\u010E\x03\x02\x02\x024\u0112\x03\x02\x02\x026\u0114\x03\x02\x02" +
-		"\x0289\x05\x04\x03\x029:\x07\x02\x02\x03:\x03\x03\x02\x02\x02;@\x05\x06" +
-		"\x04\x02<=\x07)\x02\x02=?\x05\x06\x04\x02><\x03\x02\x02\x02?B\x03\x02" +
-		"\x02\x02@>\x03\x02\x02\x02@A\x03\x02\x02\x02A\x05\x03\x02\x02\x02B@\x03" +
-		"\x02\x02\x02CE\x05\b\x05\x02DC\x03\x02\x02\x02EH\x03\x02\x02\x02FD\x03" +
-		"\x02\x02\x02FG\x03\x02\x02\x02G\x07\x03\x02\x02\x02HF\x03\x02\x02\x02" +
-		"IK\x05\x18\r\x02JL\x05\n\x06\x02KJ\x03\x02\x02\x02KL\x03\x02\x02\x02L" +
-		"\t\x03\x02\x02\x02MN\x07!\x02\x02Nf\x05\f\x07\x02OP\x07\"\x02\x02Pf\x05" +
-		"\f\x07\x02QR\x07#\x02\x02Rf\x05\f\x07\x02ST\x07$\x02\x02TU\x05$\x13\x02" +
-		"UV\x07%\x02\x02VW\x05\f\x07\x02Wf\x03\x02\x02\x02XY\x07$\x02\x02YZ\x05" +
-		"$\x13\x02Z[\x07&\x02\x02[\\\x07%\x02\x02\\]\x05\f\x07\x02]f\x03\x02\x02" +
-		"\x02^_\x07$\x02\x02_`\x05$\x13\x02`a\x07&\x02\x02ab\x05$\x13\x02bc\x07" +
-		"%\x02\x02cd\x05\f\x07\x02df\x03\x02\x02\x02eM\x03\x02\x02\x02eO\x03\x02" +
-		"\x02\x02eQ\x03\x02\x02\x02eS\x03\x02\x02\x02eX\x03\x02\x02\x02e^\x03\x02" +
-		"\x02\x02f\v\x03\x02\x02\x02gk\x07\"\x02\x02hk\x07!\x02\x02ik\x03\x02\x02" +
-		"\x02jg\x03\x02\x02\x02jh\x03\x02\x02\x02ji\x03\x02\x02\x02k\r\x03\x02" +
-		"\x02\x02lm\x07\x1D\x02\x02mo\x07\x1F\x02\x02np\x05\x1A\x0E\x02on\x03\x02" +
-		"\x02\x02pq\x03\x02\x02\x02qo\x03\x02\x02\x02qr\x03\x02\x02\x02rs\x03\x02" +
-		"\x02\x02st\x07\x1E\x02\x02t~\x03\x02\x02\x02uw\x07\x1D\x02\x02vx\x05\x1A" +
-		"\x0E\x02wv\x03\x02\x02\x02xy\x03\x02\x02\x02yw\x03\x02\x02\x02yz\x03\x02" +
-		"\x02\x02z{\x03\x02\x02\x02{|\x07\x1E\x02\x02|~\x03\x02\x02\x02}l\x03\x02" +
-		"\x02\x02}u\x03\x02\x02\x02~\x0F\x03\x02\x02\x02\x7F\x80\x07*\x02\x02\x80" +
-		"\x81\x07!\x02\x02\x81\x82\x07,\x02\x02\x82\x83\x05.\x18\x02\x83\x84\x07" +
-		"-\x02\x02\x84\x85\x05\x04\x03\x02\x85\x86\x07+\x02\x02\x86\x8C\x03\x02" +
-		"\x02\x02\x87\x88\x07*\x02\x02\x88\x89\x05\x04\x03\x02\x89\x8A\x07+\x02" +
-		"\x02\x8A\x8C\x03\x02\x02\x02\x8B\x7F\x03\x02\x02\x02\x8B\x87\x03\x02\x02" +
-		"\x02\x8C\x11\x03\x02\x02\x02\x8D\x8E\x07*\x02\x02\x8E\x8F\x07!\x02\x02" +
-		"\x8F\x90\x070\x02\x02\x90\x91\x05\x04\x03\x02\x91\x92\x07+\x02\x02\x92" +
-		"\x9A\x03\x02\x02\x02\x93\x94\x07*\x02\x02\x94\x95\x07!\x02\x02\x95\x96" +
-		"\x07)\x02\x02\x96\x97\x05\x04\x03\x02\x97\x98\x07+\x02\x02\x98\x9A\x03" +
-		"\x02\x02\x02\x99\x8D\x03\x02\x02\x02\x99\x93\x03\x02\x02\x02\x9A\x13\x03" +
-		"\x02\x02\x02\x9B\x9C\x07*\x02\x02\x9C\x9E\x07!\x02\x02\x9D\x9F\x05\x16" +
-		"\f\x02\x9E\x9D\x03\x02\x02\x02\x9F\xA0\x03\x02\x02\x02\xA0\x9E\x03\x02" +
-		"\x02\x02\xA0\xA1\x03\x02\x02\x02\xA1\xA2\x03\x02\x02\x02\xA2\xA3\x07+" +
-		"\x02\x02\xA3\x15\x03\x02\x02\x02\xA4\xA5\t\x02\x02\x02\xA5\x17\x03\x02" +
-		"\x02\x02\xA6\xB3\x05\x1C\x0F\x02\xA7\xB3\x05\x1E\x10\x02\xA8\xB3\x05\x0E" +
-		"\b\x02\xA9\xB3\x05\x10\t\x02\xAA\xB3\x05\x12\n\x02\xAB\xB3\x05\x14\v\x02" +
-		"\xAC\xB3\x07\f\x02\x02\xAD\xB3\x07\x1F\x02\x02\xAE\xB3\x07\'\x02\x02\xAF" +
-		"\xB3\x07(\x02\x02\xB0\xB3\x07\r\x02\x02\xB1\xB3\x07\x1C\x02\x02\xB2\xA6" +
-		"\x03\x02\x02\x02\xB2\xA7\x03\x02\x02\x02\xB2\xA8\x03\x02\x02\x02\xB2\xA9" +
-		"\x03\x02\x02\x02\xB2\xAA\x03\x02\x02\x02\xB2\xAB\x03\x02\x02\x02\xB2\xAC" +
-		"\x03\x02\x02\x02\xB2\xAD\x03\x02\x02\x02\xB2\xAE\x03\x02\x02\x02\xB2\xAF" +
-		"\x03\x02\x02\x02\xB2\xB0\x03\x02\x02\x02\xB2\xB1\x03\x02\x02\x02\xB3\x19" +
-		"\x03\x02\x02\x02\xB4\xB5\x05 \x11\x02\xB5\xB6\x07 \x02\x02\xB6\xB7\x05" +
-		" \x11\x02\xB7\xBB\x03\x02\x02\x02\xB8\xBB\x05\x1C\x0F\x02\xB9\xBB\x05" +
-		" \x11\x02\xBA\xB4\x03\x02\x02\x02\xBA\xB8\x03\x02\x02\x02\xBA\xB9\x03" +
-		"\x02\x02\x02\xBB\x1B\x03\x02\x02\x02\xBC\xBD\t\x03\x02\x02\xBD\x1D\x03" +
-		"\x02\x02\x02\xBE\xC1\x05\"\x12\x02\xBF\xC1\x07\x1E\x02\x02\xC0\xBE\x03" +
-		"\x02\x02\x02\xC0\xBF\x03\x02\x02\x02\xC1\x1F\x03\x02\x02\x02\xC2\xCE\x05" +
-		"\"\x12\x02\xC3\xCE\x07\f\x02\x02\xC4\xCE\x07\x1D\x02\x02\xC5\xCE\x07\x1F" +
-		"\x02\x02\xC6\xCE\x07!\x02\x02\xC7\xCE\x07\"\x02\x02\xC8\xCE\x07#\x02\x02" +
-		"\xC9\xCE\x07(\x02\x02\xCA\xCE\x07)\x02\x02\xCB\xCE\x07*\x02\x02\xCC\xCE" +
-		"\x07+\x02\x02\xCD\xC2\x03\x02\x02\x02\xCD\xC3\x03\x02\x02\x02\xCD\xC4" +
-		"\x03\x02\x02\x02\xCD\xC5\x03\x02\x02\x02\xCD\xC6\x03\x02\x02\x02\xCD\xC7" +
-		"\x03\x02\x02\x02\xCD\xC8\x03\x02\x02\x02\xCD\xC9\x03\x02\x02\x02\xCD\xCA" +
-		"\x03\x02\x02\x02\xCD\xCB\x03\x02\x02\x02\xCD\xCC\x03\x02\x02\x02\xCE!" +
-		"\x03\x02\x02\x02\xCF\xE8\x05&\x14\x02\xD0\xE8\x056\x1C\x02\xD1\xE8\x05" +
-		",\x17\x02\xD2\xE8\x07\x03\x02\x02\xD3\xE8\x07\x05\x02\x02\xD4\xE8\x07" +
-		"\x06\x02\x02\xD5\xE8\x07\x07\x02\x02\xD6\xE8\x07\b\x02\x02\xD7\xE8\x07" +
-		"\t\x02\x02\xD8\xE8\x07\v\x02\x02\xD9\xE8\x07$\x02\x02\xDA\xE8\x07%\x02" +
-		"\x02\xDB\xE8\x07&\x02\x02\xDC\xE8\x07 \x02\x02\xDD\xE8\x07,\x02\x02\xDE" +
-		"\xE8\x07-\x02\x02\xDF\xE8\x07.\x02\x02\xE0\xE8\x07/\x02\x02\xE1\xE8\x07" +
-		"0\x02\x02\xE2\xE8\x071\x02\x02\xE3\xE8\x072\x02\x02\xE4\xE8\x073\x02\x02" +
-		"\xE5\xE8\x074\x02\x02\xE6\xE8\x07s\x02\x02\xE7\xCF\x03\x02\x02\x02\xE7" +
-		"\xD0\x03\x02\x02\x02\xE7\xD1\x03\x02\x02\x02\xE7\xD2\x03\x02\x02\x02\xE7" +
-		"\xD3\x03\x02\x02\x02\xE7\xD4\x03\x02\x02\x02\xE7\xD5\x03\x02\x02\x02\xE7" +
-		"\xD6\x03\x02\x02\x02\xE7\xD7\x03\x02\x02\x02\xE7\xD8\x03\x02\x02\x02\xE7" +
-		"\xD9\x03\x02\x02\x02\xE7\xDA\x03\x02\x02\x02\xE7\xDB\x03\x02\x02\x02\xE7" +
-		"\xDC\x03\x02\x02\x02\xE7\xDD\x03\x02\x02\x02\xE7\xDE\x03\x02\x02\x02\xE7" +
-		"\xDF\x03\x02\x02\x02\xE7\xE0\x03\x02\x02\x02\xE7\xE1\x03\x02\x02\x02\xE7" +
-		"\xE2\x03\x02\x02\x02\xE7\xE3\x03\x02\x02\x02\xE7\xE4\x03\x02\x02\x02\xE7" +
-		"\xE5\x03\x02\x02\x02\xE7\xE6\x03\x02\x02\x02\xE8#\x03\x02\x02\x02\xE9" +
-		"\xEA\x05*\x16\x02\xEA%\x03\x02\x02\x02\xEB\xEC\x07\n\x02\x02\xEC\xED\t" +
-		"\x04\x02\x02\xED\xEE\x05(\x15\x02\xEE\xEF\x05(\x15\x02\xEF\xF5\x03\x02" +
-		"\x02\x02\xF0\xF1\x07\n\x02\x02\xF1\xF2\x05(\x15\x02\xF2\xF3\x05(\x15\x02" +
-		"\xF3\xF5\x03\x02\x02\x02\xF4\xEB\x03\x02\x02\x02\xF4\xF0\x03\x02\x02\x02" +
-		"\xF5\'\x03\x02\x02\x02\xF6\xF7\t\x05\x02\x02\xF7)\x03\x02\x02\x02\xF8" +
-		"\xFA\x05,\x17\x02\xF9\xF8\x03\x02\x02\x02\xFA\xFB\x03\x02\x02\x02\xFB" +
-		"\xF9\x03\x02\x02\x02\xFB\xFC\x03\x02\x02\x02\xFC+\x03\x02\x02\x02\xFD" +
-		"\xFE\t\x06\x02\x02\xFE-\x03\x02\x02\x02\xFF\u0100\x050\x19\x02\u0100/" +
-		"\x03\x02\x02\x02\u0101\u0104\x056\x1C\x02\u0102\u0104\x07/\x02\x02\u0103" +
-		"\u0101\x03\x02\x02\x02\u0103\u0102\x03\x02\x02\x02\u0104\u010A\x03\x02" +
-		"\x02\x02\u0105\u0109\x056\x1C\x02\u0106\u0109\x07/\x02\x02\u0107\u0109" +
-		"\x05,\x17\x02\u0108\u0105\x03\x02\x02\x02\u0108\u0106\x03\x02\x02\x02" +
-		"\u0108\u0107\x03\x02\x02\x02\u0109\u010C\x03\x02\x02\x02\u010A\u0108\x03" +
-		"\x02\x02\x02\u010A\u010B\x03\x02\x02\x02\u010B1\x03\x02\x02\x02\u010C" +
-		"\u010A\x03\x02\x02\x02\u010D\u010F\x054\x1B\x02\u010E\u010D\x03\x02\x02" +
-		"\x02\u010F\u0110\x03\x02\x02\x02\u0110\u010E\x03\x02\x02\x02\u0110\u0111" +
-		"\x03\x02\x02\x02\u01113\x03\x02\x02\x02\u0112\u0113\n\x07\x02\x02\u0113" +
-		"5\x03\x02\x02\x02\u0114\u0115\t\b\x02\x02\u01157\x03\x02\x02\x02\x18@" +
-		"FKejqy}\x8B\x99\xA0\xB2\xBA\xC0\xCD\xE7\xF4\xFB\u0103\u0108\u010A\u0110";
+		"4\x026\x02\x02\t\x05\x024488>>\x04\x02\x04\x04\r\x14\x04\x02`bii\x04\x02" +
+		"`fii\x03\x02`i\x03\x02\"\"\x03\x02,_\u0132\x028\x03\x02\x02\x02\x04;\x03" +
+		"\x02\x02\x02\x06F\x03\x02\x02\x02\bI\x03\x02\x02\x02\ne\x03\x02\x02\x02" +
+		"\fj\x03\x02\x02\x02\x0E}\x03\x02\x02\x02\x10\x8B\x03\x02\x02\x02\x12\x8D" +
+		"\x03\x02\x02\x02\x14\x93\x03\x02\x02\x02\x16\x9C\x03\x02\x02\x02\x18\xA7" +
+		"\x03\x02\x02\x02\x1A\xAF\x03\x02\x02\x02\x1C\xB1\x03\x02\x02\x02\x1E\xB5" +
+		"\x03\x02\x02\x02 \xC2\x03\x02\x02\x02\"\xDC\x03\x02\x02\x02$\xDE\x03\x02" +
+		"\x02\x02&\xE9\x03\x02\x02\x02(\xEB\x03\x02\x02\x02*\xEE\x03\x02\x02\x02" +
+		",\xF2\x03\x02\x02\x02.\xF4\x03\x02\x02\x020\xF8\x03\x02\x02\x022\u0103" +
+		"\x03\x02\x02\x024\u0107\x03\x02\x02\x026\u0109\x03\x02\x02\x0289\x05\x04" +
+		"\x03\x029:\x07\x02\x02\x03:\x03\x03\x02\x02\x02;@\x05\x06\x04\x02<=\x07" +
+		" \x02\x02=?\x05\x06\x04\x02><\x03\x02\x02\x02?B\x03\x02\x02\x02@>\x03" +
+		"\x02\x02\x02@A\x03\x02\x02\x02A\x05\x03\x02\x02\x02B@\x03\x02\x02\x02" +
+		"CE\x05\b\x05\x02DC\x03\x02\x02\x02EH\x03\x02\x02\x02FD\x03\x02\x02\x02" +
+		"FG\x03\x02\x02\x02G\x07\x03\x02\x02\x02HF\x03\x02\x02\x02IK\x05\x18\r" +
+		"\x02JL\x05\n\x06\x02KJ\x03\x02\x02\x02KL\x03\x02\x02\x02L\t\x03\x02\x02" +
+		"\x02MN\x07\x19\x02\x02Nf\x05\f\x07\x02OP\x07\x1A\x02\x02Pf\x05\f\x07\x02" +
+		"QR\x07\x1B\x02\x02Rf\x05\f\x07\x02ST\x07\x1C\x02\x02TU\x05$\x13\x02UV" +
+		"\x07\x1D\x02\x02VW\x05\f\x07\x02Wf\x03\x02\x02\x02XY\x07\x1C\x02\x02Y" +
+		"Z\x05$\x13\x02Z[\x07\x1E\x02\x02[\\\x07\x1D\x02\x02\\]\x05\f\x07\x02]" +
+		"f\x03\x02\x02\x02^_\x07\x1C\x02\x02_`\x05$\x13\x02`a\x07\x1E\x02\x02a" +
+		"b\x05$\x13\x02bc\x07\x1D\x02\x02cd\x05\f\x07\x02df\x03\x02\x02\x02eM\x03" +
+		"\x02\x02\x02eO\x03\x02\x02\x02eQ\x03\x02\x02\x02eS\x03\x02\x02\x02eX\x03" +
+		"\x02\x02\x02e^\x03\x02\x02\x02f\v\x03\x02\x02\x02gk\x07\x1A\x02\x02hk" +
+		"\x07\x19\x02\x02ik\x03\x02\x02\x02jg\x03\x02\x02\x02jh\x03\x02\x02\x02" +
+		"ji\x03\x02\x02\x02k\r\x03\x02\x02\x02lm\x07\x15\x02\x02mo\x07\x17\x02" +
+		"\x02np\x05\x1A\x0E\x02on\x03\x02\x02\x02pq\x03\x02\x02\x02qo\x03\x02\x02" +
+		"\x02qr\x03\x02\x02\x02rs\x03\x02\x02\x02st\x07\x16\x02\x02t~\x03\x02\x02" +
+		"\x02uw\x07\x15\x02\x02vx\x05\x1A\x0E\x02wv\x03\x02\x02\x02xy\x03\x02\x02" +
+		"\x02yw\x03\x02\x02\x02yz\x03\x02\x02\x02z{\x03\x02\x02\x02{|\x07\x16\x02" +
+		"\x02|~\x03\x02\x02\x02}l\x03\x02\x02\x02}u\x03\x02\x02\x02~\x0F\x03\x02" +
+		"\x02\x02\x7F\x80\x07!\x02\x02\x80\x81\x07\x19\x02\x02\x81\x82\x07#\x02" +
+		"\x02\x82\x83\x05.\x18\x02\x83\x84\x07$\x02\x02\x84\x85\x05\x04\x03\x02" +
+		"\x85\x86\x07\"\x02\x02\x86\x8C\x03\x02\x02\x02\x87\x88\x07!\x02\x02\x88" +
+		"\x89\x05\x04\x03\x02\x89\x8A\x07\"\x02\x02\x8A\x8C\x03\x02\x02\x02\x8B" +
+		"\x7F\x03\x02\x02\x02\x8B\x87\x03\x02\x02\x02\x8C\x11\x03\x02\x02\x02\x8D" +
+		"\x8E\x07!\x02\x02\x8E\x8F\x07\x19\x02\x02\x8F\x90\x07\'\x02\x02\x90\x91" +
+		"\x05\x04\x03\x02\x91\x92\x07\"\x02\x02\x92\x13\x03\x02\x02\x02\x93\x94" +
+		"\x07!\x02\x02\x94\x96\x07\x19\x02\x02\x95\x97\x05\x16\f\x02\x96\x95\x03" +
+		"\x02\x02\x02\x97\x98\x03\x02\x02\x02\x98\x96\x03\x02\x02\x02\x98\x99\x03" +
+		"\x02\x02\x02\x99\x9A\x03\x02\x02\x02\x9A\x9B\x07\"\x02\x02\x9B\x15\x03" +
+		"\x02\x02\x02\x9C\x9D\t\x02\x02\x02\x9D\x17\x03\x02\x02\x02\x9E\xA8\x05" +
+		"\x1C\x0F\x02\x9F\xA8\x05\x1E\x10\x02\xA0\xA8\x05\x0E\b\x02\xA1\xA8\x05" +
+		"\x10\t\x02\xA2\xA8\x05\x12\n\x02\xA3\xA8\x05\x14\v\x02\xA4\xA8\x07\f\x02" +
+		"\x02\xA5\xA8\x07\x17\x02\x02\xA6\xA8\x07\x1F\x02\x02\xA7\x9E\x03\x02\x02" +
+		"\x02\xA7\x9F\x03\x02\x02\x02\xA7\xA0\x03\x02\x02\x02\xA7\xA1\x03\x02\x02" +
+		"\x02\xA7\xA2\x03\x02\x02\x02\xA7\xA3\x03\x02\x02\x02\xA7\xA4\x03\x02\x02" +
+		"\x02\xA7\xA5\x03\x02\x02\x02\xA7\xA6\x03\x02\x02\x02\xA8\x19\x03\x02\x02" +
+		"\x02\xA9\xAA\x05 \x11\x02\xAA\xAB\x07\x18\x02\x02\xAB\xAC\x05 \x11\x02" +
+		"\xAC\xB0\x03\x02\x02\x02\xAD\xB0\x05\x1C\x0F\x02\xAE\xB0\x05 \x11\x02" +
+		"\xAF\xA9\x03\x02\x02\x02\xAF\xAD\x03\x02\x02\x02\xAF\xAE\x03\x02\x02\x02" +
+		"\xB0\x1B\x03\x02\x02\x02\xB1\xB2\t\x03\x02\x02\xB2\x1D\x03\x02\x02\x02" +
+		"\xB3\xB6\x05\"\x12\x02\xB4\xB6\x07\x16\x02\x02\xB5\xB3\x03\x02\x02\x02" +
+		"\xB5\xB4\x03\x02\x02\x02\xB6\x1F\x03\x02\x02\x02\xB7\xC3\x05\"\x12\x02" +
+		"\xB8\xC3\x07\f\x02\x02\xB9\xC3\x07\x15\x02\x02\xBA\xC3\x07\x17\x02\x02" +
+		"\xBB\xC3\x07\x19\x02\x02\xBC\xC3\x07\x1A\x02\x02\xBD\xC3\x07\x1B\x02\x02" +
+		"\xBE\xC3\x07\x1F\x02\x02\xBF\xC3\x07 \x02\x02\xC0\xC3\x07!\x02\x02\xC1" +
+		"\xC3\x07\"\x02\x02\xC2\xB7\x03\x02\x02\x02\xC2\xB8\x03\x02\x02\x02\xC2" +
+		"\xB9\x03\x02\x02\x02\xC2\xBA\x03\x02\x02\x02\xC2\xBB\x03\x02\x02\x02\xC2" +
+		"\xBC\x03\x02\x02\x02\xC2\xBD\x03\x02\x02\x02\xC2\xBE\x03\x02\x02\x02\xC2" +
+		"\xBF\x03\x02\x02\x02\xC2\xC0\x03\x02\x02\x02\xC2\xC1\x03\x02\x02\x02\xC3" +
+		"!\x03\x02\x02\x02\xC4\xDD\x05&\x14\x02\xC5\xDD\x056\x1C\x02\xC6\xDD\x05" +
+		",\x17\x02\xC7\xDD\x07\x03\x02\x02\xC8\xDD\x07\x05\x02\x02\xC9\xDD\x07" +
+		"\x06\x02\x02\xCA\xDD\x07\x07\x02\x02\xCB\xDD\x07\b\x02\x02\xCC\xDD\x07" +
+		"\t\x02\x02\xCD\xDD\x07\v\x02\x02\xCE\xDD\x07\x1C\x02\x02\xCF\xDD\x07\x1D" +
+		"\x02\x02\xD0\xDD\x07\x1E\x02\x02\xD1\xDD\x07\x18\x02\x02\xD2\xDD\x07#" +
+		"\x02\x02\xD3\xDD\x07$\x02\x02\xD4\xDD\x07%\x02\x02\xD5\xDD\x07&\x02\x02" +
+		"\xD6\xDD\x07\'\x02\x02\xD7\xDD\x07(\x02\x02\xD8\xDD\x07)\x02\x02\xD9\xDD" +
+		"\x07*\x02\x02\xDA\xDD\x07+\x02\x02\xDB\xDD\x07j\x02\x02\xDC\xC4\x03\x02" +
+		"\x02\x02\xDC\xC5\x03\x02\x02\x02\xDC\xC6\x03\x02\x02\x02\xDC\xC7\x03\x02" +
+		"\x02\x02\xDC\xC8\x03\x02\x02\x02\xDC\xC9\x03\x02\x02\x02\xDC\xCA\x03\x02" +
+		"\x02\x02\xDC\xCB\x03\x02\x02\x02\xDC\xCC\x03\x02\x02\x02\xDC\xCD\x03\x02" +
+		"\x02\x02\xDC\xCE\x03\x02\x02\x02\xDC\xCF\x03\x02\x02\x02\xDC\xD0\x03\x02" +
+		"\x02\x02\xDC\xD1\x03\x02\x02\x02\xDC\xD2\x03\x02\x02\x02\xDC\xD3\x03\x02" +
+		"\x02\x02\xDC\xD4\x03\x02\x02\x02\xDC\xD5\x03\x02\x02\x02\xDC\xD6\x03\x02" +
+		"\x02\x02\xDC\xD7\x03\x02\x02\x02\xDC\xD8\x03\x02\x02\x02\xDC\xD9\x03\x02" +
+		"\x02\x02\xDC\xDA\x03\x02\x02\x02\xDC\xDB\x03\x02\x02\x02\xDD#\x03\x02" +
+		"\x02\x02\xDE\xDF\x05*\x16\x02\xDF%\x03\x02\x02\x02\xE0\xE1\x07\n\x02\x02" +
+		"\xE1\xE2\t\x04\x02\x02\xE2\xE3\x05(\x15\x02\xE3\xE4\x05(\x15\x02\xE4\xEA" +
+		"\x03\x02\x02\x02\xE5\xE6\x07\n\x02\x02\xE6\xE7\x05(\x15\x02\xE7\xE8\x05" +
+		"(\x15\x02\xE8\xEA\x03\x02\x02\x02\xE9\xE0\x03\x02\x02\x02\xE9\xE5\x03" +
+		"\x02\x02\x02\xEA\'\x03\x02\x02\x02\xEB\xEC\t\x05\x02\x02\xEC)\x03\x02" +
+		"\x02\x02\xED\xEF\x05,\x17\x02\xEE\xED\x03\x02\x02\x02\xEF\xF0\x03\x02" +
+		"\x02\x02\xF0\xEE\x03\x02\x02\x02\xF0\xF1\x03\x02\x02\x02\xF1+\x03\x02" +
+		"\x02\x02\xF2\xF3\t\x06\x02\x02\xF3-\x03\x02\x02\x02\xF4\xF5\x050\x19\x02" +
+		"\xF5/\x03\x02\x02\x02\xF6\xF9\x056\x1C\x02\xF7\xF9\x07&\x02\x02\xF8\xF6" +
+		"\x03\x02\x02\x02\xF8\xF7\x03\x02\x02\x02\xF9\xFF\x03\x02\x02\x02\xFA\xFE" +
+		"\x056\x1C\x02\xFB\xFE\x07&\x02\x02\xFC\xFE\x05,\x17\x02\xFD\xFA\x03\x02" +
+		"\x02\x02\xFD\xFB\x03\x02\x02\x02\xFD\xFC\x03\x02\x02\x02\xFE\u0101\x03" +
+		"\x02\x02\x02\xFF\xFD\x03\x02\x02\x02\xFF\u0100\x03\x02\x02\x02\u01001" +
+		"\x03\x02\x02\x02\u0101\xFF\x03\x02\x02\x02\u0102\u0104\x054\x1B\x02\u0103" +
+		"\u0102\x03\x02\x02\x02\u0104\u0105\x03\x02\x02\x02\u0105\u0103\x03\x02" +
+		"\x02\x02\u0105\u0106\x03\x02\x02\x02\u01063\x03\x02\x02\x02\u0107\u0108" +
+		"\n\x07\x02\x02\u01085\x03\x02\x02\x02\u0109\u010A\t\b\x02\x02\u010A7\x03" +
+		"\x02\x02\x02\x17@FKejqy}\x8B\x98\xA7\xAF\xB5\xC2\xDC\xE9\xF0\xF8\xFD\xFF" +
+		"\u0105";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!CommonRegexParser.__ATN) {
@@ -2733,10 +2661,7 @@ export class AtomContext extends ParserRuleContext {
 	}
 	public Dot(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.Dot, 0); }
 	public Caret(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.Caret, 0); }
-	public StartOfSubject(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.StartOfSubject, 0); }
-	public EndOfSubjectOrLine(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.EndOfSubjectOrLine, 0); }
-	public OneDataUnit(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.OneDataUnit, 0); }
-	public ExtendedUnicodeChar(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.ExtendedUnicodeChar, 0); }
+	public EndOfSubject(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.EndOfSubject, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
@@ -2811,16 +2736,10 @@ export class Shared_atomContext extends ParserRuleContext {
 	public ControlChar(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.ControlChar, 0); }
 	public DecimalDigit(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.DecimalDigit, 0); }
 	public NotDecimalDigit(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.NotDecimalDigit, 0); }
-	public HorizontalWhiteSpace(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.HorizontalWhiteSpace, 0); }
-	public NotHorizontalWhiteSpace(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.NotHorizontalWhiteSpace, 0); }
-	public NotNewLine(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.NotNewLine, 0); }
 	public CharWithProperty(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.CharWithProperty, 0); }
 	public CharWithoutProperty(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.CharWithoutProperty, 0); }
-	public NewLineSequence(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.NewLineSequence, 0); }
 	public WhiteSpace(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.WhiteSpace, 0); }
 	public NotWhiteSpace(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.NotWhiteSpace, 0); }
-	public VerticalWhiteSpace(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.VerticalWhiteSpace, 0); }
-	public NotVerticalWhiteSpace(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.NotVerticalWhiteSpace, 0); }
 	public WordChar(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.WordChar, 0); }
 	public NotWordChar(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.NotWordChar, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
@@ -2894,7 +2813,7 @@ export class Cc_literalContext extends ParserRuleContext {
 	public QuestionMark(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.QuestionMark, 0); }
 	public Plus(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.Plus, 0); }
 	public Star(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.Star, 0); }
-	public EndOfSubjectOrLine(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.EndOfSubjectOrLine, 0); }
+	public EndOfSubject(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.EndOfSubject, 0); }
 	public Pipe(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.Pipe, 0); }
 	public OpenParen(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.OpenParen, 0); }
 	public CloseParen(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.CloseParen, 0); }
