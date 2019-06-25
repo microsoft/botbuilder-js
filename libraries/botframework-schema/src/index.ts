@@ -137,10 +137,6 @@ export interface ConversationAccount {
    * 'user', 'bot'
    */
   role?: RoleTypes;
-  /**
-   * Custom properties object (optional)
-  */
-  properties?: any
 }
 
 /**
