@@ -341,4 +341,16 @@ describe('LG', function () {
         evaled = engine.evaluateTemplate("welcome", { userName: "DL" });
         assert.strictEqual(options3.includes(evaled), true, `Evaled is ${evaled}`);
     });
+
+    it('TestRegex', function () {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath("Regex.lg"));
+        var evaled = engine.evaluateTemplate('wPhrase');
+        assert.strictEqual(evaled, 'Hi');
+
+        var evaled = engine.evaluateTemplate('wPhrase', {name: 'jack'});
+        assert.strictEqual(evaled, 'Hi jack');
+
+        var evaled = engine.evaluateTemplate('wPhrase', {name: 'morethanfive'});
+        assert.strictEqual(evaled, 'Hi');
+    });
 });

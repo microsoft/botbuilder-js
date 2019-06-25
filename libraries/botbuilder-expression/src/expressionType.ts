@@ -141,4 +141,7 @@ export class ExpressionType {
     public static readonly UriQuery: string = 'uriQuery';
     public static readonly UriScheme: string = 'uriScheme';
 
+    // Regar expression
+    public static readonly IsMatch: string = 'isMatch';
+
 }
