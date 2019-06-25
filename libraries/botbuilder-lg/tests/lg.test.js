@@ -205,25 +205,25 @@ describe('LG', function () {
     it('TestAnalyzer', function () {
         var testData = [
             {
-                name:'orderReadOut',
-                variableOptions:["orderType", "userName", "base", "topping", "bread", "meat"],
-                templateRefOptions:["wPhrase", "pizzaOrderConfirmation", "sandwichOrderConfirmation"]
+                name: 'orderReadOut',
+                variableOptions: ["orderType", "userName", "base", "topping", "bread", "meat"],
+                templateRefOptions: ["wPhrase", "pizzaOrderConfirmation", "sandwichOrderConfirmation"]
             },
             {
-                name:'sandwichOrderConfirmation',
-                variableOptions:["bread", "meat"],
-                templateRefOptions:[]
+                name: 'sandwichOrderConfirmation',
+                variableOptions: ["bread", "meat"],
+                templateRefOptions: []
             },
             {
-                name:'template1',
-                 // TODO: input.property should really be: customer.property but analyzer needs to be 
-                variableOptions:["alarms", "customer", "tasks[0]", "age", "city"],
-                templateRefOptions:["template2", "template3", "template4", "template5","template6"]
+                name: 'template1',
+                // TODO: input.property should really be: customer.property but analyzer needs to be 
+                variableOptions: ["alarms", "customer", "tasks[0]", "age", "city"],
+                templateRefOptions: ["template2", "template3", "template4", "template5", "template6"]
             },
             {
-                name:'coffee-to-go-order',
-                variableOptions:['coffee', 'userName', 'size', 'price'],
-                templateRefOptions:["wPhrase", "LatteOrderConfirmation", "MochaOrderConfirmation","CuppuccinoOrderConfirmation"]
+                name: 'coffee-to-go-order',
+                variableOptions: ['coffee', 'userName', 'size', 'price'],
+                templateRefOptions: ["wPhrase", "LatteOrderConfirmation", "MochaOrderConfirmation", "CuppuccinoOrderConfirmation"]
             },
         ]
         for (const testItem of testData) {
@@ -291,7 +291,7 @@ describe('LG', function () {
 
     it('TestImportLgFiles', function () {
         var engine = new TemplateEngine().addFile(GetExampleFilePath("import.lg"));
-        
+
         // Assert 6.lg is imported only once when there are several relative paths which point to the same file.
         // Assert import cycle loop is handled well as expected when a file imports itself.
         assert.strictEqual(engine.templates.length, 11);
@@ -341,4 +341,50 @@ describe('LG', function () {
         evaled = engine.evaluateTemplate("welcome", { userName: "DL" });
         assert.strictEqual(options3.includes(evaled), true, `Evaled is ${evaled}`);
     });
+
+    it('TestImportLgFiles', function () {
+        let engine = new TemplateEngine().addFiles([GetExampleFilePath("import.lg"), GetExampleFilePath("import2.lg")]);
+
+        // Assert 6.lg is imported only once and no exceptions are thrown when it is imported from multiple files.
+        assert.strictEqual(engine.templates.length, 13);
+
+        const options1 = ["Hi", "Hello"];
+        var evaled = engine.evaluateTemplate("basicTemplate");
+        assert.strictEqual(options1.includes(evaled), true, `Evaled is ${evaled}`);
+
+        const options2 = ["Hi DongLei :)", "Hey DongLei :)", "Hello DongLei :)"];
+        evaled = engine.evaluateTemplate("welcome");
+        assert.strictEqual(options2.includes(evaled), true, `Evaled is ${evaled}`);
+
+        const options3 = ["Hi DL :)", "Hey DL :)", "Hello DL :)"];
+        evaled = engine.evaluateTemplate("welcome", { userName: "DL" });
+        assert.strictEqual(options3.includes(evaled), true, `Evaled is ${evaled}`);
+
+        const options4 = ["Hi 2", "Hello 2"];
+        evaled = engine.evaluateTemplate("basicTemplate2");
+        assert.strictEqual(options4.includes(evaled), true, `Evaled is ${evaled}`);
+
+        var evaled = engine.evaluateTemplate("basicTemplate3");
+        assert.strictEqual(options1.includes(evaled), true, `Evaled is ${evaled}`);
+
+        evaled = engine.evaluateTemplate("basicTemplate4");
+        assert.strictEqual(options4.includes(evaled), true, `Evaled is ${evaled}`);
+
+        engine = new TemplateEngine().addFile(GetExampleFilePath("import.lg"));
+        try {
+            engine.addFile(GetExampleFilePath("import2.lg"));
+            assert.fail('Should throw error.');
+        } catch (e) {
+            console.log(e.message);
+            assert.strictEqual(e.message.includes("Dup definitions found for template wPhrase"), true);
+        }
+
+        engine = new TemplateEngine().addFiles([GetExampleFilePath("import.lg")]);
+        try {
+            engine.addFiles([GetExampleFilePath("import2.lg")]);
+            assert.fail('Should throw error.');
+        } catch (e) {
+            assert.strictEqual(e.message.includes("Dup definitions found for template wPhrase"), true);
+        }
+    })
 });

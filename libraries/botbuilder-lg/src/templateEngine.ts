@@ -17,7 +17,10 @@ import { LGResource } from './LGResource';
 import { LGTemplate } from './lgTemplate';
 import { StaticChecker } from './staticChecker';
 
-export declare type ImportResolverDelegate = (resourceId: string) => { content: string; absoluteFilePath: string };
+/**
+ * Delegate for resolving resource id of imported lg file.
+ */
+export declare type ImportResolverDelegate = (resourceId: string) => { content: string; id: string };
 
 /**
  * LG parser and evaluation engine
@@ -31,9 +34,10 @@ export class TemplateEngine {
     }
 
     public addFiles = (filePaths: string[], importResolver?: ImportResolverDelegate): TemplateEngine => {
+        let totalLGResources: LGResource[] = [];
         filePaths.forEach((filePath: string) => {
             importResolver = importResolver !== undefined ? importResolver :
-                ((id: string): { content: string; absoluteFilePath: string } => {
+                ((id: string): { content: string; id: string } => {
                     // import paths are in resource files which can be executed on multiple OS environments
                     // Call GetOsPath() to map / & \ in importPath -> OSPath
                     let importPath: string = this.getOsPath(id);
@@ -44,15 +48,27 @@ export class TemplateEngine {
 
                     const content: string = fs.readFileSync(importPath, 'utf-8');
 
-                    return { content, absoluteFilePath: importPath };
+                    return { content, id: importPath };
                 });
 
             filePath = path.normalize(filePath);
-            const fileContent: string = fs.readFileSync(filePath, 'utf-8');
-            this.templates = this.templates.concat(this.parseContent(fileContent, filePath, importResolver));
-
+            const rootResource: LGResource = LGParser.Parse(fs.readFileSync(filePath, 'utf-8'), filePath);
+            const lgResources: LGResource[] = this.discoverLGResources(rootResource, importResolver);
+            totalLGResources = totalLGResources.concat(lgResources);
         });
 
+        // Remove duplicated lg files by id
+        const deduplicatedLGResources: LGResource[] = totalLGResources.filter((resource: LGResource, index: number, self: LGResource[]) =>
+            index === self.findIndex((t: LGResource) => (
+                t.Id === resource.Id
+            ))
+        );
+
+        const lgTemplates: LGTemplate[] = deduplicatedLGResources.reduce((acc: LGTemplate[], x: LGResource) =>
+            acc = acc.concat(x.Templates), []
+        );
+
+        this.templates = this.templates.concat(lgTemplates);
         this.runStaticCheck(this.templates);
 
         return this;
@@ -62,8 +78,13 @@ export class TemplateEngine {
         this.addFiles([filePath], importResolver)
 
     public addText = (content: string, name: string, importResolver: ImportResolverDelegate): TemplateEngine => {
-        const parsedTemplates: LGTemplate[] = this.parseContent(content, name, importResolver);
-        this.templates = this.templates.concat(parsedTemplates);
+        const rootResource: LGResource = LGParser.Parse(content, name);
+        const lgResources: LGResource[] = this.discoverLGResources(rootResource, importResolver);
+        const lgTemplates: LGTemplate[] = lgResources.reduce((acc: LGTemplate[], x: LGResource) =>
+            acc = acc.concat(x.Templates), []
+        );
+
+        this.templates = this.templates.concat(lgTemplates);
         this.runStaticCheck(this.templates);
 
         return this;
@@ -105,34 +126,37 @@ export class TemplateEngine {
         }
     }
 
-    private importIds(ids: string[], sources: Map<string, LGResource>, importResolver: ImportResolverDelegate): void {
-        if (importResolver === undefined) {
-            // default to fileResolver...
-            importResolver = this.fileResolver;
-        }
+    private discoverLGResources(start: LGResource, importResolver: ImportResolverDelegate)
+        : LGResource[] {
+        const resourcesFound: LGResource[] = [];
+        importResolver = importResolver === undefined ? this.fileResolver : importResolver;
+        this.resolveImportResources(start, importResolver, resourcesFound);
 
-        ids.forEach((id: string) => {
+        return resourcesFound;
+    }
+
+    private resolveImportResources(start: LGResource, importResolver: ImportResolverDelegate, resourcesFound: LGResource[]): void {
+        const resourceIds: string[] = start.Imports.map((lg: LGImport) => lg.Id);
+        resourcesFound.push(start);
+
+        resourceIds.forEach((resourceId: string) => {
             try {
-                const {content, absoluteFilePath} = importResolver(id);
-                if (!sources.has(absoluteFilePath)) {
-                    this.loopLGText(content, absoluteFilePath, sources, importResolver);
+                const { content, id } = importResolver(resourceId);
+                const childResource: LGResource = LGParser.Parse(content, id);
+
+                if (!(resourcesFound.some((x: LGResource) => x.Id === childResource.Id))) {
+                    this.resolveImportResources(childResource, importResolver, resourcesFound);
                 }
             } catch (e) {
-                throw new Error(`${id}:${e.message}`);
+                throw new Error(`${resourceId}:${e.message}`);
             }
         });
     }
 
-    private loopLGText(content: string, name: string, sources: Map<string, LGResource>, importResolver: ImportResolverDelegate): void {
-        const source: LGResource = LGParser.Parse(content, name);
-        sources.set(name, source);
-        this.importIds(source.Imports.map((lg: LGImport) => lg.Id), sources, importResolver);
-    }
-
-    private fileResolver = (filePath: string): { content: string; absoluteFilePath: string } => {
+    private fileResolver = (filePath: string): { content: string; id: string } => {
         filePath = path.resolve(filePath);
 
-        return { content: fs.readFileSync(filePath, 'utf-8'), absoluteFilePath: filePath };
+        return { content: fs.readFileSync(filePath, 'utf-8'), id: filePath };
     }
 
     private getOsPath(ambigiousPath: string): string {
@@ -141,14 +165,5 @@ export class TemplateEngine {
         } else {
             return ambigiousPath.replace('\\', '/');
         }
-    }
-
-    private parseContent(content: string, name: string, importResolver: ImportResolverDelegate): LGTemplate[] {
-        let parsedTemplates: LGTemplate[] = [];
-        const sources: Map<string, LGResource> = new Map<string, LGResource>();
-        this.loopLGText(content, name, sources, importResolver);
-        sources.forEach((s: LGResource) => parsedTemplates = parsedTemplates.concat(s.Templates));
-
-        return parsedTemplates;
     }
 }
