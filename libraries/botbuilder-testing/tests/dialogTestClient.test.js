@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 const { DialogTestClient, DialogTestLogger } = require('../');
 const { ComponentDialog, TextPrompt, WaterfallDialog, DialogTurnStatus, DialogSet } = require('botbuilder-dialogs');
 const assert = require('assert');
@@ -29,7 +34,7 @@ describe('DialogTestClient', function() {
         let reply = await client.sendActivity('hello');
         assert(reply.text == 'hello', 'dialog responded with incorrect message');
         assert(reply.channelId == 'custom', 'custom channel id didnt get set');
-        assert(client.dialogTurnResult.status == DialogTurnStatus.empty, 'dialog did not end properly');
+        assert(client.dialogTurnResult.status == DialogTurnStatus.complete, 'dialog did not end properly');
 
     });
 
@@ -57,7 +62,7 @@ describe('DialogTestClient', function() {
         assert(reply.type == 'typing', 'dialog responded with incorrect message');
         reply = await client.getNextReply();
         assert(reply.text == 'hello 2', 'dialog responded with incorrect 2nd message');
-        assert(client.dialogTurnResult.status == DialogTurnStatus.empty, 'dialog did not end properly');
+        assert(client.dialogTurnResult.status == DialogTurnStatus.complete, 'dialog did not end properly');
     });
 
 
