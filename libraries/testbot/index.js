@@ -9,7 +9,10 @@ const restify = require('restify');
 
 // Import required bot services. See https://aka.ms/bot-services to learn more about the different parts of a bot.
 const { BotFrameworkAdapter, MemoryStorage, ConversationState, UserState } = require('botbuilder');
-const { LuisHelper } = require('./luisHelper');
+const { LuisHelper } = require('./dialogs/luisHelper');
+
+// Import the simple echo bot
+const { MyBot } = require('./bots/myBot')
 
 // This bot's main dialog.
 const { DialogAndWelcomeBot } = require('./bots/dialogAndWelcomeBot');
@@ -62,12 +65,20 @@ if (process.env.LuisAppId && process.env.LuisAPIKey && process.env.LuisAPIHostNa
 // Create the main dialog.
 const dialog = new MainDialog(logger, helper);
 const bot = new DialogAndWelcomeBot(conversationState, userState, dialog, logger);
+const echobot = new MyBot(conversationState);
 
 // Create HTTP server
 let server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function() {
     console.log(`\n${ server.name } listening to ${ server.url }`);
     console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
+});
+
+
+server.post('/api/mybot', (req, res) => {
+    adapter.processActivity(req, res, async (turnContext) => {
+        await echobot.run(turnContext);
+    });
 });
 
 // Listen for incoming activities and route them to your bot main dialog.
