@@ -79,7 +79,7 @@ export class DialogTestClient {
             const dialogContext = await dialogSet.createContext(turnContext);
             this.dialogTurnResult = await dialogContext.continueDialog();
             if (this.dialogTurnResult.status === DialogTurnStatus.empty) {
-                await dialogContext.beginDialog(targetDialog.id, initialDialogOptions);
+                this.dialogTurnResult = await dialogContext.beginDialog(targetDialog.id, initialDialogOptions);
             }
         };
     }
