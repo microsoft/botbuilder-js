@@ -869,6 +869,35 @@ describe('LuisRecognizer', function () {
         });
     });
 
+    it('should accept LuisPredictionOptions passed into recognizer "recognize" method', done => {
+        const luisPredictionDefaultOptions = {
+            includeAllIntents: true,
+            includeInstanceData: true
+        };
+        const luisPredictionUserOptions = {
+            includeAllIntents: false,
+            includeInstanceData: false
+        };
+        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, luisPredictionDefaultOptions, true);
+        const mergedOptions = luisPredictionUserOptions ? recognizer.setLuisPredictionOptions(recognizer.options, luisPredictionUserOptions) : recognizer.options;
+        assert(mergedOptions.includeAllIntents === false);
+        assert(mergedOptions.includeInstanceData === false);
+        throttle(done);
+    });
+
+    it('should use default Luis prediction options if no user options passed in', done => {
+        const luisPredictionDefaultOptions = {
+            includeAllIntents: true,
+            includeInstanceData: true
+        };
+        const luisPredictionUserOptions = null;
+        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, luisPredictionDefaultOptions, true);
+        const mergedOptions = luisPredictionUserOptions ? recognizer.setLuisPredictionOptions(recognizer.options, luisPredictionUserOptions) : recognizer.options;
+        assert(mergedOptions.includeAllIntents === true);
+        assert(mergedOptions.includeInstanceData === true);
+        throttle(done);
+    });
+
 });
 
 class telemetryOverrideRecognizer extends LuisRecognizer {
