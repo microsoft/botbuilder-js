@@ -380,7 +380,33 @@ const dataSource = [
   ["count(user.lists.todo) > int(@ordinal[0]))", true],
   ["count(user.lists.todo) >= int(@ordinal[0]))", true],
   ["user.lists.todo[int(@ordinal[0]) - 1]", "todo1"],
-  ["user.lists[user.listType][int(@ordinal[0]) - 1]", "todo1"]
+  ["user.lists[user.listType][int(@ordinal[0]) - 1]", "todo1"],
+
+  // regex test
+  ["isMatch('abc', '^[ab]+$')", false], // simple character classes ([abc]), "+" (one or more)
+  ["isMatch('abb', '^[ab]+$')", true], // simple character classes ([abc])
+  ["isMatch('123', '^[^abc]+$')", true], // complemented character classes ([^abc])
+  ["isMatch('12a', '^[^abc]+$')", false], // complemented character classes ([^abc])
+  ["isMatch('123', '^[^a-z]+$')", true], // complemented character classes ([^a-z])
+  ["isMatch('12a', '^[^a-z]+$')", false], // complemented character classes ([^a-z])
+  ["isMatch('a1', '^[a-z]?[0-9]$')", true], // "?" (zero or one)
+  ["isMatch('1', '^[a-z]?[0-9]$')", true], // "?" (zero or one)
+  ["isMatch('1', '^[a-z]*[0-9]$')", true], // "*" (zero or more)
+  ["isMatch('abc1', '^[a-z]*[0-9]$')", true], // "*" (zero or more)
+  ["isMatch('ab', '^[a-z]{1}$')", false], // "{x}" (exactly x occurrences)
+  ["isMatch('ab', '^[a-z]{1,2}$')", true], // "{x,y}" (at least x, at most y, occurrences)
+  ["isMatch('abc', '^[a-z]{1,}$')", true], // "{x,}" (x occurrences or more)
+  ["isMatch('Name', '^(?i)name$')", true], // "(?i)x" (x ignore case)
+  ["isMatch('FORTUNE', '(?i)fortune|future')", true], // "x|y" (alternation)
+  ["isMatch('FUTURE', '(?i)fortune|future')", true], // "x|y" (alternation)
+  ["isMatch('A', '(?i)fortune|future')", false], // "x|y" (alternation)
+  ["isMatch('abacaxc', 'ab.+?c')", true], // "+?" (lazy versions)
+  ["isMatch('abacaxc', 'ab.*?c')", true], // "*?" (lazy versions)
+  ["isMatch('abacaxc', 'ab.??c')", true], // "??" (lazy versions)
+  ["isMatch('12abc34', '([0-9]+)([a-z]+)([0-9]+)')", true], // "(...)" (simple group)
+  ["isMatch('12abc', '([0-9]+)([a-z]+)([0-9]+)')", false], // "(...)" (simple group)
+  [`isMatch('a', '\\w{1}')`, true], // "\w" (match [a-zA-Z0-9_])
+  [`isMatch('1', '\\d{1}')`, true], // "\d" (match [0-9])
 ];
 
 const scope = {
@@ -447,6 +473,7 @@ describe('expression functional test', () => {
   it('should get right evaluate result', () => {
     for (const data of dataSource) {
       const input = data[0].toString();
+      console.log(input)
       var parsed = new ExpressionEngine().parse(input);
       assert(parsed !== undefined);
       var { value: actual, error } = parsed.tryEvaluate(scope);

@@ -386,5 +386,17 @@ describe('LG', function () {
         } catch (e) {
             assert.strictEqual(e.message.includes("Dup definitions found for template wPhrase"), true);
         }
-    })
+    });
+    
+    it('TestRegex', function () {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath("Regex.lg"));
+        var evaled = engine.evaluateTemplate('wPhrase');
+        assert.strictEqual(evaled, 'Hi');
+
+        var evaled = engine.evaluateTemplate('wPhrase', {name: 'jack'});
+        assert.strictEqual(evaled, 'Hi jack');
+
+        var evaled = engine.evaluateTemplate('wPhrase', {name: 'morethanfive'});
+        assert.strictEqual(evaled, 'Hi');
+    });
 });
