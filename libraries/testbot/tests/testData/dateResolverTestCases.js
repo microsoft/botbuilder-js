@@ -55,6 +55,26 @@ module.exports = [
         steps: [
             ['hi', null],
         ],
+    },
+    {
+        name: 'retry prompt',
+        initialData: {},
+        expectedResult: tomorrow,
+        steps: [
+            ['hi', 'On what date would you like to travel?'],
+            ['bananas', 'I\'m sorry, for best results, please enter your travel date including the month, day and year.'],
+            ['tomorrow', null]
+        ],
+    },
+    {
+        name: 'fuzzy time',
+        initialData: {
+        },
+        expectedResult: '2055-05-05',
+        steps: [
+            ['hi', 'On what date would you like to travel?'],
+            ['may 5th', 'I\'m sorry, for best results, please enter your travel date including the month, day and year.'],
+            ['may 5th 2055', null]
+        ],
     }
-
 ]
