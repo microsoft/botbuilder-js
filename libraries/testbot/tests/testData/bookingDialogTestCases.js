@@ -97,7 +97,57 @@ module.exports = [
         ],
     },
     {
-        name: 'cancel at confirm',
+        name: 'Cancel on origin prompt',
+        initialData: {
+        },
+        expectedResult: null,
+        expectedStatus: 'complete',
+        steps: [
+            ['hi', 'To what city would you like to travel?'],
+            ['cancel','Cancelling']
+        ],
+    },
+    {
+        name: 'Cancel on destination prompt',
+        initialData: {
+        },
+        expectedResult: null,
+        expectedStatus: 'complete',
+        steps: [
+            ['hi', 'To what city would you like to travel?'],
+            ['Seattle','From what city will you be travelling?'],
+            ['cancel','Cancelling']
+        ],
+    },
+    {
+        name: 'Cancel on date prompt',
+        initialData: {
+        },
+        expectedResult: null,
+        expectedStatus: 'complete',
+        steps: [
+            ['hi', 'To what city would you like to travel?'],
+            ['Seattle','From what city will you be travelling?'],
+            ['New York', 'On what date would you like to travel?'],
+            ['cancel','Cancelling']
+        ],
+    },
+    {
+        name: 'Cancel on confirm prompt',
+        initialData: {
+        },
+        expectedResult: null,
+        expectedStatus: 'complete',
+        steps: [
+            ['hi', 'To what city would you like to travel?'],
+            ['Seattle','From what city will you be travelling?'],
+            ['New York', 'On what date would you like to travel?'],
+            ['tomorrow', `Please confirm, I have you traveling to: Seattle from: New York on: ${ tomorrow }. (1) Yes or (2) No`],
+            ['cancel','Cancelling']
+        ],
+    },
+    {
+        name: 'cancel at confirm with all details provided',
         initialData: {
             destination: 'Seattle',
             origin: 'New York',
