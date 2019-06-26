@@ -26,6 +26,11 @@ module.exports = [
         initialData: {
         },
         expectedStatus: 'complete',
+        expectedResult: {
+            destination: 'Seattle',
+            origin: 'New York',
+            travelDate: tomorrow
+        },
         steps: [
             ['hi', 'To what city would you like to travel?'],
             ['Seattle','From what city will you be travelling?'],
@@ -38,7 +43,7 @@ module.exports = [
         name: 'Full flow with \'no\' at confirmation',
         initialData: {
         },
-        expectedResult: null,
+        expectedResult: undefined,
         steps: [
             ['hi', 'To what city would you like to travel?'],
             ['Seattle','From what city will you be travelling?'],
@@ -51,6 +56,11 @@ module.exports = [
         name: 'Destination given',
         initialData: {
             destination: 'Bahamas',
+        },
+        expectedResult: {
+            origin: 'New York',
+            destination: 'Bahamas',
+            travelDate: tomorrow
         },
         steps: [
             ['hi','From what city will you be travelling?'],
@@ -65,6 +75,11 @@ module.exports = [
             destination: 'Bahamas',
             origin: 'New York',
         },
+        expectedResult: {
+            destination: 'Bahamas',
+            origin: 'New York',
+            travelDate: tomorrow
+        },
         steps: [
             ['hi', 'On what date would you like to travel?'],
             ['tomorrow', `Please confirm, I have you traveling to: Bahamas from: New York on: ${ tomorrow }. (1) Yes or (2) No`],
@@ -74,6 +89,11 @@ module.exports = [
     {
         name: 'All booking details given for today',
         initialData: {
+            destination: 'Seattle',
+            origin: 'New York',
+            travelDate: today
+        },
+        expectedResult: {
             destination: 'Seattle',
             origin: 'New York',
             travelDate: today
