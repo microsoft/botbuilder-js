@@ -33,6 +33,19 @@ module.exports = [
         ],
     },
     {
+        name: 'Full Run Path',
+        initialData: {
+        },
+        expectedStatus: 'complete',
+        steps: [
+            ['hi', 'To what city would you like to travel?'],
+            ['Seattle','From what city will you be travelling?'],
+            ['New York', 'On what date would you like to travel?'],
+            ['2022-02-22', 'Please confirm, I have you traveling to: Seattle from: New York on: 2022-02-22. (1) Yes or (2) No'],
+            ['yes',null]
+        ],
+    },
+    {
         name: 'no to confirm',
         initialData: {
             destination: 'Seattle',
@@ -73,5 +86,5 @@ module.exports = [
             ['hi', 'Please confirm, I have you traveling to: Seattle from: New York on: 2022-02-22. (1) Yes or (2) No'],
             ['yes', null]
         ],
-    },
+   },
 ]

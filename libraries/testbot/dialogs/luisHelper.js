@@ -25,7 +25,7 @@ class LuisHelper {
 
             bookingDetails.intent = intent;
 
-            if (intent === 'Book_flight') {
+            if (intent === 'BookFlight') {
                 // We need to get the result from the LUIS JSON which at every level returns an array
 
                 bookingDetails.destination = LuisHelper.parseCompositeEntity(recognizerResult, 'To', 'Airport');

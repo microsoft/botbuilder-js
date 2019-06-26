@@ -26,7 +26,7 @@ describe('dateResolverDialog', function() {
 
             for (let i = 0; i < test.steps.length; i++) {
                 let reply = await client.sendActivity(test.steps[i][0]);
-                assert(reply ? reply.text : null == test.steps[i][1],`${ reply ? reply.text : null } != ${ test.steps[i][1] }`);
+                assert((reply ? reply.text : null) == test.steps[i][1],`${ reply ? reply.text : null } != ${ test.steps[i][1] }`);
             }
             console.log(`Dialog result: ${ client.dialogTurnResult.result }`);
             if (test.expectedResult !== undefined) {

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
+const { InputHints, MessageFactory} = require('botbuilder');
 const { ConfirmPrompt, TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
 const { CancelAndHelpDialog } = require('./cancelAndHelpDialog');
 const { DateResolverDialog } = require('./dateResolverDialog');
@@ -36,7 +37,8 @@ class BookingDialog extends CancelAndHelpDialog {
         const bookingDetails = stepContext.options;
 
         if (!bookingDetails.destination) {
-            return await stepContext.prompt(TEXT_PROMPT, { prompt: 'To what city would you like to travel?' });
+            let msg = MessageFactory.text('To what city would you like to travel?','To what city would you like to travel?', InputHints.ExpectingInput);
+            return await stepContext.prompt(TEXT_PROMPT, { prompt: msg });
         } else {
             return await stepContext.next(bookingDetails.destination);
         }
@@ -51,7 +53,8 @@ class BookingDialog extends CancelAndHelpDialog {
         // Capture the response to the previous step's prompt
         bookingDetails.destination = stepContext.result;
         if (!bookingDetails.origin) {
-            return await stepContext.prompt(TEXT_PROMPT, { prompt: 'From what city will you be travelling?' });
+            let msg = MessageFactory.text('From what city will you be travelling?', 'From what city will you be travelling?', InputHints.ExpectingInput);
+            return await stepContext.prompt(TEXT_PROMPT, { prompt: msg });
         } else {
             return await stepContext.next(bookingDetails.origin);
         }
@@ -81,10 +84,9 @@ class BookingDialog extends CancelAndHelpDialog {
 
         // Capture the results of the previous step
         bookingDetails.travelDate = stepContext.result;
-        const msg = `Please confirm, I have you traveling to: ${ bookingDetails.destination } from: ${ bookingDetails.origin } on: ${ bookingDetails.travelDate }.`;
-
+        const text = `Please confirm, I have you traveling to: ${ bookingDetails.destination } from: ${ bookingDetails.origin } on: ${ bookingDetails.travelDate }.`;
         // Offer a YES/NO prompt.
-        return await stepContext.prompt(CONFIRM_PROMPT, { prompt: msg });
+        return await stepContext.prompt(CONFIRM_PROMPT, { prompt: text, speak: text, });
     }
 
     /**
