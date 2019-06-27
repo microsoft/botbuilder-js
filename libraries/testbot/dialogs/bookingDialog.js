@@ -88,7 +88,7 @@ class BookingDialog extends CancelAndHelpDialog {
         let msg = MessageFactory.text(text, text, InputHints.ExpectingInput);
 
         // Offer a YES/NO prompt.
-        return await stepContext.prompt(CONFIRM_PROMPT, { prompt: msg, speak: text, });
+        return await stepContext.prompt(CONFIRM_PROMPT, { prompt: msg });
     }
 
     /**
