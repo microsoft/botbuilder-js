@@ -2,7 +2,7 @@
   "text": "My nanme is Emad",
   "intents": {
     "SpecifyName": {
-      "score": 0.442533255
+      "score": 0.706641257
     }
   },
   "entities": {},
@@ -10,11 +10,11 @@
     "label": "neutral",
     "score": 0.5
   },
-  "luisResult": {
+  "v2": {
     "query": "My nanme is Emad",
     "topScoringIntent": {
       "intent": "SpecifyName",
-      "score": 0.442533255
+      "score": 0.706641257
     },
     "entities": [],
     "sentimentAnalysis": {

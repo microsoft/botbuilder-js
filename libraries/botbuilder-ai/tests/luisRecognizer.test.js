@@ -92,7 +92,7 @@ function GetExpected(oracle) {
     var pattern = `${path}\\?${query}`;
     var uri = new RegExp(pattern);
     var requestContent = expected.text != undefined ? `"${expected.text}"` : undefined;
-    var responseBody = expected.luisResult;
+    var responseBody = expected.v2;
 
     if (mockLuis) {
         nock('https://westus.api.cognitive.microsoft.com')
@@ -126,6 +126,8 @@ function TestJson(file, done, includeAllIntents, includeInstance, telemetryClien
     var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey },
         { includeAllIntents: includeAllIntents, includeInstanceData: includeInstance, telemetryClient: telemetryClient, logPersonalInformation: logPersonalInformation }, true);
     recognizer.recognize(context, telemetryProperties, telemetryMetrics).then(res => {
+        res.v2 = res.luisResult;
+        delete res.luisResult;
         if (!WithinDelta(expected, res, 0.1, false)) {
             fs.outputJSONSync(newPath, res, { spaces: 2 });
             assert(false, "\nReturned JSON\n  " + newPath + "\n!= expected JSON\n  " + expectedPath);
@@ -195,7 +197,7 @@ describe('LuisRecognizer', function () {
             assert(res.entities.$instance.datetime[0].text);
             assert(res.entities.$instance.datetime[0].text === 'february 2nd 2001');
             throttle(done);
-        })
+        }, false);
     });
 
     it('should return multiple intents and prebuilt entities with multiple values', done => {
@@ -213,7 +215,7 @@ describe('LuisRecognizer', function () {
             assert(res.entities.datetime);
             assert(res.entities.datetime[0].timex[0] === '2001-02-02');
             throttle(done);
-        });
+        }, false);
     });
 
     it('should return multiple intents and a list entity with a single value', done => {
@@ -235,7 +237,7 @@ describe('LuisRecognizer', function () {
             assert(res.entities.$instance.Airline[0].text);
             assert(res.entities.$instance.Airline[0].text === 'united');
             throttle(done);
-        });
+        }, false);
     });
 
     it('should return multiple intents and a list entity with multiple values', done => {
@@ -259,7 +261,7 @@ describe('LuisRecognizer', function () {
             assert(res.entities.$instance.Airline[0].text);
             assert(res.entities.$instance.Airline[0].text === 'dl');
             throttle(done);
-        });
+        }, false);
     });
 
     it('should return multiple intents and a single composite entity', done => {
@@ -301,7 +303,7 @@ describe('LuisRecognizer', function () {
             assert(res.entities.Address[0].$instance.State[0].score);
             assert(res.entities.Address[0].$instance.State[0].score > 0 && res.entities.Address[0].$instance.State[0].score <= 1);
             throttle(done);
-        });
+        }, false);
     });
 
     it('should cache multiple calls to recognize()', done => {
@@ -787,6 +789,8 @@ describe('LuisRecognizer', function () {
         var recognizer = new telemetryOverrideRecognizer({ applicationId: luisAppId, endpointKey: endpointKey },
             { includeAllIntents: false, includeInstanceData: true, telemetryClient: telemetryClient, logPersonalInformation: true }, true);
         recognizer.recognize(context, properties, metrics).then(res => {
+            res.v2 = res.luisResult;
+            delete res.luisResult;
             if (!WithinDelta(expected, res, 0.1, false)) {
                 fs.outputJSONSync(newPath, res, { spaces: 2 });
                 assert(false, "\nReturned JSON\n  " + newPath + "\n!= expected JSON\n  " + expectedPath);
@@ -850,6 +854,8 @@ describe('LuisRecognizer', function () {
         var recognizer = new overrideFillRecognizer({ applicationId: luisAppId, endpointKey: endpointKey },
             { includeAllIntents: false, includeInstanceData: true, telemetryClient: telemetryClient, logPersonalInformation: true }, true);
         recognizer.recognize(context, properties, metrics).then(res => {
+            res.v2 = res.luisResult;
+            delete res.luisResult;
             if (!WithinDelta(expected, res, 0.1, false)) {
                 fs.outputJSONSync(newPath, res, { spaces: 2 });
                 assert(false, "\nReturned JSON\n  " + newPath + "\n!= expected JSON\n  " + expectedPath);
