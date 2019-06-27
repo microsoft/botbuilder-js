@@ -290,13 +290,13 @@ describe('LG', function () {
     })
 
     it('TestImportLgFiles', function () {
-        var engine = new TemplateEngine().addFile(GetExampleFilePath("import.lg"));
+        var engine = new TemplateEngine().addFile(GetExampleFilePath("importExamples/import.lg"));
 
         // Assert 6.lg is imported only once when there are several relative paths which point to the same file.
         // Assert import cycle loop is handled well as expected when a file imports itself.
         assert.strictEqual(engine.templates.length, 11);
 
-        const options1 = ["Hi", "Hello"];
+        const options1 = ["Hi", "Hello", "Hey"];
         var evaled = engine.evaluateTemplate("basicTemplate");
         assert.strictEqual(options1.includes(evaled), true, `Evaled is ${evaled}`);
 
@@ -343,12 +343,12 @@ describe('LG', function () {
     });
 
     it('TestImportLgFiles', function () {
-        let engine = new TemplateEngine().addFiles([GetExampleFilePath("import.lg"), GetExampleFilePath("import2.lg")]);
+        let engine = new TemplateEngine().addFiles([GetExampleFilePath("importExamples/import.lg"), GetExampleFilePath("importExamples/import2.lg")]);
 
         // Assert 6.lg is imported only once and no exceptions are thrown when it is imported from multiple files.
         assert.strictEqual(engine.templates.length, 13);
 
-        const options1 = ["Hi", "Hello"];
+        const options1 = ["Hi", "Hello", "Hey"];
         var evaled = engine.evaluateTemplate("basicTemplate");
         assert.strictEqual(options1.includes(evaled), true, `Evaled is ${evaled}`);
 
@@ -370,18 +370,18 @@ describe('LG', function () {
         evaled = engine.evaluateTemplate("basicTemplate4");
         assert.strictEqual(options4.includes(evaled), true, `Evaled is ${evaled}`);
 
-        engine = new TemplateEngine().addFile(GetExampleFilePath("import.lg"));
+        engine = new TemplateEngine().addFile(GetExampleFilePath("importExamples/import.lg"));
         try {
-            engine.addFile(GetExampleFilePath("import2.lg"));
+            engine.addFile(GetExampleFilePath("importExamples/import2.lg"));
             assert.fail('Should throw error.');
         } catch (e) {
             console.log(e.message);
             assert.strictEqual(e.message.includes("Dup definitions found for template wPhrase"), true);
         }
 
-        engine = new TemplateEngine().addFiles([GetExampleFilePath("import.lg")]);
+        engine = new TemplateEngine().addFiles([GetExampleFilePath("importExamples/import.lg")]);
         try {
-            engine.addFiles([GetExampleFilePath("import2.lg")]);
+            engine.addFiles([GetExampleFilePath("importExamples/import2.lg")]);
             assert.fail('Should throw error.');
         } catch (e) {
             assert.strictEqual(e.message.includes("Dup definitions found for template wPhrase"), true);
