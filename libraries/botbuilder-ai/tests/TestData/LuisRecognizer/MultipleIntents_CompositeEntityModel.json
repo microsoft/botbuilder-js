@@ -2,37 +2,7 @@
   "text": "Please deliver it to 98033 WA",
   "intents": {
     "Delivery": {
-      "score": 0.953645349
-    },
-    "Roles": {
-      "score": 0.0129101127
-    },
-    "Weather_GetForecast": {
-      "score": 0.0123111764
-    },
-    "Cancel": {
-      "score": 0.0121123884
-    },
-    "search": {
-      "score": 0.0106669758
-    },
-    "None": {
-      "score": 0.0076863626
-    },
-    "Travel": {
-      "score": 0.00609561335
-    },
-    "SpecifyName": {
-      "score": 0.00545336958
-    },
-    "Help": {
-      "score": 0.003606656
-    },
-    "Greeting": {
-      "score": 0.00287445565
-    },
-    "EntityTests": {
-      "score": 0.00268877461
+      "score": 0.9533071
     }
   },
   "entities": {
@@ -41,7 +11,7 @@
         {
           "startIndex": 21,
           "endIndex": 29,
-          "score": 0.9665226,
+          "score": 0.9637693,
           "text": "98033 wa",
           "type": "Address"
         }
@@ -63,7 +33,7 @@
             {
               "startIndex": 27,
               "endIndex": 29,
-              "score": 0.9819666,
+              "score": 0.9803879,
               "text": "wa",
               "type": "State"
             }
@@ -82,72 +52,26 @@
     "label": "negative",
     "score": 0.311659515
   },
-  "luisResult": {
+  "v2": {
     "query": "Please deliver it to 98033 WA",
     "topScoringIntent": {
       "intent": "Delivery",
-      "score": 0.953645349
+      "score": 0.9533071
     },
-    "intents": [
-      {
-        "intent": "Delivery",
-        "score": 0.953645349
-      },
-      {
-        "intent": "Roles",
-        "score": 0.0129101127
-      },
-      {
-        "intent": "Weather.GetForecast",
-        "score": 0.0123111764
-      },
-      {
-        "intent": "Cancel",
-        "score": 0.0121123884
-      },
-      {
-        "intent": "search",
-        "score": 0.0106669758
-      },
-      {
-        "intent": "None",
-        "score": 0.0076863626
-      },
-      {
-        "intent": "Travel",
-        "score": 0.00609561335
-      },
-      {
-        "intent": "SpecifyName",
-        "score": 0.00545336958
-      },
-      {
-        "intent": "Help",
-        "score": 0.003606656
-      },
-      {
-        "intent": "Greeting",
-        "score": 0.00287445565
-      },
-      {
-        "intent": "EntityTests",
-        "score": 0.00268877461
-      }
-    ],
     "entities": [
       {
         "entity": "wa",
         "type": "State",
         "startIndex": 27,
         "endIndex": 28,
-        "score": 0.9819666
+        "score": 0.9803879
       },
       {
         "entity": "98033 wa",
         "type": "Address",
         "startIndex": 21,
         "endIndex": 28,
-        "score": 0.9665226
+        "score": 0.9637693
       },
       {
         "entity": "98033",

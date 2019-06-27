@@ -533,6 +533,20 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     }
 
     private getEntityValue(entity: LuisModels.EntityModel): any {
+        if (entity.type.startsWith("builtin.geographyV2.")) {
+            return {
+                "type": entity.type.substring(20),
+                "location": entity.entity
+            };
+        }
+
+        if (entity.type.startsWith('builtin.ordinalV2')) {
+            return {
+                "relativeTo": entity.resolution.relativeTo,
+                "offset": Number(entity.resolution.offset)
+            }
+        }
+
         if (!entity.resolution) {
             return entity.entity;
         }
@@ -606,10 +620,16 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         if (type.startsWith('builtin.datetimeV2.')) {
             type = 'datetime';
         }
-        if (type.startsWith('builtin.currency')) {
+        else if (type.startsWith('builtin.currency')) {
             type = 'money';
         }
-        if (type.startsWith('builtin.')) {
+        else if (type.startsWith('builtin.geographyV2')) {
+            type = 'geographyV2';
+        }
+        else if (type.startsWith('builtin.ordinalV2')) {
+            type = 'ordinalV2';
+        }
+        else if (type.startsWith('builtin.')) {
             type = type.substring(8);
         }
         if (entity.role !== null && entity.role !== '' && entity.role !== undefined) {
@@ -715,7 +735,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * Merges the default options set by the Recognizer contructor with the 'user' options passed into the 'recognize' method
     */
     private setLuisPredictionOptions(defaultOptions: LuisPredictionOptions, userOptions: LuisPredictionOptions): any {
-      return Object.assign(defaultOptions, userOptions);
+        return Object.assign(defaultOptions, userOptions);
     }
 
     /**
