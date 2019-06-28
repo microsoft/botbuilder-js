@@ -374,6 +374,19 @@ export const Entity: msRest.CompositeMapper = {
         type: {
           name: "String"
         }
+      },
+      text: {
+        serializedName: "text",
+        type: {
+          name: "String"
+        }
+      },
+      mentioned: {
+        serializedName: "mentioned",
+        type: {
+          name: "Composite",
+          className: "ChannelAccount"
+        }
       }
     }
   }
