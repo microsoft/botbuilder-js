@@ -6,6 +6,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BuiltInFunctions } from './buildInFunction';
 import { Constant } from './constant';
 import { Expression } from './expression';
 import { ExpressionType } from './expressionType';
@@ -83,6 +84,15 @@ export class Extensions {
                 const idxPath: string = Extensions.ReferenceWalk(children[1], references, extension);
                 if (idxPath !== undefined) {
                     references.add(idxPath);
+                }
+            } else if (BuiltInFunctions.PrefixsOfShorthand.has(expression.Type)) {
+                // Shorthand
+                const shorthandName: string = (children[0] as Constant).Value.toString();
+                if (shorthandName !== undefined) {
+                    const prefixStr: string = BuiltInFunctions.PrefixsOfShorthand.get(expression.Type);
+                    const reference: string = prefixStr + shorthandName;
+
+                    references.add(reference);
                 }
             } else {
                 for (const child of expression.Children) {

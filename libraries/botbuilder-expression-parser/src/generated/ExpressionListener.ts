@@ -5,6 +5,7 @@ import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
 import { FuncInvokeExpContext } from "./ExpressionParser";
 import { IdAtomContext } from "./ExpressionParser";
+import { ShortHandExpContext } from "./ExpressionParser";
 import { StringAtomContext } from "./ExpressionParser";
 import { IndexAccessExpContext } from "./ExpressionParser";
 import { MemberAccessExpContext } from "./ExpressionParser";
@@ -48,6 +49,19 @@ export interface ExpressionListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitIdAtom?: (ctx: IdAtomContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `shortHandExp`
+	 * labeled alternative in `ExpressionParser.primaryExpression`.
+	 * @param ctx the parse tree
+	 */
+	enterShortHandExp?: (ctx: ShortHandExpContext) => void;
+	/**
+	 * Exit a parse tree produced by the `shortHandExp`
+	 * labeled alternative in `ExpressionParser.primaryExpression`.
+	 * @param ctx the parse tree
+	 */
+	exitShortHandExp?: (ctx: ShortHandExpContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `stringAtom`

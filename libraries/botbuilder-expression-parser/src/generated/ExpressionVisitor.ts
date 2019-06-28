@@ -5,6 +5,7 @@ import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
 import { FuncInvokeExpContext } from "./ExpressionParser";
 import { IdAtomContext } from "./ExpressionParser";
+import { ShortHandExpContext } from "./ExpressionParser";
 import { StringAtomContext } from "./ExpressionParser";
 import { IndexAccessExpContext } from "./ExpressionParser";
 import { MemberAccessExpContext } from "./ExpressionParser";
@@ -41,6 +42,14 @@ export interface ExpressionVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitIdAtom?: (ctx: IdAtomContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `shortHandExp`
+	 * labeled alternative in `ExpressionParser.primaryExpression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitShortHandExp?: (ctx: ShortHandExpContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `stringAtom`

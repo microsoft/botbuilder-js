@@ -144,4 +144,10 @@ export class ExpressionType {
     // Regar expression
     public static readonly IsMatch: string = 'isMatch';
 
+    // Short hand functions
+    public static readonly Intent: string = 'intent';
+    public static readonly Entity: string = 'entity';
+    public static readonly Title: string = 'title';
+    public static readonly Instance: string = 'instance';
+    public static readonly Option: string = 'option';
 }

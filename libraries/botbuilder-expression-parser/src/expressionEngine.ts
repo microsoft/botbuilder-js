@@ -19,6 +19,14 @@ import { Util } from './util';
  * Parser to turn strings into Expression
  */
 export class ExpressionEngine implements IExpressionParser {
+    private static readonly ShorthandFunctionMap: Map<string, string> = new Map<string, string>([
+        ['#', ExpressionType.Intent],
+        ['@', ExpressionType.Entity],
+        ['$', ExpressionType.Title],
+        ['%', ExpressionType.Instance],
+        ['^', ExpressionType.Option]
+    ]);
+
     private readonly _lookup: EvaluatorLookup;
 
     // tslint:disable-next-line: typedef
@@ -49,6 +57,17 @@ export class ExpressionEngine implements IExpressionParser {
             return this.MakeExpression(binaryOperationName, left, right);
         }
 
+        public visitShortHandExp(context: ep.ShortHandExpContext): Expression {
+            const prefix: string = context.getChild(0).text;
+            if (!ExpressionEngine.ShorthandFunctionMap.has(prefix)) {
+                throw new Error(`${prefix} is not a shorthand`);
+            }
+
+            const functionName: string = ExpressionEngine.ShorthandFunctionMap.get(prefix);
+
+            return this.MakeExpression(functionName, new Constant(context.IDENTIFIER().text));
+        }
+
         public visitFuncInvokeExp(context: ep.FuncInvokeExpContext): Expression {
             const parameters: Expression[] = this.ProcessArgsList(context.argsList());
 
@@ -73,8 +92,6 @@ export class ExpressionEngine implements IExpressionParser {
                 result = new Constant(true);
             } else if (symbol === 'null' || symbol === 'undefined') {
                 result = new Constant(undefined);
-            } else if (this.IsShortHandExpression(symbol)) {
-                result = this.MakeShortHandExpression(symbol);
             } else {
                 result = this.MakeExpression(ExpressionType.Accessor, new Constant(symbol));
             }
@@ -92,10 +109,6 @@ export class ExpressionEngine implements IExpressionParser {
         public visitMemberAccessExp(context: ep.MemberAccessExpContext): Expression {
             const instance: Expression = this.visit(context.primaryExpression());
             const property: string = context.IDENTIFIER().text;
-
-            if (this.IsShortHandExpression(property)) {
-                throw new Error(`shorthand like ${property} is not allowed in an accessor`);
-            }
 
             return this.MakeExpression(ExpressionType.Accessor, new Constant(property), instance);
         }
@@ -134,41 +147,6 @@ export class ExpressionEngine implements IExpressionParser {
             }
 
             return result;
-        }
-
-        private IsShortHandExpression = (name: string): boolean => name.startsWith('#') || name.startsWith('@') || name.startsWith('$');
-
-        private MakeShortHandExpression(name: string): Expression {
-            if (!this.IsShortHandExpression(name)) {
-                throw new Error(`variable name:${name} is not a shorthand`);
-            }
-
-            const prefix: string = name[0];
-            name = name.substring(1);
-
-            // $title == dialog.result.title
-            // @city == turn.entities.city
-            // #BookFlight == turn.intents.BookFlight
-
-            // tslint:disable-next-line: switch-default
-            switch (prefix) {
-                case '#':
-                    return this.MakeExpression(ExpressionType.Accessor, new Constant(name),
-                                               this.MakeExpression(ExpressionType.Accessor, new Constant('intents'),
-                                                                   this.MakeExpression(ExpressionType.Accessor, new Constant('turn'))));
-
-                case '@':
-                    return this.MakeExpression(ExpressionType.Accessor, new Constant(name),
-                                               this.MakeExpression(ExpressionType.Accessor, new Constant('entities'),
-                                                                   this.MakeExpression(ExpressionType.Accessor, new Constant('turn'))));
-
-                case '$':
-                    return this.MakeExpression(ExpressionType.Accessor, new Constant(name),
-                                               this.MakeExpression(ExpressionType.Accessor, new Constant('result'),
-                                                                   this.MakeExpression(ExpressionType.Accessor, new Constant('dialog'))));
-            }
-
-            throw new Error(`no match for shorthand prefix: ${prefix}`);
         }
     };
 

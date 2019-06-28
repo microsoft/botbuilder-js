@@ -356,13 +356,15 @@ const dataSource = [
   ["xPath(xmlStr,'/produce/item/name')",  ["<name>Gala</name>", "<name>Honeycrisp</name>"]],
 
   // Short hand expression tests
-  ["@city == 'Bellevue'", false, ["turn.entities.city"]],
-  ["@city", "Seattle", ["turn.entities.city"]],
-  ["@city == 'Seattle'", true, ["turn.entities.city"]],
-  ["#BookFlight == 'BookFlight'", true, ["turn.intents.BookFlight"]],
-  ["exists(#BookFlight)", true, ["turn.intents.BookFlight"]],
-  ["$title", "Dialog Title", ["dialog.result.title"]],
-  ["$subTitle", "Dialog Sub Title", ["dialog.result.subTitle"]],
+  ["@city == 'Bellevue'", false, ["turn.recognized.entities.city"]],
+  ["@city", "Seattle", ["turn.recognized.entities.city"]],
+  ["@city == 'Seattle'", true, ["turn.recognized.entities.city"]],
+  ["#BookFlight == 'BookFlight'", true, ["turn.recognized.intents.BookFlight"]],
+  ["exists(#BookFlight)", true, ["turn.recognized.intents.BookFlight"]],
+  ["$title", "Dialog Title", ["dialog.title"]],
+  ["$subTitle", "Dialog Sub Title", ["dialog.subTitle"]],
+  ["%xxx", "instance", ["dialog.instance.xxx"]],
+  ["^xxx", "options", ["dialog.options.xxx"]],
 
   // Memory access tests
   ["getProperty(bag, concat('na','me'))", "mybag"],
@@ -381,6 +383,8 @@ const dataSource = [
   ["count(user.lists.todo) >= int(@ordinal[0]))", true],
   ["user.lists.todo[int(@ordinal[0]) - 1]", "todo1"],
   ["user.lists[user.listType][int(@ordinal[0]) - 1]", "todo1"],
+  ["@CompositeList1", "firstItem"],
+  ["count(@CompositeList2)", 2],
 
   // regex test
   ["isMatch('abc', '^[ab]+$')", false], // simple character classes ([abc]), "+" (one or more)
@@ -449,23 +453,27 @@ const scope = {
   },
   turn:
   {
-    entities:
+    recognized:
     {
-      city: "Seattle",
-      ordinal: ["1", "2", "3"]
-    },
-    intents:
-    {
-      BookFlight: "BookFlight"
+      entities:
+      {
+        city: "Seattle",
+        ordinal: ["1", "2", "3"],
+        CompositeList1: [["firstItem"]],
+        CompositeList2: [["firstItem", "secondItem"]]
+      },
+      intents:
+      {
+        BookFlight: "BookFlight"
+      }
     }
   },
   dialog:
   {
-    result:
-    {
-      title: "Dialog Title",
-      subTitle: "Dialog Sub Title"
-    }
+    instance: { xxx: "instance" },
+    options: { xxx: "options" },
+    title: "Dialog Title",
+    subTitle: "Dialog Sub Title"
   },
 };
 
