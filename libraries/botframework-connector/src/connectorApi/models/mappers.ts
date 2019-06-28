@@ -211,6 +211,12 @@ export const ConversationAccount: msRest.CompositeMapper = {
         type: {
           name: "String"
         }
+      },
+      properties: {
+        serializedName: "properties",
+        type: {
+          name: "Object"
+        }
       }
     }
   }
