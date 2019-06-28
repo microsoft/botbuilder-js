@@ -89,12 +89,16 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
 
         // Check for end of inner dialog
         if (turnResult.status !== DialogTurnStatus.waiting) {
+            if (turnResult.status === DialogTurnStatus.cancelled) {
+                await this.endComponent(outerDC, turnResult.result);
+                const cancelledTurnResult: DialogTurnResult = { status: DialogTurnStatus.cancelled, result: turnResult.result }
+                return cancelledTurnResult;
+            }
             // Return result to calling dialog
             return await this.endComponent(outerDC, turnResult.result);
-        } else {
-            // Just signal end of turn
-            return Dialog.EndOfTurn;
-        }
+        } 
+        // Just signal end of turn
+        return Dialog.EndOfTurn;
     }
 
     public async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
@@ -106,6 +110,11 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
 
         // Check for end of inner dialog
         if (turnResult.status !== DialogTurnStatus.waiting) {
+            if (turnResult.status === DialogTurnStatus.cancelled) {
+                await this.endComponent(outerDC, turnResult.result);
+                const cancelledTurnResult: DialogTurnResult = { status: DialogTurnStatus.cancelled, result: turnResult.result }
+                return cancelledTurnResult;
+            }
             // Return result to calling dialog
             return await this.endComponent(outerDC, turnResult.result);
         } else {
