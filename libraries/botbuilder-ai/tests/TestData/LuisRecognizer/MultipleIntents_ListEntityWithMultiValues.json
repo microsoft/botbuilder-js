@@ -2,37 +2,7 @@
   "text": "I want to travel on DL",
   "intents": {
     "Travel": {
-      "score": 0.6284412
-    },
-    "Roles": {
-      "score": 0.04839656
-    },
-    "Weather_GetForecast": {
-      "score": 0.0159541965
-    },
-    "None": {
-      "score": 0.009988914
-    },
-    "search": {
-      "score": 0.009767329
-    },
-    "Delivery": {
-      "score": 0.00756929349
-    },
-    "Help": {
-      "score": 0.00631706649
-    },
-    "SpecifyName": {
-      "score": 0.00609379727
-    },
-    "Cancel": {
-      "score": 0.005959939
-    },
-    "EntityTests": {
-      "score": 0.00270502432
-    },
-    "Greeting": {
-      "score": 0.00261759479
+      "score": 0.6291782
     }
   },
   "entities": {
@@ -70,58 +40,12 @@
     "label": "negative",
     "score": 0.143202543
   },
-  "luisResult": {
+  "v2": {
     "query": "I want to travel on DL",
     "topScoringIntent": {
       "intent": "Travel",
-      "score": 0.6284412
+      "score": 0.6291782
     },
-    "intents": [
-      {
-        "intent": "Travel",
-        "score": 0.6284412
-      },
-      {
-        "intent": "Roles",
-        "score": 0.04839656
-      },
-      {
-        "intent": "Weather.GetForecast",
-        "score": 0.0159541965
-      },
-      {
-        "intent": "None",
-        "score": 0.009988914
-      },
-      {
-        "intent": "search",
-        "score": 0.009767329
-      },
-      {
-        "intent": "Delivery",
-        "score": 0.00756929349
-      },
-      {
-        "intent": "Help",
-        "score": 0.00631706649
-      },
-      {
-        "intent": "SpecifyName",
-        "score": 0.00609379727
-      },
-      {
-        "intent": "Cancel",
-        "score": 0.005959939
-      },
-      {
-        "intent": "EntityTests",
-        "score": 0.00270502432
-      },
-      {
-        "intent": "Greeting",
-        "score": 0.00261759479
-      }
-    ],
     "entities": [
       {
         "entity": "dl",

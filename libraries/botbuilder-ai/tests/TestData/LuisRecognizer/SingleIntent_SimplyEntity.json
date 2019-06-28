@@ -2,7 +2,7 @@
   "text": "My name is Emad",
   "intents": {
     "SpecifyName": {
-      "score": 0.7960443
+      "score": 0.8930289
     }
   },
   "entities": {
@@ -11,13 +11,24 @@
         {
           "startIndex": 11,
           "endIndex": 15,
-          "score": 0.935264647,
+          "score": 0.9334999,
           "text": "emad",
           "type": "Name"
+        }
+      ],
+      "personName": [
+        {
+          "startIndex": 11,
+          "endIndex": 15,
+          "text": "emad",
+          "type": "builtin.personName"
         }
       ]
     },
     "Name": [
+      "emad"
+    ],
+    "personName": [
       "emad"
     ]
   },
@@ -25,11 +36,11 @@
     "label": "positive",
     "score": 0.8283453
   },
-  "luisResult": {
+  "v2": {
     "query": "My name is Emad",
     "topScoringIntent": {
       "intent": "SpecifyName",
-      "score": 0.7960443
+      "score": 0.8930289
     },
     "entities": [
       {
@@ -37,7 +48,13 @@
         "type": "Name",
         "startIndex": 11,
         "endIndex": 14,
-        "score": 0.935264647
+        "score": 0.9334999
+      },
+      {
+        "entity": "emad",
+        "type": "builtin.personName",
+        "startIndex": 11,
+        "endIndex": 14
       }
     ],
     "sentimentAnalysis": {

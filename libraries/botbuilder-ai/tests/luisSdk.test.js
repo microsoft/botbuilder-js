@@ -100,6 +100,8 @@ function TestJson(file, done, includeAllIntents, includeInstance) {
                 'User-Agent': 'botbuilder'
             }
         }).then(result => {
+            result.v2 = result.luisResult;
+            delete result.luisResult;
             if (!WithinDelta(expected, result, 0.1, false)) {
                 fs.outputJSONSync(newPath, result, { spaces: 2 });
                 assert(false, "\nReturned JSON\n " + newPath + "\n!= expected JSON\n " + expectedPath);

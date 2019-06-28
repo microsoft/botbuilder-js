@@ -2,37 +2,7 @@
   "text": "Please deliver February 2nd 2001",
   "intents": {
     "Delivery": {
-      "score": 0.8701288
-    },
-    "Roles": {
-      "score": 0.0165093653
-    },
-    "Cancel": {
-      "score": 0.0152201094
-    },
-    "None": {
-      "score": 0.012073569
-    },
-    "search": {
-      "score": 0.0100226561
-    },
-    "Weather_GetForecast": {
-      "score": 0.009826907
-    },
-    "Help": {
-      "score": 0.008148377
-    },
-    "SpecifyName": {
-      "score": 0.008032352
-    },
-    "EntityTests": {
-      "score": 0.00655526435
-    },
-    "Travel": {
-      "score": 0.00574227
-    },
-    "Greeting": {
-      "score": 0.00387644651
+      "score": 0.8688843
     }
   },
   "entities": {
@@ -61,6 +31,14 @@
           "text": "2nd",
           "type": "builtin.ordinal"
         }
+      ],
+      "ordinalV2": [
+        {
+          "startIndex": 24,
+          "endIndex": 27,
+          "text": "2nd",
+          "type": "builtin.ordinalV2"
+        }
       ]
     },
     "number": [
@@ -76,64 +54,24 @@
     ],
     "ordinal": [
       2
+    ],
+    "ordinalV2": [
+      {
+        "relativeTo": "start",
+        "offset": 2
+      }
     ]
   },
   "sentiment": {
     "label": "neutral",
     "score": 0.5
   },
-  "luisResult": {
+  "v2": {
     "query": "Please deliver February 2nd 2001",
     "topScoringIntent": {
       "intent": "Delivery",
-      "score": 0.8701288
+      "score": 0.8688843
     },
-    "intents": [
-      {
-        "intent": "Delivery",
-        "score": 0.8701288
-      },
-      {
-        "intent": "Roles",
-        "score": 0.0165093653
-      },
-      {
-        "intent": "Cancel",
-        "score": 0.0152201094
-      },
-      {
-        "intent": "None",
-        "score": 0.012073569
-      },
-      {
-        "intent": "search",
-        "score": 0.0100226561
-      },
-      {
-        "intent": "Weather.GetForecast",
-        "score": 0.009826907
-      },
-      {
-        "intent": "Help",
-        "score": 0.008148377
-      },
-      {
-        "intent": "SpecifyName",
-        "score": 0.008032352
-      },
-      {
-        "intent": "EntityTests",
-        "score": 0.00655526435
-      },
-      {
-        "intent": "Travel",
-        "score": 0.00574227
-      },
-      {
-        "intent": "Greeting",
-        "score": 0.00387644651
-      }
-    ],
     "entities": [
       {
         "entity": "2001",
@@ -167,6 +105,16 @@
         "endIndex": 26,
         "resolution": {
           "value": "2"
+        }
+      },
+      {
+        "entity": "2nd",
+        "type": "builtin.ordinalV2",
+        "startIndex": 24,
+        "endIndex": 26,
+        "resolution": {
+          "offset": "2",
+          "relativeTo": "start"
         }
       }
     ],
