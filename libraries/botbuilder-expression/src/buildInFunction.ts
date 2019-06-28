@@ -48,6 +48,7 @@ export class BuiltInFunctions {
     public static readonly PrefixsOfShorthand: Map<string, string> = new Map<string, string>([
         [ ExpressionType.Intent, 'turn.recognized.intents.' ],
         [ ExpressionType.Entity, 'turn.recognized.entities.' ],
+        [ ExpressionType.SimpleEntity, 'turn.recognized.entities.'],
         [ ExpressionType.Title, 'dialog.' ],
         [ ExpressionType.Instance, 'dialog.instance.'],
         [ ExpressionType.Option, 'dialog.options.']
@@ -2488,10 +2489,11 @@ export class BuiltInFunctions {
             new ExpressionEvaluator(ExpressionType.Title, this.ApplyShorthand(ExpressionType.Title), ReturnType.Object, this.ValidateUnaryString),
             new ExpressionEvaluator(ExpressionType.Instance, this.ApplyShorthand(ExpressionType.Instance), ReturnType.Object, this.ValidateUnaryString),
             new ExpressionEvaluator(ExpressionType.Option, this.ApplyShorthand(ExpressionType.Option), ReturnType.Object, this.ValidateUnaryString),
+            new ExpressionEvaluator(ExpressionType.Entity, this.ApplyShorthand(ExpressionType.Entity), ReturnType.Object, this.ValidateUnaryString),
             new ExpressionEvaluator(
-                ExpressionType.Entity,
+                ExpressionType.SimpleEntity,
                 this.ApplyShorthand(
-                    ExpressionType.Entity,
+                    ExpressionType.SimpleEntity,
                     (entity: any): { value: any; error: string } => {
                         let result: any = entity;
 

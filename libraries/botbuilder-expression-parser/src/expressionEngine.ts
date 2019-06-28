@@ -21,7 +21,8 @@ import { Util } from './util';
 export class ExpressionEngine implements IExpressionParser {
     private static readonly ShorthandFunctionMap: Map<string, string> = new Map<string, string>([
         ['#', ExpressionType.Intent],
-        ['@', ExpressionType.Entity],
+        ['@', ExpressionType.SimpleEntity],
+        ['@@', ExpressionType.Entity],
         ['$', ExpressionType.Title],
         ['%', ExpressionType.Instance],
         ['^', ExpressionType.Option]

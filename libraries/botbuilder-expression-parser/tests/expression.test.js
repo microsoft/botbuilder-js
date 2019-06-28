@@ -365,6 +365,7 @@ const dataSource = [
   ["$subTitle", "Dialog Sub Title", ["dialog.subTitle"]],
   ["%xxx", "instance", ["dialog.instance.xxx"]],
   ["^xxx", "options", ["dialog.options.xxx"]],
+  ["count(@@CompositeList1) == 1 && count(@@CompositeList1[0]) == 1", true, ["turn.recognized.entities.CompositeList1"]],
 
   // Memory access tests
   ["getProperty(bag, concat('na','me'))", "mybag"],

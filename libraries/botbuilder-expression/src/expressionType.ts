@@ -147,6 +147,7 @@ export class ExpressionType {
     // Short hand functions
     public static readonly Intent: string = 'intent';
     public static readonly Entity: string = 'entity';
+    public static readonly SimpleEntity: string = 'simpleEntity';
     public static readonly Title: string = 'title';
     public static readonly Instance: string = 'instance';
     public static readonly Option: string = 'option';
