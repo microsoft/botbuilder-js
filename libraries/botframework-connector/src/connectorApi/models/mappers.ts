@@ -211,6 +211,12 @@ export const ConversationAccount: msRest.CompositeMapper = {
         type: {
           name: "String"
         }
+      },
+      properties: {
+        serializedName: "properties",
+        type: {
+          name: "Object"
+        }
       }
     }
   }
@@ -367,6 +373,19 @@ export const Entity: msRest.CompositeMapper = {
         serializedName: "type",
         type: {
           name: "String"
+        }
+      },
+      text: {
+        serializedName: "text",
+        type: {
+          name: "String"
+        }
+      },
+      mentioned: {
+        serializedName: "mentioned",
+        type: {
+          name: "Composite",
+          className: "ChannelAccount"
         }
       }
     }
