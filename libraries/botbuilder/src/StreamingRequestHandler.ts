@@ -1,13 +1,17 @@
 import {
   Activity,
+  ActivityTypes
+} from 'botframework-schema';
+import {
   ActivityHandler,
-  ActivityTypes,
-  BotFrameworkAdapterSettings,
-  InvokeResponse,
   Middleware,
   MiddlewareHandler,
   TurnContext
-} from 'botbuilder';
+} from 'botbuilder-core';
+import {
+  BotFrameworkAdapterSettings,
+  InvokeResponse
+} from './botFrameworkAdapter';
 import { IStreamingTransportServer, ReceiveRequest, RequestHandler, Response } from 'botframework-streaming-extensions-protocol';
 import * as os from 'os';
 // tslint:disable-next-line: no-require-imports

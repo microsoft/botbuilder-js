@@ -1,11 +1,12 @@
 import {
   ActivityHandler,
-  BotFrameworkAdapterSettings,
   Middleware,
-  MiddlewareHandler,
+  MiddlewareHandler
+} from 'botbuilder-core';
+import {
+  BotFrameworkAdapterSettings,
   WebRequest
-} from 'botbuilder';
-
+} from './botFrameworkAdapter'
 import {
   JwtTokenValidation,
   MicrosoftAppCredentials,
