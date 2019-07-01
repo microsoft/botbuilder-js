@@ -23,9 +23,10 @@ export class ExpressionEngine implements IExpressionParser {
         ['#', ExpressionType.Intent],
         ['@', ExpressionType.SimpleEntity],
         ['@@', ExpressionType.Entity],
-        ['$', ExpressionType.Title],
-        ['%', ExpressionType.Instance],
-        ['^', ExpressionType.Option]
+        ['$', ExpressionType.Dialog],
+        ['^', ExpressionType.Callstack],
+        ['%', ExpressionType.Option],
+        ['~', ExpressionType.Instance]
     ]);
 
     private readonly _lookup: EvaluatorLookup;

@@ -331,6 +331,11 @@ const dataSource = [
   ["join(foreach(items, item, item), ',')", "zero,one,two"],
   ["join(foreach(nestedItems, i, i.x + first(nestedItems).x), ',')", "2,3,4", ["nestedItems"]],
   ["join(foreach(items, item, concat(item, string(count(items)))), ',')", "zero3,one3,two3", ["items"]],
+  ["join(select(items, item, item), ',')", "zero,one,two"],
+  ["join(select(nestedItems, i, i.x + first(nestedItems).x), ',')", "2,3,4", ["nestedItems"]],
+  ["join(select(items, item, concat(item, string(count(items)))), ',')", "zero3,one3,two3", ["items"]],
+  ["join(where(items, item, item == 'two'), ',')", "two"],
+  ["join(foreach(where(nestedItems, item, item.x > 1), result, result.x), ',')", "2,3", ["nestedItems"]],
   ["last(items)", "two"],
   ["last('hello')", "o"],
   ["last(createArray(0, 1, 2))", 2],
@@ -363,9 +368,13 @@ const dataSource = [
   ["exists(#BookFlight)", true, ["turn.recognized.intents.BookFlight"]],
   ["$title", "Dialog Title", ["dialog.title"]],
   ["$subTitle", "Dialog Sub Title", ["dialog.subTitle"]],
-  ["%xxx", "instance", ["dialog.instance.xxx"]],
-  ["^xxx", "options", ["dialog.options.xxx"]],
+  ["~xxx", "instance", ["dialog.instance.xxx"]],
+  ["%xxx", "options", ["dialog.options.xxx"]],
+  ["^x", 3],
+  ["^y", 2],
+  ["^z", 1],
   ["count(@@CompositeList1) == 1 && count(@@CompositeList1[0]) == 1", true, ["turn.recognized.entities.CompositeList1"]],
+  ["count(@CompositeList2) == 2 && (@CompositeList2)[0] === 'firstItem'", true, ["turn.recognized.entities.CompositeList2"]],
 
   // Memory access tests
   ["getProperty(bag, concat('na','me'))", "mybag"],
@@ -384,8 +393,6 @@ const dataSource = [
   ["count(user.lists.todo) >= int(@ordinal[0]))", true],
   ["user.lists.todo[int(@ordinal[0]) - 1]", "todo1"],
   ["user.lists[user.listType][int(@ordinal[0]) - 1]", "todo1"],
-  ["@CompositeList1", "firstItem"],
-  ["count(@CompositeList2)", 2],
 
   // regex test
   ["isMatch('abc', '^[ab]+$')", false], // simple character classes ([abc]), "+" (one or more)
@@ -476,6 +483,12 @@ const scope = {
     title: "Dialog Title",
     subTitle: "Dialog Sub Title"
   },
+  callstack:
+  [
+    { x: 3 },
+    { x: 2, y: 2 },
+    { x: 1, y: 1, z: 1 }
+  ]
 };
 
 describe('expression functional test', () => {

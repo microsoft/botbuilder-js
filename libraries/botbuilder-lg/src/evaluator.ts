@@ -129,25 +129,25 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     }
 
     public ConstructScope(templateName: string, args: any[]) : any {
-        const paramters: string[] = this.TemplateMap[templateName].Parameters;
+        const parameters: string[] = this.TemplateMap[templateName].Parameters;
 
         if (args.length === 0) {
             // no args to construct, inherit from current scope
             return this.currentTarget().Scope;
         }
 
-        if (args.length === 1 && paramters.length === 0) {
+        if (args.length === 1 && parameters.length === 0) {
             // Special case, if no parameters defined, and only one arg, don't wrap
-            // this is for directly calling an paramterized template
+            // this is for directly calling an parameterized template
             return args[0];
         }
 
-        if (paramters !== undefined && (args === undefined || paramters.length !== args.length)) {
+        if (parameters !== undefined && (args === undefined || parameters.length !== args.length)) {
             throw new Error(`The length of required parameters does not match the length of provided parameters.`);
         }
 
         const newScope: any = {};
-        paramters.map((e: string, i: number) => newScope[e] = args[i]);
+        parameters.map((e: string, i: number) => newScope[e] = args[i]);
 
         return newScope;
     }

@@ -33,11 +33,11 @@ export class GetMethodExtensions implements IGetMethod {
         return BuiltInFunctions.Lookup(name);
     }
 
-    public lgTemplate = (paramters: any[]): any => {
-        if (paramters.length > 0 &&
-            typeof paramters[0] === 'string') {
-            const func: string = paramters[0];
-            const templateParameters: any[] = paramters.slice(1);
+    public lgTemplate = (parameters: any[]): any => {
+        if (parameters.length > 0 &&
+            typeof parameters[0] === 'string') {
+            const func: string = parameters[0];
+            const templateParameters: any[] = parameters.slice(1);
 
             if (func !== undefined &&
                 func.length > 0 &&
@@ -76,23 +76,23 @@ export class GetMethodExtensions implements IGetMethod {
         }
     }
 
-    public Join = (paramters: any[]): any => {
-        if (paramters.length === 2 &&
-            paramters[0] instanceof Array &&
-            typeof (paramters[1]) === 'string') {
-            const li: any = paramters[0];
-            const sep: string = paramters[1].concat(' ');
+    public Join = (parameters: any[]): any => {
+        if (parameters.length === 2 &&
+            parameters[0] instanceof Array &&
+            typeof (parameters[1]) === 'string') {
+            const li: any = parameters[0];
+            const sep: string = parameters[1].concat(' ');
 
             return li.join(sep);
         }
 
-        if (paramters.length === 3 &&
-            paramters[0] instanceof Array &&
-            typeof (paramters[1]) === 'string' &&
-            typeof (paramters[2]) === 'string') {
-            const li: any = paramters[0];
-            const sep1: string = paramters[1].concat(' ');
-            const sep2: string = ' '.concat(paramters[2], ' ');
+        if (parameters.length === 3 &&
+            parameters[0] instanceof Array &&
+            typeof (parameters[1]) === 'string' &&
+            typeof (parameters[2]) === 'string') {
+            const li: any = parameters[0];
+            const sep1: string = parameters[1].concat(' ');
+            const sep2: string = ' '.concat(parameters[2], ' ');
             if (li.length < 3) {
                 return li.join(sep2);
             } else {

@@ -14,14 +14,14 @@ expression
     ;
  
 primaryExpression 
-    : '(' expression ')'                               #parenthesisExp
-    | NUMBER                                           #numericAtom
-    | STRING                                           #stringAtom
-    | IDENTIFIER                                       #idAtom
-    | ('#' | '@' | '@@' | '$' | '%' | '^') IDENTIFIER  #shortHandExp
-    | primaryExpression '.' IDENTIFIER                 #memberAccessExp
-    | primaryExpression '(' argsList? ')'              #funcInvokeExp
-    | primaryExpression '[' expression ']'             #indexAccessExp
+    : '(' expression ')'                                     #parenthesisExp
+    | NUMBER                                                 #numericAtom
+    | STRING                                                 #stringAtom
+    | IDENTIFIER                                             #idAtom
+    | ('#' | '@' | '@@' | '$' | '%' | '^' | '~') IDENTIFIER  #shortHandExp
+    | primaryExpression '.' IDENTIFIER                       #memberAccessExp
+    | primaryExpression '(' argsList? ')'                    #funcInvokeExp
+    | primaryExpression '[' expression ']'                   #indexAccessExp
     ;
 
 argsList

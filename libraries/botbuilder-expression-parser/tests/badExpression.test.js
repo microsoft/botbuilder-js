@@ -270,10 +270,22 @@ const badExpressions =
   "foreach(items, add(1), item)",// Second paramter of foreach is not an identifier
   "foreach(items, 1, item)", // Second paramter error
   "foreach(items, x, sum(x))", // third paramter error
-  "union(one, two)",// should have collection param
-  "intersection(one, two)",// should have collection param
+  "select(hello, item, item)", // first arg is not list
+  "select(items, item)", // should have three parameters
+  "select(items, item, item2, item3)", // should have three parameters
+  "select(items, add(1), item)", // second paramter of foreach is not an identifier
+  "select(items, 1, item)", // second paramter error
+  "select(items, x, sum(x))", // third paramter error
+  "where(hello, item, item)", // first arg is not list
+  "where(items, item)", //should have three parameters
+  "where(items, item, item2, item3)", //should have three parameters
+  "where(items, add(1), item)", // Second paramter of where is not an identifier
+  "where(items, 1, item)", // Second paramter error
+  "where(items, x, sum(x))", // third paramter error
+  "union(one, two)", // should have collection param
+  "intersection(one, two)", // should have collection param
   "skip(hello)", // should have two parameters
-  "skip(hello, world, one)", //should have two parameters
+  "skip(hello, world, one)", // should have two parameters
   "skip(hello, one)", // first param should be array
   "skip(items, hello)", // second param should be integer
   "skip(items, one + 0.5)", // second param should be integer

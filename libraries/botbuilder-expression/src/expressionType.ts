@@ -111,6 +111,8 @@ export class ExpressionType {
     public static readonly First: string = 'first';
     public static readonly Last: string = 'last';
     public static readonly Foreach: string = 'foreach';
+    public static readonly Select: string = 'select';
+    public static readonly Where: string = 'where';
     public static readonly Union: string = 'union';
     public static readonly Intersection: string = 'intersection';
     public static readonly Skip: string = 'skip';
@@ -147,8 +149,9 @@ export class ExpressionType {
     // Short hand functions
     public static readonly Intent: string = 'intent';
     public static readonly Entity: string = 'entity';
+    public static readonly Dialog: string = 'dialog';
     public static readonly SimpleEntity: string = 'simpleEntity';
-    public static readonly Title: string = 'title';
     public static readonly Instance: string = 'instance';
     public static readonly Option: string = 'option';
+    public static readonly Callstack: string = 'callstack';
 }

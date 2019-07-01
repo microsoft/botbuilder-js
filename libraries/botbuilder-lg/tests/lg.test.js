@@ -342,7 +342,7 @@ describe('LG', function () {
         assert.strictEqual(options3.includes(evaled), true, `Evaled is ${evaled}`);
     });
 
-    it('TestImportLgFiles', function () {
+    it('TestLgFileImportMultipleTimes', function () {
         let engine = new TemplateEngine().addFiles([GetExampleFilePath("importExamples/import.lg"), GetExampleFilePath("importExamples/import2.lg")]);
 
         // Assert 6.lg is imported only once and no exceptions are thrown when it is imported from multiple files.

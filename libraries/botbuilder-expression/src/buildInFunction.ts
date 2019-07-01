@@ -49,7 +49,7 @@ export class BuiltInFunctions {
         [ ExpressionType.Intent, 'turn.recognized.intents.' ],
         [ ExpressionType.Entity, 'turn.recognized.entities.' ],
         [ ExpressionType.SimpleEntity, 'turn.recognized.entities.'],
-        [ ExpressionType.Title, 'dialog.' ],
+        [ ExpressionType.Dialog, 'dialog.' ],
         [ ExpressionType.Instance, 'dialog.instance.'],
         [ ExpressionType.Option, 'dialog.options.']
     ]);
@@ -868,6 +868,48 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
+    private static Where(expression: Expression, state: any): { value: any; error: string } {
+        let result: any[];
+        let error: string;
+        let collection: any;
+
+        ({ value: collection, error } = expression.Children[0].tryEvaluate(state));
+
+        if (error === undefined) {
+            const iteratorName: string = <string>((<Constant>(expression.Children[1].Children[0])).Value);
+            if (!(collection instanceof Array)) {
+                error = `${expression.Children[0]} is not a collection to run where`;
+            } else {
+                result = [];
+                for (const item of collection) {
+                    const local: Map<string, any> = new Map<string, any>([
+                        [iteratorName, item]
+                    ]);
+
+                    const newScope: Map<string, any> = new Map<string, any>([
+                        ['$global', state],
+                        ['$local', local]
+                    ]);
+
+                    const { value: r, error: e } = expression.Children[2].tryEvaluate(newScope);
+                    if (e !== undefined) {
+                        return { value: undefined, error: e };
+                    }
+
+                    if ((Boolean(r))) {
+                        result.push(local.get(iteratorName));
+                    }
+                }
+            }
+        }
+
+        return { value: result, error };
+    }
+
+    private static ValidateWhere(expression: Expression): void {
+        BuiltInFunctions.ValidateForeach(expression);
+    }
+
     private static ValidateForeach(expression: Expression): void {
         if (expression.Children.length !== 3) {
             throw new Error(`foreach expect 3 parameters, found ${expression.Children.length}`);
@@ -1483,6 +1525,31 @@ export class BuiltInFunctions {
         }
 
         return {value: result, error};
+    }
+
+    private static Callstack(expression: Expression, state: any): { value: any; error: string } {
+        let result: any =  state;
+        let error: string;
+
+        // get collection
+        ({ value: result, error} = Extensions.AccessProperty(state, 'callstack'));
+        if (result !== undefined) {
+            const items: any[] = result as any[];
+            const property: string = (expression.Children[0] as Constant).Value.toString();
+
+            for (const item of items) {
+                // get property off of item
+                ({ value: result, error } = Extensions.AccessProperty(item, property));
+
+                // if not null
+                if (error === undefined && result !== undefined) {
+                    // return it
+                    return { value: result, error };
+                }
+            }
+        }
+
+        return { value: undefined, error };
     }
 
     // tslint:disable-next-line: max-func-body-length
@@ -2443,7 +2510,9 @@ export class BuiltInFunctions {
                     }),
                 ReturnType.Object,
                 (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.Object, ReturnType.String)),
+            new ExpressionEvaluator(ExpressionType.Select, BuiltInFunctions.Foreach, ReturnType.Object, BuiltInFunctions.ValidateForeach),
             new ExpressionEvaluator(ExpressionType.Foreach, BuiltInFunctions.Foreach, ReturnType.Object, BuiltInFunctions.ValidateForeach),
+            new ExpressionEvaluator(ExpressionType.Where, BuiltInFunctions.Where, ReturnType.Object, BuiltInFunctions.ValidateWhere),
 
             //URI Parsing Functions
             new ExpressionEvaluator(ExpressionType.UriHost, BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriHost(args[0]), BuiltInFunctions.VerifyString),
@@ -2486,9 +2555,10 @@ export class BuiltInFunctions {
 
             // Shorthand functions
             new ExpressionEvaluator(ExpressionType.Intent, this.ApplyShorthand(ExpressionType.Intent), ReturnType.Object, this.ValidateUnaryString),
-            new ExpressionEvaluator(ExpressionType.Title, this.ApplyShorthand(ExpressionType.Title), ReturnType.Object, this.ValidateUnaryString),
+            new ExpressionEvaluator(ExpressionType.Dialog, this.ApplyShorthand(ExpressionType.Dialog), ReturnType.Object, this.ValidateUnaryString),
             new ExpressionEvaluator(ExpressionType.Instance, this.ApplyShorthand(ExpressionType.Instance), ReturnType.Object, this.ValidateUnaryString),
             new ExpressionEvaluator(ExpressionType.Option, this.ApplyShorthand(ExpressionType.Option), ReturnType.Object, this.ValidateUnaryString),
+            new ExpressionEvaluator(ExpressionType.Callstack, this.Callstack, ReturnType.Object, this.ValidateUnaryString),
             new ExpressionEvaluator(ExpressionType.Entity, this.ApplyShorthand(ExpressionType.Entity), ReturnType.Object, this.ValidateUnaryString),
             new ExpressionEvaluator(
                 ExpressionType.SimpleEntity,
