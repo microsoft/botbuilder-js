@@ -2,37 +2,7 @@
   "text": "Please deliver February 2nd 2001 in room 201",
   "intents": {
     "Delivery": {
-      "score": 0.6622358
-    },
-    "Roles": {
-      "score": 0.0399782136
-    },
-    "None": {
-      "score": 0.0348676443
-    },
-    "Weather_GetForecast": {
-      "score": 0.0214544013
-    },
-    "search": {
-      "score": 0.0123604042
-    },
-    "Travel": {
-      "score": 0.00675333524
-    },
-    "EntityTests": {
-      "score": 0.005465451
-    },
-    "SpecifyName": {
-      "score": 0.005312069
-    },
-    "Cancel": {
-      "score": 0.00438869931
-    },
-    "Help": {
-      "score": 0.00296988664
-    },
-    "Greeting": {
-      "score": 0.00122421747
+      "score": 0.6577236
     }
   },
   "entities": {
@@ -76,6 +46,14 @@
           "text": "2nd",
           "type": "builtin.ordinal"
         }
+      ],
+      "ordinalV2": [
+        {
+          "startIndex": 24,
+          "endIndex": 27,
+          "text": "2nd",
+          "type": "builtin.ordinalV2"
+        }
       ]
     },
     "number": [
@@ -98,64 +76,24 @@
     ],
     "ordinal": [
       2
+    ],
+    "ordinalV2": [
+      {
+        "relativeTo": "start",
+        "offset": 2
+      }
     ]
   },
   "sentiment": {
     "label": "neutral",
     "score": 0.5
   },
-  "luisResult": {
+  "v2": {
     "query": "Please deliver February 2nd 2001 in room 201",
     "topScoringIntent": {
       "intent": "Delivery",
-      "score": 0.6622358
+      "score": 0.6577236
     },
-    "intents": [
-      {
-        "intent": "Delivery",
-        "score": 0.6622358
-      },
-      {
-        "intent": "Roles",
-        "score": 0.0399782136
-      },
-      {
-        "intent": "None",
-        "score": 0.0348676443
-      },
-      {
-        "intent": "Weather.GetForecast",
-        "score": 0.0214544013
-      },
-      {
-        "intent": "search",
-        "score": 0.0123604042
-      },
-      {
-        "intent": "Travel",
-        "score": 0.00675333524
-      },
-      {
-        "intent": "EntityTests",
-        "score": 0.005465451
-      },
-      {
-        "intent": "SpecifyName",
-        "score": 0.005312069
-      },
-      {
-        "intent": "Cancel",
-        "score": 0.00438869931
-      },
-      {
-        "intent": "Help",
-        "score": 0.00296988664
-      },
-      {
-        "intent": "Greeting",
-        "score": 0.00122421747
-      }
-    ],
     "entities": [
       {
         "entity": "2001",
@@ -209,6 +147,16 @@
         "endIndex": 26,
         "resolution": {
           "value": "2"
+        }
+      },
+      {
+        "entity": "2nd",
+        "type": "builtin.ordinalV2",
+        "startIndex": 24,
+        "endIndex": 26,
+        "resolution": {
+          "offset": "2",
+          "relativeTo": "start"
         }
       }
     ],
