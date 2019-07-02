@@ -1,4 +1,4 @@
-This library contains the core of Bot Framework Streaming Extensions, which extends the 3.0 Bot Framework protocol to communicate over multiplexed, persistent, connections such as named pipes or WebSocket. In order to use this library a service will also require a Streaming Extensions Transport library which carry the same name as this package with the transport type appended, for example 'botframework-streaming-extensions-protocol-websocket'. 
+This library contains the core of Bot Framework Streaming Extensions, which extends the 3.0 Bot Framework protocol to communicate over multiplexed, persistent, connections such as named pipes or WebSocket. In order to use this library a service will also require a Streaming Extensions Transport library which carry the same name as this package with the transport type appended, for example 'botframework-streaming-extensions-websocket'. 
 
 - [Installing](#installing)
 - [Documentation](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-overview-introduction?view=azure-bot-service-4.0)
@@ -9,7 +9,7 @@ This library contains the core of Bot Framework Streaming Extensions, which exte
 To add the latset published version of this package to your bot:
 
 ```bash
-npm install --save botframework-streaming-extensions-protocol
+npm install --save botframework-streaming-extensions
 ```
 
 #### Use the Daily Build

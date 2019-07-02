@@ -13,7 +13,7 @@ import {
   SimpleCredentialProvider
 } from 'botframework-connector';
 
-import { NodeWebSocket, WebSocketServer } from 'botframework-streaming-extensions-protocol';
+import { NodeWebSocket, WebSocketServer } from 'botframework-streaming-extensions';
 import { Watershed } from 'watershed';
 import { StreamingRequestHandler } from './StreamingRequestHandler';
 

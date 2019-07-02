@@ -12,7 +12,7 @@ import {
   BotFrameworkAdapterSettings,
   InvokeResponse
 } from './botFrameworkAdapter';
-import { IStreamingTransportServer, ReceiveRequest, RequestHandler, Response } from 'botframework-streaming-extensions-protocol';
+import { IStreamingTransportServer, ReceiveRequest, RequestHandler, Response } from 'botframework-streaming-extensions';
 import * as os from 'os';
 // tslint:disable-next-line: no-require-imports
 const pjson: any = require('../package.json');
