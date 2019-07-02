@@ -4,7 +4,10 @@
  */
 const { DialogTestClient, DialogTestLogger } = require('botbuilder-testing');
 const { MainDialog } = require('../dialogs/mainDialog');
+const { BookingDialog } = require('../dialogs/bookingDialog');
 const assert = require('assert');
+
+const BOOKING_DIALOG = 'bookingDialog';
 
 
 class MockLuisHelper {
@@ -20,6 +23,8 @@ class MockLuisHelper {
 }
 
 describe('mainDialog', function() {
+
+    const bookingDialog = new BookingDialog(BOOKING_DIALOG);
    
     it('should create a DialogTestClient', async function() {
         let client = new DialogTestClient();
@@ -28,7 +33,7 @@ describe('mainDialog', function() {
 
     let tests = require('./testData/mainDialogTestCases.js');
 
-    let dialog = new MainDialog(null, MockLuisHelper);
+    let dialog = new MainDialog(null, MockLuisHelper, bookingDialog);
 
     for (let t = 0; t < tests.length; t++) {
         let test = tests[t];
@@ -64,12 +69,11 @@ describe('mainDialog', function() {
 
     it('should warn when luis is not configured', async function() {
 
-        let md = new MainDialog();
+        let md = new MainDialog(null, null, bookingDialog);
         client = new DialogTestClient(md, null, [new DialogTestLogger()]);
         let reply = await client.sendActivity('hi');
         assert(reply.text == 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.', 'Did not warn about missing luis');
     });
-
 
 });
 

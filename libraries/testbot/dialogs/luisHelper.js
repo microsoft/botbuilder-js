@@ -24,12 +24,21 @@ class LuisHelper {
             const intent = LuisRecognizer.topIntent(recognizerResult);
 
             bookingDetails.intent = intent;
+            bookingDetails.unsupportedCities = [];
 
-            if (intent === 'BookFlight') {
+            if (intent === 'Book_flight') {
                 // We need to get the result from the LUIS JSON which at every level returns an array
 
                 bookingDetails.destination = LuisHelper.parseCompositeEntity(recognizerResult, 'To', 'Airport');
                 bookingDetails.origin = LuisHelper.parseCompositeEntity(recognizerResult, 'From', 'Airport');
+
+                if(!bookingDetails.destination) {
+                    bookingDetails.unsupportedCities.push(LuisHelper.getUnsupportedCity(recognizerResult, 'To'))
+                }
+
+                if(!bookingDetails.origin) {
+                    bookingDetails.unsupportedCities.push(LuisHelper.getUnsupportedCity(recognizerResult, 'From'))
+                }
 
                 // This value will be a TIMEX. And we are only interested in a Date so grab the first result and drop the Time part.
                 // TIMEX is a format that represents DateTime expressions that include some ambiguity. e.g. missing a Year.
@@ -61,6 +70,13 @@ class LuisHelper {
 
         const datetime = timex[0].split('T')[0];
         return datetime;
+    }
+
+    static getUnsupportedCity(result, compositeName) {
+        const cityEntity = result.luisResult.entities.find(entity => {
+          return entity.type = compositeName;
+        });
+        return cityEntity.entity.toUpperCase();
     }
 }
 

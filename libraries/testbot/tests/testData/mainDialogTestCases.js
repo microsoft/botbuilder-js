@@ -22,7 +22,7 @@ function formatDate(date) {
 module.exports = [
     {
         name: 'Happy Path',
-        expectedStatus: 'complete',
+        expectedStatus: 'waiting',
         steps: [
             ['hi', 'What can I help you with today?\nSay something like "Book a flight from Paris to Berlin on March 22, 2020"'],
             ['Book a flight from Paris to Berlin on March 22, 2020', 'Please confirm, I have you traveling to: Berlin from: Paris on: 2022-02-22. (1) Yes or (2) No'],
@@ -41,7 +41,7 @@ module.exports = [
     },
     {
         name: 'help at menu',
-        expectedStatus: 'complete',
+        expectedStatus: 'waiting',
         steps: [
             ['hi', 'What can I help you with today?\nSay something like "Book a flight from Paris to Berlin on March 22, 2020"'],
             ['help','[ This is where to send sample help to the user... ]'],
@@ -50,7 +50,7 @@ module.exports = [
     },
     {
         name: 'cancel at menu',
-        expectedStatus: 'complete',
+        expectedStatus: 'waiting',
         steps: [
             ['hi', 'What can I help you with today?\nSay something like "Book a flight from Paris to Berlin on March 22, 2020"'],
             ['cancel','Cancelling'],

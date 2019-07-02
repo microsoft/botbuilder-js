@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+const { InputHints } = require('botbuilder');
 const { ComponentDialog, DialogTurnStatus } = require('botbuilder-dialogs');
 
 /**
@@ -31,11 +32,13 @@ class CancelAndHelpDialog extends ComponentDialog {
             switch (text) {
             case 'help':
             case '?':
-                await innerDc.context.sendActivity('[ This is where to send sample help to the user... ]');
+                const helpMessageText = '[ This is where to send sample help to the user... ]';
+                await innerDc.context.sendActivity(helpMessageText, helpMessageText, InputHints.ExpectingInput);
                 return { status: DialogTurnStatus.waiting };
             case 'cancel':
             case 'quit':
-                await innerDc.context.sendActivity('Cancelling');
+                const cancelMessageText = 'Cancelling';
+                await innerDc.context.sendActivity(cancelMessageText, cancelMessageText, InputHints.IgnoringInput);
                 return await innerDc.cancelAllDialogs();
             }
         }

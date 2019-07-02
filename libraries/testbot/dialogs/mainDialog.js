@@ -2,14 +2,13 @@
 // Licensed under the MIT License.
 
 const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
+const { InputHints } = require('botbuilder');
 const { ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
-const { BookingDialog } = require('./bookingDialog');
 
 const MAIN_WATERFALL_DIALOG = 'mainWaterfallDialog';
-const BOOKING_DIALOG = 'bookingDialog';
 
 class MainDialog extends ComponentDialog {
-    constructor(logger, luisClient) {
+    constructor(logger, luisClient, bookingDialog) {
         super('MainDialog');
 
         if (!logger) {
@@ -23,10 +22,13 @@ class MainDialog extends ComponentDialog {
             this.luisClient = luisClient;
         }
 
+        if (!bookingDialog) throw new Error('[MainDialog]: Missing parameter \'bookingDialog\' is required');
+        this.bookingDialog = bookingDialog;
+
         // Define the main dialog and its related components.
         // This is a sample "book a flight" dialog.
         this.addDialog(new TextPrompt('TextPrompt'))
-            .addDialog(new BookingDialog(BOOKING_DIALOG))
+            .addDialog(this.bookingDialog)
             .addDialog(new WaterfallDialog(MAIN_WATERFALL_DIALOG, [
                 this.introStep.bind(this),
                 this.actStep.bind(this),
@@ -60,7 +62,8 @@ class MainDialog extends ComponentDialog {
      */
     async introStep(stepContext) {
         if (!this.luisClient) {
-            await stepContext.context.sendActivity('NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.');
+            const messageText = 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.'
+            await stepContext.context.sendActivity(messageText, messageText, InputHints.IgnoringInput);
             return await stepContext.next();
         }
 
@@ -79,6 +82,12 @@ class MainDialog extends ComponentDialog {
             // This will attempt to extract the origin, destination and travel date from the user's message
             // and will then pass those values into the booking dialog
             bookingDetails = await this.luisClient.executeLuisQuery(this.logger, stepContext.context);
+
+            if(bookingDetails.unsupportedCities) {
+                const messageText = `Sorry but the following airports are not supported: ${bookingDetails.unsupportedCities.join(', ')}`;
+                await stepContext.context.sendActivity(messageText, messageText, InputHints.IgnoringInput);
+                return await stepContext.replaceDialog('MainDialog');
+            }
 
             this.logger.log('LUIS extracted these booking details:', bookingDetails);
         }
@@ -106,11 +115,11 @@ class MainDialog extends ComponentDialog {
             const timeProperty = new TimexProperty(result.travelDate);
             const travelDateMsg = timeProperty.toNaturalLanguage(new Date(Date.now()));
             const msg = `I have you booked to ${ result.destination } from ${ result.origin } on ${ travelDateMsg }.`;
-            await stepContext.context.sendActivity(msg);
+            await stepContext.context.sendActivity(msg, msg, InputHints.IgnoringInput);
         } else {
             await stepContext.context.sendActivity('Thank you.');
         }
-        return await stepContext.endDialog();
+        return await stepContext.replaceDialog('MainDialog');
     }
 }
 

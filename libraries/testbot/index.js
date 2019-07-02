@@ -8,7 +8,7 @@ const path = require('path');
 const restify = require('restify');
 
 // Import required bot services. See https://aka.ms/bot-services to learn more about the different parts of a bot.
-const { BotFrameworkAdapter, MemoryStorage, ConversationState, UserState } = require('botbuilder');
+const { BotFrameworkAdapter, ConversationState, InputHints, MemoryStorage, UserState } = require('botbuilder');
 const { LuisHelper } = require('./dialogs/luisHelper');
 
 // Import the simple echo bot
@@ -17,6 +17,10 @@ const { MyBot } = require('./bots/myBot')
 // This bot's main dialog.
 const { DialogAndWelcomeBot } = require('./bots/dialogAndWelcomeBot');
 const { MainDialog } = require('./dialogs/mainDialog');
+
+// the bot's booking dialog
+const { BookingDialog } = require('./dialogs/bookingDialog');
+const BOOKING_DIALOG = 'bookingDialog';
 
 // Note: Ensure you have a .env file and include LuisAppId, LuisAPIKey and LuisAPIHostName.
 const ENV_FILE = path.join(__dirname, '.env');
@@ -36,7 +40,8 @@ adapter.onTurnError = async (context, error) => {
     //       application insights.
     console.error(`\n [onTurnError]: ${ error }`);
     // Send a message to the user
-    await context.sendActivity(`Oops. Something went wrong!`);
+    const onTurnErrorMessage = `Oops. Something went wrong!`;
+    await context.sendActivity(onTurnErrorMessage, onTurnErrorMessage, InputHints.ExpectingInput);
     // Clear out state
     await conversationState.delete(context);
 };
@@ -63,7 +68,8 @@ if (process.env.LuisAppId && process.env.LuisAPIKey && process.env.LuisAPIHostNa
 
 
 // Create the main dialog.
-const dialog = new MainDialog(logger, helper);
+const bookingDialog = new BookingDialog(BOOKING_DIALOG);
+const dialog = new MainDialog(logger, helper, bookingDialog);
 const bot = new DialogAndWelcomeBot(conversationState, userState, dialog, logger);
 const echobot = new MyBot(conversationState);
 
