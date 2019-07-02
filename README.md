@@ -1,7 +1,7 @@
 
 # ![Bot Framework SDK v4 for JavaScript](./docs/media/BotFrameworkJavaScript_header.png)
 
-### [Click here to find out what's new for //build2019!](https://github.com/Microsoft/botframework/blob/master/whats-new.md#whats-new)
+### [Click here to find out what's new](https://github.com/Microsoft/botframework/blob/master/whats-new.md#whats-new)
 
 # Bot Framework SDK v4 for JavaScript
 
