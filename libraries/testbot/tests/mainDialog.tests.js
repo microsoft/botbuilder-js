@@ -74,7 +74,6 @@ describe('mainDialog', function() {
     }
 
     it('should warn when luis is not configured', async function() {
-
         let md = new MainDialog(null, null, bookingDialog);
         client = new DialogTestClient(md, null, [new DialogTestLogger()]);
         let reply = await client.sendActivity('hi');
