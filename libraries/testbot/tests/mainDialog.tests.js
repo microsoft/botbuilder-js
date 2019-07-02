@@ -10,15 +10,19 @@ const assert = require('assert');
 const BOOKING_DIALOG = 'bookingDialog';
 
 
-class MockLuisHelper {
-
-    static async executeLuisQuery(logger, context) {
-
+class MockFlightBookingRecognizer {
+    constructor(config) {
+        this.config = config;
+    }
+    async executeLuisQuery(logger, context) {
         return {
             origin: 'Paris',
             destination: 'Berlin',
             travelDate: '2022-02-22',
         }
+    }
+    isConfigured() {
+        return true;
     }
 }
 
@@ -33,7 +37,9 @@ describe('mainDialog', function() {
 
     let tests = require('./testData/mainDialogTestCases.js');
 
-    let dialog = new MainDialog(null, MockLuisHelper, bookingDialog);
+    const mockRecognizer = new MockFlightBookingRecognizer();
+
+    let dialog = new MainDialog(null, mockRecognizer, bookingDialog);
 
     for (let t = 0; t < tests.length; t++) {
         let test = tests[t];

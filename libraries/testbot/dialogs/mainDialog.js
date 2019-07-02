@@ -8,7 +8,7 @@ const { ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialo
 const MAIN_WATERFALL_DIALOG = 'mainWaterfallDialog';
 
 class MainDialog extends ComponentDialog {
-    constructor(logger, luisClient, bookingDialog) {
+    constructor(logger, luisRecognizer, bookingDialog) {
         super('MainDialog');
 
         if (!logger) {
@@ -17,11 +17,8 @@ class MainDialog extends ComponentDialog {
         }
 
         this.logger = logger;
-
-        if (luisClient) {
-            this.luisClient = luisClient;
-        }
-
+        this.luisRecognizer = luisRecognizer;
+    
         if (!bookingDialog) throw new Error('[MainDialog]: Missing parameter \'bookingDialog\' is required');
         this.bookingDialog = bookingDialog;
 
@@ -61,7 +58,7 @@ class MainDialog extends ComponentDialog {
      * Note that the sample LUIS model will only recognize Paris, Berlin, New York and London as airport cities.
      */
     async introStep(stepContext) {
-        if (!this.luisClient) {
+        if (!this.luisRecognizer || !this.luisRecognizer.isConfigured()) {
             const messageText = 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.'
             await stepContext.context.sendActivity(messageText, messageText, InputHints.IgnoringInput);
             return await stepContext.next();
@@ -77,13 +74,13 @@ class MainDialog extends ComponentDialog {
     async actStep(stepContext) {
         let bookingDetails = {};
 
-        if (this.luisClient) {
+        if (this.luisRecognizer) {
             // Call LUIS and gather any potential booking details.
             // This will attempt to extract the origin, destination and travel date from the user's message
             // and will then pass those values into the booking dialog
-            bookingDetails = await this.luisClient.executeLuisQuery(this.logger, stepContext.context);
+            bookingDetails = await this.luisRecognizer.executeLuisQuery(this.logger, stepContext.context);
 
-            if(bookingDetails.unsupportedCities.length) {
+            if(bookingDetails.unsupportedCities && bookingDetails.unsupportedCities.length) {
                 const messageText = `Sorry but the following airports are not supported: ${bookingDetails.unsupportedCities.join(', ')}`;
                 await stepContext.context.sendActivity(messageText, messageText, InputHints.IgnoringInput);
                 return await stepContext.replaceDialog('MainDialog');

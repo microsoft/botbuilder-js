@@ -3,20 +3,28 @@
 
 const { LuisRecognizer } = require('botbuilder-ai');
 
-class LuisHelper {
+class FlightBookingRecognizer {
     /**
      * Returns an object with preformatted LUIS results for the bot's dialogs to consume.
      * @param {*} logger
      * @param {TurnContext} context
      */
-    static async executeLuisQuery(logger, context) {
+    constructor(config) {
+        this.config = config;
+    }
+
+    isConfigured() {
+        return (this.config && this.config.LuisAppId && this.config.LuisAPIKey && this.config.LuisAPIHostName) ? true : false
+    }
+
+    async executeLuisQuery(logger, context) {
         const bookingDetails = {};
 
         try {
             const recognizer = new LuisRecognizer({
-                applicationId: process.env.LuisAppId,
-                endpointKey: process.env.LuisAPIKey,
-                endpoint: `https://${ process.env.LuisAPIHostName }`
+                applicationId: this.config.LuisAppId,
+                endpointKey: this.config.LuisAPIKey,
+                endpoint: `https://${this.config.LuisAPIHostName}`
             }, {}, true);
 
             const recognizerResult = await recognizer.recognize(context);
@@ -28,29 +36,28 @@ class LuisHelper {
 
             if (intent === 'Book_flight') {
                 // We need to get the result from the LUIS JSON which at every level returns an array
-
-                bookingDetails.destination = LuisHelper.parseCompositeEntity(recognizerResult, 'To', 'Airport');
-                bookingDetails.origin = LuisHelper.parseCompositeEntity(recognizerResult, 'From', 'Airport');
+                bookingDetails.destination = this.parseCompositeEntity(recognizerResult, 'To', 'Airport');
+                bookingDetails.origin = this.parseCompositeEntity(recognizerResult, 'From', 'Airport');
 
                 if(!bookingDetails.destination) {
-                    bookingDetails.unsupportedCities.push(LuisHelper.getUnsupportedCity(recognizerResult, 'To'))
+                    bookingDetails.unsupportedCities.push(this.getUnsupportedCity(recognizerResult, 'To'))
                 }
 
                 if(!bookingDetails.origin) {
-                    bookingDetails.unsupportedCities.push(LuisHelper.getUnsupportedCity(recognizerResult, 'From'))
+                    bookingDetails.unsupportedCities.push(this.getUnsupportedCity(recognizerResult, 'From'))
                 }
 
                 // This value will be a TIMEX. And we are only interested in a Date so grab the first result and drop the Time part.
                 // TIMEX is a format that represents DateTime expressions that include some ambiguity. e.g. missing a Year.
-                bookingDetails.travelDate = LuisHelper.parseDatetimeEntity(recognizerResult);
+                bookingDetails.travelDate = this.parseDatetimeEntity(recognizerResult);
             }
         } catch (err) {
-            logger.warn(`LUIS Exception: ${ err } Check your LUIS configuration`);
+            logger.warn(`LUIS Exception: ${err} Check your LUIS configuration`);
         }
         return bookingDetails;
     }
 
-    static parseCompositeEntity(result, compositeName, entityName) {
+    parseCompositeEntity(result, compositeName, entityName) {
         const compositeEntity = result.entities[compositeName];
         if (!compositeEntity || !compositeEntity[0]) return undefined;
 
@@ -61,7 +68,7 @@ class LuisHelper {
         return entityValue;
     }
 
-    static parseDatetimeEntity(result) {
+    parseDatetimeEntity(result) {
         const datetimeEntity = result.entities['datetime'];
         if (!datetimeEntity || !datetimeEntity[0]) return undefined;
 
@@ -72,7 +79,7 @@ class LuisHelper {
         return datetime;
     }
 
-    static getUnsupportedCity(result, compositeName) {
+    getUnsupportedCity(result, compositeName) {
         const cityEntity = result.luisResult.entities.find(entity => {
           return entity.type = compositeName;
         });
@@ -80,4 +87,4 @@ class LuisHelper {
     }
 }
 
-module.exports.LuisHelper = LuisHelper;
+module.exports.FlightBookingRecognizer = FlightBookingRecognizer;

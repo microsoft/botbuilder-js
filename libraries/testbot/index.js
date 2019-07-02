@@ -9,7 +9,7 @@ const restify = require('restify');
 
 // Import required bot services. See https://aka.ms/bot-services to learn more about the different parts of a bot.
 const { BotFrameworkAdapter, ConversationState, InputHints, MemoryStorage, UserState } = require('botbuilder');
-const { LuisHelper } = require('./dialogs/luisHelper');
+const { FlightBookingRecognizer } = require('./dialogs/flightBookingRecognizer');
 
 // Import the simple echo bot
 const { MyBot } = require('./bots/myBot')
@@ -60,21 +60,19 @@ userState = new UserState(memoryStorage);
 // Pass in a logger to the bot. For this sample, the logger is the console, but alternatives such as Application Insights and Event Hub exist for storing the logs of the bot.
 const logger = console;
 
-// If configured, pass in the LuisHelper.  (Defining it externally allows it to be mocked for tests)
-let helper;
-if (process.env.LuisAppId && process.env.LuisAPIKey && process.env.LuisAPIHostName) {
-    helper = LuisHelper;
-}
-
+// If configured, pass in the FlightBookingRecognizer.  (Defining it externally allows it to be mocked for tests)
+let luisRecognizer;
+const luisConfig = (({ LuisAppId, LuisAPIKey, LuisAPIHostName }) => ({ LuisAppId, LuisAPIKey, LuisAPIHostName }))(process.env);
+luisRecognizer = new FlightBookingRecognizer(luisConfig);
 
 // Create the main dialog.
 const bookingDialog = new BookingDialog(BOOKING_DIALOG);
-const dialog = new MainDialog(logger, helper, bookingDialog);
+const dialog = new MainDialog(logger, luisRecognizer, bookingDialog);
 const bot = new DialogAndWelcomeBot(conversationState, userState, dialog, logger);
 const echobot = new MyBot(conversationState);
 
 // Create HTTP server
-let server = restify.createServer();
+const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function() {
     console.log(`\n${ server.name } listening to ${ server.url }`);
     console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
