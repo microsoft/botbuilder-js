@@ -83,7 +83,7 @@ class MainDialog extends ComponentDialog {
             // and will then pass those values into the booking dialog
             bookingDetails = await this.luisClient.executeLuisQuery(this.logger, stepContext.context);
 
-            if(bookingDetails.unsupportedCities) {
+            if(bookingDetails.unsupportedCities.length) {
                 const messageText = `Sorry but the following airports are not supported: ${bookingDetails.unsupportedCities.join(', ')}`;
                 await stepContext.context.sendActivity(messageText, messageText, InputHints.IgnoringInput);
                 return await stepContext.replaceDialog('MainDialog');
