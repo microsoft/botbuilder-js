@@ -14,13 +14,14 @@ expression
     ;
  
 primaryExpression 
-    : '(' expression ')'                      #parenthesisExp
-    | NUMBER                                  #numericAtom
-    | STRING                                  #stringAtom
-    | IDENTIFIER                              #idAtom
-    | primaryExpression '.' IDENTIFIER        #memberAccessExp
-    | primaryExpression '(' argsList? ')'     #funcInvokeExp
-    | primaryExpression '[' expression ']'    #indexAccessExp
+    : '(' expression ')'                                     #parenthesisExp
+    | NUMBER                                                 #numericAtom
+    | STRING                                                 #stringAtom
+    | IDENTIFIER                                             #idAtom
+    | ('#' | '@' | '@@' | '$' | '%' | '^' | '~') IDENTIFIER  #shortHandExp
+    | primaryExpression '.' IDENTIFIER                       #memberAccessExp
+    | primaryExpression '(' argsList? ')'                    #funcInvokeExp
+    | primaryExpression '[' expression ']'                   #indexAccessExp
     ;
 
 argsList
@@ -34,7 +35,7 @@ NUMBER : DIGIT + ( '.' DIGIT +)? ;
 
 WHITESPACE : (' '|'\t'|'\u00a0'|'\ufeff') -> skip;
 
-IDENTIFIER : (LETTER | '_' | '#' | '@' | '$') (LETTER | DIGIT | '-' | '_')*;
+IDENTIFIER : (LETTER | '_') (LETTER | DIGIT | '-' | '_')*;
 
 NEWLINE : '\r'? '\n' -> skip;
 

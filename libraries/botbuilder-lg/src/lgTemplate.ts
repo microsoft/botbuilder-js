@@ -19,7 +19,7 @@ export class LGTemplate {
      */
     public Name: string;
     /**
-     * Paramter list of this template
+     * Parameter list of this template
      */
     public Parameters: string[];
     /**

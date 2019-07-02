@@ -66,9 +66,9 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         this.evalutationTargetStack.push(new EvaluationTarget(templateName, undefined));
 
         // we don't exclude paratemters any more
-        // because given we don't track down for templates have paramters
-        // the only scenario that we are still analyzing an paramterized template is
-        // this template is root template to anaylze, in this we also don't have exclude paramters
+        // because given we don't track down for templates have parameters
+        // the only scenario that we are still analyzing an parameterized template is
+        // this template is root template to anaylze, in this we also don't have exclude parameters
         const dependencies: AnalyzerResult = this.visit(this.TemplateMap[templateName].ParseTree);
         this.evalutationTargetStack.pop();
 
@@ -217,8 +217,8 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
             const args: string[] = exp.substr(argsStartPos + 1, argsEndPos - argsStartPos - 1).split(',');
 
-            // Before we have a matural solution to analyze paramterized template, we stop digging into
-            // templates with paramters, we just analyze it's args.
+            // Before we have a matural solution to analyze parameterized template, we stop digging into
+            // templates with parameters, we just analyze it's args.
             // With this approach we may not get a very fine-grained result
             // but the result will still be accurate
 
