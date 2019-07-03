@@ -97,7 +97,6 @@ class BookingDialog extends CancelAndHelpDialog {
     async finalStep(stepContext) {
         if (stepContext.result === true) {
             const bookingDetails = stepContext.options;
-
             return await stepContext.endDialog(bookingDetails);
         } else {
             return await stepContext.endDialog();
