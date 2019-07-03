@@ -18,7 +18,7 @@ Use the DialogTestClient to drive unit tests of your dialogs.
 
 To create a test client:
 ```javascript
-let client = new DialogTestClient(dialog_to_test, dialog_options, OptionalMiddlewares);
+const client = new DialogTestClient('test', dialog_to_test, dialog_options, OptionalMiddlewares);
 ```
 
 To "send messages" through the dialog:
@@ -28,7 +28,7 @@ let reply = await client.sendActivity('test');
 
 To check for additional messages:
 ```javascript
-reply = await client.getNextReply();
+reply = client.getNextReply();
 ```
 
 Here is a sample unit test using assert:
@@ -37,21 +37,21 @@ Here is a sample unit test using assert:
 const { DialogTestClient, DialogTestLogger } = require('botbuilder-testing');
 const assert = require('assert');
 
-let my_dialog = new SomeDialog();
-let options = { ... dialog options ... };
+const my_dialog = new SomeDialog();
+const options = { ... dialog options ... };
 
 // set up a test client with a logger middleware that logs messages in and out
-let client = new DialogTestClient(my_dialog, options, [new DialogTestLogger()]);
+const client = new DialogTestClient('test', my_dialog, options, [new DialogTestLogger()]);
 
 // send a test message, catch the reply
 let reply = await client.sendActivity('hello');
-assert(reply.text == 'hello yourself', 'first message was wrong');
+assert.strictEqual(reply.text, 'hello yourself', 'first message was wrong');
 // expecting 2 messages in a row?
-reply = await client.getNextReply();
-assert(reply.text == 'second message', 'second message as wrong');
+reply = client.getNextReply();
+assert.strictEqual(reply.tex, 'second message', 'second message as wrong');
 
 // test end state
-assert(client.dialogTurnResult.status == 'empty', 'dialog is not empty');
+assert.strictEqual(client.dialogTurnResult.status, 'empty', 'dialog is not empty');
 ```
 
 [Additional examples are available here](tests/)
@@ -63,6 +63,5 @@ By default, the transcript will be logged with the `mocha-logger` package. You m
 your own logger:
 
 ```javascript
-let testlogger = new DialogTestLogger(console);
+const testlogger = new DialogTestLogger(console);
 ```
-
