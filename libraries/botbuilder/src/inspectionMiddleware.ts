@@ -203,9 +203,9 @@ export class InspectionMiddleware extends InterceptionMiddleware {
                     await this.processAttachCommand(turnContext, command[2]);
                     return true;
                 }
-
-                turnContext.activity.text = originalText;
             }
+
+            turnContext.activity.text = originalText;
         }
 
         return false;
