@@ -6,8 +6,8 @@ const { DialogTestClient, DialogTestLogger } = require('botbuilder-testing');
 const { DateResolverDialog } = require('../dialogs/dateResolverDialog');
 const assert = require('assert');
 
-describe('dateResolverDialog', function() {
-   
+describe('DateResolverDialog', function() {
+
     it('should create a DialogTestClient', async function() {
         let client = new DialogTestClient();
         assert(client instanceof DialogTestClient, 'Created an invalid object');
