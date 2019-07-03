@@ -2,9 +2,14 @@
 // Licensed under the MIT License.
 
 const restify = require('restify');
+const path = require('path');
 
 const { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState, InspectionState, InspectionMiddleware } = require('botbuilder');
+const { MicrosoftAppCredentials } = require('botframework-connector');
 const { MyBot } = require('./bots/myBot')
+
+const ENV_FILE = path.join(__dirname, '.env');
+require('dotenv').config({ path: ENV_FILE });
 
 const adapter = new BotFrameworkAdapter({
     appId: process.env.MicrosoftAppId,
@@ -17,7 +22,7 @@ var inspectionState = new InspectionState(memoryStorage);
 var userState = new UserState(memoryStorage);
 var conversationState = new ConversationState(memoryStorage);
 
-adapter.use(new InspectionMiddleware(inspectionState, userState, conversationState));
+adapter.use(new InspectionMiddleware(inspectionState, userState, conversationState, new MicrosoftAppCredentials(process.env.MicrosoftAppId, process.env.MicrosoftAppPassword)));
 
 adapter.onTurnError = async (context, error) => {
     console.error(`\n [onTurnError]: ${ error }`);
