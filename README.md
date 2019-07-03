@@ -1,7 +1,7 @@
 
 # ![Bot Framework SDK v4 for JavaScript](./docs/media/BotFrameworkJavaScript_header.png)
 
-### [Click here to find out what's new for //build2019!](https://github.com/Microsoft/botframework/blob/master/whats-new.md#whats-new)
+### [Click here to find out what's new with Bot Framework](https://github.com/Microsoft/botframework/blob/master/whats-new.md#whats-new)
 
 # Bot Framework SDK v4 for JavaScript
 
@@ -9,14 +9,14 @@ This repository contains code for the JavaScript version of the Microsoft Bot Fr
 
 This repo is part the [Microsoft Bot Framework](https://github.com/microsoft/botframework) - a comprehensive framework for building enterprise-grade conversational AI experiences.
 
- | Branch | Description        | Build Status | Coverage Status |
- |----|---------------|--------------|-----------------|
-|Master | 4.5.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/BotBuilder-JS-master-daily)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=460)|[![Coverage Status](https://coveralls.io/repos/github/microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/microsoft/botbuilder-js?branch=master)
-|4.4 | 4.4.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/BotBuilder-JS-master-daily)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=460&branch=4.4)|[![Coverage Status](https://coveralls.io/repos/github/microsoft/botbuilder-js/badge.svg?branch=4.4)](https://coveralls.io/github/microsoft/botbuilder-js?branch=4.4)
-|4.3 | 4.3.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/BotBuilder-JS%204.0%20master?branchName=4.3)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=374)|[![Coverage Status](https://coveralls.io/repos/github/microsoft/botbuilder-js/badge.svg?branch=4.3)](https://coveralls.io/github/microsoft/botbuilder-js?branch=4.3)
-|4.2 | 4.2.* Preview Builds |[![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=4.2)](https://travis-ci.org/Microsoft/botbuilder-js) |[![Coverage Status](https://coveralls.io/repos/github/microsoft/botbuilder-js/badge.svg?branch=4.2)](https://coveralls.io/github/microsoft/botbuilder-js?branch=4.2)
- |4.1 | 4.1.* Patch Builds |[![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=4.1)](https://travis-ci.org/Microsoft/botbuilder-js) | [![Coverage Status](https://coveralls.io/repos/github/microsoft/botbuilder-js/badge.svg?branch=4.1)](https://coveralls.io/github/microsoft/botbuilder-js?branch=4.1)
- |4.0 | 4.0.* Patch Builds | [![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=4.0)](https://travis-ci.org/Microsoft/botbuilder-js) | [![Coverage Status](https://coveralls.io/repos/github/microsoft/botbuilder-js/badge.svg?branch=4.0)](https://coveralls.io/github/microsoft/botbuilder-js?branch=4.0)|
+ | Branch | Description        | Build Status | Coverage Status | Windows Bot Test Status | Linux Bot Test Status |
+ |----|---------------|--------------|-----------------|--|--|
+|Master | 4.5.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/BotBuilder-JS-master-daily)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=460)|[![Coverage Status](https://coveralls.io/repos/github/microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/microsoft/botbuilder-js?branch=master)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Windows?branchName=master)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=548&branchName=master)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Linux?branchName=master)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=549&branchName=master)
+|4.4 | 4.4.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/BotBuilder-JS-master-daily)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=460&branch=4.4)|N/A|N/A|N/A
+|4.3 | 4.3.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/BotBuilder-JS%204.0%20master?branchName=4.3)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=374)|N/A|N/A|N/A
+|4.2 | 4.2.* Preview Builds |[![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=4.2)](https://travis-ci.org/Microsoft/botbuilder-js) |N/A|N/A|N/A
+ |4.1 | 4.1.* Patch Builds |[![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=4.1)](https://travis-ci.org/Microsoft/botbuilder-js) |N/A|N/A|N/A
+ |4.0 | 4.0.* Patch Builds | [![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=4.0)](https://travis-ci.org/Microsoft/botbuilder-js) |N/A|N/A|N/A
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Microsoft/botbuilder-js/blob/master/LICENSE)
 [![Gitter](https://img.shields.io/gitter/room/Microsoft/BotBuilder.svg)](https://gitter.im/Microsoft/BotBuilder)
