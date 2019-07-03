@@ -7,26 +7,20 @@ const { BookingDialog } = require('../dialogs/bookingDialog');
 const assert = require('assert');
 
 describe('BookingDialog', function() {
-    it('should create a DialogTestClient', async function() {
-        let client = new DialogTestClient();
-        assert(client instanceof DialogTestClient, 'Created an invalid object');
-    });
-
     let tests = require('./testData/bookingDialogTestCases.js');
-
-    let dialog = new BookingDialog('bookingDialog');
+    const sut = new BookingDialog('bookingDialog');
 
     for (let t = 0; t < tests.length; t++) {
         let test = tests[t];
         it(test.name, async function() {
             console.log(`Test Case: ${ test.name }`);
             console.log(`Dialog Input ${ JSON.stringify(test.initialData) }`);
-            let client = new DialogTestClient(dialog, test.initialData, [new DialogTestLogger()]);
+            const client = new DialogTestClient('test', sut, test.initialData, [new DialogTestLogger()]);
 
             for (let i = 0; i < test.steps.length; i++) {
                 let reply;
                 if (test.steps[i][0] == null) {
-                    reply = await client.getNextReply();
+                    reply = client.getNextReply();
                 } else {
                     reply = await client.sendActivity(test.steps[i][0]);
                 }
@@ -49,7 +43,6 @@ describe('BookingDialog', function() {
     }
 });
 
-// from http://adripofjavascript.com/blog/drips/object-equality-in-javascript.html
 function isEquivalent(a, b) {
     // Create arrays of property names
     var aProps = Object.getOwnPropertyNames(a);

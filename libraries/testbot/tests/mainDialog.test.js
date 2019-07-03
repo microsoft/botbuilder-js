@@ -27,27 +27,20 @@ class MockFlightBookingRecognizer {
 }
 
 describe('MainDialog', function() {
-
     const bookingDialog = new BookingDialog(BOOKING_DIALOG);
-
-    it('should create a DialogTestClient', async () => {
-        const client = new DialogTestClient();
-        assert(client instanceof DialogTestClient, 'Created an invalid object');
-    });
-
     const mockRecognizer = new MockFlightBookingRecognizer();
-    const dialog = new MainDialog(null, mockRecognizer, bookingDialog);
+    const sut = new MainDialog(null, mockRecognizer, bookingDialog);
 
     tests.map(test => {
         it(test.name, async () => {
             console.log(`Test Case: ${ test.name }`);
             console.log(`Dialog Input ${ JSON.stringify(test.initialData) }`);
-            const client = new DialogTestClient(dialog, test.initialData, [new DialogTestLogger()]);
+            const client = new DialogTestClient('test', sut, test.initialData, [new DialogTestLogger()]);
 
             for (let i = 0; i < test.steps.length; i++) {
                 let reply;
                 if (test.steps[i][0] == null) {
-                    reply = await client.getNextReply();
+                    reply = client.getNextReply();
                 } else {
                     reply = await client.sendActivity(test.steps[i][0]);
                 }
@@ -65,16 +58,14 @@ describe('MainDialog', function() {
             if (test.expectedStatus !== undefined) {
                 assert(test.expectedStatus == client.dialogTurnResult.status, `${ test.expectedStatus } != ${ client.dialogTurnResult.status }`);
             }
-
         });
     });
 
     it('should warn when luis is not configured', async () => {
-        const md = new MainDialog(null, null, bookingDialog);
-        client = new DialogTestClient(md, null, [new DialogTestLogger()]);
+        const sut = new MainDialog(null, null, bookingDialog);
+        client = new DialogTestClient('test', sut, null, [new DialogTestLogger()]);
         const reply = await client.sendActivity('hi');
         assert(reply.text == 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.', 'Did not warn about missing luis');
     });
-
 });
 

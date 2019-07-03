@@ -7,22 +7,15 @@ const { DateResolverDialog } = require('../dialogs/dateResolverDialog');
 const assert = require('assert');
 
 describe('DateResolverDialog', function() {
-
-    it('should create a DialogTestClient', async function() {
-        let client = new DialogTestClient();
-        assert(client instanceof DialogTestClient, 'Created an invalid object');
-    });
-
-    let tests = require('./testData/dateResolverTestCases.js');
-
-    let dialog = new DateResolverDialog('dateResolver');
+    const tests = require('./testData/dateResolverTestCases.js');
+    const sut = new DateResolverDialog('dateResolver');
 
     for (let t = 0; t < tests.length; t++) {
-        let test = tests[t];
+        const test = tests[t];
         it(test.name, async function() {
             console.log(`Test Case: ${ test.name }`);
             console.log(`Dialog Input ${ JSON.stringify(test.initialData) }`);
-            let client = new DialogTestClient(dialog, test.initialData, [new DialogTestLogger()]);
+            const client = new DialogTestClient('test', sut, test.initialData, [new DialogTestLogger()]);
 
             for (let i = 0; i < test.steps.length; i++) {
                 let reply = await client.sendActivity(test.steps[i][0]);
@@ -34,6 +27,4 @@ describe('DateResolverDialog', function() {
             }
         });
     }
-
-
 });
