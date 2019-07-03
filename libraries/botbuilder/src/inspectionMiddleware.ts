@@ -188,6 +188,9 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
         if (turnContext.activity.type == ActivityTypes.Message && turnContext.activity.text !== undefined) {
 
+            var originalText = turnContext.activity.text;
+            TurnContext.removeRecipientMention(turnContext.activity);
+
             var command = turnContext.activity.text.trim().split(' ');
             if (command.length > 1 && command[0] === InspectionMiddleware.command) {
 
@@ -200,6 +203,8 @@ export class InspectionMiddleware extends InterceptionMiddleware {
                     await this.processAttachCommand(turnContext, command[2]);
                     return true;
                 }
+
+                turnContext.activity.text = originalText;
             }
         }
 
