@@ -48,7 +48,7 @@ let reply = await client.sendActivity('hello');
 assert.strictEqual(reply.text, 'hello yourself', 'first message was wrong');
 // expecting 2 messages in a row?
 reply = client.getNextReply();
-assert.strictEqual(reply.tex, 'second message', 'second message as wrong');
+assert.strictEqual(reply.text, 'second message', 'second message as wrong');
 
 // test end state
 assert.strictEqual(client.dialogTurnResult.status, 'empty', 'dialog is not empty');
