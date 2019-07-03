@@ -18,41 +18,51 @@ export class DialogTestClient {
     private readonly _callback: (turnContext: TurnContext) => Promise<void>;
     private readonly _testAdapter: TestAdapter;
     public dialogTurnResult: DialogTurnResult;
+    public conversationState: ConversationState;
 
     /**
      * Create a DialogTestClient to test a dialog without having to create a full-fledged adapter.
-     * 
+     *
      * ```javascript
-     * let client = new DialogTestClient(MY_DIALOG, MY_OPTIONS);
-     * let reply = client.sendActivity('first message');
-     * assert(reply.text == 'first reply','reply failed');
+     * let client = new DialogTestClient('test', MY_DIALOG, MY_OPTIONS);
+     * let reply = await client.sendActivity('first message');
+     * assert.strictEqual(reply.text, 'first reply', 'reply failed');
      * ```
-     * 
+     *
+     * @param channelId The channelId to be used for the test.
+	 * Use 'emulator' or 'test' if you are uncertain of the channel you are targeting.
+	 * Otherwise, it is recommended that you use the id for the channel(s) your bot will be using and write a test case for each channel.
+     * @param testAdapter A list of middlewares to be added to the test adapter.
      * @param targetDialog The dialog to be tested. This will be the root dialog for the test client.
      * @param initialDialogOptions (Optional) additional argument(s) to pass to the dialog being started.
      * @param middlewares (Optional) The test adapter to use. If this parameter is not provided, the test client will use a default TestAdapter
-     * @param testAdapter (Optional) A list of middlewares to be added to the test adapter.
-     * @param callback (Optional) The bot turn processing logic for the test. If this value is not provided, the test client will create a default BotCallbackHandler
-     * @param adapterOptions (Optional) Options passed to TestAdapter that allow customizing behavior such as the channelId. eg {channelId: 'custom'}
+     * @param conversationState (Optional) A ConversationState instance to use in the test client
      */
-    public constructor(targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], testAdapter?: TestAdapter, callback?: (turnContext: TurnContext) => Promise<void>, adapterOptions?: Partial<Activity>) {
-        let convoState = new ConversationState(new MemoryStorage());
+    public constructor(channelId: string, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState);
+    public constructor(testAdapter: TestAdapter, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState)
+    constructor(channelOrAdapter: string|TestAdapter, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState) {
+        this.conversationState = conversationState || new ConversationState(new MemoryStorage());
 
-        let dialogState = convoState.createProperty('DialogState');
+        let dialogState = this.conversationState.createProperty('DialogState');
 
-        this._callback = callback || this.getDefaultCallback(targetDialog, initialDialogOptions || null, dialogState);
+        this._callback = this.getDefaultCallback(targetDialog, initialDialogOptions || null, dialogState);
 
-        this._testAdapter = testAdapter || new TestAdapter(this._callback,adapterOptions).use(new AutoSaveStateMiddleware(convoState));
+        if (typeof channelOrAdapter == 'string') {
+            const channelIdToUse: string = channelOrAdapter;
+            this._testAdapter = new TestAdapter(this._callback, {channelId: channelIdToUse}).use(new AutoSaveStateMiddleware(this.conversationState));
+        } else {
+            const testAdapterToUse: TestAdapter = channelOrAdapter;
+            this._testAdapter = testAdapterToUse;
+        }
 
         this.addUserMiddlewares(middlewares);
-
     }
 
     /**
      * Send an activity into the dialog.
      * @returns a TestFlow that can be used to assert replies etc
      * @param activity an activity potentially with text
-     * 
+     *
      * ```javascript
      * DialogTest.send('hello').assertReply('hello yourself').then(done);
      * ```
@@ -65,7 +75,7 @@ export class DialogTestClient {
     /**
      * Get the next reply waiting to be delivered (if one exists)
      */
-    public async getNextReply(): Promise<any> {
+    public getNextReply() {
         return this._testAdapter.activityBuffer.shift();
     }
 
@@ -91,5 +101,5 @@ export class DialogTestClient {
             });
         }
     }
-    
+
 }

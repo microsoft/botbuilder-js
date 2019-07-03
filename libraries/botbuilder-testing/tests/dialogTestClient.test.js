@@ -11,15 +11,14 @@ const assert = require('assert');
 describe('DialogTestClient', function() {
 
     it('should create a DialogTestClient', async function() {
-        let client = new DialogTestClient();
+        let client = new DialogTestClient('test', null);
         assert(client instanceof DialogTestClient, 'Created an invalid object');
     });
 
     it('should create a DialogTestClient with a custom channelId', async function() {
-        let client = new DialogTestClient(null, null, null, null, null, {channelId: 'custom'});
+        let client = new DialogTestClient('custom', null);
         assert(client._testAdapter.template.channelId == 'custom', 'Created with wrong channel id');
     });
-
 
     it('should process a single turn waterfall dialog', async function() {
 
@@ -30,15 +29,12 @@ describe('DialogTestClient', function() {
             }
         ]);
 
-        let client = new DialogTestClient(dialog, null, null, null, null, {channelId: 'custom'});
+        let client = new DialogTestClient('test', dialog);
         let reply = await client.sendActivity('hello');
         assert(reply.text == 'hello', 'dialog responded with incorrect message');
-        assert(reply.channelId == 'custom', 'custom channel id didnt get set');
+        assert(reply.channelId == 'test', 'test channel id didnt get set');
         assert(client.dialogTurnResult.status == DialogTurnStatus.complete, 'dialog did not end properly');
-
     });
-
-
 
     it('should process a 2 turn waterfall dialog', async function() {
 
@@ -54,17 +50,16 @@ describe('DialogTestClient', function() {
             },
         ]);
 
-        let client = new DialogTestClient(dialog, null, [new DialogTestLogger()], null, null, {channelId: 'custom'});
+        let client = new DialogTestClient('test', dialog, null, [new DialogTestLogger()], null, null);
         let reply = await client.sendActivity('hello');
         assert(reply.text == 'hello', 'dialog responded with incorrect message');
         // get typing
-        reply = await client.getNextReply();
+        reply = client.getNextReply();
         assert(reply.type == 'typing', 'dialog responded with incorrect message');
-        reply = await client.getNextReply();
+        reply = client.getNextReply();
         assert(reply.text == 'hello 2', 'dialog responded with incorrect 2nd message');
         assert(client.dialogTurnResult.status == DialogTurnStatus.complete, 'dialog did not end properly');
     });
-
 
     it('should process a component dialog', async function() {
 
@@ -81,7 +76,7 @@ describe('DialogTestClient', function() {
                         return step.next();
                     },
                 ]);
-        
+
                 this.addDialog(dialog);
                 this.addDialog(new TextPrompt('textPrompt'));
             }
@@ -89,7 +84,7 @@ describe('DialogTestClient', function() {
             async run(turnContext, accessor) {
                 const dialogSet = new DialogSet(accessor);
                 dialogSet.add(this);
-        
+
                 const dialogContext = await dialogSet.createContext(turnContext);
                 const results = await dialogContext.continueDialog();
                 if (results.status === DialogTurnStatus.empty) {
@@ -98,15 +93,12 @@ describe('DialogTestClient', function() {
             }
         }
 
-
         let component = new MainDialog('component');
-
-        let client = new DialogTestClient(component,null, [new DialogTestLogger()]);
+        let client = new DialogTestClient('test', component, null, [new DialogTestLogger()]);
         let reply = await client.sendActivity('hello');
         assert(reply.text == 'Tell me something','dialog responded with incorrect message');
         reply = await client.sendActivity('foo');
         assert(reply.text == 'you said: foo', 'dialog responded with incorrect 2nd message');
         assert(client.dialogTurnResult.status == DialogTurnStatus.complete, 'dialog did not end properly');
     });
-
 });
