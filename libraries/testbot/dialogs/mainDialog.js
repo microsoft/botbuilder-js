@@ -19,7 +19,7 @@ class MainDialog extends ComponentDialog {
 
         this.logger = logger;
         this.luisRecognizer = luisRecognizer;
-    
+
         if (!bookingDialog) throw new Error('[MainDialog]: Missing parameter \'bookingDialog\' is required');
         this.bookingDialog = bookingDialog;
 
@@ -83,27 +83,27 @@ class MainDialog extends ComponentDialog {
         // This will attempt to extract the origin, destination and travel date from the user's message
         // and will then pass those values into the booking dialog
         const recognizerResult = await this.luisRecognizer.executeLuisQuery(this.logger, stepContext.context);
-            
+
         const getBookingDetails = (recognizerResult) => {
             const bookingDetails = {};
             const intent = LuisRecognizer.topIntent(recognizerResult);
-    
+
             bookingDetails.intent = intent;
             bookingDetails.unsupportedCities = [];
-    
+
             if (intent === 'Book_flight') {
                 // We need to get the result from the LUIS JSON which at every level returns an array
                 bookingDetails.destination = parseCompositeEntity(recognizerResult, 'To', 'Airport');
                 bookingDetails.origin = parseCompositeEntity(recognizerResult, 'From', 'Airport');
-    
+
                 if(!bookingDetails.destination) {
                     bookingDetails.unsupportedCities.push(getUnsupportedCity(recognizerResult, 'To'))
                 }
-    
+
                 if(!bookingDetails.origin) {
                     bookingDetails.unsupportedCities.push(getUnsupportedCity(recognizerResult, 'From'))
                 }
-    
+
                 // This value will be a TIMEX. And we are only interested in a Date so grab the first result and drop the Time part.
                 // TIMEX is a format that represents DateTime expressions that include some ambiguity. e.g. missing a Year.
                 bookingDetails.travelDate = parseDatetimeEntity(recognizerResult);
@@ -114,25 +114,25 @@ class MainDialog extends ComponentDialog {
         const parseCompositeEntity = (result, compositeName, entityName) => {
             const compositeEntity = result.entities[compositeName];
             if (!compositeEntity || !compositeEntity[0]) return undefined;
-        
+
             const entity = compositeEntity[0][entityName];
             if (!entity || !entity[0]) return undefined;
-        
+
             const entityValue = entity[0][0];
             return entityValue;
         }
-        
+
         const parseDatetimeEntity = (result) => {
             const datetimeEntity = result.entities['datetime'];
             if (!datetimeEntity || !datetimeEntity[0]) return undefined;
-    
+
             const timex = datetimeEntity[0]['timex'];
             if (!timex || !timex[0]) return undefined;
-        
+
             const datetime = timex[0].split('T')[0];
             return datetime;
         }
-        
+
         const getUnsupportedCity = (result, compositeName) => {
             const cityEntity = result.luisResult.entities.find(entity => {
                 return entity.type = compositeName;
@@ -149,7 +149,7 @@ class MainDialog extends ComponentDialog {
         }
 
         this.logger.log('LUIS extracted these booking details:', bookingDetails);
-        
+
         // In this sample we only have a single intent we are concerned with. However, typically a scenario
         // will have multiple different intents each corresponding to starting a different child dialog.
 

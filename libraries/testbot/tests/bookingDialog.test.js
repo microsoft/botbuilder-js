@@ -6,8 +6,7 @@ const { DialogTestClient, DialogTestLogger } = require('botbuilder-testing');
 const { BookingDialog } = require('../dialogs/bookingDialog');
 const assert = require('assert');
 
-describe('bookingDialog', function() {
-   
+describe('BookingDialog', function() {
     it('should create a DialogTestClient', async function() {
         let client = new DialogTestClient();
         assert(client instanceof DialogTestClient, 'Created an invalid object');
@@ -32,23 +31,22 @@ describe('bookingDialog', function() {
                     reply = await client.sendActivity(test.steps[i][0]);
                 }
                 assert((reply ? reply.text : null) == test.steps[i][1],`${ reply ? reply.text : null } != ${ test.steps[i][1] }`);
-            }
-            console.log(`Dialog result: ${ client.dialogTurnResult.result }`);
+			}
+
+            console.log(`Dialog result: ${ JSON.stringify(client.dialogTurnResult.result) }`);
             if (test.expectedResult !== undefined) {
                 if (test.expectedResult != null && typeof(test.expectedResult) =='object') {
                     assert(isEquivalent(test.expectedResult, client.dialogTurnResult.result), `${ JSON.stringify(test.expectedResult) } != ${ JSON.stringify(client.dialogTurnResult.result) }`);
                 } else {
                     assert(test.expectedResult == client.dialogTurnResult.result, `${ test.expectedResult } != ${ client.dialogTurnResult.result }`);
                 }
-            }
+			}
+
             if (test.expectedStatus !== undefined) {
                 assert(test.expectedStatus == client.dialogTurnResult.status, `${ test.expectedStatus } != ${ client.dialogTurnResult.status }`);
             }
-
         });
     }
-
-
 });
 
 // from http://adripofjavascript.com/blog/drips/object-equality-in-javascript.html

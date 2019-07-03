@@ -3,7 +3,6 @@
  * Licensed under the MIT License.
  */
 let now = new Date();
-
 let today = formatDate(new Date());
 let tomorrow = formatDate(new Date().setDate(now.getDate() + 1));
 

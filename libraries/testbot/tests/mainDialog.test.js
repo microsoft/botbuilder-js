@@ -26,10 +26,10 @@ class MockFlightBookingRecognizer {
     }
 }
 
-describe('mainDialog', function() {
-    
+describe('MainDialog', function() {
+
     const bookingDialog = new BookingDialog(BOOKING_DIALOG);
-   
+
     it('should create a DialogTestClient', async () => {
         const client = new DialogTestClient();
         assert(client instanceof DialogTestClient, 'Created an invalid object');
