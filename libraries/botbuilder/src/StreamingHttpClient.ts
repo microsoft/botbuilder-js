@@ -1,3 +1,10 @@
+/**
+ * @module botbuilder
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { HttpClient, HttpOperationResponse, WebResource } from '@azure/ms-rest-js';
 import { IStreamingTransportServer, Request } from 'botframework-streaming-extensions';
 

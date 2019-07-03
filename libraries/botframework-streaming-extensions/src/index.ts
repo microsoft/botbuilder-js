@@ -1,3 +1,10 @@
+/**
+ * @module botframework-streaming-extensions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 export * from './CancellationToken';
 export * from './CancellationTokenSource';
 export * from './ContentStream';

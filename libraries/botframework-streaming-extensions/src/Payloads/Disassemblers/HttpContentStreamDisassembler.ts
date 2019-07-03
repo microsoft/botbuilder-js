@@ -1,3 +1,10 @@
+/**
+ * @module botframework-streaming-extensions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { HttpContentStream } from '../../HttpContentStream';
 import { IPayloadSender } from '../../PayloadTransport/IPayloadSender';
 import { Stream } from '../../Stream';

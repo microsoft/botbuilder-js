@@ -1,3 +1,10 @@
+/**
+ * @module botframework-streaming-extensions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { Stream } from '../Stream';
 import { ContentStreamAssembler } from './Assemblers/ContentStreamAssembler';
 import { IStreamManager } from './IStreamManager';

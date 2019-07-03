@@ -1,3 +1,10 @@
+/**
+ * @module botframework-streaming-extensions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import * as http from 'http';
 import * as WaterShed from 'watershed';
 import { ISocket } from './ISocket';

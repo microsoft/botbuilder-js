@@ -1,3 +1,11 @@
+/**
+ * @module botframework-streaming-extensions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+import { Server, Socket } from 'net';
 import {
   CancellationToken,
   IPayloadReceiver,
@@ -11,7 +19,6 @@ import {
   RequestHandler,
   RequestManager
 } from '../../';
-import { Server, Socket } from 'net';
 import { NamedPipeTransport } from './NamedPipeTransport';
 
 export class NamedPipeServer implements IStreamingTransportServer {

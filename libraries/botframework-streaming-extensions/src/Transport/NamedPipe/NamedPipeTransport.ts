@@ -1,5 +1,12 @@
-import { ITransportReceiver, ITransportSender } from '../../';
+/**
+ * @module botframework-streaming-extensions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { Socket } from 'net';
+import { ITransportReceiver, ITransportSender } from '../../';
 
 export class NamedPipeTransport implements ITransportSender, ITransportReceiver {
   public static readonly PipePath: string = '\\\\.\\pipe\\';

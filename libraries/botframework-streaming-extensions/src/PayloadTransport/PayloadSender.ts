@@ -1,3 +1,10 @@
+/**
+ * @module botframework-streaming-extensions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
 import { Header } from '../Payloads/Models/Header';
 import { Stream } from '../Stream';
