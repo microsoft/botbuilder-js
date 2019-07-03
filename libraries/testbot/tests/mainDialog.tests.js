@@ -5,10 +5,10 @@
 const { DialogTestClient, DialogTestLogger } = require('botbuilder-testing');
 const { MainDialog } = require('../dialogs/mainDialog');
 const { BookingDialog } = require('../dialogs/bookingDialog');
+const tests = require('./testData/mainDialogTestCases');
 const assert = require('assert');
 
 const BOOKING_DIALOG = 'bookingDialog';
-
 
 class MockFlightBookingRecognizer {
     constructor(config) {
@@ -27,26 +27,22 @@ class MockFlightBookingRecognizer {
 }
 
 describe('mainDialog', function() {
-
+    
     const bookingDialog = new BookingDialog(BOOKING_DIALOG);
    
-    it('should create a DialogTestClient', async function() {
-        let client = new DialogTestClient();
+    it('should create a DialogTestClient', async () => {
+        const client = new DialogTestClient();
         assert(client instanceof DialogTestClient, 'Created an invalid object');
     });
 
-    let tests = require('./testData/mainDialogTestCases.js');
-
     const mockRecognizer = new MockFlightBookingRecognizer();
+    const dialog = new MainDialog(null, mockRecognizer, bookingDialog);
 
-    let dialog = new MainDialog(null, mockRecognizer, bookingDialog);
-
-    for (let t = 0; t < tests.length; t++) {
-        let test = tests[t];
-        it(test.name, async function() {
+    tests.map(test => {
+        it(test.name, async () => {
             console.log(`Test Case: ${ test.name }`);
             console.log(`Dialog Input ${ JSON.stringify(test.initialData) }`);
-            let client = new DialogTestClient(dialog, test.initialData, [new DialogTestLogger()]);
+            const client = new DialogTestClient(dialog, test.initialData, [new DialogTestLogger()]);
 
             for (let i = 0; i < test.steps.length; i++) {
                 let reply;
@@ -71,12 +67,12 @@ describe('mainDialog', function() {
             }
 
         });
-    }
+    });
 
-    it('should warn when luis is not configured', async function() {
-        let md = new MainDialog(null, null, bookingDialog);
+    it('should warn when luis is not configured', async () => {
+        const md = new MainDialog(null, null, bookingDialog);
         client = new DialogTestClient(md, null, [new DialogTestLogger()]);
-        let reply = await client.sendActivity('hi');
+        const reply = await client.sendActivity('hi');
         assert(reply.text == 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.', 'Did not warn about missing luis');
     });
 

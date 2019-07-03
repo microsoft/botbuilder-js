@@ -28,34 +28,34 @@ module.exports = [
             ['Book a flight from Paris to Berlin on March 22, 2020', 'Please confirm, I have you traveling to: Berlin from: Paris on: 2022-02-22. (1) Yes or (2) No'],
             ['yes', 'I have you booked to Berlin from Paris on 22nd Februrary 2022.']
         ],
-    },
-    {
-        name: 'No at confirm',
-        expectedStatus: 'waiting',
-        steps: [
-            ['hi', 'What can I help you with today?\nSay something like "Book a flight from Paris to Berlin on March 22, 2020"'],
-            ['Book a flight from Paris to Berlin on March 22, 2020', 'Please confirm, I have you traveling to: Berlin from: Paris on: 2022-02-22. (1) Yes or (2) No'],
-            ['no', 'Thank you.'],
-            ['uhhh....','What can I help you with today?\nSay something like "Book a flight from Paris to Berlin on March 22, 2020"']
-        ],
-    },
-    {
-        name: 'help at menu',
-        expectedStatus: 'waiting',
-        steps: [
-            ['hi', 'What can I help you with today?\nSay something like "Book a flight from Paris to Berlin on March 22, 2020"'],
-            ['help','[ This is where to send sample help to the user... ]'],
-            ['ok', 'Thank you.'],
-        ],
-    },
-    {
-        name: 'cancel at menu',
-        expectedStatus: 'waiting',
-        steps: [
-            ['hi', 'What can I help you with today?\nSay something like "Book a flight from Paris to Berlin on March 22, 2020"'],
-            ['cancel','Cancelling'],
-            [null, 'Thank you.'],
-        ],
+    // },
+    // {
+    //     name: 'No at confirm',
+    //     expectedStatus: 'waiting',
+    //     steps: [
+    //         ['hi', 'What can I help you with today?\nSay something like "Book a flight from Paris to Berlin on March 22, 2020"'],
+    //         ['Book a flight from Paris to Berlin on March 22, 2020', 'Please confirm, I have you traveling to: Berlin from: Paris on: 2022-02-22. (1) Yes or (2) No'],
+    //         ['no', 'Thank you.'],
+    //         ['uhhh....','What can I help you with today?\nSay something like "Book a flight from Paris to Berlin on March 22, 2020"']
+    //     ],
+    // },
+    // {
+    //     name: 'help at menu',
+    //     expectedStatus: 'waiting',
+    //     steps: [
+    //         ['hi', 'What can I help you with today?\nSay something like "Book a flight from Paris to Berlin on March 22, 2020"'],
+    //         ['help','[ This is where to send sample help to the user... ]'],
+    //         ['ok', 'Thank you.'],
+    //     ],
+    // },
+    // {
+    //     name: 'cancel at menu',
+    //     expectedStatus: 'waiting',
+    //     steps: [
+    //         ['hi', 'What can I help you with today?\nSay something like "Book a flight from Paris to Berlin on March 22, 2020"'],
+    //         ['cancel','Cancelling'],
+    //         [null, 'Thank you.'],
+    //     ],
     },
 
 ]
