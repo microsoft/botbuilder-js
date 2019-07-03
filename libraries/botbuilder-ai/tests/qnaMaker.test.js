@@ -278,6 +278,17 @@ describe('QnAMaker', function () {
             assert.rejects(async () => await qna.getAnswers(context, stringScoreThreshold_options), nonNumberError );
         });
 
+        it('should filter low score variation', async function() {
+            const qna = new QnAMaker(endpoint, { top: 5});
+            const context = new TestContext({ text: "Q11" });
+            const results = await qna.getAnswers(context);
+            assert.strictEqual(results.length, 4, `Should have recieved 4 answers.`);
+            
+            // Apply low score variation
+            const filteredResult = await qna.getLowScoreVariation(results);
+            assert.strictEqual(filteredResult.length, 3, `Should have 3 filtered answer after low score variation.`);
+        });
+
         it('should log telemetry', async function() {
             // Arrange
             var callCount = 0;
@@ -525,6 +536,30 @@ describe('QnAMaker', function () {
             const qna = new QnAMaker(endpoint);
 
             assert.rejects(async () => await qna.getAnswers(undefined), new TypeError('QnAMaker.getAnswers() requires a TurnContext.'));
+        });
+    });
+
+    describe('trainAPI()', async function() {
+        it('should call train async function', async function() {
+            const qna = new QnAMaker(endpoint);
+            
+            var feedbackRecords = {
+                feedbackRecords:[
+                    {
+                        userId: "test",
+                        userQuestion: "How are you?",
+                        qnaId: 1
+                    },
+                    {
+                        userId: "test",
+                        userQuestion: "Whats up?",
+                        qnaId: 2
+                    }
+                ]
+            }
+
+            // Provide feedback
+            await qna.callTrainAsync(feedbackRecords);
         });
     });
 
