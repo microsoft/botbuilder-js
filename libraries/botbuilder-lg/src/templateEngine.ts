@@ -10,6 +10,7 @@ import * as path from 'path';
 import { Analyzer, AnalyzerResult } from './analyzer';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Evaluator } from './evaluator';
+import { Expander } from './expander';
 import { IGetMethod } from './getMethodExtensions';
 import { LGImport } from './LGImport';
 import { LGParser } from './lgParser';
@@ -94,6 +95,12 @@ export class TemplateEngine {
         const evalutor: Evaluator = new Evaluator(this.templates, methodBinder);
 
         return evalutor.EvaluateTemplate(templateName, scope);
+    }
+
+    public expandTemplate(templateName: string, scope?: any, methodBinder?: IGetMethod) : string[] {
+        const expander: Expander = new Expander(this.templates, methodBinder);
+
+        return expander.ExpandTemplate(templateName, scope);
     }
 
     public analyzeTemplate(templateName: string): AnalyzerResult {
