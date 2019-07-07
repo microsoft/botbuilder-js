@@ -7,64 +7,33 @@ const { BookingDialog } = require('../dialogs/bookingDialog');
 const assert = require('assert');
 
 describe('BookingDialog', function() {
-    let tests = require('./testData/bookingDialogTestCases.js');
+    const testCases = require('./testData/bookingDialogTestCases.js');
     const sut = new BookingDialog('bookingDialog');
 
-    for (let t = 0; t < tests.length; t++) {
-        let test = tests[t];
-        it(test.name, async function() {
-            console.log(`Test Case: ${ test.name }`);
-            console.log(`Dialog Input ${ JSON.stringify(test.initialData) }`);
-            const client = new DialogTestClient('test', sut, test.initialData, [new DialogTestLogger()]);
+    for (let t = 0; t < testCases.length; t++) {
+        const testData = testCases[t];
+        it(testData.name, async function() {
+            console.log(`Test Case: ${ testData.name }`);
+            console.log(`Dialog Input ${ JSON.stringify(testData.initialData) }`);
+            const client = new DialogTestClient('test', sut, testData.initialData, [new DialogTestLogger()]);
 
-            for (let i = 0; i < test.steps.length; i++) {
-                let reply;
-                if (test.steps[i][0] == null) {
-                    reply = client.getNextReply();
-                } else {
-                    reply = await client.sendActivity(test.steps[i][0]);
-                }
-                assert((reply ? reply.text : null) == test.steps[i][1],`${ reply ? reply.text : null } != ${ test.steps[i][1] }`);
+            for (let i = 0; i < testData.steps.length; i++) {
+                const reply = await client.sendActivity(testData.steps[i][0]);
+                assert.strictEqual((reply ? reply.text : null), testData.steps[i][1],`${ reply ? reply.text : null } != ${ testData.steps[i][1] }`);
 			}
+
+            assert.strictEqual(client.dialogTurnResult.status, testData.expectedStatus, `${ testData.expectedStatus } != ${ client.dialogTurnResult.status }`);
 
             console.log(`Dialog result: ${ JSON.stringify(client.dialogTurnResult.result) }`);
-            if (test.expectedResult !== undefined) {
-                if (test.expectedResult != null && typeof(test.expectedResult) =='object') {
-                    assert(isEquivalent(test.expectedResult, client.dialogTurnResult.result), `${ JSON.stringify(test.expectedResult) } != ${ JSON.stringify(client.dialogTurnResult.result) }`);
-                } else {
-                    assert(test.expectedResult == client.dialogTurnResult.result, `${ test.expectedResult } != ${ client.dialogTurnResult.result }`);
-                }
-			}
-
-            if (test.expectedStatus !== undefined) {
-                assert(test.expectedStatus == client.dialogTurnResult.status, `${ test.expectedStatus } != ${ client.dialogTurnResult.status }`);
+            if (testData.expectedResult !== undefined) {
+                // Check dialog results
+                const result = client.dialogTurnResult.result;
+                assert.strictEqual(result.destination, testData.expectedResult.destination);
+                assert.strictEqual(result.origin, testData.expectedResult.origin);
+                assert.strictEqual(result.travelDate, testData.expectedResult.travelDate);
+			} else {
+                assert.strictEqual(client.dialogTurnResult.result, undefined);
             }
         });
     }
 });
-
-function isEquivalent(a, b) {
-    // Create arrays of property names
-    var aProps = Object.getOwnPropertyNames(a);
-    var bProps = Object.getOwnPropertyNames(b);
-
-    // If number of properties is different,
-    // objects are not equivalent
-    if (aProps.length != bProps.length) {
-        return false;
-    }
-
-    for (var i = 0; i < aProps.length; i++) {
-        var propName = aProps[i];
-
-        // If values of same property are not equal,
-        // objects are not equivalent
-        if (a[propName] !== b[propName]) {
-            return false;
-        }
-    }
-
-    // If we made it this far, objects
-    // are considered equivalent
-    return true;
-}
