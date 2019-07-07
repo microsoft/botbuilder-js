@@ -5,7 +5,6 @@
 const { DialogTestClient, DialogTestLogger } = require('botbuilder-testing');
 const { MainDialog } = require('../dialogs/mainDialog');
 const { BookingDialog } = require('../dialogs/bookingDialog');
-const tests = require('./testData/mainDialogTestCases');
 const assert = require('assert');
 
 const BOOKING_DIALOG = 'bookingDialog';
@@ -27,36 +26,37 @@ class MockFlightBookingRecognizer {
 }
 
 describe('MainDialog', function() {
+    const testCases = require('./testData/mainDialogTestCases');
     const bookingDialog = new BookingDialog(BOOKING_DIALOG);
     const mockRecognizer = new MockFlightBookingRecognizer();
     const sut = new MainDialog(null, mockRecognizer, bookingDialog);
 
-    tests.map(test => {
-        it(test.name, async () => {
-            console.log(`Test Case: ${ test.name }`);
-            console.log(`Dialog Input ${ JSON.stringify(test.initialData) }`);
-            const client = new DialogTestClient('test', sut, test.initialData, [new DialogTestLogger()]);
+    testCases.map(testData => {
+        it(testData.name, async () => {
+            console.log(`Test Case: ${ testData.name }`);
+            console.log(`Dialog Input ${ JSON.stringify(testData.initialData) }`);
+            const client = new DialogTestClient('test', sut, testData.initialData, [new DialogTestLogger()]);
 
-            for (let i = 0; i < test.steps.length; i++) {
+            for (let i = 0; i < testData.steps.length; i++) {
                 let reply;
-                if (test.steps[i][0] == null) {
+                if (testData.steps[i][0] == null) {
                     reply = client.getNextReply();
                 } else {
-                    reply = await client.sendActivity(test.steps[i][0]);
+                    reply = await client.sendActivity(testData.steps[i][0]);
                 }
 
-                if (test.steps[i][1]===null) {
-                    assert(reply == test.steps[i][1],`${ reply ? reply.text : null } != ${ test.steps[i][1] }`);
+                if (testData.steps[i][1]===null) {
+                    assert(reply == testData.steps[i][1],`${ reply ? reply.text : null } != ${ testData.steps[i][1] }`);
                 } else {
-                    assert(reply.text == test.steps[i][1],`${ reply ? reply.text : null } != ${ test.steps[i][1] }`);
+                    assert(reply.text == testData.steps[i][1],`${ reply ? reply.text : null } != ${ testData.steps[i][1] }`);
                 }
             }
             console.log(`Dialog result: ${ client.dialogTurnResult.result }`);
-            if (test.expectedResult !== undefined) {
-                assert(test.expectedResult == client.dialogTurnResult.result, `${ test.expectedResult } != ${ client.dialogTurnResult.result }`);
+            if (testData.expectedResult !== undefined) {
+                assert(testData.expectedResult == client.dialogTurnResult.result, `${ testData.expectedResult } != ${ client.dialogTurnResult.result }`);
             }
-            if (test.expectedStatus !== undefined) {
-                assert(test.expectedStatus == client.dialogTurnResult.status, `${ test.expectedStatus } != ${ client.dialogTurnResult.status }`);
+            if (testData.expectedStatus !== undefined) {
+                assert(testData.expectedStatus == client.dialogTurnResult.status, `${ testData.expectedStatus } != ${ client.dialogTurnResult.status }`);
             }
         });
     });

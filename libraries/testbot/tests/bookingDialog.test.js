@@ -10,8 +10,7 @@ describe('BookingDialog', function() {
     const testCases = require('./testData/bookingDialogTestCases.js');
     const sut = new BookingDialog('bookingDialog');
 
-    for (let t = 0; t < testCases.length; t++) {
-        const testData = testCases[t];
+    testCases.map(testData => {
         it(testData.name, async function() {
             console.log(`Test Case: ${ testData.name }`);
             console.log(`Dialog Input ${ JSON.stringify(testData.initialData) }`);
@@ -35,5 +34,5 @@ describe('BookingDialog', function() {
                 assert.strictEqual(client.dialogTurnResult.result, undefined);
             }
         });
-    }
+    })
 });
