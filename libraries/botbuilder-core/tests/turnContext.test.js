@@ -349,4 +349,27 @@ describe(`TurnContext`, function () {
         });
     });
 
+    it ('should remove at mention from activity', function() {
+
+        var activity = {
+            type: 'message',
+            text: '<at>TestOAuth619</at> test activity',
+            recipient: { id: 'TestOAuth619' },
+            entities: [
+                {
+                    type: 'mention',
+                    text: `<at>TestOAuth619</at>`,
+                    mentioned: {
+                        name: 'Bot',
+                        id: `TestOAuth619`
+                    }
+                }
+            ]
+        };
+
+        var text = TurnContext.removeRecipientMention(activity);
+
+        assert(text,' test activity');
+        assert(activity.text,' test activity');
+    });
 });
