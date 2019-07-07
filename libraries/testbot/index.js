@@ -11,9 +11,6 @@ const restify = require('restify');
 const { BotFrameworkAdapter, ConversationState, InputHints, MemoryStorage, UserState } = require('botbuilder');
 const { FlightBookingRecognizer } = require('./dialogs/flightBookingRecognizer');
 
-// Import the simple echo bot
-const { MyBot } = require('./bots/myBot')
-
 // This bot's main dialog.
 const { DialogAndWelcomeBot } = require('./bots/dialogAndWelcomeBot');
 const { MainDialog } = require('./dialogs/mainDialog');
@@ -40,7 +37,7 @@ adapter.onTurnError = async (context, error) => {
     //       application insights.
     console.error(`\n [onTurnError]: ${ error }`);
     // Send a message to the user
-    const onTurnErrorMessage = `Oops. Something went wrong!`;
+    const onTurnErrorMessage = `Sorry, it looks like something went wrong!`;
     await context.sendActivity(onTurnErrorMessage, onTurnErrorMessage, InputHints.ExpectingInput);
     // Clear out state
     await conversationState.delete(context);
@@ -69,20 +66,12 @@ luisRecognizer = new FlightBookingRecognizer(luisConfig);
 const bookingDialog = new BookingDialog(BOOKING_DIALOG);
 const dialog = new MainDialog(logger, luisRecognizer, bookingDialog);
 const bot = new DialogAndWelcomeBot(conversationState, userState, dialog, logger);
-const echobot = new MyBot(conversationState);
 
 // Create HTTP server
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function() {
     console.log(`\n${ server.name } listening to ${ server.url }`);
     console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
-});
-
-
-server.post('/api/mybot', (req, res) => {
-    adapter.processActivity(req, res, async (turnContext) => {
-        await echobot.run(turnContext);
-    });
 });
 
 // Listen for incoming activities and route them to your bot main dialog.

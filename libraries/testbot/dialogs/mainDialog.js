@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
-const { InputHints } = require('botbuilder');
+const { MessageFactory, InputHints } = require('botbuilder');
 const { LuisRecognizer } = require('botbuilder-ai');
 const { ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
 
@@ -18,15 +18,16 @@ class MainDialog extends ComponentDialog {
         }
 
         this.logger = logger;
+
+        if (!luisRecognizer) throw new Error('[MainDialog]: Missing parameter \'luisRecognizer\' is required');
         this.luisRecognizer = luisRecognizer;
 
         if (!bookingDialog) throw new Error('[MainDialog]: Missing parameter \'bookingDialog\' is required');
-        this.bookingDialog = bookingDialog;
 
         // Define the main dialog and its related components.
         // This is a sample "book a flight" dialog.
         this.addDialog(new TextPrompt('TextPrompt'))
-            .addDialog(this.bookingDialog)
+            .addDialog(bookingDialog)
             .addDialog(new WaterfallDialog(MAIN_WATERFALL_DIALOG, [
                 this.introStep.bind(this),
                 this.actStep.bind(this),
@@ -59,13 +60,15 @@ class MainDialog extends ComponentDialog {
      * Note that the sample LUIS model will only recognize Paris, Berlin, New York and London as airport cities.
      */
     async introStep(stepContext) {
-        if (!this.luisRecognizer || !this.luisRecognizer.isConfigured()) {
+        if (!this.luisRecognizer.isConfigured()) {
             const messageText = 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.'
-            await stepContext.context.sendActivity(messageText, messageText, InputHints.IgnoringInput);
+            await stepContext.context.sendActivity(messageText, null, InputHints.IgnoringInput);
             return await stepContext.next();
         }
 
-        return await stepContext.prompt('TextPrompt', { prompt: 'What can I help you with today?\nSay something like "Book a flight from Paris to Berlin on March 22, 2020"' });
+        const messageText = typeof stepContext.options == 'string' ? stepContext.options : 'What can I help you with today?';
+        const promptMessage = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
+        return await stepContext.prompt('TextPrompt', { prompt: promptMessage });
     }
 
     /**
@@ -76,85 +79,66 @@ class MainDialog extends ComponentDialog {
         let bookingDetails = {};
 
         if (!this.luisRecognizer.isConfigured()) {
-            return await stepContext.beginDialog('bookingDialog');
+            // LUIS is not configured, we just run the BookingDialog path.
+            return await stepContext.beginDialog('bookingDialog', bookingDetails);
         }
 
-        // Call LUIS and gather any potential booking details.
-        // This will attempt to extract the origin, destination and travel date from the user's message
-        // and will then pass those values into the booking dialog
-        const recognizerResult = await this.luisRecognizer.executeLuisQuery(this.logger, stepContext.context);
+        // Call LUIS and gather any potential booking details. (Note the TurnContext has the response to the prompt)
+        const luisResult = await this.luisRecognizer.executeLuisQuery(stepContext.context, this.logger);
+          switch (LuisRecognizer.topIntent(luisResult))
+        {
+            case 'BookFlight':
+                // Extract the values for the composite entities from the LUIS result.
+                const fromEntities = this.luisRecognizer.getFromEntities(luisResult);
+                const toEntities = this.luisRecognizer.getToEntities(luisResult);
 
-        const getBookingDetails = (recognizerResult) => {
-            const bookingDetails = {};
-            const intent = LuisRecognizer.topIntent(recognizerResult);
+                // Show a warning for Origin and Destination if we can't resolve them.
+                await this.showWarningForUnsupportedCities(stepContext.context, fromEntities, toEntities);
 
-            bookingDetails.intent = intent;
-            bookingDetails.unsupportedCities = [];
+                // Initialize BookingDetails with any entities we may have found in the response.
+                bookingDetails.destination = toEntities.airport;
+                bookingDetails.origin = fromEntities.airport;
+                bookingDetails.travelDate = this.luisRecognizer.getTravelDate(luisResult);
 
-            if (intent === 'Book_flight') {
-                // We need to get the result from the LUIS JSON which at every level returns an array
-                bookingDetails.destination = parseCompositeEntity(recognizerResult, 'To', 'Airport');
-                bookingDetails.origin = parseCompositeEntity(recognizerResult, 'From', 'Airport');
+                this.logger.log('LUIS extracted these booking details:', JSON.stringify(bookingDetails));
 
-                if(!bookingDetails.destination) {
-                    bookingDetails.unsupportedCities.push(getUnsupportedCity(recognizerResult, 'To'))
-                }
+                // Run the BookingDialog passing in whatever details we have from the LUIS call, it will fill out the remainder.
+                return await stepContext.beginDialog('bookingDialog', bookingDetails);
 
-                if(!bookingDetails.origin) {
-                    bookingDetails.unsupportedCities.push(getUnsupportedCity(recognizerResult, 'From'))
-                }
+            case 'GetWeather':
+                // We haven't implemented the GetWeatherDialog so we just display a TODO message.
+                const getWeatherMessageText = 'TODO: get weather flow here';
+                await stepContext.context.sendActivity(getWeatherMessageText, getWeatherMessageText, InputHints.IgnoringInput);
+                break;
 
-                // This value will be a TIMEX. And we are only interested in a Date so grab the first result and drop the Time part.
-                // TIMEX is a format that represents DateTime expressions that include some ambiguity. e.g. missing a Year.
-                bookingDetails.travelDate = parseDatetimeEntity(recognizerResult);
-            }
-            return bookingDetails;
+            default:
+                // Catch all for unhandled intents
+                const didntUnderstandMessageText = `Sorry, I didn't get that. Please try asking in a different way (intent was ${LuisRecognizer.topIntent(luisResult)})`;
+                await stepContext.context.sendActivity(didntUnderstandMessageText, didntUnderstandMessageText, InputHints.IgnoringInput);
         }
 
-        const parseCompositeEntity = (result, compositeName, entityName) => {
-            const compositeEntity = result.entities[compositeName];
-            if (!compositeEntity || !compositeEntity[0]) return undefined;
+         return await stepContext.next();
+    }
 
-            const entity = compositeEntity[0][entityName];
-            if (!entity || !entity[0]) return undefined;
-
-            const entityValue = entity[0][0];
-            return entityValue;
+    /**
+     * Shows a warning if the requested From or To cities are recognized as entities but they are not in the Airport entity list.
+     * In some cases LUIS will recognize the From and To composite entities as a valid cities but the From and To Airport values
+     * will be empty if those entity values can't be mapped to a canonical item in the Airport.
+     */
+    async showWarningForUnsupportedCities(context, fromEntities, toEntities) {
+        let unsupportedCities = [];
+        if (fromEntities.from && !fromEntities.airport){
+            unsupportedCities.push(fromEntities.from);
         }
 
-        const parseDatetimeEntity = (result) => {
-            const datetimeEntity = result.entities['datetime'];
-            if (!datetimeEntity || !datetimeEntity[0]) return undefined;
-
-            const timex = datetimeEntity[0]['timex'];
-            if (!timex || !timex[0]) return undefined;
-
-            const datetime = timex[0].split('T')[0];
-            return datetime;
+        if (toEntities.to && !toEntities.airport){
+            unsupportedCities.push(toEntities.to);
         }
 
-        const getUnsupportedCity = (result, compositeName) => {
-            const cityEntity = result.luisResult.entities.find(entity => {
-                return entity.type = compositeName;
-            });
-            return cityEntity.entity.toUpperCase();
+        if(unsupportedCities.length) {
+            const messageText = `Sorry but the following airports are not supported: ${unsupportedCities.join(', ')}`;
+            await context.sendActivity(messageText, messageText, InputHints.IgnoringInput);
         }
-
-        bookingDetails = getBookingDetails(recognizerResult);
-
-        if(bookingDetails.unsupportedCities && bookingDetails.unsupportedCities.length) {
-            const messageText = `Sorry but the following airports are not supported: ${bookingDetails.unsupportedCities.join(', ')}`;
-            await stepContext.context.sendActivity(messageText, messageText, InputHints.IgnoringInput);
-            return await stepContext.replaceDialog('MainDialog');
-        }
-
-        this.logger.log('LUIS extracted these booking details:', bookingDetails);
-
-        // In this sample we only have a single intent we are concerned with. However, typically a scenario
-        // will have multiple different intents each corresponding to starting a different child dialog.
-
-        // Run the BookingDialog giving it whatever details we have from the LUIS call, it will fill out the remainder.
-        return await stepContext.beginDialog('bookingDialog', bookingDetails);
     }
 
     /**
@@ -174,10 +158,8 @@ class MainDialog extends ComponentDialog {
             const travelDateMsg = timeProperty.toNaturalLanguage(new Date(Date.now()));
             const msg = `I have you booked to ${ result.destination } from ${ result.origin } on ${ travelDateMsg }.`;
             await stepContext.context.sendActivity(msg, msg, InputHints.IgnoringInput);
-        } else {
-            await stepContext.context.sendActivity('Thank you.');
         }
-        return await stepContext.replaceDialog('MainDialog');
+        return await stepContext.replaceDialog('MainDialog', 'What else can I do for you?');
     }
 }
 

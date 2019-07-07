@@ -9,13 +9,6 @@ const { ComponentDialog, DialogTurnStatus } = require('botbuilder-dialogs');
  * BEFORE they reach the normal bot logic.
  */
 class CancelAndHelpDialog extends ComponentDialog {
-    async onBeginDialog(innerDc, options) {
-        const result = await this.interrupt(innerDc);
-        if (result) {
-            return result;
-        }
-        return await super.onBeginDialog(innerDc, options);
-    }
 
     async onContinueDialog(innerDc) {
         const result = await this.interrupt(innerDc);
@@ -37,7 +30,7 @@ class CancelAndHelpDialog extends ComponentDialog {
                 return { status: DialogTurnStatus.waiting };
             case 'cancel':
             case 'quit':
-                const cancelMessageText = 'Cancelling';
+                const cancelMessageText = 'Cancelling...';
                 await innerDc.context.sendActivity(cancelMessageText, cancelMessageText, InputHints.IgnoringInput);
                 return await innerDc.cancelAllDialogs();
             }
