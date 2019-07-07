@@ -68,8 +68,8 @@
         "siteHost": "[concat(parameters('siteName'), '.azurewebsites.net')]",
         "botEndpointConfig": {
             "bot": "[parameters('endpoint')]",
-            "sdk": "[concat('https://', variables('siteHost'), '/api/mybot')]",
-            "function": "[concat('https://', variables('siteHost'), '/api/mybot?code=', 'NYI')]"
+            "sdk": "[concat('https://', variables('siteHost'), '/api/messages')]",
+            "function": "[concat('https://', variables('siteHost'), '/api/messages?code=', 'NYI')]"
         },
         "botEndpoint": "[variables('botEndpointConfig')[parameters('kind')]]"
     },

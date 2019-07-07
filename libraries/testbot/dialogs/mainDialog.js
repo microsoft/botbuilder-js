@@ -85,7 +85,7 @@ class MainDialog extends ComponentDialog {
 
         // Call LUIS and gather any potential booking details. (Note the TurnContext has the response to the prompt)
         const luisResult = await this.luisRecognizer.executeLuisQuery(stepContext.context, this.logger);
-          switch (LuisRecognizer.topIntent(luisResult))
+        switch (LuisRecognizer.topIntent(luisResult))
         {
             case 'BookFlight':
                 // Extract the values for the composite entities from the LUIS result.
@@ -99,7 +99,6 @@ class MainDialog extends ComponentDialog {
                 bookingDetails.destination = toEntities.airport;
                 bookingDetails.origin = fromEntities.airport;
                 bookingDetails.travelDate = this.luisRecognizer.getTravelDate(luisResult);
-
                 this.logger.log('LUIS extracted these booking details:', JSON.stringify(bookingDetails));
 
                 // Run the BookingDialog passing in whatever details we have from the LUIS call, it will fill out the remainder.
@@ -159,6 +158,8 @@ class MainDialog extends ComponentDialog {
             const msg = `I have you booked to ${ result.destination } from ${ result.origin } on ${ travelDateMsg }.`;
             await stepContext.context.sendActivity(msg, msg, InputHints.IgnoringInput);
         }
+
+        // Restart the main dialog with a different message the second time around
         return await stepContext.replaceDialog('MainDialog', 'What else can I do for you?');
     }
 }
