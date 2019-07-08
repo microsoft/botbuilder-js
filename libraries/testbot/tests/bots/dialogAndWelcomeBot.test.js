@@ -8,7 +8,7 @@ const { DialogAndWelcomeBot } = require('../../bots/dialogAndWelcomeBot');
 const assert = require('assert');
 
 /**
- * A simple mock for a root dialog.
+ * A simple mock for a root dialog that gets invoked by the bot.
  */
 class MockRootDialog extends Dialog {
     constructor() {
@@ -45,7 +45,7 @@ describe('DialogAndWelcomeBot', () => {
         const memoryStorage = new MemoryStorage();
         const sut = new DialogAndWelcomeBot(new ConversationState(memoryStorage), new UserState(memoryStorage), mockRootDialog, console);
 
-        // Create conversation update activity
+        // Create conversationUpdate activity
         const conversationUpdateActivity = {
             type: ActivityTypes.ConversationUpdate,
             channelId: 'test',
@@ -58,7 +58,7 @@ describe('DialogAndWelcomeBot', () => {
             recipient: {id: 'theBot'}
         };
 
-        // Send a conversation update activity to the bot.
+        // Send the conversation update activity to the bot.
         await processActivity(conversationUpdateActivity, sut);
 
         // Assert we got the welcome card
