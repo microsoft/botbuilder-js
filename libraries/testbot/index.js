@@ -64,7 +64,7 @@ luisRecognizer = new FlightBookingRecognizer(luisConfig);
 
 // Create the main dialog.
 const bookingDialog = new BookingDialog(BOOKING_DIALOG);
-const dialog = new MainDialog(logger, luisRecognizer, bookingDialog);
+const dialog = new MainDialog(luisRecognizer, bookingDialog, logger);
 const bot = new DialogAndWelcomeBot(conversationState, userState, dialog, logger);
 
 // Create HTTP server

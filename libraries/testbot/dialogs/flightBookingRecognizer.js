@@ -11,25 +11,23 @@ class FlightBookingRecognizer {
      * @param {TurnContext} context
      */
     constructor(config) {
-        this.config = config;
+        const luisIsConfigured = config && config.LuisAppId && config.LuisAPIKey && config.LuisAPIHostName;
+        if (luisIsConfigured)
+        {
+            this.recognizer = new LuisRecognizer({
+                applicationId: config.LuisAppId,
+                endpointKey: config.LuisAPIKey,
+                endpoint: `https://${config.LuisAPIHostName}`
+            }, {}, true);
+        }
     }
 
     isConfigured() {
-        return (this.config && this.config.LuisAppId && this.config.LuisAPIKey && this.config.LuisAPIHostName) ? true : false
+        return (this.recognizer !== undefined)
     }
 
     async executeLuisQuery(context, logger) {
-        try {
-            const recognizer = new LuisRecognizer({
-                applicationId: this.config.LuisAppId,
-                endpointKey: this.config.LuisAPIKey,
-                endpoint: `https://${this.config.LuisAPIHostName}`
-            }, {}, true);
-
-            return await recognizer.recognize(context);
-        } catch (err) {
-            logger.warn(`LUIS Exception: ${err} Check your LUIS configuration`);
-        }
+        return await this.recognizer.recognize(context);
     }
 
     getFromEntities(result) {

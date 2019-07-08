@@ -6,12 +6,12 @@ const { DialogTestClient, DialogTestLogger } = require('botbuilder-testing');
 const { DateResolverDialog } = require('../dialogs/dateResolverDialog');
 const assert = require('assert');
 
-describe('DateResolverDialog', function() {
+describe('DateResolverDialog', () => {
     const testCases = require('./testData/dateResolverTestCases.js');
     const sut = new DateResolverDialog('dateResolver');
 
     testCases.map(testData => {
-        it(testData.name, async function() {
+        it(testData.name, async () => {
             console.log(`Test Case: ${ testData.name }`);
             console.log(`Dialog Input ${ JSON.stringify(testData.initialData) }`);
             const client = new DialogTestClient('test', sut, testData.initialData, [new DialogTestLogger()]);

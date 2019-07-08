@@ -9,7 +9,7 @@ const { ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialo
 const MAIN_WATERFALL_DIALOG = 'mainWaterfallDialog';
 
 class MainDialog extends ComponentDialog {
-    constructor(logger, luisRecognizer, bookingDialog) {
+    constructor(luisRecognizer, bookingDialog, logger) {
         super('MainDialog');
 
         if (!logger) {
@@ -72,7 +72,7 @@ class MainDialog extends ComponentDialog {
     }
 
     /**
-     * Second step in the waterall.  This will use LUIS to attempt to extract the origin, destination and travel dates.
+     * Second step in the waterfall.  This will use LUIS to attempt to extract the origin, destination and travel dates.
      * Then, it hands off to the bookingDialog child dialog to collect any remaining details.
      */
     async actStep(stepContext) {

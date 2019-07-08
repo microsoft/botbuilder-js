@@ -6,12 +6,12 @@ const { DialogTestClient, DialogTestLogger } = require('botbuilder-testing');
 const { BookingDialog } = require('../dialogs/bookingDialog');
 const assert = require('assert');
 
-describe('BookingDialog', function() {
+describe('BookingDialog', () => {
     const testCases = require('./testData/bookingDialogTestCases.js');
     const sut = new BookingDialog('bookingDialog');
 
     testCases.map(testData => {
-        it(testData.name, async function() {
+        it(testData.name, async () => {
             console.log(`Test Case: ${ testData.name }`);
             console.log(`Dialog Input ${ JSON.stringify(testData.initialData) }`);
             const client = new DialogTestClient('test', sut, testData.initialData, [new DialogTestLogger()]);
