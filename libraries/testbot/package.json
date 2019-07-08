@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./index.js",
-    "test": "nyc mocha tests/"
+    "test": "nyc mocha tests/**/*.test.js"
   },
   "author": "",
   "license": "MIT",

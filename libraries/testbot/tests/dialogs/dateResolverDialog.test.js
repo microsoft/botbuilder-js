@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 const { DialogTestClient, DialogTestLogger } = require('botbuilder-testing');
-const { DateResolverDialog } = require('../dialogs/dateResolverDialog');
+const { DateResolverDialog } = require('../../dialogs/dateResolverDialog');
 const assert = require('assert');
 
 describe('DateResolverDialog', () => {

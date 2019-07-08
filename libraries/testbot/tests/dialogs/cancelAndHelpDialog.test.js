@@ -5,7 +5,7 @@
 const { MessageFactory} = require('botbuilder');
 const { DialogTestClient, DialogTestLogger } = require('botbuilder-testing');
 const { TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
-const { CancelAndHelpDialog } = require('../dialogs/cancelAndHelpDialog');
+const { CancelAndHelpDialog } = require('../../dialogs/cancelAndHelpDialog');
 const assert = require('assert');
 
 /**

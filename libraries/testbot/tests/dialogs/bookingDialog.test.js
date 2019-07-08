@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 const { DialogTestClient, DialogTestLogger } = require('botbuilder-testing');
-const { BookingDialog } = require('../dialogs/bookingDialog');
+const { BookingDialog } = require('../../dialogs/bookingDialog');
 const assert = require('assert');
 
 describe('BookingDialog', () => {

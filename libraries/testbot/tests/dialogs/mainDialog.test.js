@@ -4,9 +4,9 @@
  */
 const { TextPrompt } = require('botbuilder-dialogs');
 const { DialogTestClient, DialogTestLogger } = require('botbuilder-testing');
-const { FlightBookingRecognizer } = require('../dialogs/flightBookingRecognizer');
-const { MainDialog } = require('../dialogs/mainDialog');
-const { BookingDialog } = require('../dialogs/bookingDialog');
+const { FlightBookingRecognizer } = require('../../dialogs/flightBookingRecognizer');
+const { MainDialog } = require('../../dialogs/mainDialog');
+const { BookingDialog } = require('../../dialogs/bookingDialog');
 const assert = require('assert');
 
 /**
