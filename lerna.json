@@ -11,9 +11,9 @@
     "libraries/botframework-connector",
     "libraries/botframework-schema",
     "libraries/testbot",
-    "libraries/botframework-streaming-extensions-protocol",
-    "libraries/botframework-streaming-extensions-protocol-namedpipe",
-    "libraries/botframework-streaming-extensions-protocol-websocket",
+    "libraries/botframework-streaming-extensions",
+    "libraries/botframework-streaming-extensions-namedpipe",
+    "libraries/botframework-streaming-extensions-websocket",
     "transcripts"
   ],
   "version": "independent",
