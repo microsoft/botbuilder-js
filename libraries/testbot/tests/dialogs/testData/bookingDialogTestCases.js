@@ -26,7 +26,7 @@ module.exports = [
             ['hi', 'To what city would you like to travel?'],
             ['Seattle','From what city will you be travelling?'],
             ['New York', 'On what date would you like to travel?'],
-            ['tomorrow', `Please confirm, I have you traveling to: Seattle from: New York on: ${ tomorrow }. (1) Yes or (2) No`],
+            ['tomorrow', `Please confirm, I have you traveling to: Seattle from: New York on: ${ tomorrow }. Is this correct? (1) Yes or (2) No`],
             ['yes', null]
         ],
         expectedStatus: 'complete',
@@ -43,7 +43,7 @@ module.exports = [
             ['hi', 'To what city would you like to travel?'],
             ['Seattle','From what city will you be travelling?'],
             ['New York', 'On what date would you like to travel?'],
-            ['tomorrow', `Please confirm, I have you traveling to: Seattle from: New York on: ${ tomorrow }. (1) Yes or (2) No`],
+            ['tomorrow', `Please confirm, I have you traveling to: Seattle from: New York on: ${ tomorrow }. Is this correct? (1) Yes or (2) No`],
             ['no', null]
         ],
         expectedStatus: 'complete',
@@ -57,7 +57,7 @@ module.exports = [
         steps: [
             ['hi','From what city will you be travelling?'],
             ['New York', 'On what date would you like to travel?'],
-            ['tomorrow', `Please confirm, I have you traveling to: Bahamas from: New York on: ${ tomorrow }. (1) Yes or (2) No`],
+            ['tomorrow', `Please confirm, I have you traveling to: Bahamas from: New York on: ${ tomorrow }. Is this correct? (1) Yes or (2) No`],
             ['yes', null]
         ],
         expectedStatus: 'complete',
@@ -75,7 +75,7 @@ module.exports = [
         },
         steps: [
             ['hi', 'On what date would you like to travel?'],
-            ['tomorrow', `Please confirm, I have you traveling to: Seattle from: New York on: ${ tomorrow }. (1) Yes or (2) No`],
+            ['tomorrow', `Please confirm, I have you traveling to: Seattle from: New York on: ${ tomorrow }. Is this correct? (1) Yes or (2) No`],
             ['yes', null]
         ],
         expectedStatus: 'complete',
@@ -93,7 +93,7 @@ module.exports = [
             travelDate: today
         },
         steps: [
-            ['hi', `Please confirm, I have you traveling to: Seattle from: Bahamas on: ${ today }. (1) Yes or (2) No`],
+            ['hi', `Please confirm, I have you traveling to: Seattle from: Bahamas on: ${ today }. Is this correct? (1) Yes or (2) No`],
             ['yes', null],
         ],
         expectedStatus: 'complete',
@@ -143,7 +143,7 @@ module.exports = [
             ['hi', 'To what city would you like to travel?'],
             ['Seattle','From what city will you be travelling?'],
             ['New York', 'On what date would you like to travel?'],
-            ['tomorrow', `Please confirm, I have you traveling to: Seattle from: New York on: ${ tomorrow }. (1) Yes or (2) No`],
+            ['tomorrow', `Please confirm, I have you traveling to: Seattle from: New York on: ${ tomorrow }. Is this correct? (1) Yes or (2) No`],
             ['cancel', 'Cancelling...']
         ],
         expectedStatus: 'cancelled',

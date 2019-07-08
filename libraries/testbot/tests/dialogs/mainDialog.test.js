@@ -48,24 +48,24 @@ class MockBookingDialog extends BookingDialog {
     }
 }
 
+/**
+* A specialized mock for BookingDialog that displays a dummy TextPrompt.
+* The dummy prompt is used to prevent the MainDialog waterfall from moving to the next step
+* and assert that the main dialog was called.
+*/
+class MockBookingDialogWithPrompt extends BookingDialog {
+    constructor() {
+        super('bookingDialog');
+    }
+
+    async beginDialog(dc, options) {
+        dc.dialogs.add(new TextPrompt('MockDialog'));
+        return await dc.prompt('MockDialog', { prompt: `${this.id} mock invoked` });
+    }
+};
+
 describe('MainDialog', () => {
     it("Shows message if LUIS is not configured and calls BookingDialogDirectly", async () => {
-        /**
-        * A specialized mock for BookingDialog that displays a dummy TextPrompt.
-        * The dummy prompt is used to prevent the MainDialog waterfall from moving to the next step
-        * and assert that the main dialog was called.
-        */
-        class MockBookingDialogWithPrompt extends BookingDialog {
-            constructor() {
-                super('bookingDialog');
-            }
-
-            async beginDialog(dc, options) {
-                dc.dialogs.add(new TextPrompt('MockDialog'));
-                return await dc.prompt('MockDialog', { prompt: `${this.id} mock invoked` });
-            }
-        };
-
         const mockRecognizer = new MockFlightBookingRecognizer(false);
         const mockBookingDialog = new MockBookingDialogWithPrompt();
         const sut = new MainDialog(mockRecognizer, mockBookingDialog, null);
