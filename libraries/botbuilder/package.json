@@ -25,7 +25,7 @@
     "botbuilder-core": "~4.1.6",
     "botframework-connector": "~4.1.6",
     "botframework-schema": "~4.1.6",
-    "botframework-streaming-extensions-protocol": "^0.0.1",
+    "botframework-streaming-extensions": "^0.0.1",
     "filenamify": "^2.0.0",
     "fs-extra": "^7.0.1",
     "watershed": "^0.4.0"    
