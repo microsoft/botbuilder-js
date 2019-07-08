@@ -25,7 +25,7 @@ class CancelAndHelpDialog extends ComponentDialog {
             switch (text) {
             case 'help':
             case '?':
-                const helpMessageText = '[ This is where to send sample help to the user... ]';
+                const helpMessageText = 'Show help here';
                 await innerDc.context.sendActivity(helpMessageText, helpMessageText, InputHints.ExpectingInput);
                 return { status: DialogTurnStatus.waiting };
             case 'cancel':
