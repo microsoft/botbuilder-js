@@ -26,25 +26,8 @@
         }
       ]
     },
-    "From": [
-      {
-        "$instance": {
-          "Airport": [
-            {
-              "startIndex": 12,
-              "endIndex": 15,
-              "text": "cdg",
-              "type": "Airport"
-            }
-          ]
-        },
-        "Airport": [
-          [
-            "Paris"
-          ]
-        ]
-      }
-    ],
+    "From": [ { "$instance": {} } ],
+
     "To": [
       {
         "$instance": {
@@ -87,17 +70,6 @@
         "score": 0.8905674
       },
       {
-        "entity": "cdg",
-        "type": "Airport",
-        "startIndex": 12,
-        "endIndex": 14,
-        "resolution": {
-          "values": [
-            "Paris"
-          ]
-        }
-      },
-      {
         "entity": "jfk",
         "type": "Airport",
         "startIndex": 19,
@@ -113,12 +85,8 @@
       {
         "parentType": "From",
         "value": "cdg",
-        "children": [
-          {
-            "type": "Airport",
-            "value": "cdg"
-          }
-        ]
+        "children": []
+
       },
       {
         "parentType": "To",

@@ -9,8 +9,6 @@ const { MainDialog } = require('../dialogs/mainDialog');
 const { BookingDialog } = require('../dialogs/bookingDialog');
 const assert = require('assert');
 
-const BOOKING_DIALOG = 'bookingDialog';
-
 /**
  * A mock FlightBookingRecognizer for our main dialog tests
  */
@@ -123,7 +121,30 @@ describe('MainDialog', () => {
     });
 
     describe('Shows unsupported cities warning', () => {
-        it('TODO', async () => {
+        // Create array with test case data.
+        const testCases = [
+            {jsonFile: 'FlightToMadrid.json', expectedMessage:'Sorry but the following airports are not supported: madrid'},
+            {jsonFile: 'FlightFromMadridToChicago.json', expectedMessage:'Sorry but the following airports are not supported: madrid, chicago'},
+            {jsonFile: 'FlightFromCdgToJfk.json', expectedMessage:'Sorry but the following airports are not supported: cdg'},
+            {jsonFile: 'FlightFromParisToNewYork.json', expectedMessage:'bookingDialog mock invoked'}
+        ];
+
+        testCases.map(testData => {
+            it(testData.jsonFile, async () => {
+                // Create LuisResult for the mock recognizer.
+                const flightBookingResult = require(`./testData/${testData.jsonFile}`);
+                const mockRecognizer = new MockFlightBookingRecognizer(true, flightBookingResult);
+                const bookingDialog = new MockBookingDialog();
+                const sut = new MainDialog(mockRecognizer, bookingDialog, null);
+                const client = new DialogTestClient('test', sut, null, [new DialogTestLogger()]);
+
+                console.log(`Test Case: ${ testData.intent }`);
+                let reply = await client.sendActivity('Hi');
+                assert.strictEqual(reply.text, 'What can I help you with today?');
+
+                reply = await client.sendActivity(flightBookingResult.text);
+                assert.strictEqual(reply.text, testData.expectedMessage);
+            });
         });
     });
 });
