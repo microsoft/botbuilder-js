@@ -10,7 +10,8 @@ const { BookingDialog } = require('../../dialogs/bookingDialog');
 const assert = require('assert');
 
 /**
- * A mock FlightBookingRecognizer for our main dialog tests
+ * A mock FlightBookingRecognizer for our main dialog tests that takes
+ * a mock luis result and can set as isConfigured === false.
  */
 class MockFlightBookingRecognizer extends FlightBookingRecognizer {
     constructor(isConfigured, mockResult) {
@@ -29,7 +30,7 @@ class MockFlightBookingRecognizer extends FlightBookingRecognizer {
 }
 
 /**
- * A simple mock for Booking dialog that just returns.
+ * A simple mock for Booking dialog that just returns a preset booking info for tests.
  */
 class MockBookingDialog extends BookingDialog {
     constructor() {
@@ -40,7 +41,7 @@ class MockBookingDialog extends BookingDialog {
         const bookingDetails = {
             origin: "New York",
             destination: "Seattle",
-            travelDate: "2025-07-8"
+            travelDate: "2025-07-08"
         }
         await dc.context.sendActivity(`${this.id} mock invoked`);
         return await dc.endDialog(bookingDetails);
@@ -69,6 +70,7 @@ describe('MainDialog', () => {
         const mockBookingDialog = new MockBookingDialogWithPrompt();
         const sut = new MainDialog(mockRecognizer, mockBookingDialog, null);
         const client = new DialogTestClient('test', sut, null, [new DialogTestLogger()]);
+
         const reply = await client.sendActivity('hi');
         assert.strictEqual(reply.text, 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.', 'Did not warn about missing luis');
     });
@@ -78,6 +80,7 @@ describe('MainDialog', () => {
         const mockBookingDialog = new MockBookingDialog();
         const sut = new MainDialog(mockRecognizer, mockBookingDialog, null);
         client = new DialogTestClient('test', sut, null, [new DialogTestLogger()]);
+
         const reply = await client.sendActivity('hi');
         assert.strictEqual(reply.text, 'What can I help you with today?', 'Did not show prompt');
     });
@@ -93,12 +96,13 @@ describe('MainDialog', () => {
         testCases.map(testData => {
             it(testData.intent, async () => {
                 // Create LuisResult for the mock recognizer.
-                const mockResult = JSON.parse(`{"intents": {"${testData.intent}": {"score": 1}}, "entities": {"$instance": {}}}`);
-                const mockRecognizer = new MockFlightBookingRecognizer(true, mockResult);
+                const mockLuisResult = JSON.parse(`{"intents": {"${testData.intent}": {"score": 1}}, "entities": {"$instance": {}}}`);
+                const mockRecognizer = new MockFlightBookingRecognizer(true, mockLuisResult);
                 const bookingDialog = new MockBookingDialog();
                 const sut = new MainDialog(mockRecognizer, bookingDialog, null);
                 const client = new DialogTestClient('test', sut, null, [new DialogTestLogger()]);
 
+                // Execute the test case
                 console.log(`Test Case: ${ testData.intent }`);
                 let reply = await client.sendActivity('Hi');
                 assert.strictEqual(reply.text, 'What can I help you with today?');
@@ -132,17 +136,18 @@ describe('MainDialog', () => {
         testCases.map(testData => {
             it(testData.jsonFile, async () => {
                 // Create LuisResult for the mock recognizer.
-                const flightBookingResult = require(`./testData/${testData.jsonFile}`);
-                const mockRecognizer = new MockFlightBookingRecognizer(true, flightBookingResult);
+                const mockLuisResult = require(`./testData/${testData.jsonFile}`);
+                const mockRecognizer = new MockFlightBookingRecognizer(true, mockLuisResult);
                 const bookingDialog = new MockBookingDialog();
                 const sut = new MainDialog(mockRecognizer, bookingDialog, null);
                 const client = new DialogTestClient('test', sut, null, [new DialogTestLogger()]);
 
+                // Execute the test case
                 console.log(`Test Case: ${ testData.intent }`);
                 let reply = await client.sendActivity('Hi');
                 assert.strictEqual(reply.text, 'What can I help you with today?');
 
-                reply = await client.sendActivity(flightBookingResult.text);
+                reply = await client.sendActivity(mockLuisResult.text);
                 assert.strictEqual(reply.text, testData.expectedMessage);
             });
         });
