@@ -19,11 +19,12 @@ import {
   BotFrameworkAdapterSettings,
   InvokeResponse
 } from './botFrameworkAdapter';
-import { IStreamingTransportServer, ReceiveRequest, RequestHandler, StreamingResponse } from 'botframework-streaming-extensions';
+import { IStreamingTransportServer, ReceiveRequest, RequestHandler, StreamingResponse, NamedPipeServer, WebSocketServer } from 'botframework-streaming-extensions';
 import * as os from 'os';
 // tslint:disable-next-line: no-require-imports
 const pjson: any = require('../package.json');
 import { BotFrameworkStreamingAdapter } from './BotFrameworkStreamingAdapter';
+import { ISocket } from 'botframework-streaming-extensions/lib/WebSocket/ISocket';
 
 export class StreamingRequestHandler implements RequestHandler {
   public bot: ActivityHandler;
@@ -51,9 +52,16 @@ export class StreamingRequestHandler implements RequestHandler {
     this.middleWare = middleWare;
   }
 
-  public setServer(server: IStreamingTransportServer) {
-    this.server = server;
-    this.adapter = new BotFrameworkStreamingAdapter(server, this.adapterSettings);
+  public async startNamedPipeAsync(pipename: string){
+    this.server = new NamedPipeServer(pipename, this);
+    this.adapter = new BotFrameworkStreamingAdapter(this.server, this.adapterSettings);
+    await this.server.startAsync();
+  }
+
+  public async startWebSocketAsync(socket: ISocket){
+    this.server = new WebSocketServer(socket, this);
+    this.adapter = new BotFrameworkStreamingAdapter(this.server, this.adapterSettings);
+    await this.server.startAsync();
   }
 
   public async processRequestAsync(request: ReceiveRequest): Promise<StreamingResponse> {
