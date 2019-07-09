@@ -34,11 +34,11 @@ export class Stream extends Duplex {
       this.push(null);
     } else {
       let total = 0;
-      while(total < size && this.bufferList.length > 0) {
-        let buffer=this.bufferList[0];
+      while (total < size && this.bufferList.length > 0) {
+        let buffer = this.bufferList[0];
         this.push(buffer);
         this.bufferList.splice(0, 1);
-        total+=buffer.length;
+        total += buffer.length;
       }
     }
   }
