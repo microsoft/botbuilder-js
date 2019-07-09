@@ -12,6 +12,8 @@
     "libraries/botframework-schema",
     "libraries/testbot",
     "libraries/botframework-streaming-extensions",
+    "libraries/botframework-streaming-extensions-namedpipe",
+    "libraries/botframework-streaming-extensions-websocket",
     "transcripts"
   ],
   "version": "independent",
