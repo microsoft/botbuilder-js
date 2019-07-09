@@ -103,15 +103,11 @@ export class WebSocketConnector {
     const upgrade = res.claimUpgrade();
     const ws = new Watershed();
     const socket = ws.accept(req, upgrade.socket, upgrade.head);
-
     let handler = new StreamingRequestHandler(this.bot, this.logger, settings, this.middleWare);
-    this.logger.log('Creating socket for WebSocket connection.');
     let nodeSocket = new NodeWebSocket({ serverSocket: socket });
-    this.logger.log('Creating server for WebSocket connection.');
     let server = new WebSocketServer(nodeSocket, handler);
     handler.setServer(server);
     handler.adapterSettings = settings;
-    this.logger.log('Listening on WebSocket server.');
     await server.startAsync();
   }
 }
