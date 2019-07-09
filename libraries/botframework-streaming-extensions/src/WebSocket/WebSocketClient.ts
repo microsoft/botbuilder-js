@@ -7,17 +7,19 @@
  */
 import {
   CancellationToken,
-  IPayloadReceiver,
-  IPayloadSender,
   IStreamingTransportClient,
-  PayloadReceiver,
-  PayloadSender,
   ProtocolAdapter,
   ReceiveResponse,
   Request,
-  RequestHandler,
-  RequestManager
-} from '../../';
+  RequestHandler
+} from '..';
+import { RequestManager } from '../Payloads';
+import {
+  IPayloadReceiver,
+  IPayloadSender,
+  PayloadReceiver,
+  PayloadSender
+} from '../PayloadTransport';
 import { BrowserWebSocket } from './BrowserWebSocket';
 import { NodeWebSocket } from './NodeWebSocket';
 import { WebSocketTransport } from './WebSocketTransport';

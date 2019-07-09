@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { ContentStreamAssembler } from '../Assemblers/ContentStreamAssembler';
+import { Header } from '../Models/Header';
 import { Stream } from '../Stream';
-import { ContentStreamAssembler } from './Assemblers/ContentStreamAssembler';
 import { IStreamManager } from './IStreamManager';
-import { Header } from './Models/Header';
 
 export class StreamManager implements IStreamManager {
   private readonly activeAssemblers = [];

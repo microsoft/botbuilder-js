@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Stream } from '../../Stream';
-import { IStreamManager } from '../IStreamManager';
 import { Header } from '../Models/Header';
+import { IStreamManager } from '../Payloads/IStreamManager';
+import { Stream } from '../Stream';
 import { PayloadAssembler } from './PayloadAssembler';
 
 export class ContentStreamAssembler extends PayloadAssembler {

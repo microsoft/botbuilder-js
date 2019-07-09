@@ -6,10 +6,10 @@
  * Licensed under the MIT License.
  */
 import { CancellationToken } from './CancellationToken';
-import { PayloadAssembler } from './Payloads/Assemblers/PayloadAssembler';
+import { PayloadAssembler } from './Assemblers/PayloadAssembler';
 import { IRequestManager } from './Payloads/IRequestManager';
 import { IStreamManager } from './Payloads/IStreamManager';
-import { Header } from './Payloads/Models/Header';
+import { Header } from './Models/Header';
 import { PayloadAssembleManager } from './Payloads/PayloadAssemblerManager';
 import { SendOperations } from './Payloads/SendOperations';
 import { StreamManager } from './Payloads/StreamManager';

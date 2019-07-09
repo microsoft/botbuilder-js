@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TransportContants } from '../../Transport/TransportConstants';
+import { TransportContants } from '../Transport/TransportConstants';
 
 export class Header {
   public PayloadType: string;

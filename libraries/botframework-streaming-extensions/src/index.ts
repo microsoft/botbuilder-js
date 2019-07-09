@@ -19,54 +19,12 @@ export * from './RequestHandler';
 export * from './Response';
 export * from './Stream';
 
-export * from './PayloadTransport/IPayloadReceiver';
-export * from './PayloadTransport/IPayloadSender';
-export * from './PayloadTransport/PayloadReceiver';
-export * from './PayloadTransport/PayloadSender';
-export * from './PayloadTransport/SendPacket';
-export * from './PayloadTransport/TransportDisconnectedEventArgs';
-export * from './PayloadTransport/TransportDisconnectedEventHandler';
+export * from './Models';
 
-export * from './Payloads/HeaderSerializer';
-export * from './Payloads/IRequestManager';
-export * from './Payloads/IStreamManager';
-export * from './Payloads/PayloadAssemblerManager';
-export * from './Payloads/RequestManager';
-export * from './Payloads/SendOperations';
-export * from './Payloads/StreamManager';
+export * from './Transport';
 
-export * from './Payloads/Assemblers/ContentStreamAssembler';
-export * from './Payloads/Assemblers/PayloadAssembler';
-export * from './Payloads/Assemblers/ReceiveRequestAssembler';
-export * from './Payloads/Assemblers/ReceiveResponseAssembler';
+export * from './NamedPipe';
 
-export * from './Payloads/Disassemblers/CancelDisassembler';
-export * from './Payloads/Disassemblers/HttpContentStreamDisassembler';
-export * from './Payloads/Disassemblers/PayloadDisassembler';
-export * from './Payloads/Disassemblers/RequestDisassembler';
-export * from './Payloads/Disassemblers/ResponseDisassembler';
-export * from './Payloads/Disassemblers/StreamWrapper';
-
-export * from './Payloads/Models/Header';
-export * from './Payloads/Models/PayloadTypes';
-export * from './Payloads/Models/RequestPayload';
-export * from './Payloads/Models/ResponsePayload';
-export * from './Payloads/Models/StreamDescription';
-
-export * from './Transport/ITransport';
-export * from './Transport/ITransportReceiver';
-export * from './Transport/ITransportSender';
-export * from './Transport/TransportConstants';
-
-export * from './Transport/NamedPipe/NamedPipeClient';
-export * from './Transport/NamedPipe/NamedPipeServer';
-export * from './Transport/NamedPipe/NamedPipeTransport';
-
-export * from './Transport/WebSocket/WebSocketClient';
-export * from './Transport/WebSocket/WebSocketServer';
-export * from './Transport/WebSocket/BrowserWebSocket';
-export * from './Transport/WebSocket/NodeWebSocket';
-export * from './Transport/WebSocket/ISocket';
-export * from './Transport/WebSocket/WebSocketTransport';
+export * from './WebSocket';
 
 export * from './Utilities/protocol-base';

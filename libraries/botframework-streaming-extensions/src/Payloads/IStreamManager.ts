@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 import { Stream } from '../Stream';
-import { ContentStreamAssembler } from './Assemblers/ContentStreamAssembler';
-import { Header } from './Models/Header';
+import { ContentStreamAssembler } from '../Assemblers/ContentStreamAssembler';
+import { Header } from '../Models/Header';
 
 export abstract class IStreamManager {
   public abstract getPayloadAssembler(id: string): ContentStreamAssembler;

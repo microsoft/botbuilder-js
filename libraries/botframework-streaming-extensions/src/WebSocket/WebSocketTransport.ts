@@ -5,44 +5,37 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Socket } from 'net';
-import { ITransportReceiver, ITransportSender } from '../../';
+import { ITransportReceiver, ITransportSender } from '..';
+import { ISocket } from './ISocket';
 
-export class NamedPipeTransport implements ITransportSender, ITransportReceiver {
-  public static readonly PipePath: string = '\\\\.\\pipe\\';
-  public static readonly ServerIncomingPath: string = '.incoming';
-  public static readonly ServerOutgoingPath: string = '.outgoing';
+export class WebSocketTransport implements ITransportSender, ITransportReceiver {
+  private _socket: ISocket;
 
-  private _socket: Socket;
   private readonly _queue: Buffer[];
   private _active: Buffer;
   private _activeOffset: number;
   private _activeReceiveResolve: (resolve: Buffer) => void;
   private _activeReceiveReject: (reason?: any) => void;
   private _activeReceiveCount: number;
-  private readonly _name: string;
 
-  constructor(socket: Socket, name: string) {
-    this._socket = socket;
+  constructor(ws: ISocket) {
+    this._socket = ws;
     this._queue = [];
     this._activeOffset = 0;
     this._activeReceiveCount = 0;
-    this._name = name;
-    if (socket) {
-      this._socket.on('data', (data) => {
-        this.socketReceive(data);
-      });
-      this._socket.on('close', () => {
-        this.socketClose();
-      });
-      this._socket.on('error', (err) => {
-        this.socketError(err);
-      });
-    }
+    this._socket.setOnMessageHandler((data) => {
+      this.onReceive(data);
+    });
+    this._socket.setOnErrorHandler((err) => {
+      this.onError(err);
+    });
+    this._socket.setOnCloseHandler(() => {
+      this.onClose();
+    });
   }
 
   public send(buffer: Buffer): number {
-    if (this._socket && !this._socket.connecting && this._socket.writable) {
+    if (this._socket && this._socket.isConnected()) {
       this._socket.write(buffer);
 
       return buffer.length;
@@ -52,25 +45,16 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
   }
 
   public isConnected(): boolean {
-    if (!this._socket) {
-      return false;
-    }
-
-    return !this._socket.destroyed && !this._socket.connecting;
+    return this._socket.isConnected();
   }
 
   public close() {
-    if (this._socket) {
-      this._socket.end('end');
-      this._socket = undefined;
+    if (this._socket && this._socket.isConnected()) {
+      this._socket.closeAsync();
     }
   }
 
-  // Returns:
-  //  0 if the socket is closed or no more data can be returned
-  //  1...count bytes in the buffer
-  /* tslint:disable:promise-function-async promise-must-complete */
-  public receiveAsync(count: number): Promise<Buffer> {
+  public async receiveAsync(count: number): Promise<Buffer> {
     if (this._activeReceiveResolve) {
       throw new Error('Cannot call receiveAsync more than once before it has returned.');
     }
@@ -87,14 +71,14 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     return promise;
   }
 
-  public socketReceive(data: Buffer) {
-    if (this._queue && data && data.length > 0) {
-      this._queue.push(data);
+  public onReceive(data: Buffer) {
+    if (this._queue && data && data.byteLength > 0) {
+      this._queue.push(Buffer.from(data));
       this.trySignalData();
     }
   }
 
-  public socketClose() {
+  public onClose() {
     if (this._activeReceiveReject) {
       this._activeReceiveReject(new Error('Socket was closed.'));
     }
@@ -107,11 +91,11 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     this._socket = undefined;
   }
 
-  public socketError(err: Error) {
+  public onError(err: Error) {
     if (this._activeReceiveReject) {
       this._activeReceiveReject(err);
     }
-    this.socketClose();
+    this.onClose();
   }
 
   private trySignalData(): void {
@@ -129,7 +113,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
 
           this._activeReceiveResolve(buffer);
         } else {
-          // create a new buffer and copy some of the contents into it
+          // create a Buffer.from and copy some of the contents into it
           let available = Math.min(this._activeReceiveCount, this._active.length - this._activeOffset);
           let buffer = Buffer.alloc(available);
           this._active.copy(buffer, 0, this._activeOffset, this._activeOffset + available);

@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TransportDisconnectedEventHandler } from '..';
+import { TransportDisconnectedEventHandler } from '.';
+import { Header } from '../Models/Header';
+import { PayloadTypes } from '../Models/PayloadTypes';
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
-import { Header } from '../Payloads/Models/Header';
-import { PayloadTypes } from '../Payloads/Models/PayloadTypes';
 import { Stream } from '../Stream';
 import { ITransportReceiver } from '../Transport/ITransportReceiver';
 import { TransportContants } from '../Transport/TransportConstants';

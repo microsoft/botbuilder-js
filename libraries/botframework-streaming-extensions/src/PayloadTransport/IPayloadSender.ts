@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Header } from '../Payloads/Models/Header';
+import { Header } from '../Models/Header';
 import { Stream } from '../Stream';
 import { ITransportSender } from '../Transport/ITransportSender';
 import { TransportDisconnectedEventHandler } from './TransportDisconnectedEventHandler';

@@ -7,17 +7,19 @@
  */
 import {
   CancellationToken,
-  IPayloadReceiver,
-  IPayloadSender,
   IStreamingTransportServer,
-  PayloadReceiver,
-  PayloadSender,
   ProtocolAdapter,
   ReceiveResponse,
   Request,
-  RequestHandler,
-  RequestManager
-} from '../../';
+  RequestHandler
+} from '..';
+import { RequestManager } from '../Payloads';
+import {
+  IPayloadReceiver,
+  IPayloadSender,
+  PayloadReceiver,
+  PayloadSender
+} from '../PayloadTransport';
 import { ISocket } from './ISocket';
 import { WebSocketTransport } from './WebSocketTransport';
 
@@ -48,6 +50,7 @@ export class WebSocketServer implements IStreamingTransportServer {
   public async startAsync(): Promise<string> {
     this._sender.connect(this._webSocketTransport);
     this._receiver.connect(this._webSocketTransport);
+
     return new Promise<string>(resolve =>
       this._closedSignal = resolve);
   }
@@ -62,6 +65,6 @@ export class WebSocketServer implements IStreamingTransportServer {
   }
 
   private onConnectionDisocnnected(s: WebSocketServer, sender: object, args: any) {
-    s._closedSignal("close");
+    s._closedSignal('close');
   }
 }

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IPayloadSender } from '../../PayloadTransport/IPayloadSender';
+import { IPayloadSender } from '../PayloadTransport/IPayloadSender';
 import { Header } from '../Models/Header';
 import { PayloadTypes } from '../Models/PayloadTypes';
 

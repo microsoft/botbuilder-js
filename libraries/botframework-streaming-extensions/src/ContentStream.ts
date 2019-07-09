@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ContentStreamAssembler } from './Payloads/Assemblers/ContentStreamAssembler';
+import { ContentStreamAssembler } from './Assemblers/ContentStreamAssembler';
 import { Stream } from './Stream';
 
 export class ContentStream {

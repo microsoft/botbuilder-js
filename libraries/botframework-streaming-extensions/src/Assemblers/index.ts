@@ -1,0 +1,12 @@
+/**
+ * @module botframework-streaming-extensions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+export * from './ContentStreamAssembler';
+export * from './PayloadAssembler';
+export * from './ReceiveRequestAssembler';
+export * from './ReceiveResponseAssembler';

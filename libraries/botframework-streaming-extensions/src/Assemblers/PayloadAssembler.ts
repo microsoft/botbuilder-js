@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Stream } from '../../Stream';
 import { Header } from '../Models/Header';
+import { Stream } from '../Stream';
 
 export abstract class PayloadAssembler {
   public id: string;

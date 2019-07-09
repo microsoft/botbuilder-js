@@ -8,17 +8,19 @@
 import { connect } from 'net';
 import {
   CancellationToken,
-  IPayloadReceiver,
-  IPayloadSender,
   IStreamingTransportClient,
-  PayloadReceiver,
-  PayloadSender,
   ProtocolAdapter,
   ReceiveResponse,
   Request,
-  RequestHandler,
-  RequestManager
-} from '../../';
+  RequestHandler
+} from '..';
+import { RequestManager } from '../Payloads';
+import {
+  IPayloadReceiver,
+  IPayloadSender,
+  PayloadReceiver,
+  PayloadSender
+} from '../PayloadTransport';
 import { NamedPipeTransport as NamedPipeTransport } from './NamedPipeTransport';
 
 export class NamedPipeClient implements IStreamingTransportClient {

@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { Header } from '../Models/Header';
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
-import { Header } from '../Payloads/Models/Header';
 import { Stream } from '../Stream';
 import { ITransportSender } from '../Transport/ITransportSender';
 import { TransportContants } from '../Transport/TransportConstants';

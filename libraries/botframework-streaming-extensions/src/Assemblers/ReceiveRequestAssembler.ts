@@ -5,12 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ContentStream } from '../../ContentStream';
-import { ReceiveRequest } from '../../ReceiveRequest';
-import { Stream } from '../../Stream';
-import { IStreamManager } from '../IStreamManager';
+import { ContentStream } from '../ContentStream';
 import { Header } from '../Models/Header';
 import { RequestPayload } from '../Models/RequestPayload';
+import { IStreamManager } from '../Payloads/IStreamManager';
+import { ReceiveRequest } from '../ReceiveRequest';
+import { Stream } from '../Stream';
 import { ContentStreamAssembler } from './ContentStreamAssembler';
 import { PayloadAssembler } from './PayloadAssembler';
 

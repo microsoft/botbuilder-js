@@ -6,12 +6,12 @@
  * Licensed under the MIT License.
  */
 import { Stream } from '../Stream';
-import { PayloadAssembler } from './Assemblers/PayloadAssembler';
-import { ReceiveRequestAssembler } from './Assemblers/ReceiveRequestAssembler';
-import { ReceiveResponseAssembler } from './Assemblers/ReceiveResponseAssembler';
+import { PayloadAssembler } from '../Assemblers/PayloadAssembler';
+import { ReceiveRequestAssembler } from '../Assemblers/ReceiveRequestAssembler';
+import { ReceiveResponseAssembler } from '../Assemblers/ReceiveResponseAssembler';
 import { IStreamManager } from './IStreamManager';
-import { Header } from './Models/Header';
-import { PayloadTypes } from './Models/PayloadTypes';
+import { Header } from '../Models/Header';
+import { PayloadTypes } from '../Models/PayloadTypes';
 
 export class PayloadAssembleManager {
   private readonly onReceiveRequest;

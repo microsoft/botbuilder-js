@@ -8,11 +8,11 @@
 import { IPayloadSender } from '../PayloadTransport/IPayloadSender';
 import { Request } from '../Request';
 import { Response } from '../Response';
-import { CancelDisassembler } from './Disassemblers/CancelDisassembler';
-import { HttpContentStreamDisassembler } from './Disassemblers/HttpContentStreamDisassembler';
-import { RequestDisassembler } from './Disassemblers/RequestDisassembler';
-import { ResponseDisassembler } from './Disassemblers/ResponseDisassembler';
-import { PayloadTypes } from './Models/PayloadTypes';
+import { CancelDisassembler } from '../Disassemblers/CancelDisassembler';
+import { HttpContentStreamDisassembler } from '../Disassemblers/HttpContentStreamDisassembler';
+import { RequestDisassembler } from '../Disassemblers/RequestDisassembler';
+import { ResponseDisassembler } from '../Disassemblers/ResponseDisassembler';
+import { PayloadTypes } from '../Models/PayloadTypes';
 
 export class SendOperations {
   private readonly payloadSender: IPayloadSender;

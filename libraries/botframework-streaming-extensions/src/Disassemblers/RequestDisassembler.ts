@@ -5,33 +5,32 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IPayloadSender } from '../../PayloadTransport/IPayloadSender';
-import { Response } from '../../Response';
 import { PayloadTypes } from '../Models/PayloadTypes';
-import { ResponsePayload } from '../Models/ResponsePayload';
+import { RequestPayload } from '../Models/RequestPayload';
 import { StreamDescription } from '../Models/StreamDescription';
+import { IPayloadSender } from '../PayloadTransport/IPayloadSender';
+import { Request } from '../Request';
 import { PayloadDisassembler } from './PayloadDisassembler';
 import { StreamWrapper } from './StreamWrapper';
 
-export class ResponseDisassembler extends PayloadDisassembler {
-  public readonly response: Response;
-  public readonly payloadType: PayloadTypes = PayloadTypes.response;
+export class RequestDisassembler extends PayloadDisassembler {
+  public request: Request;
+  public payloadType: PayloadTypes = PayloadTypes.request;
 
-  constructor(sender: IPayloadSender, id: string, response: Response) {
+  constructor(sender: IPayloadSender, id: string, request: Request) {
     super(sender, id);
-
-    this.response = response;
+    this.request = request;
   }
 
   public async getStream(): Promise<StreamWrapper> {
-    let payload: ResponsePayload = new ResponsePayload(this.response.statusCode);
+    let payload: RequestPayload = new RequestPayload(this.request.Verb, this.request.Path);
 
-    if (this.response.streams) {
+    if (this.request.Streams) {
       payload.streams = [];
 
       // tslint:disable-next-line: prefer-for-of
-      for (let i = 0; i < this.response.streams.length; i++) {
-        let contentStream = this.response.streams[i];
+      for (let i = 0; i < this.request.Streams.length; i++) {
+        let contentStream = this.request.Streams[i];
         let description: StreamDescription = await PayloadDisassembler.getStreamDescription(contentStream);
         payload.streams.push(description);
       }
