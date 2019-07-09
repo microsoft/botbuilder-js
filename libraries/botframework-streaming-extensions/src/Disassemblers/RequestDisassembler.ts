@@ -9,15 +9,15 @@ import { PayloadTypes } from '../Models/PayloadTypes';
 import { RequestPayload } from '../Models/RequestPayload';
 import { StreamDescription } from '../Models/StreamDescription';
 import { IPayloadSender } from '../PayloadTransport/IPayloadSender';
-import { Request } from '../StreamingRequest';
+import { StreamingRequest } from '../StreamingRequest';
 import { PayloadDisassembler } from './PayloadDisassembler';
 import { StreamWrapper } from './StreamWrapper';
 
 export class RequestDisassembler extends PayloadDisassembler {
-  public request: Request;
+  public request: StreamingRequest;
   public payloadType: PayloadTypes = PayloadTypes.request;
 
-  constructor(sender: IPayloadSender, id: string, request: Request) {
+  constructor(sender: IPayloadSender, id: string, request: StreamingRequest) {
     super(sender, id);
     this.request = request;
   }

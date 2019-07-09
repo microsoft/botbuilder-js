@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { IPayloadSender } from '../PayloadTransport/IPayloadSender';
-import { Request } from '../StreamingRequest';
+import { StreamingRequest } from '../StreamingRequest';
 import { Response } from '../Response';
 import { CancelDisassembler } from '../Disassemblers/CancelDisassembler';
 import { HttpContentStreamDisassembler } from '../Disassemblers/HttpContentStreamDisassembler';
@@ -21,7 +21,7 @@ export class SendOperations {
     this.payloadSender = payloadSender;
   }
 
-  public async sendRequestAsync(id: string, request: Request): Promise<void> {
+  public async sendRequestAsync(id: string, request: StreamingRequest): Promise<void> {
     let disassembler = new RequestDisassembler(this.payloadSender, id, request);
 
     await disassembler.disassemble();

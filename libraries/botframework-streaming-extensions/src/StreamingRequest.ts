@@ -8,7 +8,7 @@
 import { HttpContent, HttpContentStream } from './HttpContentStream';
 import { Stream } from './Stream';
 
-export class Request {
+export class StreamingRequest {
   /// <summary>
   /// Request verb, null on responses
   /// </summary>
@@ -24,8 +24,8 @@ export class Request {
   /// </summary>
   public Streams: HttpContentStream[];
 
-  public static create(method: string, route?: string, body?: HttpContent): Request {
-    let request = new Request();
+  public static create(method: string, route?: string, body?: HttpContent): StreamingRequest {
+    let request = new StreamingRequest();
     request.Verb = method;
     request.Path = route;
     if (body) {

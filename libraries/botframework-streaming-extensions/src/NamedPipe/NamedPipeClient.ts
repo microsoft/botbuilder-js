@@ -11,7 +11,7 @@ import {
   IStreamingTransportClient,
   ProtocolAdapter,
   ReceiveResponse,
-  Request,
+  StreamingRequest,
   RequestHandler
 } from '..';
 import { RequestManager } from '../Payloads';
@@ -66,7 +66,7 @@ export class NamedPipeClient implements IStreamingTransportClient {
     this._receiver.disconnect(undefined);
   }
 
-  public async sendAsync(request: Request, cancellationToken: CancellationToken): Promise<ReceiveResponse> {
+  public async sendAsync(request: StreamingRequest, cancellationToken: CancellationToken): Promise<ReceiveResponse> {
     return this._protocolAdapter.sendRequestAsync(request, cancellationToken);
   }
 

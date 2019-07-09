@@ -7,10 +7,10 @@
  */
 import { CancellationToken } from './CancellationToken';
 import { ReceiveResponse } from './ReceiveResponse';
-import { Request } from './StreamingRequest';
+import { StreamingRequest } from './StreamingRequest';
 
 export interface IStreamingTransportServer {
   startAsync(): Promise<string>;
   disconnect(): void;
-  sendAsync(request: Request, cancellationToken: CancellationToken): Promise<ReceiveResponse>;
+  sendAsync(request: StreamingRequest, cancellationToken: CancellationToken): Promise<ReceiveResponse>;
 }

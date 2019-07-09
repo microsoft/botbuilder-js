@@ -17,7 +17,7 @@ import { IPayloadReceiver } from './PayloadTransport/IPayloadReceiver';
 import { IPayloadSender } from './PayloadTransport/IPayloadSender';
 import { ReceiveRequest } from './ReceiveRequest';
 import { ReceiveResponse } from './ReceiveResponse';
-import { Request } from './StreamingRequest';
+import { StreamingRequest } from './StreamingRequest';
 import { RequestHandler } from './RequestHandler';
 import { Stream } from './Stream';
 import { generateGuid } from './Utilities/protocol-base';
@@ -43,7 +43,7 @@ export class ProtocolAdapter {
     this.payloadReceiver.subscribe((header: Header) => this.assemblerManager.getPayloadStream(header), (header: Header, contentStream: Stream, contentLength: number) => this.assemblerManager.onReceive(header, contentStream, contentLength));
   }
 
-  public async sendRequestAsync(request: Request, cancellationToken?: CancellationToken): Promise<ReceiveResponse> {
+  public async sendRequestAsync(request: StreamingRequest, cancellationToken?: CancellationToken): Promise<ReceiveResponse> {
     let requestId: string = generateGuid();
 
     await this.sendOperations.sendRequestAsync(requestId, request);
