@@ -107,7 +107,7 @@ export class WebSocketConnector {
     let nodeSocket = new NodeWebSocket({ serverSocket: socket });
     let server = new WebSocketServer(nodeSocket, handler);
     handler.setServer(server);
-    handler.adapterSettings = settings;
+    
     await server.startAsync();
   }
 }
