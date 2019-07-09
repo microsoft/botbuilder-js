@@ -49,7 +49,6 @@ export class RequestManager implements IRequestManager {
     pendingRequest.requestId = requestId;
     pendingRequest.cancellationToken = cancellationToken;
 
-    /* tslint:disable:promise-must-complete */
     let promise = new Promise<ReceiveResponse>((resolve, reject) => {
       pendingRequest.resolve = resolve;
       pendingRequest.reject = reject;

@@ -7,7 +7,7 @@
  */
 import { CancellationToken } from './CancellationToken';
 import { ReceiveResponse } from './ReceiveResponse';
-import { Request } from './Request';
+import { Request } from './StreamingRequest';
 
 export interface IStreamingTransportServer {
   startAsync(): Promise<string>;

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { IPayloadSender } from '../PayloadTransport/IPayloadSender';
-import { Request } from '../Request';
+import { Request } from '../StreamingRequest';
 import { Response } from '../Response';
 import { CancelDisassembler } from '../Disassemblers/CancelDisassembler';
 import { HttpContentStreamDisassembler } from '../Disassemblers/HttpContentStreamDisassembler';

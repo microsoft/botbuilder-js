@@ -17,7 +17,7 @@ import { IPayloadReceiver } from './PayloadTransport/IPayloadReceiver';
 import { IPayloadSender } from './PayloadTransport/IPayloadSender';
 import { ReceiveRequest } from './ReceiveRequest';
 import { ReceiveResponse } from './ReceiveResponse';
-import { Request } from './Request';
+import { Request } from './StreamingRequest';
 import { RequestHandler } from './RequestHandler';
 import { Stream } from './Stream';
 import { generateGuid } from './Utilities/protocol-base';

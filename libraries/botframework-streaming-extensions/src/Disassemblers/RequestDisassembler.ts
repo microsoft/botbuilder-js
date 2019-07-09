@@ -9,7 +9,7 @@ import { PayloadTypes } from '../Models/PayloadTypes';
 import { RequestPayload } from '../Models/RequestPayload';
 import { StreamDescription } from '../Models/StreamDescription';
 import { IPayloadSender } from '../PayloadTransport/IPayloadSender';
-import { Request } from '../Request';
+import { Request } from '../StreamingRequest';
 import { PayloadDisassembler } from './PayloadDisassembler';
 import { StreamWrapper } from './StreamWrapper';
 

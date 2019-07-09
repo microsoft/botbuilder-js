@@ -14,7 +14,7 @@ export * from './IStreamingTransportServer';
 export * from './ProtocolAdapter';
 export * from './ReceiveRequest';
 export * from './ReceiveResponse';
-export * from './Request';
+export * from './StreamingRequest';
 export * from './RequestHandler';
 export * from './Response';
 export * from './Stream';
