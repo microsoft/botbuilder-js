@@ -26,6 +26,9 @@ const pjson: any = require('../package.json');
 import { BotFrameworkStreamingAdapter } from './BotFrameworkStreamingAdapter';
 import { ISocket } from 'botframework-streaming-extensions/lib/WebSocket/ISocket';
 
+/// <summary>
+/// Used to process incoming requests sent over an <see cref="IStreamingTransport"/> and adhering to the Bot Framework Protocol v3 with Streaming Extensions.
+/// </summary>
 export class StreamingRequestHandler implements RequestHandler {
   public bot: ActivityHandler;
   public adapterSettings: BotFrameworkAdapterSettings;
@@ -34,6 +37,17 @@ export class StreamingRequestHandler implements RequestHandler {
   public adapter: BotFrameworkStreamingAdapter;
   public middleWare: (MiddlewareHandler|Middleware)[];
 
+  /// <summary>
+  /// Initializes a new instance of the <see cref="StreamingRequestHandler"/> class.
+  /// The StreamingRequestHandler serves as a translation layer between the transport layer and bot adapter.
+  /// It receives ReceiveRequests from the transport and provides them to the bot adapter in a form
+  /// it is able to build activities out of, which are then handed to the bot itself to processed.
+  /// Throws error if arguments are null.
+  /// </summary>
+  /// <param name="bot">The bot to be used for all requests to this handler.</param>
+  /// <param name="logger">Optional logger, defaults to console.</param>
+  /// <param name="settings">The settings for use with the BotFrameworkAdapter.</param>
+  /// <param name="middlewareSet">An optional set of middleware to register with the adapter.</param>
   constructor(bot: ActivityHandler, logger?, settings?: BotFrameworkAdapterSettings, middleWare?: (MiddlewareHandler|Middleware)[]) {
 
     if (bot === undefined) {
@@ -52,20 +66,34 @@ export class StreamingRequestHandler implements RequestHandler {
     this.middleWare = middleWare;
   }
 
+  /// <summary>
+  /// Connects the handler to a Named Pipe server and begins listening for incoming requests.
+  /// </summary>
+  /// <param name="pipeName">The name of the named pipe to use when creating the server.</param>
   public async startNamedPipeAsync(pipename: string){
     this.server = new NamedPipeServer(pipename, this);
     this.adapter = new BotFrameworkStreamingAdapter(this.server, this.adapterSettings);
     await this.server.startAsync();
   }
 
+  /// <summary>
+  /// Connects the handler to a WebSocket server and begins listening for incoming requests.
+  /// </summary>
+  /// <param name="socket">The socket to use when creating the server.</param>
   public async startWebSocketAsync(socket: ISocket){
     this.server = new WebSocketServer(socket, this);
     this.adapter = new BotFrameworkStreamingAdapter(this.server, this.adapterSettings);
     await this.server.startAsync();
   }
 
-  public async processRequestAsync(request: ReceiveRequest): Promise<StreamingResponse> {
 
+  /// <summary>
+  /// Checks the validity of the request and attempts to map it the correct virtual endpoint,
+  /// then generates and returns a response if appropriate.
+  /// </summary>
+  /// <param name="request">A ReceiveRequest from the connected channel.</param>
+  /// <returns>A response created by the BotAdapter to be sent to the client that originated the request.</returns>
+  public async processRequestAsync(request: ReceiveRequest): Promise<StreamingResponse> {
     let response = new StreamingResponse();
     let body = await this.readRequestBodyAsString(request);
     if (body === undefined || request.Streams === undefined) {
@@ -137,7 +165,7 @@ export class StreamingRequestHandler implements RequestHandler {
     return response;
   }
 
-  public async readRequestBodyAsString(request: ReceiveRequest): Promise<Activity> {
+  private async readRequestBodyAsString(request: ReceiveRequest): Promise<Activity> {
     if (request.Streams !== undefined && request.Streams[0] !== undefined) {
       let contentStream =  request.Streams[0];
       try {

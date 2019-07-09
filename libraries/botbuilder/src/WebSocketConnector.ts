@@ -27,41 +27,33 @@ export class WebSocketConnector {
   private readonly bot: ActivityHandler;
   private readonly middleWare: (MiddlewareHandler|Middleware)[];
 
+  /// <summary>
+  /// Initializes a new instance of the <see cref="WebSocketConnector"/> class.
+  /// Constructor for use when establishing a connection with a WebSocket server.
+  /// </summary>
+  /// <param name="bot">The bot to use when processing requests on this connection.</param>
+  /// <param name="logger">Optional logger.</param>
+  /// <param name="middleware">Optional collection of middleware.</param>
   constructor(bot: ActivityHandler, logger?, middleWare?: (MiddlewareHandler|Middleware)[]) {
-    if (logger === undefined) {
-      this.logger = console;
-    }
-
     if (bot === undefined) {
       throw new Error('Undefined Argument: Bot can not be undefined.');
     } else {
       this.bot = bot;
     }
 
+    if (logger === undefined) {
+      this.logger = console;
+    }
+
     this.middleWare = middleWare;
   }
 
-  public async authenticateConnection(req: WebRequest, appId?: string, appPassword?: string, channelService?: string): Promise<Boolean> {
-    if (!appId || !appPassword) {
-      // auth is disabled
-      return true;
-    }
-
-    try {
-      let authHeader: string = req.headers.authorization || req.headers.Authorization || '';
-      let channelIdHeader: string = req.headers.channelid || req.headers.ChannelId || req.headers.ChannelID || '';
-      let credentials = new MicrosoftAppCredentials(appId, appPassword);
-      let credentialProvider = new SimpleCredentialProvider(credentials.appId, credentials.appPassword);
-      let claims = await JwtTokenValidation.validateAuthHeader(authHeader, credentialProvider, channelService, channelIdHeader);
-
-      return claims.isAuthenticated;
-    } catch (error) {
-      this.logger.log(error);
-
-      return false;
-    }
-  }
-
+  /// <summary>
+  /// Process the initial request to establish a long lived connection via a streaming server.
+  /// </summary>
+  /// <param name="req">The connection request.</param>
+  /// <param name="res">The response sent on error or connection termination.</param>
+  /// <param name="settings">Settings to set on the BotframeworkAdapter.</param>
   public async processAsync(req, res, settings: BotFrameworkAdapterSettings) {
     if (!res.claimUpgrade) {
       let e = new Error('Upgrade to WebSockets required.');
@@ -104,5 +96,26 @@ export class WebSocketConnector {
     let handler = new StreamingRequestHandler(this.bot, this.logger, settings, this.middleWare);
 
     await handler.startWebSocketAsync(socket);
+  }
+
+  private async authenticateConnection(req: WebRequest, appId?: string, appPassword?: string, channelService?: string): Promise<Boolean> {
+    if (!appId || !appPassword) {
+      // auth is disabled
+      return true;
+    }
+
+    try {
+      let authHeader: string = req.headers.authorization || req.headers.Authorization || '';
+      let channelIdHeader: string = req.headers.channelid || req.headers.ChannelId || req.headers.ChannelID || '';
+      let credentials = new MicrosoftAppCredentials(appId, appPassword);
+      let credentialProvider = new SimpleCredentialProvider(credentials.appId, credentials.appPassword);
+      let claims = await JwtTokenValidation.validateAuthHeader(authHeader, credentialProvider, channelService, channelIdHeader);
+
+      return claims.isAuthenticated;
+    } catch (error) {
+      this.logger.log(error);
+
+      return false;
+    }
   }
 }
