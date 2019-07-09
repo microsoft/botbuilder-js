@@ -21,8 +21,7 @@ export class ContentStream {
     this.assembler = assembler;
   }
 
-// tslint:disable-next-line: no-reserved-keywords
-  public get type(): string {
+  public get contentType(): string {
     return this.assembler.contentType;
   }
 
@@ -62,9 +61,6 @@ export class ContentStream {
     let allData = obj['bufferArray'];
 // tslint:disable-next-line: no-string-literal
     let count = obj['size'];
-
-    // TODO: There's got to be a better way to do this.
-    // Will revisit this after the big attachment problem is resolved.
     let s = Buffer.alloc(count);
     let ptr = 0;
 // tslint:disable-next-line: prefer-for-of
