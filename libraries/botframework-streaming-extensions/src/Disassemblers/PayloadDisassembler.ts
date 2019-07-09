@@ -29,10 +29,10 @@ export abstract class PayloadDisassembler {
     let description: StreamDescription = new StreamDescription(stream.id);
 
     if (stream.content.headers) {
-      description.type = stream.content.headers.contentType;
+      description.contentType = stream.content.headers.contentType;
       description.length = stream.content.headers.contentLength;
     } else {
-      description.type = 'unknown';
+      description.contentType = 'unknown';
       description.length = 0;
     }
 
