@@ -9,15 +9,15 @@ import { PayloadTypes } from '../Models/PayloadTypes';
 import { ResponsePayload } from '../Models/ResponsePayload';
 import { StreamDescription } from '../Models/StreamDescription';
 import { IPayloadSender } from '../PayloadTransport/IPayloadSender';
-import { Response } from '../Response';
+import { StreamingResponse } from '../StreamingResponse';
 import { PayloadDisassembler } from './PayloadDisassembler';
 import { StreamWrapper } from './StreamWrapper';
 
 export class ResponseDisassembler extends PayloadDisassembler {
-  public readonly response: Response;
+  public readonly response: StreamingResponse;
   public readonly payloadType: PayloadTypes = PayloadTypes.response;
 
-  constructor(sender: IPayloadSender, id: string, response: Response) {
+  constructor(sender: IPayloadSender, id: string, response: StreamingResponse) {
     super(sender, id);
 
     this.response = response;

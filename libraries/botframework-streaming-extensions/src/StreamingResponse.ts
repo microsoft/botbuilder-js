@@ -8,12 +8,12 @@
 import { HttpContent, HttpContentStream } from './HttpContentStream';
 import { Stream } from './Stream';
 
-export class Response {
+export class StreamingResponse {
   public statusCode: number;
   public streams: HttpContentStream[];
 
-  public static create(statusCode: number, body?: HttpContent): Response {
-    let response = new Response();
+  public static create(statusCode: number, body?: HttpContent): StreamingResponse {
+    let response = new StreamingResponse();
     response.statusCode = statusCode;
     if (body) {
       response.addStream(body);

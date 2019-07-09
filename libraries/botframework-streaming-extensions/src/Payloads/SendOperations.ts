@@ -7,7 +7,7 @@
  */
 import { IPayloadSender } from '../PayloadTransport/IPayloadSender';
 import { StreamingRequest } from '../StreamingRequest';
-import { Response } from '../Response';
+import { StreamingResponse } from '../StreamingResponse';
 import { CancelDisassembler } from '../Disassemblers/CancelDisassembler';
 import { HttpContentStreamDisassembler } from '../Disassemblers/HttpContentStreamDisassembler';
 import { RequestDisassembler } from '../Disassemblers/RequestDisassembler';
@@ -33,7 +33,7 @@ export class SendOperations {
     }
   }
 
-  public async sendResponseAsync(id: string, response: Response): Promise<void> {
+  public async sendResponseAsync(id: string, response: StreamingResponse): Promise<void> {
     let disassembler = new ResponseDisassembler(this.payloadSender, id, response);
 
     await disassembler.disassemble();

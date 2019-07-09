@@ -19,7 +19,7 @@ import {
   BotFrameworkAdapterSettings,
   InvokeResponse
 } from './botFrameworkAdapter';
-import { IStreamingTransportServer, ReceiveRequest, RequestHandler, Response } from 'botframework-streaming-extensions';
+import { IStreamingTransportServer, ReceiveRequest, RequestHandler, StreamingResponse } from 'botframework-streaming-extensions';
 import * as os from 'os';
 // tslint:disable-next-line: no-require-imports
 const pjson: any = require('../package.json');
@@ -56,9 +56,9 @@ export class StreamingRequestHandler implements RequestHandler {
     this.adapter = new BotFrameworkStreamingAdapter(server, this.adapterSettings);
   }
 
-  public async processRequestAsync(request: ReceiveRequest): Promise<Response> {
+  public async processRequestAsync(request: ReceiveRequest): Promise<StreamingResponse> {
 
-    let response = new Response();
+    let response = new StreamingResponse();
     let body = await this.readRequestBodyAsString(request);
     if (body === undefined || request.Streams === undefined) {
       response.statusCode = 400;

@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 import { ReceiveRequest } from './ReceiveRequest';
-import { Response } from './Response';
+import { StreamingResponse } from './StreamingResponse';
 
 export abstract class RequestHandler {
-  public abstract processRequestAsync(request: ReceiveRequest, logger?): Promise<Response>;
+  public abstract processRequestAsync(request: ReceiveRequest, logger?): Promise<StreamingResponse>;
 }
