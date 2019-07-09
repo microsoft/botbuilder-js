@@ -19,8 +19,6 @@ import {
   MicrosoftAppCredentials,
   SimpleCredentialProvider
 } from 'botframework-connector';
-
-import { NodeWebSocket, WebSocketServer } from 'botframework-streaming-extensions';
 import { Watershed } from 'watershed';
 import { StreamingRequestHandler } from './StreamingRequestHandler';
 
@@ -104,10 +102,7 @@ export class WebSocketConnector {
     const ws = new Watershed();
     const socket = ws.accept(req, upgrade.socket, upgrade.head);
     let handler = new StreamingRequestHandler(this.bot, this.logger, settings, this.middleWare);
-    let nodeSocket = new NodeWebSocket({ serverSocket: socket });
-    let server = new WebSocketServer(nodeSocket, handler);
-    handler.setServer(server);
-    
-    await server.startAsync();
+
+    await handler.startWebSocketAsync(socket);
   }
 }
