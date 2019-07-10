@@ -20,14 +20,17 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
   private _activeReceiveResolve: (resolve: Buffer) => void;
   private _activeReceiveReject: (reason?: any) => void;
   private _activeReceiveCount: number;
-  private readonly _name: string;
 
-  constructor(socket: Socket, name: string) {
+  /// <summary>
+  /// Creates a new instance of the NamedPipeTransport class.
+  /// </summary>
+  /// <param name="socket">The socket object to build this connection on.</param>
+  /// <param name="name">An identifier for this </param>
+  constructor(socket: Socket) {
     this._socket = socket;
     this._queue = [];
     this._activeOffset = 0;
     this._activeReceiveCount = 0;
-    this._name = name;
     if (socket) {
       this._socket.on('data', (data) => {
         this.socketReceive(data);
