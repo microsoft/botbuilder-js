@@ -389,7 +389,7 @@ export class ExpressionParser extends Parser {
 			let _alt: number;
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 51;
+			this.state = 50;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case ExpressionParser.T__17:
@@ -441,7 +441,7 @@ export class ExpressionParser extends Parser {
 			case ExpressionParser.T__22:
 			case ExpressionParser.T__23:
 				{
-				_localctx = new ShortHandExpContext(_localctx);
+				_localctx = new ShorthandAtomContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
 				this.state = 49;
@@ -456,15 +456,13 @@ export class ExpressionParser extends Parser {
 					this._errHandler.reportMatch(this);
 					this.consume();
 				}
-				this.state = 50;
-				this.match(ExpressionParser.IDENTIFIER);
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
 			this._ctx._stop = this._input.tryLT(-1);
-			this.state = 69;
+			this.state = 70;
 			this._errHandler.sync(this);
 			_alt = this.interpreter.adaptivePredict(this._input, 6, this._ctx);
 			while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
@@ -474,69 +472,82 @@ export class ExpressionParser extends Parser {
 					}
 					_prevctx = _localctx;
 					{
-					this.state = 67;
+					this.state = 68;
 					this._errHandler.sync(this);
 					switch ( this.interpreter.adaptivePredict(this._input, 5, this._ctx) ) {
 					case 1:
 						{
-						_localctx = new MemberAccessExpContext(new PrimaryExpressionContext(_parentctx, _parentState));
+						_localctx = new ShorthandAccessorExpContext(new PrimaryExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionParser.RULE_primaryExpression);
-						this.state = 53;
-						if (!(this.precpred(this._ctx, 3))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 3)");
+						this.state = 52;
+						if (!(this.precpred(this._ctx, 4))) {
+							throw new FailedPredicateException(this, "this.precpred(this._ctx, 4)");
 						}
-						this.state = 54;
-						this.match(ExpressionParser.T__24);
-						this.state = 55;
+						this.state = 53;
 						this.match(ExpressionParser.IDENTIFIER);
 						}
 						break;
 
 					case 2:
 						{
-						_localctx = new FuncInvokeExpContext(new PrimaryExpressionContext(_parentctx, _parentState));
+						_localctx = new MemberAccessExpContext(new PrimaryExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionParser.RULE_primaryExpression);
+						this.state = 54;
+						if (!(this.precpred(this._ctx, 3))) {
+							throw new FailedPredicateException(this, "this.precpred(this._ctx, 3)");
+						}
+						this.state = 55;
+						this.match(ExpressionParser.T__24);
 						this.state = 56;
-						if (!(this.precpred(this._ctx, 2))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 2)");
-						}
-						this.state = 57;
-						this.match(ExpressionParser.T__17);
-						this.state = 59;
-						this._errHandler.sync(this);
-						_la = this._input.LA(1);
-						if ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ExpressionParser.T__0) | (1 << ExpressionParser.T__1) | (1 << ExpressionParser.T__2) | (1 << ExpressionParser.T__3) | (1 << ExpressionParser.T__6) | (1 << ExpressionParser.T__17) | (1 << ExpressionParser.T__19) | (1 << ExpressionParser.T__20) | (1 << ExpressionParser.T__21) | (1 << ExpressionParser.T__22) | (1 << ExpressionParser.T__23) | (1 << ExpressionParser.NUMBER) | (1 << ExpressionParser.IDENTIFIER))) !== 0) || _la === ExpressionParser.STRING) {
-							{
-							this.state = 58;
-							this.argsList();
-							}
-						}
-
-						this.state = 61;
-						this.match(ExpressionParser.T__18);
+						this.match(ExpressionParser.IDENTIFIER);
 						}
 						break;
 
 					case 3:
 						{
+						_localctx = new FuncInvokeExpContext(new PrimaryExpressionContext(_parentctx, _parentState));
+						this.pushNewRecursionContext(_localctx, _startState, ExpressionParser.RULE_primaryExpression);
+						this.state = 57;
+						if (!(this.precpred(this._ctx, 2))) {
+							throw new FailedPredicateException(this, "this.precpred(this._ctx, 2)");
+						}
+						this.state = 58;
+						this.match(ExpressionParser.T__17);
+						this.state = 60;
+						this._errHandler.sync(this);
+						_la = this._input.LA(1);
+						if ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ExpressionParser.T__0) | (1 << ExpressionParser.T__1) | (1 << ExpressionParser.T__2) | (1 << ExpressionParser.T__3) | (1 << ExpressionParser.T__6) | (1 << ExpressionParser.T__17) | (1 << ExpressionParser.T__19) | (1 << ExpressionParser.T__20) | (1 << ExpressionParser.T__21) | (1 << ExpressionParser.T__22) | (1 << ExpressionParser.T__23) | (1 << ExpressionParser.NUMBER) | (1 << ExpressionParser.IDENTIFIER))) !== 0) || _la === ExpressionParser.STRING) {
+							{
+							this.state = 59;
+							this.argsList();
+							}
+						}
+
+						this.state = 62;
+						this.match(ExpressionParser.T__18);
+						}
+						break;
+
+					case 4:
+						{
 						_localctx = new IndexAccessExpContext(new PrimaryExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionParser.RULE_primaryExpression);
-						this.state = 62;
+						this.state = 63;
 						if (!(this.precpred(this._ctx, 1))) {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 1)");
 						}
-						this.state = 63;
-						this.match(ExpressionParser.T__25);
 						this.state = 64;
-						this.expression(0);
+						this.match(ExpressionParser.T__25);
 						this.state = 65;
+						this.expression(0);
+						this.state = 66;
 						this.match(ExpressionParser.T__26);
 						}
 						break;
 					}
 					}
 				}
-				this.state = 71;
+				this.state = 72;
 				this._errHandler.sync(this);
 				_alt = this.interpreter.adaptivePredict(this._input, 6, this._ctx);
 			}
@@ -564,21 +575,21 @@ export class ExpressionParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 72;
+			this.state = 73;
 			this.expression(0);
-			this.state = 77;
+			this.state = 78;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === ExpressionParser.T__27) {
 				{
 				{
-				this.state = 73;
-				this.match(ExpressionParser.T__27);
 				this.state = 74;
+				this.match(ExpressionParser.T__27);
+				this.state = 75;
 				this.expression(0);
 				}
 				}
-				this.state = 79;
+				this.state = 80;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -640,56 +651,59 @@ export class ExpressionParser extends Parser {
 	private primaryExpression_sempred(_localctx: PrimaryExpressionContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 8:
-			return this.precpred(this._ctx, 3);
+			return this.precpred(this._ctx, 4);
 
 		case 9:
-			return this.precpred(this._ctx, 2);
+			return this.precpred(this._ctx, 3);
 
 		case 10:
+			return this.precpred(this._ctx, 2);
+
+		case 11:
 			return this.precpred(this._ctx, 1);
 		}
 		return true;
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03#S\x04\x02\t\x02" +
+		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03#T\x04\x02\t\x02" +
 		"\x04\x03\t\x03\x04\x04\t\x04\x03\x02\x03\x02\x03\x02\x03\x02\x05\x02\r" +
 		"\n\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02" +
 		"\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02" +
 		"\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x07\x02\'\n\x02" +
 		"\f\x02\x0E\x02*\v\x02\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03" +
-		"\x03\x03\x03\x03\x03\x03\x03\x03\x05\x036\n\x03\x03\x03\x03\x03\x03\x03" +
-		"\x03\x03\x03\x03\x03\x03\x05\x03>\n\x03\x03\x03\x03\x03\x03\x03\x03\x03" +
-		"\x03\x03\x03\x03\x07\x03F\n\x03\f\x03\x0E\x03I\v\x03\x03\x04\x03\x04\x03" +
-		"\x04\x07\x04N\n\x04\f\x04\x0E\x04Q\v\x04\x03\x04\x02\x02\x04\x02\x04\x05" +
-		"\x02\x02\x04\x02\x06\x02\x02\b\x03\x02\x03\x05\x03\x02\x07\t\x03\x02\x04" +
-		"\x05\x03\x02\n\f\x03\x02\x0E\x11\x05\x02\x06\x06\t\t\x16\x1Aa\x02\f\x03" +
-		"\x02\x02\x02\x045\x03\x02\x02\x02\x06J\x03\x02\x02\x02\b\t\b\x02\x01\x02" +
-		"\t\n\t\x02\x02\x02\n\r\x05\x02\x02\f\v\r\x05\x04\x03\x02\f\b\x03\x02\x02" +
-		"\x02\f\v\x03\x02\x02\x02\r(\x03\x02\x02\x02\x0E\x0F\f\v\x02\x02\x0F\x10" +
-		"\x07\x06\x02\x02\x10\'\x05\x02\x02\v\x11\x12\f\n\x02\x02\x12\x13\t\x03" +
-		"\x02\x02\x13\'\x05\x02\x02\v\x14\x15\f\t\x02\x02\x15\x16\t\x04\x02\x02" +
-		"\x16\'\x05\x02\x02\n\x17\x18\f\b\x02\x02\x18\x19\t\x05\x02\x02\x19\'\x05" +
-		"\x02\x02\t\x1A\x1B\f\x07\x02\x02\x1B\x1C\x07\r\x02\x02\x1C\'\x05\x02\x02" +
-		"\b\x1D\x1E\f\x06\x02\x02\x1E\x1F\t\x06\x02\x02\x1F\'\x05\x02\x02\x07 " +
-		"!\f\x05\x02\x02!\"\x07\x12\x02\x02\"\'\x05\x02\x02\x06#$\f\x04\x02\x02" +
-		"$%\x07\x13\x02\x02%\'\x05\x02\x02\x05&\x0E\x03\x02\x02\x02&\x11\x03\x02" +
-		"\x02\x02&\x14\x03\x02\x02\x02&\x17\x03\x02\x02\x02&\x1A\x03\x02\x02\x02" +
-		"&\x1D\x03\x02\x02\x02& \x03\x02\x02\x02&#\x03\x02\x02\x02\'*\x03\x02\x02" +
-		"\x02(&\x03\x02\x02\x02()\x03\x02\x02\x02)\x03\x03\x02\x02\x02*(\x03\x02" +
-		"\x02\x02+,\b\x03\x01\x02,-\x07\x14\x02\x02-.\x05\x02\x02\x02./\x07\x15" +
-		"\x02\x02/6\x03\x02\x02\x0206\x07\x1F\x02\x0216\x07#\x02\x0226\x07!\x02" +
-		"\x0234\t\x07\x02\x0246\x07!\x02\x025+\x03\x02\x02\x0250\x03\x02\x02\x02" +
-		"51\x03\x02\x02\x0252\x03\x02\x02\x0253\x03\x02\x02\x026G\x03\x02\x02\x02" +
-		"78\f\x05\x02\x0289\x07\x1B\x02\x029F\x07!\x02\x02:;\f\x04\x02\x02;=\x07" +
-		"\x14\x02\x02<>\x05\x06\x04\x02=<\x03\x02\x02\x02=>\x03\x02\x02\x02>?\x03" +
-		"\x02\x02\x02?F\x07\x15\x02\x02@A\f\x03\x02\x02AB\x07\x1C\x02\x02BC\x05" +
-		"\x02\x02\x02CD\x07\x1D\x02\x02DF\x03\x02\x02\x02E7\x03\x02\x02\x02E:\x03" +
-		"\x02\x02\x02E@\x03\x02\x02\x02FI\x03\x02\x02\x02GE\x03\x02\x02\x02GH\x03" +
-		"\x02\x02\x02H\x05\x03\x02\x02\x02IG\x03\x02\x02\x02JO\x05\x02\x02\x02" +
-		"KL\x07\x1E\x02\x02LN\x05\x02\x02\x02MK\x03\x02\x02\x02NQ\x03\x02\x02\x02" +
-		"OM\x03\x02\x02\x02OP\x03\x02\x02\x02P\x07\x03\x02\x02\x02QO\x03\x02\x02" +
-		"\x02\n\f&(5=EGO";
+		"\x03\x03\x03\x03\x03\x03\x05\x035\n\x03\x03\x03\x03\x03\x03\x03\x03\x03" +
+		"\x03\x03\x03\x03\x03\x03\x03\x03\x05\x03?\n\x03\x03\x03\x03\x03\x03\x03" +
+		"\x03\x03\x03\x03\x03\x03\x07\x03G\n\x03\f\x03\x0E\x03J\v\x03\x03\x04\x03" +
+		"\x04\x03\x04\x07\x04O\n\x04\f\x04\x0E\x04R\v\x04\x03\x04\x02\x02\x04\x02" +
+		"\x04\x05\x02\x02\x04\x02\x06\x02\x02\b\x03\x02\x03\x05\x03\x02\x07\t\x03" +
+		"\x02\x04\x05\x03\x02\n\f\x03\x02\x0E\x11\x05\x02\x06\x06\t\t\x16\x1Ac" +
+		"\x02\f\x03\x02\x02\x02\x044\x03\x02\x02\x02\x06K\x03\x02\x02\x02\b\t\b" +
+		"\x02\x01\x02\t\n\t\x02\x02\x02\n\r\x05\x02\x02\f\v\r\x05\x04\x03\x02\f" +
+		"\b\x03\x02\x02\x02\f\v\x03\x02\x02\x02\r(\x03\x02\x02\x02\x0E\x0F\f\v" +
+		"\x02\x02\x0F\x10\x07\x06\x02\x02\x10\'\x05\x02\x02\v\x11\x12\f\n\x02\x02" +
+		"\x12\x13\t\x03\x02\x02\x13\'\x05\x02\x02\v\x14\x15\f\t\x02\x02\x15\x16" +
+		"\t\x04\x02\x02\x16\'\x05\x02\x02\n\x17\x18\f\b\x02\x02\x18\x19\t\x05\x02" +
+		"\x02\x19\'\x05\x02\x02\t\x1A\x1B\f\x07\x02\x02\x1B\x1C\x07\r\x02\x02\x1C" +
+		"\'\x05\x02\x02\b\x1D\x1E\f\x06\x02\x02\x1E\x1F\t\x06\x02\x02\x1F\'\x05" +
+		"\x02\x02\x07 !\f\x05\x02\x02!\"\x07\x12\x02\x02\"\'\x05\x02\x02\x06#$" +
+		"\f\x04\x02\x02$%\x07\x13\x02\x02%\'\x05\x02\x02\x05&\x0E\x03\x02\x02\x02" +
+		"&\x11\x03\x02\x02\x02&\x14\x03\x02\x02\x02&\x17\x03\x02\x02\x02&\x1A\x03" +
+		"\x02\x02\x02&\x1D\x03\x02\x02\x02& \x03\x02\x02\x02&#\x03\x02\x02\x02" +
+		"\'*\x03\x02\x02\x02(&\x03\x02\x02\x02()\x03\x02\x02\x02)\x03\x03\x02\x02" +
+		"\x02*(\x03\x02\x02\x02+,\b\x03\x01\x02,-\x07\x14\x02\x02-.\x05\x02\x02" +
+		"\x02./\x07\x15\x02\x02/5\x03\x02\x02\x0205\x07\x1F\x02\x0215\x07#\x02" +
+		"\x0225\x07!\x02\x0235\t\x07\x02\x024+\x03\x02\x02\x0240\x03\x02\x02\x02" +
+		"41\x03\x02\x02\x0242\x03\x02\x02\x0243\x03\x02\x02\x025H\x03\x02\x02\x02" +
+		"67\f\x06\x02\x027G\x07!\x02\x0289\f\x05\x02\x029:\x07\x1B\x02\x02:G\x07" +
+		"!\x02\x02;<\f\x04\x02\x02<>\x07\x14\x02\x02=?\x05\x06\x04\x02>=\x03\x02" +
+		"\x02\x02>?\x03\x02\x02\x02?@\x03\x02\x02\x02@G\x07\x15\x02\x02AB\f\x03" +
+		"\x02\x02BC\x07\x1C\x02\x02CD\x05\x02\x02\x02DE\x07\x1D\x02\x02EG\x03\x02" +
+		"\x02\x02F6\x03\x02\x02\x02F8\x03\x02\x02\x02F;\x03\x02\x02\x02FA\x03\x02" +
+		"\x02\x02GJ\x03\x02\x02\x02HF\x03\x02\x02\x02HI\x03\x02\x02\x02I\x05\x03" +
+		"\x02\x02\x02JH\x03\x02\x02\x02KP\x05\x02\x02\x02LM\x07\x1E\x02\x02MO\x05" +
+		"\x02\x02\x02NL\x03\x02\x02\x02OR\x03\x02\x02\x02PN\x03\x02\x02\x02PQ\x03" +
+		"\x02\x02\x02Q\x07\x03\x02\x02\x02RP\x03\x02\x02\x02\n\f&(4>FHP";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!ExpressionParser.__ATN) {
@@ -875,7 +889,10 @@ export class IdAtomContext extends PrimaryExpressionContext {
 		}
 	}
 }
-export class ShortHandExpContext extends PrimaryExpressionContext {
+export class ShorthandAccessorExpContext extends PrimaryExpressionContext {
+	public primaryExpression(): PrimaryExpressionContext {
+		return this.getRuleContext(0, PrimaryExpressionContext);
+	}
 	public IDENTIFIER(): TerminalNode { return this.getToken(ExpressionParser.IDENTIFIER, 0); }
 	constructor(ctx: PrimaryExpressionContext) {
 		super(ctx.parent, ctx.invokingState);
@@ -883,20 +900,20 @@ export class ShortHandExpContext extends PrimaryExpressionContext {
 	}
 	// @Override
 	public enterRule(listener: ExpressionListener): void {
-		if (listener.enterShortHandExp) {
-			listener.enterShortHandExp(this);
+		if (listener.enterShorthandAccessorExp) {
+			listener.enterShorthandAccessorExp(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: ExpressionListener): void {
-		if (listener.exitShortHandExp) {
-			listener.exitShortHandExp(this);
+		if (listener.exitShorthandAccessorExp) {
+			listener.exitShorthandAccessorExp(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: ExpressionVisitor<Result>): Result {
-		if (visitor.visitShortHandExp) {
-			return visitor.visitShortHandExp(this);
+		if (visitor.visitShorthandAccessorExp) {
+			return visitor.visitShorthandAccessorExp(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
@@ -1042,6 +1059,32 @@ export class NumericAtomContext extends PrimaryExpressionContext {
 	public accept<Result>(visitor: ExpressionVisitor<Result>): Result {
 		if (visitor.visitNumericAtom) {
 			return visitor.visitNumericAtom(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class ShorthandAtomContext extends PrimaryExpressionContext {
+	constructor(ctx: PrimaryExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: ExpressionListener): void {
+		if (listener.enterShorthandAtom) {
+			listener.enterShorthandAtom(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: ExpressionListener): void {
+		if (listener.exitShorthandAtom) {
+			listener.exitShorthandAtom(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: ExpressionVisitor<Result>): Result {
+		if (visitor.visitShorthandAtom) {
+			return visitor.visitShorthandAtom(this);
 		} else {
 			return visitor.visitChildren(this);
 		}

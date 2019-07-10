@@ -323,6 +323,11 @@ const badExpressions =
   "xPath(xmlStr)", // should have two params
   "xPath(xmlStr, 'getTotal')", // invalid xpath query
 
+  // Short Hand Expression
+  "%.xxx", // not supported shorthand pattern
+  "@[city]", // city is not provided.
+  "@[0]", // entities is not a collection.
+
   // Memory access test
   "getProperty(bag, 1)",// second param should be string
   "Accessor(1)",// first param should be string
@@ -336,6 +341,7 @@ const badExpressions =
   "isMatch('abC', one)",// second param should be string
   "isMatch(1, '^[a-z]+$')", // first param should be string
   "isMatch('abC', '^[a-z+$')",// bad regular expression
+  
 ];
 
 const scope = {
@@ -370,13 +376,15 @@ const scope = {
   relativeUri: "../catalog/shownew.htm?date=today",
   turn:
   {
-    entities:
-    {
-      city: "Seattle"
-    },
-    intents:
-    {
-      BookFlight: "BookFlight"
+    recognized: {
+      entities:
+      {
+        city: "Seattle"
+      },
+      intents:
+      {
+        BookFlight: "BookFlight"
+      }
     }
   },
   dialog:

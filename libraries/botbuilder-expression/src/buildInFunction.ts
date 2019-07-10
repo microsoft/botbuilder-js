@@ -45,15 +45,6 @@ export type VerifyExpression = (value: any, expression: Expression, child: numbe
 export class BuiltInFunctions {
     public static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.sssZ';
     public static readonly UnixMilliSecondToTicksConstant: number = 621355968000000000;  //constant of converting unix timestamp to ticks
-    public static readonly PrefixsOfShorthand: Map<string, string> = new Map<string, string>([
-        [ ExpressionType.Intent, 'turn.recognized.intents.' ],
-        [ ExpressionType.Entity, 'turn.recognized.entities.' ],
-        [ ExpressionType.SimpleEntity, 'turn.recognized.entities.'],
-        [ ExpressionType.Dialog, 'dialog.' ],
-        [ ExpressionType.Instance, 'dialog.instance.'],
-        [ ExpressionType.Option, 'dialog.options.']
-    ]);
-    
     public static _functions: Map<string, ExpressionEvaluator> = BuiltInFunctions.BuildFunctionLookup();
 
     /**
@@ -463,35 +454,7 @@ export class BuiltInFunctions {
             return { value, error };
         };
     }
-
-    public static ApplyShorthand(functionName: string, func?: (arg0: any) => { value: any; error: string })
-        : EvaluateExpressionDelegate {
-        return (expression: Expression, state: any): { value: any; error: string } => {
-            let value: any = state;
-            let error: string;
-
-            const property: string = (expression.Children[0] as Constant).Value.toString();
-            const prefixStr: string = this.PrefixsOfShorthand.get(functionName);
-            const prefixs: string[] = prefixStr.split('.').filter((x: string) => x !== undefined && x !== '');
-            for (const prefix of prefixs) {
-                ({ value, error } = Extensions.AccessProperty(value, prefix));
-                if (error !== undefined) {
-                    break;
-                }
-            }
-
-            if (error === undefined) {
-                ({ value, error } = Extensions.AccessProperty(value, property));
-            }
-
-            if (error === undefined && func !== undefined) {
-                ({ value, error } = func(value));
-            }
-
-            return { value, error };
-        };
-    }
-
+    
     /**
      * Generate an expression delegate that applies function on the accumulated value after verifying all children.
      * @param func Function to apply.
@@ -1535,18 +1498,22 @@ export class BuiltInFunctions {
         ({ value: result, error} = Extensions.AccessProperty(state, 'callstack'));
         if (result !== undefined) {
             const items: any[] = result as any[];
-            const property: string = (expression.Children[0] as Constant).Value.toString();
-
-            for (const item of items) {
-                // get property off of item
-                ({ value: result, error } = Extensions.AccessProperty(item, property));
-
-                // if not null
-                if (error === undefined && result !== undefined) {
-                    // return it
-                    return { value: result, error };
+            let property: any;
+            ({value: property, error} = expression.Children[0].tryEvaluate(state));
+            if (property !== undefined && error === undefined) {
+                for (const item of items) {
+                    // get property off of item
+                    ({ value: result, error } = Extensions.AccessProperty(item, property.toString()));
+    
+                    // if not null
+                    if (error === undefined && result !== undefined) {
+                        // return it
+                        return { value: result, error };
+                    }
                 }
             }
+
+            
         }
 
         return { value: undefined, error };
@@ -2554,28 +2521,20 @@ export class BuiltInFunctions {
                 BuiltInFunctions.ValidateIsMatch),
 
             // Shorthand functions
-            new ExpressionEvaluator(ExpressionType.Intent, this.ApplyShorthand(ExpressionType.Intent), ReturnType.Object, this.ValidateUnaryString),
-            new ExpressionEvaluator(ExpressionType.Dialog, this.ApplyShorthand(ExpressionType.Dialog), ReturnType.Object, this.ValidateUnaryString),
-            new ExpressionEvaluator(ExpressionType.Instance, this.ApplyShorthand(ExpressionType.Instance), ReturnType.Object, this.ValidateUnaryString),
-            new ExpressionEvaluator(ExpressionType.Option, this.ApplyShorthand(ExpressionType.Option), ReturnType.Object, this.ValidateUnaryString),
-            new ExpressionEvaluator(ExpressionType.Callstack, this.Callstack, ReturnType.Object, this.ValidateUnaryString),
-            new ExpressionEvaluator(ExpressionType.Entity, this.ApplyShorthand(ExpressionType.Entity), ReturnType.Object, this.ValidateUnaryString),
+            new ExpressionEvaluator(ExpressionType.Callstack, this.Callstack, ReturnType.Object, this.ValidateUnary),
             new ExpressionEvaluator(
                 ExpressionType.SimpleEntity,
-                this.ApplyShorthand(
-                    ExpressionType.SimpleEntity,
-                    (entity: any): { value: any; error: string } => {
-                        let result: any = entity;
-
+                BuiltInFunctions.Apply(
+                    (args: ReadonlyArray<any>) => {
+                        let result: any = args[0];
                         while (Array.isArray(result) && result.length === 1) {
                             result = result[0];
                         }
 
-                        return { value: result, error: undefined };
-                    }
-                ),
+                        return result;
+                    }),
                 ReturnType.Object,
-                this.ValidateUnaryString)
+                this.ValidateUnary)
         ];
 
         const lookup: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>();

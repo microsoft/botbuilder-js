@@ -364,16 +364,24 @@ const dataSource = [
   ["@city == 'Bellevue'", false, ["turn.recognized.entities.city"]],
   ["@city", "Seattle", ["turn.recognized.entities.city"]],
   ["@city == 'Seattle'", true, ["turn.recognized.entities.city"]],
+  ["@ordinal[1]", "2", ["turn.recognized.entities.ordinal"]],
+  ["@['city']", "Seattle", ["turn.recognized.entities.city"]],
+  ["@[concat('cit', 'y')]", "Seattle", ["turn.recognized.entities"]],
+  ["@[concat(cit, y)]", "Seattle", ["turn.recognized.entities","cit","y"]],
   ["#BookFlight == 'BookFlight'", true, ["turn.recognized.intents.BookFlight"]],
+  ["#BookHotel[1].Where", "Kirkland", ["turn.recognized.intents.BookHotel[1].Where"]],
   ["exists(#BookFlight)", true, ["turn.recognized.intents.BookFlight"]],
   ["$title", "Dialog Title", ["dialog.title"]],
   ["$subTitle", "Dialog Sub Title", ["dialog.subTitle"]],
   ["~xxx", "instance", ["dialog.instance.xxx"]],
+  ["~['yyy'].instanceY", "instanceY", ["dialog.instance.yyy.instanceY"]],
   ["%xxx", "options", ["dialog.options.xxx"]],
+  ["%['xxx']", "options", ["dialog.options.xxx"]],
+  ["%yyy[1]", "optionY2", ["dialog.options.yyy[1]"]],
   ["^x", 3],
   ["^y", 2],
   ["^z", 1],
-  ["count(@@CompositeList1) == 1 && count(@@CompositeList1[0]) == 1", true, ["turn.recognized.entities.CompositeList1"]],
+  ["count(@@CompositeList1) == 1 && count(@@CompositeList1[0]) == 1", true, ["turn.recognized.entities.CompositeList1", "turn.recognized.entities.CompositeList1[0]"]],
   ["count(@CompositeList2) == 2 && (@CompositeList2)[0] === 'firstItem'", true, ["turn.recognized.entities.CompositeList2"]],
 
   // Memory access tests
@@ -426,6 +434,8 @@ const scope = {
   two: 2.0,
   hello: "hello",
   world: "world",
+  cit: "cit",
+  y: "y",
   istrue: true,
   nullObj: undefined,
   bag:
@@ -472,14 +482,26 @@ const scope = {
       },
       intents:
       {
-        BookFlight: "BookFlight"
+        BookFlight: "BookFlight",
+        BookHotel :[
+          {
+            Where: "Bellevue",
+            Time : "Tomorrow",
+            People : "2"
+          },
+          {
+            Where: "Kirkland",
+            Time : "Today",
+            People : "4"
+          }
+        ]
       }
     }
   },
   dialog:
   {
-    instance: { xxx: "instance" },
-    options: { xxx: "options" },
+    instance: { xxx: "instance", yyy : {instanceY :"instanceY"} },
+    options: { xxx: "options",  yyy : ["optionY1", "optionY2" ] },
     title: "Dialog Title",
     subTitle: "Dialog Sub Title"
   },

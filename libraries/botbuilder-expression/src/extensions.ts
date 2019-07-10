@@ -8,7 +8,7 @@
  */
 import { BuiltInFunctions } from './buildInFunction';
 import { Constant } from './constant';
-import { Expression } from './expression';
+import { Expression, ReturnType } from './expression';
 import { ExpressionType } from './expressionType';
 
 /**
@@ -76,7 +76,11 @@ export class Extensions {
                 if (path !== undefined) {
                     if (children[1] instanceof Constant) {
                         const cnst: Constant = <Constant>children[1];
-                        path += `[${cnst.Value}]`;
+                        if (cnst.ReturnType === ReturnType.String) {
+                            path += `.${cnst.Value}`;
+                        } else {
+                            path += `[${cnst.Value}]`;
+                        }
                     } else {
                         references.add(path);
                     }
@@ -84,15 +88,6 @@ export class Extensions {
                 const idxPath: string = Extensions.ReferenceWalk(children[1], references, extension);
                 if (idxPath !== undefined) {
                     references.add(idxPath);
-                }
-            } else if (BuiltInFunctions.PrefixsOfShorthand.has(expression.Type)) {
-                // Shorthand
-                const shorthandName: string = (children[0] as Constant).Value.toString();
-                if (shorthandName !== undefined) {
-                    const prefixStr: string = BuiltInFunctions.PrefixsOfShorthand.get(expression.Type);
-                    const reference: string = prefixStr + shorthandName;
-
-                    references.add(reference);
                 }
             } else {
                 for (const child of expression.Children) {
