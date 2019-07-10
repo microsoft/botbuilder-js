@@ -5,9 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, ConversationReference } from 'botframework-schema';
 import { MicrosoftAppCredentials, ConnectorClient } from 'botframework-connector';
-import { Middleware, TurnContext, BotState, StatePropertyAccessor, UserState, ConversationState, Storage } from 'botbuilder-core';
+import { Activity, ActivityTypes, Middleware, TurnContext, BotState, ConversationReference, StatePropertyAccessor, UserState, ConversationState, Storage } from 'botbuilder-core';
 
 /** @private */
 class TraceActivity {
@@ -34,14 +33,13 @@ class TraceActivity {
         };
     }
 
-    public static fromState(botState: BotState, turnContext: TurnContext, name: string, label: string): Partial<Activity> {
-        var obj = botState.get(turnContext);
+    public static fromState(botState: BotState): Partial<Activity> {
         return {
             type: ActivityTypes.Trace,
             timestamp: new Date(),
-            name: name,
-            label: label,
-            value: obj,
+            name: 'BotState',
+            label: 'Bot State',
+            value: botState,
             valueType: 'https://www.botframework.com/schemas/botState'
         };
     }
@@ -103,8 +101,6 @@ abstract class InterceptionMiddleware implements Middleware {
                 await this.invokeOutbound(ctx, [ traceActivity ]);
                 return await nextDelete();
             });
-
-            await this.invokeTraceState(turnContext);
         }
         
         if (shouldForwardToApplication) {
@@ -116,6 +112,11 @@ abstract class InterceptionMiddleware implements Middleware {
                 await this.invokeOutbound(turnContext, [ traceActivity ]);
                 throw err;
             }
+        }
+
+        if (shouldIntercept) {
+        
+            await this.invokeTraceState(turnContext);
         }
     }
 
@@ -163,7 +164,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     private static readonly command = "/INSPECT";
 
     private readonly inspectionState: InspectionState;
-    private readonly inspectionStateAccessor: StatePropertyAccessor<InspectionSessionByStatus>;
+    private readonly inspectionStateAccessor: StatePropertyAccessor<InspectionSessionsByStatus>;
     private readonly userState: UserState;
     private readonly conversationState: ConversationState;
     private readonly credentials: MicrosoftAppCredentials;
@@ -185,7 +186,10 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     public async processCommand(turnContext: TurnContext): Promise<any> {
 
-        if (turnContext.activity.type == ActivityTypes.Message) {
+        if (turnContext.activity.type == ActivityTypes.Message && turnContext.activity.text !== undefined) {
+
+            var originalText = turnContext.activity.text;
+            TurnContext.removeRecipientMention(turnContext.activity);
 
             var command = turnContext.activity.text.trim().split(' ');
             if (command.length > 1 && command[0] === InspectionMiddleware.command) {
@@ -200,6 +204,8 @@ export class InspectionMiddleware extends InterceptionMiddleware {
                     return true;
                 }
             }
+
+            turnContext.activity.text = originalText;
         }
 
         return false;
@@ -250,27 +256,32 @@ export class InspectionMiddleware extends InterceptionMiddleware {
                 await this.conversationState.load(turnContext, false);
             }
 
+            var botState: any = {};
+
             if (this.userState !== undefined) {
-                await this.invokeSend(turnContext, session, TraceActivity.fromState(this.userState, turnContext, 'UserState', 'User State'));
+                botState.userState = this.userState.get(turnContext);
             }
+
             if (this.conversationState !== undefined) {
-                await this.invokeSend(turnContext, session, TraceActivity.fromState(this.conversationState, turnContext, 'ConversationState', 'Conversation State'));
+                botState.conversationState = this.conversationState.get(turnContext);
             }
+
+            await this.invokeSend(turnContext, session, TraceActivity.fromState(botState));
         }
     }
 
     private async processOpenCommand(turnContext: TurnContext): Promise<any> {
-        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
+        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
         var sessionId = this.openCommand(sessions, TurnContext.getConversationReference(turnContext.activity));
         await turnContext.sendActivity(TraceActivity.makeCommandActivity(`${InspectionMiddleware.command} attach ${sessionId}`));
         await this.inspectionState.saveChanges(turnContext, false);
     }
 
     private async processAttachCommand(turnContext: TurnContext, sessionId: string): Promise<any> {
-        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
+        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
 
         if (this.attachComamnd(turnContext.activity.conversation.id, sessions, sessionId)) {
-            await turnContext.sendActivity('Attached to session, all traffic is being relicated for inspection.');
+            await turnContext.sendActivity('Attached to session, all traffic is being replicated for inspection.');
         }
         else {
             await turnContext.sendActivity(`Open session with id ${sessionId} does not exist.`);
@@ -279,7 +290,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         await this.inspectionState.saveChanges(turnContext, false);
     }
 
-    private openCommand(sessions: InspectionSessionByStatus, conversationReference: Partial<ConversationReference>): string {
+    private openCommand(sessions: InspectionSessionsByStatus, conversationReference: Partial<ConversationReference>): string {
         function generate_guid() {
             function s4() {
                 return Math.floor((1 + Math.random()) * 0x10000)
@@ -295,7 +306,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         return sessionId;
     }
 
-    private attachComamnd(conversationId: string, sessions: InspectionSessionByStatus, sessionId: string): boolean {
+    private attachComamnd(conversationId: string, sessions: InspectionSessionsByStatus, sessionId: string): boolean {
 
         var inspectionSessionState = sessions.openedSessions[sessionId];
         if (inspectionSessionState !== undefined) {
@@ -308,7 +319,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     }
 
     private async findSession(turnContext: TurnContext): Promise<any> {
-        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
+        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
 
         var conversationReference = sessions.attachedSessions[turnContext.activity.conversation.id];
         if (conversationReference !== undefined) {
@@ -329,7 +340,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     }
 
     private async cleanUpSession(turnContext: TurnContext): Promise<any> {
-        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionByStatus.DefaultValue);
+        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
 
         delete sessions.attachedSessions[turnContext.activity.conversation.id];
         await this.inspectionState.saveChanges(turnContext, false);
@@ -362,9 +373,9 @@ class InspectionSession {
 }
 
 /** @private */
-class InspectionSessionByStatus {
+class InspectionSessionsByStatus {
 
-    public static DefaultValue: InspectionSessionByStatus = new InspectionSessionByStatus();
+    public static DefaultValue: InspectionSessionsByStatus = new InspectionSessionsByStatus();
 
     public openedSessions: { [id: string]: Partial<ConversationReference>; } = {};
 
