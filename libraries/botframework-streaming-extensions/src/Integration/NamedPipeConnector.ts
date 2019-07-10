@@ -1,5 +1,5 @@
 /**
- * @module botbuilder
+ * @module botframework-streaming-extensions
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
