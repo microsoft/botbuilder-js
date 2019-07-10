@@ -2,34 +2,7 @@
   "text": "I want to travel on united",
   "intents": {
     "Travel": {
-      "score": 0.76965636
-    },
-    "Weather_GetForecast": {
-      "score": 0.0243125279
-    },
-    "None": {
-      "score": 0.0130586373
-    },
-    "Delivery": {
-      "score": 0.01043733
-    },
-    "Help": {
-      "score": 0.009187382
-    },
-    "Cancel": {
-      "score": 0.008433739
-    },
-    "search": {
-      "score": 0.00767625
-    },
-    "SpecifyName": {
-      "score": 0.005364695
-    },
-    "Greeting": {
-      "score": 0.00383586367
-    },
-    "EntityTests": {
-      "score": 0.00216149073
+      "score": 0.7790241
     }
   },
   "entities": {
@@ -53,54 +26,12 @@
     "label": "negative",
     "score": 0.143202543
   },
-  "luisResult": {
+  "v2": {
     "query": "I want to travel on united",
     "topScoringIntent": {
       "intent": "Travel",
-      "score": 0.76965636
+      "score": 0.7790241
     },
-    "intents": [
-      {
-        "intent": "Travel",
-        "score": 0.76965636
-      },
-      {
-        "intent": "Weather.GetForecast",
-        "score": 0.0243125279
-      },
-      {
-        "intent": "None",
-        "score": 0.0130586373
-      },
-      {
-        "intent": "Delivery",
-        "score": 0.01043733
-      },
-      {
-        "intent": "Help",
-        "score": 0.009187382
-      },
-      {
-        "intent": "Cancel",
-        "score": 0.008433739
-      },
-      {
-        "intent": "search",
-        "score": 0.00767625
-      },
-      {
-        "intent": "SpecifyName",
-        "score": 0.005364695
-      },
-      {
-        "intent": "Greeting",
-        "score": 0.00383586367
-      },
-      {
-        "intent": "EntityTests",
-        "score": 0.00216149073
-      }
-    ],
     "entities": [
       {
         "entity": "united",

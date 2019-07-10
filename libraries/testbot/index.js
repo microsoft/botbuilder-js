@@ -1,67 +1,84 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+// index.js is used to setup and configure your bot
+
+// Import required packages
+const path = require('path');
 const restify = require('restify');
 
-const { BotFrameworkAdapter, ActivityHandler, MemoryStorage, UserState, ConversationState, InspectionState, InspectionMiddleware } = require('botbuilder');
+// Import required bot services. See https://aka.ms/bot-services to learn more about the different parts of a bot.
+const { BotFrameworkAdapter, ConversationState, InputHints, MemoryStorage, UserState } = require('botbuilder');
+const { FlightBookingRecognizer } = require('./dialogs/flightBookingRecognizer');
 
+// This bot's main dialog.
+const { DialogAndWelcomeBot } = require('./bots/dialogAndWelcomeBot');
+const { MainDialog } = require('./dialogs/mainDialog');
+
+// the bot's booking dialog
+const { BookingDialog } = require('./dialogs/bookingDialog');
+const BOOKING_DIALOG = 'bookingDialog';
+
+// Note: Ensure you have a .env file and include LuisAppId, LuisAPIKey and LuisAPIHostName.
+const ENV_FILE = path.join(__dirname, '.env');
+require('dotenv').config({ path: ENV_FILE });
+
+// Create adapter.
+// See https://aka.ms/about-bot-adapter to learn more about adapters.
 const adapter = new BotFrameworkAdapter({
     appId: process.env.MicrosoftAppId,
     appPassword: process.env.MicrosoftAppPassword
 });
 
-var memoryStorage = new MemoryStorage();
-var inspectionState = new InspectionState(memoryStorage);
-
-var userState = new UserState(memoryStorage);
-var conversationState = new ConversationState(memoryStorage);
-
-var conversationStateAccessor = conversationState.createProperty('test');
-
-adapter.use(new InspectionMiddleware(inspectionState, userState, conversationState));
-
+// Catch-all for errors.
 adapter.onTurnError = async (context, error) => {
+    // This check writes out errors to console log
+    // NOTE: In production environment, you should consider logging this to Azure
+    //       application insights.
     console.error(`\n [onTurnError]: ${ error }`);
-    await context.sendActivity(`Oops. Something went wrong!`);
+    // Send a message to the user
+    const onTurnErrorMessage = `Sorry, it looks like something went wrong!`;
+    await context.sendActivity(onTurnErrorMessage, onTurnErrorMessage, InputHints.ExpectingInput);
+    // Clear out state
+    await conversationState.delete(context);
 };
 
-class TestBot extends ActivityHandler {
-    constructor() {
-        super();
-        this.onMessage(async (context, next) => {
+// Define a state store for your bot. See https://aka.ms/about-bot-state to learn more about using MemoryStorage.
+// A bot requires a state store to persist the dialog and user state between messages.
+let conversationState, userState;
 
-            var state = await conversationStateAccessor.get(context, { count: 0 });
+// For local development, in-memory storage is used.
+// CAUTION: The Memory Storage used here is for local bot debugging only. When the bot
+// is restarted, anything stored in memory will be gone.
+const memoryStorage = new MemoryStorage();
+conversationState = new ConversationState(memoryStorage);
+userState = new UserState(memoryStorage);
 
-            await context.sendActivity(`you said "${ context.activity.text }" ${ state.count }`);
+// Pass in a logger to the bot. For this sample, the logger is the console, but alternatives such as Application Insights and Event Hub exist for storing the logs of the bot.
+const logger = console;
 
-            state.count++;
-            await conversationState.saveChanges(context, false);
+// If configured, pass in the FlightBookingRecognizer.  (Defining it externally allows it to be mocked for tests)
+let luisRecognizer;
+const luisConfig = (({ LuisAppId, LuisAPIKey, LuisAPIHostName }) => ({ LuisAppId, LuisAPIKey, LuisAPIHostName }))(process.env);
+luisRecognizer = new FlightBookingRecognizer(luisConfig);
 
-            await next();
-        });
-        this.onMembersAdded(async (context, next) => {
-            const membersAdded = context.activity.membersAdded;
-            for (let cnt = 0; cnt < membersAdded.length; cnt++) {
-                if (membersAdded[cnt].id !== context.activity.recipient.id) {
-                    await context.sendActivity(`welcome ${ membersAdded[cnt].name }`);
-                }
-            }
-            await next();
-        });        
-    }
-}
+// Create the main dialog.
+const bookingDialog = new BookingDialog(BOOKING_DIALOG);
+const dialog = new MainDialog(luisRecognizer, bookingDialog, logger);
+const bot = new DialogAndWelcomeBot(conversationState, userState, dialog, logger);
 
-var bot = new TestBot();
-
-console.log('welcome to test bot - a local test tool for working with the emulator');
-
-let server = restify.createServer();
+// Create HTTP server
+const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function() {
     console.log(`\n${ server.name } listening to ${ server.url }`);
+    console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
 });
 
+// Listen for incoming activities and route them to your bot main dialog.
 server.post('/api/messages', (req, res) => {
+    // Route received a request to adapter for processing
     adapter.processActivity(req, res, async (turnContext) => {
+        // route to bot activity handler.
         await bot.run(turnContext);
     });
 });

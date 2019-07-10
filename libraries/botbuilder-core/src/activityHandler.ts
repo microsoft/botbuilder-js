@@ -109,6 +109,37 @@ export class ActivityHandler {
     }
 
     /**
+     * Receives only MessageReaction activities, regardless of whether message reactions were added or removed
+     * @remarks
+     * MessageReaction activities are sent to the bot when a message reacion, such as 'like' or 'sad' are
+     * associated with an activity previously sent from the bot.
+     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     */
+    public onMessageReaction(handler: BotHandler): this {
+        return this.on('MessageReaction', handler);
+    }
+
+    /**
+     * Receives only MessageReaction activities representing message reactions being added.
+     * @remarks
+     * context.activity.reactionsAdded will include at least one entry.
+     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     */
+    public onReactionsAdded(handler: BotHandler): this {
+        return this.on('ReactionsAdded', handler);
+    }
+
+    /**
+     * Receives only MessageReaction activities representing message reactions being removed.
+     * @remarks
+     * context.activity.reactionsRemoved will include at least one entry.
+     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     */
+    public onReactionsRemoved(handler: BotHandler): this {
+        return this.on('ReactionsRemoved', handler);
+    }
+
+    /**
      * Receives all Event activities.
      * @remarks
      * Event activities communicate programmatic information from a client or channel to a bot.
@@ -211,6 +242,17 @@ export class ActivityHandler {
                             await this.handle(context, 'MembersAdded', runDialogs);
                         } else if (context.activity.membersRemoved && context.activity.membersRemoved.length > 0) {
                             await this.handle(context, 'MembersRemoved', runDialogs);
+                        } else {
+                            await runDialogs();
+                        }
+                    });
+                    break;
+                case ActivityTypes.MessageReaction:
+                    await this.handle(context, 'MessageReaction', async () => {
+                        if (context.activity.reactionsAdded && context.activity.reactionsAdded.length > 0) {
+                            await this.handle(context, 'ReactionsAdded', runDialogs);
+                        } else if (context.activity.reactionsRemoved && context.activity.reactionsRemoved.length > 0) {
+                            await this.handle(context, 'ReactionsRemoved', runDialogs);
                         } else {
                             await runDialogs();
                         }

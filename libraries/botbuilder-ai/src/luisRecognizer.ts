@@ -270,9 +270,11 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * @param context Context for the current turn of conversation with the use.
      * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
      * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
+     * @param options (Optional) options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
      */
-    public recognize(context: TurnContext, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
+    public recognize(context: TurnContext, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }, options?: LuisPredictionOptions): Promise<RecognizerResult> {
         const cached: any = context.turnState.get(this.cacheKey);
+        const luisPredictionOptions = options ? this.setLuisPredictionOptions(this.options, options) : this.options;
         if (!cached) {
             const utterance: string = context.activity.text || '';
             let recognizerPromise: Promise<RecognizerResult>;
@@ -288,12 +290,12 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                 recognizerPromise = this.luisClient.prediction.resolve(
                     this.application.applicationId, utterance,
                     {
-                        verbose: this.options.includeAllIntents,
+                        verbose: luisPredictionOptions.includeAllIntents,
                         customHeaders: {
                             'Ocp-Apim-Subscription-Key': this.application.endpointKey,
                             'User-Agent': this.getUserAgent()
                         },
-                        ...this.options
+                        ...luisPredictionOptions
                     })
                     // Map results
                     .then((luisResult: LuisModels.LuisResult) => ({
@@ -303,7 +305,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                         entities: this.getEntitiesAndMetadata(
                             luisResult.entities,
                             luisResult.compositeEntities,
-                            this.options.includeInstanceData === undefined || this.options.includeInstanceData
+                            luisPredictionOptions.includeInstanceData === undefined || luisPredictionOptions.includeInstanceData
                         ),
                         sentiment: this.getSentiment(luisResult),
                         luisResult: (this.includeApiResults ? luisResult : null)
@@ -518,9 +520,12 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                 return;
             }
 
-            this.addProperty(entitiesAndMetadata, this.getNormalizedEntityName(entity), this.getEntityValue(entity));
-            if (verbose) {
-                this.addProperty(entitiesAndMetadata.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
+            let val = this.getEntityValue(entity);
+            if (val != null) {
+                this.addProperty(entitiesAndMetadata, this.getNormalizedEntityName(entity), val);
+                if (verbose) {
+                    this.addProperty(entitiesAndMetadata.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
+                }
             }
         });
 
@@ -528,6 +533,20 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     }
 
     private getEntityValue(entity: LuisModels.EntityModel): any {
+        if (entity.type.startsWith("builtin.geographyV2.")) {
+            return {
+                "type": entity.type.substring(20),
+                "location": entity.entity
+            };
+        }
+
+        if (entity.type.startsWith('builtin.ordinalV2')) {
+            return {
+                "relativeTo": entity.resolution.relativeTo,
+                "offset": Number(entity.resolution.offset)
+            }
+        }
+
         if (!entity.resolution) {
             return entity.entity;
         }
@@ -572,11 +591,10 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                         return obj;
                     }
                 default:
-                    return Object.keys(entity.resolution).length > 1 ?
-                        entity.resolution :
-                        entity.resolution.value ?
-                            entity.resolution.value :
-                            entity.resolution.values;
+                    // This will return null if there is no value/values which can happen when a new prebuilt is introduced
+                    return entity.resolution.value ?
+                        entity.resolution.value :
+                        entity.resolution.values;
             }
         }
     }
@@ -602,10 +620,16 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         if (type.startsWith('builtin.datetimeV2.')) {
             type = 'datetime';
         }
-        if (type.startsWith('builtin.currency')) {
+        else if (type.startsWith('builtin.currency')) {
             type = 'money';
         }
-        if (type.startsWith('builtin.')) {
+        else if (type.startsWith('builtin.geographyV2')) {
+            type = 'geographyV2';
+        }
+        else if (type.startsWith('builtin.ordinalV2')) {
+            type = 'ordinalV2';
+        }
+        else if (type.startsWith('builtin.')) {
             type = type.substring(8);
         }
         if (entity.role !== null && entity.role !== '' && entity.role !== undefined) {
@@ -654,10 +678,13 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
 
                     // Add to the set to ensure that we don't consider the same child entity more than once per composite
                     coveredSet.add(i);
-                    this.addProperty(childrenEntites, this.getNormalizedEntityName(entity), this.getEntityValue(entity));
 
-                    if (verbose) {
-                        this.addProperty(childrenEntites.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
+                    let val = this.getEntityValue(entity);
+                    if (val != null) {
+                        this.addProperty(childrenEntites, this.getNormalizedEntityName(entity), val);
+                        if (verbose) {
+                            this.addProperty(childrenEntites.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
+                        }
                     }
                 }
             }
@@ -702,6 +729,13 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         }
 
         return result;
+    }
+
+    /**
+     * Merges the default options set by the Recognizer contructor with the 'user' options passed into the 'recognize' method
+    */
+    private setLuisPredictionOptions(defaultOptions: LuisPredictionOptions, userOptions: LuisPredictionOptions): any {
+        return Object.assign(defaultOptions, userOptions);
     }
 
     /**
