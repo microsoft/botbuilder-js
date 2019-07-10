@@ -10,3 +10,4 @@
  export * from './NodeWebSocket';
  export * from './WebSocketClient';
  export * from './WebSocketServer';
+ export * from './WebSocketTransport';

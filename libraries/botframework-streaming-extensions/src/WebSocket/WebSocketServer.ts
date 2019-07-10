@@ -10,8 +10,8 @@ import {
   IStreamingTransportServer,
   ProtocolAdapter,
   ReceiveResponse,
-  StreamingRequest,
-  RequestHandler
+  RequestHandler,
+  StreamingRequest
 } from '..';
 import { RequestManager } from '../Payloads';
 import {
@@ -23,6 +23,9 @@ import {
 import { ISocket } from './ISocket';
 import { WebSocketTransport } from './WebSocketTransport';
 
+/// <summary>
+/// A server for use with the Bot Framework Protocol V3 with Streaming Extensions and an underlying WebSocket transport.
+/// </summary>
 export class WebSocketServer implements IStreamingTransportServer {
   private readonly _url: string;
   private readonly _requestHandler: RequestHandler;
@@ -33,6 +36,11 @@ export class WebSocketServer implements IStreamingTransportServer {
   private readonly _webSocketTransport: WebSocketTransport;
   private _closedSignal;
 
+  /// <summary>
+  /// Initializes a new instance of the <see cref="WebSocketServer"/> class.
+  /// </summary>
+  /// <param name="socket">The <see cref="ISocket"/> of the underlying connection for this server to be built on top of.</param>
+  /// <param name="requestHandler">A <see cref="RequestHandler"/> to process incoming messages received by this server.</param>
   constructor(socket: ISocket, requestHandler?: RequestHandler) {
     this._webSocketTransport = new WebSocketTransport(socket);
     this._requestHandler = requestHandler;
@@ -47,6 +55,10 @@ export class WebSocketServer implements IStreamingTransportServer {
     this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
   }
 
+  /// <summary>
+  /// Used to establish the connection used by this server and begin listening for incoming messages.
+  /// </summary>
+  /// <returns>A promise to handle the server listen operation. This task will not resolve as long as the server is running.</returns>
   public async startAsync(): Promise<string> {
     this._sender.connect(this._webSocketTransport);
     this._receiver.connect(this._webSocketTransport);
@@ -55,10 +67,19 @@ export class WebSocketServer implements IStreamingTransportServer {
       this._closedSignal = resolve);
   }
 
+  /// <summary>
+  /// Used to send data over this server connection.
+  /// </summary>
+  /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
+  /// <param name="cancellationToken">Optional <see cref="CancellationToken"/> used to signal this operation should be cancelled.</param>
+  /// <returns>A promise of type <see cref="ReceiveResponse"/> handling the send operation.</returns>
   public async sendAsync(request: StreamingRequest, cancellationToken: CancellationToken): Promise<ReceiveResponse> {
     return this._protocolAdapter.sendRequestAsync(request, cancellationToken);
   }
 
+  /// <summary>
+  /// Stop this server.
+  /// </summary>
   public disconnect(): void {
     this._sender.disconnect(null);
     this._receiver.disconnect(null);

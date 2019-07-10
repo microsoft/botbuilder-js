@@ -33,6 +33,14 @@ export class NamedPipeClient implements IStreamingTransportClient {
   private readonly _autoReconnect: boolean;
   private _isDisconnecting: boolean;
 
+  /// <summary>
+  /// Initializes a new instance of the <see cref="NamedPipeClient"/> class.
+  /// </summary>
+  /// <param name="baseName">The named pipe to connect to.</param>
+  /// <param name="requestHandler">Optional <see cref="RequestHandler"/> to process incoming messages received by this client.</param>
+  /// <param name="autoReconnect">Optional setting to determine if the client sould attempt to reconnect
+  /// automatically on disconnection events. Defaults to true.
+  /// </param>
   constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect: boolean = true) {
     this._baseName = baseName;
     this._requestHandler = requestHandler;
@@ -50,6 +58,9 @@ export class NamedPipeClient implements IStreamingTransportClient {
     this._isDisconnecting = false;
   }
 
+  /// <summary>
+  /// Establish a connection with no custom headers.
+  /// </summary>
   public async connectAsync(): Promise<void> {
     let outgoingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerIncomingPath;
     let outgoing = connect(outgoingPipeName);
@@ -61,11 +72,20 @@ export class NamedPipeClient implements IStreamingTransportClient {
     this._receiver.connect(new NamedPipeTransport(incoming, 'clientReceiver'));
   }
 
+  /// <summary>
+  /// Method used to disconnect this client.
+  /// </summary>
   public disconnect(): void {
     this._sender.disconnect(undefined);
     this._receiver.disconnect(undefined);
   }
 
+  /// <summary>
+  /// Task used to send data over this client connection.
+  /// </summary>
+  /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
+  /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> used to signal this operation should be cancelled.</param>
+  /// <returns>A <see cref="Task"/> that will produce an instance of <see cref="ReceiveResponse"/> on completion of the send operation.</returns>
   public async sendAsync(request: StreamingRequest, cancellationToken: CancellationToken): Promise<ReceiveResponse> {
     return this._protocolAdapter.sendRequestAsync(request, cancellationToken);
   }

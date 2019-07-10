@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ITransportReceiver, ITransportSender } from '..';
+import { ITransportReceiver, ITransportSender } from '../Transport';
 import { ISocket } from './ISocket';
 
 export class WebSocketTransport implements ITransportSender, ITransportReceiver {

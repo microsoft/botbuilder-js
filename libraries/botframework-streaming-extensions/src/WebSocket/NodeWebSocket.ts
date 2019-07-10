@@ -12,19 +12,36 @@ import { ISocket } from './ISocket';
 export class NodeWebSocket implements ISocket {
   private readonly waterShedSocket: any;
   private connected: boolean;
+
+  /// <summary>
+  /// Creates a new instance of the NodeWebSocket class.
+  /// </summary>
+  /// <param name="waterShedSocket">The WaterShed socket object to build this connection on.</param>
   constructor(waterShedSocket?) {
     this.waterShedSocket = waterShedSocket;
     this.connected = false;
   }
 
+  /// <summary>
+  /// True if the socket is currently connected.
+  /// </summary>
   public isConnected(): boolean {
     return this.connected;
   }
 
+  /// <summary>
+  /// Writes a buffer to the socket and sends it.
+  /// </summary>
+  /// <param name="buffer">The buffer of data to send across the connection.</param>
   public write(buffer: Buffer) {
     this.waterShedSocket.send(buffer);
   }
 
+  /// <summary>
+  /// Connects to the supporting socket using WebSocket protocol.
+  /// </summary>
+  /// <param name="serverAddress">The address the server is listening on.</param>
+  /// <param name="port">The port the server is listening on, defaults to 8082.</param>
   public async connectAsync(serverAddress, port = 8082): Promise<void> {
     // following template from https://github.com/joyent/node-watershed#readme
     let shed = new WaterShed.Watershed();
@@ -52,21 +69,33 @@ export class NodeWebSocket implements ISocket {
     });
   }
 
+  /// <summary>
+  /// Set the handler for text and binary messages received on the socket.
+  /// </summary>
   public setOnMessageHandler(handler: (x: any) => void) {
     this.waterShedSocket.on('text', handler);
     this.waterShedSocket.on('binary', handler);
   }
 
+  /// <summary>
+  /// Close the socket.
+  /// </summary>
   public closeAsync() {
     this.connected = false;
 
     return this.waterShedSocket.end();
   }
 
+  /// <summary>
+  /// Set the callback to call when encountering socket closures.
+  /// </summary>
   public setOnCloseHandler(handler: (x: any) => void): void {
     this.waterShedSocket.on('end', handler);
   }
 
+  /// <summary>
+  /// Set the callback to call when encountering errors.
+  /// </summary>
   public setOnErrorHandler(handler: (x: any) => void): void {
     this.waterShedSocket.on('error', (error) => { if (error) { handler(error); } });
   }

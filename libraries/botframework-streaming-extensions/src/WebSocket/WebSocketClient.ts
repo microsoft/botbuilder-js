@@ -10,8 +10,8 @@ import {
   IStreamingTransportClient,
   ProtocolAdapter,
   ReceiveResponse,
-  StreamingRequest,
-  RequestHandler
+  RequestHandler,
+  StreamingRequest
 } from '..';
 import { RequestManager } from '../Payloads';
 import {
@@ -24,6 +24,9 @@ import { BrowserWebSocket } from './BrowserWebSocket';
 import { NodeWebSocket } from './NodeWebSocket';
 import { WebSocketTransport } from './WebSocketTransport';
 
+/// <summary>
+/// A client for use with the Bot Framework Protocol V3 with Streaming Extensions and an underlying WebSocket transport.
+/// </summary>
 export class WebSocketClient implements IStreamingTransportClient {
   private readonly _url: string;
   private readonly _requestHandler: RequestHandler;
@@ -33,6 +36,14 @@ export class WebSocketClient implements IStreamingTransportClient {
   private readonly _protocolAdapter: ProtocolAdapter;
   private readonly _autoReconnect: boolean;
 
+  /// <summary>
+  /// Initializes a new instance of the <see cref="WebSocketClient"/> class.
+  /// </summary>
+  /// <param name="url">The URL of the remote server to connect to.</param>
+  /// <param name="requestHandler">Optional <see cref="RequestHandler"/> to process incoming messages received by this server.</param>
+  /// <param name="autoReconnect">Optional setting to determine if the server sould attempt to reconnect
+  /// automatically on disconnection events. Defaults to true.
+  /// </param>
   constructor({ url, requestHandler, autoReconnect = true }) {
     this._url = url;
     this._requestHandler = requestHandler;
@@ -48,6 +59,10 @@ export class WebSocketClient implements IStreamingTransportClient {
     this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
   }
 
+  /// <summary>
+  /// Establish a connection with no custom headers.
+  /// </summary>
+  /// <returns>A promise that will not resolve until the client stops listening for incoming messages.</returns>
   public async connectAsync(): Promise<void> {
     if (typeof WebSocket !== 'undefined') {
       const ws = new BrowserWebSocket();
@@ -68,11 +83,20 @@ export class WebSocketClient implements IStreamingTransportClient {
     }
   }
 
+  /// <summary>
+  /// Stop this client from listening.
+  /// </summary>
   public disconnect(): void {
     this._sender.disconnect('');
     this._receiver.disconnect('');
   }
 
+  /// <summary>
+  /// Task used to send data over this client connection.
+  /// </summary>
+  /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
+  /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> used to signal this operation should be cancelled.</param>
+  /// <returns>A promise that will produce an instance of <see cref="ReceiveResponse"/> on completion of the send operation.</returns>
   public async sendAsync(request: StreamingRequest, cancellationToken: CancellationToken): Promise<ReceiveResponse> {
     return this._protocolAdapter.sendRequestAsync(request, cancellationToken);
   }

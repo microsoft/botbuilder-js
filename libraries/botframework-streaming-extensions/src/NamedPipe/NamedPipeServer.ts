@@ -11,8 +11,8 @@ import {
   IStreamingTransportServer,
   ProtocolAdapter,
   ReceiveResponse,
-  StreamingRequest,
-  RequestHandler
+  RequestHandler,
+  StreamingRequest
 } from '..';
 import { RequestManager } from '../Payloads';
 import {
@@ -23,6 +23,9 @@ import {
 } from '../PayloadTransport';
 import { NamedPipeTransport } from './NamedPipeTransport';
 
+/// <summary>
+/// A server for use with the Bot Framework Protocol V3 with Streaming Extensions and an underlying Named Pipe transport.
+/// </summary>
 export class NamedPipeServer implements IStreamingTransportServer {
   private _outgoingServer: Server;
   private _incomingServer: Server;
@@ -36,6 +39,14 @@ export class NamedPipeServer implements IStreamingTransportServer {
   private _isDisconnecting: boolean;
   private _onClose: (arg0: string) => void;
 
+  /// <summary>
+  /// Initializes a new instance of the <see cref="NamedPipeServer"/> class.
+  /// </summary>
+  /// <param name="baseName">The named pipe to connect to.</param>
+  /// <param name="requestHandler">A <see cref="RequestHandler"/> to process incoming messages received by this server.</param>
+  /// <param name="autoReconnect">Optional setting to determine if the server sould attempt to reconnect
+  /// automatically on disconnection events. Defaults to true.
+  /// </param>
   constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect: boolean = true) {
     this._baseName = baseName;
     this._requestHandler = requestHandler;
@@ -53,7 +64,10 @@ export class NamedPipeServer implements IStreamingTransportServer {
     };
   }
 
-  /* tslint:disable:promise-function-async promise-must-complete */
+  /// <summary>
+  /// Used to establish the connection used by this server and begin listening for incoming messages.
+  /// </summary>
+  /// <returns>A promised string that will not resolve as long as the server is running.</returns>
   public startAsync(): Promise<string> {
     let incomingConnect = false;
     let outgoingConnect = false;
@@ -89,6 +103,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
     return result;
   }
 
+  // Allows for manually disconnecting the server.
   public disconnect(): void {
     this._sender.disconnect(undefined);
     this._receiver.disconnect(undefined);
@@ -104,11 +119,17 @@ export class NamedPipeServer implements IStreamingTransportServer {
     }
   }
 
+  /// <summary>
+  /// Task used to send data over this server connection.
+  /// </summary>
+  /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
+  /// <param name="cancellationToken">Optional <see cref="CancellationToken"/> used to signal this operation should be cancelled.</param>
+  /// <returns>A <see cref="Task"/> of type <see cref="ReceiveResponse"/> handling the send operation.</returns>
   public async sendAsync(request: StreamingRequest, cancellationToken: CancellationToken): Promise<ReceiveResponse> {
     return this._protocolAdapter.sendRequestAsync(request, cancellationToken);
   }
 
-  public onConnectionDisconnected() {
+  private onConnectionDisconnected() {
     if (!this._isDisconnecting) {
       this._isDisconnecting = true;
       try {

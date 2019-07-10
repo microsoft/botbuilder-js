@@ -6,25 +6,17 @@
  * Licensed under the MIT License.
  */
 export * from './CancellationToken';
-export * from './CancellationTokenSource';
-export * from './ContentStream';
-export * from './HttpContentStream';
 export * from './IStreamingTransportClient';
 export * from './IStreamingTransportServer';
 export * from './ProtocolAdapter';
 export * from './ReceiveRequest';
 export * from './ReceiveResponse';
-export * from './StreamingRequest';
 export * from './RequestHandler';
+export * from './StreamingRequest';
 export * from './StreamingResponse';
-export * from './Stream';
 
-export * from './Models';
+export {IPayloadReceiver, IPayloadSender, PayloadReceiver, PayloadSender} from './PayloadTransport';
 
-export * from './Transport';
+export {NamedPipeClient, NamedPipeServer, NamedPipeTransport} from './NamedPipe';
 
-export * from './NamedPipe';
-
-export * from './WebSocket';
-
-export * from './Utilities/protocol-base';
+export {BrowserWebSocket, NodeWebSocket, WebSocketClient, WebSocketServer, WebSocketTransport} from './WebSocket';

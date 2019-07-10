@@ -14,12 +14,22 @@ import { StreamingHttpClient } from './StreamingHttpClient';
 export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter {
   private readonly server: IStreamingTransportServer;
 
+  /// <summary> 
+  /// Creates a new instance of the BotFrameworkStreamingAdapter class.
+  /// <param name="server"> The streaming transport server to send responses over. </param>
+  /// <param name="settings"> The assorted settings to register with the base adapter. </param>
+  /// </summary>
   constructor(server: IStreamingTransportServer, settings?: Partial<BotFrameworkAdapterSettings>) {
     super(settings);
 
     this.server = server;
   }
 
+  /// <summary>
+  /// Hides the adapter's built in means of creating a connector client
+  /// and subtitutes a StreamingHttpClient in place of the standard HttpClient,
+  /// thus allowing compatibility with streaming extensions.
+  /// </summary>
   public createConnectorClient(serviceUrl: string): ConnectorClient {
     return new ConnectorClient(
       this.credentials,

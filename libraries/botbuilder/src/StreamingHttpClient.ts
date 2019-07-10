@@ -15,6 +15,13 @@ export class StreamingHttpClient implements HttpClient {
     this.server = server;
   }
 
+  /// <summary>
+  /// This function hides the default sendRequest of the HttpClient, replacing it
+  /// with a version that takes the WebResource created by the BotFrameworkAdapter
+  /// and converting it to a form that can be sent over a streaming transport.
+  /// </summary>
+  /// <param name="httpRequest">The outgoing request created by the BotframeworkAdapter.</param>
+  /// <returns>The streaming transport compatible response to send back to the client.</returns>
   public async sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse> {
     const request = this.mapHttpRequestToProtocolRequest(httpRequest);
     request.Path = request.Path.substring(request.Path.indexOf('/v3'));

@@ -16,7 +16,7 @@ export class ContentStream {
   constructor(id: string, assembler: ContentStreamAssembler) {
     if (assembler === undefined) {
       throw Error('Null Argument Exception');
-    }
+  }
     this.id = id;
     this.assembler = assembler;
   }
