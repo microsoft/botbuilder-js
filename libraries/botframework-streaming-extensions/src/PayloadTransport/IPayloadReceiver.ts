@@ -10,6 +10,9 @@ import { Header } from '../Models/Header';
 import { Stream } from '../Stream';
 import { ITransportReceiver } from '../Transport/ITransportReceiver';
 
+/// <summary>
+/// Interface implemented by PayloadReceiver classes.
+/// </summary>
 export interface IPayloadReceiver {
   isConnected: boolean;
 

@@ -20,18 +20,35 @@ export class PayloadSender implements IPayloadSender {
   private sender: ITransportSender;
   private readonly sendHeaderBuffer: Buffer = Buffer.alloc(TransportContants.MaxHeaderLength);
 
+  /// <summary>
+  /// Returns true if connected to a transport sender.
+  /// </summary>
   public get isConnected(): boolean {
     return this.sender !== undefined;
   }
 
+  /// <summary>
+  /// Connects to the given transport sender.
+  /// </summary>
+  /// <param name="sender">The transport sender to connect this payload sender to.</param>
   public connect(sender: ITransportSender) {
     this.sender = sender;
   }
 
+  /// <summary>
+  /// Sends a payload out over the connected transport sender.
+  /// </summary>
+  /// <param name="header">The header to attach to the outgoing payload.</param>
+  /// <param name="payload">The stream of buffered data to send.</param>
+  /// <param name="sentCalback">The function to execute when the send has completed.</param>
   public sendPayload(header: Header, payload: Stream, sentCallback: () => Promise<void>): void {
     this.writePacket(new SendPacket(header, payload, sentCallback));
   }
 
+  /// <summary>
+  /// Disconnects this payload sender.
+  /// </summary>
+  /// <param name="e">The disconnected event arguments to include in the disconnected event broadcast.</param>
   public disconnect(e: TransportDisconnectedEventArgs) {
     if (this.isConnected) {
       this.sender.close();

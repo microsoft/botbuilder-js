@@ -11,8 +11,8 @@ import {
   IStreamingTransportClient,
   ProtocolAdapter,
   ReceiveResponse,
-  StreamingRequest,
-  RequestHandler
+  RequestHandler,
+  StreamingRequest
 } from '..';
 import { RequestManager } from '../Payloads';
 import {
@@ -68,8 +68,8 @@ export class NamedPipeClient implements IStreamingTransportClient {
     let incomingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerOutgoingPath;
     let incoming = connect(incomingPipeName);
 
-    this._sender.connect(new NamedPipeTransport(outgoing, 'clientSender'));
-    this._receiver.connect(new NamedPipeTransport(incoming, 'clientReceiver'));
+    this._sender.connect(new NamedPipeTransport(outgoing));
+    this._receiver.connect(new NamedPipeTransport(incoming));
   }
 
   /// <summary>

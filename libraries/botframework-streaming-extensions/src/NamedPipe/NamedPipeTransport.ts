@@ -25,7 +25,6 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
   /// Creates a new instance of the NamedPipeTransport class.
   /// </summary>
   /// <param name="socket">The socket object to build this connection on.</param>
-  /// <param name="name">An identifier for this </param>
   constructor(socket: Socket) {
     this._socket = socket;
     this._queue = [];
@@ -44,6 +43,10 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     }
   }
 
+  /// <summary>
+  /// Writes to the pipe and sends.
+  /// </summary>
+  /// <param name="buffer">The buffer full of data to send out across the socket.</param>
   public send(buffer: Buffer): number {
     if (this._socket && !this._socket.connecting && this._socket.writable) {
       this._socket.write(buffer);
@@ -54,6 +57,9 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     return 0;
   }
 
+  /// <summary>
+  /// Returns true if currently connected.
+  /// </summary>
   public isConnected(): boolean {
     if (!this._socket) {
       return false;
@@ -62,6 +68,9 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     return !this._socket.destroyed && !this._socket.connecting;
   }
 
+  /// <summary>
+  /// Closes the transport.
+  /// </summary>
   public close() {
     if (this._socket) {
       this._socket.end('end');
@@ -90,14 +99,18 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     return promise;
   }
 
-  public socketReceive(data: Buffer) {
+  /// <summary>
+  /// Creates a new instance of the NamedPipeTransport class.
+  /// </summary>
+  /// <param name="socket">The socket object to build this connection on.</param>
+  private socketReceive(data: Buffer) {
     if (this._queue && data && data.length > 0) {
       this._queue.push(data);
       this.trySignalData();
     }
   }
 
-  public socketClose() {
+  private socketClose() {
     if (this._activeReceiveReject) {
       this._activeReceiveReject(new Error('Socket was closed.'));
     }
@@ -110,7 +123,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     this._socket = undefined;
   }
 
-  public socketError(err: Error) {
+  private socketError(err: Error) {
     if (this._activeReceiveReject) {
       this._activeReceiveReject(err);
     }

@@ -10,7 +10,6 @@ import { ISocket } from './ISocket';
 
 export class WebSocketTransport implements ITransportSender, ITransportReceiver {
   private _socket: ISocket;
-
   private readonly _queue: Buffer[];
   private _active: Buffer;
   private _activeOffset: number;
@@ -18,6 +17,10 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
   private _activeReceiveReject: (reason?: any) => void;
   private _activeReceiveCount: number;
 
+  /// <summary>
+  /// Creates a new instance of the WebSocketTransport class.
+  /// </summary>
+  /// <param name="ws">The ISocket to build this transport on top of.</param>
   constructor(ws: ISocket) {
     this._socket = ws;
     this._queue = [];
@@ -34,6 +37,10 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
     });
   }
 
+  /// <summary>
+  /// Sends the given buffer out over the socket's connection.
+  /// </summary>
+  /// <param name="buffer">The buffered data to send out over the connection.</param>
   public send(buffer: Buffer): number {
     if (this._socket && this._socket.isConnected()) {
       this._socket.write(buffer);
@@ -44,16 +51,27 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
     return 0;
   }
 
+  /// <summary>
+  /// Returns true if the transport is connected to a socket.
+  /// </summary>
   public isConnected(): boolean {
     return this._socket.isConnected();
   }
 
+  /// <summary>
+  /// Close the socket this transport is connected to.
+  /// </summary>
   public close() {
     if (this._socket && this._socket.isConnected()) {
       this._socket.closeAsync();
     }
   }
 
+  /// <summary>
+  /// Attempt to receive incoming data from the connected socket.
+  /// </summary>
+  /// <param name="count">The number of bytes to attempt to receive.</param>
+  /// <returns> A buffer populated with the received data.</returns>
   public async receiveAsync(count: number): Promise<Buffer> {
     if (this._activeReceiveResolve) {
       throw new Error('Cannot call receiveAsync more than once before it has returned.');
@@ -71,6 +89,10 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
     return promise;
   }
 
+  /// <summary>
+  /// Sets the transport to attempt to receive incoming data that has not yet arrived.
+  /// </summary>
+  /// <param name="data">A buffer to store incoming data in.</param>
   public onReceive(data: Buffer) {
     if (this._queue && data && data.byteLength > 0) {
       this._queue.push(Buffer.from(data));
@@ -78,7 +100,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
     }
   }
 
-  public onClose() {
+  private onClose() {
     if (this._activeReceiveReject) {
       this._activeReceiveReject(new Error('Socket was closed.'));
     }
@@ -91,7 +113,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
     this._socket = undefined;
   }
 
-  public onError(err: Error) {
+  private onError(err: Error) {
     if (this._activeReceiveReject) {
       this._activeReceiveReject(err);
     }

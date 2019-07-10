@@ -81,7 +81,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
 
     let incomingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerIncomingPath;
     this._incomingServer = new Server((socket: Socket) => {
-      this._receiver.connect(new NamedPipeTransport(socket, 'serverReceiver'));
+      this._receiver.connect(new NamedPipeTransport(socket));
       incomingConnect = true;
       if (incomingConnect && outgoingConnect) {
         this._onClose('connected');
@@ -91,7 +91,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
     this._incomingServer.listen(incomingPipeName);
     let outgoingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerOutgoingPath;
     this._outgoingServer = new Server((socket: Socket) => {
-      this._sender.connect(new NamedPipeTransport(socket, 'serverSender'));
+      this._sender.connect(new NamedPipeTransport(socket));
       outgoingConnect = true;
       if (incomingConnect && outgoingConnect) {
         this._onClose('connected');

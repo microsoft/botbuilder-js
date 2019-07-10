@@ -24,8 +24,10 @@ export class PayloadReceiver implements IPayloadReceiver {
   private _getStream: (header: Header) => Stream;
   private _receiveAction: (header: Header, stream: Stream, length: Number) => void;
 
-  //public isConnected(): boolean { return this._receiver !== undefined; }
-
+  /// <summary>
+  /// Creates a new instance of the PayloadReceiver class.
+  /// </summary>
+  /// <param name="receiver">The ITransportReceiver object to pull incoming data from.</param>
   public connect(receiver: ITransportReceiver) {
     if (this.isConnected) {
       throw new Error('Already connected.');
@@ -36,11 +38,20 @@ export class PayloadReceiver implements IPayloadReceiver {
     }
   }
 
+  /// <summary>
+  /// Allows subscribing to this receiver in order to be notified when new data comes in.
+  /// </summary>
+  /// <param name="getStream">Callback when a new stream has been received.</param>
+  /// <param name="receiveAction">Callback when a new message has been received.</param>
   public subscribe(getStream: (header: Header) => Stream, receiveAction: (header: Header, stream: Stream, count: number) => void) {
     this._getStream = getStream;
     this._receiveAction = receiveAction;
   }
 
+  /// <summary>
+  /// Force this receiver to disconnect.
+  /// </summary>
+  /// <param name="e">Event arguments to include when broadcasting disconnection event.</param>
   public disconnect(e: TransportDisconnectedEventArgs) {
     let didDisconnect = false;
     try {
@@ -61,7 +72,7 @@ export class PayloadReceiver implements IPayloadReceiver {
     }
   }
 
-  public runReceive(): void {
+  private runReceive(): void {
     this.receivePacketsAsync()
       .catch();
   }

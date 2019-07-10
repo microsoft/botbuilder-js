@@ -9,6 +9,9 @@ import { CancellationToken } from './CancellationToken';
 import { ReceiveResponse } from './ReceiveResponse';
 import { StreamingRequest } from './StreamingRequest';
 
+/// <summary>
+/// Interface implemented by StreamingTransportClient classes for each transport type.
+/// </summary>
 export interface IStreamingTransportClient {
   connectAsync(): Promise<void>;
   disconnect(): void;

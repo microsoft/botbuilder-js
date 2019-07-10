@@ -10,6 +10,9 @@ import { Stream } from '../Stream';
 import { ITransportSender } from '../Transport/ITransportSender';
 import { TransportDisconnectedEventHandler } from './TransportDisconnectedEventHandler';
 
+/// <summary>
+/// Interface implemented by PayloadSender classes.
+/// </summary>
 export interface IPayloadSender {
 
   isConnected: boolean;
