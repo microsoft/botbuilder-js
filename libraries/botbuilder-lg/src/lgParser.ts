@@ -9,7 +9,6 @@
 import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
 // tslint:disable-next-line: no-submodule-imports
 import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
-import { Diagnostic } from './diagnostic';
 import { ErrorListener } from './errorListener';
 import { LGFileLexer } from './generated/LGFileLexer';
 import { FileContext, ImportDefinitionContext, LGFileParser, ParagraphContext, TemplateDefinitionContext } from './generated/LGFileParser';
@@ -21,37 +20,15 @@ import { LGTemplate } from './lgTemplate';
  * LG Parser
  */
 export class LGParser {
-    public static Parse(text: string, id: string = ''): LGResource {
-        const parseResult: any = this.TryParse(text, id);
-        if (!parseResult.isValid) {
-            throw new Error(parseResult.error.toString());
-        }
+    public static parse(text: string, id: string = ''): LGResource {
+        const fileContext: FileContext = this.getFileContentContext(text, id);
+        const templates: LGTemplate[] = this.extractLGTemplates(fileContext, id);
+        const imports: LGImport[] = this.extractLGImports(fileContext, id);
 
-        return new LGResource(parseResult.templates, parseResult.imports, id);
+        return new LGResource(templates, imports, id);
     }
 
-    public static TryParse(text: string, id: string = '')
-        : { isValid: boolean; templates: LGTemplate[]; imports: LGImport[]; error: Diagnostic } {
-        let fileContext: FileContext;
-        let isValid: boolean = true;
-        let error: Diagnostic;
-        let templates: LGTemplate[] = [];
-        let imports: LGImport[] = [];
-
-        try {
-            fileContext = this.GetFileContentContext(text, id);
-        } catch (e) {
-            error = Object.assign(new Diagnostic(undefined, undefined), JSON.parse(e.message));
-            isValid = false;
-        }
-
-        templates = this.ExtractLGTemplates(fileContext, id);
-        imports = this.ExtractLGImports(fileContext, id);
-
-        return { isValid, templates, imports, error };
-    }
-
-    private static GetFileContentContext(text: string, source: string): FileContext {
+    private static getFileContentContext(text: string, source: string): FileContext {
         if (text === undefined
             || text === ''
             || text === null) {
@@ -69,7 +46,7 @@ export class LGParser {
         return parser.file();
     }
 
-    private static ExtractLGTemplates(file: FileContext, source: string = ''): LGTemplate[] {
+    private static extractLGTemplates(file: FileContext, source: string = ''): LGTemplate[] {
         if (file === undefined
             || file === null) {
             return [];
@@ -82,7 +59,7 @@ export class LGParser {
         return templates.map((x: TemplateDefinitionContext) => new LGTemplate(x, source));
     }
 
-    private static ExtractLGImports(file: FileContext, source: string = ''): LGImport[] {
+    private static extractLGImports(file: FileContext, source: string = ''): LGImport[] {
         if (file === undefined
             || file === null) {
             return [];
