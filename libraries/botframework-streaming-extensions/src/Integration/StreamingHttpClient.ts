@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { HttpClient, HttpOperationResponse, WebResource } from '@azure/ms-rest-js';
-import { IStreamingTransportServer, StreamingRequest } from 'botframework-streaming-extensions';
+import { IStreamingTransportServer, StreamingRequest } from '..';
 
 export class StreamingHttpClient implements HttpClient {
   private readonly server: IStreamingTransportServer;

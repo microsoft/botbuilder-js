@@ -20,3 +20,5 @@ export {IPayloadReceiver, IPayloadSender, PayloadReceiver, PayloadSender} from '
 export {NamedPipeClient, NamedPipeServer, NamedPipeTransport} from './NamedPipe';
 
 export {BrowserWebSocket, NodeWebSocket, WebSocketClient, WebSocketServer, WebSocketTransport} from './WebSocket';
+
+export * from './Integration';

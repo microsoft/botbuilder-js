@@ -6,14 +6,14 @@
  * Licensed under the MIT License.
  */
 import {
+  BotFrameworkAdapterSettings,
+  WebRequest
+} from 'botbuilder';
+import {
   ActivityHandler,
   Middleware,
   MiddlewareHandler
 } from 'botbuilder-core';
-import {
-  BotFrameworkAdapterSettings,
-  WebRequest
-} from './botFrameworkAdapter'
 import {
   JwtTokenValidation,
   MicrosoftAppCredentials,

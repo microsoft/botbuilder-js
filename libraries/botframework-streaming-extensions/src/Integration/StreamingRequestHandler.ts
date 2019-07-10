@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 import {
-  Activity,
-  ActivityTypes
-} from 'botframework-schema';
+  BotFrameworkAdapterSettings,
+  InvokeResponse
+} from 'botbuilder';
 import {
   ActivityHandler,
   Middleware,
@@ -16,15 +16,15 @@ import {
   TurnContext
 } from 'botbuilder-core';
 import {
-  BotFrameworkAdapterSettings,
-  InvokeResponse
-} from './botFrameworkAdapter';
-import { IStreamingTransportServer, ReceiveRequest, RequestHandler, StreamingResponse, NamedPipeServer, WebSocketServer } from 'botframework-streaming-extensions';
+  Activity,
+  ActivityTypes
+} from 'botframework-schema';
 import * as os from 'os';
+import { IStreamingTransportServer, NamedPipeServer, ReceiveRequest, RequestHandler, StreamingResponse, WebSocketServer } from '..';
 // tslint:disable-next-line: no-require-imports
 const pjson: any = require('../package.json');
+import { ISocket } from '../WebSocket';
 import { BotFrameworkStreamingAdapter } from './BotFrameworkStreamingAdapter';
-import { ISocket } from 'botframework-streaming-extensions/lib/WebSocket/ISocket';
 
 /// <summary>
 /// Used to process incoming requests sent over an <see cref="IStreamingTransport"/> and adhering to the Bot Framework Protocol v3 with Streaming Extensions.

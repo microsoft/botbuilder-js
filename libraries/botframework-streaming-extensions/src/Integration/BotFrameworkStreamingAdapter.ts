@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotFrameworkAdapter, BotFrameworkAdapterSettings } from './botFrameworkAdapter';
+import { BotFrameworkAdapter, BotFrameworkAdapterSettings } from 'botbuilder';
 import { TurnContext } from 'botbuilder-core';
 import { ConnectorClient } from 'botframework-connector';
-import { IStreamingTransportServer } from 'botframework-streaming-extensions';
+import { IStreamingTransportServer } from '../IStreamingTransportServer';
 import { StreamingHttpClient } from './StreamingHttpClient';
 
 export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter {

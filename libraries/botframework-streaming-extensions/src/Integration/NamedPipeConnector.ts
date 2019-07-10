@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActivityHandler, MiddlewareHandler, Middleware } from 'botbuilder-core';
-import { BotFrameworkAdapterSettings } from './botFrameworkAdapter';
+import { BotFrameworkAdapterSettings } from 'botbuilder';
+import { ActivityHandler, Middleware, MiddlewareHandler } from 'botbuilder-core';
 import { StreamingRequestHandler } from './StreamingRequestHandler';
 
 export class NamedPipeConnector {
