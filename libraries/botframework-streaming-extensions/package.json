@@ -26,11 +26,11 @@
     "typescript": "3.1.1"
   },
   "dependencies": {
-    "@azure/ms-rest-js":"2.0.2",
-    "botbuilder":"4.4.0",
-    "botbuilder-core":"4.4.0",
-    "botframework-connector":"4.4.0",
-    "botframework-schema":"4.4.0",
+    "@azure/ms-rest-js":"^2.0.2",
+    "botbuilder":"~4.1.6",
+    "botbuilder-core":"~4.1.6",
+    "botframework-connector":"~4.1.6",
+    "botframework-schema":"~4.1.6",
     "node": "^12.3.1",
     "promise.prototype.finally": "^3.1.0",
     "uuid": "^3.3.2",
