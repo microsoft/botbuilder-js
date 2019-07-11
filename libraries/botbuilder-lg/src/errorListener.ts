@@ -7,6 +7,7 @@
  */
 import { ANTLRErrorListener, RecognitionException, Recognizer, Token } from 'antlr4ts';
 import { Diagnostic, Position, Range } from './diagnostic';
+import { LGException } from './lgException';
 
 // tslint:disable-next-line: completed-docs
 export class ErrorListener implements ANTLRErrorListener<any> {
@@ -32,6 +33,6 @@ export class ErrorListener implements ANTLRErrorListener<any> {
             }
             const diagnostic: Diagnostic = new Diagnostic(range, msg);
 
-            throw new Error(JSON.stringify(diagnostic));
+            throw new LGException(diagnostic.toString(), [diagnostic]);
     }
 }

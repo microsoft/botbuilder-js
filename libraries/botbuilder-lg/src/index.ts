@@ -18,3 +18,7 @@ export * from './analyzer';
 export * from './mslgTool';
 export * from './lgTemplate';
 export * from './diagnostic';
+export * from './lgException';
+export * from './lgResource';
+export * from './ImportResolver';
+export * from './extractor';

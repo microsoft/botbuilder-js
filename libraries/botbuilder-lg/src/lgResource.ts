@@ -8,6 +8,8 @@
 
 import { LGTemplate } from './lgTemplate';
 import { LGImport } from './lgImport';
+import { ImportResolver, ImportResolverDelegate } from './ImportResolver';
+import { LGParser } from './lgParser';
 
 /**
  * LG Resource
@@ -24,5 +26,31 @@ export class LGResource {
       this.Templates = templates;
       this.Imports = imports;
       this.Id = id;
+   }
+
+   public discoverLGResources(importResolver: ImportResolverDelegate) : LGResource[] {
+      const resourcesFound: LGResource[] = [];
+      importResolver = importResolver === undefined ? ImportResolver.fileResolver() : importResolver;
+      this.resolveImportResources(this, importResolver, resourcesFound);
+
+      return resourcesFound;
+   }
+
+   private resolveImportResources(start: LGResource, importResolver: ImportResolverDelegate, resourcesFound: LGResource[]): void {
+      const resourceIds: string[] = start.Imports.map((lg: LGImport) => lg.Id);
+      resourcesFound.push(start);
+
+      resourceIds.forEach((resourceId: string) => {
+         try {
+            const { content, id } = importResolver(resourceId);
+            const childResource: LGResource = LGParser.parse(content, id);
+
+            if (!(resourcesFound.some((x: LGResource) => x.Id === childResource.Id))) {
+                  this.resolveImportResources(childResource, importResolver, resourcesFound);
+            }
+         } catch (e) {
+            throw new Error(`[Error]${resourceId}:${e.message}`);
+         }
+      });
    }
 }

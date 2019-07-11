@@ -12,16 +12,11 @@ import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Evaluator } from './evaluator';
 import { Expander } from './expander';
 import { IGetMethod } from './getMethodExtensions';
-import { LGImport } from './LGImport';
+import { ImportResolver, ImportResolverDelegate } from './ImportResolver';
 import { LGParser } from './lgParser';
 import { LGResource } from './LGResource';
 import { LGTemplate } from './lgTemplate';
 import { StaticChecker } from './staticChecker';
-
-/**
- * Delegate for resolving resource id of imported lg file.
- */
-export declare type ImportResolverDelegate = (resourceId: string) => { content: string; id: string };
 
 /**
  * LG parser and evaluation engine
@@ -37,24 +32,11 @@ export class TemplateEngine {
     public addFiles = (filePaths: string[], importResolver?: ImportResolverDelegate): TemplateEngine => {
         let totalLGResources: LGResource[] = [];
         filePaths.forEach((filePath: string) => {
-            importResolver = importResolver !== undefined ? importResolver :
-                ((id: string): { content: string; id: string } => {
-                    // import paths are in resource files which can be executed on multiple OS environments
-                    // Call GetOsPath() to map / & \ in importPath -> OSPath
-                    let importPath: string = this.getOsPath(id);
-                    if (!path.isAbsolute(importPath)) {
-                        // get full path for importPath relative to path which is doing the import.
-                        importPath = path.normalize(path.join(path.dirname(filePath), id));
-                    }
-
-                    const content: string = fs.readFileSync(importPath, 'utf-8');
-
-                    return { content, id: importPath };
-                });
+            importResolver = importResolver !== undefined ? importResolver : ImportResolver.filePathResolver(filePath);
 
             filePath = path.normalize(filePath);
-            const rootResource: LGResource = LGParser.Parse(fs.readFileSync(filePath, 'utf-8'), filePath);
-            const lgResources: LGResource[] = this.discoverLGResources(rootResource, importResolver);
+            const rootResource: LGResource = LGParser.parse(fs.readFileSync(filePath, 'utf-8'), filePath);
+            const lgResources: LGResource[] = rootResource.discoverLGResources(importResolver);
             totalLGResources = totalLGResources.concat(lgResources);
         });
 
@@ -66,7 +48,7 @@ export class TemplateEngine {
         );
 
         const lgTemplates: LGTemplate[] = deduplicatedLGResources.reduce((acc: LGTemplate[], x: LGResource) =>
-            acc = acc.concat(x.Templates), []
+            acc = acc.concat(x.Templates),                               []
         );
 
         this.templates = this.templates.concat(lgTemplates);
@@ -79,10 +61,10 @@ export class TemplateEngine {
         this.addFiles([filePath], importResolver)
 
     public addText = (content: string, name: string, importResolver: ImportResolverDelegate): TemplateEngine => {
-        const rootResource: LGResource = LGParser.Parse(content, name);
-        const lgResources: LGResource[] = this.discoverLGResources(rootResource, importResolver);
+        const rootResource: LGResource = LGParser.parse(content, name);
+        const lgResources: LGResource[] = rootResource.discoverLGResources(importResolver);
         const lgTemplates: LGTemplate[] = lgResources.reduce((acc: LGTemplate[], x: LGResource) =>
-            acc = acc.concat(x.Templates), []
+            acc = acc.concat(x.Templates),                   []
         );
 
         this.templates = this.templates.concat(lgTemplates);
@@ -115,7 +97,7 @@ export class TemplateEngine {
         inlineStr = !inlineStr.trim().startsWith('```') && inlineStr.indexOf('\n') >= 0
                    ? '```'.concat(inlineStr).concat('```') : inlineStr;
         const wrappedStr: string = `# ${fakeTemplateId} \r\n - ${inlineStr}`;
-        const lgResource: LGResource = LGParser.Parse(wrappedStr, 'inline');
+        const lgResource: LGResource = LGParser.parse(wrappedStr, 'inline');
         const mergedTemplates: LGTemplate[] = this.templates.concat(lgResource.Templates);
         this.runStaticCheck(mergedTemplates);
         const evalutor: Evaluator = new Evaluator(mergedTemplates, methodBinder);
@@ -124,53 +106,12 @@ export class TemplateEngine {
     }
 
     private readonly runStaticCheck = (templates: LGTemplate[]): void => {
-        const checker: StaticChecker = new StaticChecker(templates);
-        const diagnostics: Diagnostic[] = checker.Check();
+        const teamplatesToCheck: LGTemplate[] = templates === undefined ? this.templates : templates;
+        const diagnostics: Diagnostic[] = StaticChecker.checkTemplates(teamplatesToCheck);
 
         const errors: Diagnostic[] = diagnostics.filter((u: Diagnostic) => u.Severity === DiagnosticSeverity.Error);
         if (errors.length > 0) {
             throw new Error(errors.map((error: Diagnostic) => error.toString()).join('\n'));
-        }
-    }
-
-    private discoverLGResources(start: LGResource, importResolver: ImportResolverDelegate)
-        : LGResource[] {
-        const resourcesFound: LGResource[] = [];
-        importResolver = importResolver === undefined ? this.fileResolver : importResolver;
-        this.resolveImportResources(start, importResolver, resourcesFound);
-
-        return resourcesFound;
-    }
-
-    private resolveImportResources(start: LGResource, importResolver: ImportResolverDelegate, resourcesFound: LGResource[]): void {
-        const resourceIds: string[] = start.Imports.map((lg: LGImport) => lg.Id);
-        resourcesFound.push(start);
-
-        resourceIds.forEach((resourceId: string) => {
-            try {
-                const { content, id } = importResolver(resourceId);
-                const childResource: LGResource = LGParser.Parse(content, id);
-
-                if (!(resourcesFound.some((x: LGResource) => x.Id === childResource.Id))) {
-                    this.resolveImportResources(childResource, importResolver, resourcesFound);
-                }
-            } catch (e) {
-                throw new Error(`${resourceId}:${e.message}`);
-            }
-        });
-    }
-
-    private fileResolver = (filePath: string): { content: string; id: string } => {
-        filePath = path.resolve(filePath);
-
-        return { content: fs.readFileSync(filePath, 'utf-8'), id: filePath };
-    }
-
-    private getOsPath(ambigiousPath: string): string {
-        if (process.platform === 'win32') {
-            return ambigiousPath.replace('/', '\\');
-        } else {
-            return ambigiousPath.replace('\\', '/');
         }
     }
 }

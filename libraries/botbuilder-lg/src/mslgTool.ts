@@ -22,33 +22,18 @@ export class MSLGTool {
     private Templates: LGTemplate[];
 
     public ValidateFile(lgFileContent: string): string[] {
-        let errors: string[] = [];
-
-        const parseResult: { isValid: boolean; templates: LGTemplate[]; error: Diagnostic } = LGParser.TryParse(lgFileContent);
-        if (parseResult.isValid) {
-            this.Templates = parseResult.templates;
-            if (this.Templates !== undefined && this.Templates.length > 0) {
-                // run static checker to get warning messages
-                errors = this.RunStaticCheck(this.Templates);
-                if (errors === undefined || errors.length === 0) {
-                    this.RunTemplateExtractor(this.Templates);
-                }
-            }
-        } else {
-            const start: Position = parseResult.error.Range.Start;
-            const end: Position = parseResult.error.Range.End;
-            const error: Diagnostic = new Diagnostic(
-                new Range(
-                    new Position(start.Line, start.Character),
-                    new Position(end.Line, end.Character)),
-                parseResult.error.Message,
-                parseResult.error.Severity);
-
-            console.log(error.toString());
-            errors = errors.concat(error.toString());
+        const diagnostic: Diagnostic[] = StaticChecker.checkText(lgFileContent, '', undefined);
+        if (diagnostic.length !== 0) {
+            return diagnostic.map((error: Diagnostic) => error.toString());
         }
 
-        return errors;
+        // extract templates
+        this.Templates = LGParser.parse(lgFileContent).Templates;
+        if (this.Templates !== undefined && this.Templates.length > 0) {
+            this.RunTemplateExtractor(this.Templates);
+        }
+
+        return [];
     }
 
     public GetTemplateVariables(templateName: string): string[] {
@@ -89,13 +74,6 @@ export class MSLGTool {
         }
 
         return result;
-    }
-
-    // tslint:disable-next-line: max-line-length
-    private RunStaticCheck(templates: LGTemplate[]): string[] {
-        const checker: StaticChecker = new StaticChecker(templates);
-
-        return checker.Check().map((error: Diagnostic) => error.toString());
     }
 
     private RunTemplateExtractor(lgtemplates: LGTemplate[]): void {
