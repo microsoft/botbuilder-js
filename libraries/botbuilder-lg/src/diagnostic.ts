@@ -25,7 +25,15 @@ export class Diagnostic {
         this.Severity = severity;
     }
 
-    public toString = (): string => `[${DiagnosticSeverity[this.Severity]}] ${this.Range.toString()}: ${this.Message.toString()}`;
+    public toString(): string {
+
+        // ignore error range if source is "inline"
+        if (this.Source === 'inline') {
+            return `[${DiagnosticSeverity[this.Severity]}] ${this.Message.toString()}`;
+        } else {
+            return `[${DiagnosticSeverity[this.Severity]}] ${this.Range.toString()}: ${this.Message.toString()}`;
+        }
+    }
 }
 
 /**
