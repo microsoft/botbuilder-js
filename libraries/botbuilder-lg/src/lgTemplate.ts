@@ -58,10 +58,15 @@ export class LGTemplate {
     }
 
     private readonly ExtractBody = (parseTree: TemplateDefinitionContext): string => {
-        if (parseTree.templateBody() !== undefined) {
-            return parseTree.templateBody().text;
+        if (parseTree.templateBody() === undefined) {
+            return undefined;
         }
 
-        return '';
+        const eof: string = '<EOF>';
+        const originText: string = parseTree.templateBody().text;
+        let result: string = originText.endsWith(eof) ? originText.substr(0, originText.length - eof.length) : originText;
+        result = result.replace(/\n$/g, '').replace(/\r$/, '');
+
+        return result;
     }
 }
