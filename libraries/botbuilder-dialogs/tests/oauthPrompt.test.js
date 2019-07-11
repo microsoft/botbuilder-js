@@ -1,4 +1,4 @@
-const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter, CardFactory } = require('botbuilder-core');
+const { ActivityTypes, CardFactory, ConversationState, InputHints, MemoryStorage, TestAdapter } = require('botbuilder-core');
 const { OAuthPrompt, OAuthPromptSettings, DialogSet, DialogTurnStatus, ListStyle } = require('../');
 const assert = require('assert');
 
@@ -47,6 +47,7 @@ describe('OAuthPrompt', function () {
             .assertReply(activity  => {
                 assert(activity.attachments.length === 1);
                 assert(activity.attachments[0].contentType === CardFactory.contentTypes.oauthCard);
+                assert(activity.inputHint === InputHints.AcceptingInput);
 
                 // send a mock EventActivity back to the bot with the token
                 adapter.addUserToken(connectionName, activity.channelId, activity.recipient.id, token);

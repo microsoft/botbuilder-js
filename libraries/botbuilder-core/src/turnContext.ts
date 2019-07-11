@@ -81,10 +81,11 @@ export class TurnContext {
 
     /**
      * Rewrites the activity text without any at mention.
+     * Use with caution because this function is altering the text on the Activity.
      *
      * @remarks
      * Some channels, for example Microsoft Teams, add at mention details into the text on a message activity.
-     * This can interfer with later procsesing. This is a helper function to remove the at mention.
+     * This can interfere with later processing. This is a helper function to remove the at mention.
      *
      * ```JavaScript
      * const updatedText = TurnContext.removeRecipientMention(context.request);
@@ -97,10 +98,11 @@ export class TurnContext {
 
     /**
      * Rewrites the activity text without any at mention. Specifying a particular recipient id.
+     * Use with caution because this function is altering the text on the Activity.
      *
      * @remarks
      * Some channels, for example Microsoft Teams, add at mention details into the text on a message activity.
-     * This can interfer with later procsesing. This is a helper function to remove the at mention.
+     * This can interfere with later processing. This is a helper function to remove the at mention.
      *
      * ```JavaScript
      * const updatedText = TurnContext.removeRecipientMention(context.request);
