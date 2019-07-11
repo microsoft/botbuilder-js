@@ -147,11 +147,6 @@ export class ExpressionType {
     public static readonly IsMatch: string = 'isMatch';
 
     // Short hand functions
-    public static readonly Intent: string = 'intent';
-    public static readonly Entity: string = 'entity';
-    public static readonly Dialog: string = 'dialog';
     public static readonly SimpleEntity: string = 'simpleEntity';
-    public static readonly Instance: string = 'instance';
-    public static readonly Option: string = 'option';
     public static readonly Callstack: string = 'callstack';
 }
