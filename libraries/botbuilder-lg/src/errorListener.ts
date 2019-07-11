@@ -33,6 +33,6 @@ export class ErrorListener implements ANTLRErrorListener<any> {
             }
             const diagnostic: Diagnostic = new Diagnostic(range, msg);
 
-            throw new LGException(msg, [diagnostic]);
+            throw new LGException(diagnostic.toString(), [diagnostic]);
     }
 }

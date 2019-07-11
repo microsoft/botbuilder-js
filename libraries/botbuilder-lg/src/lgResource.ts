@@ -49,7 +49,7 @@ export class LGResource {
                   this.resolveImportResources(childResource, importResolver, resourcesFound);
             }
          } catch (e) {
-            throw new Error(`${resourceId}:${e.message}`);
+            throw new Error(`[Error]${resourceId}:${e.message}`);
          }
       });
    }
