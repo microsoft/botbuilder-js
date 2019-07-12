@@ -32,7 +32,7 @@ class FauxSock{
         return buffer.length;
     };
 
-    receiveAsync(readLength){
+    receive(readLength){
         if(this.contentString[this.position])
         {        
             this.buff = Buffer.from(this.contentString[this.position]);
@@ -45,7 +45,7 @@ class FauxSock{
             this.receiver.disconnect();
     }    
     close(){};
-    closeAsync(){
+    close(){
         this.connected = false;
     };
     end(){ 
@@ -174,7 +174,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             let transport = new ws.WebSocketTransport(sock);
             expect(transport).to.be.instanceOf(ws.WebSocketTransport);
             expect(transport.isConnected()).to.be.true;
-            expect(transport.receiveAsync(5)).to.throw;
+            expect(transport.receive(5)).to.throw;
             expect( () => transport.close()).to.not.throw;
         });
 
@@ -186,7 +186,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             let transport = new ws.WebSocketTransport(sock);
             expect(transport).to.be.instanceOf(ws.WebSocketTransport);
             expect(transport.isConnected()).to.be.true;
-            transport.receiveAsync(12).catch();
+            transport.receive(12).catch();
             transport.onReceive(Buffer.from('{"VERB":"POST", "PATH":"somewhere/something"}', 'utf8'));
             
             expect( () => transport.close()).to.not.throw;
@@ -251,7 +251,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
         it('selects the right websocket and attempts to connect to the transport layer', (done) => {
             let client = new ws.WebSocketClient('fakeURL', new protocol.RequestHandler(), false);
             expect(client).to.be.instanceOf(ws.WebSocketClient);
-            client.connectAsync()
+            client.connect()
                 .catch(
                     (err) => 
                     { expect(err.message).to
@@ -266,7 +266,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             req.Verb = 'POST';
             req.Path = 'some/path';
             req.setBody('Hello World!');
-            client.sendAsync(req, new protocol.CancellationToken).catch(err => {expect(err).to.be.undefined;}).then(done());           
+            client.send(req, new protocol.CancellationToken).catch(err => {expect(err).to.be.undefined;}).then(done());           
         });
 
         it('disconnects', (done) => {
@@ -287,7 +287,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
         it('connects', (done) => {
             let server = new ws.WebSocketServer(new FauxSock, new protocol.RequestHandler());
             expect(server).to.be.instanceOf(ws.WebSocketServer);
-            expect(server.startAsync()).to.not.throw;
+            expect(server.start()).to.not.throw;
             done();
         });
 
@@ -298,7 +298,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             req.Verb = 'POST';
             req.Path = 'some/path';
             req.setBody('Hello World!');
-            server.sendAsync(req, new protocol.CancellationToken).catch(err => {expect(err).to.be.undefined;}).then(done());              
+            server.send(req, new protocol.CancellationToken).catch(err => {expect(err).to.be.undefined;}).then(done());              
         });
 
         it('disconnects', (done) => {
@@ -313,12 +313,12 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
         it('creates a new BrowserSocket', () => {
             let bs = new ws.BrowserWebSocket( new FauxSock());
             expect(bs).to.be.instanceOf(ws.BrowserWebSocket);
-            expect(() => bs.closeAsync()).to.not.throw;
+            expect(() => bs.close()).to.not.throw;
         });
 
         it('knows its connected', () => {
             let ns = new ws.BrowserWebSocket( new FauxSock());
-            ns.connectAsync('fakeUrl');
+            ns.connect('fakeUrl');
             expect(ns.isConnected()).to.be.true;
         });
 
@@ -330,7 +330,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
 
         it('always thinks it connects', () => {
             let ns = new ws.BrowserWebSocket( new FauxSock());
-            expect(ns.connectAsync()).to.not.throw;
+            expect(ns.connect()).to.not.throw;
         });
 
         it('can set message handlers on the socket', () => {
@@ -362,7 +362,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
         it('creates a new NodeSocket', () => {
             let ns = new ws.NodeWebSocket(new FauxSock);
             expect(ns).to.be.instanceOf(ws.NodeWebSocket);
-            expect(ns.closeAsync()).to.not.be.undefined;
+            expect(ns.close()).to.not.be.undefined;
         });
 
         it('requires a valid URL', () => {
@@ -386,7 +386,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
 
         it('attempts to open a connection', () => {
             let ns = new ws.NodeWebSocket(new FauxSock);
-            expect(ns.connectAsync().catch( (error) => {
+            expect(ns.connect().catch( (error) => {
                 expect(error.message).to.equal('connect ECONNREFUSED 127.0.0.1:8082');
             }));
         });

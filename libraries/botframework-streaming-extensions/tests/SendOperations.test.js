@@ -22,13 +22,13 @@ describe('Streaming Extension SendOperations Tests', () => {
         let hc = new protocol.HttpContent(headers, stream1);
         r.addStream(hc);
         expect(so).to.be.instanceOf(protocol.SendOperations);
-        so.sendRequestAsync('test1', r).then(done());
+        so.sendRequest('test1', r).then(done());
     });
 
     it('processes a cancel stream operation', async (done) => {
         let ps = new protocol.PayloadSender();
         let so = new protocol.SendOperations(ps);
 
-        so.sendCancelStreamAsync('test1').then(done());
+        so.sendCancelStream('test1').then(done());
     });
 });

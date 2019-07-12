@@ -22,7 +22,7 @@ class FauxSock{
         return buffer.length;
     };
 
-    receiveAsync(readLength){
+    receive(readLength){
         if(this.contentString[this.position])
         {        
             this.buff = Buffer.from(this.contentString[this.position]);
@@ -244,7 +244,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             let transport = new np.NamedPipeTransport(sock, 'fakeSocket5');
             expect(transport).to.be.instanceOf(np.NamedPipeTransport);
             expect(transport.isConnected()).to.be.true;
-            expect(transport.receiveAsync(5)).to.throw;
+            expect(transport.receive(5)).to.throw;
             expect( () => transport.close()).to.not.throw;
         });
 
@@ -256,7 +256,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             let transport = new np.NamedPipeTransport(sock);
             expect(transport).to.be.instanceOf(np.NamedPipeTransport);
             expect(transport.isConnected()).to.be.true;
-            transport.receiveAsync(12).catch();
+            transport.receive(12).catch();
             transport.socketReceive(Buffer.from('Hello World!', 'utf8'));
             
             expect( () => transport.close()).to.not.throw;
@@ -319,7 +319,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
 
         it('connects without throwing', () => {
             let client = new np.NamedPipeClient('pipeA', new protocol.RequestHandler(), false);
-            expect(client.connectAsync()).to.not.throw;
+            expect(client.connect()).to.not.throw;
             expect(client.disconnect()).to.not.throw;
         });
 
@@ -334,7 +334,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             req.Verb = 'POST';
             req.Path = 'some/path';
             req.setBody('Hello World!');
-            client.sendAsync(req, new protocol.CancellationToken).catch(err => {expect(err).to.be.undefined;}).then(done());  
+            client.send(req, new protocol.CancellationToken).catch(err => {expect(err).to.be.undefined;}).then(done());  
         });
 
     });
@@ -351,33 +351,33 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
             expect(server).to.be.instanceOf(np.NamedPipeServer);
 
-            expect(server.startAsync()).to.not.throw;
+            expect(server.start()).to.not.throw;
             expect(server.disconnect()).to.not.throw;
         });
 
         it('disconnects without throwing', () => {
             let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
             expect(server).to.be.instanceOf(np.NamedPipeServer);
-            expect(server.startAsync()).to.not.throw;
+            expect(server.start()).to.not.throw;
             expect(server.disconnect()).to.not.throw;
         });
 
         it('sends without throwing', (done) => {
             let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
             expect(server).to.be.instanceOf(np.NamedPipeServer);
-            expect(server.startAsync()).to.not.throw;
+            expect(server.start()).to.not.throw;
             let req = new protocol.Request();
             req.Verb = 'POST';
             req.Path = 'some/path';
             req.setBody('Hello World!');
-            server.sendAsync(req, new protocol.CancellationToken).catch(err => {expect(err).to.be.undefined;}).then(done());  
+            server.send(req, new protocol.CancellationToken).catch(err => {expect(err).to.be.undefined;}).then(done());  
             expect(server.disconnect()).to.not.throw;
         });
 
         it('handles being disconnected', (done) => {
             let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
             expect(server).to.be.instanceOf(np.NamedPipeServer);
-            server.startAsync();
+            server.start();
             try {
                 server.onConnectionDisconnected();
             } catch (error) {
@@ -390,7 +390,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
         it('handles being disconnected and tries to reconnect', (done) => {
             let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), true);
             expect(server).to.be.instanceOf(np.NamedPipeServer);
-            server.startAsync();
+            server.start();
             try {
                 server.onConnectionDisconnected();
             } catch (err) {

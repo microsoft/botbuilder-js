@@ -13,7 +13,7 @@ class FauxSock{
         return buffer.length;
     };
 
-    receiveAsync(readLength){
+    receive(readLength){
         if(this.contentString[this.position])
         {        
             this.buff = Buffer.from(this.contentString[this.position]);

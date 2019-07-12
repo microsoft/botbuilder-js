@@ -19,9 +19,9 @@ describe('RequestManager', () => {
         let requestId = '123';
 
         //  expect.assertions(1);
-        rm.getResponseAsync(requestId, undefined);
+        rm.getResponse(requestId, undefined);
 
-        rm.getResponseAsync(requestId, undefined)
+        rm.getResponse(requestId, undefined)
             .catch((reason) => expect(reason)
                 .to
                 .equal('requestId already exists in RequestManager'));
@@ -45,7 +45,7 @@ describe('RequestManager', () => {
         let requestId = '123';
         let response = new ReceiveResponse.ReceiveResponse();
 
-        let promise = rm.getResponseAsync(requestId, undefined);
+        let promise = rm.getResponse(requestId, undefined);
 
         let result = await rm.signalResponse(requestId, response);
         expect(result)

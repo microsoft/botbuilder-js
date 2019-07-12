@@ -15,7 +15,7 @@ class TestRequestHandler extends RequestHandler.RequestHandler {
     constructor(){
         super();
     }
-    processRequestAsync(request, logger) {
+    processRequest(request, logger) {
         let response = new Response.Response();
         response.statusCode = 111;
         response.setBody("Test body.");
@@ -26,7 +26,7 @@ class TestRequestHandler extends RequestHandler.RequestHandler {
 
 class TestRequestManager {
     constructor(){ }
-    getResponseAsync() {
+    getResponse() {
         let response = new protocol.ReceiveResponse();
         response.StatusCode = 200;
         return response;
@@ -120,7 +120,7 @@ describe('Streaming Extensions ProtocolAdapter', () => {
             payloadSender,
             paylaodReceiver);
 
-        expect(protocolAdapter.sendRequestAsync(new Request.Request(), new CancellationToken.CancellationToken()))
+        expect(protocolAdapter.sendRequest(new Request.Request(), new CancellationToken.CancellationToken()))
         .to.not.throw;
         done();
     });
