@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import {
-  CancellationToken,
   IStreamingTransportServer,
   ProtocolAdapter,
   ReceiveResponse,
@@ -15,10 +14,9 @@ import {
 } from '..';
 import { RequestManager } from '../Payloads';
 import {
-  IPayloadReceiver,
-  IPayloadSender,
   PayloadReceiver,
-  PayloadSender
+  PayloadSender,
+  TransportDisconnectedEventArgs
 } from '../PayloadTransport';
 import { ISocket } from './ISocket';
 import { WebSocketTransport } from './WebSocketTransport';
@@ -29,8 +27,8 @@ import { WebSocketTransport } from './WebSocketTransport';
 export class WebSocketServer implements IStreamingTransportServer {
   private readonly _url: string;
   private readonly _requestHandler: RequestHandler;
-  private readonly _sender: IPayloadSender;
-  private readonly _receiver: IPayloadReceiver;
+  private readonly _sender: PayloadSender;
+  private readonly _receiver: PayloadReceiver;
   private readonly _requestManager: RequestManager;
   private readonly _protocolAdapter: ProtocolAdapter;
   private readonly _webSocketTransport: WebSocketTransport;
@@ -71,18 +69,17 @@ export class WebSocketServer implements IStreamingTransportServer {
   /// Used to send data over this server connection.
   /// </summary>
   /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
-  /// <param name="cancellationToken">Optional <see cref="CancellationToken"/> used to signal this operation should be cancelled.</param>
   /// <returns>A promise of type <see cref="ReceiveResponse"/> handling the send operation.</returns>
-  public async sendAsync(request: StreamingRequest, cancellationToken: CancellationToken): Promise<ReceiveResponse> {
-    return this._protocolAdapter.sendRequestAsync(request, cancellationToken);
+  public async sendAsync(request: StreamingRequest): Promise<ReceiveResponse> {
+    return this._protocolAdapter.sendRequestAsync(request);
   }
 
   /// <summary>
   /// Stop this server.
   /// </summary>
   public disconnect(): void {
-    this._sender.disconnect(null);
-    this._receiver.disconnect(null);
+    this._sender.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
+    this._receiver.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
   }
 
   private onConnectionDisocnnected(s: WebSocketServer, sender: object, args: any) {

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-export class TransportContants {
+export class TransportConstants {
   public static readonly MaxPayloadLength: number = 4096;
   //get MaxPayloadLength(): number { return TransportContants.MaxPayloadLength; }
   public static readonly MaxHeaderLength: number = 48;

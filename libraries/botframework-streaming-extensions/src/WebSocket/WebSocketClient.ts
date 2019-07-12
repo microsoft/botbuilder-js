@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import {
-  CancellationToken,
   IStreamingTransportClient,
   ProtocolAdapter,
   ReceiveResponse,
@@ -15,10 +14,9 @@ import {
 } from '..';
 import { RequestManager } from '../Payloads';
 import {
-  IPayloadReceiver,
-  IPayloadSender,
   PayloadReceiver,
-  PayloadSender
+  PayloadSender,
+  TransportDisconnectedEventArgs
 } from '../PayloadTransport';
 import { BrowserWebSocket } from './BrowserWebSocket';
 import { NodeWebSocket } from './NodeWebSocket';
@@ -30,8 +28,8 @@ import { WebSocketTransport } from './WebSocketTransport';
 export class WebSocketClient implements IStreamingTransportClient {
   private readonly _url: string;
   private readonly _requestHandler: RequestHandler;
-  private readonly _sender: IPayloadSender;
-  private readonly _receiver: IPayloadReceiver;
+  private readonly _sender: PayloadSender;
+  private readonly _receiver: PayloadReceiver;
   private readonly _requestManager: RequestManager;
   private readonly _protocolAdapter: ProtocolAdapter;
   private readonly _autoReconnect: boolean;
@@ -87,18 +85,17 @@ export class WebSocketClient implements IStreamingTransportClient {
   /// Stop this client from listening.
   /// </summary>
   public disconnect(): void {
-    this._sender.disconnect('');
-    this._receiver.disconnect('');
+    this._sender.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
+    this._receiver.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
   }
 
   /// <summary>
   /// Task used to send data over this client connection.
   /// </summary>
   /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
-  /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> used to signal this operation should be cancelled.</param>
   /// <returns>A promise that will produce an instance of <see cref="ReceiveResponse"/> on completion of the send operation.</returns>
-  public async sendAsync(request: StreamingRequest, cancellationToken: CancellationToken): Promise<ReceiveResponse> {
-    return this._protocolAdapter.sendRequestAsync(request, cancellationToken);
+  public async sendAsync(request: StreamingRequest): Promise<ReceiveResponse> {
+    return this._protocolAdapter.sendRequestAsync(request);
   }
 
   private onConnectionDisconnected(sender: object, args: any) {

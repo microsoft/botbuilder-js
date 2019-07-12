@@ -9,17 +9,17 @@ import { Stream } from '../Stream';
 import { PayloadAssembler } from '../Assemblers/PayloadAssembler';
 import { ReceiveRequestAssembler } from '../Assemblers/ReceiveRequestAssembler';
 import { ReceiveResponseAssembler } from '../Assemblers/ReceiveResponseAssembler';
-import { IStreamManager } from './IStreamManager';
+import { StreamManager } from './StreamManager';
 import { Header } from '../Models/Header';
 import { PayloadTypes } from '../Models/PayloadTypes';
 
 export class PayloadAssembleManager {
   private readonly onReceiveRequest;
   private readonly onReceiveResponse;
-  private readonly streamManager: IStreamManager;
+  private readonly streamManager: StreamManager;
   private readonly activeAssemblers: { [id: string]: PayloadAssembler } = {};
 
-  constructor(streamManager: IStreamManager, onReceiveResponse: Function, onReceiveRequest: Function) {
+  constructor(streamManager: StreamManager, onReceiveResponse: Function, onReceiveRequest: Function) {
     this.streamManager = streamManager;
     this.onReceiveRequest = onReceiveRequest;
     this.onReceiveResponse = onReceiveResponse;

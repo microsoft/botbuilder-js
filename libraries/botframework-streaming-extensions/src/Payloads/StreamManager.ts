@@ -8,9 +8,8 @@
 import { ContentStreamAssembler } from '../Assemblers/ContentStreamAssembler';
 import { Header } from '../Models/Header';
 import { Stream } from '../Stream';
-import { IStreamManager } from './IStreamManager';
 
-export class StreamManager implements IStreamManager {
+export class StreamManager {
   private readonly activeAssemblers = [];
   private readonly onCancelStream: Function;
 

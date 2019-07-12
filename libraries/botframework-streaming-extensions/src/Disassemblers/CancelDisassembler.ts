@@ -5,16 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IPayloadSender } from '../PayloadTransport/IPayloadSender';
 import { Header } from '../Models/Header';
 import { PayloadTypes } from '../Models/PayloadTypes';
+import { PayloadSender } from '../PayloadTransport/PayloadSender';
 
 export class CancelDisassembler {
-  private readonly sender: IPayloadSender;
+  private readonly sender: PayloadSender;
   private readonly id: string;
   private readonly payloadType: PayloadTypes;
 
-  constructor(sender: IPayloadSender, id: string, payloadType: PayloadTypes) {
+  constructor(sender: PayloadSender, id: string, payloadType: PayloadTypes) {
     this.sender = sender;
     this.id = id;
     this.payloadType = payloadType;

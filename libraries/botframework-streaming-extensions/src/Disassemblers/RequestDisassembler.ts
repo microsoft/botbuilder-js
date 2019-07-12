@@ -8,7 +8,7 @@
 import { PayloadTypes } from '../Models/PayloadTypes';
 import { RequestPayload } from '../Models/RequestPayload';
 import { StreamDescription } from '../Models/StreamDescription';
-import { IPayloadSender } from '../PayloadTransport/IPayloadSender';
+import { PayloadSender } from '../PayloadTransport/PayloadSender';
 import { StreamingRequest } from '../StreamingRequest';
 import { PayloadDisassembler } from './PayloadDisassembler';
 import { StreamWrapper } from './StreamWrapper';
@@ -17,7 +17,7 @@ export class RequestDisassembler extends PayloadDisassembler {
   public request: StreamingRequest;
   public payloadType: PayloadTypes = PayloadTypes.request;
 
-  constructor(sender: IPayloadSender, id: string, request: StreamingRequest) {
+  constructor(sender: PayloadSender, id: string, request: StreamingRequest) {
     super(sender, id);
     this.request = request;
   }

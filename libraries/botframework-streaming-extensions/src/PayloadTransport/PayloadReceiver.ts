@@ -11,11 +11,10 @@ import { PayloadTypes } from '../Models/PayloadTypes';
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
 import { Stream } from '../Stream';
 import { ITransportReceiver } from '../Transport/ITransportReceiver';
-import { TransportContants } from '../Transport/TransportConstants';
-import { IPayloadReceiver } from './IPayloadReceiver';
+import { TransportConstants } from '../Transport/TransportConstants';
 import { TransportDisconnectedEventArgs } from './TransportDisconnectedEventArgs';
 
-export class PayloadReceiver implements IPayloadReceiver {
+export class PayloadReceiver {
   public isConnected: boolean;
   public disconnected?: TransportDisconnectedEventHandler;
   private _receiver: ITransportReceiver;
@@ -83,8 +82,8 @@ export class PayloadReceiver implements IPayloadReceiver {
     while (this.isConnected && !isClosed) {
       try {
         let readSoFar = 0;
-        while (readSoFar < TransportContants.MaxHeaderLength) {
-          this._receiveHeaderBuffer = await this._receiver.receiveAsync(TransportContants.MaxHeaderLength - readSoFar);
+        while (readSoFar < TransportConstants.MaxHeaderLength) {
+          this._receiveHeaderBuffer = await this._receiver.receiveAsync(TransportConstants.MaxHeaderLength - readSoFar);
 
           if (this._receiveHeaderBuffer) {
             readSoFar += this._receiveHeaderBuffer.length;
@@ -99,8 +98,8 @@ export class PayloadReceiver implements IPayloadReceiver {
 
           let contentStream = this._getStream(header);
 
-          while (bytesActuallyRead < header.PayloadLength && bytesActuallyRead < TransportContants.MaxPayloadLength) {
-            let count = Math.min(header.PayloadLength - bytesActuallyRead, TransportContants.MaxPayloadLength);
+          while (bytesActuallyRead < header.PayloadLength && bytesActuallyRead < TransportConstants.MaxPayloadLength) {
+            let count = Math.min(header.PayloadLength - bytesActuallyRead, TransportConstants.MaxPayloadLength);
             //this._receivePayloadBuffer = Buffer.alloc(count);
             this._receivePayloadBuffer = await this._receiver.receiveAsync(count);
             bytesActuallyRead += this._receivePayloadBuffer.byteLength;

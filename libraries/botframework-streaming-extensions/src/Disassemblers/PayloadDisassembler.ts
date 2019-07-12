@@ -9,18 +9,18 @@ import { HttpContentStream } from '../HttpContentStream';
 import { Header } from '../Models/Header';
 import { PayloadTypes } from '../Models/PayloadTypes';
 import { StreamDescription } from '../Models/StreamDescription';
-import { IPayloadSender } from '../PayloadTransport/IPayloadSender';
+import { PayloadSender } from '../PayloadTransport/PayloadSender';
 import { Stream } from '../Stream';
 import { StreamWrapper } from './StreamWrapper';
 
 export abstract class PayloadDisassembler {
   public abstract payloadType: PayloadTypes;
-  private readonly sender: IPayloadSender;
+  private readonly sender: PayloadSender;
   private stream: Stream;
   private streamLength?: number;
   private readonly id: string;
 
-  constructor(sender: IPayloadSender, id: string) {
+  constructor(sender: PayloadSender, id: string) {
     this.sender = sender;
     this.id = id;
   }

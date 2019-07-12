@@ -8,7 +8,7 @@
 import { ContentStream } from '../ContentStream';
 import { Header } from '../Models/Header';
 import { ResponsePayload } from '../Models/ResponsePayload';
-import { IStreamManager } from '../Payloads/IStreamManager';
+import { StreamManager } from '../Payloads/StreamManager';
 import { ReceiveResponse } from '../ReceiveResponse';
 import { Stream } from '../Stream';
 import { ContentStreamAssembler } from './ContentStreamAssembler';
@@ -16,9 +16,9 @@ import { PayloadAssembler } from './PayloadAssembler';
 
 export class ReceiveResponseAssembler extends PayloadAssembler {
   private readonly _onCompleted: Function;
-  private readonly _streamManager: IStreamManager;
+  private readonly _streamManager: StreamManager;
 
-  constructor(header: Header, streamManager: IStreamManager, onCompleted: Function) {
+  constructor(header: Header, streamManager: StreamManager, onCompleted: Function) {
     super(header.Id);
     this._streamManager = streamManager;
     this._onCompleted = onCompleted;

@@ -5,18 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { CancellationToken } from '../CancellationToken';
 import { ReceiveResponse } from '../ReceiveResponse';
-import { IRequestManager } from './IRequestManager';
 
 class PendingRequest {
   public requestId: string;
-  public cancellationToken: CancellationToken;
   public resolve: (response: ReceiveResponse) => void;
   public reject: (reason?: any) => void;
 }
 
-export class RequestManager implements IRequestManager {
+export class RequestManager {
   private readonly _pendingRequests = {};
 
   public pendingRequestCount(): number {
@@ -38,7 +35,7 @@ export class RequestManager implements IRequestManager {
     return Promise.resolve(false);
   }
 
-  public async getResponseAsync(requestId: string, cancellationToken: CancellationToken): Promise<ReceiveResponse> {
+  public async getResponseAsync(requestId: string): Promise<ReceiveResponse> {
     let pendingRequest = this._pendingRequests[requestId];
 
     if (pendingRequest) {
@@ -47,7 +44,6 @@ export class RequestManager implements IRequestManager {
 
     pendingRequest = new PendingRequest();
     pendingRequest.requestId = requestId;
-    pendingRequest.cancellationToken = cancellationToken;
 
     let promise = new Promise<ReceiveResponse>((resolve, reject) => {
       pendingRequest.resolve = resolve;

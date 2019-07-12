@@ -7,7 +7,6 @@
  */
 import { Server, Socket } from 'net';
 import {
-  CancellationToken,
   IStreamingTransportServer,
   ProtocolAdapter,
   ReceiveResponse,
@@ -16,8 +15,6 @@ import {
 } from '..';
 import { RequestManager } from '../Payloads';
 import {
-  IPayloadReceiver,
-  IPayloadSender,
   PayloadReceiver,
   PayloadSender
 } from '../PayloadTransport';
@@ -31,8 +28,8 @@ export class NamedPipeServer implements IStreamingTransportServer {
   private _incomingServer: Server;
   private readonly _baseName: string;
   private readonly _requestHandler: RequestHandler;
-  private readonly _sender: IPayloadSender;
-  private readonly _receiver: IPayloadReceiver;
+  private readonly _sender: PayloadSender;
+  private readonly _receiver: PayloadReceiver;
   private readonly _requestManager: RequestManager;
   private readonly _protocolAdapter: ProtocolAdapter;
   private readonly _autoReconnect: boolean;
@@ -125,8 +122,8 @@ export class NamedPipeServer implements IStreamingTransportServer {
   /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
   /// <param name="cancellationToken">Optional <see cref="CancellationToken"/> used to signal this operation should be cancelled.</param>
   /// <returns>A <see cref="Task"/> of type <see cref="ReceiveResponse"/> handling the send operation.</returns>
-  public async sendAsync(request: StreamingRequest, cancellationToken: CancellationToken): Promise<ReceiveResponse> {
-    return this._protocolAdapter.sendRequestAsync(request, cancellationToken);
+  public async sendAsync(request: StreamingRequest): Promise<ReceiveResponse> {
+    return this._protocolAdapter.sendRequestAsync(request);
   }
 
   private onConnectionDisconnected() {

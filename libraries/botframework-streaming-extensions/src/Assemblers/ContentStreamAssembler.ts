@@ -6,16 +6,16 @@
  * Licensed under the MIT License.
  */
 import { Header } from '../Models/Header';
-import { IStreamManager } from '../Payloads/IStreamManager';
+import { StreamManager } from '../Payloads/StreamManager';
 import { Stream } from '../Stream';
 import { PayloadAssembler } from './PayloadAssembler';
 
 export class ContentStreamAssembler extends PayloadAssembler {
   public contentLength: number;
   public contentType: string;
-  private readonly _streamManager: IStreamManager;
+  private readonly _streamManager: StreamManager;
 
-  constructor(streamManager: IStreamManager, id: string, streamType?: string, length?: number) {
+  constructor(streamManager: StreamManager, id: string, streamType?: string, length?: number) {
     super(id);
     this.contentType = streamType;
     this.contentLength = length;

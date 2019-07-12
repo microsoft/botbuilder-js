@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { HttpContentStream } from '../HttpContentStream';
-import { IPayloadSender } from '../PayloadTransport/IPayloadSender';
+import { PayloadSender } from '../PayloadTransport/PayloadSender';
 import { Stream } from '../Stream';
 import { PayloadTypes } from '../Models/PayloadTypes';
 import { PayloadDisassembler } from './PayloadDisassembler';
@@ -16,7 +16,7 @@ export class HttpContentStreamDisassembler extends PayloadDisassembler {
   public readonly contentStream: HttpContentStream;
   public payloadType: PayloadTypes = PayloadTypes.stream;
 
-  constructor(sender: IPayloadSender, contentStream: HttpContentStream) {
+  constructor(sender: PayloadSender, contentStream: HttpContentStream) {
     super(sender, contentStream.id);
 
     this.contentStream = contentStream;

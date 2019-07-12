@@ -9,16 +9,15 @@ import { Header } from '../Models/Header';
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
 import { Stream } from '../Stream';
 import { ITransportSender } from '../Transport/ITransportSender';
-import { TransportContants } from '../Transport/TransportConstants';
-import { IPayloadSender } from './IPayloadSender';
+import { TransportConstants } from '../Transport/TransportConstants';
 import { SendPacket } from './SendPacket';
 import { TransportDisconnectedEventArgs } from './TransportDisconnectedEventArgs';
 import { TransportDisconnectedEventHandler } from './TransportDisconnectedEventHandler';
 
-export class PayloadSender implements IPayloadSender {
+export class PayloadSender {
   public disconnected?: TransportDisconnectedEventHandler;
   private sender: ITransportSender;
-  private readonly sendHeaderBuffer: Buffer = Buffer.alloc(TransportContants.MaxHeaderLength);
+  private readonly sendHeaderBuffer: Buffer = Buffer.alloc(TransportConstants.MaxHeaderLength);
 
   /// <summary>
   /// Returns true if connected to a transport sender.

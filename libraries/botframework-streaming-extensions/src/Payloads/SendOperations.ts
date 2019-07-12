@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IPayloadSender } from '../PayloadTransport/IPayloadSender';
+import { PayloadSender } from '../PayloadTransport/PayloadSender';
 import { StreamingRequest } from '../StreamingRequest';
 import { StreamingResponse } from '../StreamingResponse';
 import { CancelDisassembler } from '../Disassemblers/CancelDisassembler';
@@ -15,9 +15,9 @@ import { ResponseDisassembler } from '../Disassemblers/ResponseDisassembler';
 import { PayloadTypes } from '../Models/PayloadTypes';
 
 export class SendOperations {
-  private readonly payloadSender: IPayloadSender;
+  private readonly payloadSender: PayloadSender;
 
-  constructor(payloadSender: IPayloadSender) {
+  constructor(payloadSender: PayloadSender) {
     this.payloadSender = payloadSender;
   }
 

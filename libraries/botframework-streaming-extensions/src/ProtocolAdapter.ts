@@ -6,15 +6,13 @@
  * Licensed under the MIT License.
  */
 import { PayloadAssembler } from './Assemblers/PayloadAssembler';
-import { CancellationToken } from './CancellationToken';
 import { Header } from './Models/Header';
-import { IRequestManager } from './Payloads/IRequestManager';
-import { IStreamManager } from './Payloads/IStreamManager';
 import { PayloadAssembleManager } from './Payloads/PayloadAssemblerManager';
+import { RequestManager } from './Payloads/RequestManager';
 import { SendOperations } from './Payloads/SendOperations';
 import { StreamManager } from './Payloads/StreamManager';
-import { IPayloadReceiver } from './PayloadTransport/IPayloadReceiver';
-import { IPayloadSender } from './PayloadTransport/IPayloadSender';
+import { PayloadReceiver } from './PayloadTransport/PayloadReceiver';
+import { PayloadSender } from './PayloadTransport/PayloadSender';
 import { ReceiveRequest } from './ReceiveRequest';
 import { ReceiveResponse } from './ReceiveResponse';
 import { RequestHandler } from './RequestHandler';
@@ -24,11 +22,11 @@ import { generateGuid } from './Utilities/protocol-base';
 
 export class ProtocolAdapter {
   private readonly requestHandler: RequestHandler;
-  private readonly payloadSender: IPayloadSender;
-  private readonly payloadReceiver: IPayloadReceiver;
-  private readonly requestManager: IRequestManager;
+  private readonly payloadSender: PayloadSender;
+  private readonly payloadReceiver: PayloadReceiver;
+  private readonly requestManager: RequestManager;
   private readonly sendOperations: SendOperations;
-  private readonly streamManager: IStreamManager;
+  private readonly streamManager: StreamManager;
   private readonly assemblerManager: PayloadAssembleManager;
 
   /// <summary>
@@ -38,7 +36,7 @@ export class ProtocolAdapter {
   /// <param name="requestManager">The manager that will process outgoing requests.</param>
   /// <param name="sender">The sender for use with outgoing requests.</param>
   /// <param name="receiver">The receiver for use with incoming requests.</param>
-  constructor(requestHandler: RequestHandler, requestManager: IRequestManager, sender: IPayloadSender, receiver: IPayloadReceiver) {
+  constructor(requestHandler: RequestHandler, requestManager: RequestManager, sender: PayloadSender, receiver: PayloadReceiver) {
     this.requestHandler = requestHandler;
     this.requestManager = requestManager;
     this.payloadSender = sender;
@@ -55,22 +53,11 @@ export class ProtocolAdapter {
   /// </summary>
   /// <param name="request">The outgoing request to send.</param>
   /// <param name="cancellationToken">Optional cancellation token.</param>
-  public async sendRequestAsync(request: StreamingRequest, cancellationToken?: CancellationToken): Promise<ReceiveResponse> {
+  public async sendRequestAsync(request: StreamingRequest): Promise<ReceiveResponse> {
     let requestId: string = generateGuid();
-
     await this.sendOperations.sendRequestAsync(requestId, request);
 
-    if (cancellationToken) {
-      cancellationToken.throwIfCancelled();
-    }
-
-    let response: ReceiveResponse = await this.requestManager.getResponseAsync(requestId, cancellationToken);
-
-    if (cancellationToken) {
-      cancellationToken.throwIfCancelled();
-    }
-
-    return response;
+    return this.requestManager.getResponseAsync(requestId);
   }
 
   private async onReceiveRequest(id: string, request: ReceiveRequest): Promise<void> {

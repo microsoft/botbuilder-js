@@ -7,8 +7,7 @@
  */
 
  export * from './HeaderSerializer';
- export * from './IRequestManager';
- export * from './IStreamManager';
+ export * from './StreamManager';
  export * from './PayloadAssemblerManager';
  export * from './RequestManager';
  export * from './SendOperations';

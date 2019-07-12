@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
- export * from './IPayloadReceiver';
- export * from './IPayloadSender';
+ export * from './PayloadReceiver';
+ export * from './PayloadSender';
  export * from './PayloadReceiver';
  export * from './PayloadSender';
  export * from './SendPacket';

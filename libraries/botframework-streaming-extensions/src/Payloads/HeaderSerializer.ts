@@ -5,9 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TransportContants } from '../Transport/TransportConstants';
 import { Header } from '../Models/Header';
-import { PayloadTypes } from '../Models/PayloadTypes';
 
 export class HeaderSerializer {
   public static readonly Delimiter = '.';

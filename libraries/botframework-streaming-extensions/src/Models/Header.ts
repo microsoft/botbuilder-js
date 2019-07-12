@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TransportContants } from '../Transport/TransportConstants';
+import { TransportConstants } from '../Transport/TransportConstants';
 
 export class Header {
   public PayloadType: string;
@@ -18,7 +18,7 @@ export class Header {
 
   constructor(payloadType: string, payloadLength: number, id: string, end: boolean) {
     this.PayloadType = payloadType;
-    this.clampLength(payloadLength, TransportContants.MaxLength, TransportContants.MinLength);
+    this.clampLength(payloadLength, TransportConstants.MaxLength, TransportConstants.MinLength);
     this.PayloadLength = payloadLength;
     this.Id = id;
     this.End = end;
@@ -26,10 +26,10 @@ export class Header {
 
   private clampLength(value, max, min): void {
     if (value > max) {
-      throw new Error(`Length must be less than ${TransportContants.MaxLength.toString()}`);
+      throw new Error(`Length must be less than ${TransportConstants.MaxLength.toString()}`);
     }
     if (value < min) {
-      throw new Error(`Length must be greater than ${TransportContants.MinLength.toString()}`);
+      throw new Error(`Length must be greater than ${TransportConstants.MinLength.toString()}`);
     }
   }
 }
