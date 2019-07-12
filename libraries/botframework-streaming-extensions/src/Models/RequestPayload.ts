@@ -12,7 +12,7 @@ export class RequestPayload {
     public path: string;
     public streams: StreamDescription[];
 
-    constructor(verb: string, path: string) {
+    public constructor(verb: string, path: string) {
         this.verb = verb;
         this.path = path;
     }

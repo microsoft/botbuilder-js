@@ -16,7 +16,7 @@ export class Header {
 
     public End: boolean;
 
-    constructor(payloadType: string, payloadLength: number, id: string, end: boolean) {
+    public constructor(payloadType: string, payloadLength: number, id: string, end: boolean) {
         this.PayloadType = payloadType;
         this.clampLength(payloadLength, TransportConstants.MaxLength, TransportConstants.MinLength);
         this.PayloadLength = payloadLength;

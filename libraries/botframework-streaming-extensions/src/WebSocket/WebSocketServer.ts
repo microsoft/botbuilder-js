@@ -39,16 +39,16 @@ export class WebSocketServer implements IStreamingTransportServer {
     /// </summary>
     /// <param name="socket">The <see cref="ISocket"/> of the underlying connection for this server to be built on top of.</param>
     /// <param name="requestHandler">A <see cref="RequestHandler"/> to process incoming messages received by this server.</param>
-    constructor(socket: ISocket, requestHandler?: RequestHandler) {
+    public constructor(socket: ISocket, requestHandler?: RequestHandler) {
         this._webSocketTransport = new WebSocketTransport(socket);
         this._requestHandler = requestHandler;
 
         this._requestManager = new RequestManager();
 
         this._sender = new PayloadSender();
-        this._sender.disconnected = (x: object, y: any) => this.onConnectionDisocnnected(this, x, y);
+        this._sender.disconnected = (x: object, y: any): void => this.onConnectionDisconnected(this, x, y);
         this._receiver = new PayloadReceiver();
-        this._receiver.disconnected = (x: object, y: any) => this.onConnectionDisocnnected(this, x, y);
+        this._receiver.disconnected = (x: object, y: any): void => this.onConnectionDisconnected(this, x, y);
 
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
     }
@@ -57,12 +57,11 @@ export class WebSocketServer implements IStreamingTransportServer {
     /// Used to establish the connection used by this server and begin listening for incoming messages.
     /// </summary>
     /// <returns>A promise to handle the server listen operation. This task will not resolve as long as the server is running.</returns>
-    public async startAsync(): Promise<string> {
+    public async start(): Promise<string> {
         this._sender.connect(this._webSocketTransport);
         this._receiver.connect(this._webSocketTransport);
 
-        return new Promise<string>(resolve =>
-            this._closedSignal = resolve);
+        return this._closedSignal;
     }
 
     /// <summary>
@@ -70,8 +69,8 @@ export class WebSocketServer implements IStreamingTransportServer {
     /// </summary>
     /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
     /// <returns>A promise of type <see cref="ReceiveResponse"/> handling the send operation.</returns>
-    public async sendAsync(request: StreamingRequest): Promise<ReceiveResponse> {
-        return this._protocolAdapter.sendRequestAsync(request);
+    public async send(request: StreamingRequest): Promise<ReceiveResponse> {
+        return this._protocolAdapter.sendRequest(request);
     }
 
     /// <summary>
@@ -82,7 +81,7 @@ export class WebSocketServer implements IStreamingTransportServer {
         this._receiver.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
     }
 
-    private onConnectionDisocnnected(s: WebSocketServer, sender: object, args: any) {
+    private onConnectionDisconnected(s: WebSocketServer, sender: object, args: any): void {
         s._closedSignal('close');
     }
 }

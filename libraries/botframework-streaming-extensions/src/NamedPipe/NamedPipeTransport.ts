@@ -25,19 +25,19 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     /// Creates a new instance of the NamedPipeTransport class.
     /// </summary>
     /// <param name="socket">The socket object to build this connection on.</param>
-    constructor(socket: Socket) {
+    public constructor(socket: Socket) {
         this._socket = socket;
         this._queue = [];
         this._activeOffset = 0;
         this._activeReceiveCount = 0;
         if (socket) {
-            this._socket.on('data', (data) => {
+            this._socket.on('data', (data): void => {
                 this.socketReceive(data);
             });
-            this._socket.on('close', () => {
+            this._socket.on('close', (): void => {
                 this.socketClose();
             });
-            this._socket.on('error', (err) => {
+            this._socket.on('error', (err): void => {
                 this.socketError(err);
             });
         }
@@ -71,7 +71,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     /// <summary>
     /// Closes the transport.
     /// </summary>
-    public close() {
+    public close(): void {
         if (this._socket) {
             this._socket.end('end');
             this._socket = undefined;
@@ -81,15 +81,14 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     // Returns:
     //  0 if the socket is closed or no more data can be returned
     //  1...count bytes in the buffer
-    /* tslint:disable:promise-function-async promise-must-complete */
-    public receiveAsync(count: number): Promise<Buffer> {
+    public receive(count: number): Promise<Buffer> {
         if (this._activeReceiveResolve) {
-            throw new Error('Cannot call receiveAsync more than once before it has returned.');
+            throw new Error('Cannot call receive more than once before it has returned.');
         }
 
         this._activeReceiveCount = count;
 
-        let promise = new Promise<Buffer>((resolve, reject) => {
+        let promise = new Promise<Buffer>((resolve, reject): void => {
             this._activeReceiveResolve = resolve;
             this._activeReceiveReject = reject;
         });
@@ -103,14 +102,14 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     /// Creates a new instance of the NamedPipeTransport class.
     /// </summary>
     /// <param name="socket">The socket object to build this connection on.</param>
-    private socketReceive(data: Buffer) {
+    private socketReceive(data: Buffer): void {
         if (this._queue && data && data.length > 0) {
             this._queue.push(data);
             this.trySignalData();
         }
     }
 
-    private socketClose() {
+    private socketClose(): void {
         if (this._activeReceiveReject) {
             this._activeReceiveReject(new Error('Socket was closed.'));
         }
@@ -123,7 +122,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
         this._socket = undefined;
     }
 
-    private socketError(err: Error) {
+    private socketError(err: Error): void {
         if (this._activeReceiveReject) {
             this._activeReceiveReject(err);
         }

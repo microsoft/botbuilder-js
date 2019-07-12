@@ -20,7 +20,7 @@ export abstract class PayloadDisassembler {
     private streamLength?: number;
     private readonly id: string;
 
-    constructor(sender: PayloadSender, id: string) {
+    public constructor(sender: PayloadSender, id: string) {
         this.sender = sender;
         this.id = id;
     }

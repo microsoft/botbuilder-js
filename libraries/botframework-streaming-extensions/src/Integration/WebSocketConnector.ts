@@ -34,7 +34,7 @@ export class WebSocketConnector {
     /// <param name="bot">The bot to use when processing requests on this connection.</param>
     /// <param name="logger">Optional logger.</param>
     /// <param name="middleware">Optional collection of middleware.</param>
-    constructor(bot: ActivityHandler, logger?, middleWare?: (MiddlewareHandler|Middleware)[]) {
+    public constructor(bot: ActivityHandler, logger?, middleWare?: (MiddlewareHandler|Middleware)[]) {
         if (bot === undefined) {
             throw new Error('Undefined Argument: Bot can not be undefined.');
         } else {
@@ -54,7 +54,7 @@ export class WebSocketConnector {
     /// <param name="req">The connection request.</param>
     /// <param name="res">The response sent on error or connection termination.</param>
     /// <param name="settings">Settings to set on the BotframeworkAdapter.</param>
-    public async processAsync(req, res, settings: BotFrameworkAdapterSettings) {
+    public async process(req, res, settings: BotFrameworkAdapterSettings): Promise<void> {
         if (!res.claimUpgrade) {
             let e = new Error('Upgrade to WebSockets required.');
             this.logger.log(e);
@@ -95,7 +95,7 @@ export class WebSocketConnector {
         const socket = ws.accept(req, upgrade.socket, upgrade.head);
         let handler = new StreamingRequestHandler(this.bot, this.logger, settings, this.middleWare);
 
-        await handler.startWebSocketAsync(socket);
+        await handler.startWebSocket(socket);
     }
 
     private async authenticateConnection(req: WebRequest, appId?: string, appPassword?: string, channelService?: string): Promise<boolean> {

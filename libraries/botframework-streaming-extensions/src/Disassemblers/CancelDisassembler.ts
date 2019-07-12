@@ -14,7 +14,7 @@ export class CancelDisassembler {
     private readonly id: string;
     private readonly payloadType: PayloadTypes;
 
-    constructor(sender: PayloadSender, id: string, payloadType: PayloadTypes) {
+    public constructor(sender: PayloadSender, id: string, payloadType: PayloadTypes) {
         this.sender = sender;
         this.id = id;
         this.payloadType = payloadType;

@@ -18,7 +18,7 @@ export class ReceiveRequestAssembler extends PayloadAssembler {
     private readonly _onCompleted: Function;
     private readonly _streamManager: StreamManager;
 
-    constructor(header: Header, streamManager: StreamManager, onCompleted: Function) {
+    public constructor(header: Header, streamManager: StreamManager, onCompleted: Function) {
         super(header.Id);
         this._streamManager = streamManager;
         this._onCompleted = onCompleted;
@@ -28,7 +28,7 @@ export class ReceiveRequestAssembler extends PayloadAssembler {
         return new Stream();
     }
 
-    public onReceive(header: Header, stream: Stream, contentLength: number) {
+    public onReceive(header: Header, stream: Stream, contentLength: number): void {
         super.onReceive(header, stream, contentLength);
         this.processRequest(stream)
             .then()
@@ -36,7 +36,7 @@ export class ReceiveRequestAssembler extends PayloadAssembler {
     }
 
     public requestPayloadfromJson(json: string): RequestPayload {
-        return <RequestPayload>JSON.parse((json.charCodeAt(0) === 0xFEFF) ? json.slice(1) : json);
+        return JSON.parse((json.charCodeAt(0) === 0xFEFF) ? json.slice(1) : json) as RequestPayload;
     }
 
     public close(): void {
@@ -44,7 +44,7 @@ export class ReceiveRequestAssembler extends PayloadAssembler {
     }
 
     private async processRequest(stream: Stream): Promise<void> {
-        let s: Buffer = <Buffer>stream.read(stream.length);
+        let s: Buffer = stream.read(stream.length) as Buffer;
         if (!s) {
             return;
         }
@@ -55,7 +55,7 @@ export class ReceiveRequestAssembler extends PayloadAssembler {
         rr.Verb = rp.verb;
 
         if (rp.streams) {
-            rp.streams.forEach(s => {
+            rp.streams.forEach( (s): void => {
                 let a: ContentStreamAssembler = this._streamManager.getPayloadAssembler(s.id);
                 a.contentType = s.contentType;
                 a.contentLength = s.length;

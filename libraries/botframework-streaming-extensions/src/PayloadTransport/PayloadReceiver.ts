@@ -27,7 +27,7 @@ export class PayloadReceiver {
     /// Creates a new instance of the PayloadReceiver class.
     /// </summary>
     /// <param name="receiver">The ITransportReceiver object to pull incoming data from.</param>
-    public connect(receiver: ITransportReceiver) {
+    public connect(receiver: ITransportReceiver): void {
         if (this.isConnected) {
             throw new Error('Already connected.');
         } else {
@@ -42,7 +42,7 @@ export class PayloadReceiver {
     /// </summary>
     /// <param name="getStream">Callback when a new stream has been received.</param>
     /// <param name="receiveAction">Callback when a new message has been received.</param>
-    public subscribe(getStream: (header: Header) => Stream, receiveAction: (header: Header, stream: Stream, count: number) => void) {
+    public subscribe(getStream: (header: Header) => Stream, receiveAction: (header: Header, stream: Stream, count: number) => void): void {
         this._getStream = getStream;
         this._receiveAction = receiveAction;
     }
@@ -51,7 +51,7 @@ export class PayloadReceiver {
     /// Force this receiver to disconnect.
     /// </summary>
     /// <param name="e">Event arguments to include when broadcasting disconnection event.</param>
-    public disconnect(e: TransportDisconnectedEventArgs) {
+    public disconnect(e: TransportDisconnectedEventArgs): void {
         let didDisconnect = false;
         try {
             if (this.isConnected) {
@@ -72,18 +72,18 @@ export class PayloadReceiver {
     }
 
     private runReceive(): void {
-        this.receivePacketsAsync()
+        this.receivePackets()
             .catch();
     }
 
-    private async receivePacketsAsync() {
+    private async receivePackets(): Promise<void> {
         let isClosed = false;
 
         while (this.isConnected && !isClosed) {
             try {
                 let readSoFar = 0;
                 while (readSoFar < TransportConstants.MaxHeaderLength) {
-                    this._receiveHeaderBuffer = await this._receiver.receiveAsync(TransportConstants.MaxHeaderLength - readSoFar);
+                    this._receiveHeaderBuffer = await this._receiver.receive(TransportConstants.MaxHeaderLength - readSoFar);
 
                     if (this._receiveHeaderBuffer) {
                         readSoFar += this._receiveHeaderBuffer.length;
@@ -100,10 +100,8 @@ export class PayloadReceiver {
 
                     while (bytesActuallyRead < header.PayloadLength && bytesActuallyRead < TransportConstants.MaxPayloadLength) {
                         let count = Math.min(header.PayloadLength - bytesActuallyRead, TransportConstants.MaxPayloadLength);
-                        //this._receivePayloadBuffer = Buffer.alloc(count);
-                        this._receivePayloadBuffer = await this._receiver.receiveAsync(count);
+                        this._receivePayloadBuffer = await this._receiver.receive(count);
                         bytesActuallyRead += this._receivePayloadBuffer.byteLength;
-
                         contentStream.write(this._receivePayloadBuffer);
 
                         // If this is a stream we want to keep handing it up as it comes in

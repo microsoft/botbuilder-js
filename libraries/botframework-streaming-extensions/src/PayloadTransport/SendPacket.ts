@@ -13,7 +13,7 @@ export class SendPacket {
     public payload: Stream;
     public sentCallback: () => Promise<void>;
 
-    constructor(header: Header, payload: Stream, sentCallback: () => Promise<void>) {
+    public constructor(header: Header, payload: Stream, sentCallback: () => Promise<void>) {
         this.header = header;
         this.payload = payload;
         this.sentCallback = sentCallback;

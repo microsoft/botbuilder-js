@@ -19,7 +19,7 @@ export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter {
     /// <param name="server"> The streaming transport server to send responses over. </param>
     /// <param name="settings"> The assorted settings to register with the base adapter. </param>
     /// </summary>
-    constructor(server: IStreamingTransportServer, settings?: Partial<BotFrameworkAdapterSettings>) {
+    public constructor(server: IStreamingTransportServer, settings?: Partial<BotFrameworkAdapterSettings>) {
         super(settings);
 
         this.server = server;
@@ -41,12 +41,12 @@ export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter {
     }
 
     // Used to allow the request handler to run the middleware pipeline for incoming activities.
-    public async executePipeline(context: TurnContext, logic: (Context: TurnContext) => Promise<void>) {
+    public async executePipeline(context: TurnContext, logic: (Context: TurnContext) => Promise<void>): Promise<void> {
         await this.runMiddleware(context, logic);
     }
 
     // Incoming requests should be handled by the request handler, not the adapter.
-    public async processActivity(req, res, logic) {
-        throw new Error('Not implemented.');
+    public async processActivity(req, res, logic): Promise<void> {
+        throw new Error(`Not implemented. ${ req }, ${ res }, ${ logic }.`);
     }
 }

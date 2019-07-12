@@ -13,7 +13,7 @@ export abstract class PayloadAssembler {
     public end: boolean;
     private stream: Stream;
 
-    constructor(id: string) {
+    public constructor(id: string) {
         this.id = id;
     }
 

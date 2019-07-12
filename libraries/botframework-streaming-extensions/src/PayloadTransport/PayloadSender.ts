@@ -30,7 +30,7 @@ export class PayloadSender {
     /// Connects to the given transport sender.
     /// </summary>
     /// <param name="sender">The transport sender to connect this payload sender to.</param>
-    public connect(sender: ITransportSender) {
+    public connect(sender: ITransportSender): void {
         this.sender = sender;
     }
 
@@ -48,7 +48,7 @@ export class PayloadSender {
     /// Disconnects this payload sender.
     /// </summary>
     /// <param name="e">The disconnected event arguments to include in the disconnected event broadcast.</param>
-    public disconnect(e: TransportDisconnectedEventArgs) {
+    public disconnect(e: TransportDisconnectedEventArgs): void {
         if (this.isConnected) {
             this.sender.close();
             this.sender = undefined;
@@ -74,7 +74,6 @@ export class PayloadSender {
                 }
 
                 if (packet.sentCallback) {
-                    // tslint:disable-next-line: no-floating-promises
                     packet.sentCallback();
                 }
             }

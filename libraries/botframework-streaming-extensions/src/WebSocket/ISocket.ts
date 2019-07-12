@@ -13,8 +13,8 @@
 export interface ISocket {
     isConnected(): boolean;
     write(buffer: Buffer);
-    connectAsync(serverAddress: string): Promise<void>;
-    closeAsync();
+    connect(serverAddress: string): Promise<void>;
+    close();
     setOnMessageHandler(handler: (x: any) => void);
     setOnErrorHandler(handler: (x: any) => void);
     setOnCloseHandler(handler: (x: any) => void);

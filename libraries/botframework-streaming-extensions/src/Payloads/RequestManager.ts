@@ -25,8 +25,6 @@ export class RequestManager {
 
         if (pendingRequest) {
             pendingRequest.resolve(response);
-
-            /* tslint:disable:no-dynamic-delete */
             delete this._pendingRequests[requestId];
 
             return Promise.resolve(true);
@@ -35,7 +33,7 @@ export class RequestManager {
         return Promise.resolve(false);
     }
 
-    public async getResponseAsync(requestId: string): Promise<ReceiveResponse> {
+    public async getResponse(requestId: string): Promise<ReceiveResponse> {
         let pendingRequest = this._pendingRequests[requestId];
 
         if (pendingRequest) {
@@ -45,7 +43,7 @@ export class RequestManager {
         pendingRequest = new PendingRequest();
         pendingRequest.requestId = requestId;
 
-        let promise = new Promise<ReceiveResponse>((resolve, reject) => {
+        let promise = new Promise<ReceiveResponse>((resolve, reject): void => {
             pendingRequest.resolve = resolve;
             pendingRequest.reject = reject;
         });

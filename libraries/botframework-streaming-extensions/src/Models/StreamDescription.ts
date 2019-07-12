@@ -10,7 +10,7 @@ export class StreamDescription {
     public contentType: string;
     public length?: number;
 
-    constructor(id: string) {
+    public constructor(id: string) {
         this.id = id;
     }
 }

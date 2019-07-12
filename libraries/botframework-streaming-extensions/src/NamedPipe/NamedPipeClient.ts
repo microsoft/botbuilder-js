@@ -38,33 +38,27 @@ export class NamedPipeClient implements IStreamingTransportClient {
     /// <param name="autoReconnect">Optional setting to determine if the client sould attempt to reconnect
     /// automatically on disconnection events. Defaults to true.
     /// </param>
-    constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect: boolean = true) {
+    public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect: boolean = true) {
         this._baseName = baseName;
         this._requestHandler = requestHandler;
         this._autoReconnect = autoReconnect;
-
         this._requestManager = new RequestManager();
-
         this._sender = new PayloadSender();
-        this._sender.disconnected = (x: object, y: any) => this.onConnectionDisconnected(this, x, y);
+        this._sender.disconnected = (x: object, y: any): void => this.onConnectionDisconnected(this, x, y);
         this._receiver = new PayloadReceiver();
-        this._receiver.disconnected = (x: object, y: any) => this.onConnectionDisconnected(this, x, y);
-
+        this._receiver.disconnected = (x: object, y: any): void => this.onConnectionDisconnected(this, x, y);
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
-
         this._isDisconnecting = false;
     }
 
     /// <summary>
     /// Establish a connection with no custom headers.
     /// </summary>
-    public async connectAsync(): Promise<void> {
+    public async connect(): Promise<void> {
         let outgoingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerIncomingPath;
         let outgoing = connect(outgoingPipeName);
-
         let incomingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerOutgoingPath;
         let incoming = connect(incomingPipeName);
-
         this._sender.connect(new NamedPipeTransport(outgoing));
         this._receiver.connect(new NamedPipeTransport(incoming));
     }
@@ -82,11 +76,11 @@ export class NamedPipeClient implements IStreamingTransportClient {
     /// </summary>
     /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
     /// <returns>A <see cref="Task"/> that will produce an instance of <see cref="ReceiveResponse"/> on completion of the send operation.</returns>
-    public async sendAsync(request: StreamingRequest): Promise<ReceiveResponse> {
-        return this._protocolAdapter.sendRequestAsync(request);
+    public async send(request: StreamingRequest): Promise<ReceiveResponse> {
+        return this._protocolAdapter.sendRequest(request);
     }
 
-    private onConnectionDisconnected(c: NamedPipeClient, sender: object, args: any) {
+    private onConnectionDisconnected(c: NamedPipeClient, sender: object, args: any): void {
         if (!c._isDisconnecting) {
             c._isDisconnecting = true;
             try {
@@ -99,11 +93,11 @@ export class NamedPipeClient implements IStreamingTransportClient {
                 }
 
                 if (c._autoReconnect) {
-                    c.connectAsync()
-                        .then(() => {
+                    c.connect()
+                        .then((): void => {
                             return;
                         })
-                        .catch((error) => { throw new Error(`Failed to reconnect. Reason: ${ error.message } `); });
+                        .catch((error): void => { throw new Error(`Failed to reconnect. Reason: ${ error.message } Sender: ${ sender } Args: ${ args }. `); });
                 }
             }
             finally {

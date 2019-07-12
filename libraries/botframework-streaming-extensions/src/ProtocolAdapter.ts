@@ -53,19 +53,19 @@ export class ProtocolAdapter {
     /// </summary>
     /// <param name="request">The outgoing request to send.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
-    public async sendRequestAsync(request: StreamingRequest): Promise<ReceiveResponse> {
+    public async sendRequest(request: StreamingRequest): Promise<ReceiveResponse> {
         let requestId: string = generateGuid();
-        await this.sendOperations.sendRequestAsync(requestId, request);
+        await this.sendOperations.sendRequest(requestId, request);
 
-        return this.requestManager.getResponseAsync(requestId);
+        return this.requestManager.getResponse(requestId);
     }
 
     private async onReceiveRequest(id: string, request: ReceiveRequest): Promise<void> {
         if (this.requestHandler !== undefined) {
-            let response = await this.requestHandler.processRequestAsync(request);
+            let response = await this.requestHandler.processRequest(request);
 
             if (response !== undefined) {
-                await this.sendOperations.sendResponseAsync(id, response);
+                await this.sendOperations.sendResponse(id, response);
             }
         }
     }
@@ -75,7 +75,7 @@ export class ProtocolAdapter {
     }
 
     private onCancelStream(contentStreamAssembler: PayloadAssembler): void {
-        this.sendOperations.sendCancelStreamAsync(contentStreamAssembler.id)
+        this.sendOperations.sendCancelStream(contentStreamAssembler.id)
             .catch();
     }
 }

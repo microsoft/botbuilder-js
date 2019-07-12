@@ -13,7 +13,7 @@ export class StreamManager {
     private readonly activeAssemblers = [];
     private readonly onCancelStream: Function;
 
-    constructor(onCancelStream: Function) {
+    public constructor(onCancelStream: Function) {
         this.onCancelStream = onCancelStream;
     }
 

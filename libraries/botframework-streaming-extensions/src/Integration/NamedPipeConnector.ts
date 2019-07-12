@@ -28,7 +28,7 @@ export class NamedPipeConnector {
     /// <param name="bot">The bot to use when processing requests on this connection.</param>
     /// <param name="logger">Optional logger.</param>
     /// <param name="middleware">Optional collection of middleware.</param>
-    constructor(bot: ActivityHandler, logger?, pipeName?: string, middleWare?: (MiddlewareHandler|Middleware)[]) {
+    public constructor(bot: ActivityHandler, logger?, pipeName?: string, middleWare?: (MiddlewareHandler|Middleware)[]) {
         if (bot === undefined) {
             throw new Error('Undefined Argument: Bot can not be undefined.');
         } else {
@@ -52,9 +52,9 @@ export class NamedPipeConnector {
     /// Process the initial request to establish a long lived connection via a streaming server.
     /// </summary>
     /// <param name="settings">Settings to set on the BotframeworkAdapter.</param>
-    public async processAsync(settings: BotFrameworkAdapterSettings) {
+    public async process(settings: BotFrameworkAdapterSettings): Promise<void> {
         let handler = new StreamingRequestHandler( this.bot, this.logger, settings, this.middleWare);
 
-        await handler.startNamedPipeAsync(this.pipeName);
+        await handler.startNamedPipe(this.pipeName);
     }
 }

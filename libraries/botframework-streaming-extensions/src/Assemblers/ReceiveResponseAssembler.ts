@@ -18,7 +18,7 @@ export class ReceiveResponseAssembler extends PayloadAssembler {
     private readonly _onCompleted: Function;
     private readonly _streamManager: StreamManager;
 
-    constructor(header: Header, streamManager: StreamManager, onCompleted: Function) {
+    public constructor(header: Header, streamManager: StreamManager, onCompleted: Function) {
         super(header.Id);
         this._streamManager = streamManager;
         this._onCompleted = onCompleted;
@@ -28,7 +28,7 @@ export class ReceiveResponseAssembler extends PayloadAssembler {
         return new Stream();
     }
 
-    public onReceive(header: Header, stream: Stream, contentLength: number) {
+    public onReceive(header: Header, stream: Stream, contentLength: number): void {
         super.onReceive(header, stream, contentLength);
         this.processResponse(stream)
             .then()
@@ -36,7 +36,7 @@ export class ReceiveResponseAssembler extends PayloadAssembler {
     }
 
     public responsePayloadfromJson(json: string): ResponsePayload {
-        return <ResponsePayload>JSON.parse(json);
+        return JSON.parse(json) as ResponsePayload;
     }
 
     public close(): void {
@@ -48,7 +48,7 @@ export class ReceiveResponseAssembler extends PayloadAssembler {
     }
 
     private async processResponse(stream: Stream): Promise<void> {
-        let s: Buffer = <Buffer>stream.read(stream.length);
+        let s: Buffer = stream.read(stream.length) as Buffer;
         if (!s) {
             return;
         }
@@ -58,7 +58,7 @@ export class ReceiveResponseAssembler extends PayloadAssembler {
         rr.StatusCode = rp.statusCode;
 
         if (rp.streams) {
-            rp.streams.forEach(s => {
+            rp.streams.forEach( (s): void => {
                 let a: ContentStreamAssembler = this._streamManager.getPayloadAssembler(s.id);
                 a.contentType = s.contentType;
                 a.contentLength = s.length;

@@ -17,5 +17,5 @@ export abstract class RequestHandler {
     /// <param name="request">A <see cref="ReceiveRequest"/> for this handler to process.</param>
     /// <param name="logger">Logger.</param>
     /// <returns>A promise that will produce a <see cref="StreamingResponse"/> on successful completion.</returns>
-    public abstract processRequestAsync(request: ReceiveRequest, logger?): Promise<StreamingResponse>;
+    public abstract processRequest(request: ReceiveRequest, logger?): Promise<StreamingResponse>;
 }

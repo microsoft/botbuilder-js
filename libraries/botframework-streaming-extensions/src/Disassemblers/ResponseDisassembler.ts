@@ -17,7 +17,7 @@ export class ResponseDisassembler extends PayloadDisassembler {
     public readonly response: StreamingResponse;
     public readonly payloadType: PayloadTypes = PayloadTypes.response;
 
-    constructor(sender: PayloadSender, id: string, response: StreamingResponse) {
+    public constructor(sender: PayloadSender, id: string, response: StreamingResponse) {
         super(sender, id);
 
         this.response = response;

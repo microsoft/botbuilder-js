@@ -19,7 +19,7 @@ export class PayloadAssembleManager {
     private readonly streamManager: StreamManager;
     private readonly activeAssemblers: { [id: string]: PayloadAssembler } = {};
 
-    constructor(streamManager: StreamManager, onReceiveResponse: Function, onReceiveRequest: Function) {
+    public constructor(streamManager: StreamManager, onReceiveResponse: Function, onReceiveRequest: Function) {
         this.streamManager = streamManager;
         this.onReceiveRequest = onReceiveRequest;
         this.onReceiveResponse = onReceiveResponse;
@@ -42,7 +42,7 @@ export class PayloadAssembleManager {
         return undefined;
     }
 
-    public onReceive(header: Header, contentStream: Stream, contentLength: number) {
+    public onReceive(header: Header, contentStream: Stream, contentLength: number): void {
         if (header.PayloadType === PayloadTypes.stream) {
             this.streamManager.onReceive(header, contentStream, contentLength);
         } else {
@@ -51,7 +51,6 @@ export class PayloadAssembleManager {
                 assembler.onReceive(header, contentStream, contentLength);
             }
             if (header.End) {
-                // tslint:disable-next-line: no-dynamic-delete
                 delete this.activeAssemblers[header.Id];
             }
         }

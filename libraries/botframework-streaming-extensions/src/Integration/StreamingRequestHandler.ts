@@ -21,7 +21,6 @@ import {
 } from 'botframework-schema';
 import * as os from 'os';
 import { IStreamingTransportServer, NamedPipeServer, ReceiveRequest, RequestHandler, StreamingResponse, WebSocketServer } from '..';
-// tslint:disable-next-line: no-require-imports
 const pjson: any = require('../package.json');
 import { ISocket } from '../WebSocket';
 import { BotFrameworkStreamingAdapter } from './BotFrameworkStreamingAdapter';
@@ -48,7 +47,7 @@ export class StreamingRequestHandler implements RequestHandler {
     /// <param name="logger">Optional logger, defaults to console.</param>
     /// <param name="settings">The settings for use with the BotFrameworkAdapter.</param>
     /// <param name="middlewareSet">An optional set of middleware to register with the adapter.</param>
-    constructor(bot: ActivityHandler, logger?, settings?: BotFrameworkAdapterSettings, middleWare?: (MiddlewareHandler|Middleware)[]) {
+    public constructor(bot: ActivityHandler, logger?, settings?: BotFrameworkAdapterSettings, middleWare?: (MiddlewareHandler|Middleware)[]) {
 
         if (bot === undefined) {
             throw new Error('Undefined Argument: Bot can not be undefined.');
@@ -70,20 +69,20 @@ export class StreamingRequestHandler implements RequestHandler {
     /// Connects the handler to a Named Pipe server and begins listening for incoming requests.
     /// </summary>
     /// <param name="pipeName">The name of the named pipe to use when creating the server.</param>
-    public async startNamedPipeAsync(pipename: string){
+    public async startNamedPipe(pipename: string): Promise<void>{
         this.server = new NamedPipeServer(pipename, this);
         this.adapter = new BotFrameworkStreamingAdapter(this.server, this.adapterSettings);
-        await this.server.startAsync();
+        await this.server.start();
     }
 
     /// <summary>
     /// Connects the handler to a WebSocket server and begins listening for incoming requests.
     /// </summary>
     /// <param name="socket">The socket to use when creating the server.</param>
-    public async startWebSocketAsync(socket: ISocket){
+    public async startWebSocket(socket: ISocket): Promise<void>{
         this.server = new WebSocketServer(socket, this);
         this.adapter = new BotFrameworkStreamingAdapter(this.server, this.adapterSettings);
-        await this.server.startAsync();
+        await this.server.start();
     }
 
 
@@ -93,7 +92,7 @@ export class StreamingRequestHandler implements RequestHandler {
     /// </summary>
     /// <param name="request">A ReceiveRequest from the connected channel.</param>
     /// <returns>A response created by the BotAdapter to be sent to the client that originated the request.</returns>
-    public async processRequestAsync(request: ReceiveRequest): Promise<StreamingResponse> {
+    public async processRequest(request: ReceiveRequest): Promise<StreamingResponse> {
         let response = new StreamingResponse();
         let body = await this.readRequestBodyAsString(request);
         if (body === undefined || request.Streams === undefined) {
@@ -132,11 +131,11 @@ export class StreamingRequestHandler implements RequestHandler {
         try {
             let activity: Activity = body;
             let adapter: BotFrameworkStreamingAdapter = new BotFrameworkStreamingAdapter(this.server, this.adapterSettings);
-            this.middleWare.forEach(mw => {
+            this.middleWare.forEach((mw): void => {
                 adapter.use(mw);
             });
             let context = new TurnContext(adapter, activity);
-            await adapter.executePipeline(context, async (turnContext) => {
+            await adapter.executePipeline(context, async (turnContext): Promise<void> => {
                 await this.bot.run(turnContext);
             });
 

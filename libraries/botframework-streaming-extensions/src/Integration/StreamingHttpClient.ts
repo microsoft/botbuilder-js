@@ -11,7 +11,7 @@ import { IStreamingTransportServer, StreamingRequest } from '..';
 export class StreamingHttpClient implements HttpClient {
     private readonly server: IStreamingTransportServer;
 
-    constructor(server: IStreamingTransportServer) {
+    public constructor(server: IStreamingTransportServer) {
         this.server = server;
     }
 
@@ -25,7 +25,7 @@ export class StreamingHttpClient implements HttpClient {
     public async sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse> {
         const request = this.mapHttpRequestToProtocolRequest(httpRequest);
         request.Path = request.Path.substring(request.Path.indexOf('/v3'));
-        const res = await this.server.sendAsync(request);
+        const res = await this.server.send(request);
 
         return {
             request: httpRequest,

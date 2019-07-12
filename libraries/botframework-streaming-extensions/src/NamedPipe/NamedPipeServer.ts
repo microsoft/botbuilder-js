@@ -44,7 +44,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
     /// <param name="autoReconnect">Optional setting to determine if the server sould attempt to reconnect
     /// automatically on disconnection events. Defaults to true.
     /// </param>
-    constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect: boolean = true) {
+    public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect: boolean = true) {
         this._baseName = baseName;
         this._requestHandler = requestHandler;
         this._autoReconnect = autoReconnect;
@@ -53,10 +53,10 @@ export class NamedPipeServer implements IStreamingTransportServer {
         this._receiver = new PayloadReceiver();
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
         this._isDisconnecting = false;
-        this._sender.disconnected = () => {
+        this._sender.disconnected = (): void => {
             this.onConnectionDisconnected();
         };
-        this._receiver.disconnected = () => {
+        this._receiver.disconnected = (): void => {
             this.onConnectionDisconnected();
         };
     }
@@ -65,10 +65,10 @@ export class NamedPipeServer implements IStreamingTransportServer {
     /// Used to establish the connection used by this server and begin listening for incoming messages.
     /// </summary>
     /// <returns>A promised string that will not resolve as long as the server is running.</returns>
-    public startAsync(): Promise<string> {
+    public start(): Promise<string> {
         let incomingConnect = false;
         let outgoingConnect = false;
-        let result = new Promise<string>((resolve, reject) => {
+        let result = new Promise<string>((resolve): void => {
             this._onClose = resolve;
         });
 
@@ -77,7 +77,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
         }
 
         let incomingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerIncomingPath;
-        this._incomingServer = new Server((socket: Socket) => {
+        this._incomingServer = new Server((socket: Socket): void => {
             this._receiver.connect(new NamedPipeTransport(socket));
             incomingConnect = true;
             if (incomingConnect && outgoingConnect) {
@@ -87,7 +87,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
 
         this._incomingServer.listen(incomingPipeName);
         let outgoingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerOutgoingPath;
-        this._outgoingServer = new Server((socket: Socket) => {
+        this._outgoingServer = new Server((socket: Socket): void => {
             this._sender.connect(new NamedPipeTransport(socket));
             outgoingConnect = true;
             if (incomingConnect && outgoingConnect) {
@@ -122,11 +122,11 @@ export class NamedPipeServer implements IStreamingTransportServer {
     /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
     /// <param name="cancellationToken">Optional <see cref="CancellationToken"/> used to signal this operation should be cancelled.</param>
     /// <returns>A <see cref="Task"/> of type <see cref="ReceiveResponse"/> handling the send operation.</returns>
-    public async sendAsync(request: StreamingRequest): Promise<ReceiveResponse> {
-        return this._protocolAdapter.sendRequestAsync(request);
+    public async send(request: StreamingRequest): Promise<ReceiveResponse> {
+        return this._protocolAdapter.sendRequest(request);
     }
 
-    private onConnectionDisconnected() {
+    private onConnectionDisconnected(): void {
         if (!this._isDisconnecting) {
             this._isDisconnecting = true;
             try {
@@ -139,8 +139,8 @@ export class NamedPipeServer implements IStreamingTransportServer {
                 }
 
                 if (this._autoReconnect) {
-                    this.startAsync()
-                        .catch((err) => { throw(new Error(`Unable to reconnect: ${ err.message }`)); });
+                    this.start()
+                        .catch((err): void => { throw(new Error(`Unable to reconnect: ${ err.message }`)); });
                 }
             }
             finally {

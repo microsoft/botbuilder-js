@@ -17,7 +17,7 @@ export class RequestDisassembler extends PayloadDisassembler {
     public request: StreamingRequest;
     public payloadType: PayloadTypes = PayloadTypes.request;
 
-    constructor(sender: PayloadSender, id: string, request: StreamingRequest) {
+    public constructor(sender: PayloadSender, id: string, request: StreamingRequest) {
         super(sender, id);
         this.request = request;
     }

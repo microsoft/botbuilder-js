@@ -17,7 +17,7 @@ export class NodeWebSocket implements ISocket {
     /// Creates a new instance of the NodeWebSocket class.
     /// </summary>
     /// <param name="waterShedSocket">The WaterShed socket object to build this connection on.</param>
-    constructor(waterShedSocket?) {
+    public constructor(waterShedSocket?) {
         this.waterShedSocket = waterShedSocket;
         this.connected = false;
     }
@@ -33,7 +33,7 @@ export class NodeWebSocket implements ISocket {
     /// Writes a buffer to the socket and sends it.
     /// </summary>
     /// <param name="buffer">The buffer of data to send across the connection.</param>
-    public write(buffer: Buffer) {
+    public write(buffer: Buffer): void {
         this.waterShedSocket.send(buffer);
     }
 
@@ -42,7 +42,7 @@ export class NodeWebSocket implements ISocket {
     /// </summary>
     /// <param name="serverAddress">The address the server is listening on.</param>
     /// <param name="port">The port the server is listening on, defaults to 8082.</param>
-    public async connectAsync(serverAddress, port = 8082): Promise<void> {
+    public async connect(serverAddress, port = 8082): Promise<void> {
     // following template from https://github.com/joyent/node-watershed#readme
         let shed = new WaterShed.Watershed();
         let wskey = shed.generateKey();
@@ -57,13 +57,13 @@ export class NodeWebSocket implements ISocket {
         };
         let req = http.request(options);
         req.end();
-        req.on('upgrade', function(res, socket, head) {
-            let wsc = shed.connect(res, socket, head, wskey);
+        req.on('upgrade', function(res, socket, head): void {
+            shed.connect(res, socket, head, wskey);
         });
 
         this.connected = true;
 
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<void>((resolve, reject): void => {
             req.on('close', resolve);
             req.on('error', reject);
         });
@@ -72,7 +72,7 @@ export class NodeWebSocket implements ISocket {
     /// <summary>
     /// Set the handler for text and binary messages received on the socket.
     /// </summary>
-    public setOnMessageHandler(handler: (x: any) => void) {
+    public setOnMessageHandler(handler: (x: any) => void): void {
         this.waterShedSocket.on('text', handler);
         this.waterShedSocket.on('binary', handler);
     }
@@ -80,7 +80,7 @@ export class NodeWebSocket implements ISocket {
     /// <summary>
     /// Close the socket.
     /// </summary>
-    public closeAsync() {
+    public close(): any {
         this.connected = false;
 
         return this.waterShedSocket.end();
@@ -97,6 +97,6 @@ export class NodeWebSocket implements ISocket {
     /// Set the callback to call when encountering errors.
     /// </summary>
     public setOnErrorHandler(handler: (x: any) => void): void {
-        this.waterShedSocket.on('error', (error) => { if (error) { handler(error); } });
+        this.waterShedSocket.on('error', (error): void => { if (error) { handler(error); } });
     }
 }

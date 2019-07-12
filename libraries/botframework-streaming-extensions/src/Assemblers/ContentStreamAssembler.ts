@@ -15,7 +15,7 @@ export class ContentStreamAssembler extends PayloadAssembler {
     public contentType: string;
     private readonly _streamManager: StreamManager;
 
-    constructor(streamManager: StreamManager, id: string, streamType?: string, length?: number) {
+    public constructor(streamManager: StreamManager, id: string, streamType?: string, length?: number) {
         super(id);
         this.contentType = streamType;
         this.contentLength = length;

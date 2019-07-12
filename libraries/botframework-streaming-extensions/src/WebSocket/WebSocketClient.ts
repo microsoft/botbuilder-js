@@ -42,7 +42,7 @@ export class WebSocketClient implements IStreamingTransportClient {
     /// <param name="autoReconnect">Optional setting to determine if the server sould attempt to reconnect
     /// automatically on disconnection events. Defaults to true.
     /// </param>
-    constructor({ url, requestHandler, autoReconnect = true }) {
+    public constructor({ url, requestHandler, autoReconnect = true }) {
         this._url = url;
         this._requestHandler = requestHandler;
         this._autoReconnect = autoReconnect;
@@ -61,17 +61,17 @@ export class WebSocketClient implements IStreamingTransportClient {
     /// Establish a connection with no custom headers.
     /// </summary>
     /// <returns>A promise that will not resolve until the client stops listening for incoming messages.</returns>
-    public async connectAsync(): Promise<void> {
+    public async connect(): Promise<void> {
         if (typeof WebSocket !== 'undefined') {
             const ws = new BrowserWebSocket();
-            await ws.connectAsync(this._url);
+            await ws.connect(this._url);
             const transport = new WebSocketTransport(ws);
             this._sender.connect(transport);
             this._receiver.connect(transport);
         } else {
             const ws = new NodeWebSocket();
             try {
-                await ws.connectAsync(this._url);
+                await ws.connect(this._url);
                 const transport = new WebSocketTransport(ws);
                 this._sender.connect(transport);
                 this._receiver.connect(transport);
@@ -94,14 +94,14 @@ export class WebSocketClient implements IStreamingTransportClient {
     /// </summary>
     /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
     /// <returns>A promise that will produce an instance of <see cref="ReceiveResponse"/> on completion of the send operation.</returns>
-    public async sendAsync(request: StreamingRequest): Promise<ReceiveResponse> {
-        return this._protocolAdapter.sendRequestAsync(request);
+    public async send(request: StreamingRequest): Promise<ReceiveResponse> {
+        return this._protocolAdapter.sendRequest(request);
     }
 
-    private onConnectionDisconnected(sender: object, args: any) {
+    private onConnectionDisconnected(sender: object, args: any): void {
         if (this._autoReconnect) {
-            this.connectAsync()
-                .catch(() => { throw(new Error(`Unable to re-connect client to Node transport.`)); });
+            this.connect()
+                .catch((): void => { throw(new Error(`Unable to re-connect client to Node transport. Sender:` + sender + ' Args:' + args)); });
         }
     }
 
