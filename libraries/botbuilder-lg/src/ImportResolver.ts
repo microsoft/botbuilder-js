@@ -12,17 +12,16 @@ import * as path from 'path';
 /**
  * Delegate for resolving resource id of imported lg file.
  */
-export declare type ImportResolverDelegate = (resourceId: string) => { content: string; id: string };
+export declare type ImportResolverDelegate = (source: string, resourceId: string) => { content: string; id: string };
 
 /**
  * import resolver util
  */
 export class ImportResolver {
-    public static filePathResolver(filePath: string): ImportResolverDelegate {
-        return ((id: string): { content: string; id: string } => {
-            // import paths are in resource files which can be executed on multiple OS environments
+    public static fileResolver: ImportResolverDelegate = (filePath: string, id: string) => {
+        // import paths are in resource files which can be executed on multiple OS environments
             // Call GetOsPath() to map / & \ in importPath -> OSPath
-            let importPath: string = this.normalizePath(id);
+            let importPath: string = ImportResolver.normalizePath(id);
             if (!path.isAbsolute(importPath)) {
                 // get full path for importPath relative to path which is doing the import.
                 importPath = path.normalize(path.join(path.dirname(filePath), id));
@@ -31,16 +30,6 @@ export class ImportResolver {
             const content: string = fs.readFileSync(importPath, 'utf-8');
 
             return { content, id: importPath };
-        });
-    }
-
-    public static fileResolver(): ImportResolverDelegate {
-        return ((id: string): { content: string; id: string } => {
-            id = path.normalize(id);
-            const content: string = fs.readFileSync(id, 'utf-8');
-
-            return { content, id };
-        });
     }
 
      /// <summary>

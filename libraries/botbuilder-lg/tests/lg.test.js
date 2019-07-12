@@ -294,7 +294,7 @@ describe('LG', function () {
 
         // Assert 6.lg is imported only once when there are several relative paths which point to the same file.
         // Assert import cycle loop is handled well as expected when a file imports itself.
-        assert.strictEqual(engine.templates.length, 11);
+        assert.strictEqual(engine.templates.length, 14);
 
         const options1 = ["Hi", "Hello", "Hey"];
         var evaled = engine.evaluateTemplate("basicTemplate");
@@ -311,6 +311,10 @@ describe('LG', function () {
         const options4 = ["Hi 2", "Hello 2"];
         evaled = engine.evaluateTemplate("basicTemplate2");
         assert.strictEqual(options4.includes(evaled), true, `Evaled is ${evaled}`);
+
+        const options5 = ["Hi 2", "Hello 2"];
+        evaled = engine.evaluateTemplate("template3");
+        assert.strictEqual(options5.includes(evaled), true, `Evaled is ${evaled}`);
 
         // Assert 6.lg of absolute path is imported from text.
         var importedFilePath = GetExampleFilePath("6.lg");
@@ -346,7 +350,7 @@ describe('LG', function () {
         let engine = new TemplateEngine().addFiles([GetExampleFilePath("importExamples/import.lg"), GetExampleFilePath("importExamples/import2.lg")]);
 
         // Assert 6.lg is imported only once and no exceptions are thrown when it is imported from multiple files.
-        assert.strictEqual(engine.templates.length, 13);
+        assert.strictEqual(engine.templates.length, 14);
 
         const options1 = ["Hi", "Hello", "Hey"];
         var evaled = engine.evaluateTemplate("basicTemplate");

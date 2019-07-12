@@ -35,7 +35,7 @@ export class StaticChecker {
         try {
             let totalLGResources: LGResource[] = [];
             filePaths.forEach((filePath: string) => {
-                importResolver = importResolver !== undefined ? importResolver : ImportResolver.filePathResolver(filePath);
+                importResolver = importResolver !== undefined ? importResolver : ImportResolver.fileResolver;
 
                 filePath = path.normalize(filePath);
                 const rootResource: LGResource = LGParser.parse(fs.readFileSync(filePath, 'utf-8'), filePath);
