@@ -245,7 +245,7 @@ export class CardFactory {
             images = text;
             text = undefined;
         }
-        const card: Partial<ThumbnailCard> = { ...other };
+        const card: Partial<ThumbnailCard> = Object.assign({}, other);
         if (title) { card.title = title; }
         if (text) { card.text = text; }
         if (images) { card.images = CardFactory.images(images); }
@@ -334,7 +334,7 @@ function mediaCard(contentType: string,
     media: (MediaUrl | string)[],
     buttons?: (CardAction | string)[],
     other?: any): Attachment {
-    const card: VideoCard = { ...other };
+    const card: VideoCard = Object.assign({}, other);
     if (title) { card.title = title; }
     card.media = CardFactory.media(media);
     if (buttons) { card.buttons = CardFactory.actions(buttons); }
