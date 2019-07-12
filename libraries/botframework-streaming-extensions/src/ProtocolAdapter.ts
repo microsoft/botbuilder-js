@@ -21,61 +21,61 @@ import { StreamingRequest } from './StreamingRequest';
 import { generateGuid } from './Utilities/protocol-base';
 
 export class ProtocolAdapter {
-  private readonly requestHandler: RequestHandler;
-  private readonly payloadSender: PayloadSender;
-  private readonly payloadReceiver: PayloadReceiver;
-  private readonly requestManager: RequestManager;
-  private readonly sendOperations: SendOperations;
-  private readonly streamManager: StreamManager;
-  private readonly assemblerManager: PayloadAssembleManager;
+    private readonly requestHandler: RequestHandler;
+    private readonly payloadSender: PayloadSender;
+    private readonly payloadReceiver: PayloadReceiver;
+    private readonly requestManager: RequestManager;
+    private readonly sendOperations: SendOperations;
+    private readonly streamManager: StreamManager;
+    private readonly assemblerManager: PayloadAssembleManager;
 
-  /// <summary>
-  /// Creates a new instance of the protocol adapter class.
-  /// </summary>
-  /// <param name="requestHandler">The handler that will process incoming requests.</param>
-  /// <param name="requestManager">The manager that will process outgoing requests.</param>
-  /// <param name="sender">The sender for use with outgoing requests.</param>
-  /// <param name="receiver">The receiver for use with incoming requests.</param>
-  constructor(requestHandler: RequestHandler, requestManager: RequestManager, sender: PayloadSender, receiver: PayloadReceiver) {
-    this.requestHandler = requestHandler;
-    this.requestManager = requestManager;
-    this.payloadSender = sender;
-    this.payloadReceiver = receiver;
-    this.sendOperations = new SendOperations(this.payloadSender);
-    this.streamManager = new StreamManager(this.onCancelStream);
-    this.assemblerManager = new PayloadAssembleManager(this.streamManager, (id: string, response: ReceiveResponse) => this.onReceiveResponse(id, response), (id: string, request: ReceiveRequest) => this.onReceiveRequest(id, request));
-// tslint:disable-next-line: no-void-expression
-    this.payloadReceiver.subscribe((header: Header) => this.assemblerManager.getPayloadStream(header), (header: Header, contentStream: Stream, contentLength: number) => this.assemblerManager.onReceive(header, contentStream, contentLength));
-  }
-
-  /// <summary>
-  /// Sends a request over the attached request manager.
-  /// </summary>
-  /// <param name="request">The outgoing request to send.</param>
-  /// <param name="cancellationToken">Optional cancellation token.</param>
-  public async sendRequestAsync(request: StreamingRequest): Promise<ReceiveResponse> {
-    let requestId: string = generateGuid();
-    await this.sendOperations.sendRequestAsync(requestId, request);
-
-    return this.requestManager.getResponseAsync(requestId);
-  }
-
-  private async onReceiveRequest(id: string, request: ReceiveRequest): Promise<void> {
-    if (this.requestHandler !== undefined) {
-      let response = await this.requestHandler.processRequestAsync(request);
-
-      if (response !== undefined) {
-        await this.sendOperations.sendResponseAsync(id, response);
-      }
+    /// <summary>
+    /// Creates a new instance of the protocol adapter class.
+    /// </summary>
+    /// <param name="requestHandler">The handler that will process incoming requests.</param>
+    /// <param name="requestManager">The manager that will process outgoing requests.</param>
+    /// <param name="sender">The sender for use with outgoing requests.</param>
+    /// <param name="receiver">The receiver for use with incoming requests.</param>
+    constructor(requestHandler: RequestHandler, requestManager: RequestManager, sender: PayloadSender, receiver: PayloadReceiver) {
+        this.requestHandler = requestHandler;
+        this.requestManager = requestManager;
+        this.payloadSender = sender;
+        this.payloadReceiver = receiver;
+        this.sendOperations = new SendOperations(this.payloadSender);
+        this.streamManager = new StreamManager(this.onCancelStream);
+        this.assemblerManager = new PayloadAssembleManager(this.streamManager, (id: string, response: ReceiveResponse) => this.onReceiveResponse(id, response), (id: string, request: ReceiveRequest) => this.onReceiveRequest(id, request));
+        // tslint:disable-next-line: no-void-expression
+        this.payloadReceiver.subscribe((header: Header) => this.assemblerManager.getPayloadStream(header), (header: Header, contentStream: Stream, contentLength: number) => this.assemblerManager.onReceive(header, contentStream, contentLength));
     }
-  }
 
-  private async onReceiveResponse(id: string, response: ReceiveResponse): Promise<void> {
-    await this.requestManager.signalResponse(id, response);
-  }
+    /// <summary>
+    /// Sends a request over the attached request manager.
+    /// </summary>
+    /// <param name="request">The outgoing request to send.</param>
+    /// <param name="cancellationToken">Optional cancellation token.</param>
+    public async sendRequestAsync(request: StreamingRequest): Promise<ReceiveResponse> {
+        let requestId: string = generateGuid();
+        await this.sendOperations.sendRequestAsync(requestId, request);
 
-  private onCancelStream(contentStreamAssembler: PayloadAssembler): void {
-    this.sendOperations.sendCancelStreamAsync(contentStreamAssembler.id)
-      .catch();
-  }
+        return this.requestManager.getResponseAsync(requestId);
+    }
+
+    private async onReceiveRequest(id: string, request: ReceiveRequest): Promise<void> {
+        if (this.requestHandler !== undefined) {
+            let response = await this.requestHandler.processRequestAsync(request);
+
+            if (response !== undefined) {
+                await this.sendOperations.sendResponseAsync(id, response);
+            }
+        }
+    }
+
+    private async onReceiveResponse(id: string, response: ReceiveResponse): Promise<void> {
+        await this.requestManager.signalResponse(id, response);
+    }
+
+    private onCancelStream(contentStreamAssembler: PayloadAssembler): void {
+        this.sendOperations.sendCancelStreamAsync(contentStreamAssembler.id)
+            .catch();
+    }
 }

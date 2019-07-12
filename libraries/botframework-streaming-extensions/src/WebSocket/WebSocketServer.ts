@@ -6,17 +6,17 @@
  * Licensed under the MIT License.
  */
 import {
-  IStreamingTransportServer,
-  ProtocolAdapter,
-  ReceiveResponse,
-  RequestHandler,
-  StreamingRequest
+    IStreamingTransportServer,
+    ProtocolAdapter,
+    ReceiveResponse,
+    RequestHandler,
+    StreamingRequest
 } from '..';
 import { RequestManager } from '../Payloads';
 import {
-  PayloadReceiver,
-  PayloadSender,
-  TransportDisconnectedEventArgs
+    PayloadReceiver,
+    PayloadSender,
+    TransportDisconnectedEventArgs
 } from '../PayloadTransport';
 import { ISocket } from './ISocket';
 import { WebSocketTransport } from './WebSocketTransport';
@@ -25,64 +25,64 @@ import { WebSocketTransport } from './WebSocketTransport';
 /// A server for use with the Bot Framework Protocol V3 with Streaming Extensions and an underlying WebSocket transport.
 /// </summary>
 export class WebSocketServer implements IStreamingTransportServer {
-  private readonly _url: string;
-  private readonly _requestHandler: RequestHandler;
-  private readonly _sender: PayloadSender;
-  private readonly _receiver: PayloadReceiver;
-  private readonly _requestManager: RequestManager;
-  private readonly _protocolAdapter: ProtocolAdapter;
-  private readonly _webSocketTransport: WebSocketTransport;
-  private _closedSignal;
+    private readonly _url: string;
+    private readonly _requestHandler: RequestHandler;
+    private readonly _sender: PayloadSender;
+    private readonly _receiver: PayloadReceiver;
+    private readonly _requestManager: RequestManager;
+    private readonly _protocolAdapter: ProtocolAdapter;
+    private readonly _webSocketTransport: WebSocketTransport;
+    private _closedSignal;
 
-  /// <summary>
-  /// Initializes a new instance of the <see cref="WebSocketServer"/> class.
-  /// </summary>
-  /// <param name="socket">The <see cref="ISocket"/> of the underlying connection for this server to be built on top of.</param>
-  /// <param name="requestHandler">A <see cref="RequestHandler"/> to process incoming messages received by this server.</param>
-  constructor(socket: ISocket, requestHandler?: RequestHandler) {
-    this._webSocketTransport = new WebSocketTransport(socket);
-    this._requestHandler = requestHandler;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WebSocketServer"/> class.
+    /// </summary>
+    /// <param name="socket">The <see cref="ISocket"/> of the underlying connection for this server to be built on top of.</param>
+    /// <param name="requestHandler">A <see cref="RequestHandler"/> to process incoming messages received by this server.</param>
+    constructor(socket: ISocket, requestHandler?: RequestHandler) {
+        this._webSocketTransport = new WebSocketTransport(socket);
+        this._requestHandler = requestHandler;
 
-    this._requestManager = new RequestManager();
+        this._requestManager = new RequestManager();
 
-    this._sender = new PayloadSender();
-    this._sender.disconnected = (x: object, y: any) => this.onConnectionDisocnnected(this, x, y);
-    this._receiver = new PayloadReceiver();
-    this._receiver.disconnected = (x: object, y: any) => this.onConnectionDisocnnected(this, x, y);
+        this._sender = new PayloadSender();
+        this._sender.disconnected = (x: object, y: any) => this.onConnectionDisocnnected(this, x, y);
+        this._receiver = new PayloadReceiver();
+        this._receiver.disconnected = (x: object, y: any) => this.onConnectionDisocnnected(this, x, y);
 
-    this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
-  }
+        this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
+    }
 
-  /// <summary>
-  /// Used to establish the connection used by this server and begin listening for incoming messages.
-  /// </summary>
-  /// <returns>A promise to handle the server listen operation. This task will not resolve as long as the server is running.</returns>
-  public async startAsync(): Promise<string> {
-    this._sender.connect(this._webSocketTransport);
-    this._receiver.connect(this._webSocketTransport);
+    /// <summary>
+    /// Used to establish the connection used by this server and begin listening for incoming messages.
+    /// </summary>
+    /// <returns>A promise to handle the server listen operation. This task will not resolve as long as the server is running.</returns>
+    public async startAsync(): Promise<string> {
+        this._sender.connect(this._webSocketTransport);
+        this._receiver.connect(this._webSocketTransport);
 
-    return new Promise<string>(resolve =>
-      this._closedSignal = resolve);
-  }
+        return new Promise<string>(resolve =>
+            this._closedSignal = resolve);
+    }
 
-  /// <summary>
-  /// Used to send data over this server connection.
-  /// </summary>
-  /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
-  /// <returns>A promise of type <see cref="ReceiveResponse"/> handling the send operation.</returns>
-  public async sendAsync(request: StreamingRequest): Promise<ReceiveResponse> {
-    return this._protocolAdapter.sendRequestAsync(request);
-  }
+    /// <summary>
+    /// Used to send data over this server connection.
+    /// </summary>
+    /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
+    /// <returns>A promise of type <see cref="ReceiveResponse"/> handling the send operation.</returns>
+    public async sendAsync(request: StreamingRequest): Promise<ReceiveResponse> {
+        return this._protocolAdapter.sendRequestAsync(request);
+    }
 
-  /// <summary>
-  /// Stop this server.
-  /// </summary>
-  public disconnect(): void {
-    this._sender.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
-    this._receiver.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
-  }
+    /// <summary>
+    /// Stop this server.
+    /// </summary>
+    public disconnect(): void {
+        this._sender.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
+        this._receiver.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
+    }
 
-  private onConnectionDisocnnected(s: WebSocketServer, sender: object, args: any) {
-    s._closedSignal('close');
-  }
+    private onConnectionDisocnnected(s: WebSocketServer, sender: object, args: any) {
+        s._closedSignal('close');
+    }
 }

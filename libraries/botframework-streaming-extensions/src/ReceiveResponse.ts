@@ -8,13 +8,13 @@
 import { ContentStream } from './ContentStream';
 
 export class ReceiveResponse {
-  public StatusCode: number;
-  public Streams: ContentStream[];
+    public StatusCode: number;
+    public Streams: ContentStream[];
 
-  /// <summary>
-  /// Creates a new instance of the ReceiveResponse class.
-  /// </summary>
-  constructor() {
-    this.Streams = [];
-  }
+    /// <summary>
+    /// Creates a new instance of the ReceiveResponse class.
+    /// </summary>
+    constructor() {
+        this.Streams = [];
+    }
 }

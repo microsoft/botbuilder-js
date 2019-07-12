@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
- export * from './HeaderSerializer';
- export * from './StreamManager';
- export * from './PayloadAssemblerManager';
- export * from './RequestManager';
- export * from './SendOperations';
- export * from './StreamManager';
+export * from './HeaderSerializer';
+export * from './StreamManager';
+export * from './PayloadAssemblerManager';
+export * from './RequestManager';
+export * from './SendOperations';
+export * from './StreamManager';

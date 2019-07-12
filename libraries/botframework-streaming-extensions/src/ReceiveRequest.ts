@@ -8,24 +8,24 @@
 import { ContentStream } from './ContentStream';
 
 export class ReceiveRequest {
-  /// Request verb, null on responses
-  /// </summary>
-  public Verb: string;
+    /// Request verb, null on responses
+    /// </summary>
+    public Verb: string;
 
-  /// <summary>
-  /// Request path; null on responses
-  /// </summary>
-  public Path: string;
+    /// <summary>
+    /// Request path; null on responses
+    /// </summary>
+    public Path: string;
 
-  /// <summary>
-  /// Gets or sets the collection of stream attachments included in this request.
-  /// </summary>
-  public Streams: ContentStream[];
+    /// <summary>
+    /// Gets or sets the collection of stream attachments included in this request.
+    /// </summary>
+    public Streams: ContentStream[];
 
-  /// <summary>
-  /// Creates a new instance of the ReceiveRequest class.
-  /// </summary>
-  constructor() {
-    this.Streams = [];
-  }
+    /// <summary>
+    /// Creates a new instance of the ReceiveRequest class.
+    /// </summary>
+    constructor() {
+        this.Streams = [];
+    }
 }

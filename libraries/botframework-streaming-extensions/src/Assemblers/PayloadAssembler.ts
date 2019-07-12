@@ -9,27 +9,27 @@ import { Header } from '../Models/Header';
 import { Stream } from '../Stream';
 
 export abstract class PayloadAssembler {
-  public id: string;
-  public end: boolean;
-  private stream: Stream;
+    public id: string;
+    public end: boolean;
+    private stream: Stream;
 
-  constructor(id: string) {
-    this.id = id;
-  }
-
-  public getPayloadStream(): Stream {
-    if (!this.stream) {
-      this.stream = this.createPayloadStream();
+    constructor(id: string) {
+        this.id = id;
     }
 
-    return this.stream;
-  }
+    public getPayloadStream(): Stream {
+        if (!this.stream) {
+            this.stream = this.createPayloadStream();
+        }
 
-  public abstract createPayloadStream(): Stream;
+        return this.stream;
+    }
 
-  public onReceive(header: Header, stream?: Stream, contentLength?: number): void {
-    this.end = header.End;
-  }
+    public abstract createPayloadStream(): Stream;
 
-  public abstract close(): void;
+    public onReceive(header: Header, stream?: Stream, contentLength?: number): void {
+        this.end = header.End;
+    }
+
+    public abstract close(): void;
 }

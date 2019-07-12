@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
- export * from './BrowserWebSocket';
- export * from './ISocket';
- export * from './NodeWebSocket';
- export * from './WebSocketClient';
- export * from './WebSocketServer';
- export * from './WebSocketTransport';
+export * from './BrowserWebSocket';
+export * from './ISocket';
+export * from './NodeWebSocket';
+export * from './WebSocketClient';
+export * from './WebSocketServer';
+export * from './WebSocketTransport';

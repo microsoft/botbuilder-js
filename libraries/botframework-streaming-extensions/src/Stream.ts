@@ -8,42 +8,42 @@
 import { Duplex, DuplexOptions, Writable, WritableOptions } from 'stream';
 
 export class Stream extends Duplex {
-  public length: number = 0;
+    public length: number = 0;
 
-  private readonly bufferList: Buffer[] = [];
-  private _onData: (chunk: any) => void;
+    private readonly bufferList: Buffer[] = [];
+    private _onData: (chunk: any) => void;
 
-  constructor(options?: DuplexOptions) {
-    super(options);
-  }
-
-  public _write(chunk: any, encoding: string, callback: (error?: Error | null) => void): void {
-    let buffer = Buffer.from(chunk);
-    this.bufferList.push(buffer);
-    this.length += chunk.length;
-    if (this._onData) {
-      this._onData(buffer);
+    constructor(options?: DuplexOptions) {
+        super(options);
     }
-    callback();
-  }
 
-  public _read(size: number): void {
-    if (this.bufferList.length === 0) {
-      // null signals end of stream
-      // tslint:disable-next-line:no-null-keyword
-      this.push(null);
-    } else {
-      let total = 0;
-      while (total < size && this.bufferList.length > 0) {
-        let buffer = this.bufferList[0];
-        this.push(buffer);
-        this.bufferList.splice(0, 1);
-        total += buffer.length;
-      }
+    public _write(chunk: any, encoding: string, callback: (error?: Error | null) => void): void {
+        let buffer = Buffer.from(chunk);
+        this.bufferList.push(buffer);
+        this.length += chunk.length;
+        if (this._onData) {
+            this._onData(buffer);
+        }
+        callback();
     }
-  }
 
-  public subscribe(onData: (chunk: any) => void): void {
-    this._onData = onData;
-  }
+    public _read(size: number): void {
+        if (this.bufferList.length === 0) {
+            // null signals end of stream
+            // tslint:disable-next-line:no-null-keyword
+            this.push(null);
+        } else {
+            let total = 0;
+            while (total < size && this.bufferList.length > 0) {
+                let buffer = this.bufferList[0];
+                this.push(buffer);
+                this.bufferList.splice(0, 1);
+                total += buffer.length;
+            }
+        }
+    }
+
+    public subscribe(onData: (chunk: any) => void): void {
+        this._onData = onData;
+    }
 }

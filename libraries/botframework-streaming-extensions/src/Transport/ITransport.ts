@@ -6,6 +6,6 @@
  * Licensed under the MIT License.
  */
 export interface ITransport {
-  isConnected(): boolean;
-  close();
+    isConnected(): boolean;
+    close();
 }

@@ -8,50 +8,50 @@
 import { ReceiveResponse } from '../ReceiveResponse';
 
 class PendingRequest {
-  public requestId: string;
-  public resolve: (response: ReceiveResponse) => void;
-  public reject: (reason?: any) => void;
+    public requestId: string;
+    public resolve: (response: ReceiveResponse) => void;
+    public reject: (reason?: any) => void;
 }
 
 export class RequestManager {
-  private readonly _pendingRequests = {};
+    private readonly _pendingRequests = {};
 
-  public pendingRequestCount(): number {
-    return Object.keys(this._pendingRequests).length;
-  }
-
-  public async signalResponse(requestId: string, response: ReceiveResponse): Promise<boolean> {
-    let pendingRequest = this._pendingRequests[requestId];
-
-    if (pendingRequest) {
-      pendingRequest.resolve(response);
-
-      /* tslint:disable:no-dynamic-delete */
-      delete this._pendingRequests[requestId];
-
-      return Promise.resolve(true);
+    public pendingRequestCount(): number {
+        return Object.keys(this._pendingRequests).length;
     }
 
-    return Promise.resolve(false);
-  }
+    public async signalResponse(requestId: string, response: ReceiveResponse): Promise<boolean> {
+        let pendingRequest = this._pendingRequests[requestId];
 
-  public async getResponseAsync(requestId: string): Promise<ReceiveResponse> {
-    let pendingRequest = this._pendingRequests[requestId];
+        if (pendingRequest) {
+            pendingRequest.resolve(response);
 
-    if (pendingRequest) {
-      return Promise.reject('requestId already exists in RequestManager');
+            /* tslint:disable:no-dynamic-delete */
+            delete this._pendingRequests[requestId];
+
+            return Promise.resolve(true);
+        }
+
+        return Promise.resolve(false);
     }
 
-    pendingRequest = new PendingRequest();
-    pendingRequest.requestId = requestId;
+    public async getResponseAsync(requestId: string): Promise<ReceiveResponse> {
+        let pendingRequest = this._pendingRequests[requestId];
 
-    let promise = new Promise<ReceiveResponse>((resolve, reject) => {
-      pendingRequest.resolve = resolve;
-      pendingRequest.reject = reject;
-    });
+        if (pendingRequest) {
+            return Promise.reject('requestId already exists in RequestManager');
+        }
 
-    this._pendingRequests[requestId] = pendingRequest;
+        pendingRequest = new PendingRequest();
+        pendingRequest.requestId = requestId;
 
-    return promise;
-  }
+        let promise = new Promise<ReceiveResponse>((resolve, reject) => {
+            pendingRequest.resolve = resolve;
+            pendingRequest.reject = reject;
+        });
+
+        this._pendingRequests[requestId] = pendingRequest;
+
+        return promise;
+    }
 }

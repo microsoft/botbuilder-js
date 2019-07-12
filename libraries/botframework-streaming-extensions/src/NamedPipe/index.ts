@@ -6,6 +6,6 @@
  * Licensed under the MIT License.
  */
 
- export * from './NamedPipeClient';
- export * from './NamedPipeServer';
- export * from './NamedPipeTransport';
+export * from './NamedPipeClient';
+export * from './NamedPipeServer';
+export * from './NamedPipeTransport';

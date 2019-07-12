@@ -12,7 +12,7 @@ import { StreamingRequest } from './StreamingRequest';
 /// Interface implemented by StreamingTransportClient classes for each transport type.
 /// </summary>
 export interface IStreamingTransportClient {
-  connectAsync(): Promise<void>;
-  disconnect(): void;
-  sendAsync(request: StreamingRequest): Promise<ReceiveResponse>;
+    connectAsync(): Promise<void>;
+    disconnect(): void;
+    sendAsync(request: StreamingRequest): Promise<ReceiveResponse>;
 }

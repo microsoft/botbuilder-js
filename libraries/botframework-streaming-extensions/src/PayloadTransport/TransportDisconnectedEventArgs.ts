@@ -6,10 +6,10 @@
  * Licensed under the MIT License.
  */
 export class TransportDisconnectedEventArgs {
-  public static Empty: TransportDisconnectedEventArgs = new TransportDisconnectedEventArgs();
-  public reason: string;
+    public static Empty: TransportDisconnectedEventArgs = new TransportDisconnectedEventArgs();
+    public reason: string;
 
-  constructor(reason?: string) {
-    this.reason = reason;
-  }
+    constructor(reason?: string) {
+        this.reason = reason;
+    }
 }

@@ -13,18 +13,18 @@ import { PayloadDisassembler } from './PayloadDisassembler';
 import { StreamWrapper } from './StreamWrapper';
 
 export class HttpContentStreamDisassembler extends PayloadDisassembler {
-  public readonly contentStream: HttpContentStream;
-  public payloadType: PayloadTypes = PayloadTypes.stream;
+    public readonly contentStream: HttpContentStream;
+    public payloadType: PayloadTypes = PayloadTypes.stream;
 
-  constructor(sender: PayloadSender, contentStream: HttpContentStream) {
-    super(sender, contentStream.id);
+    constructor(sender: PayloadSender, contentStream: HttpContentStream) {
+        super(sender, contentStream.id);
 
-    this.contentStream = contentStream;
-  }
+        this.contentStream = contentStream;
+    }
 
-  public async getStream(): Promise<StreamWrapper> {
-    let stream: Stream = this.contentStream.content.getStream();
+    public async getStream(): Promise<StreamWrapper> {
+        let stream: Stream = this.contentStream.content.getStream();
 
-    return new StreamWrapper(stream, stream.length);
-  }
+        return new StreamWrapper(stream, stream.length);
+    }
 }
