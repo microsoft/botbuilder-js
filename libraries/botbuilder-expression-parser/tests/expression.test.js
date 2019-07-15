@@ -386,6 +386,7 @@ const dataSource = [
 
   // Memory access tests
   ["getProperty(bag, concat('na','me'))", "mybag"],
+  ["getProperty(bag, 'Name')", "mybag"],
   ["items[2]", "two", ["items[2]"]],
   ["bag.list[bag.index - 2]", "blue", ["bag.list", "bag.index"]],
   ["items[nestedItems[1].x]", "two", ["items", "nestedItems[1].x"]],
