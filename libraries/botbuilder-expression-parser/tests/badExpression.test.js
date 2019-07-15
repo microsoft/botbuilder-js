@@ -330,6 +330,7 @@ const badExpressions =
 
   // Memory access test
   "getProperty(bag, 1)",// second param should be string
+  "bag[1]",// first param should be string
   "Accessor(1)",// first param should be string
   "Accessor(bag, 1)", // second should be object
   "one[0]",  // one is not list
