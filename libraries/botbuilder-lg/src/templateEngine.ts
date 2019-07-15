@@ -32,8 +32,6 @@ export class TemplateEngine {
     public addFiles = (filePaths: string[], importResolver?: ImportResolverDelegate): TemplateEngine => {
         let totalLGResources: LGResource[] = [];
         filePaths.forEach((filePath: string) => {
-            importResolver = importResolver !== undefined ? importResolver : ImportResolver.filePathResolver(filePath);
-
             filePath = path.normalize(filePath);
             const rootResource: LGResource = LGParser.parse(fs.readFileSync(filePath, 'utf-8'), filePath);
             const lgResources: LGResource[] = rootResource.discoverLGResources(importResolver);

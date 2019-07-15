@@ -30,7 +30,7 @@ export class LGResource {
 
    public discoverLGResources(importResolver: ImportResolverDelegate) : LGResource[] {
       const resourcesFound: LGResource[] = [];
-      importResolver = importResolver === undefined ? ImportResolver.fileResolver() : importResolver;
+      importResolver = importResolver === undefined ? ImportResolver.fileResolver: importResolver;
       this.resolveImportResources(this, importResolver, resourcesFound);
 
       return resourcesFound;
@@ -42,7 +42,7 @@ export class LGResource {
 
       resourceIds.forEach((resourceId: string) => {
          try {
-            const { content, id } = importResolver(resourceId);
+            const { content, id } = importResolver(start.Id, resourceId);
             const childResource: LGResource = LGParser.parse(content, id);
 
             if (!(resourcesFound.some((x: LGResource) => x.Id === childResource.Id))) {
