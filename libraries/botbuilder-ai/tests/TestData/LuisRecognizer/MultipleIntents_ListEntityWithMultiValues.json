@@ -2,46 +2,11 @@
   "text": "I want to travel on DL",
   "intents": {
     "Travel": {
-      "score": 0.6166883
-    },
-    "None": {
-      "score": 0.0157425776
-    },
-    "Weather_GetForecast": {
-      "score": 0.0149635375
-    },
-    "Delivery": {
-      "score": 0.0108271679
-    },
-    "Help": {
-      "score": 0.009421702
-    },
-    "Cancel": {
-      "score": 0.008904019
-    },
-    "search": {
-      "score": 0.007940317
-    },
-    "SpecifyName": {
-      "score": 0.00564856129
-    },
-    "Greeting": {
-      "score": 0.00414359
-    },
-    "EntityTests": {
-      "score": 0.00233200123
+      "score": 0.6291782
     }
   },
   "entities": {
     "$instance": {
-      "Airline": [
-        {
-          "startIndex": 20,
-          "endIndex": 22,
-          "text": "dl",
-          "type": "Airline"
-        }
-      ],
       "dimension": [
         {
           "startIndex": 20,
@@ -49,73 +14,49 @@
           "text": "dl",
           "type": "builtin.dimension"
         }
+      ],
+      "Airline": [
+        {
+          "startIndex": 20,
+          "endIndex": 22,
+          "text": "dl",
+          "type": "Airline"
+        }
       ]
     },
+    "dimension": [
+      {
+        "units": "Deciliter"
+      }
+    ],
     "Airline": [
       [
         "Delta",
         "Virgin"
       ]
-    ],
-    "dimension": [
-      {
-        "units": "Deciliter"
-      }
     ]
   },
   "sentiment": {
     "label": "negative",
     "score": 0.143202543
   },
-  "luisResult": {
+  "v2": {
     "query": "I want to travel on DL",
     "topScoringIntent": {
       "intent": "Travel",
-      "score": 0.6166883
+      "score": 0.6291782
     },
-    "intents": [
-      {
-        "intent": "Travel",
-        "score": 0.6166883
-      },
-      {
-        "intent": "None",
-        "score": 0.0157425776
-      },
-      {
-        "intent": "Weather.GetForecast",
-        "score": 0.0149635375
-      },
-      {
-        "intent": "Delivery",
-        "score": 0.0108271679
-      },
-      {
-        "intent": "Help",
-        "score": 0.009421702
-      },
-      {
-        "intent": "Cancel",
-        "score": 0.008904019
-      },
-      {
-        "intent": "search",
-        "score": 0.007940317
-      },
-      {
-        "intent": "SpecifyName",
-        "score": 0.00564856129
-      },
-      {
-        "intent": "Greeting",
-        "score": 0.00414359
-      },
-      {
-        "intent": "EntityTests",
-        "score": 0.00233200123
-      }
-    ],
     "entities": [
+      {
+        "entity": "dl",
+        "type": "builtin.dimension",
+        "startIndex": 20,
+        "endIndex": 21,
+        "resolution": {
+          "unit": "Deciliter",
+          "value": null
+        }
+      },
       {
         "entity": "dl",
         "type": "Airline",
@@ -126,16 +67,6 @@
             "Delta",
             "Virgin"
           ]
-        }
-      },
-      {
-        "entity": "dl",
-        "type": "builtin.dimension",
-        "startIndex": 20,
-        "endIndex": 21,
-        "resolution": {
-          "unit": "Deciliter",
-          "value": null
         }
       }
     ],

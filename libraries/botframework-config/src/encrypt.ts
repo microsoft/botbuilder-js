@@ -40,12 +40,12 @@ export function encryptString(plainText: string, secret: string): string {
     const ivText: string = ivBytes.toString('base64');
 
     // encrypt using aes256 iv + key + plainText = encryptedText
-    const cipher: crypto.Cipher = crypto.createCipheriv('aes256', keyBytes, ivBytes);
+    const cipher: crypto.Cipher = crypto.createCipheriv('aes-256-cbc', keyBytes, ivBytes);
     let encryptedValue: string = cipher.update(plainText, 'utf8', 'base64');
     encryptedValue += cipher.final('base64');
 
     // store base64(ivBytes)!base64(encryptedValue)
-    return `${ivText}!${encryptedValue}`;
+    return `${ ivText }!${ encryptedValue }`;
 }
 
 /**
@@ -84,7 +84,7 @@ export function decryptString(encryptedValue: string, secret: string): string {
     }
 
     // decrypt using aes256 iv + key + encryptedText = decryptedText
-    const decipher: crypto.Decipher = crypto.createDecipheriv('aes256', keyBytes, ivBytes);
+    const decipher: crypto.Decipher = crypto.createDecipheriv('aes-256-cbc', keyBytes, ivBytes);
     let value: string = decipher.update(encryptedText, 'base64', 'utf8');
     value += decipher.final('utf8');
 

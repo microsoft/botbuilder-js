@@ -39,8 +39,14 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
      */
     constructor(source: IQnAService = {} as IQnAService) {
         super(source, ServiceTypes.QnA);
+        
+        if (!source.hostname) {
+            throw TypeError('QnAMakerService requires source parameter to have a hostname.')
+        }
 
-        this.hostname = new URL('/qnamaker', this.hostname).href;
+        if (!this.hostname.endsWith('/qnamaker')) {
+            this.hostname = new URL('/qnamaker', this.hostname).href;
+        }
     }
 
     // encrypt keys in service

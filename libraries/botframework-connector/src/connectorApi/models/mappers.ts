@@ -205,6 +205,18 @@ export const ConversationAccount: msRest.CompositeMapper = {
         type: {
           name: "String"
         }
+      },
+      tenantId: {
+        serializedName: "tenantId",
+        type: {
+          name: "String"
+        }
+      },
+      properties: {
+        serializedName: "properties",
+        type: {
+          name: "Object"
+        }
       }
     }
   }
@@ -362,6 +374,19 @@ export const Entity: msRest.CompositeMapper = {
         type: {
           name: "String"
         }
+      },
+      text: {
+        serializedName: "text",
+        type: {
+          name: "String"
+        }
+      },
+      mentioned: {
+        serializedName: "mentioned",
+        type: {
+          name: "Composite",
+          className: "ChannelAccount"
+        }
       }
     }
   }
@@ -450,6 +475,12 @@ export const SemanticAction: msRest.CompositeMapper = {
           name: "String"
         }
       },
+      state: {
+        serializedName: "state",
+        type: {
+          name: "String"
+        }
+      },
       entities: {
         serializedName: "entities",
         type: {
@@ -498,6 +529,12 @@ export const Activity: msRest.CompositeMapper = {
       },
       localTimezone: {
         serializedName: "localTimezone",
+        type: {
+          name: "String"
+        }
+      },
+      callerId: {
+        serializedName: "callerId",
         type: {
           name: "String"
         }
@@ -808,6 +845,12 @@ export const ConversationParameters: msRest.CompositeMapper = {
       },
       topicName: {
         serializedName: "topicName",
+        type: {
+          name: "String"
+        }
+      },
+      tenantId: {
+        serializedName: "tenantId",
         type: {
           name: "String"
         }
@@ -2038,6 +2081,12 @@ export const TokenResponse: msRest.CompositeMapper = {
     name: "Composite",
     className: "TokenResponse",
     modelProperties: {
+      channelId: {
+        serializedName: "channelId",
+        type: {
+          name: "String"
+        }
+      },
       connectionName: {
         serializedName: "connectionName",
         type: {

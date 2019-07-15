@@ -23,7 +23,7 @@
     "@types/jsonwebtoken": "7.2.8",
     "@types/node": "^10.12.18",
     "base64url": "^3.0.0",
-    "botframework-schema": "~4.1.6",
+    "botframework-schema": "4.1.6",
     "form-data": "^2.3.3",
     "jsonwebtoken": "8.0.1",
     "nock": "^10.0.1",
@@ -41,12 +41,12 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "tsc && nyc mocha tests/ --timeout 60000",
+    "test": "tsc && nyc mocha tests/ --timeout 60000 --inspect",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}"
   },
   "files": [
     "/lib",
-    "/src"   
+    "/src"
   ]
 }

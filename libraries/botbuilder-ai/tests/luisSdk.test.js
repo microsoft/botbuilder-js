@@ -1,8 +1,8 @@
 const assert = require('assert');
 const fs = require('fs-extra');
 const nock = require('nock');
-const { LUISRuntimeClient, LUISRuntimeModels } = require('azure-cognitiveservices-luis-runtime');
-const msRest = require("ms-rest");
+const { LUISRuntimeClient, LUISRuntimeModels } = require('@azure/cognitiveservices-luis-runtime');
+const msRest = require("@azure/ms-rest-js");
 
 const applicationId = '756de20e-f1e6-4dca-b80a-406a31d7054b';
 // This can be any endpoint key for calling LUIS
@@ -100,6 +100,8 @@ function TestJson(file, done, includeAllIntents, includeInstance) {
                 'User-Agent': 'botbuilder'
             }
         }).then(result => {
+            result.v2 = result.luisResult;
+            delete result.luisResult;
             if (!WithinDelta(expected, result, 0.1, false)) {
                 fs.outputJSONSync(newPath, result, { spaces: 2 });
                 assert(false, "\nReturned JSON\n " + newPath + "\n!= expected JSON\n " + expectedPath);

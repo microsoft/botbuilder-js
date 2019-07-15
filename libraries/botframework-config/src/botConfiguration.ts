@@ -73,10 +73,10 @@ export class BotConfiguration extends BotConfigurationBase {
         files = files.sort();
         for (const file of files) {
             if (path.extname(<string>file) === '.bot') {
-                return await BotConfiguration.load(`${folder}/${<string>file}`, secret);
+                return await BotConfiguration.load(`${ folder }/${ <string>file }`, secret);
             }
         }
-        throw new Error(`Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`);
+        throw new Error(`Error: no bot file found in ${ folder }. Choose a different location or use msbot init to create a .bot file."`);
     }
 
     /**
@@ -91,10 +91,10 @@ export class BotConfiguration extends BotConfigurationBase {
         files = files.sort();
         for (const file of files) {
             if (path.extname(<string>file) === '.bot') {
-                return BotConfiguration.loadSync(`${folder}/${<string>file}`, secret);
+                return BotConfiguration.loadSync(`${ folder }/${ <string>file }`, secret);
             }
         }
-        throw new Error(`Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`);
+        throw new Error(`Error: no bot file found in ${ folder }. Choose a different location or use msbot init to create a .bot file."`);
     }
 
     /**
@@ -280,7 +280,7 @@ export class BotConfiguration extends BotConfigurationBase {
                 for (const service of this.services) {
                     if (service.type === ServiceTypes.Dispatch) {
                         const dispatch: IDispatchService = (<IDispatchService>service);
-                        for (let i: number = 0; i < dispatch.serviceIds.length; i++) {
+                        for (let i = 0; i < dispatch.serviceIds.length; i++) {
                             dispatch.serviceIds[i] = map[dispatch.serviceIds[i]];
                         }
                     }

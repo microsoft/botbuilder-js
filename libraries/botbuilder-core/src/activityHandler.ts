@@ -109,6 +109,37 @@ export class ActivityHandler {
     }
 
     /**
+     * Receives only MessageReaction activities, regardless of whether message reactions were added or removed
+     * @remarks
+     * MessageReaction activities are sent to the bot when a message reacion, such as 'like' or 'sad' are
+     * associated with an activity previously sent from the bot.
+     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     */
+    public onMessageReaction(handler: BotHandler): this {
+        return this.on('MessageReaction', handler);
+    }
+
+    /**
+     * Receives only MessageReaction activities representing message reactions being added.
+     * @remarks
+     * context.activity.reactionsAdded will include at least one entry.
+     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     */
+    public onReactionsAdded(handler: BotHandler): this {
+        return this.on('ReactionsAdded', handler);
+    }
+
+    /**
+     * Receives only MessageReaction activities representing message reactions being removed.
+     * @remarks
+     * context.activity.reactionsRemoved will include at least one entry.
+     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     */
+    public onReactionsRemoved(handler: BotHandler): this {
+        return this.on('ReactionsRemoved', handler);
+    }
+
+    /**
      * Receives all Event activities.
      * @remarks
      * Event activities communicate programmatic information from a client or channel to a bot.
@@ -119,7 +150,7 @@ export class ActivityHandler {
         return this.on('Event', handler);
     }
 
-     /**
+    /**
      * Receives event activities of type 'tokens/response'
      * @remarks
      * These events occur during the oauth flow
@@ -137,9 +168,9 @@ export class ActivityHandler {
      * Check `context.activity.type` for the type value.
      * @param handler BotHandler A handler function in the form async(context, next) => { ... }
      */
-     public onUnrecognizedActivityType(handler: BotHandler): this {
+    public onUnrecognizedActivityType(handler: BotHandler): this {
         return this.on('UnrecognizedActivityType', handler);
-     }
+    }
 
     /**
      * onDialog fires at the end of the event emission process, and should be used to handle Dialog activity.
@@ -216,6 +247,17 @@ export class ActivityHandler {
                         }
                     });
                     break;
+                case ActivityTypes.MessageReaction:
+                    await this.handle(context, 'MessageReaction', async () => {
+                        if (context.activity.reactionsAdded && context.activity.reactionsAdded.length > 0) {
+                            await this.handle(context, 'ReactionsAdded', runDialogs);
+                        } else if (context.activity.reactionsRemoved && context.activity.reactionsRemoved.length > 0) {
+                            await this.handle(context, 'ReactionsRemoved', runDialogs);
+                        } else {
+                            await runDialogs();
+                        }
+                    });
+                    break;
                 case ActivityTypes.Event:
                     await this.handle(context, 'Event', async () => {
                         if (context.activity.name === 'tokens/response') {
@@ -226,7 +268,7 @@ export class ActivityHandler {
                     });
                     break;
                 default:
-                    // handler for unknown or unhandled types
+                // handler for unknown or unhandled types
                     await this.handle(context, 'UnrecognizedActivityType', runDialogs);
                     break;
             }

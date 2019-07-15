@@ -9,7 +9,7 @@ describe("ServiceManipulation", () => {
         var config = await bf.BotConfiguration.load(testBotPath);
         var config2 = new bf.BotConfiguration();
         for(let service of config.services) {
-            service.id = "1";
+            service.id = undefined;
             config2.connectService(service);
         }
 

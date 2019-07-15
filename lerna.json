@@ -13,9 +13,12 @@
     "libraries/botbuilder-expression",
     "libraries/botbuilder-expression-parser",
     "libraries/botbuilder-lg",
+    "libraries/botbuilder-testing",
     "libraries/botframework-config",
     "libraries/botframework-connector",
     "libraries/botframework-schema",
+    "libraries/functional-tests",
+    "libraries/testbot",
     "transcripts"
   ],
   "version": "independent",

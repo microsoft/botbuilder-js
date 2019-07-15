@@ -19,6 +19,7 @@ export const channels: any = {
     facebook: 'facebook',
     groupme: 'groupme',
     kik: 'kik',
+    line: 'line',
     msteams: 'msteams',
     skype: 'skype',
     skypeforbusiness: 'skypeforbusiness',
@@ -38,6 +39,8 @@ export function supportsSuggestedActions(channelId: string, buttonCnt: number = 
         case channels.facebook:
         case channels.skype:
             return (buttonCnt <= 10);
+        case channels.line:
+            return (buttonCnt <= 13);
         case channels.kik:
             return (buttonCnt <= 20);
         case channels.slack:
@@ -62,6 +65,8 @@ export function supportsCardActions(channelId: string, buttonCnt: number = 100):
         case channels.skype:
         case channels.msteams:
             return (buttonCnt <= 3);
+        case channels.line:
+            return (buttonCnt <= 99);
         case channels.slack:
         case channels.emulator:
         case channels.directline:

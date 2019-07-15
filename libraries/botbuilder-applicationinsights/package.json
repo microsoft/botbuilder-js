@@ -22,9 +22,9 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "appinsights-usage": "1.0.2",
-    "applicationinsights": "1.0.7",
+    "applicationinsights": "1.2.0",
     "applicationinsights-js": "1.0.20",
-    "botbuilder-core": "^4.1.6",
+    "botbuilder-core": "4.1.6",
     "cls-hooked": "^4.2.2"
   },
   "devDependencies": {
@@ -35,8 +35,7 @@
     "mocha": "^5.2.0",
     "nyc": "^11.4.1",
     "source-map-support": "^0.5.3",
-    "ts-node": "^4.1.0",
-    "unzip": "^0.1.11"
+    "ts-node": "^4.1.0"
   },
   "scripts": {
     "test": "tsc && nyc mocha tests/",
@@ -47,6 +46,6 @@
   },
   "files": [
     "/lib",
-    "/src"   
+    "/src"
   ]
 }

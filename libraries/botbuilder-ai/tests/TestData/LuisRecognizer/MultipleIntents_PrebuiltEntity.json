@@ -2,46 +2,11 @@
   "text": "Please deliver February 2nd 2001",
   "intents": {
     "Delivery": {
-      "score": 0.88083595
-    },
-    "Cancel": {
-      "score": 0.0193132889
-    },
-    "None": {
-      "score": 0.01645435
-    },
-    "Weather_GetForecast": {
-      "score": 0.0139958644
-    },
-    "Help": {
-      "score": 0.0109224562
-    },
-    "search": {
-      "score": 0.008114032
-    },
-    "SpecifyName": {
-      "score": 0.006581988
-    },
-    "Greeting": {
-      "score": 0.005683609
-    },
-    "Travel": {
-      "score": 0.00385131384
-    },
-    "EntityTests": {
-      "score": 0.00200137729
+      "score": 0.8688843
     }
   },
   "entities": {
     "$instance": {
-      "datetime": [
-        {
-          "startIndex": 15,
-          "endIndex": 32,
-          "text": "february 2nd 2001",
-          "type": "builtin.datetimeV2.date"
-        }
-      ],
       "number": [
         {
           "startIndex": 28,
@@ -51,6 +16,14 @@
           "subtype": "integer"
         }
       ],
+      "datetime": [
+        {
+          "startIndex": 15,
+          "endIndex": 32,
+          "text": "february 2nd 2001",
+          "type": "builtin.datetimeV2.date"
+        }
+      ],
       "ordinal": [
         {
           "startIndex": 24,
@@ -58,8 +31,19 @@
           "text": "2nd",
           "type": "builtin.ordinal"
         }
+      ],
+      "ordinalV2": [
+        {
+          "startIndex": 24,
+          "endIndex": 27,
+          "text": "2nd",
+          "type": "builtin.ordinalV2"
+        }
       ]
     },
+    "number": [
+      2001
+    ],
     "datetime": [
       {
         "type": "date",
@@ -68,66 +52,37 @@
         ]
       }
     ],
-    "number": [
-      2001
-    ],
     "ordinal": [
       2
+    ],
+    "ordinalV2": [
+      {
+        "relativeTo": "start",
+        "offset": 2
+      }
     ]
   },
   "sentiment": {
     "label": "neutral",
     "score": 0.5
   },
-  "luisResult": {
+  "v2": {
     "query": "Please deliver February 2nd 2001",
     "topScoringIntent": {
       "intent": "Delivery",
-      "score": 0.88083595
+      "score": 0.8688843
     },
-    "intents": [
-      {
-        "intent": "Delivery",
-        "score": 0.88083595
-      },
-      {
-        "intent": "Cancel",
-        "score": 0.0193132889
-      },
-      {
-        "intent": "None",
-        "score": 0.01645435
-      },
-      {
-        "intent": "Weather.GetForecast",
-        "score": 0.0139958644
-      },
-      {
-        "intent": "Help",
-        "score": 0.0109224562
-      },
-      {
-        "intent": "search",
-        "score": 0.008114032
-      },
-      {
-        "intent": "SpecifyName",
-        "score": 0.006581988
-      },
-      {
-        "intent": "Greeting",
-        "score": 0.005683609
-      },
-      {
-        "intent": "Travel",
-        "score": 0.00385131384
-      },
-      {
-        "intent": "EntityTests",
-        "score": 0.00200137729
-      }
-    ],
     "entities": [
+      {
+        "entity": "2001",
+        "type": "builtin.number",
+        "startIndex": 28,
+        "endIndex": 31,
+        "resolution": {
+          "subtype": "integer",
+          "value": "2001"
+        }
+      },
       {
         "entity": "february 2nd 2001",
         "type": "builtin.datetimeV2.date",
@@ -144,22 +99,22 @@
         }
       },
       {
-        "entity": "2001",
-        "type": "builtin.number",
-        "startIndex": 28,
-        "endIndex": 31,
-        "resolution": {
-          "subtype": "integer",
-          "value": "2001"
-        }
-      },
-      {
         "entity": "2nd",
         "type": "builtin.ordinal",
         "startIndex": 24,
         "endIndex": 26,
         "resolution": {
           "value": "2"
+        }
+      },
+      {
+        "entity": "2nd",
+        "type": "builtin.ordinalV2",
+        "startIndex": 24,
+        "endIndex": 26,
+        "resolution": {
+          "offset": "2",
+          "relativeTo": "start"
         }
       }
     ],

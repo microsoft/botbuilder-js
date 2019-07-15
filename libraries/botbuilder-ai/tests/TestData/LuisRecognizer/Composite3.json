@@ -1,35 +1,38 @@
 {
   "text": "Deliver from 12345 VA to 12346 WA",
   "intents": {
+    "Roles": {
+      "score": 0.999911964
+    },
     "Delivery": {
-      "score": 0.999999642
+      "score": 0.00238572317
     },
     "search": {
-      "score": 5.50502E-06
-    },
-    "None": {
-      "score": 1.97937743E-06
-    },
-    "EntityTests": {
-      "score": 1.76767367E-06
+      "score": 0.000009494859
     },
     "Travel": {
-      "score": 1.76767367E-06
+      "score": 0.00000309763345
+    },
+    "None": {
+      "score": 0.00000117844979
     },
     "Weather_GetForecast": {
-      "score": 5.997471E-07
+      "score": 0.00000102792524
     },
     "SpecifyName": {
-      "score": 1.75E-09
+      "score": 3.0666667e-9
     },
     "Greeting": {
-      "score": 5.9375E-10
+      "score": 1.0875e-9
     },
     "Cancel": {
-      "score": 5.529412E-10
+      "score": 1.01764708e-9
     },
     "Help": {
-      "score": 5.529412E-10
+      "score": 1.01764708e-9
+    },
+    "EntityTests": {
+      "score": 4.757576e-10
     }
   },
   "entities": {
@@ -38,33 +41,24 @@
         {
           "startIndex": 13,
           "endIndex": 21,
+          "score": 0.933905244,
           "text": "12345 va",
-          "type": "Address",
-          "score": 0.7669167
+          "type": "Address"
         }
       ],
       "Destination": [
         {
           "startIndex": 25,
           "endIndex": 33,
+          "score": 0.982723653,
           "text": "12346 wa",
-          "type": "Address",
-          "score": 0.9737196
+          "type": "Address"
         }
       ]
     },
     "Source": [
       {
         "$instance": {
-          "State": [
-            {
-              "startIndex": 19,
-              "endIndex": 21,
-              "text": "va",
-              "type": "State",
-              "score": 0.8453893
-            }
-          ],
           "number": [
             {
               "startIndex": 13,
@@ -73,28 +67,28 @@
               "type": "builtin.number",
               "subtype": "integer"
             }
+          ],
+          "State": [
+            {
+              "startIndex": 19,
+              "endIndex": 21,
+              "score": 0.937490761,
+              "text": "va",
+              "type": "State"
+            }
           ]
         },
-        "State": [
-          "va"
-        ],
         "number": [
           12345
+        ],
+        "State": [
+          "va"
         ]
       }
     ],
     "Destination": [
       {
         "$instance": {
-          "State": [
-            {
-              "startIndex": 31,
-              "endIndex": 33,
-              "text": "wa",
-              "type": "State",
-              "score": 0.9857455
-            }
-          ],
           "number": [
             {
               "startIndex": 25,
@@ -103,13 +97,22 @@
               "type": "builtin.number",
               "subtype": "integer"
             }
+          ],
+          "State": [
+            {
+              "startIndex": 31,
+              "endIndex": 33,
+              "score": 0.9893949,
+              "text": "wa",
+              "type": "State"
+            }
           ]
         },
-        "State": [
-          "wa"
-        ],
         "number": [
           12346
+        ],
+        "State": [
+          "wa"
         ]
       }
     ]
@@ -118,52 +121,56 @@
     "label": "neutral",
     "score": 0.5
   },
-  "luisResult": {
+  "v2": {
     "query": "Deliver from 12345 VA to 12346 WA",
     "topScoringIntent": {
-      "intent": "Delivery",
-      "score": 0.999999642
+      "intent": "Roles",
+      "score": 0.999911964
     },
     "intents": [
       {
+        "intent": "Roles",
+        "score": 0.999911964
+      },
+      {
         "intent": "Delivery",
-        "score": 0.999999642
+        "score": 0.00238572317
       },
       {
         "intent": "search",
-        "score": 5.50502E-06
-      },
-      {
-        "intent": "None",
-        "score": 1.97937743E-06
-      },
-      {
-        "intent": "EntityTests",
-        "score": 1.76767367E-06
+        "score": 0.000009494859
       },
       {
         "intent": "Travel",
-        "score": 1.76767367E-06
+        "score": 0.00000309763345
+      },
+      {
+        "intent": "None",
+        "score": 0.00000117844979
       },
       {
         "intent": "Weather.GetForecast",
-        "score": 5.997471E-07
+        "score": 0.00000102792524
       },
       {
         "intent": "SpecifyName",
-        "score": 1.75E-09
+        "score": 3.0666667e-9
       },
       {
         "intent": "Greeting",
-        "score": 5.9375E-10
+        "score": 1.0875e-9
       },
       {
         "intent": "Cancel",
-        "score": 5.529412E-10
+        "score": 1.01764708e-9
       },
       {
         "intent": "Help",
-        "score": 5.529412E-10
+        "score": 1.01764708e-9
+      },
+      {
+        "intent": "EntityTests",
+        "score": 4.757576e-10
       }
     ],
     "entities": [
@@ -172,21 +179,21 @@
         "type": "State",
         "startIndex": 19,
         "endIndex": 20,
-        "score": 0.8453893
+        "score": 0.937490761
       },
       {
         "entity": "wa",
         "type": "State",
         "startIndex": 31,
         "endIndex": 32,
-        "score": 0.9857455
+        "score": 0.9893949
       },
       {
         "entity": "12345 va",
         "type": "Address",
         "startIndex": 13,
         "endIndex": 20,
-        "score": 0.7669167,
+        "score": 0.933905244,
         "role": "Source"
       },
       {
@@ -194,7 +201,7 @@
         "type": "Address",
         "startIndex": 25,
         "endIndex": 32,
-        "score": 0.9737196,
+        "score": 0.982723653,
         "role": "Destination"
       },
       {
@@ -224,12 +231,12 @@
         "value": "12345 va",
         "children": [
           {
-            "type": "State",
-            "value": "va"
-          },
-          {
             "type": "builtin.number",
             "value": "12345"
+          },
+          {
+            "type": "State",
+            "value": "va"
           }
         ]
       },
@@ -238,12 +245,12 @@
         "value": "12346 wa",
         "children": [
           {
-            "type": "State",
-            "value": "wa"
-          },
-          {
             "type": "builtin.number",
             "value": "12346"
+          },
+          {
+            "type": "State",
+            "value": "wa"
           }
         ]
       }

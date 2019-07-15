@@ -10,7 +10,12 @@ const reference = {
     serviceUrl: 'https://example.org/channel',
     user: { id: 'user', name: 'User Name' },
     bot: { id: 'bot', name: 'Bot Name' },
-    conversation: { id: 'convo1' }
+    conversation: { 
+        id: 'convo1',
+        properties: {
+            'foo': 'bar'
+        }
+    }
 };
 const incomingMessage = TurnContext.applyConversationReference({ text: 'test', type: 'message' }, reference, true);
 const outgoingMessage = TurnContext.applyConversationReference({ text: 'test', type: 'message' }, reference);
@@ -134,6 +139,26 @@ function assertResponse(res, statusCode, hasBody) {
 describe(`BotFrameworkAdapter`, function () {
     this.timeout(5000);
 
+    it(`should read ChannelService and BotOpenIdMetadata env var if they exist`, function () {
+        process.env.ChannelService = 'https://botframework.azure.us';
+        process.env.BotOpenIdMetadata = 'https://someEndpoint.com';
+        const adapter = new AdapterUnderTest();
+
+        assert(adapter.settings.channelService === 'https://botframework.azure.us', `Adapter should have read process.env.ChannelService`);
+        assert(adapter.settings.openIdMetadata === 'https://someEndpoint.com', `Adapter should have read process.env.ChannelService`);
+        delete process.env.ChannelService;
+        delete process.env.BotOpenIdMetadata;
+    });
+    
+    it(`should return the status of every connection the user has`, async function () {
+        const adapter = new AdapterUnderTest();
+        const context = new TurnContext(adapter, incomingMessage);
+        adapter.getTokenStatus(context)
+        .then((responses) => {
+            assert(responses.length > 0);
+        });
+    });
+
     it(`should authenticateRequest() if no appId or appPassword.`, function (done) {
         const req = new MockRequest(incomingMessage);
         const adapter = new AdapterUnderTest();
@@ -238,6 +263,54 @@ describe(`BotFrameworkAdapter`, function () {
         }, (err) => {
             assert(err, `error not returned.`);
             assertResponse(res, 400, true);
+            done();
+        });
+    });
+
+    it(`should migrate location of tenantId for MS Teams processActivity().`, function (done) {
+        const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', channelData: { tenant: { id: '1234' } } }, reference, true);
+        incoming.channelId = 'msteams';
+        const req = new MockBodyRequest(incoming);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        adapter.processActivity(req, res, (context) => {
+            assert(context.activity.conversation.tenantId === '1234', `should have copied tenant id from channelData to conversation address`);
+            done();
+        });
+    });
+
+    it(`receive a semanticAction with a state property on the activity in processActivity().`, function (done) {
+        const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', semanticAction: { state: 'start' } }, reference, true);
+        incoming.channelId = 'msteams';
+        const req = new MockBodyRequest(incoming);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        adapter.processActivity(req, res, (context) => {
+            assert(context.activity.semanticAction.state === 'start');
+            done();
+        });
+    });
+
+    it(`receive a callerId property on the activity in processActivity().`, function (done) {
+        const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', callerId: 'foo' }, reference, true);
+        incoming.channelId = 'msteams';
+        const req = new MockBodyRequest(incoming);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        adapter.processActivity(req, res, (context) => {
+            assert(context.activity.callerId === 'foo');
+            done();
+        });
+    });
+
+    it(`should receive a properties property on the conversation object in processActivity().`, function (done) {
+        const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', callerId: 'foo' }, reference, true);
+        incoming.channelId = 'msteams';
+        const req = new MockBodyRequest(incoming);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        adapter.processActivity(req, res, (context) => {
+            assert(context.activity.conversation.properties.foo === 'bar');
             done();
         });
     });
@@ -560,6 +633,16 @@ describe(`BotFrameworkAdapter`, function () {
         done();
     });
 
+    it(`should set openIdMetadata property on GovernmentChannelValidation`, function (done) {
+        const testEndpoint = "http://azure.com/configuration";
+        console.error(connector.GovernmentChannelValidation);
+        const original = connector.GovernmentChannelValidation.OpenIdMetadataEndpoint;
+        const adapter = new BotFrameworkAdapter({openIdMetadata: testEndpoint});
+        assert(testEndpoint === connector.GovernmentChannelValidation.OpenIdMetadataEndpoint, `GovernmentChannelValidation.OpenIdMetadataEndpoint was not set.`);
+	    connector.GovernmentChannelValidation.OpenIdMetadataEndpoint = original;
+        done();
+    });
+
     it(`should set oAuthEndpoint property on connector client`, function (done) {
         const testEndpoint = "http://rainbows.com";
         const adapter = new BotFrameworkAdapter({oAuthEndpoint: testEndpoint});
@@ -807,6 +890,31 @@ describe(`BotFrameworkAdapter`, function () {
         } catch (err) {
             assert(err.message === 'BotFrameworkAdapter.getAadTokens(): missing from or from.id',
                 `expected "BotFrameworkAdapter.getAadTokens(): missing from or from.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing from in getTokenStatus()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+
+            await adapter.getTokenStatus({ activity: {} });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getTokenStatus(): missing from or from.id',
+                `expected "BotFrameworkAdapter.getTokenStatus(): missing from or from.id" Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
+
+    it(`should throw error if missing from.id in getTokenStatus()`, async function () {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getTokenStatus({ activity: { from: {} } });
+        } catch (err) {
+            assert(err.message === 'BotFrameworkAdapter.getTokenStatus(): missing from or from.id',
+                `expected "BotFrameworkAdapter.getTokenStatus(): missing from or from.id" Error message, not "${ err.message }"`);
             return;
         }
         assert(false, `should have thrown an error message`);

@@ -87,7 +87,7 @@ describe('ComponentDialog', function () {
         const startDialog = new WaterfallDialog('start', [
             async (step) => {
                 simpleStepContextCheck(step);
-                return { status: DialogTurnStatus.cancelled, result: undefined };
+                return { status: DialogTurnStatus.complete, result: undefined };
             }
         ]);
         const component = new ComponentDialog('composite');
@@ -236,7 +236,7 @@ describe('ComponentDialog', function () {
         const adapter = new TestAdapter(async turnContext => {
             const dc = await dialogs.createContext(turnContext);
             const results = await dc.beginDialog('component');
-            assert(results.status === DialogTurnStatus.complete, `should have returned ${ DialogTurnStatus.complete } not ${ results.status }`);
+            assert(results.status === DialogTurnStatus.cancelled, `should have returned ${ DialogTurnStatus.cancelled } not ${ results.status }`);
             assert(dc.stack.length === 0, `should have a dialogStack without 0 dialogs, not ${ dc.stack.length } dialogs`);
         });
 
@@ -359,4 +359,3 @@ class ContinueDialog extends ComponentDialog {
         return await innerDC.continueDialog();
     }
 }
-
