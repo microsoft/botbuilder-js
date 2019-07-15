@@ -37,7 +37,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
     /**
      * Default options for rendering the choices to the user based on locale.
      */
-    private static defaultChoiceOptions: { [locale: string]: { choices: (string|Choice)[], options: ChoiceFactoryOptions }} = {
+    private static defaultChoiceOptions: { [locale: string]: { choices: (string|Choice)[]; options: ChoiceFactoryOptions }} = {
         'es-es': { choices: ['Sí', 'No'], options: { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true }},
         'nl-nl': { choices: ['Ja', 'Nee'], options: { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true }},
         'en-us': { choices: ['Yes', 'No'], options: { inlineSeparator: ', ', inlineOr: ' or ', inlineOrMore: ', or ', includeNumbers: true }},

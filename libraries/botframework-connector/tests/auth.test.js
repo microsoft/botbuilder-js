@@ -3,12 +3,12 @@ const { ChannelValidation, ClaimsIdentity, EndorsementsValidator, EnterpriseChan
     GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider } = require('../lib');
 const Connector = require('../lib');
 
-describe('Bot Framework Connector - Auth Tests', function () {
+describe('Bot Framework Connector - Auth Tests', function() {
 
-    describe('Connector Tokens', function () {
+    describe('Connector Tokens', function() {
         this.timeout(20000);
 
-        describe('EmptyHeader', function () {
+        describe('EmptyHeader', function() {
             it('Bot with noCredentials should throw', async () => {
                 var credentials = new SimpleCredentialProvider('', '');
                 try {
@@ -20,7 +20,7 @@ describe('Bot Framework Connector - Auth Tests', function () {
             });
         });
 
-        describe('Emulator', function () {
+        describe('Emulator', function() {
             it('MsaHeader correct AppId and ServiceUrl should validate', async () => {
                 const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 const header = `Bearer ${ await tokenGenerator.getToken(true) }`;
@@ -54,13 +54,21 @@ describe('Bot Framework Connector - Auth Tests', function () {
             });
         });
 
-        describe('Channel', function () {
+        describe('Channel', function() {
             it('MsaHeader with valid ServiceUrl should be trusted', async () => {
                 const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 const header = `Bearer ${ await tokenGenerator.getToken(true) }`;
                 const credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '');
                 const claims = await JwtTokenValidation.authenticateRequest({ serviceUrl: 'https://smba.trafficmanager.net/amer-client-ss.msg/' }, header, credentials, undefined);
                 assert(MicrosoftAppCredentials.isTrustedServiceUrl('https://smba.trafficmanager.net/amer-client-ss.msg/'));
+            });
+
+            it('Obtain MsaHeader from a user specified tenant', async () => {
+                const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F', 'microsoft.com');
+                const header = `Bearer ${ await tokenGenerator.getToken(true) }`;
+                const credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '');
+                const claims = await JwtTokenValidation.authenticateRequest({ serviceUrl: 'https://smba.trafficmanager.net/amer-client-ss.msg/' }, header, credentials, undefined);
+                assert(claims.getClaimValue('tid') == '72f988bf-86f1-41af-91ab-2d7cd011db47');
             });
 
             it('MsaHeader with invalid ServiceUrl should not be trusted', async () => {
@@ -90,8 +98,8 @@ describe('Bot Framework Connector - Auth Tests', function () {
             });
         });
 
-        describe('EndorsementsValidator', function () {
-            it('with null channelId should pass', function (done) {
+        describe('EndorsementsValidator', function() {
+            it('with null channelId should pass', function(done) {
                 var isEndorsed = EndorsementsValidator.validate(null, []);
                 assert(isEndorsed);
                 done();
@@ -102,7 +110,7 @@ describe('Bot Framework Connector - Auth Tests', function () {
                 done();
             });
 
-            it('with unendorsed channelId should fail', function (done) {
+            it('with unendorsed channelId should fail', function(done) {
                 var isEndorsed = EndorsementsValidator.validate('channelOne', []);
                 assert(!isEndorsed);
                 done();
@@ -133,7 +141,7 @@ describe('Bot Framework Connector - Auth Tests', function () {
             });
         });
 
-        describe('ChannelValidator', function () {
+        describe('ChannelValidator', function() {
             it('validateIdentity should fail if unauthenticated', async () => {
                 try {
                     const claims = await ChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined);
@@ -204,7 +212,7 @@ describe('Bot Framework Connector - Auth Tests', function () {
             });
         });
 
-        describe('GovernmentChannelValidator', function () {
+        describe('GovernmentChannelValidator', function() {
             it('validateIdentity should fail if unauthenticated', async () => {
                 try {
                     const claims = await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined);
@@ -279,7 +287,7 @@ describe('Bot Framework Connector - Auth Tests', function () {
             });
         });
 
-        describe('EnterpriseChannelValidator', function () {
+        describe('EnterpriseChannelValidator', function() {
             it('validateIdentity should fail if unauthenticated', async () => {
                 try {
                     const claims = await EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined);
@@ -321,7 +329,7 @@ describe('Bot Framework Connector - Auth Tests', function () {
             it('validateIdentity should fail if no audience', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'https://api.botframework.com' }], true), credentials)
+                    const claims = await EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'https://api.botframework.com' }], true), credentials);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Invalid AppId passed on token: null', `unexpected error thrown: "${ err.message }"`);

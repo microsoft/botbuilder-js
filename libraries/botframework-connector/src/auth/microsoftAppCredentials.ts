@@ -7,7 +7,7 @@
  */
 import * as msrest from '@azure/ms-rest-js';
 import * as url from 'url';
-import { Constants } from './constants';
+import { AuthenticationConstants } from './authenticationConstants';
 
 /**
  * MicrosoftAppCredentials auth implementation and cache
@@ -28,15 +28,19 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
     public appPassword: string;
     public appId: string;
 
-    public oAuthEndpoint: string = Constants.ToChannelFromBotLoginUrl;
-    public oAuthScope: string = Constants.ToChannelFromBotOAuthScope;
+    public oAuthEndpoint: string;
+    public oAuthScope: string = AuthenticationConstants.ToChannelFromBotOAuthScope;
     public readonly tokenCacheKey: string;
     private refreshingToken: Promise<Response> | null = null;
 
-    constructor(appId: string, appPassword: string) {
+    constructor(appId: string, appPassword: string, channelAuthTenant?: string) {
         this.appId = appId;
         this.appPassword = appPassword;
-        this.tokenCacheKey = `${appId}-cache`;
+        const tenant = channelAuthTenant && channelAuthTenant.length > 0
+            ? channelAuthTenant
+            : AuthenticationConstants.DefaultChannelAuthTenant;
+        this.oAuthEndpoint = AuthenticationConstants.ToChannelFromBotLoginUrlPrefix + tenant + AuthenticationConstants.ToChannelFromBotTokenEndpointPath;
+        this.tokenCacheKey = `${ appId }-cache`;
     }
 
     /**

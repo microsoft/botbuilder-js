@@ -18,8 +18,8 @@ import { CorrelationContext, CorrelationContextManager } from 'applicationinsigh
 const origGetCurrentContext: any = CorrelationContextManager.getCurrentContext;
 
 function getCurrentContext(): any {
-  // tslint:disable-next-line:no-backbone-get-set-outside-model
-  return ns.get('ctx') || origGetCurrentContext();
+    // tslint:disable-next-line:no-backbone-get-set-outside-model
+    return ns.get('ctx') || origGetCurrentContext();
 }
 
 // Overwrite the built-in getCurrentContext() method with a new one.
@@ -27,23 +27,23 @@ CorrelationContextManager.getCurrentContext = getCurrentContext;
 
 export const ApplicationInsightsWebserverMiddleware: any = (req: any, res: any, next: any): void => {
 
-  // Check to see if the request contains an incoming request.
-  // If so, set it into the Application Insights context.
-  const activity: Partial<Activity> = req.body;
-  if (activity && activity.id) {
-    const context: CorrelationContext = appInsights.getCorrelationContext();
+    // Check to see if the request contains an incoming request.
+    // If so, set it into the Application Insights context.
+    const activity: Partial<Activity> = req.body;
+    if (activity && activity.id) {
+        const context: CorrelationContext = appInsights.getCorrelationContext();
 
-    // tslint:disable-next-line:no-string-literal
-    context['activity'] = req.body;
-  }
+        // tslint:disable-next-line:no-string-literal
+        context['activity'] = req.body;
+    }
 
-  ns.bindEmitter(req);
-  ns.bindEmitter(res);
-  ns.run((): void => {
+    ns.bindEmitter(req);
+    ns.bindEmitter(res);
+    ns.run((): void => {
     // tslint:disable-next-line:no-backbone-get-set-outside-model
-    ns.set('ctx', origGetCurrentContext());
-    next();
-  });
+        ns.set('ctx', origGetCurrentContext());
+        next();
+    });
 
 };
 
@@ -72,12 +72,12 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
     constructor(instrumentationKey: string) {
 
         this.config = appInsights.setup(instrumentationKey)
-        .setAutoDependencyCorrelation(true)
-        .setAutoCollectRequests(true)
-        .setAutoCollectPerformance(true)
-        .setAutoCollectExceptions(true)
-        .setAutoCollectDependencies(true)
-        .start();
+            .setAutoDependencyCorrelation(true)
+            .setAutoCollectRequests(true)
+            .setAutoCollectPerformance(true)
+            .setAutoCollectExceptions(true)
+            .setAutoCollectDependencies(true)
+            .start();
 
         this.client = appInsights.defaultClient;
 

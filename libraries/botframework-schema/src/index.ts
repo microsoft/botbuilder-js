@@ -9,11 +9,11 @@ export * from './activityInterfaces';
  */
 export interface AttachmentView {
   /**
-   * Content type of the attachment
+   * Id of the attachment
    */
   viewId: string;
   /**
-   * Name of the attachment
+   * Size of the attachment
    */
   size: number;
 }
@@ -137,6 +137,10 @@ export interface ConversationAccount {
    * 'user', 'bot'
    */
   role?: RoleTypes;
+  /**
+   * Custom properties object (optional)
+  */
+  properties?: any
 }
 
 /**
@@ -289,6 +293,10 @@ export interface SemanticAction {
    */
   id: string;
   /**
+   * State of this action. Allowed values: 'start', 'continue', 'done'
+   */
+  state: SemanticActionStateTypes | string;
+  /**
    * Entities associated with this action
    */
   entities: { [propertyName: string]: Entity };
@@ -314,17 +322,21 @@ export interface Activity {
    */
   timestamp?: Date;
   /**
-   * Contains the date and time that the message was sent, in local time, expressed in ISO-8601
-   * format.
+   * Contains the local date and time of the message, expressed in ISO-8601 format.
    * For example, 2016-09-23T13:07:49.4714686-07:00.
    */
   localTimestamp?: Date;
   /**
-   * Contains the name of the timezone in which the message, in local time, expressed in IANA Time
-   * Zone database format.
+   * Contains the name of the local timezone of the message, expressed in IANA Time Zone database format.
    * For example, America/Los_Angeles.
    */
   localTimezone: string;
+  /**
+   * A string containing an IRI identifying the caller of a bot. This field is not intended to be transmitted over 
+   * the wire, but is instead populated by bots and clients based on cryptographically verifiable data that asserts 
+   * the identity of the callers (e.g. tokens).
+   */
+  callerId: string;
   /**
    * Contains the URL that specifies the channel's service endpoint. Set by the channel.
    */
@@ -480,7 +492,7 @@ export interface Activity {
   /**
    * An optional programmatic action accompanying this request
    */
-  semanticAction: SemanticAction;
+  semanticAction?: SemanticAction;
 }
 
 /**
@@ -1213,6 +1225,10 @@ export interface TokenRequest {
  */
 export interface TokenResponse {
   /**
+   * @member {string} [channelId]
+   */
+  channelId?: string;
+  /**
    * The connection name
    */
   connectionName: string;
@@ -1744,5 +1760,17 @@ export enum ContactRelationUpdateActionTypes {
 export enum InstallationUpdateActionTypes {
   Add = 'add',
   Remove = 'remove',
+}
+
+/**
+ * Defines values for SemanticActionStateTypes.
+ * Possible values include: 'start', 'continue', 'done'
+ * @readonly
+ * @enum {string}
+ */
+export enum SemanticActionStateTypes {
+  Start = 'start',
+  Continue = 'continue',
+  Done = 'done',
 }
 

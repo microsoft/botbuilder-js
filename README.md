@@ -1,23 +1,28 @@
-# Bot Builder SDK v4
- | Branch | Description        | Build Status | Coverage Status |
- |----|---------------|--------------|-----------------|
-|Master | 4.2.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/BotBuilder-JS%204.0%20master?branchName=master)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=374)|[![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=master)
-|4.2 | 4.2.* Preview Builds |[![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=4.2)](https://travis-ci.org/Microsoft/botbuilder-js) |[![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=4.2)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=4.2)
- |4.1 | 4.1.* Patch Builds |[![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=4.1)](https://travis-ci.org/Microsoft/botbuilder-js) | [![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=4.1)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=4.1)
- |4.0 | 4.0.* Patch Builds | [![Build status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=4.0)](https://travis-ci.org/Microsoft/botbuilder-js) | [![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=4.0)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=4.0)|
+
+# ![Bot Framework SDK v4 for JavaScript](./docs/media/BotFrameworkJavaScript_header.png)
+
+### [Click here to find out what's new with Bot Framework](https://github.com/Microsoft/botframework/blob/master/whats-new.md#whats-new)
+
+# Bot Framework SDK v4 for JavaScript
+
+This repository contains code for the JavaScript version of the Microsoft Bot Framework SDK. The Bot Framework SDK v4 enable developers to model conversation and build sophisticated bot applications.
+
+This repo is part the [Microsoft Bot Framework](https://github.com/microsoft/botframework) - a comprehensive framework for building enterprise-grade conversational AI experiences.
+
+ | Branch | Description        | Build Status | Coverage Status | Windows Bot Test Status | Linux Bot Test Status |
+ |----|---------------|--------------|-----------------|--|--|
+|Master | 4.6.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/BotBuilder-JS-master-daily)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=460)|[![Coverage Status](https://coveralls.io/repos/github/microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/microsoft/botbuilder-js?branch=master)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Windows?branchName=master)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=548&branchName=master)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Linux?branchName=master)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=549&branchName=master)
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Microsoft/botbuilder-js/blob/master/LICENSE)
 [![Gitter](https://img.shields.io/gitter/room/Microsoft/BotBuilder.svg)](https://gitter.im/Microsoft/BotBuilder)
 
 [![StackExchange](https://img.shields.io/stackexchange/stackoverflow/t/botframework.svg)](https://stackoverflow.com/questions/tagged/botframework)
 
-This repository contains code for the JavaScript version of the [Microsoft Bot Builder SDK](https://github.com/Microsoft/botbuilder). The Bot Builder SDK v4 is the latest SDK for building bot applications. 
-
 In addition to the JavaScript SDK, Bot Builder supports creating bots in other popular programming languages like [.NET](https://github.com/Microsoft/botbuilder-dotnet), [Python](https://github.com/Microsoft/botbuilder-python), and [Java](https://github.com/Microsoft/botbuilder-java).
 
 To get started see the [Azure Bot Service Documentation](https://docs.microsoft.com/en-us/azure/bot-service/?view=azure-bot-service-4.0) for the v4 SDK.
 
-A rich set of samples are available at [BotBuilder-Samples](https://github.com/microsoft/botbuilder-samples) repository.
+A rich set of samples are available at [Bot Framework Samples](https://github.com/microsoft/botbuilder-samples) repository.
 
 
 ## Packages
@@ -63,8 +68,4 @@ email to ensure we received your original message. Further information, includin
 [MSRC PGP](https://technet.microsoft.com/en-us/security/dn606155) key, can be found in
 the [Security TechCenter](https://technet.microsoft.com/en-us/security/default).
 
-## License
-
 Copyright (c) Microsoft Corporation. All rights reserved.
-
-Licensed under the [MIT](https://github.com/Microsoft/vscode/blob/master/LICENSE.txt) License.

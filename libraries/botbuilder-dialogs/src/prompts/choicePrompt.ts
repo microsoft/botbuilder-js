@@ -84,10 +84,11 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices) || [];
         const channelId: string = context.activity.channelId;
         const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ChoicePrompt.defaultChoiceOptions[locale];
+        const choiceStyle: ListStyle = options.style || this.style;
         if (isRetry && options.retryPrompt) {
-            prompt = this.appendChoices(options.retryPrompt, channelId, choices, this.style, choiceOptions);
+            prompt = this.appendChoices(options.retryPrompt, channelId, choices, choiceStyle, choiceOptions);
         } else {
-            prompt = this.appendChoices(options.prompt, channelId, choices, this.style, choiceOptions);
+            prompt = this.appendChoices(options.prompt, channelId, choices, choiceStyle, choiceOptions);
         }
 
         // Send prompt

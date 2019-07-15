@@ -12,7 +12,7 @@ import { DialogSet } from './dialogSet';
 import { DialogContainer } from './dialogContainer';
 import { StateMap } from './stateMap';
 
-const PERSISTED_DIALOG_STATE: string = 'dialogs';
+const PERSISTED_DIALOG_STATE = 'dialogs';
 
 /**
  * Base class for a dialog that contains other child dialogs.
@@ -26,7 +26,7 @@ const PERSISTED_DIALOG_STATE: string = 'dialogs';
  * the classes constructor:
  *
  * ```JavaScript
- * const { ComponentDialog, WaterfallDialog, TextPrompt, NumberPrompt } = require('botbuilder-dialogs);
+ * const { ComponentDialog, WaterfallDialog, TextPrompt, NumberPrompt } = require('botbuilder-dialogs');
  *
  * class FillProfileDialog extends ComponentDialog {
  *     constructor(dialogId) {
@@ -91,12 +91,16 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
         // Check for end of inner dialog
         if (turnResult.status !== DialogTurnStatus.waiting) {
+            if (turnResult.status === DialogTurnStatus.cancelled) {
+                await this.endComponent(outerDC, turnResult.result);
+                const cancelledTurnResult: DialogTurnResult = { status: DialogTurnStatus.cancelled, result: turnResult.result }
+                return cancelledTurnResult;
+            }
             // Return result to calling dialog
             return await this.endComponent(outerDC, turnResult.result);
-        } else {
-            // Just signal end of turn
-            return Dialog.EndOfTurn;
-        }
+        } 
+        // Just signal end of turn
+        return Dialog.EndOfTurn;
     }
 
     public async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
@@ -106,6 +110,11 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
         // Check for end of inner dialog
         if (turnResult.status !== DialogTurnStatus.waiting) {
+            if (turnResult.status === DialogTurnStatus.cancelled) {
+                await this.endComponent(outerDC, turnResult.result);
+                const cancelledTurnResult: DialogTurnResult = { status: DialogTurnStatus.cancelled, result: turnResult.result }
+                return cancelledTurnResult;
+            }
             // Return result to calling dialog
             return await this.endComponent(outerDC, turnResult.result);
         } else {
@@ -241,7 +250,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         this.dialogs.telemetryClient = client;
     }
 
-     /**
+    /**
      * Get the current telemetry client.
      */
     public get telemetryClient(): BotTelemetryClient {

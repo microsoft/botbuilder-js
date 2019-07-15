@@ -133,6 +133,45 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.ConversationUpdate, membersRemoved: [{id: 1}]}, bot);
     });
 
+    it(`should fire onMessageReaction`, async function (done) {
+
+        const bot = new ActivityHandler();
+
+        bot.onMessageReaction(async(context, next) => {
+            assert(true, 'onMessageReaction not called');
+            done();
+            await next();
+        });
+
+        processActivity({type: ActivityTypes.MessageReaction}, bot);
+    });
+
+    it(`should fire onReactionsAdded`, async function (done) {
+
+        const bot = new ActivityHandler();
+
+        bot.onReactionsAdded(async(context, next) => {
+            assert(true, 'onReactionsAdded not called');
+            done();
+            await next();
+        });
+
+        processActivity({type: ActivityTypes.MessageReaction, reactionsAdded: [{type: 'like'}]}, bot);
+    });
+
+    it(`should fire onReactionsRemoved`, async function (done) {
+
+        const bot = new ActivityHandler();
+
+        bot.onReactionsRemoved(async(context, next) => {
+            assert(true, 'onReactionsRemoved not called');
+            done();
+            await next();
+        });
+
+        processActivity({type: ActivityTypes.MessageReaction, reactionsRemoved: [{type: 'like'}]}, bot);
+    });
+    
     it(`should fire onEvent`, async function (done) {
 
         const bot = new ActivityHandler();

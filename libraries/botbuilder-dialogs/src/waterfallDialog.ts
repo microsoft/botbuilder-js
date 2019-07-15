@@ -189,7 +189,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      */
     protected async onStep(step: WaterfallStepContext<O>): Promise<DialogTurnResult> {
         // Log Waterfall Step event. 
-        var stepName = this.waterfallStepName(step.index)
+        var stepName = this.waterfallStepName(step.index);
 
         const state = step.state.dialog;
 
@@ -197,9 +197,9 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         { 
             "DialogId": this.id,
             "InstanceId": state.get(PERSISTED_VALUES)['instanceId'],
-            "StepName": stepName,
+            "StepName": stepName
         };
-        this.telemetryClient.trackEvent({name: "WaterfallStep", properties: properties});
+        this.telemetryClient.trackEvent({name: 'WaterfallStep', properties: properties});
         return await this.steps[step.index](step);
     }
 
@@ -210,7 +210,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
             state.set(PERSISTED_STEP_INDEX, index);
 
             // Create step context
-            let nextCalled: boolean = false;
+            let nextCalled = false;
             const step: WaterfallStepContext<O> = new WaterfallStepContext<O>(dc, {
                 index: index,
                 options: <O>state.get(PERSISTED_OPTIONS),
@@ -219,7 +219,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
                 values: state.get(PERSISTED_VALUES),
                 onNext: async (stepResult?: any): Promise<DialogTurnResult<any>> => {
                     if (nextCalled) {
-                        throw new Error(`WaterfallStepContext.next(): method already called for dialog and step '${this.id}[${index}]'.`);
+                        throw new Error(`WaterfallStepContext.next(): method already called for dialog and step '${ this.id }[${ index }]'.`);
                     }
                     nextCalled = true;
                     return await this.resumeDialog(dc, DialogReason.nextCalled, stepResult);
@@ -245,17 +245,17 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         const state = new StateMap(instance.state);
         const instanceId = state.get(PERSISTED_VALUES)['instanceId'];
         if (reason === DialogReason.endCalled) {
-            this.telemetryClient.trackEvent({name: "WaterfallComplete", properties: {
-                "DialogId": this.id,
-                "InstanceId": instanceId,
+            this.telemetryClient.trackEvent({name: 'WaterfallComplete', properties: {
+                'DialogId': this.id,
+                'InstanceId': instanceId,
             }});
         } else if (reason === DialogReason.cancelCalled) {
             var index = state.get(PERSISTED_STEP_INDEX);
             var stepName = this.waterfallStepName(index);
-            this.telemetryClient.trackEvent({name: "WaterfallCancel", properties: {
-                "DialogId": this.id,
-                "StepName": stepName,
-                "InstanceId": instanceId,
+            this.telemetryClient.trackEvent({name: 'WaterfallCancel', properties: {
+                'DialogId': this.id,
+                'StepName': stepName,
+                'InstanceId': instanceId,
             }});
         }
     }
@@ -263,13 +263,13 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     private waterfallStepName(index) {
         // Log Waterfall Step event. Each event has a distinct name to hook up
         // to the Application Insights funnel.
-        var stepName = "";
+        var stepName = '';
         if (this.steps[index]) {
             try {
                 stepName = this.steps[index].name;
             } finally {
                 if (stepName === undefined || stepName === '') {
-                    stepName = "Step" + (index + 1) + "of" + (this.steps.length);
+                    stepName = 'Step' + (index + 1) + 'of' + (this.steps.length);
                 }
             }
         }
@@ -300,10 +300,10 @@ const PERSISTED_VALUES = 'values';
  */  
 function generate_guid() {
     function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
     }
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
       s4() + '-' + s4() + s4() + s4();
-  }
+}

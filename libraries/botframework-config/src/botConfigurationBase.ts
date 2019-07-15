@@ -14,7 +14,7 @@ import { IAppInsightsService, IBlobStorageService, IBotConfiguration, IBotServic
 
 /**
  * This is class which allows you to manipulate in memory representations of bot configuration with
- * no nodejs depedencies.
+ * no nodejs dependencies.
  */
 export class BotConfigurationBase implements Partial<IBotConfiguration> {
 
@@ -25,7 +25,7 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
     public version: string = '2.0';
 
     /**
-     * Creates a new BotConfigutationBase instance.
+     * Creates a new BotConfigurationBase instance.
      */
     constructor() {
         // noop
@@ -107,18 +107,19 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
     public connectService(newService: IConnectedService): string {
         const service: ConnectedService = BotConfigurationBase.serviceFromJSON(newService);
 
-        // assign a unique id
-        let found: boolean = false;
-        do {
-            found = false;
-            service.id = Math.floor((Math.random() * 255)).toString();
-            for (const existingService of this.services) {
-                if (existingService.id === service.id) {
-                    found = true;
-                    break;
+        if (!service.id) {
+            let maxValue = 0;
+            this.services.forEach((s) => {
+                if (parseInt(s.id) > maxValue) {
+                    maxValue = parseInt(s.id);
                 }
-            }
-        } while (found);
+            });
+
+            service.id = (++maxValue).toString();
+        }
+        else if (this.services.filter(s => s.type === service.type && s.id === service.id).length) {
+            throw new Error(`Service with ${ service.id } is already connected`);
+        }
 
         this.services.push(service);
 
@@ -172,7 +173,7 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
                 return services.splice(i, 1)[0];
             }
         }
-        throw new Error(`a service with id or name of [${nameOrId}] was not found`);
+        throw new Error(`a service with id or name of [${ nameOrId }] was not found`);
     }
 
     /**

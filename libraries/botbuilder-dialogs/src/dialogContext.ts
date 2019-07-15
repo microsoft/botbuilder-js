@@ -161,7 +161,7 @@ export class DialogContext {
     public async beginDialog(dialogId: string, options?: object): Promise<DialogTurnResult> {
         // Lookup dialog
         const dialog: Dialog<{}> = this.findDialog(dialogId);
-        if (!dialog) { throw new Error(`DialogContext.beginDialog(): A dialog with an id of '${dialogId}' wasn't found.`); }
+        if (!dialog) { throw new Error(`DialogContext.beginDialog(): A dialog with an id of '${ dialogId }' wasn't found.`); }
 
         // Process dialogs input bindings
         // - If the stack is empty, any `dialog.` bindings will be pulled from the active dialog on
@@ -327,10 +327,16 @@ export class DialogContext {
                 (promptOrOptions as Activity).type !== undefined) ||
             typeof promptOrOptions === 'string'
         ) {
-            options = { prompt: promptOrOptions as string | Partial<Activity>, choices: choices };
+            options = { prompt: promptOrOptions as string | Partial<Activity> };
         } else {
             options = { ...promptOrOptions as PromptOptions };
         }
+
+        if (choices) 
+        {
+            options.choices = choices;
+        }
+        
         return this.beginDialog(dialogId, options);
     }
 
