@@ -12,8 +12,8 @@ import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import { ErrorListener } from './errorListener';
 import { LGFileLexer } from './generated/LGFileLexer';
 import { FileContext, ImportDefinitionContext, LGFileParser, ParagraphContext, TemplateDefinitionContext } from './generated/LGFileParser';
-import { LGImport } from './LGImport';
-import { LGResource } from './LGResource';
+import { LGImport } from './lgImport';
+import { LGResource } from './lgResource';
 import { LGTemplate } from './lgTemplate';
 
 /**

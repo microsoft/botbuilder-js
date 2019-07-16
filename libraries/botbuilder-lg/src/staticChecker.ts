@@ -17,10 +17,10 @@ import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { GetMethodExtensions } from './getMethodExtensions';
-import { ImportResolver, ImportResolverDelegate } from './ImportResolver';
+import { ImportResolver, ImportResolverDelegate } from './importResolver';
 import { LGException } from './lgException';
 import { LGParser } from './lgParser';
-import { LGResource } from './LGResource';
+import { LGResource } from './lgResource';
 import { LGTemplate } from './lgTemplate';
 
 /**
