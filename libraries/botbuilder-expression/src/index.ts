@@ -13,7 +13,7 @@ export * from './expressionEvaluator';
 export * from './expressionParser';
 export * from './expressionType';
 export * from './extensions';
-export * from './TimeZoneConverter';
+export * from './timeZoneConverter';
 export * from './generated';
-export * from './CommonRegex';
+export * from './commonRegex';
 

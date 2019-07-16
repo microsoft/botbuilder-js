@@ -12,9 +12,9 @@ import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Evaluator } from './evaluator';
 import { Expander } from './expander';
 import { IGetMethod } from './getMethodExtensions';
-import { ImportResolver, ImportResolverDelegate } from './ImportResolver';
+import { ImportResolver, ImportResolverDelegate } from './importResolver';
 import { LGParser } from './lgParser';
-import { LGResource } from './LGResource';
+import { LGResource } from './lgResource';
 import { LGTemplate } from './lgTemplate';
 import { StaticChecker } from './staticChecker';
 

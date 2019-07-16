@@ -18,7 +18,7 @@ import { Expression, ReturnType } from './expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDelegate } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
-import { TimeZoneConverter } from './TimeZoneConverter';
+import { TimeZoneConverter } from './timeZoneConverter';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.

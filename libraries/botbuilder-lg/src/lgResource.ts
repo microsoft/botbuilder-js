@@ -8,7 +8,7 @@
 
 import { LGTemplate } from './lgTemplate';
 import { LGImport } from './lgImport';
-import { ImportResolver, ImportResolverDelegate } from './ImportResolver';
+import { ImportResolver, ImportResolverDelegate } from './importResolver';
 import { LGParser } from './lgParser';
 
 /**
