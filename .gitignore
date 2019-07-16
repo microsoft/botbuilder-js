@@ -287,7 +287,12 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 /**/node_modules
-/**/.vscode
+
+# Exception for including the ESLint extension in vscode
+!.vscode/
+.vscode/*
+!.vscode/extensions.json
+
 /**/*.VC.db
 #coverage
 /**/coverage
