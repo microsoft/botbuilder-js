@@ -48,7 +48,7 @@ describe('CancelAndHelpDialog', () => {
 
                 reply = await client.sendActivity(testData);
                 assert.strictEqual(reply.text, 'Cancelling...');
-                assert.strictEqual(client.dialogTurnResult.status, 'cancelled');
+                assert.strictEqual(client.dialogTurnResult.status, 'complete');
             });
         });
     });
