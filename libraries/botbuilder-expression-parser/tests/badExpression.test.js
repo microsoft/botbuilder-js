@@ -342,7 +342,11 @@ const badExpressions =
   "isMatch('abC', one)",// second param should be string
   "isMatch(1, '^[a-z]+$')", // first param should be string
   "isMatch('abC', '^[a-z+$')",// bad regular expression
-  
+
+  // SetPathToValue tests
+  "setPathToValue(@foo, 3)", // Cannot set simple entities
+  "setPathToValue(2+3, 4)", // Not a real path
+  "setPathToValue(a)" // Missing value
 ];
 
 const scope = {

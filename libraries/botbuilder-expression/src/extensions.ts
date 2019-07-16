@@ -139,6 +139,24 @@ export class Extensions {
     }
 
     /**
+     * Set a property in Map or Object.
+     * @param instance Instance to set.
+     * @param property Property to set.
+     * @param value Value to set.
+     * @returns set value.
+     */
+    public static SetProperty(instance: any, property: string, value: any): any {
+        const result: any = value;
+        if (instance instanceof Map) {
+            instance.set(property, value);
+        } else {
+            instance[property] = value;
+        }
+
+        return result;
+    }
+
+    /**
      * Lookup a property in IDictionary, JObject or through reflection.
      * @param instance Instance with property.
      * @param property Property to lookup.
