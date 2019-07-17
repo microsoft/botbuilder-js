@@ -114,7 +114,7 @@ export class TurnContext {
         var mentions = TurnContext.getMentions(activity);
         for (var i=0; i<mentions.length; i++) {
             if (mentions[i].mentioned.id === id) {
-                var mentionNameMatch = mentions[i].text.match(/(?<=<at.*>)(.*?)(?=<\/at>)/i);
+                var mentionNameMatch = mentions[i].text.match(/<at.*>(.*?)<\/at>/i);
                 if (mentionNameMatch.length > 0) {
                     activity.text = activity.text.replace(mentionNameMatch[0], '');
                     activity.text = activity.text.replace(/<at><\/at>/g, '');
