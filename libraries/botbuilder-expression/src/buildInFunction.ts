@@ -791,8 +791,103 @@ export class BuiltInFunctions {
 
                 return { value, error };
             }
-
         }
+    }
+
+    private static CanBeModified(value: any, property: string, expected?: number): boolean {
+        let modifiable: boolean = false;
+        if (expected !== undefined) {
+            // Modifiable list
+            modifiable = value instanceof Array;
+        } else {
+            // Modifiable object
+            modifiable = value instanceof Map;
+            if (!modifiable) {
+                if (typeof value === 'object') {
+                    modifiable = value.hasOwnProperty(property);
+                }
+            }
+        }
+
+        return modifiable;
+    }
+
+    private static TrySetPathToValue(path: Expression, value: any, state: any, expected?: number): { instance: any; error: string } {
+        let result: any;
+        let error: string;
+        let instance: any;
+        let index: any;
+        const children: Expression[] = path.Children;
+        if (path.Type === ExpressionType.Accessor || path.Type === ExpressionType.Element) {
+            ({ value: index, error } = children[path.Type === ExpressionType.Accessor ? 0 : 1].tryEvaluate(state));
+            if (error === undefined) {
+                const iindex: number = index;
+                if (children.length === 2) {
+                    ({ instance, error } = this.TrySetPathToValue(children[path.Type === ExpressionType.Accessor ? 1 : 0], undefined, state, iindex));
+                } else {
+                    instance = state;
+                }
+
+                if (error === undefined) {
+                    if (typeof index === 'string') {
+                        const propName: string = index;
+                        if (value !== undefined) {
+                            result = Extensions.SetProperty(instance, propName, value);
+                        } else {
+                            ({ value: result, error } = Extensions.AccessProperty(instance, propName));
+                            if (error !== undefined || result === undefined || !this.CanBeModified(result, propName, expected)) {
+                                // Create new value for parents to use
+                                if (expected !== undefined) {
+                                    result = Extensions.SetProperty(instance, propName, [expected + 1]);
+                                } else {
+                                    result = Extensions.SetProperty(instance, propName, new Map<string, any>());
+                                }
+                            }
+                        }
+                    } else if (iindex !== undefined) {
+                        // Child instance should be a list already because we passed down the iindex.
+                        if (instance instanceof Array) {
+                            const list: any[] = instance;
+                            if (list.length <= iindex) {
+                                while (list.length < iindex) {
+                                    // Extend list.
+                                    list.push(undefined);
+                                }
+                            }
+
+                            // Assign value or expected list size or object
+                            result = value !== undefined ? value : expected !== undefined ? [expected + 1] : new Map<string, any>();
+                            list[iindex] = result;
+                        } else {
+                            error = `${children[0]} is not a list.`;
+                        }
+                    } else {
+                        error = `${children[0]} is not a valid path.`;
+                    }
+                }
+            }
+        } else {
+            error = `${path} is not a path that can be set to a value.`;
+        }
+
+        return { instance: result, error };
+    }
+
+    private static SetPathToValue(expression: Expression, state: any): { value: any; error: string } {
+        let value: any;
+        let error: string;
+        const path: Expression = expression.Children[0];
+        const valueExpr: Expression = expression.Children[1];
+        ({ value, error } = valueExpr.tryEvaluate(state));
+        if (error === undefined) {
+            let instance: any;
+            ({ instance, error } = BuiltInFunctions.TrySetPathToValue(path, value, state));
+            if (error !== undefined) {
+                value = undefined;
+            }
+        }
+
+        return {value, error};
     }
 
     private static Foreach(expression: Expression, state: any): { value: any; error: string } {
@@ -1504,7 +1599,7 @@ export class BuiltInFunctions {
                 for (const item of items) {
                     // get property off of item
                     ({ value: result, error } = Extensions.AccessProperty(item, property.toString()));
-    
+
                     // if not null
                     if (error === undefined && result !== undefined) {
                         // return it
@@ -1512,8 +1607,6 @@ export class BuiltInFunctions {
                     }
                 }
             }
-
-            
         }
 
         return { value: undefined, error };
@@ -2477,6 +2570,11 @@ export class BuiltInFunctions {
                     }),
                 ReturnType.Object,
                 (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.Object, ReturnType.String)),
+            new ExpressionEvaluator(
+                ExpressionType.SetPathToValue,
+                this.SetPathToValue,
+                ReturnType.Object,
+                this.ValidateBinary),
             new ExpressionEvaluator(ExpressionType.Select, BuiltInFunctions.Foreach, ReturnType.Object, BuiltInFunctions.ValidateForeach),
             new ExpressionEvaluator(ExpressionType.Foreach, BuiltInFunctions.Foreach, ReturnType.Object, BuiltInFunctions.ValidateForeach),
             new ExpressionEvaluator(ExpressionType.Where, BuiltInFunctions.Where, ReturnType.Object, BuiltInFunctions.ValidateWhere),
