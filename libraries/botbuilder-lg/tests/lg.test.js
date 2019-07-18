@@ -332,7 +332,7 @@ describe('LG', function () {
         assert.strictEqual(options3.includes(evaled), true, `Evaled is ${evaled}`);
 
         // Assert 6.lg of relative path is imported from text.
-        engine = new TemplateEngine().addText(`# basicTemplate\r\n- Hi\r\n- Hello\r\n[import](./tests/testData/examples/6.lg)`, 'test', undefined);
+        engine = new TemplateEngine().addText(`# basicTemplate\r\n- Hi\r\n- Hello\r\n[import](./libraries/botbuilder-lg/tests/testData/examples/6.lg)`, 'test', undefined);
 
         assert.strictEqual(engine.templates.length, 8);
 
