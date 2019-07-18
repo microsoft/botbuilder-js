@@ -145,7 +145,7 @@ describe('LG', function () {
     });
 
     it('TestBasicInlineTemplate', function () {
-        var emptyEngine = new TemplateEngine().addText("", "test", undefined);
+        var emptyEngine = new TemplateEngine();
         assert.strictEqual(emptyEngine.evaluate("Hi"), "Hi", emptyEngine.evaluate("Hi"));
         assert.strictEqual(emptyEngine.evaluate("Hi", ""), "Hi", emptyEngine.evaluate("Hi", ""));
 
@@ -316,23 +316,8 @@ describe('LG', function () {
         evaled = engine.evaluateTemplate("template3");
         assert.strictEqual(options5.includes(evaled), true, `Evaled is ${evaled}`);
 
-        // Assert 6.lg of absolute path is imported from text.
-        var importedFilePath = GetExampleFilePath("6.lg");
-        engine = new TemplateEngine().addText(`# basicTemplate\r\n- Hi\r\n- Hello\r\n[import](${importedFilePath})`, 'test', undefined);
-
-        assert.strictEqual(engine.templates.length, 8);
-
-        evaled = engine.evaluateTemplate("basicTemplate");
-        assert.strictEqual(options1.includes(evaled), true, `Evaled is ${evaled}`);
-
-        evaled = engine.evaluateTemplate("welcome");
-        assert.strictEqual(options2.includes(evaled), true, `Evaled is ${evaled}`);
-
-        evaled = engine.evaluateTemplate("welcome", { userName: "DL" });
-        assert.strictEqual(options3.includes(evaled), true, `Evaled is ${evaled}`);
-
         // Assert 6.lg of relative path is imported from text.
-        engine = new TemplateEngine().addText(`# basicTemplate\r\n- Hi\r\n- Hello\r\n[import](./tests/testData/examples/6.lg)`, 'test', undefined);
+        engine = new TemplateEngine().addText(`# basicTemplate\r\n- Hi\r\n- Hello\r\n[import](./6.lg)`, GetExampleFilePath("xx.lg"));
 
         assert.strictEqual(engine.templates.length, 8);
 

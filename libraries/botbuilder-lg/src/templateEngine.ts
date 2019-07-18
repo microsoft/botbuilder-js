@@ -29,6 +29,16 @@ export class TemplateEngine {
         this.templates = [];
     }
 
+    /**
+     * Load .lg files into template engine.
+     * You can add one file, or mutlple file as once
+     * If you have multiple files referencing each other, make sure you add them all at once,
+     * otherwise static checking won't allow you to add it one by one.
+     * @memberof TemplateEngine
+     * @param importResolver resolver to resolve LG import id to template text.
+     * @param filePaths Paths to .lg files.
+     * @returns Teamplate engine with parsed files.
+     */
     public addFiles = (filePaths: string[], importResolver?: ImportResolverDelegate): TemplateEngine => {
         let totalLGResources: LGResource[] = [];
         filePaths.forEach((filePath: string) => {
@@ -55,11 +65,25 @@ export class TemplateEngine {
         return this;
     }
 
+    /**
+     * Load single .lg file into template engine.
+     * @param filePath Path to .lg file.
+     * @param importResolver resolver to resolve LG import id to template text.
+     * @returns Teamplate engine with single parsed file.
+     */
     public addFile = (filePath: string, importResolver?: ImportResolverDelegate): TemplateEngine =>
         this.addFiles([filePath], importResolver)
 
-    public addText = (content: string, name: string, importResolver: ImportResolverDelegate): TemplateEngine => {
-        const rootResource: LGResource = LGParser.parse(content, name);
+    /**
+     * Add text as lg file content to template engine. A fullpath id is needed when importResolver is empty, or simply pass in customized importResolver.
+     * @param content Text content contains lg templates.
+     * @param id is the content identifier. If importResolver is null, id should must be a full path string.
+     * @param importResolver resolver to resolve LG import id to template text.
+     * @returns Template engine with the parsed content.
+     */
+    public addText = (content: string, id?: string, importResolver?: ImportResolverDelegate): TemplateEngine => {
+        this.checkImportResolver(id, importResolver);
+        const rootResource: LGResource = LGParser.parse(content, id);
         const lgResources: LGResource[] = rootResource.discoverLGResources(importResolver);
         const lgTemplates: LGTemplate[] = lgResources.reduce((acc: LGTemplate[], x: LGResource) =>
             acc = acc.concat(x.Templates),                   []
@@ -110,6 +134,21 @@ export class TemplateEngine {
         const errors: Diagnostic[] = diagnostics.filter((u: Diagnostic) => u.Severity === DiagnosticSeverity.Error);
         if (errors.length > 0) {
             throw new Error(errors.map((error: Diagnostic) => error.toString()).join('\n'));
+        }
+    }
+
+    private checkImportResolver(id: string, importResolver: ImportResolverDelegate): void {
+        // Currently if no resolver is passed into AddText(),
+        // the default fileResolver is used to resolve the imports.
+        // default fileResolver require resource id should be fullPath,
+        // so that it can resolve relative path based on this fullPath.
+        // But we didn't check the id provided with AddText is fullPath or not.
+        // So when id != fullPath, fileResolver won't work.
+        if (importResolver === undefined) {
+            const importPath: string = ImportResolver.normalizePath(id);
+            if (!path.isAbsolute(importPath)) {
+                throw new Error('[Error] ImportResolver can not be empty when using AddText unless id is full path string');
+            }
         }
     }
 }
