@@ -147,7 +147,7 @@ export class TemplateEngine {
         if (importResolver === undefined) {
             const importPath: string = ImportResolver.normalizePath(id);
             if (!path.isAbsolute(importPath)) {
-                throw new Error('[Error] ImportResolver can not be empty when using AddText unless id is full path string');
+                throw new Error('[Error] id must be full path when importResolver is empty');
             }
         }
     }
