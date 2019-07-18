@@ -127,4 +127,8 @@ describe('LGExceptionTest', function () {
             }    
         }
     });
+
+    it('AddTextWithWrongId', function() {
+        assert.throws(() => { new TemplateEngine().addText("# t \n - hi", "a.lg"); }, Error);
+    });
 });

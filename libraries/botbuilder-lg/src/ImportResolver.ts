@@ -42,7 +42,7 @@ export class ImportResolver {
     /// </remarks>
     /// <param name="ambigiousPath">authoredPath.</param>
     /// <returns>path expressed as OS path.</returns>
-    private static normalizePath(ambigiousPath: string): string {
+    public static normalizePath(ambigiousPath: string): string {
         if (process.platform === 'win32') {
              // map linux/mac sep -> windows
             return ambigiousPath.replace('/', '\\');
