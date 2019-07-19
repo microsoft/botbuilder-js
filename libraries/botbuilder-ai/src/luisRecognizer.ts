@@ -180,7 +180,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
             const { applicationId, endpoint, endpointKey } = application;
             this.application = {
                 applicationId: applicationId,
-                endpoint: endpoint,
+                endpoint: this.getValidEndpoint(endpoint),
                 endpointKey: endpointKey
             };
         }
@@ -750,5 +750,17 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         if (!this.application.endpointKey) {
             throw new Error(`Invalid \`endpointKey\` value detected: ${this.application.endpointKey}\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`);
         }
+    }
+
+    /**
+     * Allows users to pass in either Machine Name (LUIS region or custom <name>.api...) or the full URL
+     * 
+     * @param endpoint https://<region/custom>.api.cognitive.microsoft.com
+     */
+    private getValidEndpoint(endpoint: string): string|null {
+        if (!endpoint) return null;
+
+        const machineName = endpoint.match(/(?:https?:\/\/)?([A-Z]*)(?:.*)?/i)[1];
+        return `https://${ machineName }.api.cognitive.microsoft.com`;
     }
 }

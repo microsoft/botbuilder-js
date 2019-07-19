@@ -520,7 +520,7 @@ describe('LuisRecognizer', function () {
         });
     });
 
-    it('should successfully construct with valid endpoint.', () => {
+    it('should successfully construct with valid endpoint when given the full application', () => {
         // Note this is NOT a real LUIS application ID nor a real LUIS subscription-key.
         // These are GUIDs edited to look right to the parsing and validation code.
         const mockedEndpoint = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/b31aeaf3-3511-495b-a07f-571fc873214b?verbose=true&timezoneOffset=-360&subscription-key=048ec46dc58e495482b0c447cfdbd291&q=';
@@ -530,6 +530,38 @@ describe('LuisRecognizer', function () {
         assert(recognizer.application.applicationId === 'b31aeaf3-3511-495b-a07f-571fc873214b');
         assert(recognizer.application.endpointKey === '048ec46dc58e495482b0c447cfdbd291');
         assert(recognizer.application.endpoint === 'https://westus.api.cognitive.microsoft.com');
+    });
+
+    it('should successfully construct with valid endpoint when given endpoint parameters', () => {
+        // Note this is NOT a real LUIS application ID nor a real LUIS subscription-key.
+        // These are GUIDs edited to look right to the parsing and validation code.
+        const appId = 'b31aeaf3-3511-495b-a07f-571fc873214b';
+        const endpointKey = '048ec46dc58e495482b0c447cfdbd291';
+        const regionEndpoint = 'westus';
+        const partialEndpoint = 'https://westus.api.cognitive.microsoft.com';
+        const customEndpoint = 'custom';
+        const mockedEndpoint = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/b31aeaf3-3511-495b-a07f-571fc873214b?verbose=true&timezoneOffset=-360&subscription-key=048ec46dc58e495482b0c447cfdbd291&q=';
+
+        const regionRecognizer = new LuisRecognizer({applicationId: appId, endpointKey: endpointKey, endpoint: regionEndpoint});
+        const partialRecognizer = new LuisRecognizer({applicationId: appId, endpointKey: endpointKey, endpoint: partialEndpoint});
+        const customRecognizer = new LuisRecognizer({applicationId: appId, endpointKey: endpointKey, endpoint: customEndpoint});
+        const mockedRecognizer = new LuisRecognizer(mockedEndpoint);
+
+        assert(regionRecognizer.application.applicationId === appId);
+        assert(regionRecognizer.application.endpointKey === endpointKey);
+        assert(regionRecognizer.application.endpoint === 'https://westus.api.cognitive.microsoft.com');
+
+        assert(partialRecognizer.application.applicationId === appId);
+        assert(partialRecognizer.application.endpointKey === endpointKey);
+        assert(partialRecognizer.application.endpoint === 'https://westus.api.cognitive.microsoft.com');
+
+        assert(customRecognizer.application.applicationId === appId);
+        assert(customRecognizer.application.endpointKey === endpointKey);
+        assert(customRecognizer.application.endpoint === 'https://custom.api.cognitive.microsoft.com');
+
+        assert(mockedRecognizer.application.applicationId === appId);
+        assert(mockedRecognizer.application.endpointKey === endpointKey);
+        assert(mockedRecognizer.application.endpoint === 'https://westus.api.cognitive.microsoft.com');
     });
 
     it('should throw an error when parsing application endpoint with no subscription-key.', () => {
