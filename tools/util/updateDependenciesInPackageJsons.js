@@ -23,14 +23,8 @@ function updateDependencies(filePath) {
         var result = '';
         dependencies.forEach(function (dependency) {
             var findString = new RegExp('("dependencies":)(.+?)("' + dependency + '":\\s*")([^\/"]+)', "gms");
-            console.log('findString =');
-            console.log(findString);
             var replaceString = '$1$2$3' + newVersion;
-            console.log('replaceString =');
-            console.log(replaceString);
             result = data.replace(findString, replaceString);
-            console.log('result =');
-            console.log(result);
             data = result;
         });
 
