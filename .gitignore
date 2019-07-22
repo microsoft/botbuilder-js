@@ -295,4 +295,5 @@ __pycache__/
 
 #derived
 /test-runner/out
+package-lock.json
 
