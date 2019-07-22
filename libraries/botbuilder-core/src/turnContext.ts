@@ -97,13 +97,21 @@ export class TurnContext {
     }
 
     /**
-     * Rewrites the activity text without any at mention. Specifying a particular recipient id.
-     * Use with caution because this function is altering the text on the Activity.
+     * Remove any mention text for given id from the Activity.Text property.  For example, given the message
+     * "@echoBot Hi Bot", this will remove "@echoBot", leaving "Hi Bot".
      *
-     * @remarks
-     * Some channels, for example Microsoft Teams, add at mention details into the text on a message activity.
-     * This can interfere with later processing. This is a helper function to remove the at mention.
-     *
+     * Typically this would be used to remove the mention text for the target recipient (the bot usually), though
+     * it could be called for each member.  For example:
+     *   turnContext.Activity.RemoveMentionText(turnContext.Activity.Recipient.Id);
+     * 
+     * The format of a mention Activity.Entity is dependent on the Channel.  But in all cases we
+     * expect the Mention.Text to contain the exact text for the user as it appears in
+     * Activity.Text.
+     * 
+     * For example, Teams uses "<at>username</at>", whereas slack use "@username". It
+     * is expected that text is in Activity.Text and this method will remove that value from
+     * Activity.Text.
+     * 
      * ```JavaScript
      * const updatedText = TurnContext.removeRecipientMention(context.request);
      * ```
@@ -114,11 +122,7 @@ export class TurnContext {
         var mentions = TurnContext.getMentions(activity);
         for (var i=0; i<mentions.length; i++) {
             if (mentions[i].mentioned.id === id) {
-                var mentionNameMatch = mentions[i].text.match(/(?<=<at.*>)(.*?)(?=<\/at>)/i);
-                if (mentionNameMatch.length > 0) {
-                    activity.text = activity.text.replace(mentionNameMatch[0], '');
-                    activity.text = activity.text.replace(/<at><\/at>/g, '');
-                }
+                activity.text = activity.text.replace(mentions[i].text, '').trim();
             }
         }
         return activity.text;
