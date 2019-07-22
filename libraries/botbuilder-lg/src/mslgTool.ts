@@ -21,8 +21,8 @@ export class MSLGTool {
 
     private Templates: LGTemplate[];
 
-    public ValidateFile(lgFileContent: string): string[] {
-        const diagnostic: Diagnostic[] = StaticChecker.checkText(lgFileContent, '', undefined);
+    public ValidateFile(lgFileContent: string, id?: string): string[] {
+        const diagnostic: Diagnostic[] = StaticChecker.checkText(lgFileContent, id, undefined);
         if (diagnostic.length !== 0) {
             return diagnostic.map((error: Diagnostic) => error.toString());
         }

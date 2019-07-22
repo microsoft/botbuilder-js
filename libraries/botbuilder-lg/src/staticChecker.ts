@@ -75,13 +75,20 @@ export class StaticChecker {
         return this.checkFiles([filePath], importResolver);
     }
 
-    public static checkText(content: string, name: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
+    public static checkText(content: string, id?: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
+        if (importResolver === undefined) {
+            const importPath: string = ImportResolver.normalizePath(id);
+            if (!path.isAbsolute(importPath)) {
+                throw new Error('[Error] id must be full path when importResolver is empty');
+            }
+        }
+        
         let result: Diagnostic[] = [];
         let templates: LGTemplate[] = [];
         let isParseSuccess: boolean = true;
 
         try {
-            const rootResource: LGResource = LGParser.parse(content, name);
+            const rootResource: LGResource = LGParser.parse(content, id);
             const resources: LGResource[] = rootResource.discoverLGResources(importResolver);
 
             templates = resources.reduce((acc: LGTemplate[], x: LGResource) =>
