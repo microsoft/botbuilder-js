@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, Middleware, TurnContext, Entity} from 'botbuilder-core';
+import { Activity, Middleware, TurnContext } from 'botbuilder-core';
 
 
 /**
@@ -25,9 +25,12 @@ export class SkypeMentionNormalizeMiddleware implements Middleware {
             for(var i = 0; i < activity.entities.length; i++){
                 var element = activity.entities[i];
                 if(element.type === 'mention'){
-                    var mentionNameMatch = element['text'].match(/(?<=<at.*>)(.*?)(?=<\/at>)/i);
-                    if (mentionNameMatch.length > 0) {
-                        element['text'] = mentionNameMatch[0];
+                    var text = element['text'];
+                    var end = text.indexOf(">");
+                    if(end > -1){
+                        var start = text.indexOf("<", end);
+                        if(start > -1)
+                            element['text'] = text.substring(end+1, start);
                     }
                 }
             }
