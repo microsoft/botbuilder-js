@@ -2,12 +2,6 @@ const { MSLGTool } = require('../');
 const assert = require('assert');
 const fs = require('fs');
 
-function GetExampleFile(fileName){
-    const path = `${ __dirname }/testData/mslgTool/`+ fileName;
-    const text = fs.readFileSync(path, 'utf-8');
-    return {path, text};
-}
-
 function GetErrors(mslgtool, fileName){
     const path = `${ __dirname }/testData/mslgTool/`+ fileName;
     const text = fs.readFileSync(path, 'utf-8');
