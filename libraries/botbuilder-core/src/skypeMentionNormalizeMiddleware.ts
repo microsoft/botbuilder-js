@@ -36,5 +36,6 @@ export class SkypeMentionNormalizeMiddleware implements Middleware {
 
     public async onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void> {
         SkypeMentionNormalizeMiddleware.normalizeSkypeMentionText(turnContext.activity);
+        await next();
     }
 }
