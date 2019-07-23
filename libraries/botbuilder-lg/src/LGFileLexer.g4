@@ -167,6 +167,6 @@ TEXT_SEPARATOR
   ;
 
 TEXT
-  : ~[ \\\t\r\n{}[\]()]+  { this.ignoreWS = false; this.expectKeywords = false;}
+  : ~[ \\\t\r\n{}[\]()]+?  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 

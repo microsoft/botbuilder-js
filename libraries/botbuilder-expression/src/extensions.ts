@@ -6,7 +6,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BuiltInFunctions } from './buildInFunction';
+import { BuiltInFunctions } from './builtInFunction';
 import { Constant } from './constant';
 import { Expression, ReturnType } from './expression';
 import { ExpressionType } from './expressionType';
