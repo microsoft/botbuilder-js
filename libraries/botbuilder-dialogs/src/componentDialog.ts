@@ -89,14 +89,10 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
 
         // Check for end of inner dialog
         if (turnResult.status !== DialogTurnStatus.waiting) {
-            if (turnResult.status === DialogTurnStatus.cancelled) {
-                await this.endComponent(outerDC, turnResult.result);
-                const cancelledTurnResult: DialogTurnResult = { status: DialogTurnStatus.cancelled, result: turnResult.result }
-                return cancelledTurnResult;
-            }
             // Return result to calling dialog
             return await this.endComponent(outerDC, turnResult.result);
-        } 
+        }
+
         // Just signal end of turn
         return Dialog.EndOfTurn;
     }
@@ -110,17 +106,12 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
 
         // Check for end of inner dialog
         if (turnResult.status !== DialogTurnStatus.waiting) {
-            if (turnResult.status === DialogTurnStatus.cancelled) {
-                await this.endComponent(outerDC, turnResult.result);
-                const cancelledTurnResult: DialogTurnResult = { status: DialogTurnStatus.cancelled, result: turnResult.result }
-                return cancelledTurnResult;
-            }
             // Return result to calling dialog
             return await this.endComponent(outerDC, turnResult.result);
-        } else {
-            // Just signal end of turn
-            return Dialog.EndOfTurn;
         }
+
+        // Just signal end of turn
+        return Dialog.EndOfTurn;
     }
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
@@ -261,5 +252,4 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
-
 }
