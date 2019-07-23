@@ -388,4 +388,25 @@ describe('LG', function () {
         var evaled = engine.evaluateTemplate('wPhrase', {name: 'morethanfive'});
         assert.strictEqual(evaled, 'Hi');
     });
+
+    it('TestEvalExpression', function () {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath("EvalExpression.lg"));
+        const userName = "MS";
+        var evaled = engine.evaluateTemplate('template1', {userName});
+        assert.strictEqual(evaled, 'Hi MS', `Evaled is ${evaled}`);
+
+        evaled = engine.evaluateTemplate('template2', {userName});
+        assert.strictEqual(evaled, 'Hi MS', `Evaled is ${evaled}`);
+
+        evaled = engine.evaluateTemplate('template3', {userName});
+        assert.strictEqual(evaled, 'HiMS', `Evaled is ${evaled}`);
+
+        const options1 = ["\r\nHi MS\r\n", "\nHi MS\n"];
+        evaled = engine.evaluateTemplate("template4", { userName});
+        assert.strictEqual(options1.includes(evaled), true, `Evaled is ${evaled}`);
+
+        const options2 = ["\r\nHiMS\r\n", "\nHiMS\n"];
+        evaled = engine.evaluateTemplate("template5", { userName});
+        assert.strictEqual(options2.includes(evaled), true, `Evaled is ${evaled}`);
+    });
 });
