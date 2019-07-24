@@ -23,7 +23,6 @@ export class ExpressionEngine implements IExpressionParser {
 
     // tslint:disable-next-line: typedef
     private readonly ExpressionTransformer = class extends AbstractParseTreeVisitor<Expression> implements ExpressionVisitor<Expression> {
-        
         private readonly ShorthandPrefixMap : Map<string, string> = new Map<string, string>([
             ['#', 'turn.recognized.intents'],
             ['@', 'turn.recognized.entities'],
@@ -60,7 +59,7 @@ export class ExpressionEngine implements IExpressionParser {
             return this.MakeExpression(binaryOperationName, left, right);
         }
 
-        public visitShorthandAccessorExp(context: ep.ShorthandAccessorExpContext ): Expression {
+        public visitShorthandAccessorExp(context: ep.ShorthandAccessorExpContext): Expression {
             if (context.primaryExpression() instanceof ep.ShorthandAtomContext) {
                 const shorthandAtom: ep.ShorthandAtomContext = <ep.ShorthandAtomContext>(context.primaryExpression());
                 const shorthandMark: string = shorthandAtom.text;
@@ -69,15 +68,15 @@ export class ExpressionEngine implements IExpressionParser {
                     throw new Error(`${shorthandMark} is not a shorthand`);
                 }
 
-                var property = new Constant(context.IDENTIFIER().text);
+                const property: Constant = new Constant(context.IDENTIFIER().text);
 
-                if (shorthandMark == "^")
-                {
+                if (shorthandMark === '^') {
                     return this.MakeExpression(ExpressionType.Callstack, property);
                 }
 
-                var accessorExpression = this.Transform(ExpressionEngine.AntlrParse(this.ShorthandPrefixMap.get(shorthandMark)));
-                var expression = this.MakeExpression(ExpressionType.Accessor, property, accessorExpression);
+                const accessorExpression: Expression = this.Transform(ExpressionEngine.AntlrParse(this.ShorthandPrefixMap.get(shorthandMark)));
+                const expression: Expression = this.MakeExpression(ExpressionType.Accessor, property, accessorExpression);
+
                 return shorthandMark === '@' ? this.MakeExpression(ExpressionType.SimpleEntity, expression) : expression;
             }
         }
@@ -85,15 +84,10 @@ export class ExpressionEngine implements IExpressionParser {
         public visitFuncInvokeExp(context: ep.FuncInvokeExpContext): Expression {
             const parameters: Expression[] = this.ProcessArgsList(context.argsList());
 
-            // Current only IdAtom is supported as function name
-            if (context.primaryExpression() instanceof ep.IdAtomContext) {
-                const idAtom: ep.IdAtomContext = <ep.IdAtomContext>(context.primaryExpression());
-                const functionName: string = idAtom.text;
+            // Remove the check to check primaryExpression is just an IDENTIFIER to support "." in template name
+            const functionName: string = context.primaryExpression().text;
 
-                return this.MakeExpression(functionName, ...parameters);
-            }
-
-            throw Error(`This format is wrong in expression ${context.text}.`);
+            return this.MakeExpression(functionName, ...parameters);
         }
 
         public visitIdAtom(context: ep.IdAtomContext): Expression {
@@ -115,7 +109,7 @@ export class ExpressionEngine implements IExpressionParser {
 
         public visitIndexAccessExp(context: ep.IndexAccessExpContext): Expression {
             let instance: Expression;
-            let property = this.visit(context.expression());
+            const property: Expression = this.visit(context.expression());
 
             if (context.primaryExpression() instanceof ep.ShorthandAtomContext) {
                 const shorthandAtom: ep.ShorthandAtomContext = <ep.ShorthandAtomContext>(context.primaryExpression());
@@ -125,16 +119,15 @@ export class ExpressionEngine implements IExpressionParser {
                     throw new Error(`${shorthandMark} is not a shorthand`);
                 }
 
-                if (shorthandMark == "^")
-                {
+                if (shorthandMark === '^') {
                     return this.MakeExpression(ExpressionType.Callstack, property);
                 }
 
                 instance = this.Transform(ExpressionEngine.AntlrParse(this.ShorthandPrefixMap.get(shorthandMark)));
-                var expression = this.MakeExpression(ExpressionType.Element, instance, property);
+                const expression: Expression = this.MakeExpression(ExpressionType.Element, instance, property);
+
                 return shorthandMark === '@' ? this.MakeExpression(ExpressionType.SimpleEntity, expression) : expression;
             }
-
 
             instance = this.visit(context.primaryExpression());
 
@@ -147,7 +140,6 @@ export class ExpressionEngine implements IExpressionParser {
                 throw new Error(`${context.text} is not a valid shorthand. Maybe you mean '${context.primaryExpression().text}${property}'?`);
             }
             const instance: Expression = this.visit(context.primaryExpression());
-            
 
             return this.MakeExpression(ExpressionType.Accessor, new Constant(property), instance);
         }
@@ -174,8 +166,8 @@ export class ExpressionEngine implements IExpressionParser {
 
         protected defaultResult = (): Expression => new Constant('');
 
-        private MakeExpression = (type: string, ...children: Expression[]): Expression =>
-            Expression.MakeExpression(type, this._lookup(type), ...children);
+        private readonly MakeExpression = (type: string, ...children: Expression[]): Expression =>
+            Expression.MakeExpression(type, this._lookup(type), ...children)
 
         private ProcessArgsList(context: ep.ArgsListContext): Expression[] {
             const result: Expression[] = [];
@@ -193,14 +185,6 @@ export class ExpressionEngine implements IExpressionParser {
         this._lookup = lookup === undefined ? BuiltInFunctions.Lookup : lookup;
     }
 
-    public parse(expression: string): Expression {
-        try {
-            return new this.ExpressionTransformer(this._lookup).Transform(ExpressionEngine.AntlrParse(expression));
-        } catch (err) {
-            throw new Error(`Parse failed for expression '${expression}', inner error: ${err}`);
-        }
-    }
-
     protected static AntlrParse(expression: string): ParseTree {
         const inputStream: ANTLRInputStream = new ANTLRInputStream(expression);
         const lexer: ExpressionLexer = new ExpressionLexer(inputStream);
@@ -211,5 +195,13 @@ export class ExpressionEngine implements IExpressionParser {
         parser.buildParseTree = true;
 
         return parser.expression();
+    }
+
+    public parse(expression: string): Expression {
+        try {
+            return new this.ExpressionTransformer(this._lookup).Transform(ExpressionEngine.AntlrParse(expression));
+        } catch (err) {
+            throw new Error(`Parse failed for expression '${expression}', inner error: ${err}`);
+        }
     }
 }

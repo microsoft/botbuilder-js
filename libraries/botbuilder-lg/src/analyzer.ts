@@ -165,22 +165,20 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     private AnalyzeExpressionDirectly(exp: Expression): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
-        if (exp.Type === 'lgTemplate') {
-            const templateName: string = (exp.Children[0] as Constant).Value;
+
+        if (exp.Type in this.TemplateMap) {
+            const templateName: string = exp.Type;
             result.union(new AnalyzerResult([], [templateName]));
 
-            if (exp.Children.length === 1) {
-                result.union(this.AnalyzeTemplate((exp.Children[0] as Constant).Value));
+            if (this.TemplateMap[templateName].Parameters === undefined || this.TemplateMap[templateName].Parameters.length === 0) {
+                result.union(this.AnalyzeTemplate(templateName));
             } else {
-                // only get template ref names
-                const templaterefNames: string[] = this.AnalyzeTemplate((exp.Children[0] as Constant).Value).TemplateReferences;
-                result.union(new AnalyzerResult([], templaterefNames));
-
-                // analyzer other children
-                exp.Children.forEach((e: Expression) => result.union(this.AnalyzeExpressionDirectly(e)));
+                // if template has params, just get the templateref without variables.
+                result.union(new AnalyzerResult([], this.AnalyzeTemplate(templateName).TemplateReferences));
             }
-        } else {
-            // analyzer all children
+        }
+
+        if (exp.Children !== undefined) {
             exp.Children.forEach((e: Expression) => result.union(this.AnalyzeExpressionDirectly(e)));
         }
 
@@ -202,45 +200,11 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     }
 
     private AnalyzeTemplateRef(exp: string): AnalyzerResult {
-        const result: AnalyzerResult = new AnalyzerResult();
         exp = exp.replace(/(^\[*)/g, '')
                 .replace(/(\]*$)/g, '');
-        const argsStartPos: number = exp.indexOf('(');
-        if (argsStartPos > 0) { // Do have args
+        exp = exp.indexOf('(') < 0 ? exp.concat('()') : exp;
 
-            // evaluate all arguments using ExpressoinEngine
-            const argsEndPos: number = exp.lastIndexOf(')');
-
-            if (argsEndPos < 0 || argsEndPos < argsStartPos + 1) {
-                throw Error(`Not a valid template ref: ${exp}`);
-            }
-
-            const args: string[] = exp.substr(argsStartPos + 1, argsEndPos - argsStartPos - 1).split(',');
-
-            // Before we have a matural solution to analyze parameterized template, we stop digging into
-            // templates with parameters, we just analyze it's args.
-            // With this approach we may not get a very fine-grained result
-            // but the result will still be accurate
-
-            const templateAnalyzerResult: AnalyzerResult[] = args.map((arg: string) => this.AnalyzeExpression(arg));
-            const templateName: string = exp.substr(0, argsStartPos);
-
-            // add this template
-            result.union(new AnalyzerResult([], [templateName]));
-            templateAnalyzerResult.forEach((e: AnalyzerResult) => result.union(e));
-        } else {
-            result.union(new AnalyzerResult([], [exp]));
-
-            // We analyze tempalte only if the template has no formal parameters
-            // But we should analyzer template reference names for all situation
-            if (this.TemplateMap[exp].Parameters === undefined || this.TemplateMap[exp].Parameters.length === 0) {
-                result.union(this.AnalyzeTemplate(exp));
-            } else {
-                result.union(new AnalyzerResult([], this.AnalyzeTemplate(exp).TemplateReferences));
-            }
-        }
-
-        return result;
+        return this.AnalyzeExpression(exp);
     }
 
     private AnalyzeMultiLineText(exp: string): AnalyzerResult {

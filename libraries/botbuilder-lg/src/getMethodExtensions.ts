@@ -22,77 +22,68 @@ export class GetMethodExtensions implements IGetMethod {
 
     public GetMethodX = (name: string): ExpressionEvaluator => {
 
-        // tslint:disable-next-line: switch-default
-        switch (name) {
-            case 'lgTemplate':
-                return new ExpressionEvaluator('lgTemplate', BuiltInFunctions.Apply(this.lgTemplate), ReturnType.String, this.ValidLgTemplate);
-            case 'join':
-                return new ExpressionEvaluator('join', BuiltInFunctions.Apply(this.Join));
-        }
+       // user can always choose to use builtin.xxx to disambiguate with template xxx
+       const builtInPrefix: string = 'builtin.';
+       if (name.startsWith(builtInPrefix)) {
+           return BuiltInFunctions.Lookup(name.substr(builtInPrefix.length));
+       }
 
-        return BuiltInFunctions.Lookup(name);
+       // tslint:disable-next-line: switch-default
+       switch (name) {
+           case 'join':
+               return new ExpressionEvaluator('join', BuiltInFunctions.Apply(this.Join));
+       }
+
+       if (name in this.evaluator.TemplateMap) {
+           return new ExpressionEvaluator(
+               name,
+               BuiltInFunctions.Apply(this.TemplateEvaluator(name)),
+               ReturnType.String,
+               this.ValidTemplateReference);
+       }
+
+       return BuiltInFunctions.Lookup(name);
     }
 
-    public lgTemplate = (parameters: any[]): any => {
-        if (parameters.length > 0 &&
-            typeof parameters[0] === 'string') {
-            const func: string = parameters[0];
-            const templateParameters: any[] = parameters.slice(1);
+    public TemplateEvaluator = (templateName: string): any =>
+    (args: any[]): string => {
+        const newScope: any = this.evaluator.ConstructScope(templateName, args);
 
-            if (func !== undefined &&
-                func.length > 0 &&
-                func in this.evaluator.TemplateMap) {
-                const newScope: any = this.evaluator.ConstructScope(func, templateParameters);
-
-                return this.evaluator.EvaluateTemplate(func, newScope);
-            } else {
-                throw new Error(`No such template defined: ${func.substr(1, func.length - 2)}`);
-            }
-        }
-
-        throw new Error('NotImplementedException');
+        return this.evaluator.EvaluateTemplate(templateName, newScope);
     }
 
-    public ValidLgTemplate = (expression: Expression): void  => {
-        if (expression.Children.length === 0) {
-            throw new Error('lgTemplate requires 1 or more arguments');
-        }
+    public ValidTemplateReference = (expression: Expression): void  => {
+        const templateName: string = expression.Type;
 
-        if (!(expression.Children[0] instanceof Constant)
-            || typeof (expression.Children[0] as Constant).Value !== 'string') {
-                throw new Error(`lgTemplate expect a string as first argument, acutal ${expression.Children[0]}`);
-        }
-
-        const templateName: string = (expression.Children[0] as Constant).Value;
         if (!(templateName in this.evaluator.TemplateMap)) {
             throw new Error(`no such template '${templateName}' to call in ${expression}`);
         }
 
         const expectedArgsCount: number = this.evaluator.TemplateMap[templateName].Parameters.length;
-        const actualArgsCount: number = expression.Children.length - 1;
+        const actualArgsCount: number = expression.Children.length;
 
         if (expectedArgsCount !== actualArgsCount) {
             throw new Error(`arguments mismatch for template ${templateName}, expect ${expectedArgsCount} actual ${actualArgsCount}`);
         }
     }
 
-    public Join = (parameters: any[]): any => {
-        if (parameters.length === 2 &&
-            parameters[0] instanceof Array &&
-            typeof (parameters[1]) === 'string') {
-            const li: any = parameters[0];
-            const sep: string = parameters[1].concat(' ');
+    public Join = (paramters: any[]): any => {
+        if (paramters.length === 2 &&
+            paramters[0] instanceof Array &&
+            typeof (paramters[1]) === 'string') {
+            const li: any = paramters[0].map((p: any) => p instanceof Array ? p[0] : p);
+            const sep: string = paramters[1];
 
             return li.join(sep);
         }
 
-        if (parameters.length === 3 &&
-            parameters[0] instanceof Array &&
-            typeof (parameters[1]) === 'string' &&
-            typeof (parameters[2]) === 'string') {
-            const li: any = parameters[0];
-            const sep1: string = parameters[1].concat(' ');
-            const sep2: string = ' '.concat(parameters[2], ' ');
+        if (paramters.length === 3 &&
+            paramters[0] instanceof Array &&
+            typeof (paramters[1]) === 'string' &&
+            typeof (paramters[2]) === 'string') {
+            const li: any = paramters[0].map((p: any) => p instanceof Array ? p[0] : p);
+            const sep1: string = paramters[1];
+            const sep2: string = paramters[2];
             if (li.length < 3) {
                 return li.join(sep2);
             } else {
