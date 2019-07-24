@@ -409,4 +409,23 @@ describe('LG', function () {
         evaled = engine.evaluateTemplate("template5", { userName});
         assert.strictEqual(options2.includes(evaled), true, `Evaled is ${evaled}`);
     });
+
+    it('TestTemplateAsFunction', function () {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath("TemplateAsFunction.lg"));
+
+        var evaled = engine.evaluateTemplate('Test2');
+        assert.strictEqual(evaled, 'hello world', `Evaled is ${evaled}`);
+
+        evaled = engine.evaluateTemplate('Test3');
+        assert.strictEqual(evaled, 'hello world', `Evaled is ${evaled}`);
+
+        evaled = engine.evaluateTemplate('Test4');
+        assert.strictEqual(evaled.trim(), 'hello world', `Evaled is ${evaled}`);
+
+        evaled = engine.evaluateTemplate('dupNameWithTemplate');
+        assert.strictEqual(evaled, 'calculate length of ms by user\'s template', `Evaled is ${evaled}`);
+
+        evaled = engine.evaluateTemplate('dupNameWithBuiltinFunc');
+        assert.strictEqual(evaled, '2', `Evaled is ${evaled}`);
+    });
 });

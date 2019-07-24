@@ -8,7 +8,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { BuiltInFunctions, ExpressionEvaluator, ReturnType, Expression, Constant } from 'botbuilder-expression';
+import { BuiltInFunctions, Constant, Expression, ExpressionEvaluator, ReturnType } from 'botbuilder-expression';
 import { ExpressionEngine} from 'botbuilder-expression-parser';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluator';
@@ -92,7 +92,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         let idx: number = 0;
         for (const caseNode of switchcaseNodes) {
             if (idx === 0) {
-                idx = idx + 1;
+                idx++;
                 continue; //skip the first node which is a switch statement
             }
 
@@ -112,7 +112,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 return this.visit(caseNode.normalTemplateBody());
             }
 
-            idx = idx + 1;
+            idx++;
         }
 
         return undefined;
@@ -150,19 +150,19 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     public ConstructScope(templateName: string, args: any[]) : any {
-        if (args.length === 1 && this.TemplateMap[templateName].Parameters.length === 0) {
-            // Special case, if no parameters defined, and only one arg, don't wrap
-            // this is for directly calling an paramterized template
-            return args[0];
-        }
-        const paramters: string[] = this.TemplateMap[templateName].Parameters;
+        const parameters: string[] = this.TemplateMap[templateName].Parameters;
 
-        if (paramters !== undefined && (args === undefined || paramters.length !== args.length)) {
+        if (args.length === 0) {
+            // no args to construct, inherit from current scope
+            return this.currentTarget().Scope;
+        }
+
+        if (parameters !== undefined && (args === undefined || parameters.length !== args.length)) {
             throw new Error(`The length of required parameters does not match the length of provided parameters.`);
         }
 
         const newScope: any = {};
-        paramters.map((e: string, i: number) => newScope[e] = args[i]);
+        parameters.map((e: string, i: number) => newScope[e] = args[i]);
 
         return newScope;
     }
@@ -246,22 +246,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     private EvalTemplateRef(exp: string) : string[] {
         exp = exp.replace(/(^\[*)/g, '')
                 .replace(/(\]*$)/g, '');
-        const argsStartPos: number = exp.indexOf('(');
-        if (argsStartPos > 0) {
-            const argsEndPos: number = exp.lastIndexOf(')');
-            if (argsEndPos < 0 || argsEndPos < argsStartPos + 1) {
-                throw new Error(`Not a valid template ref: ${exp}`);
-            }
+        exp = exp.indexOf('(') < 0 ? exp.concat('()') : exp;
 
-            const argExpressions: string[] = exp.substr(argsStartPos + 1, argsEndPos - argsStartPos - 1).split(',');
-            const args: any[] = argExpressions.map((x: string) => this.EvalByExpressionEngine(x, this.currentTarget().Scope).value);
-            const templateName: string = exp.substr(0, argsStartPos);
-            const newScope: any = this.ConstructScope(templateName, args);
-
-            return this.ExpandTemplate(templateName, newScope);
-        }
-
-        return this.ExpandTemplate(exp, this.currentTarget().Scope);
+        return this.EvalExpression(exp);
     }
 
     private EvalMultiLineText(exp: string): string[] {
@@ -321,54 +308,45 @@ export class GetExpanderMethod implements IGetMethod {
 
     public GetMethodX = (name: string): ExpressionEvaluator => {
 
+        // user can always choose to use builtin.xxx to disambiguate with template xxx
+        const builtInPrefix: string = 'builtin.';
+        if (name.startsWith(builtInPrefix)) {
+            return BuiltInFunctions.Lookup(name.substr(builtInPrefix.length));
+        }
+
         // tslint:disable-next-line: switch-default
         switch (name) {
-            case 'lgTemplate':
-                return new ExpressionEvaluator('lgTemplate', BuiltInFunctions.Apply(this.lgTemplate), ReturnType.String, this.ValidLgTemplate);
             case 'join':
                 return new ExpressionEvaluator('join', BuiltInFunctions.Apply(this.Join));
+        }
+
+        if (name in this.expander.TemplateMap) {
+            return new ExpressionEvaluator(
+                name,
+                BuiltInFunctions.Apply(this.TemplateEvaluator(name)),
+                ReturnType.String,
+                this.ValidTemplateReference);
         }
 
         return BuiltInFunctions.Lookup(name);
     }
 
-    public lgTemplate = (paramters: any[]): any => {
-        if (paramters.length > 0 &&
-            typeof paramters[0] === 'string') {
-            const func: string = paramters[0];
-            const templateParameters: any[] = paramters.slice(1);
+    public TemplateEvaluator = (templateName: string): any =>
+        (args: any[]): string[] => {
+            const newScope: any = this.expander.ConstructScope(templateName, args);
 
-            if (func !== undefined &&
-                func.length > 0 &&
-                func in this.expander.TemplateMap) {
-                const newScope: any = this.expander.ConstructScope(func, templateParameters);
-
-                return this.expander.ExpandTemplate(func, newScope);
-            } else {
-                throw new Error(`No such template defined: ${func.substr(1, func.length - 2)}`);
-            }
+            return this.expander.ExpandTemplate(templateName, newScope);
         }
 
-        throw new Error('NotImplementedException');
-    }
+    public ValidTemplateReference = (expression: Expression): void  => {
+        const templateName: string = expression.Type;
 
-    public ValidLgTemplate = (expression: Expression): void  => {
-        if (expression.Children.length === 0) {
-            throw new Error('lgTemplate requires 1 or more arguments');
-        }
-
-        if (!(expression.Children[0] instanceof Constant)
-            || typeof (expression.Children[0] as Constant).Value !== 'string') {
-                throw new Error(`lgTemplate expect a string as first argument, acutal ${expression.Children[0]}`);
-        }
-
-        const templateName: string = (expression.Children[0] as Constant).Value;
         if (!(templateName in this.expander.TemplateMap)) {
             throw new Error(`no such template '${templateName}' to call in ${expression}`);
         }
 
         const expectedArgsCount: number = this.expander.TemplateMap[templateName].Parameters.length;
-        const actualArgsCount: number = expression.Children.length - 1;
+        const actualArgsCount: number = expression.Children.length;
 
         if (expectedArgsCount !== actualArgsCount) {
             throw new Error(`arguments mismatch for template ${templateName}, expect ${expectedArgsCount} actual ${actualArgsCount}`);
@@ -380,7 +358,7 @@ export class GetExpanderMethod implements IGetMethod {
             paramters[0] instanceof Array &&
             typeof (paramters[1]) === 'string') {
             const li: any = paramters[0].map((p: any) => p instanceof Array ? p[0] : p);
-            const sep: string = paramters[1].concat(' ');
+            const sep: string = paramters[1];
 
             return li.join(sep);
         }
@@ -390,8 +368,8 @@ export class GetExpanderMethod implements IGetMethod {
             typeof (paramters[1]) === 'string' &&
             typeof (paramters[2]) === 'string') {
             const li: any = paramters[0].map((p: any) => p instanceof Array ? p[0] : p);
-            const sep1: string = paramters[1].concat(' ');
-            const sep2: string = ' '.concat(paramters[2], ' ');
+            const sep1: string = paramters[1];
+            const sep2: string = paramters[2];
             if (li.length < 3) {
                 return li.join(sep2);
             } else {

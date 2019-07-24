@@ -608,7 +608,7 @@ export class BuiltInFunctions {
     public static Lookup(type: string): ExpressionEvaluator {
         const evaluator: ExpressionEvaluator = BuiltInFunctions._functions.get(type);
         if (evaluator === undefined) {
-            throw new Error(`${type} does not have a built-in expression evaluator.`);
+            throw new Error(`${type} does not have an evaluator, it's not a built-in function or a customized function`);
         }
 
         return evaluator;

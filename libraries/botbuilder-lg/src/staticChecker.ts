@@ -37,7 +37,7 @@ export class StaticChecker {
             filePaths.forEach((filePath: string) => {
                 importResolver = importResolver !== undefined ? importResolver : ImportResolver.fileResolver;
 
-                filePath = path.normalize(filePath);
+                filePath = path.normalize(ImportResolver.normalizePath(filePath));
                 const rootResource: LGResource = LGParser.parse(fs.readFileSync(filePath, 'utf-8'), filePath);
                 const lgResources: LGResource[] = rootResource.discoverLGResources(importResolver);
                 totalLGResources = totalLGResources.concat(lgResources);
@@ -435,38 +435,22 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     }
 
     private CheckTemplateRef(exp: string, context: ParserRuleContext): Diagnostic[] {
-        let result: Diagnostic[] = [];
+        const result: Diagnostic[] = [];
         exp = exp.replace(/(^\[*)/g, '')
                 .replace(/(\]*$)/g, '')
                 .trim();
 
-        const argsStartPos: number = exp.indexOf('(');
-        if (argsStartPos > 0) {
-            const argsEndPos: number = exp.lastIndexOf(')');
-            if (argsEndPos < 0 || argsEndPos < argsStartPos + 1) {
-                result.push(this.BuildLGDiagnostic({
-                    message: `Not a valid template ref: ${exp}`,
-                    context: context
-                }));
-            } else {
-                 const templateName: string = exp.substr(0, argsStartPos);
-                 if (!(templateName in this.TemplateMap)) {
-                     result.push(this.BuildLGDiagnostic({
-                         message: `[${templateName}] template not found`,
-                         context: context
-                     }));
-                 } else {
-                    const argsNumber: number = exp.substr(argsStartPos + 1, argsEndPos - argsStartPos - 1).split(',').length;
-                    result = result.concat(this.CheckTemplateParameters(templateName, argsNumber, context));
-                 }
-            }
-        } else {
-            if (!(exp in this.TemplateMap)) {
-                result.push(this.BuildLGDiagnostic({
-                    message: `[${exp}] template not found`,
-                    context: context
-                }));
-            }
+        const expression: string = exp.indexOf('(') < 0 ? exp.concat('()') : exp;
+
+        try {
+            new ExpressionEngine(new GetMethodExtensions(new Evaluator(this.Templates, undefined)).GetMethodX).parse(expression);
+        } catch (e) {
+            result.push(this.BuildLGDiagnostic({
+                message: e.message.concat(` in template reference '${exp}'`),
+                context: context
+            }));
+
+            return result;
         }
 
         return result;
@@ -498,19 +482,6 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         return result;
     }
 
-    private CheckTemplateParameters(templateName: string, argsNumber: number, context: ParserRuleContext): Diagnostic[] {
-        const result: Diagnostic[] = [];
-        const parametersNumber: number = this.TemplateMap[templateName].Parameters.length;
-
-        if (argsNumber !== parametersNumber) {
-            result.push(this.BuildLGDiagnostic({
-                message: `Arguments count mismatch for template ref ${templateName}, expected ${parametersNumber}, actual ${argsNumber}`,
-                context: context
-            }));
-        }
-
-        return result;
-    }
 
     private CheckExpression(exp: string, context: ParserRuleContext): Diagnostic[] {
         const result: Diagnostic[] = [];
