@@ -10,6 +10,6 @@ export * from './qnamakerEndpoint';
 export * from './qnamakerMetadata';
 export * from './qnamakerOptions';
 export * from './qnamakerResult';
-export * from './qnamakerTraceinfo';
+export * from './qnamakerTraceInfo';
 export * from './feedbackRecord';
 export * from './feedbackRecords';
