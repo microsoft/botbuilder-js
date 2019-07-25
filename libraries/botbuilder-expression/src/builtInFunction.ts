@@ -1903,8 +1903,7 @@ export class BuiltInFunctions {
                         } else {
                             if (args.length == 2) {
                                 const li: any = args[0].map((p: any) => p instanceof Array ? p[0] : p);
-                                const sep: string = args[1];
-                                value = li.join(sep);
+                                value = li.join(args[1]);
                             } 
                             else {
                                 const li: any = args[0].map((p: any) => p instanceof Array ? p[0] : p);
