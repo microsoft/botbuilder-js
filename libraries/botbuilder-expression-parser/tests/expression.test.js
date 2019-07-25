@@ -328,6 +328,7 @@ const dataSource = [
   ["first(nestedItems).x", 1, ["nestedItems"]],
   ["join(items,',')", "zero,one,two"],
   ["join(createArray('a', 'b', 'c'), '.')", "a.b.c"],
+  ["join(createArray('a', 'b', 'c'), ',', ' and ')", "a,b and c"],
   ["join(foreach(items, item, item), ',')", "zero,one,two"],
   ["join(foreach(nestedItems, i, i.x + first(nestedItems).x), ',')", "2,3,4", ["nestedItems"]],
   ["join(foreach(items, item, concat(item, string(count(items)))), ',')", "zero3,one3,two3", ["items"]],

@@ -259,11 +259,10 @@ const badExpressions =
   "empty(1,2)", //should have two params
   "first(items,2)", //should have 1 param
   "last(items,2)", //should have 1 param
-  "join(items, 'p1', 'p2','p3')",//builtin function should have 3 params, 
-  //method extension should have 2-3 params
+  "join(items, 'p1', 'p2','p3')",//builtin function should have 2-3 params, 
   "join(hello, 'hi')",// first param must list
   "join(items, 1)",// second param must string 
-  "join(items, 1)",// second param must string 
+  "join(items, '1', 2)",// second param must string 
   "foreach(hello, item, item)",// first arg is not list
   "foreach(items, item)",//should have three parameters
   "foreach(items, item, item2, item3)",//should have three parameters

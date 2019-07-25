@@ -1901,14 +1901,29 @@ export class BuiltInFunctions {
                         if (!(args[0] instanceof Array)) {
                             error = `${expression.Children[0]} evaluates to ${args[0]} which is not a list.`;
                         } else {
-                            value = args[0].join(args[1]);
+                            if (args.length == 2 && typeof(args[1]) ==  'string') {
+                                const li: any = args[0].map((p: any) => p instanceof Array ? p[0] : p);
+                                const sep: string = args[1];
+                                value = li.join(sep);
+                            } 
+                            else if (args.length == 3 && typeof(args[1]) ==  'string' && typeof(args[2]) ==  'string') {
+                                const li: any = args[0].map((p: any) => p instanceof Array ? p[0] : p);
+                                const sep1: string = args[1];
+                                const sep2: string = args[2];
+                                if (li.length < 3) {
+                                    value = li.join(sep2);
+                                } else {
+                                    const firstPart: string = li.slice(0, li.length - 1).join(sep1);
+                                    value = firstPart.concat(sep2, li[li.length - 1]);
+                                }
+                            }
                         }
                     }
 
                     return { value, error };
                 },
                 ReturnType.String,
-                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, undefined, ReturnType.Object, ReturnType.String)),
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.Object, ReturnType.String)),
             // datetime
             BuiltInFunctions.TimeTransform(ExpressionType.AddDays, (ts: moment.Moment, num: any) => ts.add(num, 'd')),
             BuiltInFunctions.TimeTransform(ExpressionType.AddHours, (ts: moment.Moment, num: any) => ts.add(num, 'h')),
