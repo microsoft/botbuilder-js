@@ -9,8 +9,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "botbuilder": "4.0.0-local",
-    "botframework-connector": "4.0.0-local",
+    "botbuilder": "file:./botbuilder",
+    "botframework-connector": "file:./botframework-connector",
     "restify": "^8.3.0",
     "dotenv": "^6.1.0"
   }
