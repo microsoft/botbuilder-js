@@ -200,6 +200,9 @@ describe('LG', function () {
         var engine = new TemplateEngine().addFile(GetExampleFilePath("EscapeCharacter.lg"));
         var evaled = engine.evaluateTemplate("wPhrase", null);
         assert.strictEqual(evaled, "Hi \r\n\t[]{}\\", "Happy path failed.");
+
+        evaled = engine.evaluateTemplate("otherEscape", null);
+        assert.strictEqual(evaled, "Hi \\y \\", "Happy path failed.");
     });
 
     it('TestAnalyzer', function () {
@@ -408,6 +411,9 @@ describe('LG', function () {
         const options2 = ["\r\nHiMS\r\n", "\nHiMS\n"];
         evaled = engine.evaluateTemplate("template5", { userName});
         assert.strictEqual(options2.includes(evaled), true, `Evaled is ${evaled}`);
+
+        evaled = engine.evaluateTemplate('template6', {userName});
+        assert.strictEqual(evaled, 'goodmorning', `Evaled is ${evaled}`);
     });
 
     it('TestTemplateAsFunction', function () {
