@@ -28,12 +28,6 @@ export class GetMethodExtensions implements IGetMethod {
            return BuiltInFunctions.Lookup(name.substr(builtInPrefix.length));
        }
 
-       // tslint:disable-next-line: switch-default
-       switch (name) {
-           case 'join':
-               return new ExpressionEvaluator('join', BuiltInFunctions.Apply(this.Join));
-       }
-
        if (name in this.evaluator.TemplateMap) {
            return new ExpressionEvaluator(
                name,
@@ -65,34 +59,5 @@ export class GetMethodExtensions implements IGetMethod {
         if (expectedArgsCount !== actualArgsCount) {
             throw new Error(`arguments mismatch for template ${templateName}, expect ${expectedArgsCount} actual ${actualArgsCount}`);
         }
-    }
-
-    public Join = (paramters: any[]): any => {
-        if (paramters.length === 2 &&
-            paramters[0] instanceof Array &&
-            typeof (paramters[1]) === 'string') {
-            const li: any = paramters[0].map((p: any) => p instanceof Array ? p[0] : p);
-            const sep: string = paramters[1];
-
-            return li.join(sep);
-        }
-
-        if (paramters.length === 3 &&
-            paramters[0] instanceof Array &&
-            typeof (paramters[1]) === 'string' &&
-            typeof (paramters[2]) === 'string') {
-            const li: any = paramters[0].map((p: any) => p instanceof Array ? p[0] : p);
-            const sep1: string = paramters[1];
-            const sep2: string = paramters[2];
-            if (li.length < 3) {
-                return li.join(sep2);
-            } else {
-                const firstPart: string = li.slice(0, li.length - 1).join(sep1);
-
-                return firstPart.concat(sep2, li[li.length - 1]);
-            }
-        }
-
-        throw new Error('NotImplementedException');
     }
 }
