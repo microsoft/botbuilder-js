@@ -11,9 +11,15 @@
  */
 
 import { EntityModel } from './entityModel';
-import { EntityWithResolutionAllOf } from './entityWithResolutionAllOf';
 
-export class EntityWithResolution {
+export interface EntityWithResolution extends EntityModel {
+    /**
+    * Resolution values for pre-built LUIS entities.
+    */
+    resolution: any;
+}
+
+export class EntityWithResolution extends EntityModel{
     /**
     * Name of the entity, as defined in LUIS.
     */
@@ -33,7 +39,7 @@ export class EntityWithResolution {
     /**
     * Resolution values for pre-built LUIS entities.
     */
-    'resolution': object;
+    'resolution': any;
 
     static discriminator: string | undefined = undefined;
 
@@ -68,4 +74,3 @@ export class EntityWithResolution {
         return EntityWithResolution.attributeTypeMap;
     }
 }
-

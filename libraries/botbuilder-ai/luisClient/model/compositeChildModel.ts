@@ -10,10 +10,17 @@
  * Do not edit the class manually.
  */
 
+export interface CompositeChildModel {
+    /**
+    * Type of child entity.
+    */
+    type: string;
+    /**
+    * Value extracted by LUIS.
+    */
+    value: string;
+}
 
-/**
-* Child entity in a LUIS Composite Entity.
-*/
 export class CompositeChildModel {
     /**
     * Type of child entity.
@@ -42,4 +49,3 @@ export class CompositeChildModel {
         return CompositeChildModel.attributeTypeMap;
     }
 }
-

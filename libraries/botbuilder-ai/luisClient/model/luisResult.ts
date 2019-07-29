@@ -15,9 +15,32 @@ import { EntityModel } from './entityModel';
 import { IntentModel } from './intentModel';
 import { Sentiment } from './sentiment';
 
-/**
-* Prediction, based on the input query, containing intent(s) and entities.
-*/
+export interface LuisResult {
+    /**
+    * The input utterance that was analyzed.
+    */
+    query?: string;
+    /**
+    * The corrected utterance (when spell checking was enabled).
+    */
+    alteredQuery?: string;
+    topScoringIntent?: IntentModel;
+    /**
+    * All the intents (and their score) that were detected from utterance.
+    */
+    intents?: Array<IntentModel>;
+    /**
+    * The entities extracted from the utterance.
+    */
+    entities?: Array<EntityModel>;
+    /**
+    * The composite entities extracted from the utterance.
+    */
+    compositeEntities?: Array<CompositeEntityModel>;
+    sentimentAnalysis?: Sentiment;
+    connectedServiceResult?: LuisResult;
+}
+
 export class LuisResult {
     /**
     * The input utterance that was analyzed.
@@ -91,4 +114,3 @@ export class LuisResult {
         return LuisResult.attributeTypeMap;
     }
 }
-

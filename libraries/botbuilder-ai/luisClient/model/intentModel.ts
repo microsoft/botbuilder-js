@@ -10,10 +10,17 @@
  * Do not edit the class manually.
  */
 
+export interface IntentModel {
+    /**
+    * Name of the intent, as defined in LUIS.
+    */
+    intent?: string;
+    /**
+    * Associated prediction score for the intent (float).
+    */
+    score?: number;
+}
 
-/**
-* An intent detected from the utterance.
-*/
 export class IntentModel {
     /**
     * Name of the intent, as defined in LUIS.
@@ -42,4 +49,3 @@ export class IntentModel {
         return IntentModel.attributeTypeMap;
     }
 }
-

@@ -10,9 +10,17 @@
  * Do not edit the class manually.
  */
 
-/**
-* Sentiment of the input utterance.
-*/
+export interface Sentiment {
+    /**
+    * The polarity of the sentiment, can be positive, neutral or negative.
+    */
+    label: String;
+    /**
+    * Score of the sentiment, ranges from 0 (most negative) to 1 (most positive).
+    */
+    score: number;
+}
+
 export class Sentiment {
     /**
     * The polarity of the sentiment, can be positive, neutral or negative.
@@ -41,4 +49,3 @@ export class Sentiment {
         return Sentiment.attributeTypeMap;
     }
 }
-

@@ -10,10 +10,17 @@
  * Do not edit the class manually.
  */
 
+export interface APIError {
+    /**
+    * HTTP Status code
+    */
+    statusCode?: string;
+    /**
+    * Cause of the error.
+    */
+    message?: string;
+}
 
-/**
-* Error information returned by the API
-*/
 export class APIError {
     /**
     * HTTP Status code
@@ -42,4 +49,3 @@ export class APIError {
         return APIError.attributeTypeMap;
     }
 }
-

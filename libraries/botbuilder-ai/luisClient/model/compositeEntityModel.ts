@@ -12,9 +12,21 @@
 
 import { CompositeChildModel } from './compositeChildModel';
 
-/**
-* LUIS Composite Entity.
-*/
+export interface CompositeEntityModel {
+    /**
+    * Type/name of parent entity.
+    */
+    parentType: string;
+    /**
+    * Value for composite entity extracted by LUIS.
+    */
+    value: string;
+    /**
+    * Child entities.
+    */
+    children: Array<CompositeChildModel>;
+}
+
 export class CompositeEntityModel {
     /**
     * Type/name of parent entity.
@@ -52,4 +64,3 @@ export class CompositeEntityModel {
         return CompositeEntityModel.attributeTypeMap;
     }
 }
-

@@ -10,9 +10,27 @@
  * Do not edit the class manually.
  */
 
-/**
-* An entity extracted from the utterance.
-*/
+export interface EntityModel {
+    /**
+    * Name of the entity, as defined in LUIS.
+    */
+    entity: string;
+    /**
+    * Type of the entity, as defined in LUIS.
+    */
+    type: string;
+    /**
+    * The position of the first character of the matched entity within the utterance.
+    */
+    startIndex: number;
+    /**
+    * The position of the last character of the matched entity within the utterance.
+    */
+    endIndex: number;
+    
+    [property: string]: any;
+}
+
 export class EntityModel {
     /**
     * Name of the entity, as defined in LUIS.
@@ -59,4 +77,3 @@ export class EntityModel {
         return EntityModel.attributeTypeMap;
     }
 }
-
