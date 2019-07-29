@@ -1,0 +1,28 @@
+{
+    "name": "luis-client",
+    "version": "1.0.0",
+    "description": "NodeJS client for luis-client",
+    "repository": "GIT_USER_ID/GIT_REPO_ID",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "clean": "rm -Rf node_modules/ *.js",
+        "build": "tsc",
+        "test": "mocha test/"
+    },
+    "author": "Microsoft Corp.",
+    "license": "MIT",
+    "dependencies": {
+        "@types/bluebird": "*",
+        "@types/request": "*",
+        "bluebird": "^3.5.0",
+        "request": "^2.81.0",
+        "rewire": "^3.0.2"
+    },
+    "devDependencies": {
+        "@types/mocha": "^5.2.7",
+        "@types/node": "8.10.34",
+        "typescript": "^2.4.2",
+        "mocha": "^6.2.0"
+    }
+}
