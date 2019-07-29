@@ -13,6 +13,9 @@ import * as os from 'os';
 import * as Url from 'url-parse';
 import { LuisTelemetryConstants } from './luisTelemetryConstants';
 
+import {LuisClient as CustomLuisClient, LuisApikeys} from '../luisClient'
+import * as CustomLuisModels from '../luisClient/model'
+
 const pjson = require('../package.json');
 
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
@@ -38,7 +41,7 @@ interface LuisModel {
  */
 interface LuisTraceInfo {
     recognizerResult: RecognizerResult;
-    luisResult: LuisModels.LuisResult;
+    luisResult: CustomLuisModels.LuisResult;
     luisOptions: LuisOptions;
     luisModel: LuisModel;
 }
@@ -66,7 +69,7 @@ export interface LuisApplication {
 /**
  * Options per LUIS prediction.
  */
-export interface LuisPredictionOptions extends LuisModels.PredictionResolveOptionalParams {
+export interface LuisPredictionOptions {
     /**
      * (Optional) Bing Spell Check subscription key.
      */
@@ -111,6 +114,11 @@ export interface LuisPredictionOptions extends LuisModels.PredictionResolveOptio
      * (Optional) Designates whether personal information should be logged in telemetry.
      */
     logPersonalInformation?: boolean;
+
+    /**
+    * If true, return all intents instead of just the top scoring intent.
+    */
+    verbose?: boolean;
 }
 
 export interface LuisRecognizerTelemetryClient {
@@ -136,7 +144,6 @@ export interface LuisRecognizerTelemetryClient {
     recognize(context: TurnContext, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult>;
 }
 
-
 /**
  * Recognize intents in a user utterance using a configured LUIS model.
  *
@@ -155,6 +162,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     private includeApiResults: boolean;
 
     private luisClient: LuisClient;
+    private customLuisClient: CustomLuisClient;
     private cacheKey: symbol = Symbol('results');
 
     /**
@@ -204,6 +212,11 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         const baseUri: string = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
         this.luisClient = new LuisClient(creds as any, baseUri);
 
+        // Custom Luis Runtime Client
+        const basePath = 'https://westus.api.cognitive.microsoft.com';
+        this.customLuisClient = new CustomLuisClient(basePath);
+        this.customLuisClient.setApiKey(LuisApikeys.apiKeyHeader, this.application.endpointKey)
+
         this._telemetryClient = this.options.telemetryClient || new NullTelemetryClient();
         this._logPersonalInformation = this.options.logPersonalInformation || false;
     }
@@ -241,7 +254,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         return topIntent || defaultIntent;
     }
 
-    /**
+        /**
      * Calls LUIS to recognize intents and entities in a users utterance.
      * @remarks
      * Returns a [RecognizerResult](../botbuilder-core/recognizerresult) containing any intents and entities recognized by LUIS.
@@ -253,25 +266,25 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      *
      * ```javascript
      * async onTurn(context) {
-     *     if (turnContext.activity.type === ActivityTypes.Message) {
-     *         const results = await luisRecognizer.recognize(turnContext);
-     *         const topIntent = LuisRecognizer.topIntent(results);
-     *         switch (topIntent) {
-     *             case 'MyIntent':
-     *                 // ... handle intent ...
-     *                 break;
-     *             case 'None':
-     *                 // ... handle intent ...
-     *                 break;
-     *         }
-     *     }
-     * }
-     * ```
-     * @param context Context for the current turn of conversation with the use.
-     * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
-     * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
-     * @param options (Optional) options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
-     */
+        *     if (turnContext.activity.type === ActivityTypes.Message) {
+        *         const results = await luisRecognizer.recognize(turnContext);
+        *         const topIntent = LuisRecognizer.topIntent(results);
+        *         switch (topIntent) {
+        *             case 'MyIntent':
+        *                 // ... handle intent ...
+        *                 break;
+        *             case 'None':
+        *                 // ... handle intent ...
+        *                 break;
+        *         }
+        *     }
+        * }
+        * ```
+        * @param context Context for the current turn of conversation with the use.
+        * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
+        * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
+        * @param options (Optional) options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
+        */
     public recognize(context: TurnContext, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }, options?: LuisPredictionOptions): Promise<RecognizerResult> {
         const cached: any = context.turnState.get(this.cacheKey);
         const luisPredictionOptions = options ? this.setLuisPredictionOptions(this.options, options) : this.options;
@@ -287,31 +300,24 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                     entities: {},
                 });
             } else {
-                recognizerPromise = this.luisClient.prediction.resolve(
-                    this.application.applicationId, utterance,
-                    {
-                        verbose: luisPredictionOptions.includeAllIntents,
-                        customHeaders: {
-                            'Ocp-Apim-Subscription-Key': this.application.endpointKey,
-                            'User-Agent': this.getUserAgent()
-                        },
-                        ...luisPredictionOptions
-                    })
-                    // Map results
-                    .then((luisResult: LuisModels.LuisResult) => ({
-                        text: luisResult.query,
-                        alteredText: luisResult.alteredQuery,
-                        intents: this.getIntents(luisResult),
-                        entities: this.getEntitiesAndMetadata(
-                            luisResult.entities,
-                            luisResult.compositeEntities,
-                            luisPredictionOptions.includeInstanceData === undefined || luisPredictionOptions.includeInstanceData
-                        ),
-                        sentiment: this.getSentiment(luisResult),
-                        luisResult: (this.includeApiResults ? luisResult : null)
-                    }));
+    
+                recognizerPromise = this.customLuisClient.predictionResolveGet(
+                    this.application.applicationId,
+                    utterance
+                )   // Map results
+                .then(( response )=>({
+                    text: response.body.query,
+                    alteredText: response.body.alteredQuery,
+                    intents: this.getIntents(response.body),
+                    entities: this.getEntitiesAndMetadata(
+                        response.body.entities,
+                        response.body.compositeEntities,
+                        luisPredictionOptions.includeInstanceData === undefined || luisPredictionOptions.includeInstanceData
+                    ),
+                    sentiment: this.getSentiment(response.body),
+                    luisResult: (this.includeApiResults ? response.body : null)
+                }));
             }
-
             return recognizerPromise
                 .then((recognizerResult: RecognizerResult) => {
                     // Write to cache
@@ -415,7 +421,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         return userAgent;
     }
 
-    private emitTraceInfo(context: TurnContext, luisResult: LuisModels.LuisResult, recognizerResult: RecognizerResult): Promise<any> {
+    private emitTraceInfo(context: TurnContext, luisResult: CustomLuisModels.LuisResult, recognizerResult: RecognizerResult): Promise<any> {
         const traceInfo: LuisTraceInfo = {
             recognizerResult: recognizerResult,
             luisResult: luisResult,
@@ -479,11 +485,11 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         return name.replace(/\.| /g, '_');
     }
 
-    private getIntents(luisResult: LuisModels.LuisResult): any {
+    private getIntents(luisResult: CustomLuisModels.LuisResult): any {
         const intents: { [name: string]: { score: number } } = {};
         if (luisResult.intents) {
             luisResult.intents.reduce(
-                (prev: any, curr: LuisModels.IntentModel) => {
+                (prev: any, curr: CustomLuisModels.IntentModel) => {
                     prev[this.normalizeName(curr.intent)] = { score: curr.score };
 
                     return prev;
@@ -491,7 +497,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                 intents
             );
         } else {
-            const topScoringIntent: LuisModels.IntentModel = luisResult.topScoringIntent;
+            const topScoringIntent: CustomLuisModels.IntentModel = luisResult.topScoringIntent;
             intents[this.normalizeName((topScoringIntent).intent)] = { score: topScoringIntent.score };
         }
 
@@ -499,8 +505,8 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     }
 
     private getEntitiesAndMetadata(
-        entities: LuisModels.EntityModel[],
-        compositeEntities: LuisModels.CompositeEntityModel[] | undefined,
+        entities: CustomLuisModels.EntityModel[],
+        compositeEntities: CustomLuisModels.CompositeEntityModel[] | undefined,
         verbose: boolean
     ): any {
         const entitiesAndMetadata: any = verbose ? { $instance: {} } : {};
@@ -508,13 +514,13 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
 
         // We start by populating composite entities so that entities covered by them are removed from the entities list
         if (compositeEntities) {
-            compositeEntityTypes = compositeEntities.map((compositeEntity: LuisModels.CompositeEntityModel) => compositeEntity.parentType);
-            compositeEntities.forEach((compositeEntity: LuisModels.CompositeEntityModel) => {
+            compositeEntityTypes = compositeEntities.map((compositeEntity: CustomLuisModels.CompositeEntityModel) => compositeEntity.parentType);
+            compositeEntities.forEach((compositeEntity: CustomLuisModels.CompositeEntityModel) => {
                 entities = this.populateCompositeEntity(compositeEntity, entities, entitiesAndMetadata, verbose);
             });
         }
 
-        entities.forEach((entity: LuisModels.EntityModel) => {
+        entities.forEach((entity: CustomLuisModels.EntityModel) => {
             // we'll address composite entities separately
             if (compositeEntityTypes.indexOf(entity.type) > -1) {
                 return;
@@ -532,7 +538,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         return entitiesAndMetadata;
     }
 
-    private getEntityValue(entity: LuisModels.EntityModel): any {
+    private getEntityValue(entity: CustomLuisModels.EntityModel): any {
         if (entity.type.startsWith("builtin.geographyV2.")) {
             return {
                 "type": entity.type.substring(20),
@@ -599,7 +605,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         }
     }
 
-    private getEntityMetadata(entity: LuisModels.EntityModel): any {
+    private getEntityMetadata(entity: CustomLuisModels.EntityModel): any {
         const res: any = {
             startIndex: entity.startIndex,
             endIndex: entity.endIndex + 1,
@@ -614,7 +620,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         return res;
     }
 
-    private getNormalizedEntityName(entity: LuisModels.EntityModel): string {
+    private getNormalizedEntityName(entity: CustomLuisModels.EntityModel): string {
         // Type::Role -> Role
         let type: string = entity.type.split(':').pop();
         if (type.startsWith('builtin.datetimeV2.')) {
@@ -640,31 +646,31 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     }
 
     private populateCompositeEntity(
-        compositeEntity: LuisModels.CompositeEntityModel,
-        entities: LuisModels.EntityModel[],
+        compositeEntity: CustomLuisModels.CompositeEntityModel,
+        entities: CustomLuisModels.EntityModel[],
         entitiesAndMetadata: any,
         verbose: boolean
-    ): LuisModels.EntityModel[] {
+    ): CustomLuisModels.EntityModel[] {
         const childrenEntites: any = verbose ? { $instance: {} } : {};
         let childrenEntitiesMetadata: any = {};
 
         // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
-        const compositeEntityMetadata: LuisModels.EntityModel | undefined = entities.find((entity: LuisModels.EntityModel) => {
+        const compositeEntityMetadata: CustomLuisModels.EntityModel | undefined = entities.find((entity: CustomLuisModels.EntityModel) => {
             // For now we are matching by value, which can be ambiguous if the same composite entity shows up with the same text
             // multiple times within an utterance, but this is just a stop gap solution till the indices are included in composite entities
             return entity.type === compositeEntity.parentType && entity.entity === compositeEntity.value;
         });
 
-        const filteredEntities: LuisModels.EntityModel[] = [];
+        const filteredEntities: CustomLuisModels.EntityModel[] = [];
         if (verbose) {
             childrenEntitiesMetadata = this.getEntityMetadata(compositeEntityMetadata);
         }
 
         // This is now implemented as O(n*k) search and can be reduced to O(n + k) using a map as an optimization if n or k grow
         const coveredSet: Set<any> = new Set();
-        compositeEntity.children.forEach((childEntity: LuisModels.CompositeChildModel) => {
+        compositeEntity.children.forEach((childEntity: CustomLuisModels.CompositeChildModel) => {
             for (let i = 0; i < entities.length; i++) {
-                const entity: LuisModels.EntityModel = entities[i];
+                const entity: CustomLuisModels.EntityModel = entities[i];
                 if (!coveredSet.has(i) &&
                     childEntity.type === entity.type &&
                     compositeEntityMetadata &&
@@ -719,7 +725,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         }
     }
 
-    private getSentiment(luis: LuisModels.LuisResult): any {
+    private getSentiment(luis: CustomLuisModels.LuisResult): any {
         let result: any;
         if (luis.sentimentAnalysis) {
             result = {
