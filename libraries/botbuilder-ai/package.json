@@ -27,10 +27,16 @@
     "botbuilder-core": "4.1.6",
     "moment": "^2.20.1",
     "node-fetch": "^2.3.0",
-    "url-parse": "^1.4.4"
+    "url-parse": "^1.4.4",
+    "@types/bluebird": "^3.5.27",
+    "@types/request": "^2.48.2",
+    "bluebird": "^3.5.0",
+    "request": "^2.81.0",
+    "rewire": "^3.0.2"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
+    "@types/node": "8.10.34",
     "@types/node-fetch": "^2.3.2",
     "codelyzer": "^4.1.0",
     "fs-extra": "^7.0.1",

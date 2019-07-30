@@ -14,7 +14,6 @@ import localVarRequest = require('request');
 import http = require('http');
 
 /* tslint:disable:no-unused-locals */
-import { APIError } from './model/aPIError';
 import { LuisResult } from './model/luisResult';
 
 import { ObjectSerializer, Authentication, VoidAuth } from './model/models';
