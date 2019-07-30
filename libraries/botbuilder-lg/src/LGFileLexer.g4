@@ -150,12 +150,8 @@ ESCAPE_CHARACTER
   : '\\{' | '\\[' | '\\\\' | '\\'[rtn\]}]  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
-INVALID_ESCAPE
-  : '\\'~[\r\n]?
-  ;
-
 EXPRESSION
-  : '@'? '{' (~[\r\n{}] | STRING_LITERAL)*  '}'  { this.ignoreWS = false; this.expectKeywords = false;}
+  : '@'? '{' (~[\r\n{}] | STRING_LITERAL)*?  '}'  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 TEMPLATE_REF
@@ -163,10 +159,10 @@ TEMPLATE_REF
   ;
 
 TEXT_SEPARATOR
-  : [ \t\r\n{}[\]()]  { this.ignoreWS = false; this.expectKeywords = false;}
+  : [\t\r\n{}[\]()]  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 TEXT
-  : ~[ \\\t\r\n{}[\]()]+?  { this.ignoreWS = false; this.expectKeywords = false;}
+  : ~[\t\r\n{}[\]()]+?  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 

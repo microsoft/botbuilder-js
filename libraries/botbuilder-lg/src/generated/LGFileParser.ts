@@ -52,11 +52,10 @@ export class LGFileParser extends Parser {
 	public static readonly DEFAULT = 22;
 	public static readonly MULTI_LINE_TEXT = 23;
 	public static readonly ESCAPE_CHARACTER = 24;
-	public static readonly INVALID_ESCAPE = 25;
-	public static readonly EXPRESSION = 26;
-	public static readonly TEMPLATE_REF = 27;
-	public static readonly TEXT_SEPARATOR = 28;
-	public static readonly TEXT = 29;
+	public static readonly EXPRESSION = 25;
+	public static readonly TEMPLATE_REF = 26;
+	public static readonly TEXT_SEPARATOR = 27;
+	public static readonly TEXT = 28;
 	public static readonly RULE_file = 0;
 	public static readonly RULE_paragraph = 1;
 	public static readonly RULE_newline = 2;
@@ -91,8 +90,8 @@ export class LGFileParser extends Parser {
 		"IMPORT_PATH", "INVALID_TOKEN_DEFAULT_MODE", "WS_IN_NAME", "IDENTIFIER", 
 		"DOT", "OPEN_PARENTHESIS", "CLOSE_PARENTHESIS", "COMMA", "INVALID_SEPERATE_CHAR", 
 		"WS_IN_BODY_IGNORED", "IF", "ELSEIF", "ELSE", "SWITCH", "CASE", "DEFAULT", 
-		"MULTI_LINE_TEXT", "ESCAPE_CHARACTER", "INVALID_ESCAPE", "EXPRESSION", 
-		"TEMPLATE_REF", "TEXT_SEPARATOR", "TEXT",
+		"MULTI_LINE_TEXT", "ESCAPE_CHARACTER", "EXPRESSION", "TEMPLATE_REF", "TEXT_SEPARATOR", 
+		"TEXT",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(LGFileParser._LITERAL_NAMES, LGFileParser._SYMBOLIC_NAMES, []);
 
@@ -545,12 +544,12 @@ export class LGFileParser extends Parser {
 			this.state = 96;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.MULTI_LINE_TEXT) | (1 << LGFileParser.ESCAPE_CHARACTER) | (1 << LGFileParser.INVALID_ESCAPE) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEMPLATE_REF) | (1 << LGFileParser.TEXT_SEPARATOR) | (1 << LGFileParser.TEXT))) !== 0)) {
+			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.MULTI_LINE_TEXT) | (1 << LGFileParser.ESCAPE_CHARACTER) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEMPLATE_REF) | (1 << LGFileParser.TEXT_SEPARATOR) | (1 << LGFileParser.TEXT))) !== 0)) {
 				{
 				{
 				this.state = 93;
 				_la = this._input.LA(1);
-				if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.MULTI_LINE_TEXT) | (1 << LGFileParser.ESCAPE_CHARACTER) | (1 << LGFileParser.INVALID_ESCAPE) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEMPLATE_REF) | (1 << LGFileParser.TEXT_SEPARATOR) | (1 << LGFileParser.TEXT))) !== 0))) {
+				if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.MULTI_LINE_TEXT) | (1 << LGFileParser.ESCAPE_CHARACTER) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEMPLATE_REF) | (1 << LGFileParser.TEXT_SEPARATOR) | (1 << LGFileParser.TEXT))) !== 0))) {
 				this._errHandler.recoverInline(this);
 				} else {
 					if (this._input.LA(1) === Token.EOF) {
@@ -885,7 +884,7 @@ export class LGFileParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03\x1F\x8D\x04\x02" +
+		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03\x1E\x8D\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
 		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x04\r\t\r\x04" +
 		"\x0E\t\x0E\x04\x0F\t\x0F\x04\x10\t\x10\x04\x11\t\x11\x04\x12\t\x12\x03" +
@@ -902,7 +901,7 @@ export class LGFileParser extends Parser {
 		"\x12\x03\x12\x03\x12\x03\'\x02\x02\x13\x02\x02\x04\x02\x06\x02\b\x02\n" +
 		"\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14\x02\x16\x02\x18\x02\x1A\x02\x1C" +
 		"\x02\x1E\x02 \x02\"\x02\x02\b\x03\x03\x05\x05\x03\x02\x10\x11\x04\x02" +
-		"\x04\x04\x19\x1F\x03\x02\x13\x15\x05\x02\x04\x04\x1C\x1C\x1F\x1F\x03\x02" +
+		"\x04\x04\x19\x1E\x03\x02\x13\x15\x05\x02\x04\x04\x1B\x1B\x1E\x1E\x03\x02" +
 		"\x16\x18\x8E\x02%\x03\x02\x02\x02\x04.\x03\x02\x02\x02\x060\x03\x02\x02" +
 		"\x02\b2\x03\x02\x02\x02\n7\x03\x02\x02\x02\f<\x03\x02\x02\x02\x0EE\x03" +
 		"\x02\x02\x02\x10U\x03\x02\x02\x02\x12Z\x03\x02\x02\x02\x14^\x03\x02\x02" +
@@ -1448,15 +1447,6 @@ export class NormalTemplateStringContext extends ParserRuleContext {
 			return this.getTokens(LGFileParser.ESCAPE_CHARACTER);
 		} else {
 			return this.getToken(LGFileParser.ESCAPE_CHARACTER, i);
-		}
-	}
-	public INVALID_ESCAPE(): TerminalNode[];
-	public INVALID_ESCAPE(i: number): TerminalNode;
-	public INVALID_ESCAPE(i?: number): TerminalNode | TerminalNode[] {
-		if (i === undefined) {
-			return this.getTokens(LGFileParser.INVALID_ESCAPE);
-		} else {
-			return this.getToken(LGFileParser.INVALID_ESCAPE, i);
 		}
 	}
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {

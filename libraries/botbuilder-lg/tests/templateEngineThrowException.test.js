@@ -10,7 +10,6 @@ const StaticCheckExceptionData  = [
     "ErrorTemplateParameters.lg",
     "NoNormalTemplateBody.lg",
     "ConditionFormatError.lg",
-    "ErrorEscapeCharacter.lg",
     "NoTemplateRef.lg",
     "TemplateParamsNotMatchArgsNum.lg",
     "ErrorSeperateChar.lg",

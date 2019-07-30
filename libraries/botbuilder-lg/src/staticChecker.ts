@@ -399,13 +399,6 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         for (const child of context.children) {
             const node: TerminalNode = child as TerminalNode;
             switch (node.symbol.type) {
-                case lp.LGFileParser.INVALID_ESCAPE: {
-                    result.push(this.BuildLGDiagnostic({
-                        message: `escape character ${node.text} is invalid`,
-                        context: context
-                    }));
-                    break;
-                }
                 case lp.LGFileParser.TEMPLATE_REF: {
                     result = result.concat(this.CheckTemplateRef(node.text, context));
                     break;
