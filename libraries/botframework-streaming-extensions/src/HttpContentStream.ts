@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Stream } from './Stream';
+import { SubscribableStream } from './Stream';
 import { generateGuid } from './Utilities/protocol-base';
 
 export class HttpContentStream {
@@ -21,14 +21,14 @@ export class HttpContentStream {
 export class HttpContent {
     public headers: IHttpContentHeaders;
 
-    private readonly stream: Stream;
+    private readonly stream: SubscribableStream;
 
-    constructor(headers: IHttpContentHeaders, stream: Stream) {
+    constructor(headers: IHttpContentHeaders, stream: SubscribableStream) {
         this.headers = headers;
         this.stream = stream;
     }
 
-    public getStream(): Stream {
+    public getStream(): SubscribableStream {
         return this.stream;
     }
 }

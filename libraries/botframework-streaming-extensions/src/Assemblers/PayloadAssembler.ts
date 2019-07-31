@@ -6,18 +6,18 @@
  * Licensed under the MIT License.
  */
 import { Header } from '../Models/Header';
-import { Stream } from '../Stream';
+import { SubscribableStream } from '../Stream';
 
 export abstract class PayloadAssembler {
     public id: string;
     public end: boolean;
-    private stream: Stream;
+    private stream: SubscribableStream;
 
     public constructor(id: string) {
         this.id = id;
     }
 
-    public getPayloadStream(): Stream {
+    public getPayloadStream(): SubscribableStream {
         if (!this.stream) {
             this.stream = this.createPayloadStream();
         }
@@ -25,9 +25,9 @@ export abstract class PayloadAssembler {
         return this.stream;
     }
 
-    public abstract createPayloadStream(): Stream;
+    public abstract createPayloadStream(): SubscribableStream;
 
-    public onReceive(header: Header, stream?: Stream, contentLength?: number): void {
+    public onReceive(header: Header, stream?: SubscribableStream, contentLength?: number): void {
         this.end = header.End;
     }
 

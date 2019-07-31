@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { HttpContent, HttpContentStream } from './HttpContentStream';
-import { Stream } from './Stream';
+import { SubscribableStream } from './Stream';
 
 export class StreamingRequest {
     /// <summary>
@@ -62,7 +62,7 @@ export class StreamingRequest {
     /// <param name="body">The JSON text to write to the body of the streamingRequest.</param>
     public setBody(body: any): void {
         if (typeof body === 'string') {
-            let stream = new Stream();
+            let stream = new SubscribableStream();
             stream.write(body, 'utf8');
             this.addStream(new HttpContent({
                 contentType: 'application/json; charset=utf-8',

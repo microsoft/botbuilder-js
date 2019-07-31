@@ -10,7 +10,7 @@ import { Header } from '../Models/Header';
 import { RequestPayload } from '../Models/RequestPayload';
 import { StreamManager } from '../Payloads/StreamManager';
 import { ReceiveRequest } from '../ReceiveRequest';
-import { Stream } from '../Stream';
+import { SubscribableStream } from '../Stream';
 import { ContentStreamAssembler } from './ContentStreamAssembler';
 import { PayloadAssembler } from './PayloadAssembler';
 
@@ -24,11 +24,11 @@ export class ReceiveRequestAssembler extends PayloadAssembler {
         this._onCompleted = onCompleted;
     }
 
-    public createPayloadStream(): Stream {
-        return new Stream();
+    public createPayloadStream(): SubscribableStream {
+        return new SubscribableStream();
     }
 
-    public onReceive(header: Header, stream: Stream, contentLength: number): void {
+    public onReceive(header: Header, stream: SubscribableStream, contentLength: number): void {
         super.onReceive(header, stream, contentLength);
         this.processRequest(stream)
             .then()
@@ -43,7 +43,7 @@ export class ReceiveRequestAssembler extends PayloadAssembler {
         throw new Error('Method not implemented.');
     }
 
-    private async processRequest(stream: Stream): Promise<void> {
+    private async processRequest(stream: SubscribableStream): Promise<void> {
         let s: Buffer = stream.read(stream.length) as Buffer;
         if (!s) {
             return;

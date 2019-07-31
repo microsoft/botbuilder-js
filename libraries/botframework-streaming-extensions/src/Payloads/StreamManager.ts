@@ -7,7 +7,7 @@
  */
 import { ContentStreamAssembler } from '../Assemblers/ContentStreamAssembler';
 import { Header } from '../Models/Header';
-import { Stream } from '../Stream';
+import { SubscribableStream } from '../Stream';
 
 export class StreamManager {
     private readonly activeAssemblers = [];
@@ -30,13 +30,13 @@ export class StreamManager {
         }
     }
 
-    public getPayloadStream(header: Header): Stream {
+    public getPayloadStream(header: Header): SubscribableStream {
         let assembler = this.getPayloadAssembler(header.Id);
 
         return assembler.getPayloadStream();
     }
 
-    public onReceive(header: Header, contentStream: Stream, contentLength: number): void {
+    public onReceive(header: Header, contentStream: SubscribableStream, contentLength: number): void {
         if (this.activeAssemblers[header.Id] === undefined) {
             return;
         } else {

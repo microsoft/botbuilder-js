@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Stream } from '../Stream';
+import { SubscribableStream } from '../Stream';
 import { PayloadAssembler } from '../Assemblers/PayloadAssembler';
 import { ReceiveRequestAssembler } from '../Assemblers/ReceiveRequestAssembler';
 import { ReceiveResponseAssembler } from '../Assemblers/ReceiveResponseAssembler';
@@ -25,7 +25,7 @@ export class PayloadAssembleManager {
         this.onReceiveResponse = onReceiveResponse;
     }
 
-    public getPayloadStream(header: Header): Stream {
+    public getPayloadStream(header: Header): SubscribableStream {
         if (header.PayloadType === PayloadTypes.stream) {
             return this.streamManager.getPayloadStream(header);
         } else {
@@ -42,7 +42,7 @@ export class PayloadAssembleManager {
         return undefined;
     }
 
-    public onReceive(header: Header, contentStream: Stream, contentLength: number): void {
+    public onReceive(header: Header, contentStream: SubscribableStream, contentLength: number): void {
         if (header.PayloadType === PayloadTypes.stream) {
             this.streamManager.onReceive(header, contentStream, contentLength);
         } else {

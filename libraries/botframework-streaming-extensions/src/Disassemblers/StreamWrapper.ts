@@ -5,13 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Stream } from '../Stream';
+import { SubscribableStream } from '../Stream';
 
 export class StreamWrapper {
-    public stream: Stream;
+    public stream: SubscribableStream;
     public streamLength?: number;
 
-    public constructor(stream: Stream, streamLength?: number) {
+    public constructor(stream: SubscribableStream, streamLength?: number) {
         this.stream = stream;
         this.streamLength = streamLength;
     }

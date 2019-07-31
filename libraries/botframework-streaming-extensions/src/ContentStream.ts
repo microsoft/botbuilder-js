@@ -6,12 +6,12 @@
  * Licensed under the MIT License.
  */
 import { ContentStreamAssembler } from './Assemblers/ContentStreamAssembler';
-import { Stream } from './Stream';
+import { SubscribableStream } from './Stream';
 
 export class ContentStream {
     public id: string;
     private readonly assembler: ContentStreamAssembler;
-    private stream: Stream;
+    private stream: SubscribableStream;
 
     constructor(id: string, assembler: ContentStreamAssembler) {
         if (assembler === undefined) {
@@ -29,7 +29,7 @@ export class ContentStream {
         return this.assembler.contentLength;
     }
 
-    public getStream(): Stream {
+    public getStream(): SubscribableStream {
         if (this.stream === undefined) {
             this.stream = this.assembler.getPayloadStream();
         }

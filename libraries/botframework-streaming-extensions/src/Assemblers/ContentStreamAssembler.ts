@@ -7,7 +7,7 @@
  */
 import { Header } from '../Models/Header';
 import { StreamManager } from '../Payloads/StreamManager';
-import { Stream } from '../Stream';
+import { SubscribableStream } from '../Stream';
 import { PayloadAssembler } from './PayloadAssembler';
 
 export class ContentStreamAssembler extends PayloadAssembler {
@@ -22,11 +22,11 @@ export class ContentStreamAssembler extends PayloadAssembler {
         this._streamManager = streamManager;
     }
 
-    public createPayloadStream(): Stream {
-        return new Stream();
+    public createPayloadStream(): SubscribableStream {
+        return new SubscribableStream();
     }
 
-    public onReceive(header: Header, stream: Stream, contentLength: number): void {
+    public onReceive(header: Header, stream: SubscribableStream, contentLength: number): void {
         super.onReceive(header, stream, contentLength);
 
         if (header.End) {

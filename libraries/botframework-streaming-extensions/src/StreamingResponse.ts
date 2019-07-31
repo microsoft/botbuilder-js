@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { HttpContent, HttpContentStream } from './HttpContentStream';
-import { Stream } from './Stream';
+import { SubscribableStream } from './Stream';
 
 export class StreamingResponse {
     public statusCode: number;
@@ -44,7 +44,7 @@ export class StreamingResponse {
     /// </summary>
     /// <param name="body">The JSON text to write to the body of the streamingResponse.</param>
     public setBody(body: any): void {
-        let stream = new Stream();
+        let stream = new SubscribableStream();
         stream.write(JSON.stringify(body), 'utf8');
         this.addStream(new HttpContent({
             contentType: 'application/json; charset=utf-8',

@@ -6,14 +6,14 @@
  * Licensed under the MIT License.
  */
 import { Header } from '../Models/Header';
-import { Stream } from '../Stream';
+import { SubscribableStream } from '../Stream';
 
 export class SendPacket {
     public header: Header;
-    public payload: Stream;
+    public payload: SubscribableStream;
     public sentCallback: () => Promise<void>;
 
-    public constructor(header: Header, payload: Stream, sentCallback: () => Promise<void>) {
+    public constructor(header: Header, payload: SubscribableStream, sentCallback: () => Promise<void>) {
         this.header = header;
         this.payload = payload;
         this.sentCallback = sentCallback;

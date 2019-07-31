@@ -7,7 +7,7 @@
  */
 import { Header } from '../Models/Header';
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
-import { Stream } from '../Stream';
+import { SubscribableStream } from '../Stream';
 import { ITransportSender } from '../Transport/ITransportSender';
 import { TransportConstants } from '../Transport/TransportConstants';
 import { SendPacket } from './SendPacket';
@@ -40,7 +40,7 @@ export class PayloadSender {
     /// <param name="header">The header to attach to the outgoing payload.</param>
     /// <param name="payload">The stream of buffered data to send.</param>
     /// <param name="sentCalback">The function to execute when the send has completed.</param>
-    public sendPayload(header: Header, payload: Stream, sentCallback: () => Promise<void>): void {
+    public sendPayload(header: Header, payload: SubscribableStream, sentCallback: () => Promise<void>): void {
         this.writePacket(new SendPacket(header, payload, sentCallback));
     }
 

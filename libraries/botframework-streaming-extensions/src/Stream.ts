@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Duplex, DuplexOptions, Writable, WritableOptions } from 'stream';
+import { Duplex, DuplexOptions } from 'stream';
 
-export class Stream extends Duplex {
+export class SubscribableStream extends Duplex {
     public length: number = 0;
 
     private readonly bufferList: Buffer[] = [];
@@ -30,7 +30,6 @@ export class Stream extends Duplex {
     public _read(size: number): void {
         if (this.bufferList.length === 0) {
             // null signals end of stream
-            // tslint:disable-next-line:no-null-keyword
             this.push(null);
         } else {
             let total = 0;
