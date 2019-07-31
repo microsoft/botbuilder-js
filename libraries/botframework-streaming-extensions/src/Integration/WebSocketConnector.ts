@@ -21,6 +21,7 @@ import {
 } from 'botframework-connector';
 import { Watershed } from 'watershed';
 import { StreamingRequestHandler } from './StreamingRequestHandler';
+import { NodeWebSocket } from '..';
 
 export class WebSocketConnector {
     private readonly logger;
@@ -95,7 +96,7 @@ export class WebSocketConnector {
         const socket = ws.accept(req, upgrade.socket, upgrade.head);
         let handler = new StreamingRequestHandler(this.bot, this.logger, settings, this.middleWare);
 
-        await handler.startWebSocket(socket);
+        await handler.startWebSocket(new NodeWebSocket(socket));
     }
 
     private async authenticateConnection(req: WebRequest, appId?: string, appPassword?: string, channelService?: string): Promise<boolean> {
