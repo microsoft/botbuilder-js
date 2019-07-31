@@ -21,7 +21,7 @@ import {
 } from 'botframework-schema';
 import * as os from 'os';
 import { IStreamingTransportServer, NamedPipeServer, ReceiveRequest, RequestHandler, StreamingResponse, WebSocketServer } from '..';
-const pjson: any = require('../package.json');
+const pjson: any = require('../../package.json');
 import { ISocket } from '../WebSocket';
 import { BotFrameworkStreamingAdapter } from './BotFrameworkStreamingAdapter';
 
