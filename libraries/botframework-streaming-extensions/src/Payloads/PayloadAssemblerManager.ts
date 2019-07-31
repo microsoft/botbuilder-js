@@ -13,7 +13,7 @@ import { StreamManager } from './StreamManager';
 import { Header } from '../Models/Header';
 import { PayloadTypes } from '../Models/PayloadTypes';
 
-export class PayloadAssembleManager {
+export class PayloadAssemblerManager {
     private readonly onReceiveRequest;
     private readonly onReceiveResponse;
     private readonly streamManager: StreamManager;
