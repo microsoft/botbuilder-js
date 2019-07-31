@@ -7,7 +7,7 @@
  */
 import { PayloadAssembler } from './Assemblers/PayloadAssembler';
 import { Header } from './Models/Header';
-import { PayloadAssembleManager } from './Payloads/PayloadAssemblerManager';
+import { PayloadAssemblerManager } from './Payloads/PayloadAssemblerManager';
 import { RequestManager } from './Payloads/RequestManager';
 import { SendOperations } from './Payloads/SendOperations';
 import { StreamManager } from './Payloads/StreamManager';
@@ -27,7 +27,7 @@ export class ProtocolAdapter {
     private readonly requestManager: RequestManager;
     private readonly sendOperations: SendOperations;
     private readonly streamManager: StreamManager;
-    private readonly assemblerManager: PayloadAssembleManager;
+    private readonly assemblerManager: PayloadAssemblerManager;
 
     /// <summary>
     /// Creates a new instance of the protocol adapter class.
@@ -43,7 +43,7 @@ export class ProtocolAdapter {
         this.payloadReceiver = receiver;
         this.sendOperations = new SendOperations(this.payloadSender);
         this.streamManager = new StreamManager(this.onCancelStream);
-        this.assemblerManager = new PayloadAssembleManager(this.streamManager, (id: string, response: ReceiveResponse) => this.onReceiveResponse(id, response), (id: string, request: ReceiveRequest) => this.onReceiveRequest(id, request));
+        this.assemblerManager = new PayloadAssemblerManager(this.streamManager, (id: string, response: ReceiveResponse) => this.onReceiveResponse(id, response), (id: string, request: ReceiveRequest) => this.onReceiveRequest(id, request));
         this.payloadReceiver.subscribe((header: Header) => this.assemblerManager.getPayloadStream(header), (header: Header, contentStream: SubscribableStream, contentLength: number) => this.assemblerManager.onReceive(header, contentStream, contentLength));
     }
 

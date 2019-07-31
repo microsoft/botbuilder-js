@@ -132,7 +132,7 @@ describe('PayloadTransport', () => {
             sock.setReceiver(pr);
 
             this.streamManager = new protocol.StreamManager(undefined);
-            assemblerManager = new protocol.PayloadAssembleManager(
+            assemblerManager = new protocol.PayloadAssemblerManager(
                 this.streamManager,
                 (id, response) => onReceiveResponse(id, response),
                 (id, request) => onReceiveRequest(id, request)

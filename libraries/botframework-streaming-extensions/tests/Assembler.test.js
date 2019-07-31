@@ -140,7 +140,7 @@ describe('ContentStreamAssembler', () => {
 
 describe('PayloadAssemblerManager', () => {
     it('cretes a response stream', (done) => {
-        let p = new PayloadAssemblerManager.PayloadAssembleManager(new StreamManager.StreamManager(), () => done(), () => done());
+        let p = new PayloadAssemblerManager.PayloadAssemblerManager(new StreamManager.StreamManager(), () => done(), () => done());
         let head = new Header.Header(PayloadTypes.PayloadTypes.response, '42', '100', true);
         expect(p.getPayloadStream(head)).to.be.instanceOf(Stream.Stream);
         done();
@@ -148,14 +148,14 @@ describe('PayloadAssemblerManager', () => {
 
     
     it('cretes a request stream', (done) => {
-        let p = new PayloadAssemblerManager.PayloadAssembleManager(new StreamManager.StreamManager(), () => done(), () => done());
+        let p = new PayloadAssemblerManager.PayloadAssemblerManager(new StreamManager.StreamManager(), () => done(), () => done());
         let head = new Header.Header(PayloadTypes.PayloadTypes.request, '42', '100', true);
         expect(p.getPayloadStream(head)).to.be.instanceOf(Stream.Stream);
         done();
     });
 
     it('does not throw when receiving a request', (done) => {
-        let p = new PayloadAssemblerManager.PayloadAssembleManager(new StreamManager.StreamManager(), () => done(), () => done());
+        let p = new PayloadAssemblerManager.PayloadAssemblerManager(new StreamManager.StreamManager(), () => done(), () => done());
         let head = new Header.Header(PayloadTypes.PayloadTypes.request, '42', '100', true);
         let s = p.getPayloadStream(head);
         expect(s).to.be.instanceOf(Stream.Stream);
@@ -164,7 +164,7 @@ describe('PayloadAssemblerManager', () => {
     });
 
     it('does not throw when receiving a stream', (done) => {
-        let p = new PayloadAssemblerManager.PayloadAssembleManager(new StreamManager.StreamManager(), () => done(), () => done());
+        let p = new PayloadAssemblerManager.PayloadAssemblerManager(new StreamManager.StreamManager(), () => done(), () => done());
         let head = new Header.Header(PayloadTypes.PayloadTypes.stream, '42', '100', true);
         let s = p.getPayloadStream(head);
         expect(s).to.be.instanceOf(Stream.Stream);
@@ -173,7 +173,7 @@ describe('PayloadAssemblerManager', () => {
     });
 
     it('does not throw when receiving a response', (done) => {
-        let p = new PayloadAssemblerManager.PayloadAssembleManager(new StreamManager.StreamManager(), () => done(), () => done());
+        let p = new PayloadAssemblerManager.PayloadAssemblerManager(new StreamManager.StreamManager(), () => done(), () => done());
         let head = new Header.Header(PayloadTypes.PayloadTypes.response, '42', '100', true);
         let s = p.getPayloadStream(head);
         expect(s).to.be.instanceOf(Stream.Stream);
@@ -182,7 +182,7 @@ describe('PayloadAssemblerManager', () => {
     });
 
     it('returns undefined when asked to create an existing stream', (done) => {
-        let p = new PayloadAssemblerManager.PayloadAssembleManager(new StreamManager.StreamManager(), () => done(), () => done());
+        let p = new PayloadAssemblerManager.PayloadAssemblerManager(new StreamManager.StreamManager(), () => done(), () => done());
         let head = new Header.Header(PayloadTypes.PayloadTypes.request, '42', '100', true);
         let s = p.getPayloadStream(head);
         expect(s).to.be.instanceOf(Stream.Stream);
