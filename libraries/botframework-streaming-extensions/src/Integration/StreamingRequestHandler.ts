@@ -7,7 +7,8 @@
  */
 import {
     BotFrameworkAdapterSettings,
-    InvokeResponse
+    InvokeResponse,
+    BotFrameworkAdapter
 } from 'botbuilder';
 import {
     ActivityHandler,
@@ -20,20 +21,19 @@ import {
     ActivityTypes
 } from 'botframework-schema';
 import * as os from 'os';
-import { IStreamingTransportServer, NamedPipeServer, ReceiveRequest, RequestHandler, StreamingResponse, WebSocketServer } from '..';
+import { IStreamingTransportServer, NamedPipeServer, ReceiveRequest, RequestHandler, StreamingResponse, WebSocketServer, StreamingHttpClient } from '..';
 const pjson: any = require('../../package.json');
 import { ISocket } from '../WebSocket';
-import { BotFrameworkStreamingAdapter } from './BotFrameworkStreamingAdapter';
+import { ConnectorClient } from 'botframework-connector';
 
 /// <summary>
 /// Used to process incoming requests sent over an <see cref="IStreamingTransport"/> and adhering to the Bot Framework Protocol v3 with Streaming Extensions.
 /// </summary>
-export class StreamingRequestHandler implements RequestHandler {
+export class StreamingRequestHandler extends BotFrameworkAdapter implements RequestHandler {
     public bot: ActivityHandler;
     public adapterSettings: BotFrameworkAdapterSettings;
     public logger;
     public server: IStreamingTransportServer;
-    public adapter: BotFrameworkStreamingAdapter;
     public middleWare: (MiddlewareHandler|Middleware)[];
 
     /// <summary>
@@ -48,6 +48,7 @@ export class StreamingRequestHandler implements RequestHandler {
     /// <param name="settings">The settings for use with the BotFrameworkAdapter.</param>
     /// <param name="middlewareSet">An optional set of middleware to register with the adapter.</param>
     public constructor(bot: ActivityHandler, logger?, settings?: BotFrameworkAdapterSettings, middleWare?: (MiddlewareHandler|Middleware)[]) {
+        super(settings);
 
         if (bot === undefined) {
             throw new Error('Undefined Argument: Bot can not be undefined.');
@@ -76,7 +77,6 @@ export class StreamingRequestHandler implements RequestHandler {
     /// <param name="pipeName">The name of the named pipe to use when creating the server.</param>
     public async startNamedPipe(pipename: string): Promise<void>{
         this.server = new NamedPipeServer(pipename, this);
-        this.adapter = new BotFrameworkStreamingAdapter(this.server, this.adapterSettings);
         await this.server.start();
     }
 
@@ -86,8 +86,22 @@ export class StreamingRequestHandler implements RequestHandler {
     /// <param name="socket">The socket to use when creating the server.</param>
     public async startWebSocket(socket: ISocket): Promise<void>{
         this.server = new WebSocketServer(socket, this);
-        this.adapter = new BotFrameworkStreamingAdapter(this.server, this.adapterSettings);
         await this.server.start();
+    }
+
+        /// <summary>
+    /// Hides the adapter's built in means of creating a connector client
+    /// and subtitutes a StreamingHttpClient in place of the standard HttpClient,
+    /// thus allowing compatibility with streaming extensions.
+    /// </summary>
+    public createConnectorClient(serviceUrl: string): ConnectorClient {
+        return new ConnectorClient(
+            this.credentials,
+            {
+                baseUri: serviceUrl,
+                userAgent: super['USER_AGENT'],
+                httpClient: new StreamingHttpClient(this.server)
+            });
     }
 
 
@@ -135,12 +149,12 @@ export class StreamingRequestHandler implements RequestHandler {
 
         try {
             let activity: Activity = body;
-            let adapter: BotFrameworkStreamingAdapter = new BotFrameworkStreamingAdapter(this.server, this.adapterSettings);
+           
             this.middleWare.forEach((mw): void => {
-                adapter.use(mw);
+                this.use(mw);
             });
-            let context = new TurnContext(adapter, activity);
-            await adapter.executePipeline(context, async (turnContext): Promise<void> => {
+            let context = new TurnContext(this, activity);
+            await this.runMiddleware(context, async (turnContext): Promise<void> => {
                 await this.bot.run(turnContext);
             });
 
