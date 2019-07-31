@@ -62,7 +62,12 @@ export class StreamingRequestHandler implements RequestHandler {
         }
 
         this.adapterSettings = settings;
-        this.middleWare = middleWare;
+
+        if(middleWare === undefined) {
+            this.middleWare = [];
+        } else {
+            this.middleWare = middleWare;
+        }        
     }
 
     /// <summary>
