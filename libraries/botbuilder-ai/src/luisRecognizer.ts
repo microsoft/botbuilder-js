@@ -5,15 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { LUISRuntimeClient as LuisClient } from '@azure/cognitiveservices-luis-runtime';
-
-import * as msRest from '@azure/ms-rest-js';
 import { BotTelemetryClient, NullTelemetryClient, RecognizerResult, TurnContext } from 'botbuilder-core';
 import * as os from 'os';
 import * as Url from 'url-parse';
 import { LuisTelemetryConstants } from './luisTelemetryConstants';
 
-import {LuisClient as CustomLuisClient, LuisApikeys} from './luis-client'
+import {LuisClient, LuisApikeys} from './luis-client'
 import {
     LuisResult,
     IntentModel,
@@ -21,7 +18,6 @@ import {
     CompositeChildModel,
     CompositeEntityModel
 } from './luis-client/model'
-import { version } from 'moment';
 
 const pjson = require('../package.json');
 
@@ -121,11 +117,6 @@ export interface LuisPredictionOptions {
      * (Optional) Designates whether personal information should be logged in telemetry.
      */
     logPersonalInformation?: boolean;
-
-    /**
-    * If true, return all intents instead of just the top scoring intent.
-    */
-    verbose?: boolean;
 }
 
 export interface LuisRecognizerTelemetryClient {
@@ -167,9 +158,8 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     private application: LuisApplication;
     private options: LuisPredictionOptions;
     private includeApiResults: boolean;
-
-    private luisClient: LuisClient;
-    private customLuisClient: CustomLuisClient;
+    
+    private customLuisClient: LuisClient;
     private cacheKey: symbol = Symbol('results');
 
     /**
@@ -211,17 +201,9 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         };
         this.includeApiResults = !!includeApiResults;
 
-        // Create client
-        // - We have to cast "creds as any" to avoid a build break relating to different versions
-        //   of autorest being used by our various components.  This is just a build issue and
-        //   shouldn't effect production bots.
-        const creds: msRest.TokenCredentials = new msRest.TokenCredentials(this.application.endpointKey);
-        const baseUri: string = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
-        this.luisClient = new LuisClient(creds as any, baseUri);
-
-        // Custom Luis Runtime Client
+        // Create Luis Runtime Client
         const basePath = 'https://westus.api.cognitive.microsoft.com';
-        this.customLuisClient = new CustomLuisClient(basePath);
+        this.customLuisClient = new LuisClient(basePath);
         this.customLuisClient.setApiKey(LuisApikeys.apiKeyHeader, this.application.endpointKey)
 
         this._telemetryClient = this.options.telemetryClient || new NullTelemetryClient();
@@ -317,9 +299,9 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                     luisPredictionOptions.bingSpellCheckSubscriptionKey,
                     luisPredictionOptions.log,
                     {
-                        headers:{
-                            'Ocp-Apim-Subscription-Key': this.application.endpointKey,
-                            'User-Agent': this.getUserAgent()
+                        headers:{                        
+                            'User-Agent': this.getUserAgent(),
+                            'authorization': `Bearer ${this.application.endpointKey}`,
                         }
                        
                     }
