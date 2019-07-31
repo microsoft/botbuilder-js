@@ -433,7 +433,16 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
                 .replace(/(\]*$)/g, '')
                 .trim();
 
-        const expression: string = exp.indexOf('(') < 0 ? exp.concat('()') : exp;
+        let expression: string = exp;
+        if (exp.indexOf('(') < 0) {
+            if (exp in this.TemplateMap) {
+                expression = exp.concat('(')
+                    .concat(this.TemplateMap[exp].Parameters.join())
+                    .concat(')');
+            } else {
+                expression = exp.concat('()');
+            }
+        }
 
         try {
             new ExpressionEngine(new GetMethodExtensions(new Evaluator(this.Templates, undefined)).GetMethodX).parse(expression);

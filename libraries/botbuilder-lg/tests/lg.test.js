@@ -192,8 +192,14 @@ describe('LG', function () {
     it('TestTemplateRef', function () {
         var engine = new TemplateEngine().addFile(GetExampleFilePath("TemplateRef.lg"));
         var scope = { time: "morning", name: "Dong Lei" };
-        var evaled = engine.evaluateTemplate("Hello", scope);
-        assert.strictEqual(evaled, "Good morning Dong Lei", `Evaled is ${evaled}`);
+        var evaled1 = engine.evaluateTemplate("Hello", scope);
+        assert.strictEqual(evaled1, "Good morning Dong Lei", `Evaled is ${evaled1}`);
+
+        var evaled2 = engine.evaluateTemplate("Hello2", scope);
+        assert.strictEqual(evaled2, "Good morning Dong Lei", `Evaled is ${evaled2}`);
+
+        var evaled3 = engine.evaluateTemplate("Hello3", scope);
+        assert.strictEqual(evaled3, "Good morning Dong Lei", `Evaled is ${evaled3}`);
     });
 
     it('TestEscapeCharacter', function () {

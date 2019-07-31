@@ -258,7 +258,16 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     private EvalTemplateRef(exp: string) : string {
         exp = exp.replace(/(^\[*)/g, '')
                 .replace(/(\]*$)/g, '');
-        exp = exp.indexOf('(') < 0 ? exp.concat('()') : exp;
+
+        if (exp.indexOf('(') < 0) {
+            if (exp in this.TemplateMap) {
+                exp = exp.concat('(')
+                        .concat(this.TemplateMap[exp].Parameters.join())
+                        .concat(')');
+            } else {
+                exp = exp.concat('()');
+            }
+        }
 
         return this.EvalExpression(exp);
     }
