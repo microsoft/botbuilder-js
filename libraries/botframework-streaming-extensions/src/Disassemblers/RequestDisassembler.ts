@@ -28,7 +28,6 @@ export class RequestDisassembler extends PayloadDisassembler {
         if (this.request.Streams) {
             payload.streams = [];
 
-            // tslint:disable-next-line: prefer-for-of
             for (let i = 0; i < this.request.Streams.length; i++) {
                 let contentStream = this.request.Streams[i];
                 let description: StreamDescription = await PayloadDisassembler.getStreamDescription(contentStream);

@@ -49,7 +49,6 @@ export class StreamingResponse {
         this.addStream(new HttpContent({
             contentType: 'application/json; charset=utf-8',
             contentLength: stream.length
-            // tslint:disable-next-line: align
         }, stream));
     }
 }

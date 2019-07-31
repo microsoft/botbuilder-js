@@ -140,7 +140,6 @@ export class StreamingRequestHandler implements RequestHandler {
             });
 
             if (activity.type === ActivityTypes.Invoke) {
-                // tslint:disable-next-line: no-backbone-get-set-outside-model
                 let invokeResponse: any = context.turnState.get('BotFrameworkStreamingAdapter.InvokeResponse');
 
                 if (invokeResponse && invokeResponse.value) {

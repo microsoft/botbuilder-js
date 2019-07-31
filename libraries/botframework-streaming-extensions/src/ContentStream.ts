@@ -43,10 +43,8 @@ export class ContentStream {
 
     public async readAsString(): Promise<string> {
         let obj = await this.readAll();
-        // tslint:disable-next-line: no-string-literal
         let allData = obj['bufferArray'];
         let s = '';
-        // tslint:disable-next-line: prefer-for-of
         for (let i = 0; i < allData.length; i++) {
             s += allData[i].toString('utf8');
         }
@@ -57,15 +55,11 @@ export class ContentStream {
     public async readAsBuffer(): Promise<Buffer> {
     // do a read-all
         let obj = await this.readAll();
-        // tslint:disable-next-line: no-string-literal
         let allData = obj['bufferArray'];
-        // tslint:disable-next-line: no-string-literal
         let count = obj['size'];
         let s = Buffer.alloc(count);
         let ptr = 0;
-        // tslint:disable-next-line: prefer-for-of
         for (let i = 0; i < allData.length; i++) {
-            // tslint:disable-next-line: prefer-for-of
             for (let j = 0 ; j < allData[i].length; j++) {
                 s[ptr++] = allData[i][j];
             }

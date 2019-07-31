@@ -68,7 +68,6 @@ export class StreamingRequest {
                 contentType: 'application/json; charset=utf-8',
                 contentLength: stream.length
             },
-            // tslint:disable-next-line: align
             stream));
         } else {
             if (typeof body === 'object') {
