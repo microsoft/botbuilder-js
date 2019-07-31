@@ -6,14 +6,14 @@
  * Licensed under the MIT License.
  */
 import { ContentStreamAssembler } from './Assemblers/ContentStreamAssembler';
-import { SubscribableStream } from './Stream';
+import { SubscribableStream } from './SubscribableStream';
 
 export class ContentStream {
     public id: string;
     private readonly assembler: ContentStreamAssembler;
     private stream: SubscribableStream;
 
-    constructor(id: string, assembler: ContentStreamAssembler) {
+    public constructor(id: string, assembler: ContentStreamAssembler) {
         if (assembler === undefined) {
             throw Error('Null Argument Exception');
         }
@@ -87,14 +87,14 @@ export class ContentStream {
         while (count < stream.length) {
             let chunk = stream.read(stream.length);
             allData.push(chunk);
-            count += (<Buffer>chunk).length;
+            count += (chunk as Buffer).length;
         }
 
         if (count < this.length) {
-            let readToEnd = new Promise<boolean>((resolve) => {
-                let callback = (cs: ContentStream) => (chunk: any) => {
+            let readToEnd = new Promise<boolean>((resolve): void => {
+                let callback = (cs: ContentStream) => (chunk: any): void => {
                     allData.push(chunk);
-                    count += (<Buffer>chunk).length;
+                    count += (chunk as Buffer).length;
                     if (count === cs.length) {
                         resolve(true);
                     }

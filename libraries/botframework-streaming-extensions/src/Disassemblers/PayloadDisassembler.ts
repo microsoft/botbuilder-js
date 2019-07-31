@@ -10,7 +10,7 @@ import { Header } from '../Models/Header';
 import { PayloadTypes } from '../Models/PayloadTypes';
 import { StreamDescription } from '../Models/StreamDescription';
 import { PayloadSender } from '../PayloadTransport/PayloadSender';
-import { SubscribableStream } from '../Stream';
+import { SubscribableStream } from '../SubscribableStream';
 import { StreamWrapper } from './StreamWrapper';
 
 export abstract class PayloadDisassembler {

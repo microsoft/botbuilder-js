@@ -7,7 +7,7 @@
  */
 import { HttpContentStream } from '../HttpContentStream';
 import { PayloadSender } from '../PayloadTransport/PayloadSender';
-import { SubscribableStream } from '../Stream';
+import { SubscribableStream } from '../SubscribableStream';
 import { PayloadTypes } from '../Models/PayloadTypes';
 import { PayloadDisassembler } from './PayloadDisassembler';
 import { StreamWrapper } from './StreamWrapper';

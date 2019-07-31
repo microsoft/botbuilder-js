@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { SubscribableStream } from '../Stream';
+import { SubscribableStream } from '../SubscribableStream';
 import { PayloadAssembler } from '../Assemblers/PayloadAssembler';
 import { ReceiveRequestAssembler } from '../Assemblers/ReceiveRequestAssembler';
 import { ReceiveResponseAssembler } from '../Assemblers/ReceiveResponseAssembler';

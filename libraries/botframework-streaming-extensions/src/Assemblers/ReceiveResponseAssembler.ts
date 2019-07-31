@@ -10,7 +10,7 @@ import { Header } from '../Models/Header';
 import { ResponsePayload } from '../Models/ResponsePayload';
 import { StreamManager } from '../Payloads/StreamManager';
 import { ReceiveResponse } from '../ReceiveResponse';
-import { SubscribableStream } from '../Stream';
+import { SubscribableStream } from '../SubscribableStream';
 import { ContentStreamAssembler } from './ContentStreamAssembler';
 import { PayloadAssembler } from './PayloadAssembler';
 

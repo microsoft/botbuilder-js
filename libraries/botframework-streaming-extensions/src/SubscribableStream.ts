@@ -13,7 +13,7 @@ export class SubscribableStream extends Duplex {
     private readonly bufferList: Buffer[] = [];
     private _onData: (chunk: any) => void;
 
-    constructor(options?: DuplexOptions) {
+    public constructor(options?: DuplexOptions) {
         super(options);
     }
 

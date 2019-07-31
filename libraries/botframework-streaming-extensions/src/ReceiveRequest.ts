@@ -25,7 +25,7 @@ export class ReceiveRequest {
     /// <summary>
     /// Creates a new instance of the ReceiveRequest class.
     /// </summary>
-    constructor() {
+    public constructor() {
         this.Streams = [];
     }
 }

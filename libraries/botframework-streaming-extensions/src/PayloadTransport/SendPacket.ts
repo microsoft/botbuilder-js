@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Header } from '../Models/Header';
-import { SubscribableStream } from '../Stream';
+import { SubscribableStream } from '../SubscribableStream';
 
 export class SendPacket {
     public header: Header;

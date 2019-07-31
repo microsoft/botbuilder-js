@@ -7,7 +7,7 @@
  */
 import { Header } from '../Models/Header';
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
-import { SubscribableStream } from '../Stream';
+import { SubscribableStream } from '../SubscribableStream';
 import { ITransportSender } from '../Transport/ITransportSender';
 import { TransportConstants } from '../Transport/TransportConstants';
 import { SendPacket } from './SendPacket';

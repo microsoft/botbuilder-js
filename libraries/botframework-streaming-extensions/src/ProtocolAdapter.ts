@@ -16,7 +16,7 @@ import { PayloadSender } from './PayloadTransport/PayloadSender';
 import { ReceiveRequest } from './ReceiveRequest';
 import { ReceiveResponse } from './ReceiveResponse';
 import { RequestHandler } from './RequestHandler';
-import { SubscribableStream } from './Stream';
+import { SubscribableStream } from './SubscribableStream';
 import { StreamingRequest } from './StreamingRequest';
 import { generateGuid } from './Utilities/protocol-base';
 
@@ -36,15 +36,15 @@ export class ProtocolAdapter {
     /// <param name="requestManager">The manager that will process outgoing requests.</param>
     /// <param name="sender">The sender for use with outgoing requests.</param>
     /// <param name="receiver">The receiver for use with incoming requests.</param>
-    constructor(requestHandler: RequestHandler, requestManager: RequestManager, sender: PayloadSender, receiver: PayloadReceiver) {
+    public constructor(requestHandler: RequestHandler, requestManager: RequestManager, sender: PayloadSender, receiver: PayloadReceiver) {
         this.requestHandler = requestHandler;
         this.requestManager = requestManager;
         this.payloadSender = sender;
         this.payloadReceiver = receiver;
         this.sendOperations = new SendOperations(this.payloadSender);
         this.streamManager = new StreamManager(this.onCancelStream);
-        this.assemblerManager = new PayloadAssemblerManager(this.streamManager, (id: string, response: ReceiveResponse) => this.onReceiveResponse(id, response), (id: string, request: ReceiveRequest) => this.onReceiveRequest(id, request));
-        this.payloadReceiver.subscribe((header: Header) => this.assemblerManager.getPayloadStream(header), (header: Header, contentStream: SubscribableStream, contentLength: number) => this.assemblerManager.onReceive(header, contentStream, contentLength));
+        this.assemblerManager = new PayloadAssemblerManager(this.streamManager, (id: string, response: ReceiveResponse): Promise<void> => this.onReceiveResponse(id, response), (id: string, request: ReceiveRequest): Promise<void> => this.onReceiveRequest(id, request));
+        this.payloadReceiver.subscribe((header: Header): SubscribableStream => this.assemblerManager.getPayloadStream(header), (header: Header, contentStream: SubscribableStream, contentLength: number): void => this.assemblerManager.onReceive(header, contentStream, contentLength));
     }
 
     /// <summary>

@@ -7,7 +7,7 @@
  */
 import { Header } from '../Models/Header';
 import { StreamManager } from '../Payloads/StreamManager';
-import { SubscribableStream } from '../Stream';
+import { SubscribableStream } from '../SubscribableStream';
 import { PayloadAssembler } from './PayloadAssembler';
 
 export class ContentStreamAssembler extends PayloadAssembler {

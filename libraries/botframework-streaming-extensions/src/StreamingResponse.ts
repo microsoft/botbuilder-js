@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { HttpContent, HttpContentStream } from './HttpContentStream';
-import { SubscribableStream } from './Stream';
+import { SubscribableStream } from './SubscribableStream';
 
 export class StreamingResponse {
     public statusCode: number;
@@ -32,7 +32,7 @@ export class StreamingResponse {
     /// Adds a new stream attachment to this <see cref="StreamingResponse"/>.
     /// </summary>
     /// <param name="content">The <see cref="HttpContent"/> to include in the new stream attachment.</param>
-    public addStream(content: HttpContent) {
+    public addStream(content: HttpContent): void {
         if (!this.streams) {
             this.streams = [];
         }

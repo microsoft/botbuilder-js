@@ -7,7 +7,7 @@
  */
 import { ContentStreamAssembler } from '../Assemblers/ContentStreamAssembler';
 import { Header } from '../Models/Header';
-import { SubscribableStream } from '../Stream';
+import { SubscribableStream } from '../SubscribableStream';
 
 export class StreamManager {
     private readonly activeAssemblers = [];

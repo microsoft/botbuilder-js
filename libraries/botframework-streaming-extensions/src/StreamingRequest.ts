@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { HttpContent, HttpContentStream } from './HttpContentStream';
-import { SubscribableStream } from './Stream';
+import { SubscribableStream } from './SubscribableStream';
 
 export class StreamingRequest {
     /// <summary>
@@ -46,7 +46,7 @@ export class StreamingRequest {
     /// Adds a new stream attachment to this <see cref="StreamingRequest"/>.
     /// </summary>
     /// <param name="content">The <see cref="HttpContent"/> to include in the new stream attachment.</param>
-    public addStream(content: HttpContent) {
+    public addStream(content: HttpContent): void {
         if (!content) {
             throw new Error('Argument Undefined Exception: content undefined.');
         }

@@ -89,7 +89,7 @@ export class StreamingRequestHandler extends BotFrameworkAdapter implements Requ
         await this.server.start();
     }
 
-        /// <summary>
+    /// <summary>
     /// Hides the adapter's built in means of creating a connector client
     /// and subtitutes a StreamingHttpClient in place of the standard HttpClient,
     /// thus allowing compatibility with streaming extensions.

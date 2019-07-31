@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { SubscribableStream } from '../Stream';
+import { SubscribableStream } from '../SubscribableStream';
 
 export class StreamWrapper {
     public stream: SubscribableStream;
