@@ -51,6 +51,8 @@ export class WebSocketServer implements IStreamingTransportServer {
         this._receiver.disconnected = (x: object, y: any): void => this.onConnectionDisconnected(this, x, y);
 
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
+
+        this._closedSignal = (x: string): string => { return x; };
     }
 
     /// <summary>
