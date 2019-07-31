@@ -27,7 +27,15 @@ export interface EntityModel {
     * The position of the last character of the matched entity within the utterance.
     */
     endIndex: number;
-    
+    /**
+    * Resolution values for pre-built LUIS entities.
+    */
+    resolution: any;
+    /**
+    * Associated prediction score for the intent (float).
+    */
+    score: number;
+
     [property: string]: any;
 }
 
@@ -48,6 +56,16 @@ export class EntityModel {
     * The position of the last character of the matched entity within the utterance.
     */
     'endIndex': number;
+    /**
+    * Resolution values for pre-built LUIS entities.
+    */
+   'resolution': any;
+    /**
+    * Associated prediction score for the intent (float).
+    */
+   'score': number;
+
+   'role': string;
 
     static discriminator: string | undefined = undefined;
 
@@ -71,6 +89,21 @@ export class EntityModel {
             "name": "endIndex",
             "baseName": "endIndex",
             "type": "number"
+        },
+        {
+            "name": "resolution",
+            "baseName": "resolution",
+            "type": "object"
+        },
+        {
+            "name": "score",
+            "baseName": "score",
+            "type": "number"
+        },
+        {
+            "name": "role",
+            "baseName": "role",
+            "type": "string"
         }    ];
 
     static getAttributeTypeMap() {

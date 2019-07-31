@@ -128,6 +128,7 @@ export class LuisClient {
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
+            maxRedirects: 21,
             body: ObjectSerializer.serialize(q, "string")
         };
 
