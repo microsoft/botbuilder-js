@@ -35,14 +35,14 @@ export class Sentiment {
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "label",
-            "baseName": "label",
-            "type": "string"
+            'name': 'label',
+            'baseName': 'label',
+            'type': 'string'
         },
         {
-            "name": "score",
-            "baseName": "score",
-            "type": "number"
+            'name': 'score',
+            'baseName': 'score',
+            'type': 'number'
         }    ];
 
     static getAttributeTypeMap() {

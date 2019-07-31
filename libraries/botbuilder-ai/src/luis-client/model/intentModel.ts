@@ -35,14 +35,14 @@ export class IntentModel {
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "intent",
-            "baseName": "intent",
-            "type": "string"
+            'name': 'intent',
+            'baseName': 'intent',
+            'type': 'string'
         },
         {
-            "name": "score",
-            "baseName": "score",
-            "type": "number"
+            'name': 'score',
+            'baseName': 'score',
+            'type': 'number'
         }    ];
 
     static getAttributeTypeMap() {

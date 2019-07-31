@@ -70,44 +70,44 @@ export class LuisResult {
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "query",
-            "baseName": "query",
-            "type": "string"
+            'name': 'query',
+            'baseName': 'query',
+            'type': 'string'
         },
         {
-            "name": "alteredQuery",
-            "baseName": "alteredQuery",
-            "type": "string"
+            'name': 'alteredQuery',
+            'baseName': 'alteredQuery',
+            'type': 'string'
         },
         {
-            "name": "topScoringIntent",
-            "baseName": "topScoringIntent",
-            "type": "IntentModel"
+            'name': 'topScoringIntent',
+            'baseName': 'topScoringIntent',
+            'type': 'IntentModel'
         },
         {
-            "name": "intents",
-            "baseName": "intents",
-            "type": "Array<IntentModel>"
+            'name': 'intents',
+            'baseName': 'intents',
+            'type': 'Array<IntentModel>'
         },
         {
-            "name": "entities",
-            "baseName": "entities",
-            "type": "Array<EntityModel>"
+            'name': 'entities',
+            'baseName': 'entities',
+            'type': 'Array<EntityModel>'
         },
         {
-            "name": "compositeEntities",
-            "baseName": "compositeEntities",
-            "type": "Array<CompositeEntityModel>"
+            'name': 'compositeEntities',
+            'baseName': 'compositeEntities',
+            'type': 'Array<CompositeEntityModel>'
         },
         {
-            "name": "sentimentAnalysis",
-            "baseName": "sentimentAnalysis",
-            "type": "Sentiment"
+            'name': 'sentimentAnalysis',
+            'baseName': 'sentimentAnalysis',
+            'type': 'Sentiment'
         },
         {
-            "name": "connectedServiceResult",
-            "baseName": "connectedServiceResult",
-            "type": "LuisResult"
+            'name': 'connectedServiceResult',
+            'baseName': 'connectedServiceResult',
+            'type': 'LuisResult'
         }    ];
 
     static getAttributeTypeMap() {

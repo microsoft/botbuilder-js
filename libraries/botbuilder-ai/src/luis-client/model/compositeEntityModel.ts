@@ -45,19 +45,19 @@ export class CompositeEntityModel {
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "parentType",
-            "baseName": "parentType",
-            "type": "string"
+            'name': 'parentType',
+            'baseName': 'parentType',
+            'type': 'string'
         },
         {
-            "name": "value",
-            "baseName": "value",
-            "type": "string"
+            'name': 'value',
+            'baseName': 'value',
+            'type': 'string'
         },
         {
-            "name": "children",
-            "baseName": "children",
-            "type": "Array<CompositeChildModel>"
+            'name': 'children',
+            'baseName': 'children',
+            'type': 'Array<CompositeChildModel>'
         }    ];
 
     static getAttributeTypeMap() {

@@ -1,4 +1,4 @@
-import { EntityModel, EntityWithResolutionAllOf, EntityWithResolution } from ".";
+import { EntityModel, EntityWithResolutionAllOf, EntityWithResolution } from '.';
 
 /**
  * LUIS Runtime Client
@@ -45,29 +45,29 @@ export class EntityWithScore {
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "entity",
-            "baseName": "entity",
-            "type": "string"
+            'name': 'entity',
+            'baseName': 'entity',
+            'type': 'string'
         },
         {
-            "name": "type",
-            "baseName": "type",
-            "type": "string"
+            'name': 'type',
+            'baseName': 'type',
+            'type': 'string'
         },
         {
-            "name": "startIndex",
-            "baseName": "startIndex",
-            "type": "number"
+            'name': 'startIndex',
+            'baseName': 'startIndex',
+            'type': 'number'
         },
         {
-            "name": "endIndex",
-            "baseName": "endIndex",
-            "type": "number"
+            'name': 'endIndex',
+            'baseName': 'endIndex',
+            'type': 'number'
         },
         {
-            "name": "score",
-            "baseName": "score",
-            "type": "number"
+            'name': 'score',
+            'baseName': 'score',
+            'type': 'number'
         }    ];
 
     static getAttributeTypeMap() {

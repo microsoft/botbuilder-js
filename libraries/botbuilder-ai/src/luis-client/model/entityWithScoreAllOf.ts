@@ -1,4 +1,4 @@
-import { EntityModel } from ".";
+import { EntityModel } from '.';
 
 /**
  * LUIS Runtime Client
@@ -29,9 +29,9 @@ export class EntityWithScoreAllOf {
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "score",
-            "baseName": "score",
-            "type": "number"
+            'name': 'score',
+            'baseName': 'score',
+            'type': 'number'
         }    ];
 
     static getAttributeTypeMap() {

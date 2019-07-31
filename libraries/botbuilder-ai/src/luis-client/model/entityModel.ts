@@ -71,39 +71,39 @@ export class EntityModel {
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "entity",
-            "baseName": "entity",
-            "type": "string"
+            'name': 'entity',
+            'baseName': 'entity',
+            'type': 'string'
         },
         {
-            "name": "type",
-            "baseName": "type",
-            "type": "string"
+            'name': 'type',
+            'baseName': 'type',
+            'type': 'string'
         },
         {
-            "name": "startIndex",
-            "baseName": "startIndex",
-            "type": "number"
+            'name': 'startIndex',
+            'baseName': 'startIndex',
+            'type': 'number'
         },
         {
-            "name": "endIndex",
-            "baseName": "endIndex",
-            "type": "number"
+            'name': 'endIndex',
+            'baseName': 'endIndex',
+            'type': 'number'
         },
         {
-            "name": "resolution",
-            "baseName": "resolution",
-            "type": "object"
+            'name': 'resolution',
+            'baseName': 'resolution',
+            'type': 'object'
         },
         {
-            "name": "score",
-            "baseName": "score",
-            "type": "number"
+            'name': 'score',
+            'baseName': 'score',
+            'type': 'number'
         },
         {
-            "name": "role",
-            "baseName": "role",
-            "type": "string"
+            'name': 'role',
+            'baseName': 'role',
+            'type': 'string'
         }    ];
 
     static getAttributeTypeMap() {

@@ -1,4 +1,4 @@
-import { EntityModel } from ".";
+import { EntityModel } from '.';
 
 /**
  * LUIS Runtime Client
@@ -29,9 +29,9 @@ export class EntityWithResolutionAllOf {
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "resolution",
-            "baseName": "resolution",
-            "type": "object"
+            'name': 'resolution',
+            'baseName': 'resolution',
+            'type': 'object'
         }    ];
 
     static getAttributeTypeMap() {

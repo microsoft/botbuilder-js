@@ -31,37 +31,37 @@ export enum LuisApikeys {
 
 export class LuisClient {
     protected _basePath: string = '';
-    protected defaultHeaders : any = {};
-    protected _useQuerystring : boolean = false;
+    protected defaultHeaders: any = {};
+    protected _useQuerystring: boolean = false;
 
     protected authentications = {
-        'default': <Authentication>new VoidAuth(),
+        'default': new VoidAuth() as Authentication,
         'apiKeyHeader': new ApiKeyAuth('header', 'Ocp-Apim-Subscription-Key'),
     }
 
-    constructor(basePath: string){
+    public constructor(basePath: string){
         if (basePath) {
             this.basePath = basePath + luisVersion;
         }
-}
+    }
 
-    set useQuerystring(value: boolean) {
+    public set useQuerystring(value: boolean) {
         this._useQuerystring = value;
     }
 
-    set basePath(basePath: string) {
+    public set basePath(basePath: string) {
         this._basePath = basePath;
     }
 
-    get basePath() {
+    public get basePath(): string {
         return this._basePath;
     }
 
-    public setDefaultAuthentication(auth: Authentication) {
+    public setDefaultAuthentication(auth: Authentication): void {
         this.authentications.default = auth;
     }
 
-    public setApiKey(key: LuisApikeys, value: string) {
+    public setApiKey(key: LuisApikeys, value: string): void {
         (this.authentications as any)[LuisApikeys[key]].apiKey = value;
     }
 
@@ -76,11 +76,11 @@ export class LuisClient {
      * @param bingSpellCheckSubscriptionKey The subscription key to use when enabling Bing spell check
      * @param log Log query (default is true)
      */
-    public async predictionResolvePost (q: string, appId: string, timezoneOffset?: number, verbose?: boolean, staging?: boolean, spellCheck?: boolean, bingSpellCheckSubscriptionKey?: string, log?: boolean, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: LuisResult;  }> {
+    public async predictionResolvePost(q: string, appId: string, timezoneOffset?: number, verbose?: boolean, staging?: boolean, spellCheck?: boolean, bingSpellCheckSubscriptionKey?: string, log?: boolean, options: {headers: {[name: string]: string}} = {headers: {}}): Promise<{ response: http.IncomingMessage; body: LuisResult }> {
         const localVarPath = this.basePath + '/apps/{appId}'
             .replace('{' + 'appId' + '}', encodeURIComponent(String(appId)));
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarHeaderParams = (Object as any).assign({}, this.defaultHeaders) as any;
         let localVarFormParams: any = {};
 
         // verify required parameter 'q' is not null or undefined
@@ -94,30 +94,30 @@ export class LuisClient {
         }
 
         if (timezoneOffset !== undefined) {
-            localVarQueryParameters['timezoneOffset'] = ObjectSerializer.serialize(timezoneOffset, "number");
+            localVarQueryParameters['timezoneOffset'] = ObjectSerializer.serialize(timezoneOffset, 'number');
         }
 
         if (verbose !== undefined) {
-            localVarQueryParameters['verbose'] = ObjectSerializer.serialize(verbose, "boolean");
+            localVarQueryParameters['verbose'] = ObjectSerializer.serialize(verbose, 'boolean');
         }
 
         if (staging !== undefined) {
-            localVarQueryParameters['staging'] = ObjectSerializer.serialize(staging, "boolean");
+            localVarQueryParameters['staging'] = ObjectSerializer.serialize(staging, 'boolean');
         }
 
         if (spellCheck !== undefined) {
-            localVarQueryParameters['spellCheck'] = ObjectSerializer.serialize(spellCheck, "boolean");
+            localVarQueryParameters['spellCheck'] = ObjectSerializer.serialize(spellCheck, 'boolean');
         }
 
         if (bingSpellCheckSubscriptionKey !== undefined) {
-            localVarQueryParameters['bing-spell-check-subscription-key'] = ObjectSerializer.serialize(bingSpellCheckSubscriptionKey, "string");
+            localVarQueryParameters['bing-spell-check-subscription-key'] = ObjectSerializer.serialize(bingSpellCheckSubscriptionKey, 'string');
         }
 
         if (log !== undefined) {
-            localVarQueryParameters['log'] = ObjectSerializer.serialize(log, "boolean");
+            localVarQueryParameters['log'] = ObjectSerializer.serialize(log, 'boolean');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        (Object as any).assign(localVarHeaderParams, options.headers);
 
         let localVarUseFormData = false;
 
@@ -129,7 +129,7 @@ export class LuisClient {
             useQuerystring: this._useQuerystring,
             json: true,
             maxRedirects: 21,
-            body: ObjectSerializer.serialize(q, "string")
+            body: ObjectSerializer.serialize(q, 'string')
         };
 
         this.authentications.apiKeyHeader.applyToRequest(localVarRequestOptions);
@@ -143,22 +143,25 @@ export class LuisClient {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.IncomingMessage; body: LuisResult;  }>((resolve, reject) => {
+        return new Promise<{ response: http.IncomingMessage; body: LuisResult }>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    body = ObjectSerializer.deserialize(body, "LuisResult");
+                    body = ObjectSerializer.deserialize(body, 'LuisResult');
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
-                        reject({                                                       
+                        reject({
                             response: {
-                            response: response,
-                            headers: response.headers,
-                            body: response.body,
-                            status: response.statusCode
-                        }});
+                                response: response,
+                                headers:
+                                    response.headers,
+                                body: response.body,
+                                status:
+                                    response.statusCode
+                            }
+                        });
                     }
                 }
             });
@@ -175,11 +178,11 @@ export class LuisClient {
      * @param bingSpellCheckSubscriptionKey The subscription key to use when enabling Bing spell check
      * @param log Log query (default is true)
      */
-    public async predictionResolveGet (appId: string, q: string, timezoneOffset?: number, verbose?: boolean, staging?: boolean, spellCheck?: boolean, bingSpellCheckSubscriptionKey?: string, log?: boolean, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: LuisResult;  }> {
+    public async predictionResolveGet(appId: string, q: string, timezoneOffset?: number, verbose?: boolean, staging?: boolean, spellCheck?: boolean, bingSpellCheckSubscriptionKey?: string, log?: boolean, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: LuisResult; }> {
         const localVarPath = this.basePath + '/apps/{appId}'
             .replace('{' + 'appId' + '}', encodeURIComponent(String(appId)));
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarHeaderParams: any = (Object as any).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
 
         // verify required parameter 'appId' is not null or undefined
@@ -193,34 +196,34 @@ export class LuisClient {
         }
 
         if (q !== undefined) {
-            localVarQueryParameters['q'] = ObjectSerializer.serialize(q, "string");
+            localVarQueryParameters['q'] = ObjectSerializer.serialize(q, 'string');
         }
 
         if (timezoneOffset !== undefined) {
-            localVarQueryParameters['timezoneOffset'] = ObjectSerializer.serialize(timezoneOffset, "number");
+            localVarQueryParameters['timezoneOffset'] = ObjectSerializer.serialize(timezoneOffset, 'number');
         }
 
         if (verbose !== undefined) {
-            localVarQueryParameters['verbose'] = ObjectSerializer.serialize(verbose, "boolean");
+            localVarQueryParameters['verbose'] = ObjectSerializer.serialize(verbose, 'boolean');
         }
 
         if (staging !== undefined) {
-            localVarQueryParameters['staging'] = ObjectSerializer.serialize(staging, "boolean");
+            localVarQueryParameters['staging'] = ObjectSerializer.serialize(staging, 'boolean');
         }
 
         if (spellCheck !== undefined) {
-            localVarQueryParameters['spellCheck'] = ObjectSerializer.serialize(spellCheck, "boolean");
+            localVarQueryParameters['spellCheck'] = ObjectSerializer.serialize(spellCheck, 'boolean');
         }
 
         if (bingSpellCheckSubscriptionKey !== undefined) {
-            localVarQueryParameters['bing-spell-check-subscription-key'] = ObjectSerializer.serialize(bingSpellCheckSubscriptionKey, "string");
+            localVarQueryParameters['bing-spell-check-subscription-key'] = ObjectSerializer.serialize(bingSpellCheckSubscriptionKey, 'string');
         }
 
         if (log !== undefined) {
-            localVarQueryParameters['log'] = ObjectSerializer.serialize(log, "boolean");
+            localVarQueryParameters['log'] = ObjectSerializer.serialize(log, 'boolean');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        (Object as any).assign(localVarHeaderParams, options.headers);
 
         let localVarUseFormData = false;
 
@@ -249,7 +252,7 @@ export class LuisClient {
                 if (error) {
                     reject(error);
                 } else {
-                    body = ObjectSerializer.deserialize(body, "LuisResult");
+                    body = ObjectSerializer.deserialize(body, 'LuisResult');
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {

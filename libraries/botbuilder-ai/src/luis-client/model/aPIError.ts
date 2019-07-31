@@ -35,14 +35,14 @@ export class APIError {
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "statusCode",
-            "baseName": "statusCode",
-            "type": "string"
+            'name': 'statusCode',
+            'baseName': 'statusCode',
+            'type': 'string'
         },
         {
-            "name": "message",
-            "baseName": "message",
-            "type": "string"
+            'name': 'message',
+            'baseName': 'message',
+            'type': 'string'
         }    ];
 
     static getAttributeTypeMap() {

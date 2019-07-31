@@ -26,31 +26,31 @@ import { Sentiment } from './sentiment';
 
 /* tslint:disable:no-unused-variable */
 let primitives = [
-                    "string",
-                    "boolean",
-                    "double",
-                    "integer",
-                    "long",
-                    "float",
-                    "number",
-                    "any"
+                    'string',
+                    'boolean',
+                    'double',
+                    'integer',
+                    'long',
+                    'float',
+                    'number',
+                    'any'
                  ];
                  
 let enumsMap: {[index: string]: any} = {
 }
 
 let typeMap: {[index: string]: any} = {
-    "APIError": APIError,
-    "CompositeChildModel": CompositeChildModel,
-    "CompositeEntityModel": CompositeEntityModel,
-    "EntityModel": EntityModel,
-    "EntityWithResolution": EntityWithResolution,
-    "EntityWithResolutionAllOf": EntityWithResolutionAllOf,
-    "EntityWithScore": EntityWithScore,
-    "EntityWithScoreAllOf": EntityWithScoreAllOf,
-    "IntentModel": IntentModel,
-    "LuisResult": LuisResult,
-    "Sentiment": Sentiment,
+    'APIError': APIError,
+    'CompositeChildModel': CompositeChildModel,
+    'CompositeEntityModel': CompositeEntityModel,
+    'EntityModel': EntityModel,
+    'EntityWithResolution': EntityWithResolution,
+    'EntityWithResolutionAllOf': EntityWithResolutionAllOf,
+    'EntityWithScore': EntityWithScore,
+    'EntityWithScoreAllOf': EntityWithScoreAllOf,
+    'IntentModel': IntentModel,
+    'LuisResult': LuisResult,
+    'Sentiment': Sentiment,
 }
 
 export class ObjectSerializer {
@@ -59,7 +59,7 @@ export class ObjectSerializer {
             return expectedType;
         } else if (primitives.indexOf(expectedType.toLowerCase()) !== -1) {
             return expectedType;
-        } else if (expectedType === "Date") {
+        } else if (expectedType === 'Date') {
             return expectedType;
         } else {
             if (enumsMap[expectedType]) {
@@ -94,8 +94,8 @@ export class ObjectSerializer {
             return data;
         } else if (primitives.indexOf(type.toLowerCase()) !== -1) {
             return data;
-        } else if (type.lastIndexOf("Array<", 0) === 0) { // string.startsWith pre es6
-            let subType: string = type.replace("Array<", ""); // Array<Type> => Type>
+        } else if (type.lastIndexOf('Array<', 0) === 0) { // string.startsWith pre es6
+            let subType: string = type.replace('Array<', ''); // Array<Type> => Type>
             subType = subType.substring(0, subType.length - 1); // Type> => Type
             let transformedData: any[] = [];
             for (let index in data) {
@@ -103,7 +103,7 @@ export class ObjectSerializer {
                 transformedData.push(ObjectSerializer.serialize(date, subType));
             }
             return transformedData;
-        } else if (type === "Date") {
+        } else if (type === 'Date') {
             return data.toISOString();
         } else {
             if (enumsMap[type]) {
@@ -134,8 +134,8 @@ export class ObjectSerializer {
             return data;
         } else if (primitives.indexOf(type.toLowerCase()) !== -1) {
             return data;
-        } else if (type.lastIndexOf("Array<", 0) === 0) { // string.startsWith pre es6
-            let subType: string = type.replace("Array<", ""); // Array<Type> => Type>
+        } else if (type.lastIndexOf('Array<', 0) === 0) { // string.startsWith pre es6
+            let subType: string = type.replace('Array<', ''); // Array<Type> => Type>
             subType = subType.substring(0, subType.length - 1); // Type> => Type
             let transformedData: any[] = [];
             for (let index in data) {
@@ -143,7 +143,7 @@ export class ObjectSerializer {
                 transformedData.push(ObjectSerializer.deserialize(date, subType));
             }
             return transformedData;
-        } else if (type === "Date") {
+        } else if (type === 'Date') {
             return new Date(data);
         } else {
             if (enumsMap[type]) {// is Enum
@@ -189,9 +189,9 @@ export class ApiKeyAuth implements Authentication {
     }
 
     applyToRequest(requestOptions: localVarRequest.Options): void {
-        if (this.location == "query") {
+        if (this.location == 'query') {
             (<any>requestOptions.qs)[this.paramName] = this.apiKey;
-        } else if (this.location == "header" && requestOptions && requestOptions.headers) {
+        } else if (this.location == 'header' && requestOptions && requestOptions.headers) {
             requestOptions.headers[this.paramName] = this.apiKey;
         }
     }
@@ -202,7 +202,7 @@ export class OAuth implements Authentication {
 
     applyToRequest(requestOptions: localVarRequest.Options): void {
         if (requestOptions && requestOptions.headers) {
-            requestOptions.headers["Authorization"] = "Bearer " + this.accessToken;
+            requestOptions.headers['Authorization'] = 'Bearer ' + this.accessToken;
         }
     }
 }
