@@ -19,7 +19,12 @@ export class NodeWebSocket implements ISocket {
     /// <param name="waterShedSocket">The WaterShed socket object to build this connection on.</param>
     public constructor(waterShedSocket?) {
         this.waterShedSocket = waterShedSocket;
-        this.connected = false;
+
+        if(waterShedSocket === undefined){
+            this.connected = false;
+        } else {
+            this.connected = true;
+        }
     }
 
     /// <summary>
