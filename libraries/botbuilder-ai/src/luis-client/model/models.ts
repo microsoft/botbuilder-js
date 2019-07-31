@@ -2,10 +2,6 @@ export * from './aPIError';
 export * from './compositeChildModel';
 export * from './compositeEntityModel';
 export * from './entityModel';
-export * from './entityWithResolution';
-export * from './entityWithResolutionAllOf';
-export * from './entityWithScore';
-export * from './entityWithScoreAllOf';
 export * from './intentModel';
 export * from './luisResult';
 export * from './sentiment';
@@ -16,10 +12,6 @@ import { APIError } from './aPIError';
 import { CompositeChildModel } from './compositeChildModel';
 import { CompositeEntityModel } from './compositeEntityModel';
 import { EntityModel } from './entityModel';
-import { EntityWithResolution } from './entityWithResolution';
-import { EntityWithResolutionAllOf } from './entityWithResolutionAllOf';
-import { EntityWithScore } from './entityWithScore';
-import { EntityWithScoreAllOf } from './entityWithScoreAllOf';
 import { IntentModel } from './intentModel';
 import { LuisResult } from './luisResult';
 import { Sentiment } from './sentiment';
@@ -44,10 +36,6 @@ let typeMap: {[index: string]: any} = {
     'CompositeChildModel': CompositeChildModel,
     'CompositeEntityModel': CompositeEntityModel,
     'EntityModel': EntityModel,
-    'EntityWithResolution': EntityWithResolution,
-    'EntityWithResolutionAllOf': EntityWithResolutionAllOf,
-    'EntityWithScore': EntityWithScore,
-    'EntityWithScoreAllOf': EntityWithScoreAllOf,
     'IntentModel': IntentModel,
     'LuisResult': LuisResult,
     'Sentiment': Sentiment,
