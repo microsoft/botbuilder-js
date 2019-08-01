@@ -14,3 +14,4 @@ export * from './intentData';
 export * from './numberWithUnits';
 export * from './qnamaker-interfaces/index'
 export * from './ordinalV2';
+export * from './luis-client'
