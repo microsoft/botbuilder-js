@@ -76,7 +76,7 @@ export class LuisClient {
      * @param bingSpellCheckSubscriptionKey The subscription key to use when enabling Bing spell check
      * @param log Log query (default is true)
      */
-    public async predictionResolvePost(q: string, appId: string, timezoneOffset?: number, verbose?: boolean, staging?: boolean, spellCheck?: boolean, bingSpellCheckSubscriptionKey?: string, log?: boolean, options: {headers: {[name: string]: string}} = {headers: {}}): Promise<{ response: http.IncomingMessage; body: LuisResult }> {
+    public async predictionResolvePost(q: string, appId: string, timezoneOffset?: number, verbose?: boolean, staging?: boolean, spellCheck?: boolean, bingSpellCheckSubscriptionKey?: string, log?: boolean, options: {headers: {[name: string]: string}} = {headers: {}}): Promise<LuisResult> {
         const localVarPath = this.basePath + '/apps/{appId}'
             .replace('{' + 'appId' + '}', encodeURIComponent(String(appId)));
         let localVarQueryParameters: any = {};
@@ -143,14 +143,14 @@ export class LuisClient {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.IncomingMessage; body: LuisResult }>((resolve, reject) => {
-            localVarRequest(localVarRequestOptions, (error, response, body) => {
+        return new Promise<LuisResult>((resolve, reject) => {
+            localVarRequest(localVarRequestOptions, (error, response, luisResult) => {
                 if (error) {
                     reject(error);
                 } else {
-                    body = ObjectSerializer.deserialize(body, 'LuisResult');
+                    luisResult = ObjectSerializer.deserialize(luisResult, 'LuisResult');
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        resolve({ response: response, body: body });
+                        resolve(luisResult);
                     } else {
                         reject({
                             response: {
