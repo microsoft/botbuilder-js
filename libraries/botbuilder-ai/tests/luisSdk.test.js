@@ -89,19 +89,17 @@ function TestJson(file, done, includeAllIntents, includeInstance) {
 
     luisClient.predictionResolvePost(
         expected.query,
-        applicationId,                    
-        undefined, // time of set
-        includeAllIntents, //includeAllIntents
-        false, //stagin
-        false, // spellCheck
-        undefined, //bingSpellCheckSubscriptionKey
-        true, //log
+        applicationId,     
         {
-            headers:{                        
-                'authorization': `Bearer ${ endpointKey }`,
-                'User-Agent': 'botbuilder'
-            },
-           
+            verbose: includeAllIntents,
+            log: true,        
+            customHeaders:{
+                headers:{                        
+                    'authorization': `Bearer ${ endpointKey }`,
+                    'User-Agent': 'botbuilder'
+                },
+               
+            }
         }
     ).then(result => {
         result.v2 = result.luisResult;

@@ -10,7 +10,7 @@ import * as os from 'os';
 import * as Url from 'url-parse';
 import { LuisTelemetryConstants } from './luisTelemetryConstants';
 
-import {LuisClient, LuisApikeys} from './luis-client'
+import {LuisClient, LuisApikeys, PredictionResolveOptionalParams} from './luis-client'
 import {
     LuisResult,
     IntentModel,
@@ -72,7 +72,7 @@ export interface LuisApplication {
 /**
  * Options per LUIS prediction.
  */
-export interface LuisPredictionOptions {
+export interface LuisPredictionOptions extends PredictionResolveOptionalParams {
     /**
      * (Optional) Bing Spell Check subscription key.
      */
@@ -291,20 +291,18 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
             } else {
                 recognizerPromise = this.luisClient.predictionResolvePost(
                     utterance,
-                    this.application.applicationId,                    
-                    luisPredictionOptions.timezoneOffset,
-                    luisPredictionOptions.includeAllIntents,
-                    luisPredictionOptions.staging,
-                    luisPredictionOptions.spellCheck,
-                    luisPredictionOptions.bingSpellCheckSubscriptionKey,
-                    luisPredictionOptions.log,
+                    this.application.applicationId,
                     {
-                        headers:{                        
-                            'User-Agent': this.getUserAgent(),
-                            'authorization': `Bearer ${this.application.endpointKey}`,
-                        }
-                       
-                    }
+                        verbose: luisPredictionOptions.includeAllIntents,
+                        customHeaders: {
+                            headers:{                        
+                                'User-Agent': this.getUserAgent(),
+                                'authorization': `Bearer ${this.application.endpointKey}`,
+                            }
+                        },
+                        ...luisPredictionOptions
+
+                    }              
                 )   // Map results
                 .then(( luisResult: LuisResult )=>({
                     text: luisResult.query,
