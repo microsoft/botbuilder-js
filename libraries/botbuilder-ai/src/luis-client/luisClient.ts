@@ -98,13 +98,8 @@ export class LuisClient {
      * Gets predictions for a given utterance, in the form of intents and entities. The current maximum query size is 500 characters.
      * @param query The utterance to predict.
      * @param appId The LUIS application ID (Guid).
-     * @param timezoneOffset The timezone offset for the location of the request.
-     * @param verbose If true, return all intents instead of just the top scoring intent.
-     * @param staging Use the staging endpoint slot.
-     * @param spellCheck Enable spell checking.
-     * @param bingSpellCheckSubscriptionKey The subscription key to use when enabling Bing spell check
-     * @param log Log query (default is true)
-     * @param options
+     * @param [options] The optional parameters
+     * @returns Promise<LuisResult>
      */
     public async predictionResolvePost(query: string, appId: string, options: PredictionResolveOptionalParams): Promise<LuisResult> {
         const localVarPath = this.basePath + '/apps/{appId}'
@@ -204,19 +199,15 @@ export class LuisClient {
     /**
      * Gets predictions for a given utterance, in the form of intents and entities. The current maximum query size is 500 characters.
      * @param appId The LUIS application ID (guid).
-     * @param q The utterance to predict.
-     * @param timezoneOffset The timezone offset for the location of the request.
-     * @param verbose If true, return all intents instead of just the top scoring intent.
-     * @param staging Use the staging endpoint slot.
-     * @param spellCheck Enable spell checking.
-     * @param bingSpellCheckSubscriptionKey The subscription key to use when enabling Bing spell check
-     * @param log Log query (default is true)
+     * @param query The utterance to predict.
+     * @param [options] The optional parameters
+     * @returns Promise<LuisResult>
      */
-    public async predictionResolveGet(appId: string, q: string, timezoneOffset?: number, verbose?: boolean, staging?: boolean, spellCheck?: boolean, bingSpellCheckSubscriptionKey?: string, log?: boolean, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: LuisResult; }> {
+    public async predictionResolveGet(appId: string, query: string, options: PredictionResolveOptionalParams): Promise<LuisResult> {
         const localVarPath = this.basePath + '/apps/{appId}'
             .replace('{' + 'appId' + '}', encodeURIComponent(String(appId)));
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (Object as any).assign({}, this.defaultHeaders);
+        let localVarHeaderParams = (Object as any).assign({}, this.defaultHeaders) as any;
         let localVarFormParams: any = {};
 
         // verify required parameter 'appId' is not null or undefined
@@ -225,39 +216,43 @@ export class LuisClient {
         }
 
         // verify required parameter 'q' is not null or undefined
-        if (q === null || q === undefined) {
+        if (query === null || query === undefined) {
             throw new Error('Required parameter q was null or undefined when calling predictionResolve2.');
         }
 
-        if (q !== undefined) {
-            localVarQueryParameters['q'] = ObjectSerializer.serialize(q, 'string');
+        if (options.customHeaders === null || options.customHeaders === undefined) {
+            options.customHeaders = {headers: {}}
         }
 
-        if (timezoneOffset !== undefined) {
-            localVarQueryParameters['timezoneOffset'] = ObjectSerializer.serialize(timezoneOffset, 'number');
+        if (query !== undefined) {
+            localVarQueryParameters['q'] = ObjectSerializer.serialize(query, 'string');
         }
 
-        if (verbose !== undefined) {
-            localVarQueryParameters['verbose'] = ObjectSerializer.serialize(verbose, 'boolean');
+        if (options.timezoneOffset !== undefined) {
+            localVarQueryParameters['timezoneOffset'] = ObjectSerializer.serialize(options.timezoneOffset, 'number');
         }
 
-        if (staging !== undefined) {
-            localVarQueryParameters['staging'] = ObjectSerializer.serialize(staging, 'boolean');
+        if (options.verbose !== undefined) {
+            localVarQueryParameters['verbose'] = ObjectSerializer.serialize(options.verbose, 'boolean');
         }
 
-        if (spellCheck !== undefined) {
-            localVarQueryParameters['spellCheck'] = ObjectSerializer.serialize(spellCheck, 'boolean');
+        if (options.staging !== undefined) {
+            localVarQueryParameters['staging'] = ObjectSerializer.serialize(options.staging, 'boolean');
         }
 
-        if (bingSpellCheckSubscriptionKey !== undefined) {
-            localVarQueryParameters['bing-spell-check-subscription-key'] = ObjectSerializer.serialize(bingSpellCheckSubscriptionKey, 'string');
+        if (options.spellCheck !== undefined) {
+            localVarQueryParameters['spellCheck'] = ObjectSerializer.serialize(options.spellCheck, 'boolean');
         }
 
-        if (log !== undefined) {
-            localVarQueryParameters['log'] = ObjectSerializer.serialize(log, 'boolean');
+        if (options.bingSpellCheckSubscriptionKey !== undefined) {
+            localVarQueryParameters['bing-spell-check-subscription-key'] = ObjectSerializer.serialize(options.bingSpellCheckSubscriptionKey, 'string');
         }
 
-        (Object as any).assign(localVarHeaderParams, options.headers);
+        if (options.log !== undefined) {
+            localVarQueryParameters['log'] = ObjectSerializer.serialize(options.log, 'boolean');
+        }
+
+        (Object as any).assign(localVarHeaderParams, options.customHeaders.headers);
 
         let localVarUseFormData = false;
 
@@ -268,6 +263,8 @@ export class LuisClient {
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
+            maxRedirects: 21,
+            body: ObjectSerializer.serialize(query, 'string')
         };
 
         this.authentications.apiKeyHeader.applyToRequest(localVarRequestOptions);
@@ -281,16 +278,25 @@ export class LuisClient {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.IncomingMessage; body: LuisResult;  }>((resolve, reject) => {
-            localVarRequest(localVarRequestOptions, (error, response, body) => {
+        return new Promise<LuisResult>((resolve, reject) => {
+            localVarRequest(localVarRequestOptions, (error, response, luisResult) => {
                 if (error) {
                     reject(error);
                 } else {
-                    body = ObjectSerializer.deserialize(body, 'LuisResult');
+                    luisResult = ObjectSerializer.deserialize(luisResult, 'LuisResult');
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        resolve({ response: response, body: body });
+                        resolve(luisResult);
                     } else {
-                        reject({ response: response, body: body });
+                        reject({
+                            response: {
+                                response: response,
+                                headers:
+                                    response.headers,
+                                body: response.body,
+                                status:
+                                    response.statusCode
+                            }
+                        });
                     }
                 }
             });
