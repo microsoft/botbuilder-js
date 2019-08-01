@@ -159,7 +159,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     private options: LuisPredictionOptions;
     private includeApiResults: boolean;
     
-    private customLuisClient: LuisClient;
+    private luisClient: LuisClient;
     private cacheKey: symbol = Symbol('results');
 
     /**
@@ -203,8 +203,8 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
 
         // Create Luis Runtime Client
         const basePath = 'https://westus.api.cognitive.microsoft.com';
-        this.customLuisClient = new LuisClient(basePath);
-        this.customLuisClient.setApiKey(LuisApikeys.apiKeyHeader, this.application.endpointKey)
+        this.luisClient = new LuisClient(basePath);
+        this.luisClient.setApiKey(LuisApikeys.apiKeyHeader, this.application.endpointKey)
 
         this._telemetryClient = this.options.telemetryClient || new NullTelemetryClient();
         this._logPersonalInformation = this.options.logPersonalInformation || false;
@@ -289,7 +289,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                     entities: {},
                 });
             } else {
-                recognizerPromise = this.customLuisClient.predictionResolvePost(
+                recognizerPromise = this.luisClient.predictionResolvePost(
                     utterance,
                     this.application.applicationId,                    
                     luisPredictionOptions.timezoneOffset,
@@ -306,17 +306,17 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                        
                     }
                 )   // Map results
-                .then(( response )=>({
-                    text: response.body.query,
-                    alteredText: response.body.alteredQuery,
-                    intents: this.getIntents(response.body),
+                .then(( luisResult: LuisResult )=>({
+                    text: luisResult.query,
+                    alteredText: luisResult.alteredQuery,
+                    intents: this.getIntents(luisResult),
                     entities: this.getEntitiesAndMetadata(
-                        response.body.entities,
-                        response.body.compositeEntities,
+                        luisResult.entities,
+                        luisResult.compositeEntities,
                         luisPredictionOptions.includeInstanceData === undefined || luisPredictionOptions.includeInstanceData
                     ),
-                    sentiment: this.getSentiment(response.body),
-                    luisResult: (this.includeApiResults ? response.body : null)
+                    sentiment: this.getSentiment(luisResult),
+                    luisResult: (this.includeApiResults ? luisResult : null)
                 }));
             }
             return recognizerPromise
