@@ -6,7 +6,8 @@
  * Licensed under the MIT License.
  */
 import { HttpClient, HttpOperationResponse, WebResource } from '@azure/ms-rest-js';
-import { IStreamingTransportServer, StreamingRequest } from '..';
+import { StreamingRequest } from '..';
+import { IStreamingTransportServer } from '../Interfaces';
 
 export class StreamingHttpClient implements HttpClient {
     private readonly server: IStreamingTransportServer;

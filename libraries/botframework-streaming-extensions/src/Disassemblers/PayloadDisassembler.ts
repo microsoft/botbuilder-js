@@ -6,12 +6,12 @@
  * Licensed under the MIT License.
  */
 import { HttpContentStream } from '../HttpContentStream';
-import { IHeader } from '../Models/Header';
-import { PayloadTypes } from '../Models/PayloadTypes';
-import { IStreamDescription } from '../Models/StreamDescription';
+import { IHeader } from '../Interfaces/IHeader';
+import { PayloadTypes } from '../Payloads/PayloadTypes';
+import { IStreamDescription } from '../Interfaces/IStreamDescription';
 import { PayloadSender } from '../PayloadTransport/PayloadSender';
 import { SubscribableStream } from '../SubscribableStream';
-import { StreamWrapper } from './StreamWrapper';
+import { IStreamWrapper } from '../Interfaces/IStreamWrapper';
 
 export abstract class PayloadDisassembler {
     public abstract payloadType: PayloadTypes;
@@ -39,19 +39,19 @@ export abstract class PayloadDisassembler {
         return description;
     }
 
-    protected static serialize<T>(item: T): StreamWrapper {
+    protected static serialize<T>(item: T): IStreamWrapper {
         let stream: SubscribableStream = new SubscribableStream();
 
         stream.write(JSON.stringify(item));
         stream.end();
 
-        return new StreamWrapper(stream, stream.length);
+        return {stream: stream, streamLength: stream.length};
     }
 
-    public abstract async getStream(): Promise<StreamWrapper>;
+    public abstract async getStream(): Promise<IStreamWrapper>;
 
     public async disassemble(): Promise<void> {
-        let w: StreamWrapper = await this.getStream();
+        let w: IStreamWrapper = await this.getStream();
 
         this.stream = w.stream;
         this.streamLength = w.streamLength;

@@ -21,10 +21,11 @@ import {
     ActivityTypes
 } from 'botframework-schema';
 import * as os from 'os';
-import { IStreamingTransportServer, NamedPipeServer, ReceiveRequest, RequestHandler, StreamingResponse, WebSocketServer, StreamingHttpClient } from '..';
+import { NamedPipeServer, RequestHandler, StreamingResponse, WebSocketServer, StreamingHttpClient } from '..';
 const pjson: any = require('../../package.json');
 import { ISocket } from '../WebSocket';
 import { ConnectorClient } from 'botframework-connector';
+import { IStreamingTransportServer, IReceiveRequest } from '../Interfaces';
 
 /// <summary>
 /// Used to process incoming requests sent over an <see cref="IStreamingTransport"/> and adhering to the Bot Framework Protocol v3 with Streaming Extensions.
@@ -111,7 +112,7 @@ export class StreamingRequestHandler extends BotFrameworkAdapter implements Requ
     /// </summary>
     /// <param name="request">A ReceiveRequest from the connected channel.</param>
     /// <returns>A response created by the BotAdapter to be sent to the client that originated the request.</returns>
-    public async processRequest(request: ReceiveRequest): Promise<StreamingResponse> {
+    public async processRequest(request: IReceiveRequest): Promise<StreamingResponse> {
         let response = new StreamingResponse();
         let body = await this.readRequestBodyAsString(request);
         if (body === undefined || request.Streams === undefined) {
@@ -182,7 +183,7 @@ export class StreamingRequestHandler extends BotFrameworkAdapter implements Requ
         return response;
     }
 
-    private async readRequestBodyAsString(request: ReceiveRequest): Promise<Activity> {
+    private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {
         if (request.Streams !== undefined && request.Streams[0] !== undefined) {
             let contentStream =  request.Streams[0];
             try {

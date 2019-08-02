@@ -5,11 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ReceiveResponse } from '../ReceiveResponse';
+import { IReceiveResponse } from '../Interfaces/IReceiveResponse';
 
 class PendingRequest {
     public requestId: string;
-    public resolve: (response: ReceiveResponse) => void;
+    public resolve: (response: IReceiveResponse) => void;
     public reject: (reason?: any) => void;
 }
 
@@ -20,7 +20,7 @@ export class RequestManager {
         return Object.keys(this._pendingRequests).length;
     }
 
-    public async signalResponse(requestId: string, response: ReceiveResponse): Promise<boolean> {
+    public async signalResponse(requestId: string, response: IReceiveResponse): Promise<boolean> {
         let pendingRequest = this._pendingRequests[requestId];
 
         if (pendingRequest) {
@@ -33,7 +33,7 @@ export class RequestManager {
         return Promise.resolve(false);
     }
 
-    public async getResponse(requestId: string): Promise<ReceiveResponse> {
+    public async getResponse(requestId: string): Promise<IReceiveResponse> {
         let pendingRequest = this._pendingRequests[requestId];
 
         if (pendingRequest) {
@@ -43,7 +43,7 @@ export class RequestManager {
         pendingRequest = new PendingRequest();
         pendingRequest.requestId = requestId;
 
-        let promise = new Promise<ReceiveResponse>((resolve, reject): void => {
+        let promise = new Promise<IReceiveResponse>((resolve, reject): void => {
             pendingRequest.resolve = resolve;
             pendingRequest.reject = reject;
         });

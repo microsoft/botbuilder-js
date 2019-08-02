@@ -11,4 +11,4 @@ export * from './HttpContentStreamDisassembler';
 export * from './PayloadDisassembler';
 export * from './RequestDisassembler';
 export * from './ResponseDisassembler';
-export * from './StreamWrapper';
+export * from '../Interfaces/IStreamWrapper';

@@ -8,8 +8,8 @@
 import { SubscribableStream } from '../SubscribableStream';
 import { PayloadAssembler } from '../Assemblers/PayloadAssembler';
 import { StreamManager } from './StreamManager';
-import { IHeader } from '../Models/Header';
-import { PayloadTypes } from '../Models/PayloadTypes';
+import { IHeader } from '../Interfaces/IHeader';
+import { PayloadTypes } from './PayloadTypes';
 
 export class PayloadAssemblerManager {
     private readonly onReceiveRequest;

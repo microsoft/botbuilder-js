@@ -5,12 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IHeader } from '../Models/Header';
+import { IHeader } from '../Interfaces/IHeader';
 import { SubscribableStream } from '../SubscribableStream';
-import { StreamManager } from '../Payloads';
+import { StreamManager, PayloadTypes } from '../Payloads';
 import { ContentStream } from '../ContentStream';
-import { IResponsePayload, IRequestPayload, PayloadTypes } from '../Models';
-import { ReceiveResponse, ReceiveRequest } from '..';
+import { IResponsePayload, IRequestPayload, IReceiveResponse, IReceiveRequest } from '../Interfaces';
 
 export interface IAssemblerParams {
     header?: IHeader;
@@ -102,7 +101,7 @@ export class PayloadAssembler {
     private async processResponse(streamDataAsString: string): Promise<void> {
 
         let responsePayload: IResponsePayload = this.payloadFromJson(this.stripBOM(streamDataAsString));
-        let receiveResponse: ReceiveResponse = new ReceiveResponse();
+        let receiveResponse: IReceiveResponse = { Streams: [] };
         receiveResponse.StatusCode = responsePayload.statusCode;
 
         await this.processStreams(responsePayload, receiveResponse);
@@ -111,7 +110,7 @@ export class PayloadAssembler {
     private async processRequest(streamDataAsString: string): Promise<void> {
 
         let requestPayload: IRequestPayload = this.payloadFromJson(streamDataAsString);
-        let receiveRequest: ReceiveRequest = new ReceiveRequest();
+        let receiveRequest: IReceiveRequest = { Streams: [] }
         receiveRequest.Path = requestPayload.path;
         receiveRequest.Verb = requestPayload.verb;
 

@@ -5,13 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PayloadTypes } from '../Models/PayloadTypes';
-import { IRequestPayload } from '../Models/RequestPayload';
-import { IStreamDescription } from '../Models/StreamDescription';
+import { PayloadTypes } from '../Payloads/PayloadTypes';
+import { IRequestPayload } from '../Interfaces/IRequestPayload';
+import { IStreamDescription } from '../Interfaces/IStreamDescription';
 import { PayloadSender } from '../PayloadTransport/PayloadSender';
 import { StreamingRequest } from '../StreamingRequest';
 import { PayloadDisassembler } from './PayloadDisassembler';
-import { StreamWrapper } from './StreamWrapper';
+import { IStreamWrapper } from '../Interfaces/IStreamWrapper';
 
 export class RequestDisassembler extends PayloadDisassembler {
     public request: StreamingRequest;
@@ -22,7 +22,7 @@ export class RequestDisassembler extends PayloadDisassembler {
         this.request = request;
     }
 
-    public async getStream(): Promise<StreamWrapper> {
+    public async getStream(): Promise<IStreamWrapper> {
         let payload: IRequestPayload = { verb: this.request.Verb, path: this.request.Path};
 
         if (this.request.Streams) {

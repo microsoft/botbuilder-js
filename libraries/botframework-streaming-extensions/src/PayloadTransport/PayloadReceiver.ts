@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 import { TransportDisconnectedEventHandler } from '.';
-import { IHeader } from '../Models/Header';
-import { PayloadTypes } from '../Models/PayloadTypes';
+import { IHeader } from '../Interfaces/IHeader';
+import { PayloadTypes } from '../Payloads/PayloadTypes';
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
 import { SubscribableStream } from '../SubscribableStream';
 import { ITransportReceiver } from '../Transport/ITransportReceiver';

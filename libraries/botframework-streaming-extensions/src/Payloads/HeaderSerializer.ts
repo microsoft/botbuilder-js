@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IHeader } from '../Models/Header';
+import { IHeader } from '../Interfaces/IHeader';
 
 export class HeaderSerializer {
     public static readonly Delimiter = '.';

@@ -12,7 +12,7 @@ import { CancelDisassembler } from '../Disassemblers/CancelDisassembler';
 import { HttpContentStreamDisassembler } from '../Disassemblers/HttpContentStreamDisassembler';
 import { RequestDisassembler } from '../Disassemblers/RequestDisassembler';
 import { ResponseDisassembler } from '../Disassemblers/ResponseDisassembler';
-import { PayloadTypes } from '../Models/PayloadTypes';
+import { PayloadTypes } from './PayloadTypes';
 
 export class SendOperations {
     private readonly payloadSender: PayloadSender;

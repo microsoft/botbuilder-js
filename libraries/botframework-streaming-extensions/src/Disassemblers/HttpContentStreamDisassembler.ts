@@ -8,9 +8,9 @@
 import { HttpContentStream } from '../HttpContentStream';
 import { PayloadSender } from '../PayloadTransport/PayloadSender';
 import { SubscribableStream } from '../SubscribableStream';
-import { PayloadTypes } from '../Models/PayloadTypes';
+import { PayloadTypes } from '../Payloads/PayloadTypes';
 import { PayloadDisassembler } from './PayloadDisassembler';
-import { StreamWrapper } from './StreamWrapper';
+import { IStreamWrapper } from '../Interfaces/IStreamWrapper';
 
 export class HttpContentStreamDisassembler extends PayloadDisassembler {
     public readonly contentStream: HttpContentStream;
@@ -22,9 +22,9 @@ export class HttpContentStreamDisassembler extends PayloadDisassembler {
         this.contentStream = contentStream;
     }
 
-    public async getStream(): Promise<StreamWrapper> {
+    public async getStream(): Promise<IStreamWrapper> {
         let stream: SubscribableStream = this.contentStream.content.getStream();
 
-        return new StreamWrapper(stream, stream.length);
+        return {stream: stream, streamLength: stream.length};
     }
 }

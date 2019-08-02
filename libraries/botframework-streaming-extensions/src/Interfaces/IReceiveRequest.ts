@@ -5,27 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ContentStream } from './ContentStream';
+import { ContentStream } from '../ContentStream';
 
-export class ReceiveRequest {
+export interface IReceiveRequest {
     /// Request verb, null on responses
     /// </summary>
-    public Verb: string;
+    Verb?: string;
 
     /// <summary>
     /// Request path; null on responses
     /// </summary>
-    public Path: string;
+    Path?: string;
 
     /// <summary>
     /// Gets or sets the collection of stream attachments included in this request.
     /// </summary>
-    public Streams: ContentStream[];
-
-    /// <summary>
-    /// Creates a new instance of the ReceiveRequest class.
-    /// </summary>
-    public constructor() {
-        this.Streams = [];
-    }
+    Streams: ContentStream[];
 }

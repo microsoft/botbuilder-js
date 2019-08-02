@@ -6,10 +6,8 @@
  * Licensed under the MIT License.
  */
 import { connect } from 'net';
-import {
-    IStreamingTransportClient,
-    ProtocolAdapter,
-    ReceiveResponse,
+import {    
+    ProtocolAdapter,    
     RequestHandler,
     StreamingRequest
 } from '..';
@@ -19,6 +17,7 @@ import {
     PayloadSender
 } from '../PayloadTransport';
 import { NamedPipeTransport as NamedPipeTransport } from './NamedPipeTransport';
+import { IStreamingTransportClient, IReceiveResponse } from '../Interfaces';
 
 export class NamedPipeClient implements IStreamingTransportClient {
     private readonly _baseName: string;
@@ -76,7 +75,7 @@ export class NamedPipeClient implements IStreamingTransportClient {
     /// </summary>
     /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
     /// <returns>A <see cref="Task"/> that will produce an instance of <see cref="ReceiveResponse"/> on completion of the send operation.</returns>
-    public async send(request: StreamingRequest): Promise<ReceiveResponse> {
+    public async send(request: StreamingRequest): Promise<IReceiveResponse> {
         return this._protocolAdapter.sendRequest(request);
     }
 

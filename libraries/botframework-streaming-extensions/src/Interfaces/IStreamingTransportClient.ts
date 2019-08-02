@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ReceiveResponse } from './ReceiveResponse';
-import { StreamingRequest } from './StreamingRequest';
+import { IReceiveResponse } from './IReceiveResponse';
+import { StreamingRequest } from '../StreamingRequest';
 
 /// <summary>
 /// Interface implemented by StreamingTransportClient classes for each transport type.
@@ -14,5 +14,5 @@ import { StreamingRequest } from './StreamingRequest';
 export interface IStreamingTransportClient {
     connect(): Promise<void>;
     disconnect(): void;
-    send(request: StreamingRequest): Promise<ReceiveResponse>;
+    send(request: StreamingRequest): Promise<IReceiveResponse>;
 }

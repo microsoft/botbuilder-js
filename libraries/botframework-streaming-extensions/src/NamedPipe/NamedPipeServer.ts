@@ -6,10 +6,8 @@
  * Licensed under the MIT License.
  */
 import { Server, Socket } from 'net';
-import {
-    IStreamingTransportServer,
-    ProtocolAdapter,
-    ReceiveResponse,
+import {    
+    ProtocolAdapter,    
     RequestHandler,
     StreamingRequest
 } from '..';
@@ -19,6 +17,7 @@ import {
     PayloadSender
 } from '../PayloadTransport';
 import { NamedPipeTransport } from './NamedPipeTransport';
+import { IStreamingTransportServer, IReceiveResponse } from '../Interfaces';
 
 /// <summary>
 /// A server for use with the Bot Framework Protocol V3 with Streaming Extensions and an underlying Named Pipe transport.
@@ -122,7 +121,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
     /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
     /// <param name="cancellationToken">Optional <see cref="CancellationToken"/> used to signal this operation should be cancelled.</param>
     /// <returns>A <see cref="Task"/> of type <see cref="ReceiveResponse"/> handling the send operation.</returns>
-    public async send(request: StreamingRequest): Promise<ReceiveResponse> {
+    public async send(request: StreamingRequest): Promise<IReceiveResponse> {
         return this._protocolAdapter.sendRequest(request);
     }
 

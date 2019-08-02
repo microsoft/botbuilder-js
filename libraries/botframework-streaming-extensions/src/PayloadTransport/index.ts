@@ -10,6 +10,5 @@ export * from './PayloadReceiver';
 export * from './PayloadSender';
 export * from './PayloadReceiver';
 export * from './PayloadSender';
-export * from './SendPacket';
 export * from './TransportDisconnectedEventArgs';
 export * from './TransportDisconnectedEventHandler';

@@ -5,12 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IHeader } from '../Models/Header';
+import { IHeader } from '../Interfaces/IHeader';
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
 import { SubscribableStream } from '../SubscribableStream';
 import { ITransportSender } from '../Transport/ITransportSender';
 import { TransportConstants } from '../Transport/TransportConstants';
-import { SendPacket } from './SendPacket';
+import { ISendPacket } from '../Interfaces/ISendPacket';
 import { TransportDisconnectedEventArgs } from './TransportDisconnectedEventArgs';
 import { TransportDisconnectedEventHandler } from './TransportDisconnectedEventHandler';
 
@@ -41,7 +41,8 @@ export class PayloadSender {
     /// <param name="payload">The stream of buffered data to send.</param>
     /// <param name="sentCalback">The function to execute when the send has completed.</param>
     public sendPayload(header: IHeader, payload: SubscribableStream, sentCallback: () => Promise<void>): void {
-        this.writePacket(new SendPacket(header, payload, sentCallback));
+        var packet: ISendPacket = {header: header, payload: payload, sentCallback: sentCallback};
+        this.writePacket(packet);
     }
 
     /// <summary>
@@ -59,7 +60,7 @@ export class PayloadSender {
         }
     }
 
-    private writePacket(packet: SendPacket): void {
+    private writePacket(packet: ISendPacket): void {
         try {
             HeaderSerializer.serialize(packet.header, this.sendHeaderBuffer);
             this.sender.send(this.sendHeaderBuffer);

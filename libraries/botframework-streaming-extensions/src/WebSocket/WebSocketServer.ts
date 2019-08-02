@@ -5,10 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import {
-    IStreamingTransportServer,
-    ProtocolAdapter,
-    ReceiveResponse,
+import {    
+    ProtocolAdapter,    
     RequestHandler,
     StreamingRequest
 } from '..';
@@ -20,6 +18,7 @@ import {
 } from '../PayloadTransport';
 import { ISocket } from './ISocket';
 import { WebSocketTransport } from './WebSocketTransport';
+import { IStreamingTransportServer, IReceiveResponse } from '../Interfaces';
 
 /// <summary>
 /// A server for use with the Bot Framework Protocol V3 with Streaming Extensions and an underlying WebSocket transport.
@@ -71,7 +70,7 @@ export class WebSocketServer implements IStreamingTransportServer {
     /// </summary>
     /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
     /// <returns>A promise of type <see cref="ReceiveResponse"/> handling the send operation.</returns>
-    public async send(request: StreamingRequest): Promise<ReceiveResponse> {
+    public async send(request: StreamingRequest): Promise<IReceiveResponse> {
         return this._protocolAdapter.sendRequest(request);
     }
 

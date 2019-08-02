@@ -6,15 +6,15 @@
  * Licensed under the MIT License.
  */
 import { PayloadAssembler } from './Assemblers/PayloadAssembler';
-import { IHeader } from './Models/Header';
+import { IHeader } from './Interfaces/IHeader';
 import { PayloadAssemblerManager } from './Payloads/PayloadAssemblerManager';
 import { RequestManager } from './Payloads/RequestManager';
 import { SendOperations } from './Payloads/SendOperations';
 import { StreamManager } from './Payloads/StreamManager';
 import { PayloadReceiver } from './PayloadTransport/PayloadReceiver';
 import { PayloadSender } from './PayloadTransport/PayloadSender';
-import { ReceiveRequest } from './ReceiveRequest';
-import { ReceiveResponse } from './ReceiveResponse';
+import { IReceiveRequest } from './Interfaces/IReceiveRequest';
+import { IReceiveResponse } from './Interfaces/IReceiveResponse';
 import { RequestHandler } from './RequestHandler';
 import { SubscribableStream } from './SubscribableStream';
 import { StreamingRequest } from './StreamingRequest';
@@ -43,7 +43,7 @@ export class ProtocolAdapter {
         this.payloadReceiver = receiver;
         this.sendOperations = new SendOperations(this.payloadSender);
         this.streamManager = new StreamManager(this.onCancelStream);
-        this.assemblerManager = new PayloadAssemblerManager(this.streamManager, (id: string, response: ReceiveResponse): Promise<void> => this.onReceiveResponse(id, response), (id: string, request: ReceiveRequest): Promise<void> => this.onReceiveRequest(id, request));
+        this.assemblerManager = new PayloadAssemblerManager(this.streamManager, (id: string, response: IReceiveResponse): Promise<void> => this.onReceiveResponse(id, response), (id: string, request: IReceiveRequest): Promise<void> => this.onReceiveRequest(id, request));
         this.payloadReceiver.subscribe((header: IHeader): SubscribableStream => this.assemblerManager.getPayloadStream(header), (header: IHeader, contentStream: SubscribableStream, contentLength: number): void => this.assemblerManager.onReceive(header, contentStream, contentLength));
     }
 
@@ -52,14 +52,14 @@ export class ProtocolAdapter {
     /// </summary>
     /// <param name="request">The outgoing request to send.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
-    public async sendRequest(request: StreamingRequest): Promise<ReceiveResponse> {
+    public async sendRequest(request: StreamingRequest): Promise<IReceiveResponse> {
         let requestId: string = generateGuid();
         await this.sendOperations.sendRequest(requestId, request);
 
         return this.requestManager.getResponse(requestId);
     }
 
-    private async onReceiveRequest(id: string, request: ReceiveRequest): Promise<void> {
+    private async onReceiveRequest(id: string, request: IReceiveRequest): Promise<void> {
         if (this.requestHandler !== undefined) {
             let response = await this.requestHandler.processRequest(request);
 
@@ -69,7 +69,7 @@ export class ProtocolAdapter {
         }
     }
 
-    private async onReceiveResponse(id: string, response: ReceiveResponse): Promise<void> {
+    private async onReceiveResponse(id: string, response: IReceiveResponse): Promise<void> {
         await this.requestManager.signalResponse(id, response);
     }
 
