@@ -48,24 +48,24 @@ export class ReceiveResponseAssembler extends PayloadAssembler {
     }
 
     private async processResponse(stream: SubscribableStream): Promise<void> {
-        let s: Buffer = stream.read(stream.length) as Buffer;
-        if (!s) {
+        let streamData: Buffer = stream.read(stream.length) as Buffer;
+        if (!streamData) {
             return;
         }
-        let ps = s.toString('utf8');
-        let rp: ResponsePayload = this.responsePayloadfromJson(this.stripBOM(ps));
-        let rr: ReceiveResponse = new ReceiveResponse();
-        rr.StatusCode = rp.statusCode;
+        let streamDataAsString = streamData.toString('utf8');
+        let responsePayload: ResponsePayload = this.responsePayloadfromJson(this.stripBOM(streamDataAsString));
+        let receiveResponse: ReceiveResponse = new ReceiveResponse();
+        receiveResponse.StatusCode = responsePayload.statusCode;
 
-        if (rp.streams) {
-            rp.streams.forEach( (s): void => {
-                let a: ContentStreamAssembler = this._streamManager.getPayloadAssembler(s.id);
-                a.contentType = s.contentType;
-                a.contentLength = s.length;
-                rr.Streams.push(new ContentStream(s.id, a));
+        if (responsePayload.streams) {
+            responsePayload.streams.forEach( (responseStream): void => {
+                let contentAssembler: ContentStreamAssembler = this._streamManager.getPayloadAssembler(responseStream.id);
+                contentAssembler.contentType = responseStream.contentType;
+                contentAssembler.contentLength = responseStream.length;
+                receiveResponse.Streams.push(new ContentStream(responseStream.id, contentAssembler));
             });
         }
 
-        await this._onCompleted(this.id, rr);
+        await this._onCompleted(this.id, receiveResponse);
     }
 }
