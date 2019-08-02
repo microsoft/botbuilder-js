@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ContentStreamAssembler } from '../Assemblers/ContentStreamAssembler';
 import { Header } from '../Models/Header';
 import { SubscribableStream } from '../SubscribableStream';
+import { PayloadAssembler } from '../Assemblers';
 
 export class StreamManager {
     private readonly activeAssemblers = [];
@@ -17,10 +17,10 @@ export class StreamManager {
         this.onCancelStream = onCancelStream;
     }
 
-    public getPayloadAssembler(id: string): ContentStreamAssembler {
+    public getPayloadAssembler(id: string): PayloadAssembler {
         if (this.activeAssemblers[id] === undefined) {
             // A new id has come in, kick off the process of tracking it.
-            let assembler = new ContentStreamAssembler(this, id);
+            let assembler = new PayloadAssembler(this, {id: id});
             this.activeAssemblers[id] = assembler;
 
             return assembler;
@@ -48,7 +48,7 @@ export class StreamManager {
         if (this.activeAssemblers[id] === undefined) {
             return;
         } else {
-            let assembler: ContentStreamAssembler;
+            let assembler: PayloadAssembler;
             assembler = this.activeAssemblers[id];
             this.activeAssemblers.splice(this.activeAssemblers.indexOf(id), 1);
             let targetStream = assembler.getPayloadStream();

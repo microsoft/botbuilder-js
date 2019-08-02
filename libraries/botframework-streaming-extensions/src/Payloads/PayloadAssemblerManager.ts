@@ -7,8 +7,6 @@
  */
 import { SubscribableStream } from '../SubscribableStream';
 import { PayloadAssembler } from '../Assemblers/PayloadAssembler';
-import { ReceiveRequestAssembler } from '../Assemblers/ReceiveRequestAssembler';
-import { ReceiveResponseAssembler } from '../Assemblers/ReceiveResponseAssembler';
 import { StreamManager } from './StreamManager';
 import { Header } from '../Models/Header';
 import { PayloadTypes } from '../Models/PayloadTypes';
@@ -59,10 +57,10 @@ export class PayloadAssemblerManager {
     private createPayloadAssembler(header: Header): PayloadAssembler {
         switch (header.PayloadType) {
             case PayloadTypes.request:
-                return new ReceiveRequestAssembler(header, this.streamManager, this.onReceiveRequest);
+                return new PayloadAssembler(this.streamManager, {header: header, onCompleted: this.onReceiveRequest});
 
             case PayloadTypes.response:
-                return new ReceiveResponseAssembler(header, this.streamManager, this.onReceiveResponse);
+                return new PayloadAssembler(this.streamManager, {header: header, onCompleted: this.onReceiveResponse});
 
             default:
         }

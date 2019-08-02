@@ -5,15 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ContentStreamAssembler } from './Assemblers/ContentStreamAssembler';
 import { SubscribableStream } from './SubscribableStream';
+import { PayloadAssembler } from './Assemblers';
 
 export class ContentStream {
     public id: string;
-    private readonly assembler: ContentStreamAssembler;
+    private readonly assembler: PayloadAssembler;
     private stream: SubscribableStream;
 
-    public constructor(id: string, assembler: ContentStreamAssembler) {
+    public constructor(id: string, assembler: PayloadAssembler) {
         if (assembler === undefined) {
             throw Error('Null Argument Exception');
         }
