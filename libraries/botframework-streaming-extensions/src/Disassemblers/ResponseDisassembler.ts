@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 import { PayloadTypes } from '../Models/PayloadTypes';
-import { ResponsePayload } from '../Models/ResponsePayload';
-import { StreamDescription } from '../Models/StreamDescription';
+import { IResponsePayload } from '../Models/ResponsePayload';
+import { IStreamDescription } from '../Models/StreamDescription';
 import { PayloadSender } from '../PayloadTransport/PayloadSender';
 import { StreamingResponse } from '../StreamingResponse';
 import { PayloadDisassembler } from './PayloadDisassembler';
@@ -24,14 +24,14 @@ export class ResponseDisassembler extends PayloadDisassembler {
     }
 
     public async getStream(): Promise<StreamWrapper> {
-        let payload: ResponsePayload = new ResponsePayload(this.response.statusCode);
+        let payload: IResponsePayload = {statusCode: this.response.statusCode}
 
         if (this.response.streams) {
             payload.streams = [];
 
             for (let i = 0; i < this.response.streams.length; i++) {
                 let contentStream = this.response.streams[i];
-                let description: StreamDescription = await PayloadDisassembler.getStreamDescription(contentStream);
+                let description: IStreamDescription = await PayloadDisassembler.getStreamDescription(contentStream);
                 payload.streams.push(description);
             }
         }

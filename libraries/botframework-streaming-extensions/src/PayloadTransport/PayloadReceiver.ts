@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TransportDisconnectedEventHandler } from '.';
-import { Header } from '../Models/Header';
+import { IHeader } from '../Models/Header';
 import { PayloadTypes } from '../Models/PayloadTypes';
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
 import { SubscribableStream } from '../SubscribableStream';
@@ -20,8 +20,8 @@ export class PayloadReceiver {
     private _receiver: ITransportReceiver;
     private _receiveHeaderBuffer: Buffer;
     private _receivePayloadBuffer: Buffer;
-    private _getStream: (header: Header) => SubscribableStream;
-    private _receiveAction: (header: Header, stream: SubscribableStream, length: number) => void;
+    private _getStream: (header: IHeader) => SubscribableStream;
+    private _receiveAction: (header: IHeader, stream: SubscribableStream, length: number) => void;
 
     /// <summary>
     /// Creates a new instance of the PayloadReceiver class.
@@ -42,7 +42,7 @@ export class PayloadReceiver {
     /// </summary>
     /// <param name="getStream">Callback when a new stream has been received.</param>
     /// <param name="receiveAction">Callback when a new message has been received.</param>
-    public subscribe(getStream: (header: Header) => SubscribableStream, receiveAction: (header: Header, stream: SubscribableStream, count: number) => void): void {
+    public subscribe(getStream: (header: IHeader) => SubscribableStream, receiveAction: (header: IHeader, stream: SubscribableStream, count: number) => void): void {
         this._getStream = getStream;
         this._receiveAction = receiveAction;
     }

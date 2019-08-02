@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Header } from '../Models/Header';
+import { IHeader } from '../Models/Header';
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
 import { SubscribableStream } from '../SubscribableStream';
 import { ITransportSender } from '../Transport/ITransportSender';
@@ -40,7 +40,7 @@ export class PayloadSender {
     /// <param name="header">The header to attach to the outgoing payload.</param>
     /// <param name="payload">The stream of buffered data to send.</param>
     /// <param name="sentCalback">The function to execute when the send has completed.</param>
-    public sendPayload(header: Header, payload: SubscribableStream, sentCallback: () => Promise<void>): void {
+    public sendPayload(header: IHeader, payload: SubscribableStream, sentCallback: () => Promise<void>): void {
         this.writePacket(new SendPacket(header, payload, sentCallback));
     }
 
@@ -67,7 +67,6 @@ export class PayloadSender {
             if (packet.header.PayloadLength > 0 && packet.payload) {
                 let count = packet.header.PayloadLength;
                 while (count > 0) {
-                    // TODO: Min(count, a max chunk size)
                     let chunk = packet.payload.read(count);
                     this.sender.send(chunk);
                     count -= chunk.length;

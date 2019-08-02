@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Header } from '../Models/Header';
+import { IHeader } from '../Models/Header';
 import { SubscribableStream } from '../SubscribableStream';
 import { PayloadAssembler } from '../Assemblers';
 
@@ -30,13 +30,13 @@ export class StreamManager {
         }
     }
 
-    public getPayloadStream(header: Header): SubscribableStream {
+    public getPayloadStream(header: IHeader): SubscribableStream {
         let assembler = this.getPayloadAssembler(header.Id);
 
         return assembler.getPayloadStream();
     }
 
-    public onReceive(header: Header, contentStream: SubscribableStream, contentLength: number): void {
+    public onReceive(header: IHeader, contentStream: SubscribableStream, contentLength: number): void {
         if (this.activeAssemblers[header.Id] === undefined) {
             return;
         } else {

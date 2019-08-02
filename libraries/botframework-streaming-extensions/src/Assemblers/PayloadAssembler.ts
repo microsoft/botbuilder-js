@@ -5,15 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Header } from '../Models/Header';
+import { IHeader } from '../Models/Header';
 import { SubscribableStream } from '../SubscribableStream';
 import { StreamManager } from '../Payloads';
 import { ContentStream } from '../ContentStream';
-import { ResponsePayload, RequestPayload, PayloadTypes } from '../Models';
+import { IResponsePayload, IRequestPayload, PayloadTypes } from '../Models';
 import { ReceiveResponse, ReceiveRequest } from '..';
 
 export interface IAssemblerParams {
-    header?: Header;
+    header?: IHeader;
     id?: string;
     onCompleted?: Function;
 }
@@ -52,7 +52,7 @@ export class PayloadAssembler {
         return this.stream;
     }
 
-    public onReceive(header: Header, stream: SubscribableStream, contentLength: number): void {
+    public onReceive(header: IHeader, stream: SubscribableStream, contentLength: number): void {
         this.end = header.End;
         
         if (header.PayloadType === PayloadTypes.response || header.PayloadType === PayloadTypes.request) {
@@ -101,7 +101,7 @@ export class PayloadAssembler {
 
     private async processResponse(streamDataAsString: string): Promise<void> {
 
-        let responsePayload: ResponsePayload = this.payloadFromJson(this.stripBOM(streamDataAsString));
+        let responsePayload: IResponsePayload = this.payloadFromJson(this.stripBOM(streamDataAsString));
         let receiveResponse: ReceiveResponse = new ReceiveResponse();
         receiveResponse.StatusCode = responsePayload.statusCode;
 
@@ -110,7 +110,7 @@ export class PayloadAssembler {
 
     private async processRequest(streamDataAsString: string): Promise<void> {
 
-        let requestPayload: RequestPayload = this.payloadFromJson(streamDataAsString);
+        let requestPayload: IRequestPayload = this.payloadFromJson(streamDataAsString);
         let receiveRequest: ReceiveRequest = new ReceiveRequest();
         receiveRequest.Path = requestPayload.path;
         receiveRequest.Verb = requestPayload.verb;

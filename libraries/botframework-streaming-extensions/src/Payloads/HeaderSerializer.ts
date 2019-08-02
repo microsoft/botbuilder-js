@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Header } from '../Models/Header';
+import { IHeader } from '../Models/Header';
 
 export class HeaderSerializer {
     public static readonly Delimiter = '.';
@@ -24,7 +24,7 @@ export class HeaderSerializer {
     public static readonly TerminatorOffset = 47;
     public static readonly Encoding = 'utf8';
 
-    public static serialize(header: Header, buffer: Buffer): void {
+    public static serialize(header: IHeader, buffer: Buffer): void {
         buffer.write(header.PayloadType, this.TypeOffset, 1,  this.Encoding);
         buffer.write(this.Delimiter, this.TypeDelimiterOffset, 1, this.Encoding);
         buffer.write(this.headerLengthPadder(header.PayloadLength, this.LengthLength, '0'), this.LengthOffset, this.LengthLength, this.Encoding);
@@ -35,7 +35,7 @@ export class HeaderSerializer {
         buffer.write(this.Terminator, this.TerminatorOffset);
     }
 
-    public static deserialize(buffer: Buffer): Header {
+    public static deserialize(buffer: Buffer): IHeader {
         let jsonBuffer = buffer.toString(this.Encoding);
         let headerArray = jsonBuffer.split(this.Delimiter);
 
@@ -43,11 +43,11 @@ export class HeaderSerializer {
             throw Error('Cannot parse header, header is malformed.');
         }
 
-        let headerPayloadType = headerArray[0];
-        let headerPayloadLength = Number(headerArray[1]);
-        let headerId = headerArray[2];
-        let headerEnd = headerArray[3] === '0\n' ? false : headerArray[3] === '1\n' ? true : undefined;
-        let header = new Header(headerPayloadType, headerPayloadLength, headerId, headerEnd);
+        let headerPayloadType: string = headerArray[0];
+        let headerPayloadLength: number = Number(headerArray[1]);
+        let headerId: string = headerArray[2];
+        let headerEnd: boolean = headerArray[3] === '0\n' ? false : headerArray[3] === '1\n' ? true : undefined;
+        let header: IHeader = { PayloadType: headerPayloadType, PayloadLength: headerPayloadLength, Id: headerId, End: headerEnd };
 
         if (isNaN(header.PayloadLength) || header.PayloadLength === undefined) {
             throw Error('Header Length is missing or malformed.');

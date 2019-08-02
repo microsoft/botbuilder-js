@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Header } from '../Models/Header';
+import { IHeader } from '../Models/Header';
 import { PayloadTypes } from '../Models/PayloadTypes';
 import { PayloadSender } from '../PayloadTransport/PayloadSender';
 
@@ -21,8 +21,7 @@ export class CancelDisassembler {
     }
 
     public disassemble(): void {
-        const header = new Header(this.payloadType, 0, this.id, true);
-
+        const header: IHeader = {PayloadType: this.payloadType, PayloadLength: 0, Id: this.id, End: true};
         this.sender.sendPayload(header, undefined, undefined);
     }
 }

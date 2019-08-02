@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { PayloadAssembler } from './Assemblers/PayloadAssembler';
-import { Header } from './Models/Header';
+import { IHeader } from './Models/Header';
 import { PayloadAssemblerManager } from './Payloads/PayloadAssemblerManager';
 import { RequestManager } from './Payloads/RequestManager';
 import { SendOperations } from './Payloads/SendOperations';
@@ -44,7 +44,7 @@ export class ProtocolAdapter {
         this.sendOperations = new SendOperations(this.payloadSender);
         this.streamManager = new StreamManager(this.onCancelStream);
         this.assemblerManager = new PayloadAssemblerManager(this.streamManager, (id: string, response: ReceiveResponse): Promise<void> => this.onReceiveResponse(id, response), (id: string, request: ReceiveRequest): Promise<void> => this.onReceiveRequest(id, request));
-        this.payloadReceiver.subscribe((header: Header): SubscribableStream => this.assemblerManager.getPayloadStream(header), (header: Header, contentStream: SubscribableStream, contentLength: number): void => this.assemblerManager.onReceive(header, contentStream, contentLength));
+        this.payloadReceiver.subscribe((header: IHeader): SubscribableStream => this.assemblerManager.getPayloadStream(header), (header: IHeader, contentStream: SubscribableStream, contentLength: number): void => this.assemblerManager.onReceive(header, contentStream, contentLength));
     }
 
     /// <summary>

@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 import { HttpContentStream } from '../HttpContentStream';
-import { Header } from '../Models/Header';
+import { IHeader } from '../Models/Header';
 import { PayloadTypes } from '../Models/PayloadTypes';
-import { StreamDescription } from '../Models/StreamDescription';
+import { IStreamDescription } from '../Models/StreamDescription';
 import { PayloadSender } from '../PayloadTransport/PayloadSender';
 import { SubscribableStream } from '../SubscribableStream';
 import { StreamWrapper } from './StreamWrapper';
@@ -25,8 +25,8 @@ export abstract class PayloadDisassembler {
         this.id = id;
     }
 
-    protected static async getStreamDescription(stream: HttpContentStream): Promise<StreamDescription> {
-        let description: StreamDescription = new StreamDescription(stream.id);
+    protected static async getStreamDescription(stream: HttpContentStream): Promise<IStreamDescription> {
+        let description: IStreamDescription = {id: stream.id};
 
         if (stream.content.headers) {
             description.contentType = stream.content.headers.contentType;
@@ -60,7 +60,7 @@ export abstract class PayloadDisassembler {
     }
 
     private async send(): Promise<void> {
-        let header: Header = new Header(this.payloadType, this.streamLength, this.id, true);
+        let header: IHeader ={ PayloadType: this.payloadType, PayloadLength: this.streamLength, Id: this.id, End: true}
         this.sender.sendPayload(header, this.stream, undefined);
     }
 }

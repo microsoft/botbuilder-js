@@ -5,15 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { StreamDescription } from './StreamDescription';
+import { IStreamDescription } from './StreamDescription';
 
-export class RequestPayload {
-    public verb: string;
-    public path: string;
-    public streams: StreamDescription[];
-
-    public constructor(verb: string, path: string) {
-        this.verb = verb;
-        this.path = path;
-    }
+export interface IRequestPayload {
+    verb: string;
+    path: string;
+    streams?: IStreamDescription[];
 }

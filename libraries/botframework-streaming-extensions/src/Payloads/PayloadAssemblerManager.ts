@@ -8,7 +8,7 @@
 import { SubscribableStream } from '../SubscribableStream';
 import { PayloadAssembler } from '../Assemblers/PayloadAssembler';
 import { StreamManager } from './StreamManager';
-import { Header } from '../Models/Header';
+import { IHeader } from '../Models/Header';
 import { PayloadTypes } from '../Models/PayloadTypes';
 
 export class PayloadAssemblerManager {
@@ -23,7 +23,7 @@ export class PayloadAssemblerManager {
         this.onReceiveResponse = onReceiveResponse;
     }
 
-    public getPayloadStream(header: Header): SubscribableStream {
+    public getPayloadStream(header: IHeader): SubscribableStream {
         if (header.PayloadType === PayloadTypes.stream) {
             return this.streamManager.getPayloadStream(header);
         } else {
@@ -40,7 +40,7 @@ export class PayloadAssemblerManager {
         return undefined;
     }
 
-    public onReceive(header: Header, contentStream: SubscribableStream, contentLength: number): void {
+    public onReceive(header: IHeader, contentStream: SubscribableStream, contentLength: number): void {
         if (header.PayloadType === PayloadTypes.stream) {
             this.streamManager.onReceive(header, contentStream, contentLength);
         } else {
@@ -54,7 +54,7 @@ export class PayloadAssemblerManager {
         }
     }
 
-    private createPayloadAssembler(header: Header): PayloadAssembler {
+    private createPayloadAssembler(header: IHeader): PayloadAssembler {
         switch (header.PayloadType) {
             case PayloadTypes.request:
                 return new PayloadAssembler(this.streamManager, {header: header, onCompleted: this.onReceiveRequest});
