@@ -101,7 +101,7 @@ export class LuisClient {
         const localVarPath = this.basePath + '/apps/{appId}'
             .replace('{' + 'appId' + '}', encodeURIComponent(String(appId)));        
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams = (Object as any).assign({}, this.defaultHeaders) as any;
+        let localVarHeaderParams = this.defaultHeaders
         let localVarFormParams: any = {};
 
         // verify required parameter 'q' is not null or undefined
@@ -114,7 +114,7 @@ export class LuisClient {
             throw new Error('Required parameter appId was null or undefined when calling predictionResolve.');
         }
 
-        if (options.customHeaders === null || options.customHeaders === undefined) {
+        if (!options.customHeaders) {
             options.customHeaders = {headers: {}}
         }
 
@@ -142,7 +142,7 @@ export class LuisClient {
             localVarQueryParameters['log'] = ObjectSerializer.serialize(options.log, 'boolean');
         }
 
-        (Object as any).assign(localVarHeaderParams, options.customHeaders.headers);
+        Object.assign(localVarHeaderParams, options.customHeaders.headers);
 
         let localVarUseFormData = false;
 
