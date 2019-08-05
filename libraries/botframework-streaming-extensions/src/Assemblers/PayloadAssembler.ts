@@ -21,7 +21,6 @@ export class PayloadAssembler {
     private readonly _streamManager: StreamManager;
 
     public constructor(streamManager: StreamManager, params: IAssemblerParams) {
-        console.log("New PayloadAssembler created. 1: " + params.header + " 2: " + params.id + " 3: " +params.onCompleted);
         if(params.header !== undefined){
             this.id = params.header.Id;
             this.payloadType = params.header.PayloadType;
