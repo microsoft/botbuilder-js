@@ -10,7 +10,6 @@
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/node": "^10.12.18",
-    "@types/ws": "^6.0.1",
     "chai": "^4.2.0",
     "nyc": "^11.4.1",
     "ts-node": "^4.1.0",
