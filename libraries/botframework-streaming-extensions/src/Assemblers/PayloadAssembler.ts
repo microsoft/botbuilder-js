@@ -5,17 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IHeader } from '../Interfaces/IHeader';
 import { SubscribableStream } from '../SubscribableStream';
 import { StreamManager, PayloadTypes } from '../Payloads';
 import { ContentStream } from '../ContentStream';
-import { IResponsePayload, IRequestPayload, IReceiveResponse, IReceiveRequest } from '../Interfaces';
-
-export interface IAssemblerParams {
-    header?: IHeader;
-    id?: string;
-    onCompleted?: Function;
-}
+import { IAssemblerParams, IHeader, IResponsePayload, IRequestPayload, IReceiveResponse, IReceiveRequest } from '../Interfaces';
 
 export class PayloadAssembler {
     public id: string;
@@ -28,6 +21,7 @@ export class PayloadAssembler {
     private readonly _streamManager: StreamManager;
 
     public constructor(streamManager: StreamManager, params: IAssemblerParams) {
+        console.log("New PayloadAssembler created. 1: " + params.header + " 2: " + params.id + " 3: " +params.onCompleted);
         if(params.header !== undefined){
             this.id = params.header.Id;
             this.payloadType = params.header.PayloadType;

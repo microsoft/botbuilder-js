@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+export * from './IAssemblerParams'
 export * from './IHeader';
 export * from './IReceiveRequest';
 export * from './IReceiveResponse';
