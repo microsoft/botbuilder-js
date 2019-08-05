@@ -28,12 +28,8 @@ export class NamedPipeConnector {
     /// <param name="bot">The bot to use when processing requests on this connection.</param>
     /// <param name="logger">Optional logger.</param>
     /// <param name="middleware">Optional collection of middleware.</param>
-    public constructor(bot: ActivityHandler, logger?, pipeName?: string, middleWare?: (MiddlewareHandler|Middleware)[]) {
-        if (bot === undefined) {
-            throw new Error('Undefined Argument: Bot can not be undefined.');
-        } else {
-            this.bot = bot;
-        }
+    public constructor(bot: ActivityHandler, logger?, pipeName?: string, middleWare?: (MiddlewareHandler|Middleware)[]) {        
+        this.bot = bot;        
 
         if (logger === undefined) {
             this.logger = console;

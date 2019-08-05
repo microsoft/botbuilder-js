@@ -6,11 +6,10 @@
  * Licensed under the MIT License.
  */
 import { PayloadTypes } from '../Payloads/PayloadTypes';
-import { IResponsePayload } from '../Interfaces/IResponsePayload';
+import { IResponsePayload, IStreamWrapper } from '../Interfaces';
 import { PayloadSender } from '../PayloadTransport/PayloadSender';
 import { StreamingResponse } from '../StreamingResponse';
 import { PayloadDisassembler } from './PayloadDisassembler';
-import { IStreamWrapper } from '../Interfaces/IStreamWrapper';
 
 export class ResponseDisassembler extends PayloadDisassembler {
     public readonly response: StreamingResponse;
