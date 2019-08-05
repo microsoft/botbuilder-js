@@ -15,7 +15,7 @@ export class NamedPipeConnector {
     we're unable to change it without coordinated updates to DL ASE, which we
     currently are unable to perform.
 */
-    private readonly defaultPipeName = 'bfv4.pipes';
+    private static readonly defaultPipeName = 'bfv4.pipes';
     private readonly pipeName: string;
     private readonly logger;
     private readonly bot: ActivityHandler;
@@ -28,19 +28,10 @@ export class NamedPipeConnector {
     /// <param name="bot">The bot to use when processing requests on this connection.</param>
     /// <param name="logger">Optional logger.</param>
     /// <param name="middleware">Optional collection of middleware.</param>
-    public constructor(bot: ActivityHandler, logger?, pipeName?: string, middleWare?: (MiddlewareHandler|Middleware)[]) {        
+    public constructor(bot: ActivityHandler, logger = console, pipeName = NamedPipeConnector.defaultPipeName, middleWare?: (MiddlewareHandler|Middleware)[]) {        
         this.bot = bot;        
-
-        if (logger === undefined) {
-            this.logger = console;
-        }
-
-        if (pipeName === undefined) {
-            this.pipeName = this.defaultPipeName;
-        } else {
-            this.pipeName = pipeName;
-        }
-
+        this.logger = logger;
+        this.pipeName = pipeName;
         this.middleWare = middleWare;
     }
 
