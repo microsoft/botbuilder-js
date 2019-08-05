@@ -24,10 +24,12 @@
     "botbuilder-core": "~4.5.1",
     "botframework-connector": "~4.5.1",
     "botframework-schema": "~4.5.1",
-    "node": "^12.3.1",
     "promise.prototype.finally": "^3.1.0",
     "uuid": "^3.3.2",
     "watershed": "^0.4.0"
+  },
+  "engines": {
+    "node": ">12.3"
   },
   "scripts": {
     "test": "tsc && nyc mocha tests/",
