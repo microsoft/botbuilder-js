@@ -12,17 +12,17 @@ export class StreamingRequest {
     /// <summary>
     /// Request verb, null on responses
     /// </summary>
-    public Verb: string;
+    public verb: string;
 
     /// <summary>
     /// Request path; null on responses
     /// </summary>
-    public Path: string;
+    public path: string;
 
     /// <summary>
     /// List of associated streams
     /// </summary>
-    public Streams: HttpContentStream[];
+    public streams: HttpContentStream[];
 
     /// <summary>
     /// Creates a <see cref="StreamingRequest"/> with the passed in method, path, and body.
@@ -33,8 +33,8 @@ export class StreamingRequest {
     /// <returns>On success returns a <see cref="StreamingRequest"/> with appropriate status code and body.</returns>
     public static create(method: string, route?: string, body?: HttpContent): StreamingRequest {
         let request = new StreamingRequest();
-        request.Verb = method;
-        request.Path = route;
+        request.verb = method;
+        request.path = route;
         if (body) {
             request.setBody(body);
         }
@@ -50,10 +50,10 @@ export class StreamingRequest {
         if (!content) {
             throw new Error('Argument Undefined Exception: content undefined.');
         }
-        if (!this.Streams) {
-            this.Streams = [];
+        if (!this.streams) {
+            this.streams = [];
         }
-        this.Streams.push(new HttpContentStream(content));
+        this.streams.push(new HttpContentStream(content));
     }
 
     /// <summary>

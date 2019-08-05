@@ -12,6 +12,7 @@ import { IStreamDescription } from '../Interfaces/IStreamDescription';
 import { PayloadSender } from '../PayloadTransport/PayloadSender';
 import { SubscribableStream } from '../SubscribableStream';
 import { IStreamWrapper } from '../Interfaces/IStreamWrapper';
+import { serializeObject } from '@azure/ms-rest-js';
 
 export abstract class PayloadDisassembler {
     public abstract payloadType: PayloadTypes;
@@ -25,7 +26,7 @@ export abstract class PayloadDisassembler {
         this.id = id;
     }
 
-    protected static async getStreamDescription(stream: HttpContentStream): Promise<IStreamDescription> {
+    protected static getStreamDescription(stream: HttpContentStream): IStreamDescription {
         let description: IStreamDescription = {id: stream.id};
 
         if (stream.content.headers) {
@@ -46,6 +47,15 @@ export abstract class PayloadDisassembler {
         stream.end();
 
         return {stream: stream, streamLength: stream.length};
+    }
+
+    public DescribePayloadStreams(streams: HttpContentStream[]): IStreamDescription[] {
+        let result: IStreamDescription[] = [];
+        streams.forEach((stream) => {
+            result.push(PayloadDisassembler.getStreamDescription(stream));
+        });
+        
+        return result;
     }
 
     public abstract async getStream(): Promise<IStreamWrapper>;

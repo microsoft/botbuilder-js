@@ -26,8 +26,8 @@ export class SendOperations {
 
         await disassembler.disassemble();
 
-        if (request.Streams) {
-            request.Streams.forEach(async (contentStream): Promise<void> => {
+        if (request.streams) {
+            request.streams.forEach(async (contentStream): Promise<void> => {
                 await new HttpContentStreamDisassembler(this.payloadSender, contentStream).disassemble();
             });
         }

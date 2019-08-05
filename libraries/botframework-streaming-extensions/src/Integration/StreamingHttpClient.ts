@@ -25,7 +25,7 @@ export class StreamingHttpClient implements HttpClient {
     /// <returns>The streaming transport compatible response to send back to the client.</returns>
     public async sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse> {
         const request = this.mapHttpRequestToProtocolRequest(httpRequest);
-        request.Path = request.Path.substring(request.Path.indexOf('/v3'));
+        request.path = request.path.substring(request.path.indexOf('/v3'));
         const res = await this.server.send(request);
 
         return {

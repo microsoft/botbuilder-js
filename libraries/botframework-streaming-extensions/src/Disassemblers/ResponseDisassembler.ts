@@ -7,7 +7,6 @@
  */
 import { PayloadTypes } from '../Payloads/PayloadTypes';
 import { IResponsePayload } from '../Interfaces/IResponsePayload';
-import { IStreamDescription } from '../Interfaces/IStreamDescription';
 import { PayloadSender } from '../PayloadTransport/PayloadSender';
 import { StreamingResponse } from '../StreamingResponse';
 import { PayloadDisassembler } from './PayloadDisassembler';
@@ -25,17 +24,9 @@ export class ResponseDisassembler extends PayloadDisassembler {
 
     public async getStream(): Promise<IStreamWrapper> {
         let payload: IResponsePayload = {statusCode: this.response.statusCode}
-
         if (this.response.streams) {
-            payload.streams = [];
-
-            for (let i = 0; i < this.response.streams.length; i++) {
-                let contentStream = this.response.streams[i];
-                let description: IStreamDescription = await PayloadDisassembler.getStreamDescription(contentStream);
-                payload.streams.push(description);
-            }
+            payload.streams = this.DescribePayloadStreams(this.response.streams);
         }
-
         return PayloadDisassembler.serialize(payload);
     }
 }
