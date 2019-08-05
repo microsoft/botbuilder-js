@@ -6,7 +6,7 @@ This library contains the core of Bot Framework Streaming Extensions, which exte
 - [Report Issues](https://github.com/Microsoft/botbuilder-js/issues)
 
 ## Installing
-To add the latset published version of this package to your bot:
+To add the latest published version of this package to your bot:
 
 ```bash
 npm install --save botframework-streaming-extensions

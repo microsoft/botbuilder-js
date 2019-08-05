@@ -42,36 +42,20 @@ export class ContentStream {
     }
 
     public async readAsString(): Promise<string> {
-        let obj = await this.readAll();
-        let allData = obj['bufferArray'];
-        let s = '';
+        let record = await this.readAll();
+        let allData = record.bufferArray;
+        let stringResult = '';
         for (let i = 0; i < allData.length; i++) {
-            s += allData[i].toString('utf8');
+            stringResult += allData[i].toString('utf8');
         }
 
-        return s;
-    }
-
-    public async readAsBuffer(): Promise<Buffer> {
-    // do a read-all
-        let obj = await this.readAll();
-        let allData = obj['bufferArray'];
-        let count = obj['size'];
-        let s = Buffer.alloc(count);
-        let ptr = 0;
-        for (let i = 0; i < allData.length; i++) {
-            for (let j = 0 ; j < allData[i].length; j++) {
-                s[ptr++] = allData[i][j];
-            }
-        }
-
-        return s;
+        return stringResult;
     }
 
     public async readAsJson<T>(): Promise<T> {
-        let s = await this.readAsString();
+        let stringToParse = await this.readAsString();
         try {
-            return <T>JSON.parse(s);
+            return <T>JSON.parse(stringToParse);
         } catch (error) {
             throw error;
         }
