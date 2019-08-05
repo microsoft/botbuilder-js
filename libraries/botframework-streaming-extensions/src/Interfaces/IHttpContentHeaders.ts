@@ -6,4 +6,7 @@
  * Licensed under the MIT License.
  */
 
-export * from './TransportConstants';
+export interface IHttpContentHeaders {
+    contentType?: string;
+    contentLength?: number;
+}

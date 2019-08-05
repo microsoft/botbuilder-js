@@ -5,12 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IHeader } from '../Interfaces/IHeader';
+
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
 import { SubscribableStream } from '../SubscribableStream';
-import { ITransportSender } from '../Transport/ITransportSender';
 import { TransportConstants } from '../Transport/TransportConstants';
-import { ISendPacket } from '../Interfaces/ISendPacket';
+import { IHeader, ISendPacket, ITransportSender } from '../Interfaces';
 import { TransportDisconnectedEventArgs } from './TransportDisconnectedEventArgs';
 import { TransportDisconnectedEventHandler } from './TransportDisconnectedEventHandler';
 

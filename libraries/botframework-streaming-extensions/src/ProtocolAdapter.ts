@@ -6,15 +6,13 @@
  * Licensed under the MIT License.
  */
 import { PayloadAssembler } from './Assemblers/PayloadAssembler';
-import { IHeader } from './Interfaces/IHeader';
+import { IHeader, IReceiveRequest, IReceiveResponse } from './Interfaces';
 import { PayloadAssemblerManager } from './Payloads/PayloadAssemblerManager';
 import { RequestManager } from './Payloads/RequestManager';
 import { SendOperations } from './Payloads/SendOperations';
 import { StreamManager } from './Payloads/StreamManager';
 import { PayloadReceiver } from './PayloadTransport/PayloadReceiver';
 import { PayloadSender } from './PayloadTransport/PayloadSender';
-import { IReceiveRequest } from './Interfaces/IReceiveRequest';
-import { IReceiveResponse } from './Interfaces/IReceiveResponse';
 import { RequestHandler } from './RequestHandler';
 import { SubscribableStream } from './SubscribableStream';
 import { StreamingRequest } from './StreamingRequest';

@@ -7,6 +7,7 @@
  */
 import { SubscribableStream } from './SubscribableStream';
 import { generateGuid } from './Utilities/protocol-base';
+import { IHttpContentHeaders } from './Interfaces';
 
 export class HttpContentStream {
     public readonly id: string;
@@ -31,14 +32,4 @@ export class HttpContent {
     public getStream(): SubscribableStream {
         return this.stream;
     }
-}
-
-export interface IHttpContentHeaders {
-    contentType?: string;
-    contentLength?: number;
-}
-
-export class HttpContentHeaders implements IHttpContentHeaders {
-    public contentType?: string;
-    public contentLength?: number;
 }

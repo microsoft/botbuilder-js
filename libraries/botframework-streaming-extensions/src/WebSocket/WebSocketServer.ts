@@ -16,7 +16,7 @@ import {
     PayloadSender,
     TransportDisconnectedEventArgs
 } from '../PayloadTransport';
-import { ISocket } from './ISocket';
+import { ISocket } from '../Interfaces/ISocket';
 import { WebSocketTransport } from './WebSocketTransport';
 import { IStreamingTransportServer, IReceiveResponse } from '../Interfaces';
 
