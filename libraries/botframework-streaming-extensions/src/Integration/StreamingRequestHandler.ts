@@ -5,34 +5,35 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import {
-    BotFrameworkAdapterSettings,
-    InvokeResponse,
-    BotFrameworkAdapter
-} from 'botbuilder';
-import {
-    ActivityHandler,
-    Middleware,
-    MiddlewareHandler,
-    TurnContext
-} from 'botbuilder-core';
-import {
-    Activity,
-    ActivityTypes
-} from 'botframework-schema';
+import { BotFrameworkAdapterSettings, InvokeResponse, BotFrameworkAdapter } from 'botbuilder';
+import { ActivityHandler, Middleware, MiddlewareHandler, TurnContext } from 'botbuilder-core';
+import { ConnectorClient } from 'botframework-connector';
+import { Activity, ActivityTypes } from 'botframework-schema';
 import * as os from 'os';
 import { NamedPipeServer, RequestHandler, StreamingResponse, WebSocketServer, StreamingHttpClient } from '..';
-const pjson: any = require('../../package.json');
 import { ISocket } from '../WebSocket';
-import { ConnectorClient } from 'botframework-connector';
 import { IStreamingTransportServer, IReceiveRequest } from '../Interfaces';
+
+const pjson: any = require('../../package.json');
+const OK:number = 200;
+const BAD_REQUEST:number = 400;
+const NOT_FOUND:number = 404;
+const METHOD_NOT_ALLOWED:number = 405;
+const INTERNAL_SERVER_ERROR:number = 500;
+const NOT_IMPLEMENTED:number = 501;
+const VERSION_PATH:string = '/api/version';
+const MESSAGES_PATH:string = '/api/messages';
+const INVOKE_RESPONSE:string = 'BotFrameworkStreamingAdapter.InvokeResponse';
+const GET:string = 'GET';
+const POST:string = 'POST';
+let USER_AGENT:string;
+
 
 /// <summary>
 /// Used to process incoming requests sent over an <see cref="IStreamingTransport"/> and adhering to the Bot Framework Protocol v3 with Streaming Extensions.
 /// </summary>
 export class StreamingRequestHandler extends BotFrameworkAdapter implements RequestHandler {
     public bot: ActivityHandler;
-    public adapterSettings: BotFrameworkAdapterSettings;
     public logger;
     public server: IStreamingTransportServer;
     public middleWare: (MiddlewareHandler|Middleware)[];
@@ -48,28 +49,11 @@ export class StreamingRequestHandler extends BotFrameworkAdapter implements Requ
     /// <param name="logger">Optional logger, defaults to console.</param>
     /// <param name="settings">The settings for use with the BotFrameworkAdapter.</param>
     /// <param name="middlewareSet">An optional set of middleware to register with the adapter.</param>
-    public constructor(bot: ActivityHandler, logger?, settings?: BotFrameworkAdapterSettings, middleWare?: (MiddlewareHandler|Middleware)[]) {
+    public constructor(bot: ActivityHandler, logger = console, settings?: BotFrameworkAdapterSettings, middleWare: (MiddlewareHandler|Middleware)[] = []) {
         super(settings);
-
-        if (bot === undefined) {
-            throw new Error('Undefined Argument: Bot can not be undefined.');
-        } else {
-            this.bot = bot;
-        }
-
-        if (logger === undefined) {
-            this.logger = console;
-        } else {
-            this.logger = logger;
-        }
-
-        this.adapterSettings = settings;
-
-        if(middleWare === undefined) {
-            this.middleWare = [];
-        } else {
-            this.middleWare = middleWare;
-        }        
+        this.bot = bot;
+        this.logger = logger;
+        this.middleWare = middleWare;        
     }
 
     /// <summary>
@@ -116,34 +100,34 @@ export class StreamingRequestHandler extends BotFrameworkAdapter implements Requ
         let response = new StreamingResponse();
         let body = await this.readRequestBodyAsString(request);
         if (body === undefined || request.Streams === undefined) {
-            response.statusCode = 400;
+            response.statusCode = BAD_REQUEST;
             this.logger.log('Request missing body and/or streams.');
 
             return response;
         }
 
         if (!request || !request.Verb || !request.Path) {
-            response.statusCode = 400;
+            response.statusCode = BAD_REQUEST;
             this.logger.log('Request missing verb and/or path.');
 
             return response;
         }
 
-        if (request.Verb.toLocaleUpperCase() === 'GET' && request.Path.toLocaleLowerCase() === '/api/version') {
-            response.statusCode = 200;
+        if (request.Verb.toLocaleUpperCase() === GET && request.Path.toLocaleLowerCase() === VERSION_PATH) {
+            response.statusCode = OK;
             response.setBody(this.getUserAgent());
 
             return response;
         }
 
-        if (request.Verb.toLocaleUpperCase() !== 'POST') {
-            response.statusCode = 405;
+        if (request.Verb.toLocaleUpperCase() !== POST) {
+            response.statusCode = METHOD_NOT_ALLOWED;
 
             return response;
         }
 
-        if (request.Path.toLocaleLowerCase() !== '/api/messages') {
-            response.statusCode = 404;
+        if (request.Path.toLocaleLowerCase() !== MESSAGES_PATH) {
+            response.statusCode = NOT_FOUND;
 
             return response;
         }
@@ -160,20 +144,20 @@ export class StreamingRequestHandler extends BotFrameworkAdapter implements Requ
             });
 
             if (activity.type === ActivityTypes.Invoke) {
-                let invokeResponse: any = context.turnState.get('BotFrameworkStreamingAdapter.InvokeResponse');
+                let invokeResponse: any = context.turnState.get(INVOKE_RESPONSE);
 
                 if (invokeResponse && invokeResponse.value) {
                     const value: InvokeResponse = invokeResponse.value;
                     response.statusCode = value.status;
                     response.setBody(value.body);
                 } else {
-                    response.statusCode = 501;
+                    response.statusCode = NOT_IMPLEMENTED;
                 }
             } else {
-                response.statusCode = 200;
+                response.statusCode = OK;
             }
         } catch (error) {
-            response.statusCode = 500;
+            response.statusCode = INTERNAL_SERVER_ERROR;
             this.logger.log(error);
 
             return response;
@@ -197,12 +181,16 @@ export class StreamingRequestHandler extends BotFrameworkAdapter implements Requ
     }
 
     private getUserAgent(): string {
+        if(USER_AGENT){
+            return USER_AGENT;
+        }
         const ARCHITECTURE: any = os.arch();
         const TYPE: any = os.type();
         const RELEASE: any = os.release();
         const NODE_VERSION: any = process.version;
-
-        return `Microsoft-BotFramework/3.1 BotBuilder/${ pjson.version } ` +
+        USER_AGENT = `Microsoft-BotFramework/3.1 BotBuilder/${ pjson.version } ` +
         `(Node.js,Version=${ NODE_VERSION }; ${ TYPE } ${ RELEASE }; ${ ARCHITECTURE })`;
+
+        return USER_AGENT;
     }
 }
