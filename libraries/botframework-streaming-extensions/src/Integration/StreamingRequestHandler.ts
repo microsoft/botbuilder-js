@@ -14,20 +14,24 @@ import { NamedPipeServer, RequestHandler, StreamingResponse, WebSocketServer, St
 import { ISocket } from '../WebSocket';
 import { IStreamingTransportServer, IReceiveRequest } from '../Interfaces';
 
+export enum StatusCodes {
+    OK = 200,
+    BAD_REQUEST = 400,
+    UNAUTHORIZED = 401,
+    NOT_FOUND = 404,
+    METHOD_NOT_ALLOWED = 405,
+    UPGRADE_REQUIRED = 426,
+    INTERNAL_SERVER_ERROR = 500,
+    NOT_IMPLEMENTED = 501,
+}
+
 const pjson: any = require('../../package.json');
-const OK:number = 200;
-const BAD_REQUEST:number = 400;
-const NOT_FOUND:number = 404;
-const METHOD_NOT_ALLOWED:number = 405;
-const INTERNAL_SERVER_ERROR:number = 500;
-const NOT_IMPLEMENTED:number = 501;
 const VERSION_PATH:string = '/api/version';
 const MESSAGES_PATH:string = '/api/messages';
 const INVOKE_RESPONSE:string = 'BotFrameworkStreamingAdapter.InvokeResponse';
 const GET:string = 'GET';
 const POST:string = 'POST';
 let USER_AGENT:string;
-
 
 /// <summary>
 /// Used to process incoming requests sent over an <see cref="IStreamingTransport"/> and adhering to the Bot Framework Protocol v3 with Streaming Extensions.
@@ -100,34 +104,34 @@ export class StreamingRequestHandler extends BotFrameworkAdapter implements Requ
         let response = new StreamingResponse();
         let body = await this.readRequestBodyAsString(request);
         if (body === undefined || request.Streams === undefined) {
-            response.statusCode = BAD_REQUEST;
+            response.statusCode = StatusCodes.BAD_REQUEST;
             this.logger.log('Request missing body and/or streams.');
 
             return response;
         }
 
         if (!request || !request.Verb || !request.Path) {
-            response.statusCode = BAD_REQUEST;
+            response.statusCode = StatusCodes.BAD_REQUEST;
             this.logger.log('Request missing verb and/or path.');
 
             return response;
         }
 
         if (request.Verb.toLocaleUpperCase() === GET && request.Path.toLocaleLowerCase() === VERSION_PATH) {
-            response.statusCode = OK;
+            response.statusCode = StatusCodes.OK;
             response.setBody(this.getUserAgent());
 
             return response;
         }
 
         if (request.Verb.toLocaleUpperCase() !== POST) {
-            response.statusCode = METHOD_NOT_ALLOWED;
+            response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
 
             return response;
         }
 
         if (request.Path.toLocaleLowerCase() !== MESSAGES_PATH) {
-            response.statusCode = NOT_FOUND;
+            response.statusCode = StatusCodes.NOT_FOUND;
 
             return response;
         }
@@ -151,13 +155,13 @@ export class StreamingRequestHandler extends BotFrameworkAdapter implements Requ
                     response.statusCode = value.status;
                     response.setBody(value.body);
                 } else {
-                    response.statusCode = NOT_IMPLEMENTED;
+                    response.statusCode = StatusCodes.NOT_IMPLEMENTED;
                 }
             } else {
-                response.statusCode = OK;
+                response.statusCode = StatusCodes.OK;
             }
         } catch (error) {
-            response.statusCode = INTERNAL_SERVER_ERROR;
+            response.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
             this.logger.log(error);
 
             return response;

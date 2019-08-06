@@ -5,22 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import {
-    BotFrameworkAdapterSettings,
-    WebRequest
-} from 'botbuilder';
-import {
-    ActivityHandler,
-    Middleware,
-    MiddlewareHandler
-} from 'botbuilder-core';
-import {
-    JwtTokenValidation,
-    MicrosoftAppCredentials,
-    SimpleCredentialProvider
-} from 'botframework-connector';
+import { BotFrameworkAdapterSettings, WebRequest } from 'botbuilder';
+import { ActivityHandler, Middleware, MiddlewareHandler } from 'botbuilder-core';
+import { JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider } from 'botframework-connector';
 import { Watershed } from 'watershed';
-import { StreamingRequestHandler } from './StreamingRequestHandler';
+import { StreamingRequestHandler, StatusCodes } from './StreamingRequestHandler';
 import { NodeWebSocket } from '..';
 
 export class WebSocketConnector {
@@ -35,17 +24,9 @@ export class WebSocketConnector {
     /// <param name="bot">The bot to use when processing requests on this connection.</param>
     /// <param name="logger">Optional logger.</param>
     /// <param name="middleware">Optional collection of middleware.</param>
-    public constructor(bot: ActivityHandler, logger?, middleWare?: (MiddlewareHandler|Middleware)[]) {
-        if (bot === undefined) {
-            throw new Error('Undefined Argument: Bot can not be undefined.');
-        } else {
-            this.bot = bot;
-        }
-
-        if (logger === undefined) {
-            this.logger = console;
-        }
-
+    public constructor(bot: ActivityHandler, logger = console, middleWare: (MiddlewareHandler|Middleware)[] = []) {       
+        this.bot = bot;
+        this.logger = logger;
         this.middleWare = middleWare;
     }
 
@@ -59,7 +40,7 @@ export class WebSocketConnector {
         if (!res.claimUpgrade) {
             let e = new Error('Upgrade to WebSockets required.');
             this.logger.log(e);
-            res.status(426);
+            res.status(StatusCodes.UPGRADE_REQUIRED);
             res.send(e.message);
 
             return;
@@ -68,7 +49,7 @@ export class WebSocketConnector {
         if (req === undefined) {
             let e = new Error('Argument Null Exception: Request cannot be undefined.');
             this.logger.log(e);
-            res.status(400);
+            res.status(StatusCodes.BAD_REQUEST);
             res.send(e.message);
 
             return;
@@ -77,7 +58,7 @@ export class WebSocketConnector {
         if (res === undefined) {
             let e = new Error('Argument Null Exception: Response cannot be undefined.');
             this.logger.log(e);
-            res.status(400);
+            res.status(StatusCodes.BAD_REQUEST);
             res.send(e.message);
 
             return;
@@ -86,7 +67,7 @@ export class WebSocketConnector {
         const authenticated = await this.authenticateConnection(req, settings.appId, settings.appPassword, settings.channelService);
         if (!authenticated) {
             this.logger.log('Unauthorized connection attempt.');
-            res.status(401);
+            res.status(StatusCodes.UNAUTHORIZED);
 
             return;
         }
