@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "commonjs",
     "declaration": true,
+    "esModuleInterop": true,
     "sourceMap": true,
+    "module": "commonjs",
     "outDir": "./lib",
     "rootDir": "./src",
+    "target": "ESNext",
     "types" : ["node"]
   },
   "include": [
