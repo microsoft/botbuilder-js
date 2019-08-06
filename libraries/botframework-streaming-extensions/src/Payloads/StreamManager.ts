@@ -48,8 +48,7 @@ export class StreamManager {
         if (this.activeAssemblers[id] === undefined) {
             return;
         } else {
-            let assembler: PayloadAssembler;
-            assembler = this.activeAssemblers[id];
+            let assembler: PayloadAssembler = this.activeAssemblers[id];
             this.activeAssemblers.splice(this.activeAssemblers.indexOf(id), 1);
             let targetStream = assembler.getPayloadStream();
             if ((assembler.contentLength !== undefined

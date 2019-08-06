@@ -12,7 +12,6 @@ import { IStreamDescription } from '../Interfaces/IStreamDescription';
 import { PayloadSender } from '../PayloadTransport/PayloadSender';
 import { SubscribableStream } from '../SubscribableStream';
 import { IStreamWrapper } from '../Interfaces/IStreamWrapper';
-import { serializeObject } from '@azure/ms-rest-js';
 
 export abstract class PayloadDisassembler {
     public abstract payloadType: PayloadTypes;
