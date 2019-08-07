@@ -98,8 +98,8 @@ export class LuisClient {
      * @returns Promise<LuisResult>
      */
     public async predictionResolvePost(query: string, appId: string, options: PredictionResolveOptionalParams): Promise<LuisResult> {
-        const localVarPath = this.basePath + '/apps/{appId}'
-            .replace('{' + 'appId' + '}', encodeURIComponent(String(appId)));        
+        const path = require('path');
+        const localVarPath = path.join(this.basePath, `/apps/${String(appId)}`)     
         let localVarQueryParameters: any = {};
         let localVarHeaderParams = this.defaultHeaders
         let localVarFormParams: any = {};
@@ -200,8 +200,8 @@ export class LuisClient {
      * @returns Promise<LuisResult>
      */
     public async predictionResolveGet(appId: string, query: string, options: PredictionResolveOptionalParams): Promise<LuisResult> {
-        const localVarPath = this.basePath + '/apps/{appId}'
-            .replace('{' + 'appId' + '}', encodeURIComponent(String(appId)));
+        const path = require('path');
+        const localVarPath = path.join(this.basePath, `/apps/${String(appId)}`)        
         let localVarQueryParameters: any = {};
         let localVarHeaderParams = (Object as any).assign({}, this.defaultHeaders) as any;
         let localVarFormParams: any = {};
