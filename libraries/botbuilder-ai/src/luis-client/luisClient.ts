@@ -90,6 +90,15 @@ export class LuisClient {
         (this.authentications as any)[LuisApikeys[key]].apiKey = value;
     }
 
+    /** 
+     * Returns the local URL
+     * @param appId The appId.
+     * @returns String
+    */
+    private getLocalURL(appId: string): string {
+        return this.basePath + '/apps/' + encodeURIComponent(appId); 
+    }
+
     /**
      * Gets predictions for a given utterance, in the form of intents and entities. The current maximum query size is 500 characters.
      * @param query The utterance to predict.
@@ -98,8 +107,8 @@ export class LuisClient {
      * @returns Promise<LuisResult>
      */
     public async predictionResolvePost(query: string, appId: string, options: PredictionResolveOptionalParams): Promise<LuisResult> {
-        const path = require('path');
-        const localVarPath = path.join(this.basePath, `/apps/${String(appId)}`)     
+        const localVarPath = this.getLocalURL(appId);
+
         let localVarQueryParameters: any = {};
         let localVarHeaderParams = this.defaultHeaders
         let localVarFormParams: any = {};
@@ -200,8 +209,8 @@ export class LuisClient {
      * @returns Promise<LuisResult>
      */
     public async predictionResolveGet(appId: string, query: string, options: PredictionResolveOptionalParams): Promise<LuisResult> {
-        const path = require('path');
-        const localVarPath = path.join(this.basePath, `/apps/${String(appId)}`)        
+        const localVarPath = this.getLocalURL(appId);
+
         let localVarQueryParameters: any = {};
         let localVarHeaderParams = (Object as any).assign({}, this.defaultHeaders) as any;
         let localVarFormParams: any = {};
