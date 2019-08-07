@@ -104,7 +104,7 @@ export class LuisClient {
         let localVarHeaderParams = this.defaultHeaders
         let localVarFormParams: any = {};
 
-        // verify required parameter 'q' is not null or undefined
+        // verify required parameter 'query' is not null or undefined
         if (query === null || query === undefined) {
             throw new Error('Required parameter q was null or undefined when calling predictionResolve.');
         }
@@ -211,7 +211,7 @@ export class LuisClient {
             throw new Error('Required parameter appId was null or undefined when calling predictionResolve2.');
         }
 
-        // verify required parameter 'q' is not null or undefined
+        // verify required parameter 'query' is not null or undefined
         if (query === null || query === undefined) {
             throw new Error('Required parameter q was null or undefined when calling predictionResolve2.');
         }
