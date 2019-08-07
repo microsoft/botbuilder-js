@@ -10,7 +10,7 @@ import { PayloadTypes } from '../Payloads/PayloadTypes';
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
 import { SubscribableStream } from '../SubscribableStream';
 import { IHeader, ITransportReceiver } from '../Interfaces';
-import { TransportConstants } from '../Transport/TransportConstants';
+import { PayloadConstants } from '../Payloads/PayloadConstants';
 import { TransportDisconnectedEventArgs } from './TransportDisconnectedEventArgs';
 
 export class PayloadReceiver {
@@ -81,8 +81,8 @@ export class PayloadReceiver {
         while (this.isConnected && !isClosed) {
             try {
                 let readSoFar = 0;
-                while (readSoFar < TransportConstants.MaxHeaderLength) {
-                    this._receiveHeaderBuffer = await this._receiver.receive(TransportConstants.MaxHeaderLength - readSoFar);
+                while (readSoFar < PayloadConstants.MaxHeaderLength) {
+                    this._receiveHeaderBuffer = await this._receiver.receive(PayloadConstants.MaxHeaderLength - readSoFar);
 
                     if (this._receiveHeaderBuffer) {
                         readSoFar += this._receiveHeaderBuffer.length;
@@ -97,8 +97,8 @@ export class PayloadReceiver {
 
                     let contentStream = this._getStream(header);
 
-                    while (bytesActuallyRead < header.PayloadLength && bytesActuallyRead < TransportConstants.MaxPayloadLength) {
-                        let count = Math.min(header.PayloadLength - bytesActuallyRead, TransportConstants.MaxPayloadLength);
+                    while (bytesActuallyRead < header.PayloadLength && bytesActuallyRead < PayloadConstants.MaxPayloadLength) {
+                        let count = Math.min(header.PayloadLength - bytesActuallyRead, PayloadConstants.MaxPayloadLength);
                         this._receivePayloadBuffer = await this._receiver.receive(count);
                         bytesActuallyRead += this._receivePayloadBuffer.byteLength;
                         contentStream.write(this._receivePayloadBuffer);

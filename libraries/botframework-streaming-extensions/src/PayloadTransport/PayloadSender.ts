@@ -8,7 +8,7 @@
 
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
 import { SubscribableStream } from '../SubscribableStream';
-import { TransportConstants } from '../Transport/TransportConstants';
+import { PayloadConstants } from '../Payloads/PayloadConstants';
 import { IHeader, ISendPacket, ITransportSender } from '../Interfaces';
 import { TransportDisconnectedEventArgs } from './TransportDisconnectedEventArgs';
 import { TransportDisconnectedEventHandler } from './TransportDisconnectedEventHandler';
@@ -16,7 +16,7 @@ import { TransportDisconnectedEventHandler } from './TransportDisconnectedEventH
 export class PayloadSender {
     public disconnected?: TransportDisconnectedEventHandler;
     private sender: ITransportSender;
-    private readonly sendHeaderBuffer: Buffer = Buffer.alloc(TransportConstants.MaxHeaderLength);
+    private readonly sendHeaderBuffer: Buffer = Buffer.alloc(PayloadConstants.MaxHeaderLength);
 
     /// <summary>
     /// Returns true if connected to a transport sender.
