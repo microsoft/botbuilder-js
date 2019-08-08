@@ -174,7 +174,7 @@ export class LuisClient {
                     reject(error);
                 } else {
                     luisResult = ObjectSerializer.deserialize(luisResult, 'LuisResult');
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= HttpStatus.OK && response.statusCode < HttpStatus.MULTIPLE_CHOICES) {
                         resolve(luisResult);
                     } else {
                         reject({
@@ -202,6 +202,7 @@ export class LuisClient {
     public async predictionResolveGet(appId: string, query: string, options: PredictionResolveOptionalParams): Promise<LuisResult> {
         const localVarPath = this.basePath + '/apps/{appId}'
             .replace('{' + 'appId' + '}', encodeURIComponent(String(appId)));
+        var HttpStatus = require('http-status-codes');
         let localVarQueryParameters: any = {};
         let localVarHeaderParams = (Object as any).assign({}, this.defaultHeaders) as any;
         let localVarFormParams: any = {};
@@ -280,7 +281,7 @@ export class LuisClient {
                     reject(error);
                 } else {
                     luisResult = ObjectSerializer.deserialize(luisResult, 'LuisResult');
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= HttpStatus.OK && response.statusCode < HttpStatus.MULTIPLE_CHOICES) {
                         resolve(luisResult);
                     } else {
                         reject({
