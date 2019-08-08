@@ -9,9 +9,11 @@
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
 import { SubscribableStream } from '../SubscribableStream';
 import { PayloadConstants } from '../Payloads/PayloadConstants';
-import { IHeader, ISendPacket, ITransportSender } from '../Interfaces';
 import { TransportDisconnectedEventArgs } from './TransportDisconnectedEventArgs';
 import { TransportDisconnectedEventHandler } from './TransportDisconnectedEventHandler';
+import { ITransportSender } from '../Interfaces/ITransportSender';
+import { IHeader } from '../Interfaces/IHeader';
+import { ISendPacket } from '../Interfaces/ISendPacket';
 
 export class PayloadSender {
     public disconnected?: TransportDisconnectedEventHandler;

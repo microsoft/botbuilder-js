@@ -6,7 +6,8 @@
  * Licensed under the MIT License.
  */
 import { Socket } from 'net';
-import { ITransportReceiver, ITransportSender } from '../Interfaces';
+import { ITransportSender } from '../Interfaces/ITransportSender';
+import { ITransportReceiver } from '../Interfaces/ITransportReceiver';
 
 export class NamedPipeTransport implements ITransportSender, ITransportReceiver {
     public static readonly PipePath: string = '\\\\.\\pipe\\';

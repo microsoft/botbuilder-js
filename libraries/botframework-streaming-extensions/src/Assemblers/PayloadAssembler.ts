@@ -8,7 +8,12 @@
 import { SubscribableStream } from '../SubscribableStream';
 import { StreamManager, PayloadTypes } from '../Payloads';
 import { ContentStream } from '../ContentStream';
-import { IAssemblerParams, IHeader, IResponsePayload, IRequestPayload, IReceiveResponse, IReceiveRequest } from '../Interfaces';
+import { IAssemblerParams } from '../Interfaces/IAssemblerParams';
+import { IHeader } from '../Interfaces/IHeader';
+import { IResponsePayload } from '../Interfaces/IResponsePayload';
+import { IReceiveResponse, IReceiveRequest } from '../Interfaces';
+import { IRequestPayload } from '../Interfaces/IRequestPayload';
+
 
 export class PayloadAssembler {
     public id: string;

@@ -9,9 +9,10 @@ import { TransportDisconnectedEventHandler } from '.';
 import { PayloadTypes } from '../Payloads/PayloadTypes';
 import { HeaderSerializer } from '../Payloads/HeaderSerializer';
 import { SubscribableStream } from '../SubscribableStream';
-import { IHeader, ITransportReceiver } from '../Interfaces';
 import { PayloadConstants } from '../Payloads/PayloadConstants';
 import { TransportDisconnectedEventArgs } from './TransportDisconnectedEventArgs';
+import { ITransportReceiver } from '../Interfaces/ITransportReceiver';
+import { IHeader } from '../Interfaces/IHeader';
 
 export class PayloadReceiver {
     public isConnected: boolean;

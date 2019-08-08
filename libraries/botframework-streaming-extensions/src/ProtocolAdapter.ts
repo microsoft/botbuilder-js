@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import { PayloadAssembler } from './Assemblers/PayloadAssembler';
-import { IHeader, IReceiveRequest, IReceiveResponse } from './Interfaces';
 import { PayloadAssemblerManager } from './Payloads/PayloadAssemblerManager';
 import { RequestManager } from './Payloads/RequestManager';
 import { SendOperations } from './Payloads/SendOperations';
@@ -17,6 +16,8 @@ import { RequestHandler } from './RequestHandler';
 import { SubscribableStream } from './SubscribableStream';
 import { StreamingRequest } from './StreamingRequest';
 import { generateGuid } from './Utilities/protocol-base';
+import { IReceiveResponse, IReceiveRequest } from './Interfaces';
+import { IHeader } from './Interfaces/IHeader';
 
 export class ProtocolAdapter {
     private readonly requestHandler: RequestHandler;

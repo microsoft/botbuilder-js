@@ -6,10 +6,11 @@
  * Licensed under the MIT License.
  */
 import { PayloadTypes } from '../Payloads/PayloadTypes';
-import { IRequestPayload, IStreamWrapper } from '../Interfaces';
 import { PayloadSender } from '../PayloadTransport/PayloadSender';
 import { StreamingRequest } from '../StreamingRequest';
 import { PayloadDisassembler } from './PayloadDisassembler';
+import { IStreamWrapper } from '../Interfaces/IStreamWrapper';
+import { IRequestPayload } from '../Interfaces/IRequestPayload';
 
 export class RequestDisassembler extends PayloadDisassembler {
     public request: StreamingRequest;
