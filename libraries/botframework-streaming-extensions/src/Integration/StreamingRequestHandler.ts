@@ -37,10 +37,10 @@ let USER_AGENT:string;
 /// Used to process incoming requests sent over an <see cref="IStreamingTransport"/> and adhering to the Bot Framework Protocol v3 with Streaming Extensions.
 /// </summary>
 export class StreamingRequestHandler extends BotFrameworkAdapter implements RequestHandler {
-    public bot: ActivityHandler;
-    public logger;
-    public server: IStreamingTransportServer;
-    public middleWare: (MiddlewareHandler|Middleware)[];
+    private bot: ActivityHandler;
+    private logger;
+    private server: IStreamingTransportServer;
+    private middleWare: (MiddlewareHandler|Middleware)[];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StreamingRequestHandler"/> class.
