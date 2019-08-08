@@ -5,11 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import {    
-    ProtocolAdapter,    
-    RequestHandler,
-    StreamingRequest
-} from '..';
+import { ProtocolAdapter } from '../ProtocolAdapter';
+import { RequestHandler } from '../RequestHandler';
+import { StreamingRequest } from '../StreamingRequest';
 import { RequestManager } from '../Payloads';
 import {
     PayloadReceiver,

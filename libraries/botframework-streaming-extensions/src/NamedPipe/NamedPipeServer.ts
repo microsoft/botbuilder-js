@@ -6,11 +6,9 @@
  * Licensed under the MIT License.
  */
 import { Server, Socket } from 'net';
-import {    
-    ProtocolAdapter,    
-    RequestHandler,
-    StreamingRequest
-} from '..';
+import { ProtocolAdapter } from '../ProtocolAdapter';
+import { RequestHandler } from '../RequestHandler';
+import { StreamingRequest } from '../StreamingRequest';
 import { RequestManager } from '../Payloads';
 import {
     PayloadReceiver,

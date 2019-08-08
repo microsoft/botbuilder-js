@@ -11,8 +11,7 @@ import { ConnectorClient } from 'botframework-connector';
 import { Activity, ActivityTypes } from 'botframework-schema';
 import * as os from 'os';
 import { NamedPipeServer, RequestHandler, StreamingResponse, WebSocketServer, StreamingHttpClient } from '..';
-import { ISocket } from '../WebSocket';
-import { IStreamingTransportServer, IReceiveRequest } from '../Interfaces';
+import { ISocket, IStreamingTransportServer, IReceiveRequest } from '../Interfaces';
 
 export enum StatusCodes {
     OK = 200,
