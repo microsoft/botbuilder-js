@@ -1,13 +1,15 @@
 const  ContentStream  = require('../lib/ContentStream');
-const  ContentStreamAssembler  = require('../lib/Payloads/Assemblers/ContentStreamAssembler');
+const  PayloadAssembler  = require('../lib/Assemblers/PayloadAssembler');
 const  chai  = require('chai');
 const StreamManager = require('../lib/Payloads/StreamManager');
+const SubscribableStream = require('../lib/SubscribableStream');
+const PayloadTypes = require('../lib/Payloads/PayloadTypes');
 const protocol = require('../lib');
 var expect = chai.expect;
 
-class TestContentStreamAssembler{
+class TestPayloadAssembler{
     constructor(content){
-        this.stream1 = new protocol.Stream();
+        this.stream1 = new SubscribableStream.SubscribableStream();
         if(content){
             this.stream1.write(content);
         } else {
@@ -22,15 +24,12 @@ class TestContentStreamAssembler{
         return this.stream1;
     }
 
-    close(){}
-
-    
-
+    close(){}  
 }
 
 describe('Streaming Extensions ContentStream Tests ', () => {
     it('assigns ID when constructed', () => {
-        let csa = new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 42);
+        let csa = new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {id:'csa1'});
         let cs = new ContentStream.ContentStream('1', csa);
 
         expect(cs.id)
@@ -38,34 +37,37 @@ describe('Streaming Extensions ContentStream Tests ', () => {
     });
 
     it('throws if no assembler is passed in on construction', () => {
-        // expect.assertions(1);
         expect(() => new ContentStream.ContentStream('1', undefined))
             .throws('Null Argument Exception');
     });
 
     it('can return payload type', () => {
-        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 42));
+        let header = {PayloadType: PayloadTypes.PayloadTypes.stream, PayloadLength: 42, Id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', End: true};
+        let cs = new ContentStream.ContentStream('1', new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {id:'csa1', header: header}));
 
-        expect(cs.type)
-            .equal('stream');
+        expect(cs.contentType)
+            .equal('S');
     });
 
     it('can return length', () => {
-        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 42));
+        let header = {PayloadType: PayloadTypes.PayloadTypes.stream, PayloadLength: 42, Id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', End: true};
+        let cs = new ContentStream.ContentStream('1', new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {id:'csa1', header: header}));
 
         expect(cs.length)
             .equal(42);
     });
 
     it('can return ID', () => {
-        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 42));
+        let header = {PayloadType: PayloadTypes.PayloadTypes.stream, PayloadLength: 42, Id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', End: true};
+        let cs = new ContentStream.ContentStream('1', new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {id:'csa1', header: header}));
 
         expect(cs.id)
             .equal('1');
     });
 
     it('does not return the stream when it is is undefined', () => {
-        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 42));
+        let header = {PayloadType: PayloadTypes.PayloadTypes.stream, PayloadLength: 42, Id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', End: true};
+        let cs = new ContentStream.ContentStream('1', new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {id:'csa1', header: header}));
 
         expect(cs.getStream())
             .to
@@ -75,7 +77,8 @@ describe('Streaming Extensions ContentStream Tests ', () => {
     });
 
     it('reads a stream of length 0 and returns an empty string', () => {
-        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 0));
+        let header = {PayloadType: PayloadTypes.PayloadTypes.stream, PayloadLength: 0, Id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', End: true};
+        let cs = new ContentStream.ContentStream('1', new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {id:'csa1', header: header}));
 
         return cs.readAsString()
             .then(data => {
@@ -85,8 +88,8 @@ describe('Streaming Extensions ContentStream Tests ', () => {
     });
 
     it('throws when reading an empty stream as JSON', () => {
-        //  expect.assertions(1);
-        let cs = new ContentStream.ContentStream('1', new ContentStreamAssembler.ContentStreamAssembler(new StreamManager.StreamManager(), 'csa1', 'stream', 0));
+        let header = {PayloadType: PayloadTypes.PayloadTypes.stream, PayloadLength: 0, Id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', End: true};
+        let cs = new ContentStream.ContentStream('1', new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {id:'csa1', header: header}));
 
         return cs.readAsJson()
             .then(data => {
@@ -104,7 +107,7 @@ describe('Streaming Extensions ContentStream Tests ', () => {
     });
 
     it('reads a stream as a string',  () => {
-        let cs = new protocol.ContentStream('cs1', new TestContentStreamAssembler());
+        let cs = new ContentStream.ContentStream('cs1', new TestPayloadAssembler());
         let result = cs.readAsString();
 
         result.then(function(data) {
@@ -114,7 +117,7 @@ describe('Streaming Extensions ContentStream Tests ', () => {
     });
 
     it('reads a stream as a json',  () => {
-        let cs = new protocol.ContentStream('cs1', new TestContentStreamAssembler('{"message":"hello"}'));
+        let cs = new ContentStream.ContentStream('cs1', new TestPayloadAssembler('{"message":"hello"}'));
         let result = cs.readAsJson();
 
         result.then(function(data) {
@@ -124,9 +127,9 @@ describe('Streaming Extensions ContentStream Tests ', () => {
     });
 
     it('reads a stream before receiving all the bits',  () => {
-        let tcsa = new TestContentStreamAssembler();
+        let tcsa = new TestPayloadAssembler();
         tcsa.contentLength = 10;
-        let cs = new protocol.ContentStream('cs1', tcsa);
+        let cs = new ContentStream.ContentStream('cs1', tcsa);
         let result = cs.readAsString();
 
         result.then(function(data) {
@@ -135,18 +138,8 @@ describe('Streaming Extensions ContentStream Tests ', () => {
         });
     });
 
-    it('reads a stream as a buffer',  () => {
-        let cs = new protocol.ContentStream('cs1', new TestContentStreamAssembler());
-        let result = cs.readAsBuffer();
-
-        result.then(function(data) {
-            expect(data).to.be.instanceOf(Buffer);
-        
-        });
-    });
-
     it('can cancel',  () => {
-        let cs = new protocol.ContentStream('cs1', new TestContentStreamAssembler());
+        let cs = new ContentStream.ContentStream('cs1', new TestPayloadAssembler());
         let result = cs.readAsString();
 
         expect(cs.cancel()).to.not.throw;                

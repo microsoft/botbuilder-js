@@ -1,5 +1,4 @@
 const RequestManager = require( '../lib/Payloads/RequestManager');
-const ReceiveResponse = require( '../lib/ReceiveResponse');
 const chai = require( 'chai');
 var expect = chai.expect;
 
@@ -17,8 +16,6 @@ describe('RequestManager', () => {
     it('RequestManager.getResponseAsync called twice throws', async () => {
         let rm = new RequestManager.RequestManager();
         let requestId = '123';
-
-        //  expect.assertions(1);
         rm.getResponse(requestId, undefined);
 
         rm.getResponse(requestId, undefined)
@@ -31,8 +28,7 @@ describe('RequestManager', () => {
     it('RequestManager.signalResponse with no requestId returns false', async () => {
         let rm = new RequestManager.RequestManager();
         let requestId = '123';
-        let response = new ReceiveResponse.ReceiveResponse();
-
+        let response;
         let result = await rm.signalResponse(requestId, response);
 
         expect(result)
@@ -43,7 +39,7 @@ describe('RequestManager', () => {
     it('RequestManager end to end success', async () => {
         let rm = new RequestManager.RequestManager();
         let requestId = '123';
-        let response = new ReceiveResponse.ReceiveResponse();
+        let response;
 
         let promise = rm.getResponse(requestId, undefined);
 

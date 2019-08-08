@@ -262,11 +262,11 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
         it('sends', (done) => {
             let client = new ws.WebSocketClient('fakeURL', new protocol.RequestHandler(), false);
             expect(client).to.be.instanceOf(ws.WebSocketClient);
-            let req = new protocol.Request();
+            let req = new protocol.StreamingRequest();
             req.Verb = 'POST';
             req.Path = 'some/path';
             req.setBody('Hello World!');
-            client.send(req, new protocol.CancellationToken).catch(err => {expect(err).to.be.undefined;}).then(done());           
+            client.send(req).catch(err => {expect(err).to.be.undefined;}).then(done());           
         });
 
         it('disconnects', (done) => {
@@ -294,11 +294,11 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
         it('sends', (done) => {
             let server = new ws.WebSocketServer(new FauxSock, new protocol.RequestHandler());
             expect(server).to.be.instanceOf(ws.WebSocketServer);
-            let req = new protocol.Request();
+            let req = new protocol.StreamingRequest();
             req.Verb = 'POST';
             req.Path = 'some/path';
             req.setBody('Hello World!');
-            server.send(req, new protocol.CancellationToken).catch(err => {expect(err).to.be.undefined;}).then(done());              
+            server.send(req).catch(err => {expect(err).to.be.undefined;}).then(done());              
         });
 
         it('disconnects', (done) => {
@@ -373,9 +373,9 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             }
         });
 
-        it('starts out disconnected', () => {
+        it('starts out connected', () => {
             let ns = new ws.NodeWebSocket(new FauxSock);
-            expect(ns.isConnected()).to.be.false;
+            expect(ns.isConnected()).to.be.true;
         });
 
         it('writes to the socket', () => {
