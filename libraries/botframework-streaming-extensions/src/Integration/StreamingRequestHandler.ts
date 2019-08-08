@@ -10,8 +10,9 @@ import { ActivityHandler, Middleware, MiddlewareHandler, TurnContext } from 'bot
 import { ConnectorClient } from 'botframework-connector';
 import { Activity, ActivityTypes } from 'botframework-schema';
 import * as os from 'os';
-import { NamedPipeServer, RequestHandler, StreamingResponse, WebSocketServer, StreamingHttpClient } from '..';
+import { NamedPipeServer, RequestHandler, StreamingResponse, WebSocketServer } from '..';
 import { ISocket, IStreamingTransportServer, IReceiveRequest } from '../Interfaces';
+import { StreamingHttpClient } from './StreamingHttpClient';
 
 export enum StatusCodes {
     OK = 200,

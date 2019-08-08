@@ -114,7 +114,7 @@ export class PayloadAssembler {
                 let contentAssembler: PayloadAssembler = this._streamManager.getPayloadAssembler(responseStream.id);
                 contentAssembler.payloadType = responseStream.contentType;
                 contentAssembler.contentLength = responseStream.length;
-                receiveResponse.Streams.push(new ContentStream(responseStream.id, contentAssembler));
+                receiveResponse.streams.push(new ContentStream(responseStream.id, contentAssembler));
             });
         }
         await this._onCompleted(this.id, receiveResponse);
