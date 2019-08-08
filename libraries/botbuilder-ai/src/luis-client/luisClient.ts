@@ -12,6 +12,7 @@
 
 import localVarRequest = require('request');
 import http = require('http');
+import * as HttpStatus from 'http-status-codes';
 
 /* tslint:disable:no-unused-locals */
 import { LuisResult } from './model/luisResult';
@@ -99,7 +100,7 @@ export class LuisClient {
      */
     public async predictionResolvePost(query: string, appId: string, options: PredictionResolveOptionalParams): Promise<LuisResult> {
         const localVarPath = this.basePath + '/apps/{appId}'
-            .replace('{' + 'appId' + '}', encodeURIComponent(String(appId)));        
+            .replace('{' + 'appId' + '}', encodeURIComponent(String(appId)));
         let localVarQueryParameters: any = {};
         let localVarHeaderParams = this.defaultHeaders
         let localVarFormParams: any = {};
@@ -202,7 +203,6 @@ export class LuisClient {
     public async predictionResolveGet(appId: string, query: string, options: PredictionResolveOptionalParams): Promise<LuisResult> {
         const localVarPath = this.basePath + '/apps/{appId}'
             .replace('{' + 'appId' + '}', encodeURIComponent(String(appId)));
-        var HttpStatus = require('http-status-codes');
         let localVarQueryParameters: any = {};
         let localVarHeaderParams = (Object as any).assign({}, this.defaultHeaders) as any;
         let localVarFormParams: any = {};
