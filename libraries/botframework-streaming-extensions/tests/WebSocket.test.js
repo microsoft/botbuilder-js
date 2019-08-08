@@ -1,5 +1,6 @@
 const ws = require('../lib');
 const protocol = require('../lib');
+const wst = require('../lib/WebSocket/WebSocketTransport');
 const  chai  = require('chai');
 var expect = chai.expect;
 
@@ -98,8 +99,8 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
 
         it('creates a new transport', () => {
             let sock = new FauxSock();
-            let transport = new ws.WebSocketTransport(sock);
-            expect(transport).to.be.instanceOf(ws.WebSocketTransport);
+            let transport = new wst.WebSocketTransport(sock);
+            expect(transport).to.be.instanceOf(wst.WebSocketTransport);
             expect( () => transport.close()).to.not.throw;
         });
 
@@ -108,8 +109,8 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new ws.WebSocketTransport(sock);
-            expect(transport).to.be.instanceOf(ws.WebSocketTransport);
+            let transport = new wst.WebSocketTransport(sock);
+            expect(transport).to.be.instanceOf(wst.WebSocketTransport);
             expect( () => transport.close()).to.not.throw;
         });
 
@@ -118,8 +119,8 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new ws.WebSocketTransport(sock);
-            expect(transport).to.be.instanceOf(ws.WebSocketTransport);
+            let transport = new wst.WebSocketTransport(sock);
+            expect(transport).to.be.instanceOf(wst.WebSocketTransport);
             expect(transport.isConnected()).to.be.true;
             expect( () => transport.close()).to.not.throw;
         });
@@ -129,8 +130,8 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new ws.WebSocketTransport(sock);
-            expect(transport).to.be.instanceOf(ws.WebSocketTransport);
+            let transport = new wst.WebSocketTransport(sock);
+            expect(transport).to.be.instanceOf(wst.WebSocketTransport);
             expect( transport.close()).to.not.throw;
             let exists = transport.isConnected();
             expect(exists).to.be.false;
@@ -141,8 +142,8 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new ws.WebSocketTransport(sock);
-            expect(transport).to.be.instanceOf(ws.WebSocketTransport);
+            let transport = new wst.WebSocketTransport(sock);
+            expect(transport).to.be.instanceOf(wst.WebSocketTransport);
             expect(transport.isConnected()).to.be.true;
             let buff = Buffer.from('hello', 'utf8');
             let sent = transport.send(buff);
@@ -155,8 +156,8 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new ws.WebSocketTransport(sock);
-            expect(transport).to.be.instanceOf(ws.WebSocketTransport);
+            let transport = new wst.WebSocketTransport(sock);
+            expect(transport).to.be.instanceOf(wst.WebSocketTransport);
             expect(transport.isConnected()).to.be.true;
             sock.writable = false;
             sock.connected = false;
@@ -171,8 +172,8 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new ws.WebSocketTransport(sock);
-            expect(transport).to.be.instanceOf(ws.WebSocketTransport);
+            let transport = new wst.WebSocketTransport(sock);
+            expect(transport).to.be.instanceOf(wst.WebSocketTransport);
             expect(transport.isConnected()).to.be.true;
             expect(transport.receive(5)).to.throw;
             expect( () => transport.close()).to.not.throw;
@@ -183,8 +184,8 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new ws.WebSocketTransport(sock);
-            expect(transport).to.be.instanceOf(ws.WebSocketTransport);
+            let transport = new wst.WebSocketTransport(sock);
+            expect(transport).to.be.instanceOf(wst.WebSocketTransport);
             expect(transport.isConnected()).to.be.true;
             transport.receive(12).catch();
             transport.onReceive(Buffer.from('{"VERB":"POST", "PATH":"somewhere/something"}', 'utf8'));
@@ -197,8 +198,8 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new ws.WebSocketTransport(sock);
-            expect(transport).to.be.instanceOf(ws.WebSocketTransport);
+            let transport = new wst.WebSocketTransport(sock);
+            expect(transport).to.be.instanceOf(wst.WebSocketTransport);
             expect(transport.isConnected()).to.be.true;
             transport.onClose();
             expect(transport._active).to.be.undefined;
@@ -214,8 +215,8 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new ws.WebSocketTransport(sock);
-            expect(transport).to.be.instanceOf(ws.WebSocketTransport);
+            let transport = new wst.WebSocketTransport(sock);
+            expect(transport).to.be.instanceOf(wst.WebSocketTransport);
             expect(transport.isConnected()).to.be.true;
             transport.onError();
             expect(transport._active).to.be.undefined;
@@ -231,8 +232,8 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new ws.WebSocketTransport(sock);
-            expect(transport).to.be.instanceOf(ws.WebSocketTransport);
+            let transport = new wst.WebSocketTransport(sock);
+            expect(transport).to.be.instanceOf(wst.WebSocketTransport);
             expect(transport.isConnected()).to.be.true;
             let buff = Buffer.from('hello', 'utf8');
             expect(transport.onReceive(buff)).to.not.throw;

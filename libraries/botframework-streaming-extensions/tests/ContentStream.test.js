@@ -42,7 +42,7 @@ describe('Streaming Extensions ContentStream Tests ', () => {
     });
 
     it('can return payload type', () => {
-        let header = {PayloadType: PayloadTypes.PayloadTypes.stream, PayloadLength: 42, Id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', End: true};
+        let header = {payloadType: PayloadTypes.PayloadTypes.stream, payloadLength: 42, id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', end: true};
         let cs = new ContentStream.ContentStream('1', new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {id:'csa1', header: header}));
 
         expect(cs.contentType)
@@ -50,7 +50,7 @@ describe('Streaming Extensions ContentStream Tests ', () => {
     });
 
     it('can return length', () => {
-        let header = {PayloadType: PayloadTypes.PayloadTypes.stream, PayloadLength: 42, Id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', End: true};
+        let header = {payloadType: PayloadTypes.PayloadTypes.stream, payloadLength: 42, id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', end: true};
         let cs = new ContentStream.ContentStream('1', new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {id:'csa1', header: header}));
 
         expect(cs.length)
@@ -58,7 +58,7 @@ describe('Streaming Extensions ContentStream Tests ', () => {
     });
 
     it('can return ID', () => {
-        let header = {PayloadType: PayloadTypes.PayloadTypes.stream, PayloadLength: 42, Id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', End: true};
+        let header = {payloadType: PayloadTypes.PayloadTypes.stream, payloadLength: 42, id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', end: true};
         let cs = new ContentStream.ContentStream('1', new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {id:'csa1', header: header}));
 
         expect(cs.id)
@@ -66,7 +66,7 @@ describe('Streaming Extensions ContentStream Tests ', () => {
     });
 
     it('does not return the stream when it is is undefined', () => {
-        let header = {PayloadType: PayloadTypes.PayloadTypes.stream, PayloadLength: 42, Id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', End: true};
+        let header = {PayloadType: PayloadTypes.PayloadTypes.stream, payloadLength: 42, id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', end: true};
         let cs = new ContentStream.ContentStream('1', new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {id:'csa1', header: header}));
 
         expect(cs.getStream())
@@ -77,7 +77,7 @@ describe('Streaming Extensions ContentStream Tests ', () => {
     });
 
     it('reads a stream of length 0 and returns an empty string', () => {
-        let header = {PayloadType: PayloadTypes.PayloadTypes.stream, PayloadLength: 0, Id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', End: true};
+        let header = {payloadType: PayloadTypes.PayloadTypes.stream, payloadLength: 0, id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', end: true};
         let cs = new ContentStream.ContentStream('1', new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {id:'csa1', header: header}));
 
         return cs.readAsString()
@@ -88,7 +88,7 @@ describe('Streaming Extensions ContentStream Tests ', () => {
     });
 
     it('throws when reading an empty stream as JSON', () => {
-        let header = {PayloadType: PayloadTypes.PayloadTypes.stream, PayloadLength: 0, Id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', End: true};
+        let header = {payloadType: PayloadTypes.PayloadTypes.stream, PayloadLength: 0, id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', end: true};
         let cs = new ContentStream.ContentStream('1', new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {id:'csa1', header: header}));
 
         return cs.readAsJson()

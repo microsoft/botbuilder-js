@@ -7,7 +7,7 @@ var expect = chai.expect;
 describe('HeaderSerializer', () => {
 
     it('serializes and deserializes correctly', () => {
-        let header = {PayloadType: PayloadTypes.PayloadTypes.request, PayloadLength: 168, Id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', End: true};
+        let header = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: 168, id: '68e999ca-a651-40f4-ad8f-3aaf781862b4', end: true};
         let buffer = Buffer.alloc(Number(PayloadConstants.PayloadConstants.MaxHeaderLength));
 
         HeaderSerializer.HeaderSerializer.serialize(header, buffer);
@@ -25,13 +25,13 @@ describe('HeaderSerializer', () => {
         buffer.write('A.000168.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n');
 
         let result =  HeaderSerializer.HeaderSerializer.deserialize(buffer);
-        expect(result.PayloadType)
+        expect(result.payloadType)
             .equal('A');
-        expect(result.PayloadLength)
+        expect(result.payloadLength)
             .equal(168);
-        expect(result.Id)
+        expect(result.id)
             .equal('68e999ca-a651-40f4-ad8f-3aaf781862b4');
-        expect(result.End)
+        expect(result.end)
             .equal(true);
     });
 
@@ -40,7 +40,7 @@ describe('HeaderSerializer', () => {
         buffer.write('Z.000168.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n');
         let result =  HeaderSerializer.HeaderSerializer.deserialize(buffer);
 
-        expect(result.PayloadType)
+        expect(result.payloadType)
             .equal('Z');
     });
 

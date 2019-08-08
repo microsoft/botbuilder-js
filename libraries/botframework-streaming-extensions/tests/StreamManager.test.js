@@ -43,7 +43,7 @@ describe('Streaming Protocol StreamManager Tests', () => {
     it('looks up the correct assembler and returns the stream', () => {
         let sm = new StreamManager.StreamManager(undefined);
         expect(sm).to.be.instanceOf(StreamManager.StreamManager);
-        let head = {PayloadType: PayloadTypes.PayloadTypes.request, PayloadLength: '0', Id: 'bob', End: true};
+        let head = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '0', id: 'bob', end: true};
         let ps = sm.getPayloadStream(head);
 
         expect(ps).to.be.instanceOf(SubscribableStream.SubscribableStream);
@@ -56,7 +56,7 @@ describe('Streaming Protocol StreamManager Tests', () => {
     it('does not throw when asked to receive on a non-existant stream', () => {
         let sm = new StreamManager.StreamManager(undefined);
         expect(sm).to.be.instanceOf(StreamManager.StreamManager);
-        let head = {PayloadType: PayloadTypes.PayloadTypes.request, PayloadLength: '0', Id: 'bob', End: true};
+        let head = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '0', id: 'bob', end: true};
         let stream1 = new SubscribableStream.SubscribableStream();
         stream1.write('hello');
         expect(sm.onReceive(head, stream1, 5)).to.not.throw;
@@ -65,7 +65,7 @@ describe('Streaming Protocol StreamManager Tests', () => {
     it('attempts to receive from an existing stream', () => {
         let sm = new StreamManager.StreamManager(undefined);
         expect(sm).to.be.instanceOf(StreamManager.StreamManager);
-        let head = {PayloadType: PayloadTypes.PayloadTypes.request, PayloadLength: '0', Id: 'bob', End: true};
+        let head = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '0', id: 'bob', end: true};
         let pa = sm.getPayloadAssembler('bob');
         expect(pa).to.be.instanceOf(PayloadAssembler.PayloadAssembler);
         expect(pa.id).to.equal('bob');
@@ -77,7 +77,7 @@ describe('Streaming Protocol StreamManager Tests', () => {
     it('can close a stream', (done) => {
         let sm = new StreamManager.StreamManager(done());
         expect(sm).to.be.instanceOf(StreamManager.StreamManager);
-        let head = {PayloadType: PayloadTypes.PayloadTypes.request, PayloadLength: '0', Id: 'bob', End: true};
+        let head = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '0', id: 'bob', end: true};
         let pa = sm.getPayloadAssembler('bob');
         expect(pa).to.be.instanceOf(PayloadAssembler.PayloadAssembler);
         expect(pa.id).to.equal('bob');
@@ -89,7 +89,7 @@ describe('Streaming Protocol StreamManager Tests', () => {
     it('does not throw when asked to close a stream that does not exist', (done) => {
         let sm = new StreamManager.StreamManager(done());
         expect(sm).to.be.instanceOf(StreamManager.StreamManager);
-        let head = {PayloadType: PayloadTypes.PayloadTypes.request, PayloadLength: '0', Id: 'bob', End: true};
+        let head = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '0', id: 'bob', end: true};
         expect(sm.closeStream(head.id)).to.not.throw;
     });
 });

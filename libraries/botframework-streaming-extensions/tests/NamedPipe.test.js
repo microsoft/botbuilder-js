@@ -1,5 +1,6 @@
 const net = require('net');
 const np = require('../lib');
+const npt = require('../lib/NamedPipe/NamedPipeTransport');
 const protocol = require('../lib');
 const  chai  = require('chai');
 var expect = chai.expect;
@@ -69,7 +70,7 @@ class TestServer {
     }
 
     connect() {
-        let pipeName = np.NamedPipeTransport.PipePath + this._baseName;
+        let pipeName = npt.NamedPipeTransport.PipePath + this._baseName;
 
         let connectResolve = undefined;
 
@@ -78,7 +79,7 @@ class TestServer {
         });
 
         this._server = net.createServer(() => {
-            this.transport = new np.NamedPipeTransport(new FauxSock , pipeName);
+            this.transport = new npt.NamedPipeTransport(new FauxSock , pipeName);
             connectResolve();
         });
         this._server.listen(pipeName);
@@ -110,10 +111,10 @@ class TestClient {
     }
 
     connect() {
-        let pipeName = np.NamedPipeTransport.PipePath + this._baseName;
+        let pipeName = npt.NamedPipeTransport.PipePath + this._baseName;
 
         let socket = new FauxSock;
-        this.transport = new np.NamedPipeTransport(socket, '');
+        this.transport = new npt.NamedPipeTransport(socket, '');
 
         return Promise.resolve();
     }
@@ -179,8 +180,8 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new np.NamedPipeTransport(sock, 'fakeSocket1');
-            expect(transport).to.be.instanceOf(np.NamedPipeTransport);
+            let transport = new npt.NamedPipeTransport(sock, 'fakeSocket1');
+            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
             expect( () => transport.close()).to.not.throw;
         });
 
@@ -189,8 +190,8 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new np.NamedPipeTransport(sock, 'fakeSocket2');
-            expect(transport).to.be.instanceOf(np.NamedPipeTransport);
+            let transport = new npt.NamedPipeTransport(sock, 'fakeSocket2');
+            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
             expect(transport.isConnected()).to.be.true;
             expect( () => transport.close()).to.not.throw;
         });
@@ -200,8 +201,8 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new np.NamedPipeTransport(sock, 'fakeSocket3');
-            expect(transport).to.be.instanceOf(np.NamedPipeTransport);
+            let transport = new npt.NamedPipeTransport(sock, 'fakeSocket3');
+            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
             expect( transport.close()).to.not.throw;
             let exists = transport.isConnected();
             expect(exists).to.be.false;
@@ -212,8 +213,8 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new np.NamedPipeTransport(sock, 'fakeSocket4');
-            expect(transport).to.be.instanceOf(np.NamedPipeTransport);
+            let transport = new npt.NamedPipeTransport(sock, 'fakeSocket4');
+            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
             expect(transport.isConnected()).to.be.true;
             let buff = Buffer.from('hello', 'utf8');
             let sent = transport.send(buff);
@@ -226,8 +227,8 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new np.NamedPipeTransport(sock, 'fakeSocket5');
-            expect(transport).to.be.instanceOf(np.NamedPipeTransport);
+            let transport = new npt.NamedPipeTransport(sock, 'fakeSocket5');
+            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
             expect(transport.isConnected()).to.be.true;
             sock.writable = false;
             let buff = Buffer.from('hello', 'utf8');
@@ -241,8 +242,8 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new np.NamedPipeTransport(sock, 'fakeSocket5');
-            expect(transport).to.be.instanceOf(np.NamedPipeTransport);
+            let transport = new npt.NamedPipeTransport(sock, 'fakeSocket5');
+            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
             expect(transport.isConnected()).to.be.true;
             expect(transport.receive(5)).to.throw;
             expect( () => transport.close()).to.not.throw;
@@ -253,8 +254,8 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new np.NamedPipeTransport(sock);
-            expect(transport).to.be.instanceOf(np.NamedPipeTransport);
+            let transport = new npt.NamedPipeTransport(sock);
+            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
             expect(transport.isConnected()).to.be.true;
             transport.receive(12).catch();
             transport.socketReceive(Buffer.from('Hello World!', 'utf8'));
@@ -268,8 +269,8 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new np.NamedPipeTransport(sock, 'fakeSocket6');
-            expect(transport).to.be.instanceOf(np.NamedPipeTransport);
+            let transport = new npt.NamedPipeTransport(sock, 'fakeSocket6');
+            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
             expect(transport.isConnected()).to.be.true;
             transport.socketClose();
             expect(transport._active).to.be.undefined;
@@ -285,8 +286,8 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new np.NamedPipeTransport(sock, 'fakeSocket6');
-            expect(transport).to.be.instanceOf(np.NamedPipeTransport);
+            let transport = new npt.NamedPipeTransport(sock, 'fakeSocket6');
+            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
             expect(transport.isConnected()).to.be.true;
             transport.socketError();
             expect(transport._active).to.be.undefined;
@@ -302,8 +303,8 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            let transport = new np.NamedPipeTransport(sock, 'fakeSocket6');
-            expect(transport).to.be.instanceOf(np.NamedPipeTransport);
+            let transport = new npt.NamedPipeTransport(sock, 'fakeSocket6');
+            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
             expect(transport.isConnected()).to.be.true;
             let buff = Buffer.from('hello', 'utf8');
             expect(transport.socketReceive(buff)).to.not.throw;
