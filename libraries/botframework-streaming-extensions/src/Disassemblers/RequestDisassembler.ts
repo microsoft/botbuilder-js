@@ -21,9 +21,11 @@ export class RequestDisassembler extends PayloadDisassembler {
     }
 
     public async getStream(): Promise<IStreamWrapper> {
-        let payload: IRequestPayload = {verb: this.request.verb, path: this.request.path};    
+        let payload: IRequestPayload = {verb: this.request.verb, path: this.request.path, streams: []};    
         if (this.request.streams) {
-            payload.streams = this.DescribePayloadStreams(this.request.streams);
+            this.request.streams.forEach(function(stream){
+                payload.streams.push(stream.description);
+            })
         }
         return PayloadDisassembler.serialize(payload);
     }

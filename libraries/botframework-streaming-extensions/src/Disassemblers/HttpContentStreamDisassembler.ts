@@ -18,7 +18,6 @@ export class HttpContentStreamDisassembler extends PayloadDisassembler {
 
     public constructor(sender: PayloadSender, contentStream: HttpContentStream) {
         super(sender, contentStream.id);
-
         this.contentStream = contentStream;
     }
 

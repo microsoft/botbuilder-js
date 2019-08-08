@@ -17,14 +17,15 @@ export class ResponseDisassembler extends PayloadDisassembler {
 
     public constructor(sender: PayloadSender, id: string, response: StreamingResponse) {
         super(sender, id);
-
         this.response = response;
     }
 
     public async getStream(): Promise<IStreamWrapper> {
-        let payload: IResponsePayload = {statusCode: this.response.statusCode}
+        let payload: IResponsePayload = {statusCode: this.response.statusCode, streams: []};
         if (this.response.streams) {
-            payload.streams = this.DescribePayloadStreams(this.response.streams);
+            this.response.streams.forEach(function(stream){
+                payload.streams.push(stream.description);
+            })
         }
         return PayloadDisassembler.serialize(payload);
     }

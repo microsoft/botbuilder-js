@@ -7,21 +7,22 @@
  */
 import { SubscribableStream } from './SubscribableStream';
 import { generateGuid } from './Utilities/protocol-base';
-import { IHttpContentHeaders } from './Interfaces';
+import { IHttpContentHeaders, IStreamDescription } from './Interfaces';
 
 export class HttpContentStream {
     public readonly id: string;
     public readonly content: HttpContent;
+    public description: { id: string; contentType: string; length: number; };
 
     public constructor(content: HttpContent) {
         this.id = generateGuid();
         this.content = content;
+        this.description = {id: this.id, contentType: (this.content.headers) ? this.content.headers.contentType : "unknown", length: (this.content.headers) ? this.content.headers.contentLength : 0};
     }
 }
 
 export class HttpContent {
     public headers: IHttpContentHeaders;
-
     private readonly stream: SubscribableStream;
 
     public constructor(headers: IHttpContentHeaders, stream: SubscribableStream) {
