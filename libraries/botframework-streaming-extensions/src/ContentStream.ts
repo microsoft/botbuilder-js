@@ -22,7 +22,7 @@ export class ContentStream {
     }
 
     public get contentType(): string {
-        return this.assembler.contentType;
+        return this.assembler.payloadType;
     }
 
     public get length(): number {

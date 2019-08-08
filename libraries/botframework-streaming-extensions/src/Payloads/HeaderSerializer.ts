@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 import { IHeader } from '../Interfaces/IHeader';
+import { PayloadConstants } from './PayloadConstants';
 
 export class HeaderSerializer {
     public static readonly Delimiter = '.';
@@ -49,7 +50,7 @@ export class HeaderSerializer {
         let headerEnd: boolean = headerArray[3] === '0\n' ? false : headerArray[3] === '1\n' ? true : undefined;
         let header: IHeader = { PayloadType: headerPayloadType, PayloadLength: headerPayloadLength, Id: headerId, End: headerEnd };
 
-        if (isNaN(header.PayloadLength) || header.PayloadLength === undefined) {
+        if (isNaN(header.PayloadLength) || header.PayloadLength === undefined || header.PayloadLength > PayloadConstants.MaxPayloadLength || header.PayloadLength < PayloadConstants.MinLength) {
             throw Error('Header Length is missing or malformed.');
         }
 

@@ -28,13 +28,13 @@ export class StreamingRequest {
     /// Creates a <see cref="StreamingRequest"/> with the passed in method, path, and body.
     /// </summary>
     /// <param name="method">The HTTP verb to use for this request.</param>
-    /// <param name="route">Optional path where the resource can be found on the remote server.</param>
+    /// <param name="path">Optional path where the resource can be found on the remote server.</param>
     /// <param name="body">Optional body to send to the remote server.</param>
     /// <returns>On success returns a <see cref="StreamingRequest"/> with appropriate status code and body.</returns>
-    public static create(method: string, route?: string, body?: HttpContent): StreamingRequest {
+    public static create(method: string, path?: string, body?: HttpContent): StreamingRequest {
         let request = new StreamingRequest();
         request.verb = method;
-        request.path = route;
+        request.path = path;
         if (body) {
             request.setBody(body);
         }
