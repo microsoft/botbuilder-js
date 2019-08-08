@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 export interface IHeader {
-    PayloadType: string;
-    PayloadLength: number;
-    Id: string;
-    End: boolean;
+    payloadType: string;
+    payloadLength: number;
+    id: string;
+    end: boolean;
 }

@@ -24,13 +24,13 @@ export class PayloadAssemblerManager {
     }
 
     public getPayloadStream(header: IHeader): SubscribableStream {
-        if (header.PayloadType === PayloadTypes.stream) {
+        if (header.payloadType === PayloadTypes.stream) {
             return this.streamManager.getPayloadStream(header);
         } else {
-            if (this.activeAssemblers[header.Id] === undefined) {
+            if (this.activeAssemblers[header.id] === undefined) {
                 let assembler = this.createPayloadAssembler(header);
                 if (assembler !== undefined) {
-                    this.activeAssemblers[header.Id] = assembler;
+                    this.activeAssemblers[header.id] = assembler;
 
                     return assembler.getPayloadStream();
                 }
@@ -41,21 +41,21 @@ export class PayloadAssemblerManager {
     }
 
     public onReceive(header: IHeader, contentStream: SubscribableStream, contentLength: number): void {
-        if (header.PayloadType === PayloadTypes.stream) {
+        if (header.payloadType === PayloadTypes.stream) {
             this.streamManager.onReceive(header, contentStream, contentLength);
         } else {
-            if (this.activeAssemblers !== undefined && this.activeAssemblers[header.Id] !== undefined) {
-                let assembler = this.activeAssemblers[header.Id];
+            if (this.activeAssemblers !== undefined && this.activeAssemblers[header.id] !== undefined) {
+                let assembler = this.activeAssemblers[header.id];
                 assembler.onReceive(header, contentStream, contentLength);
             }
-            if (header.End) {
-                delete this.activeAssemblers[header.Id];
+            if (header.end) {
+                delete this.activeAssemblers[header.id];
             }
         }
     }
 
     private createPayloadAssembler(header: IHeader): PayloadAssembler {
-        switch (header.PayloadType) {
+        switch (header.payloadType) {
             case PayloadTypes.request:
                 return new PayloadAssembler(this.streamManager, {header: header, onCompleted: this.onReceiveRequest});
 

@@ -102,34 +102,34 @@ export class StreamingRequestHandler extends BotFrameworkAdapter implements Requ
     public async processRequest(request: IReceiveRequest): Promise<StreamingResponse> {
         let response = new StreamingResponse();
         let body = await this.readRequestBodyAsString(request);
-        if (body === undefined || request.Streams === undefined) {
+        if (body === undefined || request.streams === undefined) {
             response.statusCode = StatusCodes.BAD_REQUEST;
             this.logger.log('Request missing body and/or streams.');
 
             return response;
         }
 
-        if (!request || !request.Verb || !request.Path) {
+        if (!request || !request.verb || !request.path) {
             response.statusCode = StatusCodes.BAD_REQUEST;
             this.logger.log('Request missing verb and/or path.');
 
             return response;
         }
 
-        if (request.Verb.toLocaleUpperCase() === GET && request.Path.toLocaleLowerCase() === VERSION_PATH) {
+        if (request.verb.toLocaleUpperCase() === GET && request.path.toLocaleLowerCase() === VERSION_PATH) {
             response.statusCode = StatusCodes.OK;
             response.setBody(this.getUserAgent());
 
             return response;
         }
 
-        if (request.Verb.toLocaleUpperCase() !== POST) {
+        if (request.verb.toLocaleUpperCase() !== POST) {
             response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
 
             return response;
         }
 
-        if (request.Path.toLocaleLowerCase() !== MESSAGES_PATH) {
+        if (request.path.toLocaleLowerCase() !== MESSAGES_PATH) {
             response.statusCode = StatusCodes.NOT_FOUND;
 
             return response;
@@ -171,8 +171,8 @@ export class StreamingRequestHandler extends BotFrameworkAdapter implements Requ
     }
 
     private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {
-        if (request.Streams !== undefined && request.Streams[0] !== undefined) {
-            let contentStream =  request.Streams[0];
+        if (request.streams !== undefined && request.streams[0] !== undefined) {
+            let contentStream =  request.streams[0];
             try {
                 return await contentStream.readAsJson<Activity>();
             } catch (error) {

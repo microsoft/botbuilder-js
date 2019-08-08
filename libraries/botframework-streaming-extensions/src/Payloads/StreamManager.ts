@@ -31,16 +31,16 @@ export class StreamManager {
     }
 
     public getPayloadStream(header: IHeader): SubscribableStream {
-        let assembler = this.getPayloadAssembler(header.Id);
+        let assembler = this.getPayloadAssembler(header.id);
 
         return assembler.getPayloadStream();
     }
 
     public onReceive(header: IHeader, contentStream: SubscribableStream, contentLength: number): void {
-        if (this.activeAssemblers[header.Id] === undefined) {
+        if (this.activeAssemblers[header.id] === undefined) {
             return;
         } else {
-            this.activeAssemblers[header.Id].onReceive(header, contentStream, contentLength);
+            this.activeAssemblers[header.id].onReceive(header, contentStream, contentLength);
         }
     }
 

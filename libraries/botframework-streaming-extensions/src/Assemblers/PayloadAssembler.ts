@@ -21,10 +21,10 @@ export class PayloadAssembler {
 
     public constructor(streamManager: StreamManager, params: IAssemblerParams) {
         if(params.header !== undefined){
-            this.id = params.header.Id;
-            this.payloadType = params.header.PayloadType;
-            this.contentLength = params.header.PayloadLength;
-            this.end = params.header.End;
+            this.id = params.header.id;
+            this.payloadType = params.header.payloadType;
+            this.contentLength = params.header.payloadLength;
+            this.end = params.header.end;
         } else {
             this.id = params.id;
         }
@@ -46,14 +46,14 @@ export class PayloadAssembler {
     }
 
     public onReceive(header: IHeader, stream: SubscribableStream, contentLength: number): void {
-        this.end = header.End;
+        this.end = header.end;
         
-        if (header.PayloadType === PayloadTypes.response || header.PayloadType === PayloadTypes.request) {
+        if (header.payloadType === PayloadTypes.response || header.payloadType === PayloadTypes.request) {
         this.process(stream)
             .then()
             .catch();
         } else {
-            if (header.End) {
+            if (header.end) {
                 stream.end();
             }
         }
@@ -95,7 +95,7 @@ export class PayloadAssembler {
     private async processResponse(streamDataAsString: string): Promise<void> {
 
         let responsePayload: IResponsePayload = this.payloadFromJson(this.stripBOM(streamDataAsString));
-        let receiveResponse: IReceiveResponse = { Streams: [], StatusCode: responsePayload.statusCode };
+        let receiveResponse: IReceiveResponse = { streams: [], statusCode: responsePayload.statusCode };
 
         await this.processStreams(responsePayload, receiveResponse);
     }
@@ -103,7 +103,7 @@ export class PayloadAssembler {
     private async processRequest(streamDataAsString: string): Promise<void> {
 
         let requestPayload: IRequestPayload = this.payloadFromJson(streamDataAsString);
-        let receiveRequest: IReceiveRequest = { Streams: [], Path: requestPayload.path, Verb: requestPayload.verb };
+        let receiveRequest: IReceiveRequest = { streams: [], path: requestPayload.path, verb: requestPayload.verb };
 
         await this.processStreams(requestPayload, receiveRequest);
     }

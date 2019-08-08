@@ -30,9 +30,9 @@ export class StreamingHttpClient implements HttpClient {
 
         return {
             request: httpRequest,
-            status: res.StatusCode,
+            status: res.statusCode,
             headers: httpRequest.headers,
-            readableStreamBody: res.Streams.length > 0 ? res.Streams[0].getStream() : undefined
+            readableStreamBody: res.streams.length > 0 ? res.streams[0].getStream() : undefined
         };
     }
 

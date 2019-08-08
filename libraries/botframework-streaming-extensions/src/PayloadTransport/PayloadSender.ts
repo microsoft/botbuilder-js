@@ -64,8 +64,8 @@ export class PayloadSender {
             HeaderSerializer.serialize(packet.header, this.sendHeaderBuffer);
             this.sender.send(this.sendHeaderBuffer);
 
-            if (packet.header.PayloadLength > 0 && packet.payload) {
-                let count = packet.header.PayloadLength;
+            if (packet.header.payloadLength > 0 && packet.payload) {
+                let count = packet.header.payloadLength;
                 while (count > 0) {
                     let chunk = packet.payload.read(count);
                     this.sender.send(chunk);

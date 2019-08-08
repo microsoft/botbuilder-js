@@ -90,15 +90,15 @@ export class PayloadReceiver {
                 }
 
                 let header = HeaderSerializer.deserialize(this._receiveHeaderBuffer);
-                let isStream = header.PayloadType === PayloadTypes.stream;
+                let isStream = header.payloadType === PayloadTypes.stream;
 
-                if (header.PayloadLength > 0) {
+                if (header.payloadLength > 0) {
                     let bytesActuallyRead = 0;
 
                     let contentStream = this._getStream(header);
 
-                    while (bytesActuallyRead < header.PayloadLength && bytesActuallyRead < PayloadConstants.MaxPayloadLength) {
-                        let count = Math.min(header.PayloadLength - bytesActuallyRead, PayloadConstants.MaxPayloadLength);
+                    while (bytesActuallyRead < header.payloadLength && bytesActuallyRead < PayloadConstants.MaxPayloadLength) {
+                        let count = Math.min(header.payloadLength - bytesActuallyRead, PayloadConstants.MaxPayloadLength);
                         this._receivePayloadBuffer = await this._receiver.receive(count);
                         bytesActuallyRead += this._receivePayloadBuffer.byteLength;
                         contentStream.write(this._receivePayloadBuffer);

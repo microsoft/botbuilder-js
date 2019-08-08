@@ -26,13 +26,13 @@ export class HeaderSerializer {
     public static readonly Encoding = 'utf8';
 
     public static serialize(header: IHeader, buffer: Buffer): void {
-        buffer.write(header.PayloadType, this.TypeOffset, 1,  this.Encoding);
+        buffer.write(header.payloadType, this.TypeOffset, 1,  this.Encoding);
         buffer.write(this.Delimiter, this.TypeDelimiterOffset, 1, this.Encoding);
-        buffer.write(this.headerLengthPadder(header.PayloadLength, this.LengthLength, '0'), this.LengthOffset, this.LengthLength, this.Encoding);
+        buffer.write(this.headerLengthPadder(header.payloadLength, this.LengthLength, '0'), this.LengthOffset, this.LengthLength, this.Encoding);
         buffer.write(this.Delimiter, this.LengthDelimeterOffset, 1, this.Encoding);
-        buffer.write(header.Id, this.IdOffset);
+        buffer.write(header.id, this.IdOffset);
         buffer.write(this.Delimiter, this.IdDelimeterOffset, 1, this.Encoding);
-        buffer.write(header.End ? this.End : this.NotEnd, this.EndOffset);
+        buffer.write(header.end ? this.End : this.NotEnd, this.EndOffset);
         buffer.write(this.Terminator, this.TerminatorOffset);
     }
 
@@ -48,21 +48,21 @@ export class HeaderSerializer {
         let headerPayloadLength: number = Number(headerArray[1]);
         let headerId: string = headerArray[2];
         let headerEnd: boolean = headerArray[3] === '0\n' ? false : headerArray[3] === '1\n' ? true : undefined;
-        let header: IHeader = { PayloadType: headerPayloadType, PayloadLength: headerPayloadLength, Id: headerId, End: headerEnd };
+        let header: IHeader = { payloadType: headerPayloadType, payloadLength: headerPayloadLength, id: headerId, end: headerEnd };
 
-        if (isNaN(header.PayloadLength) || header.PayloadLength === undefined || header.PayloadLength > PayloadConstants.MaxPayloadLength || header.PayloadLength < PayloadConstants.MinLength) {
+        if (isNaN(header.payloadLength) || header.payloadLength === undefined || header.payloadLength > PayloadConstants.MaxPayloadLength || header.payloadLength < PayloadConstants.MinLength) {
             throw Error('Header Length is missing or malformed.');
         }
 
-        if (header.PayloadType.length !== this.TypeDelimiterOffset) {
+        if (header.payloadType.length !== this.TypeDelimiterOffset) {
             throw Error('Header Type is missing or malformed.');
         }
 
-        if (!header.Id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i) || header.Id === undefined || header.Id.length !== this.IdLength) {
+        if (!header.id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i) || header.id === undefined || header.id.length !== this.IdLength) {
             throw Error('Header ID is missing or malformed.');
         }
 
-        if (header.End === undefined) {
+        if (header.end === undefined) {
             throw Error('Header End is missing or not a valid value.');
         }
 

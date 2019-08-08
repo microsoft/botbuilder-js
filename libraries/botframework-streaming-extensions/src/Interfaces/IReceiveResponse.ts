@@ -8,6 +8,6 @@
 import { ContentStream } from '../ContentStream';
 
 export interface IReceiveResponse {
-    StatusCode?: number;
-    Streams: ContentStream[];
+    statusCode?: number;
+    streams: ContentStream[];
 }

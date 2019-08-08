@@ -10,15 +10,15 @@ import { ContentStream } from '../ContentStream';
 export interface IReceiveRequest {
     /// Request verb, null on responses
     /// </summary>
-    Verb?: string;
+    verb?: string;
 
     /// <summary>
     /// Request path; null on responses
     /// </summary>
-    Path?: string;
+    path?: string;
 
     /// <summary>
     /// Gets or sets the collection of stream attachments included in this request.
     /// </summary>
-    Streams: ContentStream[];
+    streams: ContentStream[];
 }
