@@ -62,7 +62,7 @@ export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter implements
         this.middleWare = middleWare;        
     }
 
-        /// <summary>
+    /// <summary>
     /// Process the initial request to establish a long lived connection via a streaming server.
     /// </summary>
     /// <param name="req">The connection request.</param>
@@ -109,28 +109,7 @@ export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter implements
         const socket = ws.accept(req, upgrade.socket, upgrade.head);
 
         await this.startWebSocket(new NodeWebSocket(socket));
-    }
-
-    private async authenticateConnection(req: WebRequest, appId?: string, appPassword?: string, channelService?: string): Promise<boolean> {
-        if (!appId || !appPassword) {
-            // auth is disabled
-            return true;
-        }
-
-        try {
-            let authHeader: string = req.headers.authorization || req.headers.Authorization || '';
-            let channelIdHeader: string = req.headers.channelid || req.headers.ChannelId || req.headers.ChannelID || '';
-            let credentials = new MicrosoftAppCredentials(appId, appPassword);
-            let credentialProvider = new SimpleCredentialProvider(credentials.appId, credentials.appPassword);
-            let claims = await JwtTokenValidation.validateAuthHeader(authHeader, credentialProvider, channelService, channelIdHeader);
-
-            return claims.isAuthenticated;
-        } catch (error) {
-            this.logger.log(error);
-
-            return false;
-        }
-    }
+    } 
 
     /// <summary>
     /// Connects the handler to a Named Pipe server and begins listening for incoming requests.
@@ -233,6 +212,27 @@ export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter implements
             });
     }
 
+    private async authenticateConnection(req: WebRequest, appId?: string, appPassword?: string, channelService?: string): Promise<boolean> {
+        if (!appId || !appPassword) {
+            // auth is disabled
+            return true;
+        }
+
+        try {
+            let authHeader: string = req.headers.authorization || req.headers.Authorization || '';
+            let channelIdHeader: string = req.headers.channelid || req.headers.ChannelId || req.headers.ChannelID || '';
+            let credentials = new MicrosoftAppCredentials(appId, appPassword);
+            let credentialProvider = new SimpleCredentialProvider(credentials.appId, credentials.appPassword);
+            let claims = await JwtTokenValidation.validateAuthHeader(authHeader, credentialProvider, channelService, channelIdHeader);
+
+            return claims.isAuthenticated;
+        } catch (error) {
+            this.logger.log(error);
+
+            return false;
+        }
+    }
+    
     /// <summary>
     /// Connects the handler to a WebSocket server and begins listening for incoming requests.
     /// </summary>
