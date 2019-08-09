@@ -5,14 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotFrameworkAdapterSettings, InvokeResponse, BotFrameworkAdapter } from 'botbuilder';
+import { BotFrameworkAdapterSettings, InvokeResponse, BotFrameworkAdapter, WebRequest } from 'botbuilder';
 import { ActivityHandler, Middleware, MiddlewareHandler, TurnContext } from 'botbuilder-core';
-import { ConnectorClient } from 'botframework-connector';
+import { ConnectorClient, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider } from 'botframework-connector';
 import { Activity, ActivityTypes } from 'botframework-schema';
 import * as os from 'os';
-import { NamedPipeServer, RequestHandler, StreamingResponse, WebSocketServer } from '..';
+import { NamedPipeServer, NodeWebSocket, RequestHandler, StreamingResponse, WebSocketServer, StreamingRequest } from '..'; //TODO: When integration layer is moved this will need to reference the external library.
 import { ISocket, IStreamingTransportServer, IReceiveRequest } from '../Interfaces';
-import { StreamingHttpClient } from './StreamingHttpClient';
+import { HttpClient, HttpOperationResponse, WebResource } from '@azure/ms-rest-js';
+import { Watershed } from 'watershed'; 
 
 export enum StatusCodes {
     OK = 200,
@@ -25,6 +26,7 @@ export enum StatusCodes {
     NOT_IMPLEMENTED = 501,
 }
 
+const defaultPipeName = 'bfv4.pipes';
 const pjson: any = require('../../package.json');
 const VERSION_PATH:string = '/api/version';
 const MESSAGES_PATH:string = '/api/messages';
@@ -36,7 +38,7 @@ let USER_AGENT:string;
 /// <summary>
 /// Used to process incoming requests sent over an <see cref="IStreamingTransport"/> and adhering to the Bot Framework Protocol v3 with Streaming Extensions.
 /// </summary>
-export class StreamingRequestHandler extends BotFrameworkAdapter implements RequestHandler {
+export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter implements RequestHandler {
     private bot: ActivityHandler;
     private logger;
     private server: IStreamingTransportServer;
@@ -60,39 +62,84 @@ export class StreamingRequestHandler extends BotFrameworkAdapter implements Requ
         this.middleWare = middleWare;        
     }
 
+        /// <summary>
+    /// Process the initial request to establish a long lived connection via a streaming server.
+    /// </summary>
+    /// <param name="req">The connection request.</param>
+    /// <param name="res">The response sent on error or connection termination.</param>
+    /// <param name="settings">Settings to set on the BotframeworkAdapter.</param>
+    public async connectWebSocket(req, res, settings: BotFrameworkAdapterSettings): Promise<void> {
+        if (!res.claimUpgrade) {
+            let e = new Error('Upgrade to WebSockets required.');
+            this.logger.log(e);
+            res.status(StatusCodes.UPGRADE_REQUIRED);
+            res.send(e.message);
+
+            return;
+        }
+
+        if (req === undefined) {
+            let e = new Error('Argument Null Exception: Request cannot be undefined.');
+            this.logger.log(e);
+            res.status(StatusCodes.BAD_REQUEST);
+            res.send(e.message);
+
+            return;
+        }
+
+        if (res === undefined) {
+            let e = new Error('Argument Null Exception: Response cannot be undefined.');
+            this.logger.log(e);
+            res.status(StatusCodes.BAD_REQUEST);
+            res.send(e.message);
+
+            return;
+        }
+
+        const authenticated = await this.authenticateConnection(req, settings.appId, settings.appPassword, settings.channelService);
+        if (!authenticated) {
+            this.logger.log('Unauthorized connection attempt.');
+            res.status(StatusCodes.UNAUTHORIZED);
+
+            return;
+        }
+
+        const upgrade = res.claimUpgrade();
+        const ws = new Watershed();
+        const socket = ws.accept(req, upgrade.socket, upgrade.head);
+
+        await this.startWebSocket(new NodeWebSocket(socket));
+    }
+
+    private async authenticateConnection(req: WebRequest, appId?: string, appPassword?: string, channelService?: string): Promise<boolean> {
+        if (!appId || !appPassword) {
+            // auth is disabled
+            return true;
+        }
+
+        try {
+            let authHeader: string = req.headers.authorization || req.headers.Authorization || '';
+            let channelIdHeader: string = req.headers.channelid || req.headers.ChannelId || req.headers.ChannelID || '';
+            let credentials = new MicrosoftAppCredentials(appId, appPassword);
+            let credentialProvider = new SimpleCredentialProvider(credentials.appId, credentials.appPassword);
+            let claims = await JwtTokenValidation.validateAuthHeader(authHeader, credentialProvider, channelService, channelIdHeader);
+
+            return claims.isAuthenticated;
+        } catch (error) {
+            this.logger.log(error);
+
+            return false;
+        }
+    }
+
     /// <summary>
     /// Connects the handler to a Named Pipe server and begins listening for incoming requests.
     /// </summary>
     /// <param name="pipeName">The name of the named pipe to use when creating the server.</param>
-    public async startNamedPipe(pipename: string): Promise<void>{
+    public async connectNamedPipe(pipename: string = defaultPipeName): Promise<void>{
         this.server = new NamedPipeServer(pipename, this);
         await this.server.start();
     }
-
-    /// <summary>
-    /// Connects the handler to a WebSocket server and begins listening for incoming requests.
-    /// </summary>
-    /// <param name="socket">The socket to use when creating the server.</param>
-    public async startWebSocket(socket: ISocket): Promise<void>{
-        this.server = new WebSocketServer(socket, this);
-        await this.server.start();
-    }
-
-    /// <summary>
-    /// Hides the adapter's built in means of creating a connector client
-    /// and subtitutes a StreamingHttpClient in place of the standard HttpClient,
-    /// thus allowing compatibility with streaming extensions.
-    /// </summary>
-    public createConnectorClient(serviceUrl: string): ConnectorClient {
-        return new ConnectorClient(
-            this.credentials,
-            {
-                baseUri: serviceUrl,
-                userAgent: super['USER_AGENT'],
-                httpClient: new StreamingHttpClient(this.server)
-            });
-    }
-
 
     /// <summary>
     /// Checks the validity of the request and attempts to map it the correct virtual endpoint,
@@ -171,6 +218,30 @@ export class StreamingRequestHandler extends BotFrameworkAdapter implements Requ
         return response;
     }
 
+    /// <summary>
+    /// Hides the adapter's built in means of creating a connector client
+    /// and subtitutes a StreamingHttpClient in place of the standard HttpClient,
+    /// thus allowing compatibility with streaming extensions.
+    /// </summary>
+    public createConnectorClient(serviceUrl: string): ConnectorClient {
+        return new ConnectorClient(
+            this.credentials,
+            {
+                baseUri: serviceUrl,
+                userAgent: super['USER_AGENT'],
+                httpClient: new StreamingHttpClient(this.server)
+            });
+    }
+
+    /// <summary>
+    /// Connects the handler to a WebSocket server and begins listening for incoming requests.
+    /// </summary>
+    /// <param name="socket">The socket to use when creating the server.</param>
+    private async startWebSocket(socket: ISocket): Promise<void>{
+        this.server = new WebSocketServer(socket, this);
+        await this.server.start();
+    }
+
     private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {
         if (request.streams !== undefined && request.streams[0] !== undefined) {
             let contentStream =  request.streams[0];
@@ -196,5 +267,38 @@ export class StreamingRequestHandler extends BotFrameworkAdapter implements Requ
         `(Node.js,Version=${ NODE_VERSION }; ${ TYPE } ${ RELEASE }; ${ ARCHITECTURE })`;
 
         return USER_AGENT;
+    }
+}
+
+class StreamingHttpClient implements HttpClient {
+    private readonly server: IStreamingTransportServer;
+
+    public constructor(server: IStreamingTransportServer) {
+        this.server = server;
+    }
+
+    /// <summary>
+    /// This function hides the default sendRequest of the HttpClient, replacing it
+    /// with a version that takes the WebResource created by the BotFrameworkAdapter
+    /// and converting it to a form that can be sent over a streaming transport.
+    /// </summary>
+    /// <param name="httpRequest">The outgoing request created by the BotframeworkAdapter.</param>
+    /// <returns>The streaming transport compatible response to send back to the client.</returns>
+    public async sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse> {
+        const request = this.mapHttpRequestToProtocolRequest(httpRequest);
+        request.path = request.path.substring(request.path.indexOf('/v3'));
+        const res = await this.server.send(request);
+
+        return {
+            request: httpRequest,
+            status: res.statusCode,
+            headers: httpRequest.headers,
+            readableStreamBody: res.streams.length > 0 ? res.streams[0].getStream() : undefined
+        };
+    }
+
+    private mapHttpRequestToProtocolRequest(httpRequest: WebResource): StreamingRequest {
+
+        return StreamingRequest.create(httpRequest.method, httpRequest.url, httpRequest.body);
     }
 }
