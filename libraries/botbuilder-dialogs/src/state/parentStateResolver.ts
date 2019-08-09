@@ -19,10 +19,10 @@ export class ParentStateResolver implements PathResolver {
         return (path.startsWith(this.alias) && path.length > 0)
     }
 
-    public getValue(dc: DialogContext, memory: object, path: string): any {
+    public getValue(dc: DialogContext, memory: object, path: string, defaultValue?: any): any {
         if (!dc.parent) { throw new Error(`ParentStateResolver: no parent dialog for path "${path}".`) }
 
-        return dc.parent.state.getValue('dialog.' + path.substr(1));
+        return dc.parent.state.getValue('dialog.' + path.substr(1), defaultValue);
     }
 
     public setValue(dc: DialogContext, memory: object, path: string, value: any): void {

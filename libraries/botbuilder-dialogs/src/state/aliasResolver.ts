@@ -21,8 +21,8 @@ export class AliasResolver implements PathResolver {
         return (path.startsWith(this.alias) && path.length > 0)
     }
 
-    public getValue(dc: DialogContext, memory: object, path: string): any {
-        return dc.state.getValue(this.mapper(path));
+    public getValue(dc: DialogContext, memory: object, path: string, defaultValue?: any): any {
+        return dc.state.getValue(this.mapper(path), defaultValue);
     }
 
     public setValue(dc: DialogContext, memory: object, path: string, value: any): void {

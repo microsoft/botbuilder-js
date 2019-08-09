@@ -19,7 +19,7 @@ export class DefaultPathResolver implements PathResolver {
         return true;
     }
 
-    public getValue(dc: DialogContext, memory: object, path: string): any {
+    public getValue(dc: DialogContext, memory: object, path: string, defaultValue?: any): any {
         const segments = path.split('.');
         let value = memory;
         for (let i = 0; i < segments.length; i++) {
@@ -31,7 +31,7 @@ export class DefaultPathResolver implements PathResolver {
                 }
             } 
             
-            value = undefined;
+            value = defaultValue;
             break;
         }
 

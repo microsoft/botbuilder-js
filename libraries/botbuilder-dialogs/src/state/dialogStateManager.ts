@@ -32,9 +32,9 @@ export class DialogStateManager {
         return this;
     }
 
-    public getValue(path: string): any {
+    public getValue(path: string, defaultValue?: any): any {
         const memory = this.toJSON();
-        return this.findResolver(path).getValue(this.dc, memory, path);
+        return this.findResolver(path).getValue(this.dc, memory, path, defaultValue);
     }
 
     public setValue(path: string, value: any): void {
