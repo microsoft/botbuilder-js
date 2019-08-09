@@ -231,7 +231,7 @@ export class LuisClient {
         }
 
         if (query !== undefined) {
-            localVarQueryParameters['q'] = ObjectSerializer.serialize(query, 'string');
+            localVarQueryParameters['query'] = ObjectSerializer.serialize(query, 'string');
         }
 
         if (options.timezoneOffset !== undefined) {
