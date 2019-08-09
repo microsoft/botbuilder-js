@@ -10,6 +10,7 @@ import { Choice } from './choices';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
+import { DialogStateManager } from './state';
 
 /**
  * State information persisted by a `DialogSet`.
@@ -48,6 +49,8 @@ export class DialogContext {
      */
     public readonly stack: DialogInstance[];
 
+    public readonly state: DialogStateManager;
+
     /**
      * The parent DialogContext if any.
      * 
@@ -67,6 +70,7 @@ export class DialogContext {
         this.dialogs = dialogs;
         this.context = context;
         this.stack = state.dialogStack;
+        this.state = new DialogStateManager(this);
     }
 
     /**
