@@ -50,33 +50,30 @@ describe('PayloadTransport', () => {
             expect(ps.isConnected).to.equal(true);
         });
 
-        it('writes to its sender.', () => {
+        it('writes to its sender.', (done) => {
             let ps = new PayloadSender.PayloadSender();
             ps.connect(new FauxSock);
             expect(ps.isConnected).to.equal(true);
 
             let stream = new SubscribableStream.SubscribableStream();
             stream.write('This is a test stream.');
-            let header = {PayloadType: PayloadTypes.PayloadTypes.request, PayloadLength: '42', Id: '100', End: true};
+            let header = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: 22, id: '100', end: true};
             let packet = {header: header, payload: stream, sendCallBack: undefined};
 
-            expect(ps.writePacket(packet)).to.not.throw;
+            expect(ps.sendPayload(header, stream, ()=>done()));
         });
 
-        // it('calls the packet sent callback.', (done) => {
-        //     let ps = new PayloadSender.PayloadSender();
-        //     ps.connect(new FauxSock);
-        //     expect(ps.isConnected).to.equal(true);
+        it('calls the packet sent callback.', (done) => {
+            let ps = new PayloadSender.PayloadSender();
+            ps.connect(new FauxSock);
+            expect(ps.isConnected).to.equal(true);
 
-        //     let stream = new SubscribableStream.SubscribableStream();
-        //     stream.write('This is a test stream.');
-        //     let header = {PayloadType: PayloadTypes.PayloadTypes.request, PayloadLength: 22, Id: '100', End: true};
-        //     let packet = {header: header, payload: stream, sendCallBack: function() {done();} };
-
-        //     ps.writePacket(packet);
-
-        //     expect(done);
-        // });
+            let stream = new SubscribableStream.SubscribableStream();
+            stream.write('This is a test stream.');
+            let header = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: 22, id: '100', end: true};
+           
+            ps.sendPayload(header, stream, ()=>done());
+        });
 
         it('disconnects when header length is longer than packet length.', () => {
             let ps = new PayloadSender.PayloadSender();
@@ -85,10 +82,10 @@ describe('PayloadTransport', () => {
 
             let stream = new SubscribableStream.SubscribableStream();
             stream.write('This is a test stream.');
-            let header = {PayloadType: PayloadTypes.PayloadTypes.request, PayloadLength: '42', Id: '100', End: true};
+            let header = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: 42, id: '100', end: true};
             let packet = {header: header, payload: stream, sendCallBack: undefined};
 
-            ps.writePacket(packet);
+            ps.sendPayload(header, stream, ()=>done());
 
             expect(ps.isConnected).to.equal(false);
         });
@@ -103,10 +100,10 @@ describe('PayloadTransport', () => {
 
             let stream = new SubscribableStream.SubscribableStream();
             stream.write('This is a test stream.');
-            let header = {PayloadType: PayloadTypes.PayloadTypes.request, PayloadLength: '42', Id: '100', End: true};
-            let packet = {header: header, payload: stream, sendCallBack: undefined};
+            let header = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: 22, id: '100', end: true};
+            let packet = {header: header, payload: stream, sendCallBack: ()=>done()};
 
-            expect(ps.writePacket(packet)).to.not.throw;
+            ps.sendPayload(header, stream, ()=>done());
         });
 
     });
