@@ -12,6 +12,7 @@
 
 import localVarRequest = require('request');
 import http = require('http');
+import * as HttpStatus from 'http-status-codes';
 
 /* tslint:disable:no-unused-locals */
 import { LuisResult } from './model/luisResult';
@@ -183,7 +184,7 @@ export class LuisClient {
                     reject(error);
                 } else {
                     luisResult = ObjectSerializer.deserialize(luisResult, 'LuisResult');
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= HttpStatus.OK && response.statusCode < HttpStatus.MULTIPLE_CHOICES) {
                         resolve(luisResult);
                     } else {
                         reject({
@@ -289,7 +290,7 @@ export class LuisClient {
                     reject(error);
                 } else {
                     luisResult = ObjectSerializer.deserialize(luisResult, 'LuisResult');
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= HttpStatus.OK && response.statusCode < HttpStatus.MULTIPLE_CHOICES) {
                         resolve(luisResult);
                     } else {
                         reject({
