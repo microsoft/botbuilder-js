@@ -31,33 +31,33 @@ export class CompositeEntityModel {
     /**
     * Type/name of parent entity.
     */
-    'parentType': string;
+    parentType: string;
     /**
     * Value for composite entity extracted by LUIS.
     */
-    'value': string;
+    value: string;
     /**
     * Child entities.
     */
-    'children': Array<CompositeChildModel>;
+    children: Array<CompositeChildModel>;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            'name': 'parentType',
-            'baseName': 'parentType',
-            'type': 'string'
+            name: 'parentType',
+            baseName: 'parentType',
+            type: 'string'
         },
         {
-            'name': 'value',
-            'baseName': 'value',
-            'type': 'string'
+            name: 'value',
+            baseName: 'value',
+            type: 'string'
         },
         {
-            'name': 'children',
-            'baseName': 'children',
-            'type': 'Array<CompositeChildModel>'
+            name: 'children',
+            baseName: 'children',
+            type: 'Array<CompositeChildModel>'
         }    ];
 
     static getAttributeTypeMap() {

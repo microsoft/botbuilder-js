@@ -25,24 +25,24 @@ export class Sentiment {
     /**
     * The polarity of the sentiment, can be positive, neutral or negative.
     */
-     'label': String;
+    label: String;
     /**
     * Score of the sentiment, ranges from 0 (most negative) to 1 (most positive).
     */
-    'score': number;
+    score: number;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            'name': 'label',
-            'baseName': 'label',
-            'type': 'string'
+            name: 'label',
+            baseName: 'label',
+            type: 'string'
         },
         {
-            'name': 'score',
-            'baseName': 'score',
-            'type': 'number'
+            name: 'score',
+            baseName: 'score',
+            type: 'number'
         }    ];
 
     static getAttributeTypeMap() {

@@ -25,24 +25,24 @@ export class IntentModel {
     /**
     * Name of the intent, as defined in LUIS.
     */
-    'intent'?: string;
+    intent?: string;
     /**
     * Associated prediction score for the intent (float).
     */
-    'score'?: number;
+    score?: number;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            'name': 'intent',
-            'baseName': 'intent',
-            'type': 'string'
+            name: 'intent',
+            baseName: 'intent',
+            type: 'string'
         },
         {
-            'name': 'score',
-            'baseName': 'score',
-            'type': 'number'
+            name: 'score',
+            baseName: 'score',
+            type: 'number'
         }    ];
 
     static getAttributeTypeMap() {

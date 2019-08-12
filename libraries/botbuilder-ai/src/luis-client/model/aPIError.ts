@@ -25,24 +25,24 @@ export class APIError {
     /**
     * HTTP Status code
     */
-    'statusCode'?: string;
+    statusCode?: string;
     /**
     * Cause of the error.
     */
-    'message'?: string;
+    message?: string;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            'name': 'statusCode',
-            'baseName': 'statusCode',
-            'type': 'string'
+            name: 'statusCode',
+            baseName: 'statusCode',
+            type: 'string'
         },
         {
-            'name': 'message',
-            'baseName': 'message',
-            'type': 'string'
+            name: 'message',
+            baseName: 'message',
+            type: 'string'
         }    ];
 
     static getAttributeTypeMap() {

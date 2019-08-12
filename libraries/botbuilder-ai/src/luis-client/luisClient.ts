@@ -122,7 +122,7 @@ export class LuisClient {
         }
 
         if (!options.customHeaders) {
-            options.customHeaders = {headers: {}}
+            options.customHeaders = {headers: {}};
         }
 
         if (options.timezoneOffset !== undefined) {
@@ -214,7 +214,7 @@ export class LuisClient {
         }
 
         if (options.customHeaders === null || options.customHeaders === undefined) {
-            options.customHeaders = {headers: {}}
+            options.customHeaders = {headers: {}};
         }
 
         if (query !== undefined) {

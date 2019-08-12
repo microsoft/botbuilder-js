@@ -25,24 +25,24 @@ export class CompositeChildModel {
     /**
     * Type of child entity.
     */
-    'type': string;
+    type: string;
     /**
     * Value extracted by LUIS.
     */
-    'value': string;
+    value: string;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            'name': 'type',
-            'baseName': 'type',
-            'type': 'string'
+            name: 'type',
+            baseName: 'type',
+            type: 'string'
         },
         {
-            'name': 'value',
-            'baseName': 'value',
-            'type': 'string'
+            name: 'value',
+            baseName: 'value',
+            type: 'string'
         }    ];
 
     static getAttributeTypeMap() {

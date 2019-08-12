@@ -43,67 +43,67 @@ export class EntityModel {
     /**
     * Name of the entity, as defined in LUIS.
     */
-    'entity': string;
+    entity: string;
     /**
     * Type of the entity, as defined in LUIS.
     */
-    'type': string;
+    type: string;
     /**
     * The position of the first character of the matched entity within the utterance.
     */
-    'startIndex': number;
+    startIndex: number;
     /**
     * The position of the last character of the matched entity within the utterance.
     */
-    'endIndex': number;
+    endIndex: number;
     /**
     * Resolution values for pre-built LUIS entities.
     */
-   'resolution': any;
+   resolution: any;
     /**
     * Associated prediction score for the intent (float).
     */
-   'score': number;
+   score: number;
 
-   'role': string;
+   role: string;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            'name': 'entity',
-            'baseName': 'entity',
-            'type': 'string'
+            name: 'entity',
+            baseName: 'entity',
+            type: 'string'
         },
         {
-            'name': 'type',
-            'baseName': 'type',
-            'type': 'string'
+            name: 'type',
+            baseName: 'type',
+            type: 'string'
         },
         {
-            'name': 'startIndex',
-            'baseName': 'startIndex',
-            'type': 'number'
+            name: 'startIndex',
+            baseName: 'startIndex',
+            type: 'number'
         },
         {
-            'name': 'endIndex',
-            'baseName': 'endIndex',
-            'type': 'number'
+            name: 'endIndex',
+            baseName: 'endIndex',
+            type: 'number'
         },
         {
-            'name': 'resolution',
-            'baseName': 'resolution',
-            'type': 'object'
+            name: 'resolution',
+            baseName: 'resolution',
+            type: 'object'
         },
         {
-            'name': 'score',
-            'baseName': 'score',
-            'type': 'number'
+            name: 'score',
+            baseName: 'score',
+            type: 'number'
         },
         {
-            'name': 'role',
-            'baseName': 'role',
-            'type': 'string'
+            name: 'role',
+            baseName: 'role',
+            type: 'string'
         }    ];
 
     static getAttributeTypeMap() {
