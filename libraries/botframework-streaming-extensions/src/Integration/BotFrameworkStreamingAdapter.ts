@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotFrameworkAdapterSettings, InvokeResponse, BotFrameworkAdapter, WebRequest } from 'botbuilder';
+import { BotFrameworkAdapterSettings, InvokeResponse, BotFrameworkAdapter, WebRequest, WebResponse } from 'botbuilder';
 import { ActivityHandler, Middleware, MiddlewareHandler, TurnContext } from 'botbuilder-core';
 import { ConnectorClient, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider } from 'botframework-connector';
 import { Activity, ActivityTypes } from 'botframework-schema';
@@ -14,6 +14,7 @@ import { NamedPipeServer, NodeWebSocket, RequestHandler, StreamingResponse, WebS
 import { ISocket, IStreamingTransportServer, IReceiveRequest } from '../Interfaces';
 import { HttpClient, HttpOperationResponse, WebResource } from '@azure/ms-rest-js';
 import { Watershed } from 'watershed'; 
+import { Request, ServerUpgradeResponse } from 'restify';
 
 export enum StatusCodes {
     OK = 200,
@@ -68,29 +69,11 @@ export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter implements
     /// <param name="req">The connection request.</param>
     /// <param name="res">The response sent on error or connection termination.</param>
     /// <param name="settings">Settings to set on the BotframeworkAdapter.</param>
-    public async connectWebSocket(req, res, settings: BotFrameworkAdapterSettings): Promise<void> {
-        if (!res.claimUpgrade) {
+    public async connectWebSocket(req: Request, res: ServerUpgradeResponse, settings: BotFrameworkAdapterSettings): Promise<void> {
+        if (!req.isUpgradeRequest()) {
             let e = new Error('Upgrade to WebSockets required.');
             this.logger.log(e);
             res.status(StatusCodes.UPGRADE_REQUIRED);
-            res.send(e.message);
-
-            return;
-        }
-
-        if (req === undefined) {
-            let e = new Error('Argument Null Exception: Request cannot be undefined.');
-            this.logger.log(e);
-            res.status(StatusCodes.BAD_REQUEST);
-            res.send(e.message);
-
-            return;
-        }
-
-        if (res === undefined) {
-            let e = new Error('Argument Null Exception: Response cannot be undefined.');
-            this.logger.log(e);
-            res.status(StatusCodes.BAD_REQUEST);
             res.send(e.message);
 
             return;
