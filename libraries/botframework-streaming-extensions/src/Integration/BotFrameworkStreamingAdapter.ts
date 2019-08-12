@@ -76,7 +76,7 @@ export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter implements
             res.status(StatusCodes.UPGRADE_REQUIRED);
             res.send(e.message);
 
-            return;
+            return Promise.resolve();
         }
 
         const authenticated = await this.authenticateConnection(req, settings.appId, settings.appPassword, settings.channelService);
@@ -84,7 +84,7 @@ export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter implements
             this.logger.log('Unauthorized connection attempt.');
             res.status(StatusCodes.UNAUTHORIZED);
 
-            return;
+            return Promise.resolve();
         }
 
         const upgrade = res.claimUpgrade();
