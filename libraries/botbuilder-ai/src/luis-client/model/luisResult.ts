@@ -45,69 +45,69 @@ export class LuisResult {
     /**
     * The input utterance that was analyzed.
     */
-    'query'?: string;
+    query?: string;
     /**
     * The corrected utterance (when spell checking was enabled).
     */
-    'alteredQuery'?: string;
-    'topScoringIntent'?: IntentModel;
+    alteredQuery?: string;
+    topScoringIntent?: IntentModel;
     /**
     * All the intents (and their score) that were detected from utterance.
     */
-    'intents'?: Array<IntentModel>;
+    intents?: Array<IntentModel>;
     /**
     * The entities extracted from the utterance.
     */
-    'entities'?: Array<EntityModel>;
+    entities?: Array<EntityModel>;
     /**
     * The composite entities extracted from the utterance.
     */
-    'compositeEntities'?: Array<CompositeEntityModel>;
-    'sentimentAnalysis'?: Sentiment;
-    'connectedServiceResult'?: LuisResult;
+    compositeEntities?: Array<CompositeEntityModel>;
+    sentimentAnalysis?: Sentiment;
+    connectedServiceResult?: LuisResult;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            'name': 'query',
-            'baseName': 'query',
-            'type': 'string'
+            name: 'query',
+            baseName: 'query',
+            type: 'string'
         },
         {
-            'name': 'alteredQuery',
-            'baseName': 'alteredQuery',
-            'type': 'string'
+            name: 'alteredQuery',
+            baseName: 'alteredQuery',
+            type: 'string'
         },
         {
-            'name': 'topScoringIntent',
-            'baseName': 'topScoringIntent',
-            'type': 'IntentModel'
+            name: 'topScoringIntent',
+            baseName: 'topScoringIntent',
+            type: 'IntentModel'
         },
         {
-            'name': 'intents',
-            'baseName': 'intents',
-            'type': 'Array<IntentModel>'
+            name: 'intents',
+            baseName: 'intents',
+            type: 'Array<IntentModel>'
         },
         {
-            'name': 'entities',
-            'baseName': 'entities',
-            'type': 'Array<EntityModel>'
+            name: 'entities',
+            baseName: 'entities',
+            type: 'Array<EntityModel>'
         },
         {
-            'name': 'compositeEntities',
-            'baseName': 'compositeEntities',
-            'type': 'Array<CompositeEntityModel>'
+            name: 'compositeEntities',
+            baseName: 'compositeEntities',
+            type: 'Array<CompositeEntityModel>'
         },
         {
-            'name': 'sentimentAnalysis',
-            'baseName': 'sentimentAnalysis',
-            'type': 'Sentiment'
+            name: 'sentimentAnalysis',
+            baseName: 'sentimentAnalysis',
+            type: 'Sentiment'
         },
         {
-            'name': 'connectedServiceResult',
-            'baseName': 'connectedServiceResult',
-            'type': 'LuisResult'
+            name: 'connectedServiceResult',
+            baseName: 'connectedServiceResult',
+            type: 'LuisResult'
         }    ];
 
     static getAttributeTypeMap() {
