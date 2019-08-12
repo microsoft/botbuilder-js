@@ -2,7 +2,7 @@
   "name": "botbuilder",
   "author": "Microsoft Corp.",
   "description": "Bot Builder is a framework for building rich bots on virtually any platform.",
-  "version": "4.1.6",
+  "version": "4.0.0-local",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -21,8 +21,8 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "@types/node": "^10.12.18",
-    "botbuilder-core": "4.1.6",
-    "botframework-connector": "4.1.6",
+    "botbuilder-core": "4.0.0-local",
+    "botframework-connector": "4.0.0-local",
     "filenamify": "^4.1.0",
     "fs-extra": "^7.0.1"
   },

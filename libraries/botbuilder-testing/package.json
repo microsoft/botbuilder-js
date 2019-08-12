@@ -2,7 +2,7 @@
   "name": "botbuilder-testing",
   "author": "Microsoft Corp.",
   "description": "Helpers for testing Bot Framework bots",
-  "version": "4.1.6",
+  "version": "4.0.0-local",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -20,8 +20,8 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "botbuilder-core": "4.1.6",
-    "botbuilder-dialogs": "4.1.6",
+    "botbuilder-core": "4.0.0-local",
+    "botbuilder-dialogs": "4.0.0-local",
     "mocha-logger": "^1.0.6"
   },
   "devDependencies": {
