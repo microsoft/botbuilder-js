@@ -10,8 +10,7 @@
  * and was manually modified to make it compliant with the current implementation of the library.
  */
 
-import localVarRequest = require('request');
-import http = require('http');
+import Request = require('request');
 import * as HttpStatus from 'http-status-codes';
 
 /* tslint:disable:no-unused-locals */
@@ -57,7 +56,6 @@ export enum LuisApikeys {
 
 export class LuisClient {
     protected _basePath: string = '';
-    protected defaultHeaders: any = {};
     protected _useQuerystring: boolean = false;
 
     protected authentications = {
@@ -88,7 +86,7 @@ export class LuisClient {
     }
 
     public setApiKey(key: LuisApikeys, value: string): void {
-        (this.authentications as any)[LuisApikeys[key]].apiKey = value;
+        this.authentications[LuisApikeys[key]].apiKey = value;
     }
 
     /** 
@@ -107,12 +105,11 @@ export class LuisClient {
      * @param [options] The optional parameters
      * @returns Promise<LuisResult>
      */
-    public async predictionResolvePost(query: string, appId: string, options: PredictionResolveOptionalParams): Promise<LuisResult> {
-        const localVarPath = this.getLocalURL(appId);
+    public async predictionResolvePost(query: string, appId: string, options: PredictionResolveOptionalParams): Promise<LuisResult> {        
+        const localPath = this.getLocalURL(appId);
 
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams = this.defaultHeaders
-        let localVarFormParams: any = {};
+        let localHeaderParams = {};
+        let localQueryParameters = {};        
 
         // verify required parameter 'query' is not null or undefined
         if (query === null || query === undefined) {
@@ -129,57 +126,48 @@ export class LuisClient {
         }
 
         if (options.timezoneOffset !== undefined) {
-            localVarQueryParameters['timezoneOffset'] = ObjectSerializer.serialize(options.timezoneOffset, 'number');
+            localQueryParameters['timezoneOffset'] = ObjectSerializer.serialize(options.timezoneOffset, 'number');
         }
 
         if (options.verbose !== undefined) {
-            localVarQueryParameters['verbose'] = ObjectSerializer.serialize(options.verbose, 'boolean');
+            localQueryParameters['verbose'] = ObjectSerializer.serialize(options.verbose, 'boolean');
         }
 
         if (options.staging !== undefined) {
-            localVarQueryParameters['staging'] = ObjectSerializer.serialize(options.staging, 'boolean');
+            localQueryParameters['staging'] = ObjectSerializer.serialize(options.staging, 'boolean');
         }
 
         if (options.spellCheck !== undefined) {
-            localVarQueryParameters['spellCheck'] = ObjectSerializer.serialize(options.spellCheck, 'boolean');
+            localQueryParameters['spellCheck'] = ObjectSerializer.serialize(options.spellCheck, 'boolean');
         }
 
         if (options.bingSpellCheckSubscriptionKey !== undefined) {
-            localVarQueryParameters['bing-spell-check-subscription-key'] = ObjectSerializer.serialize(options.bingSpellCheckSubscriptionKey, 'string');
+            localQueryParameters['bing-spell-check-subscription-key'] = ObjectSerializer.serialize(options.bingSpellCheckSubscriptionKey, 'string');
         }
 
         if (options.log !== undefined) {
-            localVarQueryParameters['log'] = ObjectSerializer.serialize(options.log, 'boolean');
+            localQueryParameters['log'] = ObjectSerializer.serialize(options.log, 'boolean');
         }
 
-        Object.assign(localVarHeaderParams, options.customHeaders.headers);
+        Object.assign(localHeaderParams, options.customHeaders.headers);
 
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localRequestOptions: Request.Options = {
             method: 'POST',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
+            qs: localQueryParameters,
+            headers: localHeaderParams,
+            uri: localPath,
             useQuerystring: this._useQuerystring,
             json: true,
             maxRedirects: 21,
             body: ObjectSerializer.serialize(query, 'string')
         };
 
-        this.authentications.apiKeyHeader.applyToRequest(localVarRequestOptions);
+        this.authentications.apiKeyHeader.applyToRequest(localRequestOptions);
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        this.authentications.default.applyToRequest(localRequestOptions);
 
-        if (Object.keys(localVarFormParams).length) {
-            if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
-            } else {
-                localVarRequestOptions.form = localVarFormParams;
-            }
-        }
         return new Promise<LuisResult>((resolve, reject) => {
-            localVarRequest(localVarRequestOptions, (error, response, luisResult) => {
+            Request(localRequestOptions, (error, response, luisResult) => {
                 if (error) {
                     reject(error);
                 } else {
@@ -210,11 +198,10 @@ export class LuisClient {
      * @returns Promise<LuisResult>
      */
     public async predictionResolveGet(appId: string, query: string, options: PredictionResolveOptionalParams): Promise<LuisResult> {
-        const localVarPath = this.getLocalURL(appId);
+        const localPath = this.getLocalURL(appId);
 
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams = (Object as any).assign({}, this.defaultHeaders) as any;
-        let localVarFormParams: any = {};
+        let localQueryParameters = {};
+        let localHeaderParams = {};        
 
         // verify required parameter 'appId' is not null or undefined
         if (appId === null || appId === undefined) {
@@ -231,61 +218,52 @@ export class LuisClient {
         }
 
         if (query !== undefined) {
-            localVarQueryParameters['query'] = ObjectSerializer.serialize(query, 'string');
+            localQueryParameters['query'] = ObjectSerializer.serialize(query, 'string');
         }
 
         if (options.timezoneOffset !== undefined) {
-            localVarQueryParameters['timezoneOffset'] = ObjectSerializer.serialize(options.timezoneOffset, 'number');
+            localQueryParameters['timezoneOffset'] = ObjectSerializer.serialize(options.timezoneOffset, 'number');
         }
 
         if (options.verbose !== undefined) {
-            localVarQueryParameters['verbose'] = ObjectSerializer.serialize(options.verbose, 'boolean');
+            localQueryParameters['verbose'] = ObjectSerializer.serialize(options.verbose, 'boolean');
         }
 
         if (options.staging !== undefined) {
-            localVarQueryParameters['staging'] = ObjectSerializer.serialize(options.staging, 'boolean');
+            localQueryParameters['staging'] = ObjectSerializer.serialize(options.staging, 'boolean');
         }
 
         if (options.spellCheck !== undefined) {
-            localVarQueryParameters['spellCheck'] = ObjectSerializer.serialize(options.spellCheck, 'boolean');
+            localQueryParameters['spellCheck'] = ObjectSerializer.serialize(options.spellCheck, 'boolean');
         }
 
         if (options.bingSpellCheckSubscriptionKey !== undefined) {
-            localVarQueryParameters['bing-spell-check-subscription-key'] = ObjectSerializer.serialize(options.bingSpellCheckSubscriptionKey, 'string');
+            localQueryParameters['bing-spell-check-subscription-key'] = ObjectSerializer.serialize(options.bingSpellCheckSubscriptionKey, 'string');
         }
 
         if (options.log !== undefined) {
-            localVarQueryParameters['log'] = ObjectSerializer.serialize(options.log, 'boolean');
+            localQueryParameters['log'] = ObjectSerializer.serialize(options.log, 'boolean');
         }
 
-        (Object as any).assign(localVarHeaderParams, options.customHeaders.headers);
+        Object.assign(localHeaderParams, options.customHeaders.headers);        
 
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localRequestOptions: Request.Options = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
+            qs: localQueryParameters,
+            headers: localHeaderParams,
+            uri: localPath,
             useQuerystring: this._useQuerystring,
             json: true,
             maxRedirects: 21,
             body: ObjectSerializer.serialize(query, 'string')
         };
 
-        this.authentications.apiKeyHeader.applyToRequest(localVarRequestOptions);
+        this.authentications.apiKeyHeader.applyToRequest(localRequestOptions);
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        this.authentications.default.applyToRequest(localRequestOptions);
 
-        if (Object.keys(localVarFormParams).length) {
-            if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
-            } else {
-                localVarRequestOptions.form = localVarFormParams;
-            }
-        }
         return new Promise<LuisResult>((resolve, reject) => {
-            localVarRequest(localVarRequestOptions, (error, response, luisResult) => {
+            Request(localRequestOptions, (error, response, luisResult) => {
                 if (error) {
                     reject(error);
                 } else {
