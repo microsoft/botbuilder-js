@@ -21,23 +21,79 @@ class FauxSock{
 }
 
 class TestRequest {
-    constructor(verb = undefined, path = undefined, streams = undefined){
-        this.verb = verb;
-        this.path = path;
-        this.streams = streams;
+    constructor(){
+    }
+
+    isUpgradeRequest(){
+        return this.upgradeRequestVal;
+    }
+
+    setIsUpgradeRequest(value){
+        this.upgradeRequestVal = value;
+    }
+
+    status(){
+        return this.statusVal;
+    }
+
+    status(value){
+        this.statusVal = value;
+    }
+
+    path(value){
+        this.pathVal = value;
+    }
+
+    path(){
+        return this.pathVal;
+    }
+
+    verb(value){
+        this.verbVal = value;
+    }
+    
+    verb(){
+        return this.verbVal;
+    }
+
+    streams(value){
+        this.streamsVal = value;
+    }
+
+    streams(){
+        return this.streamsVal;
+    }
+
+    headers(){
+        return this.headersVal;
+    }
+
+    headers(value){
+        this.headersVal = value;
     }
 }
 
 class TestResponse {
-    construtor(claimUpgrade = undefined, status = undefined, send = undefined){
-        this.claimUpgrade = claimUpgrade;
-        this.status = status;
-        this.send = send;
+
+    construtor(){
     }
 
-    claimUpgrade()
+    send(value){
+        this.sendVal = value;
+        return this.sendVal;
+    }
+
+    status(value){
+        this.statusVal = value;
+        return this.statusVal;
+    }
+
+    claimUpgrade(value)
     {
-        return this.claimUpgrade;
+        this.claimUpgradeVal = value;
+    }
+    get claimUpgrade(){
+        return this.claimUpgradeVal;
     }
 }
 
@@ -82,7 +138,6 @@ describe('BotFrameworkStreamingAdapter tests', () => {
     it('starts and stops a websocket server', (done) => {
         let bot = new ActivityHandler.ActivityHandler();
         let handler = new Adapter.BotFrameworkStreamingAdapter(bot);
-        let sock = new FauxSock();
         let request = new TestRequest();
         let response = new TestResponse({claimUpgrade:'anything'});
         let settings = new TestAdapterSettings(undefined, undefined);
@@ -98,31 +153,44 @@ describe('BotFrameworkStreamingAdapter tests', () => {
         expect(cc.baseUri).to.equal('www.contoso.com');
     });
 
-    it('connectWebSocket returns an error when upgradeClaim is missing',  (done) => {
+    it('connectWebSocket returns an error when request is not an upgrade request', () => {
         let bot = new ActivityHandler.ActivityHandler();
         let handler = new Adapter.BotFrameworkStreamingAdapter(bot);
-        let sock = new FauxSock();
         let request = new TestRequest();
+        request.setIsUpgradeRequest(false);
         let response = new TestResponse();
-        let settings = new TestAdapterSettings(undefined, undefined);
+        let settings = new TestAdapterSettings(undefined, undefined);        
 
-        handler.connectWebSocket(request, response, settings).then( (result) => {
-            expect(result.message)
-                .to.equal('Upgrade to WebSockets required.');
-            
-        });
-        done();
+        handler.connectWebSocket(request, response, settings).catch();
+        expect(response.sendVal).to.equal('Upgrade to WebSockets required.');
+        expect(response.statusVal).to.equal(426);       
     });
 
-    // it('returns a 500 when the request body is missing', async (done) => {
+    it('connectWebSocket returns status code 401 when request is not authorized', async () => {
+        let bot = new ActivityHandler.ActivityHandler();
+        let handler = new Adapter.BotFrameworkStreamingAdapter(bot);
+        let request = new TestRequest();
+        request.setIsUpgradeRequest(true);
+        request.headers({channelid: 'fakechannel', authorization: 'donttrustme'});
+        let response = new TestResponse();
+        let settings = new TestAdapterSettings('appId', 'password');    
+
+        await handler.connectWebSocket(request, response, settings).then(function(){
+            return;
+        });     
+        expect(response.sendVal).to.equal(undefined);
+        expect(response.statusVal).to.equal(401); 
+    });
+
+
+    // it('returns a 500 when the request body is missing', async () => {
     //     let bot = new ActivityHandler.ActivityHandler();
     //     let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
     //     let request = new TestRequest( 'POST', '/api/messages');
 
     //   await handler.processRequest(request).then( 
     //             function(response) {
-    //                 expect(response.statusCode).to.equal(500);
-    //                 done();
+    //                 expect(response.statusCode).to.equal(500);                    
     //             });        
     // });
 
