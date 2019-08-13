@@ -511,9 +511,9 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         const severity: DiagnosticSeverity = parameters.severity === undefined ? DiagnosticSeverity.Error : parameters.severity;
         const context: ParserRuleContext = parameters.context;
         // tslint:disable-next-line: max-line-length
-        const startPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.start.line - 1, context.start.charPositionInLine);
+        const startPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.start.line, context.start.charPositionInLine);
         // tslint:disable-next-line: max-line-length
-        const stopPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.stop.line - 1, context.stop.charPositionInLine + context.stop.text.length);
+        const stopPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
         const range: Range = new Range(startPosition, stopPosition);
         message = `error message: ${message}`;
         if (this.currentSource !== undefined && this.currentSource !== '') {
