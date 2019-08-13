@@ -14,7 +14,7 @@ console.log(dependencies);
 
 // Update versions for specified dependencies in package.json file
 function updateDependencies(filePath) {
-    var fs = require('fs');
+    var fs = require('fs')
     fs.readFile(filePath, 'utf8', function (err, data) {
         if (err) {
             return console.log(err);
@@ -22,7 +22,7 @@ function updateDependencies(filePath) {
 
         var result = '';
         dependencies.forEach(function (dependency) {
-            var findString = new RegExp('("dependencies":)(.+?)("' + dependency + '":\\s*")([^\/"]+)', "gms");
+            var findString = new RegExp('("dependencies":)(.+?)("' + dependency + '":\\s*")([^\/"]+)', "gms")
             var replaceString = '$1$2$3' + newVersion;
             result = data.replace(findString, replaceString);
             data = result;
