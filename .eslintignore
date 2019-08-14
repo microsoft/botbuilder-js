@@ -1,3 +1,4 @@
 libraries/botframework-connector/src/connectorApi/**/*
 libraries/botframework-connector/src/tokenApi/**/*
 libraries/botframework-schema/**/*
+libraries/botbuilder-ai/src/luis-client/model/*
