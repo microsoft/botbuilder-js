@@ -20,8 +20,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@microsoft/recognizers-text-date-time": "1.1.2",
-    "@types/bluebird": "^3.5.27",
+    "@microsoft/recognizers-text-date-time": "1.1.2",    
     "@types/node": "^10.12.18",
     "@types/request": "^2.48.2",    
     "botbuilder-core": "4.1.6",
