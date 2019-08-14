@@ -8,7 +8,9 @@ const invalidExpressions = [
   "fun(a, b, c",
   "func(A,b,b,)",
   "a.#title",
-  "\"hello'"
+  "\"hello'",
+  "user.lists.{dialog.listName}",
+  "a===a"
 ];
 
 const badExpressions =

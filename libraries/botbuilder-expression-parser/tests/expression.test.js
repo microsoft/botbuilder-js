@@ -383,7 +383,7 @@ const dataSource = [
   ["^y", 2],
   ["^z", 1],
   ["count(@@CompositeList1) == 1 && count(@@CompositeList1[0]) == 1", true, ["turn.recognized.entities.CompositeList1", "turn.recognized.entities.CompositeList1[0]"]],
-  ["count(@CompositeList2) == 2 && (@CompositeList2)[0] === 'firstItem'", true, ["turn.recognized.entities.CompositeList2"]],
+  ["count(@CompositeList2) == 2 && (@CompositeList2)[0] == 'firstItem'", true, ["turn.recognized.entities.CompositeList2"]],
 
   // Memory access tests
   ["getProperty(bag, concat('na','me'))", "mybag"],
