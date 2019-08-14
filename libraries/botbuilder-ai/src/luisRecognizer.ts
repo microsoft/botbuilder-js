@@ -243,7 +243,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         return topIntent || defaultIntent;
     }
 
-        /**
+    /**
      * Calls LUIS to recognize intents and entities in a users utterance.
      * @remarks
      * Returns a [RecognizerResult](../botbuilder-core/recognizerresult) containing any intents and entities recognized by LUIS.
@@ -255,25 +255,25 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      *
      * ```javascript
      * async onTurn(context) {
-        *     if (turnContext.activity.type === ActivityTypes.Message) {
-        *         const results = await luisRecognizer.recognize(turnContext);
-        *         const topIntent = LuisRecognizer.topIntent(results);
-        *         switch (topIntent) {
-        *             case 'MyIntent':
-        *                 // ... handle intent ...
-        *                 break;
-        *             case 'None':
-        *                 // ... handle intent ...
-        *                 break;
-        *         }
-        *     }
-        * }
-        * ```
-        * @param context Context for the current turn of conversation with the use.
-        * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
-        * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
-        * @param options (Optional) options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
-        */
+     *     if (turnContext.activity.type === ActivityTypes.Message) {
+     *         const results = await luisRecognizer.recognize(turnContext);
+     *         const topIntent = LuisRecognizer.topIntent(results);
+     *         switch (topIntent) {
+     *             case 'MyIntent':
+     *                 // ... handle intent ...
+     *                 break;
+     *             case 'None':
+     *                 // ... handle intent ...
+     *                 break;
+     *         }
+     *     }
+     * }
+     * ```
+     * @param context Context for the current turn of conversation with the use.
+     * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
+     * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
+     * @param options (Optional) options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
+    */
     public recognize(context: TurnContext, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }, options?: LuisPredictionOptions): Promise<RecognizerResult> {
         const cached: any = context.turnState.get(this.cacheKey);
         const luisPredictionOptions = options ? this.setLuisPredictionOptions(this.options, options) : this.options;
