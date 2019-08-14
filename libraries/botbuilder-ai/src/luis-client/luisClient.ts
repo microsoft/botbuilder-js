@@ -65,20 +65,8 @@ export class LuisClient {
 
     public constructor(basePath: string){
         if (basePath) {
-            this.basePath = basePath + luisVersion;
+            this._basePath = basePath + luisVersion;
         }
-    }
-
-    public set useQuerystring(value: boolean) {
-        this._useQuerystring = value;
-    }
-
-    public set basePath(basePath: string) {
-        this._basePath = basePath;
-    }
-
-    public get basePath(): string {
-        return this._basePath;
     }
 
     public setDefaultAuthentication(auth: Authentication): void {
@@ -95,7 +83,7 @@ export class LuisClient {
      * @returns String
     */
     private getLocalURL(appId: string): string {
-        return this.basePath + '/apps/' + encodeURIComponent(appId); 
+        return this._basePath + '/apps/' + encodeURIComponent(appId); 
     }
 
     /**
