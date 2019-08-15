@@ -189,8 +189,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
         let bot = new ActivityHandler.ActivityHandler();
         let handler = new Adapter.BotFrameworkStreamingAdapter(bot);
         let request = new TestRequest();        
-        request.setIsUpgradeRequest(true);
-        //request.setHeaders({'channelid': 'fakechannel', 'authorization': 'donttrustme', 'upgrade': 'websocket'});
+        request.setIsUpgradeRequest(true);       
         request.headers = [];
         request.headers['upgrade'] = 'websocket';
         request.headers['sec-websocket-key'] = 'BFlat';
@@ -222,7 +221,6 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             readAsJson: function(){ return {type: 'Invoke', serviceUrl: 'somewhere/', channelId: 'test'};},
         };
         request.streams[0] = fakeStream;
-        //request.streams[1] = "This is a stream.";
 
         await handler.processRequest(request).then( 
             function(response) {
@@ -240,7 +238,6 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             readAsJson: function(){ return {type: 'Invoke', serviceUrl: 'somewhere/', channelId: 'test'};},
         };
         request.streams[0] = fakeStream;
-        //request.streams[1] = "This is a stream.";
 
         await handler.processRequest(request).then( 
             function(response) {
@@ -248,18 +245,19 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             });  
     });
 
-    // it('returns a 400 when the request body is missing', async () => {
-    //     let bot = new ActivityHandler.ActivityHandler();
-    //     let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
-    //     let request = new TestRequest( 'POST', '/api/messages');
-    //     request.verb = 'POST';
-    //     request.path = '/api/messages';
+    it('returns a 400 when the request body is missing', async () => {
+        let bot = new ActivityHandler.ActivityHandler();
+        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let request = new TestRequest( 'POST', '/api/messages');
+        request.verb = 'POST';
+        request.path = '/api/messages';
+        request.streams = undefined;
 
-    //     await handler.processRequest(request).then( 
-    //         function(response) {
-    //             expect(response.statusCode).to.equal(400);                    
-    //         });        
-    // });
+        await handler.processRequest(request).then( 
+            function(response) {
+                expect(response.statusCode).to.equal(400);                    
+            });        
+    });
 
     it('returns user agent information when a GET hits the version endpoint', async () => {
         let bot = new ActivityHandler.ActivityHandler();
@@ -277,6 +275,30 @@ describe('BotFrameworkStreamingAdapter tests', () => {
                 expect(response.statusCode).to.equal(200); 
                 expect(response.streams[0].content).to.not.be.undefined;                   
             });     
+    });
+
+    it('returns user agent information from cache when a GET hits the version endpoint more than once', async () => {
+        let bot = new ActivityHandler.ActivityHandler();
+        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let request = new TestRequest();
+        request.verb = 'GET';
+        request.path = '/api/version';
+        let fakeStream = {
+            readAsJson: function(){ return {type: 'Invoke', serviceUrl: 'somewhere/', channelId: 'test'};},
+        };
+        request.streams[0] = fakeStream;
+
+        await handler.processRequest(request).then( 
+            function(response) {
+                expect(response.statusCode).to.equal(200); 
+                expect(response.streams[0].content).to.not.be.undefined;                   
+            });     
+
+        await handler.processRequest(request).then( 
+            function(response) {
+                expect(response.statusCode).to.equal(200); 
+                expect(response.streams[0].content).to.not.be.undefined;                   
+            }); 
     });
 
     it('returns 405 for unsupported methods', async () => {
