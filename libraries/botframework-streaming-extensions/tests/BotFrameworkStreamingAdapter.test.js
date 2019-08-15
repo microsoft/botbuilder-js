@@ -22,6 +22,7 @@ class FauxSock{
 
 class TestRequest {
     constructor(){
+        let headers = [];
     }
 
     isUpgradeRequest(){
@@ -64,13 +65,14 @@ class TestRequest {
         return this.streamsVal;
     }
 
-    headers(){
+    setHeaders(){
         return this.headersVal;
     }
 
-    headers(value){
-        this.headersVal = value;
+    setHeaders(value){
+        this.headers = value;
     }
+    
 }
 
 class TestResponse {
@@ -88,11 +90,12 @@ class TestResponse {
         return this.statusVal;
     }
 
-    claimUpgrade(value)
+    setClaimUpgrade(value)
     {
         this.claimUpgradeVal = value;
     }
-    get claimUpgrade(){
+
+    claimUpgrade(){
         return this.claimUpgradeVal;
     }
 }
@@ -171,7 +174,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
         let handler = new Adapter.BotFrameworkStreamingAdapter(bot);
         let request = new TestRequest();
         request.setIsUpgradeRequest(true);
-        request.headers({channelid: 'fakechannel', authorization: 'donttrustme'});
+        request.setHeaders({channelid: 'fakechannel', authorization: 'donttrustme'});
         let response = new TestResponse();
         let settings = new TestAdapterSettings('appId', 'password');    
 
@@ -182,36 +185,132 @@ describe('BotFrameworkStreamingAdapter tests', () => {
         expect(response.statusVal).to.equal(401); 
     });
 
+    it('connectWebSocket connects', async () => {
+        let bot = new ActivityHandler.ActivityHandler();
+        let handler = new Adapter.BotFrameworkStreamingAdapter(bot);
+        let request = new TestRequest();        
+        request.setIsUpgradeRequest(true);
+        //request.setHeaders({'channelid': 'fakechannel', 'authorization': 'donttrustme', 'upgrade': 'websocket'});
+        request.headers = [];
+        request.headers['upgrade'] = 'websocket';
+        request.headers['sec-websocket-key'] = 'BFlat';
+        request.headers['sec-websocket-version'] = '13';
+        request.headers['sec-websocket-protocol'] = '';
+        let response = new TestResponse();
+        let fakeSocket = { 
+            unshift: function(){return true;},
+            write: function(value){console.log(value);},
+            on: function(value){console.log(value);},
+            read: function(){return new Buffer('data', 'utf8');},
+            end: function(){return;},
+        };
+        response.setClaimUpgrade( {socket: fakeSocket, head: 'websocket'} );
+        let settings = new TestAdapterSettings();    
 
-    // it('returns a 500 when the request body is missing', async () => {
+        await handler.connectWebSocket(request, response, settings).then(function(){
+            return;
+        });     
+    });
+
+    it('returns a 400 when the request is missing verb', async () => {
+        let bot = new ActivityHandler.ActivityHandler();
+        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let request = new TestRequest();
+        request.verb = undefined;
+        request.path = '/api/messages';
+        let fakeStream = {
+            readAsJson: function(){ return {type: 'Invoke', serviceUrl: 'somewhere/', channelId: 'test'};},
+        };
+        request.streams[0] = fakeStream;
+        //request.streams[1] = "This is a stream.";
+
+        await handler.processRequest(request).then( 
+            function(response) {
+                expect(response.statusCode).to.equal(400);                    
+            });  
+    });
+
+    it('returns a 400 when the request is missing path', async () => {
+        let bot = new ActivityHandler.ActivityHandler();
+        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let request = new TestRequest();
+        request.verb = 'POST';
+        request.path =  undefined;
+        let fakeStream = {
+            readAsJson: function(){ return {type: 'Invoke', serviceUrl: 'somewhere/', channelId: 'test'};},
+        };
+        request.streams[0] = fakeStream;
+        //request.streams[1] = "This is a stream.";
+
+        await handler.processRequest(request).then( 
+            function(response) {
+                expect(response.statusCode).to.equal(400);                    
+            });  
+    });
+
+    // it('returns a 400 when the request body is missing', async () => {
     //     let bot = new ActivityHandler.ActivityHandler();
     //     let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
     //     let request = new TestRequest( 'POST', '/api/messages');
+    //     request.verb = 'POST';
+    //     request.path = '/api/messages';
 
-    //   await handler.processRequest(request).then( 
-    //             function(response) {
-    //                 expect(response.statusCode).to.equal(500);                    
-    //             });        
+    //     await handler.processRequest(request).then( 
+    //         function(response) {
+    //             expect(response.statusCode).to.equal(400);                    
+    //         });        
     // });
 
-    it('returns a 500 when the request is missing streams', () => {
+    it('returns user agent information when a GET hits the version endpoint', async () => {
+        let bot = new ActivityHandler.ActivityHandler();
+        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let request = new TestRequest();
+        request.verb = 'GET';
+        request.path = '/api/version';
+        let fakeStream = {
+            readAsJson: function(){ return {type: 'Invoke', serviceUrl: 'somewhere/', channelId: 'test'};},
+        };
+        request.streams[0] = fakeStream;
 
+        await handler.processRequest(request).then( 
+            function(response) {
+                expect(response.statusCode).to.equal(200); 
+                expect(response.streams[0].content).to.not.be.undefined;                   
+            });     
     });
 
-    it('returns a 500 when the request is missing', () => {
+    it('returns 405 for unsupported methods', async () => {
+        let bot = new ActivityHandler.ActivityHandler();
+        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let request = new TestRequest();
+        request.verb = 'UPDATE';
+        request.path = '/api/version';
+        let fakeStream = {
+            readAsJson: function(){ return {type: 'Invoke', serviceUrl: 'somewhere/', channelId: 'test'};},
+        };
+        request.streams[0] = fakeStream;
 
+        await handler.processRequest(request).then( 
+            function(response) {
+                expect(response.statusCode).to.equal(405);              
+            });     
     });
 
-    it('returns a 500 when the request verb is missing', () => {
+    it('returns 404 for unsupported paths', async () => {
+        let bot = new ActivityHandler.ActivityHandler();
+        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let request = new TestRequest();
+        request.verb = 'UPDATE';
+        request.path = '/api/supersecretbackdoor';
+        let fakeStream = {
+            readAsJson: function(){ return {type: 'Invoke', serviceUrl: 'somewhere/', channelId: 'test'};},
+        };
+        request.streams[0] = fakeStream;
 
-    });
-
-    it('returns a 500 when the request path is missing', () => {
-
-    });
-
-    it('returns user agent information when a GET hits the version endpoint', () => {
-
+        await handler.processRequest(request).then( 
+            function(response) {
+                expect(response.statusCode).to.equal(405);              
+            });     
     });
 
     it('returns a 405 when the verb is not POST and the path is not version', () => {

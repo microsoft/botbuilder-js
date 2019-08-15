@@ -111,13 +111,6 @@ export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter implements
     /// <returns>A response created by the BotAdapter to be sent to the client that originated the request.</returns>
     public async processRequest(request: IReceiveRequest): Promise<StreamingResponse> {
         let response = new StreamingResponse();
-        let body = await this.readRequestBodyAsString(request);
-        if (body === undefined || request.streams === undefined) {
-            response.statusCode = StatusCodes.BAD_REQUEST;
-            this.logger.log('Request missing body and/or streams.');
-
-            return response;
-        }
 
         if (!request || !request.verb || !request.path) {
             response.statusCode = StatusCodes.BAD_REQUEST;
@@ -129,6 +122,23 @@ export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter implements
         if (request.verb.toLocaleUpperCase() === GET && request.path.toLocaleLowerCase() === VERSION_PATH) {
             response.statusCode = StatusCodes.OK;
             response.setBody(this.getUserAgent());
+
+            return response;
+        }
+
+        let body: Activity;
+        try {
+            body = await this.readRequestBodyAsString(request);
+        } catch (error) {
+            response.statusCode = StatusCodes.BAD_REQUEST;
+            this.logger.log('Unable to read request body.');
+
+            return response;
+        }
+
+        if (body === undefined || request.streams === undefined) {
+            response.statusCode = StatusCodes.BAD_REQUEST;
+            this.logger.log('Request missing body and/or streams.');
 
             return response;
         }
@@ -235,7 +245,7 @@ export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter implements
             }
         }
 
-        return;
+        return Promise.reject();
     }
 
     private getUserAgent(): string {
