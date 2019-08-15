@@ -322,7 +322,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
         let bot = new ActivityHandler.ActivityHandler();
         let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
         let request = new TestRequest();
-        request.verb = 'UPDATE';
+        request.verb = 'POST';
         request.path = '/api/supersecretbackdoor';
         let fakeStream = {
             readAsJson: function(){ return {type: 'Invoke', serviceUrl: 'somewhere/', channelId: 'test'};},
@@ -331,7 +331,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
 
         await handler.processRequest(request).then( 
             function(response) {
-                expect(response.statusCode).to.equal(405);              
+                expect(response.statusCode).to.equal(404);              
             });     
     });
 
