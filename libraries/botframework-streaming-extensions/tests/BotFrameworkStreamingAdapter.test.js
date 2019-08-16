@@ -335,23 +335,100 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             });     
     });
 
-    it('returns a 405 when the verb is not POST and the path is not version', () => {
+    it('processes a well formed request when there is no middleware with a non-Invoke activity type', async () => {
+        let bot = new ActivityHandler.ActivityHandler();
+        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let request = new TestRequest();
+        request.verb = 'POST';
+        request.path = '/api/messages';
+        let fakeStream = {
+            readAsJson: function(){ return {type: 'something', serviceUrl: 'somewhere/', channelId: 'test'};},
+        };
+        request.streams[0] = fakeStream;
 
+        await handler.processRequest(request).then( 
+            function(response) {
+                expect(response.statusCode).to.equal(200);              
+            });     
     });
 
-    it('returns a 404 when the verb is POST but the path is not version or messages', () => {
+    it('returns a 501 when activity type is invoke, but the activity is invalid', async () => {
+        let bot = new ActivityHandler.ActivityHandler();
+        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let request = new TestRequest();
+        request.verb = 'POST';
+        request.path = '/api/messages';
+        let fakeStream = {
+            readAsJson: function(){ return {type: 'invoke', serviceUrl: 'somewhere/', channelId: 'test'};},
+        };
+        request.streams[0] = fakeStream;
 
+        await handler.processRequest(request).then( 
+            function(response) {
+                expect(response.statusCode).to.equal(501);              
+            });     
     });
 
-    it('processes a well formed request when there is no middleware', () => {
+    it('sends a request', async () => {
+        let bot = new ActivityHandler.ActivityHandler();
+        let handler = new Adapter.BotFrameworkStreamingAdapter(bot);
+        let request = new TestRequest();        
+        request.setIsUpgradeRequest(true);       
+        request.headers = [];
+        request.headers['upgrade'] = 'websocket';
+        request.headers['sec-websocket-key'] = 'BFlat';
+        request.headers['sec-websocket-version'] = '13';
+        request.headers['sec-websocket-protocol'] = '';
+        let response = new TestResponse();
+        let fakeSocket = {
+            unshift: function(){return true;},
+            write: function(){return Promise.resolve; },
+            on: function(){return;},
+            read: function(){return new Buffer('data', 'utf8');},
+            end: function(){return Promise.resolve;},
+        };
+        var sinon = require('sinon');
+        var spy = sinon.spy(fakeSocket, "write");
+        response.setClaimUpgrade( {socket: fakeSocket, head: 'websocket'} );
+        let settings = new TestAdapterSettings();    
 
-    });
+        await handler.connectWebSocket(request, response, settings).then(function(){
+            return;
+        });
+        
+        let connection = handler.createConnectorClient('fakeUrl');
+        connection.sendRequest({method: 'POST', url: 'testResultDotCom', body: 'Test body!'});
+        expect(spy.called).to.be.true;
+    }).timeout(2000);
+
+    // it('executes middleware', async () => {
+    //     const MiddleWare = require('botbuilder-core');
+    //     let bot = new ActivityHandler.ActivityHandler();
+    //     bot.run() = function(){return Promise.resolve();};
+    //     let mw = { 
+    //         async onTurn(context, next) 
+    //         {
+    //             console.log('Middleware executed!');
+    //             await next();
+    //         }};
+    //     let mwset = [];
+    //     mwset.push(mw);
+    //     let handler = new Adapter.BotFrameworkStreamingAdapter({ bot: bot, middleWare: mwset}); 
+    //     let request = new TestRequest();
+    //     request.verb = 'POST';
+    //     request.path = '/api/messages';
+    //     let fakeStream = {
+    //         readAsJson: function(){ return {type: 'invoke', serviceUrl: 'somewhere/', channelId: 'test'};},
+    //     };
+    //     request.streams[0] = fakeStream;
+
+    //     await handler.processRequest(request).then( 
+    //         function(response) {
+    //             expect(response.statusCode).to.equal(501);              
+    //         });     
+    // });
 
     it('processes a well formed request when there is middleware', () => {
-
-    });
-
-    it('processes a well formed request when the activity type is Invoke', () => {
 
     });
 });

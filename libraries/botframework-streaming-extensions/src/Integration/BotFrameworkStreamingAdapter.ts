@@ -129,16 +129,10 @@ export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter implements
         let body: Activity;
         try {
             body = await this.readRequestBodyAsString(request);
+
         } catch (error) {
             response.statusCode = StatusCodes.BAD_REQUEST;
-            this.logger.log('Unable to read request body.');
-
-            return response;
-        }
-
-        if (body === undefined || request.streams === undefined) {
-            response.statusCode = StatusCodes.BAD_REQUEST;
-            this.logger.log('Request missing body and/or streams.');
+            this.logger.log('Unable to read request body. Error: ' + error);
 
             return response;
         }
@@ -155,18 +149,16 @@ export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter implements
             return response;
         }
 
-        try {
-            let activity: Activity = body;
-           
+        try {           
             this.middleWare.forEach((mw): void => {
                 this.use(mw);
             });
-            let context = new TurnContext(this, activity);
+            let context = new TurnContext(this, body);
             await this.runMiddleware(context, async (turnContext): Promise<void> => {
                 await this.bot.run(turnContext);
             });
 
-            if (activity.type === ActivityTypes.Invoke) {
+            if (body.type === ActivityTypes.Invoke) {
                 let invokeResponse: any = context.turnState.get(INVOKE_RESPONSE);
 
                 if (invokeResponse && invokeResponse.value) {
@@ -235,17 +227,16 @@ export class BotFrameworkStreamingAdapter extends BotFrameworkAdapter implements
         await this.server.start();
     }
 
-    private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {
-        if (request.streams !== undefined && request.streams[0] !== undefined) {
+    private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {            
+        try {
             let contentStream =  request.streams[0];
-            try {
-                return await contentStream.readAsJson<Activity>();
-            } catch (error) {
-                this.logger.log(error);
-            }
-        }
 
-        return Promise.reject();
+            return await contentStream.readAsJson<Activity>();
+        } catch (error) {
+            this.logger.log(error);
+
+            return Promise.reject(error);
+        }
     }
 
     private getUserAgent(): string {
