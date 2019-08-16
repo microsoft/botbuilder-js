@@ -141,4 +141,28 @@ describe('PayloadAssemblerManager', () => {
         expect(p.getPayloadStream(head)).to.be.undefined;
         done();
     });
+
+    it('throws if not given an ID', () => {
+        let header = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '5', id: undefined, end: true};
+        let sm = new StreamManager.StreamManager();
+        try{
+            let rra = new PayloadAssembler.PayloadAssembler(sm, {header: header, onCompleted: function() {done();} });
+        } catch(result) {
+            expect(result.message).to.equal('An ID must be supplied when creating an assembler.');
+        }
+    });
+
+    it('processes a response with streams without throwing.', (done) => {
+        let header = {payloadType: PayloadTypes.PayloadTypes.response, payloadLength: '5', id: '100', end: true};
+        let sm = new StreamManager.StreamManager();
+        let s = new SubscribableStream.SubscribableStream();
+        s.write('{"statusCode": "12345","streams": [{"id": "1","contentType": "text","length": "2"},{"id": "2","contentType": "text","length": "2"},{"id": "3","contentType": "text","length": "2"}]}');
+        let rp = {verb: 'POST', path: '/some/path'};
+        rp.streams = [];
+        rp.streams.push(s);
+
+        let rra = new PayloadAssembler.PayloadAssembler(sm, {header: header, onCompleted: function() {done();} });
+        rra.onReceive(header, s, 5);
+        rra.close();     
+    });
 });

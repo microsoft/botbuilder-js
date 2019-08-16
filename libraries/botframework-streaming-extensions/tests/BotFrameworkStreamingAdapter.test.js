@@ -401,34 +401,60 @@ describe('BotFrameworkStreamingAdapter tests', () => {
         expect(spy.called).to.be.true;
     }).timeout(2000);
 
-    // it('executes middleware', async () => {
-    //     const MiddleWare = require('botbuilder-core');
-    //     let bot = new ActivityHandler.ActivityHandler();
-    //     bot.run() = function(){return Promise.resolve();};
-    //     let mw = { 
-    //         async onTurn(context, next) 
-    //         {
-    //             console.log('Middleware executed!');
-    //             await next();
-    //         }};
-    //     let mwset = [];
-    //     mwset.push(mw);
-    //     let handler = new Adapter.BotFrameworkStreamingAdapter({ bot: bot, middleWare: mwset}); 
-    //     let request = new TestRequest();
-    //     request.verb = 'POST';
-    //     request.path = '/api/messages';
-    //     let fakeStream = {
-    //         readAsJson: function(){ return {type: 'invoke', serviceUrl: 'somewhere/', channelId: 'test'};},
-    //     };
-    //     request.streams[0] = fakeStream;
+    it('returns a 500 when bot can not run', async () => {
+        const MiddleWare = require('botbuilder-core');
+        let bot = {};
+        let mw = { 
+            async onTurn(context, next) 
+            {
+                console.log('Middleware executed!');
+                await next();
+            }};
+        let mwset = [];
+        mwset.push(mw);
+        let handler = new Adapter.BotFrameworkStreamingAdapter({ bot: bot, middleWare: mwset}); 
+        let request = new TestRequest();
+        request.verb = 'POST';
+        request.path = '/api/messages';
+        let fakeStream = {
+            readAsJson: function(){ return {type: 'invoke', serviceUrl: 'somewhere/', channelId: 'test'};},
+        };
+        request.streams[0] = fakeStream;
 
-    //     await handler.processRequest(request).then( 
-    //         function(response) {
-    //             expect(response.statusCode).to.equal(501);              
-    //         });     
-    // });
+        await handler.processRequest(request).then( 
+            function(response) {
+                expect(response.statusCode).to.equal(500);              
+            });     
+    });
 
-    it('processes a well formed request when there is middleware', () => {
+    it('executes middleware', async () => {
+        var sinon = require('sinon');
+        let bot= new ActivityHandler.ActivityHandler();
+        bot.run = function(turnContext){return Promise.resolve();};
+        let mw = { 
+            async onTurn(context, next) 
+            {
+                console.log('Middleware executed!');
+                await next();
+            }};
+        
+        let mwset = [];
+        mwset.push(mw);
+        let handler = new Adapter.BotFrameworkStreamingAdapter({bot: bot, middleWare: mwset}); 
+        handler.bot.run = function(turnContext){return Promise.resolve();};
+        var spy = sinon.spy(handler.bot, "run");
+        let request = new TestRequest();
+        request.verb = 'POST';
+        request.path = '/api/messages';
+        let fakeStream = {
+            readAsJson: function(){ return {type: 'invoke', serviceUrl: 'somewhere/', channelId: 'test'};},
+        };
+        request.streams[0] = fakeStream;
 
+        await handler.processRequest(request).then( 
+            function(response) {
+                expect(response.statusCode).to.equal(501);    
+                expect(spy.called).to.be.true;          
+            });     
     });
 });
