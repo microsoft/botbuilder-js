@@ -16,7 +16,7 @@ import { IHeader } from '../Interfaces/IHeader';
 
 export class PayloadReceiver {
     public isConnected: boolean;
-    public disconnected?: TransportDisconnectedEventHandler;
+    public disconnected: TransportDisconnectedEventHandler = function(sender, events){};
     private _receiver: ITransportReceiver;
     private _receiveHeaderBuffer: Buffer;
     private _receivePayloadBuffer: Buffer;
