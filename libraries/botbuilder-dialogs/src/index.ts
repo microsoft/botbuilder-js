@@ -7,6 +7,7 @@
  */
 export * from './choices';
 export * from './prompts';
+export * from './state';
 export * from './dialog';
 export * from './componentDialog';
 export * from './dialogContext';

@@ -9,7 +9,6 @@ import { DialogContext } from '../dialogContext';
 import { PathResolver } from './pathResolver';
 import { DefaultPathResolver } from './defaultPathResolver';
 
-
 export class DialogStateManager {
     private readonly dc: DialogContext;
 
@@ -18,11 +17,17 @@ export class DialogStateManager {
     }
 
     public getScope(name: string): object|undefined {
-        const scopes: object = this.dc.context.turnState.get(SCOPES);
-        return scopes ? scopes[name] : undefined;
+        if (name == 'dialog') {
+            const instance = this.dc.activeDialog;
+            return instance ? instance.state : undefined;
+        } else {
+            const scopes: object = this.dc.context.turnState.get(SCOPES);
+            return scopes ? scopes[name] : undefined;
+        }
     }
 
     public setScope(name: string, state: object): this {
+        if (name == 'dialog') { throw new Error(`DialogStateManager: cannot set a scope. The name "dialog" is a reserved scope.`) }
         let scopes: object = this.dc.context.turnState.get(SCOPES);
         if (!scopes) {
             scopes = {};
