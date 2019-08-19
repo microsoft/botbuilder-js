@@ -49,7 +49,21 @@ export class TranscriptLoggerMiddleware implements Middleware {
         context.onSendActivities(async (ctx: TurnContext, activities: Partial<Activity>[], next2: () => Promise<ResourceResponse[]>) => {
             // run full pipeline
             const responses: ResourceResponse[] = await next2();
-            activities.forEach((a: ResourceResponse) => this.logActivity(transcript, this.cloneActivity(a)));
+
+            let responseIndex = 0;
+            activities.forEach((a: Partial<Activity>) => {
+                let clonedActivity: Activity = this.cloneActivity(a);
+                if (responses) {
+                    // if there is no id on the activity, add the id returned from the service
+                    if (responseIndex < responses.length) {
+                        if (!clonedActivity.id) {
+                            clonedActivity.id = responses[responseIndex].id;
+                        }
+                    }
+                    responseIndex++;
+                }
+                this.logActivity(transcript, clonedActivity);
+            });
 
             return responses;
         });
@@ -138,13 +152,13 @@ export class TranscriptLoggerMiddleware implements Middleware {
      * Error logging helper function.
      * @param err Error or object to console.error out.
      */
-    private transcriptLoggerErrorHandler(err: Error|any): void {
+    private transcriptLoggerErrorHandler(err: Error | any): void {
         // tslint:disable:no-console
         if (err instanceof Error) {
-            console.error(`TranscriptLoggerMiddleware logActivity failed: "${ err.message }"`);
+            console.error(`TranscriptLoggerMiddleware logActivity failed: "${err.message}"`);
             console.error(err.stack);
         } else {
-            console.error(`TranscriptLoggerMiddleware logActivity failed: "${ JSON.stringify(err) }"`);
+            console.error(`TranscriptLoggerMiddleware logActivity failed: "${JSON.stringify(err)}"`);
         }
         // tslint:enable:no-console
     }
