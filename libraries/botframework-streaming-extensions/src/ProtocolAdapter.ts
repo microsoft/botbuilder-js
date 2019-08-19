@@ -42,16 +42,8 @@ export class ProtocolAdapter {
         this.payloadReceiver = receiver;
         this.sendOperations = new SendOperations(this.payloadSender);
         this.streamManager = new StreamManager(this.onCancelStream);
-        this.assemblerManager = new PayloadAssemblerManager(
-            this.streamManager,
-            (id: string, response: IReceiveResponse): Promise<void> => this.onReceiveResponse(id, response),
-            (id: string, request: IReceiveRequest): Promise<void> => this.onReceiveRequest(id, request)
-            );
-        this.payloadReceiver.subscribe(
-            (header: IHeader): SubscribableStream => this.assemblerManager.getPayloadStream(header),
-            (header: IHeader, contentStream: SubscribableStream, contentLength: number): void => 
-                this.assemblerManager.onReceive(header, contentStream, contentLength)
-            );
+        this.assemblerManager = new PayloadAssemblerManager(this.streamManager, (id: string, response: IReceiveResponse): Promise<void> => this.onReceiveResponse(id, response),(id: string, request: IReceiveRequest): Promise<void> => this.onReceiveRequest(id, request));
+        this.payloadReceiver.subscribe((header: IHeader): SubscribableStream => this.assemblerManager.getPayloadStream(header),(header: IHeader, contentStream: SubscribableStream, contentLength: number): void => this.assemblerManager.onReceive(header, contentStream, contentLength));
     }
 
     /// <summary>
