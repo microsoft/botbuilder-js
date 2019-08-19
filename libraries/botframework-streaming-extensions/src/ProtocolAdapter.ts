@@ -42,8 +42,16 @@ export class ProtocolAdapter {
         this.payloadReceiver = receiver;
         this.sendOperations = new SendOperations(this.payloadSender);
         this.streamManager = new StreamManager(this.onCancelStream);
-        this.assemblerManager = new PayloadAssemblerManager(this.streamManager, (id: string, response: IReceiveResponse): Promise<void> => this.onReceiveResponse(id, response), (id: string, request: IReceiveRequest): Promise<void> => this.onReceiveRequest(id, request));
-        this.payloadReceiver.subscribe((header: IHeader): SubscribableStream => this.assemblerManager.getPayloadStream(header), (header: IHeader, contentStream: SubscribableStream, contentLength: number): void => this.assemblerManager.onReceive(header, contentStream, contentLength));
+        this.assemblerManager = new PayloadAssemblerManager(
+            this.streamManager,
+            (id: string, response: IReceiveResponse): Promise<void> => this.onReceiveResponse(id, response),
+            (id: string, request: IReceiveRequest): Promise<void> => this.onReceiveRequest(id, request)
+            );
+        this.payloadReceiver.subscribe(
+            (header: IHeader): SubscribableStream => this.assemblerManager.getPayloadStream(header),
+            (header: IHeader, contentStream: SubscribableStream, contentLength: number): void => 
+                this.assemblerManager.onReceive(header, contentStream, contentLength)
+            );
     }
 
     /// <summary>
@@ -58,7 +66,12 @@ export class ProtocolAdapter {
         return this.requestManager.getResponse(requestId);
     }
 
-    private async onReceiveRequest(id: string, request: IReceiveRequest): Promise<void> {
+    /// <summary>
+    /// Executes the receive pipeline when a request comes in.
+    /// </summary>
+    /// <param name="id">The id the resources created for the response will be assigned.</param>
+    /// <param name="request">The incoming request to process.</param>
+    public async onReceiveRequest(id: string, request: IReceiveRequest): Promise<void> {
         if (this.requestHandler !== undefined) {
             let response = await this.requestHandler.processRequest(request);
 
@@ -68,11 +81,23 @@ export class ProtocolAdapter {
         }
     }
 
-    private async onReceiveResponse(id: string, response: IReceiveResponse): Promise<void> {
+    /// <summary>
+    /// Executes the receive pipeline when a response comes in.
+    /// </summary>
+    /// <param name="id">The id the resources created for the response will be assigned.</param>
+    /// <param name="response">The incoming response to process.</param>
+    public async onReceiveResponse(id: string, response: IReceiveResponse): Promise<void> {
         await this.requestManager.signalResponse(id, response);
     }
 
-    private onCancelStream(contentStreamAssembler: PayloadAssembler): void {
+    /// <summary>
+    /// Executes the receive pipeline when a cancellation comes in.
+    /// </summary>
+    /// <param name="contentStreamAssembler">
+    /// The payload assembler processing the incoming data that this
+    /// cancellation request targets. 
+    /// </param>
+    public onCancelStream(contentStreamAssembler: PayloadAssembler): void {
         this.sendOperations.sendCancelStream(contentStreamAssembler.id)
             .catch();
     }
