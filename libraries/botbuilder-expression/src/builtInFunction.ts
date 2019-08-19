@@ -1827,7 +1827,7 @@ export class BuiltInFunctions {
                 BuiltInFunctions.ValidateUnaryString),
             new ExpressionEvaluator(
                 ExpressionType.Replace,
-                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].replace(new RegExp(args[1], 'g'), args[2]), BuiltInFunctions.VerifyString),
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].split(args[1]).join(args[2]), BuiltInFunctions.VerifyString),
                 ReturnType.String,
                 (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 3, 3, ReturnType.String)),
             new ExpressionEvaluator(

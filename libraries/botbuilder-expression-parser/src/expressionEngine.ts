@@ -158,9 +158,9 @@ export class ExpressionEngine implements IExpressionParser {
         public visitStringAtom(context: ep.StringAtomContext): Expression {
             const text: string = context.text;
             if (text.startsWith('\'')) {
-                return new Constant(unescape(Util.Trim(context.text, '\'')));
+                return new Constant(Util.Unescape(Util.Trim(context.text, '\'')));
             } else { // start with ""
-                return new Constant(unescape(Util.Trim(context.text, '"')));
+                return new Constant(Util.Unescape(Util.Trim(context.text, '"')));
             }
         }
 

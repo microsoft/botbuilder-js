@@ -209,6 +209,30 @@ describe('LG', function () {
 
         evaled = engine.evaluateTemplate("otherEscape", null);
         assert.strictEqual(evaled, "Hi \\y \\", "Happy path failed.");
+
+        evaled = engine.evaluateTemplate("escapeInExpression", null);
+        assert.strictEqual(evaled, "Hi hello\\\\");
+
+         evaled = engine.evaluateTemplate("escapeInExpression2", null);
+         assert.strictEqual(evaled, "Hi hello'");
+
+        evaled = engine.evaluateTemplate("escapeInExpression3", null);
+        assert.strictEqual(evaled, "Hi hello\"");
+
+        evaled = engine.evaluateTemplate("escapeInExpression4", null);
+        assert.strictEqual(evaled, "Hi hello\"");
+
+        evaled = engine.evaluateTemplate("escapeInExpression5", null);
+        assert.strictEqual(evaled, "Hi hello\n");
+
+        evaled = engine.evaluateTemplate("escapeInExpression6", null);
+        assert.strictEqual(evaled, "Hi hello\n");
+
+        evaled = engine.evaluateTemplate("showTodo", { todos: ["A", "B", "C"] });
+        assert.strictEqual(evaled, "\r\n    Your most recent 3 tasks are\r\n    * A\n* B\n* C\r\n    ");
+
+        evaled = engine.evaluateTemplate("showTodo", null);
+        assert.strictEqual(evaled, "\r\n    You don't have any \"t\\\\odo'\".\r\n    ");
     });
 
     it('TestAnalyzer', function () {
