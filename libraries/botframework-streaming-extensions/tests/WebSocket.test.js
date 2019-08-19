@@ -318,44 +318,74 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
         });
 
         it('knows its connected', () => {
-            let ns = new ws.BrowserWebSocket( new FauxSock());
-            ns.connect('fakeUrl');
-            expect(ns.isConnected()).to.be.true;
+            let bs = new ws.BrowserWebSocket( new FauxSock());
+            bs.connect('fakeUrl');
+            expect(bs.isConnected()).to.be.true;
         });
 
         it('writes to the socket', () => {
-            let ns = new ws.BrowserWebSocket( new FauxSock());
+            let bs = new ws.BrowserWebSocket( new FauxSock());
             let buff = Buffer.from('hello');
-            expect(ns.write(buff)).to.not.throw;
+            expect(bs.write(buff)).to.not.throw;
         });
 
         it('always thinks it connects', () => {
-            let ns = new ws.BrowserWebSocket( new FauxSock());
-            expect(ns.connect()).to.not.throw;
+            let bs = new ws.BrowserWebSocket( new FauxSock());
+            expect(bs.connect()).to.not.throw;
         });
 
         it('can set message handlers on the socket', () => {
             let sock = new FauxSock();
-            let ns = new ws.BrowserWebSocket( sock);
+            let bs = new ws.BrowserWebSocket( sock);
             expect(sock.onmessage).to.be.undefined;
-            expect(ns.setOnMessageHandler(() => {})).to.not.throw;
+            expect(bs.setOnMessageHandler(() => {})).to.not.throw;
             expect(sock.onmessage).to.not.be.undefined;
+
+            expect(sock.onmessage('This is a read test.')).to.not.throw;
         });
 
         it('can set error handler on the socket', () => {
             let sock = new FauxSock();
-            let ns = new ws.BrowserWebSocket( sock);
+            let bs = new ws.BrowserWebSocket( sock);
             expect(sock.onerror).to.be.undefined;
-            expect(ns.setOnErrorHandler(() => {})).to.not.throw;
+            expect(bs.setOnErrorHandler(() => {})).to.not.throw;
             expect(sock.onerror).to.not.be.undefined;
         });
 
         it('can set end handler on the socket', () => {
             let sock = new FauxSock();
-            let ns = new ws.BrowserWebSocket( sock);
+            let bs = new ws.BrowserWebSocket( sock);
             expect(sock.onclose).to.be.undefined;
-            expect(ns.setOnCloseHandler(() => {})).to.not.throw;
+            expect(bs.setOnCloseHandler(() => {})).to.not.throw;
             expect(sock.onclose).to.not.be.undefined;
+        });
+
+        it('can set onerror on the socket', () => {
+            let sock = new FauxSock();
+            let bs = new ws.BrowserWebSocket( sock);
+            bs.connect('nowhere');
+            expect(sock.onerror).to.not.be.undefined;
+            expect(sock.onopen).to.not.be.undefined;
+        });
+
+        it('can set onopen on the socket', () => {
+            let sock = new FauxSock();
+            let bs = new ws.BrowserWebSocket( sock);
+            bs.connect('nowhere');
+            expect(sock.onerror).to.not.be.undefined;
+            expect(sock.onopen).to.not.be.undefined;
+        });
+
+        it('can close', () => {
+            let sock = new FauxSock();
+            let bs = new ws.BrowserWebSocket( sock);
+            bs.connect('nowhere');
+            expect(sock.onerror).to.not.be.undefined;
+            expect(sock.onopen).to.not.be.undefined;
+            let sinon = require('sinon');
+            let spy = sinon.spy(sock, "close");
+            bs.close();            
+            expect(spy.called).to.be.true;
         });
     });
 
