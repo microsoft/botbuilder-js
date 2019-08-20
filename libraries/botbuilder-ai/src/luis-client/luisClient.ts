@@ -10,7 +10,8 @@
  * and was manually modified to make it compliant with the current implementation of the library.
  */
 
-import Request = require('request');
+const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
+
 import * as HttpStatus from 'http-status-codes';
 
 /* tslint:disable:no-unused-locals */
@@ -96,7 +97,7 @@ export class LuisClient {
     public async predictionResolvePost(query: string, appId: string, options: PredictionResolveOptionalParams): Promise<LuisResult> {        
         const localPath = this.getLocalURL(appId);
 
-        let localHeaderParams = {};
+        let localHeaderParams = {"content-type": "application/json"};
         let localQueryParameters = {};        
 
         // verify required parameter 'query' is not null or undefined
@@ -137,43 +138,35 @@ export class LuisClient {
             localQueryParameters['log'] = ObjectSerializer.serialize(options.log, 'boolean');
         }
 
-        Object.assign(localHeaderParams, options.customHeaders.headers);
+        Object.assign(localHeaderParams, options.customHeaders.headers);        
 
-        let localRequestOptions: Request.Options = {
+        let url = new URL(localPath)
+        Object.keys(localQueryParameters).forEach(key => url.searchParams.append(key, localQueryParameters[key]))        
+            
+        let requestOptions = {
             method: 'POST',
-            qs: localQueryParameters,
-            headers: localHeaderParams,
-            uri: localPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
-            maxRedirects: 21,
-            body: ObjectSerializer.serialize(query, 'string')
+            body: JSON.stringify(query),
+            headers: localHeaderParams
         };
-
-        this.authentications.apiKeyHeader.applyToRequest(localRequestOptions);
-
-        this.authentications.default.applyToRequest(localRequestOptions);
+        this.authentications.apiKeyHeader.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(requestOptions);
 
         return new Promise<LuisResult>((resolve, reject) => {
-            Request(localRequestOptions, (error, response, luisResult) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    luisResult = ObjectSerializer.deserialize(luisResult, 'LuisResult');
-                    if (response.statusCode && response.statusCode >= HttpStatus.OK && response.statusCode < HttpStatus.MULTIPLE_CHOICES) {
+            fetch(url, requestOptions).then(response => {
+                if (response.status && response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) {
+                    response.json().then(result => {
+                        let luisResult = ObjectSerializer.deserialize(result, "LuisResult");
                         resolve(luisResult);
-                    } else {
-                        reject({
-                            response: {
-                                response: response,
-                                headers:
-                                    response.headers,
-                                body: response.body,
-                                status:
-                                    response.statusCode
-                            }
-                        });
-                    }
+                    });
+                } else {
+                    reject({
+                        response: {
+                            response: response,
+                            headers: response.headers,
+                            body: response.body,
+                            status: response.status
+                        }
+                    });
                 }
             });
         });
