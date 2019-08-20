@@ -23,6 +23,8 @@ export class PayloadAssembler {
     private stream: SubscribableStream;
     private readonly _onCompleted: Function;
     private readonly _streamManager: StreamManager;
+    private readonly _byteOrderMark = 0xFEFF;
+    private readonly _utf: string = 'utf8';
 
     public constructor(streamManager: StreamManager, params: IAssemblerParams) {
         if(params.header !== undefined){
@@ -73,11 +75,11 @@ export class PayloadAssembler {
     }
 
     private payloadFromJson<T>(json: string): T {
-        return JSON.parse((json.charCodeAt(0) === 0xFEFF) ? json.slice(1) : json) as T;
+        return JSON.parse((json.charCodeAt(0) === this._byteOrderMark) ? json.slice(1) : json) as T;
     }
 
     private stripBOM(input: string): string {
-        return (input.charCodeAt(0) === 0xFEFF) ? input.slice(1) : input;
+        return (input.charCodeAt(0) === this._byteOrderMark) ? input.slice(1) : input;
     }
 
     private async process(stream: SubscribableStream): Promise<void> {
@@ -86,7 +88,7 @@ export class PayloadAssembler {
             return;
         }
 
-        let streamDataAsString = streamData.toString('utf8');
+        let streamDataAsString = streamData.toString(this._utf);
 
         if(this.payloadType === PayloadTypes.request){
             await this.processRequest(streamDataAsString);

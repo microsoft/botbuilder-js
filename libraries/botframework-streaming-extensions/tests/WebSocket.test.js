@@ -334,16 +334,6 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             expect(bs.connect()).to.not.throw;
         });
 
-        it('can set message handlers on the socket', () => {
-            let sock = new FauxSock();
-            let bs = new ws.BrowserWebSocket( sock);
-            expect(sock.onmessage).to.be.undefined;
-            expect(bs.setOnMessageHandler(() => {})).to.not.throw;
-            expect(sock.onmessage).to.not.be.undefined;
-
-            expect(sock.onmessage('This is a read test.')).to.not.throw;
-        });
-
         it('can set error handler on the socket', () => {
             let sock = new FauxSock();
             let bs = new ws.BrowserWebSocket( sock);
