@@ -198,15 +198,15 @@ describe(`TranscriptLoggerMiddleware`, function () {
     });
 
     it(`should add resource response id to activity when activity id is empty`, function (done) {
-        var conversationId = null;
-        var transcriptStore = new MemoryTranscriptStore();
-        var adapter = new TestAdapter(async (context) => {
+        let conversationId = null;
+        const transcriptStore = new MemoryTranscriptStore();
+        const adapter = new TestAdapter(async (context) => {
             conversationId = context.activity.conversation.id;
 
             await context.sendActivity(`echo:${context.activity.text}`);
         }).use(new TranscriptLoggerMiddleware(transcriptStore));
 
-        var fooActivity = {
+        const fooActivity = {
             type: ActivityTypes.Message,
             id: 'testFooId',
             text: 'foo'
@@ -232,7 +232,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
 
                     assert.equal(pagedResult.items[2].text, 'bar');
                     // Received activities also auto-add the incremental from the test adapter
-                    assert.equal(pagedResult.items[2].id, 1);
+                    assert.equal(pagedResult.items[2].id, '1');
 
                     assert.equal(pagedResult.items[3].text, 'echo:bar');
                     assert.equal(pagedResult.items[3].id, '2');

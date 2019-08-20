@@ -50,17 +50,12 @@ export class TranscriptLoggerMiddleware implements Middleware {
             // run full pipeline
             const responses: ResourceResponse[] = await next2();
 
-            let responseIndex = 0;
-            activities.forEach((a: Partial<Activity>) => {
-                let clonedActivity: Activity = this.cloneActivity(a);
-                if (responses) {
-                    // if there is no id on the activity, add the id returned from the service
-                    if (responseIndex < responses.length) {
-                        if (!clonedActivity.id) {
-                            clonedActivity.id = responses[responseIndex].id;
-                        }
+            activities.map((a: Partial<Activity>, index: number) => {
+                const clonedActivity = this.cloneActivity(a);
+                if (index < responses.length) {
+                    if (!clonedActivity.id) {
+                        clonedActivity.id = responses[index].id;
                     }
-                    responseIndex++;
                 }
                 this.logActivity(transcript, clonedActivity);
             });
