@@ -1,4 +1,4 @@
-This library contains the core of Bot Framework Streaming Extensions, which extends the 3.0 Bot Framework protocol to communicate over multiplexed, persistent, connections such as named pipes or WebSocket.
+This library contains the BotBuilder integration layer of of Bot Framework Streaming Extensions, which extends the 3.0 Bot Framework protocol to communicate over multiplexed, persistent, connections such as named pipes or WebSocket.  
 
 - [Installing](#installing)
 - [Documentation](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-overview-introduction?view=azure-bot-service-4.0)
@@ -9,7 +9,7 @@ This library contains the core of Bot Framework Streaming Extensions, which exte
 To add the latest published version of this package to your bot:
 
 ```bash
-npm install --save botframework-streaming-extensions
+npm install --save botbuilder-streaming-extensions
 ```
 
 #### Use the Daily Build

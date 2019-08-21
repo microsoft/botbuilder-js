@@ -10,8 +10,8 @@ import { ActivityHandler, Middleware, MiddlewareHandler, TurnContext } from 'bot
 import { ConnectorClient, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider } from 'botframework-connector';
 import { Activity, ActivityTypes } from 'botframework-schema';
 import * as os from 'os';
-import { NamedPipeServer, NodeWebSocket, RequestHandler, StreamingResponse, WebSocketServer, StreamingRequest } from '..'; //TODO: When integration layer is moved this will need to reference the external library.
-import { ISocket, IStreamingTransportServer, IReceiveRequest } from '../Interfaces';
+import { ISocket, IStreamingTransportServer, IReceiveRequest, NamedPipeServer, NodeWebSocket,
+     RequestHandler, StreamingResponse, WebSocketServer, StreamingRequest } from 'botframework-streaming-extensions'; //TODO: When integration layer is moved this will need to reference the external library.
 import { HttpClient, HttpOperationResponse, WebResource } from '@azure/ms-rest-js';
 import { Watershed } from 'watershed'; 
 import { Request, ServerUpgradeResponse } from 'restify';
@@ -28,7 +28,7 @@ export enum StatusCodes {
 }
 
 const defaultPipeName = 'bfv4.pipes';
-const pjson: any = require('../../package.json');
+const pjson: any = require('../package.json');
 const VERSION_PATH:string = '/api/version';
 const MESSAGES_PATH:string = '/api/messages';
 const INVOKE_RESPONSE:string = 'BotFrameworkStreamingAdapter.InvokeResponse';

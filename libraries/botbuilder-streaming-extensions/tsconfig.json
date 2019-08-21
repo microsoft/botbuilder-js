@@ -8,4 +8,7 @@
     "rootDir": "./src",
     "types" : ["node"]
   },
+  "include": [
+    "src/**/*"
+  ]
 }
