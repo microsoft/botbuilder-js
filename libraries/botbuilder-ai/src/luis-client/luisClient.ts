@@ -56,7 +56,7 @@ export enum LuisApikeys {
 }
 
 export class LuisClient {
-    protected _basePath: string = '';
+    private _basePath: string = '';
     protected _useQuerystring: boolean = false;
 
     protected authentications = {
@@ -64,6 +64,9 @@ export class LuisClient {
         'apiKeyHeader': new ApiKeyAuth('header', 'Ocp-Apim-Subscription-Key'),
     }
 
+    /** Creates a new instance of LuisClient.
+     * @param basePath Acceptable values: 'https://westus.api.cognitive.microsoft.com'
+     */
     public constructor(basePath: string){
         if (basePath) {
             this._basePath = basePath + luisVersion;
