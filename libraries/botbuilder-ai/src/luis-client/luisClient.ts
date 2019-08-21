@@ -57,7 +57,6 @@ export enum LuisApikeys {
 
 export class LuisClient {
     private _basePath: string = '';
-    protected _useQuerystring: boolean = false;
 
     protected authentications = {
         'default': new VoidAuth() as Authentication,
