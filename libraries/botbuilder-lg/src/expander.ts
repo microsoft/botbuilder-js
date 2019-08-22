@@ -8,7 +8,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { BuiltInFunctions, Constant, Expression, ExpressionEvaluator, ReturnType } from 'botbuilder-expression';
+import { BuiltInFunctions, Constant, Expression, ExpressionEvaluator, ReturnType, EvaluatorLookup } from 'botbuilder-expression';
 import { ExpressionEngine} from 'botbuilder-expression-parser';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluator';
@@ -21,14 +21,15 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     public readonly Templates: LGTemplate[];
     public readonly TemplateMap: {[name: string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
+    private readonly expressionEngine: ExpressionEngine;
 
-    private readonly GetMethodX: IGetMethod;
-
-    constructor(templates: LGTemplate[], getMethod: IGetMethod) {
+    constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
         this.Templates = templates;
         this.TemplateMap = keyBy(templates, (t: LGTemplate) => t.Name);
-        this.GetMethodX = getMethod === undefined ? new GetExpanderMethod(this) : getMethod;
+
+        // generate a new customzied expression engine by injecting the template as functions
+        this.expressionEngine = new ExpressionEngine(this.CustomizedEvaluatorLookup(expressionEngine.EvaluatorLookup));
     }
 
     public ExpandTemplate(templateName: string, scope: any): string[] {
@@ -246,7 +247,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     private EvalTemplateRef(exp: string) : string[] {
         exp = exp.replace(/(^\[*)/g, '')
             .replace(/(\]*$)/g, '');
-            
+
         if (exp.indexOf('(') < 0) {
             if (exp in this.TemplateMap) {
                 exp = exp.concat('(')
@@ -287,7 +288,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private EvalByExpressionEngine(exp: string, scope: any) : any {
-        const parse: Expression = new ExpressionEngine(this.GetMethodX.GetMethodX).parse(exp);
+        const parse: Expression = this.expressionEngine.parse(exp);
 
         return parse.tryEvaluate(scope);
     }
@@ -302,92 +303,40 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         return result;
     }
-}
 
-export interface IGetMethod {
-    GetMethodX(name: string): ExpressionEvaluator;
-}
-
-export class GetExpanderMethod implements IGetMethod {
-    private readonly expander: Expander;
-
-    public constructor(expander: Expander) {
-        this.expander = expander;
-    }
-
-    public GetMethodX = (name: string): ExpressionEvaluator => {
-
-        // user can always choose to use builtin.xxx to disambiguate with template xxx
+    // Genearte a new lookup function based on one lookup function
+    private readonly CustomizedEvaluatorLookup = (baseLookup: EvaluatorLookup) => (name: string) => {
         const builtInPrefix: string = 'builtin.';
+
         if (name.startsWith(builtInPrefix)) {
-            return BuiltInFunctions.Lookup(name.substr(builtInPrefix.length));
+            return baseLookup(name.substring(builtInPrefix.length));
         }
 
-        // tslint:disable-next-line: switch-default
-        switch (name) {
-            case 'join':
-                return new ExpressionEvaluator('join', BuiltInFunctions.Apply(this.Join));
+        if (this.TemplateMap[name] !== undefined) {
+            return new ExpressionEvaluator(name, BuiltInFunctions.Apply(this.TemplateEvaluator(name)), ReturnType.String, this.ValidTemplateReference);
         }
 
-        if (name in this.expander.TemplateMap) {
-            return new ExpressionEvaluator(
-                name,
-                BuiltInFunctions.Apply(this.TemplateEvaluator(name)),
-                ReturnType.String,
-                this.ValidTemplateReference);
-        }
+        return baseLookup(name);
+    };
 
-        return BuiltInFunctions.Lookup(name);
+    private readonly TemplateEvaluator = (templateName: string) => (args: ReadonlyArray<any>) => {
+        const newScope: any = this.ConstructScope(templateName, Array.from(args));
+
+        return this.ExpandTemplate(templateName, newScope);
     }
 
-    public TemplateEvaluator = (templateName: string): any =>
-        (args: any[]): string[] => {
-            const newScope: any = this.expander.ConstructScope(templateName, args);
-
-            return this.expander.ExpandTemplate(templateName, newScope);
-        }
-
-    public ValidTemplateReference = (expression: Expression): void  => {
+    private readonly ValidTemplateReference = (expression: Expression) => {
         const templateName: string = expression.Type;
 
-        if (!(templateName in this.expander.TemplateMap)) {
+        if (this.TemplateMap[templateName] === undefined) {
             throw new Error(`no such template '${templateName}' to call in ${expression}`);
         }
 
-        const expectedArgsCount: number = this.expander.TemplateMap[templateName].Parameters.length;
+        const expectedArgsCount: number = this.TemplateMap[templateName].Parameters.length;
         const actualArgsCount: number = expression.Children.length;
 
         if (expectedArgsCount !== actualArgsCount) {
             throw new Error(`arguments mismatch for template ${templateName}, expect ${expectedArgsCount} actual ${actualArgsCount}`);
         }
-    }
-
-    public Join = (paramters: any[]): any => {
-        if (paramters.length === 2 &&
-            paramters[0] instanceof Array &&
-            typeof (paramters[1]) === 'string') {
-            const li: any = paramters[0].map((p: any) => p instanceof Array ? p[0] : p);
-            const sep: string = paramters[1];
-
-            return li.join(sep);
-        }
-
-        if (paramters.length === 3 &&
-            paramters[0] instanceof Array &&
-            typeof (paramters[1]) === 'string' &&
-            typeof (paramters[2]) === 'string') {
-            const li: any = paramters[0].map((p: any) => p instanceof Array ? p[0] : p);
-            const sep1: string = paramters[1];
-            const sep2: string = paramters[2];
-            if (li.length < 3) {
-                return li.join(sep2);
-            } else {
-                const firstPart: string = li.slice(0, li.length - 1).join(sep1);
-
-                return firstPart.concat(sep2, li[li.length - 1]);
-            }
-        }
-
-        throw new Error('NotImplementedException');
     }
 }
