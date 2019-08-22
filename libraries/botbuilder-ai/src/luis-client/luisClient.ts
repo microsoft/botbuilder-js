@@ -51,11 +51,23 @@ export interface PredictionResolveOptionalParams {
     customHeaders: {headers: {[name: string]: string}};
 }
 
+ /**
+  *  Sets headers for request to LUIS service.
+  *  LUIS services use the `Ocp-Apim-Subscription-Key` header 
+  */
 export enum LuisApikeys {
     apiKeyHeader,
 }
 
+/**
+ * Luis Client Class
+ *
+ * @remarks
+ * This class is helper class for all the http request operations against the LUIS API
+ * https://www.luis.ai/
+ */
 export class LuisClient {
+    /** Acceptable values: https://westus.api.cognitive.microsoft.com */
     protected _basePath: string = '';
     protected _useQuerystring: boolean = false;
 
