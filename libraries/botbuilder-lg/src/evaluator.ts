@@ -287,10 +287,10 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
 
     // Genearte a new lookup function based on one lookup function
     private readonly CustomizedEvaluatorLookup = (baseLookup: EvaluatorLookup) => (name: string) => {
-        const builtInPrefix: string = 'builtin.';
+        const prebuiltPrefix: string = 'prebuilt.';
 
-        if (name.startsWith(builtInPrefix)) {
-            return baseLookup(name.substring(builtInPrefix.length));
+        if (name.startsWith(prebuiltPrefix)) {
+            return baseLookup(name.substring(prebuiltPrefix.length));
         }
 
         if (this.TemplateMap[name] !== undefined) {

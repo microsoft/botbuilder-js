@@ -1901,18 +1901,14 @@ export class BuiltInFunctions {
                         if (!(args[0] instanceof Array)) {
                             error = `${expression.Children[0]} evaluates to ${args[0]} which is not a list.`;
                         } else {
-                            if (args.length == 2) {
-                                const li: any = args[0].map((p: any) => p instanceof Array ? p[0] : p);
-                                value = li.join(args[1]);
-                            } 
-                            else {
-                                const li: any = args[0].map((p: any) => p instanceof Array ? p[0] : p);
-
-                                if (li.length < 3) {
-                                    value = li.join(args[2]);
+                            if (args.length === 2) {
+                                value = args[0].join(args[1]);
+                            } else {
+                                if (args[0].length < 3) {
+                                    value = args[0].join(args[2]);
                                 } else {
-                                    const firstPart: string = li.slice(0, li.length - 1).join(args[1]);
-                                    value = firstPart.concat(args[2], li[li.length - 1]);
+                                    const firstPart: string = args[0].slice(0, args[0].length - 1).join(args[1]);
+                                    value = firstPart.concat(args[2], args[0][args[0].length - 1]);
                                 }
                             }
                         }
