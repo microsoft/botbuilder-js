@@ -67,7 +67,8 @@ export enum LuisApikeys {
  * https://www.luis.ai/
  */
 export class LuisClient {
-    protected _basePath: string = '';
+    /** Supported Cognitive Services endpoint (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com) */
+    private _basePath: string = '';
 
     protected authentications = {
         'default': new VoidAuth() as Authentication,
@@ -75,7 +76,7 @@ export class LuisClient {
     }
 
     /** Creates a new instance of LuisClient.
-     * @param basePath Acceptable values: 'https://westus.api.cognitive.microsoft.com'
+     * @param basePath Supported Cognitive Services endpoint.
      */
     public constructor(basePath: string){
         if (basePath) {
