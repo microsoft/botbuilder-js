@@ -5,18 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ProtocolAdapter } from '../ProtocolAdapter';
-import { RequestHandler } from '../RequestHandler';
-import { StreamingRequest } from '../StreamingRequest';
+import { ProtocolAdapter } from '../protocolAdapter';
+import { RequestHandler } from '../requestHandler';
+import { StreamingRequest } from '../streamingRequest';
 import { RequestManager } from '../payloads';
 import {
     PayloadReceiver,
     PayloadSender,
     TransportDisconnectedEventArgs
 } from '../payloadtransport';
-import { BrowserWebSocket } from './BrowserWebSocket';
-import { NodeWebSocket } from './NodeWebSocket';
-import { WebSocketTransport } from './WebSocketTransport';
+import { BrowserWebSocket } from './browserWebSocket';
+import { NodeWebSocket } from './nodeWebSocket';
+import { WebSocketTransport } from './webSocketTransport';
 import { IStreamingTransportClient, IReceiveResponse } from '../interfaces';
 
 /// <summary>

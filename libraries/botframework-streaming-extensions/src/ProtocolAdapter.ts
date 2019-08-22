@@ -10,12 +10,12 @@ import { PayloadAssemblerManager } from './Payloads/PayloadAssemblerManager';
 import { RequestManager } from './Payloads/RequestManager';
 import { SendOperations } from './Payloads/SendOperations';
 import { StreamManager } from './Payloads/StreamManager';
-import { PayloadReceiver } from './PayloadTransport/PayloadReceiver';
-import { PayloadSender } from './PayloadTransport/PayloadSender';
+import { PayloadReceiver } from './payloadtransport/PayloadReceiver';
+import { PayloadSender } from './payloadtransport/PayloadSender';
 import { RequestHandler } from './requestHandler';
 import { SubscribableStream } from './subscribableStream';
 import { StreamingRequest } from './streamingRequest';
-import { generateGuid } from './Utilities/protocol-base';
+import { generateGuid } from './utilities/protocol-base';
 import { IReceiveResponse, IReceiveRequest } from './Interfaces';
 import { IHeader } from './Interfaces/IHeader';
 

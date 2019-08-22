@@ -6,15 +6,15 @@
  * Licensed under the MIT License.
  */
 import { connect } from 'net';
-import { ProtocolAdapter } from '../ProtocolAdapter';
-import { RequestHandler } from '../RequestHandler';
-import { StreamingRequest } from '../StreamingRequest';
-import { RequestManager } from '../Payloads';
+import { ProtocolAdapter } from '../protocolAdapter';
+import { RequestHandler } from '../requestHandler';
+import { StreamingRequest } from '../streamingRequest';
+import { RequestManager } from '../payloads';
 import {
     PayloadReceiver,
     PayloadSender
-} from '../PayloadTransport';
-import { NamedPipeTransport } from './NamedPipeTransport';
+} from '../payloadtransport';
+import { NamedPipeTransport } from './namedPipeTransport';
 import { IStreamingTransportClient, IReceiveResponse } from '../interfaces';
 
 export class NamedPipeClient implements IStreamingTransportClient {

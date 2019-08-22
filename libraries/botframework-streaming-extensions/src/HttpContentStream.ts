@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { SubscribableStream } from './subscribableStream';
-import { generateGuid } from './Utilities/protocol-base';
+import { generateGuid } from './utilities/protocol-base';
 import { IHttpContentHeaders } from './Interfaces/IHttpContentHeaders';
 
 export class HttpContentStream {
