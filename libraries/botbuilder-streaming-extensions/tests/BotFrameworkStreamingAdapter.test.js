@@ -1,4 +1,4 @@
-const Adapter = require('../lib/BotFrameworkStreamingAdapter');
+const Adapter = require('../lib/botFrameworkStreamingAdapter');
 const ActivityHandler = require("botbuilder-core");
 const  chai  = require('chai');
 var expect = chai.expect;

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IReceiveRequest } from './Interfaces/IReceiveRequest';
+import { IReceiveRequest } from './interfaces/iReceiveRequest';
 import { StreamingResponse } from './streamingResponse';
 /// <summary>
 /// Implemented by classes used to process incoming requests sent over an <see cref="IStreamingTransport"/> and adhering to the Bot Framework Protocol v3 with Streaming Extensions.

@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 import { ISocket } from '../interfaces';
-import { ITransportSender } from '../interfaces/ITransportSender';
-import { ITransportReceiver } from '../interfaces/ITransportReceiver';
+import { ITransportSender } from '../interfaces/iTransportSender';
+import { ITransportReceiver } from '../interfaces/iTransportReceiver';
 
 export class WebSocketTransport implements ITransportSender, ITransportReceiver {
     private _socket: ISocket;

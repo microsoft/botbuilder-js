@@ -10,7 +10,7 @@ import { PayloadTypes } from '../payloads/payloadTypes';
 import { HeaderSerializer } from '../payloads/headerSerializer';
 import { SubscribableStream } from '../SubscribableStream';
 import { PayloadConstants } from '../payloads/payloadConstants';
-import { TransportDisconnectedEventArgs } from './TransportDisconnectedEventArgs';
+import { TransportDisconnectedEventArgs } from './transportDisconnectedEventArgs';
 import { ITransportReceiver } from '../interfaces/iTransportReceiver';
 import { IHeader } from '../interfaces/iHeader';
 

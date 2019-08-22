@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { SubscribableStream } from '../subscribableStream';
-import { PayloadAssembler } from '../assemblers/PayloadAssembler';
+import { PayloadAssembler } from '../assemblers/payloadAssembler';
 import { StreamManager } from './streamManager';
 import { IHeader } from '../interfaces/iHeader';
 import { PayloadTypes } from './payloadTypes';

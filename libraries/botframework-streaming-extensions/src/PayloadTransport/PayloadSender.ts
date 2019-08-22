@@ -7,10 +7,10 @@
  */
 
 import { HeaderSerializer } from '../payloads/headerSerializer';
-import { SubscribableStream } from '../SubscribableStream';
+import { SubscribableStream } from '../subscribableStream';
 import { PayloadConstants } from '../payloads/payloadConstants';
-import { TransportDisconnectedEventArgs } from './TransportDisconnectedEventArgs';
-import { TransportDisconnectedEventHandler } from './TransportDisconnectedEventHandler';
+import { TransportDisconnectedEventArgs } from './transportDisconnectedEventArgs';
+import { TransportDisconnectedEventHandler } from './transportDisconnectedEventHandler';
 import { ITransportSender } from '../interfaces/iTransportSender';
 import { IHeader } from '../interfaces/iHeader';
 import { ISendPacket } from '../interfaces/iSendPacket';

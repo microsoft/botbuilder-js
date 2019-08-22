@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { HttpContent, HttpContentStream } from './httpContentStream';
-import { SubscribableStream } from './SubscribableStream';
+import { SubscribableStream } from './subscribableStream';
 
 export class StreamingResponse {
     public statusCode: number;
