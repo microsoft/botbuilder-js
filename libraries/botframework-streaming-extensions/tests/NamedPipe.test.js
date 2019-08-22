@@ -1,6 +1,6 @@
 const net = require('net');
 const np = require('../lib');
-const npt = require('../lib/NamedPipe/NamedPipeTransport');
+const npt = require('../lib/namedPipe/namedPipeTransport');
 const protocol = require('../lib');
 const  chai  = require('chai');
 var expect = chai.expect;

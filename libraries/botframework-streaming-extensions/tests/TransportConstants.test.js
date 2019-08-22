@@ -1,4 +1,4 @@
-const Constants = require( '../lib/Payloads/PayloadConstants');
+const Constants = require( '../lib/payloads/payloadConstants');
 const chai = require( 'chai');
 var expect = chai.expect;
 describe('TransportConstants', () => {

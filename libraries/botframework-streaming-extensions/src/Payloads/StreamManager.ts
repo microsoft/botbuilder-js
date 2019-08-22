@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IHeader } from '../interfaces/IHeader';
-import { SubscribableStream } from '../SubscribableStream';
+import { IHeader } from '../interfaces/iHeader';
+import { SubscribableStream } from '../subscribableStream';
 import { PayloadAssembler } from '../assemblers/PayloadAssembler';
 
 export class StreamManager {
