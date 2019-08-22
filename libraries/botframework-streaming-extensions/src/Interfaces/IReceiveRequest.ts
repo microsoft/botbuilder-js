@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ContentStream } from '../ContentStream';
+import { ContentStream } from '../contentStream';
 
 export interface IReceiveRequest {
     /// Request verb, null on responses

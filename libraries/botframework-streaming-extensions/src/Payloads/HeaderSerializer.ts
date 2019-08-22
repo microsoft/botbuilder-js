@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IHeader } from '../Interfaces/IHeader';
+import { IHeader } from '../interfaces/IHeader';
 import { PayloadConstants } from './PayloadConstants';
 
 export class HeaderSerializer {

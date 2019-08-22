@@ -5,12 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PayloadTypes } from '../Payloads/PayloadTypes';
-import { PayloadSender } from '../PayloadTransport/PayloadSender';
+import { PayloadTypes } from '../payloads/PayloadTypes';
+import { PayloadSender } from '../payloadtransport/PayloadSender';
 import { StreamingRequest } from '../StreamingRequest';
-import { PayloadDisassembler } from './PayloadDisassembler';
-import { IStreamWrapper } from '../Interfaces/IStreamWrapper';
-import { IRequestPayload } from '../Interfaces/IRequestPayload';
+import { PayloadDisassembler } from './payloadDisassembler';
+import { IStreamWrapper } from '../interfaces/IStreamWrapper';
+import { IRequestPayload } from '../interfaces/IRequestPayload';
 
 export class RequestDisassembler extends PayloadDisassembler {
     public request: StreamingRequest;

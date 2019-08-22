@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 import * as http from 'http';
-import * as WaterShed from 'watershed';
-import { ISocket } from '../Interfaces/ISocket';
+import * as WaterShed from './node_modules/watershed';
+import { ISocket } from '../interfaces/iSocket';
 
 export class NodeWebSocket implements ISocket {
     private readonly waterShedSocket: any;

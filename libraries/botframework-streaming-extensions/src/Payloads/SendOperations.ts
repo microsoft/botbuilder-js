@@ -8,10 +8,10 @@
 import { PayloadSender } from '../PayloadTransport/PayloadSender';
 import { StreamingRequest } from '../StreamingRequest';
 import { StreamingResponse } from '../StreamingResponse';
-import { CancelDisassembler } from '../Disassemblers/CancelDisassembler';
-import { HttpContentStreamDisassembler } from '../Disassemblers/HttpContentStreamDisassembler';
-import { RequestDisassembler } from '../Disassemblers/RequestDisassembler';
-import { ResponseDisassembler } from '../Disassemblers/ResponseDisassembler';
+import { CancelDisassembler } from '../disassemblers/CancelDisassembler';
+import { HttpContentStreamDisassembler } from '../disassemblers/HttpContentStreamDisassembler';
+import { RequestDisassembler } from '../disassemblers/RequestDisassembler';
+import { ResponseDisassembler } from '../disassemblers/ResponseDisassembler';
 import { PayloadTypes } from './PayloadTypes';
 
 export class SendOperations {

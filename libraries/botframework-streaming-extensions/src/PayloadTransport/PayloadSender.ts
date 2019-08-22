@@ -6,14 +6,14 @@
  * Licensed under the MIT License.
  */
 
-import { HeaderSerializer } from '../Payloads/HeaderSerializer';
+import { HeaderSerializer } from '../payloads/headerSerializer';
 import { SubscribableStream } from '../SubscribableStream';
-import { PayloadConstants } from '../Payloads/PayloadConstants';
+import { PayloadConstants } from '../payloads/payloadConstants';
 import { TransportDisconnectedEventArgs } from './TransportDisconnectedEventArgs';
 import { TransportDisconnectedEventHandler } from './TransportDisconnectedEventHandler';
-import { ITransportSender } from '../Interfaces/ITransportSender';
-import { IHeader } from '../Interfaces/IHeader';
-import { ISendPacket } from '../Interfaces/ISendPacket';
+import { ITransportSender } from '../interfaces/iTransportSender';
+import { IHeader } from '../interfaces/iHeader';
+import { ISendPacket } from '../interfaces/iSendPacket';
 
 export class PayloadSender {
     public disconnected?: TransportDisconnectedEventHandler;

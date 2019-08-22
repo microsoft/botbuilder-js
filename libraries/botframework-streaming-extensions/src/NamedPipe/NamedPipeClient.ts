@@ -15,7 +15,7 @@ import {
     PayloadSender
 } from '../PayloadTransport';
 import { NamedPipeTransport } from './NamedPipeTransport';
-import { IStreamingTransportClient, IReceiveResponse } from '../Interfaces';
+import { IStreamingTransportClient, IReceiveResponse } from '../interfaces';
 
 export class NamedPipeClient implements IStreamingTransportClient {
     private readonly _baseName: string;

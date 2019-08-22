@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IReceiveResponse } from '../Interfaces/IReceiveResponse';
+import { IReceiveResponse } from '../interfaces/IReceiveResponse';
 
 class PendingRequest {
     public requestId: string;

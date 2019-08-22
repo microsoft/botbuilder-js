@@ -15,7 +15,7 @@ import {
     PayloadSender
 } from '../PayloadTransport';
 import { NamedPipeTransport } from './NamedPipeTransport';
-import { IStreamingTransportServer, IReceiveResponse } from '../Interfaces';
+import { IStreamingTransportServer, IReceiveResponse } from '../interfaces';
 
 /// <summary>
 /// A server for use with the Bot Framework Protocol V3 with Streaming Extensions and an underlying Named Pipe transport.

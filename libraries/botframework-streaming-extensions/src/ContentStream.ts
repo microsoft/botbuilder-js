@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { SubscribableStream } from './SubscribableStream';
+import { SubscribableStream } from './subscribableStream';
 import { PayloadAssembler } from './Assemblers';
 
 export class ContentStream {
