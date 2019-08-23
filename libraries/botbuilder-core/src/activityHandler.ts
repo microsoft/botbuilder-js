@@ -276,11 +276,11 @@ export class ActivityHandler {
     }
 
     /**
-     * Private method used to bind handlers to events by name
+     * Used to bind handlers to events by name
      * @param type string
      * @param handler BotHandler
      */
-    private on(type: string, handler: BotHandler) {
+    protected on(type: string, handler: BotHandler) {
         if (!this.handlers[type]) {
             this.handlers[type] = [handler];
         } else {
@@ -290,11 +290,11 @@ export class ActivityHandler {
     }
 
     /**
-     * Private method used to fire events and execute any bound handlers
+     * Used to fire events and execute any bound handlers
      * @param type string
      * @param handler BotHandler
      */
-    private async handle(context: TurnContext, type: string,  onNext: () => Promise<void>): Promise<any> {
+    protected async handle(context: TurnContext, type: string,  onNext: () => Promise<void>): Promise<any> {
         let returnValue: any = null;
 
         async function runHandler(index: number): Promise<void> {
