@@ -44,4 +44,4 @@ They are @{ShowAlarm(alarms[1])}
 - {count(T1())}
 
 # T4
-- {substring(T1(), 1, 2)} 
+- {substring(T1(), 1, 2)}

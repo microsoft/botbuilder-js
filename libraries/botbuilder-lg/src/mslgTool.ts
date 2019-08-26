@@ -48,7 +48,7 @@ export class MSLGTool {
         return analyzer.AnalyzeTemplate(templateName).Variables;
     }
 
-    public ExpandTemplate(templateName: string, scope: any): string[] {
+    public ExpandTemplate(templateName: string, scope?: any): string[] {
         const expander: Expander = new Expander(this.Templates, this.expressionEngine);
 
         return expander.ExpandTemplate(templateName, scope);

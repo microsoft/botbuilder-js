@@ -31,7 +31,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         // generate a new customzied expression engine by injecting the template as functions
         this.expanderExpressionEngine = new ExpressionEngine(this.CustomizedEvaluatorLookup(expressionEngine.EvaluatorLookup, true));
-        this.expanderExpressionEngine = new ExpressionEngine(this.CustomizedEvaluatorLookup(expressionEngine.EvaluatorLookup, false));
+        this.evaluatorExpressionEngine = new ExpressionEngine(this.CustomizedEvaluatorLookup(expressionEngine.EvaluatorLookup, false));
     }
 
     public ExpandTemplate(templateName: string, scope: any): string[] {
@@ -366,7 +366,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             foundPrebuiltFunction = true;
         }
 
-        for (let i: number; i < expanderExpression.Children.length; i++) {
+        for (let i: number = 0; i < expanderExpression.Children.length; i++) {
             expanderExpression.Children[i] = this.ReconstructExpression(expanderExpression.Children[i], evaluatorExpression.Children[i], foundPrebuiltFunction);
         }
 
