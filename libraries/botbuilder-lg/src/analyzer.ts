@@ -14,7 +14,6 @@ import { flatten, keyBy } from 'lodash';
 import { EvaluationTarget, Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
-import { GetMethodExtensions } from './getMethodExtensions';
 import { LGTemplate } from './lgTemplate';
 
 export class AnalyzerResult {
@@ -44,11 +43,14 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly _expressionParser: IExpressionParser;
 
-    constructor(templates: LGTemplate[]) {
+    constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
         this.Templates = templates;
         this.TemplateMap = keyBy(templates, (t: LGTemplate) => t.Name);
-        this._expressionParser = new ExpressionEngine(new GetMethodExtensions(new Evaluator(this.Templates, undefined)).GetMethodX);
+
+        // create an evaluator to leverage it's customized function look up for checking
+        const evaluator: Evaluator = new Evaluator(this.Templates, expressionEngine);
+        this._expressionParser = evaluator.ExpressionEngine;
     }
 
     public AnalyzeTemplate(templateName: string): AnalyzerResult {

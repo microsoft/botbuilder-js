@@ -16,18 +16,24 @@ import { Diagnostic, DiagnosticSeverity, Position, Range } from './diagnostic';
 import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
-import { GetMethodExtensions } from './getMethodExtensions';
 import { ImportResolver, ImportResolverDelegate } from './importResolver';
 import { LGException } from './lgException';
 import { LGParser } from './lgParser';
 import { LGResource } from './lgResource';
 import { LGTemplate } from './lgTemplate';
+import { IExpressionParser } from 'botbuilder-expression';
 
 /**
  * Static checker tool
  */
 export class StaticChecker {
-    public static checkFiles(filePaths: string[], importResolver?: ImportResolverDelegate): Diagnostic[] {
+    private readonly expressionEngine: ExpressionEngine;
+
+    constructor(expressionEngine?: ExpressionEngine) {
+        this.expressionEngine = expressionEngine !== undefined ? expressionEngine : new ExpressionEngine();
+    }
+
+    public checkFiles(filePaths: string[], importResolver?: ImportResolverDelegate): Diagnostic[] {
         let result: Diagnostic[] = [];
         let templates: LGTemplate[] = [];
         let isParseSuccess: boolean = true;
@@ -71,18 +77,18 @@ export class StaticChecker {
         return result;
     }
 
-    public static checkFile(filePath: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
+    public checkFile(filePath: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
         return this.checkFiles([filePath], importResolver);
     }
 
-    public static checkText(content: string, id?: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
+    public checkText(content: string, id?: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
         if (importResolver === undefined) {
             const importPath: string = ImportResolver.normalizePath(id);
             if (!path.isAbsolute(importPath)) {
                 throw new Error('[Error] id must be full path when importResolver is empty');
             }
         }
-        
+
         let result: Diagnostic[] = [];
         let templates: LGTemplate[] = [];
         let isParseSuccess: boolean = true;
@@ -112,9 +118,9 @@ export class StaticChecker {
         return result;
     }
 
-    public static checkTemplates(templates: LGTemplate[]): Diagnostic[] {
+    public checkTemplates(templates: LGTemplate[]): Diagnostic[] {
         // tslint:disable-next-line: no-use-before-declare
-        return new StaticCheckerInner(templates).Check();
+        return new StaticCheckerInner(templates, this.expressionEngine).Check();
     }
 }
 
@@ -123,9 +129,22 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     public readonly Templates:  LGTemplate[];
     public TemplateMap: {[name: string]: LGTemplate};
     private currentSource: string = '';
-    constructor(templates: LGTemplate[]) {
+    private readonly baseExpressionEngine: ExpressionEngine;
+    private _expressionParser: IExpressionParser;
+
+    constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
         this.Templates = templates;
+        this.baseExpressionEngine = expressionEngine;
+    }
+
+    private get ExpressionParser(): IExpressionParser {
+        if (this._expressionParser === undefined) {
+            const evaluator: Evaluator = new Evaluator(this.Templates, this.baseExpressionEngine);
+            this._expressionParser = evaluator.ExpressionEngine;
+        }
+
+        return this._expressionParser;
     }
 
     public Check(): Diagnostic[] {
@@ -445,7 +464,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         }
 
         try {
-            new ExpressionEngine(new GetMethodExtensions(new Evaluator(this.Templates, undefined)).GetMethodX).parse(expression);
+            this.ExpressionParser.parse(expression);
         } catch (e) {
             result.push(this.BuildLGDiagnostic({
                 message: e.message.concat(` in template reference '${exp}'`),
@@ -493,7 +512,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
                 .trim();
 
         try {
-            new ExpressionEngine(new GetMethodExtensions(new Evaluator(this.Templates, undefined)).GetMethodX).parse(exp);
+            this.ExpressionParser.parse(exp);
         } catch (e) {
             result.push(this.BuildLGDiagnostic({
                 message: e.message.concat(` in expression '${exp}'`),

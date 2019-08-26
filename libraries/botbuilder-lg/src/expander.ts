@@ -8,7 +8,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { BuiltInFunctions, Constant, Expression, ExpressionEvaluator, ReturnType } from 'botbuilder-expression';
+import { BuiltInFunctions, Constant, Expression, ExpressionEvaluator, ReturnType, EvaluatorLookup } from 'botbuilder-expression';
 import { ExpressionEngine} from 'botbuilder-expression-parser';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluator';
@@ -21,14 +21,17 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     public readonly Templates: LGTemplate[];
     public readonly TemplateMap: {[name: string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
+    private readonly expanderExpressionEngine: ExpressionEngine;
+    private readonly evaluatorExpressionEngine: ExpressionEngine;
 
-    private readonly GetMethodX: IGetMethod;
-
-    constructor(templates: LGTemplate[], getMethod: IGetMethod) {
+    constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
         this.Templates = templates;
         this.TemplateMap = keyBy(templates, (t: LGTemplate) => t.Name);
-        this.GetMethodX = getMethod === undefined ? new GetExpanderMethod(this) : getMethod;
+
+        // generate a new customzied expression engine by injecting the template as functions
+        this.expanderExpressionEngine = new ExpressionEngine(this.CustomizedEvaluatorLookup(expressionEngine.EvaluatorLookup, true));
+        this.evaluatorExpressionEngine = new ExpressionEngine(this.CustomizedEvaluatorLookup(expressionEngine.EvaluatorLookup, false));
     }
 
     public ExpandTemplate(templateName: string, scope: any): string[] {
@@ -209,13 +212,13 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
 
-            const {value: result, error}: {value: any; error: string} = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
+            const { value: result, error }: { value: any; error: string } = this.EvalByExpressionEngine(exp, this.currentTarget().Scope);
             if (error !== undefined
                 || result === undefined
                 || typeof result === 'boolean' && !Boolean(result)
                 || Number.isInteger(result) && Number(result) === 0) {
-                    return false;
-                }
+                return false;
+            }
 
             return true;
         } catch (error) {
@@ -246,7 +249,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     private EvalTemplateRef(exp: string) : string[] {
         exp = exp.replace(/(^\[*)/g, '')
             .replace(/(\]*$)/g, '');
-            
+
         if (exp.indexOf('(') < 0) {
             if (exp in this.TemplateMap) {
                 exp = exp.concat('(')
@@ -287,7 +290,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private EvalByExpressionEngine(exp: string, scope: any) : any {
-        const parse: Expression = new ExpressionEngine(this.GetMethodX.GetMethodX).parse(exp);
+        let expanderExpression: Expression = this.expanderExpressionEngine.parse(exp);
+        let evaluatorExpression: Expression = this.evaluatorExpressionEngine.parse(exp);
+        let parse = this.ReconstructExpression(expanderExpression, evaluatorExpression, false);
 
         return parse.tryEvaluate(scope);
     }
@@ -302,59 +307,49 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         return result;
     }
-}
 
-export interface IGetMethod {
-    GetMethodX(name: string): ExpressionEvaluator;
-}
+    // Genearte a new lookup function based on one lookup function
+    private readonly CustomizedEvaluatorLookup = (baseLookup: EvaluatorLookup, isExpander: boolean) => (name: string) => {
+        const prebuiltPrefix: string = 'prebuilt.';
 
-export class GetExpanderMethod implements IGetMethod {
-    private readonly expander: Expander;
+        if (name.startsWith(prebuiltPrefix)) {
+            return baseLookup(name.substring(prebuiltPrefix.length));
+        }
 
-    public constructor(expander: Expander) {
-        this.expander = expander;
+        if (this.TemplateMap[name] !== undefined) {
+            if (isExpander) {
+                return new ExpressionEvaluator(name, BuiltInFunctions.Apply(this.TemplateExpander(name)), ReturnType.String, this.ValidTemplateReference);
+            } else {
+                return new ExpressionEvaluator(name, BuiltInFunctions.Apply(this.TemplateEvaluator(name)), ReturnType.String, this.ValidTemplateReference);
+            }
+        }
+
+        return baseLookup(name);
+    };
+
+    private readonly TemplateEvaluator = (templateName: string) => (args: ReadonlyArray<any>) => {
+        const newScope: any = this.ConstructScope(templateName, Array.from(args));
+
+        const value: string[] = this.ExpandTemplate(templateName, newScope);
+        const randomNumber: number = Math.floor(Math.random() * value.length);
+
+        return value[randomNumber];
     }
 
-    public GetMethodX = (name: string): ExpressionEvaluator => {
+    private readonly TemplateExpander = (templateName: string) => (args: ReadonlyArray<any>) => {
+        const newScope: any = this.ConstructScope(templateName, Array.from(args));
 
-        // user can always choose to use builtin.xxx to disambiguate with template xxx
-        const builtInPrefix: string = 'builtin.';
-        if (name.startsWith(builtInPrefix)) {
-            return BuiltInFunctions.Lookup(name.substr(builtInPrefix.length));
-        }
-
-        // tslint:disable-next-line: switch-default
-        switch (name) {
-            case 'join':
-                return new ExpressionEvaluator('join', BuiltInFunctions.Apply(this.Join));
-        }
-
-        if (name in this.expander.TemplateMap) {
-            return new ExpressionEvaluator(
-                name,
-                BuiltInFunctions.Apply(this.TemplateEvaluator(name)),
-                ReturnType.String,
-                this.ValidTemplateReference);
-        }
-
-        return BuiltInFunctions.Lookup(name);
+        return this.ExpandTemplate(templateName, newScope);
     }
 
-    public TemplateEvaluator = (templateName: string): any =>
-        (args: any[]): string[] => {
-            const newScope: any = this.expander.ConstructScope(templateName, args);
-
-            return this.expander.ExpandTemplate(templateName, newScope);
-        }
-
-    public ValidTemplateReference = (expression: Expression): void  => {
+    private readonly ValidTemplateReference = (expression: Expression) => {
         const templateName: string = expression.Type;
 
-        if (!(templateName in this.expander.TemplateMap)) {
+        if (this.TemplateMap[templateName] === undefined) {
             throw new Error(`no such template '${templateName}' to call in ${expression}`);
         }
 
-        const expectedArgsCount: number = this.expander.TemplateMap[templateName].Parameters.length;
+        const expectedArgsCount: number = this.TemplateMap[templateName].Parameters.length;
         const actualArgsCount: number = expression.Children.length;
 
         if (expectedArgsCount !== actualArgsCount) {
@@ -362,32 +357,19 @@ export class GetExpanderMethod implements IGetMethod {
         }
     }
 
-    public Join = (paramters: any[]): any => {
-        if (paramters.length === 2 &&
-            paramters[0] instanceof Array &&
-            typeof (paramters[1]) === 'string') {
-            const li: any = paramters[0].map((p: any) => p instanceof Array ? p[0] : p);
-            const sep: string = paramters[1];
-
-            return li.join(sep);
-        }
-
-        if (paramters.length === 3 &&
-            paramters[0] instanceof Array &&
-            typeof (paramters[1]) === 'string' &&
-            typeof (paramters[2]) === 'string') {
-            const li: any = paramters[0].map((p: any) => p instanceof Array ? p[0] : p);
-            const sep1: string = paramters[1];
-            const sep2: string = paramters[2];
-            if (li.length < 3) {
-                return li.join(sep2);
-            } else {
-                const firstPart: string = li.slice(0, li.length - 1).join(sep1);
-
-                return firstPart.concat(sep2, li[li.length - 1]);
+    private ReconstructExpression(expanderExpression: Expression, evaluatorExpression: Expression, foundPrebuiltFunction: boolean): Expression {
+        if (this.TemplateMap[expanderExpression.Type] !== undefined) {
+            if (foundPrebuiltFunction) {
+                return evaluatorExpression;
             }
+        } else {
+            foundPrebuiltFunction = true;
         }
 
-        throw new Error('NotImplementedException');
+        for (let i: number = 0; i < expanderExpression.Children.length; i++) {
+            expanderExpression.Children[i] = this.ReconstructExpression(expanderExpression.Children[i], evaluatorExpression.Children[i], foundPrebuiltFunction);
+        }
+
+        return expanderExpression
     }
 }

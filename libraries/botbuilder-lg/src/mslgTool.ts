@@ -5,9 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { ExpressionEngine } from 'botbuilder-expression-parser';
 import { Analyzer } from './analyzer';
 import { Diagnostic, Position, Range } from './diagnostic';
-import { Expander, IGetMethod } from './expander';
+import { Expander } from './expander';
 import { Extractor } from './extractor';
 import { LGParser } from './lgParser';
 import { LGTemplate } from './lgTemplate';
@@ -20,9 +21,14 @@ export class MSLGTool {
     public NameCollisions: string[] = [];
 
     private Templates: LGTemplate[];
+    private readonly expressionEngine: ExpressionEngine;
+
+    constructor(expressionEngine?: ExpressionEngine) {
+        this.expressionEngine = expressionEngine !== undefined ? expressionEngine : new ExpressionEngine();
+    }
 
     public ValidateFile(lgFileContent: string, id?: string): string[] {
-        const diagnostic: Diagnostic[] = StaticChecker.checkText(lgFileContent, id, undefined);
+        const diagnostic: Diagnostic[] = new StaticChecker().checkText(lgFileContent, id, undefined);
         if (diagnostic.length !== 0) {
             return diagnostic.map((error: Diagnostic) => error.toString());
         }
@@ -37,13 +43,13 @@ export class MSLGTool {
     }
 
     public GetTemplateVariables(templateName: string): string[] {
-        const analyzer: Analyzer = new Analyzer(this.Templates);
+        const analyzer: Analyzer = new Analyzer(this.Templates, this.expressionEngine);
 
         return analyzer.AnalyzeTemplate(templateName).Variables;
     }
 
-    public ExpandTemplate(templateName: string, scope: any, methodBinder?: IGetMethod): string[] {
-        const expander: Expander = new Expander(this.Templates, methodBinder);
+    public ExpandTemplate(templateName: string, scope?: any): string[] {
+        const expander: Expander = new Expander(this.Templates, this.expressionEngine);
 
         return expander.ExpandTemplate(templateName, scope);
     }

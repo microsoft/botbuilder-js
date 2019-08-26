@@ -9,7 +9,6 @@ export * from './templateEngine';
 export * from './evaluator';
 export * from './lgParser';
 export * from './generated';
-export * from './getMethodExtensions';
 export * from './staticChecker';
 export * from './analyzer';
 export * from './mslgTool';

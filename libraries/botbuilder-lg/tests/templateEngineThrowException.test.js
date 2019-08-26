@@ -49,7 +49,7 @@ describe('LGExceptionTest', function () {
     it('WariningTest', function () {
         for (const testDateItem of StaticCheckWariningData ) {
             var engine = new TemplateEngine().addFile(GetExampleFilePath(testDateItem));
-            var report = StaticChecker.checkTemplates(engine.templates);
+            var report = new StaticChecker().checkTemplates(engine.templates);
             assert.strictEqual(report.length > 0, true);
             report.forEach(e => assert.strictEqual(e.Severity === DiagnosticSeverity.Warning, true));
         }
