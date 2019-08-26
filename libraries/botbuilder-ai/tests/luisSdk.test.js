@@ -97,8 +97,7 @@ function TestJson(file, done, includeAllIntents, includeInstance) {
                 headers:{                        
                     'authorization': `Bearer ${ endpointKey }`,
                     'User-Agent': 'botbuilder'
-                },
-               
+                },               
             }
         }
     ).then(result => {
@@ -153,9 +152,22 @@ function findCompositeByParentType(key, data) {
     }
     return null;
 }
-    
 
-describe('LuisPredict', function() {
+
+const query = 'verbose=(true|false)(&staging=false&spellCheck=false&log=true|)';
+const path = `/luis/v2\\.0/apps/${applicationId}`;
+const pattern = `${path}\\?${query}`;
+const luisUri = new RegExp(pattern);
+
+function ReturnErrorStatusCode(basePath, uri, statusCode) {
+    nock(basePath)
+        .matchHeader('ocp-apim-subscription-key', endpointKey)
+        .matchHeader('authorization', `Bearer ${endpointKey}`)
+        .post(uri)
+        .reply(statusCode);
+}
+
+xdescribe('LuisPredict', function() {
     this.timeout(10000);
     if (!mockLuis && endpointKey === 'MockedKey') {
         console.warn('WARNING: skipping LuisRecognizer test suite because the LUISAPPKEY environment variable is not defined');
@@ -303,3 +315,32 @@ describe('LuisPredict', function() {
 
 });
 
+describe('LuisClient', function () {
+    it('Should thrown 404 error', done => {
+        nock.cleanAll();
+        const statusCode = 404;
+        const query = 'http://foo.com is where you can fly from seattle to dallas via denver';
+
+        ReturnErrorStatusCode(baseUrl, luisUri, statusCode);
+        const luisClient = new LuisClient(baseUrl)
+        luisClient.setApiKey(LuisApikeys.apiKeyHeader, endpointKey);
+
+        luisClient.predictionResolvePost(
+            query,
+            applicationId,
+            {
+                verbose: true,
+                log: true,        
+                customHeaders:{
+                    headers:{                        
+                        'authorization': `Bearer ${ endpointKey }`,
+                        'User-Agent': 'botbuilder'
+                    },
+                }
+            }
+        ).catch((response) => {
+            assert.equal(response.response.status, 404)
+            done();
+        })
+    })
+})
