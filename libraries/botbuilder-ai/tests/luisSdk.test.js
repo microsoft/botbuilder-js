@@ -161,7 +161,7 @@ const path = `/luis/v2\\.0/apps/${applicationId}`;
 const pattern = `${path}\\?${query}`;
 const luisUri = new RegExp(pattern);
 
-function ReturnErrorStatusCodeFromParameters(basePath, uri, statusCode) {
+function ReturnErrorStatusCode(basePath, uri, statusCode) {
     nock(basePath)
         .matchHeader('ocp-apim-subscription-key', endpointKey)
         .matchHeader('authorization', `Bearer ${endpointKey}`)
@@ -323,7 +323,7 @@ describe('LuisClient', function() {
         const statusCode = HttpStatus.NOT_FOUND;
         const query = 'http://foo.com';
 
-        ReturnErrorStatusCodeFromParameters(baseUrl, luisUri, statusCode);
+        ReturnErrorStatusCode(baseUrl, luisUri, statusCode);
         const luisClient = new LuisClient(baseUrl);
         luisClient.setApiKey(LuisApikeys.apiKeyHeader, endpointKey);
 
@@ -344,7 +344,6 @@ describe('LuisClient', function() {
             assert.equal(response.response.status, statusCode);
             done();
         });
-    });
-  
+    });  
 });
 
