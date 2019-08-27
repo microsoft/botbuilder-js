@@ -11,7 +11,7 @@ import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorAp
 import * as os from 'os';
 
 /**
- * Express or Restify Request object.
+ * Represents an Express or Restify request object.
  */
 export interface WebRequest {
     body?: any;
@@ -20,7 +20,7 @@ export interface WebRequest {
 }
 
 /**
- * Express or Restify Response object.
+ * Represents an Express or Restify response object.
  */
 export interface WebResponse {
     end(...args: any[]): any;
@@ -29,49 +29,49 @@ export interface WebResponse {
 }
 
 /**
- * Settings used to configure a `BotFrameworkAdapter` instance.
+ * Contains settings used to configure a [[BotFrameworkAdapter]] instance.
  */
 export interface BotFrameworkAdapterSettings {
     /**
-     * ID assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
+     * The ID assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
      */
     appId: string;
 
     /**
-     * Password assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
+     * The password assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
      */
     appPassword: string;
 
     /**
-     * (Optional) The OAuth API Endpoint for your bot to use.
+     * Optional. The tenant to acquire the bot-to-channel token from.
      */
     channelAuthTenant?: string;
 
     /**
-     * (Optional) The OAuth API Endpoint for your bot to use.
+     * Optional. The OAuth API endpoint for your bot to use.
      */
     oAuthEndpoint?: string;
     /**
-     * (Optional) The Open ID Metadata Endpoint for your bot to use.
+     * Optional. The Open ID Metadata endpoint for your bot to use.
      */
     openIdMetadata?: string;
     /**
-     * (Optional) The channel service option for this bot to validate connections from Azure or other channel locations
+     * Optional. The channel service option for this bot to validate connections from Azure or other channel locations.
      */
     channelService?: string;
 }
 
 /**
- * Response object expected to be sent in response to an `invoke` activity.
+ * Represents a response returned by a bot when it receives an `invoke` activity.
  */
 export interface InvokeResponse {
     /**
-     * Status code to return for response.
+     * The HTTP status code of the response.
      */
     status: number;
 
     /**
-     * (Optional) body to return for response.
+     * Optional. The body of the response.
      */
     body?: any;
 }
@@ -91,13 +91,19 @@ const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
 const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 
 /**
- * A BotAdapter class that connects your bot to Bot Framework channels and the Emulator.
+ * Represents a bot adapter that can connect a bot to a service endpoint.
  *
- * @remarks
- * Use this adapter to connect your bot to the Bot Framework service, through which
- * your bot can reach many chat channels like Skype, Slack, and Teams. This adapter
- * also allows your bot to work with the Bot Framework Emulator, which simulates
- * the Bot Framework service and provides a chat interface for testing and debugging.
+ * The bot adapter encapsulates authentication processes and sends activities to and receives
+ * activities from the Bot Connector Service. When your bot receives an activity, the adapter
+ * creates a context object, passes it to your bot's application logic, and sends responses back
+ * to the user's channel.
+ *
+ * Use [BotAdapter.use](xref:botbuilder-core.BotAdapter.use)
+ * to add [Middleware](xref:botbuilder-core.Middleware)
+ * objects to your adapter’s middleware collection. The adapter processes and directs incoming
+ * activities in through the bot middleware pipeline to your bot’s logic and then back out again.
+ * As each activity flows in and out of the bot, each piece of middleware can inspect or act upon
+ * the activity, both before and after the bot logic runs.
  *
  * The following example shows the typical adapter setup:
  *
@@ -117,20 +123,11 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     private isEmulatingOAuthCards: boolean;
 
     /**
-     * Creates a new BotFrameworkAdapter instance.
+     * Creates a new [[BotFrameworkAdapter]] instance.
      *
-     * @remarks
-     * Settings for this adapter include:
-     * ```javascript
-     * {
-     *      "appId": "ID assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).",
-     *      "appPassword": "Password assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).",
-     *      "openIdMetadata": "The Open ID Metadata Endpoint for your bot to use.",
-     *      "oAuthEndpoint": "The OAuth API Endpoint for your bot to use.",
-     *      "channelService": "(Optional) The channel service option for this bot to validate connections from Azure or other channel locations"
-     *  }
-     * ```
-     * @param settings (optional) configuration settings for the adapter.
+     * @param settings Optional. The settings to use for this adapter instance.
+     * 
+     * See [[BotFrameworkAdapterSettings]] for a description of the available settings.
      */
     constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
         super();
@@ -166,19 +163,20 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Resume a conversation with a user, possibly after some time has gone by.
+     * Resumes a conversation with a user, possibly after some time has gone by.
      *
-     * @remarks
      * This is often referred to as the bot's "Proactive Messaging" flow as it lets the bot proactively
      * send messages to a conversation or user without having to reply directly to an incoming message.
      * Scenarios like sending notifications or coupons to a user are enabled by this method.
      *
-     * In order to use this method, a ConversationReference must first be extracted from an incoming
+     * In order to use this method, a [ConversationReference](xref:botframework-schema.ConversationReference)
+     * must first be extracted from an incoming
      * activity. This reference can be stored in a database and used to resume the conversation at a later time.
-     * The reference can be created from any incoming activity using `TurnContext.getConversationReference(context.activity)`.
+     * The reference can be created from any incoming activity using
+     * [TurnContext.getConversationReference(context.activity)](xref:botbuilder-core.TurnContext.getConversationReference).
      *
-     * The processing steps for this method are very similar to [processActivity()](#processactivity)
-     * in that a `TurnContext` will be created which is then routed through the adapters middleware
+     * The processing steps for this method are very similar to [[processActivity]]
+     * in that a `TurnContext` will be created which is then routed through the adapter's middleware
      * before calling the passed in logic handler. The key difference is that since an activity
      * wasn't actually received from outside, it has to be created by the bot.  The created activity will have its address
      * related fields populated but will have a `context.activity.type === undefined`.
@@ -199,8 +197,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      *    }
      * });
      * ```
-     * @param reference A `ConversationReference` saved during a previous incoming activity.
-     * @param logic A function handler that will be called to perform the bots logic after the the adapters middleware has been run.
+     * @param reference A conversation reference saved during a previous incoming activity.
+     * @param logic A function handler that will be called to perform the bot logic after the the adapter's middleware runs.
      */
     public async continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void> {
         const request: Partial<Activity> = TurnContext.applyConversationReference(
