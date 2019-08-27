@@ -341,4 +341,33 @@ describe('LuisClient', function() {
             done();
         });
     });  
+
+    it('Should throw error when query is null', done => {
+        nock.cleanAll();
+        const query = null;
+
+        const luisClient = new LuisClient(baseUrl);
+        luisClient.setApiKey(LuisApikeys.apiKeyHeader, endpointKey);
+
+        luisClient.predictionResolvePost(
+            query,
+            applicationId,
+            {
+                verbose: true,
+                log: true,        
+                customHeaders:{
+                    headers:{                        
+                        'authorization': `Bearer ${ endpointKey }`,
+                        'User-Agent': 'botbuilder'
+                    },
+                }
+            }
+        ).then(
+            function() {
+                throw new Error('Should throw error when empty query was given');},
+            function(error) {assert(error, error.message);
+                done();}
+            
+        );
+    });
 });
