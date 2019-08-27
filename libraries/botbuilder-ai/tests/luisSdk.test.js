@@ -3,6 +3,8 @@ const fs = require('fs-extra');
 const nock = require('nock');
 const { LuisClient, LuisApikeys } = require('../lib/luis-client')
 
+const HttpStatus = require('http-status-codes');
+
 const applicationId = '756de20e-f1e6-4dca-b80a-406a31d7054b';
 // This can be any endpoint key for calling LUIS
 const endpointKey = process.env.LUISAPPKEY || '77fe817cc79f48bd9323a0b4eafef9fa';
@@ -159,7 +161,7 @@ const path = `/luis/v2\\.0/apps/${applicationId}`;
 const pattern = `${path}\\?${query}`;
 const luisUri = new RegExp(pattern);
 
-function ReturnErrorStatusCode(basePath, uri, statusCode) {
+function ReturnErrorStatusCodeFromParameters(basePath, uri, statusCode) {
     nock(basePath)
         .matchHeader('ocp-apim-subscription-key', endpointKey)
         .matchHeader('authorization', `Bearer ${endpointKey}`)
@@ -167,7 +169,7 @@ function ReturnErrorStatusCode(basePath, uri, statusCode) {
         .reply(statusCode);
 }
 
-xdescribe('LuisPredict', function() {
+describe('LuisPredict', function() {
     this.timeout(10000);
     if (!mockLuis && endpointKey === 'MockedKey') {
         console.warn('WARNING: skipping LuisRecognizer test suite because the LUISAPPKEY environment variable is not defined');
@@ -315,14 +317,14 @@ xdescribe('LuisPredict', function() {
 
 });
 
-describe('LuisClient', function () {
-    it('Should thrown 404 error', done => {
+describe('LuisClient', function() {
+    it('Should throw expected 404 error.', done => {
         nock.cleanAll();
-        const statusCode = 404;
-        const query = 'http://foo.com is where you can fly from seattle to dallas via denver';
+        const statusCode = HttpStatus.NOT_FOUND;
+        const query = 'http://foo.com';
 
-        ReturnErrorStatusCode(baseUrl, luisUri, statusCode);
-        const luisClient = new LuisClient(baseUrl)
+        ReturnErrorStatusCodeFromParameters(baseUrl, luisUri, statusCode);
+        const luisClient = new LuisClient(baseUrl);
         luisClient.setApiKey(LuisApikeys.apiKeyHeader, endpointKey);
 
         luisClient.predictionResolvePost(
@@ -339,8 +341,10 @@ describe('LuisClient', function () {
                 }
             }
         ).catch((response) => {
-            assert.equal(response.response.status, 404)
+            assert.equal(response.response.status, statusCode);
             done();
-        })
-    })
-})
+        });
+    });
+  
+});
+
