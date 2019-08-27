@@ -155,7 +155,6 @@ function findCompositeByParentType(key, data) {
     return null;
 }
 
-
 const query = 'verbose=(true|false)(&staging=false&spellCheck=false&log=true|)';
 const path = `/luis/v2\\.0/apps/${applicationId}`;
 const pattern = `${path}\\?${query}`;
@@ -319,14 +318,13 @@ describe('LuisPredict', function() {
 
 describe('LuisClient', function() {
     it('Should throw expected 404 error.', done => {
-        nock.cleanAll();
         const statusCode = HttpStatus.NOT_FOUND;
         const query = 'http://foo.com';
-
-        ReturnErrorStatusCode(baseUrl, luisUri, statusCode);
         const luisClient = new LuisClient(baseUrl);
-        luisClient.setApiKey(LuisApikeys.apiKeyHeader, endpointKey);
 
+        nock.cleanAll();
+        ReturnErrorStatusCode(baseUrl, luisUri, statusCode);
+        luisClient.setApiKey(LuisApikeys.apiKeyHeader, endpointKey);        
         luisClient.predictionResolvePost(
             query,
             applicationId,
