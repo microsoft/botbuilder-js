@@ -161,7 +161,7 @@ const pattern = `${path}\\?${query}`;
 const luisUri = new RegExp(pattern);
 
 function ReturnErrorStatusCode(basePath, uri, statusCode) {
-    nock(basePath)        
+    nock(basePath)
         .post(uri)
         .reply(statusCode);
 }
@@ -214,7 +214,7 @@ describe('LuisPredict', function() {
             assert(dateTime.startIndex == 15);
             assert(dateTime.endIndex == 31);
             done();
-        })
+        });
     });
 
     it('should return multiple intents and prebuilt entities with multiple values', done => {
@@ -297,7 +297,7 @@ describe('LuisPredict', function() {
             assert(stateEntity.endIndex == 28);
             assert(stateEntity);
             var addressEntity = findEntityByType('Address', result.entities);
-            assert(addressEntity)
+            assert(addressEntity);
             assert(addressEntity.entity === '98033 wa');
             assert(addressEntity.startIndex == 21);
             assert(addressEntity.endIndex == 28);
@@ -341,4 +341,61 @@ describe('LuisClient', function() {
             done();
         });
     });  
+
+    it('Should throw error when query is null', done => {
+        const query = null;
+        const luisClient = new LuisClient(baseUrl);
+
+        luisClient.setApiKey(LuisApikeys.apiKeyHeader, endpointKey);
+        luisClient.predictionResolvePost(
+            query,
+            applicationId,
+            {
+                verbose: true,
+                log: true,        
+                customHeaders:{
+                    headers:{                        
+                        'authorization': `Bearer ${ endpointKey }`,
+                        'User-Agent': 'botbuilder'
+                    },
+                }
+            }
+        ).then( () => {
+            // Error when the function doesn't throw an error, so the test fails.
+            done(new Error('Failed test: Doesnt throw an error when the query is null'));
+        }).catch( (error) => {
+            // Catch the error thrown when the function fails, and compares the given error.
+            assert(error.message, LuisClient.errorMessages.queryNull);
+            done();
+        });       
+    });
+
+    it('Should throw error when appId is null', done => {
+        const appId = null;
+        const query = baseUrl;
+        const luisClient = new LuisClient(baseUrl);
+
+        luisClient.setApiKey(LuisApikeys.apiKeyHeader, endpointKey);
+        luisClient.predictionResolvePost(
+            query,
+            appId,
+            {
+                verbose: true,
+                log: true,        
+                customHeaders:{
+                    headers:{                        
+                        'authorization': `Bearer ${ endpointKey }`,
+                        'User-Agent': 'botbuilder'
+                    },
+                }
+            }
+        ).then( () => {
+            // Error when the function doesn't throw an error, so the test fails.
+            done(new Error('Failed test: Doesnt throw an error when appId is null'));
+        }).catch( (error) => {
+            // Catch the error thrown when the function fails, and compares the given error.
+            assert(error.message, LuisClient.errorMessages.appIdNull);
+            done();
+        });       
+    });
 });
