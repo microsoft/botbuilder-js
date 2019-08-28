@@ -129,12 +129,12 @@ export class LuisClient {
         // verify required parameter 'query' is not null or undefined
         if (query === null || query === undefined) {
             //throw new Error('Required parameter query was null or undefined when calling predictionResolve.');
-            throw new Error(LuisClient.messageErrorForQueryNull);
+            throw new Error(LuisClient.errorMessages.queryNull);
         }
 
         // verify required parameter 'appId' is not null or undefined
         if (appId === null || appId === undefined) {
-            throw new Error(LuisClient.messageErrorForAppIdNull);
+            throw new Error(LuisClient.errorMessages.appIdNull);
         }
 
         if (!options.customHeaders) {
