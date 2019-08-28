@@ -161,8 +161,7 @@ const pattern = `${path}\\?${query}`;
 const luisUri = new RegExp(pattern);
 
 function ReturnErrorStatusCode(basePath, uri, statusCode) {
-    nock(basePath)
-        .matchHeader('ocp-apim-subscription-key', endpointKey)
+    nock(basePath)        
         .matchHeader('authorization', `Bearer ${endpointKey}`)
         .post(uri)
         .reply(statusCode);
@@ -317,7 +316,7 @@ describe('LuisPredict', function() {
 });
 
 describe('LuisClient', function() {
-    it('Should throw expected 404 error.', done => {
+    it('Should throw expected 404 error', done => {
         const statusCode = HttpStatus.NOT_FOUND;
         const query = 'http://foo.com';
         const luisClient = new LuisClient(baseUrl);
@@ -344,4 +343,3 @@ describe('LuisClient', function() {
         });
     });  
 });
-
