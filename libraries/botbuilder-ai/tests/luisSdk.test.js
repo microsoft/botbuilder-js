@@ -161,7 +161,7 @@ const pattern = `${path}\\?${query}`;
 const luisUri = new RegExp(pattern);
 
 function ReturnErrorStatusCode(basePath, uri, statusCode) {
-    nock(basePath)        
+    nock(basePath)
         .post(uri)
         .reply(statusCode);
 }
@@ -345,7 +345,6 @@ describe('LuisClient', function() {
     it('Should throw error when query is null', done => {
         const query = null;
         const luisClient = new LuisClient(baseUrl);
-        //const messageErrorForNull = 'Required parameter query was null or undefined when calling predictionResolve.';
 
         nock.cleanAll();
         luisClient.setApiKey(LuisApikeys.apiKeyHeader, endpointKey);
@@ -363,11 +362,41 @@ describe('LuisClient', function() {
                 }
             }
         ).then( () => {
-            // Error when the function works normally, so the test fails
+            // Error when the function doesnt throw an error, so the test fails
             done(new Error('Failed test: Doesnt throw an error when the query is null'));
         }).catch( (error) => {
             // Catch the error thrown when the function fails, and compares the given error.
-            assert(error.message, LuisClient.messageErrorForNull);
+            assert(error.message, LuisClient.messageErrorForQueryNull);
+            done();
+        });       
+    });
+
+    it('Should throw error when appId is null', done => {
+        const appId = null;
+        const query = baseUrl;
+        const luisClient = new LuisClient(baseUrl);
+
+        nock.cleanAll();
+        luisClient.setApiKey(LuisApikeys.apiKeyHeader, endpointKey);
+        luisClient.predictionResolvePost(
+            query,
+            appId,
+            {
+                verbose: true,
+                log: true,        
+                customHeaders:{
+                    headers:{                        
+                        'authorization': `Bearer ${ endpointKey }`,
+                        'User-Agent': 'botbuilder'
+                    },
+                }
+            }
+        ).then( () => {
+            // Error when the function doesnt throw an error, so the test fails
+            done(new Error('Failed test: Doesnt throw an error when appId is null'));
+        }).catch( (error) => {
+            // Catch the error thrown when the function fails, and compares the given error.
+            assert(error.message, LuisClient.messageErrorForAppIdNull);
             done();
         });       
     });
