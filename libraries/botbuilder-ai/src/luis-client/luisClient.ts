@@ -101,12 +101,18 @@ export class LuisClient {
         return this._basePath + '/apps/' + encodeURIComponent(appId); 
     }
 
-    /**  
-     * Messages errors to use in predictionResolvePost and its tests when query or appId is null.
-    */
-    static messageErrorForQueryNull: string = 'Required parameter query was null or undefined when calling predictionResolve.';
-    static messageErrorForAppIdNull: string = 'Required parameter appId was null or undefined when calling predictionResolve.';
-
+    static readonly errorMessages = {
+        /**  
+        * Message error used in predictionResolvePost and its tests when query is null.
+        */
+        queryNull: 'Required parameter query was null or undefined when calling predictionResolve.',
+        
+        /**  
+         * Message error used in predictionResolvePost and its tests when appId is null.
+        */
+        appIdNull: 'Required parameter appId was null or undefined when calling predictionResolve.'
+    };
+    
     /**
      * Gets predictions for a given utterance, in the form of intents and entities. The current maximum query size is 500 characters.
      * @param query The utterance to predict.

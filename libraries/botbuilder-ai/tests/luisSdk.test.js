@@ -160,12 +160,6 @@ const path = `/luis/v2\\.0/apps/${applicationId}`;
 const pattern = `${path}\\?${query}`;
 const luisUri = new RegExp(pattern);
 
-function ReturnErrorStatusCode(basePath, uri, statusCode) {
-    nock(basePath)
-        .post(uri)
-        .reply(statusCode);
-}
-
 describe('LuisPredict', function() {
     this.timeout(10000);
     if (!mockLuis && endpointKey === 'MockedKey') {
@@ -214,7 +208,7 @@ describe('LuisPredict', function() {
             assert(dateTime.startIndex == 15);
             assert(dateTime.endIndex == 31);
             done();
-        })
+        });
     });
 
     it('should return multiple intents and prebuilt entities with multiple values', done => {
@@ -297,7 +291,7 @@ describe('LuisPredict', function() {
             assert(stateEntity.endIndex == 28);
             assert(stateEntity);
             var addressEntity = findEntityByType('Address', result.entities);
-            assert(addressEntity)
+            assert(addressEntity);
             assert(addressEntity.entity === '98033 wa');
             assert(addressEntity.startIndex == 21);
             assert(addressEntity.endIndex == 28);
@@ -362,11 +356,11 @@ describe('LuisClient', function() {
                 }
             }
         ).then( () => {
-            // Error when the function doesnt throw an error, so the test fails
+            // Error when the function doesn't throw an error, so the test fails.
             done(new Error('Failed test: Doesnt throw an error when the query is null'));
         }).catch( (error) => {
             // Catch the error thrown when the function fails, and compares the given error.
-            assert(error.message, LuisClient.messageErrorForQueryNull);
+            assert(error.message, LuisClient.errorMessages.queryNull);
             done();
         });       
     });
@@ -392,11 +386,11 @@ describe('LuisClient', function() {
                 }
             }
         ).then( () => {
-            // Error when the function doesnt throw an error, so the test fails
+            // Error when the function doesn't throw an error, so the test fails.
             done(new Error('Failed test: Doesnt throw an error when appId is null'));
         }).catch( (error) => {
             // Catch the error thrown when the function fails, and compares the given error.
-            assert(error.message, LuisClient.messageErrorForAppIdNull);
+            assert(error.message, LuisClient.errorMessages.appIdNull);
             done();
         });       
     });
