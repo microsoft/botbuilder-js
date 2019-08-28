@@ -340,7 +340,6 @@ describe('LuisClient', function() {
         const query = null;
         const luisClient = new LuisClient(baseUrl);
 
-        nock.cleanAll();
         luisClient.setApiKey(LuisApikeys.apiKeyHeader, endpointKey);
         luisClient.predictionResolvePost(
             query,
@@ -370,7 +369,6 @@ describe('LuisClient', function() {
         const query = baseUrl;
         const luisClient = new LuisClient(baseUrl);
 
-        nock.cleanAll();
         luisClient.setApiKey(LuisApikeys.apiKeyHeader, endpointKey);
         luisClient.predictionResolvePost(
             query,
