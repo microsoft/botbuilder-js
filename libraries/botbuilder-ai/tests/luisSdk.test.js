@@ -343,12 +343,12 @@ describe('LuisClient', function() {
     });  
 
     it('Should throw error when query is null', done => {
-        nock.cleanAll();
         const query = null;
-
         const luisClient = new LuisClient(baseUrl);
-        luisClient.setApiKey(LuisApikeys.apiKeyHeader, endpointKey);
+        //const messageErrorForNull = 'Required parameter query was null or undefined when calling predictionResolve.';
 
+        nock.cleanAll();
+        luisClient.setApiKey(LuisApikeys.apiKeyHeader, endpointKey);
         luisClient.predictionResolvePost(
             query,
             applicationId,
@@ -362,12 +362,13 @@ describe('LuisClient', function() {
                     },
                 }
             }
-        ).then(
-            function() {
-                throw new Error('Should throw error when empty query was given');},
-            function(error) {assert(error, error.message);
-                done();}
-            
-        );
+        ).then( () => {
+            // Error when the function works normally, so the test fails
+            done(new Error('Failed test: Doesnt throw an error when the query is null'));
+        }).catch( (error) => {
+            // Catch the error thrown when the function fails, and compares the given error.
+            assert(error.message, LuisClient.messageErrorForNull);
+            done();
+        });       
     });
 });
