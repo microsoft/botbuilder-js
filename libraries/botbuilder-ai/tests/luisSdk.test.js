@@ -3,6 +3,8 @@ const fs = require('fs-extra');
 const nock = require('nock');
 const { LuisClient, LuisApikeys } = require('../lib/luis-client')
 
+const HttpStatus = require('http-status-codes');
+
 const applicationId = '756de20e-f1e6-4dca-b80a-406a31d7054b';
 // This can be any endpoint key for calling LUIS
 const endpointKey = process.env.LUISAPPKEY || '77fe817cc79f48bd9323a0b4eafef9fa';
@@ -97,8 +99,7 @@ function TestJson(file, done, includeAllIntents, includeInstance) {
                 headers:{                        
                     'authorization': `Bearer ${ endpointKey }`,
                     'User-Agent': 'botbuilder'
-                },
-               
+                },               
             }
         }
     ).then(result => {
@@ -153,7 +154,17 @@ function findCompositeByParentType(key, data) {
     }
     return null;
 }
-    
+
+const query = 'verbose=(true|false)(&staging=false&spellCheck=false&log=true|)';
+const path = `/luis/v2\\.0/apps/${applicationId}`;
+const pattern = `${path}\\?${query}`;
+const luisUri = new RegExp(pattern);
+
+function ReturnErrorStatusCode(basePath, uri, statusCode) {
+    nock(basePath)        
+        .post(uri)
+        .reply(statusCode);
+}
 
 describe('LuisPredict', function() {
     this.timeout(10000);
@@ -303,3 +314,31 @@ describe('LuisPredict', function() {
 
 });
 
+describe('LuisClient', function() {
+    it('Should throw expected 404 error', done => {
+        const statusCode = HttpStatus.NOT_FOUND;
+        const query = 'http://foo.com';
+        const luisClient = new LuisClient(baseUrl);
+
+        nock.cleanAll();
+        ReturnErrorStatusCode(baseUrl, luisUri, statusCode);
+        luisClient.setApiKey(LuisApikeys.apiKeyHeader, endpointKey);        
+        luisClient.predictionResolvePost(
+            query,
+            applicationId,
+            {
+                verbose: true,
+                log: true,        
+                customHeaders:{
+                    headers:{                        
+                        'authorization': `Bearer ${ endpointKey }`,
+                        'User-Agent': 'botbuilder'
+                    },
+                }
+            }
+        ).catch((response) => {
+            assert.equal(response.response.status, statusCode);
+            done();
+        });
+    });  
+});
