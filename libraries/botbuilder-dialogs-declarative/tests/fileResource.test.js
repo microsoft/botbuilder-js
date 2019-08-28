@@ -17,7 +17,7 @@ describe('FileResource', function () {
     });
 
     it('FileResource load existing file absolute path', async () => {
-        const absolutePath = path.resolve('libraries/botbuilder-dialogs-declarative/tests/resources/00 - TextPrompt/SimplePrompt.main.dialog')
+        const absolutePath = path.resolve('libraries/botbuilder-dialogs-declarative/tests/resources/00 - TextPrompt/SimplePrompt.main.dialog');
         const fileResource = new FileResource(absolutePath);
         assert.equal(fileResource.id(), 'SimplePrompt.main.dialog');
         const text = await fileResource.readText();
