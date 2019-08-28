@@ -160,6 +160,12 @@ const path = `/luis/v2\\.0/apps/${applicationId}`;
 const pattern = `${path}\\?${query}`;
 const luisUri = new RegExp(pattern);
 
+function ReturnErrorStatusCode(basePath, uri, statusCode) {
+    nock(basePath)
+        .post(uri)
+        .reply(statusCode);
+}
+
 describe('LuisPredict', function() {
     this.timeout(10000);
     if (!mockLuis && endpointKey === 'MockedKey') {
