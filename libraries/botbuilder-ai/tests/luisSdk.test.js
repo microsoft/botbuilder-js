@@ -162,7 +162,6 @@ const luisUri = new RegExp(pattern);
 
 function ReturnErrorStatusCode(basePath, uri, statusCode) {
     nock(basePath)        
-        .matchHeader('authorization', `Bearer ${endpointKey}`)
         .post(uri)
         .reply(statusCode);
 }
