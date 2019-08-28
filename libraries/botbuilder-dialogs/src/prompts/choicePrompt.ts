@@ -71,7 +71,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         // Determine locale
-        let locale: string = context.activity.locale || this.defaultLocale;
+        let locale: string = Culture.mapToNearestLanguage(context.activity.locale || this.defaultLocale);
         if (!locale || !ChoicePrompt.defaultChoiceOptions.hasOwnProperty(locale)) {
             locale = 'en-us';
         }
