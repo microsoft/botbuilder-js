@@ -1,12 +1,10 @@
-const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { ActivityTypes } = require('botframework-schema');
+const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
 const { DialogSet, NumberPrompt, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
 describe('NumberPrompt', function () {
     this.timeout(5000);
     it('should call NumberPrompt using dc.prompt().', async function () {
-        // Initialize Testawait adapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -252,7 +250,6 @@ describe('NumberPrompt', function () {
     });
 
     it('should consider culture specified in constructor', async function () {
-        // Initialize Testawait adapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -281,7 +278,6 @@ describe('NumberPrompt', function () {
     });
 
     it('should consider culture specified in activity', async function () {
-        // Initialize Testawait adapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -310,7 +306,6 @@ describe('NumberPrompt', function () {
     });
 
     it('should consider default to en-us culture when no culture is specified', async function () {
-        // Initialize Testawait adapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
