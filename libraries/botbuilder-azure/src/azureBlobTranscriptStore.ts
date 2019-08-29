@@ -335,7 +335,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         ).withFilter(new azure.LinearRetryPolicyFilter(5, 500));
 
         // The perfect use case for a Proxy
-        return new Proxy({}, {
+        return new Proxy(<BlobServiceAsync>{}, {
             get(target: azure.services.blob.blobservice.BlobService, p: PropertyKey): Promise<any> {
 				const prop = p.toString().endsWith('Async') ? p.toString().replace('Async', '') :p;
                 return target[p] || (target[p] = denodeify(blobService, blobService[prop]));

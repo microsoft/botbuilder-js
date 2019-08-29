@@ -196,6 +196,54 @@ describe(`TranscriptLoggerMiddleware`, function () {
             adapter.send('test');
         });
     });
+
+    it(`should add resource response id to activity when activity id is empty`, function (done) {
+        let conversationId = null;
+        const transcriptStore = new MemoryTranscriptStore();
+        const adapter = new TestAdapter(async (context) => {
+            conversationId = context.activity.conversation.id;
+
+            await context.sendActivity(`echo:${context.activity.text}`);
+        }).use(new TranscriptLoggerMiddleware(transcriptStore));
+
+        const fooActivity = {
+            type: ActivityTypes.Message,
+            id: 'testFooId',
+            text: 'foo'
+        };
+
+        adapter
+            .send(fooActivity)
+            // sent activities do not contain the id returned from the service, so it should be undefined here
+            .assertReply(activity => assert.equal(activity.id, undefined) && assert.equal(activity.text, 'echo:foo')) 
+            .send('bar')
+            .assertReply(activity => assert.equal(activity.id, undefined) && assert.equal(activity.text, 'echo:bar'))
+            .then(() => {
+                transcriptStore.getTranscriptActivities('test', conversationId).then(pagedResult => {
+                    assert.equal(pagedResult.items.length, 4);
+                    assert.equal(pagedResult.items[0].text, 'foo');
+                    // Transcript activities should have the id present on the activity when received
+                    assert.equal(pagedResult.items[0].id, 'testFooId');
+
+                    assert.equal(pagedResult.items[1].text, 'echo:foo');
+                    // Sent Activities in the transcript store should have the Id returned from Resource Response 
+                    // (the test adapter increments a number and uses this for the id)
+                    assert.equal(pagedResult.items[1].id, '0');
+
+                    assert.equal(pagedResult.items[2].text, 'bar');
+                    // Received activities also auto-add the incremental from the test adapter
+                    assert.equal(pagedResult.items[2].id, '1');
+
+                    assert.equal(pagedResult.items[3].text, 'echo:bar');
+                    assert.equal(pagedResult.items[3].id, '2');
+                    pagedResult.items.forEach(a => {
+                        assert(a.timestamp);
+                    })
+                    done();
+                });
+            });
+    });
+
 });
 
 
