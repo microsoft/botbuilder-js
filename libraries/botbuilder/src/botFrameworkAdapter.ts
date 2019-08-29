@@ -93,6 +93,7 @@ const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 /**
  * Represents a bot adapter that can connect a bot to a service endpoint.
  *
+ * @remarks
  * The bot adapter encapsulates authentication processes and sends activities to and receives
  * activities from the Bot Connector Service. When your bot receives an activity, the adapter
  * creates a context object, passes it to your bot's application logic, and sends responses back
@@ -123,11 +124,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     private isEmulatingOAuthCards: boolean;
 
     /**
-     * Creates a new [[BotFrameworkAdapter]] instance.
+     * Creates a new instance of the [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) class.
+     *
+     * @remarks
+     * See [BotFrameworkAdapterSettings](xref:botbuilder.BotFrameworkAdapterSettings) for a
+     * description of the available adapter settings.
      *
      * @param settings Optional. The settings to use for this adapter instance.
-     * 
-     * See [[BotFrameworkAdapterSettings]] for a description of the available settings.
      */
     constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
         super();
@@ -165,6 +168,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     /**
      * Resumes a conversation with a user, possibly after some time has gone by.
      *
+     * @remarks
      * This is often referred to as the bot's "Proactive Messaging" flow as it lets the bot proactively
      * send messages to a conversation or user without having to reply directly to an incoming message.
      * Scenarios like sending notifications or coupons to a user are enabled by this method.
@@ -175,18 +179,19 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * The reference can be created from any incoming activity using
      * [TurnContext.getConversationReference(context.activity)](xref:botbuilder-core.TurnContext.getConversationReference).
      *
-     * The processing steps for this method are very similar to [[processActivity]]
-     * in that a `TurnContext` will be created which is then routed through the adapter's middleware
-     * before calling the passed in logic handler. The key difference is that since an activity
-     * wasn't actually received from outside, it has to be created by the bot.  The created activity will have its address
-     * related fields populated but will have a `context.activity.type === undefined`.
+     * The processing steps for this method are very similar to [processActivity](xref:botbuilder.BotFrameworkAdapter.processActivity)
+     * in that a [TurnContext](xref:botbuilder-core.TurnContext) will be created which is then
+     * routed through the adapter's middleware before calling the passed in logic handler. The
+     * key difference is that since an activity wasn't actually received from outside, it has to
+     * be created by the bot.  The created activity will have its address related fields populated
+     * but will have a `context.activity.type === undefined`.
      *
      * ```JavaScript
      * server.post('/api/notifyUser', async (req, res) => {
-     *    // Lookup previously saved conversation reference
+     *    // Lookup previously saved conversation reference.
      *    const reference = await findReference(req.body.refId);
      *
-     *    // Proactively notify the user
+     *    // Proactively notify the user.
      *    if (reference) {
      *       await adapter.continueConversation(reference, async (context) => {
      *          await context.sendActivity(req.body.message);
