@@ -12,6 +12,7 @@ import { QnAMakerResult } from '../qnamaker-interfaces/qnamakerResult';
 import { QnAMakerEndpoint } from '../qnamaker-interfaces/qnamakerEndpoint';
 import { QnAMakerOptions } from '../qnamaker-interfaces/qnamakerOptions';
 import { QnAMakerTraceInfo } from '../qnamaker-interfaces/qnamakerTraceInfo';
+import { QnARequestContext } from '../qnamaker-interfaces/qnaRequestContext';
 import { HttpRequestUtils } from './httpRequestUtils';
 
 import { QNAMAKER_TRACE_TYPE, QNAMAKER_TRACE_LABEL, QNAMAKER_TRACE_NAME } from '..';
@@ -61,25 +62,26 @@ export class GenerateAnswerUtils {
     /**
      * Emits a trace event detailing a QnA Maker call and its results.
      *
-     * @param context Context for the current turn of conversation with the user.
+     * @param turnContext Turn Context for the current turn of conversation with the user.
      * @param answers Answers returned by QnA Maker.
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
-    public async emitTraceInfo(context: TurnContext, answers: QnAMakerResult[], queryOptions?: QnAMakerOptions): Promise<any> {
+    public async emitTraceInfo(turnContext: TurnContext, answers: QnAMakerResult[], queryOptions?: QnAMakerOptions): Promise<any> {
         const requestOptions: QnAMakerOptions = { ...this._options, ...queryOptions };
-        const { scoreThreshold, top, strictFilters, metadataBoost } = requestOptions;
+        const { scoreThreshold, top, strictFilters, metadataBoost, context } = requestOptions;
 
         const traceInfo: QnAMakerTraceInfo = {
-            message: context.activity,
+            message: turnContext.activity,
             queryResults: answers,
             knowledgeBaseId: this.endpoint.knowledgeBaseId,
             scoreThreshold,
             top,
             strictFilters,
-            metadataBoost
+            metadataBoost,
+            context
         };
 
-        return context.sendActivity({
+        return turnContext.sendActivity({
             type: 'trace',
             valueType: QNAMAKER_TRACE_TYPE,
             name: QNAMAKER_TRACE_NAME,
@@ -94,7 +96,7 @@ export class GenerateAnswerUtils {
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
     public validateOptions(options: QnAMakerOptions): void {
-        const { scoreThreshold, top } = options;
+        const { scoreThreshold, top, context } = options;
 
         if (scoreThreshold) {
             this.validateScoreThreshold(scoreThreshold);
