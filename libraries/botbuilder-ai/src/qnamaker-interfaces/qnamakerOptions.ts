@@ -7,6 +7,7 @@
  */
 
 import { QnAMakerMetadata } from './qnamakerMetadata';
+import { QnARequestContext } from './qnaRequestContext';
 
 /**
  * Additional settings used to configure a `QnAMaker` instance.
@@ -43,4 +44,9 @@ export interface QnAMakerOptions {
      * @remarks Defaults to "100000" milliseconds.
     */
    timeout?: number;
+
+   /**
+    * The context of the previous turn.
+    */
+   context?: QnARequestContext;
 }
