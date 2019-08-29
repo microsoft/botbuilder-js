@@ -9,6 +9,7 @@ import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { Activity, TurnContext } from 'botbuilder-core';
 import { Choice, ChoiceFactoryOptions, recognizeChoices } from '../choices';
 import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
+import { Culture } from '@microsoft/recognizers-text';
 
 /**
  * Prompts a user to confirm something with a "yes" or "no" response.
@@ -24,28 +25,28 @@ export class ConfirmPrompt extends Prompt<boolean> {
      * @deprecated since version 4.3
      */
     private static defaultConfirmChoices: { [locale: string]: (string | Choice)[] } = {
-        'es-es': ['Sí', 'No'],
-        'nl-nl': ['Ja', 'Nee'],
-        'en-us': ['Yes', 'No'],
-        'fr-fr': ['Oui', 'Non'],
-        'de-de': ['Ja', 'Nein'],
-        'ja-jp': ['はい', 'いいえ'],
-        'pt-br': ['Sim', 'Não'],
-        'zh-cn': ['是的', '不']
+        [Culture.Spanish]: ['Sí', 'No'],
+        [Culture.Dutch]: ['Ja', 'Nee'],
+        [Culture.English]: ['Yes', 'No'],
+        [Culture.French]: ['Oui', 'Non'],
+        [Culture.German]: ['Ja', 'Nein'],
+        [Culture.Japanese]: ['はい', 'いいえ'],
+        [Culture.Portuguese]: ['Sim', 'Não'],
+        [Culture.Chinese]: ['是的', '不']
     };
 
     /**
      * Default options for rendering the choices to the user based on locale.
      */
     private static defaultChoiceOptions: { [locale: string]: { choices: (string|Choice)[]; options: ChoiceFactoryOptions }} = {
-        'es-es': { choices: ['Sí', 'No'], options: { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true }},
-        'nl-nl': { choices: ['Ja', 'Nee'], options: { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true }},
-        'en-us': { choices: ['Yes', 'No'], options: { inlineSeparator: ', ', inlineOr: ' or ', inlineOrMore: ', or ', includeNumbers: true }},
-        'fr-fr': { choices: ['Oui', 'Non'], options: { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true }},
-        'de-de': { choices: ['Ja', 'Nein'], options: { inlineSeparator: ', ', inlineOr: ' oder ', inlineOrMore: ', oder ', includeNumbers: true }},
-        'ja-jp': { choices: ['はい', 'いいえ'], options: { inlineSeparator: '、 ', inlineOr: ' または ', inlineOrMore: '、 または ', includeNumbers: true }},
-        'pt-br': { choices: ['Sim', 'Não'], options: { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true }},
-        'zh-cn': { choices: ['是的', '不'], options: { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true }}
+        [Culture.Spanish]: { choices: ['Sí', 'No'], options: { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true }},
+        [Culture.Dutch]: { choices: ['Ja', 'Nee'], options: { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true }},
+        [Culture.English]: { choices: ['Yes', 'No'], options: { inlineSeparator: ', ', inlineOr: ' or ', inlineOrMore: ', or ', includeNumbers: true }},
+        [Culture.French]: { choices: ['Oui', 'Non'], options: { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true }},
+        [Culture.German]: { choices: ['Ja', 'Nein'], options: { inlineSeparator: ', ', inlineOr: ' oder ', inlineOrMore: ', oder ', includeNumbers: true }},
+        [Culture.Japanese]: { choices: ['はい', 'いいえ'], options: { inlineSeparator: '、 ', inlineOr: ' または ', inlineOrMore: '、 または ', includeNumbers: true }},
+        [Culture.Portuguese]: { choices: ['Sim', 'Não'], options: { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true }},
+        [Culture.Chinese]: { choices: ['是的', '不'], options: { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true }}
     };
     /**
      * The prompts default locale that should be recognized.
@@ -129,7 +130,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
     }
 
     private determineCulture(activity: Activity): string {
-        let culture: string = activity.locale || this.defaultLocale;
+        let culture: string = Culture.mapToNearestLanguage(activity.locale || this.defaultLocale);
         if (!culture || !ConfirmPrompt.defaultChoiceOptions.hasOwnProperty(culture)) {
             culture = 'en-us';
         }
