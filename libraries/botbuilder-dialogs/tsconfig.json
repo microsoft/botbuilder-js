@@ -6,7 +6,8 @@
     "sourceMap": true,
     "outDir": "./lib",
     "rootDir": "./src",
-    "types" : ["node"]
+    "types" : ["node"],
+    "resolveJsonModule": true
   },
   "include": [
     "src/**/*"

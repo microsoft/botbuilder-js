@@ -1,0 +1,11 @@
+/**
+ * @module botframework-streaming-extensions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+export * from './namedPipeClient';
+export * from './namedPipeServer';
+export * from './namedPipeTransport';

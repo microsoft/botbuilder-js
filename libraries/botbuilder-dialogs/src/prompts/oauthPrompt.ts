@@ -287,7 +287,7 @@ export class OAuthPrompt extends Dialog {
                     await context.sendActivity({ type: 'invokeResponse', value: { status: 404 }});
                 }
             }
-            catch
+            catch (e)
             {
                 await context.sendActivity({ type: 'invokeResponse', value: { status: 500 }});
             }

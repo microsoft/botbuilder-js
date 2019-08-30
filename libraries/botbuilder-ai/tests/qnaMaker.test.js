@@ -192,6 +192,42 @@ describe('QnAMaker', function () {
             assert.strictEqual(qnaResults, descendingQnaResults, 'answers should be sorted from greatest to least score');
         });
 
+        it('should return answer with prompts', async function() {
+            const qna = new QnAMaker(endpoint);
+            const context = new TestContext({ text: "how do I clean the stove?" });
+            const options = { top: 2 };
+            
+            const qnaResults = await qna.getAnswers(context, options);
+
+            assert.strictEqual(qnaResults.length, 1, 'one answer should be returned');
+            assert.strictEqual(qnaResults[0].context.prompts.length > 0, true, 'One or more prompts should be present');
+        });
+
+        it('should return answer with high score provided context', async function() {
+            const qna = new QnAMaker(endpoint);
+            const turnContext = new TestContext({ text: "where can I buy?" });
+            
+            const context = { previousQnAId: 5, previousUserQuery: "how do I clean the stove?"};
+            const options = { top: 2, context: context };
+            
+            const qnaResults = await qna.getAnswers(turnContext, options);
+
+            assert.strictEqual(qnaResults.length, 1, 'one answer should be returned');
+            assert.strictEqual(qnaResults[0].score, 1, 'score should be high');
+        });
+
+        it('should return answer with low score not provided context', async function() {
+            const qna = new QnAMaker(endpoint);
+            const turnContext = new TestContext({ text: "where can I buy?" });
+            
+            const options = { top: 2, context: null };
+            
+            const qnaResults = await qna.getAnswers(turnContext, options);
+
+            assert.strictEqual(qnaResults.length, 2, 'one answer should be returned');
+            assert.strictEqual(qnaResults[0].score < 1, true, 'score should be low');
+        });
+
         it('should return answer with timeout option specified', async function() {
             const timeoutOption = { timeout: 500000 };
             const qna = new QnAMaker(endpoint, timeoutOption);
