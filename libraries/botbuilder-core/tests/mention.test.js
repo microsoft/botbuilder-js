@@ -4,6 +4,48 @@ const { MessageFactory, SkypeMentionNormalizeMiddleware, TurnContext } = require
 describe(`Mention`, function () {
     this.timeout(5000);
 
+    it('should not change activity text when entity type is not a mention', async function() {
+        const mentionJson = '{\"mentioned\": {\"id\": \"recipientid\"},\"text\": \"<at id=\\\"28: 841caffa-9e92-425d-8d84-b503b3ded285\\\">botname</at>\"}';
+        const entity = JSON.parse(mentionJson);
+        entity.type = 'test';
+
+        const activity = MessageFactory.text('botname sometext');
+        activity.channelId = 'skype';
+        activity.entities = [entity];
+
+        SkypeMentionNormalizeMiddleware.normalizeSkypeMentionText(activity);
+        TurnContext.removeMentionText(activity, 'recipientid');
+        assert(activity.text === 'botname sometext');
+    });
+
+    it('should not change activity text when mention text is empty', async function() {
+        const mentionJson = '{\"mentioned\": {\"id\": \"recipientid\"},\"text\": \""}';
+        const entity = JSON.parse(mentionJson);
+        entity.type = 'mention';
+
+        const activity = MessageFactory.text('botname sometext');
+        activity.channelId = 'skype';
+        activity.entities = [entity];
+
+        SkypeMentionNormalizeMiddleware.normalizeSkypeMentionText(activity);
+        TurnContext.removeMentionText(activity, 'recipientid');
+        assert(activity.text === 'botname sometext');
+    });
+
+    it('should not change activity text when there is no matching mention', async function() {
+        const mentionJson = '{\"mentioned\": {\"id\": \"foo bar"},\"text\": \""}';
+        const entity = JSON.parse(mentionJson);
+        entity.type = 'mention';
+
+        const activity = MessageFactory.text('botname sometext');
+        activity.channelId = 'skype';
+        activity.entities = [entity];
+
+        SkypeMentionNormalizeMiddleware.normalizeSkypeMentionText(activity);
+        TurnContext.removeMentionText(activity, 'recipientid');
+        assert(activity.text === 'botname sometext');
+    });
+
     it(`should remove skype mention`, async function () {
         var mentionJson = '{\"mentioned\": {\"id\": \"recipientid\"},\"text\": \"<at id=\\\"28: 841caffa-9e92-425d-8d84-b503b3ded285\\\">botname</at>\"}';
         var entity = JSON.parse(mentionJson);

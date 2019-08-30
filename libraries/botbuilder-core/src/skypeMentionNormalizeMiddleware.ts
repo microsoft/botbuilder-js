@@ -20,20 +20,18 @@ import { Activity, Middleware, TurnContext } from 'botbuilder-core';
  * This will remove the <at> nodes, leaving just the name.
  */
 export class SkypeMentionNormalizeMiddleware implements Middleware {
-    public static normalizeSkypeMentionText(activity: Activity){
+    public static normalizeSkypeMentionText(activity: Activity): void {
         if (activity.channelId === 'skype' && activity.type === 'message'){
-            for(var i = 0; i < activity.entities.length; i++){
-                var element = activity.entities[i];
+            activity.entities.map((element): void => {
                 if(element.type === 'mention'){
-                    var text = element['text'];
-                    var end = text.indexOf(">");
+                    const text = element['text'];
+                    const end = text.indexOf('>');
                     if(end > -1){
-                        var start = text.indexOf("<", end);
-                        if(start > -1)
-                            element['text'] = text.substring(end+1, start);
+                        const start = text.indexOf('<', end);
+                        if(start > -1) element['text'] = text.substring(end + 1, start);
                     }
                 }
-            }
+            });
         }
     }
 

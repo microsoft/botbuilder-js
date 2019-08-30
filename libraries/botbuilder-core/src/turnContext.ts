@@ -119,11 +119,10 @@ export class TurnContext {
      * @param id The recipient id of the at mention
      */
     public static removeMentionText(activity: Partial<Activity>, id: string): string {
-        var mentions = TurnContext.getMentions(activity);
-        for (var i=0; i<mentions.length; i++) {
-            if (mentions[i].mentioned.id === id) {
-                activity.text = activity.text.replace(mentions[i].text, '').trim();
-            }
+        const mentions = TurnContext.getMentions(activity);
+        const mentionsFiltered = mentions.filter(mention => mention.mentioned.id === id);
+        if (mentionsFiltered.length) {
+            activity.text = activity.text.replace(mentionsFiltered[0].text, '').trim();
         }
         return activity.text;
     }
