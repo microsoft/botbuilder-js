@@ -120,7 +120,7 @@ export class TurnContext {
      */
     public static removeMentionText(activity: Partial<Activity>, id: string): string {
         const mentions = TurnContext.getMentions(activity);
-        const mentionsFiltered = mentions.filter(mention => mention.mentioned.id === id);
+        const mentionsFiltered = mentions.filter((mention): boolean => mention.mentioned.id === id);
         if (mentionsFiltered.length) {
             activity.text = activity.text.replace(mentionsFiltered[0].text, '').trim();
         }
