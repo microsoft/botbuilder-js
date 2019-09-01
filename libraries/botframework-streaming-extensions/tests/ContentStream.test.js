@@ -1,9 +1,9 @@
-const  ContentStream  = require('../lib/contentStream');
-const  PayloadAssembler  = require('../lib/assemblers/payloadAssembler');
+const  ContentStream  = require('../lib/ContentStream');
+const  PayloadAssembler  = require('../lib/Assemblers/PayloadAssembler');
 const  chai  = require('chai');
-const StreamManager = require('../lib/payloads/streamManager');
-const SubscribableStream = require('../lib/subscribableStream');
-const PayloadTypes = require('../lib/payloads/payloadTypes');
+const StreamManager = require('../lib/Payloads/StreamManager');
+const SubscribableStream = require('../lib/SubscribableStream');
+const PayloadTypes = require('../lib/Payloads/PayloadTypes');
 const protocol = require('../lib');
 var expect = chai.expect;
 
@@ -15,7 +15,7 @@ class TestPayloadAssembler{
         } else {
             this.stream1.write('hello');
         }
-        
+
         this.contentType = 'application/text';
         this.contentLength = 5;
     }
@@ -24,7 +24,7 @@ class TestPayloadAssembler{
         return this.stream1;
     }
 
-    close(){}  
+    close(){}
 }
 
 describe('Streaming Extensions ContentStream Tests ', () => {
@@ -112,7 +112,7 @@ describe('Streaming Extensions ContentStream Tests ', () => {
 
         result.then(function(data) {
             expect(data).to.equal('hello');
-        
+
         });
     });
 
@@ -122,7 +122,7 @@ describe('Streaming Extensions ContentStream Tests ', () => {
 
         result.then(function(data) {
             expect(data.message).to.equal('hello');
-        
+
         });
     });
 
@@ -134,7 +134,7 @@ describe('Streaming Extensions ContentStream Tests ', () => {
 
         result.then(function(data) {
             expect(data).to.equal('hello');
-        
+
         });
     });
 
@@ -142,6 +142,6 @@ describe('Streaming Extensions ContentStream Tests ', () => {
         let cs = new ContentStream.ContentStream('cs1', new TestPayloadAssembler());
         let result = cs.readAsString();
 
-        expect(cs.cancel()).to.not.throw;                
+        expect(cs.cancel()).to.not.throw;
     });
 });

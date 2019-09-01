@@ -1,7 +1,7 @@
-const StreamManager = require('../lib/payloads/streamManager')
-const PayloadTypes = require('../lib/payloads/payloadTypes');
-const SubscribableStream = require('../lib/subscribableStream');
-const PayloadAssembler = require('../lib/assemblers/payloadAssembler');
+const StreamManager = require('../lib/Payloads/StreamManager')
+const PayloadTypes = require('../lib/Payloads/PayloadTypes');
+const SubscribableStream = require('../lib/SubscribableStream');
+const PayloadAssembler = require('../lib/Assemblers/PayloadAssembler');
 const  chai  = require('chai');
 var expect = chai.expect;
 
@@ -21,7 +21,7 @@ describe('Streaming Protocol StreamManager Tests', () => {
         expect(pa).to.be.instanceOf(PayloadAssembler.PayloadAssembler);
         expect(pa.id).to.equal('bob');
     });
-    
+
     it('creates and returns a new assembler when others already exist', () => {
         let sm = new StreamManager.StreamManager(undefined);
         expect(sm).to.be.instanceOf(StreamManager.StreamManager);
