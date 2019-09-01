@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { HttpContent, HttpContentStream } from './httpContentStream';
-import { SubscribableStream } from './subscribableStream';
+import { HttpContent, HttpContentStream } from './HttpContentStream';
+import { SubscribableStream } from './SubscribableStream';
 
 export class StreamingRequest {
     /// <summary>

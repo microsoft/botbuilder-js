@@ -6,16 +6,16 @@
  * Licensed under the MIT License.
  */
 import { Server, Socket } from 'net';
-import { ProtocolAdapter } from '../protocolAdapter';
-import { RequestHandler } from '../requestHandler';
-import { StreamingRequest } from '../streamingRequest';
-import { RequestManager } from '../payloads';
+import { ProtocolAdapter } from '../ProtocolAdapter';
+import { RequestHandler } from '../RequestHandler';
+import { StreamingRequest } from '../StreamingRequest';
+import { RequestManager } from '../Payloads';
 import {
     PayloadReceiver,
     PayloadSender
-} from '../payloadtransport';
-import { NamedPipeTransport } from './namedPipeTransport';
-import { IStreamingTransportServer, IReceiveResponse } from '../interfaces';
+} from '../PayloadTransport';
+import { NamedPipeTransport } from './NamedPipeTransport';
+import { IStreamingTransportServer, IReceiveResponse } from '../Interfaces';
 
 /// <summary>
 /// A server for use with the Bot Framework Protocol V3 with Streaming Extensions and an underlying Named Pipe transport.
