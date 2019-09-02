@@ -25,6 +25,7 @@ export * from './privateConversationState';
 export * from './propertyManager';
 export * from './recognizerResult';
 export * from './showTypingMiddleware';
+export * from './skypeMentionNormalizeMiddleware';
 export * from './storage';
 export * from './telemetryLoggerMiddleware';
 export * from './testAdapter';
