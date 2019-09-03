@@ -68,7 +68,7 @@ export class GenerateAnswerUtils {
      */
     public async emitTraceInfo(turnContext: TurnContext, answers: QnAMakerResult[], queryOptions?: QnAMakerOptions): Promise<any> {
         const requestOptions: QnAMakerOptions = { ...this._options, ...queryOptions };
-        const { scoreThreshold, top, strictFilters, metadataBoost, context } = requestOptions;
+        const { scoreThreshold, top, strictFilters, metadataBoost, context, qnaId } = requestOptions;
 
         const traceInfo: QnAMakerTraceInfo = {
             message: turnContext.activity,
@@ -78,7 +78,8 @@ export class GenerateAnswerUtils {
             top,
             strictFilters,
             metadataBoost,
-            context
+            context,
+            qnaId,
         };
 
         return turnContext.sendActivity({
@@ -96,7 +97,7 @@ export class GenerateAnswerUtils {
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
     public validateOptions(options: QnAMakerOptions): void {
-        const { scoreThreshold, top, context } = options;
+        const { scoreThreshold, top } = options;
 
         if (scoreThreshold) {
             this.validateScoreThreshold(scoreThreshold);
