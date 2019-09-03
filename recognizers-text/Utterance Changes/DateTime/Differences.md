@@ -1,5 +1,5 @@
 ##  Changes
-### V1.2.6
+### V1.1.4
 **DateTime - Recognize**
 
  Changed Recognized inputs:
