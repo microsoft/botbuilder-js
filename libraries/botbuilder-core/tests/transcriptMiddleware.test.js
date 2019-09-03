@@ -245,13 +245,13 @@ describe(`TranscriptLoggerMiddleware`, function () {
     });
 
     it(`should use outgoing activity's timestamp for activity id when activity id and resourceResponse is empty`, function(done) {
-        let conversationId = null;
+        let conversationId, timestamp;
         const transcriptStore = new MemoryTranscriptStore();
-        const timestamp = new Date(Date.now());
 
         const adapter = createTestAdapterWithNoResourceResponseId(async (context) => {
             conversationId = context.activity.conversation.id;
 
+            timestamp = new Date(Date.now());
             await context.sendActivity({
                 text: `echo:${ context.activity.text }`,
                 timestamp: timestamp,
@@ -296,7 +296,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
     });
 
     it(`should use current server time for activity id when activity and resourceResponse id is empty and no activity timestamp exists`, function(done) {
-        let conversationId = null;
+        let conversationId;
         const transcriptStore = new MemoryTranscriptStore();
 
         const adapter = createTestAdapterWithNoResourceResponseId(async (context) => {
