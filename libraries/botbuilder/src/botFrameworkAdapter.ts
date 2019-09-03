@@ -181,9 +181,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      *
      * The processing steps for this method are very similar to [processActivity](xref:botbuilder.BotFrameworkAdapter.processActivity).
      * The adapter creates a [TurnContext](xref:botbuilder-core.TurnContext) and routes it through
-     * middleware before calling the logic handler. The key difference is that since an activity
-     * wasn't actually received from outside, it is created by the adapter. The created activity
-     * has values for its address related fields but will have `context.activity.type === undefined`.
+     * middleware before calling the `logic` handler. The created activity will have a
+     * [type](xref:botframework-schema.Activity.type) of 'event' and a
+     * [name](xref:botframework-schema.Activity.name) of 'continueConversation'.
      *
      * ```JavaScript
      * server.post('/api/notifyUser', async (req, res) => {
@@ -201,8 +201,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      *    }
      * });
      * ```
-     * @param reference A conversation reference saved during a previous incoming activity.
-     * @param logic A function handler that will be called to perform the bot logic after the adapter's middleware runs.
+     * @param reference A conversation reference for the conversation to continue.
+     * @param logic The function handler to call after the adapter middleware runs.
      */
     public async continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void> {
         const request: Partial<Activity> = TurnContext.applyConversationReference(
@@ -216,36 +216,53 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Starts a new conversation with a user. This is typically used to _direct message_ a member
-     * of a group.
+     * Requests that a channel creates and starts a conversation on behalf of the bot.
      *
      * @remarks
-     * This function creates a new conversation between the bot and a single user, as specified by
-     * the ConversationReference passed in. In multi-user chat environments, this typically means
-     * starting a 1:1 direct message conversation with a single user. If called on a reference
-     * already representing a 1:1 conversation, the new conversation will continue to be 1:1.
-     *
-     * * In order to use this method, a ConversationReference must first be extracted from an incoming
-     * activity. This reference can be stored in a database and used to resume the conversation at a later time.
-     * The reference can be created from any incoming activity using `TurnContext.getConversationReference(context.activity)`.
+     * To start a conversation, your bot must know its account information and the user's account
+     * information on that channel. While the Bot Connector service supports the creating of group
+     * conversations, this method and most channels only support initiating a direct message (non-group)
+     * conversation.
+     * 
+     * The adapter attempts to create a new conversation on the channel, and then sends an
+     * `event` activity through its middleware pipeline to the callback function
+     * specified in the `logic` parameter.
+     * 
+     * If the channel establishes the conversation with the specified users, the generated event activity's
+     * [Conversation](xref:botframework-schema.Activity.conversation) will contain the
+     * ID of the new conversation.
      *
      * The processing steps for this method are very similar to [processActivity](xref:botbuilder.BotFrameworkAdapter.processActivity).
      * The adapter creates a [TurnContext](xref:botbuilder-core.TurnContext) and routes it through
-     * middleware before calling the logic handler. The key difference is that since an activity
-     * wasn't actually received from outside, it is created by the adapter. The created activity
-     * has values for its address related fields but will have `context.activity.type === undefined`.
+     * middleware before calling the `logic` handler. The created activity will have a
+     * [type](xref:botframework-schema.Activity.type) of 'event' and a
+     * [name](xref:botframework-schema.Activity.name) of 'createConversation'.
+     *
+     * To use this method, pass in a [ConversationReference](xref:botframework-schema.ConversationReference)
+     * with the appropriate information in the `reference` parameter.
+     * To create an appropriate `ConversationReference` from a group conversation:
+     * 1. Before you can do so, you need a `ConversationReference` that already has the channel-related information
+     *    and a [ChannelAccount](xref:botframework-schema.ChannelAccount) for the intended user on that channel.
+     *    - Use [TurnContext.getConversationReference(context.activity)](xref:botbuilder-core.TurnContext.getConversationReference)
+     *      to get the conversation reference from an incoming activity. 
+     *    - This information can be stored in a database and used to create a conversation at a later time.
+     * 1. Create a copy of the conversation reference object that you saved, and set its
+     *    [user](xref:botframework-schema.ConversationReference.user) property to the intended user's `ChannelAccount`.
+     * 1. Provide this conversation reference object in the call to this method.
      *
      * ```JavaScript
      * // Get group members conversation reference
      * const reference = TurnContext.getConversationReference(context.activity);
+     * 
+     * // ...
      *
      * // Start a new conversation with the user
      * await adapter.createConversation(reference, async (ctx) => {
      *    await ctx.sendActivity(`Hi (in private)`);
      * });
      * ```
-     * @param reference A `ConversationReference` of the user to start a new conversation with.
-     * @param logic A function handler that will be called to perform the bot's logic after the adapters middleware has been run.
+     * @param reference A conversation reference for the conversation to create.
+     * @param logic The function handler to call after the adapter middleware runs.
      */
     public async createConversation(reference: Partial<ConversationReference>, logic?: (context: TurnContext) => Promise<void>): Promise<void> {
         if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`); }
@@ -290,15 +307,16 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Deletes an activity that was previously sent to a channel.
-     *
+     * Deletes an existing activity.
+     * This method supports the framework and is not intended to be called directly for your code.
+     * 
      * @remarks
-     * Calling `TurnContext.deleteActivity()` is the preferred way of deleting activities (rather than calling it directly from the adapter), as that
-     * will ensure that any interested middleware will be notified.
+     * Use [TurnContext.deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity) to delete
+     * an activity from your bot code.
      *
-     * > [!TIP]
-     * > Note: Not all chat channels support this method. Calling it on an unsupported channel may result in an error.
-     * @param context Context for the current turn of conversation with the user.
+     * > [!NOTE] Not all channels support this operation. For channels that don't, this call may throw an exception.
+     * 
+     * @param context The context object for the turn.
      * @param reference Conversation reference information for the activity being deleted.
      */
     public async deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
@@ -312,14 +330,15 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Deletes a member from the current conversation.
+     * Removes a member from the current conversation.
      *
      * @remarks
      * Remove a member's identity information from the conversation.
      *
-     * Note that this method does not apply to all channels.
-     * @param context Context for the current turn of conversation with the user.
-     * @param memberId ID of the member to delete from the conversation.
+     * > [!NOTE] Not all channels support this operation. For channels that don't, this call may throw an exception.
+     * 
+     * @param context The context object for the turn.
+     * @param memberId The ID of the member to remove from the conversation.
      */
     public async deleteConversationMember(context: TurnContext, memberId: string): Promise<void> {
         if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.deleteConversationMember(): missing serviceUrl`); }
@@ -333,15 +352,16 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Lists the members of a given activity as specified in a TurnContext.
+     * Lists the members of a given activity.
      *
      * @remarks
-     * Returns an array of ChannelAccount objects representing the users involved in a given activity.
+     * Returns an array of [ChannelAccount](xref:botframework-schema.ChannelAccount) objects representing
+     * the users involved in a given activity.
      *
-     * This is different from `getConversationMembers()` in that it will return only those users
-     * directly involved in the activity, not all members of the conversation.
-     * @param context Context for the current turn of conversation with the user.
-     * @param activityId (Optional) activity ID to enumerate. If not specified the current activities ID will be used.
+     * This is different from [getConversationMembers](xref:botbuilder.BotFrameworkAdapter.getConversationMembers)
+     * in that it will return only those users directly involved in the activity, not all members of the conversation.
+     * @param context The context object for the turn.
+     * @param activityId Optional. The ID of the activity to get the members of. If not specified, the current activity ID is used.
      */
     public async getActivityMembers(context: TurnContext, activityId?: string): Promise<ChannelAccount[]> {
         if (!activityId) { activityId = context.activity.id; }
@@ -360,15 +380,16 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Lists the members of the current conversation as specified in a TurnContext.
+     * Lists the members of the current conversation.
      *
      * @remarks
-     * Returns an array of ChannelAccount objects representing the users currently involved in the conversation
-     * in which an activity occured.
+     * Returns an array of [ChannelAccount](xref:botframework-schema.ChannelAccount) objects representing
+     * all users currently involved in a conversation.
      *
-     * This is different from `getActivityMembers()` in that it will return all
-     * members of the conversation, not just those directly involved in the activity.
-     * @param context Context for the current turn of conversation with the user.
+     * This is different from [getActivityMembers](xref:botbuilder.BotFrameworkAdapter.getActivityMembers)
+     * in that it will return all members of the conversation, not just those directly involved in a specific activity.
+     * 
+     * @param context The context object for the turn.
      */
     public async getConversationMembers(context: TurnContext): Promise<ChannelAccount[]> {
         if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.getConversationMembers(): missing serviceUrl`); }
