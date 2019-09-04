@@ -134,6 +134,7 @@ export class ExpressionType {
     public static readonly GetProperty: string = 'getProperty';
     public static readonly Coalesce: string = 'coalesce';
     public static readonly XPath: string = 'xPath';
+    public static readonly JPath: string = 'jPath';
     public static readonly SetPathToValue: string = 'setPathToValue';
 
     // URI parsing functions

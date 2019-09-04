@@ -321,6 +321,10 @@ const badExpressions =
   "xPath(invalidXml, ''sum(/produce/item/count)')", //not valid xml
   "xPath(xmlStr)", // should have two params
   "xPath(xmlStr, 'getTotal')", // invalid xpath query
+  "jPath(hello)",// should have two params
+  "jPath(hello, '.key')", //bad json
+  "jPath(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), 'getTotal')", //bad path
+
 
   // Short Hand Expression
   "%.xxx", // not supported shorthand pattern

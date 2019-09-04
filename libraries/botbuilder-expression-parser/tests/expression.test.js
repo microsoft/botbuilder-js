@@ -360,6 +360,7 @@ const dataSource = [
   ["coalesce(nullObj,'hello',nullObj)", "hello"],
   ["xPath(xmlStr,'sum(/produce/item/count)')", 30],
   ["xPath(xmlStr,'/produce/item/name')",  ["<name>Gala</name>", "<name>Honeycrisp</name>"]],
+  ["jPath(jsonStr, pathStr )", ['Jazz', 'Accord']],
 
   // Short hand expression tests
   ["@city == 'Bellevue'", false, ["turn.recognized.entities.city"]],
@@ -456,6 +457,8 @@ const scope = {
   y: "y",
   istrue: true,
   nullObj: undefined,
+  jsonStr: '{"automobiles" : [{ "maker" : "Nissan", "model" : "Teana", "year" : 2011 },{ "maker" : "Honda", "model" : "Jazz", "year" : 2010 },{ "maker" : "Honda", "model" : "Civic", "year" : 2007 },{ "maker" : "Toyota", "model" : "Yaris", "year" : 2008 },{"maker" : "Honda", "model" : "Accord", "year" : 2011 }],"motorcycles" : [{ "maker" : "Honda", "model" : "ST1300", "year" : 2012 }]}',
+  pathStr: `.automobiles{.maker == "Honda" && .year > 2009}.model`,
   bag:
   {
     three: 3.0,

@@ -19,6 +19,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDele
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { TimeZoneConverter } from './timeZoneConverter';
+import * as JSPath from 'JSPath';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -346,7 +347,7 @@ export class BuiltInFunctions {
             if (Number.isNaN(parsedData.getTime())) {
                 error = `${value} is not a valid datetime string.`;
             }
-        } catch {
+        } catch(e) {
             error = `${value} is not a valid datetime string.`;
         }
 
@@ -367,7 +368,7 @@ export class BuiltInFunctions {
             } else if (parsedData.toISOString() !== value) {
                 error = `${value} is not a ISO format datetime string.`;
             }
-        } catch {
+        } catch(e) {
             error = `${value} is not a valid datetime string.`;
         }
 
@@ -747,14 +748,14 @@ export class BuiltInFunctions {
         let xPathResult: any;
         try {
             xmlDoc = parser.parseFromString(xmlStr);
-        } catch {
+        } catch(e) {
             error = `${xmlStr} is not valid xml`;
         }
 
         if (error === undefined) {
             try {
                 xPathResult = xpathEval.select(xpath, xmlDoc);
-            } catch {
+            } catch(e) {
                 error = `${xpath} is not an valid expression`;
             }
         }
@@ -769,6 +770,35 @@ export class BuiltInFunctions {
 
         return {value: result, error};
         }
+
+    private static JPath(jsonEntity: object | string, path: string): {value: any; error: string} {
+        let result: any;
+        let error: string;
+        let evaled: any;
+        let json: object;
+        if (typeof jsonEntity === 'string') {
+            try {
+                json =JSON.parse(jsonEntity)
+            } catch(e) {
+                error = `${jsonEntity} is not a valid json string`;
+            }
+        } else if (typeof jsonEntity === 'object') {
+            json = jsonEntity;
+        } else {
+            error = "the first parameter should be either an object or a string";
+        }
+
+        if (error === undefined) {
+            try {
+                evaled = JSPath.apply(path, json);
+            } catch(e) {
+                error = `${path} is not a valid path + ${e}`;
+            }
+        }
+
+        result = evaled;    
+        return {value: result, error};
+    }
 
     private static ExtractElement(expression: Expression, state: any): { value: any; error: string } {
         let value: any;
@@ -1281,7 +1311,7 @@ export class BuiltInFunctions {
         try {
             const jsonObj: any = typeof contentToConvert === 'string' ? JSON.parse(contentToConvert) : contentToConvert;
             result = new Builder().buildObject(jsonObj);
-        } catch {
+        } catch(e) {
             error = 'Invalid json';
         }
 
@@ -1353,7 +1383,7 @@ export class BuiltInFunctions {
         let error: string;
         try {
             result = timedata.format(format);
-        } catch {
+        } catch(e) {
             error = `${format} is not a valid timestamp format`;
         }
 
@@ -1372,7 +1402,7 @@ export class BuiltInFunctions {
         if (error === undefined) {
             try {
                 result = timezone.tz(timeStamp, timeZone).format(format);
-            } catch {
+            } catch(e) {
                 error = `${format} is not a valid timestamp format`;
             }
         }
@@ -1406,14 +1436,14 @@ export class BuiltInFunctions {
                 try {
                     const sourceTime: moment.Moment = timezone.tz(timeStamp, timeZone);
                     formattedSourceTime = sourceTime.format();
-                    } catch {
+                    } catch(e) {
                     error = `${timeStamp} with ${timeZone} is not a valid timestamp with specified timeZone:`;
                 }
 
                 if (error === undefined) {
                     try {
                         result = timezone.tz(formattedSourceTime, 'Etc/UTC').format(format);
-                    } catch {
+                    } catch(e) {
                         error = `${format} is not a valid timestamp format`;
                     }
                 }
@@ -1481,7 +1511,7 @@ export class BuiltInFunctions {
         let error: string;
         try {
             result = new URL(uri);
-        } catch {
+        } catch(e) {
             error = `Invalid URI: ${uri}`;
         }
 
@@ -1496,7 +1526,7 @@ export class BuiltInFunctions {
         if (error === undefined) {
             try {
                 result = parsed.hostname;
-            } catch {
+            } catch(e) {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }
@@ -1513,7 +1543,7 @@ export class BuiltInFunctions {
             try {
                 const uriObj: URL = new URL(uri);
                 result = uriObj.pathname;
-            } catch {
+            } catch(e) {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }
@@ -1529,7 +1559,7 @@ export class BuiltInFunctions {
         if (error === undefined) {
             try {
                 result = parsed.pathname + parsed.search;
-            } catch {
+            } catch(e) {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }
@@ -1545,7 +1575,7 @@ export class BuiltInFunctions {
         if (error === undefined) {
             try {
                 result = parsed.port;
-            } catch {
+            } catch(e) {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }
@@ -1561,7 +1591,7 @@ export class BuiltInFunctions {
         if (error === undefined) {
             try {
                 result = parsed.search;
-            } catch {
+            } catch(e) {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }
@@ -1577,7 +1607,7 @@ export class BuiltInFunctions {
         if (error === undefined) {
             try {
                 result = parsed.protocol.replace(':', '');
-            } catch {
+            } catch(e) {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }
@@ -2606,10 +2636,13 @@ export class BuiltInFunctions {
                                     ReturnType.String, BuiltInFunctions.ValidateUnary),
             new ExpressionEvaluator(ExpressionType.UriScheme, BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriScheme(args[0]), BuiltInFunctions.VerifyString), 
                                     ReturnType.String, BuiltInFunctions.ValidateUnary),
+        
             new ExpressionEvaluator(ExpressionType.Coalesce, BuiltInFunctions.Apply((args: ReadonlyArray<any>[]) => this.Coalesce(<object []>args)),
                                     ReturnType.Object, BuiltInFunctions.ValidateAtLeastOne),
             new ExpressionEvaluator(ExpressionType.XPath, BuiltInFunctions.ApplyWithError((args: ReadonlyArray<any>[]) => this.XPath(args[0].toString(), args[1].toString())),
                                     ReturnType.Object, (expr: Expression): void => BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.String, ReturnType.String)),
+            new ExpressionEvaluator(ExpressionType.JPath, BuiltInFunctions.ApplyWithError((args: ReadonlyArray<any>[]) => this.JPath(args[0], args[1].toString())),
+                                    ReturnType.Object, (expr: Expression): void => BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.Object, ReturnType.String)),
 
             // Regex expression functions
             new ExpressionEvaluator(
