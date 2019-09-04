@@ -80,6 +80,11 @@ const dataSource = [
   ["count(concat(hello,world))", 10],
   ["replace('hello', 'l', 'k')", "hekko"],
   ["replace('hello', 'L', 'k')", "hello"],
+  ["replace(\"hello'\", \"'\", '\"')", "hello\""],
+  ["replace('hello\"', '\"', \"'\")", "hello'"],
+  ["replace('hello\"', '\"', '\n')", "hello\n"],
+  ["replace('hello\n', '\n', '\\\\')", "hello\\"],
+  ["replace('hello\\\\', '\\\\', '\\\\\\\\')", "hello\\\\"],
   ["replaceIgnoreCase('hello', 'L', 'k')", "hekko"],
   ["split('hello','e')", ["h", "llo"]],
   ["substring('hello', 0, 5)", "hello"],
@@ -385,7 +390,7 @@ const dataSource = [
   ["^y", 2],
   ["^z", 1],
   ["count(@@CompositeList1) == 1 && count(@@CompositeList1[0]) == 1", true, ["turn.recognized.entities.CompositeList1", "turn.recognized.entities.CompositeList1[0]"]],
-  ["count(@CompositeList2) == 2 && (@CompositeList2)[0] === 'firstItem'", true, ["turn.recognized.entities.CompositeList2"]],
+  ["count(@CompositeList2) == 2 && (@CompositeList2)[0] == 'firstItem'", true, ["turn.recognized.entities.CompositeList2"]],
 
   // Memory access tests
   ["getProperty(bag, concat('na','me'))", "mybag"],

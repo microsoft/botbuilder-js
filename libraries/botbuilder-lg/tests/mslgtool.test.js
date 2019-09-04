@@ -98,7 +98,7 @@ describe('MSLGTool', function () {
         assert.strictEqual(expandedTemplate[1], "You have 2 alarms, they are 8 pm of tomorrow");
     })
 
-    it('TestExpandTemplateWithRefInForeach', function() {
+    it('TestExpandTemplateWithFunction', function() {
         const mslgTool = new MSLGTool();
         let errors = GetErrors(mslgTool, 'ValidFile.lg');
         assert.strictEqual(errors.length, 0);
@@ -112,9 +112,28 @@ describe('MSLGTool', function () {
                 date :"tomorrow"
             }
         ];
-        let expandedTemplate = mslgTool.ExpandTemplate('ShowAlarmsWithForeach', {alarms: alarms});
-        assert.strictEqual(expandedTemplate.length, 1);
-        assert.strictEqual(expandedTemplate[0], "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow")
+        let evaled = mslgTool.ExpandTemplate('ShowAlarmsWithForeach', {alarms: alarms});
+        const evalOptions = [
+            "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow",
+            "You have 2 alarms, 7 am at tomorrow and 8 pm of tomorrow",
+            "You have 2 alarms, 7 am of tomorrow and 8 pm at tomorrow",
+            "You have 2 alarms, 7 am of tomorrow and 8 pm of tomorrow"
+        ];
+
+        assert.strictEqual(evaled.length, 1);
+        assert.strictEqual(evalOptions.includes(evaled[0]), true);
+
+        evaled = mslgTool.ExpandTemplate('T2');
+        assert.strictEqual(evaled.length, 1);
+        assert.strictEqual(evaled[0] === "3" || evaled[0] === "5", true);
+
+        evaled = mslgTool.ExpandTemplate('T3');
+        assert.strictEqual(evaled.length, 1);
+        assert.strictEqual(evaled[0] === "3" || evaled[0] === "5", true);
+
+        evaled = mslgTool.ExpandTemplate('T4');
+        assert.strictEqual(evaled.length, 1);
+        assert.strictEqual(evaled[0] === "ey" || evaled[0] === "el", true);
     })
 
     it('TestExpandTemplateWithRefInMultiLine', function() {

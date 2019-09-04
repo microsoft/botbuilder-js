@@ -61,6 +61,7 @@ export class ExpressionParser extends Parser {
 	public static readonly IDENTIFIER = 31;
 	public static readonly NEWLINE = 32;
 	public static readonly STRING = 33;
+	public static readonly INVALID_TOKEN_DEFAULT_MODE = 34;
 	public static readonly RULE_expression = 0;
 	public static readonly RULE_primaryExpression = 1;
 	public static readonly RULE_argsList = 2;
@@ -79,7 +80,8 @@ export class ExpressionParser extends Parser {
 		undefined, undefined, undefined, undefined, undefined, undefined, undefined, 
 		undefined, undefined, undefined, undefined, undefined, undefined, undefined, 
 		undefined, undefined, undefined, undefined, undefined, undefined, undefined, 
-		undefined, "NUMBER", "WHITESPACE", "IDENTIFIER", "NEWLINE", "STRING",
+		undefined, "NUMBER", "WHITESPACE", "IDENTIFIER", "NEWLINE", "STRING", 
+		"INVALID_TOKEN_DEFAULT_MODE",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(ExpressionParser._LITERAL_NAMES, ExpressionParser._SYMBOLIC_NAMES, []);
 
@@ -666,7 +668,7 @@ export class ExpressionParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03#T\x04\x02\t\x02" +
+		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03$T\x04\x02\t\x02" +
 		"\x04\x03\t\x03\x04\x04\t\x04\x03\x02\x03\x02\x03\x02\x03\x02\x05\x02\r" +
 		"\n\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02" +
 		"\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02" +

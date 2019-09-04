@@ -192,14 +192,47 @@ describe('LG', function () {
     it('TestTemplateRef', function () {
         var engine = new TemplateEngine().addFile(GetExampleFilePath("TemplateRef.lg"));
         var scope = { time: "morning", name: "Dong Lei" };
-        var evaled = engine.evaluateTemplate("Hello", scope);
-        assert.strictEqual(evaled, "Good morning Dong Lei", `Evaled is ${evaled}`);
+        var evaled1 = engine.evaluateTemplate("Hello", scope);
+        assert.strictEqual(evaled1, "Good morning Dong Lei", `Evaled is ${evaled1}`);
+
+        var evaled2 = engine.evaluateTemplate("Hello2", scope);
+        assert.strictEqual(evaled2, "Good morning Dong Lei", `Evaled is ${evaled2}`);
+
+        var evaled3 = engine.evaluateTemplate("Hello3", scope);
+        assert.strictEqual(evaled3, "Good morning Dong Lei", `Evaled is ${evaled3}`);
     });
 
     it('TestEscapeCharacter', function () {
         var engine = new TemplateEngine().addFile(GetExampleFilePath("EscapeCharacter.lg"));
         var evaled = engine.evaluateTemplate("wPhrase", null);
         assert.strictEqual(evaled, "Hi \r\n\t[]{}\\", "Happy path failed.");
+
+        evaled = engine.evaluateTemplate("otherEscape", null);
+        assert.strictEqual(evaled, "Hi \\y \\", "Happy path failed.");
+
+        evaled = engine.evaluateTemplate("escapeInExpression", null);
+        assert.strictEqual(evaled, "Hi hello\\\\");
+
+         evaled = engine.evaluateTemplate("escapeInExpression2", null);
+         assert.strictEqual(evaled, "Hi hello'");
+
+        evaled = engine.evaluateTemplate("escapeInExpression3", null);
+        assert.strictEqual(evaled, "Hi hello\"");
+
+        evaled = engine.evaluateTemplate("escapeInExpression4", null);
+        assert.strictEqual(evaled, "Hi hello\"");
+
+        evaled = engine.evaluateTemplate("escapeInExpression5", null);
+        assert.strictEqual(evaled, "Hi hello\n");
+
+        evaled = engine.evaluateTemplate("escapeInExpression6", null);
+        assert.strictEqual(evaled, "Hi hello\n");
+
+        evaled = engine.evaluateTemplate("showTodo", { todos: ["A", "B", "C"] });
+        assert.strictEqual(evaled, "\n    Your most recent 3 tasks are\n    * A\n* B\n* C\n    ");
+
+        evaled = engine.evaluateTemplate("showTodo", null);
+        assert.strictEqual(evaled, "\r\n    You don't have any \"t\\\\odo'\".\r\n    ");
     });
 
     it('TestAnalyzer', function () {
@@ -408,6 +441,9 @@ describe('LG', function () {
         const options2 = ["\r\nHiMS\r\n", "\nHiMS\n"];
         evaled = engine.evaluateTemplate("template5", { userName});
         assert.strictEqual(options2.includes(evaled), true, `Evaled is ${evaled}`);
+
+        evaled = engine.evaluateTemplate('template6', {userName});
+        assert.strictEqual(evaled, 'goodmorning', `Evaled is ${evaled}`);
     });
 
     it('TestTemplateAsFunction', function () {

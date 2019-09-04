@@ -19,7 +19,7 @@ import { Util } from './util';
  * Parser to turn strings into Expression
  */
 export class ExpressionEngine implements IExpressionParser {
-    private readonly _lookup: EvaluatorLookup;
+    public readonly EvaluatorLookup: EvaluatorLookup;
 
     // tslint:disable-next-line: typedef
     private readonly ExpressionTransformer = class extends AbstractParseTreeVisitor<Expression> implements ExpressionVisitor<Expression> {
@@ -158,9 +158,9 @@ export class ExpressionEngine implements IExpressionParser {
         public visitStringAtom(context: ep.StringAtomContext): Expression {
             const text: string = context.text;
             if (text.startsWith('\'')) {
-                return new Constant(unescape(Util.Trim(context.text, '\'')));
+                return new Constant(Util.Unescape(Util.Trim(context.text, '\'')));
             } else { // start with ""
-                return new Constant(unescape(Util.Trim(context.text, '"')));
+                return new Constant(Util.Unescape(Util.Trim(context.text, '"')));
             }
         }
 
@@ -182,7 +182,7 @@ export class ExpressionEngine implements IExpressionParser {
     };
 
     public constructor(lookup?: EvaluatorLookup) {
-        this._lookup = lookup === undefined ? BuiltInFunctions.Lookup : lookup;
+        this.EvaluatorLookup = lookup === undefined ? BuiltInFunctions.Lookup : lookup;
     }
 
     protected static AntlrParse(expression: string): ParseTree {
@@ -199,7 +199,7 @@ export class ExpressionEngine implements IExpressionParser {
 
     public parse(expression: string): Expression {
         try {
-            return new this.ExpressionTransformer(this._lookup).Transform(ExpressionEngine.AntlrParse(expression));
+            return new this.ExpressionTransformer(this.EvaluatorLookup).Transform(ExpressionEngine.AntlrParse(expression));
         } catch (err) {
             throw new Error(`Parse failed for expression '${expression}', inner error: ${err}`);
         }

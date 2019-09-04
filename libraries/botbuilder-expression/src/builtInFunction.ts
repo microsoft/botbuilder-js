@@ -347,7 +347,7 @@ export class BuiltInFunctions {
             if (Number.isNaN(parsedData.getTime())) {
                 error = `${value} is not a valid datetime string.`;
             }
-        } catch(e) {
+        } catch (e) {
             error = `${value} is not a valid datetime string.`;
         }
 
@@ -368,7 +368,7 @@ export class BuiltInFunctions {
             } else if (parsedData.toISOString() !== value) {
                 error = `${value} is not a ISO format datetime string.`;
             }
-        } catch(e) {
+        } catch (e) {
             error = `${value} is not a valid datetime string.`;
         }
 
@@ -748,14 +748,14 @@ export class BuiltInFunctions {
         let xPathResult: any;
         try {
             xmlDoc = parser.parseFromString(xmlStr);
-        } catch(e) {
+        } catch (e) {
             error = `${xmlStr} is not valid xml`;
         }
 
         if (error === undefined) {
             try {
                 xPathResult = xpathEval.select(xpath, xmlDoc);
-            } catch(e) {
+            } catch (e) {
                 error = `${xpath} is not an valid expression`;
             }
         }
@@ -779,7 +779,7 @@ export class BuiltInFunctions {
         if (typeof jsonEntity === 'string') {
             try {
                 json =JSON.parse(jsonEntity)
-            } catch(e) {
+            } catch (e) {
                 error = `${jsonEntity} is not a valid json string`;
             }
         } else if (typeof jsonEntity === 'object') {
@@ -791,7 +791,7 @@ export class BuiltInFunctions {
         if (error === undefined) {
             try {
                 evaled = JSPath.apply(path, json);
-            } catch(e) {
+            } catch (e) {
                 error = `${path} is not a valid path + ${e}`;
             }
         }
@@ -1311,7 +1311,7 @@ export class BuiltInFunctions {
         try {
             const jsonObj: any = typeof contentToConvert === 'string' ? JSON.parse(contentToConvert) : contentToConvert;
             result = new Builder().buildObject(jsonObj);
-        } catch(e) {
+        } catch (e) {
             error = 'Invalid json';
         }
 
@@ -1383,7 +1383,7 @@ export class BuiltInFunctions {
         let error: string;
         try {
             result = timedata.format(format);
-        } catch(e) {
+        } catch (e) {
             error = `${format} is not a valid timestamp format`;
         }
 
@@ -1402,7 +1402,7 @@ export class BuiltInFunctions {
         if (error === undefined) {
             try {
                 result = timezone.tz(timeStamp, timeZone).format(format);
-            } catch(e) {
+            } catch (e) {
                 error = `${format} is not a valid timestamp format`;
             }
         }
@@ -1436,14 +1436,14 @@ export class BuiltInFunctions {
                 try {
                     const sourceTime: moment.Moment = timezone.tz(timeStamp, timeZone);
                     formattedSourceTime = sourceTime.format();
-                    } catch(e) {
+                    } catch (e) {
                     error = `${timeStamp} with ${timeZone} is not a valid timestamp with specified timeZone:`;
                 }
 
                 if (error === undefined) {
                     try {
                         result = timezone.tz(formattedSourceTime, 'Etc/UTC').format(format);
-                    } catch(e) {
+                    } catch (e) {
                         error = `${format} is not a valid timestamp format`;
                     }
                 }
@@ -1511,7 +1511,7 @@ export class BuiltInFunctions {
         let error: string;
         try {
             result = new URL(uri);
-        } catch(e) {
+        } catch (e) {
             error = `Invalid URI: ${uri}`;
         }
 
@@ -1526,7 +1526,7 @@ export class BuiltInFunctions {
         if (error === undefined) {
             try {
                 result = parsed.hostname;
-            } catch(e) {
+            } catch (e) {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }
@@ -1543,7 +1543,7 @@ export class BuiltInFunctions {
             try {
                 const uriObj: URL = new URL(uri);
                 result = uriObj.pathname;
-            } catch(e) {
+            } catch (e) {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }
@@ -1559,7 +1559,7 @@ export class BuiltInFunctions {
         if (error === undefined) {
             try {
                 result = parsed.pathname + parsed.search;
-            } catch(e) {
+            } catch (e) {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }
@@ -1575,7 +1575,7 @@ export class BuiltInFunctions {
         if (error === undefined) {
             try {
                 result = parsed.port;
-            } catch(e) {
+            } catch (e) {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }
@@ -1591,7 +1591,7 @@ export class BuiltInFunctions {
         if (error === undefined) {
             try {
                 result = parsed.search;
-            } catch(e) {
+            } catch (e) {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }
@@ -1607,7 +1607,7 @@ export class BuiltInFunctions {
         if (error === undefined) {
             try {
                 result = parsed.protocol.replace(':', '');
-            } catch(e) {
+            } catch (e) {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }
@@ -1857,7 +1857,7 @@ export class BuiltInFunctions {
                 BuiltInFunctions.ValidateUnaryString),
             new ExpressionEvaluator(
                 ExpressionType.Replace,
-                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].replace(new RegExp(args[1], 'g'), args[2]), BuiltInFunctions.VerifyString),
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].split(args[1]).join(args[2]), BuiltInFunctions.VerifyString),
                 ReturnType.String,
                 (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 3, 3, ReturnType.String)),
             new ExpressionEvaluator(
@@ -1931,18 +1931,14 @@ export class BuiltInFunctions {
                         if (!(args[0] instanceof Array)) {
                             error = `${expression.Children[0]} evaluates to ${args[0]} which is not a list.`;
                         } else {
-                            if (args.length == 2) {
-                                const li: any = args[0].map((p: any) => p instanceof Array ? p[0] : p);
-                                value = li.join(args[1]);
-                            } 
-                            else {
-                                const li: any = args[0].map((p: any) => p instanceof Array ? p[0] : p);
-
-                                if (li.length < 3) {
-                                    value = li.join(args[2]);
+                            if (args.length === 2) {
+                                value = args[0].join(args[1]);
+                            } else {
+                                if (args[0].length < 3) {
+                                    value = args[0].join(args[2]);
                                 } else {
-                                    const firstPart: string = li.slice(0, li.length - 1).join(args[1]);
-                                    value = firstPart.concat(args[2], li[li.length - 1]);
+                                    const firstPart: string = args[0].slice(0, args[0].length - 1).join(args[1]);
+                                    value = firstPart.concat(args[2], args[0][args[0].length - 1]);
                                 }
                             }
                         }
