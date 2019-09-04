@@ -216,6 +216,18 @@ describe('QnAMaker', function () {
             assert.strictEqual(qnaResults[0].score, 1, 'score should be high');
         });
 
+        it('should return answer with high score provided id', async function() {
+            const qna = new QnAMaker(endpoint);
+            const turnContext = new TestContext({ text: "where can I buy?" });
+            
+            const options = { top: 2, qnaId: 55 };
+            
+            const qnaResults = await qna.getAnswers(turnContext, options);
+
+            assert.strictEqual(qnaResults.length, 1, 'one answer should be returned');
+            assert.strictEqual(qnaResults[0].score, 1, 'score should be high');
+        });
+
         it('should return answer with low score not provided context', async function() {
             const qna = new QnAMaker(endpoint);
             const turnContext = new TestContext({ text: "where can I buy?" });
