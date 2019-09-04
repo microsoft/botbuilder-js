@@ -53,4 +53,9 @@ export interface QnAMakerTraceInfo {
      * The context for multi-turn responses.
      */
     context?: QnARequestContext;
+
+    /**
+     * Id of the current question asked.
+     */
+    qnaId?: number;
 }
