@@ -19,6 +19,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDele
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { TimeZoneConverter } from './timeZoneConverter';
+import * as JSPath from 'JSPath';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -769,6 +770,35 @@ export class BuiltInFunctions {
 
         return {value: result, error};
         }
+
+    private static JPath(jsonEntity: object | string, path: string): {value: any; error: string} {
+        let result: any;
+        let error: string;
+        let evaled: any;
+        let json: object;
+        if (typeof jsonEntity === 'string') {
+            try {
+                json =JSON.parse(jsonEntity)
+            } catch (e) {
+                error = `${jsonEntity} is not a valid json string`;
+            }
+        } else if (typeof jsonEntity === 'object') {
+            json = jsonEntity;
+        } else {
+            error = "the first parameter should be either an object or a string";
+        }
+
+        if (error === undefined) {
+            try {
+                evaled = JSPath.apply(path, json);
+            } catch (e) {
+                error = `${path} is not a valid path + ${e}`;
+            }
+        }
+
+        result = evaled;    
+        return {value: result, error};
+    }
 
     private static ExtractElement(expression: Expression, state: any): { value: any; error: string } {
         let value: any;
@@ -2602,10 +2632,13 @@ export class BuiltInFunctions {
                                     ReturnType.String, BuiltInFunctions.ValidateUnary),
             new ExpressionEvaluator(ExpressionType.UriScheme, BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriScheme(args[0]), BuiltInFunctions.VerifyString), 
                                     ReturnType.String, BuiltInFunctions.ValidateUnary),
+        
             new ExpressionEvaluator(ExpressionType.Coalesce, BuiltInFunctions.Apply((args: ReadonlyArray<any>[]) => this.Coalesce(<object []>args)),
                                     ReturnType.Object, BuiltInFunctions.ValidateAtLeastOne),
             new ExpressionEvaluator(ExpressionType.XPath, BuiltInFunctions.ApplyWithError((args: ReadonlyArray<any>[]) => this.XPath(args[0].toString(), args[1].toString())),
                                     ReturnType.Object, (expr: Expression): void => BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.String, ReturnType.String)),
+            new ExpressionEvaluator(ExpressionType.JPath, BuiltInFunctions.ApplyWithError((args: ReadonlyArray<any>[]) => this.JPath(args[0], args[1].toString())),
+                                    ReturnType.Object, (expr: Expression): void => BuiltInFunctions.ValidateOrder(expr, undefined, ReturnType.Object, ReturnType.String)),
 
             // Regex expression functions
             new ExpressionEvaluator(
