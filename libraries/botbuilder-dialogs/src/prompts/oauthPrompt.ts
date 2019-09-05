@@ -331,7 +331,7 @@ export class OAuthPrompt extends Dialog {
  * @private
  */
 interface OAuthPromptState  {
-    state: object;
+    state: any;
     options: PromptOptions;
     expires: number;        // Timestamp of when the prompt will timeout.
 }
