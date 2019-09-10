@@ -259,7 +259,7 @@ const dataSource = [
   ["date(timestamp)", "3/15/2018"],//Default. TODO
   ["year(timestamp)", 2018],
   ["length(utcNow())", 24],
-  ["utcNow('MM-DD-YY')", moment(new Date().toISOString()).format('MM-DD-YY')],
+  ["utcNow('MM-DD-YY')", moment(new Date().toUTCString()).format('MM-DD-YY')],
   ["formatDateTime(notISOTimestamp)", "2018-03-15T13:00:00.000Z"],
   ["formatDateTime(notISOTimestamp, 'MM-dd-yy')", "03-15-18"],
   ["formatDateTime('2018-03-15')", "2018-03-15T00:00:00.000Z"],
