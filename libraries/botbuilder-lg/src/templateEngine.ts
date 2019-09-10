@@ -12,7 +12,7 @@ import { Analyzer, AnalyzerResult } from './analyzer';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Evaluator } from './evaluator';
 import { Expander } from './expander';
-import { ImportResolver, ImportResolverDelegate } from './importResolver';
+import { ImportResolver, ImportResolverDelegate } from './ImportResolver';
 import { LGParser } from './lgParser';
 import { LGResource } from './lgResource';
 import { LGTemplate } from './lgTemplate';
