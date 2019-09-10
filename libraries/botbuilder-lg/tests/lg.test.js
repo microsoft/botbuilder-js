@@ -232,7 +232,7 @@ describe('LG', function () {
         assert.strictEqual(evaled, "\n    Your most recent 3 tasks are\n    * A\n* B\n* C\n    ");
 
         evaled = engine.evaluateTemplate("showTodo", null);
-        assert.strictEqual(evaled, "\r\n    You don't have any \"t\\\\odo'\".\r\n    ");
+        assert.strictEqual(evaled, "\n    You don't have any \"t\\\\odo'\".\n    ");
     });
 
     it('TestAnalyzer', function () {
