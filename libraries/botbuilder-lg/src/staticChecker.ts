@@ -16,7 +16,7 @@ import { Diagnostic, DiagnosticSeverity, Position, Range } from './diagnostic';
 import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
-import { ImportResolver, ImportResolverDelegate } from './importResolver';
+import { ImportResolver, ImportResolverDelegate } from './ImportResolver';
 import { LGException } from './lgException';
 import { LGParser } from './lgParser';
 import { LGResource } from './lgResource';
