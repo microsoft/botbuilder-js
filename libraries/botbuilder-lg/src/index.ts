@@ -16,6 +16,6 @@ export * from './lgTemplate';
 export * from './diagnostic';
 export * from './lgException';
 export * from './lgResource';
-export * from './importResolver';
+export * from './ImportResolver';
 export * from './extractor';
 export * from './lgImport';
