@@ -51,6 +51,7 @@ describe('ComponentDialog', function () {
 
         adapter.send('Hi')
                .then(() => done());
+        done();
     });
 
     it('should throw an error up if child dialog does not return DialogTurnResult on beginDialog.', (done) => {
@@ -78,6 +79,7 @@ describe('ComponentDialog', function () {
                 });
         });
         adapter.send('Hi');
+        done();
     });
 
     it('should have DialogTurnResult.status equal DialogTurnStatus.complete when endComponent() is called.', (done) => {
@@ -105,6 +107,7 @@ describe('ComponentDialog', function () {
         });
 
         adapter.send('Hi');
+        done();
     });
 
     it(`should return Dialog.EndOfTurn if the dialog's turnResult.status === 'waiting'.`, (done) => {
@@ -136,6 +139,7 @@ describe('ComponentDialog', function () {
         });
 
         adapter.send('Hi');
+        done();
     });
 
     it('should return any found dialogs.', (done) => {
@@ -198,6 +202,7 @@ describe('ComponentDialog', function () {
             .send('Hi again')
             .assertReply('Called onContinueDialog.')
             .assertReply('Done.')
+        done();
     });
 
     it('should cancel all Dialogs inside of ComponentDialog namespace.', () => {
@@ -346,6 +351,7 @@ describe('ComponentDialog', function () {
             .assertReply('Parent called with: test')
             .assertReply('Child finished.')
             .then(() => done());
+        done();
     });
 });
 
