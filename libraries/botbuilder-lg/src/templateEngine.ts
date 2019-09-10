@@ -98,9 +98,9 @@ export class TemplateEngine {
     }
 
     public evaluateTemplate(templateName: string, scope?: any) : string {
-        const evalutor: Evaluator = new Evaluator(this.templates, this.expressionEngine);
+        const evaluator: Evaluator = new Evaluator(this.templates, this.expressionEngine);
 
-        return evalutor.EvaluateTemplate(templateName, scope);
+        return evaluator.EvaluateTemplate(templateName, scope);
     }
 
     public expandTemplate(templateName: string, scope?: any) : string[] {

@@ -52,7 +52,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         }
 
         if (this.evalutationTargetStack.find((u: EvaluationTarget) => u.TemplateName === templateName) !== undefined) {
-            throw new Error(`Loop deteced: ${this.evalutationTargetStack.reverse()
+            throw new Error(`Loop detected: ${this.evalutationTargetStack.reverse()
                 .map((u: EvaluationTarget) => u.TemplateName)
                 .join(' => ')}`);
         }
