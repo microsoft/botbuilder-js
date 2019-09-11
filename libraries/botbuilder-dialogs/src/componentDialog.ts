@@ -86,6 +86,8 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Start the inner dialog.
+        const dialogState: DialogState = { dialogStack: [] };
+        outerDC.activeDialog.state[PERSISTED_DIALOG_STATE] = dialogState;
         const innerDC = this.createChildContext(outerDC);
         const turnResult: DialogTurnResult<any> = await this.onBeginDialog(innerDC, options);
 
@@ -157,7 +159,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     public createChildContext(dc: DialogContext): DialogContext | undefined {
         const childDC = this.createInnerDC(dc.context, dc.activeDialog, dc.state.user, dc.state.conversation);
         childDC.parent = dc;
-        return childDC.stack.length > 0 ? childDC : undefined;
+        return childDC
     }
 
     /**
