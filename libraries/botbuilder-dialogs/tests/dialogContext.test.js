@@ -8,8 +8,8 @@ const continueMessage = { text: `continue`, type: 'message' };
 class BindingTestDialog extends Dialog {
     constructor(dialogId, inputBinding, outputBinding) {
         super(dialogId);
-        this.inputBindings['value'] = inputBinding;
-        this.outputBinding = outputBinding; 
+        this.inputProperties['value'] = inputBinding;
+        this.outputProperty = outputBinding; 
     }
 
     async beginDialog(dc, options) {
