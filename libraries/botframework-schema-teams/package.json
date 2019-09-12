@@ -1,12 +1,13 @@
 {
-  "name": "botbuilder-teams",
+  "name": "botframework-schema-teams",
   "author": "Microsoft Corp.",
   "description": "Teams extensions for Microsoft BotBuilder.",
-  "version": "4.1.6",
+  "version": "0.0.1",
   "license": "MIT",
   "keywords": [
     "botbuilder",
     "botframework",
+    "schema",
     "bots",
     "chatbots",
     "teams"

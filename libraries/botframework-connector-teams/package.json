@@ -2,7 +2,7 @@
   "name": "botframework-connector-teams",
   "author": "Microsoft Corp.",
   "description": "Teams extensions for Microsoft BotFramework Connector.",
-  "version": "4.1.6",
+  "version": "0.0.1",
   "license": "MIT",
   "keywords": [
     "botbuilder",
