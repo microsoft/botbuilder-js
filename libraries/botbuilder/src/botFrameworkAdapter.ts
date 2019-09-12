@@ -470,13 +470,14 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * For a given channel server, lists the conversations in which this bot has participated.
+     * For a given channel server, gets a page of the conversations in which this bot has participated.
      * 
      * @param contextOrServiceUrl The URL of the channel server to query or a [TurnContext](xref:botbuilder-core.TurnContext).
      * @param continuationToken Optional. The continuation token from the previous page of results.
      * Use `undefined` to retrieve the first page of results.
      * 
-     * @returns A [ConversationsResult](xref:botframework-schema.ConversationsResult) containing a page of results and a continuation token.
+     * @returns A [ConversationsResult](xref:botframework-schema.ConversationsResult) containing a page of results
+     * and a continuation token.
      *
      * @remarks
      * The result's [conversations](xref:botframework-schema.ConversationsResult.conversations) property contains a page of
