@@ -10,6 +10,7 @@ describe('Test1', function() {
 
     it('should pass', function (done) {
         assert(1);
+        done();
     });
 
 });
