@@ -33,6 +33,9 @@
     "source-map-support": "^0.5.3",
     "ts-node": "^4.1.0"
   },
+  "engines": {
+    "node": ">12.3"
+  },
   "scripts": {
     "test": "tsc && nyc mocha tests/",
     "build": "tsc",
