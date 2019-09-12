@@ -19,6 +19,11 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
+    "@types/bluebird": "*",
+    "@types/request": "*",
+    "request": "^2.88.0",
+    "rewire": "^3.0.2",
+    "bluebird": "^3.5.0",
     "@azure/ms-rest-js": "1.2.6",
     "@types/jsonwebtoken": "7.2.8",
     "@types/node": "^10.12.18",

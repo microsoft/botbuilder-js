@@ -8,6 +8,7 @@
 
 import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
 import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
+import { CustomTokenApiClient } from 'botframework-connector'
 import * as os from 'os';
 
 /**
@@ -114,6 +115,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     protected readonly credentials: MicrosoftAppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
     protected readonly settings: BotFrameworkAdapterSettings;
+
+    // new credentials for testing purpose
+    protected readonly customCredentials;
     private isEmulatingOAuthCards: boolean;
 
     /**
@@ -138,6 +142,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '', this.settings.channelAuthTenant);
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
         this.isEmulatingOAuthCards = false;
+
+        // new credentials using in testing
+        this.customCredentials = { id: this.settings.appId, pass: this.settings.appPassword};
 
         // If no channelService or openIdMetadata values were passed in the settings, check the process' Environment Variables for values.
         // These values may be set when a bot is provisioned on Azure and if so are required for the bot to properly work in Public Azure or a National Cloud.
@@ -413,9 +420,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const userId: string = context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
+        
+        //Custom token Api
+        const customClient: CustomTokenApiClient = this.createCustomTokenApiClient(url);                    
 
         const result: TokenApiModels.UserTokenGetTokenResponse = await client.userToken.getToken(userId, connectionName, { code: magicCode, channelId: context.activity.channelId });
         if (!result || !result.token || result._response.status == 404) {
+
             return undefined;
         } else {
             return result as TokenResponse;
@@ -729,7 +740,15 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      */
     protected createTokenApiClient(serviceUrl: string): TokenApiClient {
         const client = new TokenApiClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
+
         return client;
+    }
+
+    // Custom token Api Client
+    protected createCustomTokenApiClient(serviceUrl: string): CustomTokenApiClient {
+        const customClient = new CustomTokenApiClient(this.credentials, { baseUri: serviceUrl } );                
+
+        return customClient;
     }
 
     /**
