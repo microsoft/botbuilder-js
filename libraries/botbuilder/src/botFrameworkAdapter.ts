@@ -9,6 +9,7 @@
 import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
 import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
 import { CustomTokenApiClient } from 'botframework-connector'
+import * as CustomModels from '../../botframework-connector/src/customTokenApi/model/index'
 import * as os from 'os';
 
 /**
@@ -425,6 +426,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const customClient: CustomTokenApiClient = this.createCustomTokenApiClient(url);                    
 
         const result: TokenApiModels.UserTokenGetTokenResponse = await client.userToken.getToken(userId, connectionName, { code: magicCode, channelId: context.activity.channelId });
+        
+        const customResult: CustomModels.UserTokenGetTokenResponse = await customClient.userToken.getToken(userId, connectionName, { code: magicCode, channelId: context.activity.channelId });
+        
         if (!result || !result.token || result._response.status == 404) {
 
             return undefined;

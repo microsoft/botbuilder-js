@@ -15,10 +15,9 @@ import http = require('http');
 
 /* tslint:disable:no-unused-locals */
 import { AadResourceUrls } from './model/aadResourceUrls';
-import { ErrorResponse } from './model/errorResponse';
-import { TokenResponse } from './model/tokenResponse';
-import { TokenStatus } from './model/tokenStatus';
 import * as Models from './model';
+
+import { MicrosoftAppCredentials } from '../auth'
 
 import { ObjectSerializer, Authentication, VoidAuth } from './model/models';
 
@@ -35,15 +34,20 @@ export class UserTokenApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders : any = {};
     protected _useQuerystring : boolean = false;
+    protected credentials: { appId: string, appPassword: string };
 
     protected authentications = {
         'default': <Authentication>new VoidAuth(),
     }
 
-    constructor(CustomCredentials: { appId: string, appPassword: string})
-    constructor(CustomCredentials: { appId: string, appPassword: string}, basePath?: string){
+    constructor(CustomCredentials: { appId: string, appPassword: string })
+    constructor(CustomCredentials: { appId: string, appPassword: string }, basePath?: string){
         if(basePath)
          this.basePath = basePath;
+         
+        if(CustomCredentials){
+            this.credentials
+        }        
     }
 
     set useQuerystring(value: boolean) {
@@ -64,6 +68,11 @@ export class UserTokenApi {
 
     public setApiKey(key: UserTokenApiApiKeys, value: string) {
         (this.authentications as any)[UserTokenApiApiKeys[key]].apiKey = value;
+    }
+
+    private async AuthenticateRequest(){
+        const tokenGenerator = new MicrosoftAppCredentials(this.credentials.appId, this.credentials.appPassword);
+        return `Bearer ${ await tokenGenerator.getToken(true) }`;
     }
 
     /**
@@ -187,9 +196,13 @@ export class UserTokenApi {
 
         if (options.code !== undefined) {
             localVarQueryParameters['code'] = ObjectSerializer.serialize(options.code, "string");
-        }
+        }        
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        Object.assign(localVarHeaderParams, options.headers);
+
+        localVarFormParams = {
+            authorization: this.AuthenticateRequest()
+        }
 
         let localVarUseFormData = false;
 
