@@ -24,11 +24,12 @@ export interface WebRequest {
     headers: any;
 
     /**
-     * Adds a listener for an event. The framework uses this method to retrieve the request body
-     * when the [body](xref:botbuilder.WebRequest.body) property is `null` or `undefined`.
+     * When implemented in a derived class, adds a listener for an event.
+     * The framework uses this method to retrieve the request body when the
+     * [body](xref:botbuilder.WebRequest.body) property is `null` or `undefined`.
      * 
      * @param event The event name.
-     * @param args The event listener.
+     * @param args Arguments used to handle the event.
      * 
      * @returns A reference to the request object.
      */
@@ -42,7 +43,7 @@ export interface WebRequest {
  */
 export interface WebResponse {
     /**
-     * Sends a FIN packet.
+     * When implemented in a derived class, sends a FIN packet.
      * 
      * @param args The arguments for the end event.
      * 
@@ -51,7 +52,7 @@ export interface WebResponse {
     end(...args: any[]): any;
 
     /**
-     * Sends the response.
+     * When implemented in a derived class, sends the response.
      * 
      * @param body The response payload.
      * 
@@ -60,7 +61,7 @@ export interface WebResponse {
     send(body: any): any;
 
     /**
-     * Sets the HTTP status code for the response.
+     * When implemented in a derived class, sets the HTTP status code for the response.
      * 
      * @param status The status code to use.
      * 
@@ -70,7 +71,7 @@ export interface WebResponse {
 }
 
 /**
- * Settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
+ * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
  */
 export interface BotFrameworkAdapterSettings {
     /**
@@ -155,8 +156,7 @@ const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
  * [How bots work](https://docs.microsoft.com/azure/bot-service/bot-builder-basics) and
  * [Middleware](https://docs.microsoft.com/azure/bot-service/bot-builder-concept-middleware).
  *
- * This shows the typical adapter setup:
- *
+ * For example:
  * ```JavaScript
  * const { BotFrameworkAdapter } = require('botbuilder');
  *
@@ -226,19 +226,19 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Resumes a conversation with a user, possibly after some time has gone by.
+     * An asynchronous method that resumes a conversation with a user, possibly after some time has gone by.
      *
      * @param reference A reference to the conversation to continue.
-     * @param logic The bot logic to run after the adapter middleware runs.
+     * @param logic The asynchronous method to call after the adapter middleware runs.
      * 
      * @remarks
      * This is often referred to as a _proactive notification_, the bot can proactively
      * send a message to a conversation or user without waiting for an incoming message.
-     * Scenarios like sending notifications or coupons to a user are enabled by this method.
+     * For example, a bot can use this method to send notifications or coupons to a user.
      *
      * To send a proactive message:
      * 1. Save a copy of a [ConversationReference](xref:botframework-schema.ConversationReference)
-     *    from an incoming activity. For example, you can store the reference in a database.
+     *    from an incoming activity. For example, you can store the conversation reference in a database.
      * 1. Call this method to resume the conversation at a later time. Use the saved reference to access the conversation.
      * 1. On success, the adapter generates a [TurnContext](xref:botbuilder-core.TurnContext) object and calls the `logic` function handler.
      *    Use the `logic` function to send the proactive message.
@@ -246,12 +246,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * To copy the reference from any incoming activity in the conversation, use the
      * [TurnContext.getConversationReference](xref:botbuilder-core.TurnContext.getConversationReference) method.
      *
-     * The processing steps for this method are very similar to [processActivity](xref:botbuilder.BotFrameworkAdapter.processActivity).
+     * This method is similar to the [processActivity](xref:botbuilder.BotFrameworkAdapter.processActivity) method.
      * The adapter creates a [TurnContext](xref:botbuilder-core.TurnContext) and routes it through
-     * middleware before calling the `logic` handler. The created activity will have a
+     * its middleware before calling the `logic` handler. The created activity will have a
      * [type](xref:botframework-schema.Activity.type) of 'event' and a
      * [name](xref:botframework-schema.Activity.name) of 'continueConversation'.
      *
+     * For example:
      * ```JavaScript
      * server.post('/api/notifyUser', async (req, res) => {
      *    // Lookup previously saved conversation reference.
@@ -281,36 +282,38 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Requests that a channel create and start a conversation on behalf of the bot.
+     * An asynchronous method that creates and starts a conversation with a user on a channel.
      *
      * @param reference A reference for the conversation to create.
-     * @param logic The bot logic to call after the adapter middleware runs.
+     * @param logic The asynchronous method to call after the adapter middleware runs.
      * 
      * @remarks
-     * To use this method, you need both the bot's and the user's account information on that channel.
-     * Note that while the Bot Connector service supports the creating of group conversations, this
+     * To use this method, you need both the bot's and the user's account information on a channel.
+     * The Bot Connector service supports the creating of group conversations; however, this
      * method and most channels only support initiating a direct message (non-group) conversation.
      * 
      * To create and start a new conversation:
-     * 1. Get a copy of a [ConversationReference](xref:botframework-schema.ConversationReference)
-     *    from an incoming activity. Set the [user](xref:botframework-schema.ConversationReference.user)
-     *    property to the [ChannelAccount](xref:botframework-schema.ChannelAccount) for the intended recipient.
+     * 1. Get a copy of a [ConversationReference](xref:botframework-schema.ConversationReference) from an incoming activity.
+     * 1. Set the [user](xref:botframework-schema.ConversationReference.user) property to the
+     *    [ChannelAccount](xref:botframework-schema.ChannelAccount) value for the intended recipient.
      * 1. Call this method to request that the channel create a new conversation with the specified user.
      * 1. On success, the adapter generates a turn context and calls the `logic` function handler.
      * 
-     * To copy the reference from any incoming activity in the conversation, use the
-     * [TurnContext.getConversationReference](xref:botbuilder-core.TurnContext.getConversationReference) method.
+     * To get the initial reference, use the
+     * [TurnContext.getConversationReference](xref:botbuilder-core.TurnContext.getConversationReference)
+     * method on any incoming activity in the conversation.
      *
      * If the channel establishes the conversation, the generated event activity's
      * [conversation](xref:botframework-schema.Activity.conversation) property will contain the
      * ID of the new conversation.
      *
-     * The processing steps for this method are very similar to [processActivity](xref:botbuilder.BotFrameworkAdapter.processActivity).
+     * This method is similar to the [processActivity](xref:botbuilder.BotFrameworkAdapter.processActivity) method.
      * The adapter creates a [TurnContext](xref:botbuilder-core.TurnContext) and routes it through
      * middleware before calling the `logic` handler. The created activity will have a
      * [type](xref:botframework-schema.Activity.type) of 'event' and a
      * [name](xref:botframework-schema.Activity.name) of 'createConversation'.
      *
+     * For example:
      * ```JavaScript
      * // Get group members conversation reference
      * const reference = TurnContext.getConversationReference(context.activity);
@@ -365,14 +368,14 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Deletes an existing activity.
+     * An asynchronous method that deletes an existing activity.
      * 
      * > [!NOTE]
      * > - This interface supports the framework and is not intended to be called directly for your code.
      * > - Not all channels support this operation. For channels that don't, this call may throw an exception.
      * 
      * @param context The context object for the turn.
-     * @param reference Conversation reference information for the activity being deleted.
+     * @param reference Conversation reference information for the activity to delete.
      * 
      * @remarks
      * Use [TurnContext.deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity) to delete
@@ -389,7 +392,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Removes a member from the current conversation.
+     * An asynchronous method that removes a member from the current conversation.
      *
      * > [!NOTE] Not all channels support this operation. For channels that don't, this call may throw an exception.
      * 
@@ -411,16 +414,16 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Lists the members of a given activity.
+     * An asynchronous method that lists the members of a given activity.
      * 
      * @param context The context object for the turn.
      * @param activityId Optional. The ID of the activity to get the members of. If not specified, the current activity ID is used.
      *
-     * @returns An array of [ChannelAccount](xref:botframework-schema.ChannelAccount) objects representing
+     * @returns An array of [ChannelAccount](xref:botframework-schema.ChannelAccount) objects for
      * the users involved in a given activity.
      * 
      * @remarks
-     * Returns an array of [ChannelAccount](xref:botframework-schema.ChannelAccount) objects representing
+     * Returns an array of [ChannelAccount](xref:botframework-schema.ChannelAccount) objects for
      * the users involved in a given activity.
      *
      * This is different from [getConversationMembers](xref:botbuilder.BotFrameworkAdapter.getConversationMembers)
@@ -443,15 +446,15 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Lists the members of the current conversation.
+     * An asynchronous method that lists the members of the current conversation.
      * 
      * @param context The context object for the turn.
      *
-     * @returns An array of [ChannelAccount](xref:botframework-schema.ChannelAccount) objects representing
+     * @returns An array of [ChannelAccount](xref:botframework-schema.ChannelAccount) objects for
      * all users currently involved in a conversation.
      * 
      * @remarks
-     * Returns an array of [ChannelAccount](xref:botframework-schema.ChannelAccount) objects representing
+     * Returns an array of [ChannelAccount](xref:botframework-schema.ChannelAccount) objects for
      * all users currently involved in a conversation.
      *
      * This is different from [getActivityMembers](xref:botbuilder.BotFrameworkAdapter.getActivityMembers)
@@ -470,26 +473,25 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * For a given channel server, gets a page of the conversations in which this bot has participated.
+     * An asynchronous method that, for the specified channel, gets a page of the conversations in which this bot has participated.
      * 
-     * @param contextOrServiceUrl The URL of the channel server to query or a [TurnContext](xref:botbuilder-core.TurnContext).
+     * @param contextOrServiceUrl The URL of the channel server to query or a
+     * [TurnContext](xref:botbuilder-core.TurnContext) object from a conversation on the channel.
      * @param continuationToken Optional. The continuation token from the previous page of results.
-     * Use `undefined` to retrieve the first page of results.
+     * Omit this parameter or use `undefined` to retrieve the first page of results.
      * 
-     * @returns A [ConversationsResult](xref:botframework-schema.ConversationsResult) containing a page of results
+     * @returns A [ConversationsResult](xref:botframework-schema.ConversationsResult) object containing a page of results
      * and a continuation token.
      *
      * @remarks
-     * The result's [conversations](xref:botframework-schema.ConversationsResult.conversations) property contains a page of
+     * The the return value's [conversations](xref:botframework-schema.ConversationsResult.conversations) property contains a page of
      * [ConversationMembers](xref:botframework-schema.ConversationMembers) objects. Each object's
      * [id](xref:botframework-schema.ConversationMembers.id) is the ID of a conversation in which the bot has participated on this channel.
-     * 
      * This method can be called from outside the context of a conversation, as only the bot's service URL and credentials are required.
      * 
-     * The channel server returns results in pages. If the result's
+     * The channel batches results in pages. If the result's
      * [continuationToken](xref:botframework-schema.ConversationsResult.continuationToken) property is not empty, then
      * there are more pages to get. Use the returned token to get the next page of results.
-     * 
      * If the `contextOrServiceUrl` parameter is a [TurnContext](xref:botbuilder-core.TurnContext), the URL of the channel server is
      * retrieved from
      * `contextOrServiceUrl`.[activity](xref:botbuilder-core.TurnContext.activity).[serviceUrl](xref:botframework-schema.Activity.serviceUrl).
@@ -502,11 +504,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Retrieves the OAuth token for a user that is in a sign-in flow.
+     * An asynchronous method that attempts to retrieve the token for a user that's in a login flow.
      * 
      * @param context The context object for the turn.
-     * @param connectionName Name of the auth connection to use.
-     * @param magicCode Optional. User entered validation code.
+     * @param connectionName The name of the auth connection to use.
+     * @param magicCode Optional. The validation code the user entered.
+     * 
+     * @returns A [TokenResponse](xref:botframework-schema.TokenResponse) object that contains the user token.
      */
     public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse> {
         if (!context.activity.from || !context.activity.from.id) {
@@ -529,11 +533,11 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Signs the user out with the token server.
-     * @param context Context for the current turn of conversation with the user.
-     * @param connectionName Name of the auth connection to use.
-     * @param userId id of user to sign out.
-     * @returns A promise that represents the work queued to execute.
+     * An asynchronous method that signs out the user from the token server.
+     * 
+     * @param context The context object for the turn.
+     * @param connectionName The name of the auth connection to use.
+     * @param userId The ID of user to sign out.
      */
     public async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void> {
         if (!context.activity.from || !context.activity.from.id) {
@@ -550,9 +554,11 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Gets a signin link from the token server that can be sent as part of a SigninCard.
-     * @param context Context for the current turn of conversation with the user.
-     * @param connectionName Name of the auth connection to use.
+     * An asynchronous method that gets a sign-in link from the token server that can be sent as part
+     * of a [SigninCard](xref:botframework-schema.SigninCard).
+     * 
+     * @param context The context object for the turn.
+     * @param connectionName The name of the auth connection to use.
      */
     public async getSignInLink(context: TurnContext, connectionName: string): Promise<string> {
         this.checkEmulatingOAuthCards(context);
@@ -570,13 +576,16 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /** 
-     * Retrieves the token status for each configured connection for the given user.
-     * @param context Context for the current turn of conversation with the user.
-     * @param userId The user Id for which token status is retrieved.
-     * @param includeFilter Optional comma seperated list of connection's to include. Blank will return token status for all configured connections.
-     * @returns Array of TokenStatus
-     * */ 
-    
+     * An asynchronous method that retrieves the token status for each configured connection for the given user.
+     * 
+     * @param context The context object for the turn.
+     * @param userId Optional. If present, the ID of the user to retrieve the token status for.
+     *      Otherwise, the ID of the user who sent the current activity is used.
+     * @param includeFilter Optional. A comma-separated list of connection's to include. If present,
+     *      the `includeFilter` parameter limits the tokens this method returns.
+     * 
+     * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
+     */
     public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string ): Promise<TokenStatus[]>
     {
         if (!userId && (!context.activity.from || !context.activity.from.id)) {
@@ -591,9 +600,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Signs the user out with the token server.
-     * @param context Context for the current turn of conversation with the user.
-     * @param connectionName Name of the auth connection to use.
+     * An asynchronous method that signs out the user from the token server.
+     * 
+     * @param context The context object for the turn.
+     * @param connectionName The name of the auth connection to use.
+     * @param resourceUrls The list of resource URLs to retrieve tokens for.
+     * 
+     * @returns A map of the [TokenResponse](xref:botframework-schema.TokenResponse) objects by resource URL.
      */
     public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{
         [propertyName: string]: TokenResponse;
@@ -610,9 +623,14 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Tells the token service to emulate the sending of OAuthCards for a channel.
+     * An asynchronous method that sends an emulated OAuth card for a channel.
+     * > [!NOTE] This method supports the framework and is not intended to be called directly for your code.
+     * 
      * @param contextOrServiceUrl The URL of the emulator.
-     * @param emulate If `true` the emulator will emulate the sending of OAuthCards.
+     * @param emulate `true` to send an emulated OAuth card to the emulator; or `false` to not send the card.
+     * 
+     * @remarks
+     * When testing a bot in the Bot Framework Emulator, this method can emulate the OAuth card interaction.
      */
     public async emulateOAuthCards(contextOrServiceUrl: TurnContext | string, emulate: boolean): Promise<void> {
         this.isEmulatingOAuthCards = emulate;
@@ -621,45 +639,38 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Processes an incoming request received by the bots web server into a TurnContext.
+     * An asynchronous method that creates a turn context and runs the middleware pipeline for an incoming activity.
      *
+     * @param req An Express or Restify style request object.
+     * @param res An Express or Restify style response object.
+     * @param logic The function to call at the end of the middleware pipeline.
+     * 
      * @remarks
-     * This method is the main way a bot receives incoming messages.
+     * This is the main way a bot receives incoming messages and defines a turn in the conversation. This method:
+     * 
+     * 1. Parses and authenticates an incoming request.
+     *    - The activity is read from the body of the incoming request. An error will be returned
+     *      if the activity can't be parsed.
+     *    - The identity of the sender is authenticated as either the Emulator or a valid Microsoft
+     *      server, using the bot's `appId` and `appPassword`. The request is rejected if the sender's
+     *      identity is not verified.
+     * 1. Creates a [TurnContext](xref:botbuilder-core.TurnContext) object for the received activity.
+     *    - This object is wrapped with a [revocable proxy](https://www.ecma-international.org/ecma-262/6.0/#sec-proxy.revocable).
+     *    - When this method completes, the proxy is revoked.
+     * 1. Sends the turn context through the adapter's middleware pipeline.
+     * 1. Sends the turn context to the `logic` function.
+     *    - The bot may perform additional routing or processing at this time.
+     *      Returning a promise (or providing an `async` handler) will cause the adapter to wait for any asynchronous operations to complete.
+     *    - After the `logic` function completes, the promise chain set up by the middleware is resolved.
      *
-     * This method takes a raw incoming request object from a webserver and processes it into a
-     * normalized TurnContext that can be used by the bot. This includes any messages sent from a
-     * user and is the method that drives what is often referred to as the bot's "Reactive Messaging"
-     * flow.
+     * Middleware can _short circuit_ a turn. When this happens, subsequent middleware and the
+     * `logic` function is not called; however, all middleware prior to this point still run to completion.
+     * For more information about the middleware pipeline, see the
+     * [how bots work](https://docs.microsoft.com/azure/bot-service/bot-builder-basics) and
+     * [middleware](https://docs.microsoft.com/azure/bot-service/bot-builder-concept-middleware) articles.
+     * Use the adapter's [use](xref:botbuilder-core.BotAdapter.use) method to add middleware to the adapter.
      *
-     * The following steps will be taken to process the activity:
-     *
-     * - The identity of the sender will be verified to be either the Emulator or a valid Microsoft
-     *   server. The bots `appId` and `appPassword` will be used during this process and the request
-     *   will be rejected if the senders identity can't be verified.
-     * - The activity will be parsed from the body of the incoming request. An error will be returned
-     *   if the activity can't be parsed.
-     * - A `TurnContext` instance will be created for the received activity and wrapped with a
-     *   [Revocable Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/revocable).
-     * - The context will be routed through any middleware registered with the adapter using
-     *   [use()](#use).  Middleware is executed in the order in which it's added and any middleware
-     *   can intercept or prevent further routing of the context by simply not calling the passed
-     *   in `next()` function. This is called the "Leading Edge" of the request; middleware will
-     *   get a second chance to run on the "Trailing Edge" of the request after the bots logic has run.
-     * - Assuming the context hasn't been intercepted by a piece of middleware, the context will be
-     *   passed to the logic handler passed in.  The bot may perform additional routing or
-     *   processing at this time. Returning a promise (or providing an `async` handler) will cause the
-     *   adapter to wait for any asynchronous operations to complete.
-     * - Once the bot's logic completes, the promise chain set up by the middleware stack will be resolved,
-     *   giving middleware a second chance to run on the "Trailing Edge" of the request.
-     * - After the middleware stack's promise chain has been fully resolved the context object will be
-     *   `revoked()` and any future calls to the context will result in a `TypeError: Cannot perform
-     *   'set' on a proxy that has been revoked` being thrown.
-     *
-     * > [!TIP]
-     * > Note: If you see the error `TypeError: Cannot perform 'set' on a proxy that has been revoked`
-     * > appearing in your bot's console output, the likely cause is that an async function was used
-     * > without using the `await` keyword. Make sure all async functions use await!
-     *
+     * For example:
      * ```JavaScript
      * server.post('/api/messages', (req, res) => {
      *    // Route received request to adapter for processing
@@ -671,9 +682,11 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      *    });
      * });
      * ```
-     * @param req An Express or Restify style Request object.
-     * @param res An Express or Restify style Response object.
-     * @param logic A function handler that will be called to perform the bots logic after the received activity has been pre-processed by the adapter and routed through any middleware for processing.
+     *
+     * > [!TIP]
+     * > If you see the error `TypeError: Cannot perform 'set' on a proxy that has been revoked`
+     * > in your bot's console output, the likely cause is that an async function was used
+     * > without using the `await` keyword. Make sure all async functions use await!
      */
     public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
         let body: any;
@@ -723,22 +736,23 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Sends a set of outgoing activities to the appropriate channel server.
+     * An asynchronous method that sends a set of outgoing activities to a channel server.
+     * > [!NOTE] This method supports the framework and is not intended to be called directly for your code.
      *
+     * @param context The context object for the turn.
+     * @param activities The activities to send.
+     * 
+     * @returns An array of [ResourceResponse](xref:)
+     * 
      * @remarks
-     * The activities will be sent one after another in the order in which they're received. A response object will be returned for each
-     * sent activity. For `message` activities this will contain the id of the delivered message.
+     * The activities will be sent one after another in the order in which they're received. A
+     * response object will be returned for each sent activity. For `message` activities this will
+     * contain the ID of the delivered message.
      *
-     * Instead of calling these methods directly on the adapter, calling `TurnContext.sendActivities()` or `TurnContext.sendActivity()`
-     * is the preferred way of sending activities as that will ensure that outgoing activities have been properly addressed
-     * and that any interested middleware has been notified.
-     *
-     * The primary scenario for calling this method directly is when you want to explicitly bypass
-     * going through any middleware. For instance, sending the `typing` activity might
-     * be a good reason to call this method directly as those activities are unlikely to require
-     * handling by middleware.
-     * @param context Context for the current turn of conversation with the user.
-     * @param activities List of activities to send.
+     * Use the turn context's [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) or
+     * [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) method, instead of directly
+     * calling this method. The [TurnContext](xref:botbuilder-core.TurnContext) ensures that outgoing
+     * activities are properly addressed and that all registered response event handlers are notified.
      */
     public async sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         const responses: ResourceResponse[] = [];
@@ -782,15 +796,18 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Replaces an activity that was previously sent to a channel with an updated version.
-     *
+     * An asynchronous method that replaces a previous activity with an updated version.
+     * 
+     * > [!NOTE]
+     * > - This interface supports the framework and is not intended to be called directly for your code.
+     * > - Not all channels support this operation. For channels that don't, this call may throw an exception.
+     * 
+     * @param context The context object for the turn.
+     * @param activity The updated version of the activity to replace.
+     * 
      * @remarks
-     * Calling `TurnContext.updateActivity()` is the preferred way of updating activities (rather than calling it directly from the adapter) as that
-     * will ensure that any interested middleware has been notified.
-     *
-     * It should be noted that not all channels support this feature.
-     * @param context Context for the current turn of conversation with the user.
-     * @param activity New activity to replace a current activity with.
+     * Use [TurnContext.updateActivity](xref:botbuilder-core.TurnContext.updateActivity) to update
+     * an activity from your bot code.
      */
     public async updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void> {
         if (!activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.updateActivity(): missing serviceUrl`); }
@@ -821,8 +838,12 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Allows for mocking of the connector client in unit tests.
-     * @param serviceUrl Clients service url.
+     * Creates a connector client.
+     * 
+     * @param serviceUrl The client's service URL.
+     * 
+     * @remarks
+     * Override this in a derived class to create a mock connector client for unit testing.
      */
     protected createConnectorClient(serviceUrl: string): ConnectorClient {
         const client: ConnectorClient = new ConnectorClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
@@ -830,8 +851,12 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Allows for mocking of the OAuth API Client in unit tests.
-     * @param serviceUrl Clients service url.
+     * Creates an OAuth API client.
+     * 
+     * @param serviceUrl The client's service URL.
+     * 
+     * @remarks
+     * Override this in a derived class to create a mock OAuth API client for unit testing.
      */
     protected createTokenApiClient(serviceUrl: string): TokenApiClient {
         const client = new TokenApiClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
@@ -839,8 +864,15 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Allows for mocking of the OAuth Api URL in unit tests.
-     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
+     * Gets the OAuth API endpoint.
+     * 
+     * @param contextOrServiceUrl The URL of the channel server to query or
+     * a [TurnContext](xref:botbuilder-core.TurnContext). For a turn context, the context's
+     * [activity](xref:botbuilder-core.TurnContext.activity).[serviceUrl](xref:botframework-schema.Activity.serviceUrl)
+     * is used for the URL.
+     * 
+     * @remarks
+     * Override this in a derived class to create a mock OAuth API endpoint for unit testing.
      */
     protected oauthApiUrl(contextOrServiceUrl: TurnContext | string): string {
         return this.isEmulatingOAuthCards ?
@@ -851,8 +883,12 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Allows for mocking of toggling the emulating OAuthCards in unit tests.
-     * @param context The TurnContext
+     * Checks the environment and can set a flag to emulate OAuth cards.
+     * 
+     * @param context The context object for the turn.
+     * 
+     * @remarks
+     * Override this in a derived class to control how OAuth cards are emulated for unit testing.
      */
     protected checkEmulatingOAuthCards(context: TurnContext): void {
         if (!this.isEmulatingOAuthCards &&
@@ -863,8 +899,12 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Allows for the overriding of the context object in unit tests and derived adapters.
-     * @param request Received request.
+     * Creates a turn context.
+     * 
+     * @param request An incoming request body.
+     * 
+     * @remarks
+     * Override this in a derived class to modify how the adapter creates a turn context.
      */
     protected createContext(request: Partial<Activity>): TurnContext {
         return new TurnContext(this as any, request);
@@ -872,7 +912,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 }
 
 /**
- * Handle incoming webhooks from the botframework
+ * Handles incoming webhooks from the botframework
  * @private
  * @param req incoming web request
  */
