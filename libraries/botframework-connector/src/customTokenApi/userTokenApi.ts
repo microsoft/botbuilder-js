@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-import localVarRequest = require('request');
+import request = require('request');
 import http = require('http');
 
 /* tslint:disable:no-unused-locals */
@@ -110,7 +110,7 @@ export class UserTokenApi {
 
         let localVarUseFormData = false;
 
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: request.Options = {
             method: 'POST',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -131,7 +131,7 @@ export class UserTokenApi {
                 }
             }
             return new Promise<Models.UserTokenGetAadTokensResponse>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
+                request(localVarRequestOptions, (error, response, body) => {
                     if (error) {
                         reject(error);
                     } else {
@@ -193,7 +193,7 @@ export class UserTokenApi {
 
         let localVarUseFormData = false;
 
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: request.Options = {
             method: 'GET',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -213,7 +213,7 @@ export class UserTokenApi {
                 }
             }
             return new Promise<Models.UserTokenGetTokenResponse>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
+                request(localVarRequestOptions, (error, response, body) => {
                     if (error) {
                         reject(error);
                     } else {
@@ -265,7 +265,7 @@ export class UserTokenApi {
 
         let localVarUseFormData = false;
 
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: request.Options = {
             method: 'GET',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -285,7 +285,7 @@ export class UserTokenApi {
                 }
             }
             return new Promise<Models.UserTokenGetTokenStatusResponse>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
+                request(localVarRequestOptions, (error, response, body) => {
                     if (error) {
                         reject(error);
                     } else {
@@ -337,7 +337,7 @@ export class UserTokenApi {
 
         let localVarUseFormData = false;
 
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: request.Options = {
             method: 'DELETE',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -357,7 +357,7 @@ export class UserTokenApi {
                 }
             }
             return new Promise<Models.UserTokenSignOutResponse>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
+                request(localVarRequestOptions, (error, response, body) => {
                     if (error) {
                         reject(error);
                     } else {

@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-import localVarRequest = require('request');
+import request = require('request');
 import http = require('http');
 
 /* tslint:disable:no-unused-locals */
@@ -107,7 +107,7 @@ export class BotSignInApi {
 
         let localVarUseFormData = false;
 
-        let localVarRequestOptions: localVarRequest.Options = {
+        let localVarRequestOptions: request.Options = {
             method: 'GET',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -127,7 +127,7 @@ export class BotSignInApi {
                 }
             }
             return new Promise<{ response: http.IncomingMessage; body: string;  }>((resolve, reject) => {
-                localVarRequest(localVarRequestOptions, (error, response, body) => {
+                request(localVarRequestOptions, (error, response, body) => {
                     if (error) {
                         reject(error);
                     } else {
