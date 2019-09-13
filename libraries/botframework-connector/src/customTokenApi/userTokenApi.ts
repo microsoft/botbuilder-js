@@ -73,7 +73,7 @@ export class UserTokenApi {
      * @param connectionName 
      * @param channelId 
      */
-    public async userTokenGetAadTokens (aadResourceUrls: AadResourceUrls, userId: string, connectionName: string, channelId?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: { [key: string]: TokenResponse; };  }> {
+    public async getAadTokens (userId: string, connectionName: string, aadResourceUrls: AadResourceUrls, options: Models.UserTokenGetAadTokensOptionalParams = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: { [key: string]: TokenResponse; };  }> {
         const localVarPath = this.basePath + '/api/usertoken/GetAadTokens';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -102,8 +102,8 @@ export class UserTokenApi {
             localVarQueryParameters['connectionName'] = ObjectSerializer.serialize(connectionName, "string");
         }
 
-        if (channelId !== undefined) {
-            localVarQueryParameters['channelId'] = ObjectSerializer.serialize(channelId, "string");
+        if (options.channelId !== undefined) {
+            localVarQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
         }
 
         (<any>Object).assign(localVarHeaderParams, options.headers);
@@ -153,7 +153,7 @@ export class UserTokenApi {
      * @param channelId 
      * @param code 
      */
-    public async userTokenGetToken (userId: string, connectionName: string, channelId?: string, code?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: TokenResponse;  }> {
+    public async getToken (userId: string, connectionName: string, options: Models.UserTokenGetTokenOptionalParams = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: TokenResponse;  }> {
         const localVarPath = this.basePath + '/api/usertoken/GetToken';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -177,12 +177,12 @@ export class UserTokenApi {
             localVarQueryParameters['connectionName'] = ObjectSerializer.serialize(connectionName, "string");
         }
 
-        if (channelId !== undefined) {
-            localVarQueryParameters['channelId'] = ObjectSerializer.serialize(channelId, "string");
+        if (options.channelId !== undefined) {
+            localVarQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
         }
 
-        if (code !== undefined) {
-            localVarQueryParameters['code'] = ObjectSerializer.serialize(code, "string");
+        if (options.code !== undefined) {
+            localVarQueryParameters['code'] = ObjectSerializer.serialize(options.code, "string");
         }
 
         (<any>Object).assign(localVarHeaderParams, options.headers);
@@ -230,7 +230,7 @@ export class UserTokenApi {
      * @param channelId 
      * @param include 
      */
-    public async userTokenGetTokenStatus (userId: string, channelId?: string, include?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<TokenStatus>;  }> {
+    public async getTokenStatus (userId: string, options: Models.UserTokenGetTokenStatusOptionalParams = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<TokenStatus>;  }> {
         const localVarPath = this.basePath + '/api/usertoken/GetTokenStatus';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -245,12 +245,12 @@ export class UserTokenApi {
             localVarQueryParameters['userId'] = ObjectSerializer.serialize(userId, "string");
         }
 
-        if (channelId !== undefined) {
-            localVarQueryParameters['channelId'] = ObjectSerializer.serialize(channelId, "string");
+        if (options.channelId !== undefined) {
+            localVarQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
         }
 
-        if (include !== undefined) {
-            localVarQueryParameters['include'] = ObjectSerializer.serialize(include, "string");
+        if (options.include !== undefined) {
+            localVarQueryParameters['include'] = ObjectSerializer.serialize(options.include, "string");
         }
 
         (<any>Object).assign(localVarHeaderParams, options.headers);
@@ -298,7 +298,7 @@ export class UserTokenApi {
      * @param connectionName 
      * @param channelId 
      */
-    public async userTokenSignOut (userId: string, connectionName?: string, channelId?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: object;  }> {
+    public async signOut (userId: string, options: Models.UserTokenSignOutOptionalParams = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: object;  }> {
         const localVarPath = this.basePath + '/api/usertoken/SignOut';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -313,12 +313,12 @@ export class UserTokenApi {
             localVarQueryParameters['userId'] = ObjectSerializer.serialize(userId, "string");
         }
 
-        if (connectionName !== undefined) {
-            localVarQueryParameters['connectionName'] = ObjectSerializer.serialize(connectionName, "string");
+        if (options.connectionName !== undefined) {
+            localVarQueryParameters['connectionName'] = ObjectSerializer.serialize(options.connectionName, "string");
         }
 
-        if (channelId !== undefined) {
-            localVarQueryParameters['channelId'] = ObjectSerializer.serialize(channelId, "string");
+        if (options.channelId !== undefined) {
+            localVarQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
         }
 
         (<any>Object).assign(localVarHeaderParams, options.headers);
