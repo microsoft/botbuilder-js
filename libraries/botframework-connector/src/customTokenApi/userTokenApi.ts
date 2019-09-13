@@ -18,6 +18,7 @@ import { AadResourceUrls } from './model/aadResourceUrls';
 import { ErrorResponse } from './model/errorResponse';
 import { TokenResponse } from './model/tokenResponse';
 import { TokenStatus } from './model/tokenStatus';
+import * as Models from './model';
 
 import { ObjectSerializer, Authentication, VoidAuth } from './model/models';
 
