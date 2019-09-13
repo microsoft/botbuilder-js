@@ -73,7 +73,7 @@ export class UserTokenApi {
      * @param connectionName 
      * @param channelId 
      */
-    public async getAadTokens (userId: string, connectionName: string, aadResourceUrls: AadResourceUrls, options: Models.UserTokenGetAadTokensOptionalParams = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: { [key: string]: TokenResponse; };  }> {
+    public async getAadTokens (userId: string, connectionName: string, aadResourceUrls: AadResourceUrls, options: Models.UserTokenGetAadTokensOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetAadTokensResponse> {
         const localVarPath = this.basePath + '/api/usertoken/GetAadTokens';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -130,14 +130,18 @@ export class UserTokenApi {
                     localVarRequestOptions.form = localVarFormParams;
                 }
             }
-            return new Promise<{ response: http.IncomingMessage; body: { [key: string]: TokenResponse; };  }>((resolve, reject) => {
+            return new Promise<Models.UserTokenGetAadTokensResponse>((resolve, reject) => {
                 localVarRequest(localVarRequestOptions, (error, response, body) => {
                     if (error) {
                         reject(error);
                     } else {
                         body = ObjectSerializer.deserialize(body, "{ [key: string]: TokenResponse; }");
+                        let _bodyAsText = ObjectSerializer.deserialize(body, "string");
                         if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
+                            let toReturn: any = Object.assign({}, body);
+                            let _response = Object.assign(response, { bodyAsText: _bodyAsText, parsedBody: body});
+                            Object.assign(toReturn, {_response: _response});
+                            resolve(toReturn);
                         } else {
                             reject({ response: response, body: body });
                         }
@@ -153,7 +157,7 @@ export class UserTokenApi {
      * @param channelId 
      * @param code 
      */
-    public async getToken (userId: string, connectionName: string, options: Models.UserTokenGetTokenOptionalParams = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: TokenResponse;  }> {
+    public async getToken (userId: string, connectionName: string, options: Models.UserTokenGetTokenOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetTokenResponse> {
         const localVarPath = this.basePath + '/api/usertoken/GetToken';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -208,14 +212,18 @@ export class UserTokenApi {
                     localVarRequestOptions.form = localVarFormParams;
                 }
             }
-            return new Promise<{ response: http.IncomingMessage; body: TokenResponse;  }>((resolve, reject) => {
+            return new Promise<Models.UserTokenGetTokenResponse>((resolve, reject) => {
                 localVarRequest(localVarRequestOptions, (error, response, body) => {
                     if (error) {
                         reject(error);
                     } else {
-                        body = ObjectSerializer.deserialize(body, "TokenResponse");
+                        let _body: Models.TokenResponse = ObjectSerializer.deserialize(body, "TokenResponse");
+                        let _bodyAsText: string = ObjectSerializer.deserialize(body, "string");
+                        let httpResponse: http.IncomingMessage = response;
                         if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
+                            let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                            let toReturn: Models.UserTokenGetTokenResponse = Object.assign(_body, {_response: _response});                          
+                            resolve(toReturn);
                         } else {
                             reject({ response: response, body: body });
                         }
@@ -230,7 +238,7 @@ export class UserTokenApi {
      * @param channelId 
      * @param include 
      */
-    public async getTokenStatus (userId: string, options: Models.UserTokenGetTokenStatusOptionalParams = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<TokenStatus>;  }> {
+    public async getTokenStatus (userId: string, options: Models.UserTokenGetTokenStatusOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetTokenStatusResponse> {
         const localVarPath = this.basePath + '/api/usertoken/GetTokenStatus';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -276,14 +284,18 @@ export class UserTokenApi {
                     localVarRequestOptions.form = localVarFormParams;
                 }
             }
-            return new Promise<{ response: http.IncomingMessage; body: Array<TokenStatus>;  }>((resolve, reject) => {
+            return new Promise<Models.UserTokenGetTokenStatusResponse>((resolve, reject) => {
                 localVarRequest(localVarRequestOptions, (error, response, body) => {
                     if (error) {
                         reject(error);
                     } else {
                         body = ObjectSerializer.deserialize(body, "Array<TokenStatus>");
+                        let _bodyAsText = ObjectSerializer.deserialize(body, "string");
                         if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
+                            let toReturn = Object.assign({}, body);
+                            let _response = Object.assign(response, {bodyAsText: _bodyAsText, parsedBody: body});
+                            Object.assign(toReturn, {_response: _response})
+                            resolve(toReturn);
                         } else {
                             reject({ response: response, body: body });
                         }
@@ -298,7 +310,7 @@ export class UserTokenApi {
      * @param connectionName 
      * @param channelId 
      */
-    public async signOut (userId: string, options: Models.UserTokenSignOutOptionalParams = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: object;  }> {
+    public async signOut (userId: string, options: Models.UserTokenSignOutOptionalParams = {headers: {}}) : Promise<Models.UserTokenSignOutResponse> {
         const localVarPath = this.basePath + '/api/usertoken/SignOut';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -344,14 +356,18 @@ export class UserTokenApi {
                     localVarRequestOptions.form = localVarFormParams;
                 }
             }
-            return new Promise<{ response: http.IncomingMessage; body: object;  }>((resolve, reject) => {
+            return new Promise<Models.UserTokenSignOutResponse>((resolve, reject) => {
                 localVarRequest(localVarRequestOptions, (error, response, body) => {
                     if (error) {
                         reject(error);
                     } else {
                         body = ObjectSerializer.deserialize(body, "object");
+                        let _bodyAsText: string = ObjectSerializer.deserialize(body, "string");
                         if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
+                            let toReturn: any = Object.assign({}, body);
+                            let _reponse: any = Object.assign(response, {bodyAsText: _bodyAsText, parsedBody: body});
+                            Object.assign(toReturn, _reponse);
+                            resolve(toReturn)
                         } else {
                             reject({ response: response, body: body });
                         }
