@@ -83,6 +83,10 @@ export class ConversationsApi {
      * @summary CreateConversation
      * @param parameters Parameters to create the conversation from
      */
+    //createConversation(parameters: Models.ConversationParameters, 
+    //                               options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.ConversationResourceResponse>, 
+    //                              callback?: msRest.ServiceCallback<Models.ConversationResourceResponse>)
+    //                                  : Promise<Models.ConversationsCreateConversationResponse> {
     public async CreateConversation (parameters: ConversationParameters, 
                                      options: {headers: {[name: string]: string}} = {headers: {}}) 
                                      : Promise<{ 
