@@ -49,7 +49,6 @@ export class NamedPipeServer implements IStreamingTransportServer {
         this._sender = new PayloadSender();
         this._receiver = new PayloadReceiver();
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
-        this._isDisconnecting = false;
         this._sender.disconnected = this.onConnectionDisconnected.bind(this);
         this._receiver.disconnected = this.onConnectionDisconnected.bind(this);
     }
@@ -59,8 +58,8 @@ export class NamedPipeServer implements IStreamingTransportServer {
     /// </summary>
     /// <returns>A promised string that will not resolve as long as the server is running.</returns>
     public start(): Promise<string> {
-        let incomingConnect = false;
-        let outgoingConnect = false;
+        let incomingConnect;
+        let outgoingConnect;
         let result = new Promise<string>((resolve): void => {
             this._onClose = resolve;
         });
