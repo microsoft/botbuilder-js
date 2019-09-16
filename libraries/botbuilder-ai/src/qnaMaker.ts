@@ -172,7 +172,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         await this.generateAnswerUtils.emitTraceInfo(context, queryResult, queryOptions);
 
         const qnaResponse: QnAMakerResults = {
-            activeLearningEnabled: (result.activeLearningEnabled != null) ? result.activeLearningEnabled : true,
+            activeLearningEnabled: result.activeLearningEnabled,
             answers: queryResult
         }
 

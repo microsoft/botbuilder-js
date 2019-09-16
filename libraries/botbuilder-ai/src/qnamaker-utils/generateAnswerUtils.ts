@@ -57,8 +57,7 @@ export class GenerateAnswerUtils {
 
         const qnaResultJson: any = await this.httpRequestUtils.executeHttpRequest(url, payloadBody, this.endpoint, queryOptions.timeout);
         
-        qnaResultJson.answers = this.formatQnaResult(qnaResultJson);
-        return qnaResultJson;
+        return this.formatQnaResult(qnaResultJson);
     }
     
     /**
@@ -124,8 +123,8 @@ export class GenerateAnswerUtils {
             .sort((a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score);
     }
     
-    private formatQnaResult(qnaResult: any): QnAMakerResult[] {
-        return qnaResult.answers.map((ans: any) => {
+    private formatQnaResult(qnaResult: any): QnAMakerResults {
+        qnaResult.answers = qnaResult.answers.map((ans: any) => {
             ans.score = ans.score / 100;
 
             if (ans.qnaId) {
@@ -135,6 +134,10 @@ export class GenerateAnswerUtils {
 
             return ans as QnAMakerResult;
         });
+
+        qnaResult.activeLearningEnabled = (qnaResult.activeLearningEnabled != null) ? qnaResult.activeLearningEnabled : true;
+
+        return qnaResult;
     }
 
     private validateScoreThreshold(scoreThreshold: number): void {
