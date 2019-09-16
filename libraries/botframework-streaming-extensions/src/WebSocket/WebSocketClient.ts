@@ -47,9 +47,9 @@ export class WebSocketClient implements IStreamingTransportClient {
         this._requestManager = new RequestManager();
 
         this._sender = new PayloadSender();
-        this._sender.disconnected = this.onConnectionDisconnected;
+        this._sender.disconnected = this.onConnectionDisconnected.bind(this);
         this._receiver = new PayloadReceiver();
-        this._receiver.disconnected = this.onConnectionDisconnected;
+        this._receiver.disconnected = this.onConnectionDisconnected.bind(this);
 
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
     }

@@ -41,9 +41,9 @@ export class NamedPipeClient implements IStreamingTransportClient {
         this._autoReconnect = autoReconnect;
         this._requestManager = new RequestManager();
         this._sender = new PayloadSender();
-        this._sender.disconnected = (x: object, y: any): void => this.onConnectionDisconnected(this, x, y);
+        this._sender.disconnected = this.onConnectionDisconnected.bind(this);
         this._receiver = new PayloadReceiver();
-        this._receiver.disconnected = (x: object, y: any): void => this.onConnectionDisconnected(this, x, y);
+        this._receiver.disconnected = this.onConnectionDisconnected.bind(this);
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
         this._isDisconnecting = false;
     }
@@ -77,20 +77,20 @@ export class NamedPipeClient implements IStreamingTransportClient {
         return this._protocolAdapter.sendRequest(request);
     }
 
-    private onConnectionDisconnected(c: NamedPipeClient, sender: object, args: any): void {
-        if (!c._isDisconnecting) {
-            c._isDisconnecting = true;
+    private onConnectionDisconnected(sender: object, args: any): void {
+        if (!this._isDisconnecting) {
+            this._isDisconnecting = true;
             try {
-                if (c._sender.isConnected) {
-                    c._sender.disconnect();
+                if (this._sender.isConnected) {
+                    this._sender.disconnect();
                 }
 
-                if (c._receiver.isConnected) {
-                    c._receiver.disconnect();
+                if (this._receiver.isConnected) {
+                    this._receiver.disconnect();
                 }
 
-                if (c._autoReconnect) {
-                    c.connect()
+                if (this._autoReconnect) {
+                    this.connect()
                         .then((): void => {
                             return;
                         })
@@ -98,7 +98,7 @@ export class NamedPipeClient implements IStreamingTransportClient {
                 }
             }
             finally {
-                c._isDisconnecting = false;
+                this._isDisconnecting = false;
             }
         }
     }

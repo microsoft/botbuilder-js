@@ -50,12 +50,8 @@ export class NamedPipeServer implements IStreamingTransportServer {
         this._receiver = new PayloadReceiver();
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
         this._isDisconnecting = false;
-        this._sender.disconnected = (): void => {
-            this.onConnectionDisconnected();
-        };
-        this._receiver.disconnected = (): void => {
-            this.onConnectionDisconnected();
-        };
+        this._sender.disconnected = this.onConnectionDisconnected.bind(this);
+        this._receiver.disconnected = this.onConnectionDisconnected.bind(this);
     }
 
     /// <summary>
