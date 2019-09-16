@@ -22,7 +22,7 @@ export class StreamingRequest {
     /// <summary>
     /// List of associated streams
     /// </summary>
-    public streams: HttpContentStream[];
+    public streams: HttpContentStream[] = [];
 
     /// <summary>
     /// Creates a <see cref="StreamingRequest"/> with the passed in method, path, and body.
@@ -50,9 +50,7 @@ export class StreamingRequest {
         if (!content) {
             throw new Error('Argument Undefined Exception: content undefined.');
         }
-        if (!this.streams) {
-            this.streams = [];
-        }
+
         this.streams.push(new HttpContentStream(content));
     }
 

@@ -10,7 +10,7 @@ import { SubscribableStream } from './subscribableStream';
 
 export class StreamingResponse {
     public statusCode: number;
-    public streams: HttpContentStream[];
+    public streams: HttpContentStream[] = [];
 
     /// <summary>
     /// Creates a response using the passed in statusCode and optional body.
@@ -33,9 +33,6 @@ export class StreamingResponse {
     /// </summary>
     /// <param name="content">The <see cref="HttpContent"/> to include in the new stream attachment.</param>
     public addStream(content: HttpContent): void {
-        if (!this.streams) {
-            this.streams = [];
-        }
         this.streams.push(new HttpContentStream(content));
     }
 
