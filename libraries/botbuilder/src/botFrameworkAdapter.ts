@@ -355,10 +355,11 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             id: response.id,
             isGroup: false,
             conversationType: null,
-            tenantId: null,
+            tenantId: reference.conversation.tenantId,
             name: null,
         };
         request.conversation = conversation;
+        request.channelData = parameters.channelData;
 
         if (response.serviceUrl) { request.serviceUrl = response.serviceUrl; }
 
