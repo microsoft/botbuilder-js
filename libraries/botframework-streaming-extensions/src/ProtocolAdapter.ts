@@ -64,10 +64,10 @@ export class ProtocolAdapter {
     /// <param name="id">The id the resources created for the response will be assigned.</param>
     /// <param name="request">The incoming request to process.</param>
     public async onReceiveRequest(id: string, request: IReceiveRequest): Promise<void> {
-        if (this.requestHandler !== undefined) {
+        if (this.requestHandler) {
             let response = await this.requestHandler.processRequest(request);
 
-            if (response !== undefined) {
+            if (response) {
                 await this.sendOperations.sendResponse(id, response);
             }
         }

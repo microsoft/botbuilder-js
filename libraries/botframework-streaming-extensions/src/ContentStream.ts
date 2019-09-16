@@ -14,7 +14,7 @@ export class ContentStream {
     private stream: SubscribableStream;
 
     public constructor(id: string, assembler: PayloadAssembler) {
-        if (assembler === undefined) {
+        if (!assembler) {
             throw Error('Null Argument Exception');
         }
         this.id = id;
@@ -30,7 +30,7 @@ export class ContentStream {
     }
 
     public getStream(): SubscribableStream {
-        if (this.stream === undefined) {
+        if (!this.stream) {
             this.stream = this.assembler.getPayloadStream();
         }
 

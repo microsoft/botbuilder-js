@@ -20,7 +20,7 @@ export class NodeWebSocket implements ISocket {
     public constructor(waterShedSocket?) {
         this.waterShedSocket = waterShedSocket;
 
-        if(waterShedSocket === undefined){
+        if(!waterShedSocket){
             this.connected = false;
         } else {
             this.connected = true;

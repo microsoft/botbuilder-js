@@ -27,7 +27,7 @@ export class PayloadAssembler {
     private readonly _utf: string = 'utf8';
 
     public constructor(streamManager: StreamManager, params: IAssemblerParams) {
-        if(params.header !== undefined){
+        if(params.header){
             this.id = params.header.id;
             this.payloadType = params.header.payloadType;
             this.contentLength = params.header.payloadLength;
@@ -36,7 +36,7 @@ export class PayloadAssembler {
             this.id = params.id;
         }
 
-        if(this.id === undefined){
+        if(!this.id){
             throw Error('An ID must be supplied when creating an assembler.');
         }
         

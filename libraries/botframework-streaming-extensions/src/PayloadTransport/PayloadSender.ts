@@ -24,7 +24,7 @@ export class PayloadSender {
     /// Returns true if connected to a transport sender.
     /// </summary>
     public get isConnected(): boolean {
-        return this.sender !== undefined;
+        return !!this.sender;
     }
 
     /// <summary>
