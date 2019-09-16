@@ -26,14 +26,12 @@ export class PayloadAssemblerManager {
     public getPayloadStream(header: IHeader): SubscribableStream {
         if (header.payloadType === PayloadTypes.stream) {
             return this.streamManager.getPayloadStream(header);
-        } else {
-            if (!this.activeAssemblers[header.id]) {
-                let assembler = this.createPayloadAssembler(header);
-                if (assembler) {
-                    this.activeAssemblers[header.id] = assembler;
+        } else if (!this.activeAssemblers[header.id]) {
+            let assembler = this.createPayloadAssembler(header);
 
-                    return assembler.getPayloadStream();
-                }
+            if (assembler) {
+                this.activeAssemblers[header.id] = assembler;
+                return assembler.getPayloadStream();
             }
         }
     }
@@ -53,14 +51,10 @@ export class PayloadAssemblerManager {
     }
 
     private createPayloadAssembler(header: IHeader): PayloadAssembler {
-        switch (header.payloadType) {
-            case PayloadTypes.request:
-                return new PayloadAssembler(this.streamManager, {header: header, onCompleted: this.onReceiveRequest});
-
-            case PayloadTypes.response:
-                return new PayloadAssembler(this.streamManager, {header: header, onCompleted: this.onReceiveResponse});
-
-            default:
+        if (header.payloadType === PayloadTypes.request) {
+            return new PayloadAssembler(this.streamManager, {header: header, onCompleted: this.onReceiveRequest});
+        } else if (header.payloadType === PayloadTypes.response) {
+            return new PayloadAssembler(this.streamManager, {header: header, onCompleted: this.onReceiveResponse});
         }
     }
 }

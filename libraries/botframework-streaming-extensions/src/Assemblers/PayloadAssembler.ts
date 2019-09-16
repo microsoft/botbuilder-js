@@ -59,10 +59,8 @@ export class PayloadAssembler {
         this.process(stream)
             .then()
             .catch();
-        } else {
-            if (header.end) {
-                stream.end();
-            }
+        } else if (header.end) {
+            stream.end();
         }
     }
 
@@ -92,10 +90,8 @@ export class PayloadAssembler {
 
         if(this.payloadType === PayloadTypes.request){
             await this.processRequest(streamDataAsString);
-        } else {
-            if(this.payloadType === PayloadTypes.response){
-                await this.processResponse(streamDataAsString);
-            }
+        } else if(this.payloadType === PayloadTypes.response){
+            await this.processResponse(streamDataAsString);
         }
     }
 

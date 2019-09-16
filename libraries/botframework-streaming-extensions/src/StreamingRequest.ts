@@ -67,10 +67,8 @@ export class StreamingRequest {
                 contentLength: stream.length
             },
             stream));
-        } else {
-            if (typeof body === 'object') {
-                this.addStream(body);
-            }
+        } else if (typeof body === 'object') {
+            this.addStream(body);
         }
     }
 }
