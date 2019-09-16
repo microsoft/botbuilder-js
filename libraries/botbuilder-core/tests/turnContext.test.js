@@ -51,16 +51,6 @@ class SimpleAdapter extends BotAdapter {
     }
 }
 
-class BotFrameworkTestAdapter extends BotFrameworkAdapter {
-    createConnectorClient(serviceUrl) { return {
-        conversations: {
-            updateActivity: (conversationId, activityId, activity) => {
-                return Promise.resolve({ id: activityId });
-            }
-        }
-    }}
-}
-
 describe(`TurnContext`, function () {
     this.timeout(5000);
 
@@ -230,7 +220,7 @@ describe(`TurnContext`, function () {
     
     it(`should be able to update an activity with MessageFactory`, function (done) {
         let called = false;
-        const context = new TurnContext(new BotFrameworkTestAdapter(), testMessage);
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.onUpdateActivity((ctx, activity, next) => {
             assert(ctx, `context not passed to hook`);
             assert(activity, `activity not passed to hook`);
