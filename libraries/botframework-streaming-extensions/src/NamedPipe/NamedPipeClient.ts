@@ -91,9 +91,7 @@ export class NamedPipeClient implements IStreamingTransportClient {
 
                 if (this._autoReconnect) {
                     this.connect()
-                        .then((): void => {
-                            return;
-                        })
+                        .then((): void => { })
                         .catch((error): void => { throw new Error(`Failed to reconnect. Reason: ${ error.message } Sender: ${ sender } Args: ${ args }. `); });
                 }
             }

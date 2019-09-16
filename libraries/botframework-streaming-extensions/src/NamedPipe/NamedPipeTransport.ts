@@ -161,7 +161,5 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
                 this._activeReceiveResolve = undefined;
             }
         }
-
-        return;
     }
 }

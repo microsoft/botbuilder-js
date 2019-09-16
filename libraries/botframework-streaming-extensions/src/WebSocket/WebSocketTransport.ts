@@ -156,7 +156,5 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
                 this._activeReceiveResolve = undefined;
             }
         }
-
-        return;
     }
 }

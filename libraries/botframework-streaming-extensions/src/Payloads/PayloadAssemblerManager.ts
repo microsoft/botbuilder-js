@@ -36,8 +36,6 @@ export class PayloadAssemblerManager {
                 }
             }
         }
-
-        return undefined;
     }
 
     public onReceive(header: IHeader, contentStream: SubscribableStream, contentLength: number): void {
