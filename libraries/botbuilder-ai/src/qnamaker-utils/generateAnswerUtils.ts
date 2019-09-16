@@ -9,6 +9,7 @@
 import { TurnContext } from 'botbuilder-core';
 
 import { QnAMakerResult } from '../qnamaker-interfaces/qnamakerResult';
+import { QnAMakerResults } from '../qnamaker-interfaces/qnamakerResults';
 import { QnAMakerEndpoint } from '../qnamaker-interfaces/qnamakerEndpoint';
 import { QnAMakerOptions } from '../qnamaker-interfaces/qnamakerOptions';
 import { QnAMakerTraceInfo } from '../qnamaker-interfaces/qnamakerTraceInfo';
@@ -43,7 +44,7 @@ export class GenerateAnswerUtils {
      * @param question Question which need to be queried.
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
-    public async queryQnaService(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResult[]> {
+    public async queryQnaService(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResults> {
         const url: string = `${ endpoint.host }/knowledgebases/${ endpoint.knowledgeBaseId }/generateanswer`;
         const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
 
@@ -56,7 +57,8 @@ export class GenerateAnswerUtils {
 
         const qnaResultJson: any = await this.httpRequestUtils.executeHttpRequest(url, payloadBody, this.endpoint, queryOptions.timeout);
         
-        return this.formatQnaResult(qnaResultJson);
+        qnaResultJson.answers = this.formatQnaResult(qnaResultJson);
+        return qnaResultJson;
     }
     
     /**
