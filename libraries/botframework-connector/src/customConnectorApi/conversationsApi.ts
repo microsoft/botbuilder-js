@@ -25,6 +25,8 @@ import { PagedMembersResult } from './model/pagedMembersResult';
 import { ResourceResponse } from './model/resourceResponse';
 import { Transcript } from './model/transcript';
 
+import * as Models from "./model";
+
 import { ObjectSerializer, Authentication, VoidAuth } from './model/models';
 
 let defaultBasePath = 'https://api.botframework.com';
