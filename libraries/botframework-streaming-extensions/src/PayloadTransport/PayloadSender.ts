@@ -42,7 +42,7 @@ export class PayloadSender {
     /// <param name="payload">The stream of buffered data to send.</param>
     /// <param name="sentCalback">The function to execute when the send has completed.</param>
     public sendPayload(header: IHeader, payload?: SubscribableStream, sentCallback?: () => Promise<void>): void {
-        var packet: ISendPacket = {header: header, payload: payload, sentCallback: sentCallback};
+        var packet: ISendPacket = {header, payload, sentCallback};
         this.writePacket(packet);
     }
 
