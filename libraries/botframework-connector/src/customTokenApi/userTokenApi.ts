@@ -46,7 +46,7 @@ export class UserTokenApi {
          this.basePath = basePath;
          
         if(CustomCredentials){
-            this.credentials
+            this.credentials = CustomCredentials;
         }        
     }
 

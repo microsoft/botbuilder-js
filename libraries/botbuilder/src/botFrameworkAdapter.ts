@@ -9,7 +9,7 @@
 import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
 import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
 import { CustomTokenApiClient } from 'botframework-connector'
-import * as CustomModels from '../../botframework-connector/src/customTokenApi/model/index'
+import * as CustomModels from 'botframework-connector/src/customTokenApi/model/index'
 import * as os from 'os';
 
 /**
