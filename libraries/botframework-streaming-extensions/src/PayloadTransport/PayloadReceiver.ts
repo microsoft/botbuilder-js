@@ -51,7 +51,7 @@ export class PayloadReceiver {
     /// Force this receiver to disconnect.
     /// </summary>
     /// <param name="e">Event arguments to include when broadcasting disconnection event.</param>
-    public disconnect(e: TransportDisconnectedEventArgs): void {
+    public disconnect(e?: TransportDisconnectedEventArgs): void {
         let didDisconnect = false;
         try {
             if (this.isConnected) {

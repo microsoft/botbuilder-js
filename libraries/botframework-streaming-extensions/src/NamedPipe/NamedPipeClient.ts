@@ -64,8 +64,8 @@ export class NamedPipeClient implements IStreamingTransportClient {
     /// Method used to disconnect this client.
     /// </summary>
     public disconnect(): void {
-        this._sender.disconnect(undefined);
-        this._receiver.disconnect(undefined);
+        this._sender.disconnect();
+        this._receiver.disconnect();
     }
 
     /// <summary>
@@ -82,11 +82,11 @@ export class NamedPipeClient implements IStreamingTransportClient {
             c._isDisconnecting = true;
             try {
                 if (c._sender.isConnected) {
-                    c._sender.disconnect(undefined);
+                    c._sender.disconnect();
                 }
 
                 if (c._receiver.isConnected) {
-                    c._receiver.disconnect(undefined);
+                    c._receiver.disconnect();
                 }
 
                 if (c._autoReconnect) {

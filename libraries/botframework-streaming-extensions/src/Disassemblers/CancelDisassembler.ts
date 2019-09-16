@@ -22,6 +22,6 @@ export class CancelDisassembler {
 
     public disassemble(): void {
         const header: IHeader = {payloadType: this.payloadType, payloadLength: 0, id: this.id, end: true};
-        this.sender.sendPayload(header, undefined, undefined);
+        this.sender.sendPayload(header);
     }
 }
