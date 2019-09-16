@@ -1615,33 +1615,6 @@ export class BuiltInFunctions {
         return {value: result, error};
     }
 
-    private static Callstack(expression: Expression, state: any): { value: any; error: string } {
-        let result: any =  state;
-        let error: string;
-
-        // get collection
-        ({ value: result, error} = Extensions.AccessProperty(state, 'callstack'));
-        if (result !== undefined) {
-            const items: any[] = result as any[];
-            let property: any;
-            ({value: property, error} = expression.Children[0].tryEvaluate(state));
-            if (property !== undefined && error === undefined) {
-                for (const item of items) {
-                    // get property off of item
-                    ({ value: result, error } = Extensions.AccessProperty(item, property.toString()));
-
-                    // if not null
-                    if (error === undefined && result !== undefined) {
-                        // return it
-                        return { value: result, error };
-                    }
-                }
-            }
-        }
-
-        return { value: undefined, error };
-    }
-
     // tslint:disable-next-line: max-func-body-length
     private static BuildFunctionLookup(): Map<string, ExpressionEvaluator> {
         // tslint:disable-next-line: no-unnecessary-local-variable
@@ -2658,23 +2631,7 @@ export class BuiltInFunctions {
                        return {value, error};
                     }),
                 ReturnType.Boolean,
-                BuiltInFunctions.ValidateIsMatch),
-
-            // Shorthand functions
-            new ExpressionEvaluator(ExpressionType.Callstack, this.Callstack, ReturnType.Object, this.ValidateUnary),
-            new ExpressionEvaluator(
-                ExpressionType.SimpleEntity,
-                BuiltInFunctions.Apply(
-                    (args: ReadonlyArray<any>) => {
-                        let result: any = args[0];
-                        while (Array.isArray(result) && result.length === 1) {
-                            result = result[0];
-                        }
-
-                        return result;
-                    }),
-                ReturnType.Object,
-                this.ValidateUnary)
+                BuiltInFunctions.ValidateIsMatch)
         ];
 
         const lookup: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>();

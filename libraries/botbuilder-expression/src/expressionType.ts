@@ -147,8 +147,4 @@ export class ExpressionType {
 
     // Regar expression
     public static readonly IsMatch: string = 'isMatch';
-
-    // Short hand functions
-    public static readonly SimpleEntity: string = 'simpleEntity';
-    public static readonly Callstack: string = 'callstack';
 }

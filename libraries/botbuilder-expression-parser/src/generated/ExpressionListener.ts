@@ -5,13 +5,11 @@ import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
 import { FuncInvokeExpContext } from "./ExpressionParser";
 import { IdAtomContext } from "./ExpressionParser";
-import { ShorthandAccessorExpContext } from "./ExpressionParser";
 import { StringAtomContext } from "./ExpressionParser";
 import { IndexAccessExpContext } from "./ExpressionParser";
 import { MemberAccessExpContext } from "./ExpressionParser";
 import { ParenthesisExpContext } from "./ExpressionParser";
 import { NumericAtomContext } from "./ExpressionParser";
-import { ShorthandAtomContext } from "./ExpressionParser";
 import { UnaryOpExpContext } from "./ExpressionParser";
 import { BinaryOpExpContext } from "./ExpressionParser";
 import { PrimaryExpContext } from "./ExpressionParser";
@@ -50,19 +48,6 @@ export interface ExpressionListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitIdAtom?: (ctx: IdAtomContext) => void;
-
-	/**
-	 * Enter a parse tree produced by the `shorthandAccessorExp`
-	 * labeled alternative in `ExpressionParser.primaryExpression`.
-	 * @param ctx the parse tree
-	 */
-	enterShorthandAccessorExp?: (ctx: ShorthandAccessorExpContext) => void;
-	/**
-	 * Exit a parse tree produced by the `shorthandAccessorExp`
-	 * labeled alternative in `ExpressionParser.primaryExpression`.
-	 * @param ctx the parse tree
-	 */
-	exitShorthandAccessorExp?: (ctx: ShorthandAccessorExpContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `stringAtom`
@@ -128,19 +113,6 @@ export interface ExpressionListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitNumericAtom?: (ctx: NumericAtomContext) => void;
-
-	/**
-	 * Enter a parse tree produced by the `shorthandAtom`
-	 * labeled alternative in `ExpressionParser.primaryExpression`.
-	 * @param ctx the parse tree
-	 */
-	enterShorthandAtom?: (ctx: ShorthandAtomContext) => void;
-	/**
-	 * Exit a parse tree produced by the `shorthandAtom`
-	 * labeled alternative in `ExpressionParser.primaryExpression`.
-	 * @param ctx the parse tree
-	 */
-	exitShorthandAtom?: (ctx: ShorthandAtomContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `unaryOpExp`

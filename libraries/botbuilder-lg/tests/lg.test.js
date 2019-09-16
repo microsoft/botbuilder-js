@@ -229,7 +229,7 @@ describe('LG', function () {
         assert.strictEqual(evaled, "Hi hello\n");
 
         evaled = engine.evaluateTemplate("showTodo", { todos: ["A", "B", "C"] });
-        assert.strictEqual(evaled, "\n    Your most recent 3 tasks are\n    * A\n* B\n* C\n    ");
+        assert.strictEqual(evaled.replace(/\r\n/g, "\n"), "\n    Your most recent 3 tasks are\n    * A\n* B\n* C\n    ");
 
         evaled = engine.evaluateTemplate("showTodo", null);
         assert.strictEqual(evaled, "\r\n    You don't have any \"t\\\\odo'\".\r\n    ");

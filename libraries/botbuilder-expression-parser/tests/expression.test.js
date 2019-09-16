@@ -368,30 +368,6 @@ const dataSource = [
   ["jPath(jsonStr, pathStr )", ['Jazz', 'Accord']],
   ["jPath(jsonStr, '.automobiles[0].maker' )", ['Nissan']],
 
-  // Short hand expression tests
-  ["@city == 'Bellevue'", false, ["turn.recognized.entities.city"]],
-  ["@city", "Seattle", ["turn.recognized.entities.city"]],
-  ["@city == 'Seattle'", true, ["turn.recognized.entities.city"]],
-  ["@ordinal[1]", "2", ["turn.recognized.entities.ordinal"]],
-  ["@['city']", "Seattle", ["turn.recognized.entities.city"]],
-  ["@[concat('cit', 'y')]", "Seattle", ["turn.recognized.entities"]],
-  ["@[concat(cit, y)]", "Seattle", ["turn.recognized.entities","cit","y"]],
-  ["#BookFlight == 'BookFlight'", true, ["turn.recognized.intents.BookFlight"]],
-  ["#BookHotel[1].Where", "Kirkland", ["turn.recognized.intents.BookHotel[1].Where"]],
-  ["exists(#BookFlight)", true, ["turn.recognized.intents.BookFlight"]],
-  ["$title", "Dialog Title", ["dialog.title"]],
-  ["$subTitle", "Dialog Sub Title", ["dialog.subTitle"]],
-  ["~xxx", "instance", ["dialog.instance.xxx"]],
-  ["~['yyy'].instanceY", "instanceY", ["dialog.instance.yyy.instanceY"]],
-  ["%xxx", "options", ["dialog.options.xxx"]],
-  ["%['xxx']", "options", ["dialog.options.xxx"]],
-  ["%yyy[1]", "optionY2", ["dialog.options.yyy[1]"]],
-  ["^x", 3],
-  ["^y", 2],
-  ["^z", 1],
-  ["count(@@CompositeList1) == 1 && count(@@CompositeList1[0]) == 1", true, ["turn.recognized.entities.CompositeList1", "turn.recognized.entities.CompositeList1[0]"]],
-  ["count(@CompositeList2) == 2 && (@CompositeList2)[0] == 'firstItem'", true, ["turn.recognized.entities.CompositeList2"]],
-
   // Memory access tests
   ["getProperty(bag, concat('na','me'))", "mybag"],
   ["getProperty(bag, 'Name')", "mybag"],
@@ -405,14 +381,6 @@ const dataSource = [
   ["bag.set[concat('Fo', 'UR')]", 4.0],
   ["getProperty(undefined, 'p')", undefined],
   ["(getProperty(undefined, 'p'))[1]", undefined],
-
-  // Dialog tests
-  ["user.lists.todo[int(@ordinal[0]) - 1] != null", true],
-  ["user.lists.todo[int(@ordinal[0]) + 3] != null", false],
-  ["count(user.lists.todo) > int(@ordinal[0]))", true],
-  ["count(user.lists.todo) >= int(@ordinal[0]))", true],
-  ["user.lists.todo[int(@ordinal[0]) - 1]", "todo1"],
-  ["user.lists[user.listType][int(@ordinal[0]) - 1]", "todo1"],
 
   // regex test
   ["isMatch('abc', '^[ab]+$')", false], // simple character classes ([abc]), "+" (one or more)
@@ -441,8 +409,6 @@ const dataSource = [
   [`isMatch('1', '\\d{1}')`, true], // "\d" (match [0-9])
 
   // SetPathToValue tests
-  ["setPathToValue(@@blah.woof, 1+2) + @@blah.woof", 6],
-  ["setPathToValue(path.simple, 3) + path.simple", 6],
   ["setPathToValue(path.simple, 5) + path.simple", 10],
   ["setPathToValue(path.array[0], 7) + path.array[0]", 14],
   ["setPathToValue(path.array[1], 9) + path.array[1]", 18],

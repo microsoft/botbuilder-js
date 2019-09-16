@@ -23,15 +23,6 @@ export class ExpressionEngine implements IExpressionParser {
 
     // tslint:disable-next-line: typedef
     private readonly ExpressionTransformer = class extends AbstractParseTreeVisitor<Expression> implements ExpressionVisitor<Expression> {
-        private readonly ShorthandPrefixMap : Map<string, string> = new Map<string, string>([
-            ['#', 'turn.recognized.intents'],
-            ['@', 'turn.recognized.entities'],
-            ['@@', 'turn.recognized.entities'],
-            ['$', 'dialog'],
-            ['^', ''],
-            ['%', 'dialog.options'],
-            ['~', 'dialog.instance']
-        ]);
 
         private readonly _lookup: EvaluatorLookup = undefined;
         public constructor(lookup: EvaluatorLookup) {
@@ -57,28 +48,6 @@ export class ExpressionEngine implements IExpressionParser {
             const right: Expression = this.visit(context.expression(1));
 
             return this.MakeExpression(binaryOperationName, left, right);
-        }
-
-        public visitShorthandAccessorExp(context: ep.ShorthandAccessorExpContext): Expression {
-            if (context.primaryExpression() instanceof ep.ShorthandAtomContext) {
-                const shorthandAtom: ep.ShorthandAtomContext = <ep.ShorthandAtomContext>(context.primaryExpression());
-                const shorthandMark: string = shorthandAtom.text;
-
-                if (!this.ShorthandPrefixMap.has(shorthandMark)) {
-                    throw new Error(`${shorthandMark} is not a shorthand`);
-                }
-
-                const property: Constant = new Constant(context.IDENTIFIER().text);
-
-                if (shorthandMark === '^') {
-                    return this.MakeExpression(ExpressionType.Callstack, property);
-                }
-
-                const accessorExpression: Expression = this.Transform(ExpressionEngine.AntlrParse(this.ShorthandPrefixMap.get(shorthandMark)));
-                const expression: Expression = this.MakeExpression(ExpressionType.Accessor, property, accessorExpression);
-
-                return shorthandMark === '@' ? this.MakeExpression(ExpressionType.SimpleEntity, expression) : expression;
-            }
         }
 
         public visitFuncInvokeExp(context: ep.FuncInvokeExpContext): Expression {
@@ -111,24 +80,6 @@ export class ExpressionEngine implements IExpressionParser {
             let instance: Expression;
             const property: Expression = this.visit(context.expression());
 
-            if (context.primaryExpression() instanceof ep.ShorthandAtomContext) {
-                const shorthandAtom: ep.ShorthandAtomContext = <ep.ShorthandAtomContext>(context.primaryExpression());
-                const shorthandMark: string = shorthandAtom.text;
-
-                if (!this.ShorthandPrefixMap.has(shorthandMark)) {
-                    throw new Error(`${shorthandMark} is not a shorthand`);
-                }
-
-                if (shorthandMark === '^') {
-                    return this.MakeExpression(ExpressionType.Callstack, property);
-                }
-
-                instance = this.Transform(ExpressionEngine.AntlrParse(this.ShorthandPrefixMap.get(shorthandMark)));
-                const expression: Expression = this.MakeExpression(ExpressionType.Element, instance, property);
-
-                return shorthandMark === '@' ? this.MakeExpression(ExpressionType.SimpleEntity, expression) : expression;
-            }
-
             instance = this.visit(context.primaryExpression());
 
             return this.MakeExpression(ExpressionType.Element, instance, property);
@@ -136,9 +87,6 @@ export class ExpressionEngine implements IExpressionParser {
 
         public visitMemberAccessExp(context: ep.MemberAccessExpContext): Expression {
             const property: string = context.IDENTIFIER().text;
-            if (context.primaryExpression() instanceof ep.ShorthandAtomContext) {
-                throw new Error(`${context.text} is not a valid shorthand. Maybe you mean '${context.primaryExpression().text}${property}'?`);
-            }
             const instance: Expression = this.visit(context.primaryExpression());
 
             return this.MakeExpression(ExpressionType.Accessor, new Constant(property), instance);
