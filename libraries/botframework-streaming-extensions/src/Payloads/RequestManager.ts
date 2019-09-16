@@ -27,13 +27,13 @@ export class RequestManager {
             pendingRequest.resolve(response);
             delete this._pendingRequests[requestId];
 
-            return Promise.resolve(true);
+            return true;
         }
 
-        return Promise.resolve(false);
+        return false;
     }
 
-    public async getResponse(requestId: string): Promise<IReceiveResponse> {
+    public getResponse(requestId: string): Promise<IReceiveResponse> {
         let pendingRequest = this._pendingRequests[requestId];
 
         if (pendingRequest) {
