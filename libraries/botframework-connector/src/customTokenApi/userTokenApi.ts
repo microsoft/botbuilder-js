@@ -200,7 +200,7 @@ export class UserTokenApi {
 
         Object.assign(localVarHeaderParams, options.headers);
 
-        localVarFormParams = {
+        localVarHeaderParams = {
             authorization: this.AuthenticateRequest()
         }
 
