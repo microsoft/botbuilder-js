@@ -106,12 +106,12 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
             this._activeReceiveReject(new Error('Socket was closed.'));
         }
 
-        this._active = undefined;
+        this._active = null;
         this._activeOffset = 0;
-        this._activeReceiveResolve = undefined;
-        this._activeReceiveReject = undefined;
+        this._activeReceiveResolve = null;
+        this._activeReceiveReject = null;
         this._activeReceiveCount = 0;
-        this._socket = undefined;
+        this._socket = null;
     }
 
     private onError(err: Error): void {
@@ -132,7 +132,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
                 if (this._activeOffset === 0 && this._active.length === this._activeReceiveCount) {
                     // can send the entire _active buffer
                     let buffer = this._active;
-                    this._active = undefined;
+                    this._active = null;
 
                     this._activeReceiveResolve(buffer);
                 } else {
@@ -144,7 +144,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
 
                     // if we used all of active, set it to undefined
                     if (this._activeOffset >= this._active.length) {
-                        this._active = undefined;
+                        this._active = null;
                         this._activeOffset = 0;
                     }
 
@@ -152,8 +152,8 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
                 }
 
                 this._activeReceiveCount = 0;
-                this._activeReceiveReject = undefined;
-                this._activeReceiveResolve = undefined;
+                this._activeReceiveReject = null;
+                this._activeReceiveResolve = null;
             }
         }
     }

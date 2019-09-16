@@ -100,12 +100,12 @@ export class NamedPipeServer implements IStreamingTransportServer {
 
         if (this._incomingServer) {
             this._incomingServer.close();
-            this._incomingServer = undefined;
+            this._incomingServer = null;
         }
 
         if (this._outgoingServer) {
             this._outgoingServer.close();
-            this._outgoingServer = undefined;
+            this._outgoingServer = null;
         }
     }
 

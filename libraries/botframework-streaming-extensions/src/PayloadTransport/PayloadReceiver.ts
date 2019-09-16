@@ -63,7 +63,7 @@ export class PayloadReceiver {
             this.isConnected = false;
             this.disconnected(error.message, e);
         }
-        this._receiver = undefined;
+        this._receiver = null;
         this.isConnected = false;
 
         if (didDisconnect) {

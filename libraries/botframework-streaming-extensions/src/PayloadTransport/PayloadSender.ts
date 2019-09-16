@@ -53,7 +53,7 @@ export class PayloadSender {
     public disconnect(e?: TransportDisconnectedEventArgs): void {
         if (this.isConnected) {
             this.sender.close();
-            this.sender = undefined;
+            this.sender = null;
 
             if (this.disconnected) {
                 this.disconnected(this, e || TransportDisconnectedEventArgs.Empty);
