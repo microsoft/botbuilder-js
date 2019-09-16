@@ -42,14 +42,8 @@ export class ContentStream {
     }
 
     public async readAsString(): Promise<string> {
-        let record = await this.readAll();
-        let allData = record.bufferArray;
-        let stringResult = '';
-        for (let i = 0; i < allData.length; i++) {
-            stringResult += allData[i].toString('utf8');
-        }
-
-        return stringResult;
+        const { bufferArray } = await this.readAll();
+        return (bufferArray || []).map(result => result.toString('utf8')).join('');
     }
 
     public async readAsJson<T>(): Promise<T> {
