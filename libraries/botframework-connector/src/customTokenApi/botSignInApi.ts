@@ -12,10 +12,12 @@
 
 import request = require('request');
 import http = require('http');
+import * as Models from './model';
 
 /* tslint:disable:no-unused-locals */
 
-import { ObjectSerializer, Authentication, VoidAuth } from './model/models';
+import { ObjectSerializer, Authentication, OAuth, VoidAuth } from './model/models';
+import { MicrosoftAppCredentials } from '../auth'
 
 let defaultBasePath = 'https://token.botframework.com';
 
@@ -26,17 +28,21 @@ let defaultBasePath = 'https://token.botframework.com';
 export enum BotSignInApiApiKeys {
 }
 
-export interface BotSignInGetSignInUrlOptionalParams {
-    codeChallenge?: string;
-    emulatorUrl?: string;
-    finalRedirect?: string;
-}
+export class SimpleCredential {
+    appId: string;
+    appPassword: string
 
+    constructor(appId: string, appPassword: string){
+        this.appId = appId;
+        this.appPassword = appPassword;
+    }
+}
 
 export class BotSignInApi {
     protected _basePath = defaultBasePath;
-    protected defaultHeaders : any = {};
+    protected defaultHeaders = {};
     protected _useQuerystring : boolean = false;
+    protected credentials: SimpleCredential;
 
     protected authentications = {
         'default': <Authentication>new VoidAuth(),
@@ -68,6 +74,10 @@ export class BotSignInApi {
         (this.authentications as any)[BotSignInApiApiKeys[key]].apiKey = value;
     }
 
+    private async AuthenticateRequest(){
+        const tokenGenerator = new MicrosoftAppCredentials(this.credentials.appId, this.credentials.appPassword);
+        return `${ await tokenGenerator.getToken(true) }`;
+    }
     
     /**
      * 
@@ -76,11 +86,10 @@ export class BotSignInApi {
      * @param emulatorUrl 
      * @param finalRedirect 
      */
-    public async getSignInUrl (state: string, optionalParams: BotSignInGetSignInUrlOptionalParams,  string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: string;  }> {
+    public async getSignInUrl (state: string, options: Models.BotSignInGetSignInUrlOptionalParams = {headers: {}}) : Promise<Models.BotSignInGetSignInUrlResponse> {
         const localVarPath = this.basePath + '/api/botsignin/GetSignInUrl';
         let localVarQueryParameters = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
+        let localVarHeaderParams = Object.assign({}, this.defaultHeaders);    
 
         // verify required parameter 'state' is not null or undefined
         if (state === null || state === undefined) {
@@ -91,21 +100,19 @@ export class BotSignInApi {
             localVarQueryParameters['state'] = ObjectSerializer.serialize(state, "string");
         }
 
-        if (optionalParams.codeChallenge !== undefined) {
-            localVarQueryParameters['code_challenge'] = ObjectSerializer.serialize(optionalParams.codeChallenge, "string");
+        if (options.codeChallenge !== undefined) {
+            localVarQueryParameters['code_challenge'] = ObjectSerializer.serialize(options.codeChallenge, "string");
         }
 
-        if (optionalParams.emulatorUrl !== undefined) {
-            localVarQueryParameters['emulatorUrl'] = ObjectSerializer.serialize(optionalParams.emulatorUrl, "string");
+        if (options.emulatorUrl !== undefined) {
+            localVarQueryParameters['emulatorUrl'] = ObjectSerializer.serialize(options.emulatorUrl, "string");
         }
 
-        if (optionalParams.finalRedirect !== undefined) {
-            localVarQueryParameters['finalRedirect'] = ObjectSerializer.serialize(optionalParams.finalRedirect, "string");
+        if (options.finalRedirect !== undefined) {
+            localVarQueryParameters['finalRedirect'] = ObjectSerializer.serialize(options.finalRedirect, "string");
         }
 
-        Object.assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
+        Object.assign(localVarHeaderParams, options.headers);        
 
         let localVarRequestOptions: request.Options = {
             method: 'GET',
@@ -115,31 +122,30 @@ export class BotSignInApi {
             useQuerystring: this._useQuerystring,
             json: true,
         };
+                
+        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-        return authenticationPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
+        this.authentications.default.applyToRequest(localVarRequestOptions);
+
+        return new Promise<Models.BotSignInGetSignInUrlResponse>((resolve, reject) => {
+            request(localVarRequestOptions, (error, response) => {
+                if (error) {
+                    reject(error);
                 } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<{ response: http.IncomingMessage; body: string;  }>((resolve, reject) => {
-                request(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+                    let _body: Models.BotSignInGetSignInUrlResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
+                    let httpResponse: http.IncomingMessage = response;
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: Models.BotSignInGetSignInUrlResponse = Object.assign(_body, {_response: _response});
+                        resolve(toReturn);
                     } else {
-                        body = ObjectSerializer.deserialize(body, "string");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            resolve({ response: response, body: body });
-                        } else {
-                            reject({ response: response, body: body });
-                        }
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: Models.BotSignInGetSignInUrlResponse = Object.assign(_body, {_response: _response});  
+                        reject(toReturn);
                     }
-                });
+                }
             });
-        });
+        });        
     }
 }
