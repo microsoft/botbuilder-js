@@ -1,0 +1,31 @@
+{
+  "name": "wechat",
+  "version": "4.1.6",
+  "description": "wechat",
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
+  "scripts": {
+    "test": "tsc && nyc mocha tests/",
+    "clean": "erase /q /s .\\lib",
+    "build": "tsc"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@azure/ms-rest-js": "1.2.6",
+    "botbuilder-core": "4.1.6"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.47",
+    "codelyzer": "^4.1.0",
+    "dotenv": "^5.0.1",
+    "mocha": "^5.2.0",
+    "nyc": "^11.4.1",
+    "should": "^13.2.3",
+    "source-map-support": "^0.5.3",
+    "ts-node": "^4.1.0"
+  },
+  "files": [
+    "/lib",
+    "/src"
+  ]
+}

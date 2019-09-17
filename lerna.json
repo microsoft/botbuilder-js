@@ -18,6 +18,8 @@
     "libraries/testbot",
     "libraries/botframework-streaming-extensions",
     "libraries/botbuilder-streaming-extensions",
+    "libraries/Adapter/wechat",
+    "libraries/Adapter/wechat-testbot",
     "transcripts"
   ],
   "version": "independent",
