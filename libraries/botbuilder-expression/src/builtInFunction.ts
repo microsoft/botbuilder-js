@@ -19,7 +19,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDele
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { TimeZoneConverter } from './timeZoneConverter';
-import * as JSPath from 'JSPath';
+import * as jsPath from 'jspath';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -790,7 +790,7 @@ export class BuiltInFunctions {
 
         if (error === undefined) {
             try {
-                evaled = JSPath.apply(path, json);
+                evaled = jsPath.apply(path, json);
             } catch (e) {
                 error = `${path} is not a valid path + ${e}`;
             }
