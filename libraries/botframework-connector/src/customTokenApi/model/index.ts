@@ -10,6 +10,38 @@ import { TokenStatus } from './tokenStatus';
 import http = require('http');
 
 /**
+ * Contains response data for the getSignInUrl operation.
+ */
+export type BotSignInGetSignInUrlResponse = {
+    /**
+     * The parsed response body.
+     */
+    body: string;
+  
+    /**
+     * The underlying HTTP response.
+     */
+    _response: http.IncomingMessage & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+  
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: string;
+      };
+  };
+
+  export interface BotSignInGetSignInUrlOptionalParams {
+    codeChallenge?: string;
+    emulatorUrl?: string;
+    finalRedirect?: string;
+    headers?: { [key: string]: string };
+}
+
+/**
  * An interface representing TokenResponse.
  */
 export interface TokenResponse {
