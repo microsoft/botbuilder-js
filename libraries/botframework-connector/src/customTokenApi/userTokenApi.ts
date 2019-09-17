@@ -19,7 +19,7 @@ import * as Models from './model';
 
 import { MicrosoftAppCredentials } from '../auth'
 
-import { ObjectSerializer, Authentication, VoidAuth } from './model/models';
+import { ObjectSerializer, Authentication, OAuth, VoidAuth } from './model/models';
 
 let defaultBasePath = 'https://token.botframework.com';
 
@@ -30,23 +30,33 @@ let defaultBasePath = 'https://token.botframework.com';
 export enum UserTokenApiApiKeys {
 }
 
+export class SimpleCredential {
+    appId: string;
+    appPassword: string
+
+    constructor(appId: string, appPassword: string){
+        this.appId = appId;
+        this.appPassword = appPassword;
+    }
+}
+
 export class UserTokenApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders : any = {};
     protected _useQuerystring : boolean = false;
-    protected credentials: { appId: string, appPassword: string };
+    protected credentials: SimpleCredential;
 
     protected authentications = {
         'default': <Authentication>new VoidAuth(),
     }
 
-    constructor(CustomCredentials: { appId: string, appPassword: string })
-    constructor(CustomCredentials: { appId: string, appPassword: string }, basePath?: string){
+    constructor(CustomCredentials: SimpleCredential)
+    constructor(CustomCredentials: SimpleCredential, basePath?: string){
         if(basePath)
          this.basePath = basePath;
          
         if(CustomCredentials){
-            this.credentials = CustomCredentials;
+            this.credentials = new SimpleCredential(CustomCredentials.appId, CustomCredentials.appPassword);
         }        
     }
 
@@ -72,7 +82,7 @@ export class UserTokenApi {
 
     private async AuthenticateRequest(){
         const tokenGenerator = new MicrosoftAppCredentials(this.credentials.appId, this.credentials.appPassword);
-        return `Bearer ${ await tokenGenerator.getToken(true) }`;
+        return `${ await tokenGenerator.getToken(true) }`;
     }
 
     /**
@@ -116,6 +126,8 @@ export class UserTokenApi {
         }
 
         (<any>Object).assign(localVarHeaderParams, options.headers);
+
+        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
 
         let localVarUseFormData = false;
 
@@ -200,11 +212,9 @@ export class UserTokenApi {
 
         Object.assign(localVarHeaderParams, options.headers);
 
-        localVarFormParams = {
+        localVarHeaderParams = {
             authorization: this.AuthenticateRequest()
-        }
-
-        let localVarUseFormData = false;
+        }        
 
         let localVarRequestOptions: request.Options = {
             method: 'GET',
@@ -215,33 +225,26 @@ export class UserTokenApi {
             json: true,
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-        return authenticationPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
+        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
+
+        this.authentications.default.applyToRequest(localVarRequestOptions);
+
+        return new Promise<Models.UserTokenGetTokenResponse>((resolve, reject) => {
+            request(localVarRequestOptions, (error, response, body) => {
+                if (error) {
+                    reject(error);
                 } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<Models.UserTokenGetTokenResponse>((resolve, reject) => {
-                request(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+                    let _body: Models.TokenResponse = ObjectSerializer.deserialize(body, "TokenResponse");
+                    let _bodyAsText: string = ObjectSerializer.deserialize(body, "string");
+                    let httpResponse: http.IncomingMessage = response;
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: Models.UserTokenGetTokenResponse = Object.assign(_body, {_response: _response});                          
+                        resolve(toReturn);
                     } else {
-                        let _body: Models.TokenResponse = ObjectSerializer.deserialize(body, "TokenResponse");
-                        let _bodyAsText: string = ObjectSerializer.deserialize(body, "string");
-                        let httpResponse: http.IncomingMessage = response;
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                            let toReturn: Models.UserTokenGetTokenResponse = Object.assign(_body, {_response: _response});                          
-                            resolve(toReturn);
-                        } else {
-                            reject({ response: response, body: body });
-                        }
+                        reject({ response: response, body: body });
                     }
-                });
+                }
             });
         });
     }
