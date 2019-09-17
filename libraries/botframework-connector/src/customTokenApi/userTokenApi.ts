@@ -94,8 +94,8 @@ export class UserTokenApi {
      */
     public async getAadTokens (userId: string, connectionName: string, aadResourceUrls: AadResourceUrls, options: Models.UserTokenGetAadTokensOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetAadTokensResponse> {
         const localVarPath = this.basePath + '/api/usertoken/GetAadTokens';
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);        
+        let localVarQueryParameters = {};
+        let localVarHeaderParams = Object.assign({}, this.defaultHeaders);        
 
         // verify required parameter 'aadResourceUrls' is not null or undefined
         if (aadResourceUrls === null || aadResourceUrls === undefined) {
@@ -171,8 +171,8 @@ export class UserTokenApi {
      */
     public async getToken (userId: string, connectionName: string, options: Models.UserTokenGetTokenOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetTokenResponse> {
         const localVarPath = this.basePath + '/api/usertoken/GetToken';
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);        
+        let localVarQueryParameters = {};
+        let localVarHeaderParams = Object.assign({}, this.defaultHeaders);        
 
         // verify required parameter 'userId' is not null or undefined
         if (userId === null || userId === undefined) {
@@ -243,8 +243,8 @@ export class UserTokenApi {
      */
     public async getTokenStatus (userId: string, options: Models.UserTokenGetTokenStatusOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetTokenStatusResponse> {
         const localVarPath = this.basePath + '/api/usertoken/GetTokenStatus';
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);    
+        let localVarQueryParameters = {};
+        let localVarHeaderParams = Object.assign({}, this.defaultHeaders);    
 
         // verify required parameter 'userId' is not null or undefined
         if (userId === null || userId === undefined) {
@@ -288,8 +288,7 @@ export class UserTokenApi {
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
                         let toReturn: Models.UserTokenGetTokenStatusResponse = Object.assign(_body, {_response: _response}); 
-                        resolve(toReturn);
-                    } else {
+                        resolve(toReturn);                    
                     } else {
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
                         let toReturn: Models.UserTokenGetTokenStatusResponse = Object.assign(_body, {_response: _response});  
@@ -307,8 +306,8 @@ export class UserTokenApi {
      */
     public async signOut (userId: string, options: Models.UserTokenSignOutOptionalParams = {headers: {}}) : Promise<Models.UserTokenSignOutResponse> {
         const localVarPath = this.basePath + '/api/usertoken/SignOut';
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);        
+        let localVarQueryParameters = {};
+        let localVarHeaderParams = Object.assign({}, this.defaultHeaders);        
 
         // verify required parameter 'userId' is not null or undefined
         if (userId === null || userId === undefined) {
