@@ -9,6 +9,16 @@ export * from './tokenStatus'
 import { TokenStatus } from './tokenStatus';
 import http = require('http');
 
+export class SimpleCredential {
+    appId: string;
+    appPassword: string
+
+    constructor(appId: string, appPassword: string){
+        this.appId = appId;
+        this.appPassword = appPassword;
+    }
+}
+
 /**
  * Contains response data for the getSignInUrl operation.
  */

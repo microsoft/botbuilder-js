@@ -28,30 +28,24 @@ let defaultBasePath = 'https://token.botframework.com';
 export enum BotSignInApiApiKeys {
 }
 
-export class SimpleCredential {
-    appId: string;
-    appPassword: string
-
-    constructor(appId: string, appPassword: string){
-        this.appId = appId;
-        this.appPassword = appPassword;
-    }
-}
-
 export class BotSignInApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders = {};
     protected _useQuerystring : boolean = false;
-    protected credentials: SimpleCredential;
+    protected credentials: Models.SimpleCredential;
 
     protected authentications = {
         'default': <Authentication>new VoidAuth(),
     }
     
-    constructor(CustomCredentials: { appId: string, appPassword: string})
-    constructor(CustomCredentials: { appId: string, appPassword: string}, basePath?: string){
+    constructor(CustomCredentials: Models.SimpleCredential)
+    constructor(CustomCredentials: Models.SimpleCredential, basePath?: string){
         if(basePath)
          this.basePath = basePath;
+         
+        if(CustomCredentials){
+            this.credentials = new Models.SimpleCredential(CustomCredentials.appId, CustomCredentials.appPassword);
+        }        
     }
 
     set useQuerystring(value: boolean) {
