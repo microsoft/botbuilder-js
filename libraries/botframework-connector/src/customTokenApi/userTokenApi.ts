@@ -95,8 +95,7 @@ export class UserTokenApi {
     public async getAadTokens (userId: string, connectionName: string, aadResourceUrls: AadResourceUrls, options: Models.UserTokenGetAadTokensOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetAadTokensResponse> {
         const localVarPath = this.basePath + '/api/usertoken/GetAadTokens';
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);        
 
         // verify required parameter 'aadResourceUrls' is not null or undefined
         if (aadResourceUrls === null || aadResourceUrls === undefined) {
@@ -125,12 +124,9 @@ export class UserTokenApi {
             localVarQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        Object.assign(localVarHeaderParams, options.headers);
 
-        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
-
-        let localVarUseFormData = false;
-
+        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));        
         let localVarRequestOptions: request.Options = {
             method: 'POST',
             qs: localVarQueryParameters,
@@ -140,36 +136,31 @@ export class UserTokenApi {
             json: true,
             body: ObjectSerializer.serialize(aadResourceUrls, "AadResourceUrls")
         };
+        
+        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-        return authenticationPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
+        this.authentications.default.applyToRequest(localVarRequestOptions);
+
+        return new Promise<Models.UserTokenGetAadTokensResponse>((resolve, reject) => {
+            request(localVarRequestOptions, (error, response) => {
+                if (error) {
+                    reject(error);
                 } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<Models.UserTokenGetAadTokensResponse>((resolve, reject) => {
-                request(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+                    let _body: Models.UserTokenGetAadTokensResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
+                    let httpResponse: http.IncomingMessage = response;
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: Models.UserTokenGetAadTokensResponse = Object.assign(_body, {_response: _response});
+                        resolve(toReturn);
                     } else {
-                        body = ObjectSerializer.deserialize(body, "{ [key: string]: TokenResponse; }");
-                        let _bodyAsText = ObjectSerializer.deserialize(body, "string");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            let toReturn: any = Object.assign({}, body);
-                            let _response = Object.assign(response, { bodyAsText: _bodyAsText, parsedBody: body});
-                            Object.assign(toReturn, {_response: _response});
-                            resolve(toReturn);
-                        } else {
-                            reject({ response: response, body: body });
-                        }
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: Models.UserTokenGetAadTokensResponse = Object.assign(_body, {_response: _response});  
+                        reject(toReturn);
                     }
-                });
+                }
             });
-        });
+        });      
     }
     /**
      * 
@@ -181,8 +172,7 @@ export class UserTokenApi {
     public async getToken (userId: string, connectionName: string, options: Models.UserTokenGetTokenOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetTokenResponse> {
         const localVarPath = this.basePath + '/api/usertoken/GetToken';
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);        
 
         // verify required parameter 'userId' is not null or undefined
         if (userId === null || userId === undefined) {
@@ -210,11 +200,7 @@ export class UserTokenApi {
             localVarQueryParameters['code'] = ObjectSerializer.serialize(options.code, "string");
         }        
 
-        Object.assign(localVarHeaderParams, options.headers);
-
-        localVarHeaderParams = {
-            authorization: this.AuthenticateRequest()
-        }        
+        Object.assign(localVarHeaderParams, options.headers);       
 
         let localVarRequestOptions: request.Options = {
             method: 'GET',
@@ -226,23 +212,24 @@ export class UserTokenApi {
         };
 
         this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
-
         this.authentications.default.applyToRequest(localVarRequestOptions);
 
         return new Promise<Models.UserTokenGetTokenResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
+            request(localVarRequestOptions, (error, response) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: Models.TokenResponse = ObjectSerializer.deserialize(body, "TokenResponse");
-                    let _bodyAsText: string = ObjectSerializer.deserialize(body, "string");
+                    let _body: Models.TokenResponse = ObjectSerializer.deserialize(response, "TokenResponse");
+                    let _bodyAsText: string = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
                         let toReturn: Models.UserTokenGetTokenResponse = Object.assign(_body, {_response: _response});                          
                         resolve(toReturn);
                     } else {
-                        reject({ response: response, body: body });
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: Models.UserTokenGetTokenResponse = Object.assign(_body, {_response: _response});  
+                        reject(toReturn);
                     }
                 }
             });
@@ -257,8 +244,7 @@ export class UserTokenApi {
     public async getTokenStatus (userId: string, options: Models.UserTokenGetTokenStatusOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetTokenStatusResponse> {
         const localVarPath = this.basePath + '/api/usertoken/GetTokenStatus';
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);    
 
         // verify required parameter 'userId' is not null or undefined
         if (userId === null || userId === undefined) {
@@ -277,9 +263,7 @@ export class UserTokenApi {
             localVarQueryParameters['include'] = ObjectSerializer.serialize(options.include, "string");
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
+        Object.assign(localVarHeaderParams, options.headers);        
 
         let localVarRequestOptions: request.Options = {
             method: 'GET',
@@ -290,33 +274,28 @@ export class UserTokenApi {
             json: true,
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-        return authenticationPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
+        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
+        this.authentications.default.applyToRequest(localVarRequestOptions);
+
+        return new Promise<Models.UserTokenGetTokenStatusResponse>((resolve, reject) => {
+            request(localVarRequestOptions, (error, response) => {
+                if (error) {
+                    reject(error);
                 } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<Models.UserTokenGetTokenStatusResponse>((resolve, reject) => {
-                request(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+                    let _body: Models.UserTokenGetTokenStatusResponse = ObjectSerializer.deserialize(response, "Array<TokenStatus>");
+                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
+                    let httpResponse: http.IncomingMessage = response;
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: Models.UserTokenGetTokenStatusResponse = Object.assign(_body, {_response: _response}); 
+                        resolve(toReturn);
                     } else {
-                        body = ObjectSerializer.deserialize(body, "Array<TokenStatus>");
-                        let _bodyAsText = ObjectSerializer.deserialize(body, "string");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            let toReturn = Object.assign({}, body);
-                            let _response = Object.assign(response, {bodyAsText: _bodyAsText, parsedBody: body});
-                            Object.assign(toReturn, {_response: _response})
-                            resolve(toReturn);
-                        } else {
-                            reject({ response: response, body: body });
-                        }
+                    } else {
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: Models.UserTokenGetTokenStatusResponse = Object.assign(_body, {_response: _response});  
+                        reject(toReturn);
                     }
-                });
+                }
             });
         });
     }
@@ -329,8 +308,7 @@ export class UserTokenApi {
     public async signOut (userId: string, options: Models.UserTokenSignOutOptionalParams = {headers: {}}) : Promise<Models.UserTokenSignOutResponse> {
         const localVarPath = this.basePath + '/api/usertoken/SignOut';
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);        
 
         // verify required parameter 'userId' is not null or undefined
         if (userId === null || userId === undefined) {
@@ -349,9 +327,7 @@ export class UserTokenApi {
             localVarQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
+        Object.assign(localVarHeaderParams, options.headers);        
 
         let localVarRequestOptions: request.Options = {
             method: 'DELETE',
@@ -362,33 +338,27 @@ export class UserTokenApi {
             json: true,
         };
 
-        let authenticationPromise = Promise.resolve();
-        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
-        return authenticationPromise.then(() => {
-            if (Object.keys(localVarFormParams).length) {
-                if (localVarUseFormData) {
-                    (<any>localVarRequestOptions).formData = localVarFormParams;
+        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
+        this.authentications.default.applyToRequest(localVarRequestOptions);
+
+        return new Promise<Models.UserTokenSignOutResponse>((resolve, reject) => {
+            request(localVarRequestOptions, (error, response) => {
+                if (error) {
+                    reject(error);
                 } else {
-                    localVarRequestOptions.form = localVarFormParams;
-                }
-            }
-            return new Promise<Models.UserTokenSignOutResponse>((resolve, reject) => {
-                request(localVarRequestOptions, (error, response, body) => {
-                    if (error) {
-                        reject(error);
+                    let _body: Models.UserTokenSignOutResponse = ObjectSerializer.deserialize(response, "object");
+                    let _bodyAsText: string = ObjectSerializer.deserialize(response, "string");
+                    let httpResponse: http.IncomingMessage = response;
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: Models.UserTokenSignOutResponse = Object.assign(_body, {_response: _response});                         
+                        resolve(toReturn)
                     } else {
-                        body = ObjectSerializer.deserialize(body, "object");
-                        let _bodyAsText: string = ObjectSerializer.deserialize(body, "string");
-                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                            let toReturn: any = Object.assign({}, body);
-                            let _reponse: any = Object.assign(response, {bodyAsText: _bodyAsText, parsedBody: body});
-                            Object.assign(toReturn, _reponse);
-                            resolve(toReturn)
-                        } else {
-                            reject({ response: response, body: body });
-                        }
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: Models.UserTokenSignOutResponse = Object.assign(_body, {_response: _response});  
+                        reject(toReturn);
                     }
-                });
+                }
             });
         });
     }
