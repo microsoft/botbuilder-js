@@ -4,7 +4,7 @@ import { ResourceResponse } from '../resourceResponse';
 /**
  * Contains response data for the ConversationResourceResponse.
  */
-export type ConversationResourceResponse = ResourceResponse & {
+export type useResourceResponse = ResourceResponse & {
     /**
      * The underlying HTTP response.
      */

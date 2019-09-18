@@ -14,20 +14,15 @@ import request = require('request');
 import http = require('http');
 
 /* tslint:disable:no-unused-locals */
-import { Activity } from './model/activity';
 import { AttachmentData } from './model/attachmentData';
-import { ChannelAccount } from './model/channelAccount';
 import { ConversationResourceResponse } from './model/conversationResourceResponse';
-import { ConversationsResult } from './model/conversationsResult';
-import { PagedMembersResult } from './model/pagedMembersResult';
-import { ResourceResponse } from './model/resourceResponse';
+
 import { Transcript } from './model/transcript';
-import * as Models from "./model";
 import { MicrosoftAppCredentials } from '../auth'
 import { ObjectSerializer, Authentication, OAuth, VoidAuth } from './model/models';
-import { CreateConversationResponse, ConversationParameters, GetConversationPagedMembersResponse, SendConversationHistoryResponse, UpdateActivityResponse, UploadAttachmentResponse, RequestOptions, PagedParameters } from './model';
+import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
 import { SimpleCredential } from './simpleCredential';
-import { memberId } from '../connectorApi/models/parameters';
+\import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
 
 let defaultBasePath = 'https://api.botframework.com';
 
@@ -41,7 +36,7 @@ export class ConversationsApi {
     protected credentials: SimpleCredential;
 
     protected authentications = {
-        'default': <Authentication>new VoidAuth(),
+        'default': <Authentication> new VoidAuth(),
     }
 
     constructor(CustomCredentials: SimpleCredential)
@@ -80,8 +75,7 @@ export class ConversationsApi {
     }
 
 
-    public async createConversation (parameters: ConversationParameters, 
-                                    options: RequestOptions = {headers: {}}) 
+    public async createConversation (parameters: ConversationParameters)
                                     : Promise<CreateConversationResponse> {
                                                     
         const localVarPath = this.basePath + '/v3/conversations';
@@ -94,7 +88,7 @@ export class ConversationsApi {
             throw new Error('Required parameter parameters was null or undefined when calling conversationsCreateConversation.');
         }
 
-        Object.assign(localVarHeaderParams, options.headers);
+        Object.assign(localVarHeaderParams, parameters.headers);
 
         this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));  
 
@@ -148,9 +142,8 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId to delete
      */
-    public async deleteActivity (parameters: ConversationParameters,
-        options: RequestOptions = {headers: {}}) 
-        : Promise<ApiDeleteConversationMemberResponse> {
+    public async deleteActivity (parameters: ConversationParameters) 
+        : Promise<DeleteActivityResponse> {
         
             const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
@@ -170,7 +163,7 @@ export class ConversationsApi {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsDeleteActivity.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        (<any>Object).assign(localVarHeaderParams, parameters.headers);
 
         let localVarUseFormData = false;
 
@@ -192,19 +185,19 @@ export class ConversationsApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<ApiDeleteActivityResponse>((resolve, reject) => {
+        return new Promise<DeleteActivityResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: ApiDeleteActivityResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _body: DeleteActivityResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
                     let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
 
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let httpResponse: http.IncomingMessage = response;
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: ApiDeleteActivityResponse = Object.assign(_body, {_response: _response});                          
+                        let toReturn: DeleteActivityResponse = Object.assign(_body, {_response: _response});                          
                         resolve(toReturn);
                     } else {
                         reject({ response: response, body: body });
@@ -224,9 +217,8 @@ export class ConversationsApi {
      */
     public async deleteConversationMember (
         memberId: string,
-        parameters: ConversationParameters, 
-        options: RequestOptions = {headers: {}}) 
-        : Promise<ApiDeleteConversationMemberResponse> {
+        parameters: ConversationParameters) 
+        : Promise<DeleteActivityResponse> {
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/members/{memberId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
             .replace('{' + 'memberId' + '}', encodeURIComponent(String(memberId)));
@@ -244,7 +236,7 @@ export class ConversationsApi {
             throw new Error('Required parameter memberId was null or undefined when calling conversationsDeleteConversationMember.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        (<any>Object).assign(localVarHeaderParams, parameters.headers);
 
         let localVarUseFormData = false;
 
@@ -266,19 +258,19 @@ export class ConversationsApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<ApiDeleteConversationMemberResponse>((resolve, reject) => {
+        return new Promise<DeleteActivityResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: ApiDeleteConversationMemberResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _body: DeleteActivityResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
                     let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
 
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let httpResponse: http.IncomingMessage = response;
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: ApiDeleteConversationMemberResponse = Object.assign(_body, {_response: _response});                          
+                        let toReturn: DeleteActivityResponse = Object.assign(_body, {_response: _response});                          
                         resolve(toReturn);
                     } else {
                         reject({ response: response, body: body });
@@ -296,28 +288,26 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId Activity ID
      */
-    public async getActivityMembers (parameters: ConversationParameters, 
-        options: RequestOptions = {headers: {}}) 
-        : Promise<ApiDeleteConversationMemberResponse> {
+    public async getActivityMembers (parameters: ConversationParameters): Promise<DeleteActivityResponse> {
 
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}/members'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
-            .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
+            .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId == null) {
+        if (parameters.conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsGetActivityMembers.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
-        if (activityId == null) {
+        if (parameters.activity.id == null) {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsGetActivityMembers.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        (<any>Object).assign(localVarHeaderParams, parameters.headers);
 
         let localVarUseFormData = false;
 
@@ -339,19 +329,19 @@ export class ConversationsApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<ApiDeleteConversationMemberResponse>((resolve, reject) => {
+        return new Promise<DeleteActivityResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: ApiDeleteConversationMemberResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _body: DeleteActivityResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
                     let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
 
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let httpResponse: http.IncomingMessage = response;
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: ApiDeleteConversationMemberResponse = Object.assign(_body, {_response: _response});                          
+                        let toReturn: DeleteActivityResponse = Object.assign(_body, {_response: _response});                          
                         resolve(toReturn);
                     } else {
                         reject({ response: response, body: body });
@@ -367,21 +357,20 @@ export class ConversationsApi {
      * @summary GetConversationMembers
      * @param conversationId Conversation ID
      */
-    public async getConversationMembers (parameters: ConversationParameters, 
-        options: RequestOptions = {headers: {}}) 
+    public async getConversationMembers (parameters: ConversationParameters) 
         : Promise<GetConversationMembersResponse> {
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/members'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId == null) {
+        if (parameters.conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsGetConversationMembers.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        (<any>Object).assign(localVarHeaderParams, parameters.headers);
 
         let localVarUseFormData = false;
 
@@ -408,7 +397,7 @@ export class ConversationsApi {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: GetConversationMembersResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _body: GetConversationMembersResponse = ObjectSerializer.deserialize(response, "ChannelAccount[]");
                     let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
 
@@ -443,9 +432,8 @@ export class ConversationsApi {
      * @param pageSize Suggested page size
      * @param continuationToken Continuation Token
      */
-    public async getConversationPagedMembers (parameters: PagedParameters,
-        options: RequestOptions = {headers: {}}) 
-        : Promise<GetConversationPagedMembersResponse> {
+    public async getConversationPagedMembers (parameters: PagedParameters) 
+        : Promise<useResourceResponse> {
 
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/pagedmembers'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
@@ -466,7 +454,7 @@ export class ConversationsApi {
             localVarQueryParameters['continuationToken'] = ObjectSerializer.serialize(parameters.continuationToken, "string");
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        (<any>Object).assign(localVarHeaderParams, parameters.headers);
 
         let localVarUseFormData = false;
 
@@ -488,19 +476,19 @@ export class ConversationsApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<GetConversationPagedMembersResponse>((resolve, reject) => {
+        return new Promise<useResourceResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: GetConversationPagedMembersResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _body: useResourceResponse = ObjectSerializer.deserialize(response, "ResourceResponse");
                     let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
 
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let httpResponse: http.IncomingMessage = response;
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: GetConversationPagedMembersResponse = Object.assign(_body, {_response: _response});                          
+                        let toReturn: useResourceResponse = Object.assign(_body, {_response: _response});                          
                         resolve(toReturn);
                     } else {
                         reject({ response: response, body: body });
@@ -524,14 +512,14 @@ export class ConversationsApi {
      * @summary GetConversations
      * @param continuationToken skip or continuation token
      */
-    public async getConversations (options: RequestOptions = {headers: {}}) 
-                                    : Promise<GetConversationsResponse> {
+    public async getConversations (parameters: ConversationParameters = {headers: {}}) 
+                                    : Promise<useResourceResponse> {
         const localVarPath = this.basePath + '/v3/conversations';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        (<any>Object).assign(localVarHeaderParams, parameters.headers);
 
         let localVarUseFormData = false;
 
@@ -553,19 +541,19 @@ export class ConversationsApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<GetConversationsResponse>((resolve, reject) => {
+        return new Promise<useResourceResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: GetConversationsResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _body: useResourceResponse = ObjectSerializer.deserialize(response, "ResourceResponse");
                     let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
 
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let httpResponse: http.IncomingMessage = response;
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: GetConversationsResponse = Object.assign(_body, {_response: _response});                          
+                        let toReturn: useResourceResponse = Object.assign(_body, {_response: _response});                          
                         resolve(toReturn);
                     } else {
                         reject({ response: response, body: body });
@@ -588,9 +576,8 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId the reply is to (OPTIONAL)
      */
-    public async replyToActivity (parameters: ConversationParameters, 
-                                options: RequestOptions = {headers: {}})
-                                : Promise<ReplyToActivityResponse> {
+    public async replyToActivity (parameters: ConversationParameters)
+                                : Promise<useResourceResponse> {
 
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.activity.conversation.id)))
@@ -614,7 +601,7 @@ export class ConversationsApi {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsReplyToActivity.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        (<any>Object).assign(localVarHeaderParams, parameters.headers);
 
         let localVarUseFormData = false;
 
@@ -637,19 +624,19 @@ export class ConversationsApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<ReplyToActivityResponse>((resolve, reject) => {
+        return new Promise<useResourceResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: ReplyToActivityResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _body: useResourceResponse = ObjectSerializer.deserialize(response, "ResourceResponse");
                     let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
 
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let httpResponse: http.IncomingMessage = response;
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: ReplyToActivityResponse = Object.assign(_body, {_response: _response});                          
+                        let toReturn: useResourceResponse = Object.assign(_body, {_response: _response});                          
                         resolve(toReturn);
                     } else {
                         reject({ response: response, body: body });
@@ -669,9 +656,8 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      */
     public async sendConversationHistory (parameters: ConversationParameters,
-                                        history: Transcript, 
-                                        options: RequestOptions = {headers: {}}) 
-                                        : Promise<SendConversationHistoryResponse> {
+                                        history: Transcript) 
+                                        : Promise<useResourceResponse> {
 
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/history'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
@@ -688,7 +674,7 @@ export class ConversationsApi {
             throw new Error('Required parameter conversationId was null or undefined when calling SendConversationHistory.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        (<any>Object).assign(localVarHeaderParams, parameters.headers);
 
         let localVarUseFormData = false;
         let localVarRequestOptions: request.Options = {
@@ -710,19 +696,19 @@ export class ConversationsApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<SendConversationHistoryResponse>((resolve, reject) => {
+        return new Promise<useResourceResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: SendConversationHistoryResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _body: useResourceResponse = ObjectSerializer.deserialize(response, "ResourceResponse");
                     let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
 
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let httpResponse: http.IncomingMessage = response;
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: SendConversationHistoryResponse = Object.assign(_body, {_response: _response});                          
+                        let toReturn: useResourceResponse = Object.assign(_body, {_response: _response});                          
                         resolve(toReturn);
                     } else {
                         reject({ response: response, body: body });
@@ -744,9 +730,8 @@ export class ConversationsApi {
      * @param activity Activity to send
      * @param conversationId Conversation ID
      */
-    public async sendToConversation (parameters: ConversationParameters, 
-                                    options: RequestOptions = {headers: {}}) 
-                                    : Promise<SendToConversationResponse> {
+    public async sendToConversation (parameters: ConversationParameters) 
+                                    : Promise<useResourceResponse> {
                                         
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
@@ -764,7 +749,7 @@ export class ConversationsApi {
             throw new Error('Required parameter conversationId was null or undefined when calling SendToConversation.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        (<any>Object).assign(localVarHeaderParams, parameters.headers);
 
         let localVarUseFormData = false;
 
@@ -787,19 +772,19 @@ export class ConversationsApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<SendToConversationResponse>((resolve, reject) => {
+        return new Promise<useResourceResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: SendToConversationResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _body: useResourceResponse = ObjectSerializer.deserialize(response, "ResourceResponse");
                     let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
 
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let httpResponse: http.IncomingMessage = response;
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: SendToConversationResponse = Object.assign(_body, {_response: _response});                          
+                        let toReturn: useResourceResponse = Object.assign(_body, {_response: _response});                          
                         resolve(toReturn);
                     } else {
                         reject({ response: response, body: body });
@@ -818,9 +803,8 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId to update
      */
-    public async updateActivity (parameters: ConversationParameters, 
-                                options: RequestOptions = {headers: {}}) 
-                                : Promise<UpdateActivityResponse> {
+    public async updateActivity (parameters: ConversationParameters) 
+                                : Promise<useResourceResponse> {
 
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
@@ -844,7 +828,7 @@ export class ConversationsApi {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsUpdateActivity.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        (<any>Object).assign(localVarHeaderParams, parameters.headers);
 
         let localVarUseFormData = false;
 
@@ -867,19 +851,19 @@ export class ConversationsApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<UpdateActivityResponse>((resolve, reject) => {
+        return new Promise<useResourceResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: UpdateActivityResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _body: useResourceResponse = ObjectSerializer.deserialize(response, "ResourceResponse");
                     let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
 
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let httpResponse: http.IncomingMessage = response;
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: UpdateActivityResponse = Object.assign(_body, {_response: _response});                          
+                        let toReturn: useResourceResponse = Object.assign(_body, {_response: _response});                          
                         resolve(toReturn);
                     } else {
                         reject({ response: response, body: body });
@@ -899,9 +883,8 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      */
     public async uploadAttachment (parameters: ConversationParameters,
-                                    attachmentUpload: AttachmentData, 
-                                    options: RequestOptions = {headers: {}}) 
-                                    : Promise<UploadAttachmentResponse> {
+                                    attachmentUpload: AttachmentData) 
+                                    : Promise<useResourceResponse> {
 
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/attachments'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
@@ -919,7 +902,7 @@ export class ConversationsApi {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsUploadAttachment.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        (<any>Object).assign(localVarHeaderParams, parameters.headers);
 
         let localVarUseFormData = false;
 
@@ -942,19 +925,19 @@ export class ConversationsApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<UploadAttachmentResponse>((resolve, reject) => {
+        return new Promise<useResourceResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: UploadAttachmentResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _body: useResourceResponse = ObjectSerializer.deserialize(response, "ResourceResponse");
                     let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
 
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let httpResponse: http.IncomingMessage = response;
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: UploadAttachmentResponse = Object.assign(_body, {_response: _response});                          
+                        let toReturn: useResourceResponse = Object.assign(_body, {_response: _response});                          
                         resolve(toReturn);
                     } else {
                         reject({ response: response, body: body });

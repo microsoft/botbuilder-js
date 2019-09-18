@@ -71,11 +71,15 @@ export * from './tokenRequest';
 export * from './tokenResponse';
 export * from './transcript';
 export * from './videoCard';
+export * from './responses/createConversationResponse'
+export * from './responses/getConversationMembersResponse'
+export * from './responses/deleteActivityResponse'
+export * from './responses/getAttachmentInfoResponse'
+export * from './responses/getAttachmentResponse'
+export * from './responses/useResourceResponse'
 export * from './parameters/conversationParameters'
 export * from './parameters/requestOptions'
 export * from './parameters/pagedParameters'
-export * from './responses/conversationResourceResponse'
-
 
 import localVarRequest = require('request');
 
