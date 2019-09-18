@@ -16,7 +16,7 @@ import http = require('http');
 /* tslint:disable:no-unused-locals */
 import { AttachmentInfo } from './model/attachmentInfo';
 import { ErrorResponse } from './model/errorResponse';
-
+import * as Models from "./model";
 import { ObjectSerializer, Authentication, VoidAuth } from './model/models';
 
 let defaultBasePath = 'https://api.botframework.com';
@@ -32,22 +32,20 @@ export class AttachmentsApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders : any = {};
     protected _useQuerystring : boolean = false;
+    protected credentials: Models.SimpleCredential;
 
     protected authentications = {
         'default': <Authentication>new VoidAuth(),
     }
 
-    constructor(basePath?: string);
-    constructor(basePathOrUsername: string, password?: string, basePath?: string) {
-        if (password) {
-            if (basePath) {
-                this.basePath = basePath;
-            }
-        } else {
-            if (basePathOrUsername) {
-                this.basePath = basePathOrUsername
-            }
-        }
+    constructor(CustomCredentials: Models.SimpleCredential)
+    constructor(CustomCredentials: Models.SimpleCredential, basePath?: string){
+        if(basePath)
+         this.basePath = basePath;
+         
+        if(CustomCredentials){
+            this.credentials = new Models.SimpleCredential(CustomCredentials.appId, CustomCredentials.appPassword);
+        }        
     }
 
     set useQuerystring(value: boolean) {

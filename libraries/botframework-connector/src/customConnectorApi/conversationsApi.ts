@@ -24,10 +24,9 @@ import { ErrorResponse } from './model/errorResponse';
 import { PagedMembersResult } from './model/pagedMembersResult';
 import { ResourceResponse } from './model/resourceResponse';
 import { Transcript } from './model/transcript';
-
 import * as Models from "./model";
-
-import { ObjectSerializer, Authentication, VoidAuth } from './model/models';
+import { MicrosoftAppCredentials } from '../auth'
+import { ObjectSerializer, Authentication, OAuth, VoidAuth } from './model/models';
 
 let defaultBasePath = 'https://api.botframework.com';
 
@@ -42,22 +41,20 @@ export class ConversationsApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders : any = {};
     protected _useQuerystring : boolean = false;
+    protected credentials: Models.SimpleCredential;
 
     protected authentications = {
         'default': <Authentication>new VoidAuth(),
     }
 
-    constructor(basePath?: string);
-    constructor(basePathOrUsername: string, password?: string, basePath?: string) {
-        if (password) {
-            if (basePath) {
-                this.basePath = basePath;
-            }
-        } else {
-            if (basePathOrUsername) {
-                this.basePath = basePathOrUsername
-            }
-        }
+    constructor(CustomCredentials: Models.SimpleCredential)
+    constructor(CustomCredentials: Models.SimpleCredential, basePath?: string){
+        if(basePath)
+         this.basePath = basePath;
+         
+        if(CustomCredentials){
+            this.credentials = new Models.SimpleCredential(CustomCredentials.appId, CustomCredentials.appPassword);
+        }        
     }
 
     set useQuerystring(value: boolean) {
@@ -80,21 +77,17 @@ export class ConversationsApi {
         (this.authentications as any)[ConversationsApiApiKeys[key]].apiKey = value;
     }
 
+    private async AuthenticateRequest(){
+        const tokenGenerator = new MicrosoftAppCredentials(this.credentials.appId, this.credentials.appPassword);
+        return `${ await tokenGenerator.getToken(true) }`;
+    }
+
     /**
      * Create a new Conversation.    
      * @summary CreateConversation
      * @param parameters Parameters to create the conversation from
      */
-    //createConversation(parameters: Models.ConversationParameters, 
-    //                               options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.ConversationResourceResponse>, 
-    //                              callback?: msRest.ServiceCallback<Models.ConversationResourceResponse>)
-    //                                  : Promise<Models.ConversationsCreateConversationResponse> {
-    public async CreateConversation (parameters: ConversationParameters, 
-                                     options: {headers: {[name: string]: string}} = {headers: {}}) 
-                                     : Promise<{ 
-                                                response: http.IncomingMessage; 
-                                                body: ConversationResourceResponse;  
-                                                }> {
+    public async CreateConversation (parameters: ConversationParameters, options: Models.RequestOptions = {headers: {}}) : Promise<Models.ConversationsCreateConversationResponse> {
                                                     
         const localVarPath = this.basePath + '/v3/conversations';
         let localVarQueryParameters: any = {};
@@ -106,9 +99,9 @@ export class ConversationsApi {
             throw new Error('Required parameter parameters was null or undefined when calling conversationsCreateConversation.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
+        Object.assign(localVarHeaderParams, options.headers);
 
-        let localVarUseFormData = false;
+        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));  
 
         let localVarRequestOptions: localVarRequest.Options = {
             method: 'POST',
@@ -121,6 +114,7 @@ export class ConversationsApi {
         };
 
         this.authentications.default.applyToRequest(localVarRequestOptions);
+        let localVarUseFormData = false;
 
         if (Object.keys(localVarFormParams).length) {
             if (localVarUseFormData) {
@@ -129,16 +123,23 @@ export class ConversationsApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.IncomingMessage; body: ConversationResourceResponse;  }>((resolve, reject) => {
+
+        return new Promise<Models.ConversationsCreateConversationResponse>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
-                } else {
-                    body = ObjectSerializer.deserialize(body, "ConversationResourceResponse");
+                } else {                    
+                    let _body: Models.ConversationsCreateConversationResponse = ObjectSerializer.deserialize(response, "ConversationResourceResponse");
+                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
+                    let httpResponse: http.IncomingMessage = response;
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        resolve({ response: response, body: body });
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: Models.ConversationsCreateConversationResponse = Object.assign(_body, {_response: _response});
+                        resolve(toReturn);
                     } else {
-                        reject({ response: response, body: body });
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: Models.ConversationsCreateConversationResponse = Object.assign(_body, {_response: _response});  
+                        reject(toReturn);
                     }
                 }
             });

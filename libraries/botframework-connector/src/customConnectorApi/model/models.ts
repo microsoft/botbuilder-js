@@ -389,7 +389,11 @@ export class ApiKeyAuth implements Authentication {
 export class OAuth implements Authentication {
     public accessToken: string = '';
 
-    applyToRequest(requestOptions: localVarRequest.Options): void {
+    constructor(accessToken: string){
+        this.accessToken = accessToken; 
+    }
+
+    applyToRequest(requestOptions: any): void {
         if (requestOptions && requestOptions.headers) {
             requestOptions.headers["Authorization"] = "Bearer " + this.accessToken;
         }

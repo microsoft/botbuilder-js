@@ -12,6 +12,18 @@
 
 import { ConversationMembers } from './conversationMembers';
 
+export interface ConversationsResult {
+    /**
+    * Paging token
+    */
+   continuationToken?: string;
+   /**
+   * List of conversations
+   */
+   conversations?: Array<ConversationMembers>;
+}
+
+
 /**
 * Conversations result
 */

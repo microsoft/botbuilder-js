@@ -11,9 +11,26 @@
  */
 
 
+
 /**
 * A response containing a resource
 */
+export interface ConversationResourceResponse {
+    /**
+    * ID of the Activity (if sent)
+    */
+    ativityId?: string;
+    /**
+    * Service endpoint where operations concerning the conversation may be performed
+    */
+    serviceUrl?: string;
+    /**
+    * Id of the resource
+    */
+    id?: string;
+}
+
+
 export class ConversationResourceResponse {
     /**
     * ID of the Activity (if sent)
