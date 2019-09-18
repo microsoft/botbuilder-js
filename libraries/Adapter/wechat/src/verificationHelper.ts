@@ -21,13 +21,13 @@ export class VerificationHelper {
      */
     public static VerifySignature(signature: string, timestamp: string, nonce: string, token: string = null, postBody: string = null): boolean {
         if (signature === undefined) {
-            throw new Error("ArgumentNullException - Request validation failed - null Signature");
+            throw new Error('ArgumentNullException - Request validation failed - null Signature');
         }
         if (timestamp === undefined) {
-            throw new Error("ArgumentNullException - Request validation failed - null Timestamp");
+            throw new Error('ArgumentNullException - Request validation failed - null Timestamp');
         }
         if (nonce === undefined) {
-            throw new Error("ArgumentNullException - Request validation failed - null Nonce");
+            throw new Error('ArgumentNullException - Request validation failed - null Nonce');
         }
         return signature === GenerateSignature(token, timestamp, nonce, postBody);
     }
@@ -43,9 +43,9 @@ export class VerificationHelper {
  * @returns Generated signature.
  */
 function GenerateSignature(token: string, timestamp: string, nonce: string, encryptedMessage: string = null): string {
-    let sortlist = [token, timestamp, nonce, encryptedMessage];
+    const sortlist = [token, timestamp, nonce, encryptedMessage];
     sortlist.sort();
-    var raw = sortlist.join("");
+    const raw = sortlist.join('');
     const hash = crypto.createHash('sha1').update(raw).digest('hex');
     return hash;
 }

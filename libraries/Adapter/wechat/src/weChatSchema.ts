@@ -43,7 +43,7 @@ export enum RequestMessageTypes {
 
 /**Detail Event type from WeChat. */
 export enum EventTypes
-{
+    {
     /// <summary>
     /// Enter a conversation, may removed by wechat.
     /// deprecated.
@@ -975,6 +975,14 @@ export class ResponseMessage extends IResponseMessageBase {
     CreateTime: number;
 }
 
+export class Image
+{
+    MediaId: string;
+    constructor(mediaId: string) {
+        this.MediaId = mediaId;
+    }
+}
+
 export class ImageResponse extends ResponseMessage {
     image: Image;
     constructor(param: Image | string) {
@@ -988,29 +996,12 @@ export class ImageResponse extends ResponseMessage {
     }
 }
 
-export class Image
-{
-    MediaId: string;
-    constructor (mediaId: string) {
-        this.MediaId = mediaId;
-    }
-}
-
 export class MPNewsResponse extends ResponseMessage{
     MediaId: string;
     constructor(mediaId: string) {
         super();
         this.MediaId = mediaId;
         this.MsgType = ResponseMessageTypes.MPNews;
-    }
-}
-
-export class MusicResponse extends ResponseMessage {
-    Music: Music;
-    constructor(music: Music) {
-        super();
-        this.Music = music;
-        this.MsgType = ResponseMessageTypes.Music;
     }
 }
 
@@ -1024,6 +1015,15 @@ export interface Music{
     HQMusicUrl: string;
 
     ThumbMediaId: string;
+}
+
+export class MusicResponse extends ResponseMessage {
+    Music: Music;
+    constructor(music: Music) {
+        super();
+        this.Music = music;
+        this.MsgType = ResponseMessageTypes.Music;
+    }
 }
 
 export interface NewsResponse extends ResponseMessage {
@@ -1060,15 +1060,6 @@ export interface TextResponse extends ResponseMessage {
     Content: string;
 }
 
-export class VideoResponse extends ResponseMessage {
-    Video: Video;
-    constructor(mediaId: string, title?: string, description?: string) {
-        super();
-        this.Video = new Video(mediaId, title, description);
-        this.MsgType = ResponseMessageTypes.Video;
-    }
-}
-
 export class Video {
     MediaId: string;
 
@@ -1083,12 +1074,12 @@ export class Video {
     }
 }
 
-export class VoiceResponse extends ResponseMessage {
-    Voice: Voice;
-    constructor(mediaId: string) {
+export class VideoResponse extends ResponseMessage {
+    Video: Video;
+    constructor(mediaId: string, title?: string, description?: string) {
         super();
-        this.Voice = new Voice(mediaId);
-        this.MsgType = ResponseMessageTypes.Voice;
+        this.Video = new Video(mediaId, title, description);
+        this.MsgType = ResponseMessageTypes.Video;
     }
 }
 
@@ -1096,6 +1087,15 @@ export class Voice {
     MediaId: string;
     constructor(mediaId: string) {
         this.MediaId = mediaId;
+    }
+}
+
+export class VoiceResponse extends ResponseMessage {
+    Voice: Voice;
+    constructor(mediaId: string) {
+        super();
+        this.Voice = new Voice(mediaId);
+        this.MsgType = ResponseMessageTypes.Voice;
     }
 }
 
@@ -1211,7 +1211,7 @@ export class WeChatAccessToken {
         this.AppId = result.AppId,
         this.Secret = result.Secret,
         this.Token = result.Token,
-        this.ExpireTime = new Date(result.ExpireTime)
+        this.ExpireTime = new Date(result.ExpireTime);
     }
 }
 
@@ -1238,7 +1238,7 @@ export class WeChatJsonResult {
 export class UploadMediaResult extends WeChatJsonResult {
     MediaId: string;
 
-    Expired: boolean = false;
+    Expired = false;
     constructor(result: any) {
         super(result);
         this.MediaId = result.media_id;

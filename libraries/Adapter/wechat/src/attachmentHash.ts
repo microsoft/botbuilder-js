@@ -20,7 +20,7 @@ export class AttachmentHash {
      * @returns  Hash value.
      */
     computerBytesHash(bytes: Uint8Array): string {
-        var result = crypto.createHash('md5').update(bytes).digest("hex");
+        const result = crypto.createHash('md5').update(bytes).digest('hex');
         return result;
     }
 
@@ -30,8 +30,8 @@ export class AttachmentHash {
      * @returns  Hash value.
      */
     computerStringHash(content: string): string {
-        var encoder = new util.TextEncoder();
-        var bytes = encoder.encode(content);
+        const encoder = new util.TextEncoder();
+        const bytes = encoder.encode(content);
         return this.computerBytesHash(bytes);
     }
 }

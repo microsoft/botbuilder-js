@@ -19,7 +19,7 @@ export class AttachmentHelper {
      */
     public static IsUrl(content: any): boolean {
         if (typeof content === 'string') {
-            let url = content;
+            const url = content;
             if (url.startsWith('http') || url.startsWith('https')) {
                 return true;
             }
@@ -29,20 +29,20 @@ export class AttachmentHelper {
 
     public static DecodeBase64String(base64Encoded: string): any {
         let contentType: string;
-        if (base64Encoded.startsWith("data:")) {
-            var start = base64Encoded.indexOf("data:") + 5;
-            var end = base64Encoded.indexOf(";", start);
+        if (base64Encoded.startsWith('data:')) {
+            const start = base64Encoded.indexOf('data:') + 5;
+            const end = base64Encoded.indexOf(';', start);
             if (end > start) {
                 contentType = base64Encoded.substring(start, end).trim();
             }
         }
 
-        let headerIndex = base64Encoded.indexOf("base64,");
+        const headerIndex = base64Encoded.indexOf('base64,');
         if (headerIndex >= 0) {
             base64Encoded = base64Encoded.substring(headerIndex + 7).trim();
         }
 
-        let base64 = new util.TextEncoder().encode(base64Encoded);
+        const base64 = new util.TextEncoder().encode(base64Encoded);
 
         return {base64, contentType};
     }

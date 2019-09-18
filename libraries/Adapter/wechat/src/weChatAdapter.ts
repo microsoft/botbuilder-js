@@ -6,14 +6,14 @@
  * Licensed under the MIT License.
  */
 
-import {Activity, ActivityTypes, BotAdapter, ConversationReference, ResourceResponse, TurnContext } from "botbuilder-core";
-import { Storage } from "botbuilder-core";
-import { WeChatClient } from "./weChatClient";
-import { IRequestMessageBase, SecretInfo, IResponseMessageBase, ResponseMessageTypes, TextResponse, ImageResponse, NewsResponse, MusicResponse, MPNewsResponse, VideoResponse, VoiceResponse, UploadMediaResult, MessageMenuResponse } from "./weChatSchema";
-import { WeChatMessageMapper } from "./weChatMessageMapper";
-import * as xml2js from "xml2js";
-import { VerificationHelper } from "./VerificationHelper";
-import { MessageCryptography } from "./messageCryptography";
+import {Activity, ActivityTypes, BotAdapter, ConversationReference, ResourceResponse, TurnContext } from 'botbuilder-core';
+import { Storage } from 'botbuilder-core';
+import { WeChatClient } from './weChatClient';
+import { IRequestMessageBase, SecretInfo, IResponseMessageBase, ResponseMessageTypes, TextResponse, ImageResponse, NewsResponse, MusicResponse, MPNewsResponse, VideoResponse, VoiceResponse, UploadMediaResult, MessageMenuResponse } from './weChatSchema';
+import { WeChatMessageMapper } from './weChatMessageMapper';
+import * as xml2js from 'xml2js';
+import { VerificationHelper } from './VerificationHelper';
+import { MessageCryptography } from './messageCryptography';
 
 /**
  * Express or Restify Request object.
@@ -51,7 +51,7 @@ export class WeChatAdapter extends BotAdapter {
     /**
      * Key to get all response from bot in a single turn.
      */
-    private TurnResponseKey: string = "turnResponse";
+    private TurnResponseKey = 'turnResponse';
 
     private weChatMessageMapper: WeChatMessageMapper;
     private weChatClient: WeChatClient;
@@ -83,7 +83,7 @@ export class WeChatAdapter extends BotAdapter {
      * @returns conversation
      */
     public async continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void> {
-        const request: Partial<Activity> = TurnContext.applyConversationReference({ type: "event", name: "continueConversation" }, reference,true);
+        const request: Partial<Activity> = TurnContext.applyConversationReference({ type: 'event', name: 'continueConversation' }, reference,true);
         const context: TurnContext = this.createContext(request);
 
         await this.runMiddleware(context, logic as any);
@@ -105,21 +105,21 @@ export class WeChatAdapter extends BotAdapter {
      * @returns Response message entity.
      */
     public async ProcessWeChatRequest(wechatRequest: IRequestMessageBase, logic: (context: TurnContext) => Promise<any>, passiveResponse: boolean): Promise<any> {
-        var activity = await this.weChatMessageMapper.ToConnectorMessage(wechatRequest);
-        var context = new TurnContext(this, activity as Activity);
-        var responses = new Map<string, Array<Activity>>();
+        const activity = await this.weChatMessageMapper.ToConnectorMessage(wechatRequest);
+        const context = new TurnContext(this, activity as Activity);
+        const responses = new Map<string, Array<Activity>>();
         context.turnState.set(this.TurnResponseKey, responses);
         await this.runMiddleware(context, logic);
-        var key = `${activity.conversation.id}:${activity.id}`;
+        const key = `${ activity.conversation.id }:${ activity.id }`;
         try {
             let activities: any;
-            var test = responses.has(key);
+            const test = responses.has(key);
             if (test) {
                 activities = responses.get(key);
             } else {
                 activities = new Array<Activity>();
             }
-            var response = await this.ProcessBotResponse(activities, wechatRequest.FromUserName, passiveResponse);
+            const response = await this.ProcessBotResponse(activities, wechatRequest.FromUserName, passiveResponse);
             return response;
         } catch (e) {
             throw e;
@@ -130,14 +130,14 @@ export class WeChatAdapter extends BotAdapter {
      * Does not support by WeChat.
      */
     public async deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
-        throw new Error("WeChat does not support deleting activities.");
+        throw new Error('WeChat does not support deleting activities.');
     }
 
     /**
      * Does not support by WeChat.
      */
     public async updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void> {
-        throw new Error("WeChat does not support updating activities.");
+        throw new Error('WeChat does not support updating activities.');
     }
 
     /**
@@ -155,9 +155,9 @@ export class WeChatAdapter extends BotAdapter {
             switch (activity.type) {
                 case ActivityTypes.Message:
                 case ActivityTypes.EndOfConversation:
-                    var conversation = activity.conversation;
-                    var key = `${conversation.id}:${activity.replyToId}`;
-                    var responses = context.turnState.get(this.TurnResponseKey);
+                    const conversation = activity.conversation;
+                    const key = `${ conversation.id }:${ activity.replyToId }`;
+                    const responses = context.turnState.get(this.TurnResponseKey);
                     if (responses.has(key)) {
                         responses.get(key).push(activity);
                     } else {
@@ -167,7 +167,7 @@ export class WeChatAdapter extends BotAdapter {
                 default:
                     break;
             }
-            var resourceResponse: ResourceResponse = {
+            const resourceResponse: ResourceResponse = {
                 id: activity.id || ''
             };
             resourceResponses.push(resourceResponse);
@@ -202,7 +202,7 @@ export class WeChatAdapter extends BotAdapter {
         }
 
         if (!VerificationHelper.VerifySignature(secretInfo.Signature, secretInfo.Timestamp, secretInfo.Nonce, this.settings.Token)) {
-            throw new Error("UnauthorizedAccessException - Signature verification failed");
+            throw new Error('UnauthorizedAccessException - Signature verification failed');
         }
 
         secretInfo.Token = this.settings.Token;
@@ -234,7 +234,7 @@ export class WeChatAdapter extends BotAdapter {
      */
     private async ProcessBotResponse(activities: Activity[], openId: string, passiveResponse: boolean): Promise<any> {
         let response: any;
-        for (let activity of activities) {
+        for (const activity of activities) {
             if (activity !== undefined && activity.type === ActivityTypes.Message) {
                 if (activity.channelData !== undefined) {
                     if (passiveResponse) {
@@ -243,7 +243,7 @@ export class WeChatAdapter extends BotAdapter {
                         await this.SendChannelDataToWeChat(activity.channelData);
                     }
                 } else {
-                    var responseList = (await this.weChatMessageMapper.ToWeChatMessage(activity)) as IResponseMessageBase[];
+                    const responseList = (await this.weChatMessageMapper.ToWeChatMessage(activity)) as IResponseMessageBase[];
                     if (passiveResponse) {
                         response = responseList;
                     } else {
@@ -274,37 +274,34 @@ export class WeChatAdapter extends BotAdapter {
      * @param openId User's open id from WeChat.
      * @returns  Task running result.
      */
-    private async SendMessageToWeChat(
-        responseList: IResponseMessageBase[],
-        openId: string
-    ) {
-        for (let response of responseList) {
+    private async SendMessageToWeChat(responseList: IResponseMessageBase[], openId: string) {
+        for (const response of responseList) {
             try {
                 switch (response.MsgType) {
                     case ResponseMessageTypes.Text:
-                        var textResponse = response as TextResponse;
+                        const textResponse = response as TextResponse;
                         await this.weChatClient.SendTextAsync(
                             openId,
                             textResponse.Content
                         );
                         break;
                     case ResponseMessageTypes.Image:
-                        var imageResponse = response as ImageResponse;
+                        const imageResponse = response as ImageResponse;
                         await this.weChatClient.SendImageAsync(
                             openId,
                             imageResponse.image.MediaId
                         );
                         break;
                     case ResponseMessageTypes.News:
-                        var newsResponse = response as NewsResponse;
+                        const newsResponse = response as NewsResponse;
                         await this.weChatClient.SendNewsAsync(
                             openId,
                             newsResponse.Articles
                         );
                         break;
                     case ResponseMessageTypes.Music:
-                        var musicResponse = response as MusicResponse;
-                        var music = musicResponse.Music;
+                        const musicResponse = response as MusicResponse;
+                        const music = musicResponse.Music;
                         await this.weChatClient.SendMusicAsync(
                             openId,
                             music.Title,
@@ -315,15 +312,15 @@ export class WeChatAdapter extends BotAdapter {
                         );
                         break;
                     case ResponseMessageTypes.MPNews:
-                        var mpnewsResponse = response as MPNewsResponse;
+                        const mpnewsResponse = response as MPNewsResponse;
                         await this.weChatClient.SendMPNewsAsync(
                             openId,
                             mpnewsResponse.MediaId
                         );
                         break;
                     case ResponseMessageTypes.Video:
-                        var videoRespones = response as VideoResponse;
-                        var video = videoRespones.Video;
+                        const videoRespones = response as VideoResponse;
+                        const video = videoRespones.Video;
                         await this.weChatClient.SendVideoAsync(
                             openId,
                             video.MediaId,
@@ -332,14 +329,14 @@ export class WeChatAdapter extends BotAdapter {
                         );
                         break;
                     case ResponseMessageTypes.Voice:
-                        var voiceResponse = response as VoiceResponse;
+                        const voiceResponse = response as VoiceResponse;
                         await this.weChatClient.SendVoiceAsync(
                             openId,
                             voiceResponse.Voice.MediaId
                         );
                         break;
                     case ResponseMessageTypes.MessageMenu:
-                        var menuResponse = response as MessageMenuResponse;
+                        const menuResponse = response as MessageMenuResponse;
                         await this.weChatClient.SendMessageMenuAsync(openId, menuResponse.MessageMenu);
                     case ResponseMessageTypes.LocationMessage:
                     case ResponseMessageTypes.SuccessResponse:
@@ -361,7 +358,7 @@ export class WeChatAdapter extends BotAdapter {
  * @param req The request sent from WeChat.
  * @param secretInfo Secret info for decrypt message.
  */
-async function parseRequest(req: WebRequest, secretInfo: SecretInfo) {
+async function parseRequest(req: WebRequest, secretInfo: SecretInfo): Promise<IRequestMessageBase> {
     const requestRaw = await parseXML(req.body);
     if (requestRaw.Encrypt === undefined) {
         return requestRaw;
@@ -378,21 +375,21 @@ async function parseRequest(req: WebRequest, secretInfo: SecretInfo) {
  */
 function parseXML(str: string): Promise<IRequestMessageBase> {
     const xmlParser = new xml2js.Parser({
-      explicitArray: false,
-      explicitCharkey: false,
-      explicitRoot: false
+        explicitArray: false,
+        explicitCharkey: false,
+        explicitRoot: false
     });
     return new Promise((resolve, reject) => {
-      if (!str) {
-        reject(new Error("Document is empty"));
-      } else {
-        xmlParser.parseString(str, (err?: Error, res?: any) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(res);
-          }
-        });
-      }
+        if (!str) {
+            reject(new Error('Document is empty'));
+        } else {
+            xmlParser.parseString(str, (err?: Error, res?: any) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            });
+        }
     });
-  }
+}

@@ -29,9 +29,9 @@ export class WeChatAttachmentStorage {
      * @param value Item value to write to the storage.
      */
     async SaveAsync(key: string, value: UploadMediaResult): Promise<void> {
-        let dict: StoreItems = {
+        const dict: StoreItems = {
             [key]: value,
-        }
+        };
         await this.Storage.write(dict);
     }
 
@@ -40,9 +40,9 @@ export class WeChatAttachmentStorage {
      * @param key Item key to read from the store.
      */
     async GetAsync(key: string): Promise<UploadMediaResult> {
-        let keys: string[] = [key];
-        let result: StoreItems = await this.Storage.read(keys);
-        let weChatResult: UploadMediaResult = result[key];
+        const keys: string[] = [key];
+        const result: StoreItems = await this.Storage.read(keys);
+        const weChatResult: UploadMediaResult = result[key];
         return weChatResult;
     }
 
@@ -51,7 +51,7 @@ export class WeChatAttachmentStorage {
      * @param key Item key to remove from the store.
      */
     async DeleteAsync(key: string): Promise<void> {
-        let keys: string[] = [key];
+        const keys: string[] = [key];
         await this.Storage.delete(keys);
     }
 }

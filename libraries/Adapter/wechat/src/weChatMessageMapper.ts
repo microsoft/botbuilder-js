@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { WeChatClient } from "./weChatClient";
-import { IResponseMessageBase, MenuItem, MessageMenu, MessageMenuResponse, ResponseMessageTypes, TextResponse, Music, MediaTypes, ResponseMessage, ImageResponse, VideoResponse, VoiceResponse, MusicResponse, Video, News, MPNewsResponse, Article, NewsResponse, IRequestMessageBase, RequestMessageTypes, RequestMessage, TextRequest, ImageRequest, MimeTypesMap, VoiceRequest, VideoRequest, ShortVideoRequest, LocationEvent, LocationRequest, LinkRequest } from "./weChatSchema";
-import { IActivity, IMessageActivity, ActivityTypes, CardAction, Attachment, MediaUrl, AttachmentData, HeroCard, CardImage, ThumbnailCard, SigninCard, ActionTypes, ReceiptCard, Fact, ReceiptItem, OAuthCard, Activity, ChannelAccount, ConversationAccount, Entity, GeoCoordinates } from "botbuilder-core";
-import { AttachmentHelper } from "./attachmentHelper";
-import { CardFactory, AudioCard, VideoCard, AnimationCard } from "botbuilder-core";
+import { WeChatClient } from './weChatClient';
+import { IResponseMessageBase, MenuItem, MessageMenu, MessageMenuResponse, ResponseMessageTypes, TextResponse, Music, MediaTypes, ResponseMessage, ImageResponse, VideoResponse, VoiceResponse, MusicResponse, Video, News, MPNewsResponse, Article, NewsResponse, IRequestMessageBase, RequestMessageTypes, RequestMessage, TextRequest, ImageRequest, VoiceRequest, VideoRequest, ShortVideoRequest, LocationRequest, LinkRequest } from './weChatSchema';
+import { IActivity, IMessageActivity, ActivityTypes, CardAction, Attachment, MediaUrl, AttachmentData, HeroCard, CardImage, ThumbnailCard, SigninCard, ReceiptCard, Fact, ReceiptItem, OAuthCard, Activity, ChannelAccount, ConversationAccount, Entity, GeoCoordinates } from 'botbuilder-core';
+import { AttachmentHelper } from './attachmentHelper';
+import { CardFactory, AudioCard, VideoCard, AnimationCard } from 'botbuilder-core';
 
 /**
  * WeChat massage mapper that can convert the message from a WeChat request to Activity or Activity to WeChat response.
@@ -38,8 +38,8 @@ export class WeChatMessageMapper {
      * @returns  Activity.
      */
     public async ToConnectorMessage(wechatRequest: IRequestMessageBase): Promise<IActivity> {
-        let activity = CreateActivity(wechatRequest);
-        let mimeTypes = new MimeTypesMap();
+        const activity = CreateActivity(wechatRequest);
+        let attachment: Attachment;
         switch (wechatRequest.MsgType) {
             case RequestMessageTypes.Text:
                 const textRequest = wechatRequest as TextRequest;
@@ -47,7 +47,7 @@ export class WeChatMessageMapper {
                 break;
             case RequestMessageTypes.Image:
                 const imageRequest = wechatRequest as ImageRequest;
-                var attachment: Attachment = {
+                attachment = {
                     contentType: MediaTypes.Image,
                     contentUrl: imageRequest.PicUrl,
                 };
@@ -56,7 +56,7 @@ export class WeChatMessageMapper {
             case RequestMessageTypes.Voice:
                 const voiceRequest = wechatRequest as VoiceRequest;
                 activity.text = voiceRequest.Recognition;
-                var attachment: Attachment = {
+                attachment = {
                     contentType: MediaTypes.Voice,
                     contentUrl: await this.weChatClient.GetMediaUrlAsync(voiceRequest.MediaId),
                 };
@@ -64,7 +64,7 @@ export class WeChatMessageMapper {
                 break;
             case RequestMessageTypes.Video:
                 const videoRequest = wechatRequest as VideoRequest;
-                var attachment: Attachment = {
+                attachment = {
                     contentType: MediaTypes.Video,
                     contentUrl: await this.weChatClient.GetMediaUrlAsync(videoRequest.MediaId),
                     thumbnailUrl: await this.weChatClient.GetMediaUrlAsync(videoRequest.ThumbMediaId),
@@ -73,7 +73,7 @@ export class WeChatMessageMapper {
                 break;
             case RequestMessageTypes.ShortVideo:
                 const shortVideoRequest = wechatRequest as ShortVideoRequest;
-                var attachment: Attachment = {
+                attachment = {
                     contentType: MediaTypes.Video,
                     contentUrl: await this.weChatClient.GetMediaUrlAsync(shortVideoRequest.MediaId),
                     thumbnailUrl: await this.weChatClient.GetMediaUrlAsync(shortVideoRequest.ThumbMediaId),
@@ -82,7 +82,7 @@ export class WeChatMessageMapper {
                 break;
             case RequestMessageTypes.Location:
                 const locationRequest = wechatRequest as LocationRequest;
-                var geo: GeoCoordinates = {
+                const geo: GeoCoordinates = {
                     name: locationRequest.Label,
                     latitude: locationRequest.Latitude,
                     longitude: locationRequest.Longtitude,
@@ -97,7 +97,7 @@ export class WeChatMessageMapper {
                 activity.summary = linkRequest.Description;
                 break;
         }
-        return activity
+        return activity;
     }
 
     /**
@@ -109,16 +109,16 @@ export class WeChatMessageMapper {
         try {
             let responseMessageList: IResponseMessageBase[] = [];
             if (activity.type === ActivityTypes.Message) {
-                let messageActivity = activity as IMessageActivity;
+                const messageActivity = activity as IMessageActivity;
                 responseMessageList = responseMessageList.concat(CreateTextResponseFromMessageActivity(messageActivity));
 
                 if (messageActivity.suggestedActions && messageActivity.suggestedActions.actions) {
                     responseMessageList = responseMessageList.concat(ProcessCardActions(messageActivity, messageActivity.suggestedActions.actions));
                 }
-                for (let attachment of (messageActivity.attachments || Array<Attachment>())) {
+                for (const attachment of (messageActivity.attachments || Array<Attachment>())) {
                     switch (attachment.contentType) {
                         // case CardFactory.contentTypes.adaptiveCard:
-                            // TODO: AdaptiveCard
+                        // TODO: AdaptiveCard
                         case CardFactory.contentTypes.animationCard:
                         case CardFactory.contentTypes.audioCard:
                         case CardFactory.contentTypes.videoCard:
@@ -190,7 +190,7 @@ export class WeChatMessageMapper {
         const heroCard = attachment.content as HeroCard;
         const news = await this.CreateNewsFromHeroCard(activity, heroCard);
         const uploadResult = await this.weChatClient.UploadNewsAsync([news], this.uploadTemporaryMedia);
-        var mpnews = new MPNewsResponse(uploadResult.MediaId);
+        const mpnews = new MPNewsResponse(uploadResult.MediaId);
         SetCommenField(mpnews, activity);
         messages.push(mpnews);
         messages = messages.concat(ProcessCardActions(activity, heroCard.buttons));
@@ -199,13 +199,13 @@ export class WeChatMessageMapper {
 
     private async CreateNewsFromHeroCard(activity: IMessageActivity, heroCard: HeroCard): Promise<News> {
         if (heroCard.tap === undefined) {
-            throw new Error("Tap action is required.");
+            throw new Error('Tap action is required.');
         }
-        let count = "0";
+        let count = '0';
         if (heroCard.images && heroCard.images.length > 0) {
-            count = "1";
+            count = '1';
         }
-        let news: News = {
+        const news: News = {
             Author: activity.from.name,
             Description: heroCard.subtitle,
             Content: heroCard.text,
@@ -214,8 +214,8 @@ export class WeChatMessageMapper {
             ContentSourceUrl: heroCard.tap.value.toString(),
             ThumbMediaId: undefined,
             ThumbUrl: undefined,
-        }
-        for (let image of (heroCard.images || new Array<CardImage>())) {
+        };
+        for (const image of (heroCard.images || new Array<CardImage>())) {
             const mediaMessage = await this.MediaContentToWeChatResponse(activity, image.alt, image.url, MediaTypes.Image);
             news.ThumbMediaId = (mediaMessage as ImageResponse).image.MediaId;
             news.ThumbUrl = image.url;
@@ -249,7 +249,7 @@ export class WeChatMessageMapper {
             const audioCard = attachment.content as AudioCard;
             let body = audioCard.subtitle;
             body = AddLine(body, audioCard.text);
-            let music: Music = {
+            const music: Music = {
                 Title: audioCard.title,
                 MusicUrl: audioCard.media[0].url,
                 HQMusicUrl: audioCard.media[0].url,
@@ -257,12 +257,12 @@ export class WeChatMessageMapper {
                 ThumbMediaId: undefined,
             };
             if (audioCard.image && audioCard.image.url) {
-                let responseList = await this.MediaContentToWeChatResponse(activity, audioCard.image.alt, audioCard.image.url, MediaTypes.Image);
+                const responseList = await this.MediaContentToWeChatResponse(activity, audioCard.image.alt, audioCard.image.url, MediaTypes.Image);
                 if (responseList instanceof ImageResponse) {
                     music.ThumbMediaId = responseList.image.MediaId;
                 }
             }
-            let musicResponse: MusicResponse = {
+            const musicResponse: MusicResponse = {
                 CreateTime: Date.now(),
                 FromUserName: activity.from.id,
                 ToUserName: activity.recipient.id,
@@ -278,12 +278,12 @@ export class WeChatMessageMapper {
             body = AddLine(body, videoCard.text);
             let video: Video;
             if (videoCard.image && videoCard.image.url) {
-                let responseList = await this.MediaContentToWeChatResponse(activity, videoCard.title, videoCard.media[0].url, MediaTypes.Video);
+                const responseList = await this.MediaContentToWeChatResponse(activity, videoCard.title, videoCard.media[0].url, MediaTypes.Video);
                 if (responseList instanceof VideoResponse) {
                     video = new Video(responseList.Video.MediaId, videoCard.title, body);
                 }
             }
-            let videoResponse: VideoResponse = {
+            const videoResponse: VideoResponse = {
                 CreateTime: Date.now(),
                 FromUserName: activity.from.id,
                 ToUserName: activity.recipient.id,
@@ -302,7 +302,7 @@ export class WeChatMessageMapper {
             if (animationCard.image && animationCard.image.url) {
                 messages.push(await this.MediaContentToWeChatResponse(activity, animationCard.image.alt, animationCard.image.url, MediaTypes.Image));
             }
-            for (let mediaUrl of (animationCard.media || new Array<MediaUrl>())) {
+            for (const mediaUrl of (animationCard.media || new Array<MediaUrl>())) {
                 messages.push(await this.MediaContentToWeChatResponse(activity, mediaUrl.profile, mediaUrl.url, MediaTypes.Image));
             }
             messages = messages.concat(ProcessCardActions(activity, animationCard.buttons));
@@ -319,14 +319,14 @@ export class WeChatMessageMapper {
      */
     private async CreateAttachmentDataAsync(name: string, content: string, contentType: string): Promise<AttachmentData> {
         if (contentType === undefined) {
-            throw new Error("Content type can not be null.");
+            throw new Error('Content type can not be null.');
         }
         if (content === undefined) {
-            throw new Error("Content url can not be null.");
+            throw new Error('Content url can not be null.');
         }
         let data: any;
         if (AttachmentHelper.IsUrl(content)) {
-            data = await this.weChatClient.SendHttpRequestAsync("GET", content);
+            data = await this.weChatClient.SendHttpRequestAsync('GET', content);
             name = name || newGuid();
             contentType = GetFixedMeidaType(contentType);
             const attachmentData: AttachmentData = {
@@ -358,25 +358,25 @@ export class WeChatMessageMapper {
  * @returns A activity instance.
  */
 function CreateActivity(wechatRequest: IRequestMessageBase): Activity {
-    let recipient: ChannelAccount = {
+    const recipient: ChannelAccount = {
         id: wechatRequest.ToUserName,
-        name: "Bot",
-        role: "bot",
+        name: 'Bot',
+        role: 'bot',
     };
-    let user: ChannelAccount = {
+    const user: ChannelAccount = {
         id: wechatRequest.FromUserName,
-        name: "User",
-        role: "user",
+        name: 'User',
+        role: 'user',
     };
-    let conversation: ConversationAccount = {
+    const conversation: ConversationAccount = {
         isGroup: false,
         conversationType: undefined,
         tenantId: undefined,
         name: undefined,
         id: wechatRequest.FromUserName,
     };
-    let activity: Activity = {
-        channelId: "wechat",
+    const activity: Activity = {
+        channelId: 'wechat',
         recipient: recipient,
         from: user,
         serviceUrl: undefined,
@@ -392,12 +392,12 @@ function CreateActivity(wechatRequest: IRequestMessageBase): Activity {
         label: undefined,
         valueType: undefined,
         listenFor: undefined,
-    }
+    };
     if (wechatRequest.MsgType === RequestMessageTypes.Event) {
         activity.id = newGuid();
         activity.type = ActivityTypes.Message;
     } else {
-        let request = wechatRequest as RequestMessage;
+        const request = wechatRequest as RequestMessage;
         activity.id = request.MsgId.toString();
         activity.type = ActivityTypes.Message;
     }
@@ -430,17 +430,17 @@ function ProcessReceiptCard(activity: IMessageActivity, attachment: Attachment):
     let messages: IResponseMessageBase[] = [];
     const receiptCard = attachment.content as ReceiptCard;
     let body = receiptCard.title;
-    for (let fact of (receiptCard.facts || new Array<Fact>())) {
-        body = AddLine(body, `${fact.key}: ${fact.value}`);
+    for (const fact of (receiptCard.facts || new Array<Fact>())) {
+        body = AddLine(body, `${ fact.key }: ${ fact.value }`);
     }
-    for (let item of (receiptCard.items || new Array<ReceiptItem>())) {
+    for (const item of (receiptCard.items || new Array<ReceiptItem>())) {
         body = AddText(item.title, item.price);
         body = AddLine(body, item.subtitle);
         body = AddLine(body, item.text);
         messages = messages.concat(GetMessages(activity, body));
     }
-    body = `Tax: ${receiptCard.tax}`;
-    body = AddLine(body, `Total: ${receiptCard.total}`);
+    body = `Tax: ${ receiptCard.tax }`;
+    body = AddLine(body, `Total: ${ receiptCard.total }`);
     messages = messages.concat(ProcessCardActions(activity, receiptCard.buttons));
     messages = messages.concat(GetMessages(activity, body));
     return messages;
@@ -458,13 +458,13 @@ function ProcessThumbnailCard(activity: IMessageActivity, attachment: Attachment
     const thumbnailCard = attachment.content as ThumbnailCard;
     let body = thumbnailCard.subtitle;
     body = AddLine(body, thumbnailCard.text);
-    let article: Article = {
+    const article: Article = {
         title: thumbnailCard.title,
         description: body,
         url: thumbnailCard.tap? thumbnailCard.tap.value.toString() : undefined,
         picUrl: thumbnailCard.images ? thumbnailCard.images[0].url : undefined,
     };
-    let newsResponse: NewsResponse = {
+    const newsResponse: NewsResponse = {
         Articles: [article],
         FromUserName: activity.from.id,
         ToUserName: activity.recipient.id,
@@ -488,8 +488,8 @@ function ProcessThumbnailCard(activity: IMessageActivity, attachment: Attachment
 function ProcessSigninCard(activity: IMessageActivity, attachment: Attachment): IResponseMessageBase[] {
     let messages: IResponseMessageBase[] = [];
     const signinCard = attachment.content as SigninCard;
-    messages = messages.concat(ProcessCardActions(activity, signinCard.buttons))
-    let textResponse = CreateTextResponseFromMessageActivity(activity);
+    messages = messages.concat(ProcessCardActions(activity, signinCard.buttons));
+    const textResponse = CreateTextResponseFromMessageActivity(activity);
     textResponse.Content = signinCard.text;
     messages.push(textResponse);
     return messages;
@@ -503,11 +503,11 @@ function ProcessSigninCard(activity: IMessageActivity, attachment: Attachment): 
  * @returns Response message list.
  */
 function GetMessages(activity: IMessageActivity, text: string) {
-    let messages: IResponseMessageBase[] = [];
+    const messages: IResponseMessageBase[] = [];
     if (text === undefined) {
         return messages;
     }
-    let textResponse = CreateTextResponseFromMessageActivity(activity);
+    const textResponse = CreateTextResponseFromMessageActivity(activity);
     textResponse.Content = text;
     messages.push(textResponse);
     return messages;
@@ -567,7 +567,7 @@ function CreateMediaResponse(activity: IActivity, mediaId: string, type: string)
     }
     SetCommenField(response, activity);
     if (response === undefined) {
-        throw new Error("The media type is not supported by Wechat");
+        throw new Error('The media type is not supported by Wechat');
     }
     return response;
 }
@@ -600,7 +600,7 @@ function AddLine(text: string, newText: string): string {
         return newText;
     }
 
-    return text + "\r\n" + newText;
+    return text + '\r\n' + newText;
 }
 
 /**
@@ -619,7 +619,7 @@ function AddText(text: string, newText: string): string {
         return newText;
     }
 
-    return text + "  " + newText;
+    return text + '  ' + newText;
 }
 
 /**
@@ -630,30 +630,30 @@ function AddText(text: string, newText: string): string {
  * @returns  WeChatResponses converted from card actions.
  */
 function ProcessCardActions(activity: IMessageActivity, actions: CardAction[]): IResponseMessageBase[] {
-    let messages = new Array<IResponseMessageBase>();
+    const messages = new Array<IResponseMessageBase>();
     actions = actions || new Array<CardAction>();
-    let menuItems = new Array<MenuItem>();
+    const menuItems = new Array<MenuItem>();
     let text: string;
-    for (let action of actions) {
-        var actionContent = action.title || action.displayText || action.text;
+    for (const action of actions) {
+        const actionContent = action.title || action.displayText || action.text;
         if (action.value && !AttachmentHelper.IsUrl(action.value)) {
-            var menuItem: MenuItem = {
+            const menuItem: MenuItem = {
                 id: actionContent,
                 content: action.value.toString(),
             };
             menuItems.push(menuItem);
         } else {
-            text = AddLine(text, `<a href=\"${action.value}\">${actionContent}</a>`);
+            text = AddLine(text, `<a href=\"${ action.value }\">${ actionContent }</a>`);
         }
     }
 
     if (menuItems.length !== 0) {
-        let messageMenu: MessageMenu = {
-            HeaderContent: "",
+        const messageMenu: MessageMenu = {
+            HeaderContent: '',
             MenuItems: menuItems,
-            TailContent: "",
+            TailContent: '',
         };
-        let menuResponse: MessageMenuResponse = {
+        const menuResponse: MessageMenuResponse = {
             MessageMenu: messageMenu,
             MsgType: ResponseMessageTypes.MessageMenu,
             FromUserName: activity.from.id,
@@ -664,7 +664,7 @@ function ProcessCardActions(activity: IMessageActivity, actions: CardAction[]): 
     }
 
     if (text !== undefined) {
-        let textResponse = CreateTextResponseFromMessageActivity(activity);
+        const textResponse = CreateTextResponseFromMessageActivity(activity);
         textResponse.Content = text;
         messages.push(textResponse);
     }
@@ -678,7 +678,7 @@ function ProcessCardActions(activity: IMessageActivity, actions: CardAction[]): 
  * @returns  Response message to WeChat.
  */
 function CreateTextResponseFromMessageActivity(activity: IMessageActivity): TextResponse {
-    let response: TextResponse = {
+    const response: TextResponse = {
         Content: activity.text,
         FromUserName: activity.from.id,
         ToUserName: activity.recipient.id,
