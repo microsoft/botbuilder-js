@@ -3,6 +3,7 @@ export * from './conversationsApi';
 export * from './CustomConnectorClient'
 export * from './model';
 
+import http = require('http');
 
 /**
  * @interface
@@ -38,6 +39,188 @@ export interface ConversationParameters {
      * conversation
      */
     channelData: any;
+}
+
+/**
+ * @interface
+ * An interface representing ConversationsApiCreateConversationOptionalParams.
+ * Optional Parameters.
+ */
+export interface ConversationsApiCreateConversationOptionalParams {
+    /**
+     * @member {string} [channelId]
+     */
+    channelId?: string;
+    /**
+     * @member { [key: string]: string } [headers]
+     */
+    headers?: { [key: string]: string };
+}
+
+/**
+ * Contains response data for the CreateConversation operation.
+ */
+export type ConversationsApiCreateConversationResponse = {
+    /**
+     * The response body properties.
+     */
+    [propertyName: string]: TokenResponse;
+  } & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: http.IncomingMessage & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+  
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: { [propertyName: string]: TokenResponse };
+    };
+};
+
+/**
+ * Contains response data for the DeleteActivity operation.
+ */
+export type ConversationsApiDeleteActivityResponse = {
+    /**
+     * The response body properties.
+     */
+    [propertyName: string]: TokenResponse;
+  } & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: http.IncomingMessage & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+  
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: { [propertyName: string]: TokenResponse };
+    };
+};
+
+/**
+ * Contains response data for the DeleteConversationMember operation.
+ */
+export type ConversationsApiDeleteConversationMemberResponse = {
+    /**
+     * The response body properties.
+     */
+    [propertyName: string]: TokenResponse;
+  } & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: http.IncomingMessage & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+  
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: { [propertyName: string]: TokenResponse };
+    };
+};
+
+
+/**
+ * Contains response data for the GetActivityMembers operation.
+ */
+export type ConversationsApiGetActivityMembersResponse = {
+    /**
+     * The response body properties.
+     */
+    [propertyName: string]: TokenResponse;
+  } & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: http.IncomingMessage & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+  
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: { [propertyName: string]: TokenResponse };
+    };
+};
+
+/**
+ * An interface representing TokenResponse.
+ */
+export interface TokenResponse {
+    /**
+     * @member {string} [channelId]
+     */
+    channelId?: string;
+    /**
+     * @member {string} [connectionName]
+     */
+    connectionName?: string;
+    token?: string;
+    expiration?: string;
+}
+
+
+/**
+ * @interface
+ * An interface representing ConversationsApiDeleteActivityOptionalParams.
+ * Optional Parameters.
+ */
+export interface ConversationsApiDeleteActivityOptionalParams {
+    /**
+     * @member {string} [channelId]
+     */
+    channelId?: string;
+    /**
+     * @member { [key: string]: string } [headers]
+     */
+    headers?: { [key: string]: string };
+}
+
+/**
+ * @interface
+ * An interface representing ConversationsApiDeleteConversationMemberOptionalParams.
+ * Optional Parameters.
+ */
+export interface ConversationsApiDeleteConversationMemberOptionalParams {
+    /**
+     * @member {string} [channelId]
+     */
+    channelId?: string;
+    /**
+     * @member { [key: string]: string } [headers]
+     */
+    headers?: { [key: string]: string };
+}
+
+/**
+ * @interface
+ * An interface representing ConversationsApiGetActivityMembersMemberOptionalParams.
+ * Optional Parameters.
+ */
+export interface ConversationsApiGetActivityMembersMemberOptionalParams {
+    /**
+     * @member {string} [channelId]
+     */
+    channelId?: string;
+    /**
+     * @member { [key: string]: string } [headers]
+     */
+    headers?: { [key: string]: string };
 }
 
 
@@ -717,3 +900,4 @@ export declare enum ActionTypes {
     Payment = "payment",
     MessageBack = "messageBack"
 }
+
