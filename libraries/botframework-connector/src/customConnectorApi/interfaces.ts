@@ -4,6 +4,7 @@ import http = require('http');
 /* tslint:disable:no-unused-locals */
 import { Activity } from './model/activity';
 import { AttachmentData } from './model/attachmentData';
+import { AttachmentInfo } from './model/attachmentInfo';
 import { ChannelAccount } from './model/channelAccount';
 import { ConversationParameters } from './model/conversationParameters';
 import { ConversationResourceResponse } from './model/conversationResourceResponse';
@@ -21,55 +22,94 @@ export class SimpleCredential {
     appId: string;
     appPassword: string
 
-    constructor(appId: string, appPassword: string){
+    constructor(appId: string, appPassword: string) {
         this.appId = appId;
         this.appPassword = appPassword;
     }
 }
 
 export interface RequestOptions {
-    headers: 
+    headers:
     {
         [name: string]: string
     }
 }
 
-export type CreateConversationResponse = ConversationResourceResponse & {
+export type GetAttachmentResponse = {
+    /**
+     * BROWSER ONLY
+     *
+     * The response body as a browser Blob.
+     * Always undefined in node.js.
+     */
+    blobBody: Promise<Blob>;
+
+    /**
+     * NODEJS ONLY
+     *
+     * The response body as a node.js Readable stream.
+     * Always undefined in the browser.
+     */
+    readableStreamBody: NodeJS.ReadableStream;
+
+    /**
+     * The underlying HTTP response.
+     */
+    _response: http.IncomingMessage;
+};
+
+export type GetAttachmentInfoResponse = AttachmentInfo & {
     /**
      * The underlying HTTP response.
      */
     _response: http.IncomingMessage & {
-      /**
-       * The response body as text (string format)
-       */
-      bodyAsText: string;
-  
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: ConversationResourceResponse;
+        /*
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+        /*
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: AttachmentInfo;
     };
-  };
+};
+
+export type CreateConversationResponse = ConversationResourceResponse & {
+    /**
+     * The response body as text (string format)
+     */
+    _response: http.IncomingMessage & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: ConversationResourceResponse;
+    };
+};
 
 /**
  * Contains response data for the uploadAttachment operation.
  */
 export type UploadAttachmentResponse = ResourceResponse & {
     /**
-     * The underlying HTTP response.
+     * The response body as parsed JSON or XML
      */
     _response: http.IncomingMessage & {
         /**
        * The response body as text (string format)
        */
-      bodyAsText: string;
-  
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: ResourceResponse;
+        bodyAsText: string;
+
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: ResourceResponse;
     };
-  };
+};
 
 /**
  * Contains response data for the updateActivity operation.
@@ -82,14 +122,14 @@ export type UpdateActivityResponse = ResourceResponse & {
         /**
        * The response body as text (string format)
        */
-      bodyAsText: string;
-  
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: ResourceResponse;
+        bodyAsText: string;
+
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: ResourceResponse;
     };
-  };
+};
 
 /**
  * Contains response data for the sendConversationHistory operation.
@@ -99,57 +139,72 @@ export type SendConversationHistoryResponse = ResourceResponse & {
      * The underlying HTTP response.
      */
     _response: http.IncomingMessage & {
-      /**
-       * The response body as text (string format)
-       */
-      bodyAsText: string;
-  
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: ResourceResponse;
-    };
-  };
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
 
-  /**
- * Contains response data for the sendToConversation operation.
- */
-export type SendToConversationResponse = ResourceResponse & {
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: ResourceResponse;
+    };
+};
+
+export type GetConversationPagedMembersResponse = PagedMembersResult & {
     /**
-     * The underlying HTTP response.
+     * The response body as text (string format)
      */
     _response: http.IncomingMessage & {
-      /**
-       * The response body as text (string format)
-       */
-      bodyAsText: string;
-  
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: ResourceResponse;
-    };
-  };
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
 
-  /**
- * Contains response data for the replyToActivity operation.
- */
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: ResourceResponse;
+    };
+};
+
+export type SendToConversationResponse = ResourceResponse & {
+    /*
+    * The underlying HTTP response.
+    */
+    _response: http.IncomingMessage & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: PagedMembersResult;
+    };
+};
+
+/**
+* Contains response data for the replyToActivity operation.
+*/
 export type ReplyToActivityResponse = ResourceResponse & {
     /**
      * The underlying HTTP response.
      */
     _response: http.IncomingMessage & {
-      /**
-       * The response body as text (string format)
-       */
-      bodyAsText: string;
-  
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: ResourceResponse;
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: ResourceResponse;
     };
-  };
+};
+
 
 /**
  * Contains response data for the getConversations operation.
@@ -159,55 +214,37 @@ export type GetConversationsResponse = ConversationsResult & {
      * The underlying HTTP response.
      */
     _response: http.IncomingMessage & {
-      /**
-       * The response body as text (string format)
-       */
-      bodyAsText: string;
-  
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: ConversationsResult;
-    };
-  };
-  
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
 
-  export type GetConversationPagedMembersResponse = PagedMembersResult & {
-    /**
-     * The underlying HTTP response.
-     */
-    _response: http.IncomingMessage & {
-      /**
-       * The response body as text (string format)
-       */
-      bodyAsText: string;
-  
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: PagedMembersResult;
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: ConversationsResult;
     };
-  };
+};
 
-  /**
- * Contains response data for the getConversationMembers operation.
- */
+/**
+* Contains response data for the getConversationMembers operation.
+*/
 export type GetConversationMembersResponse = Array<ChannelAccount> & {
     /**
      * The underlying HTTP response.
      */
     _response: http.IncomingMessage & {
-      /**
-       * The response body as text (string format)
-       */
-      bodyAsText: string;
-  
-      /**
-       * The response body as parsed JSON or XML
-       */
-      body: Array<ChannelAccount>;
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+
+        /**
+         * The response body as parsed JSON or XML
+         */
+        body: Array<ChannelAccount>;
     };
-  };
+};
 
 /**
  * An interface representing TokenResponse.
@@ -300,11 +337,6 @@ export interface ApiCreateConversationOptionalParams {
  */
 export type ApiCreateConversationResponse = {
     /**
-     * The response body properties.
-     */
-    [propertyName: string]: TokenResponse;
-  } & {
-    /**
      * The underlying HTTP response.
      */
     _response: http.IncomingMessage & {
@@ -312,7 +344,7 @@ export type ApiCreateConversationResponse = {
          * The response body as text (string format)
          */
         bodyAsText: string;
-  
+
         /**
          * The response body as parsed JSON or XML
          */
@@ -325,19 +357,14 @@ export type ApiCreateConversationResponse = {
  */
 export type ApiDeleteActivityResponse = {
     /**
-     * The response body properties.
-     */
-    [propertyName: string]: TokenResponse;
-  } & {
-    /**
-     * The underlying HTTP response.
-     */
+  * The underlying HTTP response.
+  */
     _response: http.IncomingMessage & {
         /**
          * The response body as text (string format)
          */
         bodyAsText: string;
-  
+
         /**
          * The response body as parsed JSON or XML
          */
@@ -350,19 +377,14 @@ export type ApiDeleteActivityResponse = {
  */
 export type ApiDeleteConversationMemberResponse = {
     /**
-     * The response body properties.
-     */
-    [propertyName: string]: TokenResponse;
-  } & {
-    /**
-     * The underlying HTTP response.
-     */
+ * The underlying HTTP response.
+ */
     _response: http.IncomingMessage & {
         /**
          * The response body as text (string format)
          */
         bodyAsText: string;
-  
+
         /**
          * The response body as parsed JSON or XML
          */
@@ -376,19 +398,14 @@ export type ApiDeleteConversationMemberResponse = {
  */
 export type ApiGetActivityMembersResponse = {
     /**
-     * The response body properties.
-     */
-    [propertyName: string]: TokenResponse;
-  } & {
-    /**
-     * The underlying HTTP response.
-     */
+ * The underlying HTTP response.
+ */
     _response: http.IncomingMessage & {
         /**
          * The response body as text (string format)
          */
         bodyAsText: string;
-  
+
         /**
          * The response body as parsed JSON or XML
          */
