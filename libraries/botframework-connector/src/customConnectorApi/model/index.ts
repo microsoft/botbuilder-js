@@ -1,3 +1,40 @@
+import http = require('http');
+import { ConversationResourceResponse } from './ConversationResourceResponse';
+
+export class SimpleCredential {
+    appId: string;
+    appPassword: string
+
+    constructor(appId: string, appPassword: string){
+        this.appId = appId;
+        this.appPassword = appPassword;
+    }
+}
+
+export interface RequestOptions {
+    headers: {[name: string]: string}
+}
+
+/**
+ * Contains response data for the createConversation operation.
+ */
+export type ConversationsCreateConversationResponse = ConversationResourceResponse & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: http.IncomingMessage & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+  
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ConversationResourceResponse;
+    };
+};
+
 export * from './actionTypes'
 export * from './activity'
 export * from './activityImportance'

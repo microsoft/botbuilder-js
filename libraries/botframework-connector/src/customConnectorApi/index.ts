@@ -1,5 +1,6 @@
 export * from './attachmentsApi';
 export * from './conversationsApi';
+export * from './CustomConnectorClient'
 export * from './model';
 
 import http = require('http');
