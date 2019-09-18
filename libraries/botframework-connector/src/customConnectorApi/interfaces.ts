@@ -38,7 +38,7 @@ export type CreateConversationResponse = ConversationResourceResponse & {
     /**
      * The underlying HTTP response.
      */
-    response: http.IncomingMessage & {
+    _response: http.IncomingMessage & {
       /**
        * The response body as text (string format)
        */
@@ -49,8 +49,128 @@ export type CreateConversationResponse = ConversationResourceResponse & {
        */
       parsedBody: ConversationResourceResponse;
     };
-    body: any;
   };
+
+/**
+ * Contains response data for the uploadAttachment operation.
+ */
+export type UploadAttachmentResponse = ResourceResponse & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: http.IncomingMessage & {
+        /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+  
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ResourceResponse;
+    };
+  };
+
+/**
+ * Contains response data for the updateActivity operation.
+ */
+export type UpdateActivityResponse = ResourceResponse & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: http.IncomingMessage & {
+        /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+  
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ResourceResponse;
+    };
+  };
+
+/**
+ * Contains response data for the sendConversationHistory operation.
+ */
+export type SendConversationHistoryResponse = ResourceResponse & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: http.IncomingMessage & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+  
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ResourceResponse;
+    };
+  };
+
+  /**
+ * Contains response data for the sendToConversation operation.
+ */
+export type SendToConversationResponse = ResourceResponse & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: http.IncomingMessage & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+  
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ResourceResponse;
+    };
+  };
+
+  /**
+ * Contains response data for the replyToActivity operation.
+ */
+export type ReplyToActivityResponse = ResourceResponse & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: http.IncomingMessage & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+  
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ResourceResponse;
+    };
+  };
+
+/**
+ * Contains response data for the getConversations operation.
+ */
+export type GetConversationsResponse = ConversationsResult & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: http.IncomingMessage & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+  
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ConversationsResult;
+    };
+  };
+  
 
   export type GetConversationPagedMembersResponse = PagedMembersResult & {
     /**
@@ -72,7 +192,7 @@ export type CreateConversationResponse = ConversationResourceResponse & {
   /**
  * Contains response data for the getConversationMembers operation.
  */
-export type ConversationsGetConversationMembersResponse = Array<ChannelAccount> & {
+export type GetConversationMembersResponse = Array<ChannelAccount> & {
     /**
      * The underlying HTTP response.
      */
@@ -88,32 +208,6 @@ export type ConversationsGetConversationMembersResponse = Array<ChannelAccount> 
       body: Array<ChannelAccount>;
     };
   };
-
- 
-/**
- * Contains response data for the DeleteConversationMember operation.
- */
-export type ConversationsApiDeleteConversationMemberResponse = {
-    /**
-     * The response body properties.
-     */
-    [propertyName: string]: TokenResponse;
-  } & {
-    /**
-     * The underlying HTTP response.
-     */
-    _response: http.IncomingMessage & {
-        /**
-         * The response body as text (string format)
-         */
-        bodyAsText: string;
-  
-        /**
-         * The response body as parsed JSON or XML
-         */
-        parsedBody: { [propertyName: string]: TokenResponse };
-    };
-};
 
 /**
  * An interface representing TokenResponse.
@@ -137,7 +231,7 @@ export interface TokenResponse {
  * An interface representing ConversationsApiDeleteActivityOptionalParams.
  * Optional Parameters.
  */
-export interface ConversationsApiDeleteActivityOptionalParams {
+export interface ApiDeleteActivityOptionalParams {
     /**
      * @member {string} [channelId]
      */
@@ -190,7 +284,7 @@ export interface ConversationParameters {
  * An interface representing ConversationsApiCreateConversationOptionalParams.
  * Optional Parameters.
  */
-export interface ConversationsApiCreateConversationOptionalParams {
+export interface ApiCreateConversationOptionalParams {
     /**
      * @member {string} [channelId]
      */
@@ -204,7 +298,7 @@ export interface ConversationsApiCreateConversationOptionalParams {
 /**
  * Contains response data for the CreateConversation operation.
  */
-export type ConversationsApiCreateConversationResponse = {
+export type ApiCreateConversationResponse = {
     /**
      * The response body properties.
      */
@@ -229,7 +323,7 @@ export type ConversationsApiCreateConversationResponse = {
 /**
  * Contains response data for the DeleteActivity operation.
  */
-export type ConversationsApiDeleteActivityResponse = {
+export type ApiDeleteActivityResponse = {
     /**
      * The response body properties.
      */
@@ -254,7 +348,7 @@ export type ConversationsApiDeleteActivityResponse = {
 /**
  * Contains response data for the DeleteConversationMember operation.
  */
-export type ConversationsApiDeleteConversationMemberResponse = {
+export type ApiDeleteConversationMemberResponse = {
     /**
      * The response body properties.
      */
@@ -280,7 +374,7 @@ export type ConversationsApiDeleteConversationMemberResponse = {
 /**
  * Contains response data for the GetActivityMembers operation.
  */
-export type ConversationsApiGetActivityMembersResponse = {
+export type ApiGetActivityMembersResponse = {
     /**
      * The response body properties.
      */
@@ -324,7 +418,7 @@ export interface TokenResponse {
  * An interface representing ConversationsApiDeleteActivityOptionalParams.
  * Optional Parameters.
  */
-export interface ConversationsApiDeleteActivityOptionalParams {
+export interface ApiDeleteActivityOptionalParams {
     /**
      * @member {string} [channelId]
      */
@@ -340,7 +434,7 @@ export interface ConversationsApiDeleteActivityOptionalParams {
  * An interface representing ConversationsApiDeleteConversationMemberOptionalParams.
  * Optional Parameters.
  */
-export interface ConversationsApiDeleteConversationMemberOptionalParams {
+export interface ApiDeleteConversationMemberOptionalParams {
     /**
      * @member {string} [channelId]
      */
@@ -356,7 +450,7 @@ export interface ConversationsApiDeleteConversationMemberOptionalParams {
  * An interface representing ConversationsApiGetActivityMembersMemberOptionalParams.
  * Optional Parameters.
  */
-export interface ConversationsApiGetActivityMembersMemberOptionalParams {
+export interface ApiGetActivityMembersMemberOptionalParams {
     /**
      * @member {string} [channelId]
      */
@@ -1044,4 +1138,3 @@ export declare enum ActionTypes {
     Payment = "payment",
     MessageBack = "messageBack"
 }
-

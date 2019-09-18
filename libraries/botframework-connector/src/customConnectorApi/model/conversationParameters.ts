@@ -17,6 +17,7 @@ import { ChannelAccount } from './channelAccount';
 * Parameters for creating a new conversation
 */
 export class ConversationParameters {
+    'continuationToken'?: string;
     /**
     * IsGroup
     */
@@ -43,6 +44,11 @@ export class ConversationParameters {
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
+        {
+            "name": "continuationToken",
+            "baseName": "continuationToken",
+            "type": "string"
+        },
         {
             "name": "isGroup",
             "baseName": "isGroup",
