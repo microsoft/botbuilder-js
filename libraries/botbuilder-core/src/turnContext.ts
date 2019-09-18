@@ -1,7 +1,4 @@
 /**
- * @module botbuilder
- */
-/**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
@@ -10,11 +7,37 @@ import { BotAdapter } from './botAdapter';
 import { shallowCopy } from './internal';
 
 /**
- * Signature implemented by functions registered with `context.onSendActivity()`.
- *
- * ```TypeScript
- * type SendActivitiesHandler = (context: TurnContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promise<ResourceResponse[]>;
- * ```
+ * A handler that can participate in send activity events for the current turn.
+ * 
+ * @remarks
+ * **Parameters**
+ * 
+ * | Name | Type | Description |
+ * | :--- | :--- | :--- |
+ * | `context` | [TurnContext](xref:botbuilder-core.TurnContext) | The context object for the turn. |
+ * | `activities` | Partial\<[Activity](xref:botframework-schema.Activity)>[] | The activities to send. |
+ * | `next` | () => Promise\<[ResourceResponse](xref:botframework-schema.ResourceResponse)[]> | The function to call to continue event processing. |
+ * 
+ * **Returns**
+ * 
+ * | Type | Description |
+ * | :--- | :--- |
+ * | Promise\<[ResourceResponse](xref:botframework-schema.ResourceResponse)[]> | Objects containing the IDs that the receiving channel assigned to the activities. |
+ * 
+ * A handler calls the `next` function to pass control to the next registered handler. If a handler
+ * doesn't call the `next` function, the adapter does not call any of the subsequent handlers and
+ * does not send the activities to the user.
+ * 
+ * If the activities are successfully sent, the `next` function returns an array of
+ * [ResourceResponse](xref:botframework-schema.ResourceResponse) objects containing the IDs that the
+ * receiving channel assigned to the activities. Use this array as the return value of this handler.
+ * 
+ * **See also**
+ * 
+ * - [BotAdapter](xref:botbuilder-core.BotAdapter)
+ * - [UpdateActivityHandler](xref:botbuilder-core.UpdateActivityHandler)
+ * - [DeleteActivityHandler](xref:botbuilder-core.DeleteActivityHandler)
+ * - [TurnContext.OnSendActivities](xref:botbuilder-core.TurnContext.onSendActivities)
  */
 export type SendActivitiesHandler = (
     context: TurnContext,

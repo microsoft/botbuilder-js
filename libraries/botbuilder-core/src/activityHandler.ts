@@ -7,6 +7,12 @@
  */
 import { Activity, ActivityTypes, TurnContext } from '.';
 
+/**
+ * Contains a portion of bot logic for handling an incoming activity as an event.
+ * @remarks
+ * The incoming activity is contained in [TurnContext.activity](xref:botbuilder-core.TurnContext.activity).
+ * Call the `next` function to continue the processing of this event. Not doing so will stop propagation of this event.
+ */
 export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Promise<any>;
 
 /**
