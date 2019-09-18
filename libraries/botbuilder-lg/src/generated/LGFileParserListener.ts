@@ -11,11 +11,14 @@ import { ParagraphContext } from "./LGFileParser";
 import { NewlineContext } from "./LGFileParser";
 import { TemplateDefinitionContext } from "./LGFileParser";
 import { TemplateNameLineContext } from "./LGFileParser";
+import { ErrorTemplateNameContext } from "./LGFileParser";
 import { TemplateNameContext } from "./LGFileParser";
 import { ParametersContext } from "./LGFileParser";
 import { TemplateBodyContext } from "./LGFileParser";
 import { NormalTemplateBodyContext } from "./LGFileParser";
+import { TemplateStringContext } from "./LGFileParser";
 import { NormalTemplateStringContext } from "./LGFileParser";
+import { ErrorTemplateStringContext } from "./LGFileParser";
 import { IfElseTemplateBodyContext } from "./LGFileParser";
 import { IfConditionRuleContext } from "./LGFileParser";
 import { IfConditionContext } from "./LGFileParser";
@@ -125,6 +128,17 @@ export interface LGFileParserListener extends ParseTreeListener {
 	exitTemplateNameLine?: (ctx: TemplateNameLineContext) => void;
 
 	/**
+	 * Enter a parse tree produced by `LGFileParser.errorTemplateName`.
+	 * @param ctx the parse tree
+	 */
+	enterErrorTemplateName?: (ctx: ErrorTemplateNameContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGFileParser.errorTemplateName`.
+	 * @param ctx the parse tree
+	 */
+	exitErrorTemplateName?: (ctx: ErrorTemplateNameContext) => void;
+
+	/**
 	 * Enter a parse tree produced by `LGFileParser.templateName`.
 	 * @param ctx the parse tree
 	 */
@@ -169,6 +183,17 @@ export interface LGFileParserListener extends ParseTreeListener {
 	exitNormalTemplateBody?: (ctx: NormalTemplateBodyContext) => void;
 
 	/**
+	 * Enter a parse tree produced by `LGFileParser.templateString`.
+	 * @param ctx the parse tree
+	 */
+	enterTemplateString?: (ctx: TemplateStringContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGFileParser.templateString`.
+	 * @param ctx the parse tree
+	 */
+	exitTemplateString?: (ctx: TemplateStringContext) => void;
+
+	/**
 	 * Enter a parse tree produced by `LGFileParser.normalTemplateString`.
 	 * @param ctx the parse tree
 	 */
@@ -178,6 +203,17 @@ export interface LGFileParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitNormalTemplateString?: (ctx: NormalTemplateStringContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LGFileParser.errorTemplateString`.
+	 * @param ctx the parse tree
+	 */
+	enterErrorTemplateString?: (ctx: ErrorTemplateStringContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGFileParser.errorTemplateString`.
+	 * @param ctx the parse tree
+	 */
+	exitErrorTemplateString?: (ctx: ErrorTemplateStringContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `LGFileParser.ifElseTemplateBody`.

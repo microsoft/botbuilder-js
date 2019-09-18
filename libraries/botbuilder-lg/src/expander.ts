@@ -66,10 +66,10 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext) : string[] {
-        const normalTemplateStrs: lp.NormalTemplateStringContext[] = ctx.normalTemplateString();
+        const normalTemplateStrs: lp.TemplateStringContext[] = ctx.templateString();
         let result: string[] = [];
         for (const normalTemplateStr of normalTemplateStrs) {
-            result = result.concat(this.visit(normalTemplateStr));
+            result = result.concat(this.visit(normalTemplateStr.normalTemplateString()));
         }
 
         return result;

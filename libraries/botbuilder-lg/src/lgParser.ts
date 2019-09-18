@@ -22,10 +22,10 @@ import { LGTemplate } from './lgTemplate';
 export class LGParser {
     public static parse(text: string, id: string = ''): LGResource {
         const fileContext: FileContext = this.getFileContentContext(text, id);
-        const templates: LGTemplate[] = this.extractLGTemplates(fileContext, id);
+        const templates: LGTemplate[] = this.extractLGTemplates(fileContext, text, id);
         const imports: LGImport[] = this.extractLGImports(fileContext, id);
 
-        return new LGResource(templates, imports, id);
+        return new LGResource(templates, imports, text, id);
     }
 
     private static getFileContentContext(text: string, source: string): FileContext {
@@ -46,7 +46,7 @@ export class LGParser {
         return parser.file();
     }
 
-    private static extractLGTemplates(file: FileContext, source: string = ''): LGTemplate[] {
+    private static extractLGTemplates(file: FileContext, lgfileContent: string, source: string = ''): LGTemplate[] {
         if (file === undefined
             || file === null) {
             return [];
@@ -56,7 +56,7 @@ export class LGParser {
             .map((x: ParagraphContext) => x.templateDefinition())
             .filter((x: TemplateDefinitionContext) => x !== undefined);
 
-        return templates.map((x: TemplateDefinitionContext) => new LGTemplate(x, source));
+        return templates.map((x: TemplateDefinitionContext) => new LGTemplate(x, lgfileContent, source));
     }
 
     private static extractLGImports(file: FileContext, source: string = ''): LGImport[] {

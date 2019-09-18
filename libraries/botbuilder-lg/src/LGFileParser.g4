@@ -25,15 +25,19 @@ templateDefinition
 	;
 
 templateNameLine
-	: HASH templateName parameters?
+	: HASH ((templateName parameters?) | errorTemplateName)
 	;
+
+errorTemplateName
+    : (IDENTIFIER|TEXT_IN_NAME|OPEN_PARENTHESIS|COMMA|CLOSE_PARENTHESIS|DOT)*
+    ;
 
 templateName
     : IDENTIFIER (DOT IDENTIFIER)*
     ;
 
 parameters
-    : OPEN_PARENTHESIS? IDENTIFIER ((COMMA|INVALID_SEPERATE_CHAR) IDENTIFIER)* CLOSE_PARENTHESIS?
+    : OPEN_PARENTHESIS? IDENTIFIER (COMMA IDENTIFIER)* CLOSE_PARENTHESIS?
     ;
 
 templateBody
@@ -43,12 +47,21 @@ templateBody
 	;
 
 normalTemplateBody
-    : (normalTemplateString newline)+
+    : (templateString newline)+
+    ;
+
+templateString
+    : normalTemplateString
+    | errorTemplateString
     ;
 
 normalTemplateString
 	: DASH (WS|TEXT|EXPRESSION|TEMPLATE_REF|TEXT_SEPARATOR|MULTI_LINE_TEXT|ESCAPE_CHARACTER)*
 	;
+
+errorTemplateString
+    : INVALID_TOKEN_DEFAULT_MODE+
+    ;
 
 ifElseTemplateBody
     : ifConditionRule+

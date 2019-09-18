@@ -94,8 +94,8 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext) : AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
-        for (const templateStr of ctx.normalTemplateString()) {
-            result.union(this.visit(templateStr));
+        for (const templateStr of ctx.templateString()) {
+            result.union(this.visit(templateStr.normalTemplateString()));
         }
 
         return result;

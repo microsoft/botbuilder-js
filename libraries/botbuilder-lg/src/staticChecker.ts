@@ -192,32 +192,31 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
     public visitTemplateDefinition(context: lp.TemplateDefinitionContext): Diagnostic[] {
         let result: Diagnostic[] = [];
-        const templateName: string = context.templateNameLine().templateName().text;
-        if (context.templateBody() === undefined) {
+        const templateNameLine: lp.TemplateNameLineContext = context.templateNameLine();
+        const errorTemplateName: lp.ErrorTemplateNameContext = templateNameLine.errorTemplateName();
+        if (errorTemplateName !== undefined) {
             result.push(this.BuildLGDiagnostic({
-                message: `There is no template body in template ${templateName}`,
-                context: context.templateNameLine()
+                message: `Not a valid template name line`,
+                context: errorTemplateName
             }));
         } else {
-            result = result.concat(this.visit(context.templateBody()));
-        }
-
-        const parameters: lp.ParametersContext = context.templateNameLine().parameters();
-        if (parameters !== undefined) {
-            if (parameters.CLOSE_PARENTHESIS() === undefined || parameters.OPEN_PARENTHESIS() === undefined) {
+            const templateName: string = context.templateNameLine().templateName().text;
+            if (context.templateBody() === undefined) {
                 result.push(this.BuildLGDiagnostic({
-                    message: `parameters: ${parameters.text} format error`,
-                    context: context.templateNameLine()}));
-            }
-
-            const invalidSeperateCharacters: TerminalNode[] = parameters.INVALID_SEPERATE_CHAR();
-
-            if (invalidSeperateCharacters !== undefined
-                && invalidSeperateCharacters.length > 0) {
-                result.push(this.BuildLGDiagnostic({
-                    message: `Parameters for templates must be separated by comma.`,
+                    message: `There is no template body in template ${templateName}`,
                     context: context.templateNameLine()
                 }));
+            } else {
+                result = result.concat(this.visit(context.templateBody()));
+            }
+
+            const parameters: lp.ParametersContext = context.templateNameLine().parameters();
+            if (parameters !== undefined) {
+                if (parameters.CLOSE_PARENTHESIS() === undefined || parameters.OPEN_PARENTHESIS() === undefined) {
+                    result.push(this.BuildLGDiagnostic({
+                        message: `parameters: ${parameters.text} format error`,
+                        context: context.templateNameLine()}));
+                }
             }
         }
 
@@ -226,9 +225,17 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
     public visitNormalTemplateBody(context: lp.NormalTemplateBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
-        for (const templateStr of context.normalTemplateString()) {
-            const item: Diagnostic[] = this.visit(templateStr);
-            result = result.concat(item);
+        for (const templateStr of context.templateString()) {
+            const errorTemplateStr: lp.ErrorTemplateStringContext = templateStr.errorTemplateString();
+
+            if (errorTemplateStr !== undefined) {
+                result.push(this.BuildLGDiagnostic({
+                    message: `Invalid template body line, did you miss '-' at line begin`,
+                    context: errorTemplateStr}));
+            } else {
+                const item: Diagnostic[] = this.visit(templateStr);
+                result = result.concat(item);
+            }
         }
 
         return result;
