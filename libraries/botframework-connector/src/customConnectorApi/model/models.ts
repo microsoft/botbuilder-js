@@ -16,7 +16,6 @@ export * from './channelAccount';
 export * from './contactRelationUpdateActionTypes';
 export * from './conversationAccount';
 export * from './conversationMembers';
-export * from './conversationParameters';
 export * from './conversationReference';
 export * from './conversationResourceResponse';
 export * from './conversationsResult';
@@ -72,6 +71,11 @@ export * from './tokenRequest';
 export * from './tokenResponse';
 export * from './transcript';
 export * from './videoCard';
+export * from './parameters/conversationParameters'
+export * from './parameters/requestOptions'
+export * from './parameters/pagedParameters'
+export * from './responses/conversationResourceResponse'
+
 
 import localVarRequest = require('request');
 
@@ -93,7 +97,9 @@ import { ChannelAccount } from './channelAccount';
 import { ContactRelationUpdateActionTypes } from './contactRelationUpdateActionTypes';
 import { ConversationAccount } from './conversationAccount';
 import { ConversationMembers } from './conversationMembers';
-import { ConversationParameters } from './conversationParameters';
+import { ConversationParameters } from './parameters/conversationParameters';
+import { PagedParameters } from './parameters/pagedParameters'
+import { RequestOptions } from './parameters/requestOptions'
 import { ConversationReference } from './conversationReference';
 import { ConversationResourceResponse } from './conversationResourceResponse';
 import { ConversationsResult } from './conversationsResult';
@@ -207,6 +213,8 @@ let typeMap: {[index: string]: any} = {
     "MicrosoftPayMethodData": MicrosoftPayMethodData,
     "ModelError": ModelError,
     "OAuthCard": OAuthCard,
+    "PagedParameters": PagedParameters,
+    "RequestOptions": RequestOptions,
     "PagedMembersResult": PagedMembersResult,
     "PaymentAddress": PaymentAddress,
     "PaymentCurrencyAmount": PaymentCurrencyAmount,

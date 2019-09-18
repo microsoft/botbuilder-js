@@ -26,3 +26,7 @@ export class DeliveryModes {
     }
 }
 
+export declare enum DeliveryModes {
+    Normal = "normal",
+    Notification = "notification"
+  }

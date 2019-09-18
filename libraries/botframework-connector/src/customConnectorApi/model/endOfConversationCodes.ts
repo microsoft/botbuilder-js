@@ -26,3 +26,11 @@ export class EndOfConversationCodes {
     }
 }
 
+export declare enum EndOfConversationCodes {
+    Unknown = "unknown",
+    CompletedSuccessfully = "completedSuccessfully",
+    UserCancelled = "userCancelled",
+    BotTimedOut = "botTimedOut",
+    BotIssuedInvalidMessage = "botIssuedInvalidMessage",
+    ChannelFailed = "channelFailed"
+  }

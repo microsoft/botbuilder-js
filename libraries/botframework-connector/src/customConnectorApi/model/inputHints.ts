@@ -26,3 +26,9 @@ export class InputHints {
     }
 }
 
+export declare enum InputHints {
+    AcceptingInput = "acceptingInput",
+    IgnoringInput = "ignoringInput",
+    ExpectingInput = "expectingInput"
+  }
+  

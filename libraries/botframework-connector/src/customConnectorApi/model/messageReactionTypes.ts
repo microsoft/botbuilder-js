@@ -26,3 +26,8 @@ export class MessageReactionTypes {
     }
 }
 
+export declare enum MessageReactionTypes {
+    Like = "like",
+    PlusOne = "plusOne"
+  }
+  

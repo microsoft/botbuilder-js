@@ -26,3 +26,8 @@ export class RoleTypes {
     }
 }
 
+
+export declare enum RoleTypes {
+    User = "user",
+    Bot = "bot"
+  }

@@ -26,3 +26,7 @@ export class AttachmentLayoutTypes {
     }
 }
 
+export declare enum AttachmentLayoutTypes {
+    List = "list",
+    Carousel = "carousel"
+  }

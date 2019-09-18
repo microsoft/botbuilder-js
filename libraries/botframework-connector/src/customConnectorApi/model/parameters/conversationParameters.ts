@@ -10,13 +10,13 @@
  * Do not edit the class manually.
  */
 
-import { Activity } from './activity';
-import { ChannelAccount } from './channelAccount';
-
+import { Activity } from '../activity';
+import { ChannelAccount } from '../channelAccount';
+import { RequestOptions } from './requestOptions'
 /**
 * Parameters for creating a new conversation
 */
-export class ConversationParameters {
+export class ConversationParameters extends RequestOptions {
     'continuationToken'?: string;
     /**
     * IsGroup
@@ -40,6 +40,8 @@ export class ConversationParameters {
     * Channel specific payload for creating the conversation
     */
     'channelData'?: object;
+    'channelId'?: string;
+    'conversationId'?: string;
 
     static discriminator: string | undefined = undefined;
 
@@ -83,10 +85,20 @@ export class ConversationParameters {
             "name": "channelData",
             "baseName": "channelData",
             "type": "object"
+        },
+        {
+            "name": "conversationId",
+            "baseName": "conversationId",
+            "type": "string"
+        },
+        {
+            "name": "channelId",
+            "baseName": "channelId",
+            "type": "string"
         }    ];
 
     static getAttributeTypeMap() {
-        return ConversationParameters.attributeTypeMap;
+        return (super.attributeTypeMap).concat(this.attributeTypeMap);
     }
 }
 

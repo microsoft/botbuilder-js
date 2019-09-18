@@ -26,3 +26,8 @@ export class ActivityImportance {
     }
 }
 
+export declare enum ActivityImportance {
+    Low = "low",
+    Normal = "normal",
+    High = "high"
+  }

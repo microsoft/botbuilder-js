@@ -17,7 +17,6 @@ import http = require('http');
 import { Activity } from './model/activity';
 import { AttachmentData } from './model/attachmentData';
 import { ChannelAccount } from './model/channelAccount';
-import { ConversationParameters } from './model/conversationParameters';
 import { ConversationResourceResponse } from './model/conversationResourceResponse';
 import { ConversationsResult } from './model/conversationsResult';
 import { PagedMembersResult } from './model/pagedMembersResult';
@@ -26,7 +25,9 @@ import { Transcript } from './model/transcript';
 import * as Models from "./model";
 import { MicrosoftAppCredentials } from '../auth'
 import { ObjectSerializer, Authentication, OAuth, VoidAuth } from './model/models';
-import { SimpleCredential, CreateConversationResponse, ApiDeleteConversationMemberResponse, ApiDeleteActivityOptionalParams, ApiDeleteActivityResponse, ApiGetActivityMembersResponse, RequestOptions, GetConversationMembersResponse, GetConversationPagedMembersResponse, GetConversationsResponse, ReplyToActivityResponse, SendConversationHistoryResponse, SendToConversationResponse, UpdateActivityResponse, UploadAttachmentResponse } from './interfaces';
+import { CreateConversationResponse, ConversationParameters, GetConversationPagedMembersResponse, SendConversationHistoryResponse, UpdateActivityResponse, UploadAttachmentResponse, RequestOptions, PagedParameters } from './model';
+import { SimpleCredential } from './simpleCredential';
+import { memberId } from '../connectorApi/models/parameters';
 
 let defaultBasePath = 'https://api.botframework.com';
 
@@ -147,26 +148,25 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId to delete
      */
-    public async deleteActivity (conversationId: string, 
-        activityId: string, 
-        options: ApiDeleteActivityOptionalParams = {headers: {}}) 
+    public async deleteActivity (parameters: ConversationParameters,
+        options: RequestOptions = {headers: {}}) 
         : Promise<ApiDeleteConversationMemberResponse> {
         
             const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
-            .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
+            .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
         
         let localVarQueryParameters: {};
         let localVarHeaderParams = Object.assign({}, this.defaultHeaders);
         let localVarFormParams = {};
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId == null) {
+        if (parameters.activity.conversation.id == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsDeleteActivity.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
-        if (activityId == null) {
+        if (parameters.activity.conversation.id == null) {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsDeleteActivity.');
         }
 
@@ -222,19 +222,20 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param memberId ID of the member to delete from this conversation
      */
-    public async deleteConversationMember (conversationId: string, 
-        memberId: string, 
+    public async deleteConversationMember (
+        memberId: string,
+        parameters: ConversationParameters, 
         options: RequestOptions = {headers: {}}) 
         : Promise<ApiDeleteConversationMemberResponse> {
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/members/{memberId}'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
             .replace('{' + 'memberId' + '}', encodeURIComponent(String(memberId)));
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId == null) {
+        if (parameters.conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsDeleteConversationMember.');
         }
 
@@ -295,8 +296,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId Activity ID
      */
-    public async getActivityMembers (conversationId: string, 
-        activityId: string, 
+    public async getActivityMembers (parameters: ConversationParameters, 
         options: RequestOptions = {headers: {}}) 
         : Promise<ApiDeleteConversationMemberResponse> {
 
@@ -367,8 +367,8 @@ export class ConversationsApi {
      * @summary GetConversationMembers
      * @param conversationId Conversation ID
      */
-    public async getConversationMembers (conversationId: string, 
-        options: {headers: {[name: string]: string}} = {headers: {}}) 
+    public async getConversationMembers (parameters: ConversationParameters, 
+        options: RequestOptions = {headers: {}}) 
         : Promise<GetConversationMembersResponse> {
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/members'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
@@ -443,29 +443,27 @@ export class ConversationsApi {
      * @param pageSize Suggested page size
      * @param continuationToken Continuation Token
      */
-    public async getConversationPagedMembers (conversationId: string, 
-        pageSize?: number, 
-        continuationToken?: string, 
+    public async getConversationPagedMembers (parameters: PagedParameters,
         options: RequestOptions = {headers: {}}) 
         : Promise<GetConversationPagedMembersResponse> {
 
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/pagedmembers'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId == null) {
+        if (parameters.conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsGetConversationPagedMembers.');
         }
 
-        if (pageSize !== undefined) {
-            localVarQueryParameters['pageSize'] = ObjectSerializer.serialize(pageSize, "number");
+        if (parameters.pageSize !== undefined) {
+            localVarQueryParameters['pageSize'] = ObjectSerializer.serialize(parameters.pageSize, "number");
         }
 
-        if (continuationToken !== undefined) {
-            localVarQueryParameters['continuationToken'] = ObjectSerializer.serialize(continuationToken, "string");
+        if (parameters.continuationToken !== undefined) {
+            localVarQueryParameters['continuationToken'] = ObjectSerializer.serialize(parameters.continuationToken, "string");
         }
 
         (<any>Object).assign(localVarHeaderParams, options.headers);
@@ -527,7 +525,7 @@ export class ConversationsApi {
      * @param continuationToken skip or continuation token
      */
     public async getConversations (options: RequestOptions = {headers: {}}) 
-    : Promise<GetConversationsResponse> {
+                                    : Promise<GetConversationsResponse> {
         const localVarPath = this.basePath + '/v3/conversations';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -590,31 +588,29 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId the reply is to (OPTIONAL)
      */
-    public async replyToActivity (activity: Activity, 
-        conversationId: string, 
-        activityId: string, 
-        options: RequestOptions = {headers: {}})
-        : Promise<ReplyToActivityResponse> {
+    public async replyToActivity (parameters: ConversationParameters, 
+                                options: RequestOptions = {headers: {}})
+                                : Promise<ReplyToActivityResponse> {
 
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
-            .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.activity.conversation.id)))
+            .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
 
         // verify required parameter 'activity' is not null or undefined
-        if (activity == null) {
+        if (parameters.activity == null) {
             throw new Error('Required parameter activity was null or undefined when calling conversationsReplyToActivity.');
         }
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId == null) {
+        if (parameters.activity.conversation.id == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsReplyToActivity.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
-        if (activityId == null) {
+        if (parameters.activity.id == null) {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsReplyToActivity.');
         }
 
@@ -629,7 +625,7 @@ export class ConversationsApi {
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: ObjectSerializer.serialize(activity, "Activity")
+            body: ObjectSerializer.serialize(parameters.activity, "Activity")
         };
 
         this.authentications.default.applyToRequest(localVarRequestOptions);
@@ -672,13 +668,13 @@ export class ConversationsApi {
      * @param history Historic activities
      * @param conversationId Conversation ID
      */
-    public async sendConversationHistory (history: Transcript, 
-                                                       conversationId: string, 
-                                                       options: RequestOptions = {headers: {}}) 
-                                                       : Promise<SendConversationHistoryResponse> {
+    public async sendConversationHistory (parameters: ConversationParameters,
+                                        history: Transcript, 
+                                        options: RequestOptions = {headers: {}}) 
+                                        : Promise<SendConversationHistoryResponse> {
 
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/history'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
@@ -688,7 +684,7 @@ export class ConversationsApi {
             throw new Error('Required parameter history was null or undefined when calling SendConversationHistory.');
         }
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId == null) {
+        if (parameters.conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling SendConversationHistory.');
         }
 
@@ -748,24 +744,23 @@ export class ConversationsApi {
      * @param activity Activity to send
      * @param conversationId Conversation ID
      */
-    public async sendToConversation (activity: Activity, 
-                                    conversationId: string, 
+    public async sendToConversation (parameters: ConversationParameters, 
                                     options: RequestOptions = {headers: {}}) 
                                     : Promise<SendToConversationResponse> {
                                         
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
 
         // verify required parameter 'activity' is not null or undefined
-        if (activity == null) {
+        if (parameters.activity == null) {
             throw new Error('Required parameter activity was null or undefined when calling SendToConversation.');
         }
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId == null) {
+        if (parameters.conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling SendToConversation.');
         }
 
@@ -780,7 +775,7 @@ export class ConversationsApi {
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: ObjectSerializer.serialize(activity, "Activity")
+            body: ObjectSerializer.serialize(parameters.activity, "Activity")
         };
 
         this.authentications.default.applyToRequest(localVarRequestOptions);
@@ -823,31 +818,29 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId to update
      */
-    public async updateActivity (activity: Activity, 
-                                conversationId: string, 
-                                activityId: string, 
+    public async updateActivity (parameters: ConversationParameters, 
                                 options: RequestOptions = {headers: {}}) 
                                 : Promise<UpdateActivityResponse> {
 
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
-            .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
+            .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
 
         // verify required parameter 'activity' is not null or undefined
-        if (activity == null) {
+        if (parameters.activity == null) {
             throw new Error('Required parameter activity was null or undefined when calling conversationsUpdateActivity.');
         }
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId == null) {
+        if (parameters.conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsUpdateActivity.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
-        if (activityId == null) {
+        if (parameters.activity.id == null) {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsUpdateActivity.');
         }
 
@@ -862,7 +855,7 @@ export class ConversationsApi {
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: ObjectSerializer.serialize(activity, "Activity")
+            body: ObjectSerializer.serialize(parameters.activity, "Activity")
         };
 
         this.authentications.default.applyToRequest(localVarRequestOptions);
@@ -905,13 +898,13 @@ export class ConversationsApi {
      * @param attachmentUpload Attachment data
      * @param conversationId Conversation ID
      */
-    public async uploadAttachment (attachmentUpload: AttachmentData, 
-                                    conversationId: string, 
+    public async uploadAttachment (parameters: ConversationParameters,
+                                    attachmentUpload: AttachmentData, 
                                     options: RequestOptions = {headers: {}}) 
                                     : Promise<UploadAttachmentResponse> {
 
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/attachments'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
@@ -922,7 +915,7 @@ export class ConversationsApi {
         }
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId == null) {
+        if (parameters.conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsUploadAttachment.');
         }
 

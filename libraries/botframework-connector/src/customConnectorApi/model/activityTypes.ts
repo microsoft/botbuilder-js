@@ -26,3 +26,20 @@ export class ActivityTypes {
     }
 }
 
+export declare enum ActivityTypes {
+    Message = "message",
+    ContactRelationUpdate = "contactRelationUpdate",
+    ConversationUpdate = "conversationUpdate",
+    Typing = "typing",
+    EndOfConversation = "endOfConversation",
+    Event = "event",
+    Invoke = "invoke",
+    DeleteUserData = "deleteUserData",
+    MessageUpdate = "messageUpdate",
+    MessageDelete = "messageDelete",
+    InstallationUpdate = "installationUpdate",
+    MessageReaction = "messageReaction",
+    Suggestion = "suggestion",
+    Trace = "trace",
+    Handoff = "handoff"
+  }

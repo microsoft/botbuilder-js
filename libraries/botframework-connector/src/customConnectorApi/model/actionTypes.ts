@@ -26,3 +26,18 @@ export class ActionTypes {
     }
 }
 
+
+  export declare enum ActionTypes {
+    OpenUrl = "openUrl",
+    ImBack = "imBack",
+    PostBack = "postBack",
+    PlayAudio = "playAudio",
+    PlayVideo = "playVideo",
+    ShowImage = "showImage",
+    DownloadFile = "downloadFile",
+    Signin = "signin",
+    Call = "call",
+    Payment = "payment",
+    MessageBack = "messageBack"
+  }
+  
