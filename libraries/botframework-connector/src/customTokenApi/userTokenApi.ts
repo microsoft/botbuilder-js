@@ -17,9 +17,9 @@ import http = require('http');
 import { AadResourceUrls } from './model/aadResourceUrls';
 import * as Models from './model';
 
-import { MicrosoftAppCredentials } from '../auth'
+import { CustomMicrosoftAppCredentials } from '../auth'
 
-import { ObjectSerializer, Authentication, OAuth, VoidAuth } from './model/models';
+import { ObjectSerializer } from './model/models';
 
 let defaultBasePath = 'https://token.botframework.com';
 
@@ -34,20 +34,19 @@ export class UserTokenApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders : any = {};
     protected _useQuerystring : boolean = false;
-    protected credentials: Models.SimpleCredential;
+    protected credentials: CustomMicrosoftAppCredentials;
 
-    protected authentications = {
-        'default': <Authentication>new VoidAuth(),
-    }
+    constructor(CustomCredentials: CustomMicrosoftAppCredentials)
+    constructor(CustomCredentials: CustomMicrosoftAppCredentials, basePath?: string){
+        if (CustomCredentials === null || CustomCredentials === undefined) {
+           throw new Error('\'credentials\' cannot be null.');
+        }
 
-    constructor(CustomCredentials: Models.SimpleCredential)
-    constructor(CustomCredentials: Models.SimpleCredential, basePath?: string){
-        if(basePath)
-         this.basePath = basePath;
-         
-        if(CustomCredentials){
-            this.credentials = new Models.SimpleCredential(CustomCredentials.appId, CustomCredentials.appPassword);
-        }        
+        if(basePath){
+            this.basePath = basePath;
+        }
+
+        this.credentials = CustomCredentials              
     }
 
     set useQuerystring(value: boolean) {
@@ -60,19 +59,6 @@ export class UserTokenApi {
 
     get basePath() {
         return this._basePath;
-    }
-
-    public setDefaultAuthentication(auth: Authentication) {
-        this.authentications.default = auth;
-    }
-
-    public setApiKey(key: UserTokenApiApiKeys, value: string) {
-        (this.authentications as any)[UserTokenApiApiKeys[key]].apiKey = value;
-    }
-
-    private async AuthenticateRequest(){
-        const tokenGenerator = new MicrosoftAppCredentials(this.credentials.appId, this.credentials.appPassword);
-        return `${ await tokenGenerator.getToken(true) }`;
     }
 
     /**
@@ -115,8 +101,7 @@ export class UserTokenApi {
         }
 
         Object.assign(localVarHeaderParams, options.headers);
-
-        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));        
+                
         let localVarRequestOptions: request.Options = {
             method: 'POST',
             qs: localVarQueryParameters,
@@ -127,9 +112,7 @@ export class UserTokenApi {
             body: ObjectSerializer.serialize(aadResourceUrls, "AadResourceUrls")
         };
         
-        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
-
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        await this.credentials.signRequest(localVarRequestOptions);        
 
         return new Promise<Models.UserTokenGetAadTokensResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response) => {
@@ -201,8 +184,7 @@ export class UserTokenApi {
             json: true,
         };
 
-        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        await this.credentials.signRequest(localVarRequestOptions);    
 
         return new Promise<Models.UserTokenGetTokenResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response) => {
@@ -264,8 +246,7 @@ export class UserTokenApi {
             json: true,
         };
 
-        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        await this.credentials.signRequest(localVarRequestOptions);    
 
         return new Promise<Models.UserTokenGetTokenStatusResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response) => {
@@ -327,8 +308,7 @@ export class UserTokenApi {
             json: true,
         };
 
-        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        await this.credentials.signRequest(localVarRequestOptions);    
 
         return new Promise<Models.UserTokenSignOutResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response) => {

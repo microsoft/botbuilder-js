@@ -7,6 +7,7 @@
 import { UserTokenApi } from './userTokenApi';
 import { BotSignInApi } from './botSignInApi';
 import * as Model from "./model";
+import { CustomMicrosoftAppCredentials } from '../auth'
 
 class CustomTokenApiClient {
   // Operation groups
@@ -18,7 +19,7 @@ class CustomTokenApiClient {
    * @param credentials Subscription credentials which uniquely identify client subscription.
    * @param [options] The parameter options
    */
-  constructor( CustomCredentials: { appId: string, appPassword: string}, options?: { baseUri: string }) {  
+  constructor( CustomCredentials: CustomMicrosoftAppCredentials, options?: { baseUri: string }) {  
     this.botSignIn = new BotSignInApi(CustomCredentials);
     this.userToken = new UserTokenApi(CustomCredentials);    
 

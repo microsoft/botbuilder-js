@@ -16,8 +16,8 @@ import * as Models from './model';
 
 /* tslint:disable:no-unused-locals */
 
-import { ObjectSerializer, Authentication, OAuth, VoidAuth } from './model/models';
-import { MicrosoftAppCredentials } from '../auth'
+import { ObjectSerializer } from './model/models';
+import { CustomMicrosoftAppCredentials } from '../auth'
 
 let defaultBasePath = 'https://token.botframework.com';
 
@@ -32,20 +32,19 @@ export class BotSignInApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders = {};
     protected _useQuerystring : boolean = false;
-    protected credentials: Models.SimpleCredential;
-
-    protected authentications = {
-        'default': <Authentication>new VoidAuth(),
-    }
+    protected credentials: CustomMicrosoftAppCredentials;
     
-    constructor(CustomCredentials: Models.SimpleCredential)
-    constructor(CustomCredentials: Models.SimpleCredential, basePath?: string){
-        if(basePath)
-         this.basePath = basePath;
-         
-        if(CustomCredentials){
-            this.credentials = new Models.SimpleCredential(CustomCredentials.appId, CustomCredentials.appPassword);
-        }        
+    constructor(CustomCredentials: CustomMicrosoftAppCredentials)
+    constructor(CustomCredentials: CustomMicrosoftAppCredentials, basePath?: string){
+        if (CustomCredentials === null || CustomCredentials === undefined) {
+           throw new Error('\'credentials\' cannot be null.');
+        }
+
+        if(basePath){
+            this.basePath = basePath;
+        }
+
+        this.credentials = CustomCredentials              
     }
 
     set useQuerystring(value: boolean) {
@@ -58,19 +57,6 @@ export class BotSignInApi {
 
     get basePath() {
         return this._basePath;
-    }
-
-    public setDefaultAuthentication(auth: Authentication) {
-        this.authentications.default = auth;
-    }
-
-    public setApiKey(key: BotSignInApiApiKeys, value: string) {
-        (this.authentications as any)[BotSignInApiApiKeys[key]].apiKey = value;
-    }
-
-    private async AuthenticateRequest(){
-        const tokenGenerator = new MicrosoftAppCredentials(this.credentials.appId, this.credentials.appPassword);
-        return `${ await tokenGenerator.getToken(true) }`;
     }
     
     /**
@@ -117,9 +103,7 @@ export class BotSignInApi {
             json: true,
         };
                 
-        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
-
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        await this.credentials.signRequest(localVarRequestOptions);   
 
         return new Promise<Models.BotSignInGetSignInUrlResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response) => {
