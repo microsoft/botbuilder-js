@@ -44,7 +44,19 @@ export class GenerateAnswerUtils {
      * @param question Question which need to be queried.
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
-    public async queryQnaService(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResults> {
+    public async queryQnaService(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResult[]> {
+        var result = await this.queryQnaServiceRaw(endpoint, question, options);
+        
+        return result.answers;
+    }
+
+    /**
+     * Called internally to query the QnA Maker service.
+     * @param endpoint The endpoint of the knowledge base to query.
+     * @param question Question which need to be queried.
+     * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     */
+    public async queryQnaServiceRaw(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResults> {
         const url: string = `${ endpoint.host }/knowledgebases/${ endpoint.knowledgeBaseId }/generateanswer`;
         const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
 

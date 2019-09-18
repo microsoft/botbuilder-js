@@ -156,7 +156,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         var result: QnAMakerResults;
 
         if (question.length > 0) {
-            result = await this.generateAnswerUtils.queryQnaService(this.endpoint, question, queryOptions);
+            result = await this.generateAnswerUtils.queryQnaServiceRaw(this.endpoint, question, queryOptions);
             
             const sortedQnaAnswers: QnAMakerResult[] = GenerateAnswerUtils.sortAnswersWithinThreshold(result.answers, queryOptions);
             queryResult.push(...sortedQnaAnswers);
@@ -263,7 +263,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
      * This is exposed to enable better unit testing of the service.
      */
     protected async callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResults> {
-        return this.generateAnswerUtils.queryQnaService(endpoint, question, { top } as QnAMakerOptions);
+        return this.generateAnswerUtils.queryQnaServiceRaw(endpoint, question, { top } as QnAMakerOptions);
     }
 
     /**
