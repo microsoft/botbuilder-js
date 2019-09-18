@@ -38,6 +38,31 @@ let defaultBasePath = 'https://api.botframework.com';
 export enum ConversationsApiApiKeys {
 }
 
+export interface RequestOptions {
+    headers: 
+    {
+        [name: string]: string
+    }
+}
+
+export type ConversationsCreateConversationResponse = ConversationResourceResponse & {
+    /**
+     * The underlying HTTP response.
+     */
+    response: http.IncomingMessage & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+  
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ConversationResourceResponse;
+    };
+    body: any;
+  };
+
 export class ConversationsApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders : any = {};
@@ -89,12 +114,9 @@ export class ConversationsApi {
     //                               options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.ConversationResourceResponse>, 
     //                              callback?: msRest.ServiceCallback<Models.ConversationResourceResponse>)
     //                                  : Promise<Models.ConversationsCreateConversationResponse> {
-    public async CreateConversation (parameters: ConversationParameters, 
-                                     options: {headers: {[name: string]: string}} = {headers: {}}) 
-                                     : Promise<{ 
-                                                response: http.IncomingMessage; 
-                                                body: ConversationResourceResponse;  
-                                                }> {
+    public async createConversation (parameters: ConversationParameters, 
+                                     options: RequestOptions = {headers: {}}) 
+                                     : Promise<ConversationsCreateConversationResponse> {
                                                     
         const localVarPath = this.basePath + '/v3/conversations';
         let localVarQueryParameters: any = {};
@@ -102,7 +124,7 @@ export class ConversationsApi {
         let localVarFormParams: any = {};
 
         // verify required parameter 'parameters' is not null or undefined
-        if (parameters === null || parameters === undefined) {
+        if (parameters == null) {
             throw new Error('Required parameter parameters was null or undefined when calling conversationsCreateConversation.');
         }
 
@@ -129,7 +151,7 @@ export class ConversationsApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<{ response: http.IncomingMessage; body: ConversationResourceResponse;  }>((resolve, reject) => {
+        return new Promise<ConversationsCreateConversationResponse>((resolve, reject) => {
             localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
@@ -144,13 +166,15 @@ export class ConversationsApi {
             });
         });
     }
+
     /**
-     * Delete an existing activity.    Some channels allow you to delete an existing activity, and if successful this method will remove the specified activity.
+     * Delete an existing activity.    
+     * Some channels allow you to delete an existing activity, and if successful this method will remove the specified activity.
      * @summary DeleteActivity
      * @param conversationId Conversation ID
      * @param activityId activityId to delete
      */
-    public async conversationsDeleteActivity (conversationId: string, activityId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body?: any;  }> {
+    public async deleteActivity (conversationId: string, activityId: string, options: RequestOptions = {headers: {}}) : Promise<{ response: http.IncomingMessage; body?: any;  }> {
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
@@ -159,12 +183,12 @@ export class ConversationsApi {
         let localVarFormParams: any = {};
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId === null || conversationId === undefined) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsDeleteActivity.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
-        if (activityId === null || activityId === undefined) {
+        if (activityId == null) {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsDeleteActivity.');
         }
 
@@ -204,13 +228,16 @@ export class ConversationsApi {
             });
         });
     }
+
     /**
-     * Deletes a member from a conversation.     This REST API takes a ConversationId and a memberId (of type string) and removes that member from the conversation. If that member was the last member  of the conversation, the conversation will also be deleted.
+     * Deletes a member from a conversation.     
+     * This REST API takes a ConversationId and a memberId (of type string) and removes that member from the conversation. 
+     * If that member was the last member  of the conversation, the conversation will also be deleted.
      * @summary DeleteConversationMember
      * @param conversationId Conversation ID
      * @param memberId ID of the member to delete from this conversation
      */
-    public async conversationsDeleteConversationMember (conversationId: string, memberId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body?: any;  }> {
+    public async deleteConversationMember (conversationId: string, memberId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body?: any;  }> {
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/members/{memberId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
             .replace('{' + 'memberId' + '}', encodeURIComponent(String(memberId)));
@@ -219,12 +246,12 @@ export class ConversationsApi {
         let localVarFormParams: any = {};
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId === null || conversationId === undefined) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsDeleteConversationMember.');
         }
 
         // verify required parameter 'memberId' is not null or undefined
-        if (memberId === null || memberId === undefined) {
+        if (memberId == null) {
             throw new Error('Required parameter memberId was null or undefined when calling conversationsDeleteConversationMember.');
         }
 
@@ -264,13 +291,15 @@ export class ConversationsApi {
             });
         });
     }
+
     /**
-     * Enumerate the members of an activity.     This REST API takes a ConversationId and a ActivityId, returning an array of ChannelAccount objects representing the members of the particular activity in the conversation.
+     * Enumerate the members of an activity.     
+     * This REST API takes a ConversationId and a ActivityId, returning an array of ChannelAccount objects representing the members of the particular activity in the conversation.
      * @summary GetActivityMembers
      * @param conversationId Conversation ID
      * @param activityId Activity ID
      */
-    public async conversationsGetActivityMembers (conversationId: string, activityId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<ChannelAccount>;  }> {
+    public async getActivityMembers (conversationId: string, activityId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<ChannelAccount>;  }> {
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}/members'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
@@ -279,12 +308,12 @@ export class ConversationsApi {
         let localVarFormParams: any = {};
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId === null || conversationId === undefined) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsGetActivityMembers.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
-        if (activityId === null || activityId === undefined) {
+        if (activityId == null) {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsGetActivityMembers.');
         }
 
@@ -325,12 +354,14 @@ export class ConversationsApi {
             });
         });
     }
+
     /**
-     * Enumerate the members of a conversation.     This REST API takes a ConversationId and returns an array of ChannelAccount objects representing the members of the conversation.
+     * Enumerate the members of a conversation.     
+     * This REST API takes a ConversationId and returns an array of ChannelAccount objects representing the members of the conversation.
      * @summary GetConversationMembers
      * @param conversationId Conversation ID
      */
-    public async conversationsGetConversationMembers (conversationId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<ChannelAccount>;  }> {
+    public async getConversationMembers (conversationId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Array<ChannelAccount>;  }> {
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/members'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
         let localVarQueryParameters: any = {};
@@ -338,7 +369,7 @@ export class ConversationsApi {
         let localVarFormParams: any = {};
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId === null || conversationId === undefined) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsGetConversationMembers.');
         }
 
@@ -379,14 +410,16 @@ export class ConversationsApi {
             });
         });
     }
+
     /**
-     * Enumerate the members of a conversation one page at a time.    This REST API takes a ConversationId. Optionally a pageSize and/or continuationToken can be provided. It returns a PagedMembersResult, which contains an array  of ChannelAccounts representing the members of the conversation and a continuation token that can be used to get more values.    One page of ChannelAccounts records are returned with each call. The number of records in a page may vary between channels and calls. The pageSize parameter can be used as   a suggestion. If there are no additional results the response will not contain a continuation token. If there are no members in the conversation the Members will be empty or not present in the response.    A response to a request that has a continuation token from a prior request may rarely return members from a previous request.
+     * Enumerate the members of a conversation one page at a time.    
+     * This REST API takes a ConversationId. Optionally a pageSize and/or continuationToken can be provided. It returns a PagedMembersResult, which contains an array  of ChannelAccounts representing the members of the conversation and a continuation token that can be used to get more values.    One page of ChannelAccounts records are returned with each call. The number of records in a page may vary between channels and calls. The pageSize parameter can be used as   a suggestion. If there are no additional results the response will not contain a continuation token. If there are no members in the conversation the Members will be empty or not present in the response.    A response to a request that has a continuation token from a prior request may rarely return members from a previous request.
      * @summary GetConversationPagedMembers
      * @param conversationId Conversation ID
      * @param pageSize Suggested page size
      * @param continuationToken Continuation Token
      */
-    public async conversationsGetConversationPagedMembers (conversationId: string, pageSize?: number, continuationToken?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: PagedMembersResult;  }> {
+    public async getConversationPagedMembers (conversationId: string, pageSize?: number, continuationToken?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: PagedMembersResult;  }> {
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/pagedmembers'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
         let localVarQueryParameters: any = {};
@@ -394,7 +427,7 @@ export class ConversationsApi {
         let localVarFormParams: any = {};
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId === null || conversationId === undefined) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsGetConversationPagedMembers.');
         }
 
@@ -443,20 +476,26 @@ export class ConversationsApi {
             });
         });
     }
+
     /**
-     * List the Conversations in which this bot has participated.    GET from this method with a skip token    The return value is a ConversationsResult, which contains an array of ConversationMembers and a skip token.  If the skip token is not empty, then   there are further values to be returned. Call this method again with the returned token to get more values.    Each ConversationMembers object contains the ID of the conversation and an array of ChannelAccounts that describe the members of the conversation.
+     * List the Conversations in which this bot has participated.    
+     * 
+     * GET from this method with a skip token    
+     * 
+     * The return value is a ConversationsResult, which contains an array of ConversationMembers and a skip token.  
+     * If the skip token is not empty, then there are further values to be returned. 
+     * Call this method again with the returned token to get more values.    
+     * 
+     * Each ConversationMembers object contains the ID of the conversation and an array of 
+     * ChannelAccounts that describe the members of the conversation.
      * @summary GetConversations
      * @param continuationToken skip or continuation token
      */
-    public async conversationsGetConversations (continuationToken?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: ConversationsResult;  }> {
+    public async getConversations (options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: ConversationsResult;  }> {
         const localVarPath = this.basePath + '/v3/conversations';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
-
-        if (continuationToken !== undefined) {
-            localVarQueryParameters['continuationToken'] = ObjectSerializer.serialize(continuationToken, "string");
-        }
 
         (<any>Object).assign(localVarHeaderParams, options.headers);
 
@@ -495,14 +534,21 @@ export class ConversationsApi {
             });
         });
     }
+
     /**
-     * This method allows you to reply to an activity.    This is slightly different from SendToConversation().  * SendToConversation(conversationId) - will append the activity to the end of the conversation according to the timestamp or semantics of the channel.  * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply to another activity, if the channel supports it. If the channel does not support nested replies, ReplyToActivity falls back to SendToConversation.    Use ReplyToActivity when replying to a specific activity in the conversation.    Use SendToConversation in all other cases.
+     * This method allows you to reply to an activity.    
+     * This is slightly different from SendToConversation().  
+     * * SendToConversation(conversationId) - will append the activity to the end of the conversation according to the timestamp or semantics of the channel.  
+     * * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply to another activity, if the channel supports it. 
+     * If the channel does not support nested replies, ReplyToActivity falls back to SendToConversation.    
+     * Use ReplyToActivity when replying to a specific activity in the conversation.    
+     * Use SendToConversation in all other cases.
      * @summary ReplyToActivity
      * @param activity Activity to send
      * @param conversationId Conversation ID
      * @param activityId activityId the reply is to (OPTIONAL)
      */
-    public async conversationsReplyToActivity (activity: Activity, conversationId: string, activityId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: ResourceResponse;  }> {
+    public async replyToActivity (activity: Activity, conversationId: string, activityId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: ResourceResponse;  }> {
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
@@ -511,17 +557,17 @@ export class ConversationsApi {
         let localVarFormParams: any = {};
 
         // verify required parameter 'activity' is not null or undefined
-        if (activity === null || activity === undefined) {
+        if (activity == null) {
             throw new Error('Required parameter activity was null or undefined when calling conversationsReplyToActivity.');
         }
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId === null || conversationId === undefined) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsReplyToActivity.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
-        if (activityId === null || activityId === undefined) {
+        if (activityId == null) {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsReplyToActivity.');
         }
 
@@ -563,6 +609,7 @@ export class ConversationsApi {
             });
         });
     }
+
     /**
      * This method allows you to upload the historic activities to the conversation.    
      * Sender must ensure that the historic activities have unique ids and appropriate timestamps. 
@@ -572,7 +619,7 @@ export class ConversationsApi {
      * @param history Historic activities
      * @param conversationId Conversation ID
      */
-    public async SendConversationHistory (history: Transcript, 
+    public async sendConversationHistory (history: Transcript, 
                                                        conversationId: string, 
                                                        options: {headers: {[name: string]: string}} = {headers: {}}) 
                                                        : Promise<{ response: http.IncomingMessage; 
@@ -584,11 +631,11 @@ export class ConversationsApi {
         let localVarFormParams: any = {};
 
         // verify required parameter 'history' is not null or undefined
-        if (history === null || history === undefined) {
+        if (history == null) {
             throw new Error('Required parameter history was null or undefined when calling SendConversationHistory.');
         }
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId === null || conversationId === undefined) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling SendConversationHistory.');
         }
 
@@ -629,13 +676,20 @@ export class ConversationsApi {
             });
         });
     }
+
     /**
-     * This method allows you to send an activity to the end of a conversation.    This is slightly different from ReplyToActivity().  * SendToConversation(conversationId) - will append the activity to the end of the conversation according to the timestamp or semantics of the channel.  * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply to another activity, if the channel supports it. If the channel does not support nested replies, ReplyToActivity falls back to SendToConversation.    Use ReplyToActivity when replying to a specific activity in the conversation.    Use SendToConversation in all other cases.
+     * This method allows you to send an activity to the end of a conversation.    
+     * This is slightly different from ReplyToActivity().  
+     * * SendToConversation(conversationId) - will append the activity to the end of the conversation according to the timestamp or semantics of the channel.  
+     * * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply to another activity, if the channel supports it. 
+     * If the channel does not support nested replies, ReplyToActivity falls back to SendToConversation.    
+     * Use ReplyToActivity when replying to a specific activity in the conversation.    
+     * Use SendToConversation in all other cases.
      * @summary SendToConversation
      * @param activity Activity to send
      * @param conversationId Conversation ID
      */
-    public async SendToConversation (activity: Activity, conversationId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: ResourceResponse;  }> {
+    public async sendToConversation (activity: Activity, conversationId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: ResourceResponse;  }> {
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
         let localVarQueryParameters: any = {};
@@ -643,12 +697,12 @@ export class ConversationsApi {
         let localVarFormParams: any = {};
 
         // verify required parameter 'activity' is not null or undefined
-        if (activity === null || activity === undefined) {
+        if (activity == null) {
             throw new Error('Required parameter activity was null or undefined when calling SendToConversation.');
         }
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId === null || conversationId === undefined) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling SendToConversation.');
         }
 
@@ -690,14 +744,17 @@ export class ConversationsApi {
             });
         });
     }
+
     /**
-     * Edit an existing activity.    Some channels allow you to edit an existing activity to reflect the new state of a bot conversation.    For example, you can remove buttons after someone has clicked \"Approve\" button.
+     * Edit an existing activity.    
+     * Some channels allow you to edit an existing activity to reflect the new state of a bot conversation.    
+     * For example, you can remove buttons after someone has clicked \"Approve\" button.
      * @summary UpdateActivity
      * @param activity replacement Activity
      * @param conversationId Conversation ID
      * @param activityId activityId to update
      */
-    public async conversationsUpdateActivity (activity: Activity, conversationId: string, activityId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: ResourceResponse;  }> {
+    public async updateActivity (activity: Activity, conversationId: string, activityId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: ResourceResponse;  }> {
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
@@ -706,17 +763,17 @@ export class ConversationsApi {
         let localVarFormParams: any = {};
 
         // verify required parameter 'activity' is not null or undefined
-        if (activity === null || activity === undefined) {
+        if (activity == null) {
             throw new Error('Required parameter activity was null or undefined when calling conversationsUpdateActivity.');
         }
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId === null || conversationId === undefined) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsUpdateActivity.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
-        if (activityId === null || activityId === undefined) {
+        if (activityId == null) {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsUpdateActivity.');
         }
 
@@ -758,13 +815,16 @@ export class ConversationsApi {
             });
         });
     }
+
     /**
-     * Upload an attachment directly into a channel\'s blob storage.    This is useful because it allows you to store data in a compliant store when dealing with enterprises.    The response is a ResourceResponse which contains an AttachmentId which is suitable for using with the attachments API.
+     * Upload an attachment directly into a channel\'s blob storage.    
+     * This is useful because it allows you to store data in a compliant store when dealing with enterprises.    
+     * The response is a ResourceResponse which contains an AttachmentId which is suitable for using with the attachments API.
      * @summary UploadAttachment
      * @param attachmentUpload Attachment data
      * @param conversationId Conversation ID
      */
-    public async conversationsUploadAttachment (attachmentUpload: AttachmentData, conversationId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: ResourceResponse;  }> {
+    public async uploadAttachment (attachmentUpload: AttachmentData, conversationId: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: ResourceResponse;  }> {
         const localVarPath = this.basePath + '/v3/conversations/{conversationId}/attachments'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
         let localVarQueryParameters: any = {};
@@ -772,12 +832,12 @@ export class ConversationsApi {
         let localVarFormParams: any = {};
 
         // verify required parameter 'attachmentUpload' is not null or undefined
-        if (attachmentUpload === null || attachmentUpload === undefined) {
+        if (attachmentUpload == null) {
             throw new Error('Required parameter attachmentUpload was null or undefined when calling conversationsUploadAttachment.');
         }
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (conversationId === null || conversationId === undefined) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsUploadAttachment.');
         }
 

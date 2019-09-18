@@ -131,7 +131,6 @@ export class AttachmentsApi {
             });
         });
     }
-
     
     /**
      * Get AttachmentInfo structure describing the attachment views
