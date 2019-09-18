@@ -11,11 +11,14 @@ import { ParagraphContext } from "./LGFileParser";
 import { NewlineContext } from "./LGFileParser";
 import { TemplateDefinitionContext } from "./LGFileParser";
 import { TemplateNameLineContext } from "./LGFileParser";
+import { ErrorTemplateNameContext } from "./LGFileParser";
 import { TemplateNameContext } from "./LGFileParser";
 import { ParametersContext } from "./LGFileParser";
 import { TemplateBodyContext } from "./LGFileParser";
 import { NormalTemplateBodyContext } from "./LGFileParser";
+import { TemplateStringContext } from "./LGFileParser";
 import { NormalTemplateStringContext } from "./LGFileParser";
+import { ErrorTemplateStringContext } from "./LGFileParser";
 import { IfElseTemplateBodyContext } from "./LGFileParser";
 import { IfConditionRuleContext } from "./LGFileParser";
 import { IfConditionContext } from "./LGFileParser";
@@ -93,6 +96,13 @@ export interface LGFileParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitTemplateNameLine?: (ctx: TemplateNameLineContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by `LGFileParser.errorTemplateName`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitErrorTemplateName?: (ctx: ErrorTemplateNameContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by `LGFileParser.templateName`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -121,11 +131,25 @@ export interface LGFileParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitNormalTemplateBody?: (ctx: NormalTemplateBodyContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by `LGFileParser.templateString`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitTemplateString?: (ctx: TemplateStringContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by `LGFileParser.normalTemplateString`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitNormalTemplateString?: (ctx: NormalTemplateStringContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `LGFileParser.errorTemplateString`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitErrorTemplateString?: (ctx: ErrorTemplateStringContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `LGFileParser.ifElseTemplateBody`.

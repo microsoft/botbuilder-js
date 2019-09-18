@@ -79,11 +79,11 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     }
 
     public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext): string {
-        const normalTemplateStrs: lp.NormalTemplateStringContext[] = ctx.normalTemplateString();
+        const normalTemplateStrs: lp.TemplateStringContext[] = ctx.templateString();
         // tslint:disable-next-line: insecure-random
         const randomNumber: number = Math.floor(Math.random() * normalTemplateStrs.length);
 
-        return this.visit(normalTemplateStrs[randomNumber]);
+        return this.visit(normalTemplateStrs[randomNumber].normalTemplateString());
     }
 
     public visitIfElseBody(ctx: lp.IfElseBodyContext): string {

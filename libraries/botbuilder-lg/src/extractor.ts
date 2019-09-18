@@ -54,8 +54,8 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
 
     public visitNormalTemplateBody(context: lp.NormalTemplateBodyContext): Map<string, any> {
         const result: Map<string, any> = new Map<string, any>();
-        for (const templateStr of context.normalTemplateString()) {
-            result.set(templateStr.text, undefined);
+        for (const templateStr of context.templateString()) {
+            result.set(templateStr.normalTemplateString().text, undefined);
         }
 
         return result;
