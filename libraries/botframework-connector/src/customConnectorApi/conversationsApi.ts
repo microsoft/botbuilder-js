@@ -26,6 +26,7 @@ import { Transcript } from './model/transcript';
 import * as Models from "./model";
 import { MicrosoftAppCredentials } from '../auth'
 import { ObjectSerializer, Authentication, OAuth, VoidAuth } from './model/models';
+import { SimpleCredential, CreateConversationResponse, ConversationsApiDeleteConversationMemberResponse, ConversationsApiDeleteActivityOptionalParams } from './interfaces';
 
 let defaultBasePath = 'https://api.botframework.com';
 
@@ -61,19 +62,19 @@ export class ConversationsApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders : any = {};
     protected _useQuerystring : boolean = false;
-    protected credentials: Models.SimpleCredential;
+    protected credentials: SimpleCredential;
 
     protected authentications = {
         'default': <Authentication>new VoidAuth(),
     }
 
-    constructor(CustomCredentials: Models.SimpleCredential)
-    constructor(CustomCredentials: Models.SimpleCredential, basePath?: string){
+    constructor(CustomCredentials: SimpleCredential)
+    constructor(CustomCredentials: SimpleCredential, basePath?: string){
         if(basePath)
          this.basePath = basePath;
          
         if(CustomCredentials){
-            this.credentials = new Models.SimpleCredential(CustomCredentials.appId, CustomCredentials.appPassword);
+            this.credentials = new SimpleCredential(CustomCredentials.appId, CustomCredentials.appPassword);
         }        
     }
 
@@ -107,7 +108,7 @@ export class ConversationsApi {
      * @summary CreateConversation
      * @param parameters Parameters to create the conversation from
      */
-    public async CreateConversation (parameters: ConversationParameters, options: Models.RequestOptions = {headers: {}}) : Promise<Models.ConversationsCreateConversationResponse> {
+    public async CreateConversation (parameters: ConversationParameters, options: RequestOptions = {headers: {}}) : Promise<CreateConversationResponse> {
                                                     
         const localVarPath = this.basePath + '/v3/conversations';
         let localVarQueryParameters: any = {};
@@ -144,21 +145,21 @@ export class ConversationsApi {
             }
         }
 
-        return new Promise<Models.ConversationsCreateConversationResponse>((resolve, reject) => {
+        return new Promise<CreateConversationResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {                    
-                    let _body: Models.ConversationsCreateConversationResponse = ObjectSerializer.deserialize(response, "ConversationResourceResponse");
+                    let _body: ConversationsCreateConversationResponse = ObjectSerializer.deserialize(response, "ConversationResourceResponse");
                     let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.ConversationsCreateConversationResponse = Object.assign(_body, {_response: _response});
+                        let toReturn: ConversationsCreateConversationResponse = Object.assign(_body, {_response: _response});
                         resolve(toReturn);
                     } else {
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.ConversationsCreateConversationResponse = Object.assign(_body, {_response: _response});  
+                        let toReturn: ConversationsCreateConversationResponse = Object.assign(_body, {_response: _response});  
                         reject(toReturn);
                     }
                 }
@@ -175,8 +176,8 @@ export class ConversationsApi {
      */
     public async deleteActivity (conversationId: string, 
         activityId: string, 
-        options: Models.ConversationsApiDeleteActivityOptionalParams = {headers: {}}) 
-        : Promise<Models.ConversationsApiDeleteActivityResponse> {
+        options: ConversationsApiDeleteActivityOptionalParams = {headers: {}}) 
+        : Promise<ConversationsApiDeleteConversationMemberResponse> {
         
             const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
@@ -218,19 +219,19 @@ export class ConversationsApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<Models.ConversationsApiDeleteActivityResponse>((resolve, reject) => {
+        return new Promise<ConversationsApiDeleteActivityResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: Models.ConversationsApiDeleteActivityResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _body: ConversationsApiDeleteActivityResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
                     let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
 
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let httpResponse: http.IncomingMessage = response;
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.ConversationsApiDeleteActivityResponse = Object.assign(_body, {_response: _response});                          
+                        let toReturn: ConversationsApiDeleteActivityResponse = Object.assign(_body, {_response: _response});                          
                         resolve(toReturn);
                     } else {
                         reject({ response: response, body: body });
@@ -288,19 +289,19 @@ export class ConversationsApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<Models.ConversationsApiDeleteConversationMemberResponse>((resolve, reject) => {
+        return new Promise<ConversationsApiDeleteConversationMemberResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: Models.ConversationsApiDeleteConversationMemberResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _body: ConversationsApiDeleteConversationMemberResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
                     let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
 
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let httpResponse: http.IncomingMessage = response;
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.ConversationsApiDeleteConversationMemberResponse = Object.assign(_body, {_response: _response});                          
+                        let toReturn: ConversationsApiDeleteConversationMemberResponse = Object.assign(_body, {_response: _response});                          
                         resolve(toReturn);
                     } else {
                         reject({ response: response, body: body });
@@ -358,19 +359,19 @@ export class ConversationsApi {
                 localVarRequestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<Models.ConversationsApiGetActivityMembersResponse>((resolve, reject) => {
+        return new Promise<ConversationsApiGetActivityMembersResponse>((resolve, reject) => {
             request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: Models.ConversationsApiGetActivityMembersResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
+                    let _body: ConversationsApiGetActivityMembersResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
                     let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                     let httpResponse: http.IncomingMessage = response;
 
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let httpResponse: http.IncomingMessage = response;
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.ConversationsApiGetActivityMembersResponse = Object.assign(_body, {_response: _response});                          
+                        let toReturn: ConversationsApiGetActivityMembersResponse = Object.assign(_body, {_response: _response});                          
                         resolve(toReturn);
                     } else {
                         reject({ response: response, body: body });
