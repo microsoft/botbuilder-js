@@ -166,7 +166,7 @@ export class CustomMicrosoftAppCredentials {
     }
 
     private shouldSetToken(webResource: any): boolean {
-        return CustomMicrosoftAppCredentials.isTrustedServiceUrl(webResource.url);
+        return CustomMicrosoftAppCredentials.isTrustedServiceUrl(webResource.uri);
     }
 }
 
