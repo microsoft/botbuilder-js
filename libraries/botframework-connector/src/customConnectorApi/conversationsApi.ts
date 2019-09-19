@@ -107,9 +107,15 @@ export class ConversationsApi {
         const varPath = this.basePath + '/v3/conversations';
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
+
+        Object.assign(headerParams, parameters.headers);
+
         let formParams: any = {};
         let useFormData = false;
         let url = new URL(varPath);
+
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+        
         let requestOptions = {
             method: 'POST',
             qs: queryParameters,
@@ -119,15 +125,10 @@ export class ConversationsApi {
             json: true,
             body: ObjectSerializer.serialize(parameters, "ConversationParameters")
         }
-        
-
-        Object.assign(headerParams, parameters.headers);
 
         this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
 
 
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        Object.assign(headerParams, parameters.headers);
 
         this.authentications.default.applyToRequest(requestOptions);
 
@@ -159,13 +160,18 @@ export class ConversationsApi {
         }
 
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
-        .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
-        .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
+            .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
         let queryParameters: {};
         let headerParams = Object.assign({}, this.defaultHeaders);
+        
+        Object.assign(headerParams, parameters.headers);
+        
         let formParams = {};
-        let url = new URL(path)
         let useFormData = false;
+        let url = new URL(path)
+        
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
 
         let requestOptions = {
             method: 'DELETE',
@@ -176,9 +182,6 @@ export class ConversationsApi {
             json: true,
         };
 
-        Object.assign(headerParams, parameters.headers);
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        Object.assign(headerParams, parameters.headers);
 
         this.authentications.default.applyToRequest(requestOptions);
 
@@ -218,10 +221,16 @@ export class ConversationsApi {
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
             .replace('{' + 'memberId' + '}', encodeURIComponent(String(memberId)));
         let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        
+        Object.assign(headerParams, parameters.headers);
+        
         let useFormData = false;
         let formParams: any = {};
         let url = new URL(path)
+        
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+
         let requestOptions = {
             method: 'DELETE',
             qs: queryParameters,
@@ -231,8 +240,6 @@ export class ConversationsApi {
             json: true,
         };
 
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        Object.assign(headerParams, parameters.headers);
 
         this.authentications.default.applyToRequest(requestOptions);
 
@@ -267,10 +274,16 @@ export class ConversationsApi {
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
         let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        
+        Object.assign(headerParams, parameters.headers);
+        
         let useFormData = false;
         let formParams: any = {};
         let url = new URL(path)
+        
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+        
         let requestOptions = {
             method: 'GET',
             qs: queryParameters,
@@ -280,8 +293,6 @@ export class ConversationsApi {
             json: true,
         };
         
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        Object.assign(headerParams, parameters.headers);
 
         this.authentications.default.applyToRequest(requestOptions);
 
@@ -309,10 +320,16 @@ export class ConversationsApi {
         const path = this.basePath + '/v3/conversations/{conversationId}/members'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
         let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        
+        Object.assign(headerParams, parameters.headers);
+        
         let formParams: any = {};
         let useFormData = false;
         let url = new URL(path)
+        
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+        
         let requestOptions = {
             method: 'GET',
             qs: queryParameters,
@@ -322,8 +339,7 @@ export class ConversationsApi {
             json: true,
         };
 
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        Object.assign(headerParams, parameters.headers);
+        
 
         this.authentications.default.applyToRequest(requestOptions);
 
@@ -371,12 +387,18 @@ export class ConversationsApi {
 
         const path = this.basePath + '/v3/conversations/{conversationId}/pagedmembers'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        
+        Object.assign(headerParams, parameters.headers);
+        
         let formParams: any = {};
         let url = new URL(path)
         let useFormData = false;
+        
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+        
         let requestOptions = {
-        method: 'GET',
+            method: 'GET',
             qs: queryParameters,
             headers: headerParams,
             uri: path,
@@ -384,8 +406,6 @@ export class ConversationsApi {
             json: true,
         };
 
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        Object.assign(headerParams, parameters.headers);
 
         this.authentications.default.applyToRequest(requestOptions);
 
@@ -415,10 +435,16 @@ export class ConversationsApi {
 
         const path = this.basePath + '/v3/conversations';
         let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this.defaultHeaders);
+
+        Object.assign(headerParams, parameters.headers);
+
         let formParams: any = {};
         let url = new URL(path)
         let useFormData = false;
+        
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+
         let requestOptions = {
             method: 'GET',
             qs: queryParameters,
@@ -428,8 +454,6 @@ export class ConversationsApi {
             json: true,
         };
         
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        Object.assign(headerParams, parameters.headers);
 
         this.authentications.default.applyToRequest(requestOptions);
 
@@ -474,10 +498,16 @@ export class ConversationsApi {
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.activity.conversation.id)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
         let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        
+        Object.assign(headerParams, parameters.headers);
+        
         let formParams: any = {};
         let url = new URL(path)
         let useFormData = false;
+        
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+        
         let requestOptions = {
             method: 'POST',
             qs: queryParameters,
@@ -488,8 +518,6 @@ export class ConversationsApi {
             body: ObjectSerializer.serialize(parameters.activity, "Activity")
         };
 
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        Object.assign(headerParams, parameters.headers);
 
         this.authentications.default.applyToRequest(requestOptions);
 
@@ -524,10 +552,16 @@ export class ConversationsApi {
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/history'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
         let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        
+        Object.assign(headerParams, parameters.headers);
+        
         let formParams: any = {};
-        let url = new URL(path)
         let useFormData = false;
+        let url = new URL(path)
+        
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+        
         let requestOptions = {
             method: 'POST',
             qs: queryParameters,
@@ -538,8 +572,6 @@ export class ConversationsApi {
             body: ObjectSerializer.serialize(history, "Transcript")
         };
 
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        Object.assign(headerParams, parameters.headers);
 
         this.authentications.default.applyToRequest(requestOptions);
 
@@ -576,10 +608,16 @@ export class ConversationsApi {
         const path = this.basePath + '/v3/conversations/{conversationId}/activities'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
         let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this.defaultHeaders);
+
+        Object.assign(headerParams, parameters.headers);
+
         let formParams: any = {};
         let url = new URL(path)
         let useFormData = false;
+
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+
         let requestOptions = {
             method: 'POST',
             qs: queryParameters,
@@ -590,8 +628,6 @@ export class ConversationsApi {
             body: ObjectSerializer.serialize(parameters.activity, "Activity")
         };
 
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        Object.assign(headerParams, parameters.headers);
 
         this.authentications.default.applyToRequest(requestOptions);
 
@@ -632,10 +668,15 @@ export class ConversationsApi {
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
         let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this.defaultHeaders);
+
+        Object.assign(headerParams, parameters.headers);
+
         let formParams: any = {};
-        let url = new URL(path)
         let useFormData = false;
+        let url = new URL(path)
+
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
 
         let requestOptions = {
             method: 'PUT',
@@ -647,8 +688,6 @@ export class ConversationsApi {
             body: ObjectSerializer.serialize(parameters.activity, "Activity")
         };
 
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        Object.assign(headerParams, parameters.headers);
 
         this.authentications.default.applyToRequest(requestOptions);
 
@@ -685,10 +724,16 @@ export class ConversationsApi {
         const path = this.basePath + '/v3/conversations/{conversationId}/attachments'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
         let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this.defaultHeaders);
+
+        Object.assign(headerParams, parameters.headers);
+
         let formParams: any = {};
-        let url = new URL(path)
         let useFormData = false;
+        let url = new URL(path)
+
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+
         let requestOptions = {
             method: 'POST',
             qs: queryParameters,
@@ -699,8 +744,6 @@ export class ConversationsApi {
             body: ObjectSerializer.serialize(attachmentUpload, "AttachmentData")
         };
 
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        Object.assign(headerParams, parameters.headers);
 
         this.authentications.default.applyToRequest(requestOptions);
 
