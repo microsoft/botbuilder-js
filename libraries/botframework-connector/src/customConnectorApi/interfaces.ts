@@ -32,14 +32,6 @@ export interface RequestOptions {
     {
         [name: string]: string
     };
-
-    proxyOptions: 
-    {
-      host: string,
-      port: number,
-      user: string,
-      password: string
-    };
 }
 
 export type CreateConversationResponse = ConversationResourceResponse & {
