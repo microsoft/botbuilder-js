@@ -25,9 +25,3 @@ export class ActivityImportance {
         return ActivityImportance.attributeTypeMap;
     }
 }
-
-export declare enum ActivityImportance {
-    Low = "low",
-    Normal = "normal",
-    High = "high"
-  }

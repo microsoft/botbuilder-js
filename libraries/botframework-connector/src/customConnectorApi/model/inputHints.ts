@@ -25,10 +25,3 @@ export class InputHints {
         return InputHints.attributeTypeMap;
     }
 }
-
-export declare enum InputHints {
-    AcceptingInput = "acceptingInput",
-    IgnoringInput = "ignoringInput",
-    ExpectingInput = "expectingInput"
-  }
-  
