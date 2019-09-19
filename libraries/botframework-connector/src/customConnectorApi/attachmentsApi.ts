@@ -9,8 +9,8 @@
 import http = require('http');
 import * as HttpStatus from 'http-status-codes';
 
-import { RequestOptions, SimpleCredential, GetAttachmentResponse, GetAttachmentInfoResponse } from './interfaces';
-import { ObjectSerializer, Authentication, VoidAuth } from './model/models';
+import { ObjectSerializer, Authentication, VoidAuth, RequestOptions, GetAttachmentResponse, GetAttachmentInfoResponse } from './model/models';
+import { SimpleCredential } from './simpleCredential';
 
 const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
 let defaultBasePath = 'https://api.botframework.com';
