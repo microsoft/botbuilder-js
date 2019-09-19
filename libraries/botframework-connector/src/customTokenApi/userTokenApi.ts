@@ -115,12 +115,12 @@ export class UserTokenApi {
         await this.credentials.signRequest(localVarRequestOptions);        
 
         return new Promise<Models.UserTokenGetAadTokensResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response) => {
+            request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: Models.UserTokenGetAadTokensResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
+                    let _body: Models.UserTokenGetAadTokensResponse = ObjectSerializer.deserialize(body, "{ [key: string]: TokenResponse; }");
+                    let _bodyAsText = ObjectSerializer.deserialize(body, "string");
                     let httpResponse: http.IncomingMessage = response;
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
@@ -128,8 +128,8 @@ export class UserTokenApi {
                         resolve(toReturn);
                     } else {
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.UserTokenGetAadTokensResponse = Object.assign(_body, {_response: _response});  
-                        reject(toReturn);
+                        let toReturn: Models.UserTokenGetAadTokensResponse = Object.assign({_response: _response});  
+                        resolve(toReturn);
                     }
                 }
             });
@@ -187,12 +187,12 @@ export class UserTokenApi {
         await this.credentials.signRequest(localVarRequestOptions);    
 
         return new Promise<Models.UserTokenGetTokenResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response) => {
+            request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: Models.TokenResponse = ObjectSerializer.deserialize(response, "TokenResponse");
-                    let _bodyAsText: string = ObjectSerializer.deserialize(response, "string");
+                    let _body: Models.TokenResponse = ObjectSerializer.deserialize(body, "TokenResponse");
+                    let _bodyAsText: string = ObjectSerializer.deserialize(body, "string");
                     let httpResponse: http.IncomingMessage = response;
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
@@ -200,8 +200,8 @@ export class UserTokenApi {
                         resolve(toReturn);
                     } else {
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.UserTokenGetTokenResponse = Object.assign(_body, {_response: _response});  
-                        reject(toReturn);
+                        let toReturn: Models.UserTokenGetTokenResponse = Object.assign({_response: _response});  
+                        resolve(toReturn);
                     }
                 }
             });
@@ -249,12 +249,12 @@ export class UserTokenApi {
         await this.credentials.signRequest(localVarRequestOptions);    
 
         return new Promise<Models.UserTokenGetTokenStatusResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response) => {
+            request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: Models.UserTokenGetTokenStatusResponse = ObjectSerializer.deserialize(response, "Array<TokenStatus>");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
+                    let _body: Models.UserTokenGetTokenStatusResponse = ObjectSerializer.deserialize(body, "Array<TokenStatus>");
+                    let _bodyAsText = ObjectSerializer.deserialize(body, "string");
                     let httpResponse: http.IncomingMessage = response;
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
@@ -262,8 +262,8 @@ export class UserTokenApi {
                         resolve(toReturn);                    
                     } else {
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.UserTokenGetTokenStatusResponse = Object.assign(_body, {_response: _response});  
-                        reject(toReturn);
+                        let toReturn: Models.UserTokenGetTokenStatusResponse = Object.assign({_response: _response});  
+                        resolve(toReturn);
                     }
                 }
             });
@@ -311,12 +311,12 @@ export class UserTokenApi {
         await this.credentials.signRequest(localVarRequestOptions);    
 
         return new Promise<Models.UserTokenSignOutResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response) => {
+            request(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    let _body: Models.UserTokenSignOutResponse = ObjectSerializer.deserialize(response, "object");
-                    let _bodyAsText: string = ObjectSerializer.deserialize(response, "string");
+                    let _body: Models.UserTokenSignOutResponse = ObjectSerializer.deserialize(body, "object");
+                    let _bodyAsText: string = ObjectSerializer.deserialize(body, "string");
                     let httpResponse: http.IncomingMessage = response;
                     if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
@@ -324,8 +324,8 @@ export class UserTokenApi {
                         resolve(toReturn)
                     } else {
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.UserTokenSignOutResponse = Object.assign(_body, {_response: _response});  
-                        reject(toReturn);
+                        let toReturn: Models.UserTokenSignOutResponse = Object.assign({_response: _response});  
+                        resolve(toReturn);
                     }
                 }
             });
