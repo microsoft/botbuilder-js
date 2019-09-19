@@ -10,7 +10,8 @@
  * Do not edit the class manually.
  */
 
-import request = require('request');
+const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
+import * as HttpStatus from 'http-status-codes';
 import http = require('http');
 import * as Models from './model';
 
@@ -30,8 +31,7 @@ export enum BotSignInApiApiKeys {
 
 export class BotSignInApi {
     protected _basePath = defaultBasePath;
-    protected defaultHeaders = {};
-    protected _useQuerystring : boolean = false;
+    protected defaultHeaders = {};    
     protected credentials: CustomMicrosoftAppCredentials;
     
     constructor(CustomCredentials: CustomMicrosoftAppCredentials)
@@ -47,10 +47,6 @@ export class BotSignInApi {
         this.credentials = CustomCredentials              
     }
 
-    set useQuerystring(value: boolean) {
-        this._useQuerystring = value;
-    }
-
     set basePath(basePath: string) {
         this._basePath = basePath;
     }
@@ -59,6 +55,27 @@ export class BotSignInApi {
         return this._basePath;
     }
     
+    private async deserializeResponse<T>(url, requestOptions, type): Promise<T> {
+        return new Promise<T>((resolve, reject) => {
+            fetch(url, requestOptions).then(response => {
+                let httpResponse: http.IncomingMessage = response;
+
+                if (response.status &&  response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) { 
+                    response.json().then(result => {
+                        let _body: T = ObjectSerializer.deserialize(result, type);
+                        let _bodyAsText: string = _body == undefined? "" : ObjectSerializer.deserialize(result, "string");
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: T = _body == undefined? Object.assign( {_response: _response}) : Object.assign(_body, {_response: _response});
+                        resolve(toReturn);
+                    });
+                } else {
+                    let toReturn: T = Object.assign({_response: httpResponse});
+                    resolve(toReturn);;
+                }
+            });
+        });
+    }
+
     /**
      * 
      * @param state 
@@ -67,9 +84,9 @@ export class BotSignInApi {
      * @param finalRedirect 
      */
     public async getSignInUrl (state: string, options: Models.BotSignInGetSignInUrlOptionalParams = {headers: {}}) : Promise<Models.BotSignInGetSignInUrlResponse> {
-        const localVarPath = this.basePath + '/api/botsignin/GetSignInUrl';
-        let localVarQueryParameters = {};
-        let localVarHeaderParams = Object.assign({}, this.defaultHeaders);    
+        const localPath = this.basePath + '/api/botsignin/GetSignInUrl';
+        let localQueryParameters = {};
+        let localHeaderParams = Object.assign({}, this.defaultHeaders);    
 
         // verify required parameter 'state' is not null or undefined
         if (state === null || state === undefined) {
@@ -77,53 +94,33 @@ export class BotSignInApi {
         }
 
         if (state !== undefined) {
-            localVarQueryParameters['state'] = ObjectSerializer.serialize(state, "string");
+            localQueryParameters['state'] = ObjectSerializer.serialize(state, "string");
         }
 
         if (options.codeChallenge !== undefined) {
-            localVarQueryParameters['code_challenge'] = ObjectSerializer.serialize(options.codeChallenge, "string");
+            localQueryParameters['code_challenge'] = ObjectSerializer.serialize(options.codeChallenge, "string");
         }
 
         if (options.emulatorUrl !== undefined) {
-            localVarQueryParameters['emulatorUrl'] = ObjectSerializer.serialize(options.emulatorUrl, "string");
+            localQueryParameters['emulatorUrl'] = ObjectSerializer.serialize(options.emulatorUrl, "string");
         }
 
         if (options.finalRedirect !== undefined) {
-            localVarQueryParameters['finalRedirect'] = ObjectSerializer.serialize(options.finalRedirect, "string");
+            localQueryParameters['finalRedirect'] = ObjectSerializer.serialize(options.finalRedirect, "string");
         }
 
-        Object.assign(localVarHeaderParams, options.headers);        
+        let url = new URL(localPath)
+        Object.keys(localQueryParameters).forEach(key => url.searchParams.append(key, localQueryParameters[key]))            
+        Object.assign(localHeaderParams, options.headers);
 
-        let localVarRequestOptions: request.Options = {
+        let requestOptions = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
+            uri: localPath,
+            headers: localHeaderParams,            
             json: true,
         };
-                
-        await this.credentials.signRequest(localVarRequestOptions);   
 
-        return new Promise<Models.BotSignInGetSignInUrlResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: Models.BotSignInGetSignInUrlResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
-                    let httpResponse: http.IncomingMessage = response;
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.BotSignInGetSignInUrlResponse = Object.assign(_body, {_response: _response});
-                        resolve(toReturn);
-                    } else {
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.BotSignInGetSignInUrlResponse = Object.assign(_body, {_response: _response});  
-                        reject(toReturn);
-                    }
-                }
-            });
-        });        
+        await this.credentials.signRequest(requestOptions);       
+        return this.deserializeResponse<Models.BotSignInGetSignInUrlResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");         
     }
 }
