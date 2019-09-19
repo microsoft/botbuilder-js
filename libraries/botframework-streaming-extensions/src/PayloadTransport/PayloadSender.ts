@@ -24,7 +24,7 @@ export class PayloadSender {
     /// Returns true if connected to a transport sender.
     /// </summary>
     public get isConnected(): boolean {
-        return this.sender !== undefined;
+        return !!this.sender;
     }
 
     /// <summary>
@@ -41,8 +41,8 @@ export class PayloadSender {
     /// <param name="header">The header to attach to the outgoing payload.</param>
     /// <param name="payload">The stream of buffered data to send.</param>
     /// <param name="sentCalback">The function to execute when the send has completed.</param>
-    public sendPayload(header: IHeader, payload: SubscribableStream, sentCallback: () => Promise<void>): void {
-        var packet: ISendPacket = {header: header, payload: payload, sentCallback: sentCallback};
+    public sendPayload(header: IHeader, payload?: SubscribableStream, sentCallback?: () => Promise<void>): void {
+        var packet: ISendPacket = {header, payload, sentCallback};
         this.writePacket(packet);
     }
 
@@ -50,10 +50,10 @@ export class PayloadSender {
     /// Disconnects this payload sender.
     /// </summary>
     /// <param name="e">The disconnected event arguments to include in the disconnected event broadcast.</param>
-    public disconnect(e: TransportDisconnectedEventArgs): void {
+    public disconnect(e?: TransportDisconnectedEventArgs): void {
         if (this.isConnected) {
             this.sender.close();
-            this.sender = undefined;
+            this.sender = null;
 
             if (this.disconnected) {
                 this.disconnected(this, e || TransportDisconnectedEventArgs.Empty);

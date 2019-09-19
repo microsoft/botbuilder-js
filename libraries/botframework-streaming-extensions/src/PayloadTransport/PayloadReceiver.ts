@@ -51,8 +51,8 @@ export class PayloadReceiver {
     /// Force this receiver to disconnect.
     /// </summary>
     /// <param name="e">Event arguments to include when broadcasting disconnection event.</param>
-    public disconnect(e: TransportDisconnectedEventArgs): void {
-        let didDisconnect = false;
+    public disconnect(e?: TransportDisconnectedEventArgs): void {
+        let didDisconnect;
         try {
             if (this.isConnected) {
                 this._receiver.close();
@@ -63,7 +63,7 @@ export class PayloadReceiver {
             this.isConnected = false;
             this.disconnected(error.message, e);
         }
-        this._receiver = undefined;
+        this._receiver = null;
         this.isConnected = false;
 
         if (didDisconnect) {
@@ -77,7 +77,7 @@ export class PayloadReceiver {
     }
 
     private async receivePackets(): Promise<void> {
-        let isClosed = false;
+        let isClosed;
 
         while (this.isConnected && !isClosed) {
             try {

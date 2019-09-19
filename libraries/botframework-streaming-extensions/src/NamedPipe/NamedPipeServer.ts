@@ -49,13 +49,8 @@ export class NamedPipeServer implements IStreamingTransportServer {
         this._sender = new PayloadSender();
         this._receiver = new PayloadReceiver();
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
-        this._isDisconnecting = false;
-        this._sender.disconnected = (): void => {
-            this.onConnectionDisconnected();
-        };
-        this._receiver.disconnected = (): void => {
-            this.onConnectionDisconnected();
-        };
+        this._sender.disconnected = this.onConnectionDisconnected.bind(this);
+        this._receiver.disconnected = this.onConnectionDisconnected.bind(this);
     }
 
     /// <summary>
@@ -63,8 +58,8 @@ export class NamedPipeServer implements IStreamingTransportServer {
     /// </summary>
     /// <returns>A promised string that will not resolve as long as the server is running.</returns>
     public start(): Promise<string> {
-        let incomingConnect = false;
-        let outgoingConnect = false;
+        let incomingConnect;
+        let outgoingConnect;
         let result = new Promise<string>((resolve): void => {
             this._onClose = resolve;
         });
@@ -99,17 +94,17 @@ export class NamedPipeServer implements IStreamingTransportServer {
 
     // Allows for manually disconnecting the server.
     public disconnect(): void {
-        this._sender.disconnect(undefined);
-        this._receiver.disconnect(undefined);
+        this._sender.disconnect();
+        this._receiver.disconnect();
 
         if (this._incomingServer) {
             this._incomingServer.close();
-            this._incomingServer = undefined;
+            this._incomingServer = null;
         }
 
         if (this._outgoingServer) {
             this._outgoingServer.close();
-            this._outgoingServer = undefined;
+            this._outgoingServer = null;
         }
     }
 
@@ -128,11 +123,11 @@ export class NamedPipeServer implements IStreamingTransportServer {
             this._isDisconnecting = true;
             try {
                 if (this._sender.isConnected) {
-                    this._sender.disconnect(undefined);
+                    this._sender.disconnect();
                 }
 
                 if (this._receiver.isConnected) {
-                    this._receiver.disconnect(undefined);
+                    this._receiver.disconnect();
                 }
 
                 if (this._autoReconnect) {
