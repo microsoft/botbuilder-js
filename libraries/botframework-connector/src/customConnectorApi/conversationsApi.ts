@@ -15,8 +15,6 @@ import * as HttpStatus from 'http-status-codes';
 
 /* tslint:disable:no-unused-locals */
 import { AttachmentData } from './model/attachmentData';
-import { ConversationResourceResponse } from './model/conversationResourceResponse';
-
 import { Transcript } from './model/transcript';
 import { MicrosoftAppCredentials } from '../auth'
 import { ObjectSerializer, Authentication, OAuth, VoidAuth } from './model/models';

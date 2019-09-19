@@ -19,6 +19,11 @@ export class RequestOptions {
             "name": "headers",
             "baseName": "headers",
             "type": "{ [name: string]: string }"
+        },
+        {
+            "name": "proxyOptions",
+            "baseName": "proxyOptions",
+            "type": "{ host: string, port: number, user: string, password: string };"
         }    
     ];
 
