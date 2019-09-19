@@ -11,6 +11,7 @@
  */
 const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
 import * as HttpStatus from 'http-status-codes';
+import http = require('http');
 
 /* tslint:disable:no-unused-locals */
 import { AadResourceUrls } from './model/aadResourceUrls';
