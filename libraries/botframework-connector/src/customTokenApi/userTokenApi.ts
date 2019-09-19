@@ -12,13 +12,10 @@
 const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
 import * as HttpStatus from 'http-status-codes';
 import http = require('http');
-
-/* tslint:disable:no-unused-locals */
-import { AadResourceUrls } from './model/aadResourceUrls';
 import * as Models from './model';
 
+/* tslint:disable:no-unused-locals */
 import { CustomMicrosoftAppCredentials } from '../auth'
-
 import { ObjectSerializer } from './model/models';
 
 let defaultBasePath = 'https://token.botframework.com';
@@ -32,8 +29,7 @@ export enum UserTokenApiApiKeys {
 
 export class UserTokenApi {
     protected _basePath = defaultBasePath;
-    protected defaultHeaders : any = {};
-    protected _useQuerystring : boolean = false;
+    protected defaultHeaders = {};    
     protected credentials: CustomMicrosoftAppCredentials;
 
     constructor(CustomCredentials: CustomMicrosoftAppCredentials)
@@ -47,10 +43,6 @@ export class UserTokenApi {
         }
 
         this.credentials = CustomCredentials              
-    }
-
-    set useQuerystring(value: boolean) {
-        this._useQuerystring = value;
     }
 
     set basePath(basePath: string) {
@@ -89,10 +81,10 @@ export class UserTokenApi {
      * @param connectionName 
      * @param channelId 
      */
-    public async getAadTokens (userId: string, connectionName: string, aadResourceUrls: AadResourceUrls, options: Models.UserTokenGetAadTokensOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetAadTokensResponse> {
-        const localVarPath = this.basePath + '/api/usertoken/GetAadTokens';
-        let localVarQueryParameters = {};
-        let localVarHeaderParams = Object.assign({}, this.defaultHeaders);        
+    public async getAadTokens (userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options: Models.UserTokenGetAadTokensOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetAadTokensResponse> {
+        const localPath = this.basePath + '/api/usertoken/GetAadTokens';
+        let localQueryParameters = {};
+        let localHeaderParams = Object.assign({}, this.defaultHeaders);        
 
         // verify required parameter 'aadResourceUrls' is not null or undefined
         if (aadResourceUrls === null || aadResourceUrls === undefined) {
@@ -110,26 +102,25 @@ export class UserTokenApi {
         }
 
         if (userId !== undefined) {
-            localVarQueryParameters['userId'] = ObjectSerializer.serialize(userId, "string");
+            localQueryParameters['userId'] = ObjectSerializer.serialize(userId, "string");
         }
 
         if (connectionName !== undefined) {
-            localVarQueryParameters['connectionName'] = ObjectSerializer.serialize(connectionName, "string");
+            localQueryParameters['connectionName'] = ObjectSerializer.serialize(connectionName, "string");
         }
 
         if (options.channelId !== undefined) {
-            localVarQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
+            localQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
         }
 
-        let url = new URL(localVarPath)
-        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))            
-        Object.assign(localVarHeaderParams, options.headers);
+        let url = new URL(localPath)
+        Object.keys(localQueryParameters).forEach(key => url.searchParams.append(key, localQueryParameters[key]))            
+        Object.assign(localHeaderParams, options.headers);
 
         let requestOptions = {
             method: 'GET',
-            uri: localVarPath,
-            headers: localVarHeaderParams,
-            useQuerystring: this._useQuerystring,
+            uri: localPath,
+            headers: localHeaderParams,            
             json: true,
         };
 
@@ -144,9 +135,9 @@ export class UserTokenApi {
      * @param code 
      */
     public async getToken (userId: string, connectionName: string, options: Models.UserTokenGetTokenOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetTokenResponse> {
-        const localVarPath = this.basePath + '/api/usertoken/GetToken';
-        let localVarQueryParameters = {};
-        let localVarHeaderParams = Object.assign({}, this.defaultHeaders);        
+        const localPath = this.basePath + '/api/usertoken/GetToken';
+        let localQueryParameters = {};
+        let localHeaderParams = Object.assign({}, this.defaultHeaders);        
 
         // verify required parameter 'userId' is not null or undefined
         if (userId === null || userId === undefined) {
@@ -159,30 +150,29 @@ export class UserTokenApi {
         }
 
         if (userId !== undefined) {
-            localVarQueryParameters['userId'] = ObjectSerializer.serialize(userId, "string");
+            localQueryParameters['userId'] = ObjectSerializer.serialize(userId, "string");
         }
 
         if (connectionName !== undefined) {
-            localVarQueryParameters['connectionName'] = ObjectSerializer.serialize(connectionName, "string");
+            localQueryParameters['connectionName'] = ObjectSerializer.serialize(connectionName, "string");
         }
 
         if (options.channelId !== undefined) {
-            localVarQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
+            localQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
         }
 
         if (options.code !== undefined) {
-            localVarQueryParameters['code'] = ObjectSerializer.serialize(options.code, "string");
+            localQueryParameters['code'] = ObjectSerializer.serialize(options.code, "string");
         }        
 
-        let url = new URL(localVarPath)
-        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))            
-        Object.assign(localVarHeaderParams, options.headers);
+        let url = new URL(localPath)
+        Object.keys(localQueryParameters).forEach(key => url.searchParams.append(key, localQueryParameters[key]))            
+        Object.assign(localHeaderParams, options.headers);
 
         let requestOptions = {
             method: 'GET',
-            uri: localVarPath,
-            headers: localVarHeaderParams,
-            useQuerystring: this._useQuerystring,
+            uri: localPath,
+            headers: localHeaderParams,            
             json: true,
         };
 
@@ -196,9 +186,9 @@ export class UserTokenApi {
      * @param include 
      */
     public async getTokenStatus (userId: string, options: Models.UserTokenGetTokenStatusOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetTokenStatusResponse> {
-        const localVarPath = this.basePath + '/api/usertoken/GetTokenStatus';
-        let localVarQueryParameters = {};
-        let localVarHeaderParams = Object.assign({}, this.defaultHeaders);    
+        const localPath = this.basePath + '/api/usertoken/GetTokenStatus';
+        let localQueryParameters = {};
+        let localHeaderParams = Object.assign({}, this.defaultHeaders);    
 
         // verify required parameter 'userId' is not null or undefined
         if (userId === null || userId === undefined) {
@@ -206,26 +196,25 @@ export class UserTokenApi {
         }
 
         if (userId !== undefined) {
-            localVarQueryParameters['userId'] = ObjectSerializer.serialize(userId, "string");
+            localQueryParameters['userId'] = ObjectSerializer.serialize(userId, "string");
         }
 
         if (options.channelId !== undefined) {
-            localVarQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
+            localQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
         }
 
         if (options.include !== undefined) {
-            localVarQueryParameters['include'] = ObjectSerializer.serialize(options.include, "string");
+            localQueryParameters['include'] = ObjectSerializer.serialize(options.include, "string");
         }
 
-        let url = new URL(localVarPath)
-        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))            
-        Object.assign(localVarHeaderParams, options.headers);
+        let url = new URL(localPath)
+        Object.keys(localQueryParameters).forEach(key => url.searchParams.append(key, localQueryParameters[key]))            
+        Object.assign(localHeaderParams, options.headers);
 
         let requestOptions = {
             method: 'GET',
-            uri: localVarPath,
-            headers: localVarHeaderParams,
-            useQuerystring: this._useQuerystring,
+            uri: localPath,
+            headers: localHeaderParams,
             json: true,
         };
 
@@ -239,9 +228,9 @@ export class UserTokenApi {
      * @param channelId 
      */
     public async signOut (userId: string, options: Models.UserTokenSignOutOptionalParams = {headers: {}}) : Promise<Models.UserTokenSignOutResponse> {
-        const localVarPath = this.basePath + '/api/usertoken/SignOut';
-        let localVarQueryParameters = {};
-        let localVarHeaderParams = Object.assign({}, this.defaultHeaders);        
+        const localPath = this.basePath + '/api/usertoken/SignOut';
+        let localQueryParameters = {};
+        let localHeaderParams = Object.assign({}, this.defaultHeaders);        
 
         // verify required parameter 'userId' is not null or undefined
         if (userId === null || userId === undefined) {
@@ -249,26 +238,25 @@ export class UserTokenApi {
         }
 
         if (userId !== undefined) {
-            localVarQueryParameters['userId'] = ObjectSerializer.serialize(userId, "string");
+            localQueryParameters['userId'] = ObjectSerializer.serialize(userId, "string");
         }
 
         if (options.connectionName !== undefined) {
-            localVarQueryParameters['connectionName'] = ObjectSerializer.serialize(options.connectionName, "string");
+            localQueryParameters['connectionName'] = ObjectSerializer.serialize(options.connectionName, "string");
         }
 
         if (options.channelId !== undefined) {
-            localVarQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
+            localQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
         }
 
-        let url = new URL(localVarPath)
-        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))            
-        Object.assign(localVarHeaderParams, options.headers);
+        let url = new URL(localPath)
+        Object.keys(localQueryParameters).forEach(key => url.searchParams.append(key, localQueryParameters[key]))            
+        Object.assign(localHeaderParams, options.headers);
 
         let requestOptions = {
             method: 'GET',
-            uri: localVarPath,
-            headers: localVarHeaderParams,
-            useQuerystring: this._useQuerystring,
+            uri: localPath,
+            headers: localHeaderParams,            
             json: true,
         };
 

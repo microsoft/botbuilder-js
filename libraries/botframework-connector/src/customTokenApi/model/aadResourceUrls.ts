@@ -10,6 +10,9 @@
  * Do not edit the class manually.
  */
 
+export interface AadResourceUrls{
+    resourceUrls?: Array<string>;
+}
 
 export class AadResourceUrls {
     'resourceUrls'?: Array<string>;
