@@ -10,7 +10,6 @@
  * Do not edit the class manually.
  */
 
-import request = require('request');
 import http = require('http');
 const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
 import * as HttpStatus from 'http-status-codes';
@@ -80,7 +79,7 @@ export class ConversationsApi {
         return new Promise<T>((resolve, reject) => {
             fetch(url, requestOptions).then(response => {         
                 let _body: T = ObjectSerializer.deserialize(response, type);
-                let _bodyAsText = ObjectSerializer.deserialize(response, "string");
+                let _bodyAsText: string = _body == undefined? "" : ObjectSerializer.deserialize(response, "string");
                 let httpResponse: http.IncomingMessage = response;
                 
                 if (response.status &&  response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) { 
@@ -90,57 +89,53 @@ export class ConversationsApi {
                         resolve(toReturn);
                     });
                 } else {
-                    return response;
-                }
-                
+                    let toReturn: T = Object.assign({_response: httpResponse});   
+                    resolve(toReturn);;
+                }                
             });
         });
     }
 
-    private getRequestOptions(method, queryParameters, headerParams, varPath, parameters) {
-        return {
-            method: method,
+   
+    public async createConversation (parameters: ConversationParameters)
+                                    : Promise<CreateConversationResponse> {
+                                        
+        // verify required parameter 'parameters' is not null or undefined
+        if (parameters == null) {
+            throw new Error('Required parameter parameters was null or undefined when calling conversationsCreateConversation.');
+        }
+        
+        const varPath = this.basePath + '/v3/conversations';
+        let queryParameters: any = {};
+        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        let formParams: any = {};
+        let useFormData = false;
+        let url = new URL(varPath);
+        let requestOptions = {
+            method: 'POST',
             qs: queryParameters,
             headers: headerParams,
             uri: varPath,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: ObjectSerializer.serialize(parameters, typeof(parameters))
-        };
-    }
-   
-    private 
-    public async createConversation (parameters: ConversationParameters)
-                                    : Promise<CreateConversationResponse> {
-                                                    
-        const varPath = this.basePath + '/v3/conversations';
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-        let url = new URL(varPath)
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]))
-        
-        // verify required parameter 'parameters' is not null or undefined
-        if (parameters == null) {
-            throw new Error('Required parameter parameters was null or undefined when calling conversationsCreateConversation.');
+            body: ObjectSerializer.serialize(parameters, "ConversationParameters")
         }
+        
 
         Object.assign(headerParams, parameters.headers);
 
         this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));  
 
-        let requestOptions: request.Options = this.getRequestOptions('POST', queryParameters, headerParams, varPath, parameters);
+
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+        Object.assign(headerParams, parameters.headers);
 
         this.authentications.default.applyToRequest(requestOptions);
-        let varUseFormData = false;
 
         if (Object.keys(formParams).length) {
-            if (varUseFormData) {
-                (<any>requestOptions).formData = formParams;
-            } else {
-                requestOptions.form = formParams;
-            }
+            useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
+
         return this.deserializeResponse<CreateConversationResponse>(url, requestOptions, "ConversationResourceResponse");
     }
 
@@ -154,16 +149,6 @@ export class ConversationsApi {
     public async deleteActivity (parameters: ConversationParameters) 
         : Promise<DeleteActivityResponse> {
         
-            const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
-            .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
-        
-        let localVarQueryParameters: {};
-        let localVarHeaderParams = Object.assign({}, this.defaultHeaders);
-        let localVarFormParams = {};
-        let url = new URL(localVarPath)
-        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))    
-
         // verify required parameter 'conversationId' is not null or undefined
         if (parameters.conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsDeleteActivity.');
@@ -174,27 +159,32 @@ export class ConversationsApi {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsDeleteActivity.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, parameters.headers);
+        const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
+        .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
+        .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
+        let queryParameters: {};
+        let headerParams = Object.assign({}, this.defaultHeaders);
+        let formParams = {};
+        let url = new URL(localVarPath)
+        let useFormData = false;
 
-        let localVarUseFormData = false;
-
-        let requestOptions: request.Options = {
+        let requestOptions = {
             method: 'DELETE',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
+            qs: queryParameters,
+            headers: headerParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
+        Object.assign(headerParams, parameters.headers);
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+        Object.assign(headerParams, parameters.headers);
+
         this.authentications.default.applyToRequest(requestOptions);
 
-        if (Object.keys(localVarFormParams).length) {
-            if (localVarUseFormData) {
-                (<any>requestOptions).formData = localVarFormParams;
-            } else {
-                requestOptions.form = localVarFormParams;
-            }
+        if (Object.keys(formParams).length) {
+            useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
         return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
@@ -214,47 +204,41 @@ export class ConversationsApi {
         memberId: string,
         parameters: ConversationParameters) 
         : Promise<DeleteActivityResponse> {
-        const localVarPath = this.basePath + '/v3/conversations/{conversationId}/members/{memberId}'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
-            .replace('{' + 'memberId' + '}', encodeURIComponent(String(memberId)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
-        let url = new URL(localVarPath)
-        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))
-
-
+            
         // verify required parameter 'conversationId' is not null or undefined
         if (parameters.conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsDeleteConversationMember.');
         }
-
+    
         // verify required parameter 'memberId' is not null or undefined
         if (memberId == null) {
             throw new Error('Required parameter memberId was null or undefined when calling conversationsDeleteConversationMember.');
         }
-
-        (<any>Object).assign(localVarHeaderParams, parameters.headers);
-
-        let localVarUseFormData = false;
-
-        let requestOptions: request.Options = {
+        
+        const path = this.basePath + '/v3/conversations/{conversationId}/members/{memberId}'
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
+            .replace('{' + 'memberId' + '}', encodeURIComponent(String(memberId)));
+        let queryParameters: any = {};
+        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let useFormData = false;
+        let formParams: any = {};
+        let url = new URL(path)
+        let requestOptions = {
             method: 'DELETE',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
+            qs: queryParameters,
+            headers: headerParams,
+            uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+        Object.assign(headerParams, parameters.headers);
+
         this.authentications.default.applyToRequest(requestOptions);
 
-        if (Object.keys(localVarFormParams).length) {
-            if (localVarUseFormData) {
-                (<any>requestOptions).formData = localVarFormParams;
-            } else {
-                requestOptions.form = localVarFormParams;
-            }
+        if (Object.keys(formParams).length) {
+            useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
         return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
@@ -270,16 +254,6 @@ export class ConversationsApi {
      */
     public async getActivityMembers (parameters: ConversationParameters): Promise<DeleteActivityResponse> {
 
-        const localVarPath = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}/members'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
-            .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
-        let url = new URL(localVarPath)
-        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))
-
-
         // verify required parameter 'conversationId' is not null or undefined
         if (parameters.conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsGetActivityMembers.');
@@ -290,27 +264,30 @@ export class ConversationsApi {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsGetActivityMembers.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, parameters.headers);
-
-        let localVarUseFormData = false;
-
-        let requestOptions: request.Options = {
+        const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}/members'
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
+            .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
+        let queryParameters: any = {};
+        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let useFormData = false;
+        let formParams: any = {};
+        let url = new URL(path)
+        let requestOptions = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
+            qs: queryParameters,
+            headers: headerParams,
+            uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
         };
+        
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+        Object.assign(headerParams, parameters.headers);
 
         this.authentications.default.applyToRequest(requestOptions);
 
-        if (Object.keys(localVarFormParams).length) {
-            if (localVarUseFormData) {
-                (<any>requestOptions).formData = localVarFormParams;
-            } else {
-                requestOptions.form = localVarFormParams;
-            }
+        if (Object.keys(formParams).length) {
+            useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
         return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
