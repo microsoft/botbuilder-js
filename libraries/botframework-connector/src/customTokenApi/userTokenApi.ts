@@ -9,9 +9,8 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-
-import request = require('request');
-import http = require('http');
+const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
+import * as HttpStatus from 'http-status-codes';
 
 /* tslint:disable:no-unused-locals */
 import { AadResourceUrls } from './model/aadResourceUrls';
@@ -61,6 +60,27 @@ export class UserTokenApi {
         return this._basePath;
     }
 
+    private async deserializeResponse<T>(url, requestOptions, type): Promise<T> {
+        return new Promise<T>((resolve, reject) => {
+            fetch(url, requestOptions).then(response => {         
+                let httpResponse: http.IncomingMessage = response;
+                
+                if (response.status &&  response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) { 
+                    response.json().then(result => {
+                        let _body: T = ObjectSerializer.deserialize(result, type);
+                        let _bodyAsText: string = _body == undefined? "" : ObjectSerializer.deserialize(result, "string");
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: T = _body == undefined? Object.assign( {_response: _response}) : Object.assign(_body, {_response: _response});
+                        resolve(toReturn);
+                    });
+                } else {
+                    let toReturn: T = Object.assign({_response: httpResponse});   
+                    resolve(toReturn);;
+                }                
+            });
+        });
+    }
+
     /**
      * 
      * @param aadResourceUrls 
@@ -100,40 +120,20 @@ export class UserTokenApi {
             localVarQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
         }
 
+        let url = new URL(localVarPath)
+        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))            
         Object.assign(localVarHeaderParams, options.headers);
-                
-        let localVarRequestOptions: request.Options = {
-            method: 'POST',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
+
+        let requestOptions = {
+            method: 'GET',
             uri: localVarPath,
+            headers: localVarHeaderParams,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: ObjectSerializer.serialize(aadResourceUrls, "AadResourceUrls")
         };
-        
-        await this.credentials.signRequest(localVarRequestOptions);        
 
-        return new Promise<Models.UserTokenGetAadTokensResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: Models.UserTokenGetAadTokensResponse = ObjectSerializer.deserialize(body, "{ [key: string]: TokenResponse; }");
-                    let _bodyAsText = ObjectSerializer.deserialize(body, "string");
-                    let httpResponse: http.IncomingMessage = response;
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.UserTokenGetAadTokensResponse = Object.assign(_body, {_response: _response});
-                        resolve(toReturn);
-                    } else {
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.UserTokenGetAadTokensResponse = Object.assign({_response: _response});  
-                        resolve(toReturn);
-                    }
-                }
-            });
-        });      
+        await this.credentials.signRequest(requestOptions);       
+        return this.deserializeResponse<Models.UserTokenGetAadTokensResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
     }
     /**
      * 
@@ -173,39 +173,20 @@ export class UserTokenApi {
             localVarQueryParameters['code'] = ObjectSerializer.serialize(options.code, "string");
         }        
 
-        Object.assign(localVarHeaderParams, options.headers);       
+        let url = new URL(localVarPath)
+        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))            
+        Object.assign(localVarHeaderParams, options.headers);
 
-        let localVarRequestOptions: request.Options = {
+        let requestOptions = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
             uri: localVarPath,
+            headers: localVarHeaderParams,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        await this.credentials.signRequest(localVarRequestOptions);    
-
-        return new Promise<Models.UserTokenGetTokenResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: Models.TokenResponse = ObjectSerializer.deserialize(body, "TokenResponse");
-                    let _bodyAsText: string = ObjectSerializer.deserialize(body, "string");
-                    let httpResponse: http.IncomingMessage = response;
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.UserTokenGetTokenResponse = Object.assign(_body, {_response: _response});                          
-                        resolve(toReturn);
-                    } else {
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.UserTokenGetTokenResponse = Object.assign({_response: _response});  
-                        resolve(toReturn);
-                    }
-                }
-            });
-        });
+        await this.credentials.signRequest(requestOptions);
+        return this.deserializeResponse<Models.UserTokenGetTokenResponse>(url, requestOptions, "TokenResponse");
     }
     /**
      * 
@@ -235,39 +216,20 @@ export class UserTokenApi {
             localVarQueryParameters['include'] = ObjectSerializer.serialize(options.include, "string");
         }
 
-        Object.assign(localVarHeaderParams, options.headers);        
+        let url = new URL(localVarPath)
+        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))            
+        Object.assign(localVarHeaderParams, options.headers);
 
-        let localVarRequestOptions: request.Options = {
+        let requestOptions = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
             uri: localVarPath,
+            headers: localVarHeaderParams,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        await this.credentials.signRequest(localVarRequestOptions);    
-
-        return new Promise<Models.UserTokenGetTokenStatusResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: Models.UserTokenGetTokenStatusResponse = ObjectSerializer.deserialize(body, "Array<TokenStatus>");
-                    let _bodyAsText = ObjectSerializer.deserialize(body, "string");
-                    let httpResponse: http.IncomingMessage = response;
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.UserTokenGetTokenStatusResponse = Object.assign(_body, {_response: _response}); 
-                        resolve(toReturn);                    
-                    } else {
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.UserTokenGetTokenStatusResponse = Object.assign({_response: _response});  
-                        resolve(toReturn);
-                    }
-                }
-            });
-        });
+        await this.credentials.signRequest(requestOptions);
+        return this.deserializeResponse<Models.UserTokenGetTokenStatusResponse>(url, requestOptions, "Array<TokenStatus>");  
     }
     /**
      * 
@@ -297,38 +259,19 @@ export class UserTokenApi {
             localVarQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
         }
 
-        Object.assign(localVarHeaderParams, options.headers);        
+        let url = new URL(localVarPath)
+        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))            
+        Object.assign(localVarHeaderParams, options.headers);
 
-        let localVarRequestOptions: request.Options = {
-            method: 'DELETE',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
+        let requestOptions = {
+            method: 'GET',
             uri: localVarPath,
+            headers: localVarHeaderParams,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        await this.credentials.signRequest(localVarRequestOptions);    
-
-        return new Promise<Models.UserTokenSignOutResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: Models.UserTokenSignOutResponse = ObjectSerializer.deserialize(body, "object");
-                    let _bodyAsText: string = ObjectSerializer.deserialize(body, "string");
-                    let httpResponse: http.IncomingMessage = response;
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.UserTokenSignOutResponse = Object.assign(_body, {_response: _response});                         
-                        resolve(toReturn)
-                    } else {
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: Models.UserTokenSignOutResponse = Object.assign({_response: _response});  
-                        resolve(toReturn);
-                    }
-                }
-            });
-        });
+        await this.credentials.signRequest(requestOptions);
+        return this.deserializeResponse<Models.UserTokenSignOutResponse>(url, requestOptions, "object");
     }
 }
