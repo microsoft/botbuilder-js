@@ -47,7 +47,7 @@ export class ConversationsApi {
          
         if(CustomCredentials){
             this.credentials = new SimpleCredential(CustomCredentials.appId, CustomCredentials.appPassword);
-        }        
+        }
     }
 
     set useQuerystring(value: boolean) {
@@ -77,10 +77,10 @@ export class ConversationsApi {
 
     private async deserializeResponse<T>(url, requestOptions, type): Promise<T> {
         return new Promise<T>((resolve, reject) => {
-            fetch(url, requestOptions).then(response => {         
+            fetch(url, requestOptions).then(response => {
                 let httpResponse: http.IncomingMessage = response;
                 
-                if (response.status &&  response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) { 
+                if (response.status && response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) { 
                     response.json().then(result => {
                         let _body: T = ObjectSerializer.deserialize(result, type);
                         let _bodyAsText: string = _body == undefined? "" : ObjectSerializer.deserialize(result, "string");
@@ -89,16 +89,16 @@ export class ConversationsApi {
                         resolve(toReturn);
                     });
                 } else {
-                    let toReturn: T = Object.assign({_response: httpResponse});   
+                    let toReturn: T = Object.assign({_response: httpResponse});
                     resolve(toReturn);;
-                }                
+                }
             });
         });
     }
    
     public async createConversation (parameters: ConversationParameters)
                                     : Promise<CreateConversationResponse> {
-                                        
+
         // verify required parameter 'parameters' is not null or undefined
         if (parameters == null) {
             throw new Error('Required parameter parameters was null or undefined when calling conversationsCreateConversation.');
@@ -123,7 +123,7 @@ export class ConversationsApi {
 
         Object.assign(headerParams, parameters.headers);
 
-        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));  
+        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
 
 
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
@@ -139,7 +139,7 @@ export class ConversationsApi {
     }
 
     /**
-     * Delete an existing activity.    
+     * Delete an existing activity.
      * Some channels allow you to delete an existing activity, and if successful this method will remove the specified activity.
      * @summary DeleteActivity
      * @param conversationId Conversation ID
@@ -192,9 +192,9 @@ export class ConversationsApi {
 
 
     /**
-     * Deletes a member from a conversation.     
+     * Deletes a member from a conversation.
      * This REST API takes a ConversationId and a memberId (of type string) and removes that member from the conversation. 
-     * If that member was the last member  of the conversation, the conversation will also be deleted.
+     * If that member was the last member of the conversation, the conversation will also be deleted.
      * @summary DeleteConversationMember
      * @param conversationId Conversation ID
      * @param memberId ID of the member to delete from this conversation
@@ -203,12 +203,12 @@ export class ConversationsApi {
         memberId: string,
         parameters: ConversationParameters) 
         : Promise<DeleteActivityResponse> {
-            
+
         // verify required parameter 'conversationId' is not null or undefined
         if (parameters.conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsDeleteConversationMember.');
         }
-    
+
         // verify required parameter 'memberId' is not null or undefined
         if (memberId == null) {
             throw new Error('Required parameter memberId was null or undefined when calling conversationsDeleteConversationMember.');
@@ -244,7 +244,7 @@ export class ConversationsApi {
     }
 
     /**
-     * Enumerate the members of an activity.     
+     * Enumerate the members of an activity.
      * This REST API takes a ConversationId and a ActivityId, returning an array 
      * of ChannelAccount objects representing the members of the particular activity in the conversation.
      * @summary GetActivityMembers
@@ -293,7 +293,7 @@ export class ConversationsApi {
     }
 
     /**
-     * Enumerate the members of a conversation.     
+     * Enumerate the members of a conversation.
      * This REST API takes a ConversationId and returns an array of ChannelAccount objects representing the members of the conversation.
      * @summary GetConversationMembers
      * @param conversationId Conversation ID
@@ -335,16 +335,16 @@ export class ConversationsApi {
     }
 
     /**
-     * Enumerate the members of a conversation one page at a time.    
+     * Enumerate the members of a conversation one page at a time.
      * This REST API takes a ConversationId. Optionally a pageSize and/or continuationToken 
-     * can be provided. It returns a PagedMembersResult, which contains an array  
+     * can be provided. It returns a PagedMembersResult, which contains an array
      * of ChannelAccounts representing the members of the conversation and a continuation 
-     * token that can be used to get more values.    
+     * token that can be used to get more values.
      * One page of ChannelAccounts records are returned with each call. 
      * The number of records in a page may vary between channels and calls. 
      * The pageSize parameter can be used as a suggestion. 
      * If there are no additional results the response will not contain a continuation token. 
-     * If there are no members in the conversation the Members will be empty or not present in the response.    
+     * If there are no members in the conversation the Members will be empty or not present in the response.
      * A response to a request that has a continuation token from a prior request may rarely return members 
      * from a previous request.
      * @summary GetConversationPagedMembers
@@ -397,13 +397,13 @@ export class ConversationsApi {
     }
 
     /**
-     * List the Conversations in which this bot has participated.    
+     * List the Conversations in which this bot has participated.
      * 
-     * GET from this method with a skip token    
+     * GET from this method with a skip token
      * 
-     * The return value is a ConversationsResult, which contains an array of ConversationMembers and a skip token.  
+     * The return value is a ConversationsResult, which contains an array of ConversationMembers and a skip token.
      * If the skip token is not empty, then there are further values to be returned. 
-     * Call this method again with the returned token to get more values.    
+     * Call this method again with the returned token to get more values.
      * 
      * Each ConversationMembers object contains the ID of the conversation and an array of 
      * ChannelAccounts that describe the members of the conversation.
@@ -412,6 +412,7 @@ export class ConversationsApi {
      */
     public async getConversations (parameters: ConversationParameters = {headers: {}}) 
                                     : Promise<useResourceResponse> {
+
         const path = this.basePath + '/v3/conversations';
         let queryParameters: any = {};
         let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -436,16 +437,16 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions,  "ResourceResponse");
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
 
     /**
-     * This method allows you to reply to an activity.    
-     * This is slightly different from SendToConversation().  
-     * * SendToConversation(conversationId) - will append the activity to the end of the conversation according to the timestamp or semantics of the channel.  
+     * This method allows you to reply to an activity.
+     * This is slightly different from SendToConversation().
+     * * SendToConversation(conversationId) - will append the activity to the end of the conversation according to the timestamp or semantics of the channel.
      * * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply to another activity, if the channel supports it. 
-     * If the channel does not support nested replies, ReplyToActivity falls back to SendToConversation.    
-     * Use ReplyToActivity when replying to a specific activity in the conversation.    
+     * If the channel does not support nested replies, ReplyToActivity falls back to SendToConversation.
+     * Use ReplyToActivity when replying to a specific activity in the conversation.
      * Use SendToConversation in all other cases.
      * @summary ReplyToActivity
      * @param activity Activity to send
@@ -486,8 +487,7 @@ export class ConversationsApi {
             json: true,
             body: ObjectSerializer.serialize(parameters.activity, "Activity")
         };
-        
-        
+
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
         Object.assign(headerParams, parameters.headers);
 
@@ -497,11 +497,11 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions,  "ResourceResponse");
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
 
     /**
-     * This method allows you to upload the historic activities to the conversation.    
+     * This method allows you to upload the historic activities to the conversation.
      * Sender must ensure that the historic activities have unique ids and appropriate timestamps. 
      * The ids are used by the client to deal with duplicate activities and the timestamps are used 
      * by the client to render the activities in the right order.
@@ -512,7 +512,7 @@ export class ConversationsApi {
     public async sendConversationHistory (parameters: ConversationParameters,
                                         history: Transcript) 
                                         : Promise<useResourceResponse> {
-                                    
+
         // verify required parameter 'history' is not null or undefined
         if (history == null) {
             throw new Error('Required parameter history was null or undefined when calling SendConversationHistory.');
@@ -547,16 +547,16 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions,  "ResourceResponse");
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
 
     /**
-     * This method allows you to send an activity to the end of a conversation.    
-     * This is slightly different from ReplyToActivity().  
-     * * SendToConversation(conversationId) - will append the activity to the end of the conversation according to the timestamp or semantics of the channel.  
+     * This method allows you to send an activity to the end of a conversation.
+     * This is slightly different from ReplyToActivity().
+     * * SendToConversation(conversationId) - will append the activity to the end of the conversation according to the timestamp or semantics of the channel.
      * * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply to another activity, if the channel supports it. 
-     * If the channel does not support nested replies, ReplyToActivity falls back to SendToConversation.    
-     * Use ReplyToActivity when replying to a specific activity in the conversation.    
+     * If the channel does not support nested replies, ReplyToActivity falls back to SendToConversation.
+     * Use ReplyToActivity when replying to a specific activity in the conversation.
      * Use SendToConversation in all other cases.
      * @summary SendToConversation
      * @param activity Activity to send
@@ -564,7 +564,7 @@ export class ConversationsApi {
      */
     public async sendToConversation (parameters: ConversationParameters) 
                                     : Promise<useResourceResponse> {
-                                        
+
         // verify required parameter 'activity' is not null or undefined
         if (parameters.activity == null) {
             throw new Error('Required parameter activity was null or undefined when calling SendToConversation.');
@@ -599,12 +599,12 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions,  "ResourceResponse");
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
 
     /**
-     * Edit an existing activity.    
-     * Some channels allow you to edit an existing activity to reflect the new state of a bot conversation.    
+     * Edit an existing activity.
+     * Some channels allow you to edit an existing activity to reflect the new state of a bot conversation.
      * For example, you can remove buttons after someone has clicked \"Approve\" button.
      * @summary UpdateActivity
      * @param activity replacement Activity
@@ -656,12 +656,12 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions,  "ResourceResponse");        
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
 
     /**
-     * Upload an attachment directly into a channel\'s blob storage.    
-     * This is useful because it allows you to store data in a compliant store when dealing with enterprises.    
+     * Upload an attachment directly into a channel\'s blob storage.
+     * This is useful because it allows you to store data in a compliant store when dealing with enterprises.
      * The response is a ResourceResponse which contains an AttachmentId which is suitable for using with 
      * the attachments API.
      * @summary UploadAttachment
@@ -671,6 +671,7 @@ export class ConversationsApi {
     public async uploadAttachment (parameters: ConversationParameters,
                                     attachmentUpload: AttachmentData) 
                                     : Promise<useResourceResponse> {
+
         // verify required parameter 'attachmentUpload' is not null or undefined
         if (attachmentUpload == null) {
             throw new Error('Required parameter attachmentUpload was null or undefined when calling conversationsUploadAttachment.');
@@ -697,7 +698,7 @@ export class ConversationsApi {
             json: true,
             body: ObjectSerializer.serialize(attachmentUpload, "AttachmentData")
         };
-                
+
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
         Object.assign(headerParams, parameters.headers);
 
@@ -706,7 +707,7 @@ export class ConversationsApi {
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
-        
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions,  "ResourceResponse");
+
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
 }
