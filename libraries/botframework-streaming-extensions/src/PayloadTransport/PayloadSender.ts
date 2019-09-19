@@ -18,7 +18,6 @@ import { ISendPacket } from '../interfaces/iSendPacket';
 export class PayloadSender {
     public disconnected?: TransportDisconnectedEventHandler;
     private sender: ITransportSender;
-    private readonly sendHeaderBuffer: Buffer = Buffer.alloc(PayloadConstants.MaxHeaderLength);
 
     /// <summary>
     /// Returns true if connected to a transport sender.
@@ -63,8 +62,9 @@ export class PayloadSender {
 
     private writePacket(packet: ISendPacket): void {
         try {
-            HeaderSerializer.serialize(packet.header, this.sendHeaderBuffer);
-            this.sender.send(this.sendHeaderBuffer);
+            let sendHeaderBuffer: Buffer = Buffer.alloc(PayloadConstants.MaxHeaderLength);
+            HeaderSerializer.serialize(packet.header, sendHeaderBuffer);
+            this.sender.send(sendHeaderBuffer);
 
             if (packet.header.payloadLength > 0 && packet.payload) {
                 let count = packet.header.payloadLength;
