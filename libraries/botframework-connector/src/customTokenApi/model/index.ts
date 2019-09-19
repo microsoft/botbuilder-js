@@ -49,6 +49,13 @@ export type BotSignInGetSignInUrlResponse = {
     emulatorUrl?: string;
     finalRedirect?: string;
     headers?: { [key: string]: string };
+    proxyOptions?:
+    {
+        host: string,
+        port: number,
+        user: string,
+        password: string
+    };
 }
 
 /**
@@ -102,6 +109,14 @@ export interface UserTokenGetTokenOptionalParams {
      * @member { [key: string]: string } [headers]
      */
     headers?: { [key: string]: string };
+
+    proxyOptions?:
+    {
+        host: string,
+        port: number,
+        user: string,
+        password: string
+    };
 }
 
 /**
@@ -118,6 +133,14 @@ export interface UserTokenGetAadTokensOptionalParams {
      * @member { [key: string]: string } [headers]
      */
     headers?: { [key: string]: string };
+
+    proxyOptions?:
+    {
+        host: string,
+        port: number,
+        user: string,
+        password: string
+    };
 }
 
 /**
@@ -136,6 +159,14 @@ export interface UserTokenGetTokenStatusOptionalParams {
      * @member { [key: string]: string } [headers]
      */
     headers?: { [key: string]: string };
+    
+    proxyOptions?:
+    {
+        host: string,
+        port: number,
+        user: string,
+        password: string
+    };
 }
 
 /**
@@ -153,6 +184,14 @@ export interface UserTokenSignOutOptionalParams {
      * @member { [key: string]: string } [headers]
      */
     headers?: { [key: string]: string };
+
+    proxyOptions?:
+    {
+        host: string,
+        port: number,
+        user: string,
+        password: string
+    };
 }
 
 /**

@@ -42,7 +42,7 @@ export class UserTokenApi {
             this.basePath = basePath;
         }
 
-        this.credentials = CustomCredentials              
+        this.credentials = CustomCredentials;           
     }
 
     set basePath(basePath: string) {
@@ -64,11 +64,13 @@ export class UserTokenApi {
                         let _bodyAsText: string = _body == undefined? "" : ObjectSerializer.deserialize(result, "string");
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
                         let toReturn: T = _body == undefined? Object.assign( {_response: _response}) : Object.assign(_body, {_response: _response});
+
                         resolve(toReturn);
                     });
                 } else {
                     let toReturn: T = Object.assign({_response: httpResponse});   
-                    resolve(toReturn);;
+
+                    resolve(toReturn);
                 }                
             });
         });
@@ -122,9 +124,11 @@ export class UserTokenApi {
             uri: localPath,
             headers: localHeaderParams,            
             json: true,
+            proxy: options.proxyOptions
         };
 
         await this.credentials.signRequest(requestOptions);       
+
         return this.deserializeResponse<Models.UserTokenGetAadTokensResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
     }
     /**
@@ -174,9 +178,11 @@ export class UserTokenApi {
             uri: localPath,
             headers: localHeaderParams,            
             json: true,
+            proxy: options.proxyOptions
         };
 
         await this.credentials.signRequest(requestOptions);
+
         return this.deserializeResponse<Models.UserTokenGetTokenResponse>(url, requestOptions, "TokenResponse");
     }
     /**
@@ -216,9 +222,11 @@ export class UserTokenApi {
             uri: localPath,
             headers: localHeaderParams,
             json: true,
+            proxy: options.proxyOptions
         };
 
         await this.credentials.signRequest(requestOptions);
+
         return this.deserializeResponse<Models.UserTokenGetTokenStatusResponse>(url, requestOptions, "Array<TokenStatus>");  
     }
     /**
@@ -258,9 +266,11 @@ export class UserTokenApi {
             uri: localPath,
             headers: localHeaderParams,            
             json: true,
+            proxy: options.proxyOptions
         };
 
         await this.credentials.signRequest(requestOptions);
+
         return this.deserializeResponse<Models.UserTokenSignOutResponse>(url, requestOptions, "object");
     }
 }

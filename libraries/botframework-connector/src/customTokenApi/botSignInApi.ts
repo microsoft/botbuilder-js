@@ -31,7 +31,7 @@ export enum BotSignInApiApiKeys {
 
 export class BotSignInApi {
     protected _basePath = defaultBasePath;
-    protected defaultHeaders = {};    
+    protected defaultHeaders = {};
     protected credentials: CustomMicrosoftAppCredentials;
     
     constructor(CustomCredentials: CustomMicrosoftAppCredentials)
@@ -44,7 +44,7 @@ export class BotSignInApi {
             this.basePath = basePath;
         }
 
-        this.credentials = CustomCredentials              
+        this.credentials = CustomCredentials;
     }
 
     set basePath(basePath: string) {
@@ -66,11 +66,13 @@ export class BotSignInApi {
                         let _bodyAsText: string = _body == undefined? "" : ObjectSerializer.deserialize(result, "string");
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
                         let toReturn: T = _body == undefined? Object.assign( {_response: _response}) : Object.assign(_body, {_response: _response});
+
                         resolve(toReturn);
                     });
                 } else {
                     let toReturn: T = Object.assign({_response: httpResponse});
-                    resolve(toReturn);;
+
+                    resolve(toReturn);
                 }
             });
         });
@@ -118,9 +120,11 @@ export class BotSignInApi {
             uri: localPath,
             headers: localHeaderParams,            
             json: true,
+            proxy: options.proxyOptions
         };
 
-        await this.credentials.signRequest(requestOptions);       
+        await this.credentials.signRequest(requestOptions); 
+              
         return this.deserializeResponse<Models.BotSignInGetSignInUrlResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");         
     }
 }
