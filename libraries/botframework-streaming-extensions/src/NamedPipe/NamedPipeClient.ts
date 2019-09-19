@@ -41,11 +41,10 @@ export class NamedPipeClient implements IStreamingTransportClient {
         this._autoReconnect = autoReconnect;
         this._requestManager = new RequestManager();
         this._sender = new PayloadSender();
-        this._sender.disconnected = (x: object, y: any): void => this.onConnectionDisconnected(this, x, y);
+        this._sender.disconnected = this.onConnectionDisconnected.bind(this);
         this._receiver = new PayloadReceiver();
-        this._receiver.disconnected = (x: object, y: any): void => this.onConnectionDisconnected(this, x, y);
+        this._receiver.disconnected = this.onConnectionDisconnected.bind(this);
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
-        this._isDisconnecting = false;
     }
 
     /// <summary>
@@ -64,8 +63,8 @@ export class NamedPipeClient implements IStreamingTransportClient {
     /// Method used to disconnect this client.
     /// </summary>
     public disconnect(): void {
-        this._sender.disconnect(undefined);
-        this._receiver.disconnect(undefined);
+        this._sender.disconnect();
+        this._receiver.disconnect();
     }
 
     /// <summary>
@@ -77,28 +76,26 @@ export class NamedPipeClient implements IStreamingTransportClient {
         return this._protocolAdapter.sendRequest(request);
     }
 
-    private onConnectionDisconnected(c: NamedPipeClient, sender: object, args: any): void {
-        if (!c._isDisconnecting) {
-            c._isDisconnecting = true;
+    private onConnectionDisconnected(sender: object, args: any): void {
+        if (!this._isDisconnecting) {
+            this._isDisconnecting = true;
             try {
-                if (c._sender.isConnected) {
-                    c._sender.disconnect(undefined);
+                if (this._sender.isConnected) {
+                    this._sender.disconnect();
                 }
 
-                if (c._receiver.isConnected) {
-                    c._receiver.disconnect(undefined);
+                if (this._receiver.isConnected) {
+                    this._receiver.disconnect();
                 }
 
-                if (c._autoReconnect) {
-                    c.connect()
-                        .then((): void => {
-                            return;
-                        })
+                if (this._autoReconnect) {
+                    this.connect()
+                        .then((): void => { })
                         .catch((error): void => { throw new Error(`Failed to reconnect. Reason: ${ error.message } Sender: ${ sender } Args: ${ args }. `); });
                 }
             }
             finally {
-                c._isDisconnecting = false;
+                this._isDisconnecting = false;
             }
         }
     }
