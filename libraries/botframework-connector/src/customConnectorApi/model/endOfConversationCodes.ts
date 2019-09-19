@@ -25,12 +25,3 @@ export class EndOfConversationCodes {
         return EndOfConversationCodes.attributeTypeMap;
     }
 }
-
-export declare enum EndOfConversationCodes {
-    Unknown = "unknown",
-    CompletedSuccessfully = "completedSuccessfully",
-    UserCancelled = "userCancelled",
-    BotTimedOut = "botTimedOut",
-    BotIssuedInvalidMessage = "botIssuedInvalidMessage",
-    ChannelFailed = "channelFailed"
-  }
