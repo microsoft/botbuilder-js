@@ -19,8 +19,8 @@
 import http = require('http');
 import * as HttpStatus from 'http-status-codes';
 
-import { ObjectSerializer, Authentication, VoidAuth, RequestOptions, GetAttachmentResponse, GetAttachmentInfoResponse } from './model/models';
-import { SimpleCredential } from './simpleCredential';
+import { ObjectSerializer, RequestOptions, GetAttachmentResponse, GetAttachmentInfoResponse } from './model/models';
+import { CustomMicrosoftAppCredentials } from '../auth'
 
 const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
 let defaultBasePath = 'https://api.botframework.com';
@@ -32,19 +32,15 @@ export class AttachmentsApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders: any = {};
     protected _useQuerystring: boolean = false;
-    protected credentials: SimpleCredential;
+    protected credentials: CustomMicrosoftAppCredentials;
 
-    protected authentications = {
-        'default': <Authentication>new VoidAuth(),
-    }
-
-    constructor(CustomCredentials: SimpleCredential)
-    constructor(CustomCredentials: SimpleCredential, basePath?: string) {
+    constructor(CustomCredentials: CustomMicrosoftAppCredentials)
+    constructor(CustomCredentials: CustomMicrosoftAppCredentials, basePath?: string) {
         if (basePath) {
             this.basePath = basePath;
         }
         if (CustomCredentials) {
-            this.credentials = new SimpleCredential(CustomCredentials.appId, CustomCredentials.appPassword);
+            this.credentials = CustomCredentials;
         }
     }
 
@@ -58,14 +54,6 @@ export class AttachmentsApi {
 
     get basePath() {
         return this._basePath;
-    }
-
-    public setDefaultAuthentication(auth: Authentication) {
-        this.authentications.default = auth;
-    }
-
-    public setApiKey(key: AttachmentsApiApiKeys, value: string) {
-        (this.authentications as any)[AttachmentsApiApiKeys[key]].apiKey = value;
     }
 
     /**
@@ -104,12 +92,12 @@ export class AttachmentsApi {
 
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
         Object.assign(headerParams, options.headers);
-
-        this.authentications.default.applyToRequest(requestOptions);
-
+                
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
+
+        await this.credentials.signRequest(requestOptions);
 
         return await this.deserializeResponse<GetAttachmentResponse>(url, requestOptions, 'GetAttachmentResponse');
     }
@@ -144,12 +132,12 @@ export class AttachmentsApi {
 
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
         Object.assign(headerParams, options.headers);
-        
-        this.authentications.default.applyToRequest(requestOptions);
 
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
+
+        await this.credentials.signRequest(requestOptions);
 
         return await this.deserializeResponse<GetAttachmentInfoResponse>(url, requestOptions, 'GetAttachmentInfoResponse');
     }
