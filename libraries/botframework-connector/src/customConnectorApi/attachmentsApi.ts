@@ -90,6 +90,7 @@ export class AttachmentsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             encoding: null,
+            proxy: options.proxyOptions
         };
 
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
@@ -129,6 +130,7 @@ export class AttachmentsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
+            proxy: options.proxyOptions
         };
 
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
