@@ -218,7 +218,7 @@ export class UserTokenApi {
         Object.assign(localHeaderParams, options.headers);
 
         let requestOptions = {
-            method: 'DELETE',
+            method: 'GET',
             uri: localPath,
             headers: localHeaderParams,
             json: true,
@@ -262,7 +262,7 @@ export class UserTokenApi {
         Object.assign(localHeaderParams, options.headers);
 
         let requestOptions = {
-            method: 'GET',
+            method: 'DELETE',
             uri: localPath,
             headers: localHeaderParams,            
             json: true,

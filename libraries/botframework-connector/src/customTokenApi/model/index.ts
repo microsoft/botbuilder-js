@@ -9,14 +9,15 @@ export * from './tokenStatus'
 import { TokenStatus } from './tokenStatus';
 import http = require('http');
 
-export class SimpleCredential {
-    appId: string;
-    appPassword: string
-
-    constructor(appId: string, appPassword: string){
-        this.appId = appId;
-        this.appPassword = appPassword;
-    }
+export interface RequestOptions {
+    headers?: { [key: string]: string };
+    proxyOptions?:
+    {
+        host: string,
+        port: number,
+        user: string,
+        password: string
+    };
 }
 
 /**
@@ -44,18 +45,10 @@ export type BotSignInGetSignInUrlResponse = {
       };
   };
 
-  export interface BotSignInGetSignInUrlOptionalParams {
+  export interface BotSignInGetSignInUrlOptionalParams extends RequestOptions {
     codeChallenge?: string;
     emulatorUrl?: string;
     finalRedirect?: string;
-    headers?: { [key: string]: string };
-    proxyOptions?:
-    {
-        host: string,
-        port: number,
-        user: string,
-        password: string
-    };
 }
 
 /**
