@@ -27,7 +27,7 @@ export class ActionTypes {
 }
 
 
-  export declare enum ActionTypes {
+export declare enum ActionTypes {
     OpenUrl = "openUrl",
     ImBack = "imBack",
     PostBack = "postBack",
@@ -39,5 +39,5 @@ export class ActionTypes {
     Call = "call",
     Payment = "payment",
     MessageBack = "messageBack"
-  }
+}
   

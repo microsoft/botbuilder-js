@@ -12,6 +12,8 @@
 
 import request = require('request');
 import http = require('http');
+const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
+import * as HttpStatus from 'http-status-codes';
 
 /* tslint:disable:no-unused-locals */
 import { AttachmentData } from './model/attachmentData';
@@ -22,7 +24,7 @@ import { MicrosoftAppCredentials } from '../auth'
 import { ObjectSerializer, Authentication, OAuth, VoidAuth } from './model/models';
 import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
 import { SimpleCredential } from './simpleCredential';
-\import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
+import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
 
 let defaultBasePath = 'https://api.botframework.com';
 
@@ -74,65 +76,72 @@ export class ConversationsApi {
         return `${ await tokenGenerator.getToken(true) }`;
     }
 
+    private async deserializeResponse<T>(url, requestOptions, type): Promise<T> {
+        return new Promise<T>((resolve, reject) => {
+            fetch(url, requestOptions).then(response => {         
+                let _body: T = ObjectSerializer.deserialize(response, type);
+                let _bodyAsText = ObjectSerializer.deserialize(response, "string");
+                let httpResponse: http.IncomingMessage = response;
+                
+                if (response.status &&  response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) { 
+                    response.json().then(result => {
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: T = _body == undefined? Object.assign( {_response: _response}) : Object.assign(_body, {_response: _response});
+                        resolve(toReturn);
+                    });
+                } else {
+                    return response;
+                }
+                
+            });
+        });
+    }
 
+    private getRequestOptions(method, queryParameters, headerParams, varPath, parameters) {
+        return {
+            method: method,
+            qs: queryParameters,
+            headers: headerParams,
+            uri: varPath,
+            useQuerystring: this._useQuerystring,
+            json: true,
+            body: ObjectSerializer.serialize(parameters, typeof(parameters))
+        };
+    }
+   
+    private 
     public async createConversation (parameters: ConversationParameters)
                                     : Promise<CreateConversationResponse> {
                                                     
-        const localVarPath = this.basePath + '/v3/conversations';
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
-
+        const varPath = this.basePath + '/v3/conversations';
+        let queryParameters: any = {};
+        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let formParams: any = {};
+        let url = new URL(varPath)
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]))
+        
         // verify required parameter 'parameters' is not null or undefined
         if (parameters == null) {
             throw new Error('Required parameter parameters was null or undefined when calling conversationsCreateConversation.');
         }
 
-        Object.assign(localVarHeaderParams, parameters.headers);
+        Object.assign(headerParams, parameters.headers);
 
         this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));  
 
-        let localVarRequestOptions: request.Options = {
-            method: 'POST',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
-            useQuerystring: this._useQuerystring,
-            json: true,
-            body: ObjectSerializer.serialize(parameters, "ConversationParameters")
-        };
+        let requestOptions: request.Options = this.getRequestOptions('POST', queryParameters, headerParams, varPath, parameters);
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
-        let localVarUseFormData = false;
+        this.authentications.default.applyToRequest(requestOptions);
+        let varUseFormData = false;
 
-        if (Object.keys(localVarFormParams).length) {
-            if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
+        if (Object.keys(formParams).length) {
+            if (varUseFormData) {
+                (<any>requestOptions).formData = formParams;
             } else {
-                localVarRequestOptions.form = localVarFormParams;
+                requestOptions.form = formParams;
             }
         }
-
-        return new Promise<CreateConversationResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {                    
-                    let _body: CreateConversationResponse = ObjectSerializer.deserialize(response, "ConversationResourceResponse");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
-                    let httpResponse: http.IncomingMessage = response;
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: CreateConversationResponse = Object.assign(_body, {_response: _response});
-                        resolve(toReturn);
-                    } else {
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: CreateConversationResponse = Object.assign(_body, {_response: _response});  
-                        reject(toReturn);
-                    }
-                }
-            });
-        });
+        return this.deserializeResponse<CreateConversationResponse>(url, requestOptions, "ConversationResourceResponse");
     }
 
     /**
@@ -152,14 +161,16 @@ export class ConversationsApi {
         let localVarQueryParameters: {};
         let localVarHeaderParams = Object.assign({}, this.defaultHeaders);
         let localVarFormParams = {};
+        let url = new URL(localVarPath)
+        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))    
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (parameters.activity.conversation.id == null) {
+        if (parameters.conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsDeleteActivity.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
-        if (parameters.activity.conversation.id == null) {
+        if (parameters.activity.id == null) {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsDeleteActivity.');
         }
 
@@ -167,7 +178,7 @@ export class ConversationsApi {
 
         let localVarUseFormData = false;
 
-        let localVarRequestOptions: request.Options = {
+        let requestOptions: request.Options = {
             method: 'DELETE',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -176,36 +187,20 @@ export class ConversationsApi {
             json: true,
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        this.authentications.default.applyToRequest(requestOptions);
 
         if (Object.keys(localVarFormParams).length) {
             if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
+                (<any>requestOptions).formData = localVarFormParams;
             } else {
-                localVarRequestOptions.form = localVarFormParams;
+                requestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<DeleteActivityResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: DeleteActivityResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
-                    let httpResponse: http.IncomingMessage = response;
 
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let httpResponse: http.IncomingMessage = response;
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: DeleteActivityResponse = Object.assign(_body, {_response: _response});                          
-                        resolve(toReturn);
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+        return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
     }
+
+
 
     /**
      * Deletes a member from a conversation.     
@@ -225,6 +220,9 @@ export class ConversationsApi {
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
+        let url = new URL(localVarPath)
+        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))
+
 
         // verify required parameter 'conversationId' is not null or undefined
         if (parameters.conversationId == null) {
@@ -240,7 +238,7 @@ export class ConversationsApi {
 
         let localVarUseFormData = false;
 
-        let localVarRequestOptions: request.Options = {
+        let requestOptions: request.Options = {
             method: 'DELETE',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -249,35 +247,17 @@ export class ConversationsApi {
             json: true,
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        this.authentications.default.applyToRequest(requestOptions);
 
         if (Object.keys(localVarFormParams).length) {
             if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
+                (<any>requestOptions).formData = localVarFormParams;
             } else {
-                localVarRequestOptions.form = localVarFormParams;
+                requestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<DeleteActivityResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: DeleteActivityResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
-                    let httpResponse: http.IncomingMessage = response;
 
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let httpResponse: http.IncomingMessage = response;
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: DeleteActivityResponse = Object.assign(_body, {_response: _response});                          
-                        resolve(toReturn);
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+        return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
     }
 
     /**
@@ -296,6 +276,9 @@ export class ConversationsApi {
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
+        let url = new URL(localVarPath)
+        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))
+
 
         // verify required parameter 'conversationId' is not null or undefined
         if (parameters.conversationId == null) {
@@ -311,7 +294,7 @@ export class ConversationsApi {
 
         let localVarUseFormData = false;
 
-        let localVarRequestOptions: request.Options = {
+        let requestOptions: request.Options = {
             method: 'GET',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -320,35 +303,17 @@ export class ConversationsApi {
             json: true,
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        this.authentications.default.applyToRequest(requestOptions);
 
         if (Object.keys(localVarFormParams).length) {
             if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
+                (<any>requestOptions).formData = localVarFormParams;
             } else {
-                localVarRequestOptions.form = localVarFormParams;
+                requestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<DeleteActivityResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: DeleteActivityResponse = ObjectSerializer.deserialize(response, "{ [key: string]: TokenResponse; }");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
-                    let httpResponse: http.IncomingMessage = response;
 
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let httpResponse: http.IncomingMessage = response;
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: DeleteActivityResponse = Object.assign(_body, {_response: _response});                          
-                        resolve(toReturn);
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+        return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
     }
 
     /**
@@ -364,6 +329,9 @@ export class ConversationsApi {
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
+        let localVarUseFormData = false;
+        let url = new URL(localVarPath)
+        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))    
 
         // verify required parameter 'conversationId' is not null or undefined
         if (parameters.conversationId == null) {
@@ -371,10 +339,9 @@ export class ConversationsApi {
         }
 
         (<any>Object).assign(localVarHeaderParams, parameters.headers);
+       
 
-        let localVarUseFormData = false;
-
-        let localVarRequestOptions: request.Options = {
+        let requestOptions: request.Options = {
             method: 'GET',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -383,35 +350,17 @@ export class ConversationsApi {
             json: true,
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        this.authentications.default.applyToRequest(requestOptions);
 
         if (Object.keys(localVarFormParams).length) {
             if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
+                (<any>requestOptions).formData = localVarFormParams;
             } else {
-                localVarRequestOptions.form = localVarFormParams;
+                requestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<GetConversationMembersResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: GetConversationMembersResponse = ObjectSerializer.deserialize(response, "ChannelAccount[]");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
-                    let httpResponse: http.IncomingMessage = response;
 
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let httpResponse: http.IncomingMessage = response;
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: GetConversationMembersResponse = Object.assign(_body, {_response: _response});                          
-                        resolve(toReturn);
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+        return this.deserializeResponse<GetConversationMembersResponse>(url, requestOptions, "Array<ChannelAccount>");
     }
 
     /**
@@ -440,6 +389,8 @@ export class ConversationsApi {
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
+        let url = new URL(localVarPath)
+        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]));
 
         // verify required parameter 'conversationId' is not null or undefined
         if (parameters.conversationId == null) {
@@ -458,7 +409,7 @@ export class ConversationsApi {
 
         let localVarUseFormData = false;
 
-        let localVarRequestOptions: request.Options = {
+        let requestOptions: request.Options = {
             method: 'GET',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -467,35 +418,17 @@ export class ConversationsApi {
             json: true,
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        this.authentications.default.applyToRequest(requestOptions);
 
         if (Object.keys(localVarFormParams).length) {
             if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
+                (<any>requestOptions).formData = localVarFormParams;
             } else {
-                localVarRequestOptions.form = localVarFormParams;
+                requestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<useResourceResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: useResourceResponse = ObjectSerializer.deserialize(response, "ResourceResponse");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
-                    let httpResponse: http.IncomingMessage = response;
 
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let httpResponse: http.IncomingMessage = response;
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: useResourceResponse = Object.assign(_body, {_response: _response});                          
-                        resolve(toReturn);
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
 
     /**
@@ -518,12 +451,14 @@ export class ConversationsApi {
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
+        let url = new URL(localVarPath)
+        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]));
 
         (<any>Object).assign(localVarHeaderParams, parameters.headers);
 
         let localVarUseFormData = false;
 
-        let localVarRequestOptions: request.Options = {
+        let requestOptions: request.Options = {
             method: 'GET',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -532,35 +467,17 @@ export class ConversationsApi {
             json: true,
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        this.authentications.default.applyToRequest(requestOptions);
 
         if (Object.keys(localVarFormParams).length) {
             if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
+                (<any>requestOptions).formData = localVarFormParams;
             } else {
-                localVarRequestOptions.form = localVarFormParams;
+                requestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<useResourceResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: useResourceResponse = ObjectSerializer.deserialize(response, "ResourceResponse");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
-                    let httpResponse: http.IncomingMessage = response;
 
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let httpResponse: http.IncomingMessage = response;
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: useResourceResponse = Object.assign(_body, {_response: _response});                          
-                        resolve(toReturn);
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions,  "ResourceResponse");
     }
 
     /**
@@ -585,6 +502,8 @@ export class ConversationsApi {
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
+        let url = new URL(localVarPath)
+        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))    
 
         // verify required parameter 'activity' is not null or undefined
         if (parameters.activity == null) {
@@ -605,7 +524,7 @@ export class ConversationsApi {
 
         let localVarUseFormData = false;
 
-        let localVarRequestOptions: request.Options = {
+        let requestOptions: request.Options = {
             method: 'POST',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -615,35 +534,17 @@ export class ConversationsApi {
             body: ObjectSerializer.serialize(parameters.activity, "Activity")
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        this.authentications.default.applyToRequest(requestOptions);
 
         if (Object.keys(localVarFormParams).length) {
             if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
+                (<any>requestOptions).formData = localVarFormParams;
             } else {
-                localVarRequestOptions.form = localVarFormParams;
+                requestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<useResourceResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: useResourceResponse = ObjectSerializer.deserialize(response, "ResourceResponse");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
-                    let httpResponse: http.IncomingMessage = response;
 
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let httpResponse: http.IncomingMessage = response;
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: useResourceResponse = Object.assign(_body, {_response: _response});                          
-                        resolve(toReturn);
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions,  "ResourceResponse");
     }
 
     /**
@@ -664,6 +565,8 @@ export class ConversationsApi {
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
+        let url = new URL(localVarPath)
+        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))    
 
         // verify required parameter 'history' is not null or undefined
         if (history == null) {
@@ -677,7 +580,7 @@ export class ConversationsApi {
         (<any>Object).assign(localVarHeaderParams, parameters.headers);
 
         let localVarUseFormData = false;
-        let localVarRequestOptions: request.Options = {
+        let requestOptions: request.Options = {
             method: 'POST',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -687,35 +590,17 @@ export class ConversationsApi {
             body: ObjectSerializer.serialize(history, "Transcript")
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        this.authentications.default.applyToRequest(requestOptions);
 
         if (Object.keys(localVarFormParams).length) {
             if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
+                (<any>requestOptions).formData = localVarFormParams;
             } else {
-                localVarRequestOptions.form = localVarFormParams;
+                requestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<useResourceResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: useResourceResponse = ObjectSerializer.deserialize(response, "ResourceResponse");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
-                    let httpResponse: http.IncomingMessage = response;
 
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let httpResponse: http.IncomingMessage = response;
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: useResourceResponse = Object.assign(_body, {_response: _response});                          
-                        resolve(toReturn);
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions,  "ResourceResponse");
     }
 
     /**
@@ -738,6 +623,8 @@ export class ConversationsApi {
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
+        let url = new URL(localVarPath)
+        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))    
 
         // verify required parameter 'activity' is not null or undefined
         if (parameters.activity == null) {
@@ -753,7 +640,7 @@ export class ConversationsApi {
 
         let localVarUseFormData = false;
 
-        let localVarRequestOptions: request.Options = {
+        let requestOptions: request.Options = {
             method: 'POST',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -763,35 +650,17 @@ export class ConversationsApi {
             body: ObjectSerializer.serialize(parameters.activity, "Activity")
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        this.authentications.default.applyToRequest(requestOptions);
 
         if (Object.keys(localVarFormParams).length) {
             if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
+                (<any>requestOptions).formData = localVarFormParams;
             } else {
-                localVarRequestOptions.form = localVarFormParams;
+                requestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<useResourceResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: useResourceResponse = ObjectSerializer.deserialize(response, "ResourceResponse");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
-                    let httpResponse: http.IncomingMessage = response;
 
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let httpResponse: http.IncomingMessage = response;
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: useResourceResponse = Object.assign(_body, {_response: _response});                          
-                        resolve(toReturn);
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions,  "ResourceResponse");
     }
 
     /**
@@ -812,6 +681,8 @@ export class ConversationsApi {
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
+        let url = new URL(localVarPath)
+        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))    
 
         // verify required parameter 'activity' is not null or undefined
         if (parameters.activity == null) {
@@ -832,7 +703,7 @@ export class ConversationsApi {
 
         let localVarUseFormData = false;
 
-        let localVarRequestOptions: request.Options = {
+        let requestOptions: request.Options = {
             method: 'PUT',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -842,35 +713,16 @@ export class ConversationsApi {
             body: ObjectSerializer.serialize(parameters.activity, "Activity")
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        this.authentications.default.applyToRequest(requestOptions);
 
         if (Object.keys(localVarFormParams).length) {
             if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
+                (<any>requestOptions).formData = localVarFormParams;
             } else {
-                localVarRequestOptions.form = localVarFormParams;
+                requestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<useResourceResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: useResourceResponse = ObjectSerializer.deserialize(response, "ResourceResponse");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
-                    let httpResponse: http.IncomingMessage = response;
-
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let httpResponse: http.IncomingMessage = response;
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: useResourceResponse = Object.assign(_body, {_response: _response});                          
-                        resolve(toReturn);
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions,  "ResourceResponse");        
     }
 
     /**
@@ -891,6 +743,8 @@ export class ConversationsApi {
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
         let localVarFormParams: any = {};
+        let url = new URL(localVarPath)
+        Object.keys(localVarQueryParameters).forEach(key => url.searchParams.append(key, localVarQueryParameters[key]))    
 
         // verify required parameter 'attachmentUpload' is not null or undefined
         if (attachmentUpload == null) {
@@ -906,7 +760,7 @@ export class ConversationsApi {
 
         let localVarUseFormData = false;
 
-        let localVarRequestOptions: request.Options = {
+        let requestOptions: request.Options = {
             method: 'POST',
             qs: localVarQueryParameters,
             headers: localVarHeaderParams,
@@ -916,34 +770,16 @@ export class ConversationsApi {
             body: ObjectSerializer.serialize(attachmentUpload, "AttachmentData")
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        this.authentications.default.applyToRequest(requestOptions);
 
         if (Object.keys(localVarFormParams).length) {
             if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
+                (<any>requestOptions).formData = localVarFormParams;
             } else {
-                localVarRequestOptions.form = localVarFormParams;
+                requestOptions.form = localVarFormParams;
             }
         }
-        return new Promise<useResourceResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: useResourceResponse = ObjectSerializer.deserialize(response, "ResourceResponse");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
-                    let httpResponse: http.IncomingMessage = response;
-
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let httpResponse: http.IncomingMessage = response;
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
-                        let toReturn: useResourceResponse = Object.assign(_body, {_response: _response});                          
-                        resolve(toReturn);
-                    } else {
-                        reject({ response: response, body: body });
-                    }
-                }
-            });
-        });
+        
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions,  "ResourceResponse");
     }
 }

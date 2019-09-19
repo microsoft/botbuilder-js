@@ -83,19 +83,23 @@ export class Conversations {
    * @param [options] The optional parameters
    * @returns Promise<Models.ConversationsCreateConversationResponse>
    */
-  createConversation(parameters: Models.ConversationParameters, options?: msRest.RequestOptionsBase): Promise<Models.ConversationsCreateConversationResponse>;
-  /**
-   * @param parameters Parameters to create the conversation from
-   * @param callback The callback
-   */
-  createConversation(parameters: Models.ConversationParameters, callback: msRest.ServiceCallback<Models.ConversationResourceResponse>): void;
-  /**
-   * @param parameters Parameters to create the conversation from
-   * @param options The optional parameters
-   * @param callback The callback
-   */
-  createConversation(parameters: Models.ConversationParameters, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ConversationResourceResponse>): void;
-  createConversation(parameters: Models.ConversationParameters, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.ConversationResourceResponse>, callback?: msRest.ServiceCallback<Models.ConversationResourceResponse>): Promise<Models.ConversationsCreateConversationResponse> {
+  createConversation(parameters: Models.ConversationParameters, 
+                    options?: msRest.RequestOptionsBase)
+                    : Promise<Models.ConversationsCreateConversationResponse>;
+
+  createConversation(parameters: Models.ConversationParameters, 
+    callback: msRest.ServiceCallback<Models.ConversationResourceResponse>)
+    : void;
+
+  createConversation(parameters: Models.ConversationParameters,
+    options: msRest.RequestOptionsBase,
+    callback: msRest.ServiceCallback<Models.ConversationResourceResponse>)
+    : void;
+    
+  createConversation(parameters: Models.ConversationParameters,
+    options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.ConversationResourceResponse>, 
+    callback?: msRest.ServiceCallback<Models.ConversationResourceResponse>)
+    : Promise<Models.ConversationsCreateConversationResponse> {
     return this.client.sendOperationRequest(
       {
         parameters,
