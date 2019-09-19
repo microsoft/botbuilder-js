@@ -8,10 +8,12 @@
 
 import request = require('request');
 import http = require('http');
+import * as HttpStatus from 'http-status-codes';
 
 import { RequestOptions, SimpleCredential, GetAttachmentResponse, GetAttachmentInfoResponse } from './interfaces';
 import { ObjectSerializer, Authentication, VoidAuth } from './model/models';
 
+const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
 let defaultBasePath = 'https://api.botframework.com';
 
 export enum AttachmentsApiApiKeys {
@@ -64,13 +66,6 @@ export class AttachmentsApi {
      * @param viewId View id from attachmentInfo
      */
     public async GetAttachment(attachmentId: string, viewId: string, options: RequestOptions): Promise<GetAttachmentResponse> {
-        const localVarPath = this.basePath + '/v3/attachments/{attachmentId}/views/{viewId}'
-            .replace('{' + 'attachmentId' + '}', encodeURIComponent(String(attachmentId)))
-            .replace('{' + 'viewId' + '}', encodeURIComponent(String(viewId)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
-
         // verify required parameter 'attachmentId' is not null or undefined
         if (attachmentId == null) {
             throw new Error('Required parameter attachmentId was null or undefined when calling attachmentsGetAttachment.');
@@ -80,47 +75,33 @@ export class AttachmentsApi {
             throw new Error('Required parameter viewId was null or undefined when calling attachmentsGetAttachment.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-        let localVarRequestOptions: request.Options = {
+        const path = this.basePath + '/v3/attachments/{attachmentId}/views/{viewId}'
+            .replace('{' + 'attachmentId' + '}', encodeURIComponent(String(attachmentId)))
+            .replace('{' + 'viewId' + '}', encodeURIComponent(String(viewId)));
+        let queryParameters: any = {};
+        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        let formParams: any = {};
+        let url = new URL(path);
+        let useFormData = false;
+        let requestOptions: request.Options = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
+            qs: queryParameters,
+            headers: headerParams,
+            uri: path,
             useQuerystring: this._useQuerystring,
             encoding: null,
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+        Object.assign(headerParams, options.headers);
 
-        if (Object.keys(localVarFormParams).length) {
-            localVarUseFormData ? (<any>localVarRequestOptions).formData = localVarFormParams : localVarRequestOptions.form = localVarFormParams;
+        this.authentications.default.applyToRequest(requestOptions);
+
+        if (Object.keys(formParams).length) {
+            useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return new Promise<GetAttachmentResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: GetAttachmentResponse = ObjectSerializer.deserialize(response, "GetAttachmentResponse");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
-                    let httpResponse: http.IncomingMessage = response;
-
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
-                        let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
-                        let toReturn: GetAttachmentResponse = Object.assign(_body, { _response: _response });
-
-                        resolve(toReturn);
-                    } else {
-                        let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
-                        let toReturn: GetAttachmentResponse = Object.assign(_body, { _response: _response });
-
-                        reject(toReturn);
-                    }
-                }
-            });
-        });
+        return await this.deserializeResponse<GetAttachmentResponse>(url, requestOptions, 'GetAttachmentResponse');
     }
 
     /**
@@ -129,59 +110,53 @@ export class AttachmentsApi {
      * @param attachmentId attachment id
      */
     public async GetAttachmentInfo(attachmentId: string, options?: RequestOptions): Promise<GetAttachmentInfoResponse> {
-        const localVarPath = this.basePath + '/v3/attachments/{attachmentId}'
-            .replace('{' + 'attachmentId' + '}', encodeURIComponent(String(attachmentId)));
-        let localVarQueryParameters: any = {};
-        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let localVarFormParams: any = {};
-
         // verify required parameter 'attachmentId' is not null or undefined
         if (attachmentId == null) {
             throw new Error('Required parameter attachmentId was null or undefined when calling attachmentsGetAttachmentInfo.');
         }
 
-        (<any>Object).assign(localVarHeaderParams, options.headers);
-
-        let localVarUseFormData = false;
-        let localVarRequestOptions: request.Options = {
+        const path = this.basePath + '/v3/attachments/{attachmentId}'
+            .replace('{' + 'attachmentId' + '}', encodeURIComponent(String(attachmentId)));
+        let queryParameters: any = {};
+        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        let formParams: any = {};
+        let url = new URL(path);
+        let useFormData = false;
+        let requestOptions: request.Options = {
             method: 'GET',
-            qs: localVarQueryParameters,
-            headers: localVarHeaderParams,
-            uri: localVarPath,
+            qs: queryParameters,
+            headers: headerParams,
+            uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+        Object.assign(headerParams, options.headers);
+        
+        this.authentications.default.applyToRequest(requestOptions);
 
-        if (Object.keys(localVarFormParams).length) {
-            if (localVarUseFormData) {
-                (<any>localVarRequestOptions).formData = localVarFormParams;
-            } else {
-                localVarRequestOptions.form = localVarFormParams;
-            }
+        if (Object.keys(formParams).length) {
+            useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return new Promise<GetAttachmentInfoResponse>((resolve, reject) => {
-            request(localVarRequestOptions, (error, response, body) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    let _body: GetAttachmentInfoResponse = ObjectSerializer.deserialize(response, "GetAttachmentInfoResponse");
-                    let _bodyAsText = ObjectSerializer.deserialize(response, "string");
-                    let httpResponse: http.IncomingMessage = response;
+        return await this.deserializeResponse<GetAttachmentInfoResponse>(url, requestOptions, 'GetAttachmentInfoResponse');
+    }
 
-                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+    private async deserializeResponse<T>(url, requestOptions, type): Promise<T> {
+        return new Promise<T>((resolve, reject) => {
+            fetch(url, requestOptions).then(response => {
+                let _body: T = ObjectSerializer.deserialize(response, type);
+                let _bodyAsText = ObjectSerializer.deserialize(response, "string");
+                let httpResponse: http.IncomingMessage = response;
+
+                if (response.status && response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) {
+                    response.json().then(result => {
                         let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
-                        let toReturn: GetAttachmentInfoResponse = Object.assign(_body, { _response: _response });
+                        let toReturn: T = _body == undefined ? Object.assign({ _response: _response }) : Object.assign(_body, { _response: _response });
 
                         resolve(toReturn);
-                    } else {
-                        let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
-                        let toReturn: GetAttachmentInfoResponse = Object.assign(_body, { _response: _response });
-
-                        reject(toReturn);
-                    }
+                    });
                 }
             });
         });
