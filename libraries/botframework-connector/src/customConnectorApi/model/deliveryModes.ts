@@ -25,8 +25,3 @@ export class DeliveryModes {
         return DeliveryModes.attributeTypeMap;
     }
 }
-
-export declare enum DeliveryModes {
-    Normal = "normal",
-    Notification = "notification"
-  }
