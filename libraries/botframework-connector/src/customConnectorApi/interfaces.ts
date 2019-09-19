@@ -19,7 +19,7 @@ import { ObjectSerializer, Authentication, VoidAuth } from './model/models';
 
 export class SimpleCredential {
     appId: string;
-    appPassword: string
+    appPassword: string;
 
     constructor(appId: string, appPassword: string){
         this.appId = appId;
@@ -31,7 +31,15 @@ export interface RequestOptions {
     headers: 
     {
         [name: string]: string
-    }
+    };
+
+    proxyOptions: 
+    {
+      host: string,
+      port: number,
+      user: string,
+      password: string
+    };
 }
 
 export type CreateConversationResponse = ConversationResourceResponse & {
