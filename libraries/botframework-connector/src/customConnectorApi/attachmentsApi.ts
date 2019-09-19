@@ -6,7 +6,6 @@
  * Contact: botframework@microsoft.com
  */
 
-import request = require('request');
 import http = require('http');
 import * as HttpStatus from 'http-status-codes';
 
@@ -83,7 +82,7 @@ export class AttachmentsApi {
         let formParams: any = {};
         let url = new URL(path);
         let useFormData = false;
-        let requestOptions: request.Options = {
+        let requestOptions = {
             method: 'GET',
             qs: queryParameters,
             headers: headerParams,
@@ -123,7 +122,7 @@ export class AttachmentsApi {
         let formParams: any = {};
         let url = new URL(path);
         let useFormData = false;
-        let requestOptions: request.Options = {
+        let requestOptions = {
             method: 'GET',
             qs: queryParameters,
             headers: headerParams,
