@@ -25,9 +25,3 @@ export class RoleTypes {
         return RoleTypes.attributeTypeMap;
     }
 }
-
-
-export declare enum RoleTypes {
-    User = "user",
-    Bot = "bot"
-  }
