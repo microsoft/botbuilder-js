@@ -25,9 +25,3 @@ export class TextFormatTypes {
         return TextFormatTypes.attributeTypeMap;
     }
 }
-
-export declare enum TextFormatTypes {
-    Markdown = "markdown",
-    Plain = "plain",
-    Xml = "xml"
-  }

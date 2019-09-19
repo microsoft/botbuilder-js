@@ -5,7 +5,7 @@ import http = require('http');
 import { Activity } from './model/activity';
 import { AttachmentData } from './model/attachmentData';
 import { ChannelAccount } from './model/channelAccount';
-import { ConversationParameters } from './model/conversationParameters';
+import { ConversationParameters } from './model/parameters/conversationParameters';
 import { ConversationResourceResponse } from './model/conversationResourceResponse';
 import { ConversationsResult } from './model/conversationsResult';
 import { ErrorResponse } from './model/errorResponse';

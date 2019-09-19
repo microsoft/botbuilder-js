@@ -25,9 +25,3 @@ export class MessageReactionTypes {
         return MessageReactionTypes.attributeTypeMap;
     }
 }
-
-export declare enum MessageReactionTypes {
-    Like = "like",
-    PlusOne = "plusOne"
-  }
-  

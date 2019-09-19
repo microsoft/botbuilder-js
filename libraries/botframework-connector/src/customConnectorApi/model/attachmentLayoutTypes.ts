@@ -25,8 +25,3 @@ export class AttachmentLayoutTypes {
         return AttachmentLayoutTypes.attributeTypeMap;
     }
 }
-
-export declare enum AttachmentLayoutTypes {
-    List = "list",
-    Carousel = "carousel"
-  }

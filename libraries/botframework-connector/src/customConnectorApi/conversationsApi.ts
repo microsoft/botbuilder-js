@@ -22,7 +22,7 @@ import { MicrosoftAppCredentials } from '../auth'
 import { ObjectSerializer, Authentication, OAuth, VoidAuth } from './model/models';
 import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
 import { SimpleCredential } from './simpleCredential';
-\import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
+import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
 
 let defaultBasePath = 'https://api.botframework.com';
 
