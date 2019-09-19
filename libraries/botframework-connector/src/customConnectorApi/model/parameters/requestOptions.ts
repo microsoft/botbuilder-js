@@ -2,7 +2,15 @@ export class RequestOptions {
     'headers':
     {
         [name: string]: string
-    }
+    };
+
+    'proxyOptions'?: 
+    {
+      host: string,
+      port: number,
+      user: string,
+      password: string
+    };
 
     static discriminator: string | undefined = undefined;
 
