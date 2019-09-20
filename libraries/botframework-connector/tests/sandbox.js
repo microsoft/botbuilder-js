@@ -1,5 +1,5 @@
-const BotConnector = require('../lib');
 const CustomConnectorClient = require('../lib/customConnectorApi').CustomConnectorClient;
+const BotConnector = require('../lib');
 const Assert = require('assert');
 
 (async () => {
@@ -31,21 +31,21 @@ const Assert = require('assert');
         const token = await credentials.getToken(true);
         const options = {
             customHeaders: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${ token }`
             },
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${ token }`
             }
         };
 
         const params = {
             bot: {
-                id: "BKGSYSTFG:TKGSUQHQE",
+                id: 'BKGSYSTFG:TKGSUQHQE',
                 // name: "bot's name"
             },
             members: [
                 {
-                    id: "UK8CH2281:TKGSUQHQE",
+                    id: 'UK8CH2281:TKGSUQHQE',
                     // name: "recipient's name"
                 }
             ]

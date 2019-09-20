@@ -261,7 +261,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             parameters.tenantId = reference.conversation.tenantId;
 
         }
-
+        //TODO: Modify this to use the new client
         const response = await client.conversations.createConversation(parameters);
 
         // Initialize request and copy over new conversation ID and updated serviceUrl.
@@ -307,6 +307,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         }
         if (!reference.activityId) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing activityId`); }
         const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
+
+        //TODO: Modify to use new client
         await client.conversations.deleteActivity(reference.conversation.id, reference.activityId);
     }
 
@@ -328,6 +330,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const serviceUrl: string = context.activity.serviceUrl;
         const conversationId: string = context.activity.conversation.id;
         const client: ConnectorClient = this.createConnectorClient(serviceUrl);
+
+        //TODO: Modify to use new client
         await client.conversations.deleteConversationMember(conversationId, memberId);
     }
 
@@ -354,7 +358,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const serviceUrl: string = context.activity.serviceUrl;
         const conversationId: string = context.activity.conversation.id;
         const client: ConnectorClient = this.createConnectorClient(serviceUrl);
-
+        //TODO: Modify to use new client
         return await client.conversations.getActivityMembers(conversationId, activityId);
     }
 
@@ -377,7 +381,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const serviceUrl: string = context.activity.serviceUrl;
         const conversationId: string = context.activity.conversation.id;
         const client: ConnectorClient = this.createConnectorClient(serviceUrl);
-
+        //TODO: Modify to use new client
         return await client.conversations.getConversationMembers(conversationId);
     }
 
@@ -393,6 +397,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     public async getConversations(contextOrServiceUrl: TurnContext | string, continuationToken?: string): Promise<ConversationsResult> {
         const url: string = typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl;
         const client: ConnectorClient = this.createConnectorClient(url);
+        //TODO: Modify to use new client
 
         return await client.conversations.getConversations(continuationToken ? { continuationToken: continuationToken } : undefined);
     }
@@ -659,12 +664,16 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
                     // Just eat activity
                         responses.push({} as ResourceResponse);
                     } else if (activity.replyToId) {
+                                //TODO: Modify to use new client
+
                         responses.push(await client.conversations.replyToActivity(
                             activity.conversation.id,
                             activity.replyToId,
                             activity as Activity
                         ));
                     } else {
+                                //TODO: Modify to use new client
+
                         responses.push(await client.conversations.sendToConversation(
                             activity.conversation.id,
                             activity as Activity
@@ -694,6 +703,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         }
         if (!activity.id) { throw new Error(`BotFrameworkAdapter.updateActivity(): missing activity.id`); }
         const client: ConnectorClient = this.createConnectorClient(activity.serviceUrl);
+                //TODO: Modify to use new client
+
         await client.conversations.updateActivity(
             activity.conversation.id,
             activity.id,

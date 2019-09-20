@@ -113,7 +113,8 @@ export class ConversationsApi {
         let url = new URL(path);
 
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        
+        let b = ObjectSerializer.serialize(parameters, "ConversationParameters");
+
         let requestOptions = {
             method: 'POST',
             qs: queryParameters,
