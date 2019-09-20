@@ -330,7 +330,7 @@ export class ObjectSerializer {
         }
     }
 
-    public static deserialize(data: any, type: string) {
+    public static deserialize(data: any, type: string = "") {
         // polymorphism may change the actual type.
         type = ObjectSerializer.findCorrectType(data, type);
         if (data == undefined) {
@@ -360,7 +360,9 @@ export class ObjectSerializer {
             let attributeTypes = typeMap[type].getAttributeTypeMap();
             for (let index in attributeTypes) {
                 let attributeType = attributeTypes[index];
-                instance[attributeType.name] = ObjectSerializer.deserialize(data[attributeType.baseName], attributeType.type);
+                if (data[attributeType.baseName]) {
+                    instance[attributeType.name] = ObjectSerializer.deserialize(data[attributeType.baseName], attributeType.type);
+                }
             }
             return instance;
         }

@@ -59,17 +59,17 @@ export class ConversationsApi {
         this._defaultHeaders = defaultHeaders;
     }
 
-    private async deserializeResponse<T>(url, requestOptions, type): Promise<T> {
+    private async deserializeResponse<T>(url, requestOptions): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             fetch(url, requestOptions).then(response => {
                 let httpResponse: http.IncomingMessage = response;
 
                 if (response.status && response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) {
                     response.json().then(result => {
-                        let _body: T = ObjectSerializer.deserialize(result, type);
+                        let _body: T = ObjectSerializer.deserialize(result);
                         let _bodyAsText: string = _body == undefined ? "" : ObjectSerializer.deserialize(result, "string");
                         let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
-                        let toReturn: T = _body == undefined ? Object.assign({ _response: _response }) : Object.assign(_body, { _response: _response });
+                        let toReturn: T = _body == undefined ? Object.assign({ _response: _response }) : Object.assign(_body, _response.parsedBody );
 
                         resolve(toReturn);
                     });
@@ -107,8 +107,8 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: ObjectSerializer.serialize(parameters, "ConversationParameters"),
-            //proxy: parameters.proxyOptions
+            body: JSON.stringify(ObjectSerializer.serialize(parameters, "ConversationParameters")),
+            proxy: options.proxyOptions
         };
         
 
@@ -118,7 +118,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<CreateConversationResponse>(url, requestOptions, "ConversationResourceResponse");
+        return this.deserializeResponse<CreateConversationResponse>(url, requestOptions) ;
     }
 
     /**
@@ -171,7 +171,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
+        return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions);
     }
 
 
@@ -229,7 +229,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
+        return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions);
     }
 
     /**
@@ -282,7 +282,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
+        return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions);
     }
 
     /**
@@ -328,7 +328,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<GetConversationMembersResponse>(url, requestOptions, "Array<ChannelAccount>");
+        return this.deserializeResponse<GetConversationMembersResponse>(url, requestOptions);
     }
 
     /**
@@ -394,7 +394,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -441,7 +441,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -505,7 +505,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -559,7 +559,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -615,7 +615,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -675,7 +675,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -730,6 +730,6 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
     }
 }
