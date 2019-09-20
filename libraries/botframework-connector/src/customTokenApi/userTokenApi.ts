@@ -35,12 +35,11 @@ export class UserTokenApi {
     protected readonly client: CustomTokenApiClient;
 
     constructor(client: CustomTokenApiClient){
+        this.credentials = client.credentials;
+        this.defaultHeaders = {"content-type": client.requestContentType};
         if(client.baseUri){
             this.basePath = client.baseUri;
-        }
-
-        this.defaultHeaders = {"content-type": client.requestContentType};
-        this.credentials = client.credentials;           
+        }           
     }
 
     set basePath(basePath: string) {
