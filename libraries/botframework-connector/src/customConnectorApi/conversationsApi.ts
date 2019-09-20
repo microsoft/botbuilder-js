@@ -16,7 +16,6 @@ import * as HttpStatus from 'http-status-codes';
 /* tslint:disable:no-unused-locals */
 import { AttachmentData } from './model/attachmentData';
 import { Transcript } from './model/transcript';
-import { MicrosoftAppCredentials } from '../auth'
 import { ObjectSerializer, RequestOptions } from './model/models';
 import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
 import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
