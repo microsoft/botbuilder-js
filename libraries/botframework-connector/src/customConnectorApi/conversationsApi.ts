@@ -30,7 +30,7 @@ export enum ConversationsApiApiKeys {
 
 export class ConversationsApi {
     protected _basePath = defaultBasePath;
-    protected defaultHeaders: any = {};
+    protected _defaultHeaders: any = {};
     protected _useQuerystring: boolean = false;
     protected credentials: CustomMicrosoftAppCredentials;
 
@@ -56,6 +56,10 @@ export class ConversationsApi {
         return this._basePath;
     }
 
+    set defaultHeaders(defaultHeaders: {}) {
+        this._defaultHeaders = defaultHeaders;
+    }
+
     private async deserializeResponse<T>(url, requestOptions, type): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             fetch(url, requestOptions).then(response => {
@@ -67,7 +71,7 @@ export class ConversationsApi {
                         let _bodyAsText: string = _body == undefined ? "" : ObjectSerializer.deserialize(result, "string");
                         let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
                         let toReturn: T = _body == undefined ? Object.assign({ _response: _response }) : Object.assign(_body, { _response: _response });
-                        
+
                         resolve(toReturn);
                     });
                 } else {
@@ -87,7 +91,7 @@ export class ConversationsApi {
 
         const varPath = this.basePath + '/v3/conversations';
         let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this._defaultHeaders);
 
         Object.assign(headerParams, parameters.headers);
 
@@ -96,7 +100,7 @@ export class ConversationsApi {
         let url = new URL(varPath);
 
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        
+
         let requestOptions = {
             method: 'POST',
             qs: queryParameters,
@@ -107,13 +111,13 @@ export class ConversationsApi {
             body: ObjectSerializer.serialize(parameters, "ConversationParameters"),
             proxy: parameters.proxyOptions
         };
-        
+
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        await this.credentials.signRequest(requestOptions);   
-        
+        await this.credentials.signRequest(requestOptions);
+
         return this.deserializeResponse<CreateConversationResponse>(url, requestOptions, "ConversationResourceResponse");
     }
 
@@ -141,14 +145,14 @@ export class ConversationsApi {
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
         let queryParameters: {};
-        let headerParams = Object.assign({}, this.defaultHeaders);
-        
+        let headerParams = Object.assign({}, this._defaultHeaders);
+
         Object.assign(headerParams, parameters.headers);
-        
+
         let formParams = {};
         let useFormData = false;
         let url = new URL(path)
-        
+
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
 
         let requestOptions = {
@@ -160,12 +164,12 @@ export class ConversationsApi {
             json: true,
             proxy: parameters.proxyOptions
         };
-        
+
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        await this.credentials.signRequest(requestOptions);  
+        await this.credentials.signRequest(requestOptions);
 
         return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
     }
@@ -174,7 +178,7 @@ export class ConversationsApi {
 
     /**
      * Deletes a member from a conversation.
-     * This REST API takes a ConversationId and a memberId (of type string) and removes that member from the conversation. 
+     * This REST API takes a ConversationId and a memberId (of type string) and removes that member from the conversation.
      * If that member was the last member of the conversation, the conversation will also be deleted.
      * @summary DeleteConversationMember
      * @param conversationId Conversation ID
@@ -199,14 +203,14 @@ export class ConversationsApi {
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
             .replace('{' + 'memberId' + '}', encodeURIComponent(String(memberId)));
         let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
-        
+        let headerParams: any = Object.assign({}, this._defaultHeaders);
+
         Object.assign(headerParams, parameters.headers);
-        
+
         let useFormData = false;
         let formParams: any = {};
         let url = new URL(path)
-        
+
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
 
         let requestOptions = {
@@ -230,7 +234,7 @@ export class ConversationsApi {
 
     /**
      * Enumerate the members of an activity.
-     * This REST API takes a ConversationId and a ActivityId, returning an array 
+     * This REST API takes a ConversationId and a ActivityId, returning an array
      * of ChannelAccount objects representing the members of the particular activity in the conversation.
      * @summary GetActivityMembers
      * @param conversationId Conversation ID
@@ -252,16 +256,16 @@ export class ConversationsApi {
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
         let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
-        
+        let headerParams: any = Object.assign({}, this._defaultHeaders);
+
         Object.assign(headerParams, parameters.headers);
-        
+
         let useFormData = false;
         let formParams: any = {};
         let url = new URL(path)
-        
+
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        
+
         let requestOptions = {
             method: 'GET',
             qs: queryParameters,
@@ -298,16 +302,16 @@ export class ConversationsApi {
         const path = this.basePath + '/v3/conversations/{conversationId}/members'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
         let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
-        
+        let headerParams: any = Object.assign({}, this._defaultHeaders);
+
         Object.assign(headerParams, parameters.headers);
-        
+
         let formParams: any = {};
         let useFormData = false;
         let url = new URL(path)
-        
+
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        
+
         let requestOptions = {
             method: 'GET',
             qs: queryParameters,
@@ -329,16 +333,16 @@ export class ConversationsApi {
 
     /**
      * Enumerate the members of a conversation one page at a time.
-     * This REST API takes a ConversationId. Optionally a pageSize and/or continuationToken 
+     * This REST API takes a ConversationId. Optionally a pageSize and/or continuationToken
      * can be provided. It returns a PagedMembersResult, which contains an array
-     * of ChannelAccounts representing the members of the conversation and a continuation 
+     * of ChannelAccounts representing the members of the conversation and a continuation
      * token that can be used to get more values.
-     * One page of ChannelAccounts records are returned with each call. 
-     * The number of records in a page may vary between channels and calls. 
-     * The pageSize parameter can be used as a suggestion. 
-     * If there are no additional results the response will not contain a continuation token. 
+     * One page of ChannelAccounts records are returned with each call.
+     * The number of records in a page may vary between channels and calls.
+     * The pageSize parameter can be used as a suggestion.
+     * If there are no additional results the response will not contain a continuation token.
      * If there are no members in the conversation the Members will be empty or not present in the response.
-     * A response to a request that has a continuation token from a prior request may rarely return members 
+     * A response to a request that has a continuation token from a prior request may rarely return members
      * from a previous request.
      * @summary GetConversationPagedMembers
      * @param conversationId Conversation ID
@@ -364,16 +368,16 @@ export class ConversationsApi {
 
         const path = this.basePath + '/v3/conversations/{conversationId}/pagedmembers'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
-        
+        let headerParams: any = Object.assign({}, this._defaultHeaders);
+
         Object.assign(headerParams, parameters.headers);
-        
+
         let formParams: any = {};
         let url = new URL(path);
         let useFormData = false;
-        
+
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        
+
         let requestOptions = {
             method: 'GET',
             qs: queryParameters,
@@ -395,14 +399,14 @@ export class ConversationsApi {
 
     /**
      * List the Conversations in which this bot has participated.
-     * 
+     *
      * GET from this method with a skip token
-     * 
+     *
      * The return value is a ConversationsResult, which contains an array of ConversationMembers and a skip token.
-     * If the skip token is not empty, then there are further values to be returned. 
+     * If the skip token is not empty, then there are further values to be returned.
      * Call this method again with the returned token to get more values.
-     * 
-     * Each ConversationMembers object contains the ID of the conversation and an array of 
+     *
+     * Each ConversationMembers object contains the ID of the conversation and an array of
      * ChannelAccounts that describe the members of the conversation.
      * @summary GetConversations
      * @param continuationToken skip or continuation token
@@ -411,14 +415,14 @@ export class ConversationsApi {
         : Promise<useResourceResponse> {
         const path = this.basePath + '/v3/conversations';
         let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this._defaultHeaders);
 
         Object.assign(headerParams, parameters.headers);
 
         let formParams: any = {};
         let url = new URL(path);
         let useFormData = false;
-        
+
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
 
         let requestOptions = {
@@ -429,7 +433,7 @@ export class ConversationsApi {
             useQuerystring: this._useQuerystring,
             json: true,
             proxy: parameters.proxyOptions
-        };     
+        };
 
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
@@ -444,7 +448,7 @@ export class ConversationsApi {
      * This method allows you to reply to an activity.
      * This is slightly different from SendToConversation().
      * * SendToConversation(conversationId) - will append the activity to the end of the conversation according to the timestamp or semantics of the channel.
-     * * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply to another activity, if the channel supports it. 
+     * * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply to another activity, if the channel supports it.
      * If the channel does not support nested replies, ReplyToActivity falls back to SendToConversation.
      * Use ReplyToActivity when replying to a specific activity in the conversation.
      * Use SendToConversation in all other cases.
@@ -474,16 +478,16 @@ export class ConversationsApi {
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.activity.conversation.id)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
         let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
-        
+        let headerParams: any = Object.assign({}, this._defaultHeaders);
+
         Object.assign(headerParams, parameters.headers);
-        
+
         let formParams: any = {};
         let url = new URL(path);
         let useFormData = false;
-        
+
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        
+
         let requestOptions = {
             method: 'POST',
             qs: queryParameters,
@@ -506,8 +510,8 @@ export class ConversationsApi {
 
     /**
      * This method allows you to upload the historic activities to the conversation.
-     * Sender must ensure that the historic activities have unique ids and appropriate timestamps. 
-     * The ids are used by the client to deal with duplicate activities and the timestamps are used 
+     * Sender must ensure that the historic activities have unique ids and appropriate timestamps.
+     * The ids are used by the client to deal with duplicate activities and the timestamps are used
      * by the client to render the activities in the right order.
      * @summary SendConversationHistory
      * @param history Historic activities
@@ -528,16 +532,16 @@ export class ConversationsApi {
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/history'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
         let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
-        
+        let headerParams: any = Object.assign({}, this._defaultHeaders);
+
         Object.assign(headerParams, parameters.headers);
-        
+
         let formParams: any = {};
         let useFormData = false;
         let url = new URL(path)
-        
+
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        
+
         let requestOptions = {
             method: 'POST',
             qs: queryParameters,
@@ -562,7 +566,7 @@ export class ConversationsApi {
      * This method allows you to send an activity to the end of a conversation.
      * This is slightly different from ReplyToActivity().
      * * SendToConversation(conversationId) - will append the activity to the end of the conversation according to the timestamp or semantics of the channel.
-     * * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply to another activity, if the channel supports it. 
+     * * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply to another activity, if the channel supports it.
      * If the channel does not support nested replies, ReplyToActivity falls back to SendToConversation.
      * Use ReplyToActivity when replying to a specific activity in the conversation.
      * Use SendToConversation in all other cases.
@@ -584,7 +588,7 @@ export class ConversationsApi {
         const path = this.basePath + '/v3/conversations/{conversationId}/activities'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
         let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this._defaultHeaders);
 
         Object.assign(headerParams, parameters.headers);
 
@@ -644,7 +648,7 @@ export class ConversationsApi {
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
         let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this._defaultHeaders);
 
         Object.assign(headerParams, parameters.headers);
 
@@ -677,7 +681,7 @@ export class ConversationsApi {
     /**
      * Upload an attachment directly into a channel\'s blob storage.
      * This is useful because it allows you to store data in a compliant store when dealing with enterprises.
-     * The response is a ResourceResponse which contains an AttachmentId which is suitable for using with 
+     * The response is a ResourceResponse which contains an AttachmentId which is suitable for using with
      * the attachments API.
      * @summary UploadAttachment
      * @param attachmentUpload Attachment data
@@ -699,7 +703,7 @@ export class ConversationsApi {
         const path = this.basePath + '/v3/conversations/{conversationId}/attachments'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
         let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this._defaultHeaders);
 
         Object.assign(headerParams, parameters.headers);
 

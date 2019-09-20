@@ -302,3 +302,4 @@ __pycache__/
 /test-runner/out
 package-lock.json
 
+libraries/botframework-connector/tests/sandbox.js

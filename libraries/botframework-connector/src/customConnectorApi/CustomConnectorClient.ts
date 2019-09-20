@@ -13,7 +13,6 @@ class CustomConnectorClient {
   // Operation groups
   attachments: AttachmentsApi;
   conversations: ConversationsApi;
-
   /**
    * Initializes a new instance of the ConnectorClient class.
    * @param credentials Subscription credentials which uniquely identify client subscription.
@@ -26,6 +25,7 @@ class CustomConnectorClient {
     if (options){
       this.attachments.basePath = options.baseUri;
       this.conversations.basePath = options.baseUri; 
+      this.conversations.defaultHeaders = { "Content-Type": "application/json; charset=utf-8"};
     }
   }
 }
