@@ -34,7 +34,7 @@ export class BotSignInApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders = {};
     protected credentials: CustomMicrosoftAppCredentials;
-    protected client: CustomTokenApiClient
+    protected readonly client: CustomTokenApiClient
     
     constructor(client: CustomTokenApiClient){
         this.credentials = client.credentials;

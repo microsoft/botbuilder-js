@@ -32,7 +32,7 @@ export class UserTokenApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders = {};    
     protected credentials: CustomMicrosoftAppCredentials;
-    protected client: CustomTokenApiClient;
+    protected readonly client: CustomTokenApiClient;
 
     constructor(client: CustomTokenApiClient){
         if(client.baseUri){
