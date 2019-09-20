@@ -97,7 +97,7 @@ export class TemplateEngine {
         return this;
     }
 
-    public evaluateTemplate(templateName: string, scope?: any) : string {
+    public evaluateTemplate(templateName: string, scope?: any) : any {
         const evalutor: Evaluator = new Evaluator(this.templates, this.expressionEngine);
 
         return evalutor.EvaluateTemplate(templateName, scope);
@@ -115,7 +115,7 @@ export class TemplateEngine {
         return analyzer.AnalyzeTemplate(templateName);
     }
 
-    public evaluate(inlineStr: string, scope?: any): string {
+    public evaluate(inlineStr: string, scope?: any): any {
         // wrap inline string with "# name and -" to align the evaluation process
         const fakeTemplateId: string = '__temp__';
         inlineStr = !inlineStr.trim().startsWith('```') && inlineStr.indexOf('\n') >= 0

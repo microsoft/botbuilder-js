@@ -351,7 +351,12 @@ const badExpressions =
   // SetPathToValue tests
   "setPathToValue(@foo, 3)", // Cannot set simple entities
   "setPathToValue(2+3, 4)", // Not a real path
-  "setPathToValue(a)" // Missing value
+  "setPathToValue(a)", // Missing value
+
+  // AdaptiveCard test
+  "adaptiveCard(3)", // param should be string
+  "adaptiveCard('a', 'b')" // support one param
+
 ];
 
 const scope = {

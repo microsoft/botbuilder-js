@@ -498,4 +498,34 @@ describe('LG', function () {
         assert.strictEqual(lgResource.Templates[0].Name, 'wPhrase');
         assert.strictEqual(lgResource.Templates[0].Body.replace(/\r\n/g, '\n'), '- Hi\n- Hello\n- Hiya\n- Hi');
     });
+
+    it('TestStructuredTemplate', function () {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath("StructuredTemplate.lg"));
+
+        var evaled = engine.evaluateTemplate('AskForAge.prompt');
+        assert.deepStrictEqual(evaled, JSON.parse("{\"$type\":\"Activity\",\"text\":\"how old are you?\",\"speak\":\"how old are you?\"}"));
+
+        evaled = engine.evaluateTemplate('AskForAge.prompt2');
+        assert.deepStrictEqual(evaled, JSON.parse("{\"$type\":\"Activity\",\"text\":\"how old are you?\",\"suggestedactions\":[\"10\",\"20\",\"30\"]}"));
+
+        evaled = engine.evaluateTemplate('AskForAge.prompt3');
+        assert.deepStrictEqual(evaled, JSON.parse("{\"$type\":\"Activity\",\"text\":\"how old are you?\",\"suggestions\":[\"10 | cards\",\"20 | cards\"]}"));
+
+        evaled = engine.evaluateTemplate('T1');
+        assert.deepStrictEqual(evaled, JSON.parse("{\"$type\":\"Activity\",\"text\":\"This is awesome\",\"speak\":\"foo bar I can also speak!\"}"));
+
+        evaled = engine.evaluateTemplate('ST1');
+        assert.deepStrictEqual(evaled, JSON.parse("{\"$type\":\"MyStruct\",\"text\":\"foo\",\"speak\":\"bar\"}"));
+
+        evaled = engine.evaluateTemplate('AskForColor');
+        assert.deepStrictEqual(evaled, JSON.parse("{\"$type\":\"Activity\",\"suggestedactions\":[{\"$type\":\"MyStruct\",\"speak\":\"bar\",\"text\":\"zoo\"},{\"$type\":\"Activity\",\"speak\":\"I can also speak!\"}]}"));
+
+        evaled = engine.evaluateTemplate('MultiExpression');
+        const options = ["{\r\n  \"$type\": \"Activity\",\r\n  \"speak\": \"I can also speak!\"\r\n} {\r\n  \"$type\": \"MyStruct\",\r\n  \"text\": \"hi\"\r\n}",
+        "{\n  \"$type\": \"Activity\",\n  \"speak\": \"I can also speak!\"\n} {\n  \"$type\": \"MyStruct\",\n  \"text\": \"hi\"\n}"];
+        assert(options.includes(evaled));
+
+        evaled = engine.evaluateTemplate('StructuredTemplateRef');
+        assert.deepStrictEqual(evaled, JSON.parse("{\"$type\":\"MyStruct\",\"text\":\"hi\"}"));
+    });
 });
