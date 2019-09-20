@@ -28,6 +28,5 @@
         "no-relative-imports": false,
         "max-line-length": [true,{"limit":140,"ignore-pattern":"^\\s+\\*"}],
         "no-unsafe-any":false
-
     }
 }
