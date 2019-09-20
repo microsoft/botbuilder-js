@@ -9,8 +9,8 @@ const Assert = require('assert');
     const appPassword = 'jfRVBN9[@ctilmIKR0104%[';
     const basePath = 'https://slack.botframework.com';
 
-    const newCredentials = new CustomCredentials(appId, appPassword);
     // Create client with new implementation
+    const newCredentials = new CustomCredentials(appId, appPassword);
     const newClient = new CustomConnectorClient(newCredentials, {baseUri:basePath});
 
     // Create client with old implementation
@@ -24,12 +24,10 @@ const Assert = require('assert');
     const params = {
         bot: {
             id: "BKGSYSTFG:TKGSUQHQE",
-            // name: "bot's name"
         },
         members: [
             {
                 id: "UK8CH2281:TKGSUQHQE",
-                // name: "recipient's name"
             }
         ]
     };
