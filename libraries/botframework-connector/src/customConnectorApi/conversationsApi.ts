@@ -17,7 +17,7 @@ import * as HttpStatus from 'http-status-codes';
 import { AttachmentData } from './model/attachmentData';
 import { Transcript } from './model/transcript';
 import { MicrosoftAppCredentials } from '../auth'
-import { ObjectSerializer, Authentication, OAuth, VoidAuth } from './model/models';
+import { ObjectSerializer, Authentication, OAuth, VoidAuth, RequestOptions } from './model/models';
 import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
 import { SimpleCredential } from './simpleCredential';
 import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
@@ -96,21 +96,21 @@ export class ConversationsApi {
         });
     }
 
-    public async createConversation(parameters: ConversationParameters) : Promise<CreateConversationResponse> {
+    public async createConversation(parameters: ConversationParameters, options: RequestOptions) : Promise<CreateConversationResponse> {
         // verify required parameter 'parameters' is not null or undefined
         if (parameters == null) {
             throw new Error('Required parameter parameters was null or undefined when calling conversationsCreateConversation.');
         }
 
-        const varPath = this.basePath + '/v3/conversations';
+        const path = this.basePath + '/v3/conversations';
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
 
-        Object.assign(headerParams, parameters.headers);
+        Object.assign(headerParams, options.headers);
 
         let formParams: any = {};
         let useFormData = false;
-        let url = new URL(varPath);
+        let url = new URL(path);
 
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
         
@@ -118,24 +118,23 @@ export class ConversationsApi {
             method: 'POST',
             qs: queryParameters,
             headers: headerParams,
-            uri: varPath,
+            uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
             body: ObjectSerializer.serialize(parameters, "ConversationParameters"),
-            proxy: parameters.proxyOptions
+            //proxy: parameters.proxyOptions
         };
+        
+        await this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
 
-        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
-
-        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
-
-        this.authentications.default.applyToRequest(requestOptions);
+        await this.authentications.default.applyToRequest(requestOptions);
 
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<CreateConversationResponse>(url, requestOptions, "ConversationResourceResponse");
+        let a = await this.deserializeResponse<CreateConversationResponse>(url, requestOptions, "ConversationResourceResponse");
+        return a;
     }
 
     /**
@@ -145,7 +144,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId to delete
      */
-    public async deleteActivity(parameters: ConversationParameters)
+    public async deleteActivity(parameters: ConversationParameters, options: RequestOptions)
         : Promise<DeleteActivityResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
@@ -164,7 +163,7 @@ export class ConversationsApi {
         let queryParameters: {};
         let headerParams = Object.assign({}, this.defaultHeaders);
         
-        Object.assign(headerParams, parameters.headers);
+        Object.assign(headerParams, options.headers);
         
         let formParams = {};
         let useFormData = false;
@@ -179,7 +178,7 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            proxy: parameters.proxyOptions
+            proxy: options.proxyOptions
         };
 
 
@@ -189,7 +188,7 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
+        return await this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
     }
 
 
@@ -204,7 +203,7 @@ export class ConversationsApi {
      */
     public async deleteConversationMember(
         memberId: string,
-        parameters: ConversationParameters)
+        parameters: ConversationParameters, options: RequestOptions)
         : Promise<DeleteActivityResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
@@ -223,7 +222,7 @@ export class ConversationsApi {
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
         
-        Object.assign(headerParams, parameters.headers);
+        Object.assign(headerParams, options.headers);
         
         let useFormData = false;
         let formParams: any = {};
@@ -238,7 +237,7 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            proxy: parameters.proxyOptions
+            proxy: options.proxyOptions
         };
 
 
@@ -248,7 +247,7 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
+        return await this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
     }
 
     /**
@@ -259,7 +258,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId Activity ID
      */
-    public async getActivityMembers(parameters: ConversationParameters): Promise<DeleteActivityResponse> {
+    public async getActivityMembers(parameters: ConversationParameters, options: RequestOptions): Promise<DeleteActivityResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
         if (parameters.conversationId == null) {
@@ -277,7 +276,7 @@ export class ConversationsApi {
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
         
-        Object.assign(headerParams, parameters.headers);
+        Object.assign(headerParams, options.headers);
         
         let useFormData = false;
         let formParams: any = {};
@@ -292,7 +291,7 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            proxy: parameters.proxyOptions
+            proxy: options.proxyOptions
         };
         
 
@@ -302,7 +301,7 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
+        return await this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
     }
 
     /**
@@ -311,7 +310,7 @@ export class ConversationsApi {
      * @summary GetConversationMembers
      * @param conversationId Conversation ID
      */
-    public async getConversationMembers(parameters: ConversationParameters)
+    public async getConversationMembers(parameters: ConversationParameters, options: RequestOptions)
         : Promise<GetConversationMembersResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
@@ -324,7 +323,7 @@ export class ConversationsApi {
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
         
-        Object.assign(headerParams, parameters.headers);
+        Object.assign(headerParams, options.headers);
         
         let formParams: any = {};
         let useFormData = false;
@@ -339,7 +338,7 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            proxy: parameters.proxyOptions
+            proxy: options.proxyOptions
         };
 
         
@@ -350,7 +349,7 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<GetConversationMembersResponse>(url, requestOptions, "Array<ChannelAccount>");
+        return await this.deserializeResponse<GetConversationMembersResponse>(url, requestOptions, "Array<ChannelAccount>");
     }
 
     /**
@@ -371,7 +370,7 @@ export class ConversationsApi {
      * @param pageSize Suggested page size
      * @param continuationToken Continuation Token
      */
-    public async getConversationPagedMembers(parameters: PagedParameters)
+    public async getConversationPagedMembers(parameters: PagedParameters, options: RequestOptions)
         : Promise<useResourceResponse> {
 
         let queryParameters: any = {};
@@ -392,7 +391,7 @@ export class ConversationsApi {
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
         let headerParams: any = Object.assign({}, this.defaultHeaders);
         
-        Object.assign(headerParams, parameters.headers);
+        Object.assign(headerParams, options.headers);
         
         let formParams: any = {};
         let url = new URL(path);
@@ -407,7 +406,7 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            proxy: parameters.proxyOptions
+            proxy: options.proxyOptions
         };
 
 
@@ -417,7 +416,7 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
+        return await this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
 
     /**
@@ -434,13 +433,13 @@ export class ConversationsApi {
      * @summary GetConversations
      * @param continuationToken skip or continuation token
      */
-    public async getConversations(parameters: ConversationParameters)
+    public async getConversations(parameters: ConversationParameters, options: RequestOptions)
         : Promise<useResourceResponse> {
         const path = this.basePath + '/v3/conversations';
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
 
-        Object.assign(headerParams, parameters.headers);
+        Object.assign(headerParams, options.headers);
 
         let formParams: any = {};
         let url = new URL(path);
@@ -455,7 +454,7 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            proxy: parameters.proxyOptions
+            proxy: options.proxyOptions
         };     
 
         this.authentications.default.applyToRequest(requestOptions);
@@ -464,7 +463,7 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
+        return await this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
 
     /**
@@ -480,7 +479,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId the reply is to (OPTIONAL)
      */
-    public async replyToActivity(parameters: ConversationParameters)
+    public async replyToActivity(parameters: ConversationParameters, options: RequestOptions)
         : Promise<useResourceResponse> {
 
         // verify required parameter 'activity' is not null or undefined
@@ -503,7 +502,7 @@ export class ConversationsApi {
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
         
-        Object.assign(headerParams, parameters.headers);
+        Object.assign(headerParams, options.headers);
         
         let formParams: any = {};
         let url = new URL(path);
@@ -519,7 +518,7 @@ export class ConversationsApi {
             useQuerystring: this._useQuerystring,
             json: true,
             body: ObjectSerializer.serialize(parameters.activity, "Activity"),
-            proxy: parameters.proxyOptions
+            proxy: options.proxyOptions
         };
 
         this.authentications.default.applyToRequest(requestOptions);
@@ -528,7 +527,7 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
+        return await this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
 
     /**
@@ -541,7 +540,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      */
     public async sendConversationHistory(parameters: ConversationParameters,
-        history: Transcript)
+        history: Transcript, options: RequestOptions)
         : Promise<useResourceResponse> {
 
         // verify required parameter 'history' is not null or undefined
@@ -557,7 +556,7 @@ export class ConversationsApi {
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
         
-        Object.assign(headerParams, parameters.headers);
+        Object.assign(headerParams, options.headers);
         
         let formParams: any = {};
         let useFormData = false;
@@ -573,7 +572,7 @@ export class ConversationsApi {
             useQuerystring: this._useQuerystring,
             json: true,
             body: ObjectSerializer.serialize(history, "Transcript"),
-            proxy: parameters.proxyOptions
+            proxy: options.proxyOptions
         };
 
 
@@ -583,7 +582,7 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
+        return await this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
 
     /**
@@ -598,7 +597,7 @@ export class ConversationsApi {
      * @param activity Activity to send
      * @param conversationId Conversation ID
      */
-    public async sendToConversation(parameters: ConversationParameters)
+    public async sendToConversation(parameters: ConversationParameters, options: RequestOptions)
         : Promise<useResourceResponse> {
 
         // verify required parameter 'activity' is not null or undefined
@@ -614,7 +613,7 @@ export class ConversationsApi {
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
 
-        Object.assign(headerParams, parameters.headers);
+        Object.assign(headerParams, options.headers);
 
         let formParams: any = {};
         let url = new URL(path);
@@ -630,7 +629,7 @@ export class ConversationsApi {
             useQuerystring: this._useQuerystring,
             json: true,
             body: ObjectSerializer.serialize(parameters.activity, "Activity"),
-            proxy: parameters.proxyOptions
+            proxy: options.proxyOptions
         };
 
 
@@ -640,7 +639,7 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
+        return await this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
 
     /**
@@ -652,7 +651,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId to update
      */
-    public async updateActivity(parameters: ConversationParameters)
+    public async updateActivity(parameters: ConversationParameters, options: RequestOptions)
         : Promise<useResourceResponse> {
 
         // verify required parameter 'activity' is not null or undefined
@@ -675,7 +674,7 @@ export class ConversationsApi {
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
 
-        Object.assign(headerParams, parameters.headers);
+        Object.assign(headerParams, options.headers);
 
         let formParams: any = {};
         let useFormData = false;
@@ -691,7 +690,7 @@ export class ConversationsApi {
             useQuerystring: this._useQuerystring,
             json: true,
             body: ObjectSerializer.serialize(parameters.activity, "Activity"),
-            proxy: parameters.proxyOptions
+            proxy: options.proxyOptions
         };
 
 
@@ -701,7 +700,7 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
+        return await this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
 
     /**
@@ -714,7 +713,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      */
     public async uploadAttachment(parameters: ConversationParameters,
-        attachmentUpload: AttachmentData)
+        attachmentUpload: AttachmentData, options: RequestOptions)
         : Promise<useResourceResponse> {
         // verify required parameter 'attachmentUpload' is not null or undefined
         if (attachmentUpload == null) {
@@ -731,7 +730,7 @@ export class ConversationsApi {
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
 
-        Object.assign(headerParams, parameters.headers);
+        Object.assign(headerParams, options.headers);
 
         let formParams: any = {};
         let useFormData = false;
@@ -747,7 +746,7 @@ export class ConversationsApi {
             useQuerystring: this._useQuerystring,
             json: true,
             body: ObjectSerializer.serialize(attachmentUpload, "AttachmentData"),
-            proxy: parameters.proxyOptions
+            proxy: options.proxyOptions
         };
 
         this.authentications.default.applyToRequest(requestOptions);
@@ -756,6 +755,6 @@ export class ConversationsApi {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
+        return await this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
 }

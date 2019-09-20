@@ -40,9 +40,9 @@ function base64_encode(file) {
     return Buffer.from(bitmap);
 }
 
-const BotConnector = require('../lib');
+const BotConnector = require('../lib/customConnectorApi');
 
-const ConnectorClient = BotConnector.ConnectorClient;
+const ConnectorClient = BotConnector.BotConnector;
 const TokenApiClient = BotConnector.TokenApiClient;
 const Credentials = BotConnector.MicrosoftAppCredentials;
 

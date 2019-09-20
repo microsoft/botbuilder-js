@@ -16,7 +16,7 @@ import { RequestOptions } from './requestOptions'
 /**
 * Parameters for creating a new conversation
 */
-export class ConversationParameters extends RequestOptions {
+export class ConversationParameters {
     'continuationToken'?: string;
     /**
     * IsGroup
@@ -98,7 +98,7 @@ export class ConversationParameters extends RequestOptions {
         }    ];
 
     static getAttributeTypeMap() {
-        return (super.attributeTypeMap).concat(this.attributeTypeMap);
+        return this.attributeTypeMap;
     }
 }
 
