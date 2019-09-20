@@ -1,5 +1,6 @@
-const CustomConnectorClient = require('../lib/customConnectorApi').CustomConnectorClient;
 const BotConnector = require('../lib');
+const CustomConnectorClient = require('../lib/customConnectorApi').CustomConnectorClient;
+const CustomCredentials = require('../lib/auth').CustomMicrosoftAppCredentials;
 const Assert = require('assert');
 
 (async () => {
@@ -8,13 +9,9 @@ const Assert = require('assert');
     const appPassword = 'jfRVBN9[@ctilmIKR0104%[';
     const basePath = 'https://slack.botframework.com';
 
+    const newCredentials = new CustomCredentials(appId, appPassword);
     // Create client with new implementation
-    const newClient = new CustomConnectorClient({
-        appId: appId,
-        appPassword: appPassword
-    }, {
-        baseUri: basePath
-    });
+    const newClient = new CustomConnectorClient(newCredentials, {baseUri:basePath});
 
     // Create client with old implementation
     const credentials = new BotConnector.MicrosoftAppCredentials(appId, appPassword);
@@ -24,39 +21,49 @@ const Assert = require('assert');
     });
 
     // params used by the method
-   
+    const params = {
+        bot: {
+            id: "BKGSYSTFG:TKGSUQHQE",
+            // name: "bot's name"
+        },
+        members: [
+            {
+                id: "UK8CH2281:TKGSUQHQE",
+                // name: "recipient's name"
+            }
+        ]
+    };
 
     try {
         // token creation to avoid issues with headers
         const token = await credentials.getToken(true);
         const options = {
             customHeaders: {
-                'Authorization': `Bearer ${ token }`
+                'Authorization': `Bearer ${token}`
             },
             headers: {
-                'Authorization': `Bearer ${ token }`
-            }
+                'Authorization': `Bearer ${token}`
+            }            
         };
 
-        const params = {
-            bot: {
-                id: 'BKGSYSTFG:TKGSUQHQE',
-                // name: "bot's name"
+        const newToken = await newCredentials.getToken(true);
+        const options2 = {
+            customHeaders: {
+                'Authorization': `Bearer ${newToken}`
             },
-            members: [
-                {
-                    id: 'UK8CH2281:TKGSUQHQE',
-                    // name: "recipient's name"
-                }
-            ]
-        };
+            headers: {
+                'Authorization': `Bearer ${newToken}`
+            }            
+        }
 
         // actual code
         const expected = await client.conversations.createConversation(params, options);
-        const actual = await newClient.conversations.createConversation(params, options); 
-
+        const actual = await newClient.conversations.createConversation(params, options2); 
+        console.log(expected);
+        console.log("=================================\n=================================\n=================================\n")
+        console.log(actual);
         // assertion
-        Assert.deepStrictEqual(actual, expected);
+        Assert.deepStrictEqual(actual, expected);        
     } catch (error) {
         console.error(error);
     }

@@ -1,7 +1,7 @@
 import http = require('http');
 import { ConversationResourceResponse } from '../conversationResourceResponse';
 
-export type CreateConversationResponse = ConversationResourceResponse & {
+export type CreateConversationResponse =  {
     /**
      * The response body as text (string format)
      */
