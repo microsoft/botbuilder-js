@@ -7,7 +7,6 @@
  * Licensed under the MIT License.
  */
 import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
-import * as jsPath from 'jspath';
 import * as moment from 'moment';
 import * as timezone from 'moment-timezone';
 import { Builder } from 'xml2js';
@@ -20,6 +19,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDele
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { TimeZoneConverter } from './timeZoneConverter';
+import * as jsPath from 'jspath';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -27,8 +27,7 @@ import { TimeZoneConverter } from './timeZoneConverter';
  * @param expression Expression that produced value.
  * @param child Index of child expression.
  */
-type VerifyExpression = (value: any, expression: Expression, child: number) => string;
-export default VerifyExpression;
+export type VerifyExpression = (value: any, expression: Expression, child: number) => string;
 
 /**
  *  <summary>
@@ -2676,7 +2675,6 @@ export class BuiltInFunctions {
                     }),
                 ReturnType.Object,
                 this.ValidateUnary)
-
         ];
 
         const lookup: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>();
