@@ -151,4 +151,7 @@ export class ExpressionType {
     // Short hand functions
     public static readonly SimpleEntity: string = 'simpleEntity';
     public static readonly Callstack: string = 'callstack';
+
+    // adaptivecard
+    public static readonly AdaptiveCard: string = 'adaptiveCard';
 }

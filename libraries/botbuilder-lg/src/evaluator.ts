@@ -31,11 +31,13 @@ export class EvaluationTarget {
  * Evaluation tuntime engine
  */
 // tslint:disable-next-line: max-classes-per-file
-export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFileParserVisitor<string> {
+export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFileParserVisitor<any> {
     public readonly Templates: LGTemplate[];
     public readonly ExpressionEngine: ExpressionEngine;
     public readonly TemplateMap: { [name: string]: LGTemplate };
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
+    private readonly expressionRecognizeRegex: RegExp = new RegExp(`@?(?<!\\)\{.+?(?<!\\)\}`);
+    private readonly escapeSeperatorRegex : RegExp = new RegExp(`(?<!\\)\|`);
 
     constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -46,7 +48,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         this.ExpressionEngine = new ExpressionEngine(this.CustomizedEvaluatorLookup(expressionEngine.EvaluatorLookup));
     }
 
-    public EvaluateTemplate(templateName: string, scope: any): string {
+    public EvaluateTemplate(templateName: string, scope: any): any {
         if (!(templateName in this.TemplateMap)) {
             throw new Error(`No such template: ${templateName}`);
         }
@@ -65,7 +67,57 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         return result;
     }
 
-    public visitTemplateDefinition(ctx: lp.TemplateDefinitionContext): string {
+    public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): any {
+        let result: any = {};
+        const typeName: string = ctx.structuredBodyNameLine().STRUCTURED_CONTENT().text;
+        result['$type'] = typeName;
+
+        const bodys: TerminalNode[] = ctx.structuredBodyContentLine().STRUCTURED_CONTENT();
+        for (const body  of bodys) {
+            const line: string = body.text.trim();
+            const start: number = line.indexOf('=');
+            if (start > 0) {
+                // make it insensitive
+                const property: string = line.substr(0, start).trim().toLowerCase();
+                const originValue: string = line.substr(start + 1).trim();
+
+                const valueArray: string[] = originValue.split(this.escapeSeperatorRegex);
+                if (valueArray.length === 1) {
+                    result[property] = this.EvalText(originValue);
+                } else {
+                    let valueList: any[] = [];
+                    for (const item of valueArray) {
+                        valueList.push(this.EvalText(item.trim()));
+                    }
+
+                    result[property] = valueList;
+                }
+            } else if (this.IsPureExpression(line)) {
+                // [MyStruct
+                // Text = foo
+                // {ST2()}
+                // ]
+
+                // When the same property exists in both the calling template as well as callee,
+                //the content in caller will trump any content in the callee.
+                const propertyObject: any = JSON.parse(this.EvalExpression(line));
+
+                // Full reference to another structured template is limited to the structured template with same type
+                if ('$type' in propertyObject &&  propertyObject['$type'].toString() === typeName) {
+                    for (const key of Object.keys(propertyObject)) {
+                        if (propertyObject.hasOwnProperty(key) && !(key in result)) {
+                            result[key] = propertyObject[key];
+                        }
+                    }
+                }
+
+            }
+        }
+
+        return result;
+    }
+
+    public visitTemplateDefinition(ctx: lp.TemplateDefinitionContext): any {
         const templateNameContext: lp.TemplateNameLineContext = ctx.templateNameLine();
         if (templateNameContext.templateName().text === this.currentTarget().TemplateName) {
             return this.visit(ctx.templateBody());
@@ -74,11 +126,11 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         return undefined;
     }
 
-    public visitNormalBody(ctx: lp.NormalBodyContext): string {
+    public visitNormalBody(ctx: lp.NormalBodyContext): any {
         return this.visit(ctx.normalTemplateBody());
     }
 
-    public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext): string {
+    public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext): any {
         const normalTemplateStrs: lp.TemplateStringContext[] = ctx.templateString();
         // tslint:disable-next-line: insecure-random
         const randomNumber: number = Math.floor(Math.random() * normalTemplateStrs.length);
@@ -86,7 +138,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         return this.visit(normalTemplateStrs[randomNumber].normalTemplateString());
     }
 
-    public visitIfElseBody(ctx: lp.IfElseBodyContext): string {
+    public visitIfElseBody(ctx: lp.IfElseBodyContext): any {
         const ifRules: lp.IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             if (this.EvalCondition(ifRule.ifCondition()) && ifRule.normalTemplateBody() !== undefined) {
@@ -98,34 +150,38 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
     }
 
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string {
-        let result: string = '';
+        let result: any[] = [];
         for (const node of ctx.children) {
             const innerNode: TerminalNode = <TerminalNode>node;
             switch (innerNode.symbol.type) {
                 case lp.LGFileParser.DASH: break;
                 case lp.LGFileParser.ESCAPE_CHARACTER:
-                    result = result.concat(this.EvalEscapeCharacter(innerNode.text));
+                    result.push(this.EvalEscapeCharacter(innerNode.text));
                     break;
                 case lp.LGFileParser.EXPRESSION: {
-                    result = result.concat(this.EvalExpression(innerNode.text));
+                    result.push(this.EvalExpression(innerNode.text));
                     break;
                 }
                 case lp.LGFileParser.TEMPLATE_REF: {
-                    result = result.concat(this.EvalTemplateRef(innerNode.text));
+                    result.push(this.EvalTemplateRef(innerNode.text));
                     break;
                 }
                 case lp.LGFileParser.MULTI_LINE_TEXT: {
-                    result = result.concat(this.EvalMultiLineText(innerNode.text));
+                    result.push(this.EvalMultiLineText(innerNode.text));
                     break;
                 }
                 default: {
-                    result = result.concat(innerNode.text);
+                    result.push(innerNode.text);
                     break;
                 }
             }
         }
 
-        return result;
+        if (result.length === 1 && !(typeof result[0] === 'string')) {
+            return result[0];
+        }
+
+        return result.join('');
     }
 
     public ConstructScope(templateName: string, args: any[]): any {
@@ -151,7 +207,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         const length: number = switchcaseNodes.length;
         const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0];
         const switchExprs: TerminalNode[] = switchNode.switchCaseStat().EXPRESSION();
-        const switchExprResult: string = this.EvalExpression(switchExprs[0].text);
+        const switchExprResult: string = this.EvalExpression(switchExprs[0].text).toString();
         let idx: number = 0;
         for (const caseNode of switchcaseNodes) {
             if (idx === 0) {
@@ -168,7 +224,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
             }
 
             const caseExprs: TerminalNode[] = caseNode.switchCaseStat().EXPRESSION();
-            const caseExprResult: string = this.EvalExpression(caseExprs[0].text);
+            const caseExprResult: string = this.EvalExpression(caseExprs[0].text).toString();
             if (switchExprResult === caseExprResult) {
                 return this.visit(caseNode.normalTemplateBody());
             }
@@ -188,7 +244,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         return this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
     }
 
-    private EvalEscapeCharacter(exp: string): string {
+    private EvalEscapeCharacter(exp: string): any {
         const validCharactersDict: any = {
             '\\r': '\r',
             '\\n': '\n',
@@ -239,7 +295,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         }
     }
 
-    private EvalExpression(exp: string): string {
+    private EvalExpression(exp: string): any {
         exp = exp.replace(/(^@*)/g, '')
             .replace(/(^{*)/g, '')
             .replace(/(}*$)/g, '');
@@ -252,10 +308,10 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
             throw new Error(`Error occurs when evaluating expression '${exp}': ${exp} is evaluated to null`);
         }
 
-        return String(result);
+        return result;
     }
 
-    private EvalTemplateRef(exp: string): string {
+    private EvalTemplateRef(exp: string): any {
         exp = exp.replace(/(^\[*)/g, '')
             .replace(/(\]*$)/g, '');
 
@@ -276,7 +332,34 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
 
         exp = exp.substr(3, exp.length - 6); //remove ``` ```
 
-        return exp.replace(/@\{[^{}]+\}/g, (sub: string) => this.EvalExpression(sub));
+        return this.EvalTextContainsExpression(exp);
+    }
+
+    private EvalTextContainsExpression(exp: string) : string {
+        return exp.replace(this.expressionRecognizeRegex, (sub: string) => this.EvalExpression(sub));
+    }
+
+    private EvalText(exp: string): any {
+        if (exp === undefined || exp.length === 0) {
+            return exp;
+        }
+
+        if (this.IsPureExpression(exp)) {
+            return this.EvalExpression(exp);
+        } else {
+            return this.EvalTextContainsExpression(exp);
+        }
+    }
+
+    private isPureExoression(exp: string): boolean {
+        if (exp === undefined || exp.length === 0) {
+            return false;
+        }
+
+        exp = exp.trim();
+        const expressions: RegExpMatchArray = exp.match(this.expressionRecognizeRegex);
+
+        return expressions.length === 1 && expressions[0] === exp;
     }
 
     private EvalByExpressionEngine(exp: string, scope: any): { value: any; error: string } {
@@ -294,7 +377,7 @@ export class Evaluator extends AbstractParseTreeVisitor<string> implements LGFil
         }
 
         if (this.TemplateMap[name] !== undefined) {
-            return new ExpressionEvaluator(name, BuiltInFunctions.Apply(this.TemplateEvaluator(name)), ReturnType.String, this.ValidTemplateReference);
+            return new ExpressionEvaluator(name, BuiltInFunctions.Apply(this.TemplateEvaluator(name)), ReturnType.Object, this.ValidTemplateReference);
         }
 
         return baseLookup(name);
