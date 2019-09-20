@@ -231,9 +231,9 @@ export class UserTokenApi {
     }
     /**
      * 
-     * @param userId 
+     * @param userId
      * @param connectionName 
-     * @param channelId 
+     * @param channelId
      */
     public async signOut (userId: string, options: Models.UserTokenSignOutOptionalParams = {headers: {}}) : Promise<Models.UserTokenSignOutResponse> {
         const localPath = this.basePath + '/api/usertoken/SignOut';
@@ -273,9 +273,20 @@ export class UserTokenApi {
 
         return new Promise<Models.UserTokenSignOutResponse>((resolve, reject) => {
             fetch(url, requestOptions).then(response => {         
-                let httpResponse: http.IncomingMessage = response;                                 
-                let toReturn: Models.UserTokenSignOutResponse = Object.assign({_response: httpResponse});   
-                resolve(toReturn);                           
+                let httpResponse: http.IncomingMessage = response;
+                
+                if (response.status &&  response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) { 
+                    response.text().then(result => {
+                        let _body: string = ObjectSerializer.deserialize(result, "string");
+                        let _bodyAsText: string = _body == undefined? "" : ObjectSerializer.deserialize(result, "string");
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body}); 
+
+                        resolve({body: _body, _response: _response});
+                    });
+                } else {
+                    let toReturn: Models.UserTokenSignOutResponse = Object.assign({_response: httpResponse});   
+                    resolve(toReturn);
+                }                
             });
         });
     }
