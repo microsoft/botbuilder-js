@@ -26,13 +26,11 @@ class CustomTokenApiClient {
   constructor( CustomCredentials: CustomMicrosoftAppCredentials, options?: { baseUri: string, userAgent: string }) {
     this.credentials = CustomCredentials;
     this.userAgent = options.userAgent;
-    
+    this.baseUri = options.baseUri || this.baseUri || "https://token.botframework.com";
     this.botSignIn = new BotSignInApi(this);
     this.userToken = new UserTokenApi(this);    
-
-    if (options){
-      this.baseUri = options.baseUri;
-    }
+    
+   
   }
 }
 
