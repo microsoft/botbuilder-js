@@ -111,6 +111,10 @@ export class BotSignInApi {
             localQueryParameters['finalRedirect'] = ObjectSerializer.serialize(options.finalRedirect, "string");
         }
 
+        if (options.channelId !== undefined) {
+            localQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
+        }
+
         let url = new URL(localPath)
         Object.keys(localQueryParameters).forEach(key => url.searchParams.append(key, localQueryParameters[key]))            
         Object.assign(localHeaderParams, options.headers);

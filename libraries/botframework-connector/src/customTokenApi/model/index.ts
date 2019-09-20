@@ -46,6 +46,7 @@ export type BotSignInGetSignInUrlResponse = {
   };
 
   export interface BotSignInGetSignInUrlOptionalParams extends RequestOptions {
+    channelId?: string;
     codeChallenge?: string;
     emulatorUrl?: string;
     finalRedirect?: string;
