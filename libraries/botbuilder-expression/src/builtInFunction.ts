@@ -2676,20 +2676,7 @@ export class BuiltInFunctions {
                         return result;
                     }),
                 ReturnType.Object,
-                this.ValidateUnary),
-
-            // AdaptiveCard
-            new ExpressionEvaluator(
-                ExpressionType.AdaptiveCard,
-                BuiltInFunctions.Apply(
-                    (args: ReadonlyArray<any>) => {
-                        const adaptiveCard: AdaptiveCards.AdaptiveCard = new AdaptiveCards.AdaptiveCard();
-                        adaptiveCard.parse(args[0]);
-
-                        return adaptiveCard;
-                    }),
-                ReturnType.Object,
-                this.ValidateUnary),
+                this.ValidateUnary)
 
         ];
 

@@ -452,9 +452,6 @@ const dataSource = [
   ["setPathToValue(path.overwrite[0], 3) + setPathToValue(path.overwrite, 4) + path.overwrite", 11],
   ["setPathToValue(path.overwrite.prop, 3) + setPathToValue(path.overwrite, 4) + path.overwrite", 11],
   ["setPathToValue(path.overwrite.prop, 3) + setPathToValue(path.overwrite[0], 4) + path.overwrite[0]", 11],
-
-  // AdaptiveCard
-  ["adaptiveCard(adaptivecardString).Body[0].Text","imput text"]
 ];
 
 const scope = {
@@ -479,7 +476,6 @@ const scope = {
     index: 3,
     name: "mybag"
   },
-  adaptivecardString:"\"$schema\":\"http://adaptivecards.io/schemas/adaptive-card.json\",\"type\":\"AdaptiveCard\",\"version\":\"1.0\",\"body\":[{\"type\":\"TextBlock\",\"text\":\"input text\"}]}",
   items: ["zero", "one", "two"],
   nestedItems:
     [
