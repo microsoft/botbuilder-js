@@ -5,19 +5,19 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PayloadAssembler } from './assemblers/payloadAssembler';
-import { PayloadAssemblerManager } from './payloads/payloadAssemblerManager';
-import { RequestManager } from './payloads/requestManager';
-import { SendOperations } from './payloads/sendOperations';
-import { StreamManager } from './payloads/streamManager';
-import { PayloadReceiver } from './payloadtransport/payloadReceiver';
-import { PayloadSender } from './payloadtransport/payloadSender';
-import { RequestHandler } from './requestHandler';
-import { SubscribableStream } from './subscribableStream';
-import { StreamingRequest } from './streamingRequest';
-import { generateGuid } from './utilities/protocol-base';
-import { IReceiveResponse, IReceiveRequest } from './interfaces';
-import { IHeader } from './interfaces/iHeader';
+import { PayloadAssembler } from './Assemblers/PayloadAssembler';
+import { PayloadAssemblerManager } from './Payloads/PayloadAssemblerManager';
+import { RequestManager } from './Payloads/RequestManager';
+import { SendOperations } from './Payloads/SendOperations';
+import { StreamManager } from './Payloads/StreamManager';
+import { PayloadReceiver } from './PayloadTransport/PayloadReceiver';
+import { PayloadSender } from './PayloadTransport/PayloadSender';
+import { RequestHandler } from './RequestHandler';
+import { SubscribableStream } from './SubscribableStream';
+import { StreamingRequest } from './StreamingRequest';
+import { generateGuid } from './Utilities/protocol-base';
+import { IReceiveResponse, IReceiveRequest } from './Interfaces';
+import { IHeader } from './Interfaces/IHeader';
 
 export class ProtocolAdapter {
     private readonly requestHandler: RequestHandler;
@@ -87,7 +87,7 @@ export class ProtocolAdapter {
     /// </summary>
     /// <param name="contentStreamAssembler">
     /// The payload assembler processing the incoming data that this
-    /// cancellation request targets. 
+    /// cancellation request targets.
     /// </param>
     public onCancelStream(contentStreamAssembler: PayloadAssembler): void {
         this.sendOperations.sendCancelStream(contentStreamAssembler.id)

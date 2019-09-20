@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IHeader } from '../interfaces/iHeader';
-import { PayloadTypes } from '../payloads/payloadTypes';
-import { PayloadSender } from '../payloadtransport/payloadSender';
+import { IHeader } from '../Interfaces/IHeader';
+import { PayloadTypes } from '../Payloads/PayloadTypes';
+import { PayloadSender } from '../PayloadTransport/PayloadSender';
 
 export class CancelDisassembler {
     private readonly sender: PayloadSender;
