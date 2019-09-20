@@ -1,6 +1,6 @@
-const SubscribableStream = require('../lib/subscribableStream');
-const HttpContentStream = require('../lib/httpContentStream');
-const StreamingResponse = require('../lib/streamingResponse');
+const SubscribableStream = require('../lib/SubscribableStream');
+const HttpContentStream = require('../lib/HttpContentStream');
+const StreamingResponse = require('../lib/StreamingResponse');
 const  chai  = require('chai');
 var expect = chai.expect;
 
