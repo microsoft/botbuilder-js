@@ -17,10 +17,10 @@ import * as HttpStatus from 'http-status-codes';
 import { AttachmentData } from './model/attachmentData';
 import { Transcript } from './model/transcript';
 import { MicrosoftAppCredentials } from '../auth'
-import { ObjectSerializer, Authentication, OAuth, VoidAuth } from './model/models';
+import { ObjectSerializer } from './model/models';
 import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
-import { SimpleCredential } from './simpleCredential';
 import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
+import { CustomMicrosoftAppCredentials } from '../auth'
 
 const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
 let defaultBasePath = 'https://api.botframework.com';
@@ -32,19 +32,15 @@ export class ConversationsApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders: any = {};
     protected _useQuerystring: boolean = false;
-    protected credentials: SimpleCredential;
+    protected credentials: CustomMicrosoftAppCredentials;
 
-    protected authentications = {
-        'default': <Authentication>new VoidAuth(),
-    };
-
-    constructor(CustomCredentials: SimpleCredential)
-    constructor(CustomCredentials: SimpleCredential, basePath?: string) {
+    constructor(CustomCredentials: CustomMicrosoftAppCredentials)
+    constructor(CustomCredentials: CustomMicrosoftAppCredentials, basePath?: string) {
         if (basePath)
             this.basePath = basePath;
 
         if (CustomCredentials) {
-            this.credentials = new SimpleCredential(CustomCredentials.appId, CustomCredentials.appPassword);
+            this.credentials = CustomCredentials;
         }
     }
 
@@ -58,19 +54,6 @@ export class ConversationsApi {
 
     get basePath() {
         return this._basePath;
-    }
-
-    public setDefaultAuthentication(auth: Authentication) {
-        this.authentications.default = auth;
-    }
-
-    public setApiKey(key: ConversationsApiApiKeys, value: string) {
-        (this.authentications as any)[ConversationsApiApiKeys[key]].apiKey = value;
-    }
-
-    private async AuthenticateRequest() {
-        const tokenGenerator = new MicrosoftAppCredentials(this.credentials.appId, this.credentials.appPassword);
-        return `${await tokenGenerator.getToken(true)}`;
     }
 
     private async deserializeResponse<T>(url, requestOptions, type): Promise<T> {
@@ -124,17 +107,13 @@ export class ConversationsApi {
             body: ObjectSerializer.serialize(parameters, "ConversationParameters"),
             proxy: parameters.proxyOptions
         };
-
-        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
-
-        this.setDefaultAuthentication(new OAuth(await this.AuthenticateRequest()));
-
-        this.authentications.default.applyToRequest(requestOptions);
-
+        
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
 
+        await this.credentials.signRequest(requestOptions);   
+        
         return this.deserializeResponse<CreateConversationResponse>(url, requestOptions, "ConversationResourceResponse");
     }
 
@@ -181,13 +160,12 @@ export class ConversationsApi {
             json: true,
             proxy: parameters.proxyOptions
         };
-
-
-        this.authentications.default.applyToRequest(requestOptions);
-
+        
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
+
+        await this.credentials.signRequest(requestOptions);  
 
         return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
     }
@@ -241,12 +219,11 @@ export class ConversationsApi {
             proxy: parameters.proxyOptions
         };
 
-
-        this.authentications.default.applyToRequest(requestOptions);
-
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
+
+        await this.credentials.signRequest(requestOptions);
 
         return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
     }
@@ -294,13 +271,12 @@ export class ConversationsApi {
             json: true,
             proxy: parameters.proxyOptions
         };
-        
-
-        this.authentications.default.applyToRequest(requestOptions);
 
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
+
+        await this.credentials.signRequest(requestOptions);
 
         return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
     }
@@ -342,13 +318,11 @@ export class ConversationsApi {
             proxy: parameters.proxyOptions
         };
 
-        
-
-        this.authentications.default.applyToRequest(requestOptions);
-
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
+
+        await this.credentials.signRequest(requestOptions);
 
         return this.deserializeResponse<GetConversationMembersResponse>(url, requestOptions, "Array<ChannelAccount>");
     }
@@ -410,12 +384,11 @@ export class ConversationsApi {
             proxy: parameters.proxyOptions
         };
 
-
-        this.authentications.default.applyToRequest(requestOptions);
-
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
+
+        await this.credentials.signRequest(requestOptions);
 
         return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
@@ -458,11 +431,11 @@ export class ConversationsApi {
             proxy: parameters.proxyOptions
         };     
 
-        this.authentications.default.applyToRequest(requestOptions);
-
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
+
+        await this.credentials.signRequest(requestOptions);
 
         return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
@@ -522,11 +495,11 @@ export class ConversationsApi {
             proxy: parameters.proxyOptions
         };
 
-        this.authentications.default.applyToRequest(requestOptions);
-
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
+
+        await this.credentials.signRequest(requestOptions);
 
         return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
@@ -576,12 +549,11 @@ export class ConversationsApi {
             proxy: parameters.proxyOptions
         };
 
-
-        this.authentications.default.applyToRequest(requestOptions);
-
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
+
+        await this.credentials.signRequest(requestOptions);
 
         return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
@@ -633,12 +605,11 @@ export class ConversationsApi {
             proxy: parameters.proxyOptions
         };
 
-
-        this.authentications.default.applyToRequest(requestOptions);
-
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
+
+        await this.credentials.signRequest(requestOptions);
 
         return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
@@ -694,12 +665,11 @@ export class ConversationsApi {
             proxy: parameters.proxyOptions
         };
 
-
-        this.authentications.default.applyToRequest(requestOptions);
-
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
+
+        await this.credentials.signRequest(requestOptions);
 
         return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
@@ -750,11 +720,11 @@ export class ConversationsApi {
             proxy: parameters.proxyOptions
         };
 
-        this.authentications.default.applyToRequest(requestOptions);
-
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
+
+        await this.credentials.signRequest(requestOptions);
 
         return this.deserializeResponse<useResourceResponse>(url, requestOptions, "ResourceResponse");
     }
