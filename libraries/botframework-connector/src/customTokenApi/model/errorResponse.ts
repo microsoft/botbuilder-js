@@ -12,7 +12,10 @@
 
 
 export class ErrorResponse {
-    'error'?: Error;
+    /**
+     * Error message
+     */
+    error?: Error;
 
     static discriminator: string | undefined = undefined;
 

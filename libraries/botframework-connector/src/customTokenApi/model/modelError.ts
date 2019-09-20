@@ -13,9 +13,18 @@
 import { InnerHttpError } from './innerHttpError';
 
 export class ModelError {
-    'code'?: string;
-    'message'?: string;
-    'innerHttpError'?: InnerHttpError;
+    /**
+     * Error code
+     */
+    code?: string;
+    /**
+     * Error message
+     */
+    message?: string;
+    /**
+     * Error from inner http call
+     */
+    innerHttpError?: InnerHttpError;
 
     static discriminator: string | undefined = undefined;
 

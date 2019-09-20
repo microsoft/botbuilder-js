@@ -12,8 +12,14 @@
 
 
 export class InnerHttpError {
-    'statusCode'?: number;
-    'body'?: object;
+    /**
+     * HttpStatusCode from failed request
+     */
+    statusCode?: number;
+    /**
+     * Body from failed request
+     */
+    body?: object;
 
     static discriminator: string | undefined = undefined;
 

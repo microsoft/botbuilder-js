@@ -12,10 +12,22 @@
 
 
 export class TokenResponse {
-    'channelId'?: string;
-    'connectionName'?: string;
-    'token'?: string;
-    'expiration'?: string;
+    /**
+     * Channel ID
+     */
+    channelId?: string;
+    /**
+     * The connection name
+     */
+    connectionName?: string;
+    /** 
+     * The user token
+     */
+    token?: string;
+    /** 
+     * Expiration for the token, in ISO 8601 format (e.g. "2007-04-05T14:30Z")
+     */
+    expiration?: string;
 
     static discriminator: string | undefined = undefined;
 

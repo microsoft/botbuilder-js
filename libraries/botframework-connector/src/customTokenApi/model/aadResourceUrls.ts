@@ -15,7 +15,10 @@ export interface AadResourceUrls{
 }
 
 export class AadResourceUrls {
-    'resourceUrls'?: Array<string>;
+    /**
+     * Resource Url
+     */
+    resourceUrls?: Array<string>;
 
     static discriminator: string | undefined = undefined;
 

@@ -5,8 +5,6 @@ export * from './modelError';
 export * from './tokenResponse';
 export * from './tokenStatus';
 
-import localVarRequest = require('request');
-
 import { AadResourceUrls } from './aadResourceUrls';
 import { ErrorResponse } from './errorResponse';
 import { InnerHttpError } from './innerHttpError';

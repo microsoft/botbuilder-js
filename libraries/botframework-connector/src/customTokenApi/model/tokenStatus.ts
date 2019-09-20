@@ -18,19 +18,19 @@ export class TokenStatus {
     /**
     * The channelId of the token status pertains to
     */
-    'channelId'?: string;
+    channelId?: string;
     /**
     * The name of the connection the token status pertains to
     */
-    'connectionName'?: string;
+    connectionName?: string;
     /**
     * True if a token is stored for this ConnectionName
     */
-    'hasToken'?: boolean;
+    hasToken?: boolean;
     /**
     * The display name of the service provider for which this Token belongs to
     */
-    'serviceProviderDisplayName'?: string;
+    serviceProviderDisplayName?: string;
 
     static discriminator: string | undefined = undefined;
 
