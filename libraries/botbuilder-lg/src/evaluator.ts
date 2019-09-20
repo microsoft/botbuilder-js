@@ -36,8 +36,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     public readonly ExpressionEngine: ExpressionEngine;
     public readonly TemplateMap: { [name: string]: LGTemplate };
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
-    private readonly expressionRecognizeRegex: RegExp = new RegExp(`@?(?<!\\)\{.+?(?<!\\)\}`);
-    private readonly escapeSeperatorRegex : RegExp = new RegExp(`(?<!\\)\|`);
+    private readonly expressionRecognizeRegex: RegExp = new RegExp(/@?(?<!\\)\{.+?(?<!\\)\}/g);
+    private readonly escapeSeperatorRegex : RegExp = new RegExp(/(?<!\\)\|/g);
 
     constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -347,7 +347,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         if (this.isPureExpression(exp)) {
             return this.evalExpression(exp);
         } else {
-            return this.evalTextContainsExpression(exp);
+            return this.evalTextContainsExpression(exp).replace(/\\\|/g, '|');
         }
     }
 
@@ -359,7 +359,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         exp = exp.trim();
         const expressions: RegExpMatchArray = exp.match(this.expressionRecognizeRegex);
 
-        return expressions.length === 1 && expressions[0] === exp;
+        return expressions !== null && expressions !== undefined && expressions.length === 1 && expressions[0] === exp;
     }
 
     private evalByExpressionEngine(exp: string, scope: any): { value: any; error: string } {

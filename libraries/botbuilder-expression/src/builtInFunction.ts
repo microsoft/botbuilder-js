@@ -7,7 +7,6 @@
  * Licensed under the MIT License.
  */
 import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
-import * as AdaptiveCards from 'adaptivecards';
 import * as jsPath from 'jspath';
 import * as moment from 'moment';
 import * as timezone from 'moment-timezone';

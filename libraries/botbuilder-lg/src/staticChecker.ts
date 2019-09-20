@@ -131,7 +131,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     private currentSource: string = '';
     private readonly baseExpressionEngine: ExpressionEngine;
     private _expressionParser: IExpressionParser;
-    private readonly expressionRecognizeRegex: RegExp = new RegExp(`@?(?<!\\)\{.+?(?<!\\)\}`);
+    private readonly expressionRecognizeRegex: RegExp = new RegExp(/@?(?<!\\)\{.+?(?<!\\)\}/g);
 
     constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -258,7 +258,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
             for (const body of bodys) {
                 const line: string = body.text.trim();
                 const start: number = line.indexOf('=');
-                if (start < 0 && this.isPureExpression(line)) {
+                if (start < 0 && !this.isPureExpression(line)) {
                     result.push(this.BuildLGDiagnostic({
                         message: `Structured content does not support`,
                         context: content}));
@@ -585,7 +585,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         exp = exp.trim();
         const expressions: RegExpMatchArray = exp.match(this.expressionRecognizeRegex);
 
-        return expressions.length === 1 && expressions[0] === exp;
+        return expressions !== null && expressions !== undefined && expressions.length === 1 && expressions[0] === exp;
     }
 
 }
