@@ -34,11 +34,12 @@ export class BotSignInApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders = {};
     protected credentials: CustomMicrosoftAppCredentials;
-    protected readonly client: CustomTokenApiClient
+    protected userAgent: string;
     
     constructor(client: CustomTokenApiClient){
         this.credentials = client.credentials;
         this.defaultHeaders = {"content-type": client.requestContentType};
+        this.userAgent = client.userAgent;
         if(client.baseUri){
             this.basePath = client.baseUri;
         }
@@ -98,7 +99,8 @@ export class BotSignInApi {
             uri: localPath,
             headers: localHeaderParams,            
             json: true,
-            proxy: options.proxyOptions
+            proxy: options.proxyOptions,
+            userAgent: this.userAgent
         };
 
         await this.credentials.signRequest(requestOptions); 

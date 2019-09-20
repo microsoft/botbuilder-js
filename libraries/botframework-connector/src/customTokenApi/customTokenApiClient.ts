@@ -16,15 +16,17 @@ class CustomTokenApiClient {
   credentials: CustomMicrosoftAppCredentials;
   baseUri: string;  
   requestContentType: string = "application/json; charset=utf-8";
-  
+  userAgent: string;
+
   /**
    * Initializes a new instance of the TokenApiClient class.
    * @param credentials Subscription credentials which uniquely identify client subscription.
    * @param [options] The parameter options
    */
-  constructor( CustomCredentials: CustomMicrosoftAppCredentials, options?: { baseUri: string }) {
+  constructor( CustomCredentials: CustomMicrosoftAppCredentials, options?: { baseUri: string, userAgent: string }) {
     this.credentials = CustomCredentials;
-
+    this.userAgent = options.userAgent;
+    
     this.botSignIn = new BotSignInApi(this);
     this.userToken = new UserTokenApi(this);    
 
