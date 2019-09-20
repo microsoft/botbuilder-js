@@ -55,6 +55,29 @@ export class BotSignInApi {
         return this._basePath;
     }
 
+    private async deserializeResponse<T>(url, requestOptions, type): Promise<T> {
+        return new Promise<T>((resolve, reject) => {
+            fetch(url, requestOptions).then(response => {         
+                let httpResponse: http.IncomingMessage = response;
+                
+                if (response.status &&  response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) { 
+                    response.json().then(result => {
+                        let _body: T = ObjectSerializer.deserialize(result, type);
+                        let _bodyAsText: string = _body == undefined? "" : ObjectSerializer.deserialize(result, "string");
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: T = _body == undefined? Object.assign( {_response: _response}) : Object.assign(_body, {_response: _response});
+
+                        resolve(toReturn);
+                    });
+                } else {
+                    let toReturn: T = Object.assign({_response: httpResponse});   
+
+                    resolve(toReturn);
+                }                
+            });
+        });
+    }
+
     /**
      * 
      * @param state 
@@ -102,12 +125,6 @@ export class BotSignInApi {
 
         await this.credentials.signRequest(requestOptions); 
               
-        return new Promise<Models.BotSignInGetSignInUrlResponse>((resolve, reject) => {
-            fetch(url, requestOptions).then(response => {         
-                let httpResponse: http.IncomingMessage = response;                                 
-                let toReturn: Models.BotSignInGetSignInUrlResponse = Object.assign({_response: httpResponse});   
-                resolve(toReturn);                           
-            });
-        });  
+        return this.deserializeResponse<Models.BotSignInGetSignInUrlResponse>(url, requestOptions, "string");
     }
 }
