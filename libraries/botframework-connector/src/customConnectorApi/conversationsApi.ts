@@ -65,14 +65,23 @@ export class ConversationsApi {
                 let httpResponse: http.IncomingMessage = response;
 
                 if (response.status && response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) {
-                    response.json().then(result => {
-                        let _body: T = ObjectSerializer.deserialize(result);
-                        let _bodyAsText: string = _body == undefined ? "" : ObjectSerializer.deserialize(result, "string");
-                        let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
-                        let toReturn: T = _body == undefined ? Object.assign({ _response: _response }) : Object.assign(_body, _response.parsedBody );
+                    try {
+                        response.json().then(result => {
+                            let _body: T = ObjectSerializer.deserialize(result);
+                            let _bodyAsText: string = _body == undefined ? "" : ObjectSerializer.deserialize(result);
+                            let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
+                            let toReturn: T = _body == undefined ? Object.assign({ _response: _response }) : Object.assign(_body, _response.parsedBody );
+    
+                            resolve(toReturn);
+                        });
+                    }
+                    catch {
+                        response.text().then(result => {
+                            let toReturn: T =  {}  as any
+                            resolve(toReturn);
+                        });
+                    }
 
-                        resolve(toReturn);
-                    });
                 } else {
                     let toReturn: T = Object.assign({ _response: httpResponse });
 
@@ -199,9 +208,9 @@ export class ConversationsApi {
             throw new Error('Required parameter memberId was null or undefined when calling conversationsDeleteConversationMember.');
         }
 
-        const path = this.basePath + '/v3/conversations/{conversationId}/members/{memberId}'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
-            .replace('{' + 'memberId' + '}', encodeURIComponent(String(memberId)));
+        const path = this.basePath + `/v3/conversations/${encodeURIComponent(String(parameters.conversationId))}/members/${encodeURIComponent(String(memberId))}`
+            //.replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
+            //.replace('{' + 'memberId' + '}', encodeURIComponent(String(memberId)));
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
         
