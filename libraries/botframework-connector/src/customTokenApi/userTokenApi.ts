@@ -271,6 +271,12 @@ export class UserTokenApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<Models.UserTokenSignOutResponse>(url, requestOptions, "object");
+        return new Promise<Models.UserTokenSignOutResponse>((resolve, reject) => {
+            fetch(url, requestOptions).then(response => {         
+                let httpResponse: http.IncomingMessage = response;                                 
+                let toReturn: Models.UserTokenSignOutResponse = Object.assign({_response: httpResponse});   
+                resolve(toReturn);                           
+            });
+        });
     }
 }
