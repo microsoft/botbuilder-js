@@ -13,19 +13,23 @@ class CustomTokenApiClient {
   // Operation groups
   botSignIn: BotSignInApi;
   userToken: UserTokenApi;
-
+  credentials: CustomMicrosoftAppCredentials;
+  baseUri: string;  
+  requestContentType: string = "application/json; charset=utf-8";
+  
   /**
    * Initializes a new instance of the TokenApiClient class.
    * @param credentials Subscription credentials which uniquely identify client subscription.
    * @param [options] The parameter options
    */
-  constructor( CustomCredentials: CustomMicrosoftAppCredentials, options?: { baseUri: string }) {  
-    this.botSignIn = new BotSignInApi(CustomCredentials);
-    this.userToken = new UserTokenApi(CustomCredentials);    
+  constructor( CustomCredentials: CustomMicrosoftAppCredentials, options?: { baseUri: string }) {
+    this.credentials = CustomCredentials;
+
+    this.botSignIn = new BotSignInApi(this);
+    this.userToken = new UserTokenApi(this);    
 
     if (options){
-      this.botSignIn.basePath = options.baseUri;
-      this.userToken.basePath = options.baseUri; 
+      this.baseUri = options.baseUri;
     }
   }
 }

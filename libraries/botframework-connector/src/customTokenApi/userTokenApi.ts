@@ -17,6 +17,7 @@ import * as Models from './model';
 /* tslint:disable:no-unused-locals */
 import { CustomMicrosoftAppCredentials } from '../auth'
 import { ObjectSerializer } from './model/models';
+import { CustomTokenApiClient } from './customTokenApiClient';
 
 let defaultBasePath = 'https://token.botframework.com';
 
@@ -31,18 +32,15 @@ export class UserTokenApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders = {};    
     protected credentials: CustomMicrosoftAppCredentials;
+    protected client: CustomTokenApiClient;
 
-    constructor(CustomCredentials: CustomMicrosoftAppCredentials)
-    constructor(CustomCredentials: CustomMicrosoftAppCredentials, basePath?: string){
-        if (CustomCredentials === null || CustomCredentials === undefined) {
-           throw new Error('\'credentials\' cannot be null.');
+    constructor(client: CustomTokenApiClient){
+        if(client.baseUri){
+            this.basePath = client.baseUri;
         }
 
-        if(basePath){
-            this.basePath = basePath;
-        }
-
-        this.credentials = CustomCredentials;           
+        this.defaultHeaders = {"content-type": client.requestContentType};
+        this.credentials = client.credentials;           
     }
 
     set basePath(basePath: string) {
@@ -54,7 +52,7 @@ export class UserTokenApi {
     }
 
     private async deserializeResponse<T>(url, requestOptions, type): Promise<T> {
-        return new Promise<T>((resolve, reject) => {
+        return new Promise<T>((resolve) => {
             fetch(url, requestOptions).then(response => {         
                 let httpResponse: http.IncomingMessage = response;
                 
@@ -194,7 +192,7 @@ export class UserTokenApi {
     public async getTokenStatus (userId: string, options: Models.UserTokenGetTokenStatusOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetTokenStatusResponse> {
         const localPath = this.basePath + '/api/usertoken/GetTokenStatus';
         let localQueryParameters = {};
-        let localHeaderParams = Object.assign({}, this.defaultHeaders);    
+        let localHeaderParams = Object.assign({}, this.defaultHeaders);
 
         // verify required parameter 'userId' is not null or undefined
         if (userId === null || userId === undefined) {

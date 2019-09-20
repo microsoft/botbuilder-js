@@ -19,6 +19,7 @@ import * as Models from './model';
 
 import { ObjectSerializer } from './model/models';
 import { CustomMicrosoftAppCredentials } from '../auth'
+import { CustomTokenApiClient } from './customTokenApiClient';
 
 let defaultBasePath = 'https://token.botframework.com';
 
@@ -33,18 +34,14 @@ export class BotSignInApi {
     protected _basePath = defaultBasePath;
     protected defaultHeaders = {};
     protected credentials: CustomMicrosoftAppCredentials;
+    protected client: CustomTokenApiClient
     
-    constructor(CustomCredentials: CustomMicrosoftAppCredentials)
-    constructor(CustomCredentials: CustomMicrosoftAppCredentials, basePath?: string){
-        if (CustomCredentials === null || CustomCredentials === undefined) {
-           throw new Error('\'credentials\' cannot be null.');
+    constructor(client: CustomTokenApiClient){
+        this.credentials = client.credentials;
+        this.defaultHeaders = {"content-type": client.requestContentType};
+        if(client.baseUri){
+            this.basePath = client.baseUri;
         }
-
-        if(basePath){
-            this.basePath = basePath;
-        }
-
-        this.credentials = CustomCredentials;
     }
 
     set basePath(basePath: string) {
