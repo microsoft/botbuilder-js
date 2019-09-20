@@ -100,10 +100,10 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
                 // When the same property exists in both the calling template as well as callee,
                 //the content in caller will trump any content in the callee.
-                const propertyObject: any = JSON.parse(this.evalExpression(line));
+                const propertyObject: any = this.evalExpression(line);
 
                 // Full reference to another structured template is limited to the structured template with same type
-                if ('$type' in propertyObject &&  propertyObject.$type.toString() === typeName) {
+                if (typeof propertyObject === 'object' && '$type' in propertyObject &&  propertyObject.$type.toString() === typeName) {
                     for (const key of Object.keys(propertyObject)) {
                         if (propertyObject.hasOwnProperty(key) && !(key in result)) {
                             result[key] = propertyObject[key];
@@ -181,7 +181,13 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             return result[0];
         }
 
-        return result.join('');
+        return result.map((u: any) => {
+            if (typeof u === 'string') {
+                return u;
+            } else {
+                return JSON.stringify(u);
+            }
+        }).join('');
     }
 
     public ConstructScope(templateName: string, args: any[]): any {
@@ -347,6 +353,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         if (this.isPureExpression(exp)) {
             return this.evalExpression(exp);
         } else {
+
+            // unescape \|
             return this.evalTextContainsExpression(exp).replace(/\\\|/g, '|');
         }
     }
@@ -359,6 +367,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         exp = exp.trim();
         const expressions: RegExpMatchArray = exp.match(this.expressionRecognizeRegex);
 
+        // If there is no match, expressions could be null
         return expressions !== null && expressions !== undefined && expressions.length === 1 && expressions[0] === exp;
     }
 
