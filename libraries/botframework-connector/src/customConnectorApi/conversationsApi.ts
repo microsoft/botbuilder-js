@@ -137,7 +137,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId to delete
      */
-    public async deleteActivity(conversationId: string, activityId: string, parameters: ConversationParameters, options?: RequestOptions)
+    public async deleteActivity(conversationId: string, activityId: string, options?: RequestOptions)
         : Promise<DeleteActivityResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
@@ -151,8 +151,8 @@ export class ConversationsApi {
         }
 
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
-            .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
+            .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
         let queryParameters: {};
         let headerParams = Object.assign({}, this.defaultHeaders);
         
@@ -195,7 +195,7 @@ export class ConversationsApi {
      */
     public async deleteConversationMember(conversationId: string,
         memberId: string,
-        parameters: ConversationParameters, options?: RequestOptions)
+        options?: RequestOptions)
         : Promise<DeleteActivityResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
@@ -209,7 +209,7 @@ export class ConversationsApi {
         }
 
         const path = this.basePath + `/v3/conversations/{conversationId}/members/{memberId}`
-            .replace('{conversationId}', encodeURIComponent(String(parameters.conversationId)))
+            .replace('{conversationId}', encodeURIComponent(String(conversationId)))
             .replace('{memberId}', encodeURIComponent(String(memberId)));
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
