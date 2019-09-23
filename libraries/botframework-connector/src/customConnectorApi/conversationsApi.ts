@@ -16,7 +16,7 @@ import * as HttpStatus from 'http-status-codes';
 /* tslint:disable:no-unused-locals */
 import { AttachmentData } from './model/attachmentData';
 import { Transcript } from './model/transcript';
-import { ObjectSerializer, RequestOptions } from './model/models';
+import { ObjectSerializer, RequestOptions, Activity } from './model/models';
 import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
 import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
 import { CustomMicrosoftAppCredentials } from '../auth'
@@ -131,22 +131,22 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId to delete
      */
-    public async deleteActivity(parameters: ConversationParameters, options: RequestOptions)
+    public async deleteActivity(conversationId: string, activityId: string, options: RequestOptions)
         : Promise<DeleteActivityResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (parameters.conversationId == null) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsDeleteActivity.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
-        if (parameters.activity.id == null) {
+        if (activityId == null) {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsDeleteActivity.');
         }
 
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
-            .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
+            .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
         let queryParameters: {};
         let headerParams = Object.assign({}, this.defaultHeaders);
         
@@ -577,19 +577,19 @@ export class ConversationsApi {
      * @param activity Activity to send
      * @param conversationId Conversation ID
      */
-    public async sendToConversation(parameters: ConversationParameters, options: RequestOptions)
+    public async sendToConversation(conversationId: string, activity: Activity, options: RequestOptions)
         : Promise<useResourceResponse> {
 
         // verify required parameter 'activity' is not null or undefined
-        if (parameters.activity == null) {
+        if (activity == null) {
             throw new Error('Required parameter activity was null or undefined when calling SendToConversation.');
         }
         // verify required parameter 'conversationId' is not null or undefined
-        if (parameters.conversationId == null) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling SendToConversation.');
         }
         const path = this.basePath + '/v3/conversations/{conversationId}/activities'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this._defaultHeaders);
 
@@ -608,7 +608,7 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: ObjectSerializer.serialize(parameters.activity, "Activity"),
+            body: ObjectSerializer.serialize(activity, "Activity"),
             proxy: options.proxyOptions
         };
 
