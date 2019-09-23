@@ -37,7 +37,7 @@ import { shallowCopy } from './internal';
  * - [BotAdapter](xref:botbuilder-core.BotAdapter)
  * - [UpdateActivityHandler](xref:botbuilder-core.UpdateActivityHandler)
  * - [DeleteActivityHandler](xref:botbuilder-core.DeleteActivityHandler)
- * - [TurnContext.OnSendActivities](xref:botbuilder-core.TurnContext.onSendActivities)
+ * - [TurnContext.onSendActivities](xref:botbuilder-core.TurnContext.onSendActivities)
  */
 export type SendActivitiesHandler = (
     context: TurnContext,
@@ -46,20 +46,58 @@ export type SendActivitiesHandler = (
 ) => Promise<ResourceResponse[]>;
 
 /**
- * Signature implemented by functions registered with `context.onUpdateActivity()`.
- *
- * ```TypeScript
- * type UpdateActivityHandler = (context: TurnContext, activity: Partial<Activity>, next: () => Promise<void>) => Promise<void>;
- * ```
+ * A handler that can participate in update activity events for the current turn.
+ * 
+ * @remarks
+ * **Parameters**
+ * 
+ * | Name | Type | Description |
+ * | :--- | :--- | :--- |
+ * | `context` | [TurnContext](xref:botbuilder-core.TurnContext) | The context object for the turn. |
+ * | `activities` | Partial\<[Activity](xref:botframework-schema.Activity)> | The replacement activity. |
+ * | `next` | () => Promise\<void> | The function to call to continue event processing. |
+ * 
+ * A handler calls the `next` function to pass control to the next registered handler.
+ * If a handler doesn’t call the `next` function, the adapter does not call any of the
+ * subsequent handlers and does not attempt to update the activity.
+ * 
+ * The `activity` parameter's [id](xref:botframework-schema.Activity.id)] property indicates which activity
+ * in the conversation to replace.
+ * 
+ * **See also**
+ * 
+ * - [BotAdapter](xref:botbuilder-core.BotAdapter)
+ * - [SendActivitiesHandler](xref:botbuilder-core.SendActivitiesHandler)
+ * - [DeleteActivityHandler](xref:botbuilder-core.DeleteActivityHandler)
+ * - [TurnContext.onUpdateActivity](xref:botbuilder-core.TurnContext.onUpdateActivity)
  */
 export type UpdateActivityHandler = (context: TurnContext, activity: Partial<Activity>, next: () => Promise<void>) => Promise<void>;
 
 /**
- * Signature implemented by functions registered with `context.onDeleteActivity()`.
- *
- * ```TypeScript
- * type DeleteActivityHandler = (context: TurnContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => Promise<void>;
- * ```
+ * A handler that can participate in delete activity events for the current turn.
+ * 
+ * @remarks
+ * **Parameters**
+ * 
+ * | Name | Type | Description |
+ * | :--- | :--- | :--- |
+ * | `context` | [TurnContext](xref:botbuilder-core.TurnContext) | The context object for the turn. |
+ * | `reference` | Partial\<[ConversationReference](xref:botframework-schema.ConversationReference)> | The conversation containing the activity to delete. |
+ * | `next` | () => Promise\<void> | The function to call to continue event processing. |
+ * 
+ * A handler calls the `next` function to pass control to the next registered handler.
+ * If a handler doesn’t call the `next` function, the adapter does not call any of the
+ * subsequent handlers and does not attempt to delete the activity.
+ * 
+ * The `reference` parameter's [activityId](xref:botframework-schema.ConversationReference.activityId)] property indicates which activity
+ * in the conversation to delete.
+ * 
+ * **See also**
+ * 
+ * - [BotAdapter](xref:botbuilder-core.BotAdapter)
+ * - [SendActivitiesHandler](xref:botbuilder-core.SendActivitiesHandler)
+ * - [UpdateActivityHandler](xref:botbuilder-core.UpdateActivityHandler)
+ * - [TurnContext.onDeleteActivity](xref:botbuilder-core.TurnContext.onDeleteActivity)
  */
 export type DeleteActivityHandler = (
     context: TurnContext,
@@ -71,11 +109,11 @@ export type DeleteActivityHandler = (
 export interface TurnContext {}
 
 /**
- * Context object containing information cached for a single turn of conversation with a user.
+ * Provides context for a turn of a bot.
  *
  * @remarks
- * This will typically be created by the adapter you're using and then passed to middleware and
- * your bots logic.
+ * Context provides information needed to process an incoming activity. The context object is
+ * created by a [BotAdapter](xref:botbuilder-core.BotAdapter) and persists for the length of the turn.
  */
 export class TurnContext {
     private _adapter: BotAdapter | undefined;
@@ -87,9 +125,10 @@ export class TurnContext {
     private _onDeleteActivity: DeleteActivityHandler[] = [];
 
     /**
-     * Creates a new TurnContext instance.
-     * @param adapterOrContext Adapter that constructed the context or a context object to clone.
-     * @param request Request being processed.
+     * Creates an new instance of the [TurnContext](xref:xref:botbuilder-core.TurnContext) class.
+     * 
+     * @param adapterOrContext The adapter creating the context or the context object to clone.
+     * @param request Optional. The incoming activity for the turn.
      */
     constructor(adapterOrContext: BotAdapter, request: Partial<Activity>);
     constructor(adapterOrContext: TurnContext);
