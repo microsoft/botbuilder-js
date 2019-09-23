@@ -581,7 +581,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      */
     public async sendToConversation(conversationId: string, activity: Activity, options: RequestOptions)
-        : Promise<ConversationsSendToConversationResponse> {
+        : Promise<useResourceResponse> {
 
         // verify required parameter 'activity' is not null or undefined
         if (activity == null) {
@@ -610,7 +610,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<ConversationsSendToConversationResponse>(url, requestOptions);
+        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
     }
 
     /**
