@@ -65,18 +65,23 @@ export class ConversationsApi {
                 let httpResponse: http.IncomingMessage = response;
 
                 if (response.status && response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) {
-
-                        response.json().then(result => {
+                    try {
+                        response.text().then(result => {
                             let _body: T = ObjectSerializer.deserialize(result);
-                            let _bodyAsText: string = _body == undefined ? "" : ObjectSerializer.deserialize(result);
+                            let _bodyAsText: string = _body == undefined ? '' : ObjectSerializer.deserialize(result);
                             let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
-                            let toReturn: T = _body == undefined ? Object.assign({ _response: _response }) : Object.assign(_body, _response.parsedBody );
+                            let toReturn: T = _body == undefined ? Object.assign(_body, {}) : Object.assign(_body, _response.parsedBody );
     
                             resolve(toReturn);
-                        }).catch(error => {
-                                let toReturn: T =  {}  as any
-                                resolve(toReturn);
-                            });
+                        });
+                    }
+                    catch {
+                        response.text().then(result => {
+                            let toReturn: T =  {}  as any
+                            resolve(toReturn);
+                        });
+                    }
+
                 } else {
                     let toReturn: T = Object.assign({ _response: httpResponse });
 
