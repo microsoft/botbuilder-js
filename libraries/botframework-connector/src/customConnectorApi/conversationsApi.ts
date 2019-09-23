@@ -20,6 +20,9 @@ import { ObjectSerializer, RequestOptions, Activity } from './model/models';
 import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
 import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
 import { CustomMicrosoftAppCredentials } from '../auth'
+import * as Models from './model';
+import { ConversationsSendToConversationResponse } from '../connectorApi/models';
+
 
 const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
 let defaultBasePath = 'https://api.botframework.com';
@@ -65,22 +68,17 @@ export class ConversationsApi {
                 let httpResponse: http.IncomingMessage = response;
 
                 if (response.status && response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) {
-                    try {
-                        response.text().then(result => {
+                        response.json().then(result => {
                             let _body: T = ObjectSerializer.deserialize(result);
                             let _bodyAsText: string = _body == undefined ? '' : ObjectSerializer.deserialize(result);
                             let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
                             let toReturn: T = _body == undefined ? Object.assign(_body, {}) : Object.assign(_body, _response.parsedBody );
     
                             resolve(toReturn);
-                        });
-                    }
-                    catch {
-                        response.text().then(result => {
+                        }).catch(c => {
                             let toReturn: T =  {}  as any
                             resolve(toReturn);
                         });
-                    }
 
                 } else {
                     let toReturn: T = Object.assign({ _response: httpResponse });
@@ -91,7 +89,7 @@ export class ConversationsApi {
         });
     }
 
-    public async createConversation(parameters: ConversationParameters, options?: RequestOptions) : Promise<CreateConversationResponse> {
+    public async createConversation(parameters: ConversationParameters, options: RequestOptions = {headers: {}}) : Promise<CreateConversationResponse> {
         // verify required parameter 'parameters' is not null or undefined
         if (parameters == null) {
             throw new Error('Required parameter parameters was null or undefined when calling conversationsCreateConversation.');
@@ -153,7 +151,7 @@ export class ConversationsApi {
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
-        let queryParameters: {};
+        let queryParameters: any = {};
         let headerParams = Object.assign({}, this.defaultHeaders);
         
         Object.assign(headerParams, options.headers);
@@ -209,8 +207,8 @@ export class ConversationsApi {
         }
 
         const path = this.basePath + `/v3/conversations/{conversationId}/members/{memberId}`
-            .replace('{conversationId}', encodeURIComponent(String(conversationId)))
-            .replace('{memberId}', encodeURIComponent(String(memberId)));
+            .replace('{'+'conversationId'+'}', encodeURIComponent(String(conversationId)))
+            .replace('{'+'memberId'+'}', encodeURIComponent(String(memberId)));
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
         
@@ -596,31 +594,20 @@ export class ConversationsApi {
         }
         const path = this.basePath + '/v3/conversations/{conversationId}/activities'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
-        let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this._defaultHeaders);
+        let queryParameters = {};
+        let headerParams = Object.assign({}, this._defaultHeaders);
 
+        let url = new URL(path);
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
         Object.assign(headerParams, options.headers);
 
-        let formParams: any = {};
-        let url = new URL(path);
-        let useFormData = false;
-
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-
         let requestOptions = {
-            method: 'POST',
-            qs: queryParameters,
+            method: 'POST',            
             headers: headerParams,
-            uri: path,
-            useQuerystring: this._useQuerystring,
-            json: true,
-            body: ObjectSerializer.serialize(activity, "Activity"),
+            body: JSON.stringify(activity),
+            uri: path,                   
             proxy: options.proxyOptions
         };
-
-        if (Object.keys(formParams).length) {
-            useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
-        }
 
         await this.credentials.signRequest(requestOptions);
 

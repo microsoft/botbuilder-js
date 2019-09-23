@@ -1,0 +1,150 @@
+[
+   {
+      "input": "good now",
+      "was": [
+         {
+            "start": 5,
+            "end": 7,
+            "resolution": {
+               "values": [
+                  {
+                     "timex": "PRESENT_REF",
+                     "type": "datetime",
+                     "value": "2019-09-03 14:26:43"
+               }
+            ]
+         },
+            "text": "now",
+            "typeName": "datetimeV2.datetime"
+         }
+      ],
+      "now": [
+         {
+            "start": 5,
+            "end": 7,
+            "resolution": {
+               "values": [
+                  {
+                     "timex": "PRESENT_REF",
+                     "type": "datetime",
+                     "value": "2019-09-03 14:59:20"
+                  }
+               ]
+            },
+            "text": "now",
+            "typeName": "datetimeV2.datetime"
+         }
+      ]
+   },
+   {
+      "input": "now",
+      "was": [
+         {
+            "start": 0,
+            "end": 2,
+            "resolution": {
+               "values": [
+                  {
+                     "timex": "PRESENT_REF",
+                     "type": "datetime",
+                     "value": "2019-09-03 14:29:28"
+                  }
+               ]
+            },
+            "text": "now",
+            "typeName": "datetimeV2.datetime"
+         }
+      ],
+      "now": [
+         {
+            "start": 0,
+            "end": 2,
+            "resolution": {
+               "values": [
+                  {
+                     "timex": "PRESENT_REF",
+                     "type": "datetime",
+                     "value": "2019-09-03 15:01:39"
+                  }
+               ]
+         },
+            "text": "now",
+            "typeName": "datetimeV2.datetime"
+         }
+      ]
+   },
+   {
+      "input": "previously",
+      "was": [
+         {
+            "start": 0,
+            "end": 9,
+            "resolution": {
+               "values": [
+                  {
+                     "timex": "PAST_REF",
+                     "type": "datetime",
+                     "value": "2019-09-03 14:30:47"
+                  }
+               ]
+         },
+            "text": "previously",
+            "typeName": "datetimeV2.datetime"
+         }
+      ],
+      "now": [
+         {
+            "start": 0,
+            "end": 9,
+            "resolution": {
+               "values": [
+                  {
+                     "timex": "PAST_REF",
+                     "type": "datetime",
+                     "value": "2019-09-03 15:02:49"
+                  }
+               ]
+         },
+            "text": "previously",
+            "typeName": "datetimeV2.datetime"
+         }
+      ]
+   },
+   {
+      "input": "recently",
+      "was": [
+         {
+            "start": 0,
+            "end": 7,
+            "resolution": {
+               "values": [
+                  {
+                     "timex": "PAST_REF",
+                     "type": "datetime",
+                     "value": "2019-09-03 14:31:13"
+                  }
+               ]
+         },
+            "text": "recently",
+            "typeName": "datetimeV2.datetime"
+         }
+      ],
+      "now": [
+         {
+            "start": 0,
+            "end": 7,
+            "resolution": {
+               "values": [
+                  {
+                     "timex": "PAST_REF",
+                     "type": "datetime",
+                     "value": "2019-09-03 15:03:16"
+                  }
+               ]
+            },
+            "text": "recently",
+            "typeName": "datetimeV2.datetime"
+         }
+      ]
+   }
+]
