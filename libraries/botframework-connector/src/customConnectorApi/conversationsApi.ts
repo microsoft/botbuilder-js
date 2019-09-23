@@ -67,7 +67,7 @@ export class ConversationsApi {
             fetch(url, requestOptions).then(response => {
                 let httpResponse: http.IncomingMessage = response;
 
-                if (response.status && response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) {
+                //if (response.status && response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) {
                         response.json().then(result => {
                             let _body: T = ObjectSerializer.deserialize(result);
                             let _bodyAsText: string = _body == undefined ? '' : ObjectSerializer.deserialize(result);
@@ -79,13 +79,7 @@ export class ConversationsApi {
                             let toReturn: T =  {}  as any
                             resolve(toReturn);
                         });
-
-                } else {
-                    let toReturn: T = Object.assign({ _response: httpResponse });
-
-                    resolve(toReturn);;
-                }
-            });
+            }).catch(err => resolve(err));
         });
     }
 
@@ -135,7 +129,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId to delete
      */
-    public async deleteActivity(conversationId: string, activityId: string, options?: RequestOptions)
+    public async deleteActivity(conversationId: string, activityId: string, options: RequestOptions  = {headers: {}} )
         : Promise<DeleteActivityResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
@@ -193,7 +187,7 @@ export class ConversationsApi {
      */
     public async deleteConversationMember(conversationId: string,
         memberId: string,
-        options?: RequestOptions)
+        options: RequestOptions = {headers: {}})
         : Promise<DeleteActivityResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
@@ -247,7 +241,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId Activity ID
      */
-    public async getActivityMembers(conversationId: string, activityId: string, options: RequestOptions): Promise<GetConversationMembersResponse> {
+    public async getActivityMembers(conversationId: string, activityId: string, options: RequestOptions = {headers: {}}): Promise<GetConversationMembersResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
@@ -298,7 +292,7 @@ export class ConversationsApi {
      * @summary GetConversationMembers
      * @param conversationId Conversation ID
      */
-    public async getConversationMembers(conversationId: string, options: RequestOptions)
+    public async getConversationMembers(conversationId: string, options: RequestOptions = {headers: {}})
         : Promise<GetConversationMembersResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
@@ -356,7 +350,7 @@ export class ConversationsApi {
      * @param pageSize Suggested page size
      * @param continuationToken Continuation Token
      */
-    public async getConversationPagedMembers(conversationId: string, parameters?: PagedParameters, options?: RequestOptions)
+    public async getConversationPagedMembers(conversationId: string, parameters?: PagedParameters, options: RequestOptions = {headers: {}})
         : Promise<useResourceResponse> {
 
         let queryParameters: any = {};
@@ -418,7 +412,7 @@ export class ConversationsApi {
      * @summary GetConversations
      * @param continuationToken skip or continuation token
      */
-    public async getConversations(options?: RequestOptions)
+    public async getConversations(options: RequestOptions = {headers: {}})
         : Promise<useResourceResponse> {
         const path = this.basePath + '/v3/conversations';
         let queryParameters: any = {};
@@ -464,7 +458,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId the reply is to (OPTIONAL)
      */
-    public async replyToActivity(conversationId: string, activityId: string, activity: Activity, parameters: ConversationParameters, options: RequestOptions)
+    public async replyToActivity(conversationId: string, activityId: string, activity: Activity, options: RequestOptions = {headers: {}})
         : Promise<useResourceResponse> {
 
         // verify required parameter 'activity' is not null or undefined
@@ -482,8 +476,8 @@ export class ConversationsApi {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsReplyToActivity.');
         }
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.activity.conversation.id)))
-            .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
+            .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
         
@@ -502,7 +496,7 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: ObjectSerializer.serialize(parameters.activity, "Activity"),
+            body: JSON.stringify(ObjectSerializer.serialize(activity, "Activity")),
             proxy: options.proxyOptions
         };
 
@@ -525,7 +519,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      */
     public async sendConversationHistory(conversationId: string,
-        history: Transcript, options: RequestOptions)
+        history: Transcript, options: RequestOptions = {headers: {}})
         : Promise<useResourceResponse> {
 
         // verify required parameter 'history' is not null or undefined
@@ -581,7 +575,7 @@ export class ConversationsApi {
      * @param activity Activity to send
      * @param conversationId Conversation ID
      */
-    public async sendToConversation(conversationId: string, activity: Activity, options: RequestOptions)
+    public async sendToConversation(conversationId: string, activity: Activity, options: RequestOptions = {headers: {}})
         : Promise<useResourceResponse> {
 
         // verify required parameter 'activity' is not null or undefined
@@ -623,7 +617,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId to update
      */
-    public async updateActivity(conversationId: string, activityId: string, activity: Activity, options: RequestOptions)
+    public async updateActivity(conversationId: string, activityId: string, activity: Activity, options: RequestOptions = {headers: {}})
         : Promise<useResourceResponse> {
 
         // verify required parameter 'activity' is not null or undefined
@@ -684,7 +678,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      */
     public async uploadAttachment(conversationId: string,
-        attachmentUpload: AttachmentData, options: RequestOptions)
+        attachmentUpload: AttachmentData, options: RequestOptions = {headers: {}})
         : Promise<useResourceResponse> {
         // verify required parameter 'attachmentUpload' is not null or undefined
         if (attachmentUpload == null) {
