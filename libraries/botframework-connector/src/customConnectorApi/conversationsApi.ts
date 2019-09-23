@@ -88,7 +88,7 @@ export class ConversationsApi {
         });
     }
 
-    public async createConversation(parameters: ConversationParameters, options?: RequestOptions) : Promise<CreateConversationResponse> {
+    public async createConversation(parameters: ConversationParameters, options: RequestOptions = {headers: {}}) : Promise<CreateConversationResponse> {
         // verify required parameter 'parameters' is not null or undefined
         if (parameters == null) {
             throw new Error('Required parameter parameters was null or undefined when calling conversationsCreateConversation.');
@@ -150,7 +150,7 @@ export class ConversationsApi {
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
-        let queryParameters: {};
+        let queryParameters: any = {};
         let headerParams = Object.assign({}, this.defaultHeaders);
         
         Object.assign(headerParams, options.headers);
