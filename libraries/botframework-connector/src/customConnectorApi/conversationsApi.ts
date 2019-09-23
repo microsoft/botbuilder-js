@@ -703,6 +703,14 @@ export class ConversationsApi {
 
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
 
+        // Object.serialize makes the originalBase64 parameter a Buffer
+        let serializedObj = ObjectSerializer.serialize(attachmentUpload, "AttachmentData");
+        
+        // originalBase64 must be a string.
+        if (serializedObj.originalBase64) {
+            serializedObj.originalBase64 = serializedObj.originalBase64.toString("base64");
+        }
+
         let requestOptions = {
             method: 'POST',
             qs: queryParameters,
@@ -710,7 +718,7 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: ObjectSerializer.serialize(attachmentUpload, "AttachmentData"),
+            body: JSON.stringify(serializedObj),
             proxy: options.proxyOptions
         };
 
