@@ -16,7 +16,7 @@ import * as HttpStatus from 'http-status-codes';
 /* tslint:disable:no-unused-locals */
 import { AttachmentData } from './model/attachmentData';
 import { Transcript } from './model/transcript';
-import { ObjectSerializer, RequestOptions } from './model/models';
+import { ObjectSerializer, RequestOptions, Activity } from './model/models';
 import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
 import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
 import { CustomMicrosoftAppCredentials } from '../auth'
@@ -91,7 +91,7 @@ export class ConversationsApi {
         });
     }
 
-    public async createConversation(parameters: ConversationParameters, options: RequestOptions) : Promise<CreateConversationResponse> {
+    public async createConversation(parameters: ConversationParameters, options?: RequestOptions) : Promise<CreateConversationResponse> {
         // verify required parameter 'parameters' is not null or undefined
         if (parameters == null) {
             throw new Error('Required parameter parameters was null or undefined when calling conversationsCreateConversation.');
@@ -137,16 +137,16 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId to delete
      */
-    public async deleteActivity(parameters: ConversationParameters, options: RequestOptions)
+    public async deleteActivity(conversationId: string, activityId: string, parameters: ConversationParameters, options?: RequestOptions)
         : Promise<DeleteActivityResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (parameters.conversationId == null) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsDeleteActivity.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
-        if (parameters.activity.id == null) {
+        if (activityId == null) {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsDeleteActivity.');
         }
 
@@ -193,13 +193,13 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param memberId ID of the member to delete from this conversation
      */
-    public async deleteConversationMember(
+    public async deleteConversationMember(conversationId: string,
         memberId: string,
-        parameters: ConversationParameters, options: RequestOptions)
+        parameters: ConversationParameters, options?: RequestOptions)
         : Promise<DeleteActivityResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (parameters.conversationId == null) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsDeleteConversationMember.');
         }
 
@@ -208,9 +208,9 @@ export class ConversationsApi {
             throw new Error('Required parameter memberId was null or undefined when calling conversationsDeleteConversationMember.');
         }
 
-        const path = this.basePath + `/v3/conversations/${encodeURIComponent(String(parameters.conversationId))}/members/${encodeURIComponent(String(memberId))}`
-            //.replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
-            //.replace('{' + 'memberId' + '}', encodeURIComponent(String(memberId)));
+        const path = this.basePath + `/v3/conversations/{conversationId}/members/{memberId}`
+            .replace('{conversationId}', encodeURIComponent(String(parameters.conversationId)))
+            .replace('{memberId}', encodeURIComponent(String(memberId)));
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
         
@@ -249,21 +249,21 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId Activity ID
      */
-    public async getActivityMembers(parameters: ConversationParameters, options: RequestOptions): Promise<DeleteActivityResponse> {
+    public async getActivityMembers(conversationId: string, activityId: string, options: RequestOptions): Promise<GetConversationMembersResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (parameters.conversationId == null) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsGetActivityMembers.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
-        if (parameters.activity.id == null) {
+        if (activityId == null) {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsGetActivityMembers.');
         }
 
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}/members'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
-            .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
+            .replace('{conversationId}', encodeURIComponent(String(conversationId)))
+            .replace('{activityId}', encodeURIComponent(String(activityId)));
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
         
@@ -291,7 +291,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions);
+        return this.deserializeResponse<GetConversationMembersResponse>(url, requestOptions);
     }
 
     /**
@@ -300,16 +300,16 @@ export class ConversationsApi {
      * @summary GetConversationMembers
      * @param conversationId Conversation ID
      */
-    public async getConversationMembers(parameters: ConversationParameters, options: RequestOptions)
+    public async getConversationMembers(conversationId: string, options: RequestOptions)
         : Promise<GetConversationMembersResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (parameters.conversationId == null) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsGetConversationMembers.');
         }
 
         const path = this.basePath + '/v3/conversations/{conversationId}/members'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
         
@@ -358,12 +358,12 @@ export class ConversationsApi {
      * @param pageSize Suggested page size
      * @param continuationToken Continuation Token
      */
-    public async getConversationPagedMembers(parameters: PagedParameters, options: RequestOptions)
+    public async getConversationPagedMembers(conversationId: string, parameters?: PagedParameters, options?: RequestOptions)
         : Promise<useResourceResponse> {
 
         let queryParameters: any = {};
         // verify required parameter 'conversationId' is not null or undefined
-        if (parameters.conversationId == null) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsGetConversationPagedMembers.');
         }
 
@@ -420,7 +420,7 @@ export class ConversationsApi {
      * @summary GetConversations
      * @param continuationToken skip or continuation token
      */
-    public async getConversations(parameters: ConversationParameters, options: RequestOptions)
+    public async getConversations(options?: RequestOptions)
         : Promise<useResourceResponse> {
         const path = this.basePath + '/v3/conversations';
         let queryParameters: any = {};
@@ -466,21 +466,21 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId the reply is to (OPTIONAL)
      */
-    public async replyToActivity(parameters: ConversationParameters, options: RequestOptions)
+    public async replyToActivity(conversationId: string, activityId: string, activity: Activity, parameters: ConversationParameters, options: RequestOptions)
         : Promise<useResourceResponse> {
 
         // verify required parameter 'activity' is not null or undefined
-        if (parameters.activity == null) {
+        if (activity == null) {
             throw new Error('Required parameter activity was null or undefined when calling conversationsReplyToActivity.');
         }
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (parameters.activity.conversation.id == null) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsReplyToActivity.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
-        if (parameters.activity.id == null) {
+        if (activityId == null) {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsReplyToActivity.');
         }
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
@@ -526,7 +526,7 @@ export class ConversationsApi {
      * @param history Historic activities
      * @param conversationId Conversation ID
      */
-    public async sendConversationHistory(parameters: ConversationParameters,
+    public async sendConversationHistory(conversationId: string,
         history: Transcript, options: RequestOptions)
         : Promise<useResourceResponse> {
 
@@ -535,11 +535,11 @@ export class ConversationsApi {
             throw new Error('Required parameter history was null or undefined when calling SendConversationHistory.');
         }
         // verify required parameter 'conversationId' is not null or undefined
-        if (parameters.conversationId == null) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling SendConversationHistory.');
         }
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/history'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
         
@@ -583,19 +583,19 @@ export class ConversationsApi {
      * @param activity Activity to send
      * @param conversationId Conversation ID
      */
-    public async sendToConversation(parameters: ConversationParameters, options: RequestOptions)
+    public async sendToConversation(conversationId: string, activity: Activity, options: RequestOptions)
         : Promise<useResourceResponse> {
 
         // verify required parameter 'activity' is not null or undefined
-        if (parameters.activity == null) {
+        if (activity == null) {
             throw new Error('Required parameter activity was null or undefined when calling SendToConversation.');
         }
         // verify required parameter 'conversationId' is not null or undefined
-        if (parameters.conversationId == null) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling SendToConversation.');
         }
         const path = this.basePath + '/v3/conversations/{conversationId}/activities'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this._defaultHeaders);
 
@@ -614,7 +614,7 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: ObjectSerializer.serialize(parameters.activity, "Activity"),
+            body: ObjectSerializer.serialize(activity, "Activity"),
             proxy: options.proxyOptions
         };
 
@@ -636,26 +636,26 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId to update
      */
-    public async updateActivity(parameters: ConversationParameters, options: RequestOptions)
+    public async updateActivity(conversationId: string, activityId: string, activity: Activity, options: RequestOptions)
         : Promise<useResourceResponse> {
 
         // verify required parameter 'activity' is not null or undefined
-        if (parameters.activity == null) {
+        if (activity == null) {
             throw new Error('Required parameter activity was null or undefined when calling conversationsUpdateActivity.');
         }
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (parameters.conversationId == null) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsUpdateActivity.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
-        if (parameters.activity.id == null) {
+        if (activityId == null) {
             throw new Error('Required parameter activityId was null or undefined when calling conversationsUpdateActivity.');
         }
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
-            .replace('{' + 'activityId' + '}', encodeURIComponent(String(parameters.activity.id)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
+            .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this._defaultHeaders);
 
@@ -674,7 +674,7 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: ObjectSerializer.serialize(parameters.activity, "Activity"),
+            body: ObjectSerializer.serialize(activity, "Activity"),
             proxy: options.proxyOptions
         };
 
@@ -696,7 +696,7 @@ export class ConversationsApi {
      * @param attachmentUpload Attachment data
      * @param conversationId Conversation ID
      */
-    public async uploadAttachment(parameters: ConversationParameters,
+    public async uploadAttachment(conversationId: string,
         attachmentUpload: AttachmentData, options: RequestOptions)
         : Promise<useResourceResponse> {
         // verify required parameter 'attachmentUpload' is not null or undefined
@@ -705,12 +705,12 @@ export class ConversationsApi {
         }
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (parameters.conversationId == null) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsUploadAttachment.');
         }
 
         const path = this.basePath + '/v3/conversations/{conversationId}/attachments'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this._defaultHeaders);
 
