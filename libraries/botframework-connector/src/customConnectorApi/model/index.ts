@@ -81,3 +81,4 @@ export * from './responses/useResourceResponse'
 export * from './parameters/conversationParameters'
 export * from './parameters/requestOptions'
 export * from './parameters/pagedParameters'
+export * from './responses/ConversationsSendToConversationResponse';

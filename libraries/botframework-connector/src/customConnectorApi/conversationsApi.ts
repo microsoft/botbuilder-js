@@ -20,6 +20,9 @@ import { ObjectSerializer, RequestOptions, Activity } from './model/models';
 import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
 import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
 import { CustomMicrosoftAppCredentials } from '../auth'
+import * as Models from './model';
+import { ConversationsSendToConversationResponse } from '../connectorApi/models';
+
 
 const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
 let defaultBasePath = 'https://api.botframework.com';
@@ -578,7 +581,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      */
     public async sendToConversation(conversationId: string, activity: Activity, options: RequestOptions)
-        : Promise<useResourceResponse> {
+        : Promise<ConversationsSendToConversationResponse> {
 
         // verify required parameter 'activity' is not null or undefined
         if (activity == null) {
@@ -590,35 +593,24 @@ export class ConversationsApi {
         }
         const path = this.basePath + '/v3/conversations/{conversationId}/activities'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
-        let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this._defaultHeaders);
+        let queryParameters = {};
+        let headerParams = Object.assign({}, this._defaultHeaders);
 
+        let url = new URL(path);
+        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
         Object.assign(headerParams, options.headers);
 
-        let formParams: any = {};
-        let url = new URL(path);
-        let useFormData = false;
-
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-
         let requestOptions = {
-            method: 'POST',
-            qs: queryParameters,
+            method: 'POST',            
             headers: headerParams,
-            uri: path,
-            useQuerystring: this._useQuerystring,
-            json: true,
-            body: ObjectSerializer.serialize(activity, "Activity"),
+            body: JSON.stringify(activity),
+            uri: path,                   
             proxy: options.proxyOptions
         };
 
-        if (Object.keys(formParams).length) {
-            useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
-        }
-
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
+        return this.deserializeResponse<ConversationsSendToConversationResponse>(url, requestOptions);
     }
 
     /**
