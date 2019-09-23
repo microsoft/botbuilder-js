@@ -65,7 +65,6 @@ export class ConversationsApi {
                 let httpResponse: http.IncomingMessage = response;
 
                 if (response.status && response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) {
-                    try {
                         response.json().then(result => {
                             let _body: T = ObjectSerializer.deserialize(result);
                             let _bodyAsText: string = _body == undefined ? "" : ObjectSerializer.deserialize(result);
@@ -73,15 +72,10 @@ export class ConversationsApi {
                             let toReturn: T = _body == undefined ? Object.assign({ _response: _response }) : Object.assign(_body, _response.parsedBody );
     
                             resolve(toReturn);
-                        });
-                    }
-                    catch {
-                        response.text().then(result => {
+                        }). catch ( err => {
                             let toReturn: T =  {}  as any
                             resolve(toReturn);
                         });
-                    }
-
                 } else {
                     let toReturn: T = Object.assign({ _response: httpResponse });
 
@@ -195,11 +189,11 @@ export class ConversationsApi {
      */
     public async deleteConversationMember(
         memberId: string,
-        parameters: ConversationParameters, options: RequestOptions)
+        conversationId: string, options: RequestOptions)
         : Promise<DeleteActivityResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (parameters.conversationId == null) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsDeleteConversationMember.');
         }
 
@@ -208,7 +202,7 @@ export class ConversationsApi {
             throw new Error('Required parameter memberId was null or undefined when calling conversationsDeleteConversationMember.');
         }
 
-        const path = this.basePath + `/v3/conversations/${encodeURIComponent(String(parameters.conversationId))}/members/${encodeURIComponent(String(memberId))}`
+        const path = this.basePath + `/v3/conversations/${encodeURIComponent(String(conversationId))}/members/${encodeURIComponent(String(memberId))}`
             //.replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)))
             //.replace('{' + 'memberId' + '}', encodeURIComponent(String(memberId)));
         let queryParameters: any = {};
@@ -300,16 +294,16 @@ export class ConversationsApi {
      * @summary GetConversationMembers
      * @param conversationId Conversation ID
      */
-    public async getConversationMembers(parameters: ConversationParameters, options: RequestOptions)
+    public async getConversationMembers(conversationId : string, options: RequestOptions)
         : Promise<GetConversationMembersResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
-        if (parameters.conversationId == null) {
+        if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsGetConversationMembers.');
         }
 
         const path = this.basePath + '/v3/conversations/{conversationId}/members'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
         let queryParameters: any = {};
         let headerParams: any = Object.assign({}, this.defaultHeaders);
         
