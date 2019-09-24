@@ -15,4 +15,5 @@ export class LuisTelemetryConstants {
     public static readonly sentimentLabelProperty: string = 'sentimentLabel';
     public static readonly sentimentScoreProperty: string = 'sentimentScore';
     public static readonly fromIdProperty: string = 'fromId';
+    public static readonly sourceProperty = 'source';
 }
