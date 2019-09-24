@@ -1,13 +1,14 @@
-import { ConversationParameters } from "./conversationParameters";
+import { RequestOptions } from "./requestOptions";
 
 /**
  * Optional Parameters.
  */
-export class PagedParameters extends ConversationParameters {
+export class PagedParameters extends RequestOptions {
     /**
      * Suggested page size
      */
-    'pageSize': number;
+    'pageSize'?: number;
+    'continuationToken'?: string;
 
     static discriminator: string | undefined = undefined;
 
@@ -16,6 +17,11 @@ export class PagedParameters extends ConversationParameters {
             "name": "pageSize",
             "baseName": "pageSize",
             "type": "number"
+        },    
+        {
+            "name": "continuationToken",
+            "baseName": "continuationToken",
+            "type": "string"
         }    
     ];
 

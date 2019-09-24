@@ -351,7 +351,8 @@ export class ConversationsApi {
      * @param pageSize Suggested page size
      * @param continuationToken Continuation Token
      */
-    public async getConversationPagedMembers(conversationId: string, parameters?: PagedParameters, options: RequestOptions = {headers: {}})
+
+    public async getConversationPagedMembers(conversationId: string, parameters?: PagedParameters)
         : Promise<useResourceResponse> {
 
         let queryParameters: any = {};
@@ -369,10 +370,10 @@ export class ConversationsApi {
         }
 
         const path = this.basePath + '/v3/conversations/{conversationId}/pagedmembers'
-            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(parameters.conversationId)));
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
+            .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
+        let headerParams: any = Object.assign({}, this._defaultHeaders);
         
-        Object.assign(headerParams, options.headers);
+        Object.assign(headerParams, parameters.headers);
         
         let formParams: any = {};
         let url = new URL(path);
@@ -387,7 +388,7 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            proxy: options.proxyOptions
+            proxy: parameters.proxyOptions
         };
 
         if (Object.keys(formParams).length) {
