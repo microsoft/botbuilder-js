@@ -56,9 +56,9 @@ export class PayloadAssembler {
         this.end = header.end;
 
         if (header.payloadType === PayloadTypes.response || header.payloadType === PayloadTypes.request) {
-        this.process(stream)
-            .then()
-            .catch();
+            this.process(stream)
+                .then()
+                .catch();
         } else if (header.end) {
             stream.end();
         }

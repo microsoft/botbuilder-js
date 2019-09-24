@@ -77,7 +77,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
 
         await Promise.all([incoming, outgoing]);
 
-        const { PipePath, ServerIncomingPath, ServerOutgoingPath } = NamedPipeTransport
+        const { PipePath, ServerIncomingPath, ServerOutgoingPath } = NamedPipeTransport;
         const incomingPipeName = PipePath + this._baseName + ServerIncomingPath;
         const outgoingPipeName = PipePath + this._baseName + ServerOutgoingPath;
 

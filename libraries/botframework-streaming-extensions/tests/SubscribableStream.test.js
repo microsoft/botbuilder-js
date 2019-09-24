@@ -29,5 +29,5 @@ describe('Streaming Extensions Stream Tests', () => {
         s.subscribe((data) => done());
 
         s._write('hello', 'utf8', () => {});
-    })
+    });
 });

@@ -26,7 +26,7 @@ export class RequestDisassembler extends PayloadDisassembler {
         if (this.request.streams) {
             this.request.streams.forEach(function(stream){
                 payload.streams.push(stream.description);
-            })
+            });
         }
         return PayloadDisassembler.serialize(payload);
     }

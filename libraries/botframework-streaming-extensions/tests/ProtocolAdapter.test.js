@@ -20,7 +20,7 @@ class TestRequestHandler extends RequestHandler.RequestHandler {
     processRequest(request, logger) {
         let response = new Response.StreamingResponse();
         response.statusCode = 111;
-        response.setBody("Test body.");
+        response.setBody('Test body.');
 
         return response;
     }
@@ -109,7 +109,7 @@ describe('Streaming Extensions ProtocolAdapter', () => {
             payloadSender,
             paylaodReceiver);
 
-        var requestHandlerSpy = sinon.spy(requestHandler, "processRequest");
+        var requestHandlerSpy = sinon.spy(requestHandler, 'processRequest');
 
         protocolAdapter.onReceiveRequest('42', {verb: 'POST', path: '/api/messages', streams: [] });
         expect(requestHandlerSpy.called).to.be.true;
@@ -128,7 +128,7 @@ describe('Streaming Extensions ProtocolAdapter', () => {
             payloadSender,
             paylaodReceiver);
 
-        var requestManagerSpy = sinon.spy(requestManager, "signalResponse");
+        var requestManagerSpy = sinon.spy(requestManager, 'signalResponse');
 
         protocolAdapter.onReceiveResponse('42', {statusCode: '200', streams: [] });
         expect(requestManagerSpy.called).to.be.true;
@@ -164,7 +164,7 @@ describe('Streaming Extensions ProtocolAdapter', () => {
             paylaodReceiver);
 
         expect(protocolAdapter.sendRequest(new Request.StreamingRequest()))
-        .to.not.throw;
+            .to.not.throw;
         done();
     });
 

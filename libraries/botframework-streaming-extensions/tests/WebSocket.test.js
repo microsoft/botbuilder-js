@@ -373,7 +373,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             expect(sock.onerror).to.not.be.undefined;
             expect(sock.onopen).to.not.be.undefined;
             let sinon = require('sinon');
-            let spy = sinon.spy(sock, "close");
+            let spy = sinon.spy(sock, 'close');
             bs.close();
             expect(spy.called).to.be.true;
         });
