@@ -75,13 +75,14 @@ export class ConversationsApi {
                             let toReturn: T = _body == undefined ? Object.assign(_body, {}) : Object.assign(_body, _response.parsedBody );
     
                             resolve(toReturn);
-                        }).catch(c => {
-                            let toReturn: T =  {}  as any
+                        }).catch(err => {
+                            let toReturn: T =  {_error: err}  as any
                             resolve(toReturn);
                         });
             }).catch(err => resolve(err));
         });
     }
+
 
     public async createConversation(parameters: ConversationParameters, options: RequestOptions = {headers: {}}) : Promise<CreateConversationResponse> {
         // verify required parameter 'parameters' is not null or undefined
@@ -479,7 +480,7 @@ export class ConversationsApi {
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
         let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this._defaultHeaders);
         
         Object.assign(headerParams, options.headers);
         
@@ -496,10 +497,10 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: JSON.stringify(ObjectSerializer.serialize(activity, "Activity")),
+            body: JSON.stringify(activity),
             proxy: options.proxyOptions
         };
-
+    
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
