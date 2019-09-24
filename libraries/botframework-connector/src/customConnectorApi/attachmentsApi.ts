@@ -66,7 +66,7 @@ export class AttachmentsApi {
      * @param attachmentId attachment id
      * @param viewId View id from attachmentInfo
      */
-    public async getAttachment(attachmentId: string, viewId: string, options: RequestOptions): Promise<GetAttachmentResponse> {
+    public async getAttachment(attachmentId: string, viewId: string, options: RequestOptions = { headers: { } }): Promise<GetAttachmentResponse> {
         // verify required parameter 'attachmentId' is not null or undefined
         if (attachmentId == null) {
             throw new Error('Required parameter attachmentId was null or undefined when calling attachmentsGetAttachment.');
@@ -111,7 +111,7 @@ export class AttachmentsApi {
      * @summary GetAttachmentInfo
      * @param attachmentId attachment id
      */
-    public async getAttachmentInfo(attachmentId: string, options: RequestOptions = {headers: {}}): Promise<GetAttachmentInfoResponse> {
+    public async getAttachmentInfo(attachmentId: string, options: RequestOptions = { headers: { } }): Promise<GetAttachmentInfoResponse> {
         // verify required parameter 'attachmentId' is not null or undefined
         if (attachmentId == null) {
             throw new Error('Required parameter attachmentId was null or undefined when calling attachmentsGetAttachmentInfo.');
