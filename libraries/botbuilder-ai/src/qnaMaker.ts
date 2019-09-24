@@ -323,6 +323,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             properties[QnATelemetryConstants.answerProperty] = queryResult.answer;
             metrics[QnATelemetryConstants.scoreMetric] = queryResult.score;
             properties[QnATelemetryConstants.articleFoundProperty] = "true";
+            properties[QnATelemetryConstants.QnATelemetryConstants.sourceProperty] = queryResult.source;
         }
         else
         {
@@ -330,6 +331,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             properties[QnATelemetryConstants.questionIdProperty] = "No Qna Question Id matched";
             properties[QnATelemetryConstants.answerProperty] =  "No Qna Answer matched";
             properties[QnATelemetryConstants.articleFoundProperty] = "false";
+            properties[QnATelemetryConstants.QnATelemetryConstants.sourceProperty] = "none";
         }
         
         // Additional Properties can override "stock" properties.
