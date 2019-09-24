@@ -30,7 +30,7 @@ export enum AttachmentsApiApiKeys {
 
 export class AttachmentsApi {
     protected _basePath = defaultBasePath;
-    protected defaultHeaders: any = {};
+    protected _defaultHeaders: any = {};
     protected _useQuerystring: boolean = false;
     protected credentials: CustomMicrosoftAppCredentials;
 
@@ -56,13 +56,17 @@ export class AttachmentsApi {
         return this._basePath;
     }
 
+    set defaultHeaders(defaultHeaders: {}) {
+        this._defaultHeaders = defaultHeaders;
+    }
+
     /**
      * Get the named view as binary content
      * @summary GetAttachment
      * @param attachmentId attachment id
      * @param viewId View id from attachmentInfo
      */
-    public async GetAttachment(attachmentId: string, viewId: string, options: RequestOptions): Promise<GetAttachmentResponse> {
+    public async getAttachment(attachmentId: string, viewId: string, options: RequestOptions): Promise<GetAttachmentResponse> {
         // verify required parameter 'attachmentId' is not null or undefined
         if (attachmentId == null) {
             throw new Error('Required parameter attachmentId was null or undefined when calling attachmentsGetAttachment.');
@@ -76,7 +80,7 @@ export class AttachmentsApi {
             .replace('{' + 'attachmentId' + '}', encodeURIComponent(String(attachmentId)))
             .replace('{' + 'viewId' + '}', encodeURIComponent(String(viewId)));
         let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this._defaultHeaders);
         let formParams: any = {};
         let url = new URL(path);
         let useFormData = false;
@@ -99,7 +103,7 @@ export class AttachmentsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return await this.deserializeResponse<GetAttachmentResponse>(url, requestOptions, 'GetAttachmentResponse');
+        return await this.deserializeResponse<GetAttachmentResponse>(url, requestOptions);
     }
 
     /**
@@ -107,7 +111,7 @@ export class AttachmentsApi {
      * @summary GetAttachmentInfo
      * @param attachmentId attachment id
      */
-    public async GetAttachmentInfo(attachmentId: string, options?: RequestOptions): Promise<GetAttachmentInfoResponse> {
+    public async getAttachmentInfo(attachmentId: string, options: RequestOptions = {headers: {}}): Promise<GetAttachmentInfoResponse> {
         // verify required parameter 'attachmentId' is not null or undefined
         if (attachmentId == null) {
             throw new Error('Required parameter attachmentId was null or undefined when calling attachmentsGetAttachmentInfo.');
@@ -116,7 +120,7 @@ export class AttachmentsApi {
         const path = this.basePath + '/v3/attachments/{attachmentId}'
             .replace('{' + 'attachmentId' + '}', encodeURIComponent(String(attachmentId)));
         let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        let headerParams: any = Object.assign({}, this._defaultHeaders);
         let formParams: any = {};
         let url = new URL(path);
         let useFormData = false;
@@ -139,25 +143,28 @@ export class AttachmentsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return await this.deserializeResponse<GetAttachmentInfoResponse>(url, requestOptions, 'GetAttachmentInfoResponse');
+        return await this.deserializeResponse<GetAttachmentInfoResponse>(url, requestOptions);
     }
 
-    private async deserializeResponse<T>(url, requestOptions, type): Promise<T> {
+    private async deserializeResponse<T>(url, requestOptions): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             fetch(url, requestOptions).then(response => {
-                let _body: T = ObjectSerializer.deserialize(response, type);
-                let _bodyAsText = ObjectSerializer.deserialize(response, "string");
                 let httpResponse: http.IncomingMessage = response;
 
                 if (response.status && response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) {
                     response.json().then(result => {
+                        let _body: T = ObjectSerializer.deserialize(result);
+                        let _bodyAsText: string = _body == undefined ? '' : ObjectSerializer.deserialize(result);
                         let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
-                        let toReturn: T = _body == undefined ? Object.assign({ _response: _response }) : Object.assign(_body, { _response: _response });
+                        let toReturn: T = _body == undefined ? Object.assign(_body, {}) : Object.assign(_body, _response.parsedBody );
 
                         resolve(toReturn);
                     });
+                } else {
+                    let toReturn: T =  {}  as any
+                    resolve(toReturn);
                 }
-            });
+            }).catch(err => resolve(err));
         });
     }
 }

@@ -24,6 +24,7 @@ class CustomConnectorClient {
 
     if (options){
       this.attachments.basePath = options.baseUri;
+      this.attachments.defaultHeaders = { "Content-Type": "application/json; charset=utf-8"};
       this.conversations.basePath = options.baseUri; 
       this.conversations.defaultHeaders = { "Content-Type": "application/json; charset=utf-8"};
     }
