@@ -16,4 +16,5 @@ export class QnATelemetryConstants {
     public static readonly questionIdProperty: string = 'questionId';
     public static readonly scoreMetric: string = 'score';
     public static readonly usernameProperty: string = 'username';
+    public static readonly sourceProperty = 'source';
 }
