@@ -66,7 +66,7 @@ export class AttachmentsApi {
      * @param attachmentId attachment id
      * @param viewId View id from attachmentInfo
      */
-    public async getAttachment(attachmentId: string, viewId: string, options: RequestOptions = { headers: { } }): Promise<GetAttachmentResponse> {
+    public async getAttachment(attachmentId: string, viewId: string, options: RequestOptions = { headers: {} }): Promise<GetAttachmentResponse> {
         // verify required parameter 'attachmentId' is not null or undefined
         if (attachmentId == null) {
             throw new Error('Required parameter attachmentId was null or undefined when calling attachmentsGetAttachment.');
@@ -96,7 +96,7 @@ export class AttachmentsApi {
 
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
         Object.assign(headerParams, options.headers);
-                
+
         if (Object.keys(formParams).length) {
             useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
         }
@@ -111,7 +111,7 @@ export class AttachmentsApi {
      * @summary GetAttachmentInfo
      * @param attachmentId attachment id
      */
-    public async getAttachmentInfo(attachmentId: string, options: RequestOptions = { headers: { } }): Promise<GetAttachmentInfoResponse> {
+    public async getAttachmentInfo(attachmentId: string, options: RequestOptions = { headers: {} }): Promise<GetAttachmentInfoResponse> {
         // verify required parameter 'attachmentId' is not null or undefined
         if (attachmentId == null) {
             throw new Error('Required parameter attachmentId was null or undefined when calling attachmentsGetAttachmentInfo.');
@@ -156,12 +156,12 @@ export class AttachmentsApi {
                         let _body: T = ObjectSerializer.deserialize(result);
                         let _bodyAsText: string = _body == undefined ? '' : ObjectSerializer.deserialize(result);
                         let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
-                        let toReturn: T = _body == undefined ? Object.assign(_body, {}) : Object.assign(_body, _response.parsedBody );
+                        let toReturn: T = _body == undefined ? Object.assign(_body, {}) : Object.assign(_body, _response.parsedBody);
 
                         resolve(toReturn);
                     });
                 } else {
-                    let toReturn: T =  {}  as any
+                    let toReturn: T = {} as any
                     resolve(toReturn);
                 }
             }).catch(err => resolve(err));
