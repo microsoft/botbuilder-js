@@ -31,8 +31,8 @@ export enum ConversationsApiApiKeys {
 }
 
 export class ConversationsApi {
-    protected _basePath = defaultBasePath;
-    protected _defaultHeaders: any = {};
+    protected _basePath: string = defaultBasePath;
+    protected _defaultHeaders: {} = {};
     protected _useQuerystring: boolean = false;
     protected credentials: CustomMicrosoftAppCredentials;
 
@@ -66,8 +66,6 @@ export class ConversationsApi {
         return new Promise<T>((resolve, reject) => {
             fetch(url, requestOptions).then(response => {
                 let httpResponse: http.IncomingMessage = response;
-
-                //if (response.status && response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) {
                         response.json().then(result => {
                             let _body: T = ObjectSerializer.deserialize(result);
                             let _bodyAsText: string = _body == undefined ? '' : ObjectSerializer.deserialize(result);
@@ -78,8 +76,8 @@ export class ConversationsApi {
                         }).catch(err => {
                             let toReturn: T =  {_error: err}  as any
                             resolve(toReturn);
-                        });
-            }).catch(err => resolve(err));
+                    });
+            });
         });
     }
 
@@ -91,12 +89,12 @@ export class ConversationsApi {
         }
 
         const path = this.basePath + '/v3/conversations';
-        let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this._defaultHeaders);
+        let queryParameters: {} = {};
+        let headerParams: {} = Object.assign({}, this._defaultHeaders);
 
         Object.assign(headerParams, options.headers);
 
-        let formParams: any = {};
+        let formParams: {} = {};
         let useFormData = false;
         let url = new URL(path);
 
@@ -146,7 +144,7 @@ export class ConversationsApi {
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
-        let queryParameters: any = {};
+        let queryParameters: {} = {};
         let headerParams = Object.assign({}, this.defaultHeaders);
         
         Object.assign(headerParams, options.headers);
@@ -204,13 +202,13 @@ export class ConversationsApi {
         const path = this.basePath + `/v3/conversations/{conversationId}/members/{memberId}`
             .replace('{'+'conversationId'+'}', encodeURIComponent(String(conversationId)))
             .replace('{'+'memberId'+'}', encodeURIComponent(String(memberId)));
-        let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        let queryParameters: {} = {};
+        let headerParams: {} = Object.assign({}, this.defaultHeaders);
         
         Object.assign(headerParams, options.headers);
         
         let useFormData = false;
-        let formParams: any = {};
+        let formParams: {} = {};
         let url = new URL(path)
 
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
@@ -257,13 +255,13 @@ export class ConversationsApi {
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}/members'
             .replace('{conversationId}', encodeURIComponent(String(conversationId)))
             .replace('{activityId}', encodeURIComponent(String(activityId)));
-        let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        let queryParameters: {} = {};
+        let headerParams: {} = Object.assign({}, this.defaultHeaders);
         
         Object.assign(headerParams, options.headers);
         
         let useFormData = false;
-        let formParams: any = {};
+        let formParams: {} = {};
         let url = new URL(path)
 
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
@@ -303,12 +301,12 @@ export class ConversationsApi {
 
         const path = this.basePath + '/v3/conversations/{conversationId}/members'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
-        let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        let queryParameters: {} = {};
+        let headerParams: {} = Object.assign({}, this.defaultHeaders);
         
         Object.assign(headerParams, options.headers);
         
-        let formParams: any = {};
+        let formParams: {} = {};
         let useFormData = false;
         let url = new URL(path)
 
@@ -355,7 +353,7 @@ export class ConversationsApi {
     public async getConversationPagedMembers(conversationId: string, parameters?: PagedParameters)
         : Promise<useResourceResponse> {
 
-        let queryParameters: any = {};
+        let queryParameters: {} = {};
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
             throw new Error('Required parameter conversationId was null or undefined when calling conversationsGetConversationPagedMembers.');
@@ -371,11 +369,11 @@ export class ConversationsApi {
 
         const path = this.basePath + '/v3/conversations/{conversationId}/pagedmembers'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
-        let headerParams: any = Object.assign({}, this._defaultHeaders);
+        let headerParams: {} = Object.assign({}, this._defaultHeaders);
         
         Object.assign(headerParams, parameters.headers);
         
-        let formParams: any = {};
+        let formParams: {} = {};
         let url = new URL(path);
         let useFormData = false;
 
@@ -417,12 +415,12 @@ export class ConversationsApi {
     public async getConversations(options: RequestOptions = {headers: {}})
         : Promise<useResourceResponse> {
         const path = this.basePath + '/v3/conversations';
-        let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this._defaultHeaders);
+        let queryParameters: {} = {};
+        let headerParams: {} = Object.assign({}, this._defaultHeaders);
 
         Object.assign(headerParams, options.headers);
 
-        let formParams: any = {};
+        let formParams: {} = {};
         let url = new URL(path);
         let useFormData = false;
 
@@ -480,12 +478,12 @@ export class ConversationsApi {
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
-        let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this._defaultHeaders);
+        let queryParameters: {} = {};
+        let headerParams: {} = Object.assign({}, this._defaultHeaders);
         
         Object.assign(headerParams, options.headers);
         
-        let formParams: any = {};
+        let formParams: {} = {};
         let url = new URL(path);
         let useFormData = false;
 
@@ -534,12 +532,12 @@ export class ConversationsApi {
         }
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/history'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
-        let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this.defaultHeaders);
+        let queryParameters: {} = {};
+        let headerParams: {} = Object.assign({}, this.defaultHeaders);
         
         Object.assign(headerParams, options.headers);
         
-        let formParams: any = {};
+        let formParams: {} = {};
         let useFormData = false;
         let url = new URL(path)
 
@@ -590,8 +588,8 @@ export class ConversationsApi {
         }
         const path = this.basePath + '/v3/conversations/{conversationId}/activities'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
-        let queryParameters = {};
-        let headerParams = Object.assign({}, this._defaultHeaders);
+        let queryParameters: {} = {};
+        let headerParams: {} = Object.assign({}, this._defaultHeaders);
 
         let url = new URL(path);
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
@@ -639,13 +637,13 @@ export class ConversationsApi {
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
             .replace('{' + 'activityId' + '}', encodeURIComponent(String(activityId)));
-        let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this._defaultHeaders);
+        let queryParameters: {} = {};
+        let headerParams: {} = Object.assign({}, this._defaultHeaders);
 
         Object.assign(headerParams, options.headers);
 
-        let formParams: any = {};
-        let useFormData = false;
+        let formParams: {} = {};
+        let useFormData: boolean = false;
         let url = new URL(path)
 
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
@@ -694,12 +692,12 @@ export class ConversationsApi {
 
         const path = this.basePath + '/v3/conversations/{conversationId}/attachments'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
-        let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this._defaultHeaders);
+        let queryParameters: {} = {};
+        let headerParams: {} = Object.assign({}, this._defaultHeaders);
 
         Object.assign(headerParams, options.headers);
 
-        let formParams: any = {};
+        let formParams: {} = {};
         let useFormData = false;
         let url = new URL(path)
 
