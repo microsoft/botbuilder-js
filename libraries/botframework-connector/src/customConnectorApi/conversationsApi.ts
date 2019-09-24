@@ -656,7 +656,7 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: ObjectSerializer.serialize(activity, "Activity"),
+            body: JSON.stringify(activity),
             proxy: options.proxyOptions
         };
 
