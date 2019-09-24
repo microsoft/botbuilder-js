@@ -2,24 +2,83 @@ const BotConnector = require('../lib');
 const CustomConnectorClient = require('../lib/customConnectorApi').CustomConnectorClient;
 const CustomCredentials = require('../lib/auth').CustomMicrosoftAppCredentials;
 const Assert = require('assert');
-
+var fs = require('fs');
 const path = require('path');
+
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
-var fs = require('fs');
 
 var createAttachment = () => ({
     name: 'bot-framework.png',
     type: 'image/png',
-    originalBase64: base64_encode(__dirname + '/bot-framework.png')
+    originalBase64: base64Encode(__dirname + '/bot-framework.png')
 });
 
-function base64_encode(file) {
+function base64Encode(file) {
     // read binary data
     var bitmap = fs.readFileSync(file);
     // convert binary data to base64 encoded string
     return Buffer.from(bitmap);
 }
+
+const testGetConversations = async function(client, newClient, token, params, options){
+    const optionsGetConversations = {
+        continuationToken: undefined,
+        customHeaders: {
+            'Authorization': `Bearer ${ token }`
+        },
+        headers: {
+            'Authorization': `Bearer ${ token }`
+        }
+    };
+    const expected = await client.conversations.createConversation(params, options).then(() => {
+        return client.conversations.getConversations(optionsGetConversations).then((result) => {
+            return result;
+        });
+    });
+
+    const actual = await newClient.conversations.createConversation(params, options).then(() => {
+        return newClient.conversations.getConversations(optionsGetConversations).then((result) => {
+            return result;
+        });
+    });
+    
+    console.log('Testing -- getConversations');
+    console.log(' Expected output: ');
+    console.log(expected);
+    console.log('\n Actual output: ');
+    console.log(actual);
+};
+
+const testGetConversationsMembers = async function(client, newClient, params, options) {
+
+    await newClient.conversations.createConversation(params, options).then( async (result) => {
+        const conversationId = result.id;
+        const expected = await client.conversations.getConversationMembers(conversationId, options);
+        const actual = await newClient.conversations.getConversationMembers(conversationId, options);
+
+        console.log('Testing -- getConversationsMembers');
+        console.log(' Expected output: ');
+        console.log(expected);
+        console.log('\n Actual output: ');
+        console.log(actual);    });
+};
+
+const testUploadAttachmentAndGetAttachmentInfo = async function(client, newClient, params, options) {
+    await newClient.conversations.createConversation(params, options).then((result) => {
+        const conversationId = result.id;
+        newClient.conversations.uploadAttachment(conversationId, createAttachment(), options).then( async (result) => {
+            const attachmentId = result.id;
+            const expected = await client.attachments.getAttachmentInfo(attachmentId, options);
+            const actual = await newClient.attachments.getAttachmentInfo(attachmentId, options);
+            console.log('Testing -- uploadattAchment and getattachmentInfo');
+            console.log(' Expected output: ');
+            console.log(expected);
+            console.log('\n Actual output: ');
+            console.log(actual);
+        }).catch(err => console.log(`Error at testUploadAttachmentAndGetAttachmentInfo: ${ err }`));
+    });
+};
 
 (async () => {
     // AppId, Password, Client (telegram, slack, msteams, etc) to test
@@ -38,7 +97,7 @@ function base64_encode(file) {
         withCredentials: true
     });
 
-    // params used by the method
+    // Parameters used by the method
     const params = {
         bot: {
             id: process.env.BOT_ID
@@ -55,72 +114,21 @@ function base64_encode(file) {
         const token = await credentials.getToken(true);
         const options = {
             customHeaders: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${ token }`
             },
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${ token }`
             }
         };
 
-        testUploadAttachmentAndGetAttachmentInfo(client, newClient, params, options);
+        await testUploadAttachmentAndGetAttachmentInfo(client, newClient, params, options);
 
-        testGetConversations(client, newClient, token, params, options);
+        await testGetConversations(client, newClient, token, params, options);
         
-        testGetConversationsMembers(client, newClient, params, options);
+        await testGetConversationsMembers(client, newClient, params, options);
     } catch (error) {
         console.error(error);
     }
 })();
 
-const testGetConversations = async function(client, newClient, token, params, options){
-    const optionsGetConversations = {
-        continuationToken: undefined,
-        customHeaders: {
-            'Authorization': `Bearer ${token}`
-        },
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    };
-    const expected = await client.conversations.createConversation(params, options).then(() => {
-        return client.conversations.getConversations(optionsGetConversations).then((result) => {
-            return result;
-        })
-    });
 
-    const actual = await newClient.conversations.createConversation(params, options).then(() => {
-        return newClient.conversations.getConversations(optionsGetConversations).then((result) => {
-            return result;
-        })
-    });
-    
-    Assert.deepStrictEqual(actual, expected, 'getConversations Failed.');
-}
-
-const testGetConversationsMembers = async function(client, newClient, params, options) {
-
-    await newClient.conversations.createConversation(params, options).then(async(result) => {
-        const conversationId = result.id;
-
-        const expected = await client.conversations.getConversationMembers(conversationId, options);
-
-        const actual = await newClient.conversations.getConversationMembers(conversationId, options);
-
-        Assert.deepStrictEqual(actual, expected, 'getConversationMembers Failed.');
-    });
-}
-
-const testUploadAttachmentAndGetAttachmentInfo = async function(client, newClient, params, options) {
-    await newClient.conversations.createConversation(params, options).then((result) => {
-        const conversationId = result.id;
-        newClient.conversations.uploadAttachment(conversationId, createAttachment(), options).then(async(result) => {
-            const attachmentId = result.id;
-
-            const expected = await client.attachments.getAttachmentInfo(attachmentId, options);
-
-            const actual = await newClient.attachments.getAttachmentInfo(attachmentId, options);
-
-            Assert.deepStrictEqual(actual, expected, 'getAttachmentInfo Failed.');
-        }).catch(err => console.log(`Error at testUploadAttachmentAndGetAttachmentInfo: ${ err }`))
-    });
-}
