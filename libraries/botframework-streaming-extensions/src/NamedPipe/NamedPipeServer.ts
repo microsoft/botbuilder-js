@@ -31,7 +31,6 @@ export class NamedPipeServer implements IStreamingTransportServer {
     private readonly _protocolAdapter: ProtocolAdapter;
     private readonly _autoReconnect: boolean;
     private _isDisconnecting: boolean;
-    private _onClose: (arg0: string) => void;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NamedPipeServer"/> class.
@@ -57,39 +56,35 @@ export class NamedPipeServer implements IStreamingTransportServer {
     /// Used to establish the connection used by this server and begin listening for incoming messages.
     /// </summary>
     /// <returns>A promised string that will not resolve as long as the server is running.</returns>
-    public start(): Promise<string> {
-        let incomingConnect;
-        let outgoingConnect;
-        let result = new Promise<string>((resolve): void => {
-            this._onClose = resolve;
-        });
-
+    public async start(): Promise<string> {
         if (this._receiver.isConnected || this._sender.isConnected || this._incomingServer || this._outgoingServer) {
             this.disconnect();
         }
 
-        let incomingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerIncomingPath;
-        this._incomingServer = new Server((socket: Socket): void => {
-            this._receiver.connect(new NamedPipeTransport(socket));
-            incomingConnect = true;
-            if (incomingConnect && outgoingConnect) {
-                this._onClose('connected');
-            }
+        const incoming = new Promise(resolve => {
+            this._incomingServer = new Server((socket: Socket): void => {
+                this._receiver.connect(new NamedPipeTransport(socket));
+                resolve();
+            });
         });
+
+        const outgoing = new Promise(resolve => {
+            this._outgoingServer = new Server((socket: Socket): void => {
+                this._sender.connect(new NamedPipeTransport(socket));
+                resolve();
+            });
+        });
+
+        await Promise.all([incoming, outgoing]);
+
+        const { PipePath, ServerIncomingPath, ServerOutgoingPath } = NamedPipeTransport
+        const incomingPipeName = PipePath + this._baseName + ServerIncomingPath;
+        const outgoingPipeName = PipePath + this._baseName + ServerOutgoingPath;
 
         this._incomingServer.listen(incomingPipeName);
-        let outgoingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerOutgoingPath;
-        this._outgoingServer = new Server((socket: Socket): void => {
-            this._sender.connect(new NamedPipeTransport(socket));
-            outgoingConnect = true;
-            if (incomingConnect && outgoingConnect) {
-                this._onClose('connected');
-            }
-        });
-
         this._outgoingServer.listen(outgoingPipeName);
 
-        return result;
+        return 'connected';
     }
 
     // Allows for manually disconnecting the server.
