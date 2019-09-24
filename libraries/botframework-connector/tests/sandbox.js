@@ -3,14 +3,32 @@ const CustomConnectorClient = require('../lib/customConnectorApi').CustomConnect
 const CustomCredentials = require('../lib/auth').CustomMicrosoftAppCredentials;
 const Assert = require('assert');
 
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+
+var fs = require('fs');
+
+var createAttachment = () => ({
+    name: 'bot-framework.png',
+    type: 'image/png',
+    originalBase64: base64_encode(__dirname + '/bot-framework.png')
+});
+
+function base64_encode(file) {
+    // read binary data
+    var bitmap = fs.readFileSync(file);
+    // convert binary data to base64 encoded string
+    return Buffer.from(bitmap);
+}
+
 (async () => {
     // AppId, Password, Client (telegram, slack, msteams, etc) to test
-    const appId = '979f310a-4a1c-4bf9-839d-330fa1d795da';
-    const appPassword = 'jfRVBN9[@ctilmIKR0104%[';
-    const basePath = 'https://slack.botframework.com';
-
+    const appId = process.env.CLIENT_ID;
+    const appPassword = process.env.CLIENT_SECRET;
+    const basePath = process.env.HOST_URL;
+    
+    const newCredentials = new CustomCredentials(appId, appPassword)
     // Create client with new implementation
-    const newCredentials = new CustomCredentials(appId, appPassword);
     const newClient = new CustomConnectorClient(newCredentials, {baseUri:basePath});
 
     // Create client with old implementation
@@ -23,11 +41,11 @@ const Assert = require('assert');
     // params used by the method
     const params = {
         bot: {
-            id: "BKGSYSTFG:TKGSUQHQE",
+            id: process.env.BOT_ID
         },
         members: [
             {
-                id: "UK8CH2281:TKGSUQHQE",
+                id: process.env.USER_ID
             }
         ]
     };
@@ -41,28 +59,68 @@ const Assert = require('assert');
             },
             headers: {
                 'Authorization': `Bearer ${token}`
-            }            
+            }
         };
 
-        const newToken = await newCredentials.getToken(true);
-        const options2 = {
-            customHeaders: {
-                'Authorization': `Bearer ${newToken}`
-            },
-            headers: {
-                'Authorization': `Bearer ${newToken}`
-            }            
-        }
+        testUploadAttachmentAndGetAttachmentInfo(client, newClient, params, options);
 
-        // actual code
-        const expected = await client.conversations.createConversation(params, options);
-        const actual = await newClient.conversations.createConversation(params, options2); 
-        console.log(expected);
-        console.log("=================================\n=================================\n=================================\n")
-        console.log(actual);
-        // assertion
-        Assert.deepStrictEqual(actual, expected);        
+        testGetConversations(client, newClient, token, params, options);
+        
+        testGetConversationsMembers(client, newClient, params, options);
     } catch (error) {
         console.error(error);
     }
 })();
+
+const testGetConversations = async function(client, newClient, token, params, options){
+    const optionsGetConversations = {
+        continuationToken: undefined,
+        customHeaders: {
+            'Authorization': `Bearer ${token}`
+        },
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    };
+    const expected = await client.conversations.createConversation(params, options).then(() => {
+        return client.conversations.getConversations(optionsGetConversations).then((result) => {
+            return result;
+        })
+    });
+
+    const actual = await newClient.conversations.createConversation(params, options).then(() => {
+        return newClient.conversations.getConversations(optionsGetConversations).then((result) => {
+            return result;
+        })
+    });
+    
+    Assert.deepStrictEqual(actual, expected, 'getConversations Failed.');
+}
+
+const testGetConversationsMembers = async function(client, newClient, params, options) {
+
+    await newClient.conversations.createConversation(params, options).then(async(result) => {
+        const conversationId = result.id;
+
+        const expected = await client.conversations.getConversationMembers(conversationId, options);
+
+        const actual = await newClient.conversations.getConversationMembers(conversationId, options);
+
+        Assert.deepStrictEqual(actual, expected, 'getConversationMembers Failed.');
+    });
+}
+
+const testUploadAttachmentAndGetAttachmentInfo = async function(client, newClient, params, options) {
+    await newClient.conversations.createConversation(params, options).then((result) => {
+        const conversationId = result.id;
+        newClient.conversations.uploadAttachment(conversationId, createAttachment(), options).then(async(result) => {
+            const attachmentId = result.id;
+
+            const expected = await client.attachments.getAttachmentInfo(attachmentId, options);
+
+            const actual = await newClient.attachments.getAttachmentInfo(attachmentId, options);
+
+            Assert.deepStrictEqual(actual, expected, 'getAttachmentInfo Failed.');
+        }).catch(err => console.log(`Error at testUploadAttachmentAndGetAttachmentInfo: ${ err }`))
+    });
+}
