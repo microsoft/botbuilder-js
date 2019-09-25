@@ -135,8 +135,8 @@ export class ChoiceFactory {
         }
     }
 
-    public static heroCard(choices: Choice[] = [], text = '', speak = ''): Activity {
-        const buttons: CardAction[] = choices.map(choice => ({
+    public static heroCard(choices: (string | Choice)[] = [], text = '', speak = ''): Activity {
+        const buttons: CardAction[] = ChoiceFactory.toChoices(choices).map(choice => ({
             title: choice.value,
             type: ActionTypes.ImBack,
             value: choice.value
