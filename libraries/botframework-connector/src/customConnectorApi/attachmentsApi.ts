@@ -78,32 +78,40 @@ export class AttachmentsApi {
 
         const path = this.basePath + '/v3/attachments/{attachmentId}/views/{viewId}'
             .replace('{' + 'attachmentId' + '}', encodeURIComponent(String(attachmentId)))
-            .replace('{' + 'viewId' + '}', encodeURIComponent(String(viewId)));
-        let queryParameters: any = {};
+            .replace('{' + 'viewId' + '}', encodeURIComponent(String(viewId)));        
         let headerParams: any = Object.assign({}, this._defaultHeaders);
-        let formParams: any = {};
         let url = new URL(path);
-        let useFormData = false;
         let requestOptions = {
             method: 'GET',
-            qs: queryParameters,
             headers: headerParams,
             uri: path,
             useQuerystring: this._useQuerystring,
             encoding: null,
             proxy: options.proxyOptions
-        };
-
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+        };        
         Object.assign(headerParams, options.headers);
-
-        if (Object.keys(formParams).length) {
-            useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
-        }
 
         await this.credentials.signRequest(requestOptions);
 
-        return await this.deserializeResponse<GetAttachmentResponse>(url, requestOptions);
+        return new Promise<GetAttachmentResponse>((resolve, reject) => {
+            let httpResponse;
+            fetch(url, requestOptions).then(response => {         
+                httpResponse = response;
+                return response.body
+            }).then((body)=>{
+                if (httpResponse.status &&  httpResponse.status >= HttpStatus.OK && httpResponse.status < HttpStatus.MULTIPLE_CHOICES) { 
+                        let _body: Buffer = ObjectSerializer.deserialize(body, "Buffer");
+                        let _bodyAsText: string = _body == undefined? "" : ObjectSerializer.deserialize(body, "string");                        
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body, readableStreamBody: _body});                        
+                        let toReturn: GetAttachmentResponse = _body == undefined? Object.assign( {_response: _response}) : Object.assign(_body, {_response: _response});
+
+                        resolve(toReturn);                    
+                } else {
+                    let toReturn: GetAttachmentResponse = Object.assign({_response: httpResponse});   
+                    resolve(toReturn);
+                }                
+            });
+        });
     }
 
     /**
@@ -118,29 +126,21 @@ export class AttachmentsApi {
         }
 
         const path = this.basePath + '/v3/attachments/{attachmentId}'
-            .replace('{' + 'attachmentId' + '}', encodeURIComponent(String(attachmentId)));
-        let queryParameters: any = {};
-        let headerParams: any = Object.assign({}, this._defaultHeaders);
-        let formParams: any = {};
+            .replace('{' + 'attachmentId' + '}', encodeURIComponent(String(attachmentId)));        
+        
+        let headerParams: any = Object.assign({}, this._defaultHeaders);    
+        Object.assign(headerParams, options.headers);
+        
         let url = new URL(path);
-        let useFormData = false;
         let requestOptions = {
-            method: 'GET',
-            qs: queryParameters,
+            method: 'GET',            
             headers: headerParams,
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
             proxy: options.proxyOptions
         };
-
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
-        Object.assign(headerParams, options.headers);
-
-        if (Object.keys(formParams).length) {
-            useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
-        }
-
+        
         await this.credentials.signRequest(requestOptions);
 
         return await this.deserializeResponse<GetAttachmentInfoResponse>(url, requestOptions);
