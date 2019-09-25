@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 import { Socket } from 'net';
-import { ITransportSender } from '../interfaces/iTransportSender';
-import { ITransportReceiver } from '../interfaces/iTransportReceiver';
+import { ITransportSender } from '../Interfaces/ITransportSender';
+import { ITransportReceiver } from '../Interfaces/ITransportReceiver';
 
 export class NamedPipeTransport implements ITransportSender, ITransportReceiver {
     public static readonly PipePath: string = '\\\\.\\pipe\\';
@@ -62,11 +62,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     /// Returns true if currently connected.
     /// </summary>
     public isConnected(): boolean {
-        if (!this._socket) {
-            return false;
-        }
-
-        return !this._socket.destroyed && !this._socket.connecting;
+        return !(!this._socket || this._socket.destroyed || this._socket.connecting);
     }
 
     /// <summary>
@@ -75,7 +71,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     public close(): void {
         if (this._socket) {
             this._socket.end('end');
-            this._socket = undefined;
+            this._socket = null;
         }
     }
 
@@ -115,12 +111,12 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
             this._activeReceiveReject(new Error('Socket was closed.'));
         }
 
-        this._active = undefined;
+        this._active = null;
         this._activeOffset = 0;
-        this._activeReceiveResolve = undefined;
-        this._activeReceiveReject = undefined;
+        this._activeReceiveResolve = null;
+        this._activeReceiveReject = null;
         this._activeReceiveCount = 0;
-        this._socket = undefined;
+        this._socket = null;
     }
 
     private socketError(err: Error): void {
@@ -141,7 +137,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
                 if (this._activeOffset === 0 && this._active.length === this._activeReceiveCount) {
                     // can send the entire _active buffer
                     let buffer = this._active;
-                    this._active = undefined;
+                    this._active = null;
 
                     this._activeReceiveResolve(buffer);
                 } else {
@@ -153,7 +149,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
 
                     // if we used all of active, set it to undefined
                     if (this._activeOffset >= this._active.length) {
-                        this._active = undefined;
+                        this._active = null;
                         this._activeOffset = 0;
                     }
 
@@ -161,11 +157,9 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
                 }
 
                 this._activeReceiveCount = 0;
-                this._activeReceiveReject = undefined;
-                this._activeReceiveResolve = undefined;
+                this._activeReceiveReject = null;
+                this._activeReceiveResolve = null;
             }
         }
-
-        return;
     }
 }

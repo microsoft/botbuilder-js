@@ -1,9 +1,9 @@
-const SubscribableStream = require('../lib/subscribableStream');
-const StreamManager = require('../lib/payloads/streamManager')
-const PayloadSender = require('../lib/payloadTransport/payloadSender');
-const PayloadReceiver = require('../lib/payloadTransport/payloadReceiver');
-const PayloadTypes = require('../lib/payloads/payloadTypes');
-const PayloadAssemblerManager = require('../lib/payloads/payloadAssemblerManager');
+const SubscribableStream = require('../lib/SubscribableStream');
+const StreamManager = require('../lib/Payloads/StreamManager')
+const PayloadSender = require('../lib/PayloadTransport/PayloadSender');
+const PayloadReceiver = require('../lib/PayloadTransport/PayloadReceiver');
+const PayloadTypes = require('../lib/Payloads/PayloadTypes');
+const PayloadAssemblerManager = require('../lib/Payloads/PayloadAssemblerManager');
 const  chai  = require('chai');
 var expect = chai.expect;
 
@@ -20,7 +20,7 @@ class FauxSock{
 
     receive(readLength){
         if(this.contentString[this.position])
-        {        
+        {
             this.buff = Buffer.from(this.contentString[this.position]);
             this.position++;
 
@@ -29,7 +29,7 @@ class FauxSock{
 
         if(this.receiver.isConnected)
             this.receiver.disconnect();
-    }    
+    }
     close(){};
 
     setReceiver(receiver){
@@ -71,7 +71,7 @@ describe('PayloadTransport', () => {
             let stream = new SubscribableStream.SubscribableStream();
             stream.write('This is a test stream.');
             let header = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: 22, id: '100', end: true};
-           
+
             ps.sendPayload(header, stream, ()=>done());
         });
 
@@ -109,7 +109,7 @@ describe('PayloadTransport', () => {
     });
 
     describe('PayloadReceiver', () => {
-        
+
         it('begins disconnected.', () => {
             let pr = new PayloadReceiver.PayloadReceiver();
             expect(pr.isConnected).to.be.undefined;
@@ -144,7 +144,7 @@ describe('PayloadTransport', () => {
                 (header, contentStream, contentLength) => assemblerManager.onReceive(header, contentStream, contentLength));
 
             expect(pr.connect(sock)).to.not.throw;
-   
+
             pr.disconnected = () => done();
             expect(pr.isConnected).to.be.true;
         });

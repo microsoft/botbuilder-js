@@ -1,9 +1,9 @@
-const SubscribableStream = require('../lib/subscribableStream');
+const SubscribableStream = require('../lib/SubscribableStream');
 const chai = require('chai');
-const StreamManager = require('../lib/payloads/streamManager');
-const PayloadTypes = require('../lib/payloads/payloadTypes');
-const PayloadAssembler = require('../lib/assemblers/payloadAssembler');
-const PayloadAssemblerManager = require('../lib/payloads/payloadAssemblerManager');
+const StreamManager = require('../lib/Payloads/StreamManager');
+const PayloadTypes = require('../lib/Payloads/PayloadTypes');
+const PayloadAssembler = require('../lib/Assemblers/PayloadAssembler');
+const PayloadAssemblerManager = require('../lib/Payloads/PayloadAssemblerManager');
 var expect = chai.expect;
 
 describe('ReceiveRequestAssembler', () => {
@@ -47,7 +47,7 @@ describe('PayloadAssembler', () => {
         rp.streams = s;
         let rra = new PayloadAssembler.PayloadAssembler(sm, {header: header, onCompleted: function() {done();} });
         rra.onReceive(header, s, 5);
-        rra.close();     
+        rra.close();
     });
 
     it('processes a Response without throwing.', (done) => {
@@ -58,7 +58,7 @@ describe('PayloadAssembler', () => {
         let rp = {statusCode: 200};
         rp.streams = s;
         let rra = new PayloadAssembler.PayloadAssembler(sm, {header: header, onCompleted: function() {done();} });
-        rra.onReceive(header, s, 5);        
+        rra.onReceive(header, s, 5);
     });
 
     it('assigns values when constructed', () => {
@@ -98,7 +98,7 @@ describe('PayloadAssemblerManager', () => {
         done();
     });
 
-    
+
     it('cretes a request stream', (done) => {
         let p = new PayloadAssemblerManager.PayloadAssemblerManager(new StreamManager.StreamManager(), () => done(), () => done());
         let head = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '42', id: '100', end: true};
@@ -163,6 +163,6 @@ describe('PayloadAssemblerManager', () => {
 
         let rra = new PayloadAssembler.PayloadAssembler(sm, {header: header, onCompleted: function() {done();} });
         rra.onReceive(header, s, 5);
-        rra.close();     
+        rra.close();
     });
 });

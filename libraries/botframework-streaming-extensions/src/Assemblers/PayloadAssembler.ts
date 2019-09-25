@@ -5,14 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { SubscribableStream } from '../subscribableStream';
-import { StreamManager, PayloadTypes } from '../payloads';
-import { ContentStream } from '../contentStream';
-import { IAssemblerParams } from '../interfaces/iAssemblerParams';
-import { IHeader } from '../interfaces/iHeader';
-import { IResponsePayload } from '../interfaces/iResponsePayload';
-import { IReceiveResponse, IReceiveRequest } from '../interfaces';
-import { IRequestPayload } from '../interfaces/iRequestPayload';
+import { SubscribableStream } from '../SubscribableStream';
+import { StreamManager, PayloadTypes } from '../Payloads';
+import { ContentStream } from '../ContentStream';
+import { IAssemblerParams } from '../Interfaces/IAssemblerParams';
+import { IHeader } from '../Interfaces/IHeader';
+import { IResponsePayload } from '../Interfaces/IResponsePayload';
+import { IReceiveResponse, IReceiveRequest } from '../Interfaces';
+import { IRequestPayload } from '../Interfaces/IRequestPayload';
 
 
 export class PayloadAssembler {
@@ -27,7 +27,7 @@ export class PayloadAssembler {
     private readonly _utf: string = 'utf8';
 
     public constructor(streamManager: StreamManager, params: IAssemblerParams) {
-        if(params.header !== undefined){
+        if(params.header){
             this.id = params.header.id;
             this.payloadType = params.header.payloadType;
             this.contentLength = params.header.payloadLength;
@@ -36,10 +36,10 @@ export class PayloadAssembler {
             this.id = params.id;
         }
 
-        if(this.id === undefined){
+        if(!this.id){
             throw Error('An ID must be supplied when creating an assembler.');
         }
-        
+
         this._streamManager = streamManager;
         this._onCompleted = params.onCompleted;
     }
@@ -54,15 +54,13 @@ export class PayloadAssembler {
 
     public onReceive(header: IHeader, stream: SubscribableStream, contentLength: number): void {
         this.end = header.end;
-        
+
         if (header.payloadType === PayloadTypes.response || header.payloadType === PayloadTypes.request) {
         this.process(stream)
             .then()
             .catch();
-        } else {
-            if (header.end) {
-                stream.end();
-            }
+        } else if (header.end) {
+            stream.end();
         }
     }
 
@@ -92,10 +90,8 @@ export class PayloadAssembler {
 
         if(this.payloadType === PayloadTypes.request){
             await this.processRequest(streamDataAsString);
-        } else {
-            if(this.payloadType === PayloadTypes.response){
-                await this.processResponse(streamDataAsString);
-            }
+        } else if(this.payloadType === PayloadTypes.response){
+            await this.processResponse(streamDataAsString);
         }
     }
 
@@ -125,5 +121,5 @@ export class PayloadAssembler {
             });
         }
         await this._onCompleted(this.id, receiveResponse);
-    }    
+    }
 }

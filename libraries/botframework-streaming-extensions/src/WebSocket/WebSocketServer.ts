@@ -5,18 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ProtocolAdapter } from '../protocolAdapter';
-import { RequestHandler } from '../requestHandler';
-import { StreamingRequest } from '../streamingRequest';
-import { RequestManager } from '../payloads';
+import { ProtocolAdapter } from '../ProtocolAdapter';
+import { RequestHandler } from '../RequestHandler';
+import { StreamingRequest } from '../StreamingRequest';
+import { RequestManager } from '../Payloads';
 import {
     PayloadReceiver,
     PayloadSender,
     TransportDisconnectedEventArgs
-} from '../payloadtransport';
-import { ISocket } from '../interfaces/iSocket';
-import { WebSocketTransport } from './webSocketTransport';
-import { IStreamingTransportServer, IReceiveResponse } from '../interfaces';
+} from '../PayloadTransport';
+import { ISocket } from '../Interfaces/ISocket';
+import { WebSocketTransport } from './WebSocketTransport';
+import { IStreamingTransportServer, IReceiveResponse } from '../Interfaces';
 
 /// <summary>
 /// A server for use with the Bot Framework Protocol V3 with Streaming Extensions and an underlying WebSocket transport.
@@ -43,9 +43,9 @@ export class WebSocketServer implements IStreamingTransportServer {
         this._requestManager = new RequestManager();
 
         this._sender = new PayloadSender();
-        this._sender.disconnected = (x: object, y: any): void => this.onConnectionDisconnected(this, x, y);
+        this._sender.disconnected = this.onConnectionDisconnected.bind(this);
         this._receiver = new PayloadReceiver();
-        this._receiver.disconnected = (x: object, y: any): void => this.onConnectionDisconnected(this, x, y);
+        this._receiver.disconnected = this.onConnectionDisconnected.bind(this);
 
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
 
