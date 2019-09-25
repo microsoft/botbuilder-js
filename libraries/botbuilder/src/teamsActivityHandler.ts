@@ -22,11 +22,23 @@ import {
 } from 'botbuilder-core';
 
 export class TeamsActivityHandler extends ActivityHandler {
+
+    /**
+     * 
+     * @param handler (context: TurnContext) => Promise<void>
+     */
+    public onInvokeActivity(handler: (context: TurnContext) => Promise<void>): this {
+        this.checkRegisteredTeamsHandlers('InvokeActivity');
+        return this.on('InvokeActivity', async (context, next) => {
+            await handler(context);
+        });
+    }
+
     /**
      * Receives invoke activities with Activity name of 'fileConsent/invoke'. Handlers registered here run before
      * `onTeamsFileConsentAccept` and `onTeamsFileConsentDecline`.
      * Developers are not passed a pointer to the next `onTeamsFileConsent` handler because the _wrapper_ around
-     * the handler will call next on the developers behalf.
+     * the handler will call `onDialogs` handlers after delegating to `onTeamsFileConsentAccept` or `onTeamsFileConsentDecline`.
      * @remarks
      * It is important that only ONE onTeamsFileConsent handler is registered, otherwise the handlers for
      * onTeamsFileConsentAccept and onTeamsFileConsentDecline will run more than once.
@@ -39,12 +51,19 @@ export class TeamsActivityHandler extends ActivityHandler {
         this.checkRegisteredTeamsHandlers('TeamsFileConsent');
         return this.on('TeamsFileConsent', async (context, next) => {
             await handler(context, context.activity.value.action);
-            if (context.activity.value.action === 'accept') {
-                await this.handle(context, 'TeamsFileConsentAccept', next);
-            } else {
-                await this.handle(context, 'TeamsFileConsentDecline', next);
+            switch (context.activity.value.action) {
+                case 'accept':
+                    await this.handle(context, 'TeamsFileConsentAccept', next);
+                    break;
+                case 'decline':
+                    await this.handle(context, 'TeamsFileConsentDecline', next);
+                    break;
+                default:
+                    await TeamsActivityHandler.sendNotImplementedError(context);
+
             }
             await TeamsActivityHandler.sendInvokeResponse(context, TeamsActivityHandler.createInvokeResponse());
+            await next();
         });
     }
 
@@ -52,14 +71,14 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Receives invoke activities with Activity name of 'fileConsent/invoke' with confirmation from user
      * @remarks
      * This type of invoke activity occur during the File Consent flow.
-     * @param handler (context: TurnContext, value: FileConsentCardResponse, next: () => Promise<void>) => Promise<void>
+     * @param handler (context: TurnContext, fileConsentCardResponse: FileConsentCardResponse) => Promise<void>
      */
     public onTeamsFileConsentAccept(
-        handler: (context: TurnContext, fileConsentCardResponse: FileConsentCardResponse, next: () => Promise<void>) => Promise<void>
+        handler: (context: TurnContext, fileConsentCardResponse: FileConsentCardResponse) => Promise<void>
     ): this {
         this.checkRegisteredTeamsHandlers('TeamsFileConsentAccept');
         return this.on('TeamsFileConsentAccept', async (context, next) => {
-            await handler(context, context.activity.value, next);
+            await handler(context, context.activity.value);
         });
     }
 
@@ -67,84 +86,89 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Receives invoke activities with Activity name of 'fileConsent/invoke' with decline from user
      * @remarks
      * This type of invoke activity occur during the File Consent flow.
-     * @param handler (context: TurnContext, value: FileConsentCardResponse, next: () => Promise<void>) => Promise<void>
+     * @param handler (context: TurnContext, fileConsentCardResponse: FileConsentCardResponse) => Promise<void>
      */
     public onTeamsFileConsentDecline(
-        handler: (context: TurnContext, fileConsentCardResponse: FileConsentCardResponse, next: () => Promise<void>) => Promise<void>
+        handler: (context: TurnContext, fileConsentCardResponse: FileConsentCardResponse) => Promise<void>
     ): this {
         this.checkRegisteredTeamsHandlers('TeamsFileConsentDecline');
         return this.on('TeamsFileConsentDecline', async (context, next) => {
-            await handler(context, context.activity.value, next);
+            await handler(context, context.activity.value);
         });
     }
 
     /**
      * Receives invoke activities with Activity name of 'actionableMessage/executeAction'
-     * @param handler (context: TurnContext, value: O365ConnectorCardActionQuery, next: () => Promise<void>) => Promise<void>
+     * @param handler (context: TurnContext, value: O365ConnectorCardActionQuery) => Promise<void>
      */
     public onTeamsO365ConnectorCardAction(
-        handler: (context: TurnContext, query: O365ConnectorCardActionQuery, next: () => Promise<void>) => Promise<void>): this {
+        handler: (context: TurnContext, query: O365ConnectorCardActionQuery) => Promise<void>): this {
         this.checkRegisteredTeamsHandlers('TeamsO365ConnectorCardAction');
         return this.on('TeamsO365ConnectorCardAction', async (context, next) => {
-            await handler(context, context.activity.value, next);
+            await handler(context, context.activity.value);
             await TeamsActivityHandler.sendInvokeResponse(context, TeamsActivityHandler.createInvokeResponse());
+            await next();
         });
     }
 
     /**
      * Receives invoke activities with Activity name of 'signin/verifyState'
-     * @param handler (context: TurnContext, value: SigninStateVerificationQuery, next: () => Promise<void>) => Promise<InvokeResponse>
+     * @param handler (context: TurnContext, value: SigninStateVerificationQuery) => Promise<InvokeResponse>
      */
     public onTeamsSigninVerifyState(
-        handler: (context: TurnContext, value: SigninStateVerificationQuery, next: () => Promise<void>) => Promise<InvokeResponse>): this {
+        handler: (context: TurnContext, value: SigninStateVerificationQuery) => Promise<InvokeResponse>): this {
         this.checkRegisteredTeamsHandlers('TeamsSigninVerifyState');
         return this.on('TeamsSigninVerifyState', async (context, next) => {
-            await handler(context, context.activity.value, next);
+            await handler(context, context.activity.value);
             await TeamsActivityHandler.sendInvokeResponse(context, TeamsActivityHandler.createInvokeResponse());
+            await next();
         });
+    }
+
+    /**
+     * Receives invoke activities with Activity name of 'task/fetch'
+     * @param handler (context: TurnContext, value: TaskModuleRequest) => Promise<TaskModuleResponse>
+     */
+    public onTeamsTaskModuleFetch(
+        handler: (context: TurnContext, value: TaskModuleRequest) => Promise<TaskModuleResponse>): this {
+        this.checkRegisteredTeamsHandlers('TeamsTaskModuleFetch');
+        return this.on('TeamsTaskModuleFetch', async (context, next) => {
+            const taskModuleResponse: TaskModuleResponse = await handler(context, context.activity.value);
+            const invokeResponse = TeamsActivityHandler.createInvokeResponse(taskModuleResponse);
+            await TeamsActivityHandler.sendInvokeResponse(context, invokeResponse);
+            await next();
+        })
+    }
+
+    /**
+     * Receives invoke activities with Activity name of 'task/submit'
+     * @param handler (context: TurnContext, value: TaskModuleRequest) => Promise<TaskModuleResponse|undefined>
+     */
+    public onTeamsTaskModuleSubmit(
+        handler: (context: TurnContext, value: TaskModuleRequest) => Promise<TaskModuleResponse|undefined>): this {
+        this.checkRegisteredTeamsHandlers('TeamsTaskModuleSubmit');
+        return this.on('TeamsTaskModuleSubmit', async (context, next) => {
+            const taskModuleResponse: TaskModuleResponse = await handler(context, context.activity.value);
+            const invokeResponse = TeamsActivityHandler.createInvokeResponse(taskModuleResponse);
+            await TeamsActivityHandler.sendInvokeResponse(context, invokeResponse);
+            await next();
+        })
     }
 
     /**
      * Receives invoke activities with Activity name of 'composeExtension/queryLink'
      * @remarks
      * Used in creating a Search-based Message Extension.
-     * @param handler (context: TurnContext, value: AppBasedLinkQuery, next: () => Promise<void>) => Promise<MessagingExtensionResponse>
+     * @param handler (context: TurnContext, value: AppBasedLinkQuery) => Promise<MessagingExtensionResponse>
      */
     public onTeamsAppBasedLinkQuery(
-        handler: (context: TurnContext, value: AppBasedLinkQuery, next: () => Promise<void>) => Promise<MessagingExtensionResponse>): this {
+        handler: (context: TurnContext, value: AppBasedLinkQuery) => Promise<MessagingExtensionResponse>): this {
         this.checkRegisteredTeamsHandlers('TeamsAppBasedLinkQuery');
         return this.on('TeamsAppBasedLinkQuery', async (context, next) => {
-            const messagingExtensionResponse: MessagingExtensionResponse = await handler(context, context.activity.value, next);
+            const messagingExtensionResponse: MessagingExtensionResponse = await handler(context, context.activity.value);
             const invokeResponse = TeamsActivityHandler.createInvokeResponse(messagingExtensionResponse);
             await TeamsActivityHandler.sendInvokeResponse(context, invokeResponse);
-        })
-    }
-
-    /**
-     * Receives invoke activities with Activity name of 'task/fetch'
-     * @param handler (context: TurnContext, value: TaskModuleRequest, next: () => Promise<void>) => Promise<TaskModuleResponse>
-     */
-    public onTeamsTaskModuleFetch(
-        handler: (context: TurnContext, value: TaskModuleRequest, next: () => Promise<void>) => Promise<TaskModuleResponse>): this {
-        this.checkRegisteredTeamsHandlers('TeamsTaskModuleFetch');
-        return this.on('TeamsTaskModuleFetch', async (context, next) => {
-            const taskModuleResponse: TaskModuleResponse = await handler(context, context.activity.value, next);
-            const invokeResponse = TeamsActivityHandler.createInvokeResponse(taskModuleResponse);
-            await TeamsActivityHandler.sendInvokeResponse(context, invokeResponse);
-        })
-    }
-
-    /**
-     * Receives invoke activities with Activity name of 'task/submit'
-     * @param handler (context: TurnContext, value: TaskModuleRequest, next: () => Promise<void>) => Promise<TaskModuleResponse>
-     */
-    public onTeamsTaskModuleSubmit(
-        handler: (context: TurnContext, value: TaskModuleRequest, next: () => Promise<void>) => Promise<TaskModuleResponse>): this {
-        this.checkRegisteredTeamsHandlers('TeamsTaskModuleSubmit');
-        return this.on('TeamsTaskModuleSubmit', async (context, next) => {
-            const taskModuleResponse: TaskModuleResponse = await handler(context, context.activity.value, next);
-            const invokeResponse = TeamsActivityHandler.createInvokeResponse(taskModuleResponse);
-            await TeamsActivityHandler.sendInvokeResponse(context, invokeResponse);
+            await next();
         })
     }
 
@@ -152,15 +176,16 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Receives invoke activities with the name 'composeExtension/query'.
      * @remarks
      * Used in creating a Search-based Message Extension.
-     * @param handler (context: TurnContext, value: MessagingExtensionQuery, next: () => Promise<void>) => Promise<MessagingExtensionResponse>
+     * @param handler (context: TurnContext, value: MessagingExtensionQuery) => Promise<MessagingExtensionResponse>
      */
     public onTeamsMessagingExtensionQuery(
-        handler: (context: TurnContext, value: MessagingExtensionQuery, next: () => Promise<void>) => Promise<MessagingExtensionResponse>): this {
+        handler: (context: TurnContext, value: MessagingExtensionQuery) => Promise<MessagingExtensionResponse>): this {
         this.checkRegisteredTeamsHandlers('TeamsComposeExtension/Query');
         return this.on('TeamsComposeExtension/Query', async (context, next) => {
-            const messagingExtensionResponse: MessagingExtensionResponse = await handler(context, context.activity.value, next);
+            const messagingExtensionResponse: MessagingExtensionResponse = await handler(context, context.activity.value);
             const invokeResponse = TeamsActivityHandler.createInvokeResponse(messagingExtensionResponse);
             await TeamsActivityHandler.sendInvokeResponse(context, invokeResponse);
+            await next();
         });
     }
 
@@ -168,15 +193,16 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Receives invoke activities with the name 'composeExtension/selectItem'.
      * @remarks
      * Used in creating a Search-based Message Extension.
-     * @param handler (context: TurnContext, value: MessagingExtensionQuery, next: () => Promise<void>) => Promise<MessagingExtensionResponse>
+     * @param handler (context: TurnContext, value: MessagingExtensionQuery) => Promise<MessagingExtensionResponse>
      */
     public onTeamsMessagingExtensionSelectItem(
-        handler: (context: TurnContext, value: MessagingExtensionQuery, next: () => Promise<void>) => Promise<MessagingExtensionResponse>): this {
+        handler: (context: TurnContext, value: MessagingExtensionQuery) => Promise<MessagingExtensionResponse>): this {
         this.checkRegisteredTeamsHandlers('TeamsComposeExtension/SelectItem');
         return this.on('TeamsComposeExtension/SelectItem', async (context, next) => {
-            const messagingExtensionResponse: MessagingExtensionResponse = await handler(context, context.activity.value, next);
+            const messagingExtensionResponse: MessagingExtensionResponse = await handler(context, context.activity.value);
             const invokeResponse = TeamsActivityHandler.createInvokeResponse(messagingExtensionResponse);
             await TeamsActivityHandler.sendInvokeResponse(context, invokeResponse);
+            await next();
         });
     }
 
@@ -184,15 +210,16 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Receives invoke activities with the name 'composeExtension/submitAction'.
      * @remarks
      * This invoke activity is received when a user 
-     * @param handler (context: TurnContext, value: MessagingExtensionAction, next: () => Promise<void>) => Promise<MessagingExtensionActionResponse>
+     * @param handler (context: TurnContext, value: MessagingExtensionAction) => Promise<MessagingExtensionActionResponse>
      */
     public onTeamsMessagingExtensionSubmit(
-        handler: (context: TurnContext, value: MessagingExtensionAction, next: () => Promise<void>) => Promise<MessagingExtensionActionResponse>): this {
+        handler: (context: TurnContext, value: MessagingExtensionAction) => Promise<MessagingExtensionActionResponse>): this {
             this.checkRegisteredTeamsHandlers('TeamsComposeExtension/SubmitAction');
             return this.on('TeamsComposeExtension/SubmitAction', async (context, next) => {
-            const messagingExtensionActionResponse: MessagingExtensionActionResponse = await handler(context, context.activity.value, next);
+            const messagingExtensionActionResponse: MessagingExtensionActionResponse = await handler(context, context.activity.value);
             const invokeResponse = TeamsActivityHandler.createInvokeResponse(messagingExtensionActionResponse);
             await TeamsActivityHandler.sendInvokeResponse(context, invokeResponse);
+            await next();
         });
     }
 
@@ -201,15 +228,16 @@ export class TeamsActivityHandler extends ActivityHandler {
      * The value for 'botMessagePreview' is 'edit'.
      * @remarks
      * This invoke activity is received when a user 
-     * @param handler (context: TurnContext, value: MessagingExtensionAction, next: () => Promise<void>) => Promise<MessagingExtensionActionResponse>
+     * @param handler (context: TurnContext, value: MessagingExtensionAction) => Promise<MessagingExtensionActionResponse>
      */
     public onTeamsBotMessagePreviewEdit(
-        handler: (context: TurnContext, value: MessagingExtensionAction, next: () => Promise<void>) => Promise<MessagingExtensionActionResponse>): this {
+        handler: (context: TurnContext, value: MessagingExtensionAction) => Promise<MessagingExtensionActionResponse>): this {
         this.checkRegisteredTeamsHandlers('TeamsComposeExtension/SubmitAction/BotMessagePreviewEdit');
         return this.on('TeamsComposeExtension/SubmitAction/BotMessagePreviewEdit', async (context, next) => {
-            const messagingExtensionActionResponse: MessagingExtensionActionResponse = await handler(context, context.activity.value, next);
+            const messagingExtensionActionResponse: MessagingExtensionActionResponse = await handler(context, context.activity.value);
             const invokeResponse = TeamsActivityHandler.createInvokeResponse(messagingExtensionActionResponse);
             await TeamsActivityHandler.sendInvokeResponse(context, invokeResponse);
+            await next();
         });
     }
 
@@ -221,54 +249,58 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler (context: TurnContext, value: MessagingExtensionAction, next: () => Promise<void>) => Promise<MessagingExtensionActionResponse>
      */
     public onTeamsBotMessagePreviewSend(
-        handler: (context: TurnContext, value: MessagingExtensionAction, next: () => Promise<void>) => Promise<MessagingExtensionActionResponse>): this {
+        handler: (context: TurnContext, value: MessagingExtensionAction) => Promise<MessagingExtensionActionResponse>): this {
         this.checkRegisteredTeamsHandlers('TeamsomposeExtension/SubmitAction/BotMessagePreviewSend');
         return this.on('TeamsomposeExtension/SubmitAction/BotMessagePreviewSend', async (context, next) => {
-            const messagingExtensionActionResponse: MessagingExtensionActionResponse = await handler(context, context.activity.value, next);
+            const messagingExtensionActionResponse: MessagingExtensionActionResponse = await handler(context, context.activity.value);
             const invokeResponse = TeamsActivityHandler.createInvokeResponse(messagingExtensionActionResponse);
             await TeamsActivityHandler.sendInvokeResponse(context, invokeResponse);
+            await next();
         });
     }
 
     /**
      * Receives invoke activities with the name 'composeExtension/fetchTask' 
-     * @param handler (context: TurnContext, value: MessagingExtensionAction, next: () => Promise<void>) => Promise<MessagingExtensionResponse>
+     * @param handler (context: TurnContext, value: MessagingExtensionAction) => Promise<MessagingExtensionResponse>
      */
     public onTeamsMessagingExtensionFetchTask(
-        handler: (context: TurnContext, value: MessagingExtensionAction, next: () => Promise<void>) => Promise<MessagingExtensionResponse>): this {
+        handler: (context: TurnContext, value: MessagingExtensionAction) => Promise<MessagingExtensionResponse>): this {
         this.checkRegisteredTeamsHandlers('TeamsComposeExtension/FetchTask');
         return this.on('TeamsComposeExtension/FetchTask', async (context, next) => {
-            const messagingExtensionResponse: MessagingExtensionResponse = await handler(context, context.activity.value, next);
+            const messagingExtensionResponse: MessagingExtensionResponse = await handler(context, context.activity.value);
             const invokeResponse = TeamsActivityHandler.createInvokeResponse(messagingExtensionResponse);
             await TeamsActivityHandler.sendInvokeResponse(context, invokeResponse);
+            await next();
         });
     };
 
     /**
      * Receives invoke activities with the name 'composeExtension/querySettingUrl' 
-     * @param handler (context: TurnContext, value: MessagingExtensionAction, next: () => Promise<void>) => Promise<MessagingExtensionResponse>
+     * @param handler (context: TurnContext, value: MessagingExtensionAction) => Promise<MessagingExtensionResponse>
      */
     public onTeamsMessagingExtensionQuerySettingUrl(
-        handler: (context: TurnContext, value: MessagingExtensionQuery, next: () => Promise<void>) => Promise<MessagingExtensionResponse>): this {
+        handler: (context: TurnContext, value: MessagingExtensionQuery) => Promise<MessagingExtensionResponse>): this {
         this.checkRegisteredTeamsHandlers('TeamsComposeExtension/QuerySettingUrl');
         return this.on('TeamsComposeExtension/QuerySettingUrl', async (context, next) => {
-            const messagingExtensionResponse: MessagingExtensionResponse = await handler(context, context.activity.value, next);
+            const messagingExtensionResponse: MessagingExtensionResponse = await handler(context, context.activity.value);
             const invokeResponse = TeamsActivityHandler.createInvokeResponse(messagingExtensionResponse);
             await TeamsActivityHandler.sendInvokeResponse(context, invokeResponse);
+            await next();
         });
     }
 
     /**
      * Receives invoke activities with the name 'composeExtension/setting' 
-     * @param handler (context: TurnContext, value: MessagingExtensionQuery, next: () => Promise<void>) => Promise<MessagingExtensionResponse>
+     * @param handler (context: TurnContext, value: MessagingExtensionQuery) => Promise<MessagingExtensionResponse>
      */
     public onTeamsMessagingExtensionQuerySetting(
-        handler: (context: TurnContext, value: MessagingExtensionQuery, next: () => Promise<void>) => Promise<MessagingExtensionResponse>): this {
+        handler: (context: TurnContext, value: MessagingExtensionQuery) => Promise<MessagingExtensionResponse>): this {
         this.checkRegisteredTeamsHandlers('TeamsComposeExtension/Setting');
         return this.on('TeamsComposeExtension/Setting', async (context, next) => {
-            const messagingExtensionResponse: MessagingExtensionResponse = await handler(context, context.activity.value, next);
+            const messagingExtensionResponse: MessagingExtensionResponse = await handler(context, context.activity.value);
             const invokeResponse = TeamsActivityHandler.createInvokeResponse(messagingExtensionResponse);
             await TeamsActivityHandler.sendInvokeResponse(context, invokeResponse);
+            await next();
         });
     }
 
@@ -347,10 +379,13 @@ export class TeamsActivityHandler extends ActivityHandler {
                     });
                     break;
                 case ActivityTypes.Invoke:
+                    // The onInvokeActivity handler should not call `runDialogs`, it needs to let the
+                    // typed-Invoke Activity handler call `runDialogs`.
+                    await this.handle(context, 'Invoke', async () => {});
                     let invokeResponse: InvokeResponse;
                     switch (context.activity.name) {
                         case 'fileConsent/invoke':
-                            invokeResponse = await this.handle(context, 'TeamsFileConsent', runDialogs);
+                            await this.handle(context, 'TeamsFileConsent', runDialogs);
                             break;
                         case 'composeExtension/querySettingUrl':
                             await this.handle(context, 'TeamsComposeExtension/QuerySettingUrl', runDialogs);
@@ -407,22 +442,41 @@ export class TeamsActivityHandler extends ActivityHandler {
         });
     }
 
+    protected async handle(context: TurnContext, type: string, onNext: () => Promise<void>): Promise<any> {
+        // MS Teams Invoke activities expect a response in 5 seconds. If no handlers are registered for the
+        // Invoke activity received, the bot should send a NotImplemented HTTP status code.
+        if (context.activity.type === ActivityTypes.Invoke && context.activity.channelId === 'msteams' &&
+            type !== 'InvokeActivity' && (!(type in this.handlers) || this.handlers[type].length < 1)) {
+                return await TeamsActivityHandler.sendNotImplementedError(context);
+        }
+        return await super.handle(context, type, onNext);
+    }
+
+    /**
+     * Used to verify that only one handler is registered for a specific event. Should be called when attempting
+     * to register a handler.
+     * @param eventName name of the event emitted
+     */
+    protected checkRegisteredTeamsHandlers(eventName: string) {
+        if (eventName in this.handlers && this.handlers[eventName].length >= 1) {
+            throw new Error(`Cannot register more than one handler for ${eventName}.`);
+        }
+    }
+
+    private static async sendNotImplementedError(context: TurnContext) {
+        context.sendActivity({ value: { status: 501 } as InvokeResponse, type: 'invokeResponse' });
+    }
+
     private static createInvokeResponse(body?: any): InvokeResponse {
         return { status: 200, body };
     }
 
     /**
-     * Temporary Helper method
+     * Helper method used to send an InvokeResponse from a wrapped Teams Handler.
      * @param context 
      * @param invokeResponse 
      */
     private static async sendInvokeResponse(context: TurnContext, invokeResponse: InvokeResponse): Promise<void> {
         await context.sendActivity({ value: invokeResponse, type: 'invokeResponse' });
-    }
-
-    private checkRegisteredTeamsHandlers(eventName: string) {
-        if (this.handlers[eventName].length === 1) {
-            throw new Error(`Cannot register more than one handler for ${eventName}.`);
-        }
     }
 }
