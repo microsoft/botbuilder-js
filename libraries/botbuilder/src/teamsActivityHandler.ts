@@ -51,19 +51,6 @@ export class TeamsActivityHandler extends ActivityHandler {
         this.checkRegisteredTeamsHandlers('TeamsFileConsent');
         return this.on('TeamsFileConsent', async (context, next) => {
             await handler(context, context.activity.value.action);
-            switch (context.activity.value.action) {
-                case 'accept':
-                    await this.handle(context, 'TeamsFileConsentAccept', next);
-                    break;
-                case 'decline':
-                    await this.handle(context, 'TeamsFileConsentDecline', next);
-                    break;
-                default:
-                    await TeamsActivityHandler.sendNotImplementedError(context);
-
-            }
-            await TeamsActivityHandler.sendInvokeResponse(context, TeamsActivityHandler.createInvokeResponse());
-            await next();
         });
     }
 
@@ -79,6 +66,8 @@ export class TeamsActivityHandler extends ActivityHandler {
         this.checkRegisteredTeamsHandlers('TeamsFileConsentAccept');
         return this.on('TeamsFileConsentAccept', async (context, next) => {
             await handler(context, context.activity.value);
+            await TeamsActivityHandler.sendInvokeResponse(context, TeamsActivityHandler.createInvokeResponse());
+            await next();
         });
     }
 
@@ -94,6 +83,8 @@ export class TeamsActivityHandler extends ActivityHandler {
         this.checkRegisteredTeamsHandlers('TeamsFileConsentDecline');
         return this.on('TeamsFileConsentDecline', async (context, next) => {
             await handler(context, context.activity.value);
+            await TeamsActivityHandler.sendInvokeResponse(context, TeamsActivityHandler.createInvokeResponse());
+            await next();
         });
     }
 
@@ -385,7 +376,18 @@ export class TeamsActivityHandler extends ActivityHandler {
                     let invokeResponse: InvokeResponse;
                     switch (context.activity.name) {
                         case 'fileConsent/invoke':
-                            await this.handle(context, 'TeamsFileConsent', runDialogs);
+                            await this.handle(context, 'TeamsFileConsent', async () => {});
+                            switch (context.activity.value.action) {
+                                case 'accept':
+                                    await this.handle(context, 'TeamsFileConsentAccept', runDialogs);
+                                    break;
+                                case 'decline':
+                                    await this.handle(context, 'TeamsFileConsentDecline', runDialogs);
+                                    break;
+                                default:
+                                    return await TeamsActivityHandler.sendNotImplementedError(context);
+                            }
+                            await TeamsActivityHandler.sendNotImplementedError(context);
                             break;
                         case 'composeExtension/querySettingUrl':
                             await this.handle(context, 'TeamsComposeExtension/QuerySettingUrl', runDialogs);
@@ -446,7 +448,7 @@ export class TeamsActivityHandler extends ActivityHandler {
         // MS Teams Invoke activities expect a response in 5 seconds. If no handlers are registered for the
         // Invoke activity received, the bot should send a NotImplemented HTTP status code.
         if (context.activity.type === ActivityTypes.Invoke && context.activity.channelId === 'msteams' &&
-            type !== 'InvokeActivity' && (!(type in this.handlers) || this.handlers[type].length < 1)) {
+            (type !== 'InvokeActivity' && type !== 'TeamsFileConsent') && (!(type in this.handlers) || this.handlers[type].length < 1)) {
                 return await TeamsActivityHandler.sendNotImplementedError(context);
         }
         return await super.handle(context, type, onNext);
