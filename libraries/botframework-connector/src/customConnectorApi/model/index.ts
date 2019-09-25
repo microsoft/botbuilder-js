@@ -79,6 +79,7 @@ export * from './responses/getAttachmentInfoResponse'
 export * from './responses/getAttachmentResponse'
 export * from './responses/useResourceResponse'
 export * from './parameters/conversationParameters'
+export * from './parameters/conversationsGetConversationsOptionalParams'
 export * from './parameters/requestOptions'
 export * from './parameters/pagedParameters'
 export * from './responses/ConversationsSendToConversationResponse';
