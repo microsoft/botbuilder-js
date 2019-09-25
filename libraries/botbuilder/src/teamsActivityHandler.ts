@@ -46,8 +46,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler (context: TurnContext, fileConsentCardResponse: FileConsentCardResponse) => Promise<void> 
      */
     public onTeamsFileConsent(
-        handler: (context: TurnContext, fileConsentCardResponse: FileConsentCardResponse) => Promise<void>
-    ): this {
+        handler: (context: TurnContext, fileConsentCardResponse: FileConsentCardResponse) => Promise<void>): this {
         this.checkRegisteredTeamsHandlers('TeamsFileConsent');
         return this.on('TeamsFileConsent', async (context, next) => {
             await handler(context, context.activity.value.action);
@@ -61,8 +60,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler (context: TurnContext, fileConsentCardResponse: FileConsentCardResponse) => Promise<void>
      */
     public onTeamsFileConsentAccept(
-        handler: (context: TurnContext, fileConsentCardResponse: FileConsentCardResponse) => Promise<void>
-    ): this {
+        handler: (context: TurnContext, fileConsentCardResponse: FileConsentCardResponse) => Promise<void>): this {
         this.checkRegisteredTeamsHandlers('TeamsFileConsentAccept');
         return this.on('TeamsFileConsentAccept', async (context, next) => {
             await handler(context, context.activity.value);
@@ -78,8 +76,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler (context: TurnContext, fileConsentCardResponse: FileConsentCardResponse) => Promise<void>
      */
     public onTeamsFileConsentDecline(
-        handler: (context: TurnContext, fileConsentCardResponse: FileConsentCardResponse) => Promise<void>
-    ): this {
+        handler: (context: TurnContext, fileConsentCardResponse: FileConsentCardResponse) => Promise<void>): this {
         this.checkRegisteredTeamsHandlers('TeamsFileConsentDecline');
         return this.on('TeamsFileConsentDecline', async (context, next) => {
             await handler(context, context.activity.value);
@@ -136,7 +133,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler (context: TurnContext, value: TaskModuleRequest) => Promise<TaskModuleResponse|undefined>
      */
     public onTeamsTaskModuleSubmit(
-        handler: (context: TurnContext, value: TaskModuleRequest) => Promise<TaskModuleResponse|undefined>): this {
+        handler: (context: TurnContext, value: TaskModuleRequest) => Promise<TaskModuleResponse | undefined>): this {
         this.checkRegisteredTeamsHandlers('TeamsTaskModuleSubmit');
         return this.on('TeamsTaskModuleSubmit', async (context, next) => {
             const taskModuleResponse: TaskModuleResponse = await handler(context, context.activity.value);
@@ -198,15 +195,31 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
+     * Receives invoke activities with the name 'composeExtension/submitAction' and is called before the next appropriate handler is called.
+     * @remarks
+     * A handler registered through this method does not dispatch to the next handler (either `onTeamsMessagingExtensionSubmitAction`, `onTeamsBotMessagePreviewEdit`, or `onTeamsBotMessagePreviewSend`).
+     * This method exists for developers to optionally add more logic before the TeamsActivityHandler routes the activity to one of the
+     * previously mentioned handlers.
+     * @param handler handler: (context: TurnContext, action: MessagingExtensionAction) => Promise<void>
+     */
+    public onTeamsMessagingExtensionSubmitActionDispatch(
+        handler: (context: TurnContext, action: MessagingExtensionAction) => Promise<void>): this {
+        this.checkRegisteredTeamsHandlers('TeamsComposeExtension/SubmitActionDispatch');
+        return this.on('TeamsComposeExtension/SubmitActionDispatch', async (context, next) => {
+            await handler(context, context.activity.value);
+        });
+    }
+
+    /**
      * Receives invoke activities with the name 'composeExtension/submitAction'.
      * @remarks
      * This invoke activity is received when a user 
      * @param handler (context: TurnContext, value: MessagingExtensionAction) => Promise<MessagingExtensionActionResponse>
      */
-    public onTeamsMessagingExtensionSubmit(
+    public onTeamsMessagingExtensionSubmitAction(
         handler: (context: TurnContext, value: MessagingExtensionAction) => Promise<MessagingExtensionActionResponse>): this {
-            this.checkRegisteredTeamsHandlers('TeamsComposeExtension/SubmitAction');
-            return this.on('TeamsComposeExtension/SubmitAction', async (context, next) => {
+        this.checkRegisteredTeamsHandlers('TeamsComposeExtension/SubmitAction');
+        return this.on('TeamsComposeExtension/SubmitAction', async (context, next) => {
             const messagingExtensionActionResponse: MessagingExtensionActionResponse = await handler(context, context.activity.value);
             const invokeResponse = TeamsActivityHandler.createInvokeResponse(messagingExtensionActionResponse);
             await TeamsActivityHandler.sendInvokeResponse(context, invokeResponse);
@@ -372,11 +385,11 @@ export class TeamsActivityHandler extends ActivityHandler {
                 case ActivityTypes.Invoke:
                     // The onInvokeActivity handler should not call `runDialogs`, it needs to let the
                     // typed-Invoke Activity handler call `runDialogs`.
-                    await this.handle(context, 'Invoke', async () => {});
+                    await this.handle(context, 'Invoke', async () => { });
                     let invokeResponse: InvokeResponse;
                     switch (context.activity.name) {
                         case 'fileConsent/invoke':
-                            await this.handle(context, 'TeamsFileConsent', async () => {});
+                            await this.handle(context, 'TeamsFileConsent', async () => { });
                             switch (context.activity.value.action) {
                                 case 'accept':
                                     await this.handle(context, 'TeamsFileConsentAccept', runDialogs);
@@ -402,6 +415,7 @@ export class TeamsActivityHandler extends ActivityHandler {
                             await this.handle(context, 'TeamsComposeExtension/SelectItem', runDialogs);
                             break;
                         case 'composeExtension/submitAction':
+                            await this.handle(context, 'TeamsComposeExtension/SubmitActionDispatch', async () => { });
                             if ((context.activity.value as MessagingExtensionAction).botMessagePreviewAction === 'edit') {
                                 await this.handle(context, 'TeamsComposeExtension/SubmitAction/BotMessagePreviewEdit', runDialogs);
                             } else if ((context.activity.value as MessagingExtensionAction).botMessagePreviewAction === 'send') {
@@ -449,7 +463,7 @@ export class TeamsActivityHandler extends ActivityHandler {
         // Invoke activity received, the bot should send a NotImplemented HTTP status code.
         if (context.activity.type === ActivityTypes.Invoke && context.activity.channelId === 'msteams' &&
             (type !== 'InvokeActivity' && type !== 'TeamsFileConsent') && (!(type in this.handlers) || this.handlers[type].length < 1)) {
-                return await TeamsActivityHandler.sendNotImplementedError(context);
+            return await TeamsActivityHandler.sendNotImplementedError(context);
         }
         return await super.handle(context, type, onNext);
     }

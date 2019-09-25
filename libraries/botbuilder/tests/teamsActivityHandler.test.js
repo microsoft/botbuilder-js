@@ -93,6 +93,50 @@ describe('TeamsActivityHandler', () => {
         });
     });
 
+    describe('should send an OK status code when', () => {
+        it('a "fileConsent/invoke" activity is handled by an onTeamsFileConsentAccept handler', async () => {
+            const bot = new TeamsActivityHandler();
+            bot.onTeamsFileConsentAccept(async (context, fileConsentCardResponse) => {
+                assert(context, 'context not found');
+                assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
+            });
+    
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'accept' });
+            adapter.send(fileConsentActivity)
+                .assertReply(activity => {
+                    assert(activity.type === 'invokeResponse', `incorrect activity type "${activity.type}", expected "invokeResponse"`);
+                    assert(activity.value.status === 200, `incorrect status code "${activity.value.status}", expected "200"`);
+                    assert(!activity.value.body,
+                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
+                });
+        });
+
+        it('a "fileConsent/invoke" activity is handled by an onTeamsFileConsentAccept handler', async () => {
+            const bot = new TeamsActivityHandler();
+            bot.onTeamsFileConsentDecline(async (context, fileConsentCardResponse) => {
+                assert(context, 'context not found');
+                assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
+            });
+    
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'decline' });
+            adapter.send(fileConsentActivity)
+                .assertReply(activity => {
+                    assert(activity.type === 'invokeResponse', `incorrect activity type "${activity.type}", expected "invokeResponse"`);
+                    assert(activity.value.status === 200, `incorrect status code "${activity.value.status}", expected "200"`);
+                    assert(!activity.value.body,
+                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
+                });
+        });
+    });
+
     describe('should dispatch through a registered', () => {
         it('onTeamsFileConsent handler before an onTeamsFileConsentAccept handler', async () => {
             const bot = new TeamsActivityHandler();
@@ -105,7 +149,7 @@ describe('TeamsActivityHandler', () => {
                 assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
                 fileConsentCalled = true;
             });
-            bot.onTeamsFileConsentAccept(async (context, fileConsentCardResponse, next) => {
+            bot.onTeamsFileConsentAccept(async (context, fileConsentCardResponse) => {
                 assert(context, 'context not found');
                 assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
                 assert(fileConsentCalled, 'onTeamsFileConsent handler was not called before onTeamsFileConsentAccept handler');
@@ -146,7 +190,7 @@ describe('TeamsActivityHandler', () => {
             bot.onTeamsFileConsentDecline(async (context, fileConsentCardResponse, next) => {
                 assert(context, 'context not found');
                 assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
-                assert(fileConsentCalled, 'onTeamsFileConsent handler was not called before onTeamsFileConsentAccept handler');
+                assert(fileConsentCalled, 'onTeamsFileConsent handler was not called before onTeamsFileConsentDecline handler');
                 fileConsentDeclineCalled = true;
             });
             assert(bot.handlers['TeamsFileConsent'].length === 1);
@@ -165,7 +209,7 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
                 }).then(() => {
                     assert(fileConsentCalled, 'onTeamsFileConsent handler not called');
-                    assert(fileConsentDeclineCalled, 'onTeamsFileConsentAccept handler not called');
+                    assert(fileConsentDeclineCalled, 'onTeamsFileConsentDecline handler not called');
     
                 });
         });
@@ -263,44 +307,48 @@ describe('TeamsActivityHandler', () => {
                     assert(dialogCalled, 'onDialog handler not called');
                 });
         });
-    });
 
-    xit('should fire onDialog handler after receiving a Teams Invoke activity', async () => {
-        const bot = new TeamsActivityHandler();
-
-        let fileConsentCalled = false;
-        let fileConsentAcceptCalled = false;
-
-        bot.onDialog(async (context, next) => {
-            assert(true, 'this should not be called during test.');
-            assert(context, 'context not found');
-            assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
-            fileConsentCalled = true;
-        });
-
-        bot.onTeamsFileConsentAccept(async (context, fileConsentCardResponse) => {
-            assert(context, 'context not found');
-            assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
-            assert(fileConsentCalled, 'onTeamsFileConsent handler was not called before onTeamsFileConsentAccept handler');
-            fileConsentAcceptCalled = true;
-        });
-
-        const adapter = new TestAdapter(async context => {
-            await bot.run(context);
-        });
-
-        const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'accept' });
-        adapter.send(fileConsentActivity)
-            .assertReply(activity => {
-                assert(activity.type === 'invokeResponse', `incorrect activity type "${activity.type}", expected "invokeResponse"`);
-                assert(activity.value.status === 200, `incorrect status code "${activity.value.status}", expected "200"`);
-                assert(!activity.value.body,
-                    `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
-            }).then(() => {
-                assert(fileConsentCalled, 'onTeamsFileConsent handler not called')
-                assert(fileConsentAcceptCalled, 'onTeamsFileConsentAccept handler not called');
-
+        it('onTeamsFileConsentDecline routed activity', async () => {
+            const bot = new TeamsActivityHandler();
+    
+            let fileConsentCalled = false;
+            let fileConsentDeclineCalled = false;
+            let dialogCalled = false;
+    
+            bot.onTeamsFileConsent(async (context, fileConsentCardResponse) => {
+                assert(context, 'context not found');
+                assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
+                fileConsentCalled = true;
             });
+            bot.onTeamsFileConsentDecline(async (context, fileConsentCardResponse) => {
+                assert(context, 'context not found');
+                assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
+                assert(fileConsentCalled, 'onTeamsFileConsent handler was not called before onTeamsFileConsentDecline handler');
+                fileConsentDeclineCalled = true;
+            });
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                dialogCalled = true;
+            });
+    
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'decline' });
+            adapter.send(fileConsentActivity)
+                .assertReply(activity => {
+                    assert(activity.type === 'invokeResponse', `incorrect activity type "${activity.type}", expected "invokeResponse"`);
+                    assert(activity.value.status === 200, `incorrect status code "${activity.value.status}", expected "200"`);
+                    assert(!activity.value.body,
+                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
+                }).then(() => {
+                    assert(fileConsentCalled, 'onTeamsFileConsent handler not called');
+                    assert(fileConsentDeclineCalled, 'onTeamsFileConsentDecline handler not called');
+                    assert(dialogCalled, 'onDialog handler not called');
+                });
+        });
     });
 
     xit('should handle "AcceptFileConsent" activities', async () => {
