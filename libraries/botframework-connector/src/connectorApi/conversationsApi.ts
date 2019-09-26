@@ -11,7 +11,6 @@
  */
 
 import http = require('http');
-import * as HttpStatus from 'http-status-codes';
 
 /* tslint:disable:no-unused-locals */
 import { AttachmentData } from './model/attachmentData';
@@ -20,9 +19,6 @@ import { ObjectSerializer, RequestOptions, Activity } from './model/models';
 import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
 import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
 import { CustomMicrosoftAppCredentials } from '../auth'
-import * as Models from './model';
-import { ConversationsSendToConversationResponse } from '../connectorApi/models';
-import { continuationToken } from '../connectorApi/models/parameters';
 import { ConversationsGetConversationsOptionalParams } from './model/parameters/conversationsGetConversationsOptionalParams';
 
 

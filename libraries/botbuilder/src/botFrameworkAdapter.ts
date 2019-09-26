@@ -429,11 +429,11 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const client: TokenApiClient = this.createTokenApiClient(url);
         
         //Custom token Api
-        const customClient: CustomTokenApiClient = this.createCustomTokenApiClient(url);                    
+        const customClient: TokenApiClient = this.createTokenApiClient(url);                    
 
         const result: TokenApiModels.UserTokenGetTokenResponse = await client.userToken.getToken(userId, connectionName, { code: magicCode, channelId: context.activity.channelId });
-        
-        const customResult: CustomModels.UserTokenGetTokenResponse = await customClient.userToken.getToken(userId, connectionName, { code: magicCode, channelId: context.activity.channelId });
+        // TO-DO TODO
+        // const customResult: CustomModels.UserTokenGetTokenResponse = await customClient.userToken.getToken(userId, connectionName, { code: magicCode, channelId: context.activity.channelId });
         
         if (!result || !result.token || result._response.status == 404) {
 
@@ -760,12 +760,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         return client;
     }
 
+    // TO-DO TODO
     // Custom token Api Client
-    protected createCustomTokenApiClient(serviceUrl: string): CustomTokenApiClient {
-        const customClient = new CustomTokenApiClient(this.credentials, { baseUri: serviceUrl } );                
+    // protected createCustomTokenApiClient(serviceUrl: string): CustomTokenApiClient {
+    //     const customClient = new CustomTokenApiClient(this.credentials, { baseUri: serviceUrl } );                
 
-        return customClient;
-    }
+    //     return customClient;
+    // }
 
     /**
      * Allows for mocking of the OAuth Api URL in unit tests.
