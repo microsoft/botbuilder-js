@@ -16,12 +16,10 @@ import * as HttpStatus from 'http-status-codes';
 /* tslint:disable:no-unused-locals */
 import { AttachmentData } from './model/attachmentData';
 import { Transcript } from './model/transcript';
-import { ObjectSerializer, RequestOptions, Activity } from './model/models';
+import { ObjectSerializer, RequestOptions, Activity, ModelError } from './model/models';
 import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
 import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
 import { CustomMicrosoftAppCredentials } from '../auth'
-import * as Models from './model';
-import { ConversationsSendToConversationResponse } from '../connectorApi/models';
 
 
 const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
@@ -64,19 +62,31 @@ export class ConversationsApi {
 
     private async deserializeResponse<T>(url, requestOptions): Promise<T> {
         return new Promise<T>((resolve, reject) => {
-            fetch(url, requestOptions).then(response => {
+            fetch(url, requestOptions).then(response => {         
                 let httpResponse: http.IncomingMessage = response;
-                response.json().then(result => {
-                    let _body: T = ObjectSerializer.deserialize(result);
-                    let _bodyAsText: string = _body == undefined ? '' : ObjectSerializer.deserialize(result);
-                    let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
-                    let toReturn: T = _body == undefined ? Object.assign(_body, {}) : Object.assign(_body, _response.parsedBody);
+                
+                if (response.status &&  response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) { 
+                    response.json().then(result => {
+                        let _body: T = ObjectSerializer.deserialize(result);
+                        let _bodyAsText: string = _body == undefined? "" : ObjectSerializer.deserialize(result, "string");
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
+                        let toReturn: T = _body == undefined? Object.assign( {_response: _response}) : Object.assign(_body, {_response: _response});
 
-                    resolve(toReturn);
-                }).catch(err => {
-                    let toReturn: T = { _error: err } as any
-                    resolve(toReturn);
-                });
+                        resolve(toReturn);
+                    }).catch(err => {
+                        let toReturn: T =  { _error: err} as any;
+                        resolve(toReturn);
+                    });
+                } else {
+                    response.json().then(result => {
+                        let _body = {
+                            code: result.error.code,
+                            message: result.error.message
+                        }
+                    
+                        reject(_body);
+                    });
+                }                
             });
         });
     }
@@ -88,33 +98,21 @@ export class ConversationsApi {
             throw new Error('Required parameter parameters was null or undefined when calling conversationsCreateConversation.');
         }
 
-        const path = this.basePath + '/v3/conversations';
-        let queryParameters: {} = {};
-        let headerParams: {} = Object.assign({}, this._defaultHeaders);
+        const path = this.basePath + '/v3/conversations';        
+        let headerParams = Object.assign({}, this._defaultHeaders);
 
-        Object.assign(headerParams, options.headers);
-
-        let formParams: {} = {};
-        let useFormData = false;
-        let url = new URL(path);
-
-        Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+        Object.assign(headerParams, options.headers);        
+        let url = new URL(path);        
 
         let requestOptions = {
-            method: 'POST',
-            qs: queryParameters,
+            method: 'POST',            
             headers: headerParams,
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: JSON.stringify(ObjectSerializer.serialize(parameters, "ConversationParameters")),
+            body: JSON.stringify(parameters),
             proxy: options.proxyOptions
         };
-
-
-        if (Object.keys(formParams).length) {
-            useFormData ? requestOptions['formData'] = formParams : requestOptions['form'] = formParams;
-        }
 
         await this.credentials.signRequest(requestOptions);
 
