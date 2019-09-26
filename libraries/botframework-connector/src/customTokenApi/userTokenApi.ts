@@ -162,7 +162,7 @@ export class UserTokenApi {
             localQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
         }
 
-        if (options.code !== undefined) {
+        if (options.code !== undefined || options.code != null) { 
             localQueryParameters['code'] = ObjectSerializer.serialize(options.code, "string");
         }        
 
