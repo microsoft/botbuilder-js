@@ -107,9 +107,11 @@ export class ActivityHandler {
      * 
      * @remarks
      * Conversation update activities describe a changes to a conversation's metadata, such as title, participants,
-     * or other channel-specific information. The [onMembersAdded](xref:botbuilder-core.ActivityHandler.onMembersAdded)
-     * and [onMembersRemoved](xref:botbuilder-core.ActivityHandler.onMembersRemoved) sub-type events are also emitted
-     * when members are added or removed from the conversation.
+     * or other channel-specific information.
+     * 
+     * To handle when members are added to or removed from the conversation, use the
+     * [onMembersAdded](xref:botbuilder-core.ActivityHandler.onMembersAdded) and
+     * [onMembersRemoved](xref:botbuilder-core.ActivityHandler.onMembersRemoved) sub-type event handlers.
      */
     public onConversationUpdate(handler: BotHandler): this {
         return this.on('ConversationUpdate', handler);
@@ -131,52 +133,89 @@ export class ActivityHandler {
     }
 
     /**
-     * Receives only ConversationUpdate activities representing members being removed.
+     * Binds an activity event handler to the _members removed_ event, emitted for any incoming
+     * conversation update activity that includes members removed from the conversation.
+     * 
+     * @param handler The event handler to bind.
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
      * @remarks
-     * context.activity.membersRemoved will include at least one entry.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     * The activity's [membersRemoved](xref:botframework-schema.Activity.membersRemoved) property
+     * contains the members removed from the conversation, which can include the bot.
      */
     public onMembersRemoved(handler: BotHandler): this {
         return this.on('MembersRemoved', handler);
     }
 
     /**
-     * Receives only MessageReaction activities, regardless of whether message reactions were added or removed
+     * Binds an activity event handler to the _message reaction_ event, emitted for every incoming
+     * message reaction activity.
+     * 
+     * @param handler The event handler to bind.
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
      * @remarks
-     * MessageReaction activities are sent to the bot when a message reacion, such as 'like' or 'sad' are
-     * associated with an activity previously sent from the bot.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     * Message reaction activities represent a social interaction on an existing message activity
+     * within a conversation. The original activity is referred to by the message reaction activity's
+     * [replyToId](xref:botframework-schema.Activity.replyToId) property. The
+     * [from](xref:botframework-schema.Activity.from) property represents the source of the reaction,
+     * such as the user that reacted to the message.
+     * 
+     * To handle when reactions are added to or removed from the conversation, use the
+     * [onReactionsAdded](xref:botbuilder-core.ActivityHandler.onReactionsAdded) and
+     * [onReactionsRemoved](xref:botbuilder-core.ActivityHandler.onReactionsRemoved) sub-type event handlers.
      */
     public onMessageReaction(handler: BotHandler): this {
         return this.on('MessageReaction', handler);
     }
 
     /**
-     * Receives only MessageReaction activities representing message reactions being added.
+     * Binds an activity event handler to the _reactions added_ event, emitted for any incoming
+     * message reaction activity that describes reactions added to the conversation.
+     * 
+     * @param handler The event handler to bind.
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
      * @remarks
-     * context.activity.reactionsAdded will include at least one entry.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     * The activity's [reactionsAdded](xref:botframework-schema.Activity.reactionsAdded) property
+     * includes one or more reactions that were added.
      */
     public onReactionsAdded(handler: BotHandler): this {
         return this.on('ReactionsAdded', handler);
     }
 
     /**
-     * Receives only MessageReaction activities representing message reactions being removed.
+     * Binds an activity event handler to the _reactions removed_ event, emitted for any incoming
+     * message reaction activity that describes reactions removed from the conversation.
+     * 
+     * @param handler The event handler to bind.
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
      * @remarks
-     * context.activity.reactionsRemoved will include at least one entry.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     * The activity's [reactionsRemoved](xref:botframework-schema.Activity.reactionsRemoved) property
+     * includes one or more reactions that were removed.
      */
     public onReactionsRemoved(handler: BotHandler): this {
         return this.on('ReactionsRemoved', handler);
     }
 
     /**
-     * Receives all Event activities.
+     * Binds an activity event handler to the _event_ event, emitted for every incoming event activity.
+     * 
+     * @param handler The event handler to bind.
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
      * @remarks
      * Event activities communicate programmatic information from a client or channel to a bot.
-     * The meaning of an event activity is defined by the `name` field.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     * The meaning of an event activity is defined by the activity's
+     * [name](xref:botframework-schema.Activity.name) property, which is meaningful within the scope
+     * of a channel. Event activities are designed to carry both interactive information (such as
+     * button clicks) and non-interactive information (such as a notification of a client
+     * automatically updating an embedded speech model).
+     * 
+     * To handle a `tokens/response` event event, use the
+     * [onTokenResponseEvent](xref:botbuilder-core.ActivityHandler.onTokenResponseEvent) sub-type
+     * event handler. To handle other named events, and logic to this handler.
      */
     public onEvent(handler: BotHandler): this {
         return this.on('Event', handler);
