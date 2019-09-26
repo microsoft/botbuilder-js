@@ -9,4 +9,5 @@ export * from './auth';
 export { ConnectorClient } from './connectorApi/connectorClient';
 export { TokenApiClient, TokenApiModels } from './tokenApi/tokenApiClient';
 export { EmulatorApiClient } from './emulatorApiClient';
+export { CustomTokenApiClient } from './customTokenApi/customTokenApiClient';
 export * from './tokenApi/models'
