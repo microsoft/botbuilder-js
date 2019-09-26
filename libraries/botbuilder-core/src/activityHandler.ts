@@ -8,97 +8,123 @@
 import { Activity, ActivityTypes, TurnContext } from '.';
 
 /**
- * Contains a portion of bot logic for handling an incoming activity as an event.
+ * Describes an activity event handler, for use with an [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+ * 
  * @remarks
- * The incoming activity is contained in [TurnContext.activity](xref:botbuilder-core.TurnContext.activity).
- * Call the `next` function to continue the processing of this event. Not doing so will stop propagation of this event.
+ * **Parameters**
+ * 
+ * | Name | Type | Description |
+ * | :--- | :--- | :--- |
+ * | `context` | [TurnContext](xref:botbuilder-core.TurnContext) | The context object for the turn. |
+ * | `next` | () => Promise<void> | A continuation function for handling the activity. |
+ * 
+ * The incoming activity is contained in the `context` object's [activity](xref:botbuilder-core.TurnContext.activity) property.
+ * Call the `next` function to continue the processing of activity events. Not doing so will stop propagation of events for this activity.
  */
 export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Promise<any>;
 
 /**
- * Event-emitting base class bots.
+ * Event-emitting base class for bots.
  *
  * @remarks
- * This provides an extensible base class for handling incoming
- * activities in an event-driven way.  Developers may bind one or
- * more handlers for each type of event.
+ * This provides an extensible base class for handling incoming activities in an event-driven way.
+ * Developers may implement an arbitrary set of handlers for each event type.
  *
- * To bind a handler to an event, use the `on<Event>()` method, for example:
+ * To bind a handler to an event, use the corresponding _on event_ method. If multiple handlers are
+ * bound to an event, they are run in the order in which they were bound.
  *
- * ```Javascript
- * bot.onMessage(async (context, next) => {
- * // do something
- * // then `await next()` to continue processing
- * await next();
- * });
+ * The `ActivityHandler` emits a series of _events_ as the activity is processed.
+ * Handlers can stop the propagation of the event by not calling the continuation function.
+ *
+ * | Event type | Description |
+ * | :--- | :--- |
+ * | Turn | Emitted first for every activity. |
+ * | Type-specific | Emitted when handling a the specific activity type, before emitting an event for any sub-type. |
+ * | Sub-type | Emitted for certain specialized events, based on activity content. |
+ * | Dialog | Emitted as the final activity processing event. Designed for passing control to a dialog. |
+ *
+ * For example:
+ * 
  * ```
- *
- * A series of events will be emitted while the activity is being processed.
- * Handlers can stop the propagation of the event by omitting a call to `next()`.
- *
- * * Turn - emitted for every activity
- * * Type-specific - an event, based on activity.type
- * * Sub-type - any specialized events, based on activity content
- * * Dialog - the final event, used for processing Dialog actions
- *
- * A simple implementation:
- * ```Javascript
  * const bot = new ActivityHandler();
  *
- *  server.post('/api/messages', (req, res) => {
- *      adapter.processActivity(req, res, async (context) => {
- *          // Route to main dialog.
- *          await bot.run(context);
- *      });
+ * server.post('/api/messages', (req, res) => {
+ *     adapter.processActivity(req, res, async (context) => {
+ *         // Route to main dialog.
+ *         await bot.run(context);
+ *     });
  * });
  *
- * bot.onMessage(async (context, next) => {
- *      // do stuff
- *      await context.sendActivity(`Echo: ${ context.activity.text }`);
- *      // proceed with further processing
- *      await next();
- * });
+ * bot.onTurn(async (context, next) => {
+ *         // Handle a "turn" event.
+ *         await context.sendActivity(`${ context.activity.type } activity received.`);
+ *         // Continue with further processing.
+ *         await next();
+ *     })
+ *     .onMessage(async (context, next) => {
+ *         // Handle a message activity.
+ *         await context.sendActivity(`Echo: ${ context.activity.text }`);
+ *         // Continue with further processing.
+ *         await next();
+ *     });
  * ```
  */
 export class ActivityHandler {
     private readonly handlers: {[type: string]: BotHandler[]} = {};
 
     /**
-     * Bind a handler to the Turn event that is fired for every incoming activity, regardless of type
-     * @remarks
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     * Binds an activity event handler to the _turn_ event, emitted for every incoming activity, regardless of type.
+     * 
+     * @param handler The event handler to bind.
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      */
     public onTurn(handler: BotHandler): this {
         return this.on('Turn', handler);
     }
 
     /**
-     * Receives all incoming Message activities
+     * Binds an activity event handler to the _message_ event, emitted for every incoming message activity.
+     * 
+     * @param handler The event handler to bind.
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
      * @remarks
-     * Message activities represent content intended to be shown within a conversational interface.
-     * Message activities may contain text, speech, interactive cards, and binary or unknown attachments.
-     * Note that while most messages do contain text, this field is not always present!
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     * Message activities represent content intended to be shown within a conversational interface
+     * and can contain text, speech, interactive cards, and binary or unknown attachments.
+     * Not all message activities contain text, the [text](xref:botframework-schema.Activity.text)
+     * property of the message activity can be `null` or `undefined`.
      */
     public onMessage(handler: BotHandler): this {
         return this.on('Message', handler);
     }
 
     /**
-     * Receives all ConversationUpdate activities, regardless of whether members were added or removed
+     * Binds an activity event handler to the _conversation update_ event, emitted for every incoming
+     * conversation update activity.
+     * 
+     * @param handler The event handler to bind.
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
      * @remarks
-     * Conversation update activities describe a change in a conversation's members, description, existence, or otherwise.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     * Conversation update activities describe a changes to a conversation's metadata, such as title, participants,
+     * or other channel-specific information. The [onMembersAdded](xref:botbuilder-core.ActivityHandler.onMembersAdded)
+     * and [onMembersRemoved](xref:botbuilder-core.ActivityHandler.onMembersRemoved) sub-type events are also emitted
+     * when members are added or removed from the conversation.
      */
     public onConversationUpdate(handler: BotHandler): this {
         return this.on('ConversationUpdate', handler);
     }
 
     /**
-     * Receives only ConversationUpdate activities representing members being added.
+     * Binds an activity event handler to the _members added_ event, emitted for any incoming
+     * conversation update activity that includes members added to the conversation.
+     * 
+     * @param handler The event handler to bind.
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
      * @remarks
-     * context.activity.membersAdded will include at least one entry.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     * The activity's [membersAdded](xref:botframework-schema.Activity.membersAdded) property
+     * contains the members added to the conversation, which can include the bot.
      */
     public onMembersAdded(handler: BotHandler): this {
         return this.on('MembersAdded', handler);

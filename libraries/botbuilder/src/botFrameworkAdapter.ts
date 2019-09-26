@@ -10,7 +10,7 @@ import * as os from 'os';
 /**
  * Represents an Express or Restify request object.
  * 
- * > [!NOTE] This interface supports the framework and is not intended to be called directly for your code.
+ * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface WebRequest {
     /**
@@ -39,7 +39,7 @@ export interface WebRequest {
 /**
  * Represents an Express or Restify response object.
  * 
- * > [!NOTE] This interface supports the framework and is not intended to be called directly for your code.
+ * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface WebResponse {
     /**
@@ -95,7 +95,7 @@ export interface BotFrameworkAdapterSettings {
     oAuthEndpoint?: string;
 
     /**
-     * Optional. The Open ID Metadata endpoint for your bot to use.
+     * Optional. The OpenID Metadata endpoint for your bot to use.
      */
     openIdMetadata?: string;
 
@@ -108,7 +108,7 @@ export interface BotFrameworkAdapterSettings {
 /**
  * Represents a response returned by a bot when it receives an `invoke` activity.
  * 
- * > [!NOTE] This interface supports the framework and is not intended to be called directly for your code.
+ * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface InvokeResponse {
     /**
@@ -371,16 +371,15 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     /**
      * An asynchronous method that deletes an existing activity.
      * 
-     * > [!NOTE]
-     * > - This interface supports the framework and is not intended to be called directly for your code.
-     * > - Not all channels support this operation. For channels that don't, this call may throw an exception.
+     * This interface supports the framework and is not intended to be called directly for your code.
+     * Use [TurnContext.deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity) to delete
+     * an activity from your bot code.
      * 
      * @param context The context object for the turn.
      * @param reference Conversation reference information for the activity to delete.
      * 
      * @remarks
-     * Use [TurnContext.deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity) to delete
-     * an activity from your bot code.
+     * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
     public async deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
         if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing serviceUrl`); }
@@ -394,14 +393,14 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
     /**
      * An asynchronous method that removes a member from the current conversation.
-     *
-     * > [!NOTE] Not all channels support this operation. For channels that don't, this call may throw an exception.
      * 
      * @param context The context object for the turn.
      * @param memberId The ID of the member to remove from the conversation.
      *
      * @remarks
      * Remove a member's identity information from the conversation.
+     * 
+     * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
     public async deleteConversationMember(context: TurnContext, memberId: string): Promise<void> {
         if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.deleteConversationMember(): missing serviceUrl`); }
@@ -625,7 +624,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
     /**
      * An asynchronous method that sends an emulated OAuth card for a channel.
-     * > [!NOTE] This method supports the framework and is not intended to be called directly for your code.
+     * 
+     * This method supports the framework and is not intended to be called directly for your code.
      * 
      * @param contextOrServiceUrl The URL of the emulator.
      * @param emulate `true` to send an emulated OAuth card to the emulator; or `false` to not send the card.
@@ -664,6 +664,11 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      *      Returning a promise (or providing an `async` handler) will cause the adapter to wait for any asynchronous operations to complete.
      *    - After the `logic` function completes, the promise chain set up by the middleware is resolved.
      *
+     * > [!TIP]
+     * > If you see the error `TypeError: Cannot perform 'set' on a proxy that has been revoked`
+     * > in your bot's console output, the likely cause is that an async function was used
+     * > without using the `await` keyword. Make sure all async functions use await!
+     *
      * Middleware can _short circuit_ a turn. When this happens, subsequent middleware and the
      * `logic` function is not called; however, all middleware prior to this point still run to completion.
      * For more information about the middleware pipeline, see the
@@ -683,11 +688,6 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      *    });
      * });
      * ```
-     *
-     * > [!TIP]
-     * > If you see the error `TypeError: Cannot perform 'set' on a proxy that has been revoked`
-     * > in your bot's console output, the likely cause is that an async function was used
-     * > without using the `await` keyword. Make sure all async functions use await!
      */
     public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
         let body: any;
@@ -738,7 +738,10 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
     /**
      * An asynchronous method that sends a set of outgoing activities to a channel server.
-     * > [!NOTE] This method supports the framework and is not intended to be called directly for your code.
+     * 
+     * This method supports the framework and is not intended to be called directly for your code.
+     * Use the turn context's [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) or
+     * [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) method from your bot code.
      *
      * @param context The context object for the turn.
      * @param activities The activities to send.
@@ -749,11 +752,6 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * The activities will be sent one after another in the order in which they're received. A
      * response object will be returned for each sent activity. For `message` activities this will
      * contain the ID of the delivered message.
-     *
-     * Use the turn context's [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) or
-     * [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) method, instead of directly
-     * calling this method. The [TurnContext](xref:botbuilder-core.TurnContext) ensures that outgoing
-     * activities are properly addressed and that all registered response event handlers are notified.
      */
     public async sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         const responses: ResourceResponse[] = [];
@@ -799,16 +797,15 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     /**
      * An asynchronous method that replaces a previous activity with an updated version.
      * 
-     * > [!NOTE]
-     * > - This interface supports the framework and is not intended to be called directly for your code.
-     * > - Not all channels support this operation. For channels that don't, this call may throw an exception.
+     * This interface supports the framework and is not intended to be called directly for your code.
+     * Use [TurnContext.updateActivity](xref:botbuilder-core.TurnContext.updateActivity) to update
+     * an activity from your bot code.
      * 
      * @param context The context object for the turn.
      * @param activity The updated version of the activity to replace.
      * 
      * @remarks
-     * Use [TurnContext.updateActivity](xref:botbuilder-core.TurnContext.updateActivity) to update
-     * an activity from your bot code.
+     * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
     public async updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void> {
         if (!activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.updateActivity(): missing serviceUrl`); }
