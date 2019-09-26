@@ -179,7 +179,9 @@ export class UserTokenApi {
             userAgent: this.userAgent
         };
 
-        await this.credentials.signRequest(requestOptions);
+        if(options.headers['authorization'] === undefined) {
+            await this.credentials.signRequest(requestOptions);
+        }
 
         return this.deserializeResponse<Models.UserTokenGetTokenResponse>(url, requestOptions, "TokenResponse");
     }
