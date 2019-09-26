@@ -20,6 +20,8 @@ import { ObjectSerializer, RequestOptions, Activity, ModelError } from './model/
 import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
 import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
 import { CustomMicrosoftAppCredentials } from '../auth'
+import { ConversationsGetConversationsOptionalParams } from './model/parameters/conversationsGetConversationsOptionalParams';
+
 
 
 const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
@@ -410,7 +412,7 @@ export class ConversationsApi {
      * @summary GetConversations
      * @param continuationToken skip or continuation token
      */
-    public async getConversations(options: RequestOptions = { headers: {} })
+    public async getConversations(options?: ConversationsGetConversationsOptionalParams)
         : Promise<useResourceResponse> {
         const path = this.basePath + '/v3/conversations';
         let queryParameters: {} = {};
@@ -423,6 +425,10 @@ export class ConversationsApi {
         let useFormData = false;
 
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
+
+        if (options && options.continuationToken) {
+            queryParameters['continuationToken'] = ObjectSerializer.serialize(options.continuationToken, 'string');
+        }
 
         let requestOptions = {
             method: 'GET',
