@@ -24,7 +24,7 @@ var util = require('util');
 var uuid = require('uuid');
 var msRest = require('ms-rest');
 var msRestAzure = require('ms-rest-azure');
-var MicrosoftAppCredentials = require('../../libraries/botframework-connector/lib/auth/customMicrosoftAppCredentials');
+var MicrosoftAppCredentials = require('../../libraries/botframework-connector/lib/auth/microsoftAppCredentials');
 var TokenApiClient = require('../../libraries/botframework-connector/lib/tokenApi/tokenApiClient');
 var FileTokenCache = require('../util/fileTokenCache');
 var MockTokenCache = require('./mock-token-cache');
@@ -737,7 +737,7 @@ _.extend(SuiteBase.prototype, {
                 return callback(null);
             });
 
-            sinon.stub(MicrosoftAppCredentials.CustomMicrosoftAppCredentials.prototype, 'getToken').callsFake(async (forceRefresh) => {
+            sinon.stub(MicrosoftAppCredentials.MicrosoftAppCredentials.prototype, 'getToken').callsFake(async (forceRefresh) => {
                 return 'mockToken';
             });
 

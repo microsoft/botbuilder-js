@@ -5,14 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as msrest from '@azure/ms-rest-js';
+
 import * as url from 'url';
 import { AuthenticationConstants } from './authenticationConstants';
 
 /**
  * MicrosoftAppCredentials auth implementation and cache
  */
-export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials {
+export class MicrosoftAppCredentials {
 
     private static readonly trustedHostNames: Map<string, Date> = new Map<string, Date>([
         ['state.botframework.com', new Date(8640000000000000)],              // Date.MAX_VALUE,
@@ -89,11 +89,13 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
         return false;
     }
 
-    public async signRequest(webResource: msrest.WebResource): Promise<msrest.WebResource> {
+    public async signRequest(webResource: any): Promise<void> {
         if (this.shouldSetToken(webResource)) {
             const token: string = await this.getToken();
 
-            return new msrest.TokenCredentials(token).signRequest(webResource);
+            if (webResource && webResource.headers) {
+                webResource.headers["Authorization"] = "Bearer " + token;
+            }
         }
 
         return webResource;
@@ -163,8 +165,8 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
         return this.refreshingToken;
     }
 
-    private shouldSetToken(webResource: msrest.WebResource): boolean {
-        return MicrosoftAppCredentials.isTrustedServiceUrl(webResource.url);
+    private shouldSetToken(webResource: any): boolean {
+        return MicrosoftAppCredentials.isTrustedServiceUrl(webResource.uri);
     }
 }
 

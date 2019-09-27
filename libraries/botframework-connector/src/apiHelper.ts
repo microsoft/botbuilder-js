@@ -52,7 +52,7 @@ export class ApiHelper {
                     resolve(toReturn);
                 }).catch(err => {
                     let toReturn: T = { _error: err } as any
-                    resolve(toReturn);
+                    reject(toReturn);
                 });
             });
         });

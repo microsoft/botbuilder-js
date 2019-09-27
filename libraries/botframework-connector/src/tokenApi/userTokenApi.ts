@@ -11,7 +11,7 @@
  */
 
 import * as Models from './model';
-import { CustomMicrosoftAppCredentials } from '../auth'
+import { MicrosoftAppCredentials } from '../auth'
 import { TokenApiClient } from './tokenApiClient';
 import { ApiHelper } from '../apiHelper';
 
@@ -19,7 +19,7 @@ import { ApiHelper } from '../apiHelper';
 export class UserTokenApi {
     protected _basePath: string;
     protected defaultHeaders = {};    
-    protected credentials: CustomMicrosoftAppCredentials;
+    protected credentials: MicrosoftAppCredentials;
     protected userAgent: string;
 
     constructor(client: TokenApiClient){

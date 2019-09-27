@@ -20,7 +20,7 @@ import http = require('http');
 import * as HttpStatus from 'http-status-codes';
 
 import { RequestOptions, GetAttachmentResponse, GetAttachmentInfoResponse } from './model/models';
-import { CustomMicrosoftAppCredentials } from '../auth'
+import { MicrosoftAppCredentials } from '../auth'
 import { ApiHelper } from '../apiHelper';
 
 const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
@@ -33,10 +33,10 @@ export class AttachmentsApi {
     protected _basePath = defaultBasePath;
     protected _defaultHeaders: any = {};
     protected _useQuerystring: boolean = false;
-    protected credentials: CustomMicrosoftAppCredentials;
+    protected credentials: MicrosoftAppCredentials;
 
-    constructor(CustomCredentials: CustomMicrosoftAppCredentials)
-    constructor(CustomCredentials: CustomMicrosoftAppCredentials, basePath?: string) {
+    constructor(CustomCredentials: MicrosoftAppCredentials)
+    constructor(CustomCredentials: MicrosoftAppCredentials, basePath?: string) {
         if (basePath) {
             this.basePath = basePath;
         }
@@ -94,7 +94,25 @@ export class AttachmentsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return await ApiHelper.deserializeResponse<GetAttachmentResponse>(url, requestOptions);
+        return new Promise<GetAttachmentResponse>((resolve, reject) => {
+            let httpResponse;
+            fetch(url, requestOptions).then(response => {         
+                httpResponse = response;
+                return response.body
+            }).then((body)=>{
+                if (httpResponse.status &&  httpResponse.status >= HttpStatus.OK && httpResponse.status < HttpStatus.MULTIPLE_CHOICES) { 
+                        let _body: Buffer = ApiHelper.deserialize(body, "Buffer");
+                        let _bodyAsText: string = _body == undefined? "" : ApiHelper.deserialize(body, "string");                        
+                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body, readableStreamBody: _body});                        
+                        let toReturn: GetAttachmentResponse = _body == undefined? Object.assign( {_response: _response}) : Object.assign(_body, {_response: _response});
+
+                        resolve(toReturn);                    
+                } else {
+                    let toReturn: GetAttachmentResponse = Object.assign({_response: httpResponse});   
+                    resolve(toReturn);
+                }                
+            });
+        });
     }
 
     /**

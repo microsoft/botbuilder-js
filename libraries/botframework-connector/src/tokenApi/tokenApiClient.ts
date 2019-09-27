@@ -7,7 +7,7 @@
 import { UserTokenApi } from './userTokenApi';
 import { BotSignInApi } from './botSignInApi';
 import * as Model from "./model";
-import { CustomMicrosoftAppCredentials } from '../auth'
+import { MicrosoftAppCredentials } from '../auth'
 import * as os from 'os';
 
 const ARCHITECTURE: any = os.arch();
@@ -23,7 +23,7 @@ class TokenApiClient {
   // Operation groups
   botSignIn: BotSignInApi;
   userToken: UserTokenApi;
-  credentials: CustomMicrosoftAppCredentials;
+  credentials: MicrosoftAppCredentials;
   baseUri: string;  
   requestContentType: string = "application/json; charset=utf-8";
   userAgent: string;
@@ -33,7 +33,7 @@ class TokenApiClient {
    * @param credentials Subscription credentials which uniquely identify client subscription.
    * @param [options] The parameter options
    */
-  constructor( CustomCredentials: CustomMicrosoftAppCredentials, options?: { baseUri: string, userAgent?: string }) {
+  constructor( CustomCredentials: MicrosoftAppCredentials, options?: { baseUri: string, userAgent?: string }) {
     options.userAgent = `${packageName}/${packageVersion} ${defaultUserAgent} ${options.userAgent || ''}`
     this.credentials = CustomCredentials;
     this.userAgent = options.userAgent;

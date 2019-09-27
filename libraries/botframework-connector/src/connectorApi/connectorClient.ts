@@ -7,7 +7,7 @@
 import * as Models from "./model";
 import { ConversationsApi } from './conversationsApi';
 import { AttachmentsApi } from './attachmentsApi';
-import { CustomMicrosoftAppCredentials } from '../auth'
+import { MicrosoftAppCredentials } from '../auth'
 
 class ConnectorClient {
   // Operation groups
@@ -18,7 +18,7 @@ class ConnectorClient {
    * @param credentials Subscription credentials which uniquely identify client subscription.
    * @param [options] The parameter options
    */
-  constructor(CustomCredentials: CustomMicrosoftAppCredentials, options?: { baseUri: string }) {    
+  constructor(CustomCredentials: MicrosoftAppCredentials, options?: { baseUri: string }) {    
     this.attachments = new AttachmentsApi(CustomCredentials);
     this.conversations = new ConversationsApi(CustomCredentials);
 

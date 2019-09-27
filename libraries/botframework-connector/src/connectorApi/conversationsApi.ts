@@ -18,7 +18,7 @@ import { Transcript } from './model/transcript';
 import { RequestOptions, Activity } from './model/models';
 import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
 import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
-import { CustomMicrosoftAppCredentials } from '../auth'
+import { MicrosoftAppCredentials } from '../auth'
 import { ConversationsGetConversationsOptionalParams } from './model/parameters/conversationsGetConversationsOptionalParams';
 import { ApiHelper } from '../apiHelper';
 
@@ -33,10 +33,10 @@ export class ConversationsApi {
     protected _basePath: string = defaultBasePath;
     protected _defaultHeaders: {} = {};
     protected _useQuerystring: boolean = false;
-    protected credentials: CustomMicrosoftAppCredentials;
+    protected credentials: MicrosoftAppCredentials;
 
-    constructor(CustomCredentials: CustomMicrosoftAppCredentials)
-    constructor(CustomCredentials: CustomMicrosoftAppCredentials, basePath?: string) {
+    constructor(CustomCredentials: MicrosoftAppCredentials)
+    constructor(CustomCredentials: MicrosoftAppCredentials, basePath?: string) {
         if (basePath)
             this.basePath = basePath;
 
