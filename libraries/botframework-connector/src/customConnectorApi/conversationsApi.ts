@@ -64,24 +64,7 @@ export class ConversationsApi {
         this._defaultHeaders = defaultHeaders;
     }
 
-    private async deserializeResponse<T>(url, requestOptions): Promise<T> {
-        return new Promise<T>((resolve, reject) => {
-            fetch(url, requestOptions).then(response => {
-                let httpResponse: http.IncomingMessage = response;
-                response.json().then(result => {
-                    let _body: T = ObjectSerializer.deserialize(result);
-                    let _bodyAsText: string = _body == undefined ? '' : ObjectSerializer.deserialize(result);
-                    let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
-                    let toReturn: T = _body == undefined ? Object.assign(_body, {}) : Object.assign(_body, _response.parsedBody);
 
-                    resolve(toReturn);
-                }).catch(err => {
-                    let toReturn: T = { _error: err } as any
-                    resolve(toReturn);
-                });
-            });
-        });
-    }
 
 
     public async createConversation(parameters: ConversationParameters, options: RequestOptions = { headers: {} }): Promise<CreateConversationResponse> {
