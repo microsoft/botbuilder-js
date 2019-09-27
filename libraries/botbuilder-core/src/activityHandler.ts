@@ -222,22 +222,35 @@ export class ActivityHandler {
     }
 
     /**
-     * Receives event activities of type 'tokens/response'
+     * Binds an activity event handler to the _tokens-response_ event, emitted for any incoming
+     * `tokens/response` event activity. These are generated as part of OAuth authentication flow.
+     * 
+     * @param handler The event handler to bind.
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
      * @remarks
-     * These events occur during the oauth flow
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     * The activity's [value](xref:botframework-schema.Activity.value) property contains the user token.
+     * 
+     * If your bot handles authentication using an [OAuthPrompt](xref:botbuilder-dialogs.OAuthPrompt)
+     * within a dialog, then the dialog will need to receive this activity to complete the authentication flow.
      */
     public onTokenResponseEvent(handler: BotHandler): this {
         return this.on('TokenResponseEvent', handler);
     }
 
     /**
-     * UnrecognizedActivityType will fire if an activity is received with a type that has not previously been defined.
+     * Binds an activity event handler to the _unrecognized activity type_ event, emitted for an
+     * incoming activity with a type for which the ActivityHandler doesn't provide an event handler.
+     * 
+     * @param handler The event handler to bind.
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
      * @remarks
-     * Some channels or custom adapters may create Actitivies with different, "unofficial" types.
-     * These events will be passed through as UnrecognizedActivityType events.
-     * Check `context.activity.type` for the type value.
-     * @param handler BotHandler A handler function in the form async(context, next) => { ... }
+     * Channels and custom adapters can create [Activities](xref:botframework-schema.Activity) with
+     * types not defined in the [Bot Framework Activity schema](http://aka.ms/botSpecs-activitySchema).
+     * When the activity handler receives such an event, it emits an unrecognized activity type event.
+     * 
+     * The activity's [type](xref:botframework-schema.Activity.type) property contains the activity type.
      */
     public onUnrecognizedActivityType(handler: BotHandler): this {
         return this.on('UnrecognizedActivityType', handler);
