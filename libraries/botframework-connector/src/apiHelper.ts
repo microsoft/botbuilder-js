@@ -1,30 +1,51 @@
-import { ObjectSerializer } from "./customTokenApi/model";
+import http = require('http');
+import { primitives, enumsMap, typeMap } from "./types";
+const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
 
 export class ApiHelper {
 
-    let primitives = [
-        "string",
-        "boolean",
-        "double",
-        "integer",
-        "long",
-        "float",
-        "number",
-        "any"
-     ];
-     
-let enumsMap: {[index: string]: any} = {
-}
+    public static findCorrectType(data: any, expectedType: string) {
+        if (data == undefined) {
+            return expectedType;
+        } else if (primitives.indexOf(expectedType.toLowerCase()) !== -1) {
+            return expectedType;
+        } else if (expectedType === "Date") {
+            return expectedType;
+        } else {
+            if (enumsMap[expectedType]) {
+                return expectedType;
+            }
 
+            if (!typeMap[expectedType]) {
+                return expectedType; // w/e we don't know the type
+            }
 
+            // Check the discriminator
+            let discriminatorProperty = typeMap[expectedType].discriminator;
+            if (discriminatorProperty == null) {
+                return expectedType; // the type does not have a discriminator. use it.
+            } else {
+                if (data[discriminatorProperty]) {
+                    var discriminatorType = data[discriminatorProperty];
+                    if(typeMap[discriminatorType]){
+                        return discriminatorType; // use the type given in the discriminator
+                    } else {
+                        return expectedType; // discriminator did not map to a type
+                    }
+                } else {
+                    return expectedType; // discriminator was not present (or an empty string)
+                }
+            }
+        }
+    }
 
-    public async deserializeResponse<T>(url, requestOptions): Promise<T> {
+    public static async deserializeResponse<T>(url, requestOptions): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             fetch(url, requestOptions).then(response => {
                 let httpResponse: http.IncomingMessage = response;
                 response.json().then(result => {
-                    let _body: T = this.deserialize(result);
-                    let _bodyAsText: string = _body == undefined ? '' : ObjectSerializer.deserialize(result);
+                    let _body: T = ApiHelper.deserialize(result);
+                    let _bodyAsText: string = _body == undefined ? '' : ApiHelper.deserialize(result);
                     let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
                     let toReturn: T = _body == undefined ? Object.assign(_body, {}) : Object.assign(_body, _response.parsedBody);
 
@@ -49,7 +70,7 @@ let enumsMap: {[index: string]: any} = {
             let transformedData: any[] = [];
             for (let index in data) {
                 let date = data[index];
-                transformedData.push(ObjectSerializer.serialize(date, subType));
+                transformedData.push(ApiHelper.serialize(date, subType));
             }
             return transformedData;
         } else if (type === "Date") {
@@ -70,7 +91,7 @@ let enumsMap: {[index: string]: any} = {
             let instance: {[index: string]: any} = {};
             for (let index in attributeTypes) {
                 let attributeType = attributeTypes[index];
-                instance[attributeType.baseName] = ObjectSerializer.serialize(data[attributeType.name], attributeType.type);
+                instance[attributeType.baseName] = ApiHelper.serialize(data[attributeType.name], attributeType.type);
             }
             return instance;
         }
@@ -78,7 +99,7 @@ let enumsMap: {[index: string]: any} = {
 
     public static deserialize(data: any, type: string = '') {
         // polymorphism may change the actual type.
-        type = ObjectSerializer.findCorrectType(data, type);
+        type = ApiHelper.findCorrectType(data, type);
         if (data == undefined) {
             return data;
         } else if (primitives.indexOf(type.toLowerCase()) !== -1) {
@@ -89,7 +110,7 @@ let enumsMap: {[index: string]: any} = {
             let transformedData: any[] = [];
             for (let index in data) {
                 let date = data[index];
-                transformedData.push(this.deserialize(date, subType));
+                transformedData.push(ApiHelper.deserialize(date, subType));
             }
             return transformedData;
         } else if (type === "Date") {
@@ -106,7 +127,7 @@ let enumsMap: {[index: string]: any} = {
             let attributeTypes = typeMap[type].getAttributeTypeMap();
             for (let index in attributeTypes) {
                 let attributeType = attributeTypes[index];
-                instance[attributeType.name] = this.deserialize(data[attributeType.baseName], attributeType.type);
+                instance[attributeType.name] = ApiHelper.deserialize(data[attributeType.baseName], attributeType.type);
             }
             return instance;
         }

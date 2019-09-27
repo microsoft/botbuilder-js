@@ -16,8 +16,8 @@ import * as Models from './model';
 
 /* tslint:disable:no-unused-locals */
 import { CustomMicrosoftAppCredentials } from '../auth'
-import { ObjectSerializer } from './model/models';
 import { TokenApiClient } from './tokenApiClient';
+import { ApiHelper } from '../apiHelper';
 
 
 
@@ -56,8 +56,8 @@ export class UserTokenApi {
                 
                 if (response.status &&  response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) { 
                     response.json().then(result => {
-                        let _body: T = ObjectSerializer.deserialize(result, type);
-                        let _bodyAsText: string = _body == undefined? "" : ObjectSerializer.deserialize(result, "string");
+                        let _body: T = ApiHelper.deserialize(result, type);
+                        let _bodyAsText: string = _body == undefined? "" : ApiHelper.deserialize(result, "string");
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
                         let toReturn: T = _body == undefined? Object.assign( {_response: _response}) : Object.assign(_body, {_response: _response});
 
@@ -100,15 +100,15 @@ export class UserTokenApi {
         }
 
         if (userId !== undefined) {
-            localQueryParameters['userId'] = ObjectSerializer.serialize(userId, "string");
+            localQueryParameters['userId'] = ApiHelper.serialize(userId, "string");
         }
 
         if (connectionName !== undefined) {
-            localQueryParameters['connectionName'] = ObjectSerializer.serialize(connectionName, "string");
+            localQueryParameters['connectionName'] = ApiHelper.serialize(connectionName, "string");
         }
 
         if (options.channelId !== undefined) {
-            localQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
+            localQueryParameters['channelId'] = ApiHelper.serialize(options.channelId, "string");
         }
 
         let url = new URL(localPath)
@@ -151,19 +151,19 @@ export class UserTokenApi {
         }
 
         if (userId !== undefined) {
-            localQueryParameters['userId'] = ObjectSerializer.serialize(userId, "string");
+            localQueryParameters['userId'] = ApiHelper.serialize(userId, "string");
         }
 
         if (connectionName !== undefined) {
-            localQueryParameters['connectionName'] = ObjectSerializer.serialize(connectionName, "string");
+            localQueryParameters['connectionName'] = ApiHelper.serialize(connectionName, "string");
         }
 
         if (options.channelId !== undefined) {
-            localQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
+            localQueryParameters['channelId'] = ApiHelper.serialize(options.channelId, "string");
         }
 
         if (options.code !== undefined) {
-            localQueryParameters['code'] = ObjectSerializer.serialize(options.code, "string");
+            localQueryParameters['code'] = ApiHelper.serialize(options.code, "string");
         }        
 
         let url = new URL(localPath)
@@ -200,15 +200,15 @@ export class UserTokenApi {
         }
 
         if (userId !== undefined) {
-            localQueryParameters['userId'] = ObjectSerializer.serialize(userId, "string");
+            localQueryParameters['userId'] = ApiHelper.serialize(userId, "string");
         }
 
         if (options.channelId !== undefined) {
-            localQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
+            localQueryParameters['channelId'] = ApiHelper.serialize(options.channelId, "string");
         }
 
         if (options.include !== undefined) {
-            localQueryParameters['include'] = ObjectSerializer.serialize(options.include, "string");
+            localQueryParameters['include'] = ApiHelper.serialize(options.include, "string");
         }
 
         let url = new URL(localPath)
@@ -245,15 +245,15 @@ export class UserTokenApi {
         }
 
         if (userId !== undefined) {
-            localQueryParameters['userId'] = ObjectSerializer.serialize(userId, "string");
+            localQueryParameters['userId'] = ApiHelper.serialize(userId, "string");
         }
 
         if (options.connectionName !== undefined) {
-            localQueryParameters['connectionName'] = ObjectSerializer.serialize(options.connectionName, "string");
+            localQueryParameters['connectionName'] = ApiHelper.serialize(options.connectionName, "string");
         }
 
         if (options.channelId !== undefined) {
-            localQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
+            localQueryParameters['channelId'] = ApiHelper.serialize(options.channelId, "string");
         }
 
         let url = new URL(localPath)
@@ -277,8 +277,8 @@ export class UserTokenApi {
                 
                 if (response.status &&  response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) { 
                     response.text().then(result => {
-                        let _body: string = ObjectSerializer.deserialize(result, "string");
-                        let _bodyAsText: string = _body == undefined? "" : ObjectSerializer.deserialize(result, "string");
+                        let _body: string = ApiHelper.deserialize(result, "string");
+                        let _bodyAsText: string = _body == undefined? "" : ApiHelper.deserialize(result, "string");
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body}); 
 
                         resolve({body: _body, _response: _response});

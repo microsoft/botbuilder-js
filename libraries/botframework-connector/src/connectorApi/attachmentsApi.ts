@@ -19,8 +19,9 @@
 import http = require('http');
 import * as HttpStatus from 'http-status-codes';
 
-import { ObjectSerializer, RequestOptions, GetAttachmentResponse, GetAttachmentInfoResponse } from './model/models';
+import { RequestOptions, GetAttachmentResponse, GetAttachmentInfoResponse } from './model/models';
 import { CustomMicrosoftAppCredentials } from '../auth'
+import { ApiHelper } from '../apiHelper';
 
 const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
 let defaultBasePath = 'https://api.botframework.com';
@@ -93,25 +94,7 @@ export class AttachmentsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return new Promise<GetAttachmentResponse>((resolve, reject) => {
-            let httpResponse;
-            fetch(url, requestOptions).then(response => {         
-                httpResponse = response;
-                return response.body
-            }).then((body)=>{
-                if (httpResponse.status &&  httpResponse.status >= HttpStatus.OK && httpResponse.status < HttpStatus.MULTIPLE_CHOICES) { 
-                        let _body: Buffer = ObjectSerializer.deserialize(body, "Buffer");
-                        let _bodyAsText: string = _body == undefined? "" : ObjectSerializer.deserialize(body, "string");                        
-                        let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body, readableStreamBody: _body});                        
-                        let toReturn: GetAttachmentResponse = _body == undefined? Object.assign( {_response: _response}) : Object.assign(_body, {_response: _response});
-
-                        resolve(toReturn);                    
-                } else {
-                    let toReturn: GetAttachmentResponse = Object.assign({_response: httpResponse});   
-                    resolve(toReturn);
-                }                
-            });
-        });
+        return await ApiHelper.deserializeResponse<GetAttachmentResponse>(url, requestOptions);
     }
 
     /**
@@ -143,28 +126,6 @@ export class AttachmentsApi {
         
         await this.credentials.signRequest(requestOptions);
 
-        return await this.deserializeResponse<GetAttachmentInfoResponse>(url, requestOptions);
-    }
-
-    private async deserializeResponse<T>(url, requestOptions): Promise<T> {
-        return new Promise<T>((resolve, reject) => {
-            fetch(url, requestOptions).then(response => {
-                let httpResponse: http.IncomingMessage = response;
-
-                if (response.status && response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) {
-                    response.json().then(result => {
-                        let _body: T = ObjectSerializer.deserialize(result);
-                        let _bodyAsText: string = _body == undefined ? '' : ObjectSerializer.deserialize(result);
-                        let _response = Object.assign(httpResponse, { bodyAsText: _bodyAsText, parsedBody: _body });
-                        let toReturn: T = _body == undefined ? Object.assign(_body, {}) : Object.assign(_body, _response.parsedBody);
-
-                        resolve(toReturn);
-                    });
-                } else {
-                    let toReturn: T = {} as any
-                    resolve(toReturn);
-                }
-            }).catch(err => resolve(err));
-        });
+        return await ApiHelper.deserializeResponse<GetAttachmentInfoResponse>(url, requestOptions);
     }
 }

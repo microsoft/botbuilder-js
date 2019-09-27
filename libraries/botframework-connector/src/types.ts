@@ -1,8 +1,8 @@
 
-import * as TokenModel from "./customTokenApi/model";
-import * as ConnectorModel from './customConnectorApi/model'
+import * as TokenModel from "./tokenApi/model";
+import * as ConnectorModel from './connectorApi/model'
 
-let typeMap: {[index: string]: any} = {
+export let typeMap: {[index: string]: any} = {
     "AadResourceUrls": TokenModel.AadResourceUrls,
     "ErrorResponse": TokenModel.ErrorResponse,
     "InnerHttpError": TokenModel.InnerHttpError,
@@ -62,7 +62,7 @@ let typeMap: {[index: string]: any} = {
     "PaymentRequestCompleteResult": ConnectorModel.PaymentRequestCompleteResult,
     "PaymentRequestUpdate": ConnectorModel.PaymentRequestUpdate,
     "PaymentRequestUpdateResult": ConnectorModel.PaymentRequestUpdateResult,
-    "PaymentResponse": PaymentResponse,
+    "PaymentResponse": ConnectorModel.PaymentResponse,
     "PaymentShippingOption": ConnectorModel.PaymentShippingOption,
     "Place": ConnectorModel.Place,
     "ReceiptCard": ConnectorModel.ReceiptCard,
@@ -81,4 +81,19 @@ let typeMap: {[index: string]: any} = {
     "TokenRequest": ConnectorModel.TokenRequest,
     "Transcript": ConnectorModel.Transcript,
     "VideoCard": ConnectorModel.VideoCard,
+}
+
+
+export let primitives = [
+    "string",
+    "boolean",
+    "double",
+    "integer",
+    "long",
+    "float",
+    "number",
+    "any"
+ ];
+ 
+ export let enumsMap: {[index: string]: any} = {
 }

@@ -8,3 +8,4 @@ export { ConnectorClient } from './ConnectorApi/connectorClient';
 export { EmulatorApiClient } from './emulatorApiClient';
 export { TokenApiClient, TokenApiModels } from './TokenApi/tokenApiClient';
 export * from './TokenApi/model'
+export * from './apiHelper'

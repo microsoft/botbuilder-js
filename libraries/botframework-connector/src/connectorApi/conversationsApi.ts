@@ -15,11 +15,12 @@ import http = require('http');
 /* tslint:disable:no-unused-locals */
 import { AttachmentData } from './model/attachmentData';
 import { Transcript } from './model/transcript';
-import { ObjectSerializer, RequestOptions, Activity } from './model/models';
+import { RequestOptions, Activity } from './model/models';
 import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
 import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
 import { CustomMicrosoftAppCredentials } from '../auth'
 import { ConversationsGetConversationsOptionalParams } from './model/parameters/conversationsGetConversationsOptionalParams';
+import { ApiHelper } from '../apiHelper';
 
 
 const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
@@ -61,8 +62,6 @@ export class ConversationsApi {
     }
 
 
-
-
     public async createConversation(parameters: ConversationParameters, options: RequestOptions = { headers: {} }): Promise<CreateConversationResponse> {
         // verify required parameter 'parameters' is not null or undefined
         if (parameters == null) {
@@ -88,7 +87,7 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: JSON.stringify(ObjectSerializer.serialize(parameters, "ConversationParameters")),
+            body: JSON.stringify(ApiHelper.serialize(parameters, "ConversationParameters")),
             proxy: options.proxyOptions
         };
 
@@ -99,7 +98,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<CreateConversationResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<CreateConversationResponse>(url, requestOptions);
     }
 
     /**
@@ -152,10 +151,8 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<DeleteActivityResponse>(url, requestOptions);
     }
-
-
 
     /**
      * Deletes a member from a conversation.
@@ -210,7 +207,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<DeleteActivityResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<DeleteActivityResponse>(url, requestOptions);
     }
 
     /**
@@ -263,7 +260,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<GetConversationMembersResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<GetConversationMembersResponse>(url, requestOptions);
     }
 
     /**
@@ -309,7 +306,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<GetConversationMembersResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<GetConversationMembersResponse>(url, requestOptions);
     }
 
     /**
@@ -341,11 +338,11 @@ export class ConversationsApi {
         }
 
         if (parameters.pageSize !== undefined) {
-            queryParameters['pageSize'] = ObjectSerializer.serialize(parameters.pageSize, "number");
+            queryParameters['pageSize'] = ApiHelper.serialize(parameters.pageSize, "number");
         }
 
         if (parameters.continuationToken !== undefined) {
-            queryParameters['continuationToken'] = ObjectSerializer.serialize(parameters.continuationToken, "string");
+            queryParameters['continuationToken'] = ApiHelper.serialize(parameters.continuationToken, "string");
         }
 
         const path = this.basePath + '/v3/conversations/{conversationId}/pagedmembers'
@@ -376,7 +373,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -408,7 +405,7 @@ export class ConversationsApi {
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
 
         if (options && options.continuationToken) {
-            queryParameters['continuationToken'] = ObjectSerializer.serialize(options.continuationToken, 'string');
+            queryParameters['continuationToken'] = ApiHelper.serialize(options.continuationToken, 'string');
         }
 
         let requestOptions = {
@@ -427,7 +424,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -491,7 +488,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -535,7 +532,7 @@ export class ConversationsApi {
             uri: path,
             useQuerystring: this._useQuerystring,
             json: true,
-            body: ObjectSerializer.serialize(history, "Transcript"),
+            body: ApiHelper.serialize(history, "Transcript"),
             proxy: options.proxyOptions
         };
 
@@ -545,7 +542,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -590,7 +587,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -650,7 +647,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -689,7 +686,7 @@ export class ConversationsApi {
         Object.keys(queryParameters).forEach(key => url.searchParams.append(key, queryParameters[key]));
 
         // Object.serialize makes the originalBase64 parameter a Buffer
-        let serializedObj = ObjectSerializer.serialize(attachmentUpload, "AttachmentData");
+        let serializedObj = ApiHelper.serialize(attachmentUpload, "AttachmentData");
 
         // originalBase64 must be a string.
         if (serializedObj.originalBase64) {
@@ -713,6 +710,6 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<useResourceResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<useResourceResponse>(url, requestOptions);
     }
 }

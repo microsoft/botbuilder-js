@@ -17,9 +17,9 @@ import * as Models from './model';
 
 /* tslint:disable:no-unused-locals */
 
-import { ObjectSerializer } from './model/models';
 import { CustomMicrosoftAppCredentials } from '../auth'
 import { TokenApiClient } from './tokenApiClient';
+import { ApiHelper } from '../apiHelper';
 
 
 
@@ -69,23 +69,23 @@ export class BotSignInApi {
         }
 
         if (state !== undefined) {
-            localQueryParameters['state'] = ObjectSerializer.serialize(state, "string");
+            localQueryParameters['state'] = ApiHelper.serialize(state, "string");
         }
 
         if (options.codeChallenge !== undefined) {
-            localQueryParameters['code_challenge'] = ObjectSerializer.serialize(options.codeChallenge, "string");
+            localQueryParameters['code_challenge'] = ApiHelper.serialize(options.codeChallenge, "string");
         }
 
         if (options.emulatorUrl !== undefined) {
-            localQueryParameters['emulatorUrl'] = ObjectSerializer.serialize(options.emulatorUrl, "string");
+            localQueryParameters['emulatorUrl'] = ApiHelper.serialize(options.emulatorUrl, "string");
         }
 
         if (options.finalRedirect !== undefined) {
-            localQueryParameters['finalRedirect'] = ObjectSerializer.serialize(options.finalRedirect, "string");
+            localQueryParameters['finalRedirect'] = ApiHelper.serialize(options.finalRedirect, "string");
         }
 
         if (options.channelId !== undefined) {
-            localQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
+            localQueryParameters['channelId'] = ApiHelper.serialize(options.channelId, "string");
         }
 
         let url = new URL(localPath)
@@ -109,8 +109,8 @@ export class BotSignInApi {
                 
                 if (response.status &&  response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) { 
                     response.text().then(result => {
-                        let _body: string = ObjectSerializer.deserialize(result, "string");
-                        let _bodyAsText: string = _body == undefined? "" : ObjectSerializer.deserialize(result, "string");
+                        let _body: string = ApiHelper.deserialize(result, "string");
+                        let _bodyAsText: string = _body == undefined? "" : ApiHelper.deserialize(result, "string");
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body}); 
 
                         resolve({body: _body, _response: _response});

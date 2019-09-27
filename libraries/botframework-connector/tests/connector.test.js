@@ -29,6 +29,9 @@
 */
 var fs = require('fs');
 var assert = require('assert');
+var SuiteBase = require('../../../tools/framework/suite-base');
+var should = require('should');
+const BotConnector = require('../lib/customConnectorApi');
 
 require('dotenv').config({ path: 'tests/.env' });
 
@@ -40,14 +43,11 @@ function base64_encode(file) {
     return Buffer.from(bitmap);
 }
 
-const BotConnector = require('../lib/customConnectorApi');
 
 const ConnectorClient = BotConnector.BotConnector;
 const TokenApiClient = BotConnector.TokenApiClient;
 const Credentials = BotConnector.MicrosoftAppCredentials;
 
-var SuiteBase = require('../../../tools/framework/suite-base');
-var should = require('should');
 
 var requiredEnvironment = [
     'USER_ID',
