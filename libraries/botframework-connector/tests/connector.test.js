@@ -27,18 +27,10 @@
 *
 *   Notes: tokenApiClient.userToken.get*Token has to be mocked/stubbed because the bot can't be logged in to create a valid token
 */
-var fs = require('fs');
-var assert = require('assert');
-
-require('dotenv').config({ path: 'tests/.env' });
-
-// function to encode file data to base64 encoded string
-function base64_encode(file) {
-    // read binary data
-    var bitmap = fs.readFileSync(file);
-    // convert binary data to base64 encoded string
-    return Buffer.from(bitmap);
-}
+const fs = require('fs');
+const assert = require('assert');
+const SuiteBase = require('../../../tools/framework/suite-base');
+const should = require('should');
 
 const BotConnector = require('../lib/customConnectorApi');
 
@@ -46,8 +38,9 @@ const ConnectorClient = BotConnector.BotConnector;
 const TokenApiClient = BotConnector.TokenApiClient;
 const Credentials = BotConnector.MicrosoftAppCredentials;
 
-var SuiteBase = require('../../../tools/framework/suite-base');
-var should = require('should');
+require('dotenv').config({ path: 'tests/.env' });
+
+
 
 var requiredEnvironment = [
     'USER_ID',
@@ -58,6 +51,8 @@ var requiredEnvironment = [
 const clientId = process.env['CLIENT_ID'];
 const clientSecret = process.env['CLIENT_SECRET'];
 const hostURL = process.env['HOST_URL'] || 'https://slack.botframework.com';
+const testPrefix = 'botFramework-connector-tests';
+const libraryPath = 'botframework-connector';
 
 const user = {
     id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE'
@@ -66,8 +61,6 @@ const bot = {
     id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE'
 };
 
-const testPrefix = 'botFramework-connector-tests';
-const libraryPath = 'botframework-connector';
 var suite;
 var credentials;
 var client;
@@ -88,7 +81,7 @@ var createConversation = () => ({
 var createAttachment = () => ({
     name: 'bot-framework.png',
     type: 'image/png',
-    originalBase64: base64_encode(__dirname + '/bot-framework.png')
+    originalBase64: base64Encode(__dirname + '/bot-framework.png')
 });
 
 var readStreamToBuffer = function(stream, callback) {
@@ -97,6 +90,14 @@ var readStreamToBuffer = function(stream, callback) {
     stream.on('end', () => callback(null, buffer.join('')));
     stream.on('error', (err) => callback(err, null));
 };
+
+// function to encode file data to base64 encoded string
+function base64Encode(file) {
+    // read binary data
+    var bitmap = fs.readFileSync(file);
+    // convert binary data to base64 encoded string
+    return Buffer.from(bitmap);
+}
 
 describe('Bot Framework Connector SDK', function() {
     before(function(done) {
