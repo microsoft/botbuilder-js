@@ -4,31 +4,40 @@
  * regenerated.
  */
 
-import * as msRest from "@azure/ms-rest-js";
-import { ConnectorClientContext } from "./connectorClientContext";
-import * as Models from "./models";
-import * as Mappers from "./models/mappers";
-import * as operations from "./operations";
+import * as Models from "./model";
+import { ConversationsApi } from './conversationsApi';
+import { AttachmentsApi } from './attachmentsApi';
+import { CustomMicrosoftAppCredentials } from '../auth'
 
-class ConnectorClient extends ConnectorClientContext {
+class ConnectorClient {
   // Operation groups
-  attachments: operations.Attachments;
-  conversations: operations.Conversations;
-
+  attachments: AttachmentsApi;
+  conversations: ConversationsApi;
   /**
    * Initializes a new instance of the ConnectorClient class.
    * @param credentials Subscription credentials which uniquely identify client subscription.
    * @param [options] The parameter options
    */
-  constructor(credentials: msRest.ServiceClientCredentials, options?: Models.ConnectorClientOptions) {
-    super(credentials, options);
-    this.attachments = new operations.Attachments(this);
-    this.conversations = new operations.Conversations(this);
+  constructor(CustomCredentials: CustomMicrosoftAppCredentials, options?: { baseUri: string }) {    
+    this.attachments = new AttachmentsApi(CustomCredentials);
+    this.conversations = new ConversationsApi(CustomCredentials);
+
+    if (options){
+      this.attachments.basePath = options.baseUri;
+      this.attachments.defaultHeaders = { "Content-Type": "application/json; charset=utf-8"};
+      this.conversations.basePath = options.baseUri; 
+      this.conversations.defaultHeaders = { "Content-Type": "application/json; charset=utf-8"};
+    }
   }
 }
 
 // Operation Specifications
 
-export * from "./operations";
-export { ConnectorClient, ConnectorClientContext, Models as ConnectorModels, Mappers as ConnectorMappers };
+export * from "./model";
+export {
+  ConnectorClient,
+  ConversationsApi,
+  AttachmentsApi,
+  Models as CustomTokenApiModels,
+};
 

@@ -82,11 +82,11 @@ const testUploadAttachmentAndGetAttachmentInfo = async function(client, newClien
 
 (async () => {
     // AppId, Password, Client (telegram, slack, msteams, etc) to test
-    const appId = process.env.CLIENT_ID;
-    const appPassword = process.env.CLIENT_SECRET;
+    const appId ='952fc53e-ef44-4230-982f-18ea6187efa3';
+    const appPassword = 'WCnmUqmLVvfK+51sMq7Oqq0j?QxiPM]:';
     const basePath = process.env.HOST_URL;
     
-    const newCredentials = new CustomCredentials(appId, appPassword)
+    const newCredentials = new CustomCredentials(appId, appPassword);
     // Create client with new implementation
     const newClient = new CustomConnectorClient(newCredentials, {baseUri:basePath});
 
@@ -97,21 +97,23 @@ const testUploadAttachmentAndGetAttachmentInfo = async function(client, newClien
         withCredentials: true
     });
 
+    const gasper = {
+        id :'8465c57d-0c38-484f-9cc9-0120cd270023'
+    };
+    const mik = {
+        id: '4070e730-90b9-473e-bded-6e04e08a8864'
+    }
     // Parameters used by the method
     const params = {
         bot: {
-            id: process.env.BOT_ID
+            id: '2a5c3a66-b0e6-4688-b00e-af14a87de499'
         },
-        members: [
-            {
-                id: process.env.USER_ID
-            }
-        ]
+        members: [gasper]
     };
 
     try {
         // token creation to avoid issues with headers
-        const token = await credentials.getToken(true);
+        const token = await newCredentials.getToken(true);
         const options = {
             customHeaders: {
                 'Authorization': `Bearer ${ token }`
@@ -121,11 +123,10 @@ const testUploadAttachmentAndGetAttachmentInfo = async function(client, newClien
             }
         };
 
-        await testUploadAttachmentAndGetAttachmentInfo(client, newClient, params, options);
+        const conv = await newClient.conversations.createConversation(params, options);
+        const members = await newClient.conversations.getConversationMembers(conv.id, options);
+        console.log(members);
 
-        await testGetConversations(client, newClient, token, params, options);
-        
-        await testGetConversationsMembers(client, newClient, params, options);
     } catch (error) {
         console.error(error);
     }

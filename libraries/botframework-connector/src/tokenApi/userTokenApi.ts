@@ -17,7 +17,7 @@ import * as Models from './model';
 /* tslint:disable:no-unused-locals */
 import { CustomMicrosoftAppCredentials } from '../auth'
 import { ObjectSerializer } from './model/models';
-import { CustomTokenApiClient } from './customTokenApiClient';
+import { TokenApiClient } from './tokenApiClient';
 
 
 
@@ -34,7 +34,7 @@ export class UserTokenApi {
     protected credentials: CustomMicrosoftAppCredentials;
     protected userAgent: string;
 
-    constructor(client: CustomTokenApiClient){
+    constructor(client: TokenApiClient){
         this.credentials = client.credentials;
         this.defaultHeaders = {"content-type": client.requestContentType};
         this.userAgent = client.userAgent;

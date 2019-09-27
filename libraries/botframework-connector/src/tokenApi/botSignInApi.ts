@@ -19,7 +19,7 @@ import * as Models from './model';
 
 import { ObjectSerializer } from './model/models';
 import { CustomMicrosoftAppCredentials } from '../auth'
-import { CustomTokenApiClient } from './customTokenApiClient';
+import { TokenApiClient } from './tokenApiClient';
 
 
 
@@ -36,7 +36,7 @@ export class BotSignInApi {
     protected credentials: CustomMicrosoftAppCredentials;
     protected userAgent: string;
     
-    constructor(client: CustomTokenApiClient){
+    constructor(client: TokenApiClient){
         this.credentials = client.credentials;
         this.defaultHeaders = {"content-type": client.requestContentType};
         this.userAgent = client.userAgent;
