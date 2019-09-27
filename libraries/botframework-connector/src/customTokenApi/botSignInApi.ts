@@ -58,7 +58,7 @@ export class BotSignInApi {
      * @param emulatorUrl 
      * @param finalRedirect 
      */
-    public async getSignInUrl (state: string, options?: Models.BotSignInGetSignInUrlOptionalParams) : Promise<Models.BotSignInGetSignInUrlResponse> {
+    public async getSignInUrl (state: string, options: Models.BotSignInGetSignInUrlOptionalParams = {}) : Promise<Models.BotSignInGetSignInUrlResponse> {
         const localPath = this.basePath + '/api/botsignin/GetSignInUrl';
         let localQueryParameters = {};
         let localHeaderParams = Object.assign({}, this.defaultHeaders);    

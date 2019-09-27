@@ -162,7 +162,7 @@ export class UserTokenApi {
             localQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
         }
 
-        if (options.code !== undefined) {
+        if (options.code !== undefined || options.code != null) { 
             localQueryParameters['code'] = ObjectSerializer.serialize(options.code, "string");
         }        
 
@@ -179,7 +179,9 @@ export class UserTokenApi {
             userAgent: this.userAgent
         };
 
-        await this.credentials.signRequest(requestOptions);
+        if(options.headers['authorization'] === undefined) {
+            await this.credentials.signRequest(requestOptions);
+        }
 
         return this.deserializeResponse<Models.UserTokenGetTokenResponse>(url, requestOptions, "TokenResponse");
     }
