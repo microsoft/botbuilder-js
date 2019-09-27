@@ -11,10 +11,10 @@ var fs = require('fs');
 var createAttachment = () => ({
     name: 'bot-framework.png',
     type: 'image/png',
-    originalBase64: base64_encode(__dirname + '/bot-framework.png')
+    originalBase64: base64Encode(__dirname + '/bot-framework.png')
 });
 
-function base64_encode(file) {
+function base64Encode(file) {
     // read binary data
     var bitmap = fs.readFileSync(file);
     // convert binary data to base64 encoded string
