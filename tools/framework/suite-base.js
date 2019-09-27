@@ -24,7 +24,7 @@ var util = require('util');
 var uuid = require('uuid');
 var msRest = require('ms-rest');
 var msRestAzure = require('ms-rest-azure');
-var MicrosoftAppCredentials = require('../../libraries/botframework-connector/lib/auth/microsoftAppCredentials');
+var MicrosoftAppCredentials = require('../../libraries/botframework-connector/lib/auth/customMicrosoftAppCredentials');
 var TokenApiClient = require('../../libraries/botframework-connector/lib/tokenApi/tokenApiClient');
 var FileTokenCache = require('../util/fileTokenCache');
 var MockTokenCache = require('./mock-token-cache');
@@ -737,11 +737,11 @@ _.extend(SuiteBase.prototype, {
                 return callback(null);
             });
 
-            sinon.stub(MicrosoftAppCredentials.MicrosoftAppCredentials.prototype, 'getToken').callsFake(async (forceRefresh) => {
+            sinon.stub(MicrosoftAppCredentials.CustomMicrosoftAppCredentials.prototype, 'getToken').callsFake(async (forceRefresh) => {
                 return 'mockToken';
             });
 
-            sinon.stub(TokenApiClient.BotSignIn.prototype, 'getSignInUrl').callsFake(async (state, options, callback) => {
+            sinon.stub(TokenApiClient.BotSignInApi.prototype, 'getSignInUrl').callsFake(async (state, options, callback) => {
                 return {
                     _response: {
                         bodyAsText: 'https://token.botframework.com/api/oauth/signin?signin=921d46120f2f01dd01f4094929a89b57f4b8b0f41b',
@@ -752,7 +752,7 @@ _.extend(SuiteBase.prototype, {
         }
 
         // Stub these in all cases
-        sinon.stub(TokenApiClient.UserToken.prototype, 'getToken').callsFake(async (userId, connectionName, options, callback) => {
+        sinon.stub(TokenApiClient.UserTokenApi.prototype, 'getToken').callsFake(async (userId, connectionName, options, callback) => {
             const response = {
                 channelId: 'mockChannel',
                 connectionName: 'mockConnection',
@@ -771,7 +771,7 @@ _.extend(SuiteBase.prototype, {
             }
             return response;
         });
-        sinon.stub(TokenApiClient.UserToken.prototype, 'getAadTokens').callsFake(async (userId, connectionName, aadResourceUrls, callback) => {
+        sinon.stub(TokenApiClient.UserTokenApi.prototype, 'getAadTokens').callsFake(async (userId, connectionName, aadResourceUrls, callback) => {
             const response = {
                 channelId: 'mockChannel',
                 connectionName: 'mockConnection',
@@ -800,7 +800,7 @@ _.extend(SuiteBase.prototype, {
 
             return response;
         });
-        sinon.stub(TokenApiClient.UserToken.prototype, 'getTokenStatus').callsFake(async (userId, options, callback) => {
+        sinon.stub(TokenApiClient.UserTokenApi.prototype, 'getTokenStatus').callsFake(async (userId, options, callback) => {
             const response = {
                 channelId: 'mockChannel',
                 connectionName: 'mockConnection',
@@ -815,7 +815,7 @@ _.extend(SuiteBase.prototype, {
 
             return response;
         });
-        sinon.stub(TokenApiClient.UserToken.prototype, 'signOut').callsFake(async (userId, options, callback) => {
+        sinon.stub(TokenApiClient.UserTokenApi.prototype, 'signOut').callsFake(async (userId, options, callback) => {
             const response = {
                 body: { key: 'value' },
                 _response: {
