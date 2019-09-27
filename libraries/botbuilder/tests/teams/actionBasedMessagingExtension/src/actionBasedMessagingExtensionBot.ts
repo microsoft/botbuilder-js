@@ -2,6 +2,9 @@
 // Licensed under the MIT License.
 
 import {
+    Activity,
+    Attachment,
+    CardFactory,
     MessagingExtensionActionResponse,
     MessagingExtensionAction,
     TaskModuleContinueResponse,
@@ -10,13 +13,7 @@ import {
     TeamsActivityHandler,
 } from 'botbuilder';
 
-import {
-    Activity,
-    Attachment,
-    CardFactory
-} from 'botbuilder';
-
-export class TeamsActionExtensionBot extends TeamsActivityHandler {
+export class ActionBasedMessagingExtensionBot  extends TeamsActivityHandler {
     constructor() {
         super();
 

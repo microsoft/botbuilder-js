@@ -10,7 +10,7 @@ import * as restify from 'restify';
 import { BotFrameworkAdapter } from 'botbuilder';
 
 // This bot's main dialog.
-import { TeamsActionExtensionBot } from './teamsActionExtensionBot';
+import { ActionBasedMessagingExtensionBot  } from './actionBasedMessagingExtensionBot ';
 
 const ENV_FILE = path.join(__dirname, '..', '.env');
 config({ path: ENV_FILE });
@@ -42,7 +42,7 @@ adapter.onTurnError = async (context, error) => {
 };
 
 // Create the main dialog.
-const myBot = new TeamsActionExtensionBot();
+const myBot = new ActionBasedMessagingExtensionBot();
 
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
