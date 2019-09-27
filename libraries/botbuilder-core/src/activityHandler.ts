@@ -232,47 +232,96 @@ export class ActivityHandler {
         // List of all Activity Types:
         // https://github.com/Microsoft/botbuilder-js/blob/master/libraries/botframework-schema/src/index.ts#L1627
         await this.handle(context, 'Turn', async () => {
-            switch (context.activity.type) {
-                case ActivityTypes.Message:
-                    await this.handle(context, 'Message', runDialogs);
-                    break;
-                case ActivityTypes.ConversationUpdate:
-                    await this.handle(context, 'ConversationUpdate', async () => {
-                        if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
-                            await this.handle(context, 'MembersAdded', runDialogs);
-                        } else if (context.activity.membersRemoved && context.activity.membersRemoved.length > 0) {
-                            await this.handle(context, 'MembersRemoved', runDialogs);
-                        } else {
-                            await runDialogs();
-                        }
-                    });
-                    break;
-                case ActivityTypes.MessageReaction:
-                    await this.handle(context, 'MessageReaction', async () => {
-                        if (context.activity.reactionsAdded && context.activity.reactionsAdded.length > 0) {
-                            await this.handle(context, 'ReactionsAdded', runDialogs);
-                        } else if (context.activity.reactionsRemoved && context.activity.reactionsRemoved.length > 0) {
-                            await this.handle(context, 'ReactionsRemoved', runDialogs);
-                        } else {
-                            await runDialogs();
-                        }
-                    });
-                    break;
-                case ActivityTypes.Event:
-                    await this.handle(context, 'Event', async () => {
-                        if (context.activity.name === 'tokens/response') {
-                            await this.handle(context, 'TokenResponseEvent', runDialogs);
-                        } else {
-                            await runDialogs();
-                        }
-                    });
-                    break;
-                default:
-                // handler for unknown or unhandled types
-                    await this.handle(context, 'UnrecognizedActivityType', runDialogs);
-                    break;
-            }
+            await this.afterOnTurnDefault(context, runDialogs);
         });
+    }
+
+    protected async afterOnTurnDefault(context: TurnContext, next: () => Promise<void>): Promise<void> {
+        switch (context.activity.type) {
+            case ActivityTypes.Message:
+                await this.handle(context, 'Message', next);
+                break;
+            case ActivityTypes.ConversationUpdate:
+                    await this.handleConversationUpdate(context, next);
+                break;
+            case ActivityTypes.MessageReaction:
+                await this.handle(context, 'MessageReaction', async () => {
+                    if (context.activity.reactionsAdded && context.activity.reactionsAdded.length > 0) {
+                        await this.handle(context, 'ReactionsAdded', next);
+                    } else if (context.activity.reactionsRemoved && context.activity.reactionsRemoved.length > 0) {
+                        await this.handle(context, 'ReactionsRemoved', next);
+                    } else {
+                        await next();
+                    }
+                });
+                break;
+            case ActivityTypes.Event:
+                await this.handle(context, 'Event', async () => {
+                    if (context.activity.name === 'tokens/response') {
+                        await this.handle(context, 'TokenResponseEvent', next);
+                    } else {
+                        await next();
+                    }
+                });
+                break;
+            default:
+            // handler for unknown or unhandled types
+                await this.handle(context, 'UnrecognizedActivityType', next);
+                break;
+        }
+    }
+
+    private _handleConversationUpdate: (context: TurnContext, next: () => Promise<void>) => Promise<void>
+
+    /**
+     * Assign a function here to use different logic than the default handle ConversationUpdate logic.
+     * 
+     * The correct type to assign is: `(context: TurnContext, next: () => Promise<void>) => Promise<void>`
+     * @remarks
+     * The default logic is below:
+     * ```ts
+     *  await this.handle(context, 'ConversationUpdate', async () => {
+     *      await this.dispatchConversationUpdate(context, next);
+     *  });
+     * ```
+     */
+    get handleConversationUpdate(): (context: TurnContext, next: () => Promise<void>) => Promise<void> {
+        return this._handleConversationUpdate || this.defaultHandleConversationUpdate;
+    }
+
+    private async defaultHandleConversationUpdate(context: TurnContext, next: () => Promise<void>): Promise<void> {
+        await this.handle(context, 'ConversationUpdate', async () => {
+            await this.dispatchConversationUpdate(context, next);
+        });
+    }
+
+    /**
+     * Override this method when dispatching off of a ConversationUpdate to trigger other sub-events.
+     * @remarks
+     * Sample code:
+     * ```javascript
+     * bot.dispatchConversationUpdate(async (context, next) => {
+     *      const channelData = context.activity.data;
+     *      if (channelData.eventType === 'teamMemberAdded') {
+     *          await this.handle(context, 'TeamsMemberAdded', next);
+     *      } else if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
+     *          await this.handle(context, 'MembersAdded', next);
+     *      } else {
+     *          await next();
+     *      }
+     * });
+     * ```
+     * @param context TurnContext
+     * @param next () => Promise<void>
+     */
+    protected async dispatchConversationUpdate(context: TurnContext, next: () => Promise<void>): Promise<void> {
+        if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
+            await this.handle(context, 'MembersAdded', next);
+        } else if (context.activity.membersRemoved && context.activity.membersRemoved.length > 0) {
+            await this.handle(context, 'MembersRemoved', next);
+        } else {
+            await next();
+        }
     }
 
     /**
@@ -317,6 +366,15 @@ export class ActivityHandler {
         await runHandler(0);
 
         return returnValue;
+    }
+
+    /** 
+     * 
+    */
+    protected async runDialogs(context: TurnContext): Promise<void> {
+        await this.handle(context, 'Dialog', async () => {
+            // noop
+        });
     }
 
 }
