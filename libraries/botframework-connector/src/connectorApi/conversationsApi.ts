@@ -65,7 +65,7 @@ export class ConversationsApi {
     public async createConversation(parameters: ConversationParameters, options: RequestOptions = { headers: {} }): Promise<CreateConversationResponse> {
         // verify required parameter 'parameters' is not null or undefined
         if (parameters == null) {
-            throw new Error('Required parameter parameters was null or undefined when calling conversationsCreateConversation.');
+            throw new Error('Required parameter parameters was null or undefined when calling createConversation.');
         }
 
         const path = this.basePath + '/v3/conversations';
@@ -113,12 +113,12 @@ export class ConversationsApi {
 
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
-            throw new Error('Required parameter conversationId was null or undefined when calling conversationsDeleteActivity.');
+            throw new Error('Required parameter conversationId was null or undefined when calling deleteActivity.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
         if (activityId == null) {
-            throw new Error('Required parameter activityId was null or undefined when calling conversationsDeleteActivity.');
+            throw new Error('Required parameter activityId was null or undefined when calling deleteActivity.');
         }
 
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
@@ -169,12 +169,12 @@ export class ConversationsApi {
 
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
-            throw new Error('Required parameter conversationId was null or undefined when calling conversationsDeleteConversationMember.');
+            throw new Error('Required parameter conversationId was null or undefined when calling deleteConversationMember.');
         }
 
         // verify required parameter 'memberId' is not null or undefined
         if (memberId == null) {
-            throw new Error('Required parameter memberId was null or undefined when calling conversationsDeleteConversationMember.');
+            throw new Error('Required parameter memberId was null or undefined when calling deleteConversationMember.');
         }
 
         const path = this.basePath + `/v3/conversations/{conversationId}/members/{memberId}`
@@ -222,12 +222,12 @@ export class ConversationsApi {
 
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
-            throw new Error('Required parameter conversationId was null or undefined when calling conversationsGetActivityMembers.');
+            throw new Error('Required parameter conversationId was null or undefined when calling getActivityMembers.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
         if (activityId == null) {
-            throw new Error('Required parameter activityId was null or undefined when calling conversationsGetActivityMembers.');
+            throw new Error('Required parameter activityId was null or undefined when calling getActivityMembers.');
         }
 
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}/members'
@@ -274,7 +274,7 @@ export class ConversationsApi {
 
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
-            throw new Error('Required parameter conversationId was null or undefined when calling conversationsGetConversationMembers.');
+            throw new Error('Required parameter conversationId was null or undefined when calling getConversationMembers.');
         }
 
         const path = this.basePath + '/v3/conversations/{conversationId}/members'
@@ -334,7 +334,7 @@ export class ConversationsApi {
         let queryParameters: {} = {};
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
-            throw new Error('Required parameter conversationId was null or undefined when calling conversationsGetConversationPagedMembers.');
+            throw new Error('Required parameter conversationId was null or undefined when calling getConversationPagedMembers.');
         }
 
         if (parameters.pageSize !== undefined) {
@@ -445,17 +445,17 @@ export class ConversationsApi {
 
         // verify required parameter 'activity' is not null or undefined
         if (activity == null) {
-            throw new Error('Required parameter activity was null or undefined when calling conversationsReplyToActivity.');
+            throw new Error('Required parameter activity was null or undefined when calling replyToActivity.');
         }
 
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
-            throw new Error('Required parameter conversationId was null or undefined when calling conversationsReplyToActivity.');
+            throw new Error('Required parameter conversationId was null or undefined when calling replyToActivity.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
         if (activityId == null) {
-            throw new Error('Required parameter activityId was null or undefined when calling conversationsReplyToActivity.');
+            throw new Error('Required parameter activityId was null or undefined when calling replyToActivity.');
         }
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
@@ -506,11 +506,11 @@ export class ConversationsApi {
 
         // verify required parameter 'history' is not null or undefined
         if (history == null) {
-            throw new Error('Required parameter history was null or undefined when calling SendConversationHistory.');
+            throw new Error('Required parameter history was null or undefined when calling sendConversationHistory.');
         }
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
-            throw new Error('Required parameter conversationId was null or undefined when calling SendConversationHistory.');
+            throw new Error('Required parameter conversationId was null or undefined when calling sendConversationHistory.');
         }
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/history'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
@@ -562,11 +562,11 @@ export class ConversationsApi {
 
         // verify required parameter 'activity' is not null or undefined
         if (activity == null) {
-            throw new Error('Required parameter activity was null or undefined when calling SendToConversation.');
+            throw new Error('Required parameter activity was null or undefined when calling sendToConversation.');
         }
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
-            throw new Error('Required parameter conversationId was null or undefined when calling SendToConversation.');
+            throw new Error('Required parameter conversationId was null or undefined when calling sendToConversation.');
         }
         const path = this.basePath + '/v3/conversations/{conversationId}/activities'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)));
@@ -604,17 +604,17 @@ export class ConversationsApi {
 
         // verify required parameter 'activity' is not null or undefined
         if (activity == null) {
-            throw new Error('Required parameter activity was null or undefined when calling conversationsUpdateActivity.');
+            throw new Error('Required parameter activity was null or undefined when calling updateActivity.');
         }
 
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
-            throw new Error('Required parameter conversationId was null or undefined when calling conversationsUpdateActivity.');
+            throw new Error('Required parameter conversationId was null or undefined when calling updateActivity.');
         }
 
         // verify required parameter 'activityId' is not null or undefined
         if (activityId == null) {
-            throw new Error('Required parameter activityId was null or undefined when calling conversationsUpdateActivity.');
+            throw new Error('Required parameter activityId was null or undefined when calling updateActivity.');
         }
         const path = this.basePath + '/v3/conversations/{conversationId}/activities/{activityId}'
             .replace('{' + 'conversationId' + '}', encodeURIComponent(String(conversationId)))
@@ -664,12 +664,12 @@ export class ConversationsApi {
         : Promise<useResourceResponse> {
         // verify required parameter 'attachmentUpload' is not null or undefined
         if (attachmentUpload == null) {
-            throw new Error('Required parameter attachmentUpload was null or undefined when calling conversationsUploadAttachment.');
+            throw new Error('Required parameter attachmentUpload was null or undefined when calling uploadAttachment.');
         }
 
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
-            throw new Error('Required parameter conversationId was null or undefined when calling conversationsUploadAttachment.');
+            throw new Error('Required parameter conversationId was null or undefined when calling uploadAttachment.');
         }
 
         const path = this.basePath + '/v3/conversations/{conversationId}/attachments'

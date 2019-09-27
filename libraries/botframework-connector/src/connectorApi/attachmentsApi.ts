@@ -70,11 +70,11 @@ export class AttachmentsApi {
     public async getAttachment(attachmentId: string, viewId: string, options: RequestOptions = { headers: {} }): Promise<GetAttachmentResponse> {
         // verify required parameter 'attachmentId' is not null or undefined
         if (attachmentId == null) {
-            throw new Error('Required parameter attachmentId was null or undefined when calling attachmentsGetAttachment.');
+            throw new Error('Required parameter attachmentId was null or undefined when calling getAttachment.');
         }
         // verify required parameter 'viewId' is not null or undefined
         if (viewId == null) {
-            throw new Error('Required parameter viewId was null or undefined when calling attachmentsGetAttachment.');
+            throw new Error('Required parameter viewId was null or undefined when calling getAttachment.');
         }
 
         const path = this.basePath + '/v3/attachments/{attachmentId}/views/{viewId}'
@@ -105,7 +105,7 @@ export class AttachmentsApi {
     public async getAttachmentInfo(attachmentId: string, options: RequestOptions = { headers: {} }): Promise<GetAttachmentInfoResponse> {
         // verify required parameter 'attachmentId' is not null or undefined
         if (attachmentId == null) {
-            throw new Error('Required parameter attachmentId was null or undefined when calling attachmentsGetAttachmentInfo.');
+            throw new Error('Required parameter attachmentId was null or undefined when calling getAttachmentInfo.');
         }
 
         const path = this.basePath + '/v3/attachments/{attachmentId}'
