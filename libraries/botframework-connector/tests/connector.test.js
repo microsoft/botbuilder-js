@@ -27,26 +27,16 @@
 *
 *   Notes: tokenApiClient.userToken.get*Token has to be mocked/stubbed because the bot can't be logged in to create a valid token
 */
+require('dotenv').config({ path: 'tests/.env' });
 const fs = require('fs');
 const assert = require('assert');
 const SuiteBase = require('../../../tools/framework/suite-base');
 const should = require('should');
+const BotConnector = require('../lib');
 
-const BotConnector = require('../lib/customConnectorApi');
-
-const ConnectorClient = BotConnector.BotConnector;
+const ConnectorClient = BotConnector.ConnectorClient;
 const TokenApiClient = BotConnector.TokenApiClient;
 const Credentials = BotConnector.MicrosoftAppCredentials;
-
-require('dotenv').config({ path: 'tests/.env' });
-
-
-
-var requiredEnvironment = [
-    'USER_ID',
-    'BOT_ID',
-    'HOST_URL'
-];
 
 const clientId = process.env['CLIENT_ID'];
 const clientSecret = process.env['CLIENT_SECRET'];
@@ -54,6 +44,11 @@ const hostURL = process.env['HOST_URL'] || 'https://slack.botframework.com';
 const testPrefix = 'botFramework-connector-tests';
 const libraryPath = 'botframework-connector';
 
+var requiredEnvironment = [
+    'USER_ID',
+    'BOT_ID',
+    'HOST_URL'
+];
 const user = {
     id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE'
 };
@@ -140,10 +135,8 @@ describe('Bot Framework Connector SDK', function() {
                 params.bot = { id: 'invalid-id' };
         
                 client.conversations.createConversation(params).then((result) => {
-                    assert.fail();
-                }, (error) => {
-                    assert(!!error.code);
-                    assert(!!error.message);
+                    assert(!!result.error.code);
+                    assert(!!result.error.message);
                 }).then(done, done);
             });
             it('should fail without members', function(done) {
@@ -151,10 +144,8 @@ describe('Bot Framework Connector SDK', function() {
                 params.members = [];
 				
                 client.conversations.createConversation(params).then((result) => {
-                    assert.fail();
-                }, (error) => {
-                    assert(!!error.code);
-                    assert(!!error.message);
+                    assert(!!result.error.code);
+                    assert(!!result.error.message);
                 }).then(done, done);
             });
             it('should fail with bot member', function(done) {
@@ -162,10 +153,8 @@ describe('Bot Framework Connector SDK', function() {
                 params.members = [ bot ];
 				
                 client.conversations.createConversation(params).then((result) => {
-                    assert.fail();
-                }, (error) => {
-                    assert(!!error.code);
-                    assert(!!error.message);
+                    assert(!!result.error.code);
+                    assert(!!result.error.message);
                 }).then(done, done);
             });
         });
@@ -187,12 +176,9 @@ describe('Bot Framework Connector SDK', function() {
                 client.conversations.createConversation(params)
                     .then((result) => client.conversations.getConversationMembers(result.id.concat('M')))
                     .then((result) => {
-                        assert.fail();
-                    }, (error) => {
-                        assert(!!error.code);
-                        assert(!!error.message);
-                    })
-                    .then(done, done);
+                        assert(!!result.error.code);
+                        assert(!!result.error.message);
+                    }).then(done, done);
             });
         });
 		
@@ -242,12 +228,9 @@ describe('Bot Framework Connector SDK', function() {
                 client.conversations.createConversation(params)
                     .then((result) => client.conversations.sendToConversation(result.id.concat('M'), createActivity()))
                     .then((result) => {
-                        assert.fail();
-                    }, (error) => {
-                        assert(!!error.code);
-                        assert(!!error.message);
-                    })
-                    .then(done, done);
+                        assert(!!result.error.code);
+                        assert(!!result.error.message);
+                    }).then(done, done);
             });
             it('should send a Hero card', function(done) {
                 var params = createConversation();
@@ -293,12 +276,9 @@ describe('Bot Framework Connector SDK', function() {
                 client.conversations.createConversation(params)
                     .then((result) => client.conversations.getActivityMembers(result.id.concat('M'), result.activityId))
                     .then((result) => {
-                        assert.fail();
-                    }, (error) => {
-                        assert(!!error.code);
-                        assert(!!error.message);
-                    })
-                    .then(done, done);
+                        assert(!!result.error.code);
+                        assert(!!result.error.message);
+                    }).then(done, done);
             });
         });
 		
@@ -326,12 +306,9 @@ describe('Bot Framework Connector SDK', function() {
                     .then((result) => client.conversations.sendToConversation(result.id, createActivity()))
                     .then((result) => client.conversations.replyToActivity('invalid-id', result.id, createActivity()))
                     .then((result) => {
-                        assert.fail();
-                    }, (error) => {
-                        assert(!!error.code);
-                        assert(!!error.message);
-                    })
-                    .then(done, done);
+                        assert(!!result.error.code);
+                        assert(!!result.error.message);
+                    }).then(done, done);
             });
 			
         });
@@ -349,12 +326,9 @@ describe('Bot Framework Connector SDK', function() {
                     .then((result) => client.conversations.sendToConversation(result.id, createActivity()))
                     .then((result) => client.conversations.deleteActivity('invalid-id', result.id))
                     .then((result) => {
-                        assert.fail();
-                    }, (error) => {
-                        assert(!!error.code);
-                        assert(!!error.message);
-                    })
-                    .then(done, done);
+                        assert(!!result.error.code);
+                        assert(!!result.error.message);
+                    }).then(done, done);
             });
 			
         });
@@ -384,12 +358,9 @@ describe('Bot Framework Connector SDK', function() {
                     .then((result) => client.conversations.sendToConversation(result.id, createActivity()))
                     .then((result) => client.conversations.updateActivity('invalid-id', result.id, createActivity()))
                     .then((result) => {
-                        assert.fail();
-                    }, (error) => {
-                        assert(!!error.code);
-                        assert(!!error.message);
-                    })
-                    .then(done, done);
+                        assert(!!result.error.code);
+                        assert(!!result.error.message);
+                    }).then(done, done);
             });
 			
         });
@@ -494,17 +465,13 @@ describe('Bot Framework Connector SDK', function() {
                 it('should throw on null userId', function(done) {
                     tokenApiClient.userToken.getToken(null, 'mockConnection')
                         .then((result) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
+                            assert(!!result.error.message);
                         }).then(done, done);
                 });
                 it('should throw on null connectionName', function(done) {
                     tokenApiClient.userToken.getToken(user.id, null)
                         .then((result) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
+                            assert(!!result.error.message);
                         }).then(done, done);
                 });
                 it('should return null on invalid connection string', function(done) {
@@ -529,17 +496,13 @@ describe('Bot Framework Connector SDK', function() {
                 it('should throw on null userId', function(done) {
                     tokenApiClient.userToken.getAadTokens(null, 'mockConnection', { resourceUrls: ['http://localhost' ]})
                         .then((result) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
+                            assert(!!result.error.message);
                         }).then(done, done);
                 });
                 it('should throw on null connectionName', function(done) {
                     tokenApiClient.userToken.getAadTokens(user.id, null, { resourceUrls: ['http://localhost' ]})
                         .then((result) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
+                            assert(!!result.error.message);
                         }).then(done, done);
                 });
                 it('should return token', function(done) {
@@ -557,9 +520,7 @@ describe('Bot Framework Connector SDK', function() {
                 it('should throw on null userId', function(done) {
                     tokenApiClient.userToken.getTokenStatus(null)
                         .then((result) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
+                            assert(!!result.error.message);
                         }).then(done, done);
                 });
                 it('should return token', function(done) {
@@ -577,9 +538,7 @@ describe('Bot Framework Connector SDK', function() {
                 it('should throw on null userId', function(done) {
                     tokenApiClient.userToken.signOut(null)
                         .then((result) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
+                            assert(!!result.error.message);
                         }).then(done, done);
                 });
                 it('should return a response', function(done) {
