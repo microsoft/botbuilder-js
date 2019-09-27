@@ -43,7 +43,7 @@ export namespace JwtTokenValidation {
         const claimsIdentity: ClaimsIdentity =
             await validateAuthHeader(authHeader, credentials, channelService, activity.channelId, activity.serviceUrl);
 
-        MicrosoftAppCredentials.trustServiceUrl(activity.serviceUrl);
+            MicrosoftAppCredentials.trustServiceUrl(activity.serviceUrl);
 
         return claimsIdentity;
     }

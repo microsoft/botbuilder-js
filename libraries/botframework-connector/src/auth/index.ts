@@ -16,5 +16,4 @@ export * from './emulatorValidation';
 export * from './endorsementsValidator';
 export * from './claimsIdentity';
 export * from './authenticationConstants';
-export * from './customMicrosoftAppCredentials'
 export * from './customjwtTokenValidation';

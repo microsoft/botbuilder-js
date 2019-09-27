@@ -27,38 +27,28 @@
 *
 *   Notes: tokenApiClient.userToken.get*Token has to be mocked/stubbed because the bot can't be logged in to create a valid token
 */
-var fs = require('fs');
-var assert = require('assert');
-
 require('dotenv').config({ path: 'tests/.env' });
+const fs = require('fs');
+const assert = require('assert');
+const SuiteBase = require('../../../tools/framework/suite-base');
+const should = require('should');
+const BotConnector = require('../lib');
 
-// function to encode file data to base64 encoded string
-function base64_encode(file) {
-    // read binary data
-    var bitmap = fs.readFileSync(file);
-    // convert binary data to base64 encoded string
-    return Buffer.from(bitmap);
-}
-
-const BotConnector = require('../lib/customConnectorApi');
-
-const ConnectorClient = BotConnector.BotConnector;
+const ConnectorClient = BotConnector.ConnectorClient;
 const TokenApiClient = BotConnector.TokenApiClient;
 const Credentials = BotConnector.MicrosoftAppCredentials;
 
-var SuiteBase = require('../../../tools/framework/suite-base');
-var should = require('should');
+const clientId = process.env['CLIENT_ID'];
+const clientSecret = process.env['CLIENT_SECRET'];
+const hostURL = process.env['HOST_URL'] || 'https://slack.botframework.com';
+const testPrefix = 'botFramework-connector-tests';
+const libraryPath = 'botframework-connector';
 
 var requiredEnvironment = [
     'USER_ID',
     'BOT_ID',
     'HOST_URL'
 ];
-
-const clientId = process.env['CLIENT_ID'];
-const clientSecret = process.env['CLIENT_SECRET'];
-const hostURL = process.env['HOST_URL'] || 'https://slack.botframework.com';
-
 const user = {
     id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE'
 };
@@ -66,8 +56,6 @@ const bot = {
     id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE'
 };
 
-const testPrefix = 'botFramework-connector-tests';
-const libraryPath = 'botframework-connector';
 var suite;
 var credentials;
 var client;
@@ -88,7 +76,7 @@ var createConversation = () => ({
 var createAttachment = () => ({
     name: 'bot-framework.png',
     type: 'image/png',
-    originalBase64: base64_encode(__dirname + '/bot-framework.png')
+    originalBase64: base64Encode(__dirname + '/bot-framework.png')
 });
 
 var readStreamToBuffer = function(stream, callback) {
@@ -97,6 +85,14 @@ var readStreamToBuffer = function(stream, callback) {
     stream.on('end', () => callback(null, buffer.join('')));
     stream.on('error', (err) => callback(err, null));
 };
+
+// function to encode file data to base64 encoded string
+function base64Encode(file) {
+    // read binary data
+    var bitmap = fs.readFileSync(file);
+    // convert binary data to base64 encoded string
+    return Buffer.from(bitmap);
+}
 
 describe('Bot Framework Connector SDK', function() {
     before(function(done) {
@@ -139,10 +135,8 @@ describe('Bot Framework Connector SDK', function() {
                 params.bot = { id: 'invalid-id' };
         
                 client.conversations.createConversation(params).then((result) => {
-                    assert.fail();
-                }, (error) => {
-                    assert(!!error.code);
-                    assert(!!error.message);
+                    assert(!!result.error.code);
+                    assert(!!result.error.message);
                 }).then(done, done);
             });
             it('should fail without members', function(done) {
@@ -150,10 +144,8 @@ describe('Bot Framework Connector SDK', function() {
                 params.members = [];
 				
                 client.conversations.createConversation(params).then((result) => {
-                    assert.fail();
-                }, (error) => {
-                    assert(!!error.code);
-                    assert(!!error.message);
+                    assert(!!result.error.code);
+                    assert(!!result.error.message);
                 }).then(done, done);
             });
             it('should fail with bot member', function(done) {
@@ -161,10 +153,8 @@ describe('Bot Framework Connector SDK', function() {
                 params.members = [ bot ];
 				
                 client.conversations.createConversation(params).then((result) => {
-                    assert.fail();
-                }, (error) => {
-                    assert(!!error.code);
-                    assert(!!error.message);
+                    assert(!!result.error.code);
+                    assert(!!result.error.message);
                 }).then(done, done);
             });
         });
@@ -186,12 +176,9 @@ describe('Bot Framework Connector SDK', function() {
                 client.conversations.createConversation(params)
                     .then((result) => client.conversations.getConversationMembers(result.id.concat('M')))
                     .then((result) => {
-                        assert.fail();
-                    }, (error) => {
-                        assert(!!error.code);
-                        assert(!!error.message);
-                    })
-                    .then(done, done);
+                        assert(!!result.error.code);
+                        assert(!!result.error.message);
+                    }).then(done, done);
             });
         });
 		
@@ -241,12 +228,9 @@ describe('Bot Framework Connector SDK', function() {
                 client.conversations.createConversation(params)
                     .then((result) => client.conversations.sendToConversation(result.id.concat('M'), createActivity()))
                     .then((result) => {
-                        assert.fail();
-                    }, (error) => {
-                        assert(!!error.code);
-                        assert(!!error.message);
-                    })
-                    .then(done, done);
+                        assert(!!result.error.code);
+                        assert(!!result.error.message);
+                    }).then(done, done);
             });
             it('should send a Hero card', function(done) {
                 var params = createConversation();
@@ -292,12 +276,9 @@ describe('Bot Framework Connector SDK', function() {
                 client.conversations.createConversation(params)
                     .then((result) => client.conversations.getActivityMembers(result.id.concat('M'), result.activityId))
                     .then((result) => {
-                        assert.fail();
-                    }, (error) => {
-                        assert(!!error.code);
-                        assert(!!error.message);
-                    })
-                    .then(done, done);
+                        assert(!!result.error.code);
+                        assert(!!result.error.message);
+                    }).then(done, done);
             });
         });
 		
@@ -325,12 +306,9 @@ describe('Bot Framework Connector SDK', function() {
                     .then((result) => client.conversations.sendToConversation(result.id, createActivity()))
                     .then((result) => client.conversations.replyToActivity('invalid-id', result.id, createActivity()))
                     .then((result) => {
-                        assert.fail();
-                    }, (error) => {
-                        assert(!!error.code);
-                        assert(!!error.message);
-                    })
-                    .then(done, done);
+                        assert(!!result.error.code);
+                        assert(!!result.error.message);
+                    }).then(done, done);
             });
 			
         });
@@ -348,12 +326,9 @@ describe('Bot Framework Connector SDK', function() {
                     .then((result) => client.conversations.sendToConversation(result.id, createActivity()))
                     .then((result) => client.conversations.deleteActivity('invalid-id', result.id))
                     .then((result) => {
-                        assert.fail();
-                    }, (error) => {
-                        assert(!!error.code);
-                        assert(!!error.message);
-                    })
-                    .then(done, done);
+                        assert(!!result.error.code);
+                        assert(!!result.error.message);
+                    }).then(done, done);
             });
 			
         });
@@ -383,12 +358,9 @@ describe('Bot Framework Connector SDK', function() {
                     .then((result) => client.conversations.sendToConversation(result.id, createActivity()))
                     .then((result) => client.conversations.updateActivity('invalid-id', result.id, createActivity()))
                     .then((result) => {
-                        assert.fail();
-                    }, (error) => {
-                        assert(!!error.code);
-                        assert(!!error.message);
-                    })
-                    .then(done, done);
+                        assert(!!result.error.code);
+                        assert(!!result.error.message);
+                    }).then(done, done);
             });
 			
         });
@@ -443,155 +415,6 @@ describe('Bot Framework Connector SDK', function() {
                         });
                     })
                     .then(done, done);
-            });
-        });
-    });
-    describe('TokenApiClient', function() {
-        describe('tokenApiClient Construction', function() {
-            it('should not throw on http url', function(done) {
-                var client = new TokenApiClient(credentials, {
-                    baseUri: 'http://localhost'
-                });
-                assert(client);
-                done();
-            });
-            it('should throw on null credentials', function(done) {
-                try {
-                    var client = new TokenApiClient(null, {
-                        baseUri: 'http://localhost'
-                    });
-                    assert.fail();
-                } catch (err) {
-                    assert(!!err.message);
-                }
-                done();
-            });
-        });
-        describe('botSignIn', function() {
-            it('should return a valid sign in url', function(done) {
-                const urlRegex = /https:\/\/token.botframework.com\/api\/oauth\/signin\?signin=.*/i;
-                var conversation = createConversation();
-                conversation.user = user;
-                const state = {
-                    ConnectionName: 'github',
-                    Conversation: conversation,
-                    MsAppId: credentials.appId
-                };
-                const finalState = Buffer.from(JSON.stringify(state)).toString('base64');
-                tokenApiClient.botSignIn.getSignInUrl(finalState)
-                    .then((result) => {
-                        assert.equal(result._response.status, 200);
-                        assert(result._response.bodyAsText.match(urlRegex));
-                        done();
-                    }, (error) => {
-                        assert.fail(error);
-                    });              
-            });
-        });
-        describe('userToken', function() {
-            describe('getToken', function() {
-                it('should throw on null userId', function(done) {
-                    tokenApiClient.userToken.getToken(null, 'mockConnection')
-                        .then((result) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
-                        }).then(done, done);
-                });
-                it('should throw on null connectionName', function(done) {
-                    tokenApiClient.userToken.getToken(user.id, null)
-                        .then((result) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
-                        }).then(done, done);
-                });
-                it('should return null on invalid connection string', function(done) {
-                    tokenApiClient.userToken.getToken(user.id, 'invalid')
-                        .then((result) => {
-                            assert.equal(result.token, null);
-                            done();
-                        });
-                });
-                it('should return token with no magic code', function(done) {
-                    tokenApiClient.userToken.getToken(user.id, 'slack', { code: null })
-                        .then((result) => {
-                            assert(result.channelId);
-                            assert(result.connectionName);
-                            assert(result.token);
-                            assert(result.expiration);
-                            done();
-                        });
-                });
-            });
-            describe('getAadTokens', function() {
-                it('should throw on null userId', function(done) {
-                    tokenApiClient.userToken.getAadTokens(null, 'mockConnection', { resourceUrls: ['http://localhost' ]})
-                        .then((result) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
-                        }).then(done, done);
-                });
-                it('should throw on null connectionName', function(done) {
-                    tokenApiClient.userToken.getAadTokens(user.id, null, { resourceUrls: ['http://localhost' ]})
-                        .then((result) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
-                        }).then(done, done);
-                });
-                it('should return token', function(done) {
-                    tokenApiClient.userToken.getAadTokens(user.id, 'slack', { resourceUrls: ['http://localhost' ]})
-                        .then((result) => {
-                            assert(result.channelId);
-                            assert(result.connectionName);
-                            assert(result.token);
-                            assert(result.expiration);
-                            done();
-                        });
-                });
-            });
-            describe('getTokenStatus', function() {
-                it('should throw on null userId', function(done) {
-                    tokenApiClient.userToken.getTokenStatus(null)
-                        .then((result) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
-                        }).then(done, done);
-                });
-                it('should return token', function(done) {
-                    tokenApiClient.userToken.getTokenStatus(user.id)
-                        .then((result) => {
-                            assert(result.channelId);
-                            assert(result.connectionName);
-                            assert.notEqual(result.hasToken, null);
-                            assert(result.serviceProviderDisplayName);
-                            done();
-                        });
-                });
-            });
-            describe('signOut', function() {
-                it('should throw on null userId', function(done) {
-                    tokenApiClient.userToken.signOut(null)
-                        .then((result) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
-                        }).then(done, done);
-                });
-                it('should return a response', function(done) {
-                    tokenApiClient.userToken.signOut(user.id)
-                        .then((result) => {
-                            assert(result.body);
-                            assert(result._response);
-                            assert.equal(result._response.status, 200);
-                            assert(result._response.bodyAsText);
-                            assert(result._response.parsedBody);
-                            done();
-                        });
-                });
             });
         });
     });
