@@ -9,4 +9,5 @@
 export * from './botFrameworkAdapter';
 export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
+export * from './teamsActivityHandler';
 export * from 'botbuilder-core';

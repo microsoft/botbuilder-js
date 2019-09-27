@@ -1,4 +1,4 @@
-const Stream = require( '../lib/subscribableStream');
+const Stream = require( '../lib/SubscribableStream');
 const chai = require( 'chai');
 var expect = chai.expect;
 

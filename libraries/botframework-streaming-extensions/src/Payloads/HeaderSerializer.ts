@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IHeader } from '../interfaces/iHeader';
-import { PayloadConstants } from './payloadConstants';
+import { IHeader } from '../Interfaces/IHeader';
+import { PayloadConstants } from './PayloadConstants';
 
 export class HeaderSerializer {
     public static readonly Delimiter = '.';
@@ -44,13 +44,14 @@ export class HeaderSerializer {
             throw Error('Cannot parse header, header is malformed.');
         }
 
-        let headerPayloadType: string = headerArray[0];
-        let headerPayloadLength: number = Number(headerArray[1]);
-        let headerId: string = headerArray[2];
-        let headerEnd: boolean = headerArray[3] === '0\n' ? false : headerArray[3] === '1\n' ? true : undefined;
-        let header: IHeader = { payloadType: headerPayloadType, payloadLength: headerPayloadLength, id: headerId, end: headerEnd };
+        const [payloadType, length, id, headerEnd] = headerArray;
 
-        if (isNaN(header.payloadLength) || header.payloadLength === undefined || header.payloadLength > PayloadConstants.MaxPayloadLength || header.payloadLength < PayloadConstants.MinLength) {
+        const end = headerEnd === '1\n';
+        const payloadLength = Number(length);
+        
+        const header: IHeader = { end, payloadLength, payloadType, id };
+
+        if (!(header.payloadLength <= PayloadConstants.MaxPayloadLength && header.payloadLength >= PayloadConstants.MinLength)) {
             throw Error('Header Length is missing or malformed.');
         }
 
@@ -58,11 +59,11 @@ export class HeaderSerializer {
             throw Error('Header Type is missing or malformed.');
         }
 
-        if (!header.id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i) || header.id === undefined || header.id.length !== this.IdLength) {
+        if (!header.id || !header.id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i) || header.id.length !==  this.IdLength) {
             throw Error('Header ID is missing or malformed.');
         }
 
-        if (header.end === undefined) {
+        if (!(headerEnd === '0\n' || headerEnd === '1\n')) {
             throw Error('Header End is missing or not a valid value.');
         }
 

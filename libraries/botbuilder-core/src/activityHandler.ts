@@ -55,7 +55,7 @@ export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Pr
  * ```
  */
 export class ActivityHandler {
-    private readonly handlers: {[type: string]: BotHandler[]} = {};
+    protected readonly handlers: {[type: string]: BotHandler[]} = {};
 
     /**
      * Bind a handler to the Turn event that is fired for every incoming activity, regardless of type
