@@ -5,7 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActivityTypes, TurnContext } from '.';
+import { TurnContext } from '.';
+import { ActivityHandlerBase } from './activityHandlerBase';
 
 export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Promise<any>;
 
@@ -54,7 +55,7 @@ export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Pr
  * });
  * ```
  */
-export class ActivityHandler {
+export class ActivityHandler extends ActivityHandlerBase {
     protected readonly handlers: {[type: string]: BotHandler[]} = {};
 
     /**
@@ -209,29 +210,7 @@ export class ActivityHandler {
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
      */
     public async run(context: TurnContext): Promise<void> {
-
-        if (!context) {
-            throw new Error(`Missing TurnContext parameter`);
-        }
-
-        if (!context.activity) {
-            throw new Error(`TurnContext does not include an activity`);
-        }
-
-        if (!context.activity.type) {
-            throw new Error(`Activity is missing it's type`);
-        }
-        
-        // Allow the dialog system to be triggered at the end of the chain
-        const runDialogs = async (): Promise<void> => {
-            await this.handle(context, 'Dialog', async () => {
-                // noop
-            });
-        };
-
-        // List of all Activity Types:
-        // https://github.com/Microsoft/botbuilder-js/blob/master/libraries/botframework-schema/src/index.ts#L1627
-        await this.handleActivity(context, runDialogs);
+        await super.run(context);
     }
 
     /**
@@ -240,101 +219,50 @@ export class ActivityHandler {
      * The default logic is below:
      * ```ts
      *  await this.handle(context, 'Turn', async () => {
-     *      await this.dispatchActivity(context, next);
+     *      await this.postTurnDispatch(context, next);
      *  });
      * ```
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
-     * @param next () => Promise<void>
      */
-    protected async handleActivity(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    protected async onActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'Turn', async () => {
-            await this.dispatchActivity(context, next);
+            await super.onActivity(context);
         });
     }
 
     /**
-     * Overwrite this method to use different dispatching logic after completing all `onTurn`-registered handlers.
-     * @remarks
-     * The default logic is below:
-     * ```ts
-     *      switch (context.activity.type) {
-     *          case ActivityTypes.Message:
-     *              await this.handleMessageActivity(context, next);
-     *              break;
-     *          case ActivityTypes.ConversationUpdate:
-     *              await this.handleConversationUpdateActivity(context, next);
-     *              break;
-     *          case ActivityTypes.MessageReaction:
-     *              await this.handleMessageReactionActivity(context, next);
-     *              break;
-     *          case ActivityTypes.Event:
-     *              await this.handleEventActivity(context, next);
-     *              break;
-     *          default:
-     *              // handler for unknown or unhandled types
-     *              await this.handleUnrecognizedActivity(context, next);
-     *              break;
-     *      }
-     * ```
+     * 
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
-     * @param next () => Promise<void>
      */
-    async dispatchActivity(context: TurnContext, next: () => Promise<void>): Promise<void> {
-        switch (context.activity.type) {
-            case ActivityTypes.Message:
-                await this.handleMessageActivity(context, next);
-                break;
-            case ActivityTypes.ConversationUpdate:
-                await this.handleConversationUpdateActivity(context, next);
-                break;
-            case ActivityTypes.MessageReaction:
-                await this.handleMessageReactionActivity(context, next);
-                break;
-            case ActivityTypes.Event:
-                await this.handleEventActivity(context, next);
-                break;
-            default:
-            // handler for unknown or unhandled types
-                await this.handleUnrecognizedActivity(context, next);
-                break;
-        }
+    protected async onMessageActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'Message', this.defaultNextEvent(context));
     }
 
     /**
      * 
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
-     * @param next () => Promise<void>
      */
-    protected async handleMessageActivity(context: TurnContext, next: () => Promise<void>): Promise<void> {
-        await this.handle(context, 'Message', next);
-    }
-
-    /**
-     * 
-     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
-     * @param next () => Promise<void>
-     */
-    protected async handleUnrecognizedActivity(context: TurnContext, next: () => Promise<void>): Promise<void> {
-        await this.handle(context, 'UnrecognizedActivityType', next);
+    protected async onUnrecognizedActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'UnrecognizedActivityType', this.defaultNextEvent(context));
     }
 
     /**
      * Overwrite this method to use different logic than the default handle ConversationUpdate logic.
      * 
-     * The correct type to assign is: `(context: TurnContext, next: () => Promise<void>) => Promise<void>`
+     * The correct type to assign is: `(context: TurnContext) => Promise<void>`
      * @remarks
      * The default logic is below:
      * ```ts
      *  await this.handle(context, 'ConversationUpdate', async () => {
-     *      await this.dispatchConversationUpdateActivity(context, next);
+     *      await this.dispatchConversationUpdateActivity(context);
      *  });
      * ```
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
      * @param next () => Promise<void>
      */
-    protected async handleConversationUpdateActivity(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    protected async onConversationUpdateActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'ConversationUpdate', async () => {
-            await this.dispatchConversationUpdateActivity(context, next);
+            await this.dispatchConversationUpdateActivity(context);
         });
     }
 
@@ -342,79 +270,90 @@ export class ActivityHandler {
      * Override this method when dispatching off of a ConversationUpdate to trigger other sub-events.
      * @remarks
      * Sample code:
-     * ```javascript
-     * bot.dispatchConversationUpdate(async (context, next) => {
-     *      const channelData = context.activity.data;
-     *      if (channelData.eventType === 'teamMemberAdded') {
-     *          await this.handle(context, 'TeamsMemberAdded', next);
-     *      } else if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
-     *          await this.handle(context, 'MembersAdded', next);
-     *      } else {
-     *          await next();
-     *      }
-     * });
+     * The default logic is below:
+     * ```ts
+     *  if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
+     *      await this.handle(context, 'MembersAdded', this.defaultNextEvent(context));
+     *  } else if (context.activity.membersRemoved && context.activity.membersRemoved.length > 0) {
+     *      await this.handle(context, 'MembersRemoved', this.defaultNextEvent(context));
+     *  } else {
+     *      await this.defaultNextEvent(context)();
+     *  }
      * ```
+     * Where `next()` is equiavlent to the returned value of `ActivityHandler.defaultNextEvent()`.
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
      * @param next () => Promise<void>
      */
-    protected async dispatchConversationUpdateActivity(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    protected async dispatchConversationUpdateActivity(context: TurnContext): Promise<void> {
         if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
-            await this.handle(context, 'MembersAdded', next);
+            await this.handle(context, 'MembersAdded', this.defaultNextEvent(context));
         } else if (context.activity.membersRemoved && context.activity.membersRemoved.length > 0) {
-            await this.handle(context, 'MembersRemoved', next);
+            await this.handle(context, 'MembersRemoved', this.defaultNextEvent(context));
         } else {
-            await next();
+            await this.defaultNextEvent(context)();
         }
     }
 
     /**
      * 
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
-     * @param next () => Promise<void>
      */
-    protected async handleMessageReactionActivity(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    protected async onMessageReactionActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'MessageReaction', async () => {
-            await this.dispatchMessageReactionActivity(context, next);
+            await this.dispatchMessageReactionActivity(context);
         });
     }
 
     /**
      * 
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
-     * @param next () => Promise<void>
      */
-    protected async dispatchMessageReactionActivity(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    protected async dispatchMessageReactionActivity(context: TurnContext): Promise<void> {
         if (context.activity.reactionsAdded && context.activity.reactionsAdded.length > 0) {
-            await this.handle(context, 'ReactionsAdded', next);
+            await this.handle(context, 'ReactionsAdded', this.defaultNextEvent(context));
         } else if (context.activity.reactionsRemoved && context.activity.reactionsRemoved.length > 0) {
-            await this.handle(context, 'ReactionsRemoved', next);
+            await this.handle(context, 'ReactionsRemoved', this.defaultNextEvent(context));
         } else {
-            await next();
+            await this.defaultNextEvent(context)();
         }
     }
 
     /**
      * 
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
-     * @param next () => Promise<void>
      */
-    protected async handleEventActivity(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    protected async onEventActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'Event', async () => {
-            await this.dispatchEventActivity(context, next);
+            await this.dispatchEventActivity(context);
         });
     }
     
     /**
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
-     * @param next () => Promise<void>
      */
-    protected async dispatchEventActivity(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    protected async dispatchEventActivity(context: TurnContext): Promise<void> {
         if (context.activity.name === 'tokens/response') {
-            await this.handle(context, 'TokenResponseEvent', next);
+            await this.handle(context, 'TokenResponseEvent', this.defaultNextEvent(context));
         } else {
-            await next();
+            await this.defaultNextEvent(context)();
         }
     }
+
+    /**
+     * Returns an async function that emits the `"Dialog"` event when called.
+     * Overwrite this function to emit a different default event once all relevant
+     * events are emitted.
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected defaultNextEvent(context: TurnContext): () => Promise<void> {
+        const runDialogs = async (): Promise<void> => {
+            await this.handle(context, 'Dialog', async () => {
+                // noop
+            });
+        };
+        return runDialogs;
+    }
+
 
     /**
      * Used to bind handlers to events by name
