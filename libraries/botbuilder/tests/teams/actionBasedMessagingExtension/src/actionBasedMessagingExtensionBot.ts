@@ -11,6 +11,7 @@ import {
     TaskModuleMessageResponse,
     TaskModuleResponseBase,
     TeamsActivityHandler,
+    TurnContext,
 } from 'botbuilder';
 
 export class ActionBasedMessagingExtensionBot  extends TeamsActivityHandler {
@@ -38,16 +39,13 @@ export class ActionBasedMessagingExtensionBot  extends TeamsActivityHandler {
 
         // This method fires when an user uses an Action-based Messaging Extension from the Teams Client.
         // It should send back the tab or task module for the user to interact with.
-        this.onMessagingExtensionFetchTask(async (context, value, next) => {
+        this.onTeamsMessagingExtensionFetchTask(async (context, value) => {
             return {
-                status: 200,
-                body: {
-                    task: this.taskModuleResponse(value, false)
-                }
+                task: this.taskModuleResponse(value, false)
             };
         });
 
-        this.onBotMessagePreviewEdit(async (context, value: MessagingExtensionAction, next) => {
+        this.onTeamsBotMessagePreviewEdit(async (context, value: MessagingExtensionAction) => {
             const card = this.getCardFromPreviewMessage(value);
             let body: MessagingExtensionActionResponse;
             if (!card) {
@@ -66,10 +64,10 @@ export class ActionBasedMessagingExtensionBot  extends TeamsActivityHandler {
                 }
             }
 
-            return { status: 200, body };
+            return body;
         });
 
-        this.onBotMessagePreviewSend(async (context, value: MessagingExtensionAction, next) => {
+        this.onTeamsBotMessagePreviewSend(async (context, value: MessagingExtensionAction) => {
             let body: MessagingExtensionActionResponse;
             const card = this.getCardFromPreviewMessage(value);
             if (!card) {
@@ -84,10 +82,10 @@ export class ActionBasedMessagingExtensionBot  extends TeamsActivityHandler {
                 await context.sendActivity({ attachments: [card] });
             }
 
-            return { status: 200, body };
+            return body;
         });
 
-        this.onMessagingExtensionSubmit(async (context, value: MessagingExtensionAction, next) => {
+        this.onTeamsMessagingExtensionSubmitAction(async (context, value: MessagingExtensionAction) => {
             const data = value.data;
             let body: MessagingExtensionActionResponse;
             if (data && data.done) {
@@ -125,7 +123,7 @@ export class ActionBasedMessagingExtensionBot  extends TeamsActivityHandler {
                 }
             }
 
-            return { status: 200, body };
+            return body;
         });
     }
 
