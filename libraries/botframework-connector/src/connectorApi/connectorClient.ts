@@ -4,7 +4,7 @@
  * regenerated.
  */
 
-import * as Models from "./model";
+import * as Models from "../model";
 import { ConversationsApi } from './conversationsApi';
 import { AttachmentsApi } from './attachmentsApi';
 import { MicrosoftAppCredentials } from '../auth'
@@ -33,7 +33,7 @@ class ConnectorClient {
 
 // Operation Specifications
 
-export * from "./model";
+export * from "../model";
 export {
   ConnectorClient,
   ConversationsApi,

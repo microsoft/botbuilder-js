@@ -13,13 +13,13 @@
 import http = require('http');
 
 /* tslint:disable:no-unused-locals */
-import { AttachmentData } from './model/attachmentData';
-import { Transcript } from './model/transcript';
-import { RequestOptions, Activity } from './model/models';
-import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
-import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
+import { AttachmentData } from '../model/attachmentData';
+import { Transcript } from '../model/transcript';
+import { RequestOptions, Activity } from '../model/models';
+import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from '../model';
+import { GetConversationMembersResponse } from '../model/responses/getConversationMembersResponse';
 import { MicrosoftAppCredentials } from '../auth'
-import { ConversationsGetConversationsOptionalParams } from './model/parameters/conversationsGetConversationsOptionalParams';
+import { ConversationsOptionalParams } from '../model/parameters/conversationsOptionalParams';
 import { ApiHelper } from '../apiHelper';
 
 
@@ -390,7 +390,7 @@ export class ConversationsApi {
      * @summary GetConversations
      * @param continuationToken skip or continuation token
      */
-    public async getConversations(options?: ConversationsGetConversationsOptionalParams)
+    public async getConversations(options?: ConversationsOptionalParams)
         : Promise<useResourceResponse> {
         const path = this.basePath + '/v3/conversations';
         let queryParameters: {} = {};

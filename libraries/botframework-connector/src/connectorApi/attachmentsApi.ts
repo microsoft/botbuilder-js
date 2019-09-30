@@ -19,7 +19,7 @@
 import http = require('http');
 import * as HttpStatus from 'http-status-codes';
 
-import { RequestOptions, GetAttachmentResponse, GetAttachmentInfoResponse } from './model/models';
+import { RequestOptions, GetAttachmentResponse, GetAttachmentInfoResponse } from '../model/models';
 import { MicrosoftAppCredentials } from '../auth'
 import { ApiHelper } from '../apiHelper';
 

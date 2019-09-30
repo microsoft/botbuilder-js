@@ -5,7 +5,7 @@
 
 import { RequestOptions } from './requestOptions'
 
-export interface ConversationsGetConversationsOptionalParams extends RequestOptions {
+export interface ConversationsOptionalParams extends RequestOptions {
   /**
    * skip or continuation token
    */

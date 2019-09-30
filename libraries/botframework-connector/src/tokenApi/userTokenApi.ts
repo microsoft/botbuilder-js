@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-import * as Models from './model';
+import * as Models from '../model';
 import { MicrosoftAppCredentials } from '../auth'
 import { TokenApiClient } from './tokenApiClient';
 import { ApiHelper } from '../apiHelper';
@@ -44,7 +44,7 @@ export class UserTokenApi {
      * @param connectionName 
      * @param channelId 
      */
-    public async getAadTokens (userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options: Models.UserTokenGetAadTokensOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetAadTokensResponse> {
+    public async getAadTokens (userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options: Models.TokenOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetAadTokensResponse> {
         const localPath = this.basePath + '/api/usertoken/GetAadTokens';
         let localQueryParameters = {};
         let localHeaderParams = Object.assign({}, this.defaultHeaders);        
@@ -100,7 +100,7 @@ export class UserTokenApi {
      * @param channelId 
      * @param code 
      */
-    public async getToken (userId: string, connectionName: string, options: Models.UserTokenGetTokenOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetTokenResponse> {
+    public async getToken (userId: string, connectionName: string, options: Models.TokenOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetTokenResponse> {
         const localPath = this.basePath + '/api/usertoken/GetToken';
         let localQueryParameters = {};
         let localHeaderParams = Object.assign({}, this.defaultHeaders);        
@@ -154,7 +154,7 @@ export class UserTokenApi {
      * @param channelId 
      * @param include 
      */
-    public async getTokenStatus (userId: string, options: Models.UserTokenGetTokenStatusOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetTokenStatusResponse> {
+    public async getTokenStatus (userId: string, options: Models.TokenOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetTokenStatusResponse> {
         const localPath = this.basePath + '/api/usertoken/GetTokenStatus';
         let localQueryParameters = {};
         let localHeaderParams = Object.assign({}, this.defaultHeaders);
@@ -199,7 +199,7 @@ export class UserTokenApi {
      * @param connectionName 
      * @param channelId
      */
-    public async signOut (userId: string, options: Models.UserTokenSignOutOptionalParams = {headers: {}}) : Promise<Models.UserTokenSignOutResponse> {
+    public async signOut (userId: string, options: Models.SignOutParams = {headers: {}}) : Promise<Models.UserTokenSignOutResponse> {
         const localPath = this.basePath + '/api/usertoken/SignOut';
         let localQueryParameters = {};
         let localHeaderParams = Object.assign({}, this.defaultHeaders);        
