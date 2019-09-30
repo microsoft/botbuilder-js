@@ -5,14 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActivityTypes, TurnContext } from '.';
+import {
+    ActivityTypes,
+    ChannelAccount,
+    MessageReaction,
+    TurnContext } from '.';
 
 /**
  * Activity handling base class bots.
  * 
  * @remarks
  * This provides an inheritble base class for processing incoming events.
- * `onActivity()` contains dispatching logic based on the `Activity.type`.
+ * `onTurnActivity()` contains dispatching logic based on the `Activity.type`.
  * Developers should implement the `on*Activity()` methods with processing
  * logic for each `Activity.type` their bot supports.
  */
@@ -43,7 +47,7 @@ export class ActivityHandlerBase {
      * ```
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
      */
-    protected async onActivity(context: TurnContext): Promise<void> {
+    protected async onTurnActivity(context: TurnContext): Promise<void> {
         switch (context.activity.type) {
             case ActivityTypes.Message:
                 await this.onMessageActivity(context);
@@ -78,7 +82,15 @@ export class ActivityHandlerBase {
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
      */
     protected async onConversationUpdateActivity(context: TurnContext): Promise<void> {
-        return;
+        if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
+            if (context.activity.membersAdded.filter(m => context.activity.recipient && context.activity.recipient.id !== m.id).length) {
+                await this.onMembersAddedActivity(context.activity.membersAdded, context);
+            }
+        } else if (context.activity.membersRemoved && context.activity.membersRemoved.length > 0) {
+            if (context.activity.membersRemoved.filter(m => context.activity.recipient && context.activity.recipient.id !== m.id).length) {
+                await this.onMembersRemovedActivity(context.activity.membersRemoved, context);
+            }
+        }
     }
 
     /**
@@ -90,7 +102,11 @@ export class ActivityHandlerBase {
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
      */
     protected async onMessageReactionActivity(context: TurnContext): Promise<void> {
-        return;
+        if (context.activity.reactionsAdded && context.activity.reactionsAdded.length > 0) {
+            await this.onReactionsAddedActivity(context.activity.reactionsAdded, context);
+        } else if (context.activity.reactionsRemoved && context.activity.reactionsRemoved.length > 0) {
+            await this.onReactionsRemovedActivity(context.activity.reactionsRemoved, context);
+        }
     }
 
     /**
@@ -109,6 +125,41 @@ export class ActivityHandlerBase {
         return;
     }
 
+    /**
+     * 
+     * @param membersAdded ChannelAccount A list of all the members added to the conversation, as described by the ConversationUpdate activity.
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async onMembersAddedActivity(membersAdded: ChannelAccount[], context: TurnContext): Promise<void> {
+        return;
+    }
+
+    /**
+     * 
+     * @param membersRemoved ChannelAccount A list of all the members removed from the conversation, as described by the ConversationUpdate activity.
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async onMembersRemovedActivity(membersRemoved: ChannelAccount[], context: TurnContext): Promise<void> {
+        return;
+    }
+
+    /**
+     * 
+     * @param reactionsAdded MessageReaction The list of reactions added
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async onReactionsAddedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void> {
+        return;
+    }
+
+    /**
+     * 
+     * @param reactionsRemoved MessageReaction The list of reactions removed
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async onReactionsRemovedActivity(reactionsRemoved: MessageReaction[], context: TurnContext): Promise<void> {
+        return;
+    }
 
     /**
      * `run()` is the main "activity handler" function used to ingest activities for processing by Activity Type.
@@ -141,6 +192,6 @@ export class ActivityHandlerBase {
 
         // List of all Activity Types:
         // https://github.com/Microsoft/botbuilder-js/blob/master/libraries/botframework-schema/src/index.ts#L1627
-        await this.onActivity(context);
+        await this.onTurnActivity(context);
     }
 }

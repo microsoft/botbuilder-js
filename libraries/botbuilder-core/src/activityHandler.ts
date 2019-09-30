@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from '.';
+import { ChannelAccount, MessageReaction, TurnContext } from '.';
 import { ActivityHandlerBase } from './activityHandlerBase';
 
 export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Promise<any>;
@@ -219,14 +219,14 @@ export class ActivityHandler extends ActivityHandlerBase {
      * The default logic is below:
      * ```ts
      *  await this.handle(context, 'Turn', async () => {
-     *      await super.onActivity(context);
+     *      await super.onTurnActivity(context);
      *  });
      * ```
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
      */
-    protected async onActivity(context: TurnContext): Promise<void> {
+    protected async onTurnActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'Turn', async () => {
-            await super.onActivity(context);
+            await super.onTurnActivity(context);
         });
     }
 
@@ -314,25 +314,44 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
+     * 
+     * @param reactionsAdded The list of reactions added
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async onReactionsAddedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void> {
+        await this.handle(context, 'ReactionsAdded', this.defaultNextEvent(context));
+    }
+
+    /**
+     * 
+     * @param reactionsRemoved The list of reactions removed
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async onReactionsRemovedActivity(reactionsRemoved: MessageReaction[], context: TurnContext): Promise<void> {
+        await this.handle(context, 'ReactionsRemoved', this.defaultNextEvent(context));
+    }
+
+    /**
      * Override this method when dispatching off of a `'MessageReaction'` event to trigger other sub-events.
      * @remarks
+     * If there are no reactionsAdded or reactionsRemoved on the incoming activity, it will call `this.defaultNextEvent`
+     * which emits the `'Dialog'` event by default.
      * The default logic is below:
      * ```ts
-     *  if (context.activity.reactionsAdded && context.activity.reactionsAdded.length > 0) {
-     *      await this.handle(context, 'ReactionsAdded', this.defaultNextEvent(context));
-     *  } else if (context.activity.reactionsRemoved && context.activity.reactionsRemoved.length > 0) {
-     *      await this.handle(context, 'ReactionsRemoved', this.defaultNextEvent(context));
+     *  if (context.activity.reactionsAdded || context.activity.reactionsRemoved) {
+     *      super.onMessageReactionActivity(context);
      *  } else {
      *      await this.defaultNextEvent(context)();
      *  }
      * ```
+     * `super.onMessageReactionActivity()` will dispatch to `onReactionsAddedActivity()`
+     * or `onReactionsRemovedActivity()`.
+     * 
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
      */
     protected async dispatchMessageReactionActivity(context: TurnContext): Promise<void> {
-        if (context.activity.reactionsAdded && context.activity.reactionsAdded.length > 0) {
-            await this.handle(context, 'ReactionsAdded', this.defaultNextEvent(context));
-        } else if (context.activity.reactionsRemoved && context.activity.reactionsRemoved.length > 0) {
-            await this.handle(context, 'ReactionsRemoved', this.defaultNextEvent(context));
+        if (context.activity.reactionsAdded || context.activity.reactionsRemoved) {
+            super.onMessageReactionActivity(context);
         } else {
             await this.defaultNextEvent(context)();
         }
