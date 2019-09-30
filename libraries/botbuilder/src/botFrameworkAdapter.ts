@@ -7,7 +7,7 @@
  */
 
 import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
-import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
+import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient,  TokenApiModels } from 'botframework-connector';
 import * as os from 'os';
 
 /**
@@ -483,7 +483,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * @returns Array of TokenStatus
      * */ 
     
-    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string ): Promise<TokenStatus[]>
+    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string ): Promise<TokenApiModels.TokenStatus[]>
     {
         if (!userId && (!context.activity.from || !context.activity.from.id)) {
             throw new Error(`BotFrameworkAdapter.getTokenStatus(): missing from or from.id`);

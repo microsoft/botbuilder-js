@@ -11,7 +11,6 @@
  */
 
 import { ActivityImportance } from './activityImportance';
-import { ActivityTypes } from './activityTypes';
 import { Attachment } from './attachment';
 import { AttachmentLayoutTypes } from './attachmentLayoutTypes';
 import { ChannelAccount } from './channelAccount';
@@ -31,7 +30,7 @@ import { TextHighlight } from './textHighlight';
 * An Activity is the basic communication type for the Bot Framework 3.0 protocol.
 */
 export class Activity {
-    'type'?: ActivityTypes;
+    'type'?: string;
     /**
     * Contains an ID that uniquely identifies the activity on the channel.
     */
@@ -101,7 +100,7 @@ export class Activity {
     * The text to speak.
     */
     'speak'?: string;
-    'inputHint'?: InputHints;
+    'inputHint'?: InputHints | string;
     /**
     * The text to display if the channel cannot render cards.
     */
@@ -138,7 +137,7 @@ export class Activity {
     /**
     * A value that is associated with the activity.
     */
-    'value'?: object;
+    'value'?: object | string;
     /**
     * The name of the operation associated with an invoke or event activity.
     */
@@ -167,7 +166,7 @@ export class Activity {
         {
             "name": "type",
             "baseName": "type",
-            "type": "ActivityTypes"
+            "type": "string"
         },
         {
             "name": "id",
