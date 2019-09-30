@@ -11,9 +11,15 @@ import { DefaultPathResolver } from './defaultPathResolver';
 
 export class DialogStateManager {
     private readonly dc: DialogContext;
+    private readonly closureScopes: object[] = [];
 
     constructor(dc: DialogContext) {
         this.dc = dc;
+
+        // Add turn scope
+        if (!this.getScope('turn')) {
+            this.setScope('turn', {});
+        }
     }
 
     public getScope(name: string): object|undefined {
@@ -38,21 +44,31 @@ export class DialogStateManager {
     }
 
     public getValue(path: string, defaultValue?: any): any {
-        const memory = this.toJSON();
+        const memory = this.getMemory();
         return this.findResolver(path).getValue(this.dc, memory, path, defaultValue);
     }
 
     public setValue(path: string, value: any): void {
-        const memory = this.toJSON();
+        const memory = this.getMemory();
         return this.findResolver(path).setValue(this.dc, memory, path, value);
     }
 
     public removeValue(path: string): void {
-        const memory = this.toJSON();
+        const memory = this.getMemory();
         return this.findResolver(path).removeValue(this.dc, memory, path);
     }
 
-    public toJSON(): object {
+    public pushClosureScope(): void {
+        this.closureScopes.push({});
+    }
+
+    public popClosureScope(): void {
+        if (this.closureScopes.length > 0) {
+            this.closureScopes.pop();
+        }
+    }
+
+    public getMemory(): object[] {
         // Initialize memory with current scopes
         const scopes: object = this.dc.context.turnState.get(SCOPES);
         const memory = Object.assign({}, scopes);
@@ -63,7 +79,11 @@ export class DialogStateManager {
             memory['dialog'] = instance.state;
         }
 
-        return memory;
+        // Append closure scopes to base memory
+        const output = this.closureScopes.slice();
+        output.unshift(memory);
+
+        return output;
     }
 
     private findResolver(path: string): PathResolver {
