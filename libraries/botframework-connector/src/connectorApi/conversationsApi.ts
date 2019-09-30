@@ -387,7 +387,7 @@ export class ConversationsApi {
      * @param continuationToken skip or continuation token
      */
     public async getConversations(options: Model.ConversationParameters = {headers: {}} )
-        : Promise<Model.useResourceResponse> {
+        : Promise<Model.ConversationsResponse> {
         const path = this.basePath + '/v3/conversations';
         let queryParameters: {} = {};
         let headerParams: {} = Object.assign({}, this._defaultHeaders);
@@ -420,7 +420,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return ApiHelper.deserializeResponse<Model.useResourceResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<Model.ConversationsResponse>(url, requestOptions);
     }
 
     /**

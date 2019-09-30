@@ -83,6 +83,7 @@ export * from './modelError';
 export * from './tokenResponse';
 export * from './tokenStatus';
 export * from './responses/createConversationResponse'
+export * from './responses/conversationsResponse'
 export * from './responses/getConversationMembersResponse'
 export * from './responses/deleteActivityResponse'
 export * from './responses/getAttachmentInfoResponse'
