@@ -219,7 +219,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * The default logic is below:
      * ```ts
      *  await this.handle(context, 'Turn', async () => {
-     *      await this.postTurnDispatch(context, next);
+     *      await super.onActivity(context);
      *  });
      * ```
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
@@ -231,7 +231,15 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * 
+     * Runs all `onMesssage()` handlers before calling the `ActivityHandler.defaultNextEvent()`.
+     * @remarks
+     * Developers may overwrite this method when having supporting multiple channels to have a
+     * channel-tailored experience.
+     * @remarks
+     * The default logic is below:
+     * ```ts
+     *  await await this.handle(context, 'Message', this.defaultNextEvent(context));
+     * ```
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
      */
     protected async onMessageActivity(context: TurnContext): Promise<void> {
@@ -239,7 +247,7 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * 
+     * Runs all `onUnrecognizedActivityType()` handlers before calling `ActivityHandler.dispatchConversationUpdateActivity()`.
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
      */
     protected async onUnrecognizedActivity(context: TurnContext): Promise<void> {
@@ -247,9 +255,7 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * Overwrite this method to use different logic than the default handle ConversationUpdate logic.
-     * 
-     * The correct type to assign is: `(context: TurnContext) => Promise<void>`
+     * Runs all `onConversationUpdate()` handlers before calling `ActivityHandler.dispatchConversationUpdateActivity()`.
      * @remarks
      * The default logic is below:
      * ```ts
@@ -258,7 +264,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      *  });
      * ```
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
-     * @param next () => Promise<void>
      */
     protected async onConversationUpdateActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'ConversationUpdate', async () => {
@@ -267,9 +272,8 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * Override this method when dispatching off of a ConversationUpdate to trigger other sub-events.
+     * Override this method when dispatching off of a `'ConversationUpdate'` event to trigger other sub-events.
      * @remarks
-     * Sample code:
      * The default logic is below:
      * ```ts
      *  if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
@@ -280,9 +284,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      *      await this.defaultNextEvent(context)();
      *  }
      * ```
-     * Where `next()` is equiavlent to the returned value of `ActivityHandler.defaultNextEvent()`.
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
-     * @param next () => Promise<void>
      */
     protected async dispatchConversationUpdateActivity(context: TurnContext): Promise<void> {
         if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
@@ -295,7 +297,14 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * 
+     * Runs all `onMessageReaction()` handlers before calling `ActivityHandler.dispatchMessageReactionActivity()`.
+     * @remarks
+     * The default logic is below:
+     * ```ts
+     *  await this.handle(context, 'MessageReaction', async () => {
+     *      await this.dispatchMessageReactionActivity(context);
+     *  });
+     * ```
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
      */
     protected async onMessageReactionActivity(context: TurnContext): Promise<void> {
@@ -305,7 +314,18 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * 
+     * Override this method when dispatching off of a `'MessageReaction'` event to trigger other sub-events.
+     * @remarks
+     * The default logic is below:
+     * ```ts
+     *  if (context.activity.reactionsAdded && context.activity.reactionsAdded.length > 0) {
+     *      await this.handle(context, 'ReactionsAdded', this.defaultNextEvent(context));
+     *  } else if (context.activity.reactionsRemoved && context.activity.reactionsRemoved.length > 0) {
+     *      await this.handle(context, 'ReactionsRemoved', this.defaultNextEvent(context));
+     *  } else {
+     *      await this.defaultNextEvent(context)();
+     *  }
+     * ```
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
      */
     protected async dispatchMessageReactionActivity(context: TurnContext): Promise<void> {
@@ -319,7 +339,14 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * 
+     * Runs all `onEvent()` handlers before calling `ActivityHandler.dispatchEventActivity()`.
+     * @remarks
+     * The default logic is below:
+     * ```ts
+     *  await this.handle(context, 'Event', async () => {
+     *      await this.dispatchEventActivity(context);
+     *  });
+     * ```
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
      */
     protected async onEventActivity(context: TurnContext): Promise<void> {
@@ -329,6 +356,20 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
     
     /**
+     * Override this method when dispatching off of a `'Event'` event to trigger other sub-events.
+     * @remarks
+     * For certain channels (e.g. Web Chat, custom Direct Line clients), developers can emit
+     * custom `'event'`-type activities from the client. Developers should then overwrite this method
+     * to support their custom `'event'` activities.
+     * 
+     * The default logic is below:
+     * ```ts
+     *  if (context.activity.name === 'tokens/response') {
+     *      await this.handle(context, 'TokenResponseEvent', this.defaultNextEvent(context));
+     *  } else {
+     *      await this.defaultNextEvent(context)();
+     *  }
+     * ```
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
      */
     protected async dispatchEventActivity(context: TurnContext): Promise<void> {
@@ -340,7 +381,7 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * Returns an async function that emits the `"Dialog"` event when called.
+     * Returns an async function that emits the `'Dialog'` event when called.
      * Overwrite this function to emit a different default event once all relevant
      * events are emitted.
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
