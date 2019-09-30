@@ -38,6 +38,42 @@ describe('ActivityHandlerBase', function() {
         onUnrecognizedActivity = false;
     });
 
+    it('should throw an error if context is not passed in', done => {
+        const bot = new ActivityHandlerBase();
+
+        bot.run().catch(error => {
+            if (error.message !== 'Missing TurnContext parameter') {
+                done(error);
+            } else {
+                done();
+            }
+        });
+    });
+
+    it('should throw an error if context.activity is falsey', done => {
+        const bot = new ActivityHandlerBase();
+        
+        bot.run({}).catch(error => {
+            if (error.message !== 'TurnContext does not include an activity') {
+                done(error);
+            } else {
+                done();
+            }
+        });
+    });
+    
+    it('should throw an error if context.activity.type is falsey', done => {
+        const bot = new ActivityHandlerBase();
+
+        bot.run({ activity: {} }).catch(error => {
+            if (error.message !== `Activity is missing it's type`) {
+                done(error);
+            } else {
+                done();
+            }
+        });
+    });
+
     it('should call onActivity from run()', done => {
         const bot = new ActivityHandlerBase();
 
