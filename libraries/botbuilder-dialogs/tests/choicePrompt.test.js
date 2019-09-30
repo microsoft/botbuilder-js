@@ -656,7 +656,7 @@ describe('ChoicePrompt', function () {
             .assertReply('large');
     });
     
-    it('should display choices on a hero card with an additional attachment', async function () {
+    it('should display choices on a hero card with an additional attachment', async function (done) {
         const sizeChoices = ['large', 'medium', 'small'];
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -687,14 +687,17 @@ describe('ChoicePrompt', function () {
             "body": []
         });
 
-        const activity = { attachments: [card] };
+        const activity ={ attachments: [card], type: ActivityTypes.Message };
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
-            .assertReply(activity => {
-                assert(activity.attachments.length === 1);
-                assert(activity.attachments[0].contentType === CardFactory.contentTypes.heroCard || CardFactory.contentTypes.adaptiveCard);
+        adapter.send('Hello')
+            .assertReply(response => {
+                assert(response.attachments.length === 2);
+                assert(response.attachments[0].contentType === CardFactory.contentTypes.adaptiveCard);
+                assert(response.attachments[1].contentType === CardFactory.contentTypes.heroCard);
             });
+        done()
     });
+
 
 });
