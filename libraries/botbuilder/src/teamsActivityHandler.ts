@@ -478,10 +478,10 @@ export class TeamsActivityHandler extends ActivityHandler {
      * 
      * @param handler 
      */
-    public onTeamsTeamRenamedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
+    public onTeamsTeamRenamedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsTeamRenamed', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
-            await handler(teamsChannelData.channel, teamsChannelData.team, context, next);
+            await handler(teamsChannelData.team, context, next);
         });
     }
 
