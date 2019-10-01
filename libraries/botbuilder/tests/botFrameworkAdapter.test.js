@@ -136,10 +136,10 @@ function assertResponse(res, statusCode, hasBody) {
     }
 }
 
-describe(`BotFrameworkAdapter`, function () {
+describe(`BotFrameworkAdapter`, function() {
     this.timeout(5000);
 
-    it(`should read ChannelService and BotOpenIdMetadata env var if they exist`, function () {
+    it(`should read ChannelService and BotOpenIdMetadata env var if they exist`, function() {
         process.env.ChannelService = 'https://botframework.azure.us';
         process.env.BotOpenIdMetadata = 'https://someEndpoint.com';
         const adapter = new AdapterUnderTest();
@@ -150,22 +150,22 @@ describe(`BotFrameworkAdapter`, function () {
         delete process.env.BotOpenIdMetadata;
     });
     
-    it(`should return the status of every connection the user has`, async function () {
+    it(`should return the status of every connection the user has`, function() {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         adapter.getTokenStatus(context)
-        .then((responses) => {
-            assert(responses.length > 0);
-        });
+            .then((responses) => {
+                assert(responses.length > 0);
+            });
     });
 
-    it(`should authenticateRequest() if no appId or appPassword.`, function (done) {
+    it(`should authenticateRequest() if no appId or appPassword.`, function(done) {
         const req = new MockRequest(incomingMessage);
         const adapter = new AdapterUnderTest();
         adapter.testAuthenticateRequest(req, '').then(() => done());
     });
 
-    it(`should fail to authenticateRequest() if appId+appPassword and no headers.`, function (done) {
+    it(`should fail to authenticateRequest() if appId+appPassword and no headers.`, function(done) {
         const req = new MockRequest(incomingMessage);
         const adapter = new AdapterUnderTest({ appId: 'bogusApp', appPassword: 'bogusPassword' });
         adapter.testAuthenticateRequest(req, '').then(() => {
@@ -176,7 +176,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should createConnectorClient().`, function (done) {
+    it(`should createConnectorClient().`, function(done) {
         const req = new MockRequest(incomingMessage);
         const adapter = new AdapterUnderTest();
         const client = adapter.testCreateConnectorClient(reference.serviceUrl);
@@ -185,7 +185,7 @@ describe(`BotFrameworkAdapter`, function () {
         done();
     });
 
-    it(`should processActivity().`, function (done) {
+    it(`should processActivity().`, function(done) {
         let called = false;
         const req = new MockRequest(incomingMessage);
         const res = new MockResponse();
@@ -200,7 +200,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should processActivity() sent as body.`, function (done) {
+    it(`should processActivity() sent as body.`, function(done) {
         let called = false;
         const req = new MockBodyRequest(incomingMessage);
         const res = new MockResponse();
@@ -215,7 +215,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should check timestamp in processActivity() sent as body.`, function (done) {
+    it(`should check timestamp in processActivity() sent as body.`, function(done) {
         let called = false;
         let message = incomingMessage;
         message.timestamp = '2018-10-01T14:14:54.790Z';
@@ -237,7 +237,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should reject a bogus request sent to processActivity().`, function (done) {
+    it(`should reject a bogus request sent to processActivity().`, function(done) {
         const req = new MockRequest('bogus');
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
@@ -252,7 +252,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should reject a request without activity type sent to processActivity().`, function (done) {
+    it(`should reject a request without activity type sent to processActivity().`, function(done) {
         const req = new MockBodyRequest({ text: 'foo' });
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
@@ -267,7 +267,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should migrate location of tenantId for MS Teams processActivity().`, function (done) {
+    it(`should migrate location of tenantId for MS Teams processActivity().`, function(done) {
         const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', channelData: { tenant: { id: '1234' } } }, reference, true);
         incoming.channelId = 'msteams';
         const req = new MockBodyRequest(incoming);
@@ -279,7 +279,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`receive a semanticAction with a state property on the activity in processActivity().`, function (done) {
+    it(`receive a semanticAction with a state property on the activity in processActivity().`, function(done) {
         const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', semanticAction: { state: 'start' } }, reference, true);
         incoming.channelId = 'msteams';
         const req = new MockBodyRequest(incoming);
@@ -291,7 +291,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`receive a callerId property on the activity in processActivity().`, function (done) {
+    it(`receive a callerId property on the activity in processActivity().`, function(done) {
         const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', callerId: 'foo' }, reference, true);
         incoming.channelId = 'msteams';
         const req = new MockBodyRequest(incoming);
@@ -303,7 +303,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should receive a properties property on the conversation object in processActivity().`, function (done) {
+    it(`should receive a properties property on the conversation object in processActivity().`, function(done) {
         const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', callerId: 'foo' }, reference, true);
         incoming.channelId = 'msteams';
         const req = new MockBodyRequest(incoming);
@@ -315,7 +315,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to auth on call to processActivity().`, function (done) {
+    it(`should fail to auth on call to processActivity().`, function(done) {
         const req = new MockRequest(incomingMessage);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
@@ -331,7 +331,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should return 500 error on bot logic exception during processActivity().`, function (done) {
+    it(`should return 500 error on bot logic exception during processActivity().`, function(done) {
         const req = new MockRequest(incomingMessage);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
@@ -346,7 +346,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should continueConversation().`, function (done) {
+    it(`should continueConversation().`, function(done) {
         let called = false;
         const adapter = new AdapterUnderTest();
         adapter.continueConversation(reference, (context) => {
@@ -362,7 +362,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should createConversation().`, function (done) {
+    it(`should createConversation().`, function(done) {
         let called = false;
         const adapter = new AdapterUnderTest();
         adapter.createConversation(reference, (context) => {
@@ -376,7 +376,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should createConversation() and assign new serviceUrl.`, function (done) {
+    it(`should createConversation() and assign new serviceUrl.`, function(done) {
         let called = false;
         const adapter = new AdapterUnderTest();
         adapter.newServiceUrl = 'https://example.org/channel2';
@@ -392,7 +392,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to createConversation() if serviceUrl missing.`, function (done) {
+    it(`should fail to createConversation() if serviceUrl missing.`, function(done) {
         const adapter = new AdapterUnderTest();
         const bogus = Object.assign({}, reference);
         delete bogus.serviceUrl;
@@ -406,7 +406,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should createConversation() for Teams.`, function (done) {
+    it(`should createConversation() for Teams.`, function(done) {
         const adapter = new AdapterUnderTest();
         adapter.createConversation(reference, (context) => {
             try{
@@ -423,7 +423,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should deliver a single activity using sendActivities().`, function (done) {
+    it(`should deliver a single activity using sendActivities().`, function(done) {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         adapter.sendActivities(context, [outgoingMessage]).then((responses) => {
@@ -434,7 +434,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should deliver multiple activities using sendActivities().`, function (done) {
+    it(`should deliver multiple activities using sendActivities().`, function(done) {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         adapter.sendActivities(context, [outgoingMessage, outgoingMessage]).then((responses) => {
@@ -444,7 +444,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should wait for a 'delay' using sendActivities().`, function (done) {
+    it(`should wait for a 'delay' using sendActivities().`, function(done) {
         const start = new Date().getTime();
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
@@ -457,7 +457,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should wait for a 'delay' withut a value using sendActivities().`, function (done) {
+    it(`should wait for a 'delay' withut a value using sendActivities().`, function(done) {
         const start = new Date().getTime();
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
@@ -470,7 +470,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should return bots 'invokeResponse'.`, function (done) {
+    it(`should return bots 'invokeResponse'.`, function(done) {
         const req = new MockRequest(incomingInvoke);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
@@ -482,7 +482,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should return 501 error if bot fails to return an 'invokeResponse'.`, function (done) {
+    it(`should return 501 error if bot fails to return an 'invokeResponse'.`, function(done) {
         const req = new MockRequest(incomingInvoke);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
@@ -497,7 +497,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to sendActivities().`, function (done) {
+    it(`should fail to sendActivities().`, function(done) {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         adapter.failOperation = true;
@@ -510,7 +510,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to sendActivities() without a serviceUrl.`, function (done) {
+    it(`should fail to sendActivities() without a serviceUrl.`, function(done) {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, outgoingMessage, { serviceUrl: undefined });
@@ -522,7 +522,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to sendActivities() without a conversation.id.`, function (done) {
+    it(`should fail to sendActivities() without a conversation.id.`, function(done) {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, outgoingMessage, { conversation: undefined });
@@ -534,7 +534,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should post to a whole conversation using sendActivities() if replyToId missing.`, function (done) {
+    it(`should post to a whole conversation using sendActivities() if replyToId missing.`, function(done) {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, outgoingMessage, { replyToId: undefined });
@@ -546,13 +546,13 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should updateActivity().`, function (done) {
+    it(`should updateActivity().`, function(done) {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         adapter.updateActivity(context, incomingMessage).then(() => done());
     });
 
-    it(`should fail to updateActivity() if serviceUrl missing.`, function (done) {
+    it(`should fail to updateActivity() if serviceUrl missing.`, function(done) {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, incomingMessage, { serviceUrl: undefined });
@@ -564,7 +564,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to updateActivity() if conversation missing.`, function (done) {
+    it(`should fail to updateActivity() if conversation missing.`, function(done) {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, incomingMessage, { conversation: undefined });
@@ -576,7 +576,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to updateActivity() if activity.id missing.`, function (done) {
+    it(`should fail to updateActivity() if activity.id missing.`, function(done) {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, incomingMessage, { id: undefined });
@@ -588,13 +588,13 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should deleteActivity().`, function (done) {
+    it(`should deleteActivity().`, function(done) {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         adapter.deleteActivity(context, reference).then(() => done());
     });
 
-    it(`should fail to deleteActivity() if serviceUrl missing.`, function (done) {
+    it(`should fail to deleteActivity() if serviceUrl missing.`, function(done) {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, reference, { serviceUrl: undefined });
@@ -606,7 +606,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to deleteActivity() if conversation missing.`, function (done) {
+    it(`should fail to deleteActivity() if conversation missing.`, function(done) {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, reference, { conversation: undefined });
@@ -618,7 +618,7 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to deleteActivity() if activityId missing.`, function (done) {
+    it(`should fail to deleteActivity() if activityId missing.`, function(done) {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, reference, { activityId: undefined });
@@ -641,7 +641,7 @@ describe(`BotFrameworkAdapter`, function () {
     //     done();
     // });
 
-    it(`should set openIdMetadata property on ChannelValidation`, function (done) {
+    it(`should set openIdMetadata property on ChannelValidation`, function(done) {
         const testEndpoint = "http://rainbows.com";
         const original = connector.ChannelValidation.OpenIdMetadataEndpoint;
         const adapter = new BotFrameworkAdapter({openIdMetadata: testEndpoint});
@@ -650,7 +650,7 @@ describe(`BotFrameworkAdapter`, function () {
         done();
     });
 
-    it(`should set openIdMetadata property on GovernmentChannelValidation`, function (done) {
+    it(`should set openIdMetadata property on GovernmentChannelValidation`, function(done) {
         const testEndpoint = "http://azure.com/configuration";
         console.error(connector.GovernmentChannelValidation);
         const original = connector.GovernmentChannelValidation.OpenIdMetadataEndpoint;
@@ -660,7 +660,7 @@ describe(`BotFrameworkAdapter`, function () {
         done();
     });
 
-    it(`should set oAuthEndpoint property on connector client`, function (done) {
+    it(`should set oAuthEndpoint property on connector client`, function(done) {
         const testEndpoint = "http://rainbows.com";
         const adapter = new BotFrameworkAdapter({oAuthEndpoint: testEndpoint});
         const url = adapter.oauthApiUrl();
@@ -668,7 +668,7 @@ describe(`BotFrameworkAdapter`, function () {
         done();
     });
 
-    it(`should throw error if missing serviceUrl in deleteConversationMember()`, async function () {
+    it(`should throw error if missing serviceUrl in deleteConversationMember()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.deleteConversationMember({ activity: {} });
@@ -680,7 +680,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing conversation in deleteConversationMember()`, async function () {
+    it(`should throw error if missing conversation in deleteConversationMember()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.deleteConversationMember({ activity: { serviceUrl: 'https://test.com' } });
@@ -692,7 +692,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing conversation.id in deleteConversationMember()`, async function () {
+    it(`should throw error if missing conversation.id in deleteConversationMember()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.deleteConversationMember({ activity: { serviceUrl: 'https://test.com', conversation: {} } });
@@ -704,7 +704,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing serviceUrl in getActivityMembers()`, async function () {
+    it(`should throw error if missing serviceUrl in getActivityMembers()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.getActivityMembers({ activity: {} });
@@ -716,7 +716,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing conversation in getActivityMembers()`, async function () {
+    it(`should throw error if missing conversation in getActivityMembers()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.getActivityMembers({ activity: { serviceUrl: 'https://test.com' } });
@@ -728,7 +728,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing conversation.id in getActivityMembers()`, async function () {
+    it(`should throw error if missing conversation.id in getActivityMembers()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.getActivityMembers({ activity: { serviceUrl: 'https://test.com', conversation: {} } });
@@ -740,7 +740,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing activityId in getActivityMembers()`, async function () {
+    it(`should throw error if missing activityId in getActivityMembers()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.getActivityMembers({ activity: { serviceUrl: 'https://test.com', conversation: { id: '1' } } });
@@ -752,7 +752,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing serviceUrl in getConversationMembers()`, async function () {
+    it(`should throw error if missing serviceUrl in getConversationMembers()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.getConversationMembers({ activity: {} });
@@ -764,7 +764,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing conversation in getConversationMembers()`, async function () {
+    it(`should throw error if missing conversation in getConversationMembers()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.getConversationMembers({ activity: { serviceUrl: 'https://test.com' } });
@@ -776,7 +776,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing conversation.id in getConversationMembers()`, async function () {
+    it(`should throw error if missing conversation.id in getConversationMembers()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.getConversationMembers({ activity: { serviceUrl: 'https://test.com', conversation: {} } });
@@ -788,7 +788,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
     
-    it(`should throw error if missing from in getUserToken()`, async function () {
+    it(`should throw error if missing from in getUserToken()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.getUserToken({ activity: {} });
@@ -800,7 +800,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing from.id in getUserToken()`, async function () {
+    it(`should throw error if missing from.id in getUserToken()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.getUserToken({ activity: { from: {} } });
@@ -812,59 +812,59 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-	it(`should throw error if missing connectionName`, async function () {
-		try {
-			const adapter = new AdapterUnderTest();
-			await adapter.getUserToken({ activity: { from: {id: 'some id'} } });
-		} catch (err) {
-			assert(err.message === 'getUserToken() requires a connectionName but none was provided.',
-				`expected "getUserToken() requires a connectionName but none was provided." Error message, not "${ err.message }"`);
-			return;
-		}
-		assert(false, `should have thrown an error message`);
-	});
+    it(`should throw error if missing connectionName`, async function() {
+        try {
+            const adapter = new AdapterUnderTest();
+            await adapter.getUserToken({ activity: { from: {id: 'some id'} } });
+        } catch (err) {
+            assert(err.message === 'getUserToken() requires a connectionName but none was provided.',
+                `expected "getUserToken() requires a connectionName but none was provided." Error message, not "${ err.message }"`);
+            return;
+        }
+        assert(false, `should have thrown an error message`);
+    });
 
-	it(`should get the user token when all params are provided`, async function () {
-		const argsPassedToMockClient = [];
-		class MockTokenApiClient {
-			constructor() {
-				this.userToken = {
-					getToken: async (...args) => {
-						argsPassedToMockClient.push({getToken: args});
-						return {
-							token: 'yay! a token!',
-							_response: {status: 200}
-						}
-					}
-				}
-			}
+    it(`should get the user token when all params are provided`, async function() {
+        const argsPassedToMockClient = [];
+        class MockTokenApiClient {
+            constructor() {
+                this.userToken = {
+                    getToken: async (...args) => {
+                        argsPassedToMockClient.push({getToken: args});
+                        return {
+                            token: 'yay! a token!',
+                            _response: {status: 200}
+                        }
+                    }
+                }
+            }
 
-		}
-		const {TokenApiClient} = connector;
-		connector.TokenApiClient = MockTokenApiClient;
-		const adapter = new AdapterUnderTest();
-		const token = await adapter.getUserToken(
-			{ activity: { channelId: 'The Facebook', from: {id: 'some id'} } },
-			'aConnectionName');
+        }
+        const {TokenApiClient} = connector;
+        connector.TokenApiClient = MockTokenApiClient;
+        const adapter = new AdapterUnderTest();
+        const token = await adapter.getUserToken(
+            { activity: { channelId: 'The Facebook', from: {id: 'some id'} } },
+            'aConnectionName');
 
-		assert.ok(JSON.stringify(token) === JSON.stringify({
-			'token': 'yay! a token!',
-			'_response': {
-				'status': 200
-			}
-		}));
-		assert.ok(argsPassedToMockClient.length === 1);
-		assert.ok(JSON.stringify(argsPassedToMockClient[0]) === JSON.stringify({getToken: [
-			'some id',
-			'aConnectionName',
-			{
-				'channelId': 'The Facebook'
-			}
-		]}));
-		connector.TokenApiClient = TokenApiClient; // restore
-	});
+        assert.ok(JSON.stringify(token) === JSON.stringify({
+            'token': 'yay! a token!',
+            '_response': {
+                'status': 200
+            }
+        }));
+        assert.ok(argsPassedToMockClient.length === 1);
+        assert.ok(JSON.stringify(argsPassedToMockClient[0]) === JSON.stringify({getToken: [
+            'some id',
+            'aConnectionName',
+            {
+                'channelId': 'The Facebook'
+            }
+        ]}));
+        connector.TokenApiClient = TokenApiClient; // restore
+    });
 
-    it(`should throw error if missing from in signOutUser()`, async function () {
+    it(`should throw error if missing from in signOutUser()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.signOutUser({ activity: {} });
@@ -876,7 +876,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing from.id in signOutUser()`, async function () {
+    it(`should throw error if missing from.id in signOutUser()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.signOutUser({ activity: { from: {} } });
@@ -888,7 +888,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing from in getAadTokens()`, async function () {
+    it(`should throw error if missing from in getAadTokens()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.getAadTokens({ activity: {} });
@@ -900,7 +900,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing from.id in getAadTokens()`, async function () {
+    it(`should throw error if missing from.id in getAadTokens()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.getAadTokens({ activity: { from: {} } });
@@ -912,7 +912,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing from in getTokenStatus()`, async function () {
+    it(`should throw error if missing from in getTokenStatus()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
 
@@ -925,7 +925,7 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing from.id in getTokenStatus()`, async function () {
+    it(`should throw error if missing from.id in getTokenStatus()`, async function() {
         try {
             const adapter = new AdapterUnderTest();
             await adapter.getTokenStatus({ activity: { from: {} } });

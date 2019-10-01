@@ -117,17 +117,10 @@ export class MicrosoftAppCredentials {
         // 1. The user requested it via the forceRefresh parameter
         // 2. We have it, but it's expired
         // 3. We don't have it in the cache.
-        const res: Response = await this.refreshToken();
+        let oauthResponse: OAuthResponse;
         this.refreshingToken = null;
 
-        let oauthResponse: OAuthResponse;
-        if (res.ok) {          
-            // `res` is equalivent to the results from the cached promise `this.refreshingToken`.
-            // Because the promise has been cached, we need to see if the body has been read.
-            // If the body has not been read yet, we can call res.json() to get the access_token.
-            // If the body has been read, the OAuthResponse for that call should have been cached already,
-            // in which case we can return the cache from there. If a cached OAuthResponse does not exist,
-            // call getToken() again to retry the authentication process.
+        this.refreshToken().then(async res => {
             if (!res.bodyUsed){
                 oauthResponse = await res.json();
                 // Subtract 5 minutes from expires_in so they'll we'll get a
@@ -142,10 +135,11 @@ export class MicrosoftAppCredentials {
                 } else {
                     return await this.getToken();
                 }
-            }
-        } else {
-            throw new Error(res.statusText);
-        }
+        }}).catch( err => {
+            return err;
+        })      
+
+            
 
     }
 
