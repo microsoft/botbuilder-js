@@ -3,6 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Blanket ignore zip files
+# Related to Teams Scenarios work
+*.zip
+*.vscode
+
 # User-specific files
 *.suo
 *.user
