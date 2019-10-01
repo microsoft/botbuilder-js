@@ -10,7 +10,7 @@ import * as restify from 'restify';
 import { BotFrameworkAdapter } from 'botbuilder';
 
 // This bot's main dialog.
-import { ActionBasedMessagingExtensionBot  } from './actionBasedMessagingExtensionBot ';
+import { ActionBasedMessagingExtensionBot  } from './actionBasedMessagingExtensionBot';
 
 const ENV_FILE = path.join(__dirname, '..', '.env');
 config({ path: ENV_FILE });
