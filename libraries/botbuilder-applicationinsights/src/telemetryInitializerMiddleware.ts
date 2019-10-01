@@ -54,13 +54,13 @@ export class TelemetryInitializerMiddleware implements Middleware {
 
         if (context.activity && context.activity.id) {
             const correlationContext: CorrelationContext = appInsights.getCorrelationContext();
-            correlationContext['activity'] = JSON.stringify(context.activity);
+            correlationContext['activity'] = context.activity;
         }
 
         if(this._logActivityTelemetry)
         {
             let activityLogger = new TelemetryLoggerMiddleware(this._telemetryClient, this._logPersonalInformation);
-            activityLogger.onTurn(context, next);
+            await activityLogger.onTurn(context, next);
         }
         else if (next !== null) {
             await next();
