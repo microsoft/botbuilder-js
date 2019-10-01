@@ -4,7 +4,7 @@
  */
 
 import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
-import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
+import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient,  TokenApiModels } from 'botframework-connector';
 import * as os from 'os';
 
 /**
@@ -329,7 +329,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`); }
 
         // Create conversation
-        const parameters: ConversationParameters = { bot: reference.bot, members: [reference.user], isGroup: false, activity: null, channelData: null };
+        const parameters: ConversationParameters = { bot: reference.bot, members: [reference.user], isGroup: false, activity: null, channelData: null, headers: {} };
         const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
 
         // Mix in the tenant ID if specified. This is required for MS Teams.
@@ -506,7 +506,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const client: ConnectorClient = this.createConnectorClient(url);
         //TODO: Modify to use new client
 
-        return await client.conversations.getConversations(continuationToken ? { continuationToken: continuationToken } : undefined);
+        return await client.conversations.getConversations(continuationToken ? { continuationToken: continuationToken, headers: {} } : undefined);
     }
 
     /**
@@ -537,7 +537,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         // TO-DO TODO
         // const customResult: CustomModels.UserTokenGetTokenResponse = await customClient.userToken.getToken(userId, connectionName, { code: magicCode, channelId: context.activity.channelId });
         
-        if (!result || !result.token || result._response.status == 404) {
+        if (!result || !result.token || result._response.statusCode == 404) {
             return undefined;
         } else {
             return result as TokenResponse;
@@ -584,7 +584,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         };
 
         const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
-        return (await client.botSignIn.getSignInUrl(finalState, { channelId: context.activity.channelId }))._response.bodyAsText;
+        return (await client.botSignIn.getSignInUrl(finalState, { channelId: context.activity.channelId, headers: {} }))._response.bodyAsText;
     }
 
     /** 
@@ -595,10 +595,10 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      *      Otherwise, the ID of the user who sent the current activity is used.
      * @param includeFilter Optional. A comma-separated list of connection's to include. If present,
      *      the `includeFilter` parameter limits the tokens this method returns.
-     * 
+    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string ): Promise<TokenApiModels.TokenStatus[]>
      * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
      */
-    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string ): Promise<TokenStatus[]>
+    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string ): Promise<TokenApiModels.TokenStatus[]>
     {
         if (!userId && (!context.activity.from || !context.activity.from.id)) {
             throw new Error(`BotFrameworkAdapter.getTokenStatus(): missing from or from.id`);
@@ -864,7 +864,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * Override this in a derived class to create a mock connector client for unit testing.
      */
     protected createConnectorClient(serviceUrl: string): ConnectorClient {
-        const client: ConnectorClient = new ConnectorClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
+        const client: ConnectorClient = new ConnectorClient(this.credentials, { baseUri: serviceUrl} );
         return client;
     }
 

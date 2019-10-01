@@ -12,16 +12,49 @@
 
 
 /**
-* Indicates whether the bot is accepting, expecting, or ignoring input
+* Channel account information needed to route a message
 */
-export class InputHints {
+export class ChannelAccount {
+    /**
+    * Channel id for the user or bot on this channel (Example: joe@smith.com, or @joesmith or 123456)
+    */
+    'id'?: string;
+    /**
+    * Display friendly name
+    */
+    'name'?: string;
+    /**
+    * This account\'s object ID within Azure Active Directory (AAD)
+    */
+    'aadObjectId'?: string;
+    'role'?: string;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-    ];
+        {
+            "name": "id",
+            "baseName": "id",
+            "type": "string"
+        },
+        {
+            "name": "name",
+            "baseName": "name",
+            "type": "string"
+        },
+        {
+            "name": "aadObjectId",
+            "baseName": "aadObjectId",
+            "type": "string"
+        },
+        {
+            "name": "role",
+            "baseName": "role",
+            "type": "string"
+        }    ];
 
     static getAttributeTypeMap() {
-        return InputHints.attributeTypeMap;
+        return ChannelAccount.attributeTypeMap;
     }
 }
+

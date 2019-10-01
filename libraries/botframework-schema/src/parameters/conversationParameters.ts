@@ -10,79 +10,95 @@
  * Do not edit the class manually.
  */
 
-import { ActionTypes } from './actionTypes';
-
+import { Activity } from '../activity';
+import { ChannelAccount } from '../channelAccount';
+import { RequestOptions } from './requestOptions'
 /**
-* A clickable action
+* Parameters for creating a new conversation
 */
-export class CardAction {
-    'type'?: ActionTypes;
+export class ConversationParameters extends RequestOptions {
+    'continuationToken'?: string;
     /**
-    * Text description which appears on the button
+    * IsGroup
     */
-    'title'?: string;
+    'isGroup'?: boolean;
+    'bot'?: ChannelAccount;
     /**
-    * Image URL which will appear on the button, next to text label
+    * Members to add to the conversation
     */
-    'image'?: string;
+    'members'?: Array<ChannelAccount>;
     /**
-    * Text for this action
+    * (Optional) Topic of the conversation (if supported by the channel)
     */
-    'text'?: string;
+    'topicName'?: string;
     /**
-    * (Optional) text to display in the chat feed if the button is clicked
+    * (Optional) The tenant ID in which the conversation should be created
     */
-    'displayText'?: string;
+    'tenantId'?: string;
+    'activity'?: Activity;
     /**
-    * Supplementary parameter for action. Content of this property depends on the ActionType
-    */
-    'value'?: object;
-    /**
-    * Channel-specific data associated with this action
+    * Channel specific payload for creating the conversation
     */
     'channelData'?: object;
+    'channelId'?: string;
+    'conversationId'?: string;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
-            "name": "type",
-            "baseName": "type",
-            "type": "ActionTypes"
-        },
-        {
-            "name": "title",
-            "baseName": "title",
+            "name": "continuationToken",
+            "baseName": "continuationToken",
             "type": "string"
         },
         {
-            "name": "image",
-            "baseName": "image",
+            "name": "isGroup",
+            "baseName": "isGroup",
+            "type": "boolean"
+        },
+        {
+            "name": "bot",
+            "baseName": "bot",
+            "type": "ChannelAccount"
+        },
+        {
+            "name": "members",
+            "baseName": "members",
+            "type": "Array<ChannelAccount>"
+        },
+        {
+            "name": "topicName",
+            "baseName": "topicName",
             "type": "string"
         },
         {
-            "name": "text",
-            "baseName": "text",
+            "name": "tenantId",
+            "baseName": "tenantId",
             "type": "string"
         },
         {
-            "name": "displayText",
-            "baseName": "displayText",
-            "type": "string"
-        },
-        {
-            "name": "value",
-            "baseName": "value",
-            "type": "object"
+            "name": "activity",
+            "baseName": "activity",
+            "type": "Activity"
         },
         {
             "name": "channelData",
             "baseName": "channelData",
             "type": "object"
+        },
+        {
+            "name": "conversationId",
+            "baseName": "conversationId",
+            "type": "string"
+        },
+        {
+            "name": "channelId",
+            "baseName": "channelId",
+            "type": "string"
         }    ];
 
     static getAttributeTypeMap() {
-        return CardAction.attributeTypeMap;
+        return this.attributeTypeMap;
     }
 }
 

@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-import * as Models from './model';
+import * as Model from 'botframework-schema';
 import { MicrosoftAppCredentials } from '../auth'
 import { TokenApiClient } from './tokenApiClient';
 import { ApiHelper } from '../apiHelper';
@@ -44,7 +44,7 @@ export class UserTokenApi {
      * @param connectionName 
      * @param channelId 
      */
-    public async getAadTokens (userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options: Models.UserTokenGetAadTokensOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetAadTokensResponse> {
+    public async getAadTokens (userId: string, connectionName: string, aadResourceUrls: Model.AadResourceUrls, options: Model.TokenOptionalParams = {headers: {}}) : Promise<Model.UserTokenGetAadTokensResponse> {
         const localPath = this.basePath + '/api/usertoken/GetAadTokens';
         let localQueryParameters = {};
         let localHeaderParams = Object.assign({}, this.defaultHeaders);        
@@ -91,7 +91,7 @@ export class UserTokenApi {
 
         await this.credentials.signRequest(requestOptions);       
 
-        return ApiHelper.deserializeResponse<Models.UserTokenGetAadTokensResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<Model.UserTokenGetAadTokensResponse>(url, requestOptions);
     }
     /**
      * 
@@ -100,7 +100,7 @@ export class UserTokenApi {
      * @param channelId 
      * @param code 
      */
-    public async getToken (userId: string, connectionName: string, options: Models.UserTokenGetTokenOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetTokenResponse> {
+    public async getToken (userId: string, connectionName: string, options: Model.TokenOptionalParams = {headers: {}}) : Promise<Model.UserTokenGetTokenResponse> {
         const localPath = this.basePath + '/api/usertoken/GetToken';
         let localQueryParameters = {};
         let localHeaderParams = Object.assign({}, this.defaultHeaders);        
@@ -146,7 +146,7 @@ export class UserTokenApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return ApiHelper.deserializeResponse<Models.UserTokenGetTokenResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<Model.UserTokenGetTokenResponse>(url, requestOptions);
     }
     /**
      * 
@@ -154,7 +154,7 @@ export class UserTokenApi {
      * @param channelId 
      * @param include 
      */
-    public async getTokenStatus (userId: string, options: Models.UserTokenGetTokenStatusOptionalParams = {headers: {}}) : Promise<Models.UserTokenGetTokenStatusResponse> {
+    public async getTokenStatus (userId: string, options: Model.TokenOptionalParams = {headers: {}}) : Promise<Model.UserTokenGetTokenStatusResponse> {
         const localPath = this.basePath + '/api/usertoken/GetTokenStatus';
         let localQueryParameters = {};
         let localHeaderParams = Object.assign({}, this.defaultHeaders);
@@ -191,7 +191,7 @@ export class UserTokenApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return ApiHelper.deserializeResponse<Models.UserTokenGetTokenStatusResponse>(url, requestOptions);  
+        return ApiHelper.deserializeResponse<Model.UserTokenGetTokenStatusResponse>(url, requestOptions);  
     }
     /**
      * 
@@ -199,7 +199,7 @@ export class UserTokenApi {
      * @param connectionName 
      * @param channelId
      */
-    public async signOut (userId: string, options: Models.UserTokenSignOutOptionalParams = {headers: {}}) : Promise<Models.UserTokenSignOutResponse> {
+    public async signOut (userId: string, options: Model.SignOutParams = {headers: {}}) : Promise<Model.UserTokenSignOutResponse> {
         const localPath = this.basePath + '/api/usertoken/SignOut';
         let localQueryParameters = {};
         let localHeaderParams = Object.assign({}, this.defaultHeaders);        
@@ -236,6 +236,6 @@ export class UserTokenApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return await ApiHelper.deserializeResponse<Models.UserTokenSignOutResponse>(url, requestOptions);
+        return await ApiHelper.deserializeResponse<Model.UserTokenSignOutResponse>(url, requestOptions);
     }
 }

@@ -12,17 +12,61 @@
 
 
 /**
-* Action types valid for InstallationUpdate activities
+* An attachment within an activity
 */
-export class InstallationUpdateActionTypes {
+export class Attachment {
+    /**
+    * mimetype/Contenttype for the file
+    */
+    'contentType'?: string;
+    /**
+    * Content Url
+    */
+    'contentUrl'?: string;
+    /**
+    * Embedded content
+    */
+    'content'?: any;
+    /**
+    * (OPTIONAL) The name of the attachment
+    */
+    'name'?: string;
+    /**
+    * (OPTIONAL) Thumbnail associated with attachment
+    */
+    'thumbnailUrl'?: string;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-    ];
+        {
+            "name": "contentType",
+            "baseName": "contentType",
+            "type": "string"
+        },
+        {
+            "name": "contentUrl",
+            "baseName": "contentUrl",
+            "type": "string"
+        },
+        {
+            "name": "content",
+            "baseName": "content",
+            "type": "object"
+        },
+        {
+            "name": "name",
+            "baseName": "name",
+            "type": "string"
+        },
+        {
+            "name": "thumbnailUrl",
+            "baseName": "thumbnailUrl",
+            "type": "string"
+        }    ];
 
     static getAttributeTypeMap() {
-        return InstallationUpdateActionTypes.attributeTypeMap;
+        return Attachment.attributeTypeMap;
     }
 }
 

@@ -19,7 +19,7 @@
 import http = require('http');
 import * as HttpStatus from 'http-status-codes';
 
-import { RequestOptions, GetAttachmentResponse, GetAttachmentInfoResponse } from './model/models';
+import * as Model from 'botframework-schema';
 import { MicrosoftAppCredentials } from '../auth'
 import { ApiHelper } from '../apiHelper';
 
@@ -67,7 +67,7 @@ export class AttachmentsApi {
      * @param attachmentId attachment id
      * @param viewId View id from attachmentInfo
      */
-    public async getAttachment(attachmentId: string, viewId: string, options: RequestOptions = { headers: {} }): Promise<GetAttachmentResponse> {
+    public async getAttachment(attachmentId: string, viewId: string, options: Model.RequestOptions = { headers: {} }): Promise<Model.GetAttachmentResponse> {
         // verify required parameter 'attachmentId' is not null or undefined
         if (attachmentId == null) {
             throw new Error('Required parameter attachmentId was null or undefined when calling getAttachment.');
@@ -94,7 +94,7 @@ export class AttachmentsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return new Promise<GetAttachmentResponse>((resolve, reject) => {
+        return new Promise<Model.GetAttachmentResponse>((resolve, reject) => {
             let httpResponse;
             fetch(url, requestOptions).then(response => {         
                 httpResponse = response;
@@ -104,11 +104,11 @@ export class AttachmentsApi {
                         let _body: Buffer = ApiHelper.deserialize(body, "Buffer");
                         let _bodyAsText: string = _body == undefined? "" : ApiHelper.deserialize(body, "string");                        
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body, readableStreamBody: _body});                        
-                        let toReturn: GetAttachmentResponse = _body == undefined? Object.assign( {_response: _response}) : Object.assign(_body, {_response: _response});
+                        let toReturn: Model.GetAttachmentResponse = _body == undefined? Object.assign( {_response: _response}) : Object.assign(_body, {_response: _response});
 
                         resolve(toReturn);                    
                 } else {
-                    let toReturn: GetAttachmentResponse = Object.assign({_response: httpResponse});   
+                    let toReturn: Model.GetAttachmentResponse = Object.assign({_response: httpResponse});   
                     resolve(toReturn);
                 }                
             });
@@ -120,7 +120,7 @@ export class AttachmentsApi {
      * @summary GetAttachmentInfo
      * @param attachmentId attachment id
      */
-    public async getAttachmentInfo(attachmentId: string, options: RequestOptions = { headers: {} }): Promise<GetAttachmentInfoResponse> {
+    public async getAttachmentInfo(attachmentId: string, options: Model.RequestOptions = { headers: {} }): Promise<Model.GetAttachmentInfoResponse> {
         // verify required parameter 'attachmentId' is not null or undefined
         if (attachmentId == null) {
             throw new Error('Required parameter attachmentId was null or undefined when calling getAttachmentInfo.');
@@ -144,6 +144,6 @@ export class AttachmentsApi {
         
         await this.credentials.signRequest(requestOptions);
 
-        return await ApiHelper.deserializeResponse<GetAttachmentInfoResponse>(url, requestOptions);
+        return await ApiHelper.deserializeResponse<Model.GetAttachmentInfoResponse>(url, requestOptions);
     }
 }

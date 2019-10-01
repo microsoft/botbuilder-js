@@ -10,18 +10,79 @@
  * Do not edit the class manually.
  */
 
+import { ActionTypes } from './actionTypes';
 
 /**
-* Defines the importance of an Activity
+* A clickable action
 */
-export class ActivityImportance {
+export class CardAction {
+    'type'?: ActionTypes;
+    /**
+    * Text description which appears on the button
+    */
+    'title'?: string;
+    /**
+    * Image URL which will appear on the button, next to text label
+    */
+    'image'?: string;
+    /**
+    * Text for this action
+    */
+    'text'?: string;
+    /**
+    * (Optional) text to display in the chat feed if the button is clicked
+    */
+    'displayText'?: string;
+    /**
+    * Supplementary parameter for action. Content of this property depends on the ActionType
+    */
+    'value'?: string;
+    /**
+    * Channel-specific data associated with this action
+    */
+    'channelData'?: object;
 
     static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-    ];
+        {
+            "name": "type",
+            "baseName": "type",
+            "type": "ActionTypes"
+        },
+        {
+            "name": "title",
+            "baseName": "title",
+            "type": "string"
+        },
+        {
+            "name": "image",
+            "baseName": "image",
+            "type": "string"
+        },
+        {
+            "name": "text",
+            "baseName": "text",
+            "type": "string"
+        },
+        {
+            "name": "displayText",
+            "baseName": "displayText",
+            "type": "string"
+        },
+        {
+            "name": "value",
+            "baseName": "value",
+            "type": "object"
+        },
+        {
+            "name": "channelData",
+            "baseName": "channelData",
+            "type": "object"
+        }    ];
 
     static getAttributeTypeMap() {
-        return ActivityImportance.attributeTypeMap;
+        return CardAction.attributeTypeMap;
     }
 }
+

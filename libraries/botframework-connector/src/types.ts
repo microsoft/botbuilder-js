@@ -1,6 +1,6 @@
 
-import * as TokenModel from "./tokenApi/model";
-import * as ConnectorModel from './connectorApi/model'
+import * as TokenModel from 'botframework-schema';
+import * as ConnectorModel from 'botframework-schema';
 
 export let typeMap: {[index: string]: any} = {
     "AadResourceUrls": TokenModel.AadResourceUrls,
