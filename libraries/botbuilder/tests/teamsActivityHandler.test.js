@@ -13,50 +13,6 @@ function createInvokeActivity(name, value = {}, channelData = {}) {
 }
 
 describe('TeamsActivityHandler', () => {
-    xdescribe('should not permit', () => {
-        it('onTeamsFileConsent to register more than one handler', () => {
-            const bot = new TeamsActivityHandler();
-            // Since no onTeamsFileConsent handlers were registered, there should be no entry in bot.handlers
-            assert(!bot.handlers['TeamsFileConsent']);
-            bot.onTeamsFileConsent(async (context, fileConsentCardResponse) => { });
-            assert(bot.handlers['TeamsFileConsent'].length === 1);
-            try {
-                bot.onTeamsFileConsent(async (context, fileConsentCardResponse) => { });
-            } catch (error) {
-                assert(error.message === 'Cannot register more than one handler for TeamsFileConsent.',
-                    `unexpected error thrown:\n ${ JSON.stringify(error) }`);
-            }
-        });
-
-        it('onTeamsFileConsentAccept to register more than one handler', () => {
-            const bot = new TeamsActivityHandler();
-            // Since no onTeamsFileConsentAccept handlers were registered, there should be no entry in bot.handlers
-            assert(!bot.handlers['TeamsFileConsentAccept']);
-            bot.onTeamsFileConsentAccept(async (context, fileConsentCardResponse) => { });
-            assert(bot.handlers['TeamsFileConsentAccept'].length === 1);
-            try {
-                bot.onTeamsFileConsentAccept(async (context, fileConsentCardResponse) => { });
-            } catch (error) {
-                assert(error.message === 'Cannot register more than one handler for TeamsFileConsentAccept.',
-                    `unexpected error thrown:\n ${ JSON.stringify(error) }`);
-            }
-        });
-
-        it('onTeamsFileConsentDecline to register more than one handler', () => {
-            const bot = new TeamsActivityHandler();
-            // Since no onFileConsentDecline handlers were registered, there should be no entry in bot.handlers
-            assert(!bot.handlers['TeamsFileConsentDecline']);
-            bot.onTeamsFileConsentDecline(async (context, fileConsentCardResponse) => { });
-            assert(bot.handlers['TeamsFileConsentDecline'].length === 1);
-            try {
-                bot.onTeamsFileConsentDecline(async (context, fileConsentCardResponse) => { });
-            } catch (error) {
-                assert(error.message === 'Cannot register more than one handler for TeamsFileConsentDecline.',
-                    `unexpected error thrown:\n ${ JSON.stringify(error) }`);
-            }
-        });
-    });
-
     describe('should send a NotImplemented status code if', () => {
         it('onTeamsMessagingExtensionSubmitAction is not overridden', async () => {
             const bot = new TeamsActivityHandler();
@@ -353,7 +309,7 @@ describe('TeamsActivityHandler', () => {
     xdescribe('should call onDialog handlers after successfully handling an', () => {
 
         function createConvUpdateActivity() {
-            
+
         }
 
         it('onTeamsMembersAdded routed activity', async () => {
