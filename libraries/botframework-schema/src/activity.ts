@@ -117,7 +117,7 @@ export class Activity {
     /**
     * Contains channel-specific content.
     */
-    'channelData'?: object;
+    'channelData'?: any;
     /**
     * Indicates whether the recipient of a contactRelationUpdate was added or removed from the sender\'s contact list.
     */
@@ -137,7 +137,7 @@ export class Activity {
     /**
     * A value that is associated with the activity.
     */
-    'value'?: object | string;
+    'value'?: any;
     /**
     * The name of the operation associated with an invoke or event activity.
     */
