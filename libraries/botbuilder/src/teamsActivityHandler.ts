@@ -21,6 +21,7 @@ import {
     TaskModuleTaskInfo,
     TaskModuleRequest,
     TaskModuleResponse,
+    TeamsChannelData,
     TeamInfo,
     TurnContext
 } from 'botbuilder-core';
@@ -331,104 +332,160 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
+     * Override this method to change the dispatching of ConversationUpdate activities.
+     * @remarks
      * 
      * @param context 
      */
     protected async dispatchConversationUpdateActivity(context: TurnContext): Promise<void> {
-        const channelData = context.activity.channelData;
-
-        if (!channelData.eventType) {
-            return await super.onConversationUpdateActivity(context);
-        }
-
-        switch (channelData.EventType)
-        {
-            case 'teamMemberAdded':
-                return await this.onTeamsMembersAdded(context);
-
-            case 'teamMemberRemoved':
-                return await this.onTeamsMembersRemoved(context);
-
-            case 'channelCreated':
-                return await this.onTeamsChannelCreated(context);
-
-            case 'channelDeleted':
-                // return await this.onTeamsChannelDeleted(channelData.channel, channelData.team, context);
-
-            case 'channelRenamed':
-                // return await this.onTeamsChannelRenamed(channelData.channel, channelData.team, context);
-
-            case 'teamRenamed':
-                // return await this.onTeamsTeamRenamed(channelData.team, context);
-
-            default:
-                return await super.onConversationUpdateActivity(context);
-        }
-    }
-
-    public onTeamsMembersAddedEvent(handler: (membersAdded: ChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
-        return this.on('TeamsMembersAdded', async (context, next) => {
-            await handler(context.activity.membersAdded, context.activity.channelData.team, context, next);
+        await this.handle(context, 'ConversationUpdate', async () => {
+            const channelData = context.activity.channelData as TeamsChannelData;
+    
+            if (!channelData.eventType) {
+                return await super.dispatchConversationUpdateActivity(context);
+            }
+    
+            switch (channelData.eventType)
+            {
+                case 'teamMemberAdded':
+                    return await this.onTeamsMembersAdded(context);
+    
+                case 'teamMemberRemoved':
+                    return await this.onTeamsMembersRemoved(context);
+    
+                case 'channelCreated':
+                    return await this.onTeamsChannelCreated(context);
+    
+                case 'channelDeleted':
+                    return await this.onTeamsChannelDeleted(context);
+    
+                case 'channelRenamed':
+                    return await this.onTeamsChannelRenamed(context);
+    
+                case 'teamRenamed':
+                    return await this.onTeamsTeamRenamed(context);
+    
+                default:
+                    return await super.dispatchConversationUpdateActivity(context);
+            }
         });
     }
 
+    /**
+     * 
+     * @param context 
+     */
     protected async onTeamsMembersAdded(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsMembersAdded', this.defaultNextEvent(context));
     }
 
-    public onTeamsMembersRemovedEvent(handler: (membersRemoved: ChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
-        return this.on('TeamsMembersRemoved', async (context, next) => {
-            await handler(context.activity.membersRemoved, context.activity.channelData.team, context, next);
-        });
-    }
-
+    /**
+     * 
+     * @param context 
+     */
     protected async onTeamsMembersRemoved(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsMembersRemoved', this.defaultNextEvent(context));
     }
 
-    public onTeamsChannelCreatedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
-        return this.on('TeamsChannelCreated', async (context, next) => {
-            await handler(context.activity.channelData.channel, context.activity.channelData.team, context, next);
-        });
-    }
-
+    /**
+     * 
+     * @param context 
+     */
     protected async onTeamsChannelCreated(context): Promise<void> {
         await this.handle(context, 'TeamsChannelCreated', this.defaultNextEvent(context));
     }
 
+    /**
+     * 
+     * @param context 
+     */
     protected async onTeamsChannelDeleted(context): Promise<void> {
         await this.handle(context, 'TeamsChannelDeleted', this.defaultNextEvent(context));
     }
 
-    public onTeamsChannelDeletedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
-        return this.on('TeamsChannelDeleted', async (context, next) => {
-            await handler(context.activity.channelData.channel, context.activity.channelData.team, context, next);
-        });
-    }
-
+    /**
+     * 
+     * @param context 
+     */
     protected async onTeamsChannelRenamed(context): Promise<void> {
         await this.handle(context, 'TeamsChannelRenamed', this.defaultNextEvent(context));
     }
 
+    /**
+     * 
+     * @param context 
+     */
+    protected async onTeamsTeamRenamed(context): Promise<void> {
+        await this.handle(context, 'TeamsTeamRenamed', this.defaultNextEvent(context));
+    }
+
+    /**
+     * 
+     * @param handler 
+     */
+    public onTeamsMembersAddedEvent(handler: (membersAdded: ChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
+        return this.on('TeamsMembersAdded', async (context, next) => {
+            const teamsChannelData = context.activity.channelData as TeamsChannelData;
+            await handler(context.activity.membersAdded, teamsChannelData.team, context, next);
+        });
+    }
+
+    /**
+     * 
+     * @param handler 
+     */
+    public onTeamsMembersRemovedEvent(handler: (membersRemoved: ChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
+        return this.on('TeamsMembersRemoved', async (context, next) => {
+            const teamsChannelData = context.activity.channelData as TeamsChannelData;
+            await handler(context.activity.membersRemoved, teamsChannelData.team, context, next);
+        });
+    }
+
+    /**
+     * 
+     * @param handler 
+     */
+    public onTeamsChannelCreatedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
+        return this.on('TeamsChannelCreated', async (context, next) => {
+            const teamsChannelData = context.activity.channelData as TeamsChannelData;
+            await handler(teamsChannelData.channel, teamsChannelData.team, context, next);
+        });
+    }
+
+    /**
+     * 
+     * @param handler 
+     */
+    public onTeamsChannelDeletedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
+        return this.on('TeamsChannelDeleted', async (context, next) => {
+            const teamsChannelData = context.activity.channelData as TeamsChannelData;
+            await handler(teamsChannelData.channel, teamsChannelData.team, context, next);
+        });
+    }
+
+    /**
+     * 
+     * @param handler 
+     */
     public onTeamsChannelRenamedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsChannelRenamed', async (context, next) => {
-            await handler(context.activity.channelData.channel, context.activity.channelData.team, context, next);
+            const teamsChannelData = context.activity.channelData as TeamsChannelData;
+            await handler(teamsChannelData.channel, teamsChannelData.team, context, next);
         });
     }
 
-    protected async onTeamsTeamRenamed(context): Promise<void> {
-    await this.handle(context, 'TeamsTeamRenamed', this.defaultNextEvent(context));
-    }
-
+    /**
+     * 
+     * @param handler 
+     */
     public onTeamsTeamRenamedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsTeamRenamed', async (context, next) => {
-            await handler(context.activity.channelData.channel, context.activity.channelData.team, context, next);
+            const teamsChannelData = context.activity.channelData as TeamsChannelData;
+            await handler(teamsChannelData.channel, teamsChannelData.team, context, next);
         });
     }
 
-    protected static createInvokeResponse(body?: any): InvokeResponse {
+    private static createInvokeResponse(body?: any): InvokeResponse {
         return { status: 200, body };
     }
-
-    protected async 
 }

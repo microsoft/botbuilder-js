@@ -74,6 +74,7 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                 });
         });
+
         it('onTeamsBotMessagePreviewEdit is not overridden', async () => {
             const bot = new TeamsActivityHandler();
     
@@ -108,7 +109,7 @@ describe('TeamsActivityHandler', () => {
                 });
         });
 
-        it('a bad BotMessagePreview action is sent', async () => {
+        it('a bad BotMessagePreview action is received by the bot', async () => {
             const bot = new TeamsActivityHandler();
     
             const adapter = new TestAdapter(async context => {
@@ -116,6 +117,57 @@ describe('TeamsActivityHandler', () => {
             });
     
             const fileConsentActivity = createInvokeActivity('composeExtension/submitAction', { botMessagePreviewAction: 'this.is.a.bad.action' });
+            adapter.send(fileConsentActivity)
+                .assertReply(activity => {
+                    assert(activity.type === 'invokeResponse', `incorrect activity type "${ activity.type }", expected "invokeResponse"`);
+                    assert(activity.value.status === 501, `incorrect status code "${ activity.value.status }", expected "501"`);
+                    assert(!activity.value.body,
+                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
+                });
+        });
+
+        it('onTeamsFileConsentAccept is not overridden', async () => {
+            const bot = new TeamsActivityHandler();
+    
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'accept' });
+            adapter.send(fileConsentActivity)
+                .assertReply(activity => {
+                    assert(activity.type === 'invokeResponse', `incorrect activity type "${ activity.type }", expected "invokeResponse"`);
+                    assert(activity.value.status === 501, `incorrect status code "${ activity.value.status }", expected "501"`);
+                    assert(!activity.value.body,
+                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
+                });
+        });
+
+        it('onTeamsFileConsentDecline is not overridden', async () => {
+            const bot = new TeamsActivityHandler();
+    
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'decline' });
+            adapter.send(fileConsentActivity)
+                .assertReply(activity => {
+                    assert(activity.type === 'invokeResponse', `incorrect activity type "${ activity.type }", expected "invokeResponse"`);
+                    assert(activity.value.status === 501, `incorrect status code "${ activity.value.status }", expected "501"`);
+                    assert(!activity.value.body,
+                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
+                });
+        });
+
+        it('a bad FileConsentCardResponse.action is received by the bot', async () => {
+            const bot = new TeamsActivityHandler();
+    
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'this.is.a.bad.action' });
             adapter.send(fileConsentActivity)
                 .assertReply(activity => {
                     assert(activity.type === 'invokeResponse', `incorrect activity type "${ activity.type }", expected "invokeResponse"`);
@@ -299,7 +351,12 @@ describe('TeamsActivityHandler', () => {
     });
 
     xdescribe('should call onDialog handlers after successfully handling an', () => {
-        it('onTeamsFileConsentAccept routed activity', async () => {
+
+        function createConvUpdateActivity() {
+            
+        }
+
+        it('onTeamsMembersAdded routed activity', async () => {
             const bot = new TeamsActivityHandler();
     
             let fileConsentCalled = false;
