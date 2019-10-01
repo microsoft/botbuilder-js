@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-import * as Models from './model';
+import * as Model from 'botframework-schema';
 import { MicrosoftAppCredentials } from '../auth'
 import { TokenApiClient } from './tokenApiClient';
 import { ApiHelper } from '../apiHelper';
@@ -44,7 +44,7 @@ export class BotSignInApi {
      * @param emulatorUrl 
      * @param finalRedirect 
      */
-    public async getSignInUrl (state: string, options: Models.BotSignInGetSignInUrlOptionalParams = { }) : Promise<Models.BotSignInGetSignInUrlResponse> {
+    public async getSignInUrl (state: string, options: Model.SignInParams = { headers: {}}) : Promise<any> {
         const path = this.basePath + '/api/botsignin/GetSignInUrl';
         let queryParameters = {};
         let headerParams = Object.assign({}, this.defaultHeaders);    
@@ -89,6 +89,6 @@ export class BotSignInApi {
 
         await this.credentials.signRequest(requestOptions); 
               
-        return ApiHelper.deserializeResponse<Models.BotSignInGetSignInUrlResponse>(url, requestOptions)
+        return ApiHelper.deserializeResponse<any>(url, requestOptions)
     }
 }

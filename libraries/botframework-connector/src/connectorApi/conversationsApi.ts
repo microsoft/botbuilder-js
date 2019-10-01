@@ -13,13 +13,9 @@
 import http = require('http');
 
 /* tslint:disable:no-unused-locals */
-import { AttachmentData } from './model/attachmentData';
-import { Transcript } from './model/transcript';
-import { RequestOptions, Activity } from './model/models';
-import { CreateConversationResponse, ConversationParameters, PagedParameters, DeleteActivityResponse, useResourceResponse } from './model';
-import { GetConversationMembersResponse } from './model/responses/getConversationMembersResponse';
+
+import * as Model from 'botframework-schema';
 import { MicrosoftAppCredentials } from '../auth'
-import { ConversationsGetConversationsOptionalParams } from './model/parameters/conversationsGetConversationsOptionalParams';
 import { ApiHelper } from '../apiHelper';
 
 
@@ -62,7 +58,7 @@ export class ConversationsApi {
     }
 
 
-    public async createConversation(parameters: ConversationParameters, options: RequestOptions = { headers: {} }): Promise<CreateConversationResponse> {
+    public async createConversation(parameters: Model.ConversationParameters, options: Model.RequestOptions = { headers: {} }): Promise<Model.CreateConversationResponse> {
         // verify required parameter 'parameters' is not null or undefined
         if (parameters == null) {
             throw new Error('Required parameter parameters was null or undefined when calling createConversation.');
@@ -98,7 +94,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return ApiHelper.deserializeResponse<CreateConversationResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<Model.CreateConversationResponse>(url, requestOptions);
     }
 
     /**
@@ -108,8 +104,8 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId to delete
      */
-    public async deleteActivity(conversationId: string, activityId: string, options: RequestOptions = { headers: {} })
-        : Promise<DeleteActivityResponse> {
+    public async deleteActivity(conversationId: string, activityId: string, options: Model.RequestOptions = { headers: {} })
+        : Promise<Model.DeleteActivityResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
@@ -151,7 +147,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return ApiHelper.deserializeResponse<DeleteActivityResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<Model.DeleteActivityResponse>(url, requestOptions);
     }
 
     /**
@@ -164,8 +160,8 @@ export class ConversationsApi {
      */
     public async deleteConversationMember(conversationId: string,
         memberId: string,
-        options: RequestOptions = { headers: {} })
-        : Promise<DeleteActivityResponse> {
+        options: Model.RequestOptions = { headers: {} })
+        : Promise<Model.DeleteActivityResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
@@ -207,7 +203,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return ApiHelper.deserializeResponse<DeleteActivityResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<Model.DeleteActivityResponse>(url, requestOptions);
     }
 
     /**
@@ -218,7 +214,7 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId Activity ID
      */
-    public async getActivityMembers(conversationId: string, activityId: string, options: RequestOptions = { headers: {} }): Promise<GetConversationMembersResponse> {
+    public async getActivityMembers(conversationId: string, activityId: string, options: Model.RequestOptions = { headers: {} }): Promise<Model.GetConversationMembersResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
@@ -260,7 +256,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return ApiHelper.deserializeResponse<GetConversationMembersResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<Model.GetConversationMembersResponse>(url, requestOptions);
     }
 
     /**
@@ -269,8 +265,8 @@ export class ConversationsApi {
      * @summary GetConversationMembers
      * @param conversationId Conversation ID
      */
-    public async getConversationMembers(conversationId: string, options: RequestOptions = { headers: {} })
-        : Promise<GetConversationMembersResponse> {
+    public async getConversationMembers(conversationId: string, options: Model.RequestOptions = { headers: {} })
+        : Promise<Model.GetConversationMembersResponse> {
 
         // verify required parameter 'conversationId' is not null or undefined
         if (conversationId == null) {
@@ -306,7 +302,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return ApiHelper.deserializeResponse<GetConversationMembersResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<Model.GetConversationMembersResponse>(url, requestOptions);
     }
 
     /**
@@ -328,8 +324,8 @@ export class ConversationsApi {
      * @param continuationToken Continuation Token
      */
 
-    public async getConversationPagedMembers(conversationId: string, parameters?: PagedParameters)
-        : Promise<useResourceResponse> {
+    public async getConversationPagedMembers(conversationId: string, parameters?: Model.PagedParameters)
+        : Promise<Model.useResourceResponse> {
 
         let queryParameters: {} = {};
         // verify required parameter 'conversationId' is not null or undefined
@@ -373,7 +369,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return ApiHelper.deserializeResponse<useResourceResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<Model.useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -390,8 +386,8 @@ export class ConversationsApi {
      * @summary GetConversations
      * @param continuationToken skip or continuation token
      */
-    public async getConversations(options?: ConversationsGetConversationsOptionalParams)
-        : Promise<useResourceResponse> {
+    public async getConversations(options: Model.ConversationParameters = {headers: {}} )
+        : Promise<Model.ConversationsResponse> {
         const path = this.basePath + '/v3/conversations';
         let queryParameters: {} = {};
         let headerParams: {} = Object.assign({}, this._defaultHeaders);
@@ -424,7 +420,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return ApiHelper.deserializeResponse<useResourceResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<Model.ConversationsResponse>(url, requestOptions);
     }
 
     /**
@@ -440,8 +436,8 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId the reply is to (OPTIONAL)
      */
-    public async replyToActivity(conversationId: string, activityId: string, activity: Activity, options: RequestOptions = { headers: {} })
-        : Promise<useResourceResponse> {
+    public async replyToActivity(conversationId: string, activityId: string, activity: Model.Activity, options: Model.RequestOptions = { headers: {} })
+        : Promise<Model.useResourceResponse> {
 
         // verify required parameter 'activity' is not null or undefined
         if (activity == null) {
@@ -488,7 +484,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return ApiHelper.deserializeResponse<useResourceResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<Model.useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -501,8 +497,8 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      */
     public async sendConversationHistory(conversationId: string,
-        history: Transcript, options: RequestOptions = { headers: {} })
-        : Promise<useResourceResponse> {
+        history: Model.Transcript, options: Model.RequestOptions = { headers: {} })
+        : Promise<Model.useResourceResponse> {
 
         // verify required parameter 'history' is not null or undefined
         if (history == null) {
@@ -542,7 +538,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return ApiHelper.deserializeResponse<useResourceResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<Model.useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -557,8 +553,8 @@ export class ConversationsApi {
      * @param activity Activity to send
      * @param conversationId Conversation ID
      */
-    public async sendToConversation(conversationId: string, activity: Activity, options: RequestOptions = { headers: {} })
-        : Promise<useResourceResponse> {
+    public async sendToConversation(conversationId: string, activity: Model.Activity, options: Model.RequestOptions = { headers: {} })
+        : Promise<Model.useResourceResponse> {
 
         // verify required parameter 'activity' is not null or undefined
         if (activity == null) {
@@ -587,7 +583,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return ApiHelper.deserializeResponse<useResourceResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<Model.useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -599,8 +595,8 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      * @param activityId activityId to update
      */
-    public async updateActivity(conversationId: string, activityId: string, activity: Activity, options: RequestOptions = { headers: {} })
-        : Promise<useResourceResponse> {
+    public async updateActivity(conversationId: string, activityId: string, activity: Model.Activity, options: Model.RequestOptions = { headers: {} })
+        : Promise<Model.useResourceResponse> {
 
         // verify required parameter 'activity' is not null or undefined
         if (activity == null) {
@@ -647,7 +643,7 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return ApiHelper.deserializeResponse<useResourceResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<Model.useResourceResponse>(url, requestOptions);
     }
 
     /**
@@ -660,8 +656,8 @@ export class ConversationsApi {
      * @param conversationId Conversation ID
      */
     public async uploadAttachment(conversationId: string,
-        attachmentUpload: AttachmentData, options: RequestOptions = { headers: {} })
-        : Promise<useResourceResponse> {
+        attachmentUpload: Model.AttachmentData, options: Model.RequestOptions = { headers: {} })
+        : Promise<Model.useResourceResponse> {
         // verify required parameter 'attachmentUpload' is not null or undefined
         if (attachmentUpload == null) {
             throw new Error('Required parameter attachmentUpload was null or undefined when calling uploadAttachment.');
@@ -710,6 +706,6 @@ export class ConversationsApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return ApiHelper.deserializeResponse<useResourceResponse>(url, requestOptions);
+        return ApiHelper.deserializeResponse<Model.useResourceResponse>(url, requestOptions);
     }
 }

@@ -6,7 +6,7 @@
 
 import { UserTokenApi } from './userTokenApi';
 import { BotSignInApi } from './botSignInApi';
-import * as Model from "./model";
+import * as Model from 'botframework-schema';
 import { MicrosoftAppCredentials } from '../auth'
 import * as os from 'os';
 
@@ -48,6 +48,5 @@ export {
   TokenApiClient,
   UserTokenApi,
   BotSignInApi,
-  Model as TokenApiModels,
+  Model as TokenApiModels
 };
-export * from "./model";

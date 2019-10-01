@@ -4,7 +4,7 @@
  * regenerated.
  */
 
-import * as Models from "./model";
+import * as Model from 'botframework-schema';
 import { ConversationsApi } from './conversationsApi';
 import { AttachmentsApi } from './attachmentsApi';
 import { MicrosoftAppCredentials } from '../auth'
@@ -33,11 +33,10 @@ class ConnectorClient {
 
 // Operation Specifications
 
-export * from "./model";
 export {
   ConnectorClient,
   ConversationsApi,
   AttachmentsApi,
-  Models as CustomTokenApiModels,
+  Model as CustomTokenApiModels,
 };
 
