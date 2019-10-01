@@ -26,7 +26,7 @@ export class Attachment {
     /**
     * Embedded content
     */
-    'content'?: object;
+    'content'?: any;
     /**
     * (OPTIONAL) The name of the attachment
     */

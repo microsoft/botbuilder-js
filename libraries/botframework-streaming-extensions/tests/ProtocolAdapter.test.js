@@ -1,14 +1,14 @@
-const PayloadAssembler = require('../lib/assemblers/payloadAssembler');
-const ProtocolAdapter = require('../lib/protocolAdapter');
-const RequestManager = require('../lib/payloads/requestManager');
-const PayloadSender = require('../lib/payloadTransport/payloadSender');
-const PayloadReceiver = require('../lib/payloadTransport/payloadReceiver');
-const PayloadConstants = require('../lib/payloads/payloadConstants');
-const SubscribableStream = require('../lib/subscribableStream');
-const RequestHandler = require('../lib/requestHandler');
-const Response = require('../lib/streamingResponse');
-const Request = require('../lib/streamingRequest');
-const StreamManager = require('../lib/payloads/streamManager');
+const PayloadAssembler = require('../lib/Assemblers/PayloadAssembler');
+const ProtocolAdapter = require('../lib/ProtocolAdapter');
+const RequestManager = require('../lib/Payloads/RequestManager');
+const PayloadSender = require('../lib/PayloadTransport/PayloadSender');
+const PayloadReceiver = require('../lib/PayloadTransport/PayloadReceiver');
+const PayloadConstants = require('../lib/Payloads/PayloadConstants');
+const SubscribableStream = require('../lib/SubscribableStream');
+const RequestHandler = require('../lib/RequestHandler');
+const Response = require('../lib/StreamingResponse');
+const Request = require('../lib/StreamingRequest');
+const StreamManager = require('../lib/Payloads/StreamManager');
 const  chai  = require('chai');
 var sinon = require('sinon');
 var expect = chai.expect;
@@ -108,11 +108,11 @@ describe('Streaming Extensions ProtocolAdapter', () => {
             requestManager,
             payloadSender,
             paylaodReceiver);
-       
+
         var requestHandlerSpy = sinon.spy(requestHandler, "processRequest");
 
         protocolAdapter.onReceiveRequest('42', {verb: 'POST', path: '/api/messages', streams: [] });
-        expect(requestHandlerSpy.called).to.be.true; 
+        expect(requestHandlerSpy.called).to.be.true;
     });
 
     it('processes responses.', async () => {
@@ -127,11 +127,11 @@ describe('Streaming Extensions ProtocolAdapter', () => {
             requestManager,
             payloadSender,
             paylaodReceiver);
-       
+
         var requestManagerSpy = sinon.spy(requestManager, "signalResponse");
 
         protocolAdapter.onReceiveResponse('42', {statusCode: '200', streams: [] });
-        expect(requestManagerSpy.called).to.be.true; 
+        expect(requestManagerSpy.called).to.be.true;
     });
 
     it('does not throw when processing a cancellation for an already processed stream', async () => {
@@ -172,11 +172,11 @@ describe('Streaming Extensions ProtocolAdapter', () => {
         let pa = new PayloadReceiver.PayloadReceiver();
         let buffer =Buffer.alloc(Number(PayloadConstants.PayloadConstants.MaxHeaderLength));
         buffer.write('A.000168.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n');
-        let receiver = { 
-            
+        let receiver = {
+
             receive: function(){return buffer;},
             close: function(){throw new Error('Test error!');},
-        
+
         };
         let s = new SubscribableStream.SubscribableStream();
         s.write('{"statusCode": "12345","streams": [{"id": "1","contentType": "text","length": "2"},{"id": "2","contentType": "text","length": "2"},{"id": "3","contentType": "text","length": "2"}]}');

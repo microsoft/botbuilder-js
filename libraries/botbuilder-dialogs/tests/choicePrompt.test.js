@@ -1,4 +1,4 @@
-const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ActivityTypes, CardFactory, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
 const { ChoicePrompt, DialogSet, ListStyle, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
@@ -618,6 +618,83 @@ describe('ChoicePrompt', function () {
             .assertReply('Please choose a color.')
             .send('1')
             .assertReply('red');
+    });
+
+    it('should display choices on a hero card', async function () {
+        const sizeChoices = ['large', 'medium', 'small'];
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', 'Please choose a size.', sizeChoices);
+            } else if (results.status === DialogTurnStatus.complete) {
+                const selectedChoice = results.result;
+                await turnContext.sendActivity(selectedChoice.value);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and ChoicePrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const choicePrompt = new ChoicePrompt('prompt');
+        // Change the ListStyle of the prompt to ListStyle.none.
+        choicePrompt.style = ListStyle.heroCard;
+
+        dialogs.add(choicePrompt);
+
+        await adapter.send('Hello')
+            .assertReply(activity => {
+                assert(activity.attachments.length === 1);
+                assert(activity.attachments[0].contentType === CardFactory.contentTypes.heroCard);
+                assert(activity.attachments[0].content.text === 'Please choose a size.');
+            })
+            .send('1')
+            .assertReply('large');
+    });
+    
+    it('should display choices on a hero card with an additional attachment', async function () {
+        const sizeChoices = ['large', 'medium', 'small'];
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', activity, sizeChoices);
+            } else if (results.status === DialogTurnStatus.complete) {
+                const selectedChoice = results.result;
+                await turnContext.sendActivity(selectedChoice.value);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and ChoicePrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const choicePrompt = new ChoicePrompt('prompt');
+        // Change the ListStyle of the prompt to ListStyle.none.
+        choicePrompt.style = ListStyle.heroCard;
+
+        const card = CardFactory.adaptiveCard({
+            "type": "AdaptiveCard",
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "version": "1.2",
+            "body": []
+        });
+
+        const activity = { attachments: [card] };
+        dialogs.add(choicePrompt);
+
+        await adapter.send('Hello')
+            .assertReply(activity => {
+                assert(activity.attachments.length === 1);
+                assert(activity.attachments[0].contentType === CardFactory.contentTypes.heroCard || CardFactory.contentTypes.adaptiveCard);
+            });
     });
 
 });

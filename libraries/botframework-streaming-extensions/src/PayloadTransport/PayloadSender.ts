@@ -6,25 +6,24 @@
  * Licensed under the MIT License.
  */
 
-import { HeaderSerializer } from '../payloads/headerSerializer';
-import { SubscribableStream } from '../subscribableStream';
-import { PayloadConstants } from '../payloads/payloadConstants';
-import { TransportDisconnectedEventArgs } from './transportDisconnectedEventArgs';
-import { TransportDisconnectedEventHandler } from './transportDisconnectedEventHandler';
-import { ITransportSender } from '../interfaces/iTransportSender';
-import { IHeader } from '../interfaces/iHeader';
-import { ISendPacket } from '../interfaces/iSendPacket';
+import { HeaderSerializer } from '../Payloads/HeaderSerializer';
+import { SubscribableStream } from '../SubscribableStream';
+import { PayloadConstants } from '../Payloads/PayloadConstants';
+import { TransportDisconnectedEventArgs } from './TransportDisconnectedEventArgs';
+import { TransportDisconnectedEventHandler } from './TransportDisconnectedEventHandler';
+import { ITransportSender } from '../Interfaces/ITransportSender';
+import { IHeader } from '../Interfaces/IHeader';
+import { ISendPacket } from '../Interfaces/ISendPacket';
 
 export class PayloadSender {
     public disconnected?: TransportDisconnectedEventHandler;
     private sender: ITransportSender;
-    private readonly sendHeaderBuffer: Buffer = Buffer.alloc(PayloadConstants.MaxHeaderLength);
 
     /// <summary>
     /// Returns true if connected to a transport sender.
     /// </summary>
     public get isConnected(): boolean {
-        return this.sender !== undefined;
+        return !!this.sender;
     }
 
     /// <summary>
@@ -41,8 +40,8 @@ export class PayloadSender {
     /// <param name="header">The header to attach to the outgoing payload.</param>
     /// <param name="payload">The stream of buffered data to send.</param>
     /// <param name="sentCalback">The function to execute when the send has completed.</param>
-    public sendPayload(header: IHeader, payload: SubscribableStream, sentCallback: () => Promise<void>): void {
-        var packet: ISendPacket = {header: header, payload: payload, sentCallback: sentCallback};
+    public sendPayload(header: IHeader, payload?: SubscribableStream, sentCallback?: () => Promise<void>): void {
+        var packet: ISendPacket = {header, payload, sentCallback};
         this.writePacket(packet);
     }
 
@@ -50,10 +49,10 @@ export class PayloadSender {
     /// Disconnects this payload sender.
     /// </summary>
     /// <param name="e">The disconnected event arguments to include in the disconnected event broadcast.</param>
-    public disconnect(e: TransportDisconnectedEventArgs): void {
+    public disconnect(e?: TransportDisconnectedEventArgs): void {
         if (this.isConnected) {
             this.sender.close();
-            this.sender = undefined;
+            this.sender = null;
 
             if (this.disconnected) {
                 this.disconnected(this, e || TransportDisconnectedEventArgs.Empty);
@@ -63,8 +62,9 @@ export class PayloadSender {
 
     private writePacket(packet: ISendPacket): void {
         try {
-            HeaderSerializer.serialize(packet.header, this.sendHeaderBuffer);
-            this.sender.send(this.sendHeaderBuffer);
+            let sendHeaderBuffer: Buffer = Buffer.alloc(PayloadConstants.MaxHeaderLength);
+            HeaderSerializer.serialize(packet.header, sendHeaderBuffer);
+            this.sender.send(sendHeaderBuffer);
 
             if (packet.header.payloadLength > 0 && packet.payload) {
                 let count = packet.header.payloadLength;

@@ -1,7 +1,7 @@
 const chai = require( 'chai');
-const HeaderSerializer = require( '../lib/payloads/headerSerializer');
-const PayloadTypes = require( '../lib/payloads/payloadTypes');
-const PayloadConstants = require( '../lib/payloads/payloadConstants');
+const HeaderSerializer = require( '../lib/Payloads/HeaderSerializer');
+const PayloadTypes = require( '../lib/Payloads/PayloadTypes');
+const PayloadConstants = require( '../lib/Payloads/PayloadConstants');
 var expect = chai.expect;
 
 describe('HeaderSerializer', () => {
@@ -21,7 +21,7 @@ describe('HeaderSerializer', () => {
     });
 
     it('can parse an ASCII header', () => {
-        let buffer =Buffer.alloc(Number(PayloadConstants.PayloadConstants.MaxHeaderLength));
+        let buffer = Buffer.alloc(Number(PayloadConstants.PayloadConstants.MaxHeaderLength));
         buffer.write('A.000168.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n');
 
         let result =  HeaderSerializer.HeaderSerializer.deserialize(buffer);
@@ -80,7 +80,7 @@ describe('HeaderSerializer', () => {
         .throws('Header Length is missing or malformed.');
     });
 
-    it('throws if the header length is to small', () => {
+    it('throws if the header length is too small', () => {
         // expect.assertions(1);
         let buffer = Buffer.alloc(Number(PayloadConstants.PayloadConstants.MaxHeaderLength));
         buffer.write('A.-100000.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n');
