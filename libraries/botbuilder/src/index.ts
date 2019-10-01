@@ -7,6 +7,7 @@
  */
 
 export * from './botFrameworkAdapter';
+export * from './conversationBridgeMiddleware';
 export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
 export * from './teamsActivityHandler';
