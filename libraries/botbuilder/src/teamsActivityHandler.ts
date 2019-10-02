@@ -21,6 +21,7 @@ import {
     TaskModuleTaskInfo,
     TaskModuleRequest,
     TaskModuleResponse,
+    TaskModuleResponseBase,
     TeamsChannelData,
     TeamInfo,
     TurnContext
@@ -98,11 +99,14 @@ export class TeamsActivityHandler extends ActivityHandler {
 
                     case 'task/fetch':
                         const fetchResponse = await this.onTeamsTaskModuleFetch(context, context.activity.value);
-                        return TeamsActivityHandler.createInvokeResponse(fetchResponse);
+                        const taskModuleContineResponse = { type: 'continue', value: fetchResponse };
+                        const taskModuleResponse = { task: taskModuleContineResponse };
+                        return TeamsActivityHandler.createInvokeResponse(taskModuleResponse);
 
                     case 'task/submit':
-                        const submitResponse = await this.onTeamsTaskModuleSubmit(context, context.activity.value);
-                        return TeamsActivityHandler.createInvokeResponse(submitResponse);
+                        const submitResponseBase = await this.onTeamsTaskModuleSubmit(context, context.activity.value);
+                        const taskModuleResponse_submit = { task: submitResponseBase };
+                        return TeamsActivityHandler.createInvokeResponse(taskModuleResponse_submit);
 
                     default:
                         throw new Error('NotImplemented');
@@ -210,7 +214,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param taskModuleRequest
      */
-    protected async onTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse | void> {
+    protected async onTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponseBase | void> {
         throw new Error('NotImplemented');
     }
 
