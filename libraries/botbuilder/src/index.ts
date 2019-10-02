@@ -10,4 +10,6 @@ export * from './botFrameworkAdapter';
 export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
 export * from './teamsActivityHandler';
+export * from './teamsActivityHelpers';
+export * from './teamsTurnContextHelpers';
 export * from 'botbuilder-core';
