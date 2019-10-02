@@ -372,19 +372,31 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * 
+     * Called in `dispatchConversationUpdateActivity()` to trigger the `'TeamsMembersAdded'` handlers.
+     * @remarks
+     * If no handlers are registered for the `'TeamsMembersAdded'` event, the `'MembersAdded'` handlers will run instead.
      * @param context 
      */
     protected async onTeamsMembersAdded(context: TurnContext): Promise<void> {
-        await this.handle(context, 'TeamsMembersAdded', this.defaultNextEvent(context));
+        if ('TeamsMembersAdded' in this.handlers && this.handlers['TeamsMembersAdded'].length > 0) {
+            await this.handle(context, 'TeamsMembersAdded', this.defaultNextEvent(context));
+        } else {
+            await this.handle(context, 'MembersAdded', this.defaultNextEvent(context));
+        }
     }
 
     /**
-     * 
+     * Called in `dispatchConversationUpdateActivity()` to trigger the `'TeamsMembersRemoved'` handlers.
+     * @remarks
+     * If no handlers are registered for the `'TeamsMembersRemoved'` event, the `'MembersRemoved'` handlers will run instead.
      * @param context 
      */
     protected async onTeamsMembersRemoved(context: TurnContext): Promise<void> {
-        await this.handle(context, 'TeamsMembersRemoved', this.defaultNextEvent(context));
+        if ('TeamsMembersRemoved' in this.handlers && this.handlers['TeamsMembersRemoved'].length > 0) {
+            await this.handle(context, 'TeamsMembersRemoved', this.defaultNextEvent(context));
+        } else {
+            await this.handle(context, 'MembersRemoved', this.defaultNextEvent(context));
+        }
     }
 
     /**
