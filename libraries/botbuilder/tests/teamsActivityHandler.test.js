@@ -13,6 +13,42 @@ function createInvokeActivity(name, value = {}, channelData = {}) {
 }
 
 describe('TeamsActivityHandler', () => {
+    describe('should send a BadRequest status code if', () => {
+        it('a bad BotMessagePreview.action is received by the bot', async () => {
+            const bot = new TeamsActivityHandler();
+    
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            const fileConsentActivity = createInvokeActivity('composeExtension/submitAction', { botMessagePreviewAction: 'this.is.a.bad.action' });
+            adapter.send(fileConsentActivity)
+                .assertReply(activity => {
+                    assert(activity.type === 'invokeResponse', `incorrect activity type "${ activity.type }", expected "invokeResponse"`);
+                    assert(activity.value.status === 400, `incorrect status code "${ activity.value.status }", expected "400"`);
+                    assert(!activity.value.body,
+                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
+                });
+        });
+
+        it('a bad FileConsentCardResponse.action is received by the bot', async () => {
+            const bot = new TeamsActivityHandler();
+    
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'this.is.a.bad.action' });
+            adapter.send(fileConsentActivity)
+                .assertReply(activity => {
+                    assert(activity.type === 'invokeResponse', `incorrect activity type "${ activity.type }", expected "invokeResponse"`);
+                    assert(activity.value.status === 400, `incorrect status code "${ activity.value.status }", expected "400"`);
+                    assert(!activity.value.body,
+                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
+                });
+        });
+    });
+
     describe('should send a NotImplemented status code if', () => {
         it('onTeamsMessagingExtensionSubmitAction is not overridden', async () => {
             const bot = new TeamsActivityHandler();
@@ -65,23 +101,6 @@ describe('TeamsActivityHandler', () => {
                 });
         });
 
-        it('a bad BotMessagePreview action is received by the bot', async () => {
-            const bot = new TeamsActivityHandler();
-    
-            const adapter = new TestAdapter(async context => {
-                await bot.run(context);
-            });
-    
-            const fileConsentActivity = createInvokeActivity('composeExtension/submitAction', { botMessagePreviewAction: 'this.is.a.bad.action' });
-            adapter.send(fileConsentActivity)
-                .assertReply(activity => {
-                    assert(activity.type === 'invokeResponse', `incorrect activity type "${ activity.type }", expected "invokeResponse"`);
-                    assert(activity.value.status === 501, `incorrect status code "${ activity.value.status }", expected "501"`);
-                    assert(!activity.value.body,
-                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
-                });
-        });
-
         it('onTeamsFileConsentAccept is not overridden', async () => {
             const bot = new TeamsActivityHandler();
     
@@ -107,23 +126,6 @@ describe('TeamsActivityHandler', () => {
             });
     
             const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'decline' });
-            adapter.send(fileConsentActivity)
-                .assertReply(activity => {
-                    assert(activity.type === 'invokeResponse', `incorrect activity type "${ activity.type }", expected "invokeResponse"`);
-                    assert(activity.value.status === 501, `incorrect status code "${ activity.value.status }", expected "501"`);
-                    assert(!activity.value.body,
-                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
-                });
-        });
-
-        it('a bad FileConsentCardResponse.action is received by the bot', async () => {
-            const bot = new TeamsActivityHandler();
-    
-            const adapter = new TestAdapter(async context => {
-                await bot.run(context);
-            });
-    
-            const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'this.is.a.bad.action' });
             adapter.send(fileConsentActivity)
                 .assertReply(activity => {
                     assert(activity.type === 'invokeResponse', `incorrect activity type "${ activity.type }", expected "invokeResponse"`);

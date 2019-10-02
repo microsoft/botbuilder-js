@@ -111,6 +111,8 @@ export class TeamsActivityHandler extends ActivityHandler {
         } catch (err) {
             if (err.message === 'NotImplemented') {
                 return { status: 501 };
+            } else if (err.message === 'BadRequest') {
+                return { status: 400 };
             }
             throw err;
         }
@@ -143,7 +145,7 @@ export class TeamsActivityHandler extends ActivityHandler {
             case 'decline':
                 return await this.onTeamsFileConsentDecline(context, fileConsentCardResponse);
             default:
-                throw new Error('NotImplemented');
+                throw new Error('BadRequest');
         }
     }
 
@@ -262,7 +264,7 @@ export class TeamsActivityHandler extends ActivityHandler {
                 case 'send':
                     return await this.onTeamsBotMessagePreviewSend(context, action);
                 default:
-                    throw new Error('NotImplemented');
+                    throw new Error('BadRequest');
             }
         } else {
             return await this.onTeamsMessagingExtensionSubmitAction(context, action);
