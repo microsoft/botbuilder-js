@@ -11,7 +11,6 @@ import {
     TaskModuleMessageResponse,
     TaskModuleResponseBase,
     TeamsActivityHandler,
-    TurnContext,
 } from 'botbuilder';
 
 export class ActionBasedMessagingExtensionBot  extends TeamsActivityHandler {
@@ -36,95 +35,96 @@ export class ActionBasedMessagingExtensionBot  extends TeamsActivityHandler {
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
+    }
 
-        // This method fires when an user uses an Action-based Messaging Extension from the Teams Client.
-        // It should send back the tab or task module for the user to interact with.
-        this.onTeamsMessagingExtensionFetchTask(async (context, value) => {
-            return {
-                task: this.taskModuleResponse(value, false)
-            };
-        });
-
-        this.onTeamsBotMessagePreviewEdit(async (context, value: MessagingExtensionAction) => {
-            const card = this.getCardFromPreviewMessage(value);
-            let body: MessagingExtensionActionResponse;
-            if (!card) {
-                body = {
-                    task: <TaskModuleMessageResponse>{
-                        type: 'message',
-                        value: 'Missing user edit card. Something wrong on Teams client.'
-                    }
-                }
-            } else {
-                body = {
-                    task: <TaskModuleContinueResponse>{
-                        type: 'continue',
-                        value: { card }
-                    }
-                }
-            }
-
-            return body;
-        });
-
-        this.onTeamsBotMessagePreviewSend(async (context, value: MessagingExtensionAction) => {
-            let body: MessagingExtensionActionResponse;
-            const card = this.getCardFromPreviewMessage(value);
-            if (!card) {
-                body = {
-                    task: <TaskModuleMessageResponse>{
-                        type: 'message',
-                        value: 'Missing user edit card. Something wrong on Teams client.'
-                    }
-                }
-            } else {
-                body = undefined;
-                await context.sendActivity({ attachments: [card] });
-            }
-
-            return body;
-        });
-
-        this.onTeamsMessagingExtensionSubmitAction(async (context, value: MessagingExtensionAction) => {
-            const data = value.data;
-            let body: MessagingExtensionActionResponse;
-            if (data && data.done) {
-                // The commandContext check doesn't need to be used in this scenario as the manifest specifies the shareMessage command only works in the "message" context.
-                let sharedMessage = (value.commandId === 'shareMessage' && value.commandContext === 'message')
-                    ? `Shared message: <div style="background:#F0F0F0">${JSON.stringify(value.messagePayload)}</div><br/>`
-                    : '';
-                let preview = CardFactory.thumbnailCard('Created Card', `Your input: ${data.userText}`);
-                let heroCard = CardFactory.heroCard('Created Card', `${sharedMessage}Your input: <pre>${data.userText}</pre>`);
-                body = {
-                    composeExtension: {
-                        type: 'result',
-                        attachmentLayout: 'list',
-                        attachments: [
-                            { ...heroCard, preview }
-                        ]
-                    }
-                }
-            } else if (value.commandId === 'createWithPreview') {
-                const activityPreview = {
+    protected async onTeamsMessagingExtensionSubmitAction(context, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+        const data = action.data;
+        let body: MessagingExtensionActionResponse;
+        if (data && data.done) {
+            // The commandContext check doesn't need to be used in this scenario as the manifest specifies the shareMessage command only works in the "message" context.
+            let sharedMessage = (action.commandId === 'shareMessage' && action.commandContext === 'message')
+                ? `Shared message: <div style="background:#F0F0F0">${JSON.stringify(action.messagePayload)}</div><br/>`
+                : '';
+            let preview = CardFactory.thumbnailCard('Created Card', `Your input: ${data.userText}`);
+            let heroCard = CardFactory.heroCard('Created Card', `${sharedMessage}Your input: <pre>${data.userText}</pre>`);
+            body = {
+                composeExtension: {
+                    type: 'result',
+                    attachmentLayout: 'list',
                     attachments: [
-                        this.taskModuleResponseCard(value)
+                        { ...heroCard, preview }
                     ]
-                } as Activity;
-
-                body = {
-                    composeExtension: {
-                        type: 'botMessagePreview',
-                        activityPreview
-                    }
-                };
-            } else {
-                body = {
-                    task: this.taskModuleResponse(value, false)
                 }
             }
+        } else if (action.commandId === 'createWithPreview') {
+            // The commandId is definied in the manifest of the Teams Application
+            const activityPreview = {
+                attachments: [
+                    this.taskModuleResponseCard(action)
+                ]
+            } as Activity;
 
-            return body;
-        });
+            body = {
+                composeExtension: {
+                    type: 'botMessagePreview',
+                    activityPreview
+                }
+            };
+        } else {
+            body = {
+                task: this.taskModuleResponse(action, false)
+            }
+        }
+
+        return body;
+    }
+
+    // This method fires when an user uses an Action-based Messaging Extension from the Teams Client.
+    // It should send back the tab or task module for the user to interact with.
+    protected async onTeamsMessagingExtensionFetchTask(context, query): Promise<MessagingExtensionActionResponse> {
+        return {
+            task: this.taskModuleResponse(query, false)
+        };
+    }
+
+    protected async onTeamsBotMessagePreviewSend(context, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+        let body: MessagingExtensionActionResponse;
+        const card = this.getCardFromPreviewMessage(action);
+        if (!card) {
+            body = {
+                task: <TaskModuleMessageResponse>{
+                    type: 'message',
+                    value: 'Missing user edit card. Something wrong on Teams client.'
+                }
+            }
+        } else {
+            body = undefined;
+            await context.sendActivity({ attachments: [card] });
+        }
+
+        return body;
+    }
+
+    protected async onTeamsBotMessagePreviewEdit(context, value: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+        const card = this.getCardFromPreviewMessage(value);
+        let body: MessagingExtensionActionResponse;
+        if (!card) {
+            body = {
+                task: <TaskModuleMessageResponse>{
+                    type: 'message',
+                    value: 'Missing user edit card. Something wrong on Teams client.'
+                }
+            }
+        } else {
+            body = {
+                task: <TaskModuleContinueResponse>{
+                    type: 'continue',
+                    value: { card }
+                }
+            }
+        }
+
+        return body;
     }
 
     private getCardFromPreviewMessage(query: MessagingExtensionAction): Attachment {
