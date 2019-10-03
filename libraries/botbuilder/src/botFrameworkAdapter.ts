@@ -721,18 +721,21 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
                 status = 200;
             }
         } catch (err) {
-            body = err.toString();
+            body = err;
         }
 
         // Return status 
         res.status(status);
-        if (body) { res.send(body); }
+        if (body) { res.send(body.toString()); }
         res.end();
 
         // Check for an error
         if (status >= 400) {
-            console.warn(`BotFrameworkAdapter.processActivity(): ${ status } ERROR - ${ body.toString() }`);
-            throw new Error(body.toString());
+            if (body && (body as Error).stack) {
+                throw new Error(`BotFrameworkAdapter.processActivity(): ${ status } ERROR\n ${ body.stack }`);
+            } else {
+                throw new Error(`BotFrameworkAdapter.processActivity(): ${ status } ERROR`);
+            }
         }
     }
 
