@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 export * from './cosmosDbStorage';
+export * from './cosmosDbPartitionedStorage';
 export * from './blobStorage';
 export * from './azureBlobTranscriptStore';
 export * from './cosmosDbKeyEscape';
