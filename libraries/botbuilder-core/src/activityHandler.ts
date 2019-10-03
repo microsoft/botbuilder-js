@@ -5,7 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, TurnContext } from '.';
+import { ChannelAccount, MessageReaction, TurnContext } from '.';
+import { ActivityHandlerBase } from './activityHandlerBase';
 
 export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Promise<any>;
 
@@ -54,7 +55,7 @@ export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Pr
  * });
  * ```
  */
-export class ActivityHandler {
+export class ActivityHandler extends ActivityHandlerBase {
     protected readonly handlers: {[type: string]: BotHandler[]} = {};
 
     /**
@@ -209,71 +210,210 @@ export class ActivityHandler {
      * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
      */
     public async run(context: TurnContext): Promise<void> {
+        await super.run(context);
+    }
 
-        if (!context) {
-            throw new Error(`Missing TurnContext parameter`);
-        }
+    /**
+     * Overwrite this method to use different logic than the default initial Activity processing logic.
+     * @remarks
+     * The default logic is below:
+     * ```ts
+     *  await this.handle(context, 'Turn', async () => {
+     *      await super.onTurnActivity(context);
+     *  });
+     * ```
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async onTurnActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'Turn', async () => {
+            await super.onTurnActivity(context);
+        });
+    }
 
-        if (!context.activity) {
-            throw new Error(`TurnContext does not include an activity`);
-        }
+    /**
+     * Runs all `onMesssage()` handlers before calling the `ActivityHandler.defaultNextEvent()`.
+     * @remarks
+     * Developers may overwrite this method when having supporting multiple channels to have a
+     * channel-tailored experience.
+     * @remarks
+     * The default logic is below:
+     * ```ts
+     *  await await this.handle(context, 'Message', this.defaultNextEvent(context));
+     * ```
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async onMessageActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'Message', this.defaultNextEvent(context));
+    }
 
-        if (!context.activity.type) {
-            throw new Error(`Activity is missing it's type`);
+    /**
+     * Runs all `onUnrecognizedActivityType()` handlers before calling `ActivityHandler.dispatchConversationUpdateActivity()`.
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async onUnrecognizedActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'UnrecognizedActivityType', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Runs all `onConversationUpdate()` handlers before calling `ActivityHandler.dispatchConversationUpdateActivity()`.
+     * @remarks
+     * The default logic is below:
+     * ```ts
+     *  await this.handle(context, 'ConversationUpdate', async () => {
+     *      await this.dispatchConversationUpdateActivity(context);
+     *  });
+     * ```
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async onConversationUpdateActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'ConversationUpdate', async () => {
+            await this.dispatchConversationUpdateActivity(context);
+        });
+    }
+
+    /**
+     * Override this method when dispatching off of a `'ConversationUpdate'` event to trigger other sub-events.
+     * @remarks
+     * The default logic is below:
+     * ```ts
+     *  if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
+     *      await this.handle(context, 'MembersAdded', this.defaultNextEvent(context));
+     *  } else if (context.activity.membersRemoved && context.activity.membersRemoved.length > 0) {
+     *      await this.handle(context, 'MembersRemoved', this.defaultNextEvent(context));
+     *  } else {
+     *      await this.defaultNextEvent(context)();
+     *  }
+     * ```
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async dispatchConversationUpdateActivity(context: TurnContext): Promise<void> {
+        if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
+            await this.handle(context, 'MembersAdded', this.defaultNextEvent(context));
+        } else if (context.activity.membersRemoved && context.activity.membersRemoved.length > 0) {
+            await this.handle(context, 'MembersRemoved', this.defaultNextEvent(context));
+        } else {
+            await this.defaultNextEvent(context)();
         }
-        
-        // Allow the dialog system to be triggered at the end of the chain
+    }
+
+    /**
+     * Runs all `onMessageReaction()` handlers before calling `ActivityHandler.dispatchMessageReactionActivity()`.
+     * @remarks
+     * The default logic is below:
+     * ```ts
+     *  await this.handle(context, 'MessageReaction', async () => {
+     *      await this.dispatchMessageReactionActivity(context);
+     *  });
+     * ```
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async onMessageReactionActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'MessageReaction', async () => {
+            await this.dispatchMessageReactionActivity(context);
+        });
+    }
+
+    /**
+     * 
+     * @param reactionsAdded The list of reactions added
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async onReactionsAddedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void> {
+        await this.handle(context, 'ReactionsAdded', this.defaultNextEvent(context));
+    }
+
+    /**
+     * 
+     * @param reactionsRemoved The list of reactions removed
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async onReactionsRemovedActivity(reactionsRemoved: MessageReaction[], context: TurnContext): Promise<void> {
+        await this.handle(context, 'ReactionsRemoved', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Override this method when dispatching off of a `'MessageReaction'` event to trigger other sub-events.
+     * @remarks
+     * If there are no reactionsAdded or reactionsRemoved on the incoming activity, it will call `this.defaultNextEvent`
+     * which emits the `'Dialog'` event by default.
+     * The default logic is below:
+     * ```ts
+     *  if (context.activity.reactionsAdded || context.activity.reactionsRemoved) {
+     *      super.onMessageReactionActivity(context);
+     *  } else {
+     *      await this.defaultNextEvent(context)();
+     *  }
+     * ```
+     * `super.onMessageReactionActivity()` will dispatch to `onReactionsAddedActivity()`
+     * or `onReactionsRemovedActivity()`.
+     * 
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async dispatchMessageReactionActivity(context: TurnContext): Promise<void> {
+        if (context.activity.reactionsAdded || context.activity.reactionsRemoved) {
+            super.onMessageReactionActivity(context);
+        } else {
+            await this.defaultNextEvent(context)();
+        }
+    }
+
+    /**
+     * Runs all `onEvent()` handlers before calling `ActivityHandler.dispatchEventActivity()`.
+     * @remarks
+     * The default logic is below:
+     * ```ts
+     *  await this.handle(context, 'Event', async () => {
+     *      await this.dispatchEventActivity(context);
+     *  });
+     * ```
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async onEventActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'Event', async () => {
+            await this.dispatchEventActivity(context);
+        });
+    }
+    
+    /**
+     * Override this method when dispatching off of a `'Event'` event to trigger other sub-events.
+     * @remarks
+     * For certain channels (e.g. Web Chat, custom Direct Line clients), developers can emit
+     * custom `'event'`-type activities from the client. Developers should then overwrite this method
+     * to support their custom `'event'` activities.
+     * 
+     * The default logic is below:
+     * ```ts
+     *  if (context.activity.name === 'tokens/response') {
+     *      await this.handle(context, 'TokenResponseEvent', this.defaultNextEvent(context));
+     *  } else {
+     *      await this.defaultNextEvent(context)();
+     *  }
+     * ```
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected async dispatchEventActivity(context: TurnContext): Promise<void> {
+        if (context.activity.name === 'tokens/response') {
+            await this.handle(context, 'TokenResponseEvent', this.defaultNextEvent(context));
+        } else {
+            await this.defaultNextEvent(context)();
+        }
+    }
+
+    /**
+     * Returns an async function that emits the `'Dialog'` event when called.
+     * Overwrite this function to emit a different default event once all relevant
+     * events are emitted.
+     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     */
+    protected defaultNextEvent(context: TurnContext): () => Promise<void> {
         const runDialogs = async (): Promise<void> => {
             await this.handle(context, 'Dialog', async () => {
                 // noop
             });
         };
-
-        // List of all Activity Types:
-        // https://github.com/Microsoft/botbuilder-js/blob/master/libraries/botframework-schema/src/index.ts#L1627
-        await this.handle(context, 'Turn', async () => {
-            switch (context.activity.type) {
-                case ActivityTypes.Message:
-                    await this.handle(context, 'Message', runDialogs);
-                    break;
-                case ActivityTypes.ConversationUpdate:
-                    await this.handle(context, 'ConversationUpdate', async () => {
-                        if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
-                            await this.handle(context, 'MembersAdded', runDialogs);
-                        } else if (context.activity.membersRemoved && context.activity.membersRemoved.length > 0) {
-                            await this.handle(context, 'MembersRemoved', runDialogs);
-                        } else {
-                            await runDialogs();
-                        }
-                    });
-                    break;
-                case ActivityTypes.MessageReaction:
-                    await this.handle(context, 'MessageReaction', async () => {
-                        if (context.activity.reactionsAdded && context.activity.reactionsAdded.length > 0) {
-                            await this.handle(context, 'ReactionsAdded', runDialogs);
-                        } else if (context.activity.reactionsRemoved && context.activity.reactionsRemoved.length > 0) {
-                            await this.handle(context, 'ReactionsRemoved', runDialogs);
-                        } else {
-                            await runDialogs();
-                        }
-                    });
-                    break;
-                case ActivityTypes.Event:
-                    await this.handle(context, 'Event', async () => {
-                        if (context.activity.name === 'tokens/response') {
-                            await this.handle(context, 'TokenResponseEvent', runDialogs);
-                        } else {
-                            await runDialogs();
-                        }
-                    });
-                    break;
-                default:
-                // handler for unknown or unhandled types
-                    await this.handle(context, 'UnrecognizedActivityType', runDialogs);
-                    break;
-            }
-        });
+        return runDialogs;
     }
+
 
     /**
      * Used to bind handlers to events by name
@@ -318,5 +458,4 @@ export class ActivityHandler {
 
         return returnValue;
     }
-
 }
