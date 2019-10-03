@@ -84,8 +84,6 @@ export class FileUploadBot extends TeamsActivityHandler {
     }
 
     private async sendFileCard(context: TurnContext, filename: string, filesize: number): Promise<void> {
-        console.log("FILESIZE " + filesize);
-
         let fileContext = {
             filename: filename
         };

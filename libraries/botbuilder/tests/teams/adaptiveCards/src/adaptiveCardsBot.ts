@@ -26,24 +26,17 @@ export class AdaptiveCardsBot  extends TeamsActivityHandler {
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
-            const text = context.activity.text.trim().split(" ").splice(-1)[0];
-            const activityValue = context.activity.value.trim().split(" ").splice(-1)[0];
-
-            if (text.length == 0) {
-                await context.sendActivity('App sent a message with empty text');
-                if (activityValue.length > 0) {
-                    await context.sendActivity(`but with value ${activityValue}`);
-                }
-            }
-            else {
-                TurnContext.removeRecipientMention(context.activity);
+            TurnContext.removeRecipientMention(context.activity);
+            let text = context.activity.text;
+            if (text && text.length > 0) {
+                text = text.trim();
                 if (text == '1')
                 {
                     await this.sendAdaptiveCard1(context);
                 }
                 else if (text == '2')
                 {
-                    await this.sendAdaptiveCard1(context);
+                    await this.sendAdaptiveCard2(context);
                 }
                 else if (text == '3')
                 {
@@ -52,6 +45,13 @@ export class AdaptiveCardsBot  extends TeamsActivityHandler {
                 else
                 {
                     await context.sendActivity(`You said: ${text}`);
+                }
+            }
+            else {
+                await context.sendActivity('App sent a message with empty text');
+                const activityValue = context.activity.value;
+                if (activityValue) {
+                    await context.sendActivity(`but with value ${JSON.stringify(activityValue)}`);
                 }
             }
             await next();
@@ -108,7 +108,7 @@ export class AdaptiveCardsBot  extends TeamsActivityHandler {
     }
 
     protected async onTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse> {
-        await context.sendActivity(MessageFactory.text(`OnTeamsCardActionInvoke value: ${context.activity.value}`));
+        await context.sendActivity(MessageFactory.text(`OnTeamsCardActionInvoke value: ${JSON.stringify(context.activity.value)}`));
         return <InvokeResponse>{ status: 200 };
     }
 
@@ -119,37 +119,57 @@ export class AdaptiveCardsBot  extends TeamsActivityHandler {
             "version": "1.0",
             "body": [
                 {
-                   "type": "TextBlock",
-                   "text": "Bot Builder actions"
+                    "type": "TextBlock",
+                    "text": "Bot Builder actions"
                 }
             ],
             "actions": [
                 {
-                    "type": ActionTypes.ImBack,
-                    "title": "Action.Submit",
-                    "value": "text"
+                    "type": "Action.Submit",
+                    "title": "imBack",
+                    "data": {
+                        "msteams": {
+                        "type": "imBack",
+                        "value": "text"
+                        }
+                    }
                 },
                 {
-                    "type": ActionTypes.MessageBack,
+                    "type": "Action.Submit",
                     "title": "message back",
-                    "value": { "key": "value"}
+                    "data": {
+                        "msteams": {
+                            "type": "messageBack",
+                            "value": { "key": "value" }
+                        }
+                    }
                 },
                 {
-                    "type": ActionTypes.ImBack,
+                    "type": "Action.Submit",
                     "title": "message back local echo",
-                    "text": "text received by bots",
-                    "displayText": "display text message back",
-                    "value": { "key": "value"}
+                    "data": {
+                        "msteams": {
+                            "type": "messageBack",
+                            "text": "text received by bots",
+                            "displayText": "display text message back",
+                            "value": { "key": "value" }
+                        }
+                    },
                 },
                 {
-                    "type": "invoke",
+                    "type": "Action.Submit",
                     "title": "invoke",
-                    "value": { "key": "value"}
+                    "data": {
+                        "msteams": {
+                            "type": "invoke",
+                            "value": { "key": "value" }
+                        }
+                    }
                 }
             ]
-        });        
+        });
 
-        await context.sendActivity(MessageFactory.attachment(CardFactory.adaptiveCard(card)));
+        await context.sendActivity(MessageFactory.attachment(card));
     }
 
     private async sendAdaptiveCard2(context: TurnContext): Promise<void> {
@@ -159,8 +179,8 @@ export class AdaptiveCardsBot  extends TeamsActivityHandler {
             "version": "1.0",
             "body": [
                 {
-                   "type": "TextBlock",
-                   "text": "Task Module Adaptive Card"
+                    "type": "TextBlock",
+                    "text": "Task Module Adaptive Card"
                 }
             ],
             "actions": [
@@ -171,8 +191,8 @@ export class AdaptiveCardsBot  extends TeamsActivityHandler {
                         "msteams": {
                             "type": "invoke",
                             "value": {
-                                "type": "task/fetch",
-                                "hiddenKey": "hidden value from task module launcher"
+                                "hiddenKey": "hidden value from task module launcher",
+                                "type": "task/fetch"
                             }
                         }
                     }
@@ -180,7 +200,7 @@ export class AdaptiveCardsBot  extends TeamsActivityHandler {
             ]
         });
 
-        await context.sendActivity(MessageFactory.attachment(CardFactory.adaptiveCard(card)));
+        await context.sendActivity(MessageFactory.attachment(card));
     }
 
     private async sendAdaptiveCard3(context: TurnContext): Promise<void> {
@@ -208,7 +228,7 @@ export class AdaptiveCardsBot  extends TeamsActivityHandler {
                 }
             ]
         });
-
-        await context.sendActivity(MessageFactory.attachment(CardFactory.adaptiveCard(card)));
+        
+        await context.sendActivity(MessageFactory.attachment(card));
     }
 }
