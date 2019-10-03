@@ -1,0 +1,42 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.3/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.3",
+  "version": "1.0.0",
+  "id": "cd59cf47-aca1-41e0-8441-387faee8331e",
+  "packageName": "com.teams.sample.echobot",
+  "developer": {
+    "name": "CardActionsBotJS",
+    "websiteUrl": "https://www.microsoft.com",
+    "privacyUrl": "https://www.teams.com/privacy",
+    "termsOfUseUrl": "https://www.teams.com/termsofuser"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "CardActionsBot",
+    "full": "CardActionsBot"
+  },
+  "description": {
+    "short": "CardActionsBot",
+    "full": "CardActionsBot"
+  },
+  "accentColor": "#FFFFFF",
+  "bots": [
+    {
+      "botId": "cd59cf47-aca1-41e0-8441-387faee8331e",
+      "scopes": [
+        "groupchat",
+        "team"
+      ],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": []
+}
