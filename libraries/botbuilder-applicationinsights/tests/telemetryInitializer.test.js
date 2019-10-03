@@ -3,7 +3,7 @@
 
 const assert = require('assert');
 const appInsights = require("applicationinsights");
-const { TestAdapter, ActivityTypes } = require('botbuilder-core');
+const { TestAdapter, ActivityTypes, TelemetryLoggerMiddleware } = require('botbuilder-core');
 const { TelemetryInitializerMiddleware } = require('../');
 
 describe(`TelemetryMiddleware`, function () {
@@ -19,8 +19,8 @@ describe(`TelemetryMiddleware`, function () {
             }
         };
 
-        var initializerMiddleware = new TelemetryInitializerMiddleware(telemetryClient, true, true);
-        initializerMiddleware.appInsightsDep = appInsights;
+        var telemetryLoggerMiddleware = new TelemetryLoggerMiddleware(telemetryClient, true);
+        var initializerMiddleware = new TelemetryInitializerMiddleware(telemetryLoggerMiddleware, true);
         
         var adapter = new TestAdapter(async (context) => {
             conversationId = context.activity.conversation.id;
