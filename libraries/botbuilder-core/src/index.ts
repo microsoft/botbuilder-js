@@ -21,7 +21,6 @@ export * from './memoryStorage';
 export * from './memoryTranscriptStore';
 export * from './messageFactory';
 export * from './middlewareSet';
-export * from './multiAdapter';
 export * from './privateConversationState';
 export * from './propertyManager';
 export * from './recognizerResult';
