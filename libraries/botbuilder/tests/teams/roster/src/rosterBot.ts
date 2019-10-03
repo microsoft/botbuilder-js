@@ -15,7 +15,29 @@ export class RosterBot extends TeamsActivityHandler {
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
-            await context.sendActivity(`You said '${context.activity.text}'`);
+            await context.sendActivity(this.createReply(context.activity, `Echo: ${context.activity.text}this.createReply(context.activity)`));
+            TurnContext.removeRecipientMention(context.activity);
+
+            switch (context.activity.text)
+            {
+                case "show members":
+                    await this.showMembers(context);
+                    break;
+
+                case "show channels":
+                    await this.showChannels(context);
+                    break;
+
+                case "show details":
+                    await this.showDetails(context);
+                    break;
+
+                default:
+                    await context.sendActivity(this.createReply(context.activity, 
+                        'Invalid command. Type "Show channels" to see a channel list. Type "Show members" to see a list of members in a team. ' +
+                        'Type "show group chat members" to see members in a group chat.'));
+                    break;
+            }
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
@@ -31,32 +53,6 @@ export class RosterBot extends TeamsActivityHandler {
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
-    }
-
-    protected async onMessageActivity(context: TurnContext): Promise<void> {
-        await context.sendActivity(this.createReply(context.activity, `Echo: ${context.activity.text}this.createReply(context.activity)`));
-        TurnContext.removeRecipientMention(context.activity);
-
-        switch (context.activity.text)
-        {
-            case "show members":
-                await this.showMembers(context);
-                break;
-
-            case "show channels":
-                await this.showChannels(context);
-                break;
-
-            case "show details":
-                await this.showDetails(context);
-                break;
-
-            default:
-                await context.sendActivity(this.createReply(context.activity, 
-                    'Invalid command. Type "Show channels" to see a channel list. Type "Show members" to see a list of members in a team. ' +
-                    'Type "show group chat members" to see members in a group chat.'));
-                break;
-        }
     } 
     
     private createReply(activity, text = null, locale = null) : Activity {
