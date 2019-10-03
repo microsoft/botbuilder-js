@@ -14,21 +14,18 @@ import * as appInsights from 'applicationinsights';
  */
 export class TelemetryInitializerMiddleware implements Middleware {
 
-    private readonly _telemetryClient: BotTelemetryClient;
-
     // tslint:disable:variable-name
     private readonly _logActivityTelemetry: boolean;
-    private readonly _logPersonalInformation: boolean;
+    private readonly _telemetryLoggerMiddleware: TelemetryLoggerMiddleware;
     // tslint:enable:variable-name
 
     /**
      * Initializes a new instance of the TelemetryInitializerMiddleware class.
-     * @param _telemetryClient The TelemetryClient used by the TelemetryLoggerMiddleware for logging activity telemetry.
-     * * @param _logActivityTelemetry (Optional) Enable/Disable logging of activity telemetry.
-     * * @param _logPersonalInformation (Optional) Enable/Disable logging original message name within Application Insights.
+     * @param telemetryLoggerMiddleware The TelemetryLoggerMiddleware used for logging activity telemetry.
+     * * @param logActivityTelemetry (Optional) Enable/Disable logging of activity telemetry.
      */
-    constructor(telemetryClient: TelemetryClient, logActivityTelemetry: boolean = false, logPersonalInformation: boolean = false) {
-        this._telemetryClient = telemetryClient || new NullTelemetryClient();
+    constructor(telemetryLoggerMiddleware: TelemetryLoggerMiddleware, logActivityTelemetry: boolean = false) {
+        this._telemetryLoggerMiddleware = telemetryLoggerMiddleware;
         this._logActivityTelemetry = logActivityTelemetry;
     }
 
@@ -38,12 +35,12 @@ export class TelemetryInitializerMiddleware implements Middleware {
     public get logActivityTelemetry(): boolean { return this._logActivityTelemetry; }
 
     /**
-     * Gets the currently configured botTelemetryClient that logs the events.
+     * Gets the currently configured TelemetryLoggerMiddleware that logs activity events.
      */
-    public get telemetryClient(): BotTelemetryClient { return this._telemetryClient; }
+    public get telemetryClient(): TelemetryLoggerMiddleware { return this._telemetryLoggerMiddleware; }
 
     /**
-     * Logs events based on incoming and outgoing activities using the botTelemetryClient class.
+     * Store the incoming activity on the App Insights Correlation Context and optionally calls the TelemetryLoggerMiddleware
      * @param context The context object for this turn.
      * @param next The delegate to call to continue the bot middleware pipeline
      */
@@ -57,10 +54,9 @@ export class TelemetryInitializerMiddleware implements Middleware {
             correlationContext['activity'] = context.activity;
         }
 
-        if(this._logActivityTelemetry)
+        if(this._logActivityTelemetry && this._telemetryLoggerMiddleware)
         {
-            let activityLogger = new TelemetryLoggerMiddleware(this._telemetryClient, this._logPersonalInformation);
-            await activityLogger.onTurn(context, next);
+            await this._telemetryLoggerMiddleware.onTurn(context, next);
         }
         else if (next !== null) {
             await next();
