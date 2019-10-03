@@ -2,15 +2,13 @@
 // Licensed under the MIT License.
 
 import {
-    TeamsActivityHandler,
-} from 'botbuilder';
-import {
+    ActionTypes,
     CardAction,
     CardFactory,
     MessageFactory,
+    TeamsActivityHandler,
     TurnContext,
-    ActionTypes,
-} from 'botbuilder-core';
+} from 'botbuilder';
 
 export class CardsBot  extends TeamsActivityHandler {
     // NOT SUPPORTED ON TEAMS: AnimationCard, AudioCard, VideoCard, OAuthCard
