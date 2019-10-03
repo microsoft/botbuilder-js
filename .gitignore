@@ -308,3 +308,4 @@ __pycache__/
 package-lock.json
 
 libraries/botframework-connector/tests/sandbox.js
+*.tsbuildinfo
