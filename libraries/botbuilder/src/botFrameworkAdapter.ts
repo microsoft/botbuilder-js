@@ -1,11 +1,15 @@
 /**
+ * @module botbuilder
+ */
+/**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
-import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext, ActionTypes } from 'botbuilder-core';
 import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
 import * as os from 'os';
+import { BotFrameworkChannelServerMethods } from './botFrameworkChannelServer';
 
 /**
  * Represents an Express or Restify request object.
@@ -14,12 +18,22 @@ import * as os from 'os';
  */
 export interface WebRequest {
     /**
+     * The url of the request.
+     */
+    url: string;
+
+    /**
+     * The HTTP method invoked for the request.
+     */
+    method: string;
+
+    /**
      * Optional. The request body.
      */
     body?: any;
 
     /***
-     * Optional. The request headers.
+     * The request headers.
      */
     headers: any;
 
@@ -734,6 +748,43 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             console.warn(`BotFrameworkAdapter.processActivity(): ${ status } ERROR - ${ body.toString() }`);
             throw new Error(body.toString());
         }
+    }
+
+    public async processLocalActivity(activity: Partial<Activity>, logic: (context: TurnContext) => Promise<any>): Promise<InvokeResponse> {
+        if (activity.type == ActivityTypes.Invoke && activity.name.toLowerCase().startsWith('botframework.')) {
+            // Find the serviceUrl to use
+            const args: object = activity.value || {};
+            const a: Activity = args['activity'] || {};
+            const serviceUrl = a.serviceUrl || args['serviceUrl'] || activity.serviceUrl;
+            if (serviceUrl == undefined) { throw new Error(`BotFrameworkAdapter: no serviceUrl provided for the '${activity.name}' operation.`) }
+            
+            // Create a connector client
+            const client = this.createConnectorClient(serviceUrl);
+
+            // Handle specific method calls
+            let response: any;
+            switch (activity.name) {
+                case BotFrameworkChannelServerMethods.SendToConversation:
+                    response = await client.conversations.sendToConversation(args['conversationId'], a);
+                    break;
+                case BotFrameworkChannelServerMethods.ReplyToActivity:
+                    response = await client.conversations.replyToActivity(args['conversationId'], args['activityId'], a);
+                    break;
+                case BotFrameworkChannelServerMethods.UpdateActivity:
+                    response = await client.conversations.updateActivity(args['conversationId'], args['activityId'], a);
+                    break;
+                case BotFrameworkChannelServerMethods.DeleteActivity:
+                    response = await client.conversations.deleteActivity(args['conversationId'], args['activityId']);
+                    break;
+                default:
+                    throw new Error(`BotFrameworkAdapter: the '${activity.name}' operation is not supported.`)
+                    break;
+            }
+
+            return { status: 200, body: response };
+        }
+
+        return super.processLocalActivity(activity, logic);
     }
 
     /**

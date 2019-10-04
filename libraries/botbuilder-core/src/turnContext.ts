@@ -8,6 +8,11 @@
 import { Activity, ActivityTypes, ConversationReference, InputHints, ResourceResponse, Mention } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
 import { shallowCopy } from './internal';
+require('isomorphic-fetch');
+
+export interface BeginSkillConversationOptions {
+    serviceUrl: string;
+}
 
 /**
  * Signature implemented by functions registered with `context.onSendActivity()`.
@@ -44,6 +49,19 @@ export type DeleteActivityHandler = (
     next: () => Promise<void>
 ) => Promise<void>;
 
+/**
+ * Signature implemented by functions registered with `context.onForwardActivity()`.
+ *
+ * ```TypeScript
+ * type ForwardActivityHandler = (context: TurnContext, activity: Partial<Activity>, next: () => Promise<void>) => Promise<void>;
+ * ```
+ */
+export type ForwardActivityHandler = (
+    context: TurnContext,
+    activity: Partial<Activity>,
+    next: () => Promise<void>
+) => Promise<void>;
+
 // tslint:disable-next-line:no-empty-interface
 export interface TurnContext {}
 
@@ -62,6 +80,7 @@ export class TurnContext {
     private _onSendActivities: SendActivitiesHandler[] = [];
     private _onUpdateActivity: UpdateActivityHandler[] = [];
     private _onDeleteActivity: DeleteActivityHandler[] = [];
+    private _onForwardActivity: ForwardActivityHandler[] = [];
 
     /**
      * Creates a new TurnContext instance.
@@ -419,7 +438,7 @@ export class TurnContext {
 
         return this;
     }
-
+   
     /**
      * Called when this TurnContext instance is passed into the constructor of a new TurnContext
      * instance.
@@ -432,7 +451,8 @@ export class TurnContext {
         // Copy private member to other instance.
         [
             '_adapter', '_activity', '_respondedRef', '_services',
-            '_onSendActivities', '_onUpdateActivity', '_onDeleteActivity'
+            '_onSendActivities', '_onUpdateActivity', '_onDeleteActivity',
+            '_onForwardActivity'
         ].forEach((prop: string) => (context as any)[prop] = (this as any)[prop]);
     }
 
@@ -535,4 +555,53 @@ export class TurnContext {
         return emitNext(0);
     }
 
+    public beginSkillConversation(options: BeginSkillConversationOptions): Partial<ConversationReference> {
+        const skillRef = TurnContext.getConversationReference(this.activity);
+        const id = encodeURIComponent(createId());
+        const cid = encodeURIComponent(skillRef.conversation.id);
+        const url = encodeURIComponent(skillRef.serviceUrl);
+        skillRef.conversation.id = `cid=${cid}&url=${url}&id=${id}`;
+        skillRef.serviceUrl = options.serviceUrl;
+        return skillRef;
+    }
+
+    public async forwardActivity(skillRef: Partial<ConversationReference>, activity: Partial<Activity>): Promise<void> {
+        const a: Partial<Activity> = TurnContext.applyConversationReference({...activity}, skillRef);
+        a.relatesTo = TurnContext.getConversationReference(this.activity) as ConversationReference;
+
+        return this.emit(this._onForwardActivity, a, async () => {
+            // POST activity to skill
+            // - TODO: add auth headers
+            const response = await fetch(a.serviceUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(a)
+            });
+
+            // Check delivery status
+            if (response.status >= 400) { throw new Error(`TurnContext: '${response.status}' error forwarding activity to '${a.serviceUrl}'.`) }
+        });
+    }
+
+    /**
+     * Registers a handler to be notified of, and potentially intercept, the forwarding of an 
+     * activity to a remote skill.
+     * @param handler A function that will be called anytime [forwardActivity()](#forwardactivity) is called. The handler should call `next()` to continue sending of the activities.
+     */
+    public onForwardActivity(handler: ForwardActivityHandler): this {
+        this._onForwardActivity.push(handler);
+
+        return this;
+    }
+}
+
+function createId(): string {
+    let seed = new Date().getTime();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (substr) => {
+        const r = (seed + Math.random()*16)%16 | 0;
+        seed = Math.floor(seed/16);
+        return (substr == 'x' ? r : (r&0x3|0x8)).toString(16);
+    });
 }

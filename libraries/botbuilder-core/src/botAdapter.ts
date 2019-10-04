@@ -52,8 +52,31 @@ export abstract class BotAdapter {
      */
     public abstract continueConversation(
         reference: Partial<ConversationReference>,
-        logic: (revocableContext: TurnContext
-        ) => Promise<void>): Promise<void>;
+        logic: (revocableContext: TurnContext) => Promise<void>
+        ): Promise<void>;
+
+    /**
+     * Dispatches a locally created activity to the bot for processing.
+     * 
+     * @remarks
+     * This method is similar to the `processActivity()` method found on most adapters but will
+     * bypass any of the bots parsing and security logic. Callers should ensure that only 
+     * trusted activities are routed through this method.
+     * @param activity The activity to dispatch.
+     * @param logic Function to execute for performing the bots logic.
+     */
+    public async processLocalActivity(
+        activity: Partial<Activity>, 
+        logic: (revocableContext: TurnContext) => Promise<void>
+        ): Promise<{ status: number; body?: any; }> 
+    {
+        // Create a new turn context and run middleware
+        // - NOTE: we're returning an empty object for body to properly mimic the output
+        //   from client.conversation.sendToActivity() for skills. 
+        const context = new TurnContext(this, activity);
+        await this.runMiddleware(context, logic);
+        return { status: 200, body: {} };
+    }
 
     /**
      * Gets/sets a error handler that will be called anytime an uncaught exception is raised during

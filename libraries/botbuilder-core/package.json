@@ -21,7 +21,8 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "assert": "^1.4.1",
-    "botframework-schema": "4.1.6"
+    "botframework-schema": "4.1.6",
+    "isomorphic-fetch": "^2.2.1"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
