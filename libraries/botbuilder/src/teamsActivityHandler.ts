@@ -347,7 +347,7 @@ export class TeamsActivityHandler extends ActivityHandler {
         await this.handle(context, 'ConversationUpdate', async () => {
             const channelData = context.activity.channelData as TeamsChannelData;
     
-            if (!channelData.eventType) {
+            if (!channelData || !channelData.eventType) {
                 return await super.dispatchConversationUpdateActivity(context);
             }
     
