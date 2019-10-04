@@ -104,7 +104,7 @@ export class AdaptiveCardsBot  extends TeamsActivityHandler {
 
     protected async onTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponseBase> {
         await context.sendActivity(MessageFactory.text(`OnTeamsTaskModuleSubmit value: ${ JSON.stringify(taskModuleRequest) }`));
-        return <TaskModuleMessageResponse>{ value: 'Thanks!' };
+        return <TaskModuleMessageResponse>{ type: 'message', value: 'Thanks!' };
     }
 
     protected async onTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse> {
