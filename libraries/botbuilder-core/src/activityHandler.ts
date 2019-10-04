@@ -351,7 +351,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      */
     protected async dispatchMessageReactionActivity(context: TurnContext): Promise<void> {
         if (context.activity.reactionsAdded || context.activity.reactionsRemoved) {
-            super.onMessageReactionActivity(context);
+            await super.onMessageReactionActivity(context);
         } else {
             await this.defaultNextEvent(context)();
         }
