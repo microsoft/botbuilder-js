@@ -329,7 +329,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`); }
 
         // Create conversation
-        const parameters: ConversationParameters = { bot: reference.bot, members: [reference.user], isGroup: false, activity: null, channelData: null, headers: {} };
+        const parameters: ConversationParameters = { bot: reference.bot, members: [reference.user], isGroup: false, activity: null, channelData: null };
         const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
 
         // Mix in the tenant ID if specified. This is required for MS Teams.
@@ -506,7 +506,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const client: ConnectorClient = this.createConnectorClient(url);
         //TODO: Modify to use new client
 
-        return await client.conversations.getConversations(continuationToken ? { continuationToken: continuationToken, headers: {} } : undefined);
+        return await client.conversations.getConversations(continuationToken ? { continuationToken: continuationToken } : undefined);
     }
 
     /**
@@ -537,7 +537,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         // TO-DO TODO
         // const customResult: CustomModels.UserTokenGetTokenResponse = await customClient.userToken.getToken(userId, connectionName, { code: magicCode, channelId: context.activity.channelId });
         
-        if (!result || !result.token || result._response.statusCode == 404) {
+        if (!result || !result.token || result._response.status == 404) {
             return undefined;
         } else {
             return result as TokenResponse;
@@ -584,7 +584,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         };
 
         const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
-        return (await client.botSignIn.getSignInUrl(finalState, { channelId: context.activity.channelId, headers: {} }))._response.bodyAsText;
+        return (await client.botSignIn.getSignInUrl(finalState, { channelId: context.activity.channelId }))._response.bodyAsText;
     }
 
     /** 
@@ -864,7 +864,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * Override this in a derived class to create a mock connector client for unit testing.
      */
     protected createConnectorClient(serviceUrl: string): ConnectorClient {
-        const client: ConnectorClient = new ConnectorClient(this.credentials, { baseUri: serviceUrl} );
+        const client: ConnectorClient = new ConnectorClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
         return client;
     }
 
@@ -877,7 +877,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * Override this in a derived class to create a mock OAuth API client for unit testing.
      */
     protected createTokenApiClient(serviceUrl: string): TokenApiClient {
-        const client = new TokenApiClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
+        const client = new TokenApiClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
         return client;
     }
 

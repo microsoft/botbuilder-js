@@ -1,5 +1,5 @@
 export class RequestOptions {
-    'headers':
+    'headers'?:
     {
         [name: string]: string
     };

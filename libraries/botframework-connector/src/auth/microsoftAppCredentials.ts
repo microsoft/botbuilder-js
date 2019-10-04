@@ -120,7 +120,7 @@ export class MicrosoftAppCredentials {
         let oauthResponse: OAuthResponse;
         this.refreshingToken = null;
 
-        this.refreshToken().then(async res => {
+        return this.refreshToken().then(async res => {
             if (!res.bodyUsed){
                 oauthResponse = await res.json();
                 // Subtract 5 minutes from expires_in so they'll we'll get a
