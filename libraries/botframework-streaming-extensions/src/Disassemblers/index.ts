@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-export * from './cancelDisassembler';
-export * from './httpContentStreamDisassembler';
-export * from './payloadDisassembler';
-export * from './requestDisassembler';
-export * from './responseDisassembler';
+export * from './CancelDisassembler';
+export * from './HttpContentStreamDisassembler';
+export * from './PayloadDisassembler';
+export * from './RequestDisassembler';
+export * from './ResponseDisassembler';

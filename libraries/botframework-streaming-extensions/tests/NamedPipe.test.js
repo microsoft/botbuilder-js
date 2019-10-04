@@ -1,6 +1,6 @@
 const net = require('net');
 const np = require('../lib');
-const npt = require('../lib/namedPipe/namedPipeTransport');
+const npt = require('../lib/NamedPipe/NamedPipeTransport');
 const protocol = require('../lib');
 const  chai  = require('chai');
 var expect = chai.expect;
@@ -12,7 +12,7 @@ class FauxSock{
             this.position = 0;
         }
         this.connecting = false;
-        this.exists = true;       
+        this.exists = true;
     }
 
     write(buffer){
@@ -25,7 +25,7 @@ class FauxSock{
 
     receive(readLength){
         if(this.contentString[this.position])
-        {        
+        {
             this.buff = Buffer.from(this.contentString[this.position]);
             this.position++;
 
@@ -34,12 +34,12 @@ class FauxSock{
 
         if(this.receiver.isConnected)
             this.receiver.disconnect();
-    }    
+    }
     close(){};
-    end(){ 
+    end(){
         this.exists = false;
     };
-    destroyed(){ 
+    destroyed(){
         return this.exists;
     };
 
@@ -57,7 +57,7 @@ class FauxSock{
         if(action === 'close'){
             this.closeHandler = handler;
         }
-        
+
     };
 }
 class TestServer {
@@ -101,7 +101,7 @@ class TestServer {
 }
 
 class TestClient {
-    
+
 
     constructor(baseName) {
         let _baseName = undefined;
@@ -221,7 +221,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(sent).to.equal(5);
             expect( () => transport.close()).to.not.throw;
         });
-        
+
         it('returns 0 when attepmting to write to a closed socket', () => {
             let sock = new FauxSock();
             sock.destroyed = false;
@@ -259,11 +259,11 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(transport.isConnected()).to.be.true;
             transport.receive(12).catch();
             transport.socketReceive(Buffer.from('Hello World!', 'utf8'));
-            
+
             expect( () => transport.close()).to.not.throw;
         });
 
-        
+
         it('cleans up when onClose is fired', () => {
             let sock = new FauxSock();
             sock.destroyed = false;
@@ -273,10 +273,10 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
             expect(transport.isConnected()).to.be.true;
             transport.socketClose();
-            expect(transport._active).to.be.undefined;
-            expect(transport._activeReceiveResolve).to.be.undefined;
-            expect(transport._activeReceiveReject).to.be.undefined;
-            expect(transport._socket).to.be.undefined;
+            expect(transport._active).to.be.null;
+            expect(transport._activeReceiveResolve).to.be.null;
+            expect(transport._activeReceiveReject).to.be.null;
+            expect(transport._socket).to.be.null;
             expect(transport._activeOffset).to.equal(0);
             expect(transport._activeReceiveCount).to.equal(0);
         });
@@ -290,10 +290,10 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
             expect(transport.isConnected()).to.be.true;
             transport.socketError();
-            expect(transport._active).to.be.undefined;
-            expect(transport._activeReceiveResolve).to.be.undefined;
-            expect(transport._activeReceiveReject).to.be.undefined;
-            expect(transport._socket).to.be.undefined;
+            expect(transport._active).to.be.null;
+            expect(transport._activeReceiveResolve).to.be.null;
+            expect(transport._activeReceiveReject).to.be.null;
+            expect(transport._socket).to.be.null;
             expect(transport._activeOffset).to.equal(0);
             expect(transport._activeReceiveCount).to.equal(0);
         });
@@ -335,7 +335,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             req.Verb = 'POST';
             req.Path = 'some/path';
             req.setBody('Hello World!');
-            client.send(req).catch(err => {expect(err).to.be.undefined;}).then(done());  
+            client.send(req).catch(err => {expect(err).to.be.undefined;}).then(done());
         });
 
     });
@@ -362,14 +362,14 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(server.start()).to.not.throw;
             expect(server.disconnect()).to.not.throw;
         });
-        
+
 
         it('sends without throwing', (done) => {
             let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
             expect(server).to.be.instanceOf(np.NamedPipeServer);
             expect(server.start()).to.not.throw;
             let req = {verb: 'POST', path: '/api/messages', streams: []};
-            server.send(req).catch(err => {expect(err).to.be.undefined;}).then(  
+            server.send(req).catch(err => {expect(err).to.be.undefined;}).then(
             expect(server.disconnect()).to.not.throw).then(done());
         });
 
@@ -381,7 +381,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
                 server.onConnectionDisconnected();
             } catch (error) {
                 expect(err).to.equal(`address already in use \\.\pipe\pipeA.incoming`);
-            } 
+            }
             expect(server.disconnect()).to.not.throw;
             done();
         });
@@ -394,7 +394,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
                 server.onConnectionDisconnected();
             } catch (err) {
                 expect(err).to.equal(`address already in use \\.\pipe\pipeA.incoming`);
-            } 
+            }
             expect(server.disconnect()).to.not.throw;
             done();
         });

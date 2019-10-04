@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-export * from './payloadReceiver';
-export * from './payloadSender';
-export * from './payloadReceiver';
-export * from './payloadSender';
-export * from './transportDisconnectedEventArgs';
-export * from './transportDisconnectedEventHandler';
+export * from './PayloadReceiver';
+export * from './PayloadSender';
+export * from './PayloadReceiver';
+export * from './PayloadSender';
+export * from './TransportDisconnectedEventArgs';
+export * from './TransportDisconnectedEventHandler';
