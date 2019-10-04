@@ -95,7 +95,7 @@ export class AdaptiveCardsBot  extends TeamsActivityHandler {
         });
 
         return <TaskModuleTaskInfo> {
-            card: CardFactory.adaptiveCard(card),
+            card: card,
             height: 200,
             width: 400,
             title: 'Task Module Example'
