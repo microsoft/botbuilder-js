@@ -40,6 +40,7 @@ export class CardFactory {
         heroCard: 'application/vnd.microsoft.card.hero',
         receiptCard: 'application/vnd.microsoft.card.receipt',
         oauthCard: 'application/vnd.microsoft.card.oauth',
+        o365ConnectorCard: 'application/vnd.microsoft.teams.card.o365connector',
         signinCard: 'application/vnd.microsoft.card.signin',
         thumbnailCard: 'application/vnd.microsoft.card.thumbnail',
         videoCard: 'application/vnd.microsoft.card.video'
@@ -178,6 +179,32 @@ export class CardFactory {
         if (text) { card.text = text; }
 
         return { contentType: CardFactory.contentTypes.oauthCard, content: card };
+    }
+
+
+    /**
+    * Returns an attachment for an 0365Connector card.
+    *
+    * @remarks
+    * ```JavaScript
+    * const card = CardFactory.o365ConnectorCard({
+    *   "title": "card title",
+    *   "text": "card text",
+    *   "summary": "O365 card summary",
+    *   "themeColor": "#E67A9E",
+    *   "sections": [
+    *       {
+    *           "title": "**section title**",
+    *           "text": "section text",
+    *           "activityTitle": "activity title",
+    *       }
+    *   ]
+    * });
+    * ```
+    * @param card The o365Connector card to return as an attachment.
+    */
+    public static o365ConnectorCard(card: any): Attachment {
+        return { contentType: CardFactory.contentTypes.o365ConnectorCard, content: card };
     }
 
     /**
