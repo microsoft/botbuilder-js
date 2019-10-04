@@ -320,11 +320,9 @@ export class TurnContext {
      * @param activity New replacement activity. The activity should already have it's ID information populated.
      */
     public updateActivity(activity: Partial<Activity>): Promise<void> {
-
-        let conversationReference = TurnContext.getConversationReference(this._activity);
-        let sendingActivity = TurnContext.applyConversationReference(activity, conversationReference);
-
-        return this.emit(this._onUpdateActivity, sendingActivity, () => this.adapter.updateActivity(this, sendingActivity));
+        const ref: Partial<ConversationReference> = TurnContext.getConversationReference(this.activity);
+        const a: Partial<Activity> = TurnContext.applyConversationReference(activity, ref);
+        return this.emit(this._onUpdateActivity, a, () => this.adapter.updateActivity(this, a));
     }
 
     /**
