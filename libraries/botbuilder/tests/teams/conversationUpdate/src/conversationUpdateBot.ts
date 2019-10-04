@@ -2,16 +2,15 @@
 // Licensed under the MIT License.
 
 import {
-    TeamsActivityHandler,
-} from 'botbuilder';
-import {
     CardFactory,
     ChannelAccount,
     ChannelInfo,
     MessageFactory,
     TeamInfo,
+    TeamsActivityHandler,
     TurnContext,
-} from 'botbuilder-core';
+} from 'botbuilder';
+
 
 export class ConversationUpdateBot  extends TeamsActivityHandler {
     constructor() {
@@ -41,7 +40,7 @@ export class ConversationUpdateBot  extends TeamsActivityHandler {
             await context.sendActivity(message);
             await next();
         });
-        this.onTeamsTeamRenamedEvent(async (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>): Promise<void> => {
+        this.onTeamsTeamRenamedEvent(async (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>): Promise<void> => {
             const card = CardFactory.heroCard('Team Renamed', `${teamInfo.name} is the new Team name`);
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);
