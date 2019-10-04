@@ -1,5 +1,8 @@
 const assert = require('assert');
-const { BotAdapter, TurnContext } = require('../');
+const { BotAdapter, MessageFactory, TurnContext } = require('../');
+const { BotFrameworkAdapter } = require('../../botbuilder');
+
+const activityId = `activity ID`;
 
 const testMessage = {
     type: 'message', 
@@ -211,6 +214,26 @@ describe(`TurnContext`, function () {
         });
         context.updateActivity(testMessage).then((responses) => {
             assert(called, `update hook not called.`);        
+            done();
+        });
+    });
+    
+    it(`should be able to update an activity with MessageFactory`, function (done) {
+        let called = false;
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        context.onUpdateActivity((ctx, activity, next) => {
+            assert(ctx, `context not passed to hook`);
+            assert(activity, `activity not passed to hook`);
+            assert(activity.id === activityId, `wrong activity passed to hook`);
+            assert(activity.conversation.id === testMessage.conversation.id, `conversation ID not applied to activity`);
+            assert(activity.serviceUrl === testMessage.serviceUrl, `service URL not applied to activity`);
+            called = true;
+            return next();
+        });
+        const message = MessageFactory.text(`test text`);
+        message.id = activityId;
+        context.updateActivity(message).then((responses) => {
+            assert(called, `update hook not called.`);
             done();
         });
     });
