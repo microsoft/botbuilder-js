@@ -30,20 +30,20 @@ export class ActionBasedMessagingExtensionFetchTaskBot   extends TeamsActivityHa
     }
 
     protected async onTeamsMessagingExtensionFetchTask(context, query): Promise<MessagingExtensionActionResponse> {
-        var resp = AdaptiveCardHelper.createTaskModuleAdaptiveCardResponse();
+        const resp = AdaptiveCardHelper.createTaskModuleAdaptiveCardResponse();
         return resp;        
     }
 
     protected async onTeamsMessagingExtensionSubmitAction(context: TurnContext, action: MessagingExtensionAction) : Promise<MessagingExtensionActionResponse> {
         const submittedData = <SubmitExampleData>action.data;
         const adaptiveCard = AdaptiveCardHelper.toAdaptiveCardAttachment(submittedData);
-        var response = CardResponseHelpers.toMessagingExtensionBotMessagePreviewResponse(adaptiveCard);
+        const response = CardResponseHelpers.toMessagingExtensionBotMessagePreviewResponse(adaptiveCard);
         return response;
     }
 
     protected async onTeamsMessagingExtensionBotMessagePreviewEdit(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
-        var submitData = AdaptiveCardHelper.toSubmitExampleData(action);
-        var response = AdaptiveCardHelper.createTaskModuleAdaptiveCardResponse(
+        const submitData = AdaptiveCardHelper.toSubmitExampleData(action);
+        const response = AdaptiveCardHelper.createTaskModuleAdaptiveCardResponse(
                                                     submitData.Question,
                                                     (submitData.MultiSelect.toLowerCase() == 'true'),
                                                     submitData.Option1,
@@ -53,9 +53,9 @@ export class ActionBasedMessagingExtensionFetchTaskBot   extends TeamsActivityHa
     }
 
     protected async onTeamsMessagingExtensionBotMessagePreviewSend(context: TurnContext, action: MessagingExtensionAction) : Promise<MessagingExtensionActionResponse> {
-        var submitData = AdaptiveCardHelper.toSubmitExampleData(action);
-        var adaptiveCard = AdaptiveCardHelper.toAdaptiveCardAttachment(submitData);
-        var response = CardResponseHelpers.toComposeExtensionResultResponse(adaptiveCard);
+        const submitData = AdaptiveCardHelper.toSubmitExampleData(action);
+        const adaptiveCard = AdaptiveCardHelper.toAdaptiveCardAttachment(submitData);
+        const response = CardResponseHelpers.toComposeExtensionResultResponse(adaptiveCard);
         return response;
     }
 
