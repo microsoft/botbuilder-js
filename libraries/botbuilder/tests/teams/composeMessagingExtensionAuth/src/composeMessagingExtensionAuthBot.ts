@@ -12,6 +12,7 @@ import {
     TaskModuleRequest,
     TeamsActivityHandler,
     TurnContext,
+    BotFrameworkAdapter,
 } from 'botbuilder';
 
 import {
@@ -36,7 +37,8 @@ export class ComposeMessagingExtensionAuthBot extends TeamsActivityHandler {
 
             if (text === 'LOGOUT' || text === 'SIGNOUT')
             {
-                const adapter: IUserTokenProvider = context.adapter as unknown as IUserTokenProvider;
+                const adapter: IUserTokenProvider = context.adapter as BotFrameworkAdapter;
+
                 await adapter.signOutUser(context, this.connectionName);
                 await context.sendActivity(`Signed Out: ${context.activity.from.name}`);
                 
@@ -61,8 +63,8 @@ export class ComposeMessagingExtensionAuthBot extends TeamsActivityHandler {
         });
     }
 
-    protected async onTeamsMessagingExtensionFetchTask(context, query: MessagingExtensionQuery): Promise<MessagingExtensionActionResponse> {
-        const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
+    protected async onTeamsMessagingExtensionFetchTask(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionActionResponse> {
+        const adapter: IUserTokenProvider = context.adapter as BotFrameworkAdapter;
         const userToken = await adapter.getUserToken(context, this.connectionName);
         if (!userToken)
         {
@@ -99,11 +101,11 @@ export class ComposeMessagingExtensionAuthBot extends TeamsActivityHandler {
         return response;
     }
 
-    protected async onTeamsTaskModuleFetch(context, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleTaskInfo> {
+    protected async onTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleTaskInfo> {
         var data = context.activity.value;
         if (data && data.state)
         {
-            const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
+            const adapter: IUserTokenProvider = context.adapter as BotFrameworkAdapter;
             const tokenResponse = await adapter.getUserToken(context, this.connectionName, data.state);
             return this.CreateSignedInTaskModuleTaskInfo(tokenResponse.token);
         }
