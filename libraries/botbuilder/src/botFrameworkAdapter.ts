@@ -852,7 +852,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * @remarks
      * Override this in a derived class to create a mock connector client for unit testing.
      */
-    protected createConnectorClient(serviceUrl: string): ConnectorClient {
+    public createConnectorClient(serviceUrl: string): ConnectorClient {
         const client: ConnectorClient = new ConnectorClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
         return client;
     }
