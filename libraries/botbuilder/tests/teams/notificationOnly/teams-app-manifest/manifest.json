@@ -3,7 +3,7 @@
   "manifestVersion": "1.3",
   "version": "1.0",
   "id": "<<YOUR_GENERATED_APP_GUID>>",
-  "packageName": "com.microsoft.teams.samples.filebot",
+  "packageName": "com.microsoft.teams.samples.notificationonly",
   "developer": {
     "name": "Microsoft Corp",
     "websiteUrl": "https://example.azurewebsites.net",
@@ -11,29 +11,32 @@
     "termsOfUseUrl": "https://example.azurewebsites.net/termsofuse"
   },
   "name": {
-    "short": "V4 File Sample",
-    "full": "Microsoft Teams V4 File Sample Bot"
+    "short": "NotificationOnly",
+    "full": "NotificationOnly"
   },
   "description": {
-    "short": "Sample bot using V4 SDK to demo bot file features",
-    "full": "Sample bot using V4 Bot Builder SDK and V4 Microsoft Teams Extension SDK to demo bot file features"
+    "short": "NotificationOnly",
+    "full": "NotificationOnly"
   },
   "icons": {
     "outline": "outline.png",
     "color": "color.png"
   },
-  "accentColor": "#abcdef",
+  "accentColor": "#FFFFFF",
   "bots": [
     {
-      "botId": "<<YOUR_GENERATED_APP_GUID>>",
+      "botId": "<<YOUR_BOTS_MSA_APP_ID>>",
       "scopes": [
         "personal",
         "team"
       ],
-      "supportsFiles": true
+      "supportsFiles": false,
+      "isNotificationOnly": true,
     }
   ],
-  "validDomains": [
-    "*.azurewebsites.net"
-  ]
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],  
+  "validDomains": []
 }
