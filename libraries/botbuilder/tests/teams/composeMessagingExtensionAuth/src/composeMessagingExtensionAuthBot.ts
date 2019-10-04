@@ -19,6 +19,12 @@ import {
     IUserTokenProvider,
 } from 'botbuilder-core';
 
+/*
+* This Bot requires an Azure Bot Service OAuth connection name in appsettings.json
+* see: https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-authentication
+*
+* Clicking this bot's Task Menu will retrieve the login dialog, if the user is not already signed in.
+*/
 export class ComposeMessagingExtensionAuthBot extends TeamsActivityHandler {
     connectionName: string;
     constructor(authConnectionName: string) {
