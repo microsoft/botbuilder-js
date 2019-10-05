@@ -11,5 +11,6 @@ export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
 export * from './teamsActivityHandler';
 export * from './teamsActivityHelpers';
+export * from './teamsInfo';
 export * from './teamsTurnContextHelpers';
 export * from 'botbuilder-core';
