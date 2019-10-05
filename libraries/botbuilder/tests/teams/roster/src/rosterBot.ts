@@ -3,21 +3,26 @@
 
 import {
     Activity,
+    MessageFactory,
     TeamsActivityHandler,
     TeamsInfo,
     TurnContext
 } from 'botbuilder';
 
+//
+// You need to install this bot in a team. You can @mention the bot "show members", "show channels", or "show details" to get the
+// members of the team, the channels of the team, or metadata about the team respectively.
+//
 export class RosterBot extends TeamsActivityHandler {
     constructor() {
         super();
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
-            await context.sendActivity(this.createReply(context.activity, `Echo: ${context.activity.text}this.createReply(context.activity)`));
+            await context.sendActivity(MessageFactory.text(`Echo: ${context.activity.text}`));
             TurnContext.removeRecipientMention(context.activity);
-
-            switch (context.activity.text) {
+            const text = context.activity.text ? context.activity.text.trim() : '';
+            switch (text) {
                 case "show members":
                     await this.showMembers(context);
                     break;
@@ -31,9 +36,9 @@ export class RosterBot extends TeamsActivityHandler {
                     break;
 
                 default:
-                    await context.sendActivity(this.createReply(context.activity, 
+                    await context.sendActivity(
                         'Invalid command. Type "Show channels" to see a channel list. Type "Show members" to see a list of members in a team. ' +
-                        'Type "show group chat members" to see members in a group chat.'));
+                        'Type "show group chat members" to see members in a group chat.');
                     break;
             }
             // By calling next() you ensure that the next BotHandler is run.
@@ -51,49 +56,29 @@ export class RosterBot extends TeamsActivityHandler {
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
-    } 
-    
-    private createReply(activity, text = null, locale = null) : Activity {
-        return {
-            type: 'message',
-            from: { id: activity.recipient.id, name: activity.recipient.name },
-            recipient: { id: activity.from.id, name: activity.from.name },
-            replyToId: activity.id,
-            serviceUrl: activity.serviceUrl,
-            channelId: activity.channelId,
-            conversation: { isGroup: activity.conversation.isGroup, id: activity.conversation.id, name: activity.conversation.name },
-            text: text || '',
-            locale: locale || activity.locale
-        } as Activity;
     }
 
     private async showMembers(context: TurnContext): Promise<void> {
         let teamsChannelAccounts = await TeamsInfo.getMembers(context);
-        let replyActivity = this.createReply(context.activity, `Total of ${teamsChannelAccounts.length} members are currently in team`);
-        await context.sendActivity(replyActivity);
-
-        var messages = teamsChannelAccounts.map(function(teamsChannelAccount){
+        await context.sendActivity(MessageFactory.text(`Total of ${teamsChannelAccounts.length} members are currently in team`));
+        let messages = teamsChannelAccounts.map(function(teamsChannelAccount) {
             return `${teamsChannelAccount.aadObjectId} --> ${teamsChannelAccount.name} --> ${teamsChannelAccount.userPrincipalName}`;
         });
-
         await this.sendInBatches(context, messages);
     }
     
     private async showChannels(context: TurnContext): Promise<void> { 
         let channels = await TeamsInfo.getChannels(context);
-        await context.sendActivity(this.createReply(context.activity, `Total of ${channels.length} channels are currently in team`));
-
-        var messages = channels.map(function(channel){
-            return `${channel.id} --> ${channel.name}`;
+        await context.sendActivity(MessageFactory.text(`Total of ${channels.length} channels are currently in team`));
+        let messages = channels.map(function(channel) {
+            return `${channel.id} --> ${channel.name ? channel.name : 'General'}`;
         });
-
         await this.sendInBatches(context, messages);
     }
    
     private async showDetails(context: TurnContext): Promise<void> {
         let teamDetails = await TeamsInfo.getTeamDetails(context);
-        var replyActivity = this.createReply(context.activity, `The team name is ${teamDetails.name}. The team ID is ${teamDetails.id}. The AAD GroupID is ${teamDetails.aadGroupId}.`);
-        await context.sendActivity(replyActivity);
+        await context.sendActivity(MessageFactory.text(`The team name is ${teamDetails.name}. The team ID is ${teamDetails.id}. The AAD GroupID is ${teamDetails.aadGroupId}.`));
     }
 
     private async sendInBatches(context: TurnContext, messages: string[]): Promise<void> {
@@ -101,14 +86,13 @@ export class RosterBot extends TeamsActivityHandler {
         messages.forEach(async (msg: string) => {
             batch.push(msg);
             if (batch.length == 10) {
-                await context.sendActivity(this.createReply(context.activity, batch.join('<br>')));
+                await context.sendActivity(MessageFactory.text(batch.join('<br>')));
                 batch = [];
             }
         });
 
-        if (batch.length > 0)
-        {
-            await context.sendActivity(this.createReply(context.activity, batch.join('<br>')));
+        if (batch.length > 0) {
+            await context.sendActivity(MessageFactory.text(batch.join('<br>')));
         }
     }
 }
