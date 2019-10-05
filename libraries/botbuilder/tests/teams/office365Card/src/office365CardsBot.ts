@@ -6,6 +6,7 @@ import {
     Attachment,
     CardFactory,
     MessageFactory,
+    O365ConnectorCard,
     O365ConnectorCardActionQuery,
     TeamsActivityHandler,
     TurnContext
@@ -305,8 +306,7 @@ export class Office365CardsBot extends TeamsActivityHandler {
                 "@id": "open-uri"
                 }
             ]
-        });
-        console.log(JSON.stringify(card));
+        } /* as O365ConnectorCard */);
         await context.sendActivity(MessageFactory.attachment(card));
     }
 }

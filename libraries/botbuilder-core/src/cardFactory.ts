@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActionTypes, AnimationCard, Attachment, AudioCard, CardAction, CardImage, HeroCard, MediaUrl, OAuthCard, ReceiptCard, SigninCard, ThumbnailCard, VideoCard } from 'botframework-schema';
+import { ActionTypes, AnimationCard, Attachment, AudioCard, CardAction, CardImage, HeroCard, MediaUrl, OAuthCard, O365ConnectorCard, ReceiptCard, SigninCard, ThumbnailCard, VideoCard } from 'botframework-schema';
 
 /**
  * A set of utility functions designed to assist with the formatting of the various card types a
@@ -203,7 +203,7 @@ export class CardFactory {
     * ```
     * @param card The o365Connector card to return as an attachment.
     */
-    public static o365ConnectorCard(card: any): Attachment {
+    public static o365ConnectorCard(card/*: O365ConnectorCard*/: any): Attachment {
         return { contentType: CardFactory.contentTypes.o365ConnectorCard, content: card };
     }
 
