@@ -1,6 +1,6 @@
 const ws = require('../lib');
 const protocol = require('../lib');
-const wst = require('../lib/webSocket/webSocketTransport');
+const wst = require('../lib/WebSocket/WebSocketTransport');
 const  chai  = require('chai');
 var expect = chai.expect;
 
@@ -13,7 +13,7 @@ class FauxSock{
         this.connecting = false;
         this.connected = true;
         this.readyState = 1;
-        this.exists = true;       
+        this.exists = true;
 
         this.onmessage = undefined;
         this.onerror = undefined;
@@ -35,7 +35,7 @@ class FauxSock{
 
     receive(readLength){
         if(this.contentString[this.position])
-        {        
+        {
             this.buff = Buffer.from(this.contentString[this.position]);
             this.position++;
 
@@ -44,16 +44,16 @@ class FauxSock{
 
         if(this.receiver.isConnected)
             this.receiver.disconnect();
-    }    
+    }
     close(){};
     close(){
         this.connected = false;
     };
-    end(){ 
+    end(){
         this.exists = false;
         return true;
     };
-    destroyed(){ 
+    destroyed(){
         return this.exists;
     };
     on(action, handler){
@@ -74,7 +74,7 @@ class FauxSock{
         }
         if(action === 'end'){
             this.endHandler = handler;
-        }          
+        }
     };
 
 
@@ -150,7 +150,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             expect(sent).to.equal(5);
             expect( () => transport.close()).to.not.throw;
         });
-        
+
         it('returns 0 when attepmting to write to a closed socket', () => {
             let sock = new FauxSock();
             sock.destroyed = false;
@@ -161,7 +161,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             expect(transport.isConnected()).to.be.true;
             sock.writable = false;
             sock.connected = false;
-            let buff = Buffer.from('hello', 'utf8');            
+            let buff = Buffer.from('hello', 'utf8');
             let sent = transport.send(buff);
             expect(sent).to.equal(0);
             expect( () => transport.close()).to.not.throw;
@@ -189,7 +189,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             expect(transport.isConnected()).to.be.true;
             transport.receive(12).catch();
             transport.onReceive(Buffer.from('{"VERB":"POST", "PATH":"somewhere/something"}', 'utf8'));
-            
+
             expect( () => transport.close()).to.not.throw;
         });
 
@@ -202,10 +202,10 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             expect(transport).to.be.instanceOf(wst.WebSocketTransport);
             expect(transport.isConnected()).to.be.true;
             transport.onClose();
-            expect(transport._active).to.be.undefined;
-            expect(transport._activeReceiveResolve).to.be.undefined;
-            expect(transport._activeReceiveReject).to.be.undefined;
-            expect(transport._socket).to.be.undefined;
+            expect(transport._active).to.be.null;
+            expect(transport._activeReceiveResolve).to.be.null;
+            expect(transport._activeReceiveReject).to.be.null;
+            expect(transport._socket).to.be.null;
             expect(transport._activeOffset).to.equal(0);
             expect(transport._activeReceiveCount).to.equal(0);
         });
@@ -219,10 +219,10 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             expect(transport).to.be.instanceOf(wst.WebSocketTransport);
             expect(transport.isConnected()).to.be.true;
             transport.onError();
-            expect(transport._active).to.be.undefined;
-            expect(transport._activeReceiveResolve).to.be.undefined;
-            expect(transport._activeReceiveReject).to.be.undefined;
-            expect(transport._socket).to.be.undefined;
+            expect(transport._active).to.be.null;
+            expect(transport._activeReceiveResolve).to.be.null;
+            expect(transport._activeReceiveReject).to.be.null;
+            expect(transport._socket).to.be.null;
             expect(transport._activeOffset).to.equal(0);
             expect(transport._activeReceiveCount).to.equal(0);
         });
@@ -254,7 +254,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             expect(client).to.be.instanceOf(ws.WebSocketClient);
             client.connect()
                 .catch(
-                    (err) => 
+                    (err) =>
                     { expect(err.message).to
                         .equal('Unable to connect client to Node transport.');}) //We don't want to really open a connection.
                 .then(done());
@@ -267,7 +267,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             req.Verb = 'POST';
             req.Path = 'some/path';
             req.setBody('Hello World!');
-            client.send(req).catch(err => {expect(err).to.be.undefined;}).then(done());           
+            client.send(req).catch(err => {expect(err).to.be.undefined;}).then(done());
         });
 
         it('disconnects', (done) => {
@@ -299,7 +299,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             req.Verb = 'POST';
             req.Path = 'some/path';
             req.setBody('Hello World!');
-            server.send(req).catch(err => {expect(err).to.be.undefined;}).then(done());              
+            server.send(req).catch(err => {expect(err).to.be.undefined;}).then(done());
         });
 
         it('disconnects', (done) => {
@@ -374,7 +374,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             expect(sock.onopen).to.not.be.undefined;
             let sinon = require('sinon');
             let spy = sinon.spy(sock, "close");
-            bs.close();            
+            bs.close();
             expect(spy.called).to.be.true;
         });
     });
