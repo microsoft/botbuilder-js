@@ -3,9 +3,8 @@
 
 import {
     Activity,
-    Attachment,
-    CardFactory,
     TeamsActivityHandler,
+    TeamsInfo,
     TurnContext
 } from 'botbuilder';
 
@@ -18,8 +17,7 @@ export class RosterBot extends TeamsActivityHandler {
             await context.sendActivity(this.createReply(context.activity, `Echo: ${context.activity.text}this.createReply(context.activity)`));
             TurnContext.removeRecipientMention(context.activity);
 
-            switch (context.activity.text)
-            {
+            switch (context.activity.text) {
                 case "show members":
                     await this.showMembers(context);
                     break;
@@ -70,44 +68,32 @@ export class RosterBot extends TeamsActivityHandler {
     }
 
     private async showMembers(context: TurnContext): Promise<void> {
-        let teamsChannelAccounts = await this.getMembers(context);
+        let teamsChannelAccounts = await TeamsInfo.getMembers(context);
         let replyActivity = this.createReply(context.activity, `Total of ${teamsChannelAccounts.length} members are currently in team`);
         await context.sendActivity(replyActivity);
 
         var messages = teamsChannelAccounts.map(function(teamsChannelAccount){
-            return `${teamsChannelAccount.AadObjectId} --> ${teamsChannelAccount.Name} --> ${teamsChannelAccount.UserPrincipalName}`;
+            return `${teamsChannelAccount.aadObjectId} --> ${teamsChannelAccount.name} --> ${teamsChannelAccount.userPrincipalName}`;
         });
 
         await this.sendInBatches(context, messages);
     }
     
     private async showChannels(context: TurnContext): Promise<void> { 
-        let channels = await this.getChannels(context);
+        let channels = await TeamsInfo.getChannels(context);
         await context.sendActivity(this.createReply(context.activity, `Total of ${channels.length} channels are currently in team`));
 
         var messages = channels.map(function(channel){
-            return `${channel.aadObjectId} --> ${channel.name} --> ${channel.userPrincipalName}`;
+            return `${channel.id} --> ${channel.name}`;
         });
 
         await this.sendInBatches(context, messages);
     }
    
     private async showDetails(context: TurnContext): Promise<void> {
-        let teamDetails = await this.getTeamDetails(context);
-        var replyActivity = this.createReply(context.activity, `The team name is ${teamDetails.Name}. The team ID is ${teamDetails.Id}. The AAD GroupID is ${teamDetails.AadGroupId}.`);
+        let teamDetails = await TeamsInfo.getTeamDetails(context);
+        var replyActivity = this.createReply(context.activity, `The team name is ${teamDetails.name}. The team ID is ${teamDetails.id}. The AAD GroupID is ${teamDetails.aadGroupId}.`);
         await context.sendActivity(replyActivity);
-    }
-
-    private async getMembers(context: TurnContext): Promise<any[]> {
-        return null;
-    }
-
-    private async getChannels(context: TurnContext): Promise<any[]> {
-        return null;
-    }
-
-    private async getTeamDetails(context: TurnContext): Promise<any> {
-        return null;
     }
 
     private async sendInBatches(context: TurnContext, messages: string[]): Promise<void> {
