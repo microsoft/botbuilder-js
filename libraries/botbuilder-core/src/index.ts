@@ -7,6 +7,7 @@
  */
 
 export * from 'botframework-schema';
+export * from './activityEx';
 export * from './activityHandler';
 export * from './activityHandlerBase';
 export * from './autoSaveStateMiddleware';
@@ -34,3 +35,4 @@ export * from './transcriptLogger';
 export * from './turnContext';
 export * from './userState';
 export * from './userTokenProvider';
+export * from './userTokenSettings';

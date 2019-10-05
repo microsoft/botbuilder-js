@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Token } from '@microsoft/recognizers-text-date-time';
-import { Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, TokenResponse, TurnContext, IUserTokenProvider } from 'botbuilder-core';
+import { Activity, ActivityEx, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, TokenResponse, TurnContext, IUserTokenProvider } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
@@ -73,7 +73,7 @@ export interface OAuthPromptSettings {
  * needed and their access token will be passed as an argument to the callers next waterfall step:
  *
  * ```JavaScript
- * const { ConversationState, MemoryStorage } = require('botbuilder');
+ * const { ConversationState, MemoryStorage, OAuthLoginTimeoutMsValue } = require('botbuilder');
  * const { DialogSet, OAuthPrompt, WaterfallDialog } = require('botbuilder-dialogs');
  *
  * const convoState = new ConversationState(new MemoryStorage());
@@ -83,7 +83,7 @@ export interface OAuthPromptSettings {
  * dialogs.add(new OAuthPrompt('loginPrompt', {
  *    connectionName: 'GitConnection',
  *    title: 'Login To GitHub',
- *    timeout: 300000   // User has 5 minutes to login
+ *    timeout: OAuthLoginTimeoutMsValue   // User has 15 minutes to login
  * }));
  *
  * dialogs.add(new WaterfallDialog('taskNeedingLogin', [
@@ -249,11 +249,16 @@ export class OAuthPrompt extends Dialog {
         if (this.channelSupportsOAuthCard(context.activity.channelId)) {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.oauthCard);
             if (cards.length === 0) {
+                let link: string = undefined;
+                if (ActivityEx.isFromStreamingConnection(context.activity)) {
+                    link = await (context.adapter as any).getSignInLink(context, this.settings.connectionName);
+                }
                 // Append oauth card
                 msg.attachments.push(CardFactory.oauthCard(
                     this.settings.connectionName,
                     this.settings.title,
-                    this.settings.text
+                    this.settings.text,
+                    link
                 ));
             }
         } else {
