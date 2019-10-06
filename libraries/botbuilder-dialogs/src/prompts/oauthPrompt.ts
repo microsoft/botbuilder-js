@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Token } from '@microsoft/recognizers-text-date-time';
-import { Activity, ActivityEx, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, TokenResponse, TurnContext, IUserTokenProvider } from 'botbuilder-core';
+import { Activity, ActivityEx, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider,  } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
@@ -272,6 +272,12 @@ export class OAuthPrompt extends Dialog {
                     this.settings.text
                 ));
             }
+        }
+
+        // Add the login timeout specified in OAuthPromptSettings to TurnState so it can be referenced if polling is needed
+        if (!context.turnState[OAuthLoginTimeoutKey] && this.settings.timeout)
+        {
+            context.turnState[OAuthLoginTimeoutKey] = this.settings.timeout;
         }
 
         // Send prompt
