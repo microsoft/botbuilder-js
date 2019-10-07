@@ -2,10 +2,15 @@
 // Licensed under the MIT License.
 
 import {
+    Activity,
+    Attachment,
     MessagingExtensionAction,
     MessagingExtensionActionResponse,
     MessageFactory,
     TeamsActivityHandler,
+    teamsCreateConversation,
+    TeamDetails,
+    TeamsInfo,
     TurnContext
 } from 'botbuilder';
 
@@ -31,7 +36,7 @@ export class ActionBasedMessagingExtensionFetchTaskBot   extends TeamsActivityHa
 
     protected async onTeamsMessagingExtensionFetchTask(context, query): Promise<MessagingExtensionActionResponse> {
         const resp = AdaptiveCardHelper.createTaskModuleAdaptiveCardResponse();
-        return resp;        
+        return resp;
     }
 
     protected async onTeamsMessagingExtensionSubmitAction(context: TurnContext, action: MessagingExtensionAction) : Promise<MessagingExtensionActionResponse> {
@@ -53,8 +58,24 @@ export class ActionBasedMessagingExtensionFetchTaskBot   extends TeamsActivityHa
     }
 
     protected async onTeamsMessagingExtensionBotMessagePreviewSend(context: TurnContext, action: MessagingExtensionAction) : Promise<MessagingExtensionActionResponse> {
-        const submitData = AdaptiveCardHelper.toSubmitExampleData(action);
-        const adaptiveCard = AdaptiveCardHelper.toAdaptiveCardAttachment(submitData);
+        const submitData : SubmitExampleData = AdaptiveCardHelper.toSubmitExampleData(action);
+        const adaptiveCard : Attachment = AdaptiveCardHelper.toAdaptiveCardAttachment(submitData);
+
+        const responseActivity = <Activity> {type: 'message', attachments: [adaptiveCard] };
+
+        try {
+            // Send to channel where messaging extension invoked.
+            var results = await teamsCreateConversation(context, context.activity.channelData.channel.id, responseActivity);
+
+            // Send card to "General" channel.
+            const teamDetails: TeamDetails = await TeamsInfo.getTeamDetails(context);
+            results  = await teamsCreateConversation(context, teamDetails.id, responseActivity);
+        }
+        catch {
+            console.log('In group chat or personal scope.');
+        }
+
+        // Send card to compose box for the current user.
         const response = CardResponseHelpers.toComposeExtensionResultResponse(adaptiveCard);
         return response;
     }
