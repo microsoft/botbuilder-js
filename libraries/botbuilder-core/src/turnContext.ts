@@ -20,9 +20,7 @@ import { shallowCopy } from './internal';
  * 
  * **Returns**
  * 
- * | Type | Description |
- * | :--- | :--- |
- * | Promise\<[ResourceResponse](xref:botframework-schema.ResourceResponse)[]> | Objects containing the IDs that the receiving channel assigned to the activities. |
+ * Promise\<[ResourceResponse](xref:botframework-schema.ResourceResponse)[]>
  * 
  * A handler calls the `next` function to pass control to the next registered handler. If a handler
  * doesn't call the `next` function, the adapter does not call any of the subsequent handlers and
@@ -127,11 +125,22 @@ export class TurnContext {
     /**
      * Creates an new instance of the [TurnContext](xref:xref:botbuilder-core.TurnContext) class.
      * 
+     * @param adapterOrContext The adapter creating the context.
+     * @param request The incoming activity for the turn.
+     */
+    constructor(adapterOrContext: BotAdapter, request: Partial<Activity>);
+    /**
+     * Creates an new instance of the [TurnContext](xref:xref:botbuilder-core.TurnContext) class.
+     * 
+     * @param adapterOrContext The context object to clone.
+     */
+    constructor(adapterOrContext: TurnContext);
+    /**
+     * Creates an new instance of the [TurnContext](xref:xref:botbuilder-core.TurnContext) class.
+     * 
      * @param adapterOrContext The adapter creating the context or the context object to clone.
      * @param request Optional. The incoming activity for the turn.
      */
-    constructor(adapterOrContext: BotAdapter, request: Partial<Activity>);
-    constructor(adapterOrContext: TurnContext);
     constructor(adapterOrContext: BotAdapter|TurnContext, request?: Partial<Activity>) {
         if (adapterOrContext instanceof TurnContext) {
             adapterOrContext.copyTo(this);
@@ -142,43 +151,59 @@ export class TurnContext {
     }
 
     /**
-     * Rewrites the activity text without any at mention.
-     * Use with caution because this function is altering the text on the Activity.
+     * Removes at mentions for the activity's [recipient](xref:botframework-schema.Activity.recipient)
+     * from the text of an activity and returns the updated text.
+     * Use with caution; this function alters the activity's [text](xref:botframework-schema.Activity.text) property.
      *
+     * @param activity The activity to remove at mentions from.
+     * 
      * @remarks
-     * Some channels, for example Microsoft Teams, add at mention details into the text on a message activity.
-     * This can interfere with later processing. This is a helper function to remove the at mention.
+     * Some channels, for example Microsoft Teams, add at-mention details to the text of a message activity.
+     * 
+     * Use this helper method to modify the activity's [text](xref:botframework-schema.Activity.text) property.
+     * It removes all at mentions of the activity's [recipient](xref:botframework-schema.Activity.recipient)
+     * and then returns the updated property value.
      *
+     * For example:
      * ```JavaScript
-     * const updatedText = TurnContext.removeRecipientMention(context.request);
+     * const updatedText = TurnContext.removeRecipientMention(turnContext.request);
      * ```
-     * @param activity The activity to alter the text on
+     * **See also**
+     * - [removeMentionText](xref:botbuilder-core.TurnContext.removeMentionText)
      */
     public static removeRecipientMention(activity: Partial<Activity>): string {
         return TurnContext.removeMentionText(activity, activity.recipient.id);
     }
 
     /**
-     * Remove any mention text for given id from the Activity.Text property.  For example, given the message
-     * "@echoBot Hi Bot", this will remove "@echoBot", leaving "Hi Bot".
+     * Removes at mentions for a given ID from the text of an activity and returns the updated text.
+     * Use with caution; this function alters the activity's [text](xref:botframework-schema.Activity.text) property.
+     * 
+     * @param activity The activity to remove at mentions from.
+     * @param id The ID of the user or bot to remove at mentions for.
+     * 
+     * @remarks
+     * Some channels, for example Microsoft Teams, add at mentions to the text of a message activity.
+     * 
+     * Use this helper method to modify the activity's [text](xref:botframework-schema.Activity.text) property.
+     * It removes all at mentions for the given bot or user ID and then returns the updated property value.
+     * 
+     * For example, when you remove mentions of **echoBot** from an activity containing the text "@echoBot Hi Bot",
+     * the activity text is updated, and the method returns "Hi Bot".
      *
-     * Typically this would be used to remove the mention text for the target recipient (the bot usually), though
-     * it could be called for each member.  For example:
-     *   turnContext.Activity.RemoveMentionText(turnContext.Activity.Recipient.Id);
+     * The format of a mention [entity](xref:botframework-schema.Entity) is channel-dependent.
+     * However, the mention's [text](xref:botframework-schema.Mention.text) property should contain
+     * the exact text for the user as it appears in the activity text.
      * 
-     * The format of a mention Activity.Entity is dependent on the Channel.  But in all cases we
-     * expect the Mention.Text to contain the exact text for the user as it appears in
-     * Activity.Text.
+     * For example, whether the channel uses "<at>username</at>" or "@username", this string is in
+     * the activity's text, and this method will remove all occurrences of that string from the text.
      * 
-     * For example, Teams uses "<at>username</at>", whereas slack use "@username". It
-     * is expected that text is in Activity.Text and this method will remove that value from
-     * Activity.Text.
-     * 
+     * For example:
      * ```JavaScript
-     * const updatedText = TurnContext.removeRecipientMention(context.request);
+     * const updatedText = TurnContext.removeMentionText(activity, activity.recipient.id);
      * ```
-     * @param activity The activity to alter the text on
-     * @param id The recipient id of the at mention
+     * **See also**
+     * - [removeRecipientMention](xref:botbuilder-core.TurnContext.removeRecipientMention)
      */
     public static removeMentionText(activity: Partial<Activity>, id: string): string {
         const mentions = TurnContext.getMentions(activity);
@@ -190,13 +215,20 @@ export class TurnContext {
     }
 
     /**
-     * Returns the mentions on an activity.
+     * Gets all at-mention entities included in an activity.
      *
+     * @param activity The activity.
+     * 
+     * @remarks
+     * The activity's [entities](xref:botframework-schema.Activity.entities) property contains a flat
+     * list of metadata objects pertaining to this activity and can contain
+     * [mention](xref:botframework-schema.Mention) entities. This method returns all such entities
+     * for a given activity.
+     * 
+     * For example:
      * ```JavaScript
-     * const mentions = TurnContext.getMentions(context.request);
+     * const mentions = TurnContext.getMentions(turnContext.request);
      * ```
-     * @param activity The activity to alter the text on
-     * @param id The recipient id of the at mention
      */
     public static getMentions(activity: Partial<Activity>): Mention[] {
         var result: Mention[] = [];
@@ -211,16 +243,21 @@ export class TurnContext {
     } 
 
     /**
-     * Returns the conversation reference for an activity.
+     * Copies conversation reference information from an activity.
      *
+     * @param activity The activity to get the information from.
+     * 
      * @remarks
-     * This can be saved as a plain old JSON object and then later used to message the user
-     * proactively.
+     * You can save the conversation reference as a JSON object and use it later to proactively message the user.
      *
+     * For example:
      * ```JavaScript
      * const reference = TurnContext.getConversationReference(context.request);
      * ```
-     * @param activity The activity to copy the conversation reference from
+     * 
+     * **See also**
+     * 
+     * - [BotAdapter.continueConversation](xref:botbuilder-core.BotAdapter.continueConversation)
      */
     public static getConversationReference(activity: Partial<Activity>): Partial<ConversationReference> {
         return {
