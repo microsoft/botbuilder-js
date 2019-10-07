@@ -3,9 +3,9 @@
   "manifestVersion": "1.3",
   "version": "1.0.0",
   "id": "",
-  "packageName": "com.teams.sample.rosterBot",
+  "packageName": "com.teams.sample.activityupdateanddelete",
   "developer": {
-    "name": "TeamsRosterBot",
+    "name": "ActivityUpdateAndDeleteBot",
     "websiteUrl": "https://www.microsoft.com",
     "privacyUrl": "https://www.teams.com/privacy",
     "termsOfUseUrl": "https://www.teams.com/termsofuser"
@@ -15,12 +15,12 @@
     "outline": "outline.png"
   },
   "name": {
-    "short": "TeamsRosterBot",
-    "full": "TeamsRosterBot"
+    "short": "ActivityUpdateAndDeleteBot",
+    "full": "ActivityUpdateAndDeleteBot"
   },
   "description": {
-    "short": "TeamsRosterBot",
-    "full": "TeamsRosterBot"
+    "short": "TeamsActivityUpdateAndDeleteBot",
+    "full": "TeamsActivityUpdateAndDeleteBot"
   },
   "accentColor": "#FFFFFF",
   "bots": [
@@ -28,7 +28,8 @@
       "botId": "",
       "scopes": [
         "groupchat",
-        "team"
+        "team",
+        "personal"
       ],
       "supportsFiles": false,
       "isNotificationOnly": false
