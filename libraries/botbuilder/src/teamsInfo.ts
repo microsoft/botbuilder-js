@@ -49,8 +49,10 @@ export class TeamsInfo {
         if (!conversationId) {
             throw new Error('The getMembers operation needs a valid conversationId.');
         }
-
         const teamMembers = await connectorClient.conversations.getConversationMembers(conversationId);
+        teamMembers.forEach((member:any) => {
+            member.aadObjectId = member.objectId;
+        });
         return teamMembers as TeamsChannelAccount[];
     }
 
