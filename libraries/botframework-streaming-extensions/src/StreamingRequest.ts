@@ -63,7 +63,7 @@ export class StreamingRequest {
             let stream = new SubscribableStream();
             stream.write(body, 'utf8');
             this.addStream(new HttpContent({
-                contentType: 'application/json; charset=utf-8',
+                type: 'application/json; charset=utf-8',
                 contentLength: stream.length
             },
             stream));

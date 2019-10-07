@@ -692,6 +692,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
         let body: any;
         let status: number;
+        let processError: Error;
         try {
             // Parse body of request
             status = 400;
@@ -721,6 +722,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
                 status = 200;
             }
         } catch (err) {
+            // Catch the error to try and throw the stacktrace out of processActivity()
+            processError = err;
             body = err.toString();
         }
 
@@ -731,8 +734,11 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
         // Check for an error
         if (status >= 400) {
-            console.warn(`BotFrameworkAdapter.processActivity(): ${ status } ERROR - ${ body.toString() }`);
-            throw new Error(body.toString());
+            if (processError && (processError as Error).stack) {
+                throw new Error(`BotFrameworkAdapter.processActivity(): ${ status } ERROR\n ${ processError.stack }`);
+            } else {
+                throw new Error(`BotFrameworkAdapter.processActivity(): ${ status } ERROR`);
+            }
         }
     }
 
@@ -843,7 +849,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * @remarks
      * Override this in a derived class to create a mock connector client for unit testing.
      */
-    protected createConnectorClient(serviceUrl: string): ConnectorClient {
+    public createConnectorClient(serviceUrl: string): ConnectorClient {
         const client: ConnectorClient = new ConnectorClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
         return client;
     }
