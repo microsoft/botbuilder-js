@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 import {
-    MessageFactory,
     ActivityHandler,
     TurnContext,
+    ActivityTypes,
 } from 'botbuilder';
 
 
@@ -24,22 +24,19 @@ export class ActivityUpdateAndDeleteBot extends ActivityHandler {
         this.onMessage(async (context, next) => {
 
             TurnContext.removeRecipientMention(context.activity);
-            if (context.activity.text == "delete")
-            {
+            if (context.activity.text == "delete") {
                 for (const activityId of this.activityIds) {
                     await context.deleteActivity(activityId);
                 }
 
                 this.activityIds = [];
             }
-            else
-            {
+            else {
                 await this.sendMessageAndLogActivityId(context, `${context.activity.text}`);
 
-                for (const activityId of this.activityIds) {
-                    let newActivity = MessageFactory.text(context.activity.text);
-                    newActivity.id = activityId;
-                    await context.updateActivity(newActivity);
+                const text = context.activity.text;
+                for (const id of this.activityIds) {
+                    await context.updateActivity({ id, text, type: ActivityTypes.Message });
                 }
             }
 
@@ -49,10 +46,7 @@ export class ActivityUpdateAndDeleteBot extends ActivityHandler {
     }
 
     async sendMessageAndLogActivityId(context: TurnContext, text: string): Promise<void> {
-        var replyActivity = MessageFactory.text(text);
-        var resourceResponse = await context.sendActivity(replyActivity);
+        var resourceResponse = await context.sendActivity({ text });
         await this.activityIds.push(resourceResponse.id);
-
-        return;
     }    
 }
