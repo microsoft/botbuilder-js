@@ -10,7 +10,7 @@ import * as restify from 'restify';
 import { BotFrameworkAdapter } from 'botbuilder';
 
 // This bot's main dialog.
-import { Office365CardsBot  } from './office365CardsBot';
+import { Office365CardsBot } from './office365CardsBot';
 
 const ENV_FILE = path.join(__dirname, '..', '.env');
 config({ path: ENV_FILE });
@@ -29,8 +29,6 @@ const adapter = new BotFrameworkAdapter({
     appId: process.env.MicrosoftAppId,
     appPassword: process.env.MicrosoftAppPassword
 });
-
-// adapter.use(new TranscriptLoggerMiddleware(new FileTranscriptStore('./transcripts')));
 
 // Catch-all for errors.
 adapter.onTurnError = async (context, error) => {

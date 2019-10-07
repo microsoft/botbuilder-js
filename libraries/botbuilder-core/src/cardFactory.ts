@@ -203,7 +203,7 @@ export class CardFactory {
     * ```
     * @param card The o365Connector card to return as an attachment.
     */
-    public static o365ConnectorCard(card/*: O365ConnectorCard*/: any): Attachment {
+    public static o365ConnectorCard(card: O365ConnectorCard): Attachment {
         return { contentType: CardFactory.contentTypes.o365ConnectorCard, content: card };
     }
 

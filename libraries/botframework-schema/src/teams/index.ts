@@ -7,6 +7,7 @@
  // The Teams schemas was manually added to botframework-schema. This file has been updated import from the botframework-schema and the extension folder.
 import * as teams from './extension';
 import { Activity, Attachment, CardAction, ChannelAccount } from '../';
+export * from './extension';
 
 /**
  * @interface
