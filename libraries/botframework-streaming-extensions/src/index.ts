@@ -7,7 +7,7 @@
  */
 export { ContentStream } from './ContentStream'; // Temporary for DirectLineJS integration
 export { HttpContent } from './HttpContentStream'; // Temporary for DirectLineJS integration
-export { IStreamingTransportServer, ISocket, IReceiveRequest } from './Interfaces' // Temporary for DirectLineJS integration
+export { IStreamingTransportServer, IStreamingTransportClient, ISocket, IReceiveRequest } from './Interfaces' // Temporary for DirectLineJS integration
 export { NamedPipeClient, NamedPipeServer } from './NamedPipe';
 export { RequestHandler } from './RequestHandler';
 export { StreamingRequest } from './StreamingRequest';
