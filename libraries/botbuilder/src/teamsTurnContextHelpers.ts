@@ -2,28 +2,45 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from 'botbuilder-core';
-import { ResourceResponse } from 'botframework-schema';
+import {
+    Activity,
+    ChannelInfo,
+    ConversationParameters,
+    ConversationReference,
+    ConversationResourceResponse,
+    ResourceResponse,
+    TeamsChannelData,
+    TurnContext,
+} from 'botbuilder-core';
 import { teamsGetTeamId } from './teamsActivityHelpers';
+import { BotFrameworkAdapter } from './botFrameworkAdapter';
 
 /**
  * Turn Context extension methods for Teams.
  */
-export async function teamsSendToChannel(turnContext:TurnContext, teamsChannelId:string, activity:object) : Promise<ResourceResponse> {
-    const originalConversationId = turnContext.activity.conversation.id;
-    turnContext.activity.conversation.id = teamsChannelId;
-    const result: ResourceResponse = await turnContext.sendActivity(activity);
-    turnContext.activity.conversation.id = originalConversationId;
-    return result;
-}
 
-export async function teamsSendToGeneralChannel(turnContext:TurnContext, activity:object) : Promise<ResourceResponse> {
-    // The Team Id is also the Id of the general channel
-    var teamId = await teamsGetTeamId(turnContext.activity);
-
-    if (!teamId){
-        throw new Error("The current Activity was not sent from a Teams Team.");
+export async function teamsCreateConversation(turnContext: TurnContext, teamsChannelId: string, message: Partial<Activity>): Promise<[ConversationReference, string]> {
+    if (!teamsChannelId) {
+        throw new Error('Missing valid teamsChannelId argument');
     }
-
-    return teamsSendToChannel(turnContext, teamId, activity);
+    if (!message) {
+        throw new Error('Missing valid message argument');
+    }
+    const conversationParameters = <ConversationParameters>{
+        isGroup: true,
+        channelData: <TeamsChannelData>{
+            channel: <ChannelInfo>{
+                id: teamsChannelId
+            }
+        },
+        activity: <Activity>message,
+    };
+    const adapter = <BotFrameworkAdapter>turnContext.adapter;
+    const connectorClient = adapter.createConnectorClient(turnContext.activity.serviceUrl);
+    // This call does NOT send the outbound Activity is not being sent through the middleware stack.
+    const conversationResourceResponse: ConversationResourceResponse = await connectorClient.conversations.createConversation(conversationParameters);
+    const conversationReference = <ConversationReference>TurnContext.getConversationReference(turnContext.activity);
+    conversationReference.conversation.id = conversationResourceResponse.id;
+    return [conversationReference, conversationResourceResponse.activityId];
 }
+
