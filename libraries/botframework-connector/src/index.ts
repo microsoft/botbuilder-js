@@ -9,3 +9,4 @@ export { EmulatorApiClient } from './emulatorApiClient';
 export { TokenApiClient, TokenApiModels } from './TokenApi/tokenApiClient';
 export * from './types'
 export * from './apiHelper'
+export * from './teams';

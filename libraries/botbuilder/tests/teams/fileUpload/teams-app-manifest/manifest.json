@@ -3,7 +3,7 @@
   "manifestVersion": "1.3",
   "version": "1.0",
   "id": "<<YOUR_GENERATED_APP_GUID>>",
-  "packageName": "com.microsoft.teams.samples.v4bot",
+  "packageName": "com.microsoft.teams.samples.filebot",
   "developer": {
     "name": "Microsoft Corp",
     "websiteUrl": "https://example.azurewebsites.net",
