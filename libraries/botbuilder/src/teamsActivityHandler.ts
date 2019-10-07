@@ -90,7 +90,7 @@ export class TeamsActivityHandler extends ActivityHandler {
                         return TeamsActivityHandler.createInvokeResponse(await this.onTeamsMessagingExtensionConfigurationQuerySettingUrl(context, context.activity.value));
 
                     case 'composeExtension/setting':
-                        await this.onTeamsMessagingExtensionQuerySetting(context, context.activity.value);
+                        await this.onTeamsMessagingExtensionConfigurationSetting(context, context.activity.value);
                         return TeamsActivityHandler.createInvokeResponse();
 
                     case 'composeExtension/onCardButtonClicked':
@@ -333,7 +333,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param query
      */
-    protected onTeamsMessagingExtensionQuerySetting(context: TurnContext, settings: any): Promise<MessagingExtensionResponse> {
+    protected onTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings: any): Promise<void> {
         throw new Error('NotImplemented');
     }
 
