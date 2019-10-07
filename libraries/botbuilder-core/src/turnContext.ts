@@ -271,21 +271,18 @@ export class TurnContext {
     }
 
     /**
-     * Updates an activity with the delivery information from a conversation reference.
+     * Updates an activity with the delivery information from an existing conversation reference.
      *
+     * @param activity The activity to update.
+     * @param reference The conversation reference to copy delivery information from.
+     * @param isIncoming Optional. `true` to treat the activity as an incoming activity, where the
+     *      bot is the recipient; otherwise, `false`. Default is `false`, and the activity will show
+     *      the bot as the sender.
+     * 
      * @remarks
-     * Calling this after [getConversationReference()](#getconversationreference) on an incoming
-     * activity will properly address the reply to a received activity.
-     *
-     * ```JavaScript
-     * // Send a typing indicator without going through a middleware listeners.
-     * const reference = TurnContext.getConversationReference(context.activity);
-     * const activity = TurnContext.applyConversationReference({ type: 'typing' }, reference);
-     * await context.adapter.sendActivities([activity]);
-     * ```
-     * @param activity Activity to copy delivery information to.
-     * @param reference Conversation reference containing delivery information.
-     * @param isIncoming (Optional) flag indicating whether the activity is an incoming or outgoing activity. Defaults to `false` indicating the activity is outgoing.
+     * Call the [getConversationReference](xref:botbuilder-core.TurnContext.getConversationReference)
+     * method on an incoming activity to get a conversation reference that you can then use
+     * to update an outgoing activity with the correct delivery information.
      */
     public static applyConversationReference(
         activity: Partial<Activity>,
@@ -309,18 +306,26 @@ export class TurnContext {
     }
 
     /**
-     * Create a ConversationReference based on an outgoing Activity's ResourceResponse
+     * Copies conversation reference information from a resource response for a sent activity.
+     *
+     * @param activity The sent activity.
+     * @param reply The resource response for the activity, returned by the
+     *      [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) or
+     *      [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) method.
      *
      * @remarks
-     * This method can be used to create a ConversationReference that can be stored
-     * and used later to delete or update the activity.
+     * You can save the conversation reference as a JSON object and use it later to update or delete the message.
+     * 
+     * For example:
      * ```javascript
      * var reply = await context.sendActivity('Hi');
      * var reference = TurnContext.getReplyConversationReference(context.activity, reply);
      * ```
-     *
-     * @param activity Activity from which to pull Conversation info
-     * @param reply ResourceResponse returned from sendActivity
+     * 
+     * **See also**
+     * 
+     * - [deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity)
+     * - [updateActivity](xref:botbuilder-core.TurnContext.updateActivity)
      */
     public static getReplyConversationReference(
         activity: Partial<Activity>,
@@ -335,18 +340,34 @@ export class TurnContext {
     }
 
     /**
-     * Sends a single activity or message to the user.
+     * Sends an activity to the sender of the incoming activity.
      *
+     * @param activityOrText The activity or text to send.
+     * @param speak Optional. The text to be spoken by your bot on a speech-enabled channel.
+     * @param inputHint Optional. Indicates whether your bot is accepting, expecting, or ignoring user
+     *      input after the message is delivered to the client. One of: 'acceptingInput', 'ignoringInput',
+     *      or 'expectingInput'. Default is 'acceptingInput'.
+     * 
      * @remarks
-     * This ultimately calls [sendActivities()](#sendactivites) and is provided as a convenience to
-     * make formating and sending individual activities easier.
+     * If the activity is successfully sent, results in a
+     * [ResourceResponse](xref:botframework-schema.ResourceResponse) object containing the ID that the
+     * receiving channel assigned to the activity.
+     * 
+     * See the channel's documentation for limits imposed upon the contents of the **activityOrText** parameter.
+     * 
+     * To control various characteristics of your bot's speech such as voice, rate, volume, pronunciation,
+     * and pitch, specify **speak** in Speech Synthesis Markup Language (SSML) format.
      *
+     * For example:
      * ```JavaScript
      * await context.sendActivity(`Hello World`);
      * ```
-     * @param activityOrText Activity or text of a message to send the user.
-     * @param speak (Optional) SSML that should be spoken to the user for the message.
-     * @param inputHint (Optional) `InputHint` for the message sent to the user. Defaults to `acceptingInput`.
+     * 
+     * **See also**
+     * 
+     * - [sendActivities](xref:botbuilder-core.TurnContext.sendActivities)
+     * - [updateActivity](xref:botbuilder-core.TurnContext.updateActivity)
+     * - [deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity)
      */
     public sendActivity(activityOrText: string|Partial<Activity>, speak?: string, inputHint?: string): Promise<ResourceResponse|undefined> {
         let a: Partial<Activity>;
@@ -363,14 +384,19 @@ export class TurnContext {
     }
 
     /**
-     * Sends a set of activities to the user. An array of responses from the server will be returned.
+     * Sends a set of activities to the sender of the incoming activity.
      *
+     * @param activities The activities to send.
+     * 
      * @remarks
-     * Prior to delivery, the activities will be updated with information from the `ConversationReference`
-     * for the contexts [activity](#activity) and if any activities `type` field hasn't been set it will be
-     * set to a type of `message`. The array of activities will then be routed through any [onSendActivities()](#onsendactivities)
-     * handlers before being passed to `adapter.sendActivities()`.
+     * If the activities are successfully sent, results in an array of
+     * [ResourceResponse](xref:botframework-schema.ResourceResponse) objects containing the IDs that
+     * the receiving channel assigned to the activities.
+     * 
+     * Before they are sent, the delivery information of each outbound activity is updated based on the
+     * delivery information of the inbound inbound activity.
      *
+     * For example:
      * ```JavaScript
      * await context.sendActivities([
      *    { type: 'typing' },
@@ -378,7 +404,12 @@ export class TurnContext {
      *    { type: 'message', text: 'Hello... How are you?' }
      * ]);
      * ```
-     * @param activities One or more activities to send to the user.
+     * 
+     * **See also**
+     * 
+     * - [sendActivity](xref:botbuilder-core.TurnContext.sendActivity)
+     * - [updateActivity](xref:botbuilder-core.TurnContext.updateActivity)
+     * - [deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity)
      */
     public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         let sentNonTraceActivity = false;
@@ -403,12 +434,15 @@ export class TurnContext {
     }
 
     /**
-     * Replaces an existing activity.
+     * Updates a previously sent activity.
      *
+     * @param activity The replacement for the original activity.
+     * 
      * @remarks
-     * The activity will be routed through any registered [onUpdateActivity](#onupdateactivity) handlers
-     * before being passed to `adapter.updateActivity()`.
-     *
+     * The [id](xref:botframework-schema.Activity.id) of the replacement activity indicates the activity
+     * in the conversation to replace.
+     * 
+     * For example:
      * ```JavaScript
      * const matched = /approve (.*)/i.exec(context.activity.text);
      * if (matched) {
@@ -416,7 +450,12 @@ export class TurnContext {
      *    await context.updateActivity(update);
      * }
      * ```
-     * @param activity New replacement activity. The activity should already have it's ID information populated.
+     * 
+     * **See also**
+     * 
+     * - [sendActivity](xref:botbuilder-core.TurnContext.sendActivity)
+     * - [deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity)
+     * - [getReplyConversationReference](xref:botbuilder-core.TurnContext.getReplyConversationReference)
      */
     public updateActivity(activity: Partial<Activity>): Promise<void> {
         const ref: Partial<ConversationReference> = TurnContext.getConversationReference(this.activity);
@@ -425,12 +464,15 @@ export class TurnContext {
     }
 
     /**
-     * Deletes an existing activity.
+     * Deletes a previously sent activity.
      *
+     * @param idOrReference ID or conversation reference for the activity to delete.
+     * 
      * @remarks
-     * The `ConversationReference` for the activity being deleted will be routed through any registered
-     * [onDeleteActivity](#ondeleteactivity) handlers before being passed to `adapter.deleteActivity()`.
+     * If an ID is specified, the conversation reference for the current request is used
+     * to get the rest of the information needed.
      *
+     * For example:
      * ```JavaScript
      * const matched = /approve (.*)/i.exec(context.activity.text);
      * if (matched) {
@@ -438,7 +480,12 @@ export class TurnContext {
      *    await context.deleteActivity(savedId);
      * }
      * ```
-     * @param idOrReference ID or conversation of the activity being deleted. If an ID is specified the conversation reference information from the current request will be used to delete the activity.
+     * 
+     * **See also**
+     * 
+     * - [sendActivity](xref:botbuilder-core.TurnContext.sendActivity)
+     * - [updateActivity](xref:botbuilder-core.TurnContext.updateActivity)
+     * - [getReplyConversationReference](xref:botbuilder-core.TurnContext.getReplyConversationReference)
      */
     public deleteActivity(idOrReference: string|Partial<ConversationReference>): Promise<void> {
         let reference: Partial<ConversationReference>;
@@ -453,21 +500,29 @@ export class TurnContext {
     }
 
     /**
-     * Registers a handler to be notified of, and potentially intercept, the sending of activities.
+     * Adds a response handler for send activity operations.
      *
+     * @param handler The handler to add to the context object.
+     * 
      * @remarks
-     * This example shows how to listen for and logs outgoing `message` activities.
+     * This method returns a reference to the turn context object.
+     * 
+     * When the [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) or
+     * [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) method is called,
+     * the registered handlers are called in the order in which they were added to the context object
+     * before the activities are sent.
+     * 
+     * This example shows how to listen for and log outgoing `message` activities.
      *
      * ```JavaScript
      * context.onSendActivities(async (ctx, activities, next) => {
-     *    // Deliver activities
-     *    await next();
-     *
-     *    // Log sent messages
+     *    // Log activities before sending them.
      *    activities.filter(a => a.type === 'message').forEach(a => logSend(a));
+     *
+     *    // Allow the send process to continue.
+     *    next();
      * });
      * ```
-     * @param handler A function that will be called anytime [sendActivity()](#sendactivity) is called. The handler should call `next()` to continue sending of the activities.
      */
     public onSendActivities(handler: SendActivitiesHandler): this {
         this._onSendActivities.push(handler);
@@ -476,10 +531,18 @@ export class TurnContext {
     }
 
     /**
-     * Registers a handler to be notified of, and potentially intercept, an activity being updated.
+     * Adds a response handler for update activity operations.
      *
+     * @param handler The handler to add to the context object.
+     * 
      * @remarks
-     * This example shows how to listen for and logs updated activities.
+     * This method returns a reference to the turn context object.
+     * 
+     * When the [updateActivity](xref:botbuilder-core.TurnContext.updateActivity) method is called,
+     * the registered handlers are called in the order in which they were added to the context object
+     * before the activity is updated.
+     * 
+     * This example shows how to listen for and log activity updates.
      *
      * ```JavaScript
      * context.onUpdateActivity(async (ctx, activity, next) => {
@@ -490,7 +553,6 @@ export class TurnContext {
      *    logUpdate(activity);
      * });
      * ```
-     * @param handler A function that will be called anytime [updateActivity()](#updateactivity) is called. The handler should call `next()` to continue sending of the replacement activity.
      */
     public onUpdateActivity(handler: UpdateActivityHandler): this {
         this._onUpdateActivity.push(handler);
@@ -499,10 +561,18 @@ export class TurnContext {
     }
 
     /**
-     * Registers a handler to be notified of, and potentially intercept, an activity being deleted.
+     * Adds a response handler for delete activity operations.
      *
+     * @param handler The handler to add to the context object.
+     * 
      * @remarks
-     * This example shows how to listen for and logs deleted activities.
+     * This method returns a reference to the turn context object.
+     * 
+     * When the [deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity) method is called,
+     * the registered handlers are called in the order in which they were added to the context object
+     * before the activity is deleted.
+     * 
+     * This example shows how to listen for and log activity deletions.
      *
      * ```JavaScript
      * context.onDeleteActivity(async (ctx, reference, next) => {
@@ -513,7 +583,6 @@ export class TurnContext {
      *    logDelete(activity);
      * });
      * ```
-     * @param handler A function that will be called anytime [deleteActivity()](#deleteactivity) is called. The handler should call `next()` to continue deletion of the activity.
      */
     public onDeleteActivity(handler: DeleteActivityHandler): this {
         this._onDeleteActivity.push(handler);
@@ -522,15 +591,18 @@ export class TurnContext {
     }
 
     /**
-     * Called when this TurnContext instance is passed into the constructor of a new TurnContext
-     * instance.
+     * Called when this turn context object is passed into the constructor for a new turn context.
      *
+     * @param context The new turn context object.
+     * 
      * @remarks
-     * Can be overridden in derived classes to add additional fields that should be cloned.
-     * @param context The context object to copy private members to. Everything should be copied by reference.
+     * This copies private members from this object to the new object.
+     * All property values are copied by reference.
+     * 
+     * Override this in a derived class to copy any additional members, as necessary.
      */
     protected copyTo(context: TurnContext): void {
-        // Copy private member to other instance.
+        // Copy private members to other instance.
         [
             '_adapter', '_activity', '_respondedRef', '_services',
             '_onSendActivities', '_onUpdateActivity', '_onDeleteActivity'
@@ -538,27 +610,14 @@ export class TurnContext {
     }
 
     /**
-     * The adapter for this context.
-     *
-     * @remarks
-     * This example shows how to send a `typing` activity directly using the adapter. This approach
-     * bypasses any middleware which sometimes has its advantages.  The calls to
-     * `getConversationReference()` and `applyConversationReference()` are needed to ensure that the
-     * outgoing activity is properly addressed:
-     *
-     * ```JavaScript
-     * // Send a typing indicator without going through an middleware listeners.
-     * const reference = TurnContext.getConversationReference(context.activity);
-     * const activity = TurnContext.applyConversationReference({ type: 'typing' }, reference);
-     * await context.adapter.sendActivities([activity]);
-     * ```
+     * Gets the bot adapter that created this context object.
      */
     public get adapter(): BotAdapter {
         return this._adapter as BotAdapter;
     }
 
     /**
-     * The received activity.
+     * Gets the activity associated with this turn.
      *
      * @remarks
      * This example shows how to get the users trimmed utterance from the activity:
@@ -572,11 +631,14 @@ export class TurnContext {
     }
 
     /**
-     * If `true` at least one response has been sent for the current turn of conversation.
+     * **true** if at least one response was sent for the current turn; otherwise, **false**.
      *
      * @remarks
-     * This is primarily useful for determining if a bot should run fallback routing logic:
+     * Use this to determine if your bot needs to run fallback logic after other normal processing.
+     * 
+     * Trace activities do not set this flag.
      *
+     * for example:
      * ```JavaScript
      * await routeActivity(context);
      * if (!context.responded) {
@@ -588,27 +650,38 @@ export class TurnContext {
         return this._respondedRef.responded;
     }
 
+    /**
+     * Sets the response flag on the current turn context.
+     * 
+     * @remarks
+     * The [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) and
+     * [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) methods call this method to
+     * update the responded flag. You can call this method directly to indicate that your bot has
+     * responded appropriately to the incoming activity.
+     */
     public set responded(value: boolean) {
         if (!value) { throw new Error(`TurnContext: cannot set 'responded' to a value of 'false'.`); }
         this._respondedRef.responded = true;
     }
 
     /**
-     * Map of services and other values cached for the lifetime of the turn.
+     * Gets the services registered on this context object.
      *
      * @remarks
      * Middleware, other components, and services will typically use this to cache information
-     * that could be asked for by a bot multiple times during a turn. The bots logic is free to
-     * use this to pass information between its own components.
+     * that could be asked for by a bot multiple times during a turn. You can use this cache to
+     * pass information between components of your bot.
      *
+     * For example:
      * ```JavaScript
+     * const cartKey = Symbol();
      * const cart = await loadUsersShoppingCart(context);
-     * context.turnState.set('cart', cart);
+     * context.turnState.set(cartKey, cart);
      * ```
      *
      * > [!TIP]
-     * > For middleware and third party components, consider using a `Symbol()` for your cache key
-     * > to avoid potential naming collisions with the bots caching and other components.
+     * > When creating middleware or a third-party component, use a unique symbol for your cache key
+     * > to avoid state naming collisions with the bot or other middleware or components.
      */
     public get turnState(): Map<any, any> {
         return this._turnState;
