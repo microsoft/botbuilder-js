@@ -7,6 +7,6 @@
  */
 
 export interface IHttpContentHeaders {
-    contentType?: string;
+    type?: string;
     contentLength?: number;
 }
