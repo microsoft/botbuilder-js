@@ -23,7 +23,14 @@
     "color": "icon-color.png"
   },
   "accentColor": "#0080FF",
-  "bots": [],
+  "bots": [
+    {
+      "botId": "<<YOUR_BOTS_MSA_APP_ID>>",
+      "scopes": [
+        "team", "personal", "groupchat"
+      ]
+    }
+  ],
   "composeExtensions": [
     {
       "botId": "<<YOUR_BOTS_MSA_APP_ID>>",
@@ -51,6 +58,20 @@
               "title": "Body text",
               "description": "Text for body in Hero Card",
               "inputType": "text"
+            }
+          ]
+        },
+        {
+          "id": "createWithPreview",
+          "type": "action",
+          "description": "Test command to run action to create a card with preview before sending",
+          "title": "Create cards with preview",
+          "fetchTask": true,
+          "parameters": [
+            {
+              "name": "dummy",
+              "title": "Dummy parameter",
+              "description": "Dummy parameter"
             }
           ]
         },
