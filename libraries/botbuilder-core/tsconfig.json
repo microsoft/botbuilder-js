@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "target": "ES5",
-    "lib": [ "es2015", "dom" ],
-    "module": "commonjs",
     "declaration": true,
+    "esModuleInterop": true,
     "sourceMap": true,
+    "module": "commonjs",
     "outDir": "./lib",
     "rootDir": "./src",
+    "target": "ES5",
+    "lib": [ "es2015", "dom" ],
     "types" : ["node"]
   },
   "include": [

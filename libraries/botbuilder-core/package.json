@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
+    "@types/node": "^12.6.9",
     "mocha": "^5.2.0",
     "nyc": "^11.4.1",
     "source-map-support": "^0.5.3",
