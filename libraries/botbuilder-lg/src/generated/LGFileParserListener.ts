@@ -5,6 +5,7 @@ import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
 import { SwitchCaseBodyContext } from "./LGFileParser";
 import { NormalBodyContext } from "./LGFileParser";
+import { StructuredBodyContext } from "./LGFileParser";
 import { IfElseBodyContext } from "./LGFileParser";
 import { FileContext } from "./LGFileParser";
 import { ParagraphContext } from "./LGFileParser";
@@ -15,6 +16,10 @@ import { ErrorTemplateNameContext } from "./LGFileParser";
 import { TemplateNameContext } from "./LGFileParser";
 import { ParametersContext } from "./LGFileParser";
 import { TemplateBodyContext } from "./LGFileParser";
+import { StructuredTemplateBodyContext } from "./LGFileParser";
+import { StructuredBodyNameLineContext } from "./LGFileParser";
+import { StructuredBodyContentLineContext } from "./LGFileParser";
+import { StructuredBodyEndLineContext } from "./LGFileParser";
 import { NormalTemplateBodyContext } from "./LGFileParser";
 import { TemplateStringContext } from "./LGFileParser";
 import { NormalTemplateStringContext } from "./LGFileParser";
@@ -58,6 +63,19 @@ export interface LGFileParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitNormalBody?: (ctx: NormalBodyContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `structuredBody`
+	 * labeled alternative in `LGFileParser.templateBody`.
+	 * @param ctx the parse tree
+	 */
+	enterStructuredBody?: (ctx: StructuredBodyContext) => void;
+	/**
+	 * Exit a parse tree produced by the `structuredBody`
+	 * labeled alternative in `LGFileParser.templateBody`.
+	 * @param ctx the parse tree
+	 */
+	exitStructuredBody?: (ctx: StructuredBodyContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `ifElseBody`
@@ -170,6 +188,50 @@ export interface LGFileParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitTemplateBody?: (ctx: TemplateBodyContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LGFileParser.structuredTemplateBody`.
+	 * @param ctx the parse tree
+	 */
+	enterStructuredTemplateBody?: (ctx: StructuredTemplateBodyContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGFileParser.structuredTemplateBody`.
+	 * @param ctx the parse tree
+	 */
+	exitStructuredTemplateBody?: (ctx: StructuredTemplateBodyContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LGFileParser.structuredBodyNameLine`.
+	 * @param ctx the parse tree
+	 */
+	enterStructuredBodyNameLine?: (ctx: StructuredBodyNameLineContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGFileParser.structuredBodyNameLine`.
+	 * @param ctx the parse tree
+	 */
+	exitStructuredBodyNameLine?: (ctx: StructuredBodyNameLineContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LGFileParser.structuredBodyContentLine`.
+	 * @param ctx the parse tree
+	 */
+	enterStructuredBodyContentLine?: (ctx: StructuredBodyContentLineContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGFileParser.structuredBodyContentLine`.
+	 * @param ctx the parse tree
+	 */
+	exitStructuredBodyContentLine?: (ctx: StructuredBodyContentLineContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LGFileParser.structuredBodyEndLine`.
+	 * @param ctx the parse tree
+	 */
+	enterStructuredBodyEndLine?: (ctx: StructuredBodyEndLineContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGFileParser.structuredBodyEndLine`.
+	 * @param ctx the parse tree
+	 */
+	exitStructuredBodyEndLine?: (ctx: StructuredBodyEndLineContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `LGFileParser.normalTemplateBody`.

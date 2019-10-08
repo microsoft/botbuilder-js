@@ -21,7 +21,8 @@ const StaticCheckExceptionData  = [
     "LgTemplateFunctionError.lg",
     "SwitchCaseFormatError.lg",
     "InvalidLGFileImportPath.lg",
-    "DuplicatedTemplatesInImportFiles.lg"
+    "DuplicatedTemplatesInImportFiles.lg",
+    "ErrorStructuredTemplate.lg"
     ];
 
 const StaticCheckWariningData  = [

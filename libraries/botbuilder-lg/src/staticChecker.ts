@@ -131,6 +131,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     private currentSource: string = '';
     private readonly baseExpressionEngine: ExpressionEngine;
     private _expressionParser: IExpressionParser;
+    private readonly expressionRecognizeRegex: RegExp = new RegExp(/@?(?<!\\)\{.+?(?<!\\)\}/g);
 
     constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -235,6 +236,33 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
             } else {
                 const item: Diagnostic[] = this.visit(templateStr);
                 result = result.concat(item);
+            }
+        }
+
+        return result;
+    }
+
+    public visitStructuredTemplateBody(context: lp.StructuredTemplateBodyContext): Diagnostic[] {
+        let result: Diagnostic[] = [];
+        const content: lp.StructuredBodyContentLineContext = context.structuredBodyContentLine();
+        let bodys: TerminalNode[] = [];
+        if (content !== undefined) {
+            bodys = content.STRUCTURED_CONTENT();
+        }
+
+        if (bodys === undefined || bodys.length === 0 || bodys.find(u => u !== undefined && u.text.trim().length !== 0) === undefined) {
+            result.push(this.BuildLGDiagnostic({
+                message: `Structured content is empty`,
+                context: content}));
+        } else {
+            for (const body of bodys) {
+                const line: string = body.text.trim();
+                const start: number = line.indexOf('=');
+                if (start < 0 && !this.isPureExpression(line)) {
+                    result.push(this.BuildLGDiagnostic({
+                        message: `Structured content does not support`,
+                        context: content}));
+                }
             }
         }
 
@@ -548,4 +576,16 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
         return new Diagnostic(range, message, severity);
     }
+
+    private isPureExpression(exp: string): boolean {
+        if (exp === undefined || exp.length === 0) {
+            return false;
+        }
+
+        exp = exp.trim();
+        const expressions: RegExpMatchArray = exp.match(this.expressionRecognizeRegex);
+
+        return expressions !== null && expressions !== undefined && expressions.length === 1 && expressions[0] === exp;
+    }
+
 }
