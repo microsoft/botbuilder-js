@@ -17,3 +17,7 @@ export * from './entityModel';
 export * from './intentModel';
 export * from './luisResult';
 export * from './sentiment';
+export * from './authentication';
+export * from './voidAuth';
+export * from './apiKeyAuth';
+

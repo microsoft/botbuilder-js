@@ -13,14 +13,11 @@
 const fetch = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
 
 import * as HttpStatus from 'http-status-codes';
-
-/* tslint:disable:no-unused-locals */
 import { LuisResult } from './model/luisResult';
+import { Authentication, VoidAuth, ApiKeyAuth } from './model';
+import { ObjectSerializer } from './apiHelper'
 
-import { ObjectSerializer, Authentication, VoidAuth } from './model/models';
-import { ApiKeyAuth } from './model/models';
-
-let luisVersion = '/luis/v2.0';
+const luisVersion = '/luis/v2.0';
 
 export interface PredictionResolveOptionalParams {
     /**

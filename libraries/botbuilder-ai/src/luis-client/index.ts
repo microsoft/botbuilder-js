@@ -11,4 +11,4 @@
  */
 
 export * from './LuisClient';
-export * from './model/models';
+export * from './model/';
