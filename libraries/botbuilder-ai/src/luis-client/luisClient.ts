@@ -81,10 +81,6 @@ export class LuisClient {
         }
     }
 
-    public setDefaultAuthentication(auth: Authentication): void {
-        this.authentications.default = auth;
-    }
-
     public setApiKey(key: LuisApikeys, value: string): void {
         this.authentications[LuisApikeys[key]].apiKey = value;
     }
