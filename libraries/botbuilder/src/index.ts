@@ -7,8 +7,9 @@
  */
 
 export * from './botFrameworkAdapter';
-export * from './botFrameworkChannelServer';
 export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
+export * from './multiAdapter';
+export * from './skillHostMiddleware';
 export * from './teamsActivityHandler';
 export * from 'botbuilder-core';

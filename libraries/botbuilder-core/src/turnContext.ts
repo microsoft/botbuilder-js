@@ -8,7 +8,6 @@
 import { Activity, ActivityTypes, ConversationReference, InputHints, ResourceResponse, Mention } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
 import { shallowCopy } from './internal';
-require('isomorphic-fetch');
 
 export interface BeginSkillConversationOptions {
     serviceUrl: string;
@@ -53,11 +52,12 @@ export type DeleteActivityHandler = (
  * Signature implemented by functions registered with `context.onForwardActivity()`.
  *
  * ```TypeScript
- * type ForwardActivityHandler = (context: TurnContext, activity: Partial<Activity>, next: () => Promise<void>) => Promise<void>;
+ * type ForwardActivityHandler = (context: TurnContext, activity: Partial<Activity>, protocolUri: string, next: () => Promise<void>) => Promise<void>;
  * ```
  */
 export type ForwardActivityHandler = (
     context: TurnContext,
+    protocolUri: string,
     activity: Partial<Activity>,
     next: () => Promise<void>
 ) => Promise<void>;
@@ -311,7 +311,7 @@ export class TurnContext {
             return o;
         });
 
-        return this.emit(this._onSendActivities, output, () => {
+        return this.emit(this._onSendActivities, [output], () => {
             return this.adapter.sendActivities(this, output)
                 .then((responses: ResourceResponse[]) => {
                     // Set responded flag
@@ -339,7 +339,7 @@ export class TurnContext {
      * @param activity New replacement activity. The activity should already have it's ID information populated.
      */
     public updateActivity(activity: Partial<Activity>): Promise<void> {
-        return this.emit(this._onUpdateActivity, activity, () => this.adapter.updateActivity(this, activity));
+        return this.emit(this._onUpdateActivity, [activity], () => this.adapter.updateActivity(this, activity));
     }
 
     /**
@@ -367,7 +367,7 @@ export class TurnContext {
             reference = idOrReference;
         }
 
-        return this.emit(this._onDeleteActivity, reference, () => this.adapter.deleteActivity(this, reference));
+        return this.emit(this._onDeleteActivity, [reference], () => this.adapter.deleteActivity(this, reference));
     }
 
     /**
@@ -533,26 +533,26 @@ export class TurnContext {
         return this._turnState;
     }
 
-    private emit<T>(
-        handlers: ((context: TurnContext, arg: T, next: () => Promise<any>) => Promise<any>)[],
-        arg: T,
+    private async emit(
+        handlers: Function[],
+        args: any[],
         next: () => Promise<any>
     ): Promise<any> {
-        const list:  ((context: TurnContext, arg: T, next: () => Promise<any>) => Promise<any>)[] = handlers.slice();
+        const list = handlers.slice();
         const context: TurnContext = this;
-        function emitNext(i: number): Promise<void> {
-            try {
-                if (i < list.length) {
-                    return Promise.resolve(list[i](context, arg, () => emitNext(i + 1)));
-                }
-
-                return Promise.resolve(next());
-            } catch (err) {
-                return Promise.reject(err);
+        async function emitNext(i: number): Promise<any> {
+            if (i < list.length) {
+                const handler = list[i];
+                const argArray: any[] = [context];
+                Array.prototype.push.apply(argArray, args);
+                argArray.push(async () => await emitNext(i + 1))
+                return await handler.apply({}, argArray);
+            } else {
+                return await next();
             }
         }
 
-        return emitNext(0);
+        return await emitNext(0);
     }
 
     public beginSkillConversation(options: BeginSkillConversationOptions): Partial<ConversationReference> {
@@ -565,24 +565,12 @@ export class TurnContext {
         return skillRef;
     }
 
-    public async forwardActivity(skillRef: Partial<ConversationReference>, activity: Partial<Activity>): Promise<void> {
-        const a: Partial<Activity> = TurnContext.applyConversationReference({...activity}, skillRef);
-        a.relatesTo = TurnContext.getConversationReference(this.activity) as ConversationReference;
-
-        return this.emit(this._onForwardActivity, a, async () => {
-            // POST activity to skill
-            // - TODO: add auth headers
-            const response = await fetch(a.serviceUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(a)
-            });
-
-            // Check delivery status
-            if (response.status >= 400) { throw new Error(`TurnContext: '${response.status}' error forwarding activity to '${a.serviceUrl}'.`) }
-        });
+    public async forwardActivity(protocolUri: string, activity: Partial<Activity>, skillRef?: Partial<ConversationReference>): Promise<void> {
+        const clone = Object.assign({}, activity);
+        if (skillRef) { TurnContext.applyConversationReference(clone, skillRef) }
+        if (clone.relatesTo == undefined) { clone.relatesTo = TurnContext.getConversationReference(this.activity) as ConversationReference }
+        
+        return this.emit(this._onForwardActivity, [protocolUri, clone], () => this._adapter.forwardActivity(this, protocolUri, clone));
     }
 
     /**

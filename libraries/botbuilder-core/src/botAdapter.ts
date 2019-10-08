@@ -139,4 +139,12 @@ export abstract class BotAdapter {
             throw err;
         });
     }
+
+    public get forwardProtocols(): string[] {
+        return [];
+    }
+    
+    public async forwardActivity(context: TurnContext, protocolUri: string, activity: Partial<Activity>): Promise<void> {
+        throw new Error(`BotAdapter.forwardActivity: not implemented.`);
+    }
 }
