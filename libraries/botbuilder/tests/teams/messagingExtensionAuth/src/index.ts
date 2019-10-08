@@ -10,7 +10,7 @@ import * as restify from 'restify';
 import { BotFrameworkAdapter } from 'botbuilder';
 
 // This bot's main dialog.
-import { ComposeMessagingExtensionAuthBot  } from './composeMessagingExtensionAuthBot';
+import { MessagingExtensionAuthBot  } from './messagingExtensionAuthBot';
 
 const ENV_FILE = path.join(__dirname, '..', '.env');
 config({ path: ENV_FILE });
@@ -40,7 +40,7 @@ adapter.onTurnError = async (context, error) => {
 };
 
 // Create the main dialog.
-const myBot = new ComposeMessagingExtensionAuthBot(process.env.ConnectionName);
+const myBot = new MessagingExtensionAuthBot(process.env.ConnectionName);
 
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {

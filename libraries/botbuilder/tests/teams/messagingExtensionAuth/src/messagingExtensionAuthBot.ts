@@ -25,7 +25,7 @@ import {
 *
 * Clicking this bot's Task Menu will retrieve the login dialog, if the user is not already signed in.
 */
-export class ComposeMessagingExtensionAuthBot extends TeamsActivityHandler {
+export class MessagingExtensionAuthBot extends TeamsActivityHandler {
     connectionName: string;
     constructor(authConnectionName: string) {
         super();

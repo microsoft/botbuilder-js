@@ -14,7 +14,7 @@ import {
     ActionTypes,
 } from 'botframework-schema'
 
-export class ComposeMessagingExtensionsBot  extends TeamsActivityHandler {
+export class MessagingExtensionConfigBot  extends TeamsActivityHandler {
     constructor() {
         super();
 
