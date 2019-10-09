@@ -370,7 +370,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(server.start()).to.not.throw;
             let req = {verb: 'POST', path: '/api/messages', streams: []};
             server.send(req).catch(err => {expect(err).to.be.undefined;}).then(
-            expect(server.disconnect()).to.not.throw).then(done());
+                expect(server.disconnect()).to.not.throw).then(done());
         });
 
         it('handles being disconnected', (done) => {
