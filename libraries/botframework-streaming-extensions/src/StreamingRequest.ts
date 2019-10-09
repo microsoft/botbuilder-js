@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { HttpContent, HttpContentStream } from './httpContentStream';
-import { SubscribableStream } from './subscribableStream';
+import { HttpContent, HttpContentStream } from './HttpContentStream';
+import { SubscribableStream } from './SubscribableStream';
 
 export class StreamingRequest {
     /// <summary>
@@ -22,7 +22,7 @@ export class StreamingRequest {
     /// <summary>
     /// List of associated streams
     /// </summary>
-    public streams: HttpContentStream[];
+    public streams: HttpContentStream[] = [];
 
     /// <summary>
     /// Creates a <see cref="StreamingRequest"/> with the passed in method, path, and body.
@@ -50,9 +50,7 @@ export class StreamingRequest {
         if (!content) {
             throw new Error('Argument Undefined Exception: content undefined.');
         }
-        if (!this.streams) {
-            this.streams = [];
-        }
+
         this.streams.push(new HttpContentStream(content));
     }
 
@@ -65,14 +63,12 @@ export class StreamingRequest {
             let stream = new SubscribableStream();
             stream.write(body, 'utf8');
             this.addStream(new HttpContent({
-                contentType: 'application/json; charset=utf-8',
+                type: 'application/json; charset=utf-8',
                 contentLength: stream.length
             },
             stream));
-        } else {
-            if (typeof body === 'object') {
-                this.addStream(body);
-            }
+        } else if (typeof body === 'object') {
+            this.addStream(body);
         }
     }
 }

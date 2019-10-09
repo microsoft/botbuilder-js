@@ -1,10 +1,10 @@
-const Disassemblers = require('../lib/disassemblers/requestDisassembler');
-const PayloadSender = require('../lib/payloadTransport/payloadSender');
-const Request = require('../lib/streamingRequest');
-const HttpContentStream = require('../lib/httpContentStream');
-const Stream = require('../lib/subscribableStream');
-const CancelDisassembler = require('../lib/disassemblers/cancelDisassembler');
-const PayloadTypes = require('../lib/payloads/payloadTypes');
+const Disassemblers = require('../lib/Disassemblers/RequestDisassembler');
+const PayloadSender = require('../lib/PayloadTransport/PayloadSender');
+const Request = require('../lib/StreamingRequest');
+const HttpContentStream = require('../lib/HttpContentStream');
+const Stream = require('../lib/SubscribableStream');
+const CancelDisassembler = require('../lib/Disassemblers/CancelDisassembler');
+const PayloadTypes = require('../lib/Payloads/PayloadTypes');
 const  chai  = require('chai');
 var expect = chai.expect;
 
@@ -15,7 +15,7 @@ describe('RequestDisassembler', () => {
         let req = new Request.StreamingRequest();
         let headers = {contentLength: 40, contentType: 'A'};
         let stream = new Stream.SubscribableStream();
-        stream.write("This is the data inside of the stream.", 'UTF-8');
+        stream.write('This is the data inside of the stream.', 'UTF-8');
         let content = new HttpContentStream.HttpContent(headers, stream);
         let contentStream = new HttpContentStream.HttpContentStream(content);
         contentStream.content.headers = headers;
@@ -24,7 +24,7 @@ describe('RequestDisassembler', () => {
         let rd = new Disassemblers.RequestDisassembler(sender,'42', req);
 
         let result = rd.getStream()
-        .then(done());
+            .then(done());
     });
 });
 

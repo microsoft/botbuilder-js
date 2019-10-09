@@ -1,4 +1,4 @@
-const Stream = require( '../lib/subscribableStream');
+const Stream = require( '../lib/SubscribableStream');
 const chai = require( 'chai');
 var expect = chai.expect;
 
@@ -29,5 +29,5 @@ describe('Streaming Extensions Stream Tests', () => {
         s.subscribe((data) => done());
 
         s._write('hello', 'utf8', () => {});
-    })
+    });
 });

@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { SubscribableStream } from './subscribableStream';
-import { PayloadAssembler } from './assemblers';
+import { SubscribableStream } from './SubscribableStream';
+import { PayloadAssembler } from './Assemblers';
 
 export class ContentStream {
     public id: string;
@@ -14,7 +14,7 @@ export class ContentStream {
     private stream: SubscribableStream;
 
     public constructor(id: string, assembler: PayloadAssembler) {
-        if (assembler === undefined) {
+        if (!assembler) {
             throw Error('Null Argument Exception');
         }
         this.id = id;
@@ -30,7 +30,7 @@ export class ContentStream {
     }
 
     public getStream(): SubscribableStream {
-        if (this.stream === undefined) {
+        if (!this.stream) {
             this.stream = this.assembler.getPayloadStream();
         }
 
@@ -42,14 +42,8 @@ export class ContentStream {
     }
 
     public async readAsString(): Promise<string> {
-        let record = await this.readAll();
-        let allData = record.bufferArray;
-        let stringResult = '';
-        for (let i = 0; i < allData.length; i++) {
-            stringResult += allData[i].toString('utf8');
-        }
-
-        return stringResult;
+        const { bufferArray } = await this.readAll();
+        return (bufferArray || []).map(result => result.toString('utf8')).join('');
     }
 
     public async readAsJson<T>(): Promise<T> {

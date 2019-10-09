@@ -335,7 +335,11 @@ export abstract class Prompt<T> extends Dialog {
             }
 
             if (msg.attachments) {
-                prompt.attachments = msg.attachments;
+                if (prompt.attachments) {
+                  prompt.attachments = prompt.attachments.concat(msg.attachments);
+                } else {
+                  prompt.attachments = msg.attachments;
+                }
             }
 
             return prompt;
