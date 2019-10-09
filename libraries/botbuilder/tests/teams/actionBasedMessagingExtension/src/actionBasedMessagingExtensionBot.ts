@@ -13,7 +13,7 @@ import {
     TeamsActivityHandler
 } from 'botbuilder';
 
-export class ActionBasedMessagingExtensionBot  extends TeamsActivityHandler {
+export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
     constructor() {
         super();
 
