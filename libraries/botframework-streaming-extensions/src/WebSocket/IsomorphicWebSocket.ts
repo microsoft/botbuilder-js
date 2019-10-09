@@ -102,7 +102,7 @@ export class IsomorphicWebSocket implements ISocket {
     /// <summary>
     /// Writes a buffer to the socket and sends it.
     /// </summary>
-    /// <param name="buffer">The buffer of data to send across the connection.</param>
+    /// <param name="message">The buffer of message to send across the connection.</param>
     public write(message: any) {
         this.webSocket.send(message);
     }
@@ -111,7 +111,6 @@ export class IsomorphicWebSocket implements ISocket {
     /// Connects to the supporting socket using WebSocket protocol.
     /// </summary>
     /// <param name="url">The address the server is listening on.</param>
-    /// <param name="port">The port the server is listening on, defaults to 8082.</param>
     public async connect(url): Promise<void> {
         if (!this.connectPromise) {
             this.connectPromise = new Promise((resolve, reject) => {
