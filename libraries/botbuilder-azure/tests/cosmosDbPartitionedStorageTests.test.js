@@ -27,6 +27,7 @@ const storage = new CosmosDbPartitionedStorage(getSettings());
 const noEmulatorMessage = 'This test requires CosmosDB Emulator! go to https://aka.ms/documentdb-emulator-docs to download and install.';
 const emulatorPath = `C:/Program Files/Azure Cosmos DB Emulator/CosmosDB.Emulator.exe`;
 
+// Disable certificate checking when running tests locally
 if (cosmosDbEndpoint.includes('localhost:8081')) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     console.warn('WARNING: Disabling SSL Verification because we detected the emulator was being used');
@@ -246,6 +247,7 @@ const testStorage = () => {
 
     // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
     it('should delete an object', async function() {
+        this.timeout(99*99*99);
         if(checkEmulator()) {
             const { nockDone } = usingNock(this.test, mode, options);
     
@@ -270,6 +272,8 @@ const testStorage = () => {
         }
     });
 };
+
+// TODO: Add additional tests
 
 describe('CosmosDbPartitionedStorage', function() {
     this.timeout(20000);

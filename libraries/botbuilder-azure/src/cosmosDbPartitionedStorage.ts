@@ -44,7 +44,7 @@ class DocumentStoreItem {
      * Gets the PartitionKey path to be used for this document type.
      */
     public static get partitionKeyPath(): string {
-        return '/realId';
+        return '/id';
     }
     /**
      * Gets or sets the sanitized Id/Key used as PrimaryKey.
@@ -67,7 +67,7 @@ class DocumentStoreItem {
      * Gets the PartitionKey value for the document.
      */
     public get partitionKey(): string {
-        return this.realId;
+        return this.id;
     }
 
     // We can't make the partitionKey optional AND have it auto-get this.realId, so we'll use a constructor
@@ -110,40 +110,32 @@ export class CosmosDbPartitionedStorage implements Storage {
 
         const storeItems: StoreItems = {};
 
-        const parameterSequence: string = Array.from(Array(keys.length).keys())
-            .map((ix: number): string => `@id${ ix }`)
-            .join(',');
+        await Promise.all(keys.map(async (k: string): Promise<void> => {
+            try {
+                const escapedKey = CosmosDbKeyEscape.escapeKey(k);
 
-        const parameterValues: SqlParameter[] = keys.map((key: string, ix: number): SqlParameter => ({
-            name: `@id${ ix }`,
-            value: CosmosDbKeyEscape.escapeKey(key)
+                const readItemResponse = await this.container.item(escapedKey, escapedKey).read<DocumentStoreItem>();
+                const documentStoreItem = readItemResponse.resource;
+                if (documentStoreItem) {
+                    storeItems[documentStoreItem.realId] = documentStoreItem.document;
+                    storeItems[documentStoreItem.realId].eTag = documentStoreItem._etag;
+                }
+            } catch (err) {
+                // When an item is not found a CosmosException is thrown, but we want to
+                // return an empty collection so in this instance we catch and do not rethrow.
+                // Throw for any other exception.
+                if (err.code === 404) { }
+                // Throw unique error for 400s
+                else if (err.code === 400) {
+                    this.throwInformativeError(`Error initializing container. You might be using partitions in a non-partitioned DB or
+                    are not using partitions in a partitioned db that already contains partitioned data`, err);
+                } else {
+                    this.throwInformativeError('Error reading from container', err);
+                }
+            }
         }));
 
-        const querySpec: SqlQuerySpec = {
-            query: `SELECT c.id, c.realId, c.document, c._etag FROM c WHERE c.id in (${ parameterSequence })`,
-            parameters: parameterValues,
-        };
-
-        try {
-            const { resources: results }: FeedResponse<StoreItem> = await this.container.items
-                .query(querySpec)
-                .fetchAll();
-            // Push documents to storeItems
-            results.map((resource): void => {
-                storeItems[resource.realId] = resource.document;
-                storeItems[resource.realId].eTag = resource._etag;
-            });
-            return storeItems;
-
-        } catch (err) {
-            // Throw unique error for 400s
-            if (err.code === 400) {
-                this.throwInformativeError(`Error initializing container. You might be using partitions in a non-partitioned DB or
-                are not using partitions in a partitioned db that already contains partitioned data`, err);
-            } else {
-                this.throwInformativeError('Error reading from container', err);
-            }
-        }
+        return storeItems;
     }
 
     public async write(changes: StoreItems): Promise<void> {
