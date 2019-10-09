@@ -181,6 +181,18 @@ describe('QnAMaker', function () {
 
         });
 
+        it('should return answer and active learning flag', async function() {
+            const noOptionsQnA = new QnAMaker(endpoint);
+            const noOptionsContext = new TestContext({ text: 'where are the unicorns?' })
+            const defaultNumberOfAnswers = 1;
+
+            const results = await noOptionsQnA.getAnswersRaw(noOptionsContext);
+            const numberOfResults = results.answers.length;
+
+            assert.strictEqual(numberOfResults, defaultNumberOfAnswers, 'Should return only 1 answer with default settings (i.e. no options specified) for question with answer.');
+            assert.strictEqual(results.activeLearningEnabled, false, 'Should return false for active learning flag.');
+        });
+
         it('should sort the answers in the qna results from highest to lowest score', async function() {
             const qna = new QnAMaker(endpoint);
             const context = new TestContext({ text: "what's your favorite animal?" });

@@ -406,6 +406,23 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
+    it(`should createConversation() for Teams.`, function (done) {
+        const adapter = new AdapterUnderTest();
+        adapter.createConversation(reference, (context) => {
+            try{
+                assert(context, `context not passed.`);
+                assert(context.activity, `context has no request.`);
+                assert(context.activity.conversation, `request has invalid conversation.`);
+                assert.strictEqual(context.activity.conversation.id, 'convo2', `request has invalid conversation.id.`);
+                assert.strictEqual(context.activity.conversation.tenantId, reference.conversation.tenantId, `request has invalid tenantId on conversation.`);
+                assert.strictEqual(context.activity.channelData.tenant.id, reference.conversation.tenantId, `request has invalid tenantId in channelData.`);
+                done();
+            } catch(err) {
+                done(err);
+            }
+        });
+    });
+
     it(`should deliver a single activity using sendActivities().`, function (done) {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);

@@ -5,14 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PayloadSender } from '../payloadtransport/payloadSender';
-import { StreamingRequest } from '../streamingRequest';
-import { StreamingResponse } from '../streamingResponse';
-import { CancelDisassembler } from '../disassemblers/cancelDisassembler';
-import { HttpContentStreamDisassembler } from '../disassemblers/httpContentStreamDisassembler';
-import { RequestDisassembler } from '../disassemblers/requestDisassembler';
-import { ResponseDisassembler } from '../disassemblers/responseDisassembler';
-import { PayloadTypes } from './payloadTypes';
+import { PayloadSender } from '../PayloadTransport/PayloadSender';
+import { StreamingRequest } from '../StreamingRequest';
+import { StreamingResponse } from '../StreamingResponse';
+import { CancelDisassembler } from '../Disassemblers/CancelDisassembler';
+import { HttpContentStreamDisassembler } from '../Disassemblers/HttpContentStreamDisassembler';
+import { RequestDisassembler } from '../Disassemblers/RequestDisassembler';
+import { ResponseDisassembler } from '../Disassemblers/ResponseDisassembler';
+import { PayloadTypes } from './PayloadTypes';
 
 export class SendOperations {
     private readonly payloadSender: PayloadSender;
