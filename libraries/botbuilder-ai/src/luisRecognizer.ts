@@ -202,7 +202,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         this.includeApiResults = !!includeApiResults;
 
         // Create Luis Runtime Client
-        const basePath = 'https://westus.api.cognitive.microsoft.com';
+        const basePath = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
         this.luisClient = new LuisClient(basePath);
         this.luisClient.setApiKey(LuisApikeys.apiKeyHeader, this.application.endpointKey)
 

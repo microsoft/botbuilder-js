@@ -6,7 +6,7 @@ const { LuisRecognizer } = require('../');
 const luisAppId = '38330cad-f768-4619-96f9-69ea333e594b';
 
 // This can be any endpoint key for calling LUIS
-const endpointKey = process.env.LUISAPPKEY || "MockedKey";
+const endpointKey = process.env.LUISAPPKEY || 'MockedKey';
 
 // If this is true, then LUIS responses will come from oracle files.
 // If it is false, the LUIS service will be called and if there are changes you will get a new oracle file.
@@ -57,19 +57,19 @@ function WithinDelta(token1, token2, delta, compare) {
             within = WithinDelta(token1[i], token2[i], delta, compare);
         }
     }
-    else if (typeof token1 === "object" && typeof token2 === "object") {
+    else if (typeof token1 === 'object' && typeof token2 === 'object') {
         Object.keys(token2).forEach(k => token2[k] === undefined && delete token2[k]);
         within = Object.keys(token1).length === Object.keys(token2).length;
-        Object.keys(token1).forEach(function (key) {
+        Object.keys(token1).forEach(function(key) {
             if (!within) return;
-            within = WithinDelta(token1[key], token2[key], delta, compare || key === "score" || key === "intents");
+            within = WithinDelta(token1[key], token2[key], delta, compare || key === 'score' || key === 'intents');
         });
     }
     else if (token1 !== token2) {
         if (token1 !== undefined && token2 != undefined && token1.Type == token2.Type) {
             within = false;
             if (compare &&
-                typeof token1 === "number" && typeof token2 === "number") {
+                typeof token1 === 'number' && typeof token2 === 'number') {
                 within = Math.abs(token1 - token2) < delta;
             }
         }
@@ -81,23 +81,23 @@ function WithinDelta(token1, token2, delta, compare) {
 }
 
 function ExpectedPath(file) {
-    return __dirname + "/TestData/LuisRecognizer/" + file;
+    return __dirname + '/TestData/LuisRecognizer/' + file;
 }
 
 function GetExpected(oracle) {
     var expected = fs.readJSONSync(oracle);
 
     var query = 'verbose=(true|false)&staging=false&spellCheck=false&log=true';
-    var path = `/luis/v2\\.0/apps/${luisAppId}`;
-    var pattern = `${path}\\?${query}`;
+    var path = `/luis/v2\\.0/apps/${ luisAppId }`;
+    var pattern = `${ path }\\?${ query }`;
     var uri = new RegExp(pattern);
-    var requestContent = expected.text != undefined ? `"${expected.text}"` : undefined;
+    var requestContent = expected.text != undefined ? `"${ expected.text }"` : undefined;
     var responseBody = expected.v2;
 
     if (mockLuis) {
         nock('https://westus.api.cognitive.microsoft.com')
             .matchHeader('Ocp-Apim-Subscription-Key', endpointKey)
-            .matchHeader('authorization', `Bearer ${endpointKey}`)
+            .matchHeader('authorization', `Bearer ${ endpointKey }`)
             .post(uri, requestContent)
             .reply(200, responseBody);
     }
@@ -121,7 +121,7 @@ function TestJson(file, done, includeAllIntents, includeInstance, telemetryClien
     if (telemetryProperties === undefined) telemetryProperties = null;
     var expectedPath = ExpectedPath(file);
     var expected = GetExpected(expectedPath);
-    var newPath = expectedPath + ".new";
+    var newPath = expectedPath + '.new';
     var context = new TestContext({ text: expected.text });
     var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey },
         { includeAllIntents: includeAllIntents, includeInstanceData: includeInstance, telemetryClient: telemetryClient, logPersonalInformation: logPersonalInformation }, true);
@@ -130,7 +130,7 @@ function TestJson(file, done, includeAllIntents, includeInstance, telemetryClien
         delete res.luisResult;
         if (!WithinDelta(expected, res, 0.1, false)) {
             fs.outputJSONSync(newPath, res, { spaces: 2 });
-            assert(false, "\nReturned JSON\n  " + newPath + "\n!= expected JSON\n  " + expectedPath);
+            assert(false, '\nReturned JSON\n  ' + newPath + '\n!= expected JSON\n  ' + expectedPath);
         }
         else if (fs.existsSync(newPath)) {
             fs.unlinkSync(newPath);
@@ -139,22 +139,22 @@ function TestJson(file, done, includeAllIntents, includeInstance, telemetryClien
     });
 }
 
-describe('LuisRecognizer', function () {
+describe('LuisRecognizer', function() {
     this.timeout(15000);
 
-    if (!mockLuis && endpointKey === "MockedKey") {
+    if (!mockLuis && endpointKey === 'MockedKey') {
         console.warn('WARNING: skipping LuisRecognizer test suite because the LUISAPPKEY environment variable is not defined');
         return;
     }
 
-    it('test built-ins composite1', done => TestJson("Composite1.json", res => throttle(done)));
-    it('test built-ins composite2', done => TestJson("Composite2.json", res => throttle(done)));
-    it('test built-ins composite3', done => TestJson("Composite3.json", res => throttle(done)));
-    it('test built-ins prebuilt', done => TestJson("Prebuilt.json", res => throttle(done)));
-    it('test patterns', done => TestJson("Patterns.json", res => throttle(done)));
-    it('test roles', done => TestJson("roles.json", res => throttle(done)));
+    it('test built-ins composite1', done => TestJson('Composite1.json', res => throttle(done)));
+    it('test built-ins composite2', done => TestJson('Composite2.json', res => throttle(done)));
+    it('test built-ins composite3', done => TestJson('Composite3.json', res => throttle(done)));
+    it('test built-ins prebuilt', done => TestJson('Prebuilt.json', res => throttle(done)));
+    it('test patterns', done => TestJson('Patterns.json', res => throttle(done)));
+    it('test roles', done => TestJson('roles.json', res => throttle(done)));
     it('should return single intent and a simple entity', done => {
-        TestJson("SingleIntent_SimplyEntity.json", (res) => {
+        TestJson('SingleIntent_SimplyEntity.json', (res) => {
             assert(res);
             assert(res.text == 'My name is Emad');
             assert(Object.keys(res.intents).length == 1);
@@ -173,7 +173,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should return multiple intents and prebuilt entities with a single value', done => {
-        TestJson("MultipleIntents_PrebuiltEntity.json", res => {
+        TestJson('MultipleIntents_PrebuiltEntity.json', res => {
             assert(res);
             assert(res.text == 'Please deliver February 2nd 2001');
             assert(res.intents);
@@ -201,7 +201,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should return multiple intents and prebuilt entities with multiple values', done => {
-        TestJson("MultipleIntents_PrebuiltEntitiesWithMultiValues.json", res => {
+        TestJson('MultipleIntents_PrebuiltEntitiesWithMultiValues.json', res => {
             assert(res);
             assert(res.text == 'Please deliver February 2nd 2001 in room 201');
             assert(res.intents);
@@ -219,7 +219,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should return multiple intents and a list entity with a single value', done => {
-        TestJson("MultipleIntents_ListEntityWithSingleValue.json", res => {
+        TestJson('MultipleIntents_ListEntityWithSingleValue.json', res => {
             assert(res);
             assert(res.text == 'I want to travel on united');
             assert(res.intents);
@@ -241,7 +241,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should return multiple intents and a list entity with multiple values', done => {
-        TestJson("MultipleIntents_ListEntityWithMultiValues.json", res => {
+        TestJson('MultipleIntents_ListEntityWithMultiValues.json', res => {
             assert(res);
             assert(res.text == 'I want to travel on DL');
             assert(res.intents);
@@ -265,7 +265,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should return multiple intents and a single composite entity', done => {
-        TestJson("MultipleIntents_CompositeEntityModel.json", res => {
+        TestJson('MultipleIntents_CompositeEntityModel.json', res => {
             assert(res);
             assert(res.text == 'Please deliver it to 98033 WA');
             assert(res.intents);
@@ -277,7 +277,7 @@ describe('LuisRecognizer', function () {
             assert(res.entities.Address);
             assert(res.entities.Address[0].number[0] === 98033);
             assert(res.entities.Address[0].State);
-            assert(res.entities.Address[0].State[0] === "wa");
+            assert(res.entities.Address[0].State[0] === 'wa');
             assert(res.entities.$instance);
             assert(res.entities.$instance.number === undefined);
             assert(res.entities.$instance.State === undefined);
@@ -294,7 +294,7 @@ describe('LuisRecognizer', function () {
             assert(res.entities.Address[0].$instance.number[0].endIndex);
             assert(res.entities.Address[0].$instance.number[0].endIndex === 26);
             assert(res.entities.Address[0].$instance.number[0].text);
-            assert(res.entities.Address[0].$instance.number[0].text === "98033");
+            assert(res.entities.Address[0].$instance.number[0].text === '98033');
             assert(res.entities.Address[0].$instance.State);
             assert(res.entities.Address[0].$instance.State[0].startIndex);
             assert(res.entities.Address[0].$instance.State[0].startIndex === 27);
@@ -307,7 +307,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should cache multiple calls to recognize()', done => {
-        var expected = GetExpected(ExpectedPath("SingleIntent_SimplyEntity.json"));
+        var expected = GetExpected(ExpectedPath('SingleIntent_SimplyEntity.json'));
         var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         var context = new TestContext({ text: expected.text });
         recognizer.recognize(context)
@@ -323,7 +323,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should only return $instance metadata for entities if verbose flag set', done => {
-        TestJson("NoInstanceSimple.json", res => {
+        TestJson('NoInstanceSimple.json', res => {
             assert(res);
             assert(res.entities);
             assert(res.entities.$instance === undefined);
@@ -332,7 +332,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should only return $instance metadata for composite entities if verbose flag set', done => {
-        TestJson("NoInstanceComposite.json", res => {
+        TestJson('NoInstanceComposite.json', res => {
             assert(res);
             assert(res.entities);
             assert(res.entities.$instance === undefined);
@@ -341,7 +341,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should only return empty intent for empty text', done => {
-        TestJson("EmptyText.json", res => {
+        TestJson('EmptyText.json', res => {
             const top = LuisRecognizer.topIntent(res);
             assert(top === 'None'); // topIntent() converts '' to 'None'
             assert(Object.keys(res.intents).length == 1)
@@ -363,7 +363,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should emit trace info once per call to recognize', done => {
-        var expected = GetExpected(ExpectedPath("SingleIntent_SimplyEntity.json"));
+        var expected = GetExpected(ExpectedPath('SingleIntent_SimplyEntity.json'));
         var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         var context = new TestContext({ text: expected.text });
         recognizer.recognize(context).then(res => {
@@ -488,7 +488,7 @@ describe('LuisRecognizer', function () {
         const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response ${statusCode}: Unexpected status code received. Please verify that your LUIS application is properly setup.`;
+            expectedError = `Response ${ statusCode }: Unexpected status code received. Please verify that your LUIS application is properly setup.`;
             assert(error.message === expectedError, `unexpected error message thrown.`);
             nock.cleanAll();
             throttle(done);
@@ -539,7 +539,7 @@ describe('LuisRecognizer', function () {
             const recognizer = new LuisRecognizer(endpointWithNoSubscriptionKey);
             assert(false, 'should have thrown an error.');
         } catch (e) {
-            assert(e.message === `Invalid \`endpointKey\` value detected: ${expectedSubscriptionKey}\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`);
+            assert(e.message === `Invalid \`endpointKey\` value detected: ${ expectedSubscriptionKey }\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`);
         }
     });
 
@@ -550,7 +550,7 @@ describe('LuisRecognizer', function () {
             const recognizer = new LuisRecognizer(endpointWithNoAppId);
             assert(false, 'should have thrown an error.');
         } catch (e) {
-            assert(e.message === `Invalid \`applicationId\` value detected: ${expectedApplicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
+            assert(e.message === `Invalid \`applicationId\` value detected: ${ expectedApplicationId }\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
         }
     });
 
@@ -559,12 +559,12 @@ describe('LuisRecognizer', function () {
             const recognizer = new LuisRecognizer('this.is.not.a.url');
             assert(false, 'should have thrown an error.');
         } catch (e) {
-            assert(e.message === `Invalid \`applicationId\` value detected: ${expectedApplicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
+            assert(e.message === `Invalid \`applicationId\` value detected: ${ expectedApplicationId }\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
         }
     });
 
     it('null telemetryClient should work.', () => {
-        TestJson("SingleIntent_SimplyEntityTelemetry.json", (res) => {
+        TestJson('SingleIntent_SimplyEntityTelemetry.json', (res) => {
             assert(res);
             assert(res.text == 'My name is Emad');
             assert(Object.keys(res.intents).length == 1);
@@ -611,7 +611,7 @@ describe('LuisRecognizer', function () {
             }
         }
 
-        TestJson("SingleIntent_SimplyEntityTelemetry.json", (res) => {
+        TestJson('SingleIntent_SimplyEntityTelemetry.json', (res) => {
             assert(res);
             assert(res.text == 'My name is Emad');
             assert(Object.keys(res.intents).length == 1);
@@ -658,7 +658,7 @@ describe('LuisRecognizer', function () {
             }
         }
 
-        TestJson("MultipleIntents_ListEntityWithMultiValuesTelemetry.json", (res) => {
+        TestJson('MultipleIntents_ListEntityWithMultiValuesTelemetry.json', (res) => {
             assert(res);
             assert(res.text == 'I want to travel on DL');
             assert(res.intents);
@@ -716,11 +716,11 @@ describe('LuisRecognizer', function () {
         }
 
         const properties = {};
-        properties["test"] = "testvalue";
-        properties["foo"] = "foovalue";
-        properties["intent"] = "MYINTENT";
+        properties['test'] = 'testvalue';
+        properties['foo'] = 'foovalue';
+        properties['intent'] = 'MYINTENT';
 
-        TestJson("SingleIntent_SimplyEntityTelemetry.json", (res) => {
+        TestJson('SingleIntent_SimplyEntityTelemetry.json', (res) => {
             assert(res);
             assert(res.text == 'My name is Emad');
             assert(Object.keys(res.intents).length == 1);
@@ -749,11 +749,11 @@ describe('LuisRecognizer', function () {
                         assert(telemetry.name === 'LuisResult');
                         assert(telemetry.properties);
                         assert('test' in telemetry.properties);
-                        assert(telemetry.properties['test'] === "testvalue");
+                        assert(telemetry.properties['test'] === 'testvalue');
                         assert('foo' in telemetry.properties);
-                        assert(telemetry.properties['foo'] === "foovalue");
+                        assert(telemetry.properties['foo'] === 'foovalue');
                         assert('MyImportantProperty' in telemetry.properties);
-                        assert(telemetry.properties['MyImportantProperty'] === "myImportantValue");
+                        assert(telemetry.properties['MyImportantProperty'] === 'myImportantValue');
 
                         break;
 
@@ -763,7 +763,7 @@ describe('LuisRecognizer', function () {
                         assert(telemetry.name === 'MySecondEvent');
                         assert(telemetry.properties);
                         assert('MyImportantProperty2' in telemetry.properties);
-                        assert(telemetry.properties['MyImportantProperty2'] === "myImportantValue2");
+                        assert(telemetry.properties['MyImportantProperty2'] === 'myImportantValue2');
                         break;
 
                     default:
@@ -776,15 +776,15 @@ describe('LuisRecognizer', function () {
         }
 
         const properties = {};
-        properties["test"] = "testvalue";
-        properties["foo"] = "foovalue";
+        properties['test'] = 'testvalue';
+        properties['foo'] = 'foovalue';
         const metrics = {};
-        metrics["moo"] = 3.14159;
-        metrics["boo"] = 2.11;
+        metrics['moo'] = 3.14159;
+        metrics['boo'] = 2.11;
 
-        var expectedPath = ExpectedPath("SingleIntent_SimplyEntityTelemetry.json");
+        var expectedPath = ExpectedPath('SingleIntent_SimplyEntityTelemetry.json');
         var expected = GetExpected(expectedPath);
-        var newPath = expectedPath + ".new";
+        var newPath = expectedPath + '.new';
         var context = new TestContext({ text: expected.text });
         var recognizer = new telemetryOverrideRecognizer({ applicationId: luisAppId, endpointKey: endpointKey },
             { includeAllIntents: false, includeInstanceData: true, telemetryClient: telemetryClient, logPersonalInformation: true }, true);
@@ -793,7 +793,7 @@ describe('LuisRecognizer', function () {
             delete res.luisResult;
             if (!WithinDelta(expected, res, 0.1, false)) {
                 fs.outputJSONSync(newPath, res, { spaces: 2 });
-                assert(false, "\nReturned JSON\n  " + newPath + "\n!= expected JSON\n  " + expectedPath);
+                assert(false, '\nReturned JSON\n  ' + newPath + '\n!= expected JSON\n  ' + expectedPath);
             }
         });
 
@@ -811,11 +811,11 @@ describe('LuisRecognizer', function () {
                         assert(telemetry.name === 'LuisResult');
                         assert(telemetry.properties);
                         assert('MyImportantProperty' in telemetry.properties);
-                        assert(telemetry.properties['MyImportantProperty'] === "myImportantValue");
+                        assert(telemetry.properties['MyImportantProperty'] === 'myImportantValue');
                         assert('test' in telemetry.properties);
-                        assert(telemetry.properties['test'] === "testvalue");
+                        assert(telemetry.properties['test'] === 'testvalue');
                         assert('foo' in telemetry.properties);
-                        assert(telemetry.properties['foo'] === "foovalue");
+                        assert(telemetry.properties['foo'] === 'foovalue');
                         assert('moo' in telemetry.metrics);
                         assert(telemetry.metrics['moo'] === 3.14159);
                         assert('boo' in telemetry.metrics);
@@ -828,7 +828,7 @@ describe('LuisRecognizer', function () {
                         assert(telemetry.name === 'MySecondEvent');
                         assert(telemetry.properties);
                         assert('MyImportantProperty2' in telemetry.properties);
-                        assert(telemetry.properties['MyImportantProperty2'] === "myImportantValue2");
+                        assert(telemetry.properties['MyImportantProperty2'] === 'myImportantValue2');
                         break;
 
                     default:
@@ -841,15 +841,15 @@ describe('LuisRecognizer', function () {
         }
 
         var properties = {};
-        properties["test"] = "testvalue";
-        properties["foo"] = "foovalue";
+        properties['test'] = 'testvalue';
+        properties['foo'] = 'foovalue';
         var metrics = {};
-        metrics["moo"] = 3.14159;
-        metrics["boo"] = 2.11;
+        metrics['moo'] = 3.14159;
+        metrics['boo'] = 2.11;
 
-        var expectedPath = ExpectedPath("SingleIntent_SimplyEntityTelemetry.json");
+        var expectedPath = ExpectedPath('SingleIntent_SimplyEntityTelemetry.json');
         var expected = GetExpected(expectedPath);
-        var newPath = expectedPath + ".new";
+        var newPath = expectedPath + '.new';
         var context = new TestContext({ text: expected.text });
         var recognizer = new overrideFillRecognizer({ applicationId: luisAppId, endpointKey: endpointKey },
             { includeAllIntents: false, includeInstanceData: true, telemetryClient: telemetryClient, logPersonalInformation: true }, true);
@@ -858,7 +858,7 @@ describe('LuisRecognizer', function () {
             delete res.luisResult;
             if (!WithinDelta(expected, res, 0.1, false)) {
                 fs.outputJSONSync(newPath, res, { spaces: 2 });
-                assert(false, "\nReturned JSON\n  " + newPath + "\n!= expected JSON\n  " + expectedPath);
+                assert(false, '\nReturned JSON\n  ' + newPath + '\n!= expected JSON\n  ' + expectedPath);
             }
             assert(res.text == 'My name is Emad');
             assert(Object.keys(res.intents).length == 1);
@@ -908,21 +908,21 @@ describe('LuisRecognizer', function () {
 
 class telemetryOverrideRecognizer extends LuisRecognizer {
     async onRecognizerResults(recognizerResult, turnContext, properties, metrics) {
-        if (!("'MyImportantProperty" in properties)) {
-            properties["MyImportantProperty"] = "myImportantValue";
+        if (!('\'MyImportantProperty' in properties)) {
+            properties['MyImportantProperty'] = 'myImportantValue';
         }
         this.telemetryClient.trackEvent({
-            name: "LuisResult",
+            name: 'LuisResult',
             properties: properties,
             metrics: metrics
         });
 
         // Create second event
         const secondProperties = {};
-        secondProperties["MyImportantProperty2"] = "myImportantValue2";
+        secondProperties['MyImportantProperty2'] = 'myImportantValue2';
 
         this.telemetryClient.trackEvent({
-            name: "MySecondEvent",
+            name: 'MySecondEvent',
             properties: secondProperties
         });
     }
@@ -931,22 +931,22 @@ class telemetryOverrideRecognizer extends LuisRecognizer {
 class overrideFillRecognizer extends LuisRecognizer {
     async onRecognizerResults(recognizerResult, turnContext, properties, metrics) {
         var props = await this.fillTelemetryProperties(recognizerResult, turnContext, properties);
-        if (!("MyImportantProperty" in props)) {
-            props["MyImportantProperty"] = "myImportantValue";
+        if (!('MyImportantProperty' in props)) {
+            props['MyImportantProperty'] = 'myImportantValue';
         }
 
         this.telemetryClient.trackEvent({
-            name: "LuisResult",
+            name: 'LuisResult',
             properties: props,
             metrics: metrics
         });
 
         // Create second event
         const secondProperties = {};
-        secondProperties["MyImportantProperty2"] = "myImportantValue2";
+        secondProperties['MyImportantProperty2'] = 'myImportantValue2';
 
         this.telemetryClient.trackEvent({
-            name: "MySecondEvent",
+            name: 'MySecondEvent',
             properties: secondProperties
         });
     }
