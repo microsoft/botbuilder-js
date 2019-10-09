@@ -101,7 +101,7 @@ const testStorage = () => {
     // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
     it('should create an object', async function() {
         if(checkEmulator()) {
-            const { nockDone } = usingNock(this.test, mode, options);
+            const { nockDone } = await usingNock(this.test, mode, options);
     
             const storeItems = {
                 createPoco: { id: 1 },
@@ -117,14 +117,14 @@ const testStorage = () => {
             assert.notStrictEqual(readStoreItems.createPoco.eTag, null);
             assert.notStrictEqual(readStoreItems.createPocoStoreItem.eTag, null);
     
-            nockDone;
+            return nockDone();
         }
     });
 
     // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
     it('should handle crazy keys', async function() {
         if(checkEmulator()) {
-            const { nockDone } = usingNock(this.test, mode, options);
+            const { nockDone } = await usingNock(this.test, mode, options);
     
             const key = `!@#$%^&*()~/\\><,.?';\"\`~`;
             const storeItem = { id: 1 };
@@ -137,59 +137,59 @@ const testStorage = () => {
             assert.notStrictEqual(readStoreItems[key], null);
             assert.strictEqual(readStoreItems[key].id, 1);
     
-            nockDone;
+            return nockDone();
         }
     });
 
     // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
     it('should return empty dictionary when reading empty keys', async function() {
         if(checkEmulator()) {
-            const { nockDone } = usingNock(this.test, mode, options);
+            const { nockDone } = await usingNock(this.test, mode, options);
     
             const state = await storage.read([]);
             assert.deepStrictEqual(state, {});
     
-            nockDone;
+            return nockDone();
         }
     });
 
     // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
     it('should throw when reading null keys', async function() {
         if(checkEmulator()) {
-            const { nockDone } = usingNock(this.test, mode, options);
+            const { nockDone } = await usingNock(this.test, mode, options);
     
             await assert.rejects(async () => await storage.read(null), ReferenceError(`Keys are required when reading.`));
     
-            nockDone;
+            return nockDone();
         }
     });
 
     // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
     it('should throw when writing null keys', async function() {
         if(checkEmulator()) {
-            const { nockDone } = usingNock(this.test, mode, options);
+            const { nockDone } = await usingNock(this.test, mode, options);
     
             await assert.rejects(async () => await storage.write(null), ReferenceError(`Changes are required when writing.`));
     
-            nockDone;
+            return nockDone();
         }
     });
 
     // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
     it('should not throw when writing no items', async function() {
         if(checkEmulator()) {
-            const { nockDone } = usingNock(this.test, mode, options);
+            const { nockDone } = await usingNock(this.test, mode, options);
     
             await assert.doesNotReject(async () => await storage.write([]));
     
-            nockDone;
+            return nockDone();
         }
     });
 
     // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
     it('should update an object', async function() {
         if(checkEmulator()) {
-            const { nockDone } = usingNock(this.test, mode, options);
+            const { nockDone } = await usingNock(this.test, mode, options);
     
             const originalStoreItems = {
                 pocoItem: { id: 1, count: 1 },
@@ -284,14 +284,14 @@ const testStorage = () => {
             assert.strictEqual(finalStoreItems.pocoItem.count, 100);
             assert.strictEqual(finalStoreItems.pocoStoreItem.count, 100);
     
-            nockDone;
+            return nockDone();
         }
     });
 
     // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
     it('should delete an object', async function() {
         if(checkEmulator()) {
-            const { nockDone } = usingNock(this.test, mode, options);
+            const { nockDone } = await usingNock(this.test, mode, options);
     
             const storeItems = {
                 delete1: { id: 1, count: 1 }
@@ -310,27 +310,27 @@ const testStorage = () => {
     
             assert.strictEqual(reloadedStoreItems.delete1, undefined);
     
-            nockDone;
+            return nockDone();
         }
     });
 
     // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
     it('should not throw when deleting unknown object', async function() {
         if(checkEmulator()) {
-            const { nockDone } = usingNock(this.test, mode, options);
+            const { nockDone } = await usingNock(this.test, mode, options);
 
             await assert.doesNotReject(async () => {
                 await storage.delete(['unknown_key']);
             });
     
-            nockDone;
+            return nockDone();
         }
     });
 
     // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
     it('should correctly proceed through a waterfall dialog', async function() {
         if(checkEmulator()) {
-            const { nockDone } = usingNock(this.test, mode, options);
+            const { nockDone } = await usingNock(this.test, mode, options);
 
             const convoState = new ConversationState(storage);
 
@@ -394,7 +394,7 @@ const testStorage = () => {
                 .assertReply('step3')
                 .startTest();
     
-            nockDone;
+            return nockDone();
         }
     });
 };
