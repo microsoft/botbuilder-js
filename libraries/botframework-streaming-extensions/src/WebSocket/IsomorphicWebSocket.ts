@@ -142,7 +142,7 @@ export class IsomorphicWebSocket implements ISocket {
             this.webSocket = null;
 
             return new Promise(resolve => {
-                addEventListenerOnce(this.webSocket, 'close', () => resolve());
+                addEventListenerOnce(closingWebSocket, 'close', () => resolve());
                 closingWebSocket.close(code, reason);
             });
         }
