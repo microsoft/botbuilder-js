@@ -7,7 +7,7 @@
         "status": 404,
         "response": {
             "code": "NotFound",
-            "message": "Message: {\"Errors\":[\"Resource Not Found\"]}\r\nActivityId: 3722d32d-1204-4f55-8b5a-9627d23be22b, Request URI: /apps/DocDbApp/services/DocDbServer16/partitions/a4cb495c-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, RequestStats: \r\nRequestStartTime: 2019-10-09T23:27:32.2376296Z, RequestEndTime: 2019-10-09T23:27:32.2386309Z, Number of regions attempted: 1\r\nResponseTime: 2019-10-09T23:27:32.2386309Z, StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10253/apps/DocDbApp/services/DocDbServer16/partitions/a4cb495c-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 987, GlobalCommittedLsn: -1, PartitionKeyRangeId: 0, IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#987, UsingLocalLSN: True, TransportException: null, ResourceType: Document, OperationType: Read\r\n, SDK: Microsoft.Azure.Documents.Common/2.4.0.0"
+            "message": "Message: {\"Errors\":[\"Resource Not Found\"]}\r\nActivityId: ae574b4e-2664-4b07-8aa6-564e176a3424, Request URI: /apps/DocDbApp/services/DocDbServer16/partitions/a4cb495c-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, RequestStats: \r\nRequestStartTime: 2019-10-09T23:40:51.7254436Z, RequestEndTime: 2019-10-09T23:40:51.7274440Z, Number of regions attempted: 1\r\nResponseTime: 2019-10-09T23:40:51.7274440Z, StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10253/apps/DocDbApp/services/DocDbServer16/partitions/a4cb495c-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 1012, GlobalCommittedLsn: -1, PartitionKeyRangeId: 0, IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#1012, UsingLocalLSN: True, TransportException: null, ResourceType: Document, OperationType: Read\r\n, SDK: Microsoft.Azure.Documents.Common/2.4.0.0"
         },
         "rawHeaders": [
             "Transfer-Encoding",
@@ -25,11 +25,11 @@
             "x-ms-last-state-change-utc",
             "Wed, 09 Oct 2019 20:28:26.312 GMT",
             "lsn",
-            "987",
+            "1012",
             "x-ms-schemaversion",
             "1.8",
             "x-ms-quorum-acked-lsn",
-            "987",
+            "1012",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
@@ -41,23 +41,23 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-transport-request-id",
-            "920",
+            "980",
             "x-ms-cosmos-llsn",
-            "987",
+            "1012",
             "x-ms-cosmos-quorum-acked-llsn",
-            "987",
+            "1012",
             "x-ms-session-token",
-            "0:-1#987",
+            "0:-1#1012",
             "x-ms-request-charge",
             "1",
             "x-ms-serviceversion",
             "version=2.4.0.0",
             "x-ms-activity-id",
-            "3722d32d-1204-4f55-8b5a-9627d23be22b",
+            "ae574b4e-2664-4b07-8aa6-564e176a3424",
             "x-ms-gatewayversion",
             "version=2.4.0.0",
             "Date",
-            "Wed, 09 Oct 2019 23:27:32 GMT"
+            "Wed, 09 Oct 2019 23:40:50 GMT"
         ]
     },
     {
@@ -75,7 +75,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 0
                             }
@@ -96,7 +96,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 0
                             }
@@ -104,11 +104,11 @@
                     ]
                 }
             },
-            "_rid": "YCFpANju2o0HAAAAAAAAAA==",
-            "_self": "dbs/YCFpAA==/colls/YCFpANju2o0=/docs/YCFpANju2o0HAAAAAAAAAA==/",
-            "_etag": "\"00000000-0000-0000-7ef9-1fc8a65d01d5\"",
+            "_rid": "ATF2ANJrohQHAAAAAAAAAA==",
+            "_self": "dbs/ATF2AA==/colls/ATF2ANJrohQ=/docs/ATF2ANJrohQHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7efa-fc51686901d5\"",
             "_attachments": "attachments/",
-            "_ts": 1570663652
+            "_ts": 1570664451
         },
         "rawHeaders": [
             "Cache-Control",
@@ -128,21 +128,21 @@
             "x-ms-last-state-change-utc",
             "Wed, 09 Oct 2019 20:28:26.312 GMT",
             "etag",
-            "\"00000000-0000-0000-7ef9-1fc8a65d01d5\"",
+            "\"00000000-0000-0000-7efa-fc51686901d5\"",
             "x-ms-resource-quota",
             "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
             "x-ms-resource-usage",
-            "documentSize=0;documentsSize=0;documentsCount=5;collectionSize=6;",
+            "documentSize=0;documentsSize=3;documentsCount=5;collectionSize=6;",
             "lsn",
-            "988",
+            "1013",
             "x-ms-schemaversion",
             "1.8",
             "x-ms-alt-content-path",
             "dbs/test-db/colls/bot-storage",
             "x-ms-content-path",
-            "YCFpANju2o0=",
+            "ATF2ANJrohQ=",
             "x-ms-quorum-acked-lsn",
-            "987",
+            "1012",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
@@ -154,23 +154,23 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-transport-request-id",
-            "921",
+            "981",
             "x-ms-cosmos-llsn",
-            "988",
+            "1013",
             "x-ms-cosmos-quorum-acked-llsn",
-            "987",
+            "1012",
             "x-ms-session-token",
-            "0:-1#988",
+            "0:-1#1013",
             "x-ms-request-charge",
             "8.38",
             "x-ms-serviceversion",
             "version=2.4.0.0",
             "x-ms-activity-id",
-            "286ee59e-cd82-4d20-a01e-d7ca5c18c203",
+            "0946069f-9866-45d8-b5d4-df7775532da2",
             "x-ms-gatewayversion",
             "version=2.4.0.0",
             "Date",
-            "Wed, 09 Oct 2019 23:27:32 GMT"
+            "Wed, 09 Oct 2019 23:40:50 GMT"
         ]
     },
     {
@@ -190,7 +190,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 0
                             }
@@ -198,11 +198,11 @@
                     ]
                 }
             },
-            "_rid": "YCFpANju2o0HAAAAAAAAAA==",
-            "_self": "dbs/YCFpAA==/colls/YCFpANju2o0=/docs/YCFpANju2o0HAAAAAAAAAA==/",
-            "_etag": "\"00000000-0000-0000-7ef9-1fc8a65d01d5\"",
+            "_rid": "ATF2ANJrohQHAAAAAAAAAA==",
+            "_self": "dbs/ATF2AA==/colls/ATF2ANJrohQ=/docs/ATF2ANJrohQHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7efa-fc51686901d5\"",
             "_attachments": "attachments/",
-            "_ts": 1570663652
+            "_ts": 1570664451
         },
         "rawHeaders": [
             "Cache-Control",
@@ -224,21 +224,21 @@
             "x-ms-last-state-change-utc",
             "Wed, 09 Oct 2019 20:28:26.312 GMT",
             "etag",
-            "\"00000000-0000-0000-7ef9-1fc8a65d01d5\"",
+            "\"00000000-0000-0000-7efa-fc51686901d5\"",
             "x-ms-resource-quota",
             "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
             "x-ms-resource-usage",
-            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "documentSize=0;documentsSize=3;documentsCount=6;collectionSize=6;",
             "lsn",
-            "988",
+            "1013",
             "x-ms-schemaversion",
             "1.8",
             "x-ms-alt-content-path",
             "dbs/test-db/colls/bot-storage",
             "x-ms-content-path",
-            "YCFpANju2o0=",
+            "ATF2ANJrohQ=",
             "x-ms-quorum-acked-lsn",
-            "988",
+            "1013",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
@@ -250,27 +250,27 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-item-lsn",
-            "988",
+            "1013",
             "x-ms-transport-request-id",
-            "922",
+            "982",
             "x-ms-cosmos-llsn",
-            "988",
+            "1013",
             "x-ms-cosmos-quorum-acked-llsn",
-            "988",
+            "1013",
             "x-ms-cosmos-item-llsn",
-            "988",
+            "1013",
             "x-ms-session-token",
-            "0:-1#988",
+            "0:-1#1013",
             "x-ms-request-charge",
             "1",
             "x-ms-serviceversion",
             "version=2.4.0.0",
             "x-ms-activity-id",
-            "1926debe-fdfe-45c1-824d-64e9b44ad77a",
+            "b72a834c-c14a-477e-9529-97723f06ea33",
             "x-ms-gatewayversion",
             "version=2.4.0.0",
             "Date",
-            "Wed, 09 Oct 2019 23:27:32 GMT"
+            "Wed, 09 Oct 2019 23:40:50 GMT"
         ]
     },
     {
@@ -288,7 +288,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 1
                             }
@@ -322,7 +322,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 1
                             }
@@ -343,11 +343,11 @@
                     ]
                 }
             },
-            "_rid": "YCFpANju2o0HAAAAAAAAAA==",
-            "_self": "dbs/YCFpAA==/colls/YCFpANju2o0=/docs/YCFpANju2o0HAAAAAAAAAA==/",
-            "_etag": "\"00000000-0000-0000-7ef9-1fcd8a9701d5\"",
+            "_rid": "ATF2ANJrohQHAAAAAAAAAA==",
+            "_self": "dbs/ATF2AA==/colls/ATF2ANJrohQ=/docs/ATF2ANJrohQHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7efa-fc55cafb01d5\"",
             "_attachments": "attachments/",
-            "_ts": 1570663652
+            "_ts": 1570664451
         },
         "rawHeaders": [
             "Cache-Control",
@@ -367,21 +367,21 @@
             "x-ms-last-state-change-utc",
             "Wed, 09 Oct 2019 20:28:26.312 GMT",
             "etag",
-            "\"00000000-0000-0000-7ef9-1fcd8a9701d5\"",
+            "\"00000000-0000-0000-7efa-fc55cafb01d5\"",
             "x-ms-resource-quota",
             "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
             "x-ms-resource-usage",
-            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "documentSize=0;documentsSize=3;documentsCount=6;collectionSize=6;",
             "lsn",
-            "989",
+            "1014",
             "x-ms-schemaversion",
             "1.8",
             "x-ms-alt-content-path",
             "dbs/test-db/colls/bot-storage",
             "x-ms-content-path",
-            "YCFpANju2o0=",
+            "ATF2ANJrohQ=",
             "x-ms-quorum-acked-lsn",
-            "988",
+            "1013",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
@@ -393,23 +393,23 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-transport-request-id",
-            "923",
+            "983",
             "x-ms-cosmos-llsn",
-            "989",
+            "1014",
             "x-ms-cosmos-quorum-acked-llsn",
-            "988",
+            "1013",
             "x-ms-session-token",
-            "0:-1#989",
+            "0:-1#1014",
             "x-ms-request-charge",
             "12.38",
             "x-ms-serviceversion",
             "version=2.4.0.0",
             "x-ms-activity-id",
-            "6e0bf3dd-dd8a-4d5a-8caa-eb163b5b5f26",
+            "7fc031f4-e38c-4a10-beb5-221ea7efaaca",
             "x-ms-gatewayversion",
             "version=2.4.0.0",
             "Date",
-            "Wed, 09 Oct 2019 23:27:32 GMT"
+            "Wed, 09 Oct 2019 23:40:50 GMT"
         ]
     },
     {
@@ -429,7 +429,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 1
                             }
@@ -450,11 +450,11 @@
                     ]
                 }
             },
-            "_rid": "YCFpANju2o0HAAAAAAAAAA==",
-            "_self": "dbs/YCFpAA==/colls/YCFpANju2o0=/docs/YCFpANju2o0HAAAAAAAAAA==/",
-            "_etag": "\"00000000-0000-0000-7ef9-1fcd8a9701d5\"",
+            "_rid": "ATF2ANJrohQHAAAAAAAAAA==",
+            "_self": "dbs/ATF2AA==/colls/ATF2ANJrohQ=/docs/ATF2ANJrohQHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7efa-fc55cafb01d5\"",
             "_attachments": "attachments/",
-            "_ts": 1570663652
+            "_ts": 1570664451
         },
         "rawHeaders": [
             "Cache-Control",
@@ -476,21 +476,21 @@
             "x-ms-last-state-change-utc",
             "Wed, 09 Oct 2019 20:28:26.312 GMT",
             "etag",
-            "\"00000000-0000-0000-7ef9-1fcd8a9701d5\"",
+            "\"00000000-0000-0000-7efa-fc55cafb01d5\"",
             "x-ms-resource-quota",
             "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
             "x-ms-resource-usage",
-            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "documentSize=0;documentsSize=3;documentsCount=6;collectionSize=6;",
             "lsn",
-            "989",
+            "1014",
             "x-ms-schemaversion",
             "1.8",
             "x-ms-alt-content-path",
             "dbs/test-db/colls/bot-storage",
             "x-ms-content-path",
-            "YCFpANju2o0=",
+            "ATF2ANJrohQ=",
             "x-ms-quorum-acked-lsn",
-            "989",
+            "1014",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
@@ -502,27 +502,27 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-item-lsn",
-            "989",
+            "1014",
             "x-ms-transport-request-id",
-            "924",
+            "984",
             "x-ms-cosmos-llsn",
-            "989",
+            "1014",
             "x-ms-cosmos-quorum-acked-llsn",
-            "989",
+            "1014",
             "x-ms-cosmos-item-llsn",
-            "989",
+            "1014",
             "x-ms-session-token",
-            "0:-1#989",
+            "0:-1#1014",
             "x-ms-request-charge",
             "1",
             "x-ms-serviceversion",
             "version=2.4.0.0",
             "x-ms-activity-id",
-            "40c79cb5-8039-402f-a839-622026d3ba9a",
+            "942f4310-74ca-4bae-8d8a-1799c49d5980",
             "x-ms-gatewayversion",
             "version=2.4.0.0",
             "Date",
-            "Wed, 09 Oct 2019 23:27:32 GMT"
+            "Wed, 09 Oct 2019 23:40:50 GMT"
         ]
     },
     {
@@ -540,7 +540,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 1
                             }
@@ -576,7 +576,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 1
                             }
@@ -599,11 +599,11 @@
                     ]
                 }
             },
-            "_rid": "YCFpANju2o0HAAAAAAAAAA==",
-            "_self": "dbs/YCFpAA==/colls/YCFpANju2o0=/docs/YCFpANju2o0HAAAAAAAAAA==/",
-            "_etag": "\"00000000-0000-0000-7ef9-1fd1d84101d5\"",
+            "_rid": "ATF2ANJrohQHAAAAAAAAAA==",
+            "_self": "dbs/ATF2AA==/colls/ATF2ANJrohQ=/docs/ATF2ANJrohQHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7efa-fc58f39601d5\"",
             "_attachments": "attachments/",
-            "_ts": 1570663652
+            "_ts": 1570664451
         },
         "rawHeaders": [
             "Cache-Control",
@@ -623,21 +623,21 @@
             "x-ms-last-state-change-utc",
             "Wed, 09 Oct 2019 20:28:26.312 GMT",
             "etag",
-            "\"00000000-0000-0000-7ef9-1fd1d84101d5\"",
+            "\"00000000-0000-0000-7efa-fc58f39601d5\"",
             "x-ms-resource-quota",
             "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
             "x-ms-resource-usage",
-            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "documentSize=0;documentsSize=3;documentsCount=6;collectionSize=6;",
             "lsn",
-            "990",
+            "1015",
             "x-ms-schemaversion",
             "1.8",
             "x-ms-alt-content-path",
             "dbs/test-db/colls/bot-storage",
             "x-ms-content-path",
-            "YCFpANju2o0=",
+            "ATF2ANJrohQ=",
             "x-ms-quorum-acked-lsn",
-            "989",
+            "1014",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
@@ -649,23 +649,23 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-transport-request-id",
-            "925",
+            "985",
             "x-ms-cosmos-llsn",
-            "990",
+            "1015",
             "x-ms-cosmos-quorum-acked-llsn",
-            "989",
+            "1014",
             "x-ms-session-token",
-            "0:-1#990",
+            "0:-1#1015",
             "x-ms-request-charge",
             "10.67",
             "x-ms-serviceversion",
             "version=2.4.0.0",
             "x-ms-activity-id",
-            "899a7123-36b7-4ab1-befc-bee96c26b65e",
+            "22403ec6-2d20-42fb-8184-85161d488489",
             "x-ms-gatewayversion",
             "version=2.4.0.0",
             "Date",
-            "Wed, 09 Oct 2019 23:27:32 GMT"
+            "Wed, 09 Oct 2019 23:40:51 GMT"
         ]
     },
     {
@@ -685,7 +685,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 1
                             }
@@ -708,11 +708,11 @@
                     ]
                 }
             },
-            "_rid": "YCFpANju2o0HAAAAAAAAAA==",
-            "_self": "dbs/YCFpAA==/colls/YCFpANju2o0=/docs/YCFpANju2o0HAAAAAAAAAA==/",
-            "_etag": "\"00000000-0000-0000-7ef9-1fd1d84101d5\"",
+            "_rid": "ATF2ANJrohQHAAAAAAAAAA==",
+            "_self": "dbs/ATF2AA==/colls/ATF2ANJrohQ=/docs/ATF2ANJrohQHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7efa-fc58f39601d5\"",
             "_attachments": "attachments/",
-            "_ts": 1570663652
+            "_ts": 1570664451
         },
         "rawHeaders": [
             "Cache-Control",
@@ -734,21 +734,21 @@
             "x-ms-last-state-change-utc",
             "Wed, 09 Oct 2019 20:28:26.312 GMT",
             "etag",
-            "\"00000000-0000-0000-7ef9-1fd1d84101d5\"",
+            "\"00000000-0000-0000-7efa-fc58f39601d5\"",
             "x-ms-resource-quota",
             "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
             "x-ms-resource-usage",
-            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "documentSize=0;documentsSize=3;documentsCount=6;collectionSize=6;",
             "lsn",
-            "990",
+            "1015",
             "x-ms-schemaversion",
             "1.8",
             "x-ms-alt-content-path",
             "dbs/test-db/colls/bot-storage",
             "x-ms-content-path",
-            "YCFpANju2o0=",
+            "ATF2ANJrohQ=",
             "x-ms-quorum-acked-lsn",
-            "990",
+            "1015",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
@@ -760,27 +760,27 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-item-lsn",
-            "990",
+            "1015",
             "x-ms-transport-request-id",
-            "926",
+            "986",
             "x-ms-cosmos-llsn",
-            "990",
+            "1015",
             "x-ms-cosmos-quorum-acked-llsn",
-            "990",
+            "1015",
             "x-ms-cosmos-item-llsn",
-            "990",
+            "1015",
             "x-ms-session-token",
-            "0:-1#990",
+            "0:-1#1015",
             "x-ms-request-charge",
             "1",
             "x-ms-serviceversion",
             "version=2.4.0.0",
             "x-ms-activity-id",
-            "088b7517-ac46-490a-973c-db7a84a035e0",
+            "92178e66-6c47-45d1-89d8-a0398e180558",
             "x-ms-gatewayversion",
             "version=2.4.0.0",
             "Date",
-            "Wed, 09 Oct 2019 23:27:32 GMT"
+            "Wed, 09 Oct 2019 23:40:51 GMT"
         ]
     },
     {
@@ -798,7 +798,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 1
                             }
@@ -834,7 +834,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 1
                             }
@@ -857,11 +857,11 @@
                     ]
                 }
             },
-            "_rid": "YCFpANju2o0HAAAAAAAAAA==",
-            "_self": "dbs/YCFpAA==/colls/YCFpANju2o0=/docs/YCFpANju2o0HAAAAAAAAAA==/",
-            "_etag": "\"00000000-0000-0000-7ef9-1fd51e8e01d5\"",
+            "_rid": "ATF2ANJrohQHAAAAAAAAAA==",
+            "_self": "dbs/ATF2AA==/colls/ATF2ANJrohQ=/docs/ATF2ANJrohQHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7efa-fc5c5b8c01d5\"",
             "_attachments": "attachments/",
-            "_ts": 1570663652
+            "_ts": 1570664451
         },
         "rawHeaders": [
             "Cache-Control",
@@ -881,21 +881,21 @@
             "x-ms-last-state-change-utc",
             "Wed, 09 Oct 2019 20:28:26.312 GMT",
             "etag",
-            "\"00000000-0000-0000-7ef9-1fd51e8e01d5\"",
+            "\"00000000-0000-0000-7efa-fc5c5b8c01d5\"",
             "x-ms-resource-quota",
             "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
             "x-ms-resource-usage",
-            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "documentSize=0;documentsSize=3;documentsCount=6;collectionSize=6;",
             "lsn",
-            "991",
+            "1016",
             "x-ms-schemaversion",
             "1.8",
             "x-ms-alt-content-path",
             "dbs/test-db/colls/bot-storage",
             "x-ms-content-path",
-            "YCFpANju2o0=",
+            "ATF2ANJrohQ=",
             "x-ms-quorum-acked-lsn",
-            "990",
+            "1015",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
@@ -907,23 +907,23 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-transport-request-id",
-            "927",
+            "987",
             "x-ms-cosmos-llsn",
-            "991",
+            "1016",
             "x-ms-cosmos-quorum-acked-llsn",
-            "990",
+            "1015",
             "x-ms-session-token",
-            "0:-1#991",
+            "0:-1#1016",
             "x-ms-request-charge",
             "10.67",
             "x-ms-serviceversion",
             "version=2.4.0.0",
             "x-ms-activity-id",
-            "d57a609c-6f91-403b-bcc1-7b5a1a54c7f2",
+            "2dce64bd-4613-4918-9c22-9ed73abaf589",
             "x-ms-gatewayversion",
             "version=2.4.0.0",
             "Date",
-            "Wed, 09 Oct 2019 23:27:32 GMT"
+            "Wed, 09 Oct 2019 23:40:51 GMT"
         ]
     },
     {
@@ -943,7 +943,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 1
                             }
@@ -966,11 +966,11 @@
                     ]
                 }
             },
-            "_rid": "YCFpANju2o0HAAAAAAAAAA==",
-            "_self": "dbs/YCFpAA==/colls/YCFpANju2o0=/docs/YCFpANju2o0HAAAAAAAAAA==/",
-            "_etag": "\"00000000-0000-0000-7ef9-1fd51e8e01d5\"",
+            "_rid": "ATF2ANJrohQHAAAAAAAAAA==",
+            "_self": "dbs/ATF2AA==/colls/ATF2ANJrohQ=/docs/ATF2ANJrohQHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7efa-fc5c5b8c01d5\"",
             "_attachments": "attachments/",
-            "_ts": 1570663652
+            "_ts": 1570664451
         },
         "rawHeaders": [
             "Cache-Control",
@@ -992,21 +992,21 @@
             "x-ms-last-state-change-utc",
             "Wed, 09 Oct 2019 20:28:26.312 GMT",
             "etag",
-            "\"00000000-0000-0000-7ef9-1fd51e8e01d5\"",
+            "\"00000000-0000-0000-7efa-fc5c5b8c01d5\"",
             "x-ms-resource-quota",
             "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
             "x-ms-resource-usage",
-            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "documentSize=0;documentsSize=3;documentsCount=6;collectionSize=6;",
             "lsn",
-            "991",
+            "1016",
             "x-ms-schemaversion",
             "1.8",
             "x-ms-alt-content-path",
             "dbs/test-db/colls/bot-storage",
             "x-ms-content-path",
-            "YCFpANju2o0=",
+            "ATF2ANJrohQ=",
             "x-ms-quorum-acked-lsn",
-            "991",
+            "1016",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
@@ -1018,27 +1018,27 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-item-lsn",
-            "991",
+            "1016",
             "x-ms-transport-request-id",
-            "928",
+            "988",
             "x-ms-cosmos-llsn",
-            "991",
+            "1016",
             "x-ms-cosmos-quorum-acked-llsn",
-            "991",
+            "1016",
             "x-ms-cosmos-item-llsn",
-            "991",
+            "1016",
             "x-ms-session-token",
-            "0:-1#991",
+            "0:-1#1016",
             "x-ms-request-charge",
             "1",
             "x-ms-serviceversion",
             "version=2.4.0.0",
             "x-ms-activity-id",
-            "8fcf5b09-4942-43cd-a592-925fe307f6f9",
+            "9289ae6e-1a02-4d88-baab-4ffd532112da",
             "x-ms-gatewayversion",
             "version=2.4.0.0",
             "Date",
-            "Wed, 09 Oct 2019 23:27:32 GMT"
+            "Wed, 09 Oct 2019 23:40:51 GMT"
         ]
     },
     {
@@ -1056,7 +1056,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 1
                             }
@@ -1092,7 +1092,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 1
                             }
@@ -1115,11 +1115,11 @@
                     ]
                 }
             },
-            "_rid": "YCFpANju2o0HAAAAAAAAAA==",
-            "_self": "dbs/YCFpAA==/colls/YCFpANju2o0=/docs/YCFpANju2o0HAAAAAAAAAA==/",
-            "_etag": "\"00000000-0000-0000-7ef9-1fd89afc01d5\"",
+            "_rid": "ATF2ANJrohQHAAAAAAAAAA==",
+            "_self": "dbs/ATF2AA==/colls/ATF2ANJrohQ=/docs/ATF2ANJrohQHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7efa-fc5fcc6f01d5\"",
             "_attachments": "attachments/",
-            "_ts": 1570663652
+            "_ts": 1570664451
         },
         "rawHeaders": [
             "Cache-Control",
@@ -1139,21 +1139,21 @@
             "x-ms-last-state-change-utc",
             "Wed, 09 Oct 2019 20:28:26.312 GMT",
             "etag",
-            "\"00000000-0000-0000-7ef9-1fd89afc01d5\"",
+            "\"00000000-0000-0000-7efa-fc5fcc6f01d5\"",
             "x-ms-resource-quota",
             "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
             "x-ms-resource-usage",
-            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "documentSize=0;documentsSize=2;documentsCount=6;collectionSize=6;",
             "lsn",
-            "992",
+            "1017",
             "x-ms-schemaversion",
             "1.8",
             "x-ms-alt-content-path",
             "dbs/test-db/colls/bot-storage",
             "x-ms-content-path",
-            "YCFpANju2o0=",
+            "ATF2ANJrohQ=",
             "x-ms-quorum-acked-lsn",
-            "991",
+            "1016",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
@@ -1165,23 +1165,23 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-transport-request-id",
-            "929",
+            "989",
             "x-ms-cosmos-llsn",
-            "992",
+            "1017",
             "x-ms-cosmos-quorum-acked-llsn",
-            "991",
+            "1016",
             "x-ms-session-token",
-            "0:-1#992",
+            "0:-1#1017",
             "x-ms-request-charge",
             "10.67",
             "x-ms-serviceversion",
             "version=2.4.0.0",
             "x-ms-activity-id",
-            "aef80f14-4fe7-4140-b16f-0168ed255435",
+            "96d64cd1-53d1-4710-828a-d40dbc33dd9c",
             "x-ms-gatewayversion",
             "version=2.4.0.0",
             "Date",
-            "Wed, 09 Oct 2019 23:27:32 GMT"
+            "Wed, 09 Oct 2019 23:40:51 GMT"
         ]
     },
     {
@@ -1201,7 +1201,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 1
                             }
@@ -1224,11 +1224,11 @@
                     ]
                 }
             },
-            "_rid": "YCFpANju2o0HAAAAAAAAAA==",
-            "_self": "dbs/YCFpAA==/colls/YCFpANju2o0=/docs/YCFpANju2o0HAAAAAAAAAA==/",
-            "_etag": "\"00000000-0000-0000-7ef9-1fd89afc01d5\"",
+            "_rid": "ATF2ANJrohQHAAAAAAAAAA==",
+            "_self": "dbs/ATF2AA==/colls/ATF2ANJrohQ=/docs/ATF2ANJrohQHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7efa-fc5fcc6f01d5\"",
             "_attachments": "attachments/",
-            "_ts": 1570663652
+            "_ts": 1570664451
         },
         "rawHeaders": [
             "Cache-Control",
@@ -1250,21 +1250,21 @@
             "x-ms-last-state-change-utc",
             "Wed, 09 Oct 2019 20:28:26.312 GMT",
             "etag",
-            "\"00000000-0000-0000-7ef9-1fd89afc01d5\"",
+            "\"00000000-0000-0000-7efa-fc5fcc6f01d5\"",
             "x-ms-resource-quota",
             "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
             "x-ms-resource-usage",
-            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "documentSize=0;documentsSize=2;documentsCount=6;collectionSize=6;",
             "lsn",
-            "992",
+            "1017",
             "x-ms-schemaversion",
             "1.8",
             "x-ms-alt-content-path",
             "dbs/test-db/colls/bot-storage",
             "x-ms-content-path",
-            "YCFpANju2o0=",
+            "ATF2ANJrohQ=",
             "x-ms-quorum-acked-lsn",
-            "992",
+            "1017",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
@@ -1276,27 +1276,27 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-item-lsn",
-            "992",
+            "1017",
             "x-ms-transport-request-id",
-            "930",
+            "990",
             "x-ms-cosmos-llsn",
-            "992",
+            "1017",
             "x-ms-cosmos-quorum-acked-llsn",
-            "992",
+            "1017",
             "x-ms-cosmos-item-llsn",
-            "992",
+            "1017",
             "x-ms-session-token",
-            "0:-1#992",
+            "0:-1#1017",
             "x-ms-request-charge",
             "1",
             "x-ms-serviceversion",
             "version=2.4.0.0",
             "x-ms-activity-id",
-            "51ce1909-b6fa-410f-8599-edd21350263a",
+            "2947ff1e-913e-4da8-b7fd-125e84bec30f",
             "x-ms-gatewayversion",
             "version=2.4.0.0",
             "Date",
-            "Wed, 09 Oct 2019 23:27:32 GMT"
+            "Wed, 09 Oct 2019 23:40:51 GMT"
         ]
     },
     {
@@ -1314,7 +1314,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 2
                             }
@@ -1335,7 +1335,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "47be5b9d-5b19-76b8-e56d-59fc6337c2d0"
+                                    "instanceId": "ee8a1a85-1b16-f7d3-8450-a0da4ca3bad0"
                                 },
                                 "stepIndex": 2
                             }
@@ -1343,11 +1343,11 @@
                     ]
                 }
             },
-            "_rid": "YCFpANju2o0HAAAAAAAAAA==",
-            "_self": "dbs/YCFpAA==/colls/YCFpANju2o0=/docs/YCFpANju2o0HAAAAAAAAAA==/",
-            "_etag": "\"00000000-0000-0000-7ef9-1fdc4c6f01d5\"",
+            "_rid": "ATF2ANJrohQHAAAAAAAAAA==",
+            "_self": "dbs/ATF2AA==/colls/ATF2ANJrohQ=/docs/ATF2ANJrohQHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7efa-fc63941701d5\"",
             "_attachments": "attachments/",
-            "_ts": 1570663652
+            "_ts": 1570664451
         },
         "rawHeaders": [
             "Cache-Control",
@@ -1367,21 +1367,21 @@
             "x-ms-last-state-change-utc",
             "Wed, 09 Oct 2019 20:28:26.312 GMT",
             "etag",
-            "\"00000000-0000-0000-7ef9-1fdc4c6f01d5\"",
+            "\"00000000-0000-0000-7efa-fc63941701d5\"",
             "x-ms-resource-quota",
             "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
             "x-ms-resource-usage",
-            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "documentSize=0;documentsSize=2;documentsCount=6;collectionSize=6;",
             "lsn",
-            "993",
+            "1018",
             "x-ms-schemaversion",
             "1.8",
             "x-ms-alt-content-path",
             "dbs/test-db/colls/bot-storage",
             "x-ms-content-path",
-            "YCFpANju2o0=",
+            "ATF2ANJrohQ=",
             "x-ms-quorum-acked-lsn",
-            "992",
+            "1017",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
@@ -1393,23 +1393,23 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-transport-request-id",
-            "931",
+            "991",
             "x-ms-cosmos-llsn",
-            "993",
+            "1018",
             "x-ms-cosmos-quorum-acked-llsn",
-            "992",
+            "1017",
             "x-ms-session-token",
-            "0:-1#993",
+            "0:-1#1018",
             "x-ms-request-charge",
             "12.76",
             "x-ms-serviceversion",
             "version=2.4.0.0",
             "x-ms-activity-id",
-            "579a73c2-71be-4a3e-a81c-7fe22f85ceab",
+            "d802cd65-b2b8-4709-8329-19a32ac0adb8",
             "x-ms-gatewayversion",
             "version=2.4.0.0",
             "Date",
-            "Wed, 09 Oct 2019 23:27:32 GMT"
+            "Wed, 09 Oct 2019 23:40:51 GMT"
         ]
     }
 ]

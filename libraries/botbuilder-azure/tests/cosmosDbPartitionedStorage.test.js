@@ -38,10 +38,10 @@ if (cosmosDbEndpoint.includes('localhost:8081')) {
 const hasEmulator = fs.existsSync(emulatorPath);
 
 const checkEmulator = () => {
-    if (!hasEmulator) {
-        assert.fail(noEmulatorMessage);
+    if (hasEmulator) {
+        return true;
     }
-    return true;
+    return false;
 };
 
 // item to test the read and delete operations with partitionkey
