@@ -1,5 +1,13 @@
-import { Storage, StoreItems, StoreItem } from 'botbuilder';
-import { Container, CosmosClient, CosmosClientOptions, FeedResponse, SqlParameter, SqlQuerySpec } from '@azure/cosmos';
+/**
+ * @module botbuilder-azure
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+import { Storage, StoreItems } from 'botbuilder';
+import { Container, CosmosClient, CosmosClientOptions } from '@azure/cosmos';
 import { CosmosDbKeyEscape } from './cosmosDbKeyEscape';
 import * as semaphore from 'semaphore';
 
