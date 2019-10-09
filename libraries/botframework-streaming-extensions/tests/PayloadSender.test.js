@@ -1,5 +1,5 @@
 const SubscribableStream = require('../lib/SubscribableStream');
-const StreamManager = require('../lib/Payloads/StreamManager')
+const StreamManager = require('../lib/Payloads/StreamManager');
 const PayloadSender = require('../lib/PayloadTransport/PayloadSender');
 const PayloadReceiver = require('../lib/PayloadTransport/PayloadReceiver');
 const PayloadTypes = require('../lib/Payloads/PayloadTypes');
@@ -119,7 +119,7 @@ describe('PayloadTransport', () => {
             let pr = new PayloadReceiver.PayloadReceiver();
             expect(pr.isConnected).to.be.undefined;
 
-            let sock = new FauxSock(["A.000000.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n"]);
+            let sock = new FauxSock(['A.000000.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n']);
             sock.setReceiver(pr);
 
             pr.connect(sock);
@@ -130,7 +130,7 @@ describe('PayloadTransport', () => {
             let pr = new PayloadReceiver.PayloadReceiver();
             expect(pr.isConnected).to.be.undefined;
 
-            let sock = new FauxSock(["S.000005.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n", "12345"]);
+            let sock = new FauxSock(['S.000005.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n', '12345']);
             sock.setReceiver(pr);
 
             this.streamManager = new StreamManager.StreamManager(undefined);
