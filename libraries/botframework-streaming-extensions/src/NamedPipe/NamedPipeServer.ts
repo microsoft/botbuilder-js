@@ -75,14 +75,14 @@ export class NamedPipeServer implements IStreamingTransportServer {
             });
         });
 
-        await Promise.all([incoming, outgoing]);
-
         const { PipePath, ServerIncomingPath, ServerOutgoingPath } = NamedPipeTransport;
         const incomingPipeName = PipePath + this._baseName + ServerIncomingPath;
         const outgoingPipeName = PipePath + this._baseName + ServerOutgoingPath;
 
         this._incomingServer.listen(incomingPipeName);
         this._outgoingServer.listen(outgoingPipeName);
+
+        await Promise.all([incoming, outgoing]);
 
         return 'connected';
     }
