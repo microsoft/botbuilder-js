@@ -45,7 +45,7 @@ export interface PredictionResolveOptionalParams {
      */
     log?: boolean;
 
-    customHeaders: {headers: {[name: string]: string}};
+    customHeaders?: {headers: {[name: string]: string}};
 }
 
  /**
