@@ -5,12 +5,12 @@ import {
     Activity,
     Attachment,
     CardFactory,
-    MessagingExtensionActionResponse,
     MessagingExtensionAction,
+    MessagingExtensionActionResponse,
     TaskModuleContinueResponse,
     TaskModuleMessageResponse,
     TaskModuleResponseBase,
-    TeamsActivityHandler,
+    TeamsActivityHandler
 } from 'botbuilder';
 
 export class ActionBasedMessagingExtensionBot  extends TeamsActivityHandler {
@@ -42,20 +42,20 @@ export class ActionBasedMessagingExtensionBot  extends TeamsActivityHandler {
         let body: MessagingExtensionActionResponse;
         if (data && data.done) {
             // The commandContext check doesn't need to be used in this scenario as the manifest specifies the shareMessage command only works in the "message" context.
-            let sharedMessage = (action.commandId === 'shareMessage' && action.commandContext === 'message')
+            const sharedMessage = (action.commandId === 'shareMessage' && action.commandContext === 'message')
                 ? `Shared message: <div style="background:#F0F0F0">${JSON.stringify(action.messagePayload)}</div><br/>`
                 : '';
-            let preview = CardFactory.thumbnailCard('Created Card', `Your input: ${data.userText}`);
-            let heroCard = CardFactory.heroCard('Created Card', `${sharedMessage}Your input: <pre>${data.userText}</pre>`);
+            const preview = CardFactory.thumbnailCard('Created Card', `Your input: ${data.userText}`);
+            const heroCard = CardFactory.heroCard('Created Card', `${sharedMessage}Your input: <pre>${data.userText}</pre>`);
             body = {
                 composeExtension: {
-                    type: 'result',
                     attachmentLayout: 'list',
                     attachments: [
                         { ...heroCard, preview }
-                    ]
+                    ],
+                    type: 'result'
                 }
-            }
+            };
         } else if (action.commandId === 'createWithPreview') {
             // The commandId is definied in the manifest of the Teams Application
             const activityPreview = {
@@ -66,14 +66,14 @@ export class ActionBasedMessagingExtensionBot  extends TeamsActivityHandler {
 
             body = {
                 composeExtension: {
-                    type: 'botMessagePreview',
-                    activityPreview
+                    activityPreview,
+                    type: 'botMessagePreview'
                 }
             };
         } else {
             body = {
                 task: this.taskModuleResponse(action, false)
-            }
+            };
         }
 
         return body;
@@ -92,11 +92,11 @@ export class ActionBasedMessagingExtensionBot  extends TeamsActivityHandler {
         const card = this.getCardFromPreviewMessage(action);
         if (!card) {
             body = {
-                task: <TaskModuleMessageResponse>{
+                task: {
                     type: 'message',
                     value: 'Missing user edit card. Something wrong on Teams client.'
-                }
-            }
+                } as TaskModuleMessageResponse
+            };
         } else {
             body = undefined;
             await context.sendActivity({ attachments: [card] });
@@ -110,18 +110,18 @@ export class ActionBasedMessagingExtensionBot  extends TeamsActivityHandler {
         let body: MessagingExtensionActionResponse;
         if (!card) {
             body = {
-                task: <TaskModuleMessageResponse>{
+                task: {
                     type: 'message',
                     value: 'Missing user edit card. Something wrong on Teams client.'
-                }
-            }
+                } as TaskModuleMessageResponse
+            };
         } else {
             body = {
-                task: <TaskModuleContinueResponse>{
+                task: {
                     type: 'continue',
                     value: { card }
-                }
-            }
+                } as TaskModuleContinueResponse
+            };
         }
 
         return body;
@@ -137,66 +137,66 @@ export class ActionBasedMessagingExtensionBot  extends TeamsActivityHandler {
 
     private taskModuleResponse(query: any, done: boolean): TaskModuleResponseBase {
         if (done) {
-            return <TaskModuleMessageResponse>{
+            return {
                 type: 'message',
                 value: 'Thanks for your inputs!'
-            }
+            } as TaskModuleMessageResponse;
         } else {
-            return <TaskModuleContinueResponse>{
+            return {
                 type: 'continue',
                 value: {
-                    title: 'More Page',
-                    card: this.taskModuleResponseCard(query, (query.data && query.data.userText) || undefined)
+                    card: this.taskModuleResponseCard(query, (query.data && query.data.userText) || undefined),
+                    title: 'More Page'
                 }
-            };
+            } as TaskModuleContinueResponse;
         }
     }
 
     private taskModuleResponseCard(data: any, textValue?: string) {
         return CardFactory.adaptiveCard({
-            version: '1.0.0',
-            type: 'AdaptiveCard',
+            actions: [
+                {
+                    data: {
+                        done: false
+                    },
+                    title: 'Next',
+                    type: 'Action.Submit'
+                },
+                {
+                    data: {
+                        done: true
+                    },
+                    title: 'Submit',
+                    type: 'Action.Submit'
+                }
+            ],
             body: [
                 {
-                    type: 'TextBlock',
-                    text: `Your request:`,
                     size: 'large',
+                    text: `Your request:`,
+                    type: 'TextBlock',
                     weight: 'bolder'
                 },
                 {
-                    type: 'Container',
-                    style: 'emphasis',
                     items: [
                         {
-                            type: 'TextBlock',
                             text: JSON.stringify(data),
+                            type: 'TextBlock',
                             wrap: true
                         }
-                    ]
+                    ],
+                    style: 'emphasis',
+                    type: 'Container'
                 },
                 {
-                    type: 'Input.Text',
                     id: 'userText',
                     placeholder: 'Type text here...',
+                    type: 'Input.Text',
                     value: textValue
                 }
             ],
-            actions: [
-                {
-                    type: 'Action.Submit',
-                    title: 'Next',
-                    data: {
-                        done: false
-                    }
-                },
-                {
-                    type: 'Action.Submit',
-                    title: 'Submit',
-                    data: {
-                        done: true
-                    }
-                }
-            ]
-        })
+            type: 'AdaptiveCard',
+            version: '1.0.0'
+        });
     }
 }
