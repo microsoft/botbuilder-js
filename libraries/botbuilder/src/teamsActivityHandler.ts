@@ -90,7 +90,7 @@ export class TeamsActivityHandler extends ActivityHandler {
                         return TeamsActivityHandler.createInvokeResponse(await this.onTeamsMessagingExtensionConfigurationQuerySettingUrl(context, context.activity.value));
 
                     case 'composeExtension/setting':
-                        await this.onTeamsMessagingExtensionQuerySetting(context, context.activity.value);
+                        await this.onTeamsMessagingExtensionConfigurationSetting(context, context.activity.value);
                         return TeamsActivityHandler.createInvokeResponse();
 
                     case 'composeExtension/onCardButtonClicked':
@@ -264,9 +264,9 @@ export class TeamsActivityHandler extends ActivityHandler {
         if (action.botMessagePreviewAction) {
             switch (action.botMessagePreviewAction) {
                 case 'edit':
-                    return await this.onTeamsBotMessagePreviewEdit(context, action);
+                    return await this.onTeamsMessagingExtensionBotMessagePreviewEdit(context, action);
                 case 'send':
-                    return await this.onTeamsBotMessagePreviewSend(context, action);
+                    return await this.onTeamsMessagingExtensionBotMessagePreviewSend(context, action);
                 default:
                     throw new Error('BadRequest');
             }
@@ -294,7 +294,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param action
      */
-    protected async onTeamsBotMessagePreviewEdit(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+    protected async onTeamsMessagingExtensionBotMessagePreviewEdit(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -306,7 +306,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param action
      */
-    protected async onTeamsBotMessagePreviewSend(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+    protected async onTeamsMessagingExtensionBotMessagePreviewSend(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -333,7 +333,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param query
      */
-    protected onTeamsMessagingExtensionQuerySetting(context: TurnContext, settings: any): Promise<MessagingExtensionResponse> {
+    protected onTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings: any): Promise<void> {
         throw new Error('NotImplemented');
     }
 

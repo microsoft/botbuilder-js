@@ -34,33 +34,7 @@ describe('ActivityExtensions', function() {
 		teamsNotifyUser(activity);
 		assert(activity.channelData.Notification.Alert === true);
     });
-    it('should send to channel', async function() {
-		// Arrange
-		var teamActivity = createActivityTeamId();
-		var context = new TestContext(teamActivity);
-
-		// Act
-		var response = await teamsSendToChannel(context, "MySwitchedID", teamActivity);
-		
-		// Assert
-		assert(context.sent.length == 1);
-		assert(response == undefined);
-		assert(context.sent[0].conversation.id == "MySwitchedID");
-	});
-    it('should send to general channel', async function() {
-		// Arrange
-		var teamActivity = createActivityTeamId();
-		var context = new TestContext(teamActivity);
-
-		// Act
-		var response = await teamsSendToGeneralChannel(context, teamActivity);
-		
-		// Assert
-		assert(context.sent.length == 1);
-		assert(response == undefined);
-		assert(context.sent[0].conversation.id == "myId");
-	});
-   
+ 
 });
 
 function createActivityNoId() {
