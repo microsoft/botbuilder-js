@@ -11,11 +11,12 @@
 /// with the WebSocket server or client.
 /// </summary>
 export interface ISocket {
+    // TODO: We could convert this into property.
     isConnected(): boolean;
-    write(buffer: Buffer);
-    connect(serverAddress: string): Promise<void>;
-    close();
-    setOnMessageHandler(handler: (x: any) => void);
-    setOnErrorHandler(handler: (x: any) => void);
-    setOnCloseHandler(handler: (x: any) => void);
+    write(message: any);
+    connect(url: string): Promise<void>;
+    close(code?: number, reason?: string): Promise<void>;
+    setOnMessageHandler(handler: (message: any) => void);
+    setOnErrorHandler(handler: (error: Error) => void);
+    setOnCloseHandler(handler: (code: number, reason: string) => void);
 }
