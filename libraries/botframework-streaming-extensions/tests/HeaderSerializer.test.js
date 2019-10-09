@@ -68,7 +68,7 @@ describe('HeaderSerializer', () => {
         buffer.write('ABCDE.000168.68e999ca-a651-40f4-ad8f-3aaf7b4.1\n');
 
         expect(() =>  HeaderSerializer.HeaderSerializer.deserialize(buffer))
-        .throws('Header Type is missing or malformed.');
+            .throws('Header Type is missing or malformed.');
     });
 
     it('throws if the header length is malformed', () => {
@@ -77,7 +77,7 @@ describe('HeaderSerializer', () => {
         buffer.write('A.00b168.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n');
 
         expect(() =>  HeaderSerializer.HeaderSerializer.deserialize(buffer))
-        .throws('Header Length is missing or malformed.');
+            .throws('Header Length is missing or malformed.');
     });
 
     it('throws if the header length is too small', () => {
@@ -86,7 +86,7 @@ describe('HeaderSerializer', () => {
         buffer.write('A.-100000.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n');
 
         expect(() =>  HeaderSerializer.HeaderSerializer.deserialize(buffer))
-        .throws('Header Length is missing or malformed.');
+            .throws('Header Length is missing or malformed.');
     });
 
     it('throws if the header length is to big', () => {
@@ -95,7 +95,7 @@ describe('HeaderSerializer', () => {
         buffer.write('A.1111111.8e999ca-a651-40f4-ad8f-3aaf781862b4.1\n');
 
         expect(() =>  HeaderSerializer.HeaderSerializer.deserialize(buffer))
-        .throws('Header Length is missing or malformed.');
+            .throws('Header Length is missing or malformed.');
     });
 
     it('throws if the header terminator is malformed', () => {
@@ -104,7 +104,7 @@ describe('HeaderSerializer', () => {
         buffer.write('A.000168.68e999ca-a651-40f4-ad8f-3aaf781862b4.2\n');
 
         expect(() =>  HeaderSerializer.HeaderSerializer.deserialize(buffer))
-        .throws('Header End is missing or not a valid value.');
+            .throws('Header End is missing or not a valid value.');
     });
 
     it('throws if the header ID is malformed', () => {
