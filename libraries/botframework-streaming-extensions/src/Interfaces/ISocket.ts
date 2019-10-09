@@ -11,7 +11,6 @@
 /// with the WebSocket server or client.
 /// </summary>
 export interface ISocket {
-    // TODO: We could convert this into property.
     isConnected(): boolean;
     write(message: any);
     connect(url: string): Promise<void>;
