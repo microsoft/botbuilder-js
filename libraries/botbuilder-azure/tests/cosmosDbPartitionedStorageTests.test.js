@@ -1,11 +1,13 @@
 const assert = require('assert');
 const { CosmosDbPartitionedStorage } = require('../lib');
+const { AutoSaveStateMiddleware, ConversationState, MessageFactory, TestAdapter } = require('../../botbuilder-core');
+const { Dialog, DialogSet, TextPrompt, WaterfallDialog } = require('../../botbuilder-dialogs');
 const { CosmosClient } = require('@azure/cosmos');
 const { MockMode, usingNock } = require('./mockHelper');
 const nock = require('nock');
 const fs = require('fs');
 
-const mode = process.env.MOCK_MODE ? process.env.MOCK_MODE : MockMode.wild; // TODO: change this back to lockdown
+const mode = process.env.MOCK_MODE ? process.env.MOCK_MODE : MockMode.lockdown;
 
 // Endpoint and Authkey for the CosmosDB Emulator running locally
 const cosmosDbEndpoint = 'https://localhost:8081';
@@ -62,10 +64,6 @@ const reset = async () => {
         } catch (err) { }
         await client.databases.create({ id: databaseId });
     }
-};
-
-const print = (o) => {
-    return JSON.stringify(o, null, '  ');
 };
 
 const options = {
@@ -138,6 +136,51 @@ const testStorage = () => {
     
             assert.notStrictEqual(readStoreItems[key], null);
             assert.strictEqual(readStoreItems[key].id, 1);
+    
+            nockDone;
+        }
+    });
+
+    // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
+    it('should return empty dictionary when reading empty keys', async function() {
+        if(checkEmulator()) {
+            const { nockDone } = usingNock(this.test, mode, options);
+    
+            const state = await storage.read([]);
+            assert.deepStrictEqual(state, {});
+    
+            nockDone;
+        }
+    });
+
+    // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
+    it('should throw when reading null keys', async function() {
+        if(checkEmulator()) {
+            const { nockDone } = usingNock(this.test, mode, options);
+    
+            await assert.rejects(async () => await storage.read(null), ReferenceError(`Keys are required when reading.`));
+    
+            nockDone;
+        }
+    });
+
+    // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
+    it('should throw when writing null keys', async function() {
+        if(checkEmulator()) {
+            const { nockDone } = usingNock(this.test, mode, options);
+    
+            await assert.rejects(async () => await storage.write(null), ReferenceError(`Changes are required when writing.`));
+    
+            nockDone;
+        }
+    });
+
+    // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
+    it('should not throw when writing no items', async function() {
+        if(checkEmulator()) {
+            const { nockDone } = usingNock(this.test, mode, options);
+    
+            await assert.doesNotReject(async () => await storage.write([]));
     
             nockDone;
         }
@@ -247,7 +290,6 @@ const testStorage = () => {
 
     // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
     it('should delete an object', async function() {
-        this.timeout(99*99*99);
         if(checkEmulator()) {
             const { nockDone } = usingNock(this.test, mode, options);
     
@@ -271,9 +313,91 @@ const testStorage = () => {
             nockDone;
         }
     });
-};
 
-// TODO: Add additional tests
+    // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
+    it('should not throw when deleting unknown object', async function() {
+        if(checkEmulator()) {
+            const { nockDone } = usingNock(this.test, mode, options);
+
+            await assert.doesNotReject(async () => {
+                await storage.delete(['unknown_key']);
+            });
+    
+            nockDone;
+        }
+    });
+
+    // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
+    it('should correctly proceed through a waterfall dialog', async function() {
+        if(checkEmulator()) {
+            const { nockDone } = usingNock(this.test, mode, options);
+
+            const convoState = new ConversationState(storage);
+
+            const dialogState = convoState.createProperty('dialogState');
+            const dialogs = new DialogSet(dialogState);
+
+            const adapter = new TestAdapter(async (turnContext) => {
+                const dc = await dialogs.createContext(turnContext);
+
+                await dc.continueDialog();
+                if (!turnContext.responded) {
+                    await dc.beginDialog('waterfallDialog');
+                }
+            })
+                .use(new AutoSaveStateMiddleware(convoState));
+
+            dialogs.add(new TextPrompt('textPrompt', async (promptContext) => {
+                const result = promptContext.recognized.value;
+                if (result.length > 3) {
+                    const succeededMessage = MessageFactory.text(`You got it at the ${ promptContext.attemptCount }th try!`);
+                    await promptContext.context.sendActivity(succeededMessage);
+                    return true;
+                }
+
+                const reply = MessageFactory.text(`Please send a name that is longer than 3 characters. ${ promptContext.attemptCount }`);
+                await promptContext.context.sendActivity(reply);
+                return false;
+            }));
+
+            const steps = [
+                async (stepContext) => {
+                    assert.strictEqual(typeof(stepContext.activeDialog.state['stepIndex']), 'number');
+                    await stepContext.context.sendActivity('step1');
+                    return Dialog.EndOfTurn;
+                },
+                async (stepContext) => {
+                    assert.strictEqual(typeof(stepContext.activeDialog.state['stepIndex']), 'number');
+                    await stepContext.prompt('textPrompt', { prompt: MessageFactory.text('Please type your name.') });
+                },
+                async (stepContext) => {
+                    assert.strictEqual(typeof(stepContext.activeDialog.state['stepIndex']), 'number');
+                    await stepContext.context.sendActivity('step3');
+                    return Dialog.EndOfTurn;
+                },
+            ];
+
+            dialogs.add(new WaterfallDialog('waterfallDialog', steps));
+
+            await adapter.send('hello')
+                .assertReply('step1')
+                .send('hello')
+                .assertReply('Please type your name.')
+                .send('hi')
+                .assertReply('Please send a name that is longer than 3 characters. 1')
+                .send('hi')
+                .assertReply('Please send a name that is longer than 3 characters. 2')
+                .send('hi')
+                .assertReply('Please send a name that is longer than 3 characters. 3')
+                .send('Kyle')
+                .assertReply('You got it at the 4th try!')
+                .assertReply('step3')
+                .startTest();
+    
+            nockDone;
+        }
+    });
+};
 
 describe('CosmosDbPartitionedStorage', function() {
     this.timeout(20000);
