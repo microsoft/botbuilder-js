@@ -41,6 +41,7 @@ const checkEmulator = () => {
     if (hasEmulator) {
         return true;
     }
+    console.warn(noEmulatorMessage);
     return false;
 };
 
@@ -67,7 +68,7 @@ const reset = async () => {
 };
 
 const options = {
-    scope: getSettings().serviceEndpoint
+    scope: getSettings().cosmosDbEndpoint
 };
 
 const testStorage = () => {
