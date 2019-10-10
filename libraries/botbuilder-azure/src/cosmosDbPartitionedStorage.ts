@@ -135,8 +135,8 @@ export class CosmosDbPartitionedStorage implements Storage {
                 if (err.code === 404) { }
                 // Throw unique error for 400s
                 else if (err.code === 400) {
-                    this.throwInformativeError(`Error initializing container. You might be using partitions in a non-partitioned DB or
-                    are not using partitions in a partitioned db that already contains partitioned data`, err);
+                    this.throwInformativeError(`Error reading from container. You might be attempting to read from a non-partitioned 
+                    container or a container that does not use '/id' as the partitionKeyPath`, err);
                 } else {
                     this.throwInformativeError('Error reading from container', err);
                 }
@@ -165,11 +165,11 @@ export class CosmosDbPartitionedStorage implements Storage {
             });
 
             const eTag: string = changes[k].eTag;
-            if (!eTag || eTag === '*') {
+            if (eTag == null || eTag === '*') {
                 // If new item or *, then insert or replace unconditionally
                 try {
                     await this.container.items
-                        .upsert(documentChange, { disableAutomaticIdGeneration: true,  });
+                        .upsert(documentChange, { disableAutomaticIdGeneration: true, });
                 } catch (err) {
                     this.throwInformativeError('Error upserting document', err);
                 }
@@ -177,8 +177,8 @@ export class CosmosDbPartitionedStorage implements Storage {
                 // If we have an etag, do opt. concurrency replace
                 try {
                     await this.container
-                        .item(CosmosDbKeyEscape.escapeKey(k), documentChange.partitionKey)
-                        .replace(documentChange, { accessCondition: { type: 'IfMatch', condition: eTag } });
+                        .items
+                        .upsert(documentChange, { accessCondition: { type: 'IfMatch', condition: eTag } });
                 } catch (err) {
                     this.throwInformativeError('Error replacing document', err);
                 }
@@ -193,9 +193,10 @@ export class CosmosDbPartitionedStorage implements Storage {
         await this.initialize();
 
         await Promise.all(keys.map(async (k: string): Promise<void> => {
+            const escapedKey = CosmosDbKeyEscape.escapeKey(k);
             try {
                 await this.container
-                    .item(CosmosDbKeyEscape.escapeKey(k), k)
+                    .item(escapedKey, escapedKey)
                     .delete();
             } catch (err) {
                 // If trying to delete a document that doesn't exist, do nothing. Otherwise, throw
