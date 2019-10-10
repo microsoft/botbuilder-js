@@ -8,6 +8,12 @@
  * Activity helper methods for Teams.
  */
 
+export function teamsGetChannelId(activity : object) {
+    const channelData = ('channelData' in activity) ? activity['channelData'] : null;
+    const channel = (validObject(channelData) && 'channel' in channelData) ? channelData['channel'] : null;
+    return (validObject(channel) && 'id' in channel) ? channel['id'] : null;
+}
+
 export function teamsGetTeamId(activity : object) {
     const channelData = ('channelData' in activity) ? activity['channelData'] : null;
     const team = (validObject(channelData) && 'team' in channelData) ? channelData['team'] : null;

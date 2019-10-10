@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
- export interface IStreamDescription {
-     id: string;
-     contentType?: string;
-     length?: number;
- }
+export interface IStreamDescription {
+    id: string;
+    contentType?: string;
+    length?: number;
+}

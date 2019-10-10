@@ -355,6 +355,6 @@ export abstract class Prompt<T> extends Dialog {
  * @private
  */
 interface PromptState {
-    state: object;
+    state: any;
     options: PromptOptions;
 }
