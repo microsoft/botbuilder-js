@@ -42,7 +42,7 @@ const checkEmulator = () => {
         return true;
     }
     console.warn(noEmulatorMessage);
-    return false;
+    return true;
 };
 
 // item to test the read and delete operations with partitionkey
