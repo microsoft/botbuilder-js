@@ -343,4 +343,27 @@ describe(`CardFactory`, function () {
         assert(content.text === undefined, `text should not exist.`);
         assert(content.connectionName === 'ConnectionName', `wrong connectionName.`);
     });
+
+    it(`should create an o365ConnectorCard.`, function () {
+        const attachment = CardFactory.o365ConnectorCard(
+            {
+                "title": "card title",
+                "text": "card text",
+                "summary": "O365 card summary",
+                "themeColor": "#E67A9E",
+                "sections": [
+                    {
+                        "title": "**section title**",
+                        "text": "section text",
+                        "activityTitle": "activity title",
+                     }
+                ]
+            }
+        );
+        assertAttachment(attachment, CardFactory.contentTypes.o365ConnectorCard);
+        const content = attachment.content;
+        assert(content.title === 'card title', `wrong title.`);
+        assert(content.sections.length === 1, `wrong sections count.`);
+        assert(content.potentialAction === undefined, `potentialAction should not exist.`);
+    });
 });
