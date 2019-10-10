@@ -15,7 +15,7 @@ describe('RequestDisassembler', () => {
         let req = new Request.StreamingRequest();
         let headers = {contentLength: 40, contentType: 'A'};
         let stream = new Stream.SubscribableStream();
-        stream.write("This is the data inside of the stream.", 'UTF-8');
+        stream.write('This is the data inside of the stream.', 'UTF-8');
         let content = new HttpContentStream.HttpContent(headers, stream);
         let contentStream = new HttpContentStream.HttpContentStream(content);
         contentStream.content.headers = headers;
@@ -24,7 +24,7 @@ describe('RequestDisassembler', () => {
         let rd = new Disassemblers.RequestDisassembler(sender,'42', req);
 
         let result = rd.getStream()
-        .then(done());
+            .then(done());
     });
 });
 

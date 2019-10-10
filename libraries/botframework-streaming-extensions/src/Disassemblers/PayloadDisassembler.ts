@@ -44,7 +44,7 @@ export abstract class PayloadDisassembler {
     }
 
     private async send(): Promise<void> {
-        let header: IHeader = {payloadType: this.payloadType, payloadLength: this.streamLength, id: this.id, end: true}
+        let header: IHeader = {payloadType: this.payloadType, payloadLength: this.streamLength, id: this.id, end: true};
         this.sender.sendPayload(header, this.stream);
     }
 }
