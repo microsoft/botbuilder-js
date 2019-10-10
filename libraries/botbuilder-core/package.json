@@ -34,7 +34,7 @@
   "scripts": {
     "test": "tsc && nyc mocha tests/",
     "build": "tsc",
-    "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\index.d.ts ..\\botbuilder-core\\lib\\index.d.ts ..\\botbuilder-core-extensions\\lib\\index.d.ts ..\\botframework-schema\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK\" --readme none",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\index.d.ts ..\\botbuilder-core\\lib\\index.d.ts ..\\botframework-schema\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK\" --readme none",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}"
   },

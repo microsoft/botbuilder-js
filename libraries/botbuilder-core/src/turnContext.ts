@@ -44,6 +44,8 @@ export type DeleteActivityHandler = (
     next: () => Promise<void>
 ) => Promise<void>;
 
+export const BotCallbackHandlerKey = 'botCallbackHandler';
+
 // tslint:disable-next-line:no-empty-interface
 export interface TurnContext {}
 
@@ -320,7 +322,9 @@ export class TurnContext {
      * @param activity New replacement activity. The activity should already have it's ID information populated.
      */
     public updateActivity(activity: Partial<Activity>): Promise<void> {
-        return this.emit(this._onUpdateActivity, activity, () => this.adapter.updateActivity(this, activity));
+        const ref: Partial<ConversationReference> = TurnContext.getConversationReference(this.activity);
+        const a: Partial<Activity> = TurnContext.applyConversationReference(activity, ref);
+        return this.emit(this._onUpdateActivity, a, () => this.adapter.updateActivity(this, a));
     }
 
     /**
@@ -535,4 +539,14 @@ export class TurnContext {
         return emitNext(0);
     }
 
+    /**
+      * Determine if the Activity was sent via an Http/Https connection or Streaming
+      * This can be determined by looking at the ServiceUrl property:
+      *   (1) All channels that send messages via http/https are not streaming
+      *   (2) Channels that send messages via streaming have a ServiceUrl that does not begin with http/https.
+      * @param activity 
+      */
+     public static isFromStreamingConnection(activity: Activity): boolean {
+        return activity && activity.serviceUrl && !activity.serviceUrl.toLowerCase().startsWith('http');
+     }
 }

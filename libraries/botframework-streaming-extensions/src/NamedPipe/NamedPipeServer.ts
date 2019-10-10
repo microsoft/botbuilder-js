@@ -75,9 +75,13 @@ export class NamedPipeServer implements IStreamingTransportServer {
             });
         });
 
-        await Promise.all([incoming, outgoing]);
+        // These promises will only resolve when the underlying connection has terminated.
+        // Anything awaiting on them will be blocked for the duration of the session,
+        // which is useful when detecting premature terminations, but requires an unawaited
+        // promise during the process of establishing the connection.
+        Promise.all([incoming, outgoing]);
 
-        const { PipePath, ServerIncomingPath, ServerOutgoingPath } = NamedPipeTransport
+        const { PipePath, ServerIncomingPath, ServerOutgoingPath } = NamedPipeTransport;
         const incomingPipeName = PipePath + this._baseName + ServerIncomingPath;
         const outgoingPipeName = PipePath + this._baseName + ServerOutgoingPath;
 

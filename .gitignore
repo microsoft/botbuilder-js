@@ -307,3 +307,4 @@ __pycache__/
 /test-runner/out
 package-lock.json
 
+*.tsbuildinfo
