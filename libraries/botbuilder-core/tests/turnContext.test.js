@@ -395,4 +395,46 @@ describe(`TurnContext`, function () {
         assert(text,' test activity');
         assert(activity.text,' test activity');
     });
+
+    it ('should identify streaming connections', function() {
+        let activity = {
+            type: 'message',
+            text: '<at>TestOAuth619</at> test activity',
+            recipient: { id: 'TestOAuth619' },
+        };
+
+        const streaming = [
+            'urn:botframework:WebSocket:wss://beep.com',
+            'urn:botframework:WebSocket:http://beep.com',
+            'URN:botframework:WebSocket:wss://beep.com',
+            'URN:botframework:WebSocket:http://beep.com',
+        ];
+
+        streaming.forEach(s =>
+        {
+            activity.serviceUrl = s;
+            assert(TurnContext.isFromStreamingConnection(activity), 'did not detect streaming');
+        });
+    });
+
+    it ('should identify http connections', function() {
+        let activity = {
+            type: 'message',
+            text: '<at>TestOAuth619</at> test activity',
+            recipient: { id: 'TestOAuth619' },
+        };
+
+        const streaming = [
+            'http://yayay.com',
+            'https://yayay.com',
+            'HTTP://yayay.com',
+            'HTTPS://yayay.com',
+        ];
+
+        streaming.forEach(s =>
+        {
+            activity.serviceUrl = s;
+            assert(!TurnContext.isFromStreamingConnection(activity), 'incorrectly detected streaming');
+        });
+    });
 });

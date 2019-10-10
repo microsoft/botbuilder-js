@@ -14,12 +14,12 @@ export interface TokenPollingSettings
     /**
      * Polling timeout time in milliseconds. This is equivalent to login flow timeout.
      */
-    timeout: number;
+    timeout?: number;
     
     /**
      * Time Interval in milliseconds between token polling requests.
      */
-    interval: number;
+    interval?: number;
 }
 
 /**

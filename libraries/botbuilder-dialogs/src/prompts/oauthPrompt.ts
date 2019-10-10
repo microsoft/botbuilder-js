@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Token } from '@microsoft/recognizers-text-date-time';
-import { Activity, ActivityEx, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider,  } from 'botbuilder-core';
+import { Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider,  } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
@@ -250,7 +250,7 @@ export class OAuthPrompt extends Dialog {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.oauthCard);
             if (cards.length === 0) {
                 let link: string = undefined;
-                if (ActivityEx.isFromStreamingConnection(context.activity)) {
+                if (TurnContext.isFromStreamingConnection(context.activity)) {
                     link = await (context.adapter as any).getSignInLink(context, this.settings.connectionName);
                 }
                 // Append oauth card
@@ -275,9 +275,9 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Add the login timeout specified in OAuthPromptSettings to TurnState so it can be referenced if polling is needed
-        if (!context.turnState[OAuthLoginTimeoutKey] && this.settings.timeout)
+        if (!context.turnState.get(OAuthLoginTimeoutKey) && this.settings.timeout)
         {
-            context.turnState[OAuthLoginTimeoutKey] = this.settings.timeout;
+            context.turnState.set(OAuthLoginTimeoutKey, this.settings.timeout);
         }
 
         // Send prompt
