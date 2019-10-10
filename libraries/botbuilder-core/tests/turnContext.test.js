@@ -1,6 +1,5 @@
 const assert = require('assert');
 const { BotAdapter, MessageFactory, TurnContext } = require('../');
-const { BotFrameworkAdapter } = require('../../botbuilder');
 
 const activityId = `activity ID`;
 
