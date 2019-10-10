@@ -1,1 +1,1 @@
-export * from './BotFrameworkStreamingAdapter';
+export * from './botFrameworkStreamingAdapter';
