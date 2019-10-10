@@ -4,8 +4,9 @@
   "description": "",
   "main": "./lib/index.js",
   "scripts": {
-    "start": "tsc --build && node ./lib/index.js",
     "build": "tsc --build",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "start": "tsc --build && node ./lib/index.js",
     "watch": "nodemon --watch ./src -e ts --exec \"npm run start\""
   },
   "keywords": [],
@@ -25,6 +26,7 @@
     "@types/restify": "^7.2.7",
     "nodemon": "^1.19.1",
     "ts-node": "^7.0.1",
+    "tslint": "~5.18.0",
     "typescript": "^3.2.4"
   }
 }
