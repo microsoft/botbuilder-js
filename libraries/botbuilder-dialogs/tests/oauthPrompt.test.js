@@ -48,6 +48,7 @@ describe('OAuthPrompt', function () {
                 assert(activity.attachments.length === 1);
                 assert(activity.attachments[0].contentType === CardFactory.contentTypes.oauthCard);
                 assert(activity.inputHint === InputHints.AcceptingInput);
+                assert(!activity.attachments[0].content.buttons[0].value);
 
                 // send a mock EventActivity back to the bot with the token
                 adapter.addUserToken(connectionName, activity.channelId, activity.recipient.id, token);
@@ -112,6 +113,83 @@ describe('OAuthPrompt', function () {
                 adapter.addUserToken(connectionName, activity.channelId, activity.recipient.id, token, magicCode);
             })
             .send(magicCode)
+            .assertReply('Logged in.');
+    });
+
+    it('should call OAuthPrompt for streaming connection', async function () {
+        var connectionName = "myConnection";
+        var token = "abc123";
+
+        // Initialize TestAdapter.
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', { });
+            } else if (results.status === DialogTurnStatus.complete) {
+                if (results.result.token) {
+                    await turnContext.sendActivity(`Logged in.`);
+                }
+                else {
+                    await turnContext.sendActivity(`Failed`);
+                }
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and AttachmentPrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new OAuthPrompt('prompt', {
+                connectionName,
+                title: 'Login',
+                timeout: 300000
+            }));
+
+        const streamingActivity = {
+            activityId: '1234',
+            channelId: 'directlinespeech',
+            serviceUrl: 'urn:botframework.com:websocket:wss://channel.com/blah',
+            user: { id: 'user', name: 'User Name' },
+            bot: { id: 'bot', name: 'Bot Name' },
+            conversation: { 
+                id: 'convo1',
+                properties: {
+                    'foo': 'bar'
+                }
+            },
+            attachments: [],
+            type: 'message',
+            text: 'Hello'
+        };
+
+        await adapter.send(streamingActivity)
+            .assertReply(activity  => {
+                assert(activity.attachments.length === 1);
+                assert(activity.attachments[0].contentType === CardFactory.contentTypes.oauthCard);
+                assert(activity.inputHint === InputHints.AcceptingInput);
+                assert(activity.attachments[0].content.buttons[0].value);
+
+                // send a mock EventActivity back to the bot with the token
+                adapter.addUserToken(connectionName, activity.channelId, activity.recipient.id, token);
+
+                var eventActivity = createReply(activity);
+                eventActivity.type = ActivityTypes.Event;
+                var from = eventActivity.from;
+                eventActivity.from = eventActivity.recipient;
+                eventActivity.recipient = from;
+                eventActivity.name = "tokens/response";
+                eventActivity.value = {
+                    connectionName,
+                    token
+                };
+
+                adapter.send(eventActivity);
+            })
             .assertReply('Logged in.');
     });
 });

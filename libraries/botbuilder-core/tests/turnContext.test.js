@@ -1,5 +1,7 @@
 const assert = require('assert');
-const { BotAdapter, TurnContext } = require('../');
+const { BotAdapter, MessageFactory, TurnContext } = require('../');
+
+const activityId = `activity ID`;
 
 const testMessage = {
     type: 'message', 
@@ -214,6 +216,26 @@ describe(`TurnContext`, function () {
             done();
         });
     });
+    
+    it(`should be able to update an activity with MessageFactory`, function (done) {
+        let called = false;
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        context.onUpdateActivity((ctx, activity, next) => {
+            assert(ctx, `context not passed to hook`);
+            assert(activity, `activity not passed to hook`);
+            assert(activity.id === activityId, `wrong activity passed to hook`);
+            assert(activity.conversation.id === testMessage.conversation.id, `conversation ID not applied to activity`);
+            assert(activity.serviceUrl === testMessage.serviceUrl, `service URL not applied to activity`);
+            called = true;
+            return next();
+        });
+        const message = MessageFactory.text(`test text`);
+        message.id = activityId;
+        context.updateActivity(message).then((responses) => {
+            assert(called, `update hook not called.`);
+            done();
+        });
+    });
 
     it(`should call onDeleteActivity() hook before delete by "id".`, function (done) {
         let called = false;
@@ -371,5 +393,47 @@ describe(`TurnContext`, function () {
 
         assert(text,' test activity');
         assert(activity.text,' test activity');
+    });
+
+    it ('should identify streaming connections', function() {
+        let activity = {
+            type: 'message',
+            text: '<at>TestOAuth619</at> test activity',
+            recipient: { id: 'TestOAuth619' },
+        };
+
+        const streaming = [
+            'urn:botframework:WebSocket:wss://beep.com',
+            'urn:botframework:WebSocket:http://beep.com',
+            'URN:botframework:WebSocket:wss://beep.com',
+            'URN:botframework:WebSocket:http://beep.com',
+        ];
+
+        streaming.forEach(s =>
+        {
+            activity.serviceUrl = s;
+            assert(TurnContext.isFromStreamingConnection(activity), 'did not detect streaming');
+        });
+    });
+
+    it ('should identify http connections', function() {
+        let activity = {
+            type: 'message',
+            text: '<at>TestOAuth619</at> test activity',
+            recipient: { id: 'TestOAuth619' },
+        };
+
+        const streaming = [
+            'http://yayay.com',
+            'https://yayay.com',
+            'HTTP://yayay.com',
+            'HTTPS://yayay.com',
+        ];
+
+        streaming.forEach(s =>
+        {
+            activity.serviceUrl = s;
+            assert(!TurnContext.isFromStreamingConnection(activity), 'incorrectly detected streaming');
+        });
     });
 });
