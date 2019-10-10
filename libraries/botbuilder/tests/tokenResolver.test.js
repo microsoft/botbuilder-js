@@ -67,6 +67,24 @@ describe(`TokenResolver`, function () {
         }
     });
 
+    it(`no attachements is a no-op`, async function () {
+        let fail = false;
+        const returnTokenResponse = () => { fail = true; return { token: '1234', connectionName: 'foo' }; };
+        const botLogic= (ctx) => {
+            fail = true;
+        };
+        const adapter = new MockAdapter(botLogic, returnTokenResponse);
+        const activity = createOAuthCardActivity();
+        activity.attachments = [];
+        const context = adapter.createTurnContext(activity);
+        const log = [];
+
+        TokenResolver.checkForOAuthCards(adapter, context, activity, log);
+
+        assert(!fail, 'called bot methods');
+        assert(log.length === 0, 'logged actions, should be zero');
+    });
+
     it(`should get the token`, async function () {
         let gotToken = false;
         const returnTokenResponse = () => { return { token: '1234', connectionName: 'foo' }; };
@@ -86,12 +104,75 @@ describe(`TokenResolver`, function () {
         const adapter = new MockAdapter(botLogic, returnTokenResponse);
         const activity = createOAuthCardActivity();
         const context = adapter.createTurnContext(activity);
+        const log = [];
 
-        TokenResolver.checkForOAuthCards(adapter, context, activity);
+        TokenResolver.checkForOAuthCards(adapter, context, activity, log);
 
         await done;
 
         assert(gotToken, 'did not receive token');
+    });
+
+    it(`should call onTurnError with process throw Error`, async function () {
+        let calledOnTurnError = false;
+        const returnTokenResponse = () => { return { token: '1234', connectionName: 'foo' }; };
+        let doneResolve, doneReject;
+        let done = new Promise((resolve, reject) => {
+            doneResolve = resolve;
+            doneReject = reject;
+        });
+        const botLogic= (ctx) => {
+            if (ctx.activity.type === 'event' && ctx.activity.value.token) {
+                throw 'this is the error';
+            } else {
+                doneReject('error');
+            }
+        };
+        const adapter = new MockAdapter(botLogic, returnTokenResponse);
+        adapter.onTurnError = async (context, error) => {
+            calledOnTurnError = true;
+            doneResolve('done');
+        };
+        const activity = createOAuthCardActivity();
+        const context = adapter.createTurnContext(activity);
+        const log = [];
+
+        TokenResolver.checkForOAuthCards(adapter, context, activity, log);
+
+        await done;
+
+        assert(calledOnTurnError, 'did not receive error');
+    });
+
+    it(`should call onTurnError with process throw other`, async function () {
+        let calledOnTurnError = false;
+        const returnTokenResponse = () => { return { token: '1234', connectionName: 'foo' }; };
+        let doneResolve, doneReject;
+        let done = new Promise((resolve, reject) => {
+            doneResolve = resolve;
+            doneReject = reject;
+        });
+        const botLogic= (ctx) => {
+            if (ctx.activity.type === 'event' && ctx.activity.value.token) {
+                throw new Error('this is the error');
+            } else {
+                doneReject('error');
+            }
+        };
+        const adapter = new MockAdapter(botLogic, returnTokenResponse);
+        adapter.onTurnError = async (context, error) => {
+            calledOnTurnError = true;
+            doneResolve('done');
+        };
+        const activity = createOAuthCardActivity();
+        const context = adapter.createTurnContext(activity);
+        const log = [];
+
+        TokenResolver.checkForOAuthCards(adapter, context, activity, log);
+
+        await done;
+
+        assert(calledOnTurnError, 'did not receive error');
     });
 
     it(`should get the token on the second try`, async function () {
