@@ -169,18 +169,17 @@ export class CosmosDbPartitionedStorage implements Storage {
                 // If new item or *, then insert or replace unconditionally
                 try {
                     await this.container.items
-                        .upsert(documentChange, { disableAutomaticIdGeneration: true, });
+                        .upsert(documentChange);
                 } catch (err) {
                     this.throwInformativeError('Error upserting document', err);
                 }
             } else if (eTag.length > 0) {
                 // If we have an etag, do opt. concurrency replace
                 try {
-                    await this.container
-                        .items
+                    await this.container.items
                         .upsert(documentChange, { accessCondition: { type: 'IfMatch', condition: eTag } });
                 } catch (err) {
-                    this.throwInformativeError('Error replacing document', err);
+                    this.throwInformativeError('Error upserting document', err);
                 }
             } else {
                 throw new Error(`etag empty`);
