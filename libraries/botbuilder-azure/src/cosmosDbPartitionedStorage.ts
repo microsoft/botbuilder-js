@@ -174,7 +174,7 @@ export class CosmosDbPartitionedStorage implements Storage {
                     this.throwInformativeError('Error upserting document', err);
                 }
             } else if (eTag.length > 0) {
-                // If we have an etag, do opt. concurrency replace
+                // If we have an etag, do opt. concurrency upsert
                 try {
                     await this.container.items
                         .upsert(documentChange, { accessCondition: { type: 'IfMatch', condition: eTag } });

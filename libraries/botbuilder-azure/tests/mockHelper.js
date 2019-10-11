@@ -23,6 +23,11 @@ function usingNock(test, mode, options = null) {
         fixedScope = options.scope;
     }
 
+    /**
+     * Test recordings fail when testing waterfall dialogs because the SDK sets a random instanceId GUID
+     * and it's included in the request body. The next two functions replace that instanceId with a constant
+     * so that tests using waterfall dialogs can pass when using the nock recordings
+     */
     const instanceIdRegEx = /"instanceId":"[\w-]{36}"/g;
     const instanceIdReplacement = 'fakeInstanceId';
 

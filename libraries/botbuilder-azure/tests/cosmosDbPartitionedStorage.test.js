@@ -38,10 +38,9 @@ if (cosmosDbEndpoint.includes('localhost:8081')) {
 const hasEmulator = fs.existsSync(emulatorPath);
 
 const checkEmulator = () => {
-    if (hasEmulator) {
-        return true;
+    if (!hasEmulator) {
+        console.warn(noEmulatorMessage);
     }
-    console.warn(noEmulatorMessage);
     return true;
 };
 
