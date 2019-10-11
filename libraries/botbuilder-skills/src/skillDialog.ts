@@ -18,7 +18,13 @@ const SKILL_CONVERSATION_KEY = 'skillConvo';
 export class SkillDialog<O extends object = {}> extends Dialog<O> {
     private readonly settings: SkillDialogSettings;
 
-    constructor(dialogId: string, settings: SkillDialogSettings) {
+    constructor(settings: SkillDialogSettings);
+    constructor(dialogId: string, settings: SkillDialogSettings);
+    constructor(dialogId: string|SkillDialogSettings, settings?: SkillDialogSettings) {
+        if (typeof dialogId == 'object') { 
+            settings = dialogId;
+            dialogId = settings.skillId;
+        }
         super(dialogId);
         this.settings = Object.assign({}, settings);
     }

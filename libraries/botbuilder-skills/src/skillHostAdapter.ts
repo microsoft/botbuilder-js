@@ -130,19 +130,19 @@ export enum BotFrameworkInvokeMethods {
     UploadAttachment = 'BotFramework.UploadAttachment'
 }
 
-export abstract class SkillHostAdapter extends BotAdapter implements Middleware {
-    private _adapter: BotAdapter;
+export abstract class SkillHostAdapter<T extends BotAdapter = BotAdapter> extends BotAdapter implements Middleware {
+    private _adapter: T;
     private readonly _skills: { [id: string]: SkillConfiguration } = {};
     private readonly _settings: SkillHostAdapterSettings;
     private _onForwardActivity: ForwardActivityHandler[] = [];
 
-    public constructor(settings: SkillHostAdapterSettings, adapter?: BotAdapter) {
+    public constructor(settings: SkillHostAdapterSettings, adapter?: T) {
         super();
         this._settings = settings;
         if (adapter) { this.adapter = adapter }
     }
 
-    public set adapter(value: BotAdapter) {
+    public set adapter(value: T) {
         // Add ourselves to adapters middleware chain
         if (value) { value.use(this) }
 
@@ -151,7 +151,7 @@ export abstract class SkillHostAdapter extends BotAdapter implements Middleware 
         this.adapter = value;
     }
 
-    public get adapter() {
+    public get adapter(): T {
         return this._adapter;
     }
 
