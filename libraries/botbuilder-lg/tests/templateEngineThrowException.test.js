@@ -6,7 +6,6 @@ function GetExampleFilePath(fileName){
 }
 
 const StaticCheckExceptionData  = [
-    "EmptyTemplate.lg",
     "ErrorTemplateParameters.lg",
     "NoNormalTemplateBody.lg",
     "ConditionFormatError.lg",
@@ -29,7 +28,8 @@ const StaticCheckWariningData  = [
     "EmptyLGFile.lg",
     "OnlyNoMatchRule.lg",
     "NoMatchRule.lg",
-    "SwitchCaseWarning.lg"
+    "SwitchCaseWarning.lg",
+    "EmptyTemplate.lg",
 ];
 
 const AnalyzerExceptionData   = [
