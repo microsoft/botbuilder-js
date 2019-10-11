@@ -458,6 +458,10 @@ export class TurnContext {
         return this._adapter as BotAdapter;
     }
 
+    public set adapter(value: BotAdapter) {
+        this._adapter = value;
+    }
+
     /**
      * The received activity.
      *

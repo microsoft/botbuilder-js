@@ -1,0 +1,50 @@
+{
+  "name": "botbuilder-skills",
+  "author": "Microsoft Corp.",
+  "description": "Extensions to support remote skills within a Bot Builder project.",
+  "version": "4.1.6",
+  "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "botframework",
+    "bots",
+    "chatbots"
+  ],
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
+  "dependencies": {
+    "@types/node": "^10.12.18",
+    "botbuilder-core": "4.1.6",
+    "botbuilder-dialogs": "4.1.6",
+    "isomorphic-fetch": "^2.2.1"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.47",
+    "assert": "^1.4.1",
+    "chatdown": "^1.0.2",
+    "mocha": "^5.2.0",
+    "nock": "^10.0.3",
+    "nyc": "^11.4.1",
+    "source-map-support": "^0.5.3",
+    "ts-node": "^4.1.0",
+    "uuid": "^3.3.2"
+  },
+  "scripts": {
+    "test": "tsc && nyc mocha tests/",
+    "build": "tsc",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-skills --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-skills .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder Skills\" --readme none",
+    "clean": "erase /q /s .\\lib",
+    "set-version": "npm version --allow-same-version ${Version}"
+  },
+  "files": [
+    "/lib",
+    "/src"
+  ]
+}
