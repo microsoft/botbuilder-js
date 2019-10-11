@@ -205,7 +205,8 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
             if (context.templateBody() === undefined) {
                 result.push(this.BuildLGDiagnostic({
                     message: `There is no template body in template ${templateName}`,
-                    context: context.templateNameLine()
+                    context: context.templateNameLine(),
+                    severity: DiagnosticSeverity.Warning
                 }));
             } else {
                 result = result.concat(this.visit(context.templateBody()));
