@@ -5,46 +5,46 @@ import {
     Activity,
     Attachment,
     InputHints,
+    MessageFactory,
     MessagingExtensionActionResponse,
     MessagingExtensionAttachment,
     MessagingExtensionResult,
-    MessageFactory,
-    TaskModuleTaskInfo,
     TaskModuleContinueResponse,
+    TaskModuleTaskInfo
 } from 'botbuilder';
 
 export class CardResponseHelpers {
-    public static toTaskModuleResponse(cardAttachment: Attachment): MessagingExtensionActionResponse  {
-        return <MessagingExtensionActionResponse> {
-            task: <TaskModuleContinueResponse> {
-                value: <TaskModuleTaskInfo> {
-                    card: <Attachment> cardAttachment
-                },
-                height: 450, 
-                width: 500, 
-                title: 'Task Module Fetch Example'
-            }
-        }
+    public static toTaskModuleResponse(cardAttachment: Attachment): MessagingExtensionActionResponse {
+        return {
+            task: {
+                height: 450,
+                title: 'Task Module Fetch Example',
+                    value: {
+                        card: cardAttachment
+                    } as TaskModuleTaskInfo,
+                width: 500
+            } as TaskModuleContinueResponse
+        } as MessagingExtensionActionResponse;
     }
 
-    public static toComposeExtensionResultResponse(cardAttachment: Attachment) : MessagingExtensionActionResponse {
-        
-        return <MessagingExtensionActionResponse> {
-            composeExtension: <MessagingExtensionResult> {
-                type: 'result',
+    public static toComposeExtensionResultResponse(cardAttachment: Attachment): MessagingExtensionActionResponse {
+
+        return {
+            composeExtension: {
                 attachmentLayout: 'list',
-                attachments: [ <MessagingExtensionAttachment> cardAttachment ]
+                attachments: [cardAttachment as MessagingExtensionAttachment],
+                type: 'result'
 
-            }
-        }
+            } as MessagingExtensionResult
+        } as MessagingExtensionActionResponse;
     }
 
-    public static toMessagingExtensionBotMessagePreviewResponse(cardAttachment: Attachment) : MessagingExtensionActionResponse {
-        return <MessagingExtensionActionResponse> {
-            composeExtension: <MessagingExtensionResult> {
-                type: 'botMessagePreview',
+    public static toMessagingExtensionBotMessagePreviewResponse(cardAttachment: Attachment): MessagingExtensionActionResponse {
+        return {
+            composeExtension: {
                 activityPreview: MessageFactory.attachment(cardAttachment, null, null, InputHints.ExpectingInput) as Activity,
-            }
-        }
+                type: 'botMessagePreview'
+            } as MessagingExtensionResult
+        } as MessagingExtensionActionResponse;
     }
 }
