@@ -13,7 +13,7 @@
     "libraries/botframework-schema",
     "libraries/functional-tests",
     "libraries/testbot",
-    "libraries/botframework-streaming-extensions",
+    "libraries/botframework-streaming",
     "libraries/botbuilder-streaming-extensions",
     "transcripts"
   ],

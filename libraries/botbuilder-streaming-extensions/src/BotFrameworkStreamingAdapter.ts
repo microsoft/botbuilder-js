@@ -11,7 +11,7 @@ import { ConnectorClient, JwtTokenValidation, MicrosoftAppCredentials, SimpleCre
 import { Activity, ActivityTypes } from 'botframework-schema';
 import * as os from 'os';
 import { ISocket, IStreamingTransportServer, IReceiveRequest, NamedPipeServer, NodeWebSocket,
-     RequestHandler, StreamingResponse, WebSocketServer, StreamingRequest } from 'botframework-streaming-extensions'; //TODO: When integration layer is moved this will need to reference the external library.
+     RequestHandler, StreamingResponse, WebSocketServer, StreamingRequest } from 'botframework-streaming'; //TODO: When integration layer is moved this will need to reference the external library.
 import { HttpClient, HttpOperationResponse, WebResource } from '@azure/ms-rest-js';
 import { Watershed } from 'watershed'; 
 import { Request, ServerUpgradeResponse } from 'restify';
