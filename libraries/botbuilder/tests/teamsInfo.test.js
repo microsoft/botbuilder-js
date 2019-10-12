@@ -240,6 +240,50 @@ describe('TeamsInfo', () => {
             assert(fetchChannelListExpectation.isDone());
             assertMemberInfo(fetchedMembers, members);
         });
+
+        it('should not work if conversationId is falsey', async () => {
+            const context = new TestContext(oneOnOneActivity);
+            context.activity.conversation.id = undefined;
+            try {
+                await TeamsInfo.getMembers(context);
+                throw new Error('should have thrown an error');
+            } catch (err) {
+                assert.strictEqual(err.message, 'The getMembers operation needs a valid conversationId.');
+                oneOnOneActivity.conversation.id = 'a:oneOnOneConversationId';
+            }
+        });
+    });
+
+    describe('private methods', () => {
+        it(`getConnectorClient() should error if the context doesn't have an adapter`, done => {
+            try {
+                TeamsInfo.getConnectorClient({});
+                done(new Error('should have thrown an error'));
+            } catch (err) {
+                assert.strictEqual(err.message, 'This method requires a connector client.');
+                done();
+            }
+        });
+
+        it(`getConnectorClient() should error if the adapter doesn't have a createConnectorClient method`, done => {
+            try {
+                TeamsInfo.getConnectorClient({ adapter: {} });
+                done(new Error('should have thrown an error'));
+            } catch (err) {
+                assert.strictEqual(err.message, 'This method requires a connector client.');
+                done();
+            }
+        });
+
+        it(`getMembersInternal() should error if an invalid conversationId is passed in.`, async () => {
+            try {
+                const results = await TeamsInfo.getMembersInternal({}, undefined);
+                console.error(results)
+                throw new Error('should have thrown an error');
+            } catch (err) {
+                assert.strictEqual(err.message, 'The getMembers operation needs a valid conversationId.');
+            }
+        });
     });
 });
 

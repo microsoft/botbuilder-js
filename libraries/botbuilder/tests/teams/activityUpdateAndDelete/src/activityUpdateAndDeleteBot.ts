@@ -3,35 +3,33 @@
 
 import {
     ActivityHandler,
-    TurnContext,
     ActivityTypes,
+    TurnContext
 } from 'botbuilder';
 
-
+/*
+ * From the UI you can just @mention the bot from any channelwith any string EXCEPT for "delete". If you send the bot "delete" it will delete
+ * all of the previous bot responses and empty it's internal storage.
+ */
 export class ActivityUpdateAndDeleteBot extends ActivityHandler {
-    activityIds: string[];
+    protected activityIds: string[];
 
-    /*
-     * From the UI you can just @mention the bot from any channelwith any string EXCEPT for "delete". If you send the bot "delete" it will delete
-     * all of the previous bot responses and empty it's internal storage.
-     */
     constructor(activityIds: string[]) {
         super();
-        
+
         this.activityIds = activityIds;
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
 
             TurnContext.removeRecipientMention(context.activity);
-            if (context.activity.text == "delete") {
+            if (context.activity.text === 'delete') {
                 for (const activityId of this.activityIds) {
                     await context.deleteActivity(activityId);
                 }
 
                 this.activityIds = [];
-            }
-            else {
+            } else {
                 await this.sendMessageAndLogActivityId(context, `${context.activity.text}`);
 
                 const text = context.activity.text;
@@ -45,8 +43,8 @@ export class ActivityUpdateAndDeleteBot extends ActivityHandler {
         });
     }
 
-    async sendMessageAndLogActivityId(context: TurnContext, text: string): Promise<void> {
-        var resourceResponse = await context.sendActivity({ text });
+    private async sendMessageAndLogActivityId(context: TurnContext, text: string): Promise<void> {
+        const resourceResponse = await context.sendActivity({ text });
         await this.activityIds.push(resourceResponse.id);
-    }    
+    }
 }
