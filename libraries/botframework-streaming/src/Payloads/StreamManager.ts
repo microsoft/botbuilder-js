@@ -7,7 +7,7 @@
  */
 import { IHeader } from '../Interfaces/IHeader';
 import { SubscribableStream } from '../SubscribableStream';
-import { PayloadAssembler } from '../Assemblers/PayloadAssembler';
+import { PayloadAssembler } from '../assemblers/PayloadAssembler';
 
 export class StreamManager {
     private readonly activeAssemblers = [];
