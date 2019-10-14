@@ -165,24 +165,12 @@ export class CosmosDbPartitionedStorage implements Storage {
             });
 
             const eTag: string = changes[k].eTag;
-            if (eTag == null || eTag === '*') {
-                // If new item or *, then insert or replace unconditionally
-                try {
-                    await this.container.items
-                        .upsert(documentChange);
-                } catch (err) {
-                    this.throwInformativeError('Error upserting document', err);
-                }
-            } else if (eTag.length > 0) {
-                // If we have an etag, do opt. concurrency upsert
-                try {
-                    await this.container.items
-                        .upsert(documentChange, { accessCondition: { type: 'IfMatch', condition: eTag } });
-                } catch (err) {
-                    this.throwInformativeError('Error upserting document', err);
-                }
-            } else {
-                throw new Error(`etag empty`);
+            const ac = eTag !== '*' && eTag != null && eTag.length > 0 ? { accessCondition: { type: 'IfMatch', condition: eTag } } : undefined;
+            try {
+                await this.container.items
+                    .upsert(documentChange, ac);
+            } catch (err) {
+                this.throwInformativeError('Error upserting document', err);
             }
         }));
     }
