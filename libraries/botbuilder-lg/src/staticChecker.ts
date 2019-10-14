@@ -258,11 +258,14 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         } else {
             for (const body of bodys) {
                 const line: string = body.text.trim();
-                const start: number = line.indexOf('=');
-                if (start < 0 && !this.isPureExpression(line)) {
-                    result.push(this.BuildLGDiagnostic({
-                        message: `Structured content does not support`,
-                        context: content}));
+
+                if (line !== '') {
+                    const start: number = line.indexOf('=');
+                    if (start < 0 && !this.isPureExpression(line)) {
+                        result.push(this.BuildLGDiagnostic({
+                            message: `Structured content does not support`,
+                            context: content}));
+                    }
                 }
             }
         }

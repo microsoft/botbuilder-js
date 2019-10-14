@@ -440,6 +440,9 @@ const dataSource = [
   [`isMatch('a', '\\w{1}')`, true], // "\w" (match [a-zA-Z0-9_])
   [`isMatch('1', '\\d{1}')`, true], // "\d" (match [0-9])
 
+  // Empty expression
+  ['', ''],
+
   // SetPathToValue tests
   ["setPathToValue(@@blah.woof, 1+2) + @@blah.woof", 6],
   ["setPathToValue(path.simple, 3) + path.simple", 6],
