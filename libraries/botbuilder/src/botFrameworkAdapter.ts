@@ -3,9 +3,10 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
 import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
 import * as os from 'os';
+import { TokenResolver } from './tokenResolver';
 
 /**
  * Represents an Express or Restify request object.
@@ -706,6 +707,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             // Process received activity
             status = 500;
             const context: TurnContext = this.createContext(request);
+            context.turnState.set(BotCallbackHandlerKey, logic);
             await this.runMiddleware(context, logic);
 
             // Retrieve cached invoke response.
@@ -734,6 +736,52 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
         // Check for an error
         if (status >= 400) {
+            if (processError && (processError as Error).stack) {
+                throw new Error(`BotFrameworkAdapter.processActivity(): ${ status } ERROR\n ${ processError.stack }`);
+            } else {
+                throw new Error(`BotFrameworkAdapter.processActivity(): ${ status } ERROR`);
+            }
+        }
+    }
+
+    /**
+     * An asynchronous method that creates a turn context and runs the middleware pipeline for an incoming activity.
+     *
+     * @param activity The activity to process.
+     * @param logic The function to call at the end of the middleware pipeline.
+     * 
+     * @remarks
+     * This is the main way a bot receives incoming messages and defines a turn in the conversation. This method:
+     * 
+     * 1. Creates a [TurnContext](xref:botbuilder-core.TurnContext) object for the received activity.
+     *    - This object is wrapped with a [revocable proxy](https://www.ecma-international.org/ecma-262/6.0/#sec-proxy.revocable).
+     *    - When this method completes, the proxy is revoked.
+     * 1. Sends the turn context through the adapter's middleware pipeline.
+     * 1. Sends the turn context to the `logic` function.
+     *    - The bot may perform additional routing or processing at this time.
+     *      Returning a promise (or providing an `async` handler) will cause the adapter to wait for any asynchronous operations to complete.
+     *    - After the `logic` function completes, the promise chain set up by the middleware is resolved.
+     *
+     * Middleware can _short circuit_ a turn. When this happens, subsequent middleware and the
+     * `logic` function is not called; however, all middleware prior to this point still run to completion.
+     * For more information about the middleware pipeline, see the
+     * [how bots work](https://docs.microsoft.com/azure/bot-service/bot-builder-basics) and
+     * [middleware](https://docs.microsoft.com/azure/bot-service/bot-builder-concept-middleware) articles.
+     * Use the adapter's [use](xref:botbuilder-core.BotAdapter.use) method to add middleware to the adapter.
+     */
+    public async processActivityDirect(activity: Activity, logic: (context: TurnContext) => Promise<any>): Promise<void> {
+        let processError: Error;
+        try {   
+            // Process activity
+            const context: TurnContext = this.createContext(activity);
+            context.turnState.set(BotCallbackHandlerKey, logic);
+            await this.runMiddleware(context, logic);
+        } catch (err) {
+            // Catch the error to try and throw the stacktrace out of processActivity()
+            processError = err;
+        }
+
+        if (processError) {
             if (processError && (processError as Error).stack) {
                 throw new Error(`BotFrameworkAdapter.processActivity(): ${ status } ERROR\n ${ processError.stack }`);
             } else {
@@ -777,6 +825,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
                     if (!activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.sendActivity(): missing serviceUrl.`); }
                     if (!activity.conversation || !activity.conversation.id) {
                         throw new Error(`BotFrameworkAdapter.sendActivity(): missing conversation id.`);
+                    }
+                    if (TurnContext.isFromStreamingConnection(activity as Activity)) {
+                        TokenResolver.checkForOAuthCards(this, context, activity as Activity);
                     }
                     const client: ConnectorClient = this.createConnectorClient(activity.serviceUrl);
                     if (activity.type === 'trace' && activity.channelId !== 'emulator') {

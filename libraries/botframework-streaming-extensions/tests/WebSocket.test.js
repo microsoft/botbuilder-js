@@ -244,13 +244,13 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
 
     describe('WebSocket Client Tests', () => {
         it('creates a new client', () => {
-            let client = new ws.WebSocketClient('fakeURL', new protocol.RequestHandler(), false);
+            let client = new ws.WebSocketClient('fakeURL', new protocol.RequestHandler());
             expect(client).to.be.instanceOf(ws.WebSocketClient);
             expect(client.disconnect()).to.not.throw;
         });
 
         it('selects the right websocket and attempts to connect to the transport layer', (done) => {
-            let client = new ws.WebSocketClient('fakeURL', new protocol.RequestHandler(), false);
+            let client = new ws.WebSocketClient('fakeURL', new protocol.RequestHandler());
             expect(client).to.be.instanceOf(ws.WebSocketClient);
             client.connect()
                 .catch(
@@ -261,7 +261,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
         });
 
         it('sends', (done) => {
-            let client = new ws.WebSocketClient('fakeURL', new protocol.RequestHandler(), false);
+            let client = new ws.WebSocketClient('fakeURL', new protocol.RequestHandler());
             expect(client).to.be.instanceOf(ws.WebSocketClient);
             let req = new protocol.StreamingRequest();
             req.Verb = 'POST';
@@ -271,7 +271,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
         });
 
         it('disconnects', (done) => {
-            let client = new ws.WebSocketClient('fakeURL', new protocol.RequestHandler(), false);
+            let client = new ws.WebSocketClient('fakeURL', new protocol.RequestHandler());
             expect(client).to.be.instanceOf(ws.WebSocketClient);
             expect(client.disconnect()).to.not.throw;
             done();
