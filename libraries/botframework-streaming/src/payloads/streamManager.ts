@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IHeader } from '../Interfaces/IHeader';
-import { SubscribableStream } from '../SubscribableStream';
-import { PayloadAssembler } from '../Assemblers/PayloadAssembler';
+import { IHeader } from '../interfaces/IHeader';
+import { SubscribableStream } from '../subscribableStream';
+import { PayloadAssembler } from '../assemblers/payloadAssembler';
 
 export class StreamManager {
     private readonly activeAssemblers = [];

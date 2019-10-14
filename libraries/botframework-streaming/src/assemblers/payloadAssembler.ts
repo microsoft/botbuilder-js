@@ -5,14 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { SubscribableStream } from '../SubscribableStream';
-import { StreamManager, PayloadTypes } from '../Payloads';
-import { ContentStream } from '../ContentStream';
-import { IAssemblerParams } from '../Interfaces/IAssemblerParams';
-import { IHeader } from '../Interfaces/IHeader';
-import { IResponsePayload } from '../Interfaces/IResponsePayload';
-import { IReceiveResponse, IReceiveRequest } from '../Interfaces';
-import { IRequestPayload } from '../Interfaces/IRequestPayload';
+import { SubscribableStream } from '../subscribableStream';
+import { StreamManager, PayloadTypes } from '../payloads';
+import { ContentStream } from '../contentStream';
+import { IAssemblerParams } from '../interfaces/IAssemblerParams';
+import { IHeader } from '../interfaces/IHeader';
+import { IResponsePayload } from '../interfaces/IResponsePayload';
+import { IReceiveResponse, IReceiveRequest } from '../interfaces';
+import { IRequestPayload } from '../interfaces/IRequestPayload';
 
 
 export class PayloadAssembler {

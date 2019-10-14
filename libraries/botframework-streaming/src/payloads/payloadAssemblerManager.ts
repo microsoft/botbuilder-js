@@ -5,11 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { SubscribableStream } from '../SubscribableStream';
-import { PayloadAssembler } from '../Assemblers/PayloadAssembler';
-import { StreamManager } from './StreamManager';
-import { IHeader } from '../Interfaces/IHeader';
-import { PayloadTypes } from './PayloadTypes';
+import { SubscribableStream } from '../subscribableStream';
+import { PayloadAssembler } from '../assemblers/payloadAssembler';
+import { StreamManager } from './streamManager';
+import { IHeader } from '../interfaces/IHeader';
+import { PayloadTypes } from './payloadTypes';
 
 export class PayloadAssemblerManager {
     private readonly onReceiveRequest;

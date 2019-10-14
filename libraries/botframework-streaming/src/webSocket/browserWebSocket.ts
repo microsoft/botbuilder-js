@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ISocket } from '../Interfaces/ISocket';
+import { ISocket } from '../interfaces/ISocket';
 
 export class BrowserWebSocket implements ISocket {
     private webSocket: WebSocket;

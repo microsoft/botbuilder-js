@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { SubscribableStream } from './SubscribableStream';
-import { generateGuid } from './Utilities/protocol-base';
-import { IHttpContentHeaders } from './Interfaces/IHttpContentHeaders';
+import { SubscribableStream } from './subscribableStream';
+import { generateGuid } from './utilities/protocol-base';
+import { IHttpContentHeaders } from './interfaces/IHttpContentHeaders';
 
 export class HttpContentStream {
     public readonly id: string;

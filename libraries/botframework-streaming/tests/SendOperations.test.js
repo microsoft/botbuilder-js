@@ -1,9 +1,9 @@
-const HttpContent = require('../lib/HttpContentStream');
-const PayloadSender = require('../lib/PayloadTransport/PayloadSender');
-const SubscribableStream = require('../lib/SubscribableStream');
-const SendOperations = require('../lib/payloads/SendOperations');
-const StreamingRequest = require('../lib/StreamingRequest');
-const StreamingResponse = require('../lib/StreamingResponse');
+const HttpContent = require('../lib/httpContentStream');
+const PayloadSender = require('../lib/payloadTransport/payloadSender');
+const SubscribableStream = require('../lib/subscribableStream');
+const SendOperations = require('../lib/payloads/sendOperations');
+const StreamingRequest = require('../lib/streamingRequest');
+const StreamingResponse = require('../lib/streamingResponse');
 const  chai  = require('chai');
 var expect = chai.expect;
 

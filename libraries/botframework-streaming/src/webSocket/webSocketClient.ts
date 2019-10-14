@@ -5,19 +5,19 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ProtocolAdapter } from '../ProtocolAdapter';
-import { RequestHandler } from '../RequestHandler';
-import { StreamingRequest } from '../StreamingRequest';
-import { RequestManager } from '../Payloads';
+import { ProtocolAdapter } from '../protocolAdapter';
+import { RequestHandler } from '../requestHandler';
+import { StreamingRequest } from '../streamingRequest';
+import { RequestManager } from '../payloads';
 import {
     PayloadReceiver,
     PayloadSender,
     TransportDisconnectedEventArgs
-} from '../PayloadTransport';
+} from '../payloadTransport';
 import { BrowserWebSocket } from './BrowserWebSocket';
 import { NodeWebSocket } from './NodeWebSocket';
 import { WebSocketTransport } from './WebSocketTransport';
-import { IStreamingTransportClient, IReceiveResponse } from '../Interfaces';
+import { IStreamingTransportClient, IReceiveResponse } from '../interfaces';
 
 /// <summary>
 /// A client for use with the Bot Framework Protocol V3 with Streaming Extensions and an underlying WebSocket transport.

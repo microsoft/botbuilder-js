@@ -1,9 +1,9 @@
-const  ContentStream  = require('../lib/ContentStream');
-const  PayloadAssembler  = require('../lib/Assemblers/PayloadAssembler');
+const  ContentStream  = require('../lib/contentStream');
+const  PayloadAssembler  = require('../lib/assemblers/payloadAssembler');
 const  chai  = require('chai');
-const StreamManager = require('../lib/Payloads/StreamManager');
-const SubscribableStream = require('../lib/SubscribableStream');
-const PayloadTypes = require('../lib/Payloads/PayloadTypes');
+const StreamManager = require('../lib/payloads/streamManager');
+const SubscribableStream = require('../lib/subscribableStream');
+const PayloadTypes = require('../lib/payloads/payloadTypes');
 const protocol = require('../lib');
 var expect = chai.expect;
 

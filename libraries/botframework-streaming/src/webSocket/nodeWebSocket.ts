@@ -7,7 +7,7 @@
  */
 import * as http from 'http';
 import * as WaterShed from 'watershed';
-import { ISocket } from '../Interfaces/ISocket';
+import { ISocket } from '../interfaces/ISocket';
 
 export class NodeWebSocket implements ISocket {
     private readonly waterShedSocket: any;

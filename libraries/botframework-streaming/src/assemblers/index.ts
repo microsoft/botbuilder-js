@@ -6,4 +6,4 @@
  * Licensed under the MIT License.
  */
 
-export * from './PayloadAssembler';
+export * from './payloadAssembler';

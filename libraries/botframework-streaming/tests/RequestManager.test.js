@@ -1,4 +1,4 @@
-const RequestManager = require( '../lib/Payloads/RequestManager');
+const RequestManager = require( '../lib/payloads/requestManager');
 const chai = require( 'chai');
 var expect = chai.expect;
 

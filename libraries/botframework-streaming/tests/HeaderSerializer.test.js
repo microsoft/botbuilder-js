@@ -1,7 +1,7 @@
 const chai = require( 'chai');
-const HeaderSerializer = require( '../lib/Payloads/HeaderSerializer');
-const PayloadTypes = require( '../lib/Payloads/PayloadTypes');
-const PayloadConstants = require( '../lib/Payloads/PayloadConstants');
+const HeaderSerializer = require( '../lib/payloads/headerSerializer');
+const PayloadTypes = require( '../lib/payloads/payloadTypes');
+const PayloadConstants = require( '../lib/payloads/payloadConstants');
 var expect = chai.expect;
 
 describe('HeaderSerializer', () => {

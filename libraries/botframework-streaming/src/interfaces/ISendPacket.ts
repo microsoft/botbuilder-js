@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { IHeader } from './IHeader';
-import { SubscribableStream } from '../SubscribableStream';
+import { SubscribableStream } from '../subscribableStream';
 
 export interface ISendPacket {
     header: IHeader;

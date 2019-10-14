@@ -1,6 +1,6 @@
 const ws = require('../lib');
 const protocol = require('../lib');
-const wst = require('../lib/WebSocket/WebSocketTransport');
+const wst = require('../lib/webSocket/webSocketTransport');
 const  chai  = require('chai');
 var expect = chai.expect;
 
