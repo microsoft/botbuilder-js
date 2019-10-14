@@ -116,4 +116,15 @@ describe('HeaderSerializer', () => {
             .throws('Header ID is missing or malformed.');
     });
 
+    it('accepts nil GUIDs as valid header IDs', () => {
+        let buffer = Buffer.alloc(Number(PayloadConstants.PayloadConstants.MaxHeaderLength));
+        buffer.write('A.000168.00000000-0000-0000-0000-000000000000.1\n');
+
+        let result = HeaderSerializer.HeaderSerializer.deserialize(buffer);
+        
+        expect(result.id)
+            .to
+            .deep
+            .equal('00000000-0000-0000-0000-000000000000');
+    });
 });
