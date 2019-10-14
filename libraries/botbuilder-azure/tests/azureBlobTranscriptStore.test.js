@@ -196,9 +196,9 @@ describe('The AzureBlobTranscriptStore', () => {
 	});
 
 	it('should log an activity', async () => {
-		const date = {getTime: () => 1546214400000};
+		const date = new Date(1546214400000);
 		const activity = createActivity('logActivityTest', date);
-
+console.log(date.toJSON());
 		await storage.logActivity(activity);
 		const { mockFunctionCalls } = mockService;
 		const { logActivity } = expectedCalls;
