@@ -7,7 +7,7 @@ import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAcco
 import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
 import * as os from 'os';
 import { TokenResolver } from './tokenResolver';
-import { IStreamingTransportServer, StreamingRequest, IReceiveRequest, StreamingResponse, NamedPipeServer, ISocket, WebSocketServer, NodeWebSocket } from 'botframework-streaming/lib';
+import { IStreamingTransportServer, StreamingRequest, IReceiveRequest, StreamingResponse, NamedPipeServer, ISocket, WebSocketServer, NodeWebSocket } from 'botframework-streaming';
 import { WebResource, HttpOperationResponse, HttpClient } from 'botframework-connector/node_modules/@azure/ms-rest-js';
 import { Request, ServerUpgradeResponse } from 'restify';
 import { Watershed } from 'watershed'; 
