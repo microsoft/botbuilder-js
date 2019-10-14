@@ -1243,6 +1243,10 @@ export interface TokenResponse {
    * Expiration for the token, in ISO 8601 format (e.g. "2007-04-05T14:30Z")
    */
   expiration: string;
+  /**
+   * A collection of properties about this response, such as token polling parameters
+   */
+  properties?: { [propertyName: string]: any };
 }
 
 /**

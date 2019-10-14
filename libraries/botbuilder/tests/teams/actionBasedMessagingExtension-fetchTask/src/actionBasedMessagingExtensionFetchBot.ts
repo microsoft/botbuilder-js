@@ -4,23 +4,23 @@
 import {
     Activity,
     Attachment,
+    MessageFactory,
     MessagingExtensionAction,
     MessagingExtensionActionResponse,
-    MessageFactory,
+    TeamDetails,
     TeamsActivityHandler,
     teamsCreateConversation,
-    TeamDetails,
     TeamsInfo,
     TurnContext
 } from 'botbuilder';
 
-import { AdaptiveCardHelper  } from './adaptiveCardHelper';
-import { SubmitExampleData  } from './submitExampleData';
+import { AdaptiveCardHelper } from './adaptiveCardHelper';
 import { CardResponseHelpers } from './cardResponseHelpers';
+import { SubmitExampleData } from './submitExampleData';
 
-export class ActionBasedMessagingExtensionFetchTaskBot   extends TeamsActivityHandler {
+export class ActionBasedMessagingExtensionFetchTaskBot extends TeamsActivityHandler {
     /*
-     * After installing this bot you will need to click on the 3 dots to pull up the extension menu to select the bot. Once you do you do 
+     * After installing this bot you will need to click on the 3 dots to pull up the extension menu to select the bot. Once you do you do
      * see the extension pop a task module.
      */
     constructor() {
@@ -35,12 +35,12 @@ export class ActionBasedMessagingExtensionFetchTaskBot   extends TeamsActivityHa
     }
 
     protected async onTeamsMessagingExtensionFetchTask(context, query): Promise<MessagingExtensionActionResponse> {
-        const resp = AdaptiveCardHelper.createTaskModuleAdaptiveCardResponse();
-        return resp;
+        const response = AdaptiveCardHelper.createTaskModuleAdaptiveCardResponse();
+        return response;
     }
 
-    protected async onTeamsMessagingExtensionSubmitAction(context: TurnContext, action: MessagingExtensionAction) : Promise<MessagingExtensionActionResponse> {
-        const submittedData = <SubmitExampleData>action.data;
+    protected async onTeamsMessagingExtensionSubmitAction(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+        const submittedData = action.data as SubmitExampleData;
         const adaptiveCard = AdaptiveCardHelper.toAdaptiveCardAttachment(submittedData);
         const response = CardResponseHelpers.toMessagingExtensionBotMessagePreviewResponse(adaptiveCard);
         return response;
@@ -50,29 +50,28 @@ export class ActionBasedMessagingExtensionFetchTaskBot   extends TeamsActivityHa
         const submitData = AdaptiveCardHelper.toSubmitExampleData(action);
         const response = AdaptiveCardHelper.createTaskModuleAdaptiveCardResponse(
                                                     submitData.Question,
-                                                    (submitData.MultiSelect.toLowerCase() == 'true'),
+                                                    (submitData.MultiSelect.toLowerCase() === 'true'),
                                                     submitData.Option1,
                                                     submitData.Option2,
                                                     submitData.Option3);
         return response;
     }
 
-    protected async onTeamsMessagingExtensionBotMessagePreviewSend(context: TurnContext, action: MessagingExtensionAction) : Promise<MessagingExtensionActionResponse> {
-        const submitData : SubmitExampleData = AdaptiveCardHelper.toSubmitExampleData(action);
-        const adaptiveCard : Attachment = AdaptiveCardHelper.toAdaptiveCardAttachment(submitData);
+    protected async onTeamsMessagingExtensionBotMessagePreviewSend(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+        const submitData: SubmitExampleData = AdaptiveCardHelper.toSubmitExampleData(action);
+        const adaptiveCard: Attachment = AdaptiveCardHelper.toAdaptiveCardAttachment(submitData);
 
-        const responseActivity = <Activity> {type: 'message', attachments: [adaptiveCard] };
+        const responseActivity = {type: 'message', attachments: [adaptiveCard] } as Activity;
 
         try {
             // Send to channel where messaging extension invoked.
-            var results = await teamsCreateConversation(context, context.activity.channelData.channel.id, responseActivity);
+            let results = await teamsCreateConversation(context, context.activity.channelData.channel.id, responseActivity);
 
             // Send card to "General" channel.
             const teamDetails: TeamDetails = await TeamsInfo.getTeamDetails(context);
-            results  = await teamsCreateConversation(context, teamDetails.id, responseActivity);
-        }
-        catch {
-            console.log('In group chat or personal scope.');
+            results = await teamsCreateConversation(context, teamDetails.id, responseActivity);
+        } catch {
+            console.error('In group chat or personal scope.');
         }
 
         // Send card to compose box for the current user.
@@ -81,7 +80,7 @@ export class ActionBasedMessagingExtensionFetchTaskBot   extends TeamsActivityHa
     }
 
     protected async onTeamsMessagingExtensionCardButtonClicked(context: TurnContext, obj) {
-        const reply = MessageFactory.text("onTeamsMessagingExtensionCardButtonClicked Value: " + JSON.stringify(context.activity.value));
+        const reply = MessageFactory.text('onTeamsMessagingExtensionCardButtonClicked Value: ' + JSON.stringify(context.activity.value));
         await context.sendActivity(reply);
     }
 }
