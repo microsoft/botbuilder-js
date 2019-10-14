@@ -1,4 +1,4 @@
-const Adapter = require('../lib/botFrameworkStreamingAdapter');
+const Adapter = require('../lib/botFrameworkAdapter');
 const ActivityHandler = require("botbuilder-core");
 const  chai  = require('chai');
 var expect = chai.expect;
@@ -121,73 +121,77 @@ describe('BotFrameworkStreamingAdapter tests', () => {
     });
 
     it('gets constructed properly', () => {
-        let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot);
+        let handler = new Adapter.BotFrameworkAdapter();
 
-        expect(handler).to.be.instanceOf(Adapter.BotFrameworkStreamingAdapter);
-        expect(handler.bot).to.equal(bot);
-        expect(handler.logger).to.equal(console);
-        expect(handler.middleWare).to.be.an('array').that.is.empty;
+        expect(handler).to.be.instanceOf(Adapter.BotFrameworkAdapter);
     });
 
     it('starts and stops a namedpipe server', () => {
-        let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot);
+        let handler = new Adapter.BotFrameworkAdapter();
 
-        handler.connectNamedPipe('PipeyMcPipeface');
-        expect(handler.server.disconnect()).to.not.throw;
+        handler.useNamedPipe('PipeyMcPipeface', async (context) => {
+            // Route to bot
+            await bot.run(context);
+        });
+        expect(handler.streamingServer.disconnect()).to.not.throw;
     });
 
     it('starts and stops a websocket server', (done) => {
         let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot);
+        let handler = new Adapter.BotFrameworkAdapter();
         let request = new TestRequest();
         let response = new TestResponse({claimUpgrade:'anything'});
-        let settings = new TestAdapterSettings(undefined, undefined);
 
-        expect(handler.connectWebSocket(request, response, settings)).to.not.throw;
+        expect(handler.useWebSocket(request, response, async (context) => {
+            // Route to bot
+            await bot.run(context);
+        })).to.not.throw;
         done();
     });
 
     it('returns a connector client', () => {
         let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let handler = new Adapter.BotFrameworkAdapter(); 
         cc = handler.createConnectorClient('www.contoso.com');
         expect(cc.baseUri).to.equal('www.contoso.com');
     });
 
-    it('connectWebSocket returns an error when request is not an upgrade request', () => {
+    it('useWebSocket returns an error when request is not an upgrade request', () => {
         let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot);
+        let handler = new Adapter.BotFrameworkAdapter();
         let request = new TestRequest();
         request.setIsUpgradeRequest(false);
         let response = new TestResponse();
-        let settings = new TestAdapterSettings(undefined, undefined);        
 
-        handler.connectWebSocket(request, response, settings).catch();
+        handler.useWebSocket(request, response, async (context) => {
+            // Route incoming streaming requests to bot
+            await bot.run(context);
+        }).catch();
         expect(response.sendVal).to.equal('Upgrade to WebSockets required.');
         expect(response.statusVal).to.equal(426);       
     });
 
-    it('connectWebSocket returns status code 401 when request is not authorized', async () => {
+    it('useWebSocket returns status code 401 when request is not authorized', async () => {
         let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot);
+        let handler = new Adapter.BotFrameworkAdapter(new TestAdapterSettings('appId', 'password'));
         let request = new TestRequest();
         request.setIsUpgradeRequest(true);
         request.setHeaders({channelid: 'fakechannel', authorization: 'donttrustme'});
         let response = new TestResponse();
-        let settings = new TestAdapterSettings('appId', 'password');    
 
-        await handler.connectWebSocket(request, response, settings).then(function(){
+        await handler.useWebSocket(request, response, async (context) => {
+            // Route to bot
+            await bot.run(context);
+        }).then(function(){
             return;
         });     
         expect(response.sendVal).to.equal(undefined);
         expect(response.statusVal).to.equal(401); 
     });
 
-    it('connectWebSocket connects', async () => {
+    it('useWebSocket connects', async () => {
         let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot);
+        let handler = new Adapter.BotFrameworkAdapter();
         let request = new TestRequest();        
         request.setIsUpgradeRequest(true);       
         request.headers = [];
@@ -204,16 +208,18 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             end: function(){return;},
         };
         response.setClaimUpgrade( {socket: fakeSocket, head: 'websocket'} );
-        let settings = new TestAdapterSettings();    
 
-        await handler.connectWebSocket(request, response, settings).then(function(){
+        await handler.useWebSocket(request, response, async (context) => {
+            // Route to bot
+            await bot.run(context);
+        }).then(function(){
             return;
         });     
     });
 
     it('returns a 400 when the request is missing verb', async () => {
         let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let handler = new Adapter.BotFrameworkAdapter(); 
         let request = new TestRequest();
         request.verb = undefined;
         request.path = '/api/messages';
@@ -230,7 +236,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
 
     it('returns a 400 when the request is missing path', async () => {
         let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let handler = new Adapter.BotFrameworkAdapter(); 
         let request = new TestRequest();
         request.verb = 'POST';
         request.path =  undefined;
@@ -247,7 +253,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
 
     it('returns a 400 when the request body is missing', async () => {
         let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let handler = new Adapter.BotFrameworkAdapter(); 
         let request = new TestRequest( 'POST', '/api/messages');
         request.verb = 'POST';
         request.path = '/api/messages';
@@ -261,7 +267,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
 
     it('returns user agent information when a GET hits the version endpoint', async () => {
         let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let handler = new Adapter.BotFrameworkAdapter(); 
         let request = new TestRequest();
         request.verb = 'GET';
         request.path = '/api/version';
@@ -279,7 +285,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
 
     it('returns user agent information from cache when a GET hits the version endpoint more than once', async () => {
         let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let handler = new Adapter.BotFrameworkAdapter(); 
         let request = new TestRequest();
         request.verb = 'GET';
         request.path = '/api/version';
@@ -303,7 +309,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
 
     it('returns 405 for unsupported methods', async () => {
         let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let handler = new Adapter.BotFrameworkAdapter(); 
         let request = new TestRequest();
         request.verb = 'UPDATE';
         request.path = '/api/version';
@@ -320,7 +326,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
 
     it('returns 404 for unsupported paths', async () => {
         let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let handler = new Adapter.BotFrameworkAdapter(); 
         let request = new TestRequest();
         request.verb = 'POST';
         request.path = '/api/supersecretbackdoor';
@@ -337,7 +343,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
 
     it('processes a well formed request when there is no middleware with a non-Invoke activity type', async () => {
         let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let handler = new Adapter.BotFrameworkAdapter(); 
         let request = new TestRequest();
         request.verb = 'POST';
         request.path = '/api/messages';
@@ -346,15 +352,20 @@ describe('BotFrameworkStreamingAdapter tests', () => {
         };
         request.streams[0] = fakeStream;
 
+        handler.streamingLogic = async (context) => {
+            // Route to bot
+            await bot.run(context);
+        };
+
         await handler.processRequest(request).then( 
             function(response) {
                 expect(response.statusCode).to.equal(200);              
-            });     
+            });  
     });
 
     it('returns a 501 when activity type is invoke, but the activity is invalid', async () => {
         let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot); 
+        let handler = new Adapter.BotFrameworkAdapter(); 
         let request = new TestRequest();
         request.verb = 'POST';
         request.path = '/api/messages';
@@ -363,6 +374,11 @@ describe('BotFrameworkStreamingAdapter tests', () => {
         };
         request.streams[0] = fakeStream;
 
+        handler.streamingLogic =  async (context) => {
+            // Route to bot
+            await bot.run(context);
+        };
+        
         await handler.processRequest(request).then( 
             function(response) {
                 expect(response.statusCode).to.equal(501);              
@@ -371,7 +387,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
 
     it('sends a request', async () => {
         let bot = new ActivityHandler.ActivityHandler();
-        let handler = new Adapter.BotFrameworkStreamingAdapter(bot);
+        let handler = new Adapter.BotFrameworkAdapter();
         let request = new TestRequest();        
         request.setIsUpgradeRequest(true);       
         request.headers = [];
@@ -390,9 +406,11 @@ describe('BotFrameworkStreamingAdapter tests', () => {
         var sinon = require('sinon');
         var spy = sinon.spy(fakeSocket, "write");
         response.setClaimUpgrade( {socket: fakeSocket, head: 'websocket'} );
-        let settings = new TestAdapterSettings();    
-
-        await handler.connectWebSocket(request, response, settings).then(function(){
+    
+        await handler.useWebSocket(request, response, async (context) => {
+            // Route to bot
+            await bot.run(context);
+        }).then(function(){
             return;
         });
         
@@ -412,7 +430,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             }};
         let mwset = [];
         mwset.push(mw);
-        let handler = new Adapter.BotFrameworkStreamingAdapter({ bot: bot, middleWare: mwset}); 
+        let handler = new Adapter.BotFrameworkAdapter({ bot: bot, middleWare: mwset}); 
         let request = new TestRequest();
         request.verb = 'POST';
         request.path = '/api/messages';
@@ -429,20 +447,18 @@ describe('BotFrameworkStreamingAdapter tests', () => {
 
     it('executes middleware', async () => {
         var sinon = require('sinon');
-        let bot= new ActivityHandler.ActivityHandler();
+        let bot = new ActivityHandler.ActivityHandler();
         bot.run = function(turnContext){return Promise.resolve();};
-        let mw = { 
-            async onTurn(context, next) 
-            {
-                console.log('Middleware executed!');
-                await next();
-            }};
-        
+
+
         let mwset = [];
-        mwset.push(mw);
-        let handler = new Adapter.BotFrameworkStreamingAdapter({bot: bot, middleWare: mwset}); 
-        handler.bot.run = function(turnContext){return Promise.resolve();};
-        var spy = sinon.spy(handler.bot, "run");
+        let handler = new Adapter.BotFrameworkAdapter(); 
+        handler.use(async(context, next) => {
+            console.log('Middleware executed!');
+            return next();
+        });
+
+        var spy = sinon.spy(bot, 'run');
         let request = new TestRequest();
         request.verb = 'POST';
         request.path = '/api/messages';
@@ -450,6 +466,11 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             readAsJson: function(){ return {type: 'invoke', serviceUrl: 'somewhere/', channelId: 'test'};},
         };
         request.streams[0] = fakeStream;
+
+        handler.streamingLogic = async (context) => {
+            // Route to bot
+            await bot.run(context);
+        };
 
         await handler.processRequest(request).then( 
             function(response) {
