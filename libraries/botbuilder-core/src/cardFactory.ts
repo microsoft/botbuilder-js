@@ -168,11 +168,12 @@ export class CardFactory {
      * @param connectionName The name of the OAuth connection to use.
      * @param title Title of the cards signin button.
      * @param text (Optional) additional text to include on the card.
+     * @param link (Optional) the sign in link to follow
      */
-    public static oauthCard(connectionName: string, title: string, text?: string): Attachment {
+    public static oauthCard(connectionName: string, title: string, text?: string, link?: string): Attachment {
         const card: Partial<OAuthCard> = {
             buttons: [
-                { type: ActionTypes.Signin, title: title, value: undefined, channelData: undefined }
+                { type: ActionTypes.Signin, title: title, value: link, channelData: undefined }
             ],
             connectionName: connectionName
         };

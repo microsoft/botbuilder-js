@@ -37,10 +37,6 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context 
      */
     protected async onTurnActivity(context: TurnContext): Promise<void> {
-        if (context.activity.channelId === 'msteams') {
-            // this.teamsRosterClient = 
-        }
-
         switch (context.activity.type) {
             case ActivityTypes.Invoke:
                 const invokeResponse = await this.onInvokeActivity(context);

@@ -5,23 +5,14 @@ import { config } from 'dotenv';
 import * as path from 'path';
 import * as restify from 'restify';
 
-// Import required bot services.
-// See https://aka.ms/bot-services to learn more about the different parts of a bot.
-import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
+// Import required bot services. See https://aka.ms/bot-services to learn more about the different parts of a bot.
+import { BotFrameworkAdapter } from 'botbuilder';
 
-// This bot's main dialog.
-import { ActivityUpdateAndDeleteBot  } from './activityUpdateAndDeleteBot';
+import { ActivityUpdateAndDeleteBot } from './activityUpdateAndDeleteBot';
 
+// Note: Ensure you have a .env file and include MicrosoftAppId and MicrosoftAppPassword.
 const ENV_FILE = path.join(__dirname, '..', '.env');
 config({ path: ENV_FILE });
-
-// Create HTTP server.
-const server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, () => {
-    console.log(`\n${server.name} listening to ${server.url}`);
-    console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
-    console.log(`\nTo test your bot, see: https://aka.ms/debug-with-emulator`);
-});
 
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about adapters.
@@ -39,10 +30,17 @@ adapter.onTurnError = async (context, error) => {
     await context.sendActivity(`Oops. Something went wrong in the bot!\n  ${error.message}`);
 };
 
-let activityIds: string[] = [];
+const activityIds: string[] = [];
 
 // Create the bot.
 const myBot = new ActivityUpdateAndDeleteBot(activityIds);
+
+// Create HTTP server.
+const server = restify.createServer();
+server.listen(process.env.port || process.env.PORT || 3978, () => {
+    console.log(`\n${ server.name } listening to ${ server.url }`);
+    console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
+});
 
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
