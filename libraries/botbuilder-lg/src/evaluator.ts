@@ -75,6 +75,9 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         const bodys: TerminalNode[] = ctx.structuredBodyContentLine().STRUCTURED_CONTENT();
         for (const body  of bodys) {
             const line: string = body.text.trim();
+            if (line === '') {
+                continue;
+            }
             const start: number = line.indexOf('=');
             if (start > 0) {
                 // make it insensitive
