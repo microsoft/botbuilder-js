@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { SubscribableStream } from './SubscribableStream';
-import { PayloadAssembler } from './Assemblers';
+import { PayloadAssembler } from './assemblers';
 
 export class ContentStream {
     public id: string;

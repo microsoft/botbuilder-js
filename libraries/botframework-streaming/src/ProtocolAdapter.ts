@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PayloadAssembler } from './Assemblers/PayloadAssembler';
+import { PayloadAssembler } from './assemblers/PayloadAssembler';
 import { PayloadAssemblerManager } from './Payloads/PayloadAssemblerManager';
 import { RequestManager } from './Payloads/RequestManager';
 import { SendOperations } from './Payloads/SendOperations';
