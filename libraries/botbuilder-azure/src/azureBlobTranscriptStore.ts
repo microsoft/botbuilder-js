@@ -79,7 +79,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             {
                 fromid: activity.from.id,
                 recipientid: activity.recipient.id,
-                timestamp: activity.timestamp.getTime().toString()
+                timestamp: activity.timestamp.toJSON()
             }
         );
 
@@ -205,8 +205,8 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
     ): Promise<azure.BlobService.BlobResult[]> {
     	const listBlobResult = await this.client.listBlobsSegmentedWithPrefixAsync(container, prefix, token, { include: 'metadata' });
         listBlobResult.entries.some(blob => {
-            const timestamp: number = parseInt(blob.metadata.timestamp, 10);
-            if (timestamp >= startDate.getTime()) {
+            const timestamp: Date = new Date(blob.metadata.timestamp);
+            if (timestamp >= startDate) {
                 if (continuationToken) {
                     if (blob.name === continuationToken) {
                         continuationToken = null;
