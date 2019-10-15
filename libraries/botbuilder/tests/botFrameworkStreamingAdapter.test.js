@@ -152,8 +152,17 @@ describe('BotFrameworkStreamingAdapter tests', () => {
     it('returns a connector client', () => {
         let bot = new ActivityHandler.ActivityHandler();
         let handler = new Adapter.BotFrameworkAdapter(); 
-        cc = handler.createConnectorClient('www.contoso.com');
-        expect(cc.baseUri).to.equal('www.contoso.com');
+        let request = new TestRequest();
+        request.setIsUpgradeRequest(true);
+        let response = new TestResponse();
+
+        handler.useWebSocket(request, response, async (context) => {
+            // Route to bot
+            await bot.run(context);
+        }).then(() => {
+            cc = handler.createConnectorClient('urn:test'); 
+            expect(cc.baseUri).to.equal('urn:test');
+        }); 
     });
 
     it('useWebSocket returns an error when request is not an upgrade request', () => {
@@ -171,7 +180,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
         expect(response.statusVal).to.equal(426);       
     });
 
-    it('useWebSocket returns status code 401 when request is not authorized', async () => {
+    it('useWebSocket returns status code 401 when request is not authorized', () => {
         let bot = new ActivityHandler.ActivityHandler();
         let handler = new Adapter.BotFrameworkAdapter(new TestAdapterSettings('appId', 'password'));
         let request = new TestRequest();
@@ -179,14 +188,13 @@ describe('BotFrameworkStreamingAdapter tests', () => {
         request.setHeaders({channelid: 'fakechannel', authorization: 'donttrustme'});
         let response = new TestResponse();
 
-        await handler.useWebSocket(request, response, async (context) => {
+        handler.useWebSocket(request, response, async (context) => {
             // Route to bot
             await bot.run(context);
-        }).then(function(){
-            return;
-        });     
-        expect(response.sendVal).to.equal(undefined);
-        expect(response.statusVal).to.equal(401); 
+        }).then(() => {
+            expect(response.sendVal).to.equal(undefined);
+            expect(response.statusVal).to.equal(401); 
+        });
     });
 
     it('useWebSocket connects', async () => {

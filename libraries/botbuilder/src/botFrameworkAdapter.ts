@@ -967,7 +967,15 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * Override this in a derived class to create a mock connector client for unit testing.
      */
     public createConnectorClient(serviceUrl: string): ConnectorClient {
+
         if (TurnContext.isStreamingServiceUrl(serviceUrl)) {
+
+            // Check if we have a streaming server. Otherwise, requesting a connector client
+            // for a non-existent streaming connection results in an error
+            if (!this.streamingServer) {
+                throw new Error(`Cannot create streaming connector client for serviceUrl ${serviceUrl} without a streaming connection. Call 'useWebSocket' or 'useNamedPipe' to start a streaming connection.`)
+            }
+
             return new ConnectorClient(
                 this.credentials,
                 {

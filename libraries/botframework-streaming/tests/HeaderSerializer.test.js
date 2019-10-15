@@ -109,7 +109,7 @@ describe('HeaderSerializer', () => {
 
     it('throws if the header ID is malformed', () => {
         //  expect.assertions(1);
-        const headerId = 'A.000168.68e9p9ca-a651-40f4-ad8f-3aaf781862b4.1\n';
+        const headerId = '68e9p9ca-a651-40f4-ad8f-3aaf781862b4';
         const header = `A.000168.${ headerId }.1\n`;
 
         let buffer = Buffer.alloc(Number(PayloadConstants.PayloadConstants.MaxHeaderLength));
