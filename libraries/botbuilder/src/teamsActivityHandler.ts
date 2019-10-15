@@ -62,7 +62,8 @@ export class TeamsActivityHandler extends ActivityHandler {
             } else {
                 switch (context.activity.name) {
                     case 'signin/verifyState':
-                        return await this.onTeamsSigninVerifyState(context, context.activity.value);
+                        await this.onTeamsSigninVerifyState(context, context.activity.value);
+                        return TeamsActivityHandler.createInvokeResponse();
 
                     case 'fileConsent/invoke':
                         return TeamsActivityHandler.createInvokeResponse(await this.onTeamsFileConsent(context, context.activity.value));
@@ -98,15 +99,10 @@ export class TeamsActivityHandler extends ActivityHandler {
                         return TeamsActivityHandler.createInvokeResponse();
 
                     case 'task/fetch':
-                        const fetchResponse = await this.onTeamsTaskModuleFetch(context, context.activity.value);
-                        const taskModuleContineResponse = { type: 'continue', value: fetchResponse };
-                        const taskModuleResponse = { task: taskModuleContineResponse };
-                        return TeamsActivityHandler.createInvokeResponse(taskModuleResponse);
+                        return TeamsActivityHandler.createInvokeResponse(await this.onTeamsTaskModuleFetch(context, context.activity.value));
 
                     case 'task/submit':
-                        const submitResponseBase = await this.onTeamsTaskModuleSubmit(context, context.activity.value);
-                        const taskModuleResponse_submit = { task: submitResponseBase };
-                        return TeamsActivityHandler.createInvokeResponse(taskModuleResponse_submit);
+                        return TeamsActivityHandler.createInvokeResponse(await this.onTeamsTaskModuleSubmit(context, context.activity.value));
 
                     default:
                         throw new Error('NotImplemented');
@@ -187,7 +183,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param action
      */
-    protected async onTeamsSigninVerifyState(context: TurnContext, query: SigninStateVerificationQuery): Promise<InvokeResponse> {
+    protected async onTeamsSigninVerifyState(context: TurnContext, query: SigninStateVerificationQuery): Promise<void> {
         throw new Error('NotImplemented');
     }
 
@@ -205,7 +201,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param taskModuleRequest
      */
-    protected async onTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleTaskInfo> {
+    protected async onTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -214,7 +210,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param taskModuleRequest
      */
-    protected async onTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponseBase | void> {
+    protected async onTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
         throw new Error('NotImplemented');
     }
 
