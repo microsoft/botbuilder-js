@@ -229,7 +229,6 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     private readonly credentials: MicrosoftAppCredentials;
     private readonly credentialsProvider: SimpleCredentialProvider;
     private readonly settings: BotFrameworkAdapterSettings;
-    private readonly logger;
 
     private streamingLogic: (context: TurnContext) => Promise<void>;
     private streamingServer: IStreamingTransportServer;
@@ -949,12 +948,17 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     public async processRequest(request: IReceiveRequest): Promise<StreamingResponse> {
         let response = new StreamingResponse();
 
-        if (!request || !request.verb || !request.path) {
+        if (!request) {
             response.statusCode = StatusCodes.BAD_REQUEST;
-            //this.logger.log('Request missing verb and/or path.');
-
+            response.setBody(`No request provided.`);
             return response;
         }
+
+        if (!request.verb || !request.path) {
+            response.statusCode = StatusCodes.BAD_REQUEST;
+            response.setBody(`Request missing verb and/or path. Verb: ${ request.verb }. Path: ${ request.path }`);
+            return response;
+        } 
 
         if (request.verb.toLocaleUpperCase() === GET && request.path.toLocaleLowerCase() === VERSION_PATH) {
             response.statusCode = StatusCodes.OK;
@@ -969,20 +973,19 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
         } catch (error) {
             response.statusCode = StatusCodes.BAD_REQUEST;
-            //this.logger.log('Unable to read request body. Error: ' + error);
-
+            response.setBody(`Unable to read request body. Error: ${ error }`);
             return response;
         }
 
         if (request.verb.toLocaleUpperCase() !== POST) {
             response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
-
+            response.setBody(`Method ${ request.verb.toLocaleUpperCase() } not allowed. Expected POST.`);
             return response;
         }
 
         if (request.path.toLocaleLowerCase() !== MESSAGES_PATH) {
             response.statusCode = StatusCodes.NOT_FOUND;
-
+            response.setBody(`Path ${ request.path.toLocaleLowerCase() } not not found. Expected ${ MESSAGES_PATH }}.`);
             return response;
         }
 
@@ -1007,10 +1010,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             }
         } catch (error) {
             response.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
-            //this.logger.log(error);
-
+            response.setBody(error);
             return response;
-
         }
 
         return response;
@@ -1025,24 +1026,21 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     public async useWebSocket(req: Request, res: ServerUpgradeResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
         if (!req.isUpgradeRequest()) {
             let e = new Error('Upgrade to WebSockets required.');
-            //this.logger.log(e);
             res.status(StatusCodes.UPGRADE_REQUIRED);
             res.send(e.message);
 
             return Promise.resolve();
         }
 
-        if (!streamingLogic) {
+        if (!logic) {
             throw new Error('Streaming logic needs to be provided to `useWebSocket`');
         }
 
-        this.streamingLogic = streamingLogic;
+        this.streamingLogic = logic;
 
         const authenticated = await this.authenticateConnection(req, this.settings.appId, this.settings.appPassword, this.settings.channelService);
         if (!authenticated) {
-            //this.logger.log('Unauthorized connection attempt.');
             res.status(StatusCodes.UNAUTHORIZED);
-
             return Promise.resolve();
         }
 
@@ -1066,7 +1064,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         this.streamingLogic = logic;
 
         this.streamingServer = new NamedPipeServer(pipeName, this);
-        await this.pipeStreamingServer.start();
+        await this.streamingServer.start();
     }
 
     /**
@@ -1172,25 +1170,19 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             return true;
         }
 
-        try {
-            let authHeader: string = req.headers.authorization || req.headers.Authorization || '';
-            let channelIdHeader: string = req.headers.channelid || req.headers.ChannelId || req.headers.ChannelID || '';
-            let credentials = new MicrosoftAppCredentials(appId, appPassword);
-            let credentialProvider = new SimpleCredentialProvider(credentials.appId, credentials.appPassword);
-            let claims = await JwtTokenValidation.validateAuthHeader(authHeader, credentialProvider, channelService, channelIdHeader);
+        let authHeader: string = req.headers.authorization || req.headers.Authorization || '';
+        let channelIdHeader: string = req.headers.channelid || req.headers.ChannelId || req.headers.ChannelID || '';
+        let credentials = new MicrosoftAppCredentials(appId, appPassword);
+        let credentialProvider = new SimpleCredentialProvider(credentials.appId, credentials.appPassword);
+        let claims = await JwtTokenValidation.validateAuthHeader(authHeader, credentialProvider, channelService, channelIdHeader);
 
-            return claims.isAuthenticated;
-        } catch (error) {
-            //this.logger.log(error);
-
-            return false;
-        }
+        return claims.isAuthenticated;
     }
-    
-    /// <summary>
-    /// Connects the handler to a WebSocket server and begins listening for incoming requests.
-    /// </summary>
-    /// <param name="socket">The socket to use when creating the server.</param>
+
+    /**
+     * Connects the handler to a WebSocket server and begins listening for incoming requests.
+     * @param socket The socket to use when creating the server.
+     */
     private async startWebSocket(socket: ISocket): Promise<void>{
         this.streamingServer = new WebSocketServer(socket, this);
         await this.streamingServer.start();
@@ -1199,11 +1191,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {            
         try {
             let contentStream =  request.streams[0];
-
             return await contentStream.readAsJson<Activity>();
         } catch (error) {
-            //this.logger.log(error);
-
             return Promise.reject(error);
         }
     }

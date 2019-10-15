@@ -76,6 +76,7 @@ export class BrowserWebSocket implements ISocket {
      * Set the handler for text and binary messages received on the socket.
      */
     public setOnMessageHandler(handler: (x: any) => void): void {
+        const bufferKey: string = 'buffer';
         let packets = [];
         this.webSocket.onmessage = (evt): void => {
             let fileReader = new FileReader();
@@ -83,10 +84,10 @@ export class BrowserWebSocket implements ISocket {
             packets.push(queueEntry);
             fileReader.onload = (e): void => {
                 let t: FileReader = e.target as FileReader;
-                queueEntry['buffer'] = t.result;
+                queueEntry[bufferKey] = t.result;
                 if (packets[0] === queueEntry) {
-                    while(0 < packets.length && packets[0]['buffer']) {
-                        handler(packets[0]['buffer']);
+                    while(0 < packets.length && packets[0][bufferKey]) {
+                        handler(packets[0][bufferKey]);
                         packets.splice(0, 1);
                     }
                 }

@@ -19,5 +19,5 @@ export abstract class RequestHandler {
      * @param request A receipt request for this handler to process.
      * @returns A promise that will produce a streaming response on successful completion.
      */
-    public abstract processRequest(request: IReceiveRequest, logger?): Promise<StreamingResponse>;
+    public abstract processRequest(request: IReceiveRequest): Promise<StreamingResponse>;
 }

@@ -56,7 +56,7 @@ export class HeaderSerializer {
         let headerArray = jsonBuffer.split(this.Delimiter);
 
         if (headerArray.length !== 4) {
-            throw Error('Cannot parse header, header is malformed.');
+            throw Error(`Cannot parse header, header is malformed. Header: ${ jsonBuffer }`);
         }
 
         const [payloadType, length, id, headerEnd] = headerArray;
@@ -67,19 +67,19 @@ export class HeaderSerializer {
         const header: IHeader = { end, payloadLength, payloadType, id };
 
         if (!(header.payloadLength <= PayloadConstants.MaxPayloadLength && header.payloadLength >= PayloadConstants.MinLength)) {
-            throw Error('Header Length is missing or malformed.');
+            throw Error(`Header length of ${ header.payloadLength } is missing or malformed`);
         }
 
         if (header.payloadType.length !== this.TypeDelimiterOffset) {
-            throw Error('Header Type is missing or malformed.');
+            throw Error(`Header type '${ header.payloadType.length }' is missing or malformed.`);
         }
 
         if (!header.id || !header.id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i) || header.id.length !==  this.IdLength) {
-            throw Error('Header ID is missing or malformed.');
+            throw Error(`Header ID '${ header.id }' is missing or malformed.`);
         }
 
         if (!(headerEnd === '0\n' || headerEnd === '1\n')) {
-            throw Error('Header End is missing or not a valid value.');
+            throw Error(`Header End is missing or not a valid value. Header end: '${ headerEnd }'`);
         }
 
         return header;

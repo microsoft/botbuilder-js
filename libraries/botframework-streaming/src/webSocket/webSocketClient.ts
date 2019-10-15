@@ -102,6 +102,6 @@ export class WebSocketClient implements IStreamingTransportClient {
             return;
         }
 
-        throw(new Error(`Unable to re-connect client to Node transport. Sender:` + sender + ' Args:' + args));
+        throw(new Error(`Unable to re-connect client to Node transport for url ${ this._url }. Sender: '${ sender }'. Args:' ${ args }`));
     }
 }

@@ -43,7 +43,7 @@ export class RequestManager {
         let pendingRequest = this._pendingRequests[requestId];
 
         if (pendingRequest) {
-            return Promise.reject('requestId already exists in RequestManager');
+            return Promise.reject(`requestId '${ requestId }' already exists in RequestManager`);
         }
 
         pendingRequest = new PendingRequest();
