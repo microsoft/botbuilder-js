@@ -43,8 +43,7 @@ export class TeamsTenantFilteringMiddleware implements Middleware {
             throw new Error('context is null');
         }
 
-        if (context.activity.channelId !== 'msteams')
-        {
+        if (context.activity.channelId !== 'msteams') {
             // If the goal is to NOT process messages from other channels, comment out the following line
             // and message processing will be 'short circuited'.
             if (next !== null) {
@@ -57,13 +56,11 @@ export class TeamsTenantFilteringMiddleware implements Middleware {
         const tenant = channelData && channelData.tenant ? channelData.tenant : undefined;
         const tenantId = tenant && typeof(tenant.id) === 'string' ? tenant.id : undefined;
 
-        if (!tenantId)
-        {
+        if (!tenantId) {
             throw new Error("Tenant Id is missing.");
         }
 
-        if (!this._tenantSet.has(tenantId))
-        {
+        if (!this._tenantSet.has(tenantId)) {
             throw new Error(`Tenant Id '${tenantId}' is not allowed access.`);
         }
 
