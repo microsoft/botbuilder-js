@@ -26,19 +26,33 @@ export enum StatusCodes {
 class StreamingHttpClient implements HttpClient {
     private readonly server: IStreamingTransportServer;
 
+    /**
+     * Creates a new streaming Http client.
+     *
+     * @param server Transport server implementation to be used.
+     */
     public constructor(server: IStreamingTransportServer) {
+
+        if (!server) {
+            throw new Error(`StreamingHttpClient: Expected server.`);
+        }
+
         this.server = server;
     }
 
-    /// <summary>
-    /// This function hides the default sendRequest of the HttpClient, replacing it
-    /// with a version that takes the WebResource created by the BotFrameworkAdapter
-    /// and converting it to a form that can be sent over a streaming transport.
-    /// </summary>
-    /// <param name="httpRequest">The outgoing request created by the BotframeworkAdapter.</param>
-    /// <returns>The streaming transport compatible response to send back to the client.</returns>
-    
+    /**
+     * This function hides the default sendRequest of the HttpClient, replacing it
+     * with a version that takes the WebResource created by the BotFrameworkAdapter
+     * and converting it to a form that can be sent over a streaming transport.
+     *
+     * @param httpRequest The outgoing request created by the BotframeworkAdapter.
+     * @return The streaming transport compatible response to send back to the client.
+     */
     public async sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse> {
+        if (!httpRequest) {
+            throw new Error('SendRequest invalid parameter: httpRequest should be provided');
+        }
+
         const request = this.mapHttpRequestToProtocolRequest(httpRequest);
         request.path = request.path.substring(request.path.indexOf('/v3'));
         const res = await this.server.send(request);
@@ -344,7 +358,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * An asynchronous method that creates and starts a conversation with a user on a channel.
      *
      * @param reference A reference for the conversation to create.
-     * @param logic The asynchronous method to call after the adapter middleware runs. If not provided, the adap
+     * @param logic The asynchronous method to call after the adapter middleware runs. 
      * 
      * @remarks
      * To use this method, you need both the bot's and the user's account information on a channel.
@@ -940,6 +954,79 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
+     * Process the initial request to establish a long lived connection via a streaming server.
+     * @param req The connection request.
+     * @param res The response sent on error or connection termination.
+     * @param res The logic that will handle incoming requests.
+     */
+    public async useWebSocket(req: Request, res: ServerUpgradeResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
+        if (!req.isUpgradeRequest()) {
+            let e = new Error('Upgrade to WebSockets required.');
+            res.status(StatusCodes.UPGRADE_REQUIRED);
+            res.send(e.message);
+
+            return Promise.resolve();
+        }
+
+        if (!logic) {
+            throw new Error('Streaming logic needs to be provided to `useWebSocket`');
+        }
+
+        this.streamingLogic = logic;
+
+        const authenticated = await this.authenticateConnection(req, this.settings.appId, this.settings.appPassword, this.settings.channelService);
+        if (!authenticated) {
+            res.status(StatusCodes.UNAUTHORIZED);
+            return Promise.resolve();
+        }
+
+        const upgrade = res.claimUpgrade();
+        const ws = new Watershed();
+        const socket = ws.accept(req, upgrade.socket, upgrade.head);
+
+        await this.startWebSocket(new NodeWebSocket(socket));
+    }
+
+    /**
+     * Connects the handler to a Named Pipe server and begins listening for incoming requests.
+     * @param pipeName The name of the named pipe to use when creating the server.
+     * @param logic The logic that will handle incoming requests.
+     */
+    public async useNamedPipe(pipeName: string = defaultPipeName, logic: (context: TurnContext) => Promise<any>): Promise<void>{
+        if (!logic) {
+            throw new Error('Bot logic needs to be provided to `useNamedPipe`');
+        }
+
+        this.streamingLogic = logic;
+
+        this.streamingServer = new NamedPipeServer(pipeName, this);
+        await this.streamingServer.start();
+    }
+
+    /**
+     * Creates a connector client.
+     * 
+     * @param serviceUrl The client's service URL.
+     * 
+     * @remarks
+     * Override this in a derived class to create a mock connector client for unit testing.
+     */
+    public createConnectorClient(serviceUrl: string): ConnectorClient {
+        if (TurnContext.isStreamingServiceUrl(serviceUrl)) {
+            return new ConnectorClient(
+                this.credentials,
+                {
+                    baseUri: serviceUrl,
+                    userAgent: USER_AGENT,
+                    httpClient: new StreamingHttpClient(this.streamingServer)
+                });
+        }
+
+        const client: ConnectorClient = new ConnectorClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
+        return client;
+    }
+
+    /**
      * Checks the validity of the request and attempts to map it the correct virtual endpoint,
      * then generates and returns a response if appropriate.
      * @param request A ReceiveRequest from the connected channel.
@@ -1018,53 +1105,16 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Process the initial request to establish a long lived connection via a streaming server.
-     * @param req The connection request.
-     * @param res The response sent on error or connection termination.
-     * @param res The logic that will handle incoming requests.
+     * Creates an OAuth API client.
+     * 
+     * @param serviceUrl The client's service URL.
+     * 
+     * @remarks
+     * Override this in a derived class to create a mock OAuth API client for unit testing.
      */
-    public async useWebSocket(req: Request, res: ServerUpgradeResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
-        if (!req.isUpgradeRequest()) {
-            let e = new Error('Upgrade to WebSockets required.');
-            res.status(StatusCodes.UPGRADE_REQUIRED);
-            res.send(e.message);
-
-            return Promise.resolve();
-        }
-
-        if (!logic) {
-            throw new Error('Streaming logic needs to be provided to `useWebSocket`');
-        }
-
-        this.streamingLogic = logic;
-
-        const authenticated = await this.authenticateConnection(req, this.settings.appId, this.settings.appPassword, this.settings.channelService);
-        if (!authenticated) {
-            res.status(StatusCodes.UNAUTHORIZED);
-            return Promise.resolve();
-        }
-
-        const upgrade = res.claimUpgrade();
-        const ws = new Watershed();
-        const socket = ws.accept(req, upgrade.socket, upgrade.head);
-
-        await this.startWebSocket(new NodeWebSocket(socket));
-    }
-
-    /**
-     * Connects the handler to a Named Pipe server and begins listening for incoming requests.
-     * @param pipeName The name of the named pipe to use when creating the server.
-     * @param logic The logic that will handle incoming requests.
-     */
-    public async useNamedPipe(pipeName: string = defaultPipeName, logic: (context: TurnContext) => Promise<any>): Promise<void>{
-        if (!logic) {
-            throw new Error('Bot logic needs to be provided to `useNamedPipe`');
-        }
-
-        this.streamingLogic = logic;
-
-        this.streamingServer = new NamedPipeServer(pipeName, this);
-        await this.streamingServer.start();
+    protected createTokenApiClient(serviceUrl: string): TokenApiClient {
+        const client = new TokenApiClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
+        return client;
     }
 
     /**
@@ -1079,42 +1129,6 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             this.settings.channelService
         );
         if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
-    }
-
-    /**
-     * Creates a connector client.
-     * 
-     * @param serviceUrl The client's service URL.
-     * 
-     * @remarks
-     * Override this in a derived class to create a mock connector client for unit testing.
-     */
-    public createConnectorClient(serviceUrl: string): ConnectorClient {
-        if (TurnContext.isStreamingServiceUrl(serviceUrl)) {
-            return new ConnectorClient(
-                this.credentials,
-                {
-                    baseUri: serviceUrl,
-                    userAgent: USER_AGENT,
-                    httpClient: new StreamingHttpClient(this.streamingServer)
-                });
-        }
-
-        const client: ConnectorClient = new ConnectorClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
-        return client;
-    }
-
-    /**
-     * Creates an OAuth API client.
-     * 
-     * @param serviceUrl The client's service URL.
-     * 
-     * @remarks
-     * Override this in a derived class to create a mock OAuth API client for unit testing.
-     */
-    protected createTokenApiClient(serviceUrl: string): TokenApiClient {
-        const client = new TokenApiClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
-        return client;
     }
 
     /**
