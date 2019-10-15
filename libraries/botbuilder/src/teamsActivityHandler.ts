@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { InvokeResponse } from './botFrameworkAdapter';
+import { InvokeResponse, INVOKE_RESPONSE_KEY } from './botFrameworkAdapter';
 
 import {
-    ActivityTypes,
     ActivityHandler,
+    ActivityTypes,
     AppBasedLinkQuery,
     ChannelAccount,
     ChannelInfo,
@@ -40,7 +40,8 @@ export class TeamsActivityHandler extends ActivityHandler {
         switch (context.activity.type) {
             case ActivityTypes.Invoke:
                 const invokeResponse = await this.onInvokeActivity(context);
-                if (invokeResponse) {
+                // If onInvokeActivity has already sent an InvokeResponse, do not send another one.
+                if (invokeResponse && !context.turnState.get(INVOKE_RESPONSE_KEY)) {
                     await context.sendActivity({ value: invokeResponse, type: 'invokeResponse' });
                 }
                 break;

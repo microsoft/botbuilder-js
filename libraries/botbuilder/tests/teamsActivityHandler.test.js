@@ -13,22 +13,52 @@ function createInvokeActivity(name, value = {}, channelData = {}) {
 }
 
 describe('TeamsActivityHandler', () => {
-    it('should call onTurnActivity if non-Invoke is received', async () => {
-        const bot = new TeamsActivityHandler();
-        bot.onMessage(async (context, next) => {
-            await context.sendActivity('Hello');
-            await next();
-        });
-
-        const adapter = new TestAdapter(async context => {
-            await bot.run(context);
-        });
-
-        adapter.send({ type: ActivityTypes.Message, text: 'Hello' })
-            .assertReply(activity => {
-                assert.strictEqual(activity.type, ActivityTypes.Message);
-                assert.strictEqual(activity.text, 'Hello');
+    describe('onTurnActivity()', () => {
+        it('should not override the InvokeResponse on the context.turnState if it is set', done => {
+            class InvokeHandler extends TeamsActivityHandler {
+                async onInvokeActivity(context) {
+                    assert(context, 'context not found');
+                    await context.sendActivity({ type: 'invokeResponse', value: { status: 200, body: `I'm a teapot.` } });
+                    return { status: 418 };
+                }
+            }
+    
+            const bot = new InvokeHandler();
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
             });
+    
+            adapter.send({ type: ActivityTypes.Invoke })
+                .assertReply(activity => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert(activity.value, 'activity.value not found');
+                    assert.strictEqual(activity.value.status, 200);
+                    assert.strictEqual(activity.value.body, `I'm a teapot.`);
+                    done();
+                })
+                .catch(err => done(err));
+    
+        });
+
+        it('should call onTurnActivity if non-Invoke is received', done => {
+            const bot = new TeamsActivityHandler();
+            bot.onMessage(async (context, next) => {
+                await context.sendActivity('Hello');
+                await next();
+            });
+    
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            adapter.send({ type: ActivityTypes.Message, text: 'Hello' })
+                .assertReply(activity => {
+                    assert.strictEqual(activity.type, ActivityTypes.Message);
+                    assert.strictEqual(activity.text, 'Hello');
+                    done();
+                })
+                .catch(err => done(err));
+        });
     });
 
     describe('should send a BadRequest status code if', () => {
