@@ -29,7 +29,7 @@ export class PayloadReceiver {
     /**
      * Connects to a transport receiver
      *
-     * @param receiver The [ITransportReceiver](xref:botbuilder-streaming.ITransportReceiver) object to pull incoming data from.
+     * @param receiver The [ITransportReceiver](xref:botframework-streaming.ITransportReceiver) object to pull incoming data from.
      */
     public connect(receiver: ITransportReceiver): void {
         if (this.isConnected) {

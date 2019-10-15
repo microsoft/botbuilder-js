@@ -11,7 +11,7 @@ export class BrowserWebSocket implements ISocket {
     private webSocket: WebSocket;
 
     /**
-     * Creates a new instance of the [BrowserWebSocket](xref:botbuilder-streaming.BrowserWebSocket) class.
+     * Creates a new instance of the [BrowserWebSocket](xref:botframework-streaming.BrowserWebSocket) class.
      *
      * @param socket The socket object to build this connection on.
      */

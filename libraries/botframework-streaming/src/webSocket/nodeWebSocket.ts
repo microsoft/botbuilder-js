@@ -14,7 +14,7 @@ export class NodeWebSocket implements ISocket {
     private connected: boolean;
 
     /**
-     * Creates a new instance of the [NodeWebSocket](xref:botbuilder-streaming.NodeWebSocket) class.
+     * Creates a new instance of the [NodeWebSocket](xref:botframework-streaming.NodeWebSocket) class.
      *
      * @param socket The WaterShed socket object to build this connection on.
      */

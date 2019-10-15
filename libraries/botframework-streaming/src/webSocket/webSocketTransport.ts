@@ -22,7 +22,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
     private _activeReceiveCount: number;
 
     /**
-     * Creates a new instance of the [WebSocketTransport](xref:botbuilder-streaming.WebSocketTransport) class.
+     * Creates a new instance of the [WebSocketTransport](xref:botframework-streaming.WebSocketTransport) class.
      *
      * @param ws The ISocket to build this transport on top of.
      */

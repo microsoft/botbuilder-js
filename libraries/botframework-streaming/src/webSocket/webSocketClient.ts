@@ -32,10 +32,10 @@ export class WebSocketClient implements IStreamingTransportClient {
     private readonly _disconnectionHandler: (message: string) => void;
 
     /**
-     * Creates a new instance of the [WebSocketClient](xref:botbuilder-streaming.WebSocketClient) class.
+     * Creates a new instance of the [WebSocketClient](xref:botframework-streaming.WebSocketClient) class.
      *
      * @param url The URL of the remote server to connect to.
-     * @param requestHandler Optional [RequestHandler](xref:botbuilder-streaming.RequestHandler) to process incoming messages received by this server.
+     * @param requestHandler Optional [RequestHandler](xref:botframework-streaming.RequestHandler) to process incoming messages received by this server.
      * @param disconnectionHandler Optional function to handle the disconnection message.
      */
     public constructor({ url, requestHandler, disconnectionHandler = null}) {

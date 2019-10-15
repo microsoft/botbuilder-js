@@ -9,7 +9,7 @@ import { IReceiveRequest } from './Interfaces/IReceiveRequest';
 import { StreamingResponse } from './streamingResponse';
 
 /**
- * Implemented by classes used to process incoming streaming requests sent over an [IStreamingTransport](xref:botbuilder-streaming.IStreamingTransport).
+ * Implemented by classes used to process incoming streaming requests sent over an [IStreamingTransport](xref:botframework-streaming.IStreamingTransport).
  */
 export abstract class RequestHandler {
 

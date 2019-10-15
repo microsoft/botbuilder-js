@@ -31,10 +31,10 @@ export class NamedPipeClient implements IStreamingTransportClient {
     private _isDisconnecting: boolean;
     
     /**
-     * Creates a new instance of the [NamedPipeClient](xref:botbuilder-streaming.NamedPipeClient) class.
+     * Creates a new instance of the [NamedPipeClient](xref:botframework-streaming.NamedPipeClient) class.
      *
      * @param baseName The named pipe to connect to.
-     * @param requestHandler Optional [RequestHandler](xref:botbuilder-streaming.RequestHandler) to process incoming messages received by this client.
+     * @param requestHandler Optional [RequestHandler](xref:botframework-streaming.RequestHandler) to process incoming messages received by this client.
      * @param autoReconnect Optional setting to determine if the client sould attempt to reconnect automatically on disconnection events. Defaults to true.
      */
     public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect: boolean = true) {
@@ -72,8 +72,8 @@ export class NamedPipeClient implements IStreamingTransportClient {
     /**
      * Task used to send data over this client connection.
      *
-     * @param request The [StreamingRequest](xref:botbuilder-streaming.StreamingRequest) to send.
-     * @returns A promise for an instance of [IReceiveResponse](xref:botbuilder-streaming.IReceiveResponse) on completion of the send operation.
+     * @param request The [StreamingRequest](xref:botframework-streaming.StreamingRequest) to send.
+     * @returns A promise for an instance of [IReceiveResponse](xref:botframework-streaming.IReceiveResponse) on completion of the send operation.
      */
     public async send(request: StreamingRequest): Promise<IReceiveResponse> {
         return this._protocolAdapter.sendRequest(request);

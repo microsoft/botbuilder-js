@@ -27,7 +27,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     private _activeReceiveCount: number;
 
     /**
-     * Creates a new instance of the [NamedPipeTransport](xref:botbuilder-streaming.NamedPipeTransport) class.
+     * Creates a new instance of the [NamedPipeTransport](xref:botframework-streaming.NamedPipeTransport) class.
      *
      * @param socket The socket object to build this connection on.
      */

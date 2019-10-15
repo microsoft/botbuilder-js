@@ -32,10 +32,10 @@ export class WebSocketServer implements IStreamingTransportServer {
     private _closedSignal;
 
     /**
-     * Creates a new instance of the [WebSocketServer](xref:botbuilder-streaming.WebSocketServer) class.
+     * Creates a new instance of the [WebSocketServer](xref:botframework-streaming.WebSocketServer) class.
      *
      * @param socket The underlying web socket.
-     * @param requestHandler Optional [RequestHandler](xref:botbuilder-streaming.RequestHandler) to process incoming messages received by this server.
+     * @param requestHandler Optional [RequestHandler](xref:botframework-streaming.RequestHandler) to process incoming messages received by this server.
      */
     public constructor(socket: ISocket, requestHandler?: RequestHandler) {
         this._webSocketTransport = new WebSocketTransport(socket);
