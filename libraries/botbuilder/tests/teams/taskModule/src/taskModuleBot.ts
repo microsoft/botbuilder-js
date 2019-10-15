@@ -8,9 +8,10 @@ import {
     Attachment,
     CardFactory,
     MessageFactory,
+    TaskModuleContinueResponse,
     TaskModuleMessageResponse,
     TaskModuleRequest,
-    TaskModuleResponseBase,
+    TaskModuleResponse,
     TaskModuleTaskInfo,
     TurnContext,
 } from 'botbuilder-core';
@@ -28,22 +29,33 @@ export class TaskModuleBot  extends TeamsActivityHandler {
         });
     }
 
-    protected async onTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleTaskInfo> {
+    protected async onTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
         var reply = MessageFactory.text("OnTeamsTaskModuleFetchAsync TaskModuleRequest" + JSON.stringify(taskModuleRequest));
         await context.sendActivity(reply);
+
         return {
-            card: this.GetTaskModuleAdaptiveCard(),
-            height: 200,
-            width: 400,
-            title: "Adaptive Card: Inputs",
-        };
+            task: { 
+                type: "continue", 
+                value: {
+                    card: this.GetTaskModuleAdaptiveCard(),
+                    height: 200,
+                    width: 400,
+                    title: "Adaptive Card: Inputs",
+                } as TaskModuleTaskInfo, 
+            } as TaskModuleContinueResponse
+        } as TaskModuleResponse;
     }
-    // TaskModuleResponseBase: type:
-    protected async onTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponseBase | void> {
+    
+    protected async onTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
         var reply = MessageFactory.text("OnTeamsTaskModuleFetchAsync Value: " + JSON.stringify(taskModuleRequest));
         await context.sendActivity(reply);
-        var response : TaskModuleMessageResponse = { type: "message", value: "Hello", };
-        return <TaskModuleResponseBase> response ;
+
+        return {
+            task: { 
+                type: "message", 
+                value: "Hello", 
+            } as TaskModuleMessageResponse
+        } as TaskModuleResponse;
     }
 
     private GetTaskModuleHeroCard() : Attachment {
