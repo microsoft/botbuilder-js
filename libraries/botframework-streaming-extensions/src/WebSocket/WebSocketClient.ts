@@ -29,20 +29,19 @@ export class WebSocketClient implements IStreamingTransportClient {
     private readonly _receiver: PayloadReceiver;
     private readonly _requestManager: RequestManager;
     private readonly _protocolAdapter: ProtocolAdapter;
-    private readonly _autoReconnect: boolean;
+    private readonly _disconnectionHandler: (message: string) => void;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WebSocketClient"/> class.
     /// </summary>
     /// <param name="url">The URL of the remote server to connect to.</param>
     /// <param name="requestHandler">Optional <see cref="RequestHandler"/> to process incoming messages received by this server.</param>
-    /// <param name="autoReconnect">Optional setting to determine if the server sould attempt to reconnect
-    /// automatically on disconnection events. Defaults to true.
+    /// <param name="disconnectionHandler ">Optional function to handle the disconnection message</param>
     /// </param>
-    public constructor({ url, requestHandler, autoReconnect = true }) {
+    public constructor({ url, requestHandler, disconnectionHandler = null}) {
         this._url = url;
         this._requestHandler = requestHandler;
-        this._autoReconnect = autoReconnect;
+        this._disconnectionHandler = disconnectionHandler;
 
         this._requestManager = new RequestManager();
 
@@ -96,10 +95,11 @@ export class WebSocketClient implements IStreamingTransportClient {
     }
 
     private onConnectionDisconnected(sender: object, args: any): void {
-        if (this._autoReconnect) {
-            this.connect()
-                .catch((): void => { throw(new Error(`Unable to re-connect client to Node transport. Sender:` + sender + ' Args:' + args)); });
+        if (this._disconnectionHandler != null) {
+            this._disconnectionHandler("Disconnected");
+            return;
         }
-    }
 
+        throw(new Error(`Unable to re-connect client to Node transport. Sender:` + sender + ' Args:' + args));
+    }
 }

@@ -34,10 +34,6 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context 
      */
     protected async onTurnActivity(context: TurnContext): Promise<void> {
-        if (context.activity.channelId === 'msteams') {
-            // this.teamsRosterClient = 
-        }
-
         switch (context.activity.type) {
             case ActivityTypes.Invoke:
                 const invokeResponse = await this.onInvokeActivity(context);
@@ -192,7 +188,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * 
+     * Receives invoke activities with Activity name of 'composeExtension/onCardButtonClicked'
      * @param context 
      * @param cardData 
      */
@@ -315,7 +311,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param action
      */
-    protected async onTeamsMessagingExtensionFetchTask(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionActionResponse> {
+    protected async onTeamsMessagingExtensionFetchTask(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
 
