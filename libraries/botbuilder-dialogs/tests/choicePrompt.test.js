@@ -226,11 +226,13 @@ describe('ChoicePrompt', function () {
         }, 'es-es');
         dialogs.add(choicePrompt);
 
-        await adapter.send({ text: 'Hello', type: ActivityTypes.Message })
-            .assertReply('Please choose a color. (1) red, (2) green, o (3) blue')
+        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: null })
+            .assertReply((activity) => {
+                assert('Please choose a color. (1) red, (2) green, o (3) blue');
+            })
             .send(invalidMessage)
             .assertReply('bad input.')
-            .send({ text: 'red', type: ActivityTypes.Message })
+            .send({ text: 'red', type: ActivityTypes.Message, locale: null })
             .assertReply('red');
     });
 

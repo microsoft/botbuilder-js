@@ -45,7 +45,7 @@ export interface PromptCultureModel {
 export class PromptCultureModels {
     public static Chinese: PromptCultureModel = {
         locale: Culture.Chinese,
-        separator: '， ',
+        separator: ', ',
         inlineOr: ' 要么 ',
         inlineOrMore: '， 要么 ',
         yesInLanguage: '是的',
@@ -54,7 +54,7 @@ export class PromptCultureModels {
 
     public static Dutch: PromptCultureModel = {
         locale: Culture.Dutch,
-        separator: '， ',
+        separator: ', ',
         inlineOr: ' of ',
         inlineOrMore: ', of ',
         yesInLanguage: 'Ja',
@@ -63,7 +63,7 @@ export class PromptCultureModels {
 
     public static English: PromptCultureModel = {
         locale: Culture.English,
-        separator: '， ',
+        separator: ', ',
         inlineOr: ' or ',
         inlineOrMore: ', or ',
         yesInLanguage: 'Yes',
@@ -72,7 +72,7 @@ export class PromptCultureModels {
 
     public static French: PromptCultureModel = {
         locale: Culture.French,
-        separator: '， ',
+        separator: ', ',
         inlineOr: ' ou ',
         inlineOrMore: ', ou ',
         yesInLanguage: 'Oui',
@@ -81,7 +81,7 @@ export class PromptCultureModels {
 
     public static German: PromptCultureModel = {
         locale: Culture.German,
-        separator: '， ',
+        separator: ', ',
         inlineOr: ' oder ',
         inlineOrMore: ', oder ',
         yesInLanguage: 'Ja',
@@ -99,7 +99,7 @@ export class PromptCultureModels {
 
     public static Portuguese: PromptCultureModel = {
         locale: Culture.Portuguese,
-        separator: '， ',
+        separator: ', ',
         inlineOr: ' ou ',
         inlineOrMore: ', ou ',
         yesInLanguage: 'Sim',
@@ -108,7 +108,7 @@ export class PromptCultureModels {
 
     public static Spanish: PromptCultureModel = {
         locale: Culture.Spanish,
-        separator: '， ',
+        separator: ', ',
         inlineOr: ' o ',
         inlineOrMore: ', o ',
         yesInLanguage: 'Sí',

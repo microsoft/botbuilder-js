@@ -13,7 +13,6 @@ import { PromptCultureModels } from './promptCultureModels';
 
 // Need ChoiceDefaultsProperty so we can set choiceDefaults dynamically with lambda
 interface ChoiceDefaultsConfirmPrompt { [locale: string]: { choices: (string|Choice)[]; options: ChoiceFactoryOptions }};
-type ChoiceDefaultsProperty = (() => ChoiceDefaultsConfirmPrompt) | ChoiceDefaultsConfirmPrompt;
 
 /**
  * Prompts a user to confirm something with a "yes" or "no" response.
@@ -27,22 +26,9 @@ export class ConfirmPrompt extends Prompt<boolean> {
     /**
      * A dictionary of Default Choices based on [[PromptCultureModels.getSupportedCultures()]].
      * Can be replaced by user using the constructor that contains choiceDefaults.
+     * This is initially set in the constructor.
      */
-    private choiceDefaults: ChoiceDefaultsProperty = (): ChoiceDefaultsConfirmPrompt => {
-        const supported: ChoiceDefaultsConfirmPrompt = {};
-        PromptCultureModels.getSupportedCultures().forEach((culture): void => {
-            supported[culture.locale] = {
-                choices: [culture.yesInLanguage, culture.noInLanguage],
-                options: {
-                    inlineSeparator: culture.separator,
-                    inlineOr: culture.inlineOr,
-                    inlineOrMore: culture.inlineOrMore,
-                    includeNumbers: true
-                }
-            };
-        });
-        return supported;
-    }
+    private choiceDefaults: ChoiceDefaultsConfirmPrompt;
     /**
      * The prompts default locale that should be recognized.
      */
@@ -79,7 +65,24 @@ export class ConfirmPrompt extends Prompt<boolean> {
         super(dialogId, validator);
         this.style = ListStyle.auto;
         this.defaultLocale = defaultLocale;
-        this.choiceDefaults = choiceDefaults;
+
+        if (choiceDefaults == null) {
+            const supported: ChoiceDefaultsConfirmPrompt = {};
+            PromptCultureModels.getSupportedCultures().forEach((culture): void => {
+                supported[culture.locale] = {
+                    choices: [culture.yesInLanguage, culture.noInLanguage],
+                    options: {
+                        inlineSeparator: culture.separator,
+                        inlineOr: culture.inlineOr,
+                        inlineOrMore: culture.inlineOrMore,
+                        includeNumbers: true
+                    }
+                };
+            });
+            this.choiceDefaults = supported;
+        } else {
+            this.choiceDefaults = choiceDefaults;
+        }
     }
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {

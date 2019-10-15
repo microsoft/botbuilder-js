@@ -12,7 +12,6 @@ import { PromptCultureModels } from './promptCultureModels';
 
 // Need ChoiceDefaultsProperty so we can set choiceDefaults dynamically with lambda
 interface ChoiceDefaultsChoicePrompt { [locale: string]: ChoiceFactoryOptions };
-type ChoiceDefaultsProperty = (() => ChoiceDefaultsChoicePrompt) | ChoiceDefaultsChoicePrompt;
 
 /**
  * Prompts a user to select from a list of choices.
@@ -27,18 +26,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
      * A dictionary of Default Choices based on [[PromptCultureModels.getSupportedCultures()]].
      * Can be replaced by user using the constructor that contains choiceDefaults.
      */
-    private choiceDefaults: ChoiceDefaultsProperty = (): ChoiceDefaultsChoicePrompt => {
-        const supported: ChoiceDefaultsChoicePrompt = {};
-        PromptCultureModels.getSupportedCultures().forEach((culture): void => {
-            supported[culture.locale] = {
-                inlineSeparator: culture.separator,
-                inlineOr: culture.inlineOr,
-                inlineOrMore: culture.inlineOrMore,
-                includeNumbers: true
-            };
-        });
-        return supported;
-    }
+    private choiceDefaults: ChoiceDefaultsChoicePrompt;
 
     /**
      * The prompts default locale that should be recognized.
@@ -78,7 +66,21 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         super(dialogId, validator);
         this.style = ListStyle.auto;
         this.defaultLocale = defaultLocale;
-        this.choiceDefaults = choiceDefaults;
+        
+        if (choiceDefaults == null) {
+            const supported: ChoiceDefaultsChoicePrompt = {};
+            PromptCultureModels.getSupportedCultures().forEach((culture): void => {
+                supported[culture.locale] = {
+                    inlineSeparator: culture.separator,
+                    inlineOr: culture.inlineOr,
+                    inlineOrMore: culture.inlineOrMore,
+                    includeNumbers: true
+                };
+            });
+            this.choiceDefaults = supported;
+        } else {
+            this.choiceDefaults = choiceDefaults;
+        }
     }
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
