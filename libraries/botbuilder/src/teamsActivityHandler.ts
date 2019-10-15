@@ -188,7 +188,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * 
+     * Receives invoke activities with Activity name of 'composeExtension/onCardButtonClicked'
      * @param context 
      * @param cardData 
      */
