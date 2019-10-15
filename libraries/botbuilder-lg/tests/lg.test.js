@@ -526,4 +526,19 @@ describe('LG', function () {
         evaled = engine.evaluateTemplate('StructuredTemplateRef');
         assert.deepStrictEqual(evaled, JSON.parse("{\"$type\":\"MyStruct\",\"text\":\"hi\"}"));
     });
+
+    it('TestEvaluateOnce', function () {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath("EvaluateOnce.lg"));
+
+        var evaled = engine.evaluateTemplate('templateWithSameParams', { param: 'ms' });
+        assert.notEqual(evaled, undefined);
+        
+        const resultList = evaled.split(' ');
+        assert.equal(resultList.length, 2);
+
+        assert.equal(resultList[0], resultList[1]);
+
+        // maybe has different values
+        evaled = engine.evaluateTemplate('templateWithDifferentParams', { param1: 'ms', param2: 'newms' });
+    });
 });
