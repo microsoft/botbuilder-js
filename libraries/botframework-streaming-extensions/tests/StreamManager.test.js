@@ -1,4 +1,4 @@
-const StreamManager = require('../lib/Payloads/StreamManager')
+const StreamManager = require('../lib/Payloads/StreamManager');
 const PayloadTypes = require('../lib/Payloads/PayloadTypes');
 const SubscribableStream = require('../lib/SubscribableStream');
 const PayloadAssembler = require('../lib/Assemblers/PayloadAssembler');
