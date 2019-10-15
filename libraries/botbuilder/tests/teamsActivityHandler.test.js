@@ -224,6 +224,39 @@ describe('TeamsActivityHandler', () => {
         });
     });
 
+    describe('should send a BadRequest status code when', () => {
+        it('onTeamsFileConsent() receives an unexpected action value', () => {
+            const bot = new TeamsActivityHandler();            
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+            const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'test' });
+
+            adapter.send(fileConsentActivity)
+                .assertReply(activity => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert.strictEqual(activity.value.status, 400);
+                    assert.strictEqual(activity.value.body, undefined);
+                });
+
+        });
+
+        it('onTeamsMessagingExtensionSubmitActionDispatch() receives an unexpected botMessagePreviewAction value', () => {
+            const bot = new TeamsActivityHandler();            
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+            const fileConsentActivity = createInvokeActivity('composeExtension/submitAction', { botMessagePreviewAction: 'test' });
+
+            adapter.send(fileConsentActivity)
+                .assertReply(activity => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert.strictEqual(activity.value.status, 400);
+                    assert.strictEqual(activity.value.body, undefined);
+                });
+        });
+    });
+
     describe('should dispatch through a registered', () => {
         let fileConsentAcceptCalled = false;
         let fileConsentDeclineCalled = false;
