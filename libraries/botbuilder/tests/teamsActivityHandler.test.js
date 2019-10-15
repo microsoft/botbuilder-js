@@ -337,93 +337,300 @@ describe('TeamsActivityHandler', () => {
         });
     });
 
-    xdescribe('should call onDialog handlers after successfully handling an', () => {
+    describe('should call onDialog handlers after successfully handling an', () => {
 
-        function createConvUpdateActivity() {
-
+        function createConvUpdateActivity(channelData) {
+            const activity = {
+                type: ActivityTypes.ConversationUpdate,
+                channelData
+            };
+            return activity;
         }
 
-        it('onTeamsMembersAdded routed activity', async () => {
+        let onConversationUpdateCalled = false;
+        let onDialogCalled = false;
+
+        beforeEach(() => {
+            onConversationUpdateCalled = false;
+            onDialogCalled = false;
+        });
+
+        afterEach(() => {
+            onConversationUpdateCalled = true;
+            onDialogCalled = true;
+        });
+
+        it('onTeamsMembersAdded routed activity', () => {
             const bot = new TeamsActivityHandler();
+            let onTeamsMemberAddedEvent = false;
     
-            let fileConsentCalled = false;
-            let fileConsentAcceptCalled = false;
-            let dialogCalled = false;
-    
-            bot.onTeamsFileConsent(async (context, fileConsentCardResponse) => {
+            const membersAddedMock = [{ id: 'test'} , { id: 'id' }];
+            const team = { id: 'team' };
+            const activity = createConvUpdateActivity({ team, eventType: 'teamMemberAdded' });
+            activity.membersAdded = membersAddedMock;
+
+            bot.onConversationUpdate(async (context, next) => {
                 assert(context, 'context not found');
-                assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
-                fileConsentCalled = true;
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
             });
-            bot.onTeamsFileConsentAccept(async (context, fileConsentCardResponse) => {
+
+            bot.onTeamsMembersAddedEvent(async (membersAdded, teamInfo, context, next) => {
+                assert(membersAdded, 'membersAdded not found');
+                assert(teamInfo, 'teamsInfo not found');
                 assert(context, 'context not found');
-                assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
-                assert(fileConsentCalled, 'onTeamsFileConsent handler was not called before onTeamsFileConsentAccept handler');
-                fileConsentAcceptCalled = true;
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                assert.strictEqual(membersAdded, membersAddedMock);
+                onTeamsMemberAddedEvent = true;
+                await next();
             });
+
             bot.onDialog(async (context, next) => {
                 assert(context, 'context not found');
                 assert(next, 'next not found');
-                dialogCalled = true;
+                onDialogCalled = true;
+                await next();
             });
     
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
             });
     
-            const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'accept' });
-            adapter.send(fileConsentActivity)
-                .assertReply(activity => {
-                    assert(activity.type === 'invokeResponse', `incorrect activity type "${activity.type}", expected "invokeResponse"`);
-                    assert(activity.value.status === 200, `incorrect status code "${activity.value.status}", expected "200"`);
-                    assert(!activity.value.body,
-                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
-                }).then(() => {
-                    assert(fileConsentCalled, 'onTeamsFileConsent handler not called');
-                    assert(fileConsentAcceptCalled, 'onTeamsFileConsentAccept handler not called');
-                    assert(dialogCalled, 'onDialog handler not called');
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsMemberAddedEvent, 'onTeamsMemberAddedEvent handler not called');
+                    assert(onConversationUpdateCalled, 'onTeamsFileConsentAccept handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
                 });
         });
 
-        it('onTeamsFileConsentDecline routed activity', async () => {
+        it('onTeamsMembersRemoved routed activity', () => {
             const bot = new TeamsActivityHandler();
     
-            let fileConsentCalled = false;
-            let fileConsentDeclineCalled = false;
-            let dialogCalled = false;
+            let onTeamsMemberAddedEvent = false;
     
-            bot.onTeamsFileConsent(async (context, fileConsentCardResponse) => {
+            const membersRemovedMock = [{ id: 'test'} , { id: 'id' }];
+            const team = { id: 'team' };
+            const activity = createConvUpdateActivity({ team, eventType: 'teamMemberRemoved' });
+            activity.membersRemoved = membersRemovedMock;
+
+            bot.onConversationUpdate(async (context, next) => {
                 assert(context, 'context not found');
-                assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
-                fileConsentCalled = true;
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
             });
-            bot.onTeamsFileConsentDecline(async (context, fileConsentCardResponse) => {
+
+            bot.onTeamsMembersRemovedEvent(async (membersRemoved, teamInfo, context, next) => {
+                assert(membersRemoved, 'membersRemoved not found');
+                assert(teamInfo, 'teamsInfo not found');
                 assert(context, 'context not found');
-                assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
-                assert(fileConsentCalled, 'onTeamsFileConsent handler was not called before onTeamsFileConsentDecline handler');
-                fileConsentDeclineCalled = true;
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                assert.strictEqual(membersRemoved, membersRemovedMock);
+                onTeamsMemberAddedEvent = true;
+                await next();
             });
+
             bot.onDialog(async (context, next) => {
                 assert(context, 'context not found');
                 assert(next, 'next not found');
-                dialogCalled = true;
+                onDialogCalled = true;
+                await next();
             });
     
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
             });
     
-            const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'decline' });
-            adapter.send(fileConsentActivity)
-                .assertReply(activity => {
-                    assert(activity.type === 'invokeResponse', `incorrect activity type "${activity.type}", expected "invokeResponse"`);
-                    assert(activity.value.status === 200, `incorrect status code "${activity.value.status}", expected "200"`);
-                    assert(!activity.value.body,
-                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
-                }).then(() => {
-                    assert(fileConsentCalled, 'onTeamsFileConsent handler not called');
-                    assert(fileConsentDeclineCalled, 'onTeamsFileConsentDecline handler not called');
-                    assert(dialogCalled, 'onDialog handler not called');
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsMemberAddedEvent, 'onTeamsMemberAddedEvent handler not called');
+                    assert(onConversationUpdateCalled, 'onTeamsFileConsentAccept handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                });
+        });
+
+        it('onTeamsChannelCreated routed activity', () => {
+            const bot = new TeamsActivityHandler();
+    
+            let onTeamsChannelCreatedEventCalled = false;
+    
+            const team = { id: 'team' };
+            const channel = { id: 'channel', name: 'channelName' };
+            const activity = createConvUpdateActivity({ channel, team, eventType: 'channelCreated' });
+
+            bot.onConversationUpdate(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
+            });
+
+            bot.onTeamsChannelCreatedEvent(async (channelInfo, teamInfo, context, next) => {
+                assert(channelInfo, 'channelInfo not found');
+                assert(teamInfo, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                assert.strictEqual(channelInfo, channel);
+                onTeamsChannelCreatedEventCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+    
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsChannelCreatedEventCalled, 'onTeamsChannelCreated handler not called');
+                    assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                });
+        });
+
+        it('onTeamsChannelDeleted routed activity', () => {
+            const bot = new TeamsActivityHandler();
+    
+            let onTeamsChannelDeletedEventCalled = false;
+    
+            const team = { id: 'team' };
+            const channel = { id: 'channel', name: 'channelName' };
+            const activity = createConvUpdateActivity({ channel, team, eventType: 'channelDeleted' });
+
+            bot.onConversationUpdate(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
+            });
+
+            bot.onTeamsChannelDeletedEvent(async (channelInfo, teamInfo, context, next) => {
+                assert(channelInfo, 'channelInfo not found');
+                assert(teamInfo, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                assert.strictEqual(channelInfo, channel);
+                onTeamsChannelDeletedEventCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+    
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsChannelDeletedEventCalled, 'onTeamsChannelDeletedEvent handler not called');
+                    assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                });
+        });
+        
+        it('onTeamsChannelRenamed routed activity', () => {
+            const bot = new TeamsActivityHandler();
+    
+            let onTeamsChannelRenamedEventCalled = false;
+    
+            const team = { id: 'team' };
+            const channel = { id: 'channel', name: 'channelName' };
+            const activity = createConvUpdateActivity({ channel, team, eventType: 'channelRenamed' });
+
+            bot.onConversationUpdate(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
+            });
+
+            bot.onTeamsChannelRenamedEvent(async (channelInfo, teamInfo, context, next) => {
+                assert(channelInfo, 'channelInfo not found');
+                assert(teamInfo, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                assert.strictEqual(channelInfo, channel);
+                onTeamsChannelRenamedEventCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+    
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsChannelRenamedEventCalled, 'onTeamsChannelRenamedEvent handler not called');
+                    assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                });
+        });
+        
+        it('onTeamsTeamRenamed routed activity', () => {
+            const bot = new TeamsActivityHandler();
+    
+            let onTeamsTeamRenamedEventCalled = false;
+    
+            const team = { id: 'team' };
+            const activity = createConvUpdateActivity({ team, eventType: 'teamRenamed' });
+
+            bot.onConversationUpdate(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
+            });
+
+            bot.onTeamsTeamRenamedEvent(async (teamInfo, context, next) => {
+                assert(teamInfo, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                onTeamsTeamRenamedEventCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+    
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsTeamRenamedEventCalled, 'onTeamsTeamRenamedEvent handler not called');
+                    assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
                 });
         });
     });
