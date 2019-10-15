@@ -14,6 +14,7 @@ import { keyBy } from 'lodash';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
+import { stringify } from 'querystring';
 
 /**
  * Runtime template context store
@@ -21,9 +22,19 @@ import { LGTemplate } from './lgTemplate';
 export class EvaluationTarget {
     public TemplateName: string;
     public Scope: any;
+    public  EvaluatedChildren : Map<string, any>;
     public constructor(templateName: string, scope: any) {
         this.TemplateName = templateName;
         this.Scope = scope;
+        this.EvaluatedChildren = new Map<string, any>();
+    }
+
+    public GetId(): string {
+        if (this.Scope !== undefined && this.Scope !== null) {
+            return this.TemplateName + JSON.stringify(this.Scope);
+        }
+
+        return this.TemplateName;
     }
 }
 
@@ -59,9 +70,26 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 .join(' => ')}`);
         }
 
+        const templateTarget: EvaluationTarget = new EvaluationTarget(templateName, scope);
+        const currentEvulateId: string = templateTarget.GetId();
+
+        let previousEvaluateTarget: EvaluationTarget;
+
+        if (this.evalutationTargetStack.length !== 0) {
+            previousEvaluateTarget = this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
+            if (previousEvaluateTarget.EvaluatedChildren.has(currentEvulateId)) {
+                return previousEvaluateTarget.EvaluatedChildren.get(currentEvulateId);
+            }
+        }
+
         // Using a stack to track the evalution trace
-        this.evalutationTargetStack.push(new EvaluationTarget(templateName, scope));
+        this.evalutationTargetStack.push(templateTarget);
         const result: string = this.visit(this.TemplateMap[templateName].ParseTree);
+
+        if (previousEvaluateTarget !== undefined) {
+            previousEvaluateTarget.EvaluatedChildren.set(currentEvulateId, result);
+        }
+
         this.evalutationTargetStack.pop();
 
         return result;
