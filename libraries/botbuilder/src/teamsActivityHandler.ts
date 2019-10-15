@@ -311,7 +311,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param action
      */
-    protected async onTeamsMessagingExtensionFetchTask(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionActionResponse> {
+    protected async onTeamsMessagingExtensionFetchTask(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
 
