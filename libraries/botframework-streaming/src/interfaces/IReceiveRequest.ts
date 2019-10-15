@@ -7,6 +7,9 @@
  */
 import { ContentStream } from '../contentStream';
 
+/**
+ * Streaming receive request definition
+ */
 export interface IReceiveRequest {
     /// Request verb, null on responses
     /// </summary>

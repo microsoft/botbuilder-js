@@ -7,6 +7,9 @@
  */
 import { ContentStream } from '../contentStream';
 
+/**
+ * Streaming response from a receive request.
+ */
 export interface IReceiveResponse {
     statusCode?: number;
     streams: ContentStream[];

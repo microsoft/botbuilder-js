@@ -9,6 +9,9 @@ import { ISocket } from '../interfaces';
 import { ITransportSender } from '../interfaces/ITransportSender';
 import { ITransportReceiver } from '../interfaces/ITransportReceiver';
 
+/**
+ * Web socket based transport.
+ */
 export class WebSocketTransport implements ITransportSender, ITransportReceiver {
     private _socket: ISocket;
     private readonly _queue: Buffer[];
@@ -18,10 +21,11 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
     private _activeReceiveReject: (reason?: any) => void;
     private _activeReceiveCount: number;
 
-    /// <summary>
-    /// Creates a new instance of the WebSocketTransport class.
-    /// </summary>
-    /// <param name="ws">The ISocket to build this transport on top of.</param>
+    /**
+     * Creates a new instance of the [WebSocketTransport](xref:botbuilder-streaming.WebSocketTransport) class.
+     *
+     * @param ws The ISocket to build this transport on top of.
+     */
     public constructor(ws: ISocket) {
         this._socket = ws;
         this._queue = [];
@@ -38,10 +42,11 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
         });
     }
 
-    /// <summary>
-    /// Sends the given buffer out over the socket's connection.
-    /// </summary>
-    /// <param name="buffer">The buffered data to send out over the connection.</param>
+    /**
+     * Sends the given buffer out over the socket's connection.
+     *
+     * @param buffer The buffered data to send out over the connection.
+     */
     public send(buffer: Buffer): number {
         if (this._socket && this._socket.isConnected()) {
             this._socket.write(buffer);
@@ -52,27 +57,28 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
         return 0;
     }
 
-    /// <summary>
-    /// Returns true if the transport is connected to a socket.
-    /// </summary>
+    /**
+     * Returns true if the transport is connected to a socket.
+     */
     public isConnected(): boolean {
         return this._socket.isConnected();
     }
 
-    /// <summary>
-    /// Close the socket this transport is connected to.
-    /// </summary>
+    /**
+     * Close the socket this transport is connected to.
+     */
     public close(): void {
         if (this._socket && this._socket.isConnected()) {
             this._socket.close();
         }
     }
 
-    /// <summary>
-    /// Attempt to receive incoming data from the connected socket.
-    /// </summary>
-    /// <param name="count">The number of bytes to attempt to receive.</param>
-    /// <returns> A buffer populated with the received data.</returns>
+    /**
+     * Attempt to receive incoming data from the connected socket.
+     *
+     * @param count The number of bytes to attempt to receive.
+     * @returns A buffer populated with the received data.
+     */
     public async receive(count: number): Promise<Buffer> {
         if (this._activeReceiveResolve) {
             throw new Error('Cannot call receiveAsync more than once before it has returned.');
@@ -90,10 +96,11 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
         return promise;
     }
 
-    /// <summary>
-    /// Sets the transport to attempt to receive incoming data that has not yet arrived.
-    /// </summary>
-    /// <param name="data">A buffer to store incoming data in.</param>
+    /**
+     * Sets the transport to attempt to receive incoming data that has not yet arrived.
+     *
+     * @param data A buffer to store incoming data in.
+     */
     public onReceive(data: Buffer): void {
         if (this._queue && data && data.byteLength > 0) {
             this._queue.push(Buffer.from(data));

@@ -18,9 +18,9 @@ import { ISocket } from '../interfaces/ISocket';
 import { WebSocketTransport } from './WebSocketTransport';
 import { IStreamingTransportServer, IReceiveResponse } from '../interfaces';
 
-/// <summary>
-/// A server for use with the Bot Framework Protocol V3 with Streaming Extensions and an underlying WebSocket transport.
-/// </summary>
+/**
+ * Web socket based server to be used as streaming transport.
+ */
 export class WebSocketServer implements IStreamingTransportServer {
     private readonly _url: string;
     private readonly _requestHandler: RequestHandler;
@@ -31,11 +31,12 @@ export class WebSocketServer implements IStreamingTransportServer {
     private readonly _webSocketTransport: WebSocketTransport;
     private _closedSignal;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="WebSocketServer"/> class.
-    /// </summary>
-    /// <param name="socket">The <see cref="ISocket"/> of the underlying connection for this server to be built on top of.</param>
-    /// <param name="requestHandler">A <see cref="RequestHandler"/> to process incoming messages received by this server.</param>
+    /**
+     * Creates a new instance of the [WebSocketServer](xref:botbuilder-streaming.WebSocketServer) class.
+     *
+     * @param socket The underlying web socket.
+     * @param requestHandler Optional [RequestHandler](xref:botbuilder-streaming.RequestHandler) to process incoming messages received by this server.
+     */
     public constructor(socket: ISocket, requestHandler?: RequestHandler) {
         this._webSocketTransport = new WebSocketTransport(socket);
         this._requestHandler = requestHandler;
@@ -52,10 +53,11 @@ export class WebSocketServer implements IStreamingTransportServer {
         this._closedSignal = (x: string): string => { return x; };
     }
 
-    /// <summary>
-    /// Used to establish the connection used by this server and begin listening for incoming messages.
-    /// </summary>
-    /// <returns>A promise to handle the server listen operation. This task will not resolve as long as the server is running.</returns>
+    /**
+     * Used to establish the connection used by this server and begin listening for incoming messages.
+     *
+     * @returns A promise to handle the server listen operation. This task will not resolve as long as the server is running.
+     */
     public async start(): Promise<string> {
         this._sender.connect(this._webSocketTransport);
         this._receiver.connect(this._webSocketTransport);
@@ -63,18 +65,19 @@ export class WebSocketServer implements IStreamingTransportServer {
         return this._closedSignal;
     }
 
-    /// <summary>
-    /// Used to send data over this server connection.
-    /// </summary>
-    /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
-    /// <returns>A promise of type <see cref="ReceiveResponse"/> handling the send operation.</returns>
+    /**
+     * Task used to send data over this server connection.
+     *
+     * @param request The streaming request to send.
+     * @returns A promise that will produce an instance of receive response on completion of the send operation.
+     */
     public async send(request: StreamingRequest): Promise<IReceiveResponse> {
         return this._protocolAdapter.sendRequest(request);
     }
 
-    /// <summary>
-    /// Stop this server.
-    /// </summary>
+    /**
+     * Stop this server.
+     */
     public disconnect(): void {
         this._sender.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
         this._receiver.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));

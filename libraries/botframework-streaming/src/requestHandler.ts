@@ -7,15 +7,17 @@
  */
 import { IReceiveRequest } from './Interfaces/IReceiveRequest';
 import { StreamingResponse } from './streamingResponse';
-/// <summary>
-/// Implemented by classes used to process incoming requests sent over an <see cref="IStreamingTransport"/> and adhering to the Bot Framework Protocol v3 with Streaming Extensions.
-/// </summary>
+
+/**
+ * Implemented by classes used to process incoming streaming requests sent over an [IStreamingTransport](xref:botbuilder-streaming.IStreamingTransport).
+ */
 export abstract class RequestHandler {
-    /// <summary>
-    /// The method that must be implemented in order to handle incoming requests.
-    /// </summary>
-    /// <param name="request">A <see cref="ReceiveRequest"/> for this handler to process.</param>
-    /// <param name="logger">Logger.</param>
-    /// <returns>A promise that will produce a <see cref="StreamingResponse"/> on successful completion.</returns>
+
+    /**
+     * The method that must be implemented in order to handle incoming requests.
+     * 
+     * @param request A receipt request for this handler to process.
+     * @returns A promise that will produce a streaming response on successful completion.
+     */
     public abstract processRequest(request: IReceiveRequest, logger?): Promise<StreamingResponse>;
 }

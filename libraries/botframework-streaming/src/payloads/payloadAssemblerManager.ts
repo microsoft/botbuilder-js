@@ -11,6 +11,9 @@ import { StreamManager } from './streamManager';
 import { IHeader } from '../interfaces/IHeader';
 import { PayloadTypes } from './payloadTypes';
 
+/**
+ * Orchestrates assemly of payloads
+ */
 export class PayloadAssemblerManager {
     private readonly onReceiveRequest;
     private readonly onReceiveResponse;

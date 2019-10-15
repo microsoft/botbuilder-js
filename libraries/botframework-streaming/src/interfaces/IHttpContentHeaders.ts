@@ -6,6 +6,9 @@
  * Licensed under the MIT License.
  */
 
+/**
+ * Streaming Http content header definition.
+ */
 export interface IHttpContentHeaders {
     type?: string;
     contentLength?: number;

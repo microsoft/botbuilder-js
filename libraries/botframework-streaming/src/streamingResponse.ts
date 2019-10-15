@@ -12,12 +12,13 @@ export class StreamingResponse {
     public statusCode: number;
     public streams: HttpContentStream[] = [];
 
-    /// <summary>
-    /// Creates a response using the passed in statusCode and optional body.
-    /// </summary>
-    /// <param name="statusCode">The <see cref="HttpStatusCode"/> to set on the <see cref="StreamingResponse"/>.</param>
-    /// <param name="body">An optional body containing additional information.</param>
-    /// <returns>A streamingResponse with the appropriate statuscode and passed in body.</returns>
+    /**
+     * Creates a streaming response with the passed in method, path, and body.
+     *
+     * @param statusCode The HTTP verb to use for this request.
+     * @param body Optional body containing additional information.
+     * @returns A streaming response with the appropriate statuscode and passed in body.
+     */
     public static create(statusCode: number, body?: HttpContent): StreamingResponse {
         let response = new StreamingResponse();
         response.statusCode = statusCode;
@@ -28,18 +29,20 @@ export class StreamingResponse {
         return response;
     }
 
-    /// <summary>
-    /// Adds a new stream attachment to this <see cref="StreamingResponse"/>.
-    /// </summary>
-    /// <param name="content">The <see cref="HttpContent"/> to include in the new stream attachment.</param>
+    /**
+     * Adds a new stream attachment to this streaming request.
+     *
+     * @param content The Http content to include in the new stream attachment.
+     */
     public addStream(content: HttpContent): void {
         this.streams.push(new HttpContentStream(content));
     }
 
-    /// <summary>
-    /// Sets the contents of the body of this streamingResponse.
-    /// </summary>
-    /// <param name="body">The JSON text to write to the body of the streamingResponse.</param>
+    /**
+     * Sets the contents of the body of this streaming response.
+     *
+     * @param body The JSON text to write to the body of the streaming response.
+     */
     public setBody(body: any): void {
         let stream = new SubscribableStream();
         stream.write(JSON.stringify(body), 'utf8');

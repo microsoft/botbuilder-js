@@ -12,6 +12,9 @@ import { PayloadTypes } from '../payloads/payloadTypes';
 import { PayloadDisassembler } from './payloadDisassembler';
 import { IStreamWrapper } from '../interfaces/IStreamWrapper';
 
+/**
+ * Disassembler for Http content stream
+ */
 export class HttpContentStreamDisassembler extends PayloadDisassembler {
     public readonly contentStream: HttpContentStream;
     public payloadType: PayloadTypes = PayloadTypes.stream;

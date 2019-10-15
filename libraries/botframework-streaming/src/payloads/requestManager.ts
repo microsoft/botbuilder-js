@@ -7,12 +7,18 @@
  */
 import { IReceiveResponse } from '../interfaces/IReceiveResponse';
 
+/**
+ * A streaming pending request.
+ */
 class PendingRequest {
     public requestId: string;
     public resolve: (response: IReceiveResponse) => void;
     public reject: (reason?: any) => void;
 }
 
+/**
+ * Orchestrates and manages pending streaming requests.
+ */
 export class RequestManager {
     private readonly _pendingRequests = {};
 

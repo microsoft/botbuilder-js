@@ -14,6 +14,9 @@ import { TransportDisconnectedEventArgs } from './TransportDisconnectedEventArgs
 import { ITransportReceiver } from '../interfaces/ITransportReceiver';
 import { IHeader } from '../interfaces/IHeader';
 
+/**
+ * Payload receiver for straming.
+ */
 export class PayloadReceiver {
     public isConnected: boolean;
     public disconnected: TransportDisconnectedEventHandler = function(sender, events){};
@@ -23,10 +26,11 @@ export class PayloadReceiver {
     private _getStream: (header: IHeader) => SubscribableStream;
     private _receiveAction: (header: IHeader, stream: SubscribableStream, length: number) => void;
 
-    /// <summary>
-    /// Creates a new instance of the PayloadReceiver class.
-    /// </summary>
-    /// <param name="receiver">The ITransportReceiver object to pull incoming data from.</param>
+    /**
+     * Connects to a transport receiver
+     *
+     * @param receiver The [ITransportReceiver](xref:botbuilder-streaming.ITransportReceiver) object to pull incoming data from.
+     */
     public connect(receiver: ITransportReceiver): void {
         if (this.isConnected) {
             throw new Error('Already connected.');
@@ -37,20 +41,22 @@ export class PayloadReceiver {
         }
     }
 
-    /// <summary>
-    /// Allows subscribing to this receiver in order to be notified when new data comes in.
-    /// </summary>
-    /// <param name="getStream">Callback when a new stream has been received.</param>
-    /// <param name="receiveAction">Callback when a new message has been received.</param>
+    /**
+     * Allows subscribing to this receiver in order to be notified when new data comes in.
+     *
+     * @param getStream Callback when a new stream has been received.
+     * @param receiveAction Callback when a new message has been received.
+     */
     public subscribe(getStream: (header: IHeader) => SubscribableStream, receiveAction: (header: IHeader, stream: SubscribableStream, count: number) => void): void {
         this._getStream = getStream;
         this._receiveAction = receiveAction;
     }
 
-    /// <summary>
-    /// Force this receiver to disconnect.
-    /// </summary>
-    /// <param name="e">Event arguments to include when broadcasting disconnection event.</param>
+    /**
+     * Force this receiver to disconnect.
+     *
+     * @param e Event arguments to include when broadcasting disconnection event.
+     */
     public disconnect(e?: TransportDisconnectedEventArgs): void {
         let didDisconnect;
         try {

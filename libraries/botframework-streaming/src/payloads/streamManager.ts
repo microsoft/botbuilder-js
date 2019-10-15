@@ -9,6 +9,9 @@ import { IHeader } from '../interfaces/IHeader';
 import { SubscribableStream } from '../subscribableStream';
 import { PayloadAssembler } from '../assemblers/payloadAssembler';
 
+/**
+ * Orchestrates and manages streams.
+ */
 export class StreamManager {
     private readonly activeAssemblers = [];
     private readonly onCancelStream: Function;

@@ -8,6 +8,9 @@
 import { IHeader } from './IHeader';
 import { SubscribableStream } from '../subscribableStream';
 
+/**
+ * Streaming send packet definition.
+ */
 export interface ISendPacket {
     header: IHeader;
     payload: SubscribableStream;

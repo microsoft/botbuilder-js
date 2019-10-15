@@ -6,10 +6,10 @@
  * Licensed under the MIT License.
  */
 
-/// <summary>
-/// The interface implemented by any compatible socket transport, typically used
-/// with the WebSocket server or client.
-/// </summary>
+/**
+ * The interface implemented by any compatible socket transport, typically used
+ * with the WebSocket server or client.
+ */
 export interface ISocket {
     isConnected(): boolean;
     write(buffer: Buffer);

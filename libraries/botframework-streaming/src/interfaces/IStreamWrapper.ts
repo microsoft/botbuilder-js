@@ -7,6 +7,9 @@
  */
 import { SubscribableStream } from '../subscribableStream';
 
+/**
+ * Stream with length.
+ */
 export interface IStreamWrapper {
     stream: SubscribableStream;
     streamLength?: number;

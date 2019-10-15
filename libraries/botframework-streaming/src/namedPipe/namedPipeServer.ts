@@ -17,9 +17,9 @@ import {
 import { NamedPipeTransport } from './NamedPipeTransport';
 import { IStreamingTransportServer, IReceiveResponse } from '../interfaces';
 
-/// <summary>
-/// A server for use with the Bot Framework Protocol V3 with Streaming Extensions and an underlying Named Pipe transport.
-/// </summary>
+/**
+* Streaming transport server implementation that uses named pipes for inter-process communication.
+*/
 export class NamedPipeServer implements IStreamingTransportServer {
     private _outgoingServer: Server;
     private _incomingServer: Server;
@@ -32,14 +32,13 @@ export class NamedPipeServer implements IStreamingTransportServer {
     private readonly _autoReconnect: boolean;
     private _isDisconnecting: boolean;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="NamedPipeServer"/> class.
-    /// </summary>
-    /// <param name="baseName">The named pipe to connect to.</param>
-    /// <param name="requestHandler">A <see cref="RequestHandler"/> to process incoming messages received by this server.</param>
-    /// <param name="autoReconnect">Optional setting to determine if the server sould attempt to reconnect
-    /// automatically on disconnection events. Defaults to true.
-    /// </param>
+    /**
+    * Creates a new instance of the [NamedPipeServer](xref:botbuilder-streaming.NamedPipeServer) class.
+     *
+     * @param baseName The named pipe to connect to.
+     * @param requestHandler Optional [RequestHandler](xref:botbuilder-streaming.RequestHandler) to process incoming messages received by this client.
+     * @param autoReconnect Optional setting to determine if the client sould attempt to reconnect automatically on disconnection events. Defaults to true.
+     */
     public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect: boolean = true) {
         this._baseName = baseName;
         this._requestHandler = requestHandler;
@@ -52,10 +51,11 @@ export class NamedPipeServer implements IStreamingTransportServer {
         this._receiver.disconnected = this.onConnectionDisconnected.bind(this);
     }
 
-    /// <summary>
-    /// Used to establish the connection used by this server and begin listening for incoming messages.
-    /// </summary>
-    /// <returns>A promised string that will not resolve as long as the server is running.</returns>
+    /**
+     * Used to establish the connection used by this server and begin listening for incoming messages.
+     *
+     * @returns A promised string that will not resolve as long as the server is running.
+     */
     public async start(): Promise<string> {
         if (this._receiver.isConnected || this._sender.isConnected || this._incomingServer || this._outgoingServer) {
             this.disconnect();
@@ -91,7 +91,9 @@ export class NamedPipeServer implements IStreamingTransportServer {
         return 'connected';
     }
 
-    // Allows for manually disconnecting the server.
+    /**
+     * Allows for manually disconnecting the server.
+     */
     public disconnect(): void {
         this._sender.disconnect();
         this._receiver.disconnect();
@@ -106,13 +108,13 @@ export class NamedPipeServer implements IStreamingTransportServer {
             this._outgoingServer = null;
         }
     }
-
-    /// <summary>
-    /// Task used to send data over this server connection.
-    /// </summary>
-    /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
-    /// <param name="cancellationToken">Optional <see cref="CancellationToken"/> used to signal this operation should be cancelled.</param>
-    /// <returns>A <see cref="Task"/> of type <see cref="ReceiveResponse"/> handling the send operation.</returns>
+    
+    /**
+     * Task used to send data over this client connection.
+     *
+     * @param request The [StreamingRequest](xref:botbuilder-streaming.StreamingRequest) to send.
+     * @returns A promise for an instance of [IReceiveResponse](xref:botbuilder-streaming.IReceiveResponse) on completion of the send operation.
+     */
     public async send(request: StreamingRequest): Promise<IReceiveResponse> {
         return this._protocolAdapter.sendRequest(request);
     }

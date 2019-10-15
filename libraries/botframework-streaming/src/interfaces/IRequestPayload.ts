@@ -7,6 +7,9 @@
  */
 import { IStreamDescription } from './IStreamDescription';
 
+/**
+ * Definition for a streaming request payload.
+ */
 export interface IRequestPayload {
     verb: string;
     path: string;

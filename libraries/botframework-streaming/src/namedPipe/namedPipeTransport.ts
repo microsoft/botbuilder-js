@@ -9,6 +9,10 @@ import { Socket } from 'net';
 import { ITransportSender } from '../interfaces/ITransportSender';
 import { ITransportReceiver } from '../interfaces/ITransportReceiver';
 
+
+/**
+ * Named pipes based transport sender and receiver abstraction
+ */
 export class NamedPipeTransport implements ITransportSender, ITransportReceiver {
     public static readonly PipePath: string = '\\\\.\\pipe\\';
     public static readonly ServerIncomingPath: string = '.incoming';
@@ -22,10 +26,11 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     private _activeReceiveReject: (reason?: any) => void;
     private _activeReceiveCount: number;
 
-    /// <summary>
-    /// Creates a new instance of the NamedPipeTransport class.
-    /// </summary>
-    /// <param name="socket">The socket object to build this connection on.</param>
+    /**
+     * Creates a new instance of the [NamedPipeTransport](xref:botbuilder-streaming.NamedPipeTransport) class.
+     *
+     * @param socket The socket object to build this connection on.
+     */
     public constructor(socket: Socket) {
         this._socket = socket;
         this._queue = [];
@@ -44,10 +49,11 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
         }
     }
 
-    /// <summary>
-    /// Writes to the pipe and sends.
-    /// </summary>
-    /// <param name="buffer">The buffer full of data to send out across the socket.</param>
+    /**
+     * Writes to the pipe and sends.
+     *
+     * @param buffer The buffer full of data to send out across the socket.
+     */
     public send(buffer: Buffer): number {
         if (this._socket && !this._socket.connecting && this._socket.writable) {
             this._socket.write(buffer);
@@ -58,16 +64,16 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
         return 0;
     }
 
-    /// <summary>
-    /// Returns true if currently connected.
-    /// </summary>
+    /**
+     * Returns true if currently connected.
+     */
     public isConnected(): boolean {
         return !(!this._socket || this._socket.destroyed || this._socket.connecting);
     }
 
-    /// <summary>
-    /// Closes the transport.
-    /// </summary>
+    /**
+     * Closes the transport.
+     */
     public close(): void {
         if (this._socket) {
             this._socket.end('end');
@@ -75,9 +81,9 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
         }
     }
 
-    // Returns:
-    //  0 if the socket is closed or no more data can be returned
-    //  1...count bytes in the buffer
+    /**
+     * Receive from the transport into the buffer.
+     */
     public receive(count: number): Promise<Buffer> {
         if (this._activeReceiveResolve) {
             throw new Error('Cannot call receive more than once before it has returned.');
@@ -95,10 +101,6 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
         return promise;
     }
 
-    /// <summary>
-    /// Creates a new instance of the NamedPipeTransport class.
-    /// </summary>
-    /// <param name="socket">The socket object to build this connection on.</param>
     private socketReceive(data: Buffer): void {
         if (this._queue && data && data.length > 0) {
             this._queue.push(data);

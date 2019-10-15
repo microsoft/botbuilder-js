@@ -10,20 +10,22 @@ import { ISocket } from '../interfaces/ISocket';
 export class BrowserWebSocket implements ISocket {
     private webSocket: WebSocket;
 
-    /// <summary>
-    /// Creates a new instance of the BrowserWebSocket class.
-    /// </summary>
-    /// <param name="socket">The socket object to build this connection on.</param>
+    /**
+     * Creates a new instance of the [BrowserWebSocket](xref:botbuilder-streaming.BrowserWebSocket) class.
+     *
+     * @param socket The socket object to build this connection on.
+     */
     public constructor(socket?: WebSocket) {
         if (socket) {
             this.webSocket = socket;
         }
     }
 
-    /// <summary>
-    /// Connects to the supporting socket using WebSocket protocol.
-    /// </summary>
-    /// <param name="serverAddress">The address the server is listening on.</param>
+    /**
+     * Connects to the supporting socket using WebSocket protocol.
+     *
+     * @param serverAddress The address the server is listening on.
+     */
     public async connect(serverAddress: string): Promise<void> {
         let resolver;
         let rejector;
@@ -47,31 +49,32 @@ export class BrowserWebSocket implements ISocket {
 
     }
 
-    /// <summary>
-    /// True if the socket is currently connected.
-    /// </summary>
+    /**
+     * True if the socket is currently connected.
+     */
     public isConnected(): boolean {
         return this.webSocket.readyState === 1;
     }
 
-    /// <summary>
-    /// Writes a buffer to the socket and sends it.
-    /// </summary>
-    /// <param name="buffer">The buffer of data to send across the connection.</param>
+    /**
+     * Writes a buffer to the socket and sends it.
+     *
+     * @param buffer The buffer of data to send across the connection.
+     */
     public write(buffer: Buffer): void {
         this.webSocket.send(buffer);
     }
 
-    /// <summary>
-    /// Close the socket.
-    /// </summary>
+    /**
+     * Close the socket.
+     */
     public close(): void {
         this.webSocket.close();
     }
 
-    /// <summary>
-    /// Set the handler for text and binary messages received on the socket.
-    /// </summary>
+    /**
+     * Set the handler for text and binary messages received on the socket.
+     */
     public setOnMessageHandler(handler: (x: any) => void): void {
         let packets = [];
         this.webSocket.onmessage = (evt): void => {
@@ -92,16 +95,16 @@ export class BrowserWebSocket implements ISocket {
         };
     }
 
-    /// <summary>
-    /// Set the callback to call when encountering errors.
-    /// </summary>
+    /**
+     * Set the callback to call when encountering errors.
+     */
     public setOnErrorHandler(handler: (x: any) => void): void {
         this.webSocket.onerror = (error): void => { if (error) { handler(error); } };
     }
-
-    /// <summary>
-    /// Set the callback to call when encountering socket closures.
-    /// </summary>
+    
+    /**
+     * Set the callback to call when encountering socket closures.
+     */
     public setOnCloseHandler(handler: (x: any) => void): void {
         this.webSocket.onclose = handler;
     }

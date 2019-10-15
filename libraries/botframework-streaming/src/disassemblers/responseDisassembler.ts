@@ -12,6 +12,9 @@ import { PayloadDisassembler } from './payloadDisassembler';
 import { IStreamWrapper } from '../interfaces/IStreamWrapper';
 import { IResponsePayload } from '../interfaces/IResponsePayload';
 
+/**
+ * Streaming response disassembler.
+ */
 export class ResponseDisassembler extends PayloadDisassembler {
     public readonly response: StreamingResponse;
     public readonly payloadType: PayloadTypes = PayloadTypes.response;

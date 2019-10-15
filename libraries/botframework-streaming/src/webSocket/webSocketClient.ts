@@ -19,9 +19,9 @@ import { NodeWebSocket } from './NodeWebSocket';
 import { WebSocketTransport } from './WebSocketTransport';
 import { IStreamingTransportClient, IReceiveResponse } from '../interfaces';
 
-/// <summary>
-/// A client for use with the Bot Framework Protocol V3 with Streaming Extensions and an underlying WebSocket transport.
-/// </summary>
+/**
+ * Web socket based client to be used as streaming transport.
+ */
 export class WebSocketClient implements IStreamingTransportClient {
     private readonly _url: string;
     private readonly _requestHandler: RequestHandler;
@@ -31,13 +31,13 @@ export class WebSocketClient implements IStreamingTransportClient {
     private readonly _protocolAdapter: ProtocolAdapter;
     private readonly _disconnectionHandler: (message: string) => void;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="WebSocketClient"/> class.
-    /// </summary>
-    /// <param name="url">The URL of the remote server to connect to.</param>
-    /// <param name="requestHandler">Optional <see cref="RequestHandler"/> to process incoming messages received by this server.</param>
-    /// <param name="disconnectionHandler ">Optional function to handle the disconnection message</param>
-    /// </param>
+    /**
+     * Creates a new instance of the [WebSocketClient](xref:botbuilder-streaming.WebSocketClient) class.
+     *
+     * @param url The URL of the remote server to connect to.
+     * @param requestHandler Optional [RequestHandler](xref:botbuilder-streaming.RequestHandler) to process incoming messages received by this server.
+     * @param disconnectionHandler Optional function to handle the disconnection message.
+     */
     public constructor({ url, requestHandler, disconnectionHandler = null}) {
         this._url = url;
         this._requestHandler = requestHandler;
@@ -53,10 +53,11 @@ export class WebSocketClient implements IStreamingTransportClient {
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
     }
 
-    /// <summary>
-    /// Establish a connection with no custom headers.
-    /// </summary>
-    /// <returns>A promise that will not resolve until the client stops listening for incoming messages.</returns>
+    /**
+     * Establish a connection with no custom headers.
+     *
+     * @returns A promise that will not resolve until the client stops listening for incoming messages.
+     */
     public async connect(): Promise<void> {
         if (typeof WebSocket !== 'undefined') {
             const ws = new BrowserWebSocket();
@@ -77,19 +78,20 @@ export class WebSocketClient implements IStreamingTransportClient {
         }
     }
 
-    /// <summary>
-    /// Stop this client from listening.
-    /// </summary>
+    /**
+     * Stop this client from listening.
+     */
     public disconnect(): void {
         this._sender.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
         this._receiver.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
     }
 
-    /// <summary>
-    /// Task used to send data over this client connection.
-    /// </summary>
-    /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
-    /// <returns>A promise that will produce an instance of <see cref="ReceiveResponse"/> on completion of the send operation.</returns>
+    /**
+     * Task used to send data over this client connection.
+     *
+     * @param request The streaming request to send.
+     * @returns A promise that will produce an instance of receive response on completion of the send operation.
+     */
     public async send(request: StreamingRequest): Promise<IReceiveResponse> {
         return this._protocolAdapter.sendRequest(request);
     }

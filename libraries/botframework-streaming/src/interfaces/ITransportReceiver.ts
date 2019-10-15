@@ -7,6 +7,9 @@
  */
 import { ITransport } from './ITransport';
 
+/**
+ * Definition of a streaming transport that can receive requests.
+ */
 export interface ITransportReceiver extends ITransport {
     receive(count: number): Promise<Buffer>;
 }

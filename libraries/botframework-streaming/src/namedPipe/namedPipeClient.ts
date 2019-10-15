@@ -17,6 +17,9 @@ import {
 import { NamedPipeTransport } from './NamedPipeTransport';
 import { IStreamingTransportClient, IReceiveResponse } from '../interfaces';
 
+/**
+ * Streaming transport client implementation that uses named pipes for inter-process communication.
+ */
 export class NamedPipeClient implements IStreamingTransportClient {
     private readonly _baseName: string;
     private readonly _requestHandler: RequestHandler;
@@ -26,15 +29,14 @@ export class NamedPipeClient implements IStreamingTransportClient {
     private readonly _protocolAdapter: ProtocolAdapter;
     private readonly _autoReconnect: boolean;
     private _isDisconnecting: boolean;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="NamedPipeClient"/> class.
-    /// </summary>
-    /// <param name="baseName">The named pipe to connect to.</param>
-    /// <param name="requestHandler">Optional <see cref="RequestHandler"/> to process incoming messages received by this client.</param>
-    /// <param name="autoReconnect">Optional setting to determine if the client sould attempt to reconnect
-    /// automatically on disconnection events. Defaults to true.
-    /// </param>
+    
+    /**
+     * Creates a new instance of the [NamedPipeClient](xref:botbuilder-streaming.NamedPipeClient) class.
+     *
+     * @param baseName The named pipe to connect to.
+     * @param requestHandler Optional [RequestHandler](xref:botbuilder-streaming.RequestHandler) to process incoming messages received by this client.
+     * @param autoReconnect Optional setting to determine if the client sould attempt to reconnect automatically on disconnection events. Defaults to true.
+     */
     public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect: boolean = true) {
         this._baseName = baseName;
         this._requestHandler = requestHandler;
@@ -47,9 +49,9 @@ export class NamedPipeClient implements IStreamingTransportClient {
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
     }
 
-    /// <summary>
-    /// Establish a connection with no custom headers.
-    /// </summary>
+    /**
+     * Establish a connection with no custom headers.
+     */
     public async connect(): Promise<void> {
         let outgoingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerIncomingPath;
         let outgoing = connect(outgoingPipeName);
@@ -59,19 +61,20 @@ export class NamedPipeClient implements IStreamingTransportClient {
         this._receiver.connect(new NamedPipeTransport(incoming));
     }
 
-    /// <summary>
-    /// Method used to disconnect this client.
-    /// </summary>
+    /**
+     * Disconnect the client.
+     */
     public disconnect(): void {
         this._sender.disconnect();
         this._receiver.disconnect();
     }
 
-    /// <summary>
-    /// Task used to send data over this client connection.
-    /// </summary>
-    /// <param name="request">The <see cref="StreamingRequest"/> to send.</param>
-    /// <returns>A <see cref="Task"/> that will produce an instance of <see cref="ReceiveResponse"/> on completion of the send operation.</returns>
+    /**
+     * Task used to send data over this client connection.
+     *
+     * @param request The [StreamingRequest](xref:botbuilder-streaming.StreamingRequest) to send.
+     * @returns A promise for an instance of [IReceiveResponse](xref:botbuilder-streaming.IReceiveResponse) on completion of the send operation.
+     */
     public async send(request: StreamingRequest): Promise<IReceiveResponse> {
         return this._protocolAdapter.sendRequest(request);
     }

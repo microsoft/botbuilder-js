@@ -12,6 +12,9 @@ import { PayloadDisassembler } from './payloadDisassembler';
 import { IStreamWrapper } from '../interfaces/IStreamWrapper';
 import { IRequestPayload } from '../interfaces/IRequestPayload';
 
+/**
+ * Streaming request disassembler.
+ */
 export class RequestDisassembler extends PayloadDisassembler {
     public request: StreamingRequest;
     public payloadType: PayloadTypes = PayloadTypes.request;

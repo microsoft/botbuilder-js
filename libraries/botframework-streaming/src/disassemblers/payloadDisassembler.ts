@@ -11,6 +11,9 @@ import { PayloadSender } from '../payloadTransport/payloadSender';
 import { SubscribableStream } from '../subscribableStream';
 import { IStreamWrapper } from '../interfaces/IStreamWrapper';
 
+/**
+ * Base class streaming payload disassembling.
+ */
 export abstract class PayloadDisassembler {
     public abstract payloadType: PayloadTypes;
     private readonly sender: PayloadSender;

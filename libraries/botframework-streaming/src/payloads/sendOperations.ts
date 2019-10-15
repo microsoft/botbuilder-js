@@ -14,6 +14,9 @@ import { RequestDisassembler } from '../disassemblers/requestDisassembler';
 import { ResponseDisassembler } from '../disassemblers/responseDisassembler';
 import { PayloadTypes } from './payloadTypes';
 
+/**
+ * Send operations for streaming payloads.
+ */
 export class SendOperations {
     private readonly payloadSender: PayloadSender;
 

@@ -7,6 +7,9 @@
  */
 import { IHeader } from './IHeader';
 
+/**
+ * Parameters for a streaming assembler.
+ */
 export interface IAssemblerParams {
     header?: IHeader;
     id?: string;

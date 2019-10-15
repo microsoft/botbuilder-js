@@ -8,9 +8,10 @@
 import { IReceiveResponse } from './IReceiveResponse';
 import { StreamingRequest } from '../StreamingRequest';
 
-/// <summary>
-/// Interface implemented by StreamingTransportClient classes for each transport type.
-/// </summary>
+/**
+ * Abstraction to define the characteristics of a streaming transport client. 
+ * Example possible implementations include WebSocket transport client or NamedPipe transport client.
+ */
 export interface IStreamingTransportClient {
     connect(): Promise<void>;
     disconnect(): void;

@@ -15,40 +15,48 @@ import { ITransportSender } from '../interfaces/ITransportSender';
 import { IHeader } from '../interfaces/IHeader';
 import { ISendPacket } from '../interfaces/ISendPacket';
 
+/**
+ * Streaming payload sender.
+ */
 export class PayloadSender {
     public disconnected?: TransportDisconnectedEventHandler;
     private sender: ITransportSender;
 
-    /// <summary>
-    /// Returns true if connected to a transport sender.
-    /// </summary>
+    /**
+     * Tests whether the transport sender is connected.
+     *
+     * @returns true if connected to a transport sender.
+     */
     public get isConnected(): boolean {
         return !!this.sender;
     }
 
-    /// <summary>
-    /// Connects to the given transport sender.
-    /// </summary>
-    /// <param name="sender">The transport sender to connect this payload sender to.</param>
+    /**
+     * Connects to the given transport sender.
+     *
+     * @param sender The transport sender to connect this payload sender to.
+     */
     public connect(sender: ITransportSender): void {
         this.sender = sender;
     }
 
-    /// <summary>
-    /// Sends a payload out over the connected transport sender.
-    /// </summary>
-    /// <param name="header">The header to attach to the outgoing payload.</param>
-    /// <param name="payload">The stream of buffered data to send.</param>
-    /// <param name="sentCalback">The function to execute when the send has completed.</param>
+    /**
+     * Sends a payload out over the connected transport sender.
+     *
+     * @param header The header to attach to the outgoing payload.
+     * @param payload The stream of buffered data to send.
+     * @param sentCalback The function to execute when the send has completed.
+     */
     public sendPayload(header: IHeader, payload?: SubscribableStream, sentCallback?: () => Promise<void>): void {
         var packet: ISendPacket = {header, payload, sentCallback};
         this.writePacket(packet);
     }
 
-    /// <summary>
-    /// Disconnects this payload sender.
-    /// </summary>
-    /// <param name="e">The disconnected event arguments to include in the disconnected event broadcast.</param>
+    /**
+     * Disconnects this payload sender.
+     *
+     * @param e The disconnected event arguments to include in the disconnected event broadcast.
+     */
     public disconnect(e?: TransportDisconnectedEventArgs): void {
         if (this.isConnected) {
             this.sender.close();

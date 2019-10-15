@@ -37,6 +37,7 @@ class StreamingHttpClient implements HttpClient {
     /// </summary>
     /// <param name="httpRequest">The outgoing request created by the BotframeworkAdapter.</param>
     /// <returns>The streaming transport compatible response to send back to the client.</returns>
+    
     public async sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse> {
         const request = this.mapHttpRequestToProtocolRequest(httpRequest);
         request.path = request.path.substring(request.path.indexOf('/v3'));
@@ -231,10 +232,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     private readonly logger;
 
     private streamingLogic: (context: TurnContext) => Promise<void>;
-    
-    private isEmulatingOAuthCards: boolean;    
     private streamingServer: IStreamingTransportServer;
-    
+    private isEmulatingOAuthCards: boolean;    
     
 
     /**
@@ -941,12 +940,12 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         );
     }
 
-    /// <summary>
-    /// Checks the validity of the request and attempts to map it the correct virtual endpoint,
-    /// then generates and returns a response if appropriate.
-    /// </summary>
-    /// <param name="request">A ReceiveRequest from the connected channel.</param>
-    /// <returns>A response created by the BotAdapter to be sent to the client that originated the request.</returns>
+    /**
+     * Checks the validity of the request and attempts to map it the correct virtual endpoint,
+     * then generates and returns a response if appropriate.
+     * @param request A ReceiveRequest from the connected channel.
+     * @returns A response created by the BotAdapter to be sent to the client that originated the request.
+     */
     public async processRequest(request: IReceiveRequest): Promise<StreamingResponse> {
         let response = new StreamingResponse();
 
@@ -1017,13 +1016,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         return response;
     }
 
-    /// <summary>
-    /// Process the initial request to establish a long lived connection via a streaming server.
-    /// </summary>
-    /// <param name="req">The connection request.</param>
-    /// <param name="res">The response sent on error or connection termination.</param>
-    /// <param name="settings">Settings to set on the BotframeworkAdapter.</param>
-    public async useWebSocket(req: Request, res: ServerUpgradeResponse, streamingLogic: (context: TurnContext) => Promise<any>): Promise<void> {
+    /**
+     * Process the initial request to establish a long lived connection via a streaming server.
+     * @param req The connection request.
+     * @param res The response sent on error or connection termination.
+     * @param res The logic that will handle incoming requests.
+     */
+    public async useWebSocket(req: Request, res: ServerUpgradeResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
         if (!req.isUpgradeRequest()) {
             let e = new Error('Upgrade to WebSockets required.');
             //this.logger.log(e);
@@ -1053,19 +1052,21 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
         await this.startWebSocket(new NodeWebSocket(socket));
     }
-        /// <summary>
-    /// Connects the handler to a Named Pipe server and begins listening for incoming requests.
-    /// </summary>
-    /// <param name="pipeName">The name of the named pipe to use when creating the server.</param>
-    public async useNamedPipe(pipename: string = defaultPipeName, streamingLogic: (context: TurnContext) => Promise<any>): Promise<void>{
-        if (!streamingLogic) {
-            throw new Error('Streaming logic needs to be provided to `useNamedPipe`');
+
+    /**
+     * Connects the handler to a Named Pipe server and begins listening for incoming requests.
+     * @param pipeName The name of the named pipe to use when creating the server.
+     * @param logic The logic that will handle incoming requests.
+     */
+    public async useNamedPipe(pipeName: string = defaultPipeName, logic: (context: TurnContext) => Promise<any>): Promise<void>{
+        if (!logic) {
+            throw new Error('Bot logic needs to be provided to `useNamedPipe`');
         }
 
-        this.streamingLogic = streamingLogic;
+        this.streamingLogic = logic;
 
-        this.streamingServer = new NamedPipeServer(pipename, this);
-        await this.streamingServer.start();
+        this.streamingServer = new NamedPipeServer(pipeName, this);
+        await this.pipeStreamingServer.start();
     }
 
     /**

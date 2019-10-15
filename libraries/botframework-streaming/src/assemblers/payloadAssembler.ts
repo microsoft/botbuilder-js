@@ -14,7 +14,9 @@ import { IResponsePayload } from '../interfaces/IResponsePayload';
 import { IReceiveResponse, IReceiveRequest } from '../interfaces';
 import { IRequestPayload } from '../interfaces/IRequestPayload';
 
-
+/**
+ * Assembles payloads for streaming library.
+ */
 export class PayloadAssembler {
     public id: string;
     public end: boolean;

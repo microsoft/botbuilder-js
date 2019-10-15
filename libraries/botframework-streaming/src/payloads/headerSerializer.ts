@@ -8,6 +8,9 @@
 import { IHeader } from '../interfaces/IHeader';
 import { PayloadConstants } from './payloadConstants';
 
+/**
+ * Streaming header serializer
+ */
 export class HeaderSerializer {
     public static readonly Delimiter = '.';
     public static readonly Terminator = '\n';
@@ -25,6 +28,12 @@ export class HeaderSerializer {
     public static readonly TerminatorOffset = 47;
     public static readonly Encoding = 'utf8';
 
+    /**
+     * Serializes the header into a buffer
+     *
+     * @param header The header to serialize.
+     * @param buffer The buffer into which to serialize the header.
+     */
     public static serialize(header: IHeader, buffer: Buffer): void {
         buffer.write(header.payloadType, this.TypeOffset, 1,  this.Encoding);
         buffer.write(this.Delimiter, this.TypeDelimiterOffset, 1, this.Encoding);
@@ -36,6 +45,12 @@ export class HeaderSerializer {
         buffer.write(this.Terminator, this.TerminatorOffset);
     }
 
+    /**
+     * Deserializes a buffer containing header information.
+     *
+     * @param buffer The buffer from which to obtain the data to deserialize.
+     * @returns The deserialized header from the buffer.
+     */
     public static deserialize(buffer: Buffer): IHeader {
         let jsonBuffer = buffer.toString(this.Encoding);
         let headerArray = jsonBuffer.split(this.Delimiter);

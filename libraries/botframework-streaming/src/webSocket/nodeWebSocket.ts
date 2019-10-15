@@ -13,37 +13,40 @@ export class NodeWebSocket implements ISocket {
     private readonly waterShedSocket: any;
     private connected: boolean;
 
-    /// <summary>
-    /// Creates a new instance of the NodeWebSocket class.
-    /// </summary>
-    /// <param name="waterShedSocket">The WaterShed socket object to build this connection on.</param>
+    /**
+     * Creates a new instance of the [NodeWebSocket](xref:botbuilder-streaming.NodeWebSocket) class.
+     *
+     * @param socket The WaterShed socket object to build this connection on.
+     */
     public constructor(waterShedSocket?) {
         this.waterShedSocket = waterShedSocket;
         this.connected = !!waterShedSocket;
     }
 
-    /// <summary>
-    /// True if the socket is currently connected.
-    /// </summary>
+    /**
+     * True if the socket is currently connected.
+     */
     public isConnected(): boolean {
         return this.connected;
     }
 
-    /// <summary>
-    /// Writes a buffer to the socket and sends it.
-    /// </summary>
-    /// <param name="buffer">The buffer of data to send across the connection.</param>
+    /**
+     * Writes a buffer to the socket and sends it.
+     *
+     * @param buffer The buffer of data to send across the connection.
+     */
     public write(buffer: Buffer): void {
         this.waterShedSocket.send(buffer);
     }
 
-    /// <summary>
-    /// Connects to the supporting socket using WebSocket protocol.
-    /// </summary>
-    /// <param name="serverAddress">The address the server is listening on.</param>
-    /// <param name="port">The port the server is listening on, defaults to 8082.</param>
+    /**
+     * Connects to the supporting socket using WebSocket protocol.
+     *
+     * @param serverAddress The address the server is listening on.
+     * @param port The port the server is listening on, defaults to 8082.
+     */
     public async connect(serverAddress, port = 8082): Promise<void> {
-    // following template from https://github.com/joyent/node-watershed#readme
+        // Following template from https://github.com/joyent/node-watershed#readme
         let shed = new WaterShed.Watershed();
         let wskey = shed.generateKey();
         let options = {
@@ -69,33 +72,33 @@ export class NodeWebSocket implements ISocket {
         });
     }
 
-    /// <summary>
-    /// Set the handler for text and binary messages received on the socket.
-    /// </summary>
+    /**
+     * Set the handler for text and binary messages received on the socket.
+     */
     public setOnMessageHandler(handler: (x: any) => void): void {
         this.waterShedSocket.on('text', handler);
         this.waterShedSocket.on('binary', handler);
     }
 
-    /// <summary>
-    /// Close the socket.
-    /// </summary>
+    /**
+     * Close the socket.
+     */
     public close(): any {
         this.connected = false;
 
         return this.waterShedSocket.end();
     }
 
-    /// <summary>
-    /// Set the callback to call when encountering socket closures.
-    /// </summary>
+    /**
+     * Set the callback to call when encountering socket closures.
+     */
     public setOnCloseHandler(handler: (x: any) => void): void {
         this.waterShedSocket.on('end', handler);
     }
 
-    /// <summary>
-    /// Set the callback to call when encountering errors.
-    /// </summary>
+    /**
+     * Set the callback to call when encountering errors.
+     */
     public setOnErrorHandler(handler: (x: any) => void): void {
         this.waterShedSocket.on('error', (error): void => { if (error) { handler(error); } });
     }

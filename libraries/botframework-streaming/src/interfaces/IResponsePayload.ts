@@ -7,6 +7,9 @@
  */
 import { IStreamDescription } from './IStreamDescription';
 
+/**
+ * Base class for all dialogs.
+ */
 export interface IResponsePayload {
     statusCode: number;
     streams?: IStreamDescription[];

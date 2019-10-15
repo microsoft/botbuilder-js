@@ -7,6 +7,9 @@
  */
 import { ITransport } from './ITransport';
 
+/**
+ * Definition of a streaming transport that can send requests.
+ */
 export interface ITransportSender extends ITransport {
     send(buffer: Buffer): number;
 }
