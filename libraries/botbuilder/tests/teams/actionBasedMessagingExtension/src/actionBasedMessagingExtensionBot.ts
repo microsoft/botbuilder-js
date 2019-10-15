@@ -10,7 +10,8 @@ import {
     TaskModuleContinueResponse,
     TaskModuleMessageResponse,
     TaskModuleResponseBase,
-    TeamsActivityHandler
+    TeamsActivityHandler,
+    TurnContext
 } from 'botbuilder';
 
 export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
@@ -81,13 +82,13 @@ export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
 
     // This method fires when an user uses an Action-based Messaging Extension from the Teams Client.
     // It should send back the tab or task module for the user to interact with.
-    protected async onTeamsMessagingExtensionFetchTask(context, query): Promise<MessagingExtensionActionResponse> {
+    protected async onTeamsMessagingExtensionFetchTask(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         return {
             task: this.taskModuleResponse(query, false)
         };
     }
 
-    protected async onTeamsBotMessagePreviewSend(context, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+    protected async onTeamsBotMessagePreviewSend(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         let body: MessagingExtensionActionResponse;
         const card = this.getCardFromPreviewMessage(action);
         if (!card) {
