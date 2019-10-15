@@ -68,7 +68,7 @@ describe('HeaderSerializer', () => {
         buffer.write('ABCDE.000168.68e999ca-a651-40f4-ad8f-3aaf7b4.1\n');
 
         expect(() =>  HeaderSerializer.HeaderSerializer.deserialize(buffer))
-            .throws('Header Type is missing or malformed.');
+            .throws('Header type \'5\' is missing or malformed.');
     });
 
     it('throws if the header length is malformed', () => {
@@ -77,7 +77,7 @@ describe('HeaderSerializer', () => {
         buffer.write('A.00b168.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n');
 
         expect(() =>  HeaderSerializer.HeaderSerializer.deserialize(buffer))
-            .throws('Header Length is missing or malformed.');
+            .throws('Header length of NaN is missing or malformed');
     });
 
     it('throws if the header length is too small', () => {
@@ -86,16 +86,16 @@ describe('HeaderSerializer', () => {
         buffer.write('A.-100000.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n');
 
         expect(() =>  HeaderSerializer.HeaderSerializer.deserialize(buffer))
-            .throws('Header Length is missing or malformed.');
+            .throws('Header length of -100000 is missing or malformed');
     });
 
-    it('throws if the header length is to big', () => {
+    it('throws if the header length is too big', () => {
         // expect.assertions(1);
         let buffer = Buffer.alloc(Number(PayloadConstants.PayloadConstants.MaxHeaderLength));
         buffer.write('A.1111111.8e999ca-a651-40f4-ad8f-3aaf781862b4.1\n');
 
         expect(() =>  HeaderSerializer.HeaderSerializer.deserialize(buffer))
-            .throws('Header Length is missing or malformed.');
+            .throws('Header length of 1111111 is missing or malformed');
     });
 
     it('throws if the header terminator is malformed', () => {
@@ -109,11 +109,14 @@ describe('HeaderSerializer', () => {
 
     it('throws if the header ID is malformed', () => {
         //  expect.assertions(1);
+        const headerId = 'A.000168.68e9p9ca-a651-40f4-ad8f-3aaf781862b4.1\n';
+        const header = `A.000168.${ headerId }.1\n`;
+
         let buffer = Buffer.alloc(Number(PayloadConstants.PayloadConstants.MaxHeaderLength));
-        buffer.write('A.000168.68e9p9ca-a651-40f4-ad8f-3aaf781862b4.1\n');
+        buffer.write(header);
 
         expect(() =>  HeaderSerializer.HeaderSerializer.deserialize(buffer))
-            .throws('Header ID is missing or malformed.');
+            .throws(`Header ID \'${ headerId }\' is missing or malformed.`);
     });
 
 });
