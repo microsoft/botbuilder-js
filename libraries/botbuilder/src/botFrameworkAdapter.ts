@@ -1,4 +1,7 @@
 /**
+ * @module botbuilder
+ */
+/**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
@@ -7,10 +10,10 @@ import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAcco
 import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
 import * as os from 'os';
 import { TokenResolver } from './tokenResolver';
-import { IStreamingTransportServer, StreamingRequest, IReceiveRequest, StreamingResponse, NamedPipeServer, ISocket, WebSocketServer, NodeWebSocket } from 'botframework-streaming';
-import { WebResource, HttpOperationResponse, HttpClient } from 'botframework-connector/node_modules/@azure/ms-rest-js';
+import { IStreamingTransportServer, IReceiveRequest, StreamingResponse, NamedPipeServer, ISocket, WebSocketServer, NodeWebSocket } from 'botframework-streaming';
 import { Request, ServerUpgradeResponse } from 'restify';
 import { Watershed } from 'watershed'; 
+import { StreamingHttpClient } from './streamingHttpClient';
 
 export enum StatusCodes {
     OK = 200,
@@ -21,54 +24,6 @@ export enum StatusCodes {
     UPGRADE_REQUIRED = 426,
     INTERNAL_SERVER_ERROR = 500,
     NOT_IMPLEMENTED = 501,
-}
-
-class StreamingHttpClient implements HttpClient {
-    private readonly server: IStreamingTransportServer;
-
-    /**
-     * Creates a new streaming Http client.
-     *
-     * @param server Transport server implementation to be used.
-     */
-    public constructor(server: IStreamingTransportServer) {
-
-        if (!server) {
-            throw new Error(`StreamingHttpClient: Expected server.`);
-        }
-
-        this.server = server;
-    }
-
-    /**
-     * This function hides the default sendRequest of the HttpClient, replacing it
-     * with a version that takes the WebResource created by the BotFrameworkAdapter
-     * and converting it to a form that can be sent over a streaming transport.
-     *
-     * @param httpRequest The outgoing request created by the BotframeworkAdapter.
-     * @return The streaming transport compatible response to send back to the client.
-     */
-    public async sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse> {
-        if (!httpRequest) {
-            throw new Error('SendRequest invalid parameter: httpRequest should be provided');
-        }
-
-        const request = this.mapHttpRequestToProtocolRequest(httpRequest);
-        request.path = request.path.substring(request.path.indexOf('/v3'));
-        const res = await this.server.send(request);
-
-        return {
-            request: httpRequest,
-            status: res.statusCode,
-            headers: httpRequest.headers,
-            readableStreamBody: res.streams.length > 0 ? res.streams[0].getStream() : undefined
-        };
-    }
-
-    private mapHttpRequestToProtocolRequest(httpRequest: WebResource): StreamingRequest {
-
-        return StreamingRequest.create(httpRequest.method, httpRequest.url, httpRequest.body);
-    }
 }
 
 /**
