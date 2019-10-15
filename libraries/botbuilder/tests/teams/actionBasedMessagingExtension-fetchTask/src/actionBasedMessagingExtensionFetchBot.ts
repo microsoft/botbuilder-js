@@ -34,7 +34,7 @@ export class ActionBasedMessagingExtensionFetchTaskBot extends TeamsActivityHand
         });
     }
 
-    protected async onTeamsMessagingExtensionFetchTask(context, query): Promise<MessagingExtensionActionResponse> {
+    protected async onTeamsMessagingExtensionFetchTask(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         const response = AdaptiveCardHelper.createTaskModuleAdaptiveCardResponse();
         return response;
     }

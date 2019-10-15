@@ -69,7 +69,7 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
         });
     }
 
-    protected async onTeamsMessagingExtensionFetchTask(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionActionResponse> {
+    protected async onTeamsMessagingExtensionFetchTask(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         const adapter: IUserTokenProvider = context.adapter as BotFrameworkAdapter;
         const userToken = await adapter.getUserToken(context, this.connectionName);
         if (!userToken)
