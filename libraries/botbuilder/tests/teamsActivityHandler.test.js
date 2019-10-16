@@ -98,7 +98,7 @@ describe('TeamsActivityHandler', () => {
     });
 
     describe('should send a NotImplemented status code if', () => {
-        it('onTeamsMessagingExtensionSubmitAction is not overridden', async () => {
+        it('handleTeamsMessagingExtensionSubmitAction is not overridden', async () => {
             const bot = new TeamsActivityHandler();
     
             const adapter = new TestAdapter(async context => {
@@ -149,7 +149,7 @@ describe('TeamsActivityHandler', () => {
                 });
         });
 
-        it('onTeamsFileConsentAccept is not overridden', async () => {
+        it('handleTeamsFileConsentAccept is not overridden', async () => {
             const bot = new TeamsActivityHandler();
     
             const adapter = new TestAdapter(async context => {
@@ -166,7 +166,7 @@ describe('TeamsActivityHandler', () => {
                 });
         });
 
-        it('onTeamsFileConsentDecline is not overridden', async () => {
+        it('handleTeamsFileConsentDecline is not overridden', async () => {
             const bot = new TeamsActivityHandler();
     
             const adapter = new TestAdapter(async context => {
@@ -182,7 +182,7 @@ describe('TeamsActivityHandler', () => {
                 });
         });
 
-        it('onTeamsO365ConnectorCardAction is not overridden', async () => {
+        it('handleTeamsO365ConnectorCardAction is not overridden', async () => {
             const bot = new TeamsActivityHandler();
     
             const adapter = new TestAdapter(async context => {
@@ -198,7 +198,7 @@ describe('TeamsActivityHandler', () => {
                 });
         });
 
-        it('onTeamsSigninVerifyState is not overridden', async () => {
+        it('handleTeamsSigninVerifyState is not overridden', async () => {
             const bot = new TeamsActivityHandler();
     
             const adapter = new TestAdapter(async context => {
@@ -214,7 +214,7 @@ describe('TeamsActivityHandler', () => {
                 });
         });
 
-        it('onTeamsMessagingExtensionCardButtonClicked is not overridden', async () => {
+        it('handleTeamsMessagingExtensionCardButtonClicked is not overridden', async () => {
             const bot = new TeamsActivityHandler();
     
             const adapter = new TestAdapter(async context => {
@@ -230,7 +230,7 @@ describe('TeamsActivityHandler', () => {
                 });
         });
 
-        it('onTeamsTaskModuleFetch is not overridden', async () => {
+        it('handleTeamsTaskModuleFetch is not overridden', async () => {
             const bot = new TeamsActivityHandler();
     
             const adapter = new TestAdapter(async context => {
@@ -246,7 +246,7 @@ describe('TeamsActivityHandler', () => {
                 });
         });
 
-        it('onTeamsTaskModuleSubmit is not overridden', async () => {
+        it('handleTeamsTaskModuleSubmit is not overridden', async () => {
             const bot = new TeamsActivityHandler();
     
             const adapter = new TestAdapter(async context => {
@@ -265,18 +265,18 @@ describe('TeamsActivityHandler', () => {
 
     describe('should send an OK status code', () => {
         class OKFileConsent extends TeamsActivityHandler {
-            async onTeamsFileConsentAccept(context, fileConsentCardResponse) {
+            async handleTeamsFileConsentAccept(context, fileConsentCardResponse) {
                 assert(context, 'context not found');
                 assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
             }
 
-            async onTeamsFileConsentDecline(context, fileConsentCardResponse) {
+            async handleTeamsFileConsentDecline(context, fileConsentCardResponse) {
                 assert(context, 'context not found');
                 assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
             }
         }
 
-        it('when a "fileConsent/invoke" activity is handled by onTeamsFileConsentAccept', async () => {
+        it('when a "fileConsent/invoke" activity is handled by handleTeamsFileConsentAccept', async () => {
             const bot = new OKFileConsent();
     
             const adapter = new TestAdapter(async context => {
@@ -293,7 +293,7 @@ describe('TeamsActivityHandler', () => {
                 });
         });
 
-        it('when a "fileConsent/invoke" activity is handled by onTeamsFileConsentDecline', async () => {
+        it('when a "fileConsent/invoke" activity is handled by handleTeamsFileConsentDecline', async () => {
             const bot = new OKFileConsent();
 
             const adapter = new TestAdapter(async context => {
@@ -310,9 +310,9 @@ describe('TeamsActivityHandler', () => {
                 });
         });
 
-        it('when a "fileConsent/invoke" activity handled by onTeamsFileConsent', async () => {
+        it('when a "fileConsent/invoke" activity handled by handleTeamsFileConsent', async () => {
             class FileConsent extends TeamsActivityHandler {
-                async onTeamsFileConsent(context, fileConsentCardResponse) {
+                async handleTeamsFileConsent(context, fileConsentCardResponse) {
                     assert(context, 'context not found');
                     assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
                 }
@@ -343,20 +343,20 @@ describe('TeamsActivityHandler', () => {
                     this.submitReturn = { task: { type: 'message', value: 'test' } };
                 }
 
-                async onTeamsTaskModuleFetch(context, taskModuleRequest) {
+                async handleTeamsTaskModuleFetch(context, taskModuleRequest) {
                     assert(context, 'context not found');
                     assert(taskModuleRequest, 'taskModuleRequest not found');
                     return this.fetchReturn;
                 }
 
-                async onTeamsTaskModuleSubmit(context, taskModuleRequest) {
+                async handleTeamsTaskModuleSubmit(context, taskModuleRequest) {
                     assert(context, 'context not found');
                     assert(taskModuleRequest, 'taskModuleRequest not found');
                     return this.submitReturn;
                 }
             }
 
-            it('an overriden onTeamsTaskModuleFetch()', done => {
+            it('an overriden handleTeamsTaskModuleFetch()', done => {
                 const bot = new TaskHandler();
 
                 const adapter = new TestAdapter(async context => {
@@ -375,7 +375,7 @@ describe('TeamsActivityHandler', () => {
                     .catch(err => done(err));
             });
 
-            it('an overriden onTeamsTaskModuleSubmit()', done => {
+            it('an overriden handleTeamsTaskModuleSubmit()', done => {
                 const bot = new TaskHandler();
 
                 const adapter = new TestAdapter(async context => {
@@ -397,7 +397,7 @@ describe('TeamsActivityHandler', () => {
     });
 
     describe('should send a BadRequest status code when', () => {
-        it('onTeamsFileConsent() receives an unexpected action value', () => {
+        it('handleTeamsFileConsent() receives an unexpected action value', () => {
             const bot = new TeamsActivityHandler();            
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -412,7 +412,7 @@ describe('TeamsActivityHandler', () => {
                 });
         });
 
-        it('onTeamsMessagingExtensionSubmitActionDispatch() receives an unexpected botMessagePreviewAction value', () => {
+        it('handleTeamsMessagingExtensionSubmitActionDispatch() receives an unexpected botMessagePreviewAction value', () => {
             const bot = new TeamsActivityHandler();            
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -434,24 +434,24 @@ describe('TeamsActivityHandler', () => {
         let fileConsentCalled = false;
 
         class FileConsentBot extends TeamsActivityHandler {
-            async onTeamsFileConsent(context, fileConsentCardResponse) {
+            async handleTeamsFileConsent(context, fileConsentCardResponse) {
                 assert(context, 'context not found');
                 assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
                 fileConsentCalled = true;
-                await super.onTeamsFileConsent(context, fileConsentCardResponse);
+                await super.handleTeamsFileConsent(context, fileConsentCardResponse);
             }
 
-            async onTeamsFileConsentAccept(context, fileConsentCardResponse) {
+            async handleTeamsFileConsentAccept(context, fileConsentCardResponse) {
                 assert(context, 'context not found');
                 assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
-                assert(fileConsentCalled, 'onTeamsFileConsent handler was not called before onTeamsFileConsentAccept handler');
+                assert(fileConsentCalled, 'handleTeamsFileConsent handler was not called before handleTeamsFileConsentAccept handler');
                 fileConsentAcceptCalled = true;
             }
 
-            async onTeamsFileConsentDecline(context, fileConsentCardResponse) {
+            async handleTeamsFileConsentDecline(context, fileConsentCardResponse) {
                 assert(context, 'context not found');
                 assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
-                assert(fileConsentCalled, 'onTeamsFileConsent handler was not called before onTeamsFileConsentDecline handler');
+                assert(fileConsentCalled, 'handleTeamsFileConsent handler was not called before handleTeamsFileConsentDecline handler');
                 fileConsentDeclineCalled = true;
             }            
         }
@@ -468,7 +468,7 @@ describe('TeamsActivityHandler', () => {
             fileConsentCalled = false;
         });
 
-        it('onTeamsFileConsent handler before an onTeamsFileConsentAccept handler', async () => {
+        it('handleTeamsFileConsent handler before an handleTeamsFileConsentAccept handler', async () => {
             const bot = new FileConsentBot();
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -482,12 +482,12 @@ describe('TeamsActivityHandler', () => {
                     assert(!activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
                 }).then(() => {
-                    assert(fileConsentCalled, 'onTeamsFileConsent handler not called');
-                    assert(fileConsentAcceptCalled, 'onTeamsFileConsentAccept handler not called');
+                    assert(fileConsentCalled, 'handleTeamsFileConsent handler not called');
+                    assert(fileConsentAcceptCalled, 'handleTeamsFileConsentAccept handler not called');
                 });
         });
 
-        it('onTeamsFileConsent handler before an onTeamsFileConsentDecline handler', async () => {
+        it('handleTeamsFileConsent handler before an handleTeamsFileConsentDecline handler', async () => {
             const bot = new FileConsentBot();
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -501,8 +501,8 @@ describe('TeamsActivityHandler', () => {
                     assert(!activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
                 }).then(() => {
-                    assert(fileConsentCalled, 'onTeamsFileConsent handler not called');
-                    assert(fileConsentDeclineCalled, 'onTeamsFileConsentDecline handler not called');
+                    assert(fileConsentCalled, 'handleTeamsFileConsent handler not called');
+                    assert(fileConsentDeclineCalled, 'handleTeamsFileConsentDecline handler not called');
     
                 });
         });
@@ -572,7 +572,7 @@ describe('TeamsActivityHandler', () => {
             adapter.send(activity)
                 .then(() => {
                     assert(onTeamsMemberAddedEvent, 'onTeamsMemberAddedEvent handler not called');
-                    assert(onConversationUpdateCalled, 'onTeamsFileConsentAccept handler not called');
+                    assert(onConversationUpdateCalled, 'handleTeamsFileConsentAccept handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
                 });
         });
@@ -619,7 +619,7 @@ describe('TeamsActivityHandler', () => {
             adapter.send(activity)
                 .then(() => {
                     assert(onTeamsMemberAddedEvent, 'onTeamsMemberAddedEvent handler not called');
-                    assert(onConversationUpdateCalled, 'onTeamsFileConsentAccept handler not called');
+                    assert(onConversationUpdateCalled, 'handleTeamsFileConsentAccept handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
                 });
         });

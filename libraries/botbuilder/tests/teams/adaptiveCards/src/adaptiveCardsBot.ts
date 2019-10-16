@@ -67,8 +67,8 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
         });
     }
 
-    protected async onTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        await context.sendActivity(MessageFactory.text(`OnTeamsTaskModuleFetchAsync TaskModuleRequest: ${JSON.stringify(taskModuleRequest)}`));
+    protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
+        await context.sendActivity(MessageFactory.text(`handleTeamsTaskModuleFetchAsync TaskModuleRequest: ${JSON.stringify(taskModuleRequest)}`));
 
         /**
          * The following line disables the lint rules for the Adaptive Card so that users can
@@ -110,8 +110,8 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
         } as TaskModuleResponse;
     }
 
-    protected async onTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        await context.sendActivity(MessageFactory.text(`OnTeamsTaskModuleSubmit value: ${JSON.stringify(taskModuleRequest)}`));
+    protected async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
+        await context.sendActivity(MessageFactory.text(`handleTeamsTaskModuleSubmit value: ${JSON.stringify(taskModuleRequest)}`));
 
         return { 
                 task: { 
@@ -121,8 +121,8 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
         } as TaskModuleResponse;
     }
 
-    protected async onTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse> {
-        await context.sendActivity(MessageFactory.text(`OnTeamsCardActionInvoke value: ${JSON.stringify(context.activity.value)}`));
+    protected async handleTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse> {
+        await context.sendActivity(MessageFactory.text(`handleTeamsCardActionInvoke value: ${JSON.stringify(context.activity.value)}`));
         return { status: 200 } as InvokeResponse;
     }
 

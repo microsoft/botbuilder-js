@@ -7,6 +7,7 @@
  */
 
 import {
+    ChannelAccount,
     ChannelInfo,
     ConversationList,
     TeamsChannelAccount,
@@ -19,35 +20,42 @@ import { ConnectorClient, TeamsConnectorClient } from 'botframework-connector';
 import { BotFrameworkAdapter } from './botFrameworkAdapter';
 
 export class TeamsInfo {
-    static async getTeamDetails(context: TurnContext): Promise<TeamDetails> {
-        const teamId = this.getTeamId(context);
-        if (!teamId) {
+    public static async getTeamDetails(context: TurnContext, teamId?: string): Promise<TeamDetails> {
+        const t = teamId || this.getTeamId(context);
+        if (!t) {
             throw new Error('This method is only valid within the scope of a MS Teams Team.');
         }
 
-        return await this.getTeamsConnectorClient(context).teams.fetchTeamDetails(teamId);
+        return await this.getTeamsConnectorClient(context).teams.fetchTeamDetails(t);
     }
 
-    static async getChannels(context: TurnContext): Promise<ChannelInfo[]> {
-        const teamId = this.getTeamId(context);
-        if (!teamId) {
+    public static async getTeamChannels(context: TurnContext, teamId?: string): Promise<ChannelInfo[]> {
+        const t = teamId || this.getTeamId(context);
+        if (!t) {
             throw new Error('This method is only valid within the scope of a MS Teams Team.');
         }
 
-        const channelList: ConversationList = await this.getTeamsConnectorClient(context).teams.fetchChannelList(teamId);
+        const channelList: ConversationList = await this.getTeamsConnectorClient(context).teams.fetchChannelList(t);
         return channelList.conversations;
     }
 
-    static async getMembers(context: TurnContext): Promise<TeamsChannelAccount[]> {
-        const connectorClient = this.getConnectorClient(context);
+    public static async getMembers(context: TurnContext): Promise<TeamsChannelAccount[]> {
         const teamId = this.getTeamId(context);
         if (teamId) {
-            return await this.getMembersInternal(connectorClient, teamId);
+            return await this.getTeamMembers(context, teamId);
         } else {
             const conversation = context.activity.conversation;
             const conversationId = conversation && conversation.id ? conversation.id : undefined;
-            return await this.getMembersInternal(connectorClient, conversationId);
+            return await this.getMembersInternal(this.getConnectorClient(context), conversationId);
         }
+    }
+
+    public static async getTeamMembers(context: TurnContext, teamId?: string): Promise<TeamsChannelAccount[]> {
+        const t = teamId || this.getTeamId(context);
+        if (!t) {
+            throw new Error('This method is only valid within the scope of a MS Teams Team.');
+        }
+        return this.getMembersInternal(this.getConnectorClient(context), t);
     }
 
     private static async getMembersInternal(connectorClient: ConnectorClient, conversationId: string): Promise<TeamsChannelAccount[]> {
@@ -55,9 +63,9 @@ export class TeamsInfo {
             throw new Error('The getMembers operation needs a valid conversationId.');
         }
 
-        const teamMembers = await connectorClient.conversations.getConversationMembers(conversationId);
-        teamMembers.forEach((member:any) => {
-            member.aadObjectId = member.objectId;
+        const teamMembers: ChannelAccount[] = await connectorClient.conversations.getConversationMembers(conversationId);
+        teamMembers.forEach((member): void => {
+            member.aadObjectId = (member as any).objectId;
         });
 
         return teamMembers as TeamsChannelAccount[];

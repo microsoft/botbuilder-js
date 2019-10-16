@@ -27,7 +27,7 @@ export class LinkUnfurlingBot extends TeamsActivityHandler {
     // https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/messaging-extensions/search-extensions#receive-requests-from-links-inserted-into-the-compose-message-box
     // By specifying domains under the messageHandlers section in the manifest, the bot can receive
     // events when a user enters in a domain in the compose box.   
-    protected async onTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse> {
+    protected async handleTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse> {
         const attachment = CardFactory.thumbnailCard('Thumbnail Card', query.url, ["https://raw.githubusercontent.com/microsoft/botframework-sdk/master/icon.png"]);
 
         const result: MessagingExtensionResult = {
