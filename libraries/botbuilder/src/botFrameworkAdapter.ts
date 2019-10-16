@@ -122,6 +122,11 @@ export interface BotFrameworkAdapterSettings {
      * Optional. The channel service option for this bot to validate connections from Azure or other channel locations.
      */
     channelService?: string;
+
+    /**
+     * Optional. The option to determine if this adapter accepts WebSocket connections
+     */
+    enableWebSockets?: boolean;
 }
 
 /**
@@ -199,7 +204,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     private readonly credentialsProvider: SimpleCredentialProvider;
     private readonly settings: BotFrameworkAdapterSettings;
 
-    private streamingLogic: (context: TurnContext) => Promise<void>;
+    private logic: (context: TurnContext) => Promise<void>;
     private streamingServer: IStreamingTransportServer;
     private isEmulatingOAuthCards: boolean;    
     
@@ -718,6 +723,10 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * > without using the `await` keyword. Make sure all async functions use await!
      */
     public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
+        if ((req as Request).isUpgradeRequest()) {
+            return this.useWebSocket(req as Request, res as ServerUpgradeResponse, logic);
+        }
+
         let body: any;
         let status: number;
         let processError: Error;
@@ -909,56 +918,6 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * Process the initial request to establish a long lived connection via a streaming server.
-     * @param req The connection request.
-     * @param res The response sent on error or connection termination.
-     * @param res The logic that will handle incoming requests.
-     */
-    public async useWebSocket(req: Request, res: ServerUpgradeResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
-        if (!req.isUpgradeRequest()) {
-            let e = new Error('Upgrade to WebSockets required.');
-            res.status(StatusCodes.UPGRADE_REQUIRED);
-            res.send(e.message);
-
-            return Promise.resolve();
-        }
-
-        if (!logic) {
-            throw new Error('Streaming logic needs to be provided to `useWebSocket`');
-        }
-
-        this.streamingLogic = logic;
-
-        const authenticated = await this.authenticateConnection(req, this.settings.appId, this.settings.appPassword, this.settings.channelService);
-        if (!authenticated) {
-            res.status(StatusCodes.UNAUTHORIZED);
-            return Promise.resolve();
-        }
-
-        const upgrade = res.claimUpgrade();
-        const ws = new Watershed();
-        const socket = ws.accept(req, upgrade.socket, upgrade.head);
-
-        await this.startWebSocket(new NodeWebSocket(socket));
-    }
-
-    /**
-     * Connects the handler to a Named Pipe server and begins listening for incoming requests.
-     * @param pipeName The name of the named pipe to use when creating the server.
-     * @param logic The logic that will handle incoming requests.
-     */
-    public async useNamedPipe(pipeName: string = defaultPipeName, logic: (context: TurnContext) => Promise<any>): Promise<void>{
-        if (!logic) {
-            throw new Error('Bot logic needs to be provided to `useNamedPipe`');
-        }
-
-        this.streamingLogic = logic;
-
-        this.streamingServer = new NamedPipeServer(pipeName, this);
-        await this.streamingServer.start();
-    }
-
-    /**
      * Creates a connector client.
      * 
      * @param serviceUrl The client's service URL.
@@ -1042,7 +1001,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         try {           
             let context = new TurnContext(this, body);
             await this.runMiddleware(context, async (turnContext): Promise<void> => {
-                await this.streamingLogic(context);
+                await this.logic(context);
             });
 
             if (body.type === ActivityTypes.Invoke) {
@@ -1154,6 +1113,56 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         let claims = await JwtTokenValidation.validateAuthHeader(authHeader, credentialProvider, channelService, channelIdHeader);
 
         return claims.isAuthenticated;
+    }
+
+    /**
+     * Connects the handler to a Named Pipe server and begins listening for incoming requests.
+     * @param pipeName The name of the named pipe to use when creating the server.
+     * @param logic The logic that will handle incoming requests.
+     */
+    private async useNamedPipe(pipeName: string = defaultPipeName, logic: (context: TurnContext) => Promise<any>): Promise<void>{
+        if (!logic) {
+            throw new Error('Bot logic needs to be provided to `useNamedPipe`');
+        }
+
+        this.logic = logic;
+
+        this.streamingServer = new NamedPipeServer(pipeName, this);
+        await this.streamingServer.start();
+    }
+
+    /**
+     * Process the initial request to establish a long lived connection via a streaming server.
+     * @param req The connection request.
+     * @param res The response sent on error or connection termination.
+     * @param res The logic that will handle incoming requests.
+     */
+    private async useWebSocket(req: Request, res: ServerUpgradeResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
+        if (!req.isUpgradeRequest()) {
+            let e = new Error('Upgrade to WebSockets required.');
+            res.status(StatusCodes.UPGRADE_REQUIRED);
+            res.send(e.message);
+
+            return Promise.resolve();
+        }
+
+        if (!logic) {
+            throw new Error('Streaming logic needs to be provided to `useWebSocket`');
+        }
+
+        this.logic = logic;
+
+        const authenticated = await this.authenticateConnection(req, this.settings.appId, this.settings.appPassword, this.settings.channelService);
+        if (!authenticated) {
+            res.status(StatusCodes.UNAUTHORIZED);
+            return Promise.resolve();
+        }
+
+        const upgrade = res.claimUpgrade();
+        const ws = new Watershed();
+        const socket = ws.accept(req, upgrade.socket, upgrade.head);
+
+        await this.startWebSocket(new NodeWebSocket(socket));
     }
 
     /**
