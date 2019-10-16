@@ -6,8 +6,8 @@ import {
     CardFactory,
     MessagingExtensionActionResponse,
     MessagingExtensionAction,
-    MessagingExtensionQuery,
     TaskModuleContinueResponse,
+    TaskModuleResponse,
     TaskModuleTaskInfo,
     TaskModuleRequest,
     TeamsActivityHandler,
@@ -107,13 +107,23 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
         return response;
     }
 
-    protected async onTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleTaskInfo> {
+    protected async onTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
         var data = context.activity.value;
         if (data && data.state)
         {
             const adapter: IUserTokenProvider = context.adapter as BotFrameworkAdapter;
             const tokenResponse = await adapter.getUserToken(context, this.connectionName, data.state);
-            return this.CreateSignedInTaskModuleTaskInfo(tokenResponse.token);
+
+            const continueResponse : TaskModuleContinueResponse = {
+                type: 'continue',
+                value: this.CreateSignedInTaskModuleTaskInfo(tokenResponse.token),
+            };
+    
+            const response : MessagingExtensionActionResponse = { 
+                task: continueResponse 
+            }; 
+
+            return response;
         }
         else
         {
