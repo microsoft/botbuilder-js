@@ -29,8 +29,8 @@ export class TaskModuleBot  extends TeamsActivityHandler {
         });
     }
 
-    protected async onTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        var reply = MessageFactory.text("OnTeamsTaskModuleFetchAsync TaskModuleRequest" + JSON.stringify(taskModuleRequest));
+    protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
+        var reply = MessageFactory.text("handleTeamsTaskModuleFetchAsync TaskModuleRequest" + JSON.stringify(taskModuleRequest));
         await context.sendActivity(reply);
 
         return {
@@ -46,8 +46,8 @@ export class TaskModuleBot  extends TeamsActivityHandler {
         } as TaskModuleResponse;
     }
     
-    protected async onTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        var reply = MessageFactory.text("OnTeamsTaskModuleFetchAsync Value: " + JSON.stringify(taskModuleRequest));
+    protected async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
+        var reply = MessageFactory.text("handleTeamsTaskModuleFetchAsync Value: " + JSON.stringify(taskModuleRequest));
         await context.sendActivity(reply);
 
         return {
