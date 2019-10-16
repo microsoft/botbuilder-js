@@ -50,7 +50,7 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
         });
     }
 
-    protected async onTeamsMessagingExtensionQuery(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionResponse>{
+    protected async handleTeamsMessagingExtensionQuery(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionResponse>{
         const accessor = this.userState.createProperty<{ useHeroCard: boolean }>(RICH_CARD_PROPERTY);
         const config = await accessor.get(context, { useHeroCard: true });
 
@@ -98,7 +98,7 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
         return composeExtensionResponse;
     }
     
-    protected async onTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>{
+    protected async handleTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>{
         const accessor = this.userState.createProperty<{ useHeroCard: boolean }>(RICH_CARD_PROPERTY);
         const config = await accessor.get(context, { useHeroCard: true });
 
@@ -140,7 +140,7 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
         return composeExtensionResponse;
     }
 
-    protected async onTeamsMessagingExtensionConfigurationQuerySettingUrl(context: TurnContext, query: MessagingExtensionQuery){
+    protected async handleTeamsMessagingExtensionConfigurationQuerySettingUrl(context: TurnContext, query: MessagingExtensionQuery){
         return <MessagingExtensionActionResponse>
         {
             composeExtension: <MessagingExtensionResult> {
@@ -158,7 +158,7 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
         }
     }
 
-    protected async onTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings: MessagingExtensionQuery){
+    protected async handleTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings: MessagingExtensionQuery){
         // This event is fired when the settings page is submitted
         const accessor = this.userState.createProperty<{ useHeroCard: boolean }>(RICH_CARD_PROPERTY);
         const config = await accessor.get(context, { useHeroCard: true });
