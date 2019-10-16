@@ -538,26 +538,4 @@ export class TurnContext {
 
         return emitNext(0);
     }
-
-    /**
-      * Determine if the Activity was sent via an Http/Https connection or Streaming
-      * This can be determined by looking at the ServiceUrl property:
-      *   (1) All channels that send messages via http/https are not streaming
-      *   (2) Channels that send messages via streaming have a ServiceUrl that does not begin with http/https.
-      * @param activity the activity.
-      */
-     public static isFromStreamingConnection(activity: Activity): boolean {
-        return activity && this.isStreamingServiceUrl(activity.serviceUrl);
-     }
-
-    /**
-      * Determine if the serviceUrl was sent via an Http/Https connection or Streaming
-      * This can be determined by looking at the ServiceUrl property:
-      *   (1) All channels that send messages via http/https are not streaming
-      *   (2) Channels that send messages via streaming have a ServiceUrl that does not begin with http/https.
-      * @param serviceUrl the serviceUrl provided in the resquest. 
-      */
-     public static isStreamingServiceUrl(serviceUrl: string): boolean {
-        return serviceUrl && !serviceUrl.toLowerCase().startsWith('http');
-     }
 }

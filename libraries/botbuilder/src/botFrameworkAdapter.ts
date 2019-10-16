@@ -855,7 +855,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
                     if (!activity.conversation || !activity.conversation.id) {
                         throw new Error(`BotFrameworkAdapter.sendActivity(): missing conversation id.`);
                     }
-                    if (TurnContext.isFromStreamingConnection(activity as Activity)) {
+                    if (BotFrameworkAdapter.isFromStreamingConnection(activity as Activity)) {
                         TokenResolver.checkForOAuthCards(this, context, activity as Activity);
                     }
                     const client: ConnectorClient = this.createConnectorClient(activity.serviceUrl);
@@ -968,7 +968,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      */
     public createConnectorClient(serviceUrl: string): ConnectorClient {
 
-        if (TurnContext.isStreamingServiceUrl(serviceUrl)) {
+        if (BotFrameworkAdapter.isStreamingServiceUrl(serviceUrl)) {
 
             // Check if we have a streaming server. Otherwise, requesting a connector client
             // for a non-existent streaming connection results in an error
@@ -1140,6 +1140,28 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     protected createContext(request: Partial<Activity>): TurnContext {
         return new TurnContext(this as any, request);
     }
+
+    /**
+      * Determine if the Activity was sent via an Http/Https connection or Streaming
+      * This can be determined by looking at the ServiceUrl property:
+      *   (1) All channels that send messages via http/https are not streaming
+      *   (2) Channels that send messages via streaming have a ServiceUrl that does not begin with http/https.
+      * @param activity the activity.
+      */
+     private static isFromStreamingConnection(activity: Activity): boolean {
+        return activity && this.isStreamingServiceUrl(activity.serviceUrl);
+     }
+
+    /**
+      * Determine if the serviceUrl was sent via an Http/Https connection or Streaming
+      * This can be determined by looking at the ServiceUrl property:
+      *   (1) All channels that send messages via http/https are not streaming
+      *   (2) Channels that send messages via streaming have a ServiceUrl that does not begin with http/https.
+      * @param serviceUrl the serviceUrl provided in the resquest. 
+      */
+     private static isStreamingServiceUrl(serviceUrl: string): boolean {
+        return serviceUrl && !serviceUrl.toLowerCase().startsWith('http');
+     }
 
     private async authenticateConnection(req: WebRequest, appId?: string, appPassword?: string, channelService?: string): Promise<boolean> {
         if (!appId || !appPassword) {
