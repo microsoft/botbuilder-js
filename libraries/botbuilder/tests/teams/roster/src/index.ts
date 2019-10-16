@@ -12,6 +12,9 @@ import { BotFrameworkAdapter } from 'botbuilder';
 // This bot's main dialog.
 import { RosterBot  } from './rosterBot';
 
+// Import middleware for filtering messages based on Teams Tenant Id
+import { TeamsTenantFilteringMiddleware  } from './teamsTenantFilteringMiddleware';
+
 const ENV_FILE = path.join(__dirname, '..', '.env');
 config({ path: ENV_FILE });
 
@@ -30,7 +33,11 @@ const adapter = new BotFrameworkAdapter({
     appPassword: process.env.MicrosoftAppPassword
 });
 
-// adapter.use(new TranscriptLoggerMiddleware(new FileTranscriptStore('./transcripts')));
+// Use the TeamsTenantFilteringMiddleware IF there is an AllowedTeamsTenantId
+if(process.env.AllowedTeamsTenantId){
+    let teamsTenantFilteringMiddleware = new TeamsTenantFilteringMiddleware(process.env.AllowedTeamsTenantId);
+    adapter.use(teamsTenantFilteringMiddleware);
+}
 
 // Catch-all for errors.
 adapter.onTurnError = async (context, error) => {
