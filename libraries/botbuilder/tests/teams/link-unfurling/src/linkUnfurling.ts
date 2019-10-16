@@ -3,13 +3,10 @@
 
 import {
     AppBasedLinkQuery,
+    CardFactory, 
     MessagingExtensionResponse,
     MessagingExtensionResult,
     TeamsActivityHandler,
-    CardFactory, 
-    ThumbnailCard,
-    CardImage,
-    HeroCard,
     TurnContext } 
 from 'botbuilder';
 
@@ -20,7 +17,6 @@ export class LinkUnfurlingBot extends TeamsActivityHandler {
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
             await context.sendActivity(`You said '${context.activity.text}'`);
-            await context.sendActivity(`Second response! '${context.activity.text}'`);
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
@@ -34,18 +30,16 @@ export class LinkUnfurlingBot extends TeamsActivityHandler {
     protected async onTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse> {
         const attachment = CardFactory.thumbnailCard('Thumbnail Card', query.url, ["https://raw.githubusercontent.com/microsoft/botframework-sdk/master/icon.png"]);
 
-            const result: MessagingExtensionResult = {
-                attachmentLayout: 'list',
-                type: 'result',
-                attachments: [attachment],
-                text: 'test unfurl',
-            }
-            const response: MessagingExtensionResponse = {
-                composeExtension: result,
-            }
-
-            // For Invoke activities from Teams, we're currently not continuing the chain of handlers.
-            // await next();
-            return Promise.resolve(response);
+        const result: MessagingExtensionResult = {
+            attachmentLayout: 'list',
+            type: 'result',
+            attachments: [attachment],
+            text: 'test unfurl',
+        }
+        const response: MessagingExtensionResponse = {
+            composeExtension: result,
+        }
+        
+        return response;
     }
 }
