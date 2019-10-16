@@ -722,9 +722,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * > in your bot's console output, the likely cause is that an async function was used
      * > without using the `await` keyword. Make sure all async functions use await!
      */
-    public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
-        if ((req as Request).isUpgradeRequest()) {
-            return this.useWebSocket(req as Request, res as ServerUpgradeResponse, logic);
+    public async processActivity(req: WebRequest|Request, res: WebResponse|ServerUpgradeResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
+        if (this.isARequest(req) && (req).isUpgradeRequest()) {
+            return this.useWebSocket(req, res as ServerUpgradeResponse, logic);
         }
 
         let body: any;
@@ -1113,6 +1113,10 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         let claims = await JwtTokenValidation.validateAuthHeader(authHeader, credentialProvider, channelService, channelIdHeader);
 
         return claims.isAuthenticated;
+    }
+
+    private isARequest(target: any): target is Request {
+        return 'isUpgradeRequest' in target;
     }
 
     /**
