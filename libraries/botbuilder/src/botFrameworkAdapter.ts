@@ -723,7 +723,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * > without using the `await` keyword. Make sure all async functions use await!
      */
     public async processActivity(req: WebRequest|Request, res: WebResponse|ServerUpgradeResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
-        if (this.isARequest(req) && (req).isUpgradeRequest()) {
+        if (this.isUpgradeRequest(req) && (req).isUpgradeRequest()) {
             return this.useWebSocket(req, res as ServerUpgradeResponse, logic);
         }
 
@@ -1115,7 +1115,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         return claims.isAuthenticated;
     }
 
-    private isARequest(target: any): target is Request {
+    private isUpgradeRequest(target: any): target is Request {
         return 'isUpgradeRequest' in target;
     }
 
