@@ -7,7 +7,7 @@
  */
 
 import { IStreamingTransportServer, StreamingRequest } from 'botframework-streaming';
-import { WebResource, HttpOperationResponse, HttpClient } from 'botframework-connector/node_modules/@azure/ms-rest-js';
+import { WebResource, HttpOperationResponse, HttpClient } from '@azure/ms-rest-js';
 
 export class StreamingHttpClient implements HttpClient {
     private readonly server: IStreamingTransportServer;
