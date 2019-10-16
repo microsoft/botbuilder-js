@@ -132,6 +132,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     private readonly baseExpressionEngine: ExpressionEngine;
     private _expressionParser: IExpressionParser;
     private readonly expressionRecognizeRegex: RegExp = new RegExp(/@?(?<!\\)\{.+?(?<!\\)\}/g);
+    private readonly escapeSeperatorRegex : RegExp = new RegExp(/(?<!\\)\|/g);
 
     constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -265,6 +266,19 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
                         result.push(this.BuildLGDiagnostic({
                             message: `Structured content does not support`,
                             context: content}));
+                    } else if (start > 0) {
+                        const originValue: string = line.substr(start + 1).trim();
+
+                        const valueArray: string[] = originValue.split(this.escapeSeperatorRegex);
+                        if (valueArray.length === 1) {
+                            result = result.concat(this.CheckText(originValue, context));
+                        } else {
+                            for (const item of valueArray) {
+                                result = result.concat(this.CheckText(item.trim(), context));
+                            }
+                        }
+                    } else if (this.isPureExpression(line)) {
+                        result = result.concat(this.CheckExpression(line, context));
                     }
                 }
             }
@@ -470,7 +484,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
                     break;
                 }
                 case lp.LGFileParser.TEXT: {
-                    result = result.concat(this.CheckText(node.text, context));
+                    result = result.concat(this.CheckErrorMultiLineText(node.text, context));
                     break;
                 }
                 default:
@@ -517,9 +531,15 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     }
 
     private CheckMultiLineText(exp: string, context: ParserRuleContext): Diagnostic[] {
-        let result: Diagnostic[] = [];
         exp = exp.substr(3, exp.length - 6);
-        const matches: string[] = exp.match(/@\{[^{}]+\}/g);
+
+        return this.CheckText(exp, context, true);
+    }
+
+    private CheckText(exp: string, context: ParserRuleContext, isMultiLineText : boolean = false): Diagnostic[] {
+        let result: Diagnostic[] = [];
+        const reg: RegExp = isMultiLineText ? /@\{[^{}]+\}/g : /@?\{[^{}]+\}/g;
+        const matches: string[] = exp.match(reg);
         if (matches !== null && matches !== undefined) {
             for (const match of matches) {
                 result = result.concat(this.CheckExpression(match, context));
@@ -529,7 +549,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         return result;
     }
 
-    private CheckText(exp: string, context: ParserRuleContext): Diagnostic[] {
+    private CheckErrorMultiLineText(exp: string, context: ParserRuleContext): Diagnostic[] {
         const result: Diagnostic[] = [];
 
         if (exp.startsWith('```')) {
