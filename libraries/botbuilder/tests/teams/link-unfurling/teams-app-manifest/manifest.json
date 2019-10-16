@@ -2,7 +2,7 @@
   "$schema": "https://github.com/OfficeDev/microsoft-teams-app-schema/blob/preview/DevPreview/MicrosoftTeams.schema.json",
   "manifestVersion": "1.5",
   "version": "1.0",
-  "id": "cd59cf47-aca1-41e0-8441-387faee8331e",
+  "id": "<<MSA BOT ID>>",
   "packageName": "com.teams.sample.linkunfurling",
   "developer": {
     "name": "Link Unfurling1",
@@ -25,13 +25,13 @@
   "accentColor": "#FFFFFF",
   "bots": [
     {
-      "botId": "cd59cf47-aca1-41e0-8441-387faee8331e",
+      "botId": "<<MSA BOT ID>>",
       "scopes": [ "personal", "team" ]
     }
   ],
   "composeExtensions": [
     {
-      "botId": "cd59cf47-aca1-41e0-8441-387faee8331e",
+      "botId": "<<MSA BOT ID>>",
       "commands": [
         {
           "id": "searchQuery",
