@@ -1,4 +1,7 @@
 /**
+ * @module botbuilder
+ */
+/**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
@@ -21,6 +24,7 @@ export class TeamsInfo {
         if (!teamId) {
             throw new Error('This method is only valid within the scope of a MS Teams Team.');
         }
+
         return await this.getTeamsConnectorClient(context).teams.fetchTeamDetails(teamId);
     }
 
@@ -29,6 +33,7 @@ export class TeamsInfo {
         if (!teamId) {
             throw new Error('This method is only valid within the scope of a MS Teams Team.');
         }
+
         const channelList: ConversationList = await this.getTeamsConnectorClient(context).teams.fetchChannelList(teamId);
         return channelList.conversations;
     }
@@ -49,10 +54,12 @@ export class TeamsInfo {
         if (!conversationId) {
             throw new Error('The getMembers operation needs a valid conversationId.');
         }
+
         const teamMembers = await connectorClient.conversations.getConversationMembers(conversationId);
         teamMembers.forEach((member:any) => {
             member.aadObjectId = member.objectId;
         });
+
         return teamMembers as TeamsChannelAccount[];
     }
 
@@ -60,9 +67,11 @@ export class TeamsInfo {
         if (!context) {
             throw new Error('Missing context parameter');
         }
+
         if (!context.activity) {
             throw new Error('Missing activity on context');
         }
+
         const channelData = context.activity.channelData as TeamsChannelData;
         const team = channelData && channelData.team ? channelData.team : undefined;
         const teamId = team && typeof(team.id) === 'string' ? team.id : undefined;
@@ -71,8 +80,9 @@ export class TeamsInfo {
 
     private static getConnectorClient(context: TurnContext): ConnectorClient {
         if (!context.adapter || !('createConnectorClient' in context.adapter)) {
-            throw new Error('This method requires a connector client.')
+            throw new Error('This method requires a connector client.');
         }
+
         return (context.adapter as BotFrameworkAdapter).createConnectorClient(context.activity.serviceUrl);
     }
 
@@ -80,5 +90,4 @@ export class TeamsInfo {
         const connectorClient = this.getConnectorClient(context);
         return new TeamsConnectorClient(connectorClient.credentials, { baseUri: context.activity.serviceUrl });
     }
-
 }

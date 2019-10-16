@@ -5,12 +5,13 @@ import {
     CardFactory,
     InvokeResponse,
     MessageFactory,
+    TaskModuleContinueResponse,
     TaskModuleMessageResponse,
     TaskModuleRequest,
-    TaskModuleResponseBase,
+    TaskModuleResponse,
     TaskModuleTaskInfo,
     TeamsActivityHandler,
-    TurnContext
+    TurnContext,
 } from 'botbuilder';
 
 /**
@@ -66,7 +67,7 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
         });
     }
 
-    protected async onTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleTaskInfo> {
+    protected async onTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
         await context.sendActivity(MessageFactory.text(`OnTeamsTaskModuleFetchAsync TaskModuleRequest: ${JSON.stringify(taskModuleRequest)}`));
 
         /**
@@ -96,17 +97,28 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
             "version": "1.0"
         });
         /* tslint:enable:quotemark object-literal-key-quotes */
-        return {
-            card,
-            height: 200,
-            title: 'Task Module Example',
-            width: 400
-        } as TaskModuleTaskInfo;
+        return { 
+                task: {
+                        type: 'continue',
+                        value: {
+                            card,
+                            height: 200,
+                            title: 'Task Module Example',
+                            width: 400
+                        } as TaskModuleTaskInfo
+            } as TaskModuleContinueResponse
+        } as TaskModuleResponse;
     }
 
-    protected async onTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponseBase> {
+    protected async onTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
         await context.sendActivity(MessageFactory.text(`OnTeamsTaskModuleSubmit value: ${JSON.stringify(taskModuleRequest)}`));
-        return { type: 'message', value: 'Thanks!' } as TaskModuleMessageResponse;
+
+        return { 
+                task: { 
+                    type: 'message', 
+                    value: 'Thanks!' 
+                } as TaskModuleMessageResponse
+        } as TaskModuleResponse;
     }
 
     protected async onTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse> {
