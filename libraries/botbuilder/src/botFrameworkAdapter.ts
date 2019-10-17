@@ -227,7 +227,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that resumes a conversation with a user, possibly after some time has gone by.
+     * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
      *
      * @param reference A reference to the conversation to continue.
      * @param logic The asynchronous method to call after the adapter middleware runs.
@@ -283,7 +283,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that creates and starts a conversation with a user on a channel.
+     * Asynchronously creates and starts a conversation with a user on a channel.
      *
      * @param reference A reference for the conversation to create.
      * @param logic The asynchronous method to call after the adapter middleware runs.
@@ -370,7 +370,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that deletes an existing activity.
+     * Asynchronously deletes an existing activity.
      * 
      * This interface supports the framework and is not intended to be called directly for your code.
      * Use [TurnContext.deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity) to delete
@@ -393,7 +393,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that removes a member from the current conversation.
+     * Asynchronously removes a member from the current conversation.
      * 
      * @param context The context object for the turn.
      * @param memberId The ID of the member to remove from the conversation.
@@ -415,7 +415,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that lists the members of a given activity.
+     * Asynchronously lists the members of a given activity.
      * 
      * @param context The context object for the turn.
      * @param activityId Optional. The ID of the activity to get the members of. If not specified, the current activity ID is used.
@@ -447,7 +447,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that lists the members of the current conversation.
+     * Asynchronously lists the members of the current conversation.
      * 
      * @param context The context object for the turn.
      *
@@ -474,7 +474,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that, for the specified channel, gets a page of the conversations in which this bot has participated.
+     * For the specified channel, asynchronously gets a page of the conversations in which this bot has participated.
      * 
      * @param contextOrServiceUrl The URL of the channel server to query or a
      * [TurnContext](xref:botbuilder-core.TurnContext) object from a conversation on the channel.
@@ -505,7 +505,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that attempts to retrieve the token for a user that's in a login flow.
+     * Asynchronously attempts to retrieve the token for a user that's in a login flow.
      * 
      * @param context The context object for the turn.
      * @param connectionName The name of the auth connection to use.
@@ -534,7 +534,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that signs out the user from the token server.
+     * Asynchronously signs out the user from the token server.
      * 
      * @param context The context object for the turn.
      * @param connectionName The name of the auth connection to use.
@@ -555,7 +555,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that gets a sign-in link from the token server that can be sent as part
+     * Asynchronously gets a sign-in link from the token server that can be sent as part
      * of a [SigninCard](xref:botframework-schema.SigninCard).
      * 
      * @param context The context object for the turn.
@@ -577,7 +577,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /** 
-     * An asynchronous method that retrieves the token status for each configured connection for the given user.
+     * Asynchronously retrieves the token status for each configured connection for the given user.
      * 
      * @param context The context object for the turn.
      * @param userId Optional. If present, the ID of the user to retrieve the token status for.
@@ -601,7 +601,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that signs out the user from the token server.
+     * Asynchronously signs out the user from the token server.
      * 
      * @param context The context object for the turn.
      * @param connectionName The name of the auth connection to use.
@@ -624,7 +624,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that sends an emulated OAuth card for a channel.
+     * Asynchronously sends an emulated OAuth card for a channel.
      * 
      * This method supports the framework and is not intended to be called directly for your code.
      * 
@@ -641,7 +641,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that creates a turn context and runs the middleware pipeline for an incoming activity.
+     * Asynchronously creates a turn context and runs the middleware pipeline for an incoming activity.
      *
      * @param req An Express or Restify style request object.
      * @param res An Express or Restify style response object.
@@ -745,7 +745,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that creates a turn context and runs the middleware pipeline for an incoming activity.
+     * Asynchronously creates a turn context and runs the middleware pipeline for an incoming activity.
      *
      * @param activity The activity to process.
      * @param logic The function to call at the end of the middleware pipeline.
@@ -791,7 +791,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that sends a set of outgoing activities to a channel server.
+     * Asynchronously sends a set of outgoing activities to a channel server.
      * 
      * This method supports the framework and is not intended to be called directly for your code.
      * Use the turn context's [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) or
@@ -852,7 +852,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that replaces a previous activity with an updated version.
+     * Asynchronously replaces a previous activity with an updated version.
      * 
      * This interface supports the framework and is not intended to be called directly for your code.
      * Use [TurnContext.updateActivity](xref:botbuilder-core.TurnContext.updateActivity) to update

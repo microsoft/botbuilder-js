@@ -342,7 +342,7 @@ export class TurnContext {
     }
 
     /**
-     * Sends an activity to the sender of the incoming activity.
+     * Asynchronously sends an activity to the sender of the incoming activity.
      *
      * @param activityOrText The activity or text to send.
      * @param speak Optional. The text to be spoken by your bot on a speech-enabled channel.
@@ -386,7 +386,7 @@ export class TurnContext {
     }
 
     /**
-     * Sends a set of activities to the sender of the incoming activity.
+     * Asynchronously sends a set of activities to the sender of the incoming activity.
      *
      * @param activities The activities to send.
      * 
@@ -436,7 +436,7 @@ export class TurnContext {
     }
 
     /**
-     * Updates a previously sent activity.
+     * Asynchronously updates a previously sent activity.
      *
      * @param activity The replacement for the original activity.
      * 
@@ -466,7 +466,7 @@ export class TurnContext {
     }
 
     /**
-     * Deletes a previously sent activity.
+     * Asynchronously deletes a previously sent activity.
      *
      * @param idOrReference ID or conversation reference for the activity to delete.
      * 
@@ -633,9 +633,10 @@ export class TurnContext {
     }
 
     /**
-     * **true** if at least one response was sent for the current turn; otherwise, **false**.
+     * Indicates whether the bot has replied to the user this turn.
      *
      * @remarks
+     * **true** if at least one response was sent for the current turn; otherwise, **false**.
      * Use this to determine if your bot needs to run fallback logic after other normal processing.
      * 
      * Trace activities do not set this flag.
@@ -712,11 +713,15 @@ export class TurnContext {
     }
 
     /**
-      * Determine if the Activity was sent via an Http/Https connection or Streaming
-      * This can be determined by looking at the ServiceUrl property:
-      *   (1) All channels that send messages via http/https are not streaming
-      *   (2) Channels that send messages via streaming have a ServiceUrl that does not begin with http/https.
-      * @param activity 
+      * Determines whether an activity was sent via an HTTP or HTTPS connection or via a streaming connection.
+      * 
+      * @param activity The activity to check.
+      * 
+      * @remarks
+      * `true` if the activity was sent via a streaming connection; otherwise, `false`.
+      * This method examines the activity's [serviceUrl](xref:botframework-schema.Activity.serviceUrl) property.
+      * - All channels that send messages via HTTP or HTTPS are not streaming.
+      * - Channels that send messages via a streaming connection have a `serviceUrl` that does not begin with "http" or "https".
       */
      public static isFromStreamingConnection(activity: Activity): boolean {
         return activity && activity.serviceUrl && !activity.serviceUrl.toLowerCase().startsWith('http');

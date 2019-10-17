@@ -1,7 +1,4 @@
 /**
- * @module botbuilder-dialogs
- */
-/**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
@@ -12,55 +9,69 @@ import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
 
 /**
- * State information persisted by a `DialogSet`.
+ * Contains state information for the dialog stack (dialog state) for a specific [DialogSet](xref:botbuilder-dialogs.DialogSet).
+ * 
+ * @remarks
+ * State is read from and saved to storage each turn, and the turn context maintains a state cache for the turn.
+ * 
+ * For more information, see the articles on
+ * [Managing state](https://docs.microsoft.com/azure/bot-service/bot-builder-concept-state) and
+ * [Dialogs library](https://docs.microsoft.com/azure/bot-service/bot-builder-concept-dialog).
  */
 export interface DialogState {
     /**
-     * The dialog stack being persisted.
+     * Contains state information for each [Dialog](xref:botbuilder-dialogs.Dialog) on the stack.
      */
     dialogStack: DialogInstance[];
 }
 
 /**
- * A context object used to manipulate a dialog stack.
+ * The context for the current dialog turn with respect to a specific [DialogSet](xref:botbuilder-dialogs.DialogSet).
  *
  * @remarks
- * This is typically created through a call to `DialogSet.createContext()` and is then passed
- * through to all of the bots dialogs and waterfall steps.
+ * This includes the turn context, information about the dialog set, and the state of the dialog stack.
+ * 
+ * Use a dialog set's [createContext](xref:botbuilder-dialogs.DialogSet.createContext) method to create the dialog context.
+ * Use the methods of the dialog context to manage the progression of dialogs in the set.
  *
+ * For example:
  * ```JavaScript
  * const dc = await dialogs.createContext(turnContext);
+ * const result = await dc.continueDialog();
  * ```
  */
 export class DialogContext {
     /**
-     * Set of dialogs that can be called from this context.
+     * Gets the dialogs that can be called directly from this context.
      */
     public readonly dialogs: DialogSet;
 
     /**
-     * Context for the current turn of conversation.
+     * Gets the context object for the turn.
      */
     public readonly context: TurnContext;
 
     /**
-     * Current dialog stack.
+     * Gets the current dialog stack.
      */
     public readonly stack: DialogInstance[];
 
     /**
-     * The parent DialogContext if any.
+     * The parent dialog context for this dialog context, or `undefined` if this context doesn't have a parent.
      * 
      * @remarks
-     * This will be used when searching for dialogs to start.
+     * When it attempts to start a dialog, the dialog context searches for the [id](xref:botbuilder-dialogs.Dialog.id)
+     * in its [dialogs](xref:botbuilder-dialogs.DialogContext.dialogs). If the dialog to start is not found
+     * in this dialog context, it searches in its parent dialog context, and so on.
      */
     public parent: DialogContext|undefined;
 
     /**
-      * Creates a new DialogContext instance.
-      * @param dialogs Parent dialog set.
-      * @param context Context for the current turn of conversation with the user.
-      * @param state State object being used to persist the dialog stack.
+      * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
+      * 
+      * @param dialogs The dialog set for which to create the dialog context.
+      * @param context The context object for the current turn of the bot.
+      * @param state The state object to use to read and write dialog state to storage.
       */
     constructor(dialogs: DialogSet, context: TurnContext, state: DialogState) {
         if (!Array.isArray(state.dialogStack)) { state.dialogStack = []; }
@@ -70,36 +81,37 @@ export class DialogContext {
     }
 
     /**
-     * Returns the persisted instance of the active dialog on the top of the stack or `undefined` if
+     * Returns the state information for the dialog on the top of the dialog stack, or `undefined` if
      * the stack is empty.
-     *
-     * @remarks
-     * Dialogs can use this to persist custom state in between conversation turns:
-     *
-     * ```JavaScript
-     * dc.activeDialog.state = { someFlag: true };
-     * ```
      */
     public get activeDialog(): DialogInstance|undefined {
         return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
     }
 
     /**
-     * Pushes a new dialog onto the dialog stack.
+     * Starts a dialog instance and pushes it onto the dialog stack.
      *
-     * @remarks
-     * If there's already an active dialog on the stack, that dialog will be paused until the new
-     * dialog calls [endDialog()](#enddialog).
-     *
-     * ```JavaScript
-     * return await dc.beginDialog('greeting', { name: user.name });
-     * ```
-     *
-     * The `DialogTurnResult.status` returned can be:
-     * - `DialogTurnStatus.active` if the dialog started was a multi-turn dialog.
-     * - `DialogTurnStatus.completed` if the dialog started was a single-turn dialog.
      * @param dialogId ID of the dialog to start.
-     * @param options (Optional) additional argument(s) to pass to the dialog being started.
+     * @param options Optional. Information to pass into the dialog when it starts.
+     * 
+     * @remarks
+     * If there's already an active dialog on the stack, that dialog will be paused until
+     * it is again the top dialog on the stack.
+     *
+     * The [status](xref:botbuilder-dialogs.DialogTurnResult.status) of returned object describes
+     * the status of the dialog stack after this method completes.
+     *
+     * This method throws an exception if the requested dialog can't be found in this dialog context
+     * or any of its ancestors.
+     * 
+     * For example:
+     * ```JavaScript
+     * const result = await dc.beginDialog('greeting', { name: user.name });
+     * ```
+     * 
+     * **See also**
+     * - [endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
+     * - [replaceDialog](xref:botbuilder-dialogs.DialogContext.replaceDialog)
      */
     public async beginDialog(dialogId: string, options?: object): Promise<DialogTurnResult> {
         // Lookup dialog
@@ -118,20 +130,24 @@ export class DialogContext {
     }
 
     /**
-     * Cancels any dialogs on the stack resulting in an empty stack.
+     * Cancels all dialogs on the dialog stack, and clears stack.
      *
      * @remarks
-     * The dialogs being cancelled will have their `Dialog.endDialog()` method called before being
-     * removed from the stack.
+     * This calls each dialog's [endDialog](xref:botbuilder-dialogs.Dialog.endDialog) method before
+     * removing the dialog from the stack.
+     * 
+     * If there were any dialogs on the stack initially, the [status](xref:botbuilder-dialogs.DialogTurnResult.status)
+     * of the return value is [cancelled](xref:botbuilder-dialogs.DialogTurnStatus.cancelled); otherwise, it's
+     * [empty](xref:botbuilder-dialogs.DialogTurnStatus.empty).
      *
+     * This example clears a dialog stack, `dc`, before starting a 'bookFlight' dialog.
      * ```JavaScript
      * await dc.cancelAllDialogs();
      * return await dc.beginDialog('bookFlight');
      * ```
      *
-     * The `DialogTurnResult.status` returned can be:
-     * - `DialogTurnStatus.cancelled` if one or more dialogs were cancelled.
-     * - `DialogTurnStatus.empty` if the stack was empty.
+     * **See also**
+     * - [endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
      */
     public async cancelAllDialogs(): Promise<DialogTurnResult> {
         if (this.stack.length > 0) {
@@ -148,10 +164,17 @@ export class DialogContext {
     /**
      * Searches for a dialog with a given ID.
      * 
-     * @remarks
-     * If the dialog cannot be found within the current `DialogSet`, the parent `DialogContext` 
-     * will be searched if there is one. 
      * @param dialogId ID of the dialog to search for.
+     * 
+     * @remarks
+     * If the dialog to start is not found in the [DialogSet](xref:botbuilder-dialogs.DialogSet) associated
+     * with this dialog context, it attempts to find the dialog in its parent dialog context.
+     * 
+     * If the dialog cannot be found within the current `DialogSet`, the parent `DialogContext` 
+     * will be searched if there is one.
+     * 
+     * **See also**
+     * - [dialogs](xref:botbuilder-dialogs.DialogContext.dialogs)
      */
     public findDialog(dialogId: string): Dialog|undefined {
         let dialog = this.dialogs.find(dialogId);
@@ -162,18 +185,22 @@ export class DialogContext {
     }
 
     /**
-     * Helper function to simplify formatting the options for calling a `Prompt` based dialog.
-     *
+     * Helper function to simplify formatting the options for calling a prompt dialog.
+     * 
+     * @param dialogId ID of the prompt dialog to start.
+     * @param promptOrOptions The text of the initial prompt to send the user,
+     *      the activity to send as the initial prompt, or
+     *      the object with which to format the prompt dialog.
+     * @param choices Optional. Array of choices for the user to choose from,
+     *      for use with a [ChoicePrompt](xref:botbuilder-dialogs.ChoicePrompt).
+     * 
      * @remarks
-     * This is a lightweight wrapper abound [beginDialog()](#begindialog). It fills in a
-     * `PromptOptions` structure and then passes it through to `dc.beginDialog(dialogId, options)`.
+     * This helper method formats the object to use as the `options` parameter, and then calls
+     * [beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog) to start the specified prompt dialog.
      *
      * ```JavaScript
      * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
-     * @param dialogId ID of the prompt to start.
-     * @param promptOrOptions Initial prompt to send the user or a set of options to configure the prompt with.
-     * @param choices (Optional) array of choices associated with the prompt.
      */
     public async prompt(dialogId: string, promptOrOptions: string | Partial<Activity> | PromptOptions): Promise<DialogTurnResult>;
     public async prompt(dialogId: string, promptOrOptions: string | Partial<Activity> | PromptOptions, choices: (string | Choice)[]): Promise<DialogTurnResult>;
