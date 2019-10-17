@@ -467,4 +467,46 @@ describe('BotFrameworkStreamingAdapter tests', () => {
         connection.sendRequest({ method: 'POST', url: 'testResultDotCom', body: 'Test body!' });
         expect(spy.called).to.be.true;
     }).timeout(2000);
+
+    describe('private methods', () => {
+        it('should identify streaming connections', function () {
+            let activity = {
+                type: 'message',
+                text: '<at>TestOAuth619</at> test activity',
+                recipient: { id: 'TestOAuth619' },
+            };
+
+            const streaming = [
+                'urn:botframework:WebSocket:wss://beep.com',
+                'urn:botframework:WebSocket:http://beep.com',
+                'URN:botframework:WebSocket:wss://beep.com',
+                'URN:botframework:WebSocket:http://beep.com',
+            ];
+
+            streaming.forEach(s => {
+                activity.serviceUrl = s;
+                expect(BotFrameworkAdapter.isFromStreamingConnection(activity)).to.be.true;
+            });
+        });
+
+        it('should identify http connections', function () {
+            let activity = {
+                type: 'message',
+                text: '<at>TestOAuth619</at> test activity',
+                recipient: { id: 'TestOAuth619' },
+            };
+
+            const streaming = [
+                'http://yayay.com',
+                'https://yayay.com',
+                'HTTP://yayay.com',
+                'HTTPS://yayay.com',
+            ];
+
+            streaming.forEach(s => {
+                activity.serviceUrl = s;
+                expect(BotFrameworkAdapter.isFromStreamingConnection(activity)).to.be.false;
+            });
+        });
+    });
 });
