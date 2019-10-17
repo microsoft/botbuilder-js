@@ -4,7 +4,6 @@
 import {
     Activity,
     Attachment,
-    CardFactory,
     TeamsActivityHandler,
     TurnContext,
     FileInfoCard,
