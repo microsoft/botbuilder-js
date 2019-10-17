@@ -41,7 +41,7 @@ export class FileUploadBot extends TeamsActivityHandler {
         });
     }
 
-    protected async onTeamsFileConsentAccept(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
+    protected async handleTeamsFileConsentAccept(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
         try {
             await this.sendFile(fileConsentCardResponse);
             await this.fileUploadCompleted(context, fileConsentCardResponse);
@@ -51,7 +51,7 @@ export class FileUploadBot extends TeamsActivityHandler {
         }
     }
 
-    protected async onTeamsFileConsentDecline(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
+    protected async handleTeamsFileConsentDecline(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
         let reply = this.createReply(context.activity);
         reply.textFormat = "xml";
         reply.text = `Declined. We won't upload file <b>${fileConsentCardResponse.context["filename"]}</b>.`;

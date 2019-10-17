@@ -5,12 +5,13 @@ import {
     CardFactory,
     InvokeResponse,
     MessageFactory,
+    TaskModuleContinueResponse,
     TaskModuleMessageResponse,
     TaskModuleRequest,
-    TaskModuleResponseBase,
+    TaskModuleResponse,
     TaskModuleTaskInfo,
     TeamsActivityHandler,
-    TurnContext
+    TurnContext,
 } from 'botbuilder';
 
 /**
@@ -66,8 +67,8 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
         });
     }
 
-    protected async onTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleTaskInfo> {
-        await context.sendActivity(MessageFactory.text(`OnTeamsTaskModuleFetchAsync TaskModuleRequest: ${JSON.stringify(taskModuleRequest)}`));
+    protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
+        await context.sendActivity(MessageFactory.text(`handleTeamsTaskModuleFetchAsync TaskModuleRequest: ${JSON.stringify(taskModuleRequest)}`));
 
         /**
          * The following line disables the lint rules for the Adaptive Card so that users can
@@ -96,21 +97,32 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
             "version": "1.0"
         });
         /* tslint:enable:quotemark object-literal-key-quotes */
-        return {
-            card,
-            height: 200,
-            title: 'Task Module Example',
-            width: 400
-        } as TaskModuleTaskInfo;
+        return { 
+                task: {
+                        type: 'continue',
+                        value: {
+                            card,
+                            height: 200,
+                            title: 'Task Module Example',
+                            width: 400
+                        } as TaskModuleTaskInfo
+            } as TaskModuleContinueResponse
+        } as TaskModuleResponse;
     }
 
-    protected async onTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponseBase> {
-        await context.sendActivity(MessageFactory.text(`OnTeamsTaskModuleSubmit value: ${JSON.stringify(taskModuleRequest)}`));
-        return { type: 'message', value: 'Thanks!' } as TaskModuleMessageResponse;
+    protected async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
+        await context.sendActivity(MessageFactory.text(`handleTeamsTaskModuleSubmit value: ${JSON.stringify(taskModuleRequest)}`));
+
+        return { 
+                task: { 
+                    type: 'message', 
+                    value: 'Thanks!' 
+                } as TaskModuleMessageResponse
+        } as TaskModuleResponse;
     }
 
-    protected async onTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse> {
-        await context.sendActivity(MessageFactory.text(`OnTeamsCardActionInvoke value: ${JSON.stringify(context.activity.value)}`));
+    protected async handleTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse> {
+        await context.sendActivity(MessageFactory.text(`handleTeamsCardActionInvoke value: ${JSON.stringify(context.activity.value)}`));
         return { status: 200 } as InvokeResponse;
     }
 
