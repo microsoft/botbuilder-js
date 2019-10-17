@@ -42,6 +42,11 @@ export interface WebRequest {
      */
     headers: any;
 
+    /***
+     * Optional. The request method.
+     */
+    method?: any;
+
     /**
      * When implemented in a derived class, adds a listener for an event.
      * The framework uses this method to retrieve the request body when the
@@ -722,8 +727,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * > in your bot's console output, the likely cause is that an async function was used
      * > without using the `await` keyword. Make sure all async functions use await!
      */
-    public async processActivity(req: WebRequest|Request, res: WebResponse|ServerUpgradeResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
-        if (this.isUpgradeRequest(req) && (req).isUpgradeRequest()) {
+    public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
+        if (this.settings.enableWebSockets && req.method === 'GET' && req.headers.Contains('Upgrade')) {
             return this.useWebSocket(req, res as ServerUpgradeResponse, logic);
         }
 
@@ -1163,15 +1168,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * @param res The response sent on error or connection termination.
      * @param res The logic that will handle incoming requests.
      */
-    private async useWebSocket(req: Request, res: ServerUpgradeResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
-        if (!req.isUpgradeRequest()) {
-            let e = new Error('Upgrade to WebSockets required.');
-            res.status(StatusCodes.UPGRADE_REQUIRED);
-            res.send(e.message);
-
-            return Promise.resolve();
-        }
-
+    private async useWebSocket(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {   
         if (!logic) {
             throw new Error('Streaming logic needs to be provided to `useWebSocket`');
         }
@@ -1184,7 +1181,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             return Promise.resolve();
         }
 
-        const upgrade = res.claimUpgrade();
+        const upgrade = (res as ServerUpgradeResponse).claimUpgrade();
         const ws = new Watershed();
         const socket = ws.accept(req, upgrade.socket, upgrade.head);
 
