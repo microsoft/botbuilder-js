@@ -10,6 +10,7 @@ import { Analyzer } from './analyzer';
 import { Diagnostic, Position, Range } from './diagnostic';
 import { Expander } from './expander';
 import { Extractor } from './extractor';
+import { ImportResolver } from './importResolver';
 import { LGParser } from './lgParser';
 import { LGTemplate } from './lgTemplate';
 import { StaticChecker } from './staticChecker';
@@ -28,7 +29,7 @@ export class MSLGTool {
     }
 
     public ValidateFile(lgFileContent: string, id?: string): string[] {
-        const diagnostic: Diagnostic[] = new StaticChecker().checkText(lgFileContent, id, undefined);
+        const diagnostic: Diagnostic[] = new StaticChecker().checkText(lgFileContent, id, ImportResolver.fileResolver);
         if (diagnostic.length !== 0) {
             return diagnostic.map((error: Diagnostic) => error.toString());
         }

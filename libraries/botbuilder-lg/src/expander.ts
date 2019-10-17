@@ -45,8 +45,26 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 .join(' => ')}`);
         }
 
-        this.evalutationTargetStack.push(new EvaluationTarget(templateName, scope));
+        const templateTarget: EvaluationTarget = new EvaluationTarget(templateName, scope);
+        const currentEvulateId: string = templateTarget.GetId();
+
+        let previousEvaluateTarget: EvaluationTarget;
+
+        if (this.evalutationTargetStack.length !== 0) {
+            previousEvaluateTarget = this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
+            if (previousEvaluateTarget.EvaluatedChildren.has(currentEvulateId)) {
+                return previousEvaluateTarget.EvaluatedChildren.get(currentEvulateId);
+            }
+        }
+
+        // Using a stack to track the evalution trace
+        this.evalutationTargetStack.push(templateTarget);
         const result: string[] = this.visit(this.TemplateMap[templateName].ParseTree);
+
+        if (previousEvaluateTarget !== undefined) {
+            previousEvaluateTarget.EvaluatedChildren.set(currentEvulateId, result);
+        }
+
         this.evalutationTargetStack.pop();
 
         return result;
@@ -86,6 +104,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         return undefined;
     }
 
+    
     public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext) : string[] {
         const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
         const length: number = switchcaseNodes.length;

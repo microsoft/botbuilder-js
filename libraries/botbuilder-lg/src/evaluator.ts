@@ -11,32 +11,10 @@ import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { BuiltInFunctions, EvaluatorLookup, Expression, ExpressionEvaluator, ReturnType } from 'botbuilder-expression';
 import { ExpressionEngine } from 'botbuilder-expression-parser';
 import { keyBy } from 'lodash';
+import { EvaluationTarget } from './evaluationTarget';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
-import { stringify } from 'querystring';
-
-/**
- * Runtime template context store
- */
-export class EvaluationTarget {
-    public TemplateName: string;
-    public Scope: any;
-    public  EvaluatedChildren : Map<string, any>;
-    public constructor(templateName: string, scope: any) {
-        this.TemplateName = templateName;
-        this.Scope = scope;
-        this.EvaluatedChildren = new Map<string, any>();
-    }
-
-    public GetId(): string {
-        if (this.Scope !== undefined && this.Scope !== null) {
-            return this.TemplateName + JSON.stringify(this.Scope);
-        }
-
-        return this.TemplateName;
-    }
-}
 
 /**
  * Evaluation tuntime engine
