@@ -161,6 +161,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             read: function () { return new Buffer.from('data', 'utf8'); },
             end: function () { return; },
         };
+        response.socket = fakeSocket;
         response.setClaimUpgrade({ socket: fakeSocket, head: 'websocket' });
 
         await handler.useWebSocket(request, response, async (context) => {
@@ -190,6 +191,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
                 read: function () { return new Buffer.from('data', 'utf8'); },
                 end: function () { return; },
             };
+            response.socket = fakeSocket;
             response.setClaimUpgrade({ socket: fakeSocket, head: 'websocket' });
 
             await handler.useWebSocket(request, response, async (context) => {
@@ -203,15 +205,17 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             let handler = new BotFrameworkAdapter();
             let request = new TestRequest();
             request.setIsUpgradeRequest(false);
+            request.headers = [];
             let response = new TestResponse();
+            response.socket = [];
 
             await handler.useWebSocket(request, response, async (context) => {
                 // Route incoming streaming requests to bot
                 await bot.run(context);
+                expect('Should not have gotten here.').to.equal('But we did.');
+            }).catch(err => {
+                expect(err.message).to.equal('Missing Upgrade Header');            
             });
-
-            expect(response.sendVal).to.equal('Upgrade to WebSockets required.');
-            expect(response.statusVal).to.equal(426);
         });
 
         it('returns status code 401 when request is not authorized', async () => {
@@ -454,6 +458,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             read: function () { return new Buffer.from('data', 'utf8'); },
             end: function () { return Promise.resolve; },
         };
+        response.socket = fakeSocket;
         const sinon = require('sinon');
         const spy = sinon.spy(fakeSocket, "write");
         response.setClaimUpgrade({ socket: fakeSocket, head: 'websocket' });
