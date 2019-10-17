@@ -67,6 +67,12 @@ export interface WebRequest {
  */
 export interface WebResponse {
     /**
+     * 
+     * Optional. The underlying socket.
+     */
+    socket?: any;
+
+    /**
      * When implemented in a derived class, sends a FIN packet.
      * 
      * @param args The arguments for the end event.
@@ -728,8 +734,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * > without using the `await` keyword. Make sure all async functions use await!
      */
     public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
-        if (this.settings.enableWebSockets && req.method === 'GET' && req.headers.Contains('Upgrade')) {
-            return this.useWebSocket(req, res as ServerUpgradeResponse, logic);
+        if (this.settings.enableWebSockets && req.method === 'GET' && (req.headers.Upgrade || req.headers.upgrade)) {
+            return this.useWebSocket(req, res, logic);
         }
 
         let body: any;
@@ -1140,10 +1146,6 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         return claims.isAuthenticated;
     }
 
-    private isUpgradeRequest(target: any): target is Request {
-        return 'isUpgradeRequest' in target;
-    }
-
     /**
      * Connects the handler to a Named Pipe server and begins listening for incoming requests.
      * @param pipeName The name of the named pipe to use when creating the server.
@@ -1179,9 +1181,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             return Promise.resolve();
         }
 
-        const upgrade = (res as ServerUpgradeResponse).claimUpgrade();
         const ws = new Watershed();
-        const socket = ws.accept(req, upgrade.socket, upgrade.head);
+        const socket = ws.accept(req, res.socket);
 
         await this.startWebSocket(new NodeWebSocket(socket));
     }
