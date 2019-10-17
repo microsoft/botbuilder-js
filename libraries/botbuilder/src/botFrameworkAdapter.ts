@@ -170,7 +170,7 @@ const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
 
 // This key is exported internally so that the TeamsActivityHandler will not overwrite any already set InvokeResponses.
-const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
+export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 const defaultPipeName = 'bfv4.pipes';
 const VERSION_PATH:string = '/api/version';
 const MESSAGES_PATH:string = '/api/messages';
