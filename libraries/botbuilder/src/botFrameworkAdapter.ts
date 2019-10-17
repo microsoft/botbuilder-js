@@ -1000,9 +1000,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
         try {           
             let context = new TurnContext(this, body);
-            await this.runMiddleware(context, async (turnContext): Promise<void> => {
-                await this.logic(context);
-            });
+            await this.runMiddleware(context, this.logic);
 
             if (body.type === ActivityTypes.Invoke) {
                 let invokeResponse: any = context.turnState.get(INVOKE_RESPONSE_KEY);

@@ -404,15 +404,18 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             let bot = new ActivityHandler();
             bot.run = function (turnContext) { return Promise.resolve(); };
 
-
-            let mwset = [];
             let handler = new BotFrameworkAdapter();
-            handler.use(async (context, next) => {
-                console.log('Middleware executed!');
-                return next();
-            });
+            let middlewareCalled = false;
+            const middleware = {
+                async onTurn(context, next) {
+                    middlewareCalled = true;
+                    return next();
+                }
+            }
 
-            var spy = sinon.spy(bot, 'run');
+            handler.use(middleware);
+
+            const runSpy = sinon.spy(bot, 'run');
             let request = new TestRequest();
             request.verb = 'POST';
             request.path = '/api/messages';
@@ -428,7 +431,8 @@ describe('BotFrameworkStreamingAdapter tests', () => {
 
             const response = await handler.processRequest(request);
             expect(response.statusCode).to.equal(501);
-            expect(spy.called).to.be.true;
+            expect(runSpy.called).to.be.true;
+            expect(middlewareCalled).to.be.true;
         });
     });
 
