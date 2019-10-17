@@ -83,7 +83,18 @@ export class WebSocketServer implements IStreamingTransportServer {
         this._receiver.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
     }
 
-    private onConnectionDisconnected(s: WebSocketServer, sender: object, args: any): void {
-        s._closedSignal('close');
+    private onConnectionDisconnected(sender: PayloadReceiver | PayloadSender, e?: TransportDisconnectedEventArgs): void {
+        if (this._closedSignal) {
+            this._closedSignal('close');
+            this._closedSignal = null;
+        }
+
+        if (sender === this._sender) {
+            this._receiver.disconnect(e);
+        }
+
+        if (sender === this._receiver) {
+            this._sender.disconnect(e);
+        }
     }
 }

@@ -67,7 +67,7 @@ export class PayloadReceiver {
             }
         } catch (error) {
             this.isConnected = false;
-            this.disconnected(error.message, e);
+            this.disconnected(this, new TransportDisconnectedEventArgs(error.message));
         }
         this._receiver = null;
         this.isConnected = false;

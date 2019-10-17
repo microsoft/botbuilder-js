@@ -1005,9 +1005,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
         try {           
             let context = new TurnContext(this, body);
-            await this.runMiddleware(context, async (turnContext): Promise<void> => {
-                await this.logic(context);
-            });
+            await this.runMiddleware(context, this.logic);
 
             if (body.type === ActivityTypes.Invoke) {
                 let invokeResponse: any = context.turnState.get(INVOKE_RESPONSE_KEY);
@@ -1166,7 +1164,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * Process the initial request to establish a long lived connection via a streaming server.
      * @param req The connection request.
      * @param res The response sent on error or connection termination.
-     * @param res The logic that will handle incoming requests.
+     * @param logic The logic that will handle incoming requests.
      */
     private async useWebSocket(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {   
         if (!logic) {
