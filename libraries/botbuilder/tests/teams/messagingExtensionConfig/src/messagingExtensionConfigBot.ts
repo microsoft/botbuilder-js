@@ -38,7 +38,7 @@ export class MessagingExtensionConfigBot  extends TeamsActivityHandler {
         });
     }
 
-    protected async onTeamsMessagingExtensionConfigurationQuerySettingUrl(context: TurnContext, query: MessagingExtensionQuery){
+    protected async handleTeamsMessagingExtensionConfigurationQuerySettingUrl(context: TurnContext, query: MessagingExtensionQuery){
         return <MessagingExtensionActionResponse>
         {
             composeExtension: <MessagingExtensionResult> {
@@ -55,7 +55,7 @@ export class MessagingExtensionConfigBot  extends TeamsActivityHandler {
         }
     }
 
-    protected async onTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings){
+    protected async handleTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings){
         // This event is fired when the settings page is submitted
         await context.sendActivity(`onTeamsMessagingExtensionSettings event fired with ${ JSON.stringify(settings) }`);
     }

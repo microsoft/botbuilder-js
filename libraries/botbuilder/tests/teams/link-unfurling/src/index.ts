@@ -10,10 +10,7 @@ import * as restify from 'restify';
 import { BotFrameworkAdapter } from 'botbuilder';
 
 // This bot's main dialog.
-import { RosterBot  } from './rosterBot';
-
-// Import middleware for filtering messages based on Teams Tenant Id
-import { TeamsTenantFilteringMiddleware  } from './teamsTenantFilteringMiddleware';
+import { LinkUnfurlingBot  } from './linkUnfurling';
 
 const ENV_FILE = path.join(__dirname, '..', '.env');
 config({ path: ENV_FILE });
@@ -33,12 +30,6 @@ const adapter = new BotFrameworkAdapter({
     appPassword: process.env.MicrosoftAppPassword
 });
 
-// Use the TeamsTenantFilteringMiddleware IF there is an AllowedTeamsTenantId
-if(process.env.AllowedTeamsTenantId){
-    let teamsTenantFilteringMiddleware = new TeamsTenantFilteringMiddleware(process.env.AllowedTeamsTenantId);
-    adapter.use(teamsTenantFilteringMiddleware);
-}
-
 // Catch-all for errors.
 adapter.onTurnError = async (context, error) => {
     // This check writes out errors to console log .vs. app insights.
@@ -49,7 +40,7 @@ adapter.onTurnError = async (context, error) => {
 };
 
 // Create the main dialog.
-const myBot = new RosterBot();
+const myBot = new LinkUnfurlingBot();
 
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {

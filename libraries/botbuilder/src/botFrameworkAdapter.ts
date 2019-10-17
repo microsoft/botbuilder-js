@@ -135,7 +135,9 @@ const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${ pjson.versi
     `(Node.js,Version=${ NODE_VERSION }; ${ TYPE } ${ RELEASE }; ${ ARCHITECTURE })`;
 const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
-const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
+
+// This key is exported internally so that the TeamsActivityHandler will not overwrite any already set InvokeResponses.
+export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 
 /**
  * A [BotAdapter](xref:botbuilder-core.BotAdapter) that can connect a bot to a service endpoint.
