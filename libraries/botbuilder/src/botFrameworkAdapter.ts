@@ -733,7 +733,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * > without using the `await` keyword. Make sure all async functions use await!
      */
     public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
-        if (this.settings.enableWebSockets && req.method === 'GET' && (req.headers.Upgrade || req.headers.upgrade)) {
+        if (this.settings.enableWebSockets && req.method === GET && (req.headers.Upgrade || req.headers.upgrade)) {
             return this.useWebSocket(req, res, logic);
         }
 
