@@ -30,9 +30,7 @@
   },
   "dependencies": {
     "fs-extra": "^7.0.0",
-    "process": "^0.11.10",
     "read-text-file": "^1.1.0",
-    "url": "^0.11.0",
     "uuid": "^3.3.2"
   },
   "scripts": {

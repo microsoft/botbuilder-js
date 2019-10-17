@@ -711,19 +711,4 @@ export class TurnContext {
 
         return emitNext(0);
     }
-
-    /**
-      * Determines whether an activity was sent via an HTTP or HTTPS connection or via a streaming connection.
-      * 
-      * @param activity The activity to check.
-      * 
-      * @remarks
-      * `true` if the activity was sent via a streaming connection; otherwise, `false`.
-      * This method examines the activity's [serviceUrl](xref:botframework-schema.Activity.serviceUrl) property.
-      * - All channels that send messages via HTTP or HTTPS are not streaming.
-      * - Channels that send messages via a streaming connection have a `serviceUrl` that does not begin with "http" or "https".
-      */
-     public static isFromStreamingConnection(activity: Activity): boolean {
-        return activity && activity.serviceUrl && !activity.serviceUrl.toLowerCase().startsWith('http');
-     }
 }

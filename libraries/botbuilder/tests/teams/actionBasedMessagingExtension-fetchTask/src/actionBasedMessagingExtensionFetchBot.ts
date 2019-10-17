@@ -34,19 +34,19 @@ export class ActionBasedMessagingExtensionFetchTaskBot extends TeamsActivityHand
         });
     }
 
-    protected async onTeamsMessagingExtensionFetchTask(context, query): Promise<MessagingExtensionActionResponse> {
+    protected async handleTeamsMessagingExtensionFetchTask(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         const response = AdaptiveCardHelper.createTaskModuleAdaptiveCardResponse();
         return response;
     }
 
-    protected async onTeamsMessagingExtensionSubmitAction(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+    protected async handleTeamsMessagingExtensionSubmitAction(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         const submittedData = action.data as SubmitExampleData;
         const adaptiveCard = AdaptiveCardHelper.toAdaptiveCardAttachment(submittedData);
         const response = CardResponseHelpers.toMessagingExtensionBotMessagePreviewResponse(adaptiveCard);
         return response;
     }
 
-    protected async onTeamsMessagingExtensionBotMessagePreviewEdit(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+    protected async handleTeamsMessagingExtensionBotMessagePreviewEdit(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         const submitData = AdaptiveCardHelper.toSubmitExampleData(action);
         const response = AdaptiveCardHelper.createTaskModuleAdaptiveCardResponse(
                                                     submitData.Question,
@@ -57,7 +57,7 @@ export class ActionBasedMessagingExtensionFetchTaskBot extends TeamsActivityHand
         return response;
     }
 
-    protected async onTeamsMessagingExtensionBotMessagePreviewSend(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+    protected async handleTeamsMessagingExtensionBotMessagePreviewSend(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         const submitData: SubmitExampleData = AdaptiveCardHelper.toSubmitExampleData(action);
         const adaptiveCard: Attachment = AdaptiveCardHelper.toAdaptiveCardAttachment(submitData);
 
@@ -79,8 +79,8 @@ export class ActionBasedMessagingExtensionFetchTaskBot extends TeamsActivityHand
         return response;
     }
 
-    protected async onTeamsMessagingExtensionCardButtonClicked(context: TurnContext, obj) {
-        const reply = MessageFactory.text('onTeamsMessagingExtensionCardButtonClicked Value: ' + JSON.stringify(context.activity.value));
+    protected async handleTeamsMessagingExtensionCardButtonClicked(context: TurnContext, obj) {
+        const reply = MessageFactory.text('handleTeamsMessagingExtensionCardButtonClicked Value: ' + JSON.stringify(context.activity.value));
         await context.sendActivity(reply);
     }
 }

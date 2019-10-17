@@ -6,8 +6,8 @@ import {
     CardFactory,
     MessagingExtensionActionResponse,
     MessagingExtensionAction,
-    MessagingExtensionQuery,
     TaskModuleContinueResponse,
+    TaskModuleResponse,
     TaskModuleTaskInfo,
     TaskModuleRequest,
     TeamsActivityHandler,
@@ -69,7 +69,7 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
         });
     }
 
-    protected async onTeamsMessagingExtensionFetchTask(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionActionResponse> {
+    protected async handleTeamsMessagingExtensionFetchTask(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         const adapter: IUserTokenProvider = context.adapter as BotFrameworkAdapter;
         const userToken = await adapter.getUserToken(context, this.connectionName);
         if (!userToken)
@@ -107,22 +107,32 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
         return response;
     }
 
-    protected async onTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleTaskInfo> {
+    protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
         var data = context.activity.value;
         if (data && data.state)
         {
             const adapter: IUserTokenProvider = context.adapter as BotFrameworkAdapter;
             const tokenResponse = await adapter.getUserToken(context, this.connectionName, data.state);
-            return this.CreateSignedInTaskModuleTaskInfo(tokenResponse.token);
+
+            const continueResponse : TaskModuleContinueResponse = {
+                type: 'continue',
+                value: this.CreateSignedInTaskModuleTaskInfo(tokenResponse.token),
+            };
+    
+            const response : MessagingExtensionActionResponse = { 
+                task: continueResponse 
+            }; 
+
+            return response;
         }
         else
         {
-            await context.sendActivity("OnTeamsTaskModuleFetchAsync called without 'state' in Activity.Value");
+            await context.sendActivity("handleTeamsTaskModuleFetchAsync called without 'state' in Activity.Value");
             return null;
         }
     }
 
-    protected async onTeamsMessagingExtensionSubmitAction(context, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+    protected async handleTeamsMessagingExtensionSubmitAction(context, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         if (action.data != null && action.data.key && action.data.key == "signout")
         {
             // User clicked the Sign Out button from a Task Module
