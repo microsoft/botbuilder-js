@@ -200,24 +200,6 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             });
         });
 
-        it('returns an error when request is not an upgrade request', async () => {
-            let bot = new ActivityHandler();
-            let handler = new BotFrameworkAdapter();
-            let request = new TestRequest();
-            request.setIsUpgradeRequest(false);
-            request.headers = [];
-            let response = new TestResponse();
-            response.socket = [];
-
-            await handler.useWebSocket(request, response, async (context) => {
-                // Route incoming streaming requests to bot
-                await bot.run(context);
-                expect('Should not have gotten here.').to.equal('But we did.');
-            }).catch(err => {
-                expect(err.message).to.equal('Missing Upgrade Header');            
-            });
-        });
-
         it('returns status code 401 when request is not authorized', async () => {
             let bot = new ActivityHandler();
             const settings = new TestAdapterSettings('appId', 'password');

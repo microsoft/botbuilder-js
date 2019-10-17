@@ -1176,14 +1176,19 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
         this.logic = logic;
 
+        if (typeof((res as any).claimUpgrade) !== 'function') {
+            throw new Error("ClaimUpgrade is required for creating WebSocket connection.");
+        }
+
         const authenticated = await this.authenticateConnection(req, this.settings.appId, this.settings.appPassword, this.settings.channelService);
         if (!authenticated) {
             res.status(StatusCodes.UNAUTHORIZED);
             return Promise.resolve();
         }
-
+        
+        const upgrade = (res as any).claimUpgrade();
         const ws = new Watershed();
-        const socket = ws.accept(req, res.socket);
+        const socket = ws.accept(req, upgrade.socket, upgrade.head);
 
         await this.startWebSocket(new NodeWebSocket(socket));
     }
