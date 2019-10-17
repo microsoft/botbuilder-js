@@ -1161,7 +1161,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * Process the initial request to establish a long lived connection via a streaming server.
      * @param req The connection request.
      * @param res The response sent on error or connection termination.
-     * @param res The logic that will handle incoming requests.
+     * @param logic The logic that will handle incoming requests.
      */
     private async useWebSocket(req: Request, res: ServerUpgradeResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
         if (!req.isUpgradeRequest()) {
