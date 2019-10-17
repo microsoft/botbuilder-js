@@ -205,9 +205,9 @@ const POST:string = 'POST';
  * ```
  */
 export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvider {
-    private readonly credentials: MicrosoftAppCredentials;
-    private readonly credentialsProvider: SimpleCredentialProvider;
-    private readonly settings: BotFrameworkAdapterSettings;
+    protected readonly credentials: MicrosoftAppCredentials;
+    protected readonly credentialsProvider: SimpleCredentialProvider;
+    protected readonly settings: BotFrameworkAdapterSettings;
 
     private logic: (context: TurnContext) => Promise<void>;
     private streamingServer: IStreamingTransportServer;
