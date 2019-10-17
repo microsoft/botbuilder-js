@@ -11,7 +11,6 @@ import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorAp
 import * as os from 'os';
 import { TokenResolver } from './tokenResolver';
 import { IStreamingTransportServer, IReceiveRequest, StreamingResponse, NamedPipeServer, ISocket, WebSocketServer, NodeWebSocket } from 'botframework-streaming';
-import { Request, ServerUpgradeResponse } from 'restify';
 import { Watershed } from 'watershed'; 
 import { StreamingHttpClient } from './streamingHttpClient';
 
