@@ -112,6 +112,7 @@ export class DialogContext {
      * **See also**
      * - [endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
      * - [replaceDialog](xref:botbuilder-dialogs.DialogContext.replaceDialog)
+     * - [Dialog.beginDialog](xref:botbuilder-dialogs.Dialog.beginDialog)
      */
     public async beginDialog(dialogId: string, options?: object): Promise<DialogTurnResult> {
         // Lookup dialog
@@ -229,12 +230,19 @@ export class DialogContext {
     }
 
     /**
-     * Continues execution of the active multi-turn dialog, if there is one.
+     * Continues execution of the active dialog, if there is one, by passing this dialog context to its
+     * [Dialog.continueDialog](xref:botbuilder-dialogs.Dialog.continueDialog) method.
      *
      * @remarks
-     * The stack will be inspected and the active dialog will be retrieved using `DialogSet.find()`.
-     * The dialog will then have its `Dialog.continueDialog()` method called.
+     * After the call completes, you can check the turn context's [responded](xref:botbuilder-core.TurnContext.responded)
+     * property to determine if the dialog sent a reply to the user.
      *
+     * The [status](xref:botbuilder-dialogs.DialogTurnResult.status) of returned object describes
+     * the status of the dialog stack after this method completes.
+     *
+     * Typically, you would call this from within your bot's turn handler.
+     * 
+     * For example:
      * ```JavaScript
      * const result = await dc.continueDialog();
      * if (result.status == DialogTurnStatus.empty && dc.context.activity.type == ActivityTypes.message) {
@@ -243,10 +251,8 @@ export class DialogContext {
      * }
      * ```
      *
-     * The `DialogTurnResult.status` returned can be:
-     * - `DialogTurnStatus.active` if there's still one or more dialogs on the stack.
-     * - `DialogTurnStatus.completed` if the last dialog on the stack just ended.
-     * - `DialogTurnStatus.empty` if the stack was empty.
+     * **See also**
+     * - [Dialog.continueDialog](xref:botbuilder-dialogs.Dialog.continueDialog)
      */
     public async continueDialog(): Promise<DialogTurnResult> {
         // Check for a dialog on the stack
@@ -266,24 +272,35 @@ export class DialogContext {
     }
 
     /**
-     * Ends a dialog by popping it off the stack and returns an optional result to the dialogs
+     * Ends a dialog by popping it off the stack and returns an optional result to the dialog's
      * parent.
      *
+     * @param result Optional. A result to pass to the parent logic. This might be the next dialog
+     *      on the stack, or it might be the bot's turn handler, if this was the last dialog on the stack.
+     * 
      * @remarks
-     * The parent dialog is the dialog the started the one being ended via a call to either
-     * [beginDialog()](#begindialog) or [prompt()](#prompt). The parent dialog will have its
-     * `Dialog.resumeDialog()` method called with any returned `result`. If there is no parent
-     * dialog then turn will end and the result will be passed to the bot via
-     * `DialogTurnResult.result`.
+     * The _parent_ dialog is the next dialog on the dialog stack, if there is one. This method
+     * calls the parent dialog's [resumeDialog](xref:botbuilder-dialogs.Dialog.resumeDialog) method,
+     * passing the result returned by the ending dialog. If there is no parent dialog, the turn ends
+     * and the result is available to the bot through the returned object's
+     * [result](xref:botbuilder-dialogs.DialogTurnResult.result) property.
      *
+     * The [status](xref:botbuilder-dialogs.DialogTurnResult.status) of returned object describes
+     * the status of the dialog stack after this method completes.
+     * 
+     * Typically, you would call this from within the logic for a specific dialog to signal back to
+     * the dialog context that the dialog has completed, the dialog should be removed from the stack,
+     * and the parent dialog should resume.
+     * 
+     * For example:
      * ```JavaScript
-     * return await dc.endDialog();
+     * return await dc.endDialog(returnValue);
      * ```
-     *
-     * The `DialogTurnResult.status` returned can be:
-     * - `DialogTurnStatus.active` the parent dialog was resumed and is still active.
-     * - `DialogTurnStatus.completed` the parent dialog completed or there was no parent dialog to resume.
-     * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
+     * 
+     * **See also**
+     * - [beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog)
+     * - [replaceDialog](xref:botbuilder-dialogs.DialogContext.replaceDialog)
+     * - [Dialog.endDialog](xref:botbuilder-dialogs.Dialog.endDialog)
      */
     public async endDialog(result?: any): Promise<DialogTurnResult> {
         // End the active dialog
@@ -309,13 +326,19 @@ export class DialogContext {
     /**
      * Ends the active dialog and starts a new dialog in its place.
      *
+     * @param dialogId ID of the dialog to start.
+     * @param options Optional. Information to pass into the dialog when it starts.
+     * 
      * @remarks
-     * This method is conceptually equivalent to calling [endDialog()](#enddialog) and then
-     * immediately calling [beginDialog()](#begindialog). The difference is that the parent
-     * dialog is not resumed or otherwise notified that the dialog it started has been replaced.
+     * This is particularly useful for creating a loop or redirecting to another dialog.
      *
-     * This method is particularly useful for creating conversational loops within your bot:
+     * The [status](xref:botbuilder-dialogs.DialogTurnResult.status) of returned object describes
+     * the status of the dialog stack after this method completes.
+     * 
+     * This method is similar to ending the current dialog and immediately beginning the new one.
+     * However, the parent dialog is neither resumed nor otherwise notified.
      *
+     * For example:
      * ```JavaScript
      * this.addDialog(new WaterfallDialog('randomNumber', [
      *     async (step) => {
@@ -334,8 +357,10 @@ export class DialogContext {
      *
      * this.addDialog(new ConfirmPrompt('continuePrompt'));
      * ```
-     * @param dialogId ID of the new dialog to start.
-     * @param options (Optional) additional argument(s) to pass to the new dialog.
+     * 
+     * **See also**
+     * - [beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog)
+     * - [endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
      */
     public async replaceDialog(dialogId: string, options?: object): Promise<DialogTurnResult> {
         // End the active dialog
@@ -346,11 +371,12 @@ export class DialogContext {
     }
 
     /**
-     * Requests the [activeDialog](#activeDialog) to re-prompt the user for input.
+     * Requests the active dialog to re-prompt the user for input.
      *
      * @remarks
-     * The active dialogs `Dialog.repromptDialog()` method will be called.
+     * This calls the active dialog's [repromptDialog](xref:botbuilder-dialogs.Dialog.repromptDialog) method.
      *
+     * For example:
      * ```JavaScript
      * await dc.repromptDialog();
      * ```
