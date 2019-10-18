@@ -11,7 +11,8 @@ import { AbstractParseTreeVisitor, ParseTree, TerminalNode } from 'antlr4ts/tree
 import { Constant, Expression, Extensions, IExpressionParser } from 'botbuilder-expression';
 import { ExpressionEngine} from 'botbuilder-expression-parser';
 import { flatten, keyBy } from 'lodash';
-import { EvaluationTarget, Evaluator } from './evaluator';
+import { EvaluationTarget } from './evaluationTarget';
+import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';

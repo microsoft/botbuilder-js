@@ -158,11 +158,11 @@ ESCAPE_CHARACTER
   ;
 
 EXPRESSION
-  : '@'? '{' (~[\r\n{}] | STRING_LITERAL)*?  '}'  { this.ignoreWS = false; this.expectKeywords = false;}
+  : '@'? '{' (~[\r\n{}'"] | STRING_LITERAL)*?  '}'  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 TEMPLATE_REF
-  : '[' (~[\r\n\]] | TEMPLATE_REF)* ']'  { this.ignoreWS = false; this.expectKeywords = false;}
+  : '[' (~[\r\n[\]] | TEMPLATE_REF)* ']'  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 TEXT_SEPARATOR
