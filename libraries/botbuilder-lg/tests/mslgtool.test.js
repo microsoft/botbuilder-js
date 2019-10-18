@@ -32,14 +32,17 @@ describe('MSLGTool', function () {
         assert.strictEqual(errors.length, 0);
         errors = GetErrors(mslgTool, 'CollateFile2.lg');
         assert.strictEqual(errors.length, 0);
-        errors =GetErrors(mslgTool, 'CollateFile3.lg');
+        errors = GetErrors(mslgTool, 'CollateFile3.lg');
+        assert.strictEqual(errors.length, 0);
+        errors = GetErrors(mslgTool, 'CollateFile4.lg'); 
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(mslgTool.CollationMessages.length, 0);
         assert.strictEqual(mslgTool.NameCollisions.length, 3);
-        assert.strictEqual(mslgTool.CollatedTemplates.size, 5);
+        assert.strictEqual(mslgTool.CollatedTemplates.size, 6);
         assert.strictEqual(mslgTool.CollatedTemplates.get('Greeting').length, 3);
         assert.strictEqual(mslgTool.CollatedTemplates.get('TimeOfDayWithCondition').size, 3);
         assert.strictEqual(mslgTool.CollatedTemplates.get('TimeOfDay').length, 3);
+        assert.strictEqual(mslgTool.CollatedTemplates.get('ST2')[0], '[MyStruct\r\n    Speak = bar\r\n    Text = zoo\r\n]');
     });
 
     it('TestExpandTemplate', function () {
@@ -151,5 +154,21 @@ describe('MSLGTool', function () {
         const eval2Options = ["\r\nYou have 2 alarms.\r\nThey are 8 pm of tomorrow\r\n", "\nYou have 2 alarms.\nThey are 8 pm of tomorrow\n"]
         assert(eval1Options.includes(expandedTemplate[0]));
         assert(eval2Options.includes(expandedTemplate[1]));
+    })
+
+    it('TestExpandTemplateWithStructuredLG', function() {
+        const mslgTool = new MSLGTool();
+        let errors = GetErrors(mslgTool, 'StructuredLG.lg');
+        assert.strictEqual(errors.length, 0);
+        let expandedTemplate = mslgTool.ExpandTemplate('AskForAge.prompt', undefined);
+        assert.strictEqual(expandedTemplate.length, 4);
+        const evalOptions = [
+            '{"$type":"Activity","text":"how old are you?","speak":"how old are you?"}',
+            '{"$type":"Activity","text":"how old are you?","speak":"what\'s your age?"}',
+            '{"$type":"Activity","text":"what\'s your age?","speak":"how old are you?"}',
+            '{"$type":"Activity","text":"what\'s your age?","speak":"what\'s your age?"}'
+        ]
+        
+        evalOptions.forEach(evalOption => assert(expandedTemplate.includes(evalOption)));
     })
 })

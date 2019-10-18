@@ -61,6 +61,14 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         return result;
     }
 
+    public visitStructuredBody(context: lp.StructuredBodyContext): Map<string, any> {
+        const result: Map<string, any> = new Map<string, any>();
+        const rr = context.structuredTemplateBody().text;
+        result.set(context.structuredTemplateBody().text, undefined);
+
+        return result;
+    }
+
     public visitIfElseBody(context: lp.IfElseBodyContext): Map<string, any> {
         const result: Map<string, any> = new Map<string, any>();
         const ifRules: lp.IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
