@@ -11,7 +11,7 @@ import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { BuiltInFunctions, Constant, Expression, ExpressionEvaluator, ReturnType, EvaluatorLookup } from 'botbuilder-expression';
 import { ExpressionEngine} from 'botbuilder-expression-parser';
 import { keyBy } from 'lodash';
-import { EvaluationTarget } from './evaluator';
+import { EvaluationTarget } from './evaluationTarget';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
@@ -48,8 +48,26 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 .join(' => ')}`);
         }
 
-        this.evalutationTargetStack.push(new EvaluationTarget(templateName, scope));
+        const templateTarget: EvaluationTarget = new EvaluationTarget(templateName, scope);
+        const currentEvulateId: string = templateTarget.GetId();
+
+        let previousEvaluateTarget: EvaluationTarget;
+
+        if (this.evalutationTargetStack.length !== 0) {
+            previousEvaluateTarget = this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
+            if (previousEvaluateTarget.EvaluatedChildren.has(currentEvulateId)) {
+                return previousEvaluateTarget.EvaluatedChildren.get(currentEvulateId);
+            }
+        }
+
+        // Using a stack to track the evalution trace
+        this.evalutationTargetStack.push(templateTarget);
         const result: string[] = this.visit(this.TemplateMap[templateName].ParseTree);
+
+        if (previousEvaluateTarget !== undefined) {
+            previousEvaluateTarget.EvaluatedChildren.set(currentEvulateId, result);
+        }
+
         this.evalutationTargetStack.pop();
 
         return result;
@@ -62,6 +80,10 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         }
 
         return undefined;
+    }
+
+    public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): any {
+        // TODO;
     }
 
     public visitNormalBody(ctx: lp.NormalBodyContext): string[] {
@@ -169,7 +191,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                     tempRes.push(res.replace(templateRefValue[0], refValue));
                 }
             }
-            
+
             finalResult = tempRes;
         }
 
