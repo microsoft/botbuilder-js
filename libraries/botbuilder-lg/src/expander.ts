@@ -81,11 +81,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         return undefined;
     }
-
-    public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): any {
-        // TODO;
-    }
-
+    
     public visitNormalBody(ctx: lp.NormalBodyContext): string[] {
         return this.visit(ctx.normalTemplateBody());
     }

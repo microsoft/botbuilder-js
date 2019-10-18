@@ -43,6 +43,8 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     public readonly TemplateMap: {[name: string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly _expressionParser: IExpressionParser;
+    private readonly escapeSeperatorRegex : RegExp = new RegExp(/(?<!\\)\|/g);
+    private readonly expressionRecognizeRegex: RegExp = new RegExp(/@?(?<!\\)\{.+?(?<!\\)\}/g);
 
     constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -97,6 +99,40 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         const result: AnalyzerResult = new AnalyzerResult();
         for (const templateStr of ctx.templateString()) {
             result.union(this.visit(templateStr.normalTemplateString()));
+        }
+
+        return result;
+    }
+
+    public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): AnalyzerResult {
+        const result: AnalyzerResult = new AnalyzerResult();
+
+        const bodys: TerminalNode[] = ctx.structuredBodyContentLine().STRUCTURED_CONTENT();
+        for (const body  of bodys) {
+            const line: string = body.text.trim();
+            if (line === '') {
+                continue;
+            }
+            const start: number = line.indexOf('=');
+            if (start > 0) {
+                // make it insensitive
+                const property: string = line.substr(0, start).trim().toLowerCase();
+                const originValue: string = line.substr(start + 1).trim();
+
+                const valueArray: string[] = originValue.split(this.escapeSeperatorRegex);
+                if (valueArray.length === 1) {
+                    result.union(this.AnalyzeText(originValue));
+                } else {
+                    const valueList: any[] = [];
+                    for (const item of valueArray) {
+                        result.union(this.AnalyzeText(item.trim()));
+                    }
+
+                    result[property] = valueList;
+                }
+            } else if (this.isPureExpression(line)) {
+                result.union(this.AnalyzeExpression(line));
+            }
         }
 
         return result;
@@ -188,6 +224,27 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
+    private AnalyzeText(exp: string): AnalyzerResult {
+        if (exp === undefined || exp.length === 0) {
+            return new AnalyzerResult();
+        }
+
+        if (this.isPureExpression(exp)) {
+            return this.AnalyzeExpression(exp);
+        } else {
+            // unescape \|
+            return this.AnalyzeTextContainsExpression(exp);
+        }
+    }
+
+    private AnalyzeTextContainsExpression(exp: string): AnalyzerResult {
+        const result: AnalyzerResult =  new AnalyzerResult();
+        const expressions: RegExpMatchArray = exp.match(this.expressionRecognizeRegex);
+        expressions.forEach((u: string) => result.union(this.AnalyzeExpression(exp)));
+
+        return result;
+    }
+
     private AnalyzeExpression(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
         exp = exp.replace(/(^@*)/g, '')
@@ -213,7 +270,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     private AnalyzeMultiLineText(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
         exp = exp.substr(3, exp.length - 6);
-        const matches: string[] = exp.match(/@\{[^{}]+\}/g);
+        const matches: string[] = exp.match(/@?(?<!\\)\{.+?(?<!\\)\}/g);
         for (const match of matches) {
             result.union(this.AnalyzeExpression(match));
         }
@@ -223,5 +280,17 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     private currentTarget(): EvaluationTarget {
         return this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
+    }
+
+    private isPureExpression(exp: string): boolean {
+        if (exp === undefined || exp.length === 0) {
+            return false;
+        }
+
+        exp = exp.trim();
+        const expressions: RegExpMatchArray = exp.match(this.expressionRecognizeRegex);
+
+        // If there is no match, expressions could be null
+        return expressions !== null && expressions !== undefined && expressions.length === 1 && expressions[0] === exp;
     }
 }
