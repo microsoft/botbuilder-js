@@ -15,6 +15,7 @@ import {
     FileConsentCardResponse,
     InvokeResponse,
     MessageFactory,
+    MessageReaction,
     MessagingExtensionAction,
     MessagingExtensionActionResponse,
     TaskModuleContinueResponse,
@@ -33,11 +34,14 @@ import {
 import { AdaptiveCardHelper } from './adaptiveCardHelper';
 import { CardResponseHelpers } from './cardResponseHelpers';
 import { SubmitExampleData } from './submitExampleData';
+import { ActivityLog } from './activityLog';
 
 export class IntegrationBot extends TeamsActivityHandler {
     protected activityIds: string[];
     // NOT SUPPORTED ON TEAMS: AnimationCard, AudioCard, VideoCard, OAuthCard
     protected cardTypes: string[];
+    protected _log: ActivityLog;
+
 
     static readonly HeroCard = 'Hero';
     static readonly  ThumbnailCard = 'Thumbnail';
@@ -261,6 +265,37 @@ export class IntegrationBot extends TeamsActivityHandler {
         return { status: 200 } as InvokeResponse;
     }
 
+    protected async onReactionsAddedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void> {
+        for (var i = 0, len = reactionsAdded.length; i < len; i++) {
+            var activity = await this._log.find(context.activity.replyToId);
+            if (activity == null) {
+                // If we had sent the message from the error handler we wouldn't have recorded the Activity Id and so we shouldn't expect to see it in the log.
+                await this.sendMessageAndLogActivityId(context, `Activity ${context.activity.replyToId} not found in the log.`);
+            }
+            else {
+                await this.sendMessageAndLogActivityId(context, `You added '${reactionsAdded[i].type}' regarding '${activity.text}'`);
+            }
+        };
+
+        return;
+    }
+
+    protected async onReactionsRemovedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void> {
+        for (var i = 0, len = reactionsAdded.length; i < len; i++) {
+            // The ReplyToId property of the inbound MessageReaction Activity will correspond to a Message Activity that was previously sent from this bot.
+            var activity = await this._log.find(context.activity.replyToId);
+            if (activity == null) {
+                // If we had sent the message from the error handler we wouldn't have recorded the Activity Id and so we shouldn't expect to see it in the log.
+                await this.sendMessageAndLogActivityId(context, `Activity ${context.activity.replyToId} not found in the log.`);
+            }
+            else {
+                await this.sendMessageAndLogActivityId(context, `You removed '${reactionsAdded[i].type}' regarding '${activity.text}'`);
+            }
+        };
+
+        return;
+    }
+
     private async handleNonEmptyMessage(text, context, next) : Promise<void> {
         if (text === 'delete') {
             for (const activityId of this.activityIds) {
@@ -425,8 +460,10 @@ export class IntegrationBot extends TeamsActivityHandler {
     } 
 
     private async sendMessageAndLogActivityId(context: TurnContext, text: string): Promise<void> {
-        const resourceResponse = await context.sendActivity(`You said '${text}'`);
+        var replyActivity = MessageFactory.text(`You said '${text}'`);
+        var resourceResponse = await context.sendActivity(replyActivity);
         await this.activityIds.push(resourceResponse.id);
+        await this._log.append(resourceResponse.id, replyActivity);
     }
 
     private async sendAdaptiveCard1(context: TurnContext): Promise<void> {
