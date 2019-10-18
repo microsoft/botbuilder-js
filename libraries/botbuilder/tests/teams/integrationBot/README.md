@@ -92,8 +92,10 @@ To create the use the proxy host, perform the following:
 # run the bot
 npm start
 ```
-## Recording Script
-<TODO: - enter in detailed instructions on how to exercise>
+## Recording Script 
+1. Link Unfurl: Type "https://foo.com" (or some URL with https) in the client.  Should see
+2. Action Based Messaging Extension - Fetch Task:
+   1. Click on Menu
 
 ## Prerequisites
 
@@ -234,7 +236,7 @@ note left of Bot\n(TEST_MODE=PROXY_PLAY): **End the tests**\nAll tests are compl
 # Appendix B
 
 Here's an example `.vscode/launch.json` to debug this sample.
-It's assumed the `workspaceFolder` is set to `Botbuilder-Samples` directory.
+It's assumed the `workspaceFolder` is set to `botbuilder-js` directory.
 
 ```json
 {
@@ -243,18 +245,56 @@ It's assumed the `workspaceFolder` is set to `Botbuilder-Samples` directory.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+    
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceFolder}\\experimental\\teams\\javascript_nodejs\\scenarios\\link-unfurling\\lib\\index.js",
+            "name": "Proxy Play",
+            "program": "${workspaceFolder}\\libraries\\botbuilder\\tests\\teams\\integrationBot\\lib\\index.js",
             "sourceMaps": false,
             "env": {"TEST_MODE":"PROXY_PLAY", "PROXY_HOST":"http://localhost:3979"},
-            "cwd": "${workspaceFolder}\\experimental\\teams\\javascript_nodejs\\scenarios\\link-unfurling",
+            "cwd": "${workspaceFolder}\\libraries\\botbuilder\\tests\\teams\\integrationBot",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]
-        }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Play",
+            "program": "${workspaceFolder}\\libraries\\botbuilder\\tests\\teams\\integrationBot\\lib\\index.js",
+            "sourceMaps": false,
+            "env": {"TEST_MODE":"PLAY", "PROXY_HOST":"http://localhost:3979"},
+            "cwd": "${workspaceFolder}\\libraries\\botbuilder\\tests\\teams\\integrationBot",
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Record",
+            "program": "${workspaceFolder}\\libraries\\botbuilder\\tests\\teams\\integrationBot\\lib\\index.js",
+            "sourceMaps": false,
+            "env": {"TEST_MODE":"RECORD"},
+            "cwd": "${workspaceFolder}\\libraries\\botbuilder\\tests\\teams\\integrationBot",
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Proxy Host",
+            "program": "${workspaceFolder}\\libraries\\botbuilder\\tests\\teams\\integrationBot\\lib\\index.js",
+            "sourceMaps": false,
+            "env": {"TEST_MODE":"PROXY_HOST"},
+            "cwd": "${workspaceFolder}\\libraries\\botbuilder\\tests\\teams\\integrationBot",
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        },
+
     ]
 }
 ```
