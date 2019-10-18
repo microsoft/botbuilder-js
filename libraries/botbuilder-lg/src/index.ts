@@ -19,3 +19,6 @@ export * from './lgResource';
 export * from './importResolver';
 export * from './extractor';
 export * from './lgImport';
+export * from './range';
+export * from './position';
+export * from './evaluationTarget';
