@@ -6,8 +6,10 @@
  * Licensed under the MIT License.
  */
 import { ANTLRErrorListener, RecognitionException, Recognizer, Token } from 'antlr4ts';
-import { Diagnostic, Position, Range } from './diagnostic';
+import { Diagnostic } from './diagnostic';
 import { LGException } from './lgException';
+import { Position } from './position';
+import { Range } from './range';
 
 // tslint:disable-next-line: completed-docs
 export class ErrorListener implements ANTLRErrorListener<any> {

@@ -8,11 +8,12 @@
 // tslint:disable-next-line: no-submodule-imports
 import { ParserRuleContext } from 'antlr4ts';
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
+import { IExpressionParser } from 'botbuilder-expression';
 import { ExpressionEngine } from 'botbuilder-expression-parser';
 import * as fs from 'fs';
 import { keyBy } from 'lodash';
 import * as path from 'path';
-import { Diagnostic, DiagnosticSeverity, Position, Range } from './diagnostic';
+import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
@@ -21,7 +22,8 @@ import { LGException } from './lgException';
 import { LGParser } from './lgParser';
 import { LGResource } from './lgResource';
 import { LGTemplate } from './lgTemplate';
-import { IExpressionParser } from 'botbuilder-expression';
+import { Position } from './position';
+import { Range } from './range';
 
 /**
  * Static checker tool

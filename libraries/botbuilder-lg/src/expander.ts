@@ -11,7 +11,7 @@ import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { BuiltInFunctions, Constant, Expression, ExpressionEvaluator, ReturnType, EvaluatorLookup } from 'botbuilder-expression';
 import { ExpressionEngine} from 'botbuilder-expression-parser';
 import { keyBy } from 'lodash';
-import { EvaluationTarget } from './evaluator';
+import { EvaluationTarget } from './evaluationTarget';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
@@ -77,6 +77,10 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         }
 
         return undefined;
+    }
+
+    public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): any {
+        // TODO;
     }
 
     public visitNormalBody(ctx: lp.NormalBodyContext): string[] {
