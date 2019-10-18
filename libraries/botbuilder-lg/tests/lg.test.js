@@ -544,6 +544,7 @@ describe('LG', function () {
         assert.notEqual(evaled, undefined);
         
         const resultList = evaled.split(' ');
+        console.log(resultList);
         assert.equal(resultList.length, 2);
 
         assert.equal(resultList[0], resultList[1]);

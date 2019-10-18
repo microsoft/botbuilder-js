@@ -25,8 +25,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     public readonly ExpressionEngine: ExpressionEngine;
     public readonly TemplateMap: { [name: string]: LGTemplate };
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
-    private readonly expressionRecognizeRegex: RegExp = new RegExp(/@?(?<!\\)\{.+?(?<!\\)\}/g);
-    private readonly escapeSeperatorRegex : RegExp = new RegExp(/(?<!\\)\|/g);
+    private readonly expressionRecognizeRegex: RegExp = new RegExp(/\}(?!\\).+?\{(?!\\)@?/g);
+    private readonly escapeSeperatorRegex : RegExp = new RegExp(/\|(?!\\)/g);
 
     constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -90,7 +90,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 const property: string = line.substr(0, start).trim().toLowerCase();
                 const originValue: string = line.substr(start + 1).trim();
 
-                const valueArray: string[] = originValue.split(this.escapeSeperatorRegex);
+                const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, this.escapeSeperatorRegex);
                 if (valueArray.length === 1) {
                     result[property] = this.evalText(originValue);
                 } else {
@@ -351,7 +351,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     private evalTextContainsExpression(exp: string) : string {
-        return exp.replace(this.expressionRecognizeRegex, (sub: string) => this.evalExpression(sub));
+        return this.wrappedEvalTextContainsExpression(exp, this.expressionRecognizeRegex);
     }
 
     private evalText(exp: string): any {
@@ -374,10 +374,14 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         }
 
         exp = exp.trim();
-        const expressions: RegExpMatchArray = exp.match(this.expressionRecognizeRegex);
-
+        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(this.expressionRecognizeRegex);
         // If there is no match, expressions could be null
-        return expressions !== null && expressions !== undefined && expressions.length === 1 && expressions[0] === exp;
+        if (reversedExps === null || reversedExps === undefined || reversedExps.length !== 1) {
+            return false;
+        } else {
+            return reversedExps[0].split('').reverse().join('') === exp;
+        }
+
     }
 
     private evalByExpressionEngine(exp: string, scope: any): { value: any; error: string } {
@@ -421,5 +425,13 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         if (expectedArgsCount !== actualArgsCount) {
             throw new Error(`arguments mismatch for template ${templateName}, expect ${expectedArgsCount} actual ${actualArgsCount}`);
         }
+    }
+
+    public static wrappedRegExSplit(inputString: string, regex : RegExp): string[] {
+        return inputString.split('').reverse().join('').split(regex).map(e => e.split('').reverse().join('')).reverse()
+    }
+
+    public wrappedEvalTextContainsExpression(exp: string, regex: RegExp): string {
+        return (exp.split('').reverse().join('').replace(regex, (sub: string) => this.evalExpression(sub.split('').reverse().join('')).toString().split('').reverse().join(''))).split('').reverse().join('');
     }
 }
