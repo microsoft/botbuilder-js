@@ -377,7 +377,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         exp = exp.substr(3, exp.length - 6);
 
         const templateRefValues: Map<string, string[]> = new Map<string, string[]>();
-        const matches: string[] = exp.match(/@?(?<!\\)\{.+?(?<!\\)\}/g);
+        const matches: string[] = exp.match(/@\{[^{}]+\}/g);
         if (matches !== null && matches !== undefined) {
             for (const match of matches) {
                 templateRefValues.set(match, this.EvalExpression(match));
