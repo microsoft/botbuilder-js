@@ -12,7 +12,6 @@ import { IntegrationBot } from './integrationBot';
 
 // Set up Nock
 import * as nockHelper from './../src/nock-helper/nock-helper';
-
 nockHelper.nockHttp('integrationBot')
 
 
@@ -55,7 +54,6 @@ if (nockHelper.isRecording()) {
         adapter.processActivity(req, res, async (context) => {
             if (req.body.text == 'exit') {
                 //graceful shutdown
-                nockHelper.gitSaveRecordings();
                 process.exit();
             }
             nockHelper.logRequest(req, 'integrationBot');

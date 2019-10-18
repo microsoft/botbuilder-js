@@ -47,17 +47,44 @@ exports.proxyRecordings = function() {
         delete clientSessions[req.connection.remoteAddress];
         return next(false);
     });
+
     server.post({
-        path: '/v3/conversations/*',
+        path: '/v3/conversations',
         contentType: 'application/json'
     },
     (req, res, next) => {
-        processHostReply(req, res, clientSessions[req.connection.remoteAddress]);
+        //validateHeaders(req);
+        processPostReply(req, res, clientSessions[req.connection.remoteAddress]);
         const response = { id: "1"};
         res.send(response);
         return next(false);
     });
+
+    server.post({
+        path: '/v3/conversations/*',
+        contentType: 'application/json; charset=utf-8'
+    },
+    (req, res, next) => {
+        //validateHeaders(req);
+        processPostReply(req, res, clientSessions[req.connection.remoteAddress], true);
+        const response = { id: "1"};
+        res.send(response);
+        return next(false);
+    });
+    
+    server.get({
+        path: '/v3/teams/*',
+        contentType: 'application/json; charset=utf-8'
+    },
+    (req, res, next) => {
+        processGetReply(req, res, clientSessions[req.connection.remoteAddress]);
+        const response = { id: "1"};
+        res.send(response);
+        return next(false);
+    });
+
 }
+
 
 class ProxySession {
     constructor(testName, clientAddress) {
@@ -70,23 +97,45 @@ class ProxySession {
     }
 }
 
-function processHostReply(req, res, clientSession) {
+function processPostReply(req, res, clientSession, session = false) {
     const recordedActivity = clientSession.recordedActivities[clientSession.activityIndex];
     console.log(`Processing reply ${clientSession.reply_index + 1} of ${recordedActivity.replies.length}`);
-    const reply = recordedActivity.replies[clientSession.reply_index];
+    const recordedReply = recordedActivity.replies[clientSession.reply_index];
 
-    validateReply(req, reply)
+
+    if (session) {
+        // Validating a session requires a little bit more finesse
+        validatePostReply(req, reply);
+    }
+    else {
+        const incomingReply = req.body;
+        assert(JSON.stringify(incomingReply), JSON.stringify(recordedReply));
+    }
+
 
     // Increment for next reply
     clientSession.reply_index = clientSession.reply_index + 1;
 }
 
+function processGetReply(req, res, clientSession) {
+    const recordedActivity = clientSession.recordedActivities[clientSession.activityIndex];
+    console.log(`Processing reply ${clientSession.reply_index + 1} of ${recordedActivity.replies.length}`);
+    const reply = recordedActivity.replies[clientSession.reply_index];
+
+    // Not much to validate here
+    assert(reply.method.toLowerCase() == 'get');
+
+    // Increment for next reply
+    clientSession.reply_index = clientSession.reply_index + 1;
+}
+
+
 // Validate "reply" (which is the incoming request - confusing!)
-function validateReply(req, reply_from_recording) {
-    // console.log('VALIDATE REPLY: REQBODY: ' + JSON.stringify(req.body, null, 1) );
-    // console.log('VALIDATE REPLY: REPLY: ' + JSON.stringify(reply_from_recording.body, null, 1) );
+function validatePostReply(req, replyFromRecording) {
+    // console.log('VALIDATE REPLY: INCOMING REPLY: ' + JSON.stringify(req.body, null, 1) );
+    // console.log('VALIDATE REPLY: RECORDING: ' + JSON.stringify(replyFromRecording.body, null, 1) );
     const reply = req.body;
-    const recorded_reply = reply_from_recording.body;
+    const recorded_reply = replyFromRecording.body;
     assert(reply.type == recorded_reply.type);
     assert(reply.channelId == recorded_reply.channelId);
     assert(reply.from.id == recorded_reply.from.id);
@@ -102,6 +151,9 @@ function validateReply(req, reply_from_recording) {
     assert(reply.inputHint == recorded_reply.inputHint);
     assert(reply.replyToId == recorded_reply.replyToId);
 }
+
+
+
 
 async function processHostRecordings(clientSession) {
     const recordedActivities = nockhelper.parseActivityBundles();

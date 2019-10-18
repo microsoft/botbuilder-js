@@ -111,12 +111,16 @@ export class IntegrationBot extends TeamsActivityHandler {
         try {
             // Send to channel where messaging extension invoked.
             let results = await teamsCreateConversation(context, context.activity.channelData.channel.id, responseActivity);
+        } catch(ex) {
+            console.error('ERROR Sending to Channel:');
+        }
 
+        try {
             // Send card to "General" channel.
             const teamDetails: TeamDetails = await TeamsInfo.getTeamDetails(context);
-            results = await teamsCreateConversation(context, teamDetails.id, responseActivity);
-        } catch {
-            console.error('In group chat or personal scope.');
+            let results = await teamsCreateConversation(context, teamDetails.id, responseActivity);
+        } catch(ex) {
+            console.error('ERROR Sending to General channel:' + JSON.stringify(ex));
         }
 
         // Send card to compose box for the current user.
