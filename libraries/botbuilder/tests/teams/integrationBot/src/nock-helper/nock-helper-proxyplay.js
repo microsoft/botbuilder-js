@@ -1,25 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const assert = require('assert');
 var https = require('https');
 var http = require('http');
 var restify = require('restify');
-var OriginalClientRequest = http.ClientRequest; // HTTP ClientRequest before mocking by Nock
-var OriginalHttpsRequest = https.request;
-var OriginalHttpRequest = http.request;
-var nock = require('nock');
-var fs = require('fs')
-var httpMocks = require('node-mocks-http');
 var botbuilder = require('botbuilder');
-var connector = require('botframework-connector');
-var NockClientRequest = http.ClientRequest; // HTTP ClientRequest mocked by Nock
-var NockHttpsRequest = https.request;
-var  NockHttpRequest = http.request;
 var nockhelper = require('./nock-helper');
 var fetch = require('node-fetch');
-
-const hostingCacheByClient = {};
 
 exports.proxyPlay = async function(bot) {
     console.log('PLAY against proxy');
@@ -28,7 +15,6 @@ exports.proxyPlay = async function(bot) {
         console.log('Nothing to replay, no recordings found.')
         return;
     }
-
 
     setupBot(bot);
     const requestUrl = process.env.PROXY_HOST + '/api/runtests';
@@ -42,30 +28,14 @@ exports.proxyPlay = async function(bot) {
             TestName: 'mytest',
         },
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data)
-    })
-    .catch(err => console.log(err));
-
-
-    // if (res.ok) {
-    //     console.log('FETCH successful.')
-    //     console.log(res.json());
-    //     return true;
-    // } else {
-    //     throw new Error(`Test failed with status code: ${ res.status }`);
-    // }
-
-    // activityBundles.forEach((activityBundle, index) => {
-    //     console.log(`\n -Item # ${index+1} of ${activityBundles.length} ---------\n`);
-        
-    //     console.log(JSON.stringify(activityBundle));
-    // });
-}
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(err => console.log(err));
+};
 
 function setupBot(bot) {
-    console.log('SETTING UP BOT..');
     // Create HTTP server.
     const server = restify.createServer();
     server.use(restify.plugins.queryParser());
@@ -83,17 +53,19 @@ function setupBot(bot) {
         contentType: 'application/json'
     },
     async (req, res, next) => {
-        console.log('RECEIVED BOT HIT.. ' + JSON.stringify(req.body));
-        //console.log('    ' + req.toString());
+        console.log('RECEIVED BOT HIT.. ');
+        
+        // Uncomment to see incomine requests.
+        //console.log(JSON.stringify(req.body))
+
         await adapter.processActivity(req, res, async (context) => {
             if (req.body.text == 'exit') {
                 //graceful shutdown
+                console.log('Exit received.');
                 process.exit();
             }
-            //nockHelper.logRequest(req, 'link-unfurling');
             // Route to main dialog.
             await bot.run(context);
-            //nockHelper.logResponse(res, 'link-unfurling')
         });
     });
     console.log('BOT SETUP COMPLETE.')
