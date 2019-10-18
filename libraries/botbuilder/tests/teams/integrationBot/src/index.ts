@@ -36,8 +36,10 @@ adapter.onTurnError = async (context, error) => {
     await context.sendActivity(`Oops. Something went wrong in the bot!\n  ${error.message}`);
 };
 
+const activityIds: string[] = [];
+
 // Create the bot.
-const myBot = new IntegrationBot();
+const myBot = new IntegrationBot(activityIds);
 
 if (nockHelper.isRecording()) {
 

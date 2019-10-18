@@ -3,6 +3,7 @@
 
 import {
     Activity,
+    ActivityTypes,
     Attachment,
     CardFactory,
     FileInfoCard,
@@ -13,7 +14,9 @@ import {
     MessagingExtensionActionResponse,
     TaskModuleContinueResponse,
     TaskModuleMessageResponse,
-    TaskModuleResponseBase,
+    TaskModuleRequest,
+    TaskModuleResponse,
+    TaskModuleTaskInfo,
     TeamDetails,
     TeamsActivityHandler,
     teamsCreateConversation,
@@ -26,16 +29,39 @@ import { CardResponseHelpers } from './cardResponseHelpers';
 import { SubmitExampleData } from './submitExampleData';
 
 export class IntegrationBot extends TeamsActivityHandler {
+    protected activityIds: string[];
+
     /*
      * After installing this bot you will need to click on the 3 dots to pull up the extension menu to select the bot. Once you do you do
      * see the extension pop a task module.
      */
-    constructor() {
+    constructor(activityIds: string[]) {
         super();
+        this.activityIds = activityIds;
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
             await context.sendActivity(`You said '${context.activity.text}'`);
+            // By calling next() you ensure that the next BotHandler is run.
+            await next();
+
+
+            TurnContext.removeRecipientMention(context.activity);
+            if (context.activity.text === 'delete') {
+                for (const activityId of this.activityIds) {
+                    await context.deleteActivity(activityId);
+                }
+
+                this.activityIds = [];
+            } else {
+                await this.sendMessageAndLogActivityId(context, `${context.activity.text}`);
+
+                const text = context.activity.text;
+                for (const id of this.activityIds) {
+                    await context.updateActivity({ id, text, type: ActivityTypes.Message });
+                }
+            }
+
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
@@ -60,14 +86,9 @@ export class IntegrationBot extends TeamsActivityHandler {
 
     protected async handleTeamsMessagingExtensionSubmitAction(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         const submittedData = action.data as SubmitExampleData;
-        if (submittedData) {
-            const adaptiveCard = AdaptiveCardHelper.toAdaptiveCardAttachment(submittedData);
-            const response = CardResponseHelpers.toMessagingExtensionBotMessagePreviewResponse(adaptiveCard);
-            return response;    
-        }
-        else {
-            return this.handleSubmitActionForFetch(context, action);
-        }
+        const adaptiveCard = AdaptiveCardHelper.toAdaptiveCardAttachment(submittedData);
+        const response = CardResponseHelpers.toMessagingExtensionBotMessagePreviewResponse(adaptiveCard);
+        return response;    
     }
 
     protected async handleTeamsMessagingExtensionBotMessagePreviewEdit(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
@@ -124,6 +145,68 @@ export class IntegrationBot extends TeamsActivityHandler {
         reply.text = `Declined. We won't upload file <b>${fileConsentCardResponse.context["filename"]}</b>.`;
         await context.sendActivity(reply);
     } 
+    
+    protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
+        var reply = MessageFactory.text("handleTeamsTaskModuleFetchAsync TaskModuleRequest" + JSON.stringify(taskModuleRequest));
+        await context.sendActivity(reply);
+
+        return {
+            task: { 
+                type: "continue", 
+                value: {
+                    card: this.getTaskModuleAdaptiveCard(),
+                    height: 200,
+                    width: 400,
+                    title: "Adaptive Card: Inputs",
+                } as TaskModuleTaskInfo, 
+            } as TaskModuleContinueResponse
+        } as TaskModuleResponse;
+    }
+
+    protected async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
+        var reply = MessageFactory.text("handleTeamsTaskModuleFetchAsync Value: " + JSON.stringify(taskModuleRequest));
+        await context.sendActivity(reply);
+
+        return {
+            task: { 
+                type: "message", 
+                value: "Hello", 
+            } as TaskModuleMessageResponse
+        } as TaskModuleResponse;
+    }
+
+    private getTaskModuleHeroCard() : Attachment {
+        return CardFactory.heroCard("Task Module Invocation from Hero Card", 
+            "This is a hero card with a Task Module Action button.  Click the button to show an Adaptive Card within a Task Module.",
+            null, // No images
+            [{type: "invoke", title:"Adaptive Card", value: {type:"task/fetch", data:"adaptivecard"} }]
+            );
+    }
+
+    private getTaskModuleAdaptiveCard(): Attachment {
+        return CardFactory.adaptiveCard({
+            version: '1.0.0',
+            type: 'AdaptiveCard',
+            body: [
+                {
+                    type: 'TextBlock',
+                    text: `Enter Text Here`,
+                },
+                {
+                    type: 'Input.Text',
+                    id: 'usertext',
+                    placeholder: 'add some text and submit',
+                    IsMultiline: true,
+                }
+            ],
+            actions: [
+                {
+                    type: 'Action.Submit',
+                    title: 'Submit',
+                }
+            ]
+        });
+    }
     
     private async sendFile(fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
         const request = require("request");
@@ -184,48 +267,6 @@ export class IntegrationBot extends TeamsActivityHandler {
         await context.sendActivity(reply);
     }
 
-    private async handleSubmitActionForFetch(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
-        const data = action.data;
-        let body: MessagingExtensionActionResponse;
-        if (data && data.done) {
-            // The commandContext check doesn't need to be used in this scenario as the manifest specifies the shareMessage command only works in the "message" context.
-            const sharedMessage = (action.commandId === 'shareMessage' && action.commandContext === 'message')
-                ? `Shared message: <div style="background:#F0F0F0">${JSON.stringify(action.messagePayload)}</div><br/>`
-                : '';
-            const preview = CardFactory.thumbnailCard('Created Card', `Your input: ${data.userText}`);
-            const heroCard = CardFactory.heroCard('Created Card', `${sharedMessage}Your input: <pre>${data.userText}</pre>`);
-            body = {
-                composeExtension: {
-                    attachmentLayout: 'list',
-                    attachments: [
-                        { ...heroCard, preview }
-                    ],
-                    type: 'result'
-                }
-            };
-        } else if (action.commandId === 'createWithPreview') {
-            // The commandId is definied in the manifest of the Teams Application
-            const activityPreview = {
-                attachments: [
-                    this.taskModuleResponseCard(action)
-                ]
-            } as Activity;
-
-            body = {
-                composeExtension: {
-                    activityPreview,
-                    type: 'botMessagePreview'
-                }
-            };
-        } else {
-            body = {
-                task: this.taskModuleResponse(action, false)
-            };
-        }
-
-        return body;
-    }
-
     private createReply(activity, text = null, locale = null) : Activity {
         return {
             type: 'message',
@@ -238,78 +279,10 @@ export class IntegrationBot extends TeamsActivityHandler {
             text: text || '',
             locale: locale || activity.locale
         } as Activity;
-    }
+    } 
 
-    private getCardFromPreviewMessage(query: MessagingExtensionAction): Attachment {
-        const userEditActivities = query.botActivityPreview;
-        return userEditActivities
-            && userEditActivities[0]
-            && userEditActivities[0].attachments
-            && userEditActivities[0].attachments[0];
-    }
-
-    private taskModuleResponse(query: any, done: boolean): TaskModuleResponseBase {
-        if (done) {
-            return {
-                type: 'message',
-                value: 'Thanks for your inputs!'
-            } as TaskModuleMessageResponse;
-        } else {
-            return {
-                type: 'continue',
-                value: {
-                    card: this.taskModuleResponseCard(query, (query.data && query.data.userText) || undefined),
-                    title: 'More Page'
-                }
-            } as TaskModuleContinueResponse;
-        }
-    }
-
-    private taskModuleResponseCard(data: any, textValue?: string) {
-        return CardFactory.adaptiveCard({
-            actions: [
-                {
-                    data: {
-                        done: false
-                    },
-                    title: 'Next',
-                    type: 'Action.Submit'
-                },
-                {
-                    data: {
-                        done: true
-                    },
-                    title: 'Submit',
-                    type: 'Action.Submit'
-                }
-            ],
-            body: [
-                {
-                    size: 'large',
-                    text: `Your request:`,
-                    type: 'TextBlock',
-                    weight: 'bolder'
-                },
-                {
-                    items: [
-                        {
-                            text: JSON.stringify(data),
-                            type: 'TextBlock',
-                            wrap: true
-                        }
-                    ],
-                    style: 'emphasis',
-                    type: 'Container'
-                },
-                {
-                    id: 'userText',
-                    placeholder: 'Type text here...',
-                    type: 'Input.Text',
-                    value: textValue
-                }
-            ],
-            type: 'AdaptiveCard',
-            version: '1.0.0'
-        });
+    private async sendMessageAndLogActivityId(context: TurnContext, text: string): Promise<void> {
+        const resourceResponse = await context.sendActivity(`You said '${text}'`);
+        await this.activityIds.push(resourceResponse.id);
     }
 }
