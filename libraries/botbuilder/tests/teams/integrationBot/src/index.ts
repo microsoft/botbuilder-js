@@ -10,6 +10,9 @@ import { BotFrameworkAdapter } from 'botbuilder';
 
 import { IntegrationBot } from './integrationBot';
 
+// Import middleware for filtering messages based on Teams Tenant Id
+import { TeamsTenantFilteringMiddleware  } from './teamsTenantFilteringMiddleware';
+
 // Set up Nock
 import * as nockHelper from './../src/nock-helper/nock-helper';
 nockHelper.nockHttp('integrationBot')
@@ -25,6 +28,12 @@ const adapter = new BotFrameworkAdapter({
     appId: process.env.MicrosoftAppId,
     appPassword: process.env.MicrosoftAppPassword
 });
+
+// Use the TeamsTenantFilteringMiddleware IF there is an AllowedTeamsTenantId
+if(process.env.AllowedTeamsTenantId){
+    let teamsTenantFilteringMiddleware = new TeamsTenantFilteringMiddleware(process.env.AllowedTeamsTenantId);
+    adapter.use(teamsTenantFilteringMiddleware);
+}
 
 // Catch-all for errors.
 adapter.onTurnError = async (context, error) => {

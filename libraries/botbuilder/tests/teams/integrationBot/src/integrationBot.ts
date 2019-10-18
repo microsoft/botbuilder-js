@@ -647,6 +647,18 @@ export class IntegrationBot extends TeamsActivityHandler {
                     reply = MessageFactory.list([this.getHeroCard(), this.getHeroCard(), this.getHeroCard()]);
                     break;
 
+                case "show members":
+                    await this.showMembers(context);
+                    break;
+
+                case "show channels":
+                    await this.showChannels(context);
+                    break;
+
+                case "show details":
+                    await this.showDetails(context);
+                    break;
+    
                 default:
                     await this.sendMessageAndLogActivityId(context, text);
                     for (const id of this.activityIds) {
@@ -961,5 +973,43 @@ export class IntegrationBot extends TeamsActivityHandler {
     private getChoices() {
         const actions = this.cardTypes.map((cardType) => ({ type: ActionTypes.MessageBack, title: cardType, text: cardType })) as CardAction[];
         return CardFactory.heroCard('Task Module Invocation from Hero Card', null, actions);
+    }
+
+    private async showMembers(context: TurnContext): Promise<void> {
+        let teamsChannelAccounts = await TeamsInfo.getMembers(context);
+        await context.sendActivity(MessageFactory.text(`Total of ${teamsChannelAccounts.length} members are currently in team`));
+        let messages = teamsChannelAccounts.map(function(teamsChannelAccount) {
+            return `${teamsChannelAccount.aadObjectId} --> ${teamsChannelAccount.name} --> ${teamsChannelAccount.userPrincipalName}`;
+        });
+        await this.sendInBatches(context, messages);
+    }
+    
+    private async showChannels(context: TurnContext): Promise<void> { 
+        let channels = await TeamsInfo.getTeamChannels(context);
+        await context.sendActivity(MessageFactory.text(`Total of ${channels.length} channels are currently in team`));
+        let messages = channels.map(function(channel) {
+            return `${channel.id} --> ${channel.name ? channel.name : 'General'}`;
+        });
+        await this.sendInBatches(context, messages);
+    }
+   
+    private async showDetails(context: TurnContext): Promise<void> {
+        let teamDetails = await TeamsInfo.getTeamDetails(context);
+        await context.sendActivity(MessageFactory.text(`The team name is ${teamDetails.name}. The team ID is ${teamDetails.id}. The AAD GroupID is ${teamDetails.aadGroupId}.`));
+    }
+
+    private async sendInBatches(context: TurnContext, messages: string[]): Promise<void> {
+        let batch: string[] = [];
+        messages.forEach(async (msg: string) => {
+            batch.push(msg);
+            if (batch.length == 10) {
+                await context.sendActivity(MessageFactory.text(batch.join('<br>')));
+                batch = [];
+            }
+        });
+
+        if (batch.length > 0) {
+            await context.sendActivity(MessageFactory.text(batch.join('<br>')));
+        }
     }
 }
