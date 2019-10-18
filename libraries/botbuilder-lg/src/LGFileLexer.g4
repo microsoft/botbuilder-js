@@ -130,7 +130,7 @@ IF
   ;
 
 ELSEIF
-  : E L S E I F WHITESPACE* ':' {this.expectKeywords}? { this.ignoreWS = true;}
+  : E L S E WHITESPACE* I F WHITESPACE* ':' {this.expectKeywords}? { this.ignoreWS = true;}
   ;
 
 ELSE
