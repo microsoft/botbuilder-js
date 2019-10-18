@@ -983,7 +983,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
         if (request.verb.toLocaleUpperCase() === GET && request.path.toLocaleLowerCase() === VERSION_PATH) {
             response.statusCode = StatusCodes.OK;
-            response.setBody(this.getUserAgent());
+            response.setBody({UserAgent: USER_AGENT});
 
             return response;
         }
@@ -1209,18 +1209,6 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         } catch (error) {
             return Promise.reject(error);
         }
-    }
-
-    private getUserAgent(): string {
-        if(USER_AGENT){
-            return USER_AGENT;
-        }
-        const ARCHITECTURE: any = os.arch();
-        const TYPE: any = os.type();
-        const RELEASE: any = os.release();
-        const NODE_VERSION: any = process.version;
-        return `Microsoft-BotFramework/3.1 BotBuilder/${ pjson.version } ` +
-        `(Node.js,Version=${ NODE_VERSION }; ${ TYPE } ${ RELEASE }; ${ ARCHITECTURE })`;
     }
 }
 
