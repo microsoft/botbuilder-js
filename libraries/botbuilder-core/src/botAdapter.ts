@@ -18,7 +18,7 @@ import { TurnContext } from './turnContext';
  * of channels.
  */
 export abstract class BotAdapter {
-    private middleware: MiddlewareSet = new MiddlewareSet();
+    protected middleware: MiddlewareSet = new MiddlewareSet();
     private turnError: (context: TurnContext, error: Error) => Promise<void>;
 
     /**

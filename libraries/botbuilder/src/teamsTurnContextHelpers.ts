@@ -1,17 +1,21 @@
 /**
+ * @module botbuilder
+ */
+/**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
 import {
     Activity,
     ChannelInfo,
     ConversationParameters,
     ConversationReference,
     ConversationResourceResponse,
-    ResourceResponse,
     TeamsChannelData,
-    TurnContext,
+    TurnContext
 } from 'botbuilder-core';
+
 import { teamsGetTeamId } from './teamsActivityHelpers';
 import { BotFrameworkAdapter } from './botFrameworkAdapter';
 
@@ -19,7 +23,7 @@ import { BotFrameworkAdapter } from './botFrameworkAdapter';
  * Turn Context extension methods for Teams.
  */
 
-export async function teamsCreateConversation(turnContext: TurnContext, teamsChannelId: string, message: Partial<Activity>): Promise<[ConversationReference, string]> {
+export async function teamsCreateConversation(context: TurnContext, teamsChannelId: string, message: Partial<Activity>): Promise<[ConversationReference, string]> {
     if (!teamsChannelId) {
         throw new Error('Missing valid teamsChannelId argument');
     }
@@ -33,14 +37,22 @@ export async function teamsCreateConversation(turnContext: TurnContext, teamsCha
                 id: teamsChannelId
             }
         },
-        activity: <Activity>message,
+        activity: message,
     };
-    const adapter = <BotFrameworkAdapter>turnContext.adapter;
-    const connectorClient = adapter.createConnectorClient(turnContext.activity.serviceUrl);
+    const adapter = <BotFrameworkAdapter>context.adapter;
+    const connectorClient = adapter.createConnectorClient(context.activity.serviceUrl);
     // This call does NOT send the outbound Activity is not being sent through the middleware stack.
     const conversationResourceResponse: ConversationResourceResponse = await connectorClient.conversations.createConversation(conversationParameters);
-    const conversationReference = <ConversationReference>TurnContext.getConversationReference(turnContext.activity);
+    const conversationReference = <ConversationReference>TurnContext.getConversationReference(context.activity);
     conversationReference.conversation.id = conversationResourceResponse.id;
     return [conversationReference, conversationResourceResponse.activityId];
 }
 
+export async function teamsSendToGeneralChannel(context: TurnContext, message: Partial<Activity>): Promise<[ConversationReference, string]> {
+    const teamId = teamsGetTeamId(context.activity);
+    if (!teamId) {
+        throw new Error('The current Activity was not sent from a Teams Team.');
+    }
+
+    return teamsCreateConversation(context, teamId, message);
+}
