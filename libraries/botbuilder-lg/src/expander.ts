@@ -154,7 +154,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         const templateRefValues: Map<string, string[]> = new Map<string, string[]>();
         for (const idToString of idToStringMap) {
-            if ((idToString[1].startsWith('@') || idToStringMap[1].startsWith('{')) && idToString[1].endsWith('}')) {
+            if ((idToString[1].startsWith('@') || idToString[1].startsWith('{')) && idToString[1].endsWith('}')) {
                 templateRefValues.set(idToString[0], this.EvalExpression(idToString[1]));
             } else {
                 templateRefValues.set(idToString[0], this.evalText(idToString[1]));
