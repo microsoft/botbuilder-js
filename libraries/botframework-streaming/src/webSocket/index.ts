@@ -7,6 +7,7 @@
  */
 
 export * from './browserWebSocket';
+export * from './factories';
 export * from '../interfaces/ISocket';
 export * from './nodeWebSocket';
 export * from './webSocketClient';
