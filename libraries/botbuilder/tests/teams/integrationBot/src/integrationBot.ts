@@ -5,7 +5,9 @@ import {
     Activity,
     ActivityTypes,
     ActionTypes,
+    AppBasedLinkQuery,
     Attachment,
+    BotState,
     CardAction,
     CardFactory,
     ChannelAccount,
@@ -19,6 +21,7 @@ import {
     MessagingExtensionAction,
     MessagingExtensionActionResponse,
     MessagingExtensionQuery,
+    MessagingExtensionResponse,
     MessagingExtensionResult,
     MessagingExtensionSuggestedAction,
     O365ConnectorCard,
@@ -50,6 +53,18 @@ import { CardResponseHelpers } from './cardResponseHelpers';
 import { SubmitExampleData } from './submitExampleData';
 import { ActivityLog } from './activityLog';
 
+const RICH_CARD_PROPERTY = 'richCardConfig';
+const HeroCard = 'Hero';
+const ThumbnailCard = 'Thumbnail';
+const ReceiptCard = 'Receipt';
+const SigninCard = 'Signin';
+const Carousel = 'Carousel';
+const List = 'List';
+    
+/**
+ * We need to change the key for the user state because the bot might not be in the conversation, which means they get a 403 error.
+ * @param userState 
+ */
 export class IntegrationBot extends TeamsActivityHandler {
     protected activityIds: string[];
     // NOT SUPPORTED ON TEAMS: AnimationCard, AudioCard, VideoCard, OAuthCard
@@ -57,27 +72,15 @@ export class IntegrationBot extends TeamsActivityHandler {
     protected _log: ActivityLog;
 
 
-    static readonly HeroCard = 'Hero';
-    static readonly  ThumbnailCard = 'Thumbnail';
-    static readonly  ReceiptCard = 'Receipt';
-    static readonly  SigninCard = 'Signin';
-    static readonly  Carousel = 'Carousel';
-    static readonly  List = 'List';
     
     /*
      * After installing this bot you will need to click on the 3 dots to pull up the extension menu to select the bot. Once you do you do
      * see the extension pop a task module.
      */
-    constructor(activityIds: string[]) {
+    constructor(public userState: BotState, activityIds: string[]) {
         super();
         this.activityIds = activityIds;
-        this.cardTypes = [
-            IntegrationBot.HeroCard, 
-            IntegrationBot.ThumbnailCard, 
-            IntegrationBot.ReceiptCard, 
-            IntegrationBot.SigninCard, 
-            IntegrationBot.Carousel, 
-            IntegrationBot.List];
+        this.cardTypes = [ HeroCard, ThumbnailCard, ReceiptCard, SigninCard, Carousel, List];
         
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
@@ -310,7 +313,118 @@ export class IntegrationBot extends TeamsActivityHandler {
         return;
     }
 
+    protected async handleTeamsO365ConnectorCardAction(context: TurnContext, query: O365ConnectorCardActionQuery): Promise<void> {
+        await context.sendActivity(MessageFactory.text(`O365ConnectorCardActionQuery event value: ${JSON.stringify(query)}`));
+    }
+
+    
+    protected async handleTeamsMessagingExtensionQuery(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionResponse>{
+        const accessor = this.userState.createProperty<{ useHeroCard: boolean }>(RICH_CARD_PROPERTY);
+        const config = await accessor.get(context, { useHeroCard: true });
+
+        const searchQuery = query.parameters[0].value;
+        const cardText = `You said "${searchQuery}"`;
+        let composeExtensionResponse: MessagingExtensionResponse;
+
+        const bfLogo = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU';
+        const button = { type: 'openUrl', title: 'Click for more Information', value: "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview" };
+
+        if (config.useHeroCard) {
+            const heroCard = CardFactory.heroCard('You searched for:', cardText, [bfLogo], [button]);
+            const preview = CardFactory.heroCard('You searched for:', cardText, [bfLogo]);
+
+            const secondPreview = CardFactory.heroCard('Learn more about Teams:', "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview", [bfLogo]);
+            const secondHeroCard = CardFactory.heroCard('Learn more about Teams:', "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview", [bfLogo], [button]);
+            composeExtensionResponse = {
+                composeExtension: {
+                    type: 'result',
+                    attachmentLayout: 'list',
+                    attachments: [
+                        { ...heroCard, preview },
+                        { ...secondHeroCard, preview: secondPreview }
+                    ]
+                }
+            }
+        } else {
+            const thumbnailCard = CardFactory.thumbnailCard('You searched for:', cardText, [bfLogo], [button]);
+            const preview = CardFactory.thumbnailCard('You searched for:', cardText, [bfLogo]);
+
+            const secondPreview = CardFactory.thumbnailCard('Learn more about Teams:', "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview", [bfLogo]);
+            const secondThumbnailCard = CardFactory.thumbnailCard('Learn more about Teams:', "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview", [bfLogo], [button]);
+            composeExtensionResponse = {
+                composeExtension: {
+                    type: 'result',
+                    attachmentLayout: 'list',
+                    attachments: [
+                        { ...thumbnailCard, preview },
+                        { ...secondThumbnailCard, preview: secondPreview }
+                    ]
+                }
+            }
+        }
+
+        return composeExtensionResponse;
+    }
+    
+    protected async handleTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>{
+        const accessor = this.userState.createProperty<{ useHeroCard: boolean }>(RICH_CARD_PROPERTY);
+        const config = await accessor.get(context, { useHeroCard: true });
+
+        const url = query.url;
+        const cardText = `You entered "${url}"`;
+        let composeExtensionResponse: MessagingExtensionResponse;
+
+        const bfLogo = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU';
+        const button = { type: 'openUrl', title: 'Click for more Information', value: "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview" };
+
+        if (config.useHeroCard) {
+            const heroCard = CardFactory.heroCard('HeroCard for Link Unfurling:', cardText, [bfLogo], [button]);
+            const preview = CardFactory.heroCard('HeroCard for Link Unfurling:', cardText, [bfLogo]);
+
+            composeExtensionResponse = {
+                composeExtension: {
+                    type: 'result',
+                    attachmentLayout: 'list',
+                    attachments: [
+                        { ...heroCard, preview }
+                    ]
+                }
+            }
+        } else {
+            const thumbnailCard = CardFactory.thumbnailCard('ThumbnailCard for Link Unfurling:', cardText, [bfLogo], [button]);
+            const preview = CardFactory.thumbnailCard('ThumbnailCard for Link Unfurling:', cardText, [bfLogo]);
+
+            composeExtensionResponse = {
+                composeExtension: {
+                    type: 'result',
+                    attachmentLayout: 'list',
+                    attachments: [
+                        { ...thumbnailCard, preview }
+                    ]
+                }
+            }
+        }
+
+        return composeExtensionResponse;
+    }
+
     protected async handleTeamsMessagingExtensionConfigurationQuerySettingUrl(context: TurnContext, query: MessagingExtensionQuery){
+        return <MessagingExtensionActionResponse>
+        {
+            composeExtension: <MessagingExtensionResult> {
+                type: 'config',
+                suggestedActions: <MessagingExtensionSuggestedAction> { 
+                    actions: [
+                        {
+                            type: ActionTypes.OpenUrl,
+                            title: 'Config',
+                            value: process.env.host + '/composeExtensionSettings.html',
+                        },
+                    ]
+                }
+            }
+        }
+        /*
         return <MessagingExtensionActionResponse>
         {
             composeExtension: <MessagingExtensionResult> {
@@ -325,15 +439,26 @@ export class IntegrationBot extends TeamsActivityHandler {
                     }
             }
         }
+        */
     }
 
-    protected async handleTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings){
+    protected async handleTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings: MessagingExtensionQuery){
         // This event is fired when the settings page is submitted
-        await context.sendActivity(`onTeamsMessagingExtensionSettings event fired with ${ JSON.stringify(settings) }`);
-    }
+        const accessor = this.userState.createProperty<{ useHeroCard: boolean }>(RICH_CARD_PROPERTY);
+        const config = await accessor.get(context, { useHeroCard: true });
 
-    protected async handleTeamsO365ConnectorCardAction(context: TurnContext, query: O365ConnectorCardActionQuery): Promise<void> {
-        await context.sendActivity(MessageFactory.text(`O365ConnectorCardActionQuery event value: ${JSON.stringify(query)}`));
+        if (settings.state === 'hero') {
+            config.useHeroCard = true;
+        } 
+        else if (settings.state === 'thumbnail') {
+            config.useHeroCard = false;
+        }
+        else {
+            await context.sendActivity(`onTeamsMessagingExtensionSettings event fired with ${ JSON.stringify(settings) }`);
+        }
+
+        // We should save it after we send the message back to Teams.
+        await this.userState.saveChanges(context);
     }
 
     private async sendO365CardAttachment(context: TurnContext): Promise<void> {
@@ -626,23 +751,23 @@ export class IntegrationBot extends TeamsActivityHandler {
                     await this.sendAdaptiveCard3(context);
                     break;
 
-                case IntegrationBot.HeroCard.toLowerCase():
+                case HeroCard.toLowerCase():
                     reply = MessageFactory.attachment(this.getHeroCard());
                     break;
-                case IntegrationBot.ThumbnailCard.toLowerCase():
+                case ThumbnailCard.toLowerCase():
                     reply = MessageFactory.attachment(this.getThumbnailCard());
                     break;
-                case IntegrationBot.ReceiptCard.toLowerCase():
+                case ReceiptCard.toLowerCase():
                     reply = MessageFactory.attachment(this.getReceiptCard());
                     break;
-                case IntegrationBot.SigninCard.toLowerCase():
+                case SigninCard.toLowerCase():
                     reply = MessageFactory.attachment(this.getSigninCard());
                     break;
-                case IntegrationBot.Carousel.toLowerCase():
+                case Carousel.toLowerCase():
                     // NOTE: if cards are NOT the same height in a carousel, Teams will instead display as AttachmentLayoutTypes.List
                     reply = MessageFactory.carousel([this.getHeroCard(), this.getHeroCard(), this.getHeroCard()]);
                     break;
-                case IntegrationBot.List.toLowerCase():
+                case List.toLowerCase():
                     // NOTE: MessageFactory.Attachment with multiple attachments will default to AttachmentLayoutTypes.List
                     reply = MessageFactory.list([this.getHeroCard(), this.getHeroCard(), this.getHeroCard()]);
                     break;

@@ -6,7 +6,7 @@ import * as path from 'path';
 import * as restify from 'restify';
 
 // Import required bot services. See https://aka.ms/bot-services to learn more about the different parts of a bot.
-import { BotFrameworkAdapter } from 'botbuilder';
+import { BotFrameworkAdapter, MemoryStorage, UserState } from 'botbuilder';
 
 import { IntegrationBot } from './integrationBot';
 
@@ -46,13 +46,27 @@ adapter.onTurnError = async (context, error) => {
 
 const activityIds: string[] = [];
 
+// Define a state store for your bot. See https://aka.ms/about-bot-state to learn more about using MemoryStorage.
+// A bot requires a state store to persist the dialog and user state between messages.
+
+// For local development, in-memory storage is used.
+// CAUTION: The Memory Storage used here is for local bot debugging only. When the bot
+// is restarted, anything stored in memory will be gone.
+const memoryStorage = new MemoryStorage();
+const userState = new UserState(memoryStorage);
+
 // Create the bot.
-const myBot = new IntegrationBot(activityIds);
+const myBot = new IntegrationBot(userState, activityIds);
 
 if (nockHelper.isRecording()) {
-
     // Create HTTP server.
     const server = restify.createServer();
+    
+    server.get('/*', restify.plugins.serveStatic({
+        directory: path.join(__dirname, '../static'),
+        appendRequestPath: false
+    }));
+
     server.listen(process.env.port || process.env.PORT || 3978, () => {
         console.log(`\n${ server.name } listening to ${ server.url }`);
         console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
