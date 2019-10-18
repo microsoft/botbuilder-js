@@ -551,4 +551,20 @@ describe('LG', function () {
         // maybe has different values
         evaled = engine.evaluateTemplate('templateWithDifferentParams', { param1: 'ms', param2: 'newms' });
     });
+
+    it('TestConditionExpression', function () {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath("ConditionExpression.lg"));
+
+        var evaled = engine.evaluateTemplate('conditionTemplate', { num: 1 });
+        assert.equal(evaled, "Your input is one");
+        
+        evaled = engine.evaluateTemplate('conditionTemplate', { num: 2 });
+        assert.equal(evaled, "Your input is two");
+
+        evaled = engine.evaluateTemplate('conditionTemplate', { num: 3 });
+        assert.equal(evaled, "Your input is three");
+
+        evaled = engine.evaluateTemplate('conditionTemplate', { num: 4 });
+        assert.equal(evaled, "Your input is not one, two or three");
+    });
 });
