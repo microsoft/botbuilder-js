@@ -133,8 +133,8 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     private currentSource: string = '';
     private readonly baseExpressionEngine: ExpressionEngine;
     private _expressionParser: IExpressionParser;
-    private readonly expressionRecognizeRegex: RegExp = new RegExp(/@?(?<!\\)\{.+?(?<!\\)\}/g);
-    private readonly escapeSeperatorRegex : RegExp = new RegExp(/(?<!\\)\|/g);
+    private readonly expressionRecognizeRegex: RegExp = new RegExp(/\}(?!\\).+?\{(?!\\)@?/g);
+    private readonly escapeSeperatorRegex : RegExp = new RegExp(/\|(?!\\)/g);
 
     constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -270,8 +270,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
                             context: content}));
                     } else if (start > 0) {
                         const originValue: string = line.substr(start + 1).trim();
-
-                        const valueArray: string[] = originValue.split(this.escapeSeperatorRegex);
+                        const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, this.escapeSeperatorRegex);
                         if (valueArray.length === 1) {
                             result = result.concat(this.CheckText(originValue, context));
                         } else {
@@ -609,9 +608,13 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         }
 
         exp = exp.trim();
-        const expressions: RegExpMatchArray = exp.match(this.expressionRecognizeRegex);
-
-        return expressions !== null && expressions !== undefined && expressions.length === 1 && expressions[0] === exp;
+        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(this.expressionRecognizeRegex);
+        // If there is no match, expressions could be null
+        if (reversedExps === null || reversedExps === undefined || reversedExps.length !== 1) {
+            return false;
+        } else {
+            return reversedExps[0].split('').reverse().join('') === exp;
+        }
     }
 
 }

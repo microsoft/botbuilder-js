@@ -16,6 +16,7 @@ import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
 import { v4 as uuid } from 'uuid';
+import { Evaluator } from './evaluator';
 
 // tslint:disable-next-line: max-classes-per-file
 export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFileParserVisitor<string[]> {
@@ -24,8 +25,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly expanderExpressionEngine: ExpressionEngine;
     private readonly evaluatorExpressionEngine: ExpressionEngine;
-    private readonly expressionRecognizeRegex: RegExp = new RegExp(/@?(?<!\\)\{.+?(?<!\\)\}/g);
-    private readonly escapeSeperatorRegex : RegExp = new RegExp(/(?<!\\)\|/g);
+    private readonly expressionRecognizeRegex: RegExp = new RegExp(/\}(?!\\).+?\{(?!\\)@?/g);
+    private readonly escapeSeperatorRegex : RegExp = new RegExp(/\|(?!\\)/g);
 
     constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -126,7 +127,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 const property: string = line.substr(0, start).trim().toLowerCase();
                 const originValue: string = line.substr(start + 1).trim();
 
-                const valueArray: string[] = originValue.split(this.escapeSeperatorRegex);
+                const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, this.escapeSeperatorRegex);
                 if (valueArray.length === 1) {
                     const id = uuid();
                     result[property] = id;
@@ -483,7 +484,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
     private evalTextContainsExpression(exp: string) : string[] {
         const templateRefValues: Map<string, string[]> = new Map<string, string[]>();
-        const matches: string[] = exp.match(this.expressionRecognizeRegex);
+        const matches: string[] = exp.split('').reverse().join('').match(this.expressionRecognizeRegex).map(e => e.split('').reverse().join('')).reverse();;
         if (matches !== null && matches !== undefined) {
             for (const match of matches) {
                 templateRefValues.set(match, this.EvalExpression(match));
@@ -524,9 +525,13 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         }
 
         exp = exp.trim();
-        const expressions: RegExpMatchArray = exp.match(this.expressionRecognizeRegex);
-
+        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(this.expressionRecognizeRegex);
         // If there is no match, expressions could be null
-        return expressions !== null && expressions !== undefined && expressions.length === 1 && expressions[0] === exp;
+        if (reversedExps === null || reversedExps === undefined || reversedExps.length !== 1) {
+            return false;
+        } else {
+            return reversedExps[0].split('').reverse().join('') === exp;
+        }
+        
     }
 }

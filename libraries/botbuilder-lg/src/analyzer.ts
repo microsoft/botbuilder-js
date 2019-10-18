@@ -43,9 +43,9 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     public readonly TemplateMap: {[name: string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly _expressionParser: IExpressionParser;
-    private readonly escapeSeperatorRegex : RegExp = new RegExp(/(?<!\\)\|/g);
-    private readonly expressionRecognizeRegex: RegExp = new RegExp(/@?(?<!\\)\{.+?(?<!\\)\}/g);
-
+    private readonly escapeSeperatorRegex : RegExp = new RegExp(/\|(?!\\)/g);
+    private readonly expressionRecognizeRegex: RegExp = new RegExp(/\}(?!\\).+?\{(?!\\)@?/g);
+    
     constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
         this.Templates = templates;
@@ -118,8 +118,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
                 // make it insensitive
                 const property: string = line.substr(0, start).trim().toLowerCase();
                 const originValue: string = line.substr(start + 1).trim();
-
-                const valueArray: string[] = originValue.split(this.escapeSeperatorRegex);
+                const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, this.escapeSeperatorRegex);
                 if (valueArray.length === 1) {
                     result.union(this.AnalyzeText(originValue));
                 } else {
@@ -239,9 +238,11 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     private AnalyzeTextContainsExpression(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
-        const expressions: RegExpMatchArray = exp.match(this.expressionRecognizeRegex);
-        expressions.forEach((u: string) => result.union(this.AnalyzeExpression(exp)));
-
+        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(this.expressionRecognizeRegex);
+        const expressionsRaw = reversedExps.map(e => e.split('').reverse().join('')).reverse();
+        const expressions = expressionsRaw.filter(e => e.length > 0);
+        expressions.forEach((exp: string) => result.union(this.AnalyzeExpression(exp)));
+        
         return result;
     }
 
@@ -270,7 +271,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     private AnalyzeMultiLineText(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
         exp = exp.substr(3, exp.length - 6);
-        const matches: string[] = exp.match(/@?(?<!\\)\{.+?(?<!\\)\}/g);
+        const matches: string[] = exp.split('').reverse().join('').match(this.expressionRecognizeRegex).map(e => e.split('').reverse().join('')).reverse();
         for (const match of matches) {
             result.union(this.AnalyzeExpression(match));
         }
@@ -288,9 +289,12 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         }
 
         exp = exp.trim();
-        const expressions: RegExpMatchArray = exp.match(this.expressionRecognizeRegex);
-
+        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(this.expressionRecognizeRegex);
         // If there is no match, expressions could be null
-        return expressions !== null && expressions !== undefined && expressions.length === 1 && expressions[0] === exp;
+        if (reversedExps === null || reversedExps === undefined || reversedExps.length !== 1) {
+            return false;
+        } else {
+            return reversedExps[0].split('').reverse().join('') === exp;
+        }
     }
 }
