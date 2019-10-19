@@ -11,7 +11,7 @@ var OriginalHttpsRequest = https.request;
 var OriginalHttpRequest = http.request;
 var nock = require('nock');
 var fs = require('fs')
-var httpMocks = require('node-mocks-http');
+
 var botbuilder = require('botbuilder');
 var connector = require('botframework-connector');
 var NockClientRequest = http.ClientRequest; // HTTP ClientRequest mocked by Nock
@@ -19,12 +19,14 @@ var NockHttpsRequest = https.request;
 var  NockHttpRequest = http.request;
 var proxyhost = require('./nock-helper-proxyhost');
 var proxyplay = require('./nock-helper-proxyplay');
+var play = require('./nock-helper-play');
 
 exports.nock = nock;
 exports.testName = '';
 exports.testMode = ''; // RECORD | PLAY | PROXY_HOST | PROXY_PLAY
 exports.proxyRecordings = proxyhost.proxyRecordings;
 exports.proxyPlay = proxyplay.proxyPlay;
+exports.processRecordings = play.processRecordings;
 
 // $env:AZURE_NOCK_RECORD="true"
 exports.isRecording = function() {
@@ -88,7 +90,7 @@ exports.nockHttp = function(testNameDefault, recordingsPathRoot = './recordings'
             fs.appendFileSync(recordingsPathRoot + '/' + fileName('reply', testName), JSON.stringify(content) );
         }
 
-        nock.recorder.rec({output_objects: true,
+        nock.recorder.rec({output_objects: true,            
             dont_print: false,
             enable_reqheaders_recording: true,
             logging: nock_output_recording,
@@ -112,137 +114,15 @@ function isIncomingActivityRequest(req) {
     return false;
 }
 
-function setupInterceptorReplies(replies) {
-    if (replies == null || replies.length <= 0) {
-        return null;
-    }
-    var response = [];
-    replies.forEach((item) => {
-        var code = ``;
-        itemScopeNoPort = item.scope.substring(0, item.scope.lastIndexOf(':'));
-        code += `return nock('${item.scope}')\n`;
-        // Uncomment to debug matching logic.
-        //code += `  .log(console.log)\n`;
-        
 
-        // Set up interceptor with some validation on properties.
-        if ('content-length' in item.reqheaders) {
-            code += `  .matchHeader('content-length', '${item.reqheaders['content-length']}')\n`;
-        }
+exports.unNockHttp = function() {
+    http.ClientRequest = OriginalClientRequest;
+    http.request = OriginalHttpRequest;
+    https.request = OriginalHttpsRequest;
+};
 
-        code += `  .matchHeader('content-type', '${item.reqheaders['content-type']}')\n`;
-        if ('content-length' in item.reqheaders) {
-            code += `  .matchHeader('accept', '${item.reqheaders.accept}')\n`;
-        }
-
-        // Prepare URL
-        //    ie, `/amer/v3/conversations/../1569442142365`
-        // Last token (1569442142365) is variable, must be pulled off.
-        const lastToken = item.path.substring(item.path.lastIndexOf('/'));
-        const truncateLastToken = (/^\d+$/.test(lastToken) && lastToken.length == 13);
-        const pathNoLastElement = truncateLastToken ? item.path.substring(0, item.path.lastIndexOf('/')) : item.path;
-
-        if (truncateLastToken) {
-            code += `  .${item.method.toLowerCase()}(uri => uri.includes('${pathNoLastElement}'),\n`;
-        }
-        else {
-            code += `  .${item.method.toLowerCase()}('${pathNoLastElement}'`;
-        }
-
-        if (item.method.toLowerCase() == 'post') {
-            code += `,\n    function(body) {\n`;
-            // code += `       console.log('INSIDE BODY EVALUATION!!');\n`;
-
-            // Validate body type
-            if (item.body.hasOwnProperty('type')) { 
-                code += `      if ('${item.body.type}' != body.type) {\n`;
-                code += `        console.log('Body type does not match ${item.body.type} != ' + body.type);\n`;
-                code += `        return false;\n`;
-                code += `      }\n`;
-            }
-            // Validate Activity
-            if (item.body.hasOwnProperty('activity')) { 
-                code += `      if (${item.body.activity.hasOwnProperty('type')} && '${item.body.activity.type}' != body.activity.type) {\n`;
-                code += `        console.log('Activity type does not match ${item.body.activity.type} != ' + body.activity.type);\n`;
-                code += `        return false;\n`;
-                code += `      }\n`;
-                // Validate Activity attachments
-                if (item.body.activity.hasOwnProperty('attachments')) {
-                    code += `      if ('${JSON.stringify(item.body.activity.attachments)}' != JSON.stringify(body.activity.attachments)) {\n`;
-                    code += `        console.log('Activity attachments do not match ${JSON.stringify(item.body.activity.attachments)} != ' + JSON.stringify(body.activity.attachments));\n`;
-                    code += `        return false;\n`;
-                    code += `      }\n`;
-                }
-            }
-
-            // Validate ChannelData
-            if (item.body.hasOwnProperty('channelData') && item.body.channelData.hasOwnProperty('channel') 
-                && item.body.channelData.channel.hasOwnProperty('id')) { 
-                code += `      if ('${item.body.channelData.channel.id}' != body.channelData.channel.id) {\n`;
-                code += `        console.log('Channel data/channel id does not match ${JSON.stringify(item.body.channelData)} != ' + JSON.stringify(body.channelData));\n`;
-                code += `        return false;\n`;
-                code += `      }\n`;
-            }
-
-            // Validate from.name 
-            if (item.body.hasOwnProperty('from') && item.body.from.hasOwnProperty('name')) { 
-                code += `      if ('${item.body.from.name}' != body.from.name) {\n`;
-                code += `        console.log('From name does not match');\n`;
-                code += `        return false;\n`;
-                code += `      }\n`;
-            }
-            code += `      return true;\n`;
-            code += `    })\n`;
-            code += `  .reply(${item.status}, ${JSON.stringify(item.response)}, ${formatHeaders(item.rawHeaders)});\n`;
-        }
-        else {
-            code += `)\n`;
-            code += `  .reply(${item.status}, ${JSON.stringify(item.response)}, ${formatHeaders(item.rawHeaders)})\n`;
-        }
-        
-        // Uncomment to see generated Interceptor code.
-        // console.log('NOCK INTERCEPTOR CODE (replies count = ' + replies.length + '):\n' + code);
-        var interceptor = new Function('nock', code);
-        response.push(interceptor(nock));
-    });
-    return response;
-}
-
-function formatHeaders(rawHeaders) {
-    var headers = '{';
-    for (let i=0; i< rawHeaders.length-2; i=i+2) {
-        if (rawHeaders[i] == 'Content-Length') {
-            continue;
-        }
-        headers += '"' + rawHeaders[i] + '"' + ':' + '"' + rawHeaders[i+1] + '"';
-        if (i < rawHeaders.length - 4) {
-            headers += ',';
-        }
-    }
-    headers += '}';
-    return headers;
-}
-// Process Activities locally.
-async function playRecordings(activity, replies, adapter, myBot) { 
-    // Setup interceptor(s)
-    nock_interceptors = setupInterceptorReplies(replies);
-    
-    // Call bot
-    var request  = httpMocks.createRequest({
-        method: activity.method,
-        url: activity.url,
-        headers: activity.headers,
-        body: activity.body,
-    });   
-    var response = httpMocks.createResponse();
-
-    var adapt = new AdapterDisableAuth();
-    await adapt.processActivity(request, response, async (context) => {
-        // Route to main dialog.
-        await myBot.run(context);
-    });
-}
-
+// Parse all the sorted files and bundle them into Request/Replies
+// Used in proxy and local playback..
 exports.parseActivityBundles = function () {
     const sortedRecordings = fs.readdirSync("./recordings", "utf8")
                                 .map(item => {
@@ -287,23 +167,9 @@ exports.parseActivityBundles = function () {
     return activities;
 }
 
-
-exports.processRecordings = function(testName, adapter = null, myBot = null) {
-    const activityBundles = exports.parseActivityBundles();
-    activityBundles.forEach(async (activityBundle, index) => {
-        await playRecordings(activityBundle.activity, activityBundle.replies, adapter, myBot);
-    });
-    console.log('Process Recordings complete!');
-};
-
-exports.unNockHttp = function() {
-    http.ClientRequest = OriginalClientRequest;
-    http.request = OriginalHttpRequest;
-    https.request = OriginalHttpsRequest;
-};
-
-
-class AdapterDisableAuth extends botbuilder.BotFrameworkAdapter {
+// Adapter which disables authentication.  
+// Used in proxy and local playback..
+exports.AdapterDisableAuth = class AdapterDisableAuth extends botbuilder.BotFrameworkAdapter {
     constructor(settings) {
         super(settings);
     }
@@ -313,6 +179,7 @@ class AdapterDisableAuth extends botbuilder.BotFrameworkAdapter {
         return true;
     }
 }
+
 
 exports.unNockHttp(); // Revert the nock change so that tests by default run with the original, unmocked http request objects
 

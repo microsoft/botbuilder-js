@@ -83,6 +83,19 @@ exports.proxyRecordings = function() {
         return next(false);
     });
 
+    server.put({
+        path: '/v3/conversations/*',
+        contentType: 'application/json; charset=utf-8'
+    },
+    (req, res, next) => {
+        //validateHeaders(req);
+        processPutReply(req, res, clientSessions[req.connection.remoteAddress], true);
+        const response = { id: "1"};
+        res.send(response);
+        return next(false);
+    });
+
+
 }
 
 
@@ -124,6 +137,18 @@ function processGetReply(req, res, clientSession) {
 
     // Not much to validate here
     assert(reply.method.toLowerCase() == 'get');
+
+    // Increment for next reply
+    clientSession.reply_index = clientSession.reply_index + 1;
+}
+
+function processPutReply(req, res, clientSession) {
+    const recordedActivity = clientSession.recordedActivities[clientSession.activityIndex];
+    console.log(`Processing reply ${clientSession.reply_index + 1} of ${recordedActivity.replies.length}`);
+    const reply = recordedActivity.replies[clientSession.reply_index];
+
+    // Not much to validate here
+    assert(JSON.stringify(reply) == JSON.stringify(req.body));
 
     // Increment for next reply
     clientSession.reply_index = clientSession.reply_index + 1;

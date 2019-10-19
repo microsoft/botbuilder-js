@@ -93,9 +93,67 @@ To create the use the proxy host, perform the following:
 npm start
 ```
 ## Recording Script 
-1. Link Unfurl: Type "https://foo.com" (or some URL with https) in the client.  Should see
-2. Action Based Messaging Extension - Fetch Task:
-   1. Click on Menu
+1. Action Based Messaging Extension - Fetch Task
+
+   a. Enter a Teams **channel** (other than "General") where the bot is registered.
+
+   b. click on triple dots (". . .") menu at bottom of compose window.
+
+   c. Select "Integration Bot"
+
+   d. Click on "+" to the right of the title.  A menu should pop up.
+
+   e. Click on "Create cards with preview"
+
+   f. Type a question in the "Enter text for Question" (ie, What is your phone?)
+
+   g. Select "Is Multi-Select" to False
+
+   h. Enter three options to choose from (ie, Android, Apple, Other).
+
+   i. Click the "Submit" button  This should take you to a different dialog.
+
+   j. Click on the "Edit" button.  This should return you back to the original screen (with question and options you originally typed in)
+
+   k. Click "Submit" button a second time.
+
+   l. Click "Send"
+
+   Validate: You should see the same card posted in 3 areas: 
+
+   1. Your compose window
+   2. The Channel you are currently in.
+   3. The General channel for the team.
+
+2. Link Unfurl: 
+
+   a. Type `@Integration Bot https://foo.com` (Integration Bot being the name of the registered bot.)
+
+   b. Type a space after the 'm' in '.com'.
+
+   Validate: You should see a hero card with "HeroCard for Link Unfurling" with "You entered https://foo.com"
+
+   c. Hit enter.  
+   Validate: The bot should reply with "You said 'https://foo.com''"
+
+3.  Add/Delete Users
+
+   1. On a Team where the bot is registered, click on the ". . ." menu next to the name -> Add member.
+   2. Select a user to add to the team.
+   3. Validate: A message should be posted to the "General" channel with "Account Added" message.
+   4. Remove the user from the team.
+   5. Validate: A message should be posted to the "General" channel with "Account Removed" message.
+
+4. Rename Events
+
+   1. On a Team where the bot is registered, click on the ". . ." menu next to the name -> "Edit Team".
+   2. Under "Team name" rename the team.
+   3. Validate: A message should be posted to the "General" channel with "Team Renamed" message.
+   4. On a Team **Channel** where the bot is registered, click on the ". . ." menu next to the name -> "Edit Channel".
+   5. Under "Channel name" rename the channel.
+   6. Validate: A message should be posted to the "General" channel with "Channel Renamed" message
+
+5. 
 
 ## Prerequisites
 
