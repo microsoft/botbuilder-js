@@ -5,12 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as http from 'http';
-import * as WaterShed from 'watershed';
+
+import { IncomingMessage, request } from 'http';
+import { Socket } from 'net';
+import { Watershed } from 'watershed';
 import { ISocket } from '../interfaces/ISocket';
 
+const SHED = new Watershed();
+
 export class NodeWebSocket implements ISocket {
-    private readonly waterShedSocket: any;
+    private waterShedSocket: any;
     private connected: boolean;
 
     /**
@@ -21,6 +25,17 @@ export class NodeWebSocket implements ISocket {
     public constructor(waterShedSocket?) {
         this.waterShedSocket = waterShedSocket;
         this.connected = !!waterShedSocket;
+    }
+
+    /**
+     * Create and set a WaterShed WebSocket with an HTTP Request, Socket and Buffer.
+     * @param req IncomingMessage
+     * @param socket Socket
+     * @param head Buffer
+     */
+    public create(req: IncomingMessage, socket: Socket, head: Buffer): void {
+        this.waterShedSocket = SHED.accept(req, socket, head);
+        this.connected = true;
     }
 
     /**
@@ -47,9 +62,8 @@ export class NodeWebSocket implements ISocket {
      */
     public async connect(serverAddress, port = 8082): Promise<void> {
         // Following template from https://github.com/joyent/node-watershed#readme
-        let shed = new WaterShed.Watershed();
-        let wskey = shed.generateKey();
-        let options = {
+        const wskey = SHED.generateKey();
+        const options = {
             port: port,
             hostname: serverAddress,
             headers: {
@@ -58,10 +72,10 @@ export class NodeWebSocket implements ISocket {
                 'Sec-WebSocket-Version': '13'
             }
         };
-        let req = http.request(options);
+        const req = request(options);
         req.end();
         req.on('upgrade', function(res, socket, head): void {
-            shed.connect(res, socket, head, wskey);
+            SHED.connect(res, socket, head, wskey);
         });
 
         this.connected = true;
