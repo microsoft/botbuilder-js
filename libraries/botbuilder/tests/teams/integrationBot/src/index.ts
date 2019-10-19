@@ -15,6 +15,7 @@ import { TeamsTenantFilteringMiddleware  } from './teamsTenantFilteringMiddlewar
 
 // Set up Nock
 import * as nockHelper from './../src/nock-helper/nock-helper';
+import { ActivityLog } from './activityLog';
 nockHelper.nockHttp('integrationBot')
 
 
@@ -54,9 +55,10 @@ const activityIds: string[] = [];
 // is restarted, anything stored in memory will be gone.
 const memoryStorage = new MemoryStorage();
 const userState = new UserState(memoryStorage);
+const activityLog = new ActivityLog(memoryStorage);
 
 // Create the bot.
-const myBot = new IntegrationBot(userState, activityIds);
+const myBot = new IntegrationBot(userState, activityIds, activityLog);
 
 if (nockHelper.isRecording()) {
     // Create HTTP server.

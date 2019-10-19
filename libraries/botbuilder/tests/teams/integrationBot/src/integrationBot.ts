@@ -71,16 +71,16 @@ export class IntegrationBot extends TeamsActivityHandler {
     protected cardTypes: string[];
     protected _log: ActivityLog;
 
-
     
     /*
      * After installing this bot you will need to click on the 3 dots to pull up the extension menu to select the bot. Once you do you do
      * see the extension pop a task module.
      */
-    constructor(public userState: BotState, activityIds: string[]) {
+    constructor(public userState: BotState, activityIds: string[], activityLog: ActivityLog) {
         super();
         this.activityIds = activityIds;
         this.cardTypes = [ HeroCard, ThumbnailCard, ReceiptCard, SigninCard, Carousel, List];
+        this._log = activityLog
         
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
