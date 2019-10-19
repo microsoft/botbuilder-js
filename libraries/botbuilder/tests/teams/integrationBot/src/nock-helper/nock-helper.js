@@ -1,22 +1,26 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-
-const assert = require('assert');
+// Implements TEST_MODE=RECORD
+//
+// Sets up nock http hooks to intercept and record the traffic (as json files)
+// in the ./recordings directory and runs the bot as normal.
+//
+// You can send the bot "exit" and the bot will exit gracefully.
+//
+// The bottom of this file contains some common helper functions/class.
+//
 var https = require('https');
 var http = require('http');
-var restify = require('restify');
+var nock = require('nock');
+var fs = require('fs')
 var OriginalClientRequest = http.ClientRequest; // HTTP ClientRequest before mocking by Nock
 var OriginalHttpsRequest = https.request;
 var OriginalHttpRequest = http.request;
-var nock = require('nock');
-var fs = require('fs')
-
-var botbuilder = require('botbuilder');
-var connector = require('botframework-connector');
 var NockClientRequest = http.ClientRequest; // HTTP ClientRequest mocked by Nock
 var NockHttpsRequest = https.request;
 var  NockHttpRequest = http.request;
+var botbuilder = require('botbuilder');
 var proxyhost = require('./nock-helper-proxyhost');
 var proxyplay = require('./nock-helper-proxyplay');
 var play = require('./nock-helper-play');

@@ -1,6 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+// Implements TEST_MODE=PROXY_PLAY
+//
+// Initiates a REST call against the proxy which runs all the tests.  This
+// essentially is just the plain bot running that happens to call a REST API
+// after the bot is up and running.
+// 
+
 var https = require('https');
 var http = require('http');
 var restify = require('restify');

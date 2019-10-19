@@ -1,6 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+// Implements TEST_MODE=PLAY
+//
+// Loads all the recordings (json files) in the ./recordings directory
+// and drives traffic to the bot.  It intercepts all external service calls 
+// (captured in the recordings) and responds based on what's in the recording.
+//
+// Validates the traffic matches.
+
 var nockhelper = require('./nock-helper');
 var https = require('https');
 var http = require('http');
@@ -103,7 +111,7 @@ function setupInterceptorReplies(replies) {
         }
         
         // Uncomment to see generated Interceptor code.
-        console.log('NOCK INTERCEPTOR CODE (replies count = ' + replies.length + '):\n' + code);
+        //console.log('NOCK INTERCEPTOR CODE (replies count = ' + replies.length + '):\n' + code);
         var interceptor = new Function('nock', code);
         response.push(interceptor(nock));
     });

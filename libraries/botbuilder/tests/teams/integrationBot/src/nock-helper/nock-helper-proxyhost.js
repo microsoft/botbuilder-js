@@ -1,6 +1,20 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+// Implements TEST_MODE=PROXY_HOST
+//
+// Emulates the Teams Server to initiate traffic to a remote bot.
+// Since traffic is normally initiated from the Teams->Server to the
+// bot somethign is required to begin the bot traffic.  This is done by
+// exposing a GET /api/runtests REST call which synchronously runs all
+// the tests.
+//
+// This proxy host simply loads the JSON recordings and invokes the same
+// traffic pattern in order.  Also validates the traffic matches.
+//
+// The proxy also exposes all the endpoints that the Teams Server does
+// to capture and respond to replies from the Bot with the recorded data.
+//
 const assert = require('assert');
 var restify = require('restify');
 var nockhelper = require('./nock-helper');
@@ -95,10 +109,10 @@ exports.proxyRecordings = function() {
         return next(false);
     });
 
-
 }
 
-
+// Represents an active test session that's executing.
+// Stores how far we've progressed in the recordings.
 class ProxySession {
     constructor(testName, clientAddress) {
         this.testName = testName;
