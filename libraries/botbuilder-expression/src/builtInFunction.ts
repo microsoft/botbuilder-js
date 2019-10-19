@@ -27,7 +27,7 @@ import * as jsPath from 'jspath';
  * @param expression Expression that produced value.
  * @param child Index of child expression.
  */
-export type VerifyExpression = (value: any, expression: Expression, child: number) => string;
+export type VerifyExpression = (value: any, expression: Expression, child: number) => string | undefined;
 
 /**
  *  <summary>
@@ -1892,7 +1892,7 @@ export class BuiltInFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.CountWord,
-                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].trim().split(/\s+/).length, BuiltInFunctions.VerifyString),
+                BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].trim().split(/verifys+/).length, BuiltInFunctions.VerifyString),
                 ReturnType.Number,
                 BuiltInFunctions.ValidateUnaryString
             ),

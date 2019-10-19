@@ -130,8 +130,8 @@ export class TemplateEngine {
     }
 
     private readonly runStaticCheck = (templates: LGTemplate[]): void => {
-        const teamplatesToCheck: LGTemplate[] = templates === undefined ? this.templates : templates;
-        const diagnostics: Diagnostic[] = new StaticChecker().checkTemplates(teamplatesToCheck);
+        const templatesToCheck: LGTemplate[] = templates === undefined ? this.templates : templates;
+        const diagnostics: Diagnostic[] = new StaticChecker(this.expressionEngine).checkTemplates(templatesToCheck);
 
         const errors: Diagnostic[] = diagnostics.filter((u: Diagnostic) => u.Severity === DiagnosticSeverity.Error);
         if (errors.length > 0) {
