@@ -114,7 +114,7 @@ function processPostReply(req, res, clientSession, session = false) {
     const recordedActivity = clientSession.recordedActivities[clientSession.activityIndex];
     console.log(`Processing reply ${clientSession.reply_index + 1} of ${recordedActivity.replies.length}`);
     const recordedReply = recordedActivity.replies[clientSession.reply_index];
-
+    const reply = recordedActivity.replies[clientSession.reply_index];
 
     if (session) {
         // Validating a session requires a little bit more finesse
@@ -147,8 +147,15 @@ function processPutReply(req, res, clientSession) {
     console.log(`Processing reply ${clientSession.reply_index + 1} of ${recordedActivity.replies.length}`);
     const reply = recordedActivity.replies[clientSession.reply_index];
 
-    // Not much to validate here
-    assert(JSON.stringify(reply) == JSON.stringify(req.body));
+    // Validate contents
+    var recordedBody = Object.getOwnPropertyNames(reply.body);
+    var excludedProperties = ['id', 'serviceUrl']; // Filter proxy-altered properties
+    for (prop in recordedBody) {
+        if (prop in excludedProperties) {
+            continue;
+        }
+        assert(JSON.stringify(req.body[prop]) == JSON.stringify(reply.body[prop]));
+    }
 
     // Increment for next reply
     clientSession.reply_index = clientSession.reply_index + 1;
