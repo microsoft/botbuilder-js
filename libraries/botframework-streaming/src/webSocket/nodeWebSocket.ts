@@ -35,6 +35,7 @@ export class NodeWebSocket implements ISocket {
      */
     public create(req: IncomingMessage, socket: Socket, head: Buffer): void {
         this.waterShedSocket = SHED.accept(req, socket, head);
+        this.connected = true;
     }
 
     /**
