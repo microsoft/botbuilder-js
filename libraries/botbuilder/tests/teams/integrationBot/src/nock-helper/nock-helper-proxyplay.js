@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
@@ -8,6 +7,8 @@
 // essentially is just the plain bot running that happens to call a REST API
 // after the bot is up and running.
 // 
+
+/* eslint-disable @typescript-eslint/no-var-requires */
 
 var restify = require('restify');
 var nockhelper = require('./nock-helper');

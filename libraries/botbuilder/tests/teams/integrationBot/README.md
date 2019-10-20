@@ -93,91 +93,97 @@ To create the use the proxy host, perform the following:
 npm start
 ```
 ## Recording Script 
-1. Action Based Messaging Extension - Fetch Task
+- Action Based Messaging Extension - Fetch Task
 
-   a. Enter a Teams **channel** (other than "General") where the bot is registered.
+  - Enter a Teams **channel** (other than "General") where the bot is registered.
 
-   b. click on triple dots (". . .") menu at bottom of compose window.
+  - Click on triple dots (". . .") menu at bottom of compose window.
 
-   c. Select "Integration Bot"
+  - Select "Integration Bot"
 
-   d. Click on "+" to the right of the title.  A menu should pop up.
+  - Click on "+" to the right of the title.  A menu should pop up.
 
-   e. Click on "Create cards with preview"
+  - Click on "Create cards with preview"
 
-   f. Type a question in the "Enter text for Question" (ie, What is your phone?)
+  - Type a question in the "Enter text for Question" (ie, What is your phone?)
 
-   g. Select "Is Multi-Select" to False
+  - Select "Is Multi-Select" to False
 
-   h. Enter three options to choose from (ie, Android, Apple, Other).
+  - Enter three options to choose from (ie, Android, Apple, Other).
 
-   i. Click the "Submit" button  This should take you to a different dialog.
+  - Click the "Submit" button  This should take you to a different dialog.
 
-   j. Click on the "Edit" button.  This should return you back to the original screen (with question and options you originally typed in)
+  - Click on the "Edit" button.  This should return you back to the original screen (with question and options you originally typed in)
 
-   k. Click "Submit" button a second time.
+  - Click "Submit" button a second time.
 
-   l. Click "Send"
+  - Click "Send"
+  - **Validate:** You should see the same card posted in 3 areas: 
 
-   Validate: You should see the same card posted in 3 areas: 
+  - Your compose window
 
-   1. Your compose window
-   2. The Channel you are currently in.
-   3. The General channel for the team.
+  - The Channel you are currently in.
 
-2. Link Unfurl: 
+  - The General channel for the team.
 
-   a. Type `@Integration Bot https://foo.com` (Integration Bot being the name of the registered bot.)
+  - Click Submit on one of the cards.
 
-   b. Type a space after the 'm' in '.com'.
+  - **Validate**: You should see a message something lik:
 
-   Validate: You should see a hero card with "HeroCard for Link Unfurling" with "You entered https://foo.com"
+    `App sent a message with empty  text but with value {"submitLocation":"messagingExtensionSubmit", "Answer":""}`
 
-   c. Hit enter.  
-   Validate: The bot should reply with "You said 'https://foo.com''"
+- Link Unfurl: 
 
-3.  Add/Delete Users
+  -  Type `@Integration Bot https://foo.com` (Integration Bot being the name of the registered bot.)
 
-   1. On a Team where the bot is registered, click on the ". . ." menu next to the name -> Add member.
-   2. Select a user to add to the team.
-   3. Validate: A message should be posted to the "General" channel with "Account Added" message.
-   4. Remove the user from the team.
-   5. Validate: A message should be posted to the "General" channel with "Account Removed" message.
+  - Type a space after the 'm' in '.com'.
+  - **Validate**: You should see a hero card with "HeroCard for Link Unfurling" with "You entered https://foo.com"
 
-4. Rename Events
+  - Hit enter.  
+  - Validate: The bot should reply with "You said 'https://foo.com''"
 
-   1. On a Team where the bot is registered, click on the ". . ." menu next to the name -> "Edit Team".
-   2. Under "Team name" rename the team.
-   3. Validate: A message should be posted to the "General" channel with "Team Renamed" message.
-   4. On a Team **Channel** where the bot is registered, click on the ". . ." menu next to the name -> "Edit Channel".
-   5. Under "Channel name" rename the channel.
-   6. Validate: A message should be posted to the "General" channel with "Channel Renamed" message
+-  Add/Delete Users
 
-5. Add Channel Event
+  - On a Team where the bot is registered, click on the ". . ." menu next to the name -> Add member.
+  - Select a user to add to the team.
+  - **Validate**: A message should be posted to the "General" channel with "Account Added" message.
+  - Remove the user from the team.
+  - **Validate**: A message should be posted to the "General" channel with "Account Removed" message.
 
-   1. On a Team where the bot is registered, click on the ". . ." menu next to the name -> "Add Channel".
-   2. Under "Channel name" type a new channel.
-   3. Validate: A message should be posted to the "General" channel with "Channel Created" message
+- Rename Events
 
-6. Delete channel Event
+  - On a Team where the bot is registered, click on the ". . ." menu next to the name -> "Edit Team".
+  - Under "Team name" rename the team.
+  - **Validate**: A message should be posted to the "General" channel with "Team Renamed" message.
+  - On a Team **Channel** where the bot is registered, click on the ". . ." menu next to the name -> "Edit Channel".
+  - Under "Channel name" rename the channel.
+  - **Validate**: A message should be posted to the "General" channel with "Channel Renamed" message
 
-   1. On a Team Channel where the bot is registered, click on the ". . ." menu next to the name -> "Delete this channel".
-   2. Click on Delete.
-   3. Validate: A message should be posted to the "General" channel with "Channel Deleted" message
+- Add Channel Event
 
-7. Add member to Group Chat
+  - On a Team where the bot is registered, click on the ". . ." menu next to the name -> "Add Channel".
+  - Under "Channel name" type a new channel.
+  - **Validate**: A message should be posted to the "General" channel with "Channel Created" message
 
-   1. On a Teams Group Chat, add a member (click on the icon with people and plus sign towards the top left of the UI)
-   2. Add a new user.
-   3. Validate: A message should be posted to the group chat with "Member Added" message.
+- Delete channel Event
 
-8. Remove member from Group Chat
+  - On a Team Channel where the bot is registered, click on the ". . ." menu next to the name -> "Delete this channel".
+  - Click on Delete.
+  - **Validate**: A message should be posted to the "General" channel with "Channel Deleted" message
 
-   1. On a Teams Group Chat, click on the icon with people and plus sign towards the top left of the UI.
-   2. Click the "X" to the right of a user to remove the user.
-   3. Validate: A message should be posted to the group chat with "Member Removed" message.
+- Add member to Group Chat
 
-   
+  - On a Teams Group Chat, add a member (click on the icon with people and plus sign towards the top left of the UI)
+  - Add a new user.
+  - **Validate**: A message should be posted to the group chat with "Member Added" message.
+
+- Remove member from Group Chat
+
+  - On a Teams Group Chat, click on the icon with people and plus sign towards the top left of the UI.
+  - Click the "X" to the right of a user to remove the user.
+  - **Validate**: A message should be posted to the group chat with "Member Removed" message.
+
+  
 
 ## Prerequisites
 

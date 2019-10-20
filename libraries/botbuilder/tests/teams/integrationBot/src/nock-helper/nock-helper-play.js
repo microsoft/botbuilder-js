@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
@@ -9,6 +8,8 @@
 // (captured in the recordings) and responds based on what's in the recording.
 //
 // Validates the traffic matches.
+
+/* eslint-disable @typescript-eslint/no-var-requires */
 
 var nockhelper = require('./nock-helper');
 var nock = require('nock');
@@ -121,7 +122,6 @@ function setupInterceptorReplies(replies) {
 // First sets up all the anticipated external calls (interceptors)
 // and then calls the adapter to invoke the bot.
 async function playRecordings(activity, replies, adapter, myBot) { 
-    // Setup interceptor(s)
     // eslint-disable-next-line @typescript-eslint/camelcase
     nock_interceptors = setupInterceptorReplies(replies);
     

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
@@ -16,12 +15,19 @@
 // The proxy also exposes all the endpoints that the Teams Server does
 // to capture and respond to replies from the Bot with the recorded data.
 //
+// Note: Authentication not supported.
+//
+
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 const assert = require('assert');
 var restify = require('restify');
 var nockhelper = require('./nock-helper');
 
 const clientSessions = {};
 
+// Start the http server and listen for test run requests.
+// Also expose all endpoints to simulate the Teams server.
 exports.proxyRecordings = function() {
     const server = restify.createServer();
     server.use(restify.plugins.queryParser());

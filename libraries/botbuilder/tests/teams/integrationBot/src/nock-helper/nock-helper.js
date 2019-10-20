@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
-/* eslint-disable @typescript-eslint/no-var-requires */
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
@@ -12,6 +10,8 @@
 //
 // The bottom of this file contains some common helper functions/class.
 //
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable @typescript-eslint/no-var-requires */
 
 var https = require('https');
 var http = require('http');
@@ -35,11 +35,9 @@ exports.proxyRecordings = proxyhost.proxyRecordings;
 exports.proxyPlay = proxyplay.proxyPlay;
 exports.processRecordings = play.processRecordings;
 
-// $env:AZURE_NOCK_RECORD="true"
 exports.isRecording = function() {
     return process.env.TEST_MODE === 'RECORD' ? true : false;
 };
-
 exports.isPlaying = function() {
     return process.env.TEST_MODE === 'PLAY' ? true : false;
 };
