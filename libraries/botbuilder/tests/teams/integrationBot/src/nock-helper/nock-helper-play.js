@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
@@ -10,8 +11,6 @@
 // Validates the traffic matches.
 
 var nockhelper = require('./nock-helper');
-var https = require('https');
-var http = require('http');
 var nock = require('nock');
 var httpMocks = require('node-mocks-http');
 
@@ -30,19 +29,19 @@ function setupInterceptorReplies(replies) {
     replies.forEach((item) => {
         var code = ``;
         itemScopeNoPort = item.scope.substring(0, item.scope.lastIndexOf(':'));
-        code += `return nock('${item.scope}')\n`;
+        code += `return nock('${ item.scope }')\n`;
         // Uncomment to debug matching logic.
         //code += `  .log(console.log)\n`;
         
 
         // Set up interceptor with some validation on properties.
         if ('content-length' in item.reqheaders) {
-            code += `  .matchHeader('content-length', '${item.reqheaders['content-length']}')\n`;
+            code += `  .matchHeader('content-length', '${ item.reqheaders['content-length'] }')\n`;
         }
 
-        code += `  .matchHeader('content-type', '${item.reqheaders['content-type']}')\n`;
+        code += `  .matchHeader('content-type', '${ item.reqheaders['content-type'] }')\n`;
         if ('content-length' in item.reqheaders) {
-            code += `  .matchHeader('accept', '${item.reqheaders.accept}')\n`;
+            code += `  .matchHeader('accept', '${ item.reqheaders.accept }')\n`;
         }
 
         // Prepare URL
@@ -53,10 +52,10 @@ function setupInterceptorReplies(replies) {
         const pathNoLastElement = truncateLastToken ? item.path.substring(0, item.path.lastIndexOf('/')) : item.path;
 
         if (truncateLastToken) {
-            code += `  .${item.method.toLowerCase()}(uri => uri.includes('${pathNoLastElement}'),\n`;
+            code += `  .${ item.method.toLowerCase() }(uri => uri.includes('${ pathNoLastElement }'),\n`;
         }
         else {
-            code += `  .${item.method.toLowerCase()}('${pathNoLastElement}'`;
+            code += `  .${ item.method.toLowerCase() }('${ pathNoLastElement }'`;
         }
 
         if (item.method.toLowerCase() == 'post') {
@@ -65,21 +64,21 @@ function setupInterceptorReplies(replies) {
 
             // Validate body type
             if (item.body.hasOwnProperty('type')) { 
-                code += `      if ('${item.body.type}' != body.type) {\n`;
-                code += `        console.log('Body type does not match ${item.body.type} != ' + body.type);\n`;
+                code += `      if ('${ item.body.type }' != body.type) {\n`;
+                code += `        console.log('Body type does not match ${ item.body.type } != ' + body.type);\n`;
                 code += `        return false;\n`;
                 code += `      }\n`;
             }
             // Validate Activity
             if (item.body.hasOwnProperty('activity')) { 
-                code += `      if (${item.body.activity.hasOwnProperty('type')} && '${item.body.activity.type}' != body.activity.type) {\n`;
-                code += `        console.log('Activity type does not match ${item.body.activity.type} != ' + body.activity.type);\n`;
+                code += `      if (${ item.body.activity.hasOwnProperty('type') } && '${ item.body.activity.type }' != body.activity.type) {\n`;
+                code += `        console.log('Activity type does not match ${ item.body.activity.type } != ' + body.activity.type);\n`;
                 code += `        return false;\n`;
                 code += `      }\n`;
                 // Validate Activity attachments
                 if (item.body.activity.hasOwnProperty('attachments')) {
-                    code += `      if ('${JSON.stringify(item.body.activity.attachments)}' != JSON.stringify(body.activity.attachments)) {\n`;
-                    code += `        console.log('Activity attachments do not match ${JSON.stringify(item.body.activity.attachments)} != ' + JSON.stringify(body.activity.attachments));\n`;
+                    code += `      if ('${ JSON.stringify(item.body.activity.attachments) }' != JSON.stringify(body.activity.attachments)) {\n`;
+                    code += `        console.log('Activity attachments do not match ${ JSON.stringify(item.body.activity.attachments) } != ' + JSON.stringify(body.activity.attachments));\n`;
                     code += `        return false;\n`;
                     code += `      }\n`;
                 }
@@ -88,26 +87,26 @@ function setupInterceptorReplies(replies) {
             // Validate ChannelData
             if (item.body.hasOwnProperty('channelData') && item.body.channelData.hasOwnProperty('channel') 
                 && item.body.channelData.channel.hasOwnProperty('id')) { 
-                code += `      if ('${item.body.channelData.channel.id}' != body.channelData.channel.id) {\n`;
-                code += `        console.log('Channel data/channel id does not match ${JSON.stringify(item.body.channelData)} != ' + JSON.stringify(body.channelData));\n`;
+                code += `      if ('${ item.body.channelData.channel.id }' != body.channelData.channel.id) {\n`;
+                code += `        console.log('Channel data/channel id does not match ${ JSON.stringify(item.body.channelData) } != ' + JSON.stringify(body.channelData));\n`;
                 code += `        return false;\n`;
                 code += `      }\n`;
             }
 
             // Validate from.name 
             if (item.body.hasOwnProperty('from') && item.body.from.hasOwnProperty('name')) { 
-                code += `      if ('${item.body.from.name}' != body.from.name) {\n`;
+                code += `      if ('${ item.body.from.name }' != body.from.name) {\n`;
                 code += `        console.log('From name does not match');\n`;
                 code += `        return false;\n`;
                 code += `      }\n`;
             }
             code += `      return true;\n`;
             code += `    })\n`;
-            code += `  .reply(${item.status}, ${JSON.stringify(item.response)}, ${formatHeaders(item.rawHeaders)});\n`;
+            code += `  .reply(${ item.status }, ${ JSON.stringify(item.response) }, ${ formatHeaders(item.rawHeaders) });\n`;
         }
         else {
             code += `)\n`;
-            code += `  .reply(${item.status}, ${JSON.stringify(item.response)}, ${formatHeaders(item.rawHeaders)})\n`;
+            code += `  .reply(${ item.status }, ${ JSON.stringify(item.response) }, ${ formatHeaders(item.rawHeaders) })\n`;
         }
         
         // Uncomment to see generated Interceptor code.
@@ -123,6 +122,7 @@ function setupInterceptorReplies(replies) {
 // and then calls the adapter to invoke the bot.
 async function playRecordings(activity, replies, adapter, myBot) { 
     // Setup interceptor(s)
+    // eslint-disable-next-line @typescript-eslint/camelcase
     nock_interceptors = setupInterceptorReplies(replies);
     
     // Call bot
@@ -146,6 +146,7 @@ async function playRecordings(activity, replies, adapter, myBot) {
 // and the play each bot invocation.
 exports.processRecordings = function(testName, adapter = null, myBot = null) {
     const activityBundles = nockhelper.parseActivityBundles();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     activityBundles.forEach(async (activityBundle, index) => {
         await playRecordings(activityBundle.activity, activityBundle.replies, adapter, myBot);
     });

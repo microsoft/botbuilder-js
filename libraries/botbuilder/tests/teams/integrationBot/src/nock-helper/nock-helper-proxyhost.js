@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
@@ -26,10 +27,10 @@ exports.proxyRecordings = function() {
     server.use(restify.plugins.queryParser());
     server.use(restify.plugins.bodyParser());
     server.listen(3979, '0.0.0.0', () => {
-        console.log(`\n${server.name} listening to ${server.url}`);
-        console.log(`\nHosting recordings.\n  To trigger begin of testing, hit ${server.url}/api/runtests.`);
+        console.log(`\n${ server.name } listening to ${ server.url }`);
+        console.log(`\nHosting recordings.\n  To trigger begin of testing, hit ${ server.url }/api/runtests.`);
         console.log(`  In another console, start test with TEST_MODE=PLAY_SERVER, PLAY_HOST=<ip addr>.`);
-        console.log('  You may have collision on https port.  To mitigate that, ngrok http -host-header=rewrite 3979')
+        console.log('  You may have collision on https port.  To mitigate that, ngrok http -host-header=rewrite 3979');
     });
     
     // Listen for incoming requests.
@@ -45,7 +46,7 @@ exports.proxyRecordings = function() {
 
         // Only one test running per client host.
         if (remoteAddress in clientSessions) {
-            const errorMsg = `FAIL: Session already running from client ${removeAddress}.`;
+            const errorMsg = `FAIL: Session already running from client ${ removeAddress }.`;
             console.log(errorMsg);
 
             // Send back to client.
@@ -53,12 +54,17 @@ exports.proxyRecordings = function() {
             return next(false);
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
         const session = new ProxySession(testName, remoteAddress);
         clientSessions[req.connection.remoteAddress] = session;
         await processHostRecordings(session);
-        const response = { id: "1"};
+        const response = { id: '1'};
         res.send(response);
+        
         delete clientSessions[req.connection.remoteAddress];
+        console.log('---------------------------');
+        console.log('TEST RUN SESSION COMPLETED!');
+        console.log('---------------------------');
         return next(false);
     });
 
@@ -69,7 +75,7 @@ exports.proxyRecordings = function() {
     (req, res, next) => {
         //validateHeaders(req);
         processPostReply(req, res, clientSessions[req.connection.remoteAddress]);
-        const response = { id: "1"};
+        const response = { id: '1'};
         res.send(response);
         return next(false);
     });
@@ -81,7 +87,7 @@ exports.proxyRecordings = function() {
     (req, res, next) => {
         //validateHeaders(req);
         processPostReply(req, res, clientSessions[req.connection.remoteAddress], true);
-        const response = { id: "1"};
+        const response = { id: '1'};
         res.send(response);
         return next(false);
     });
@@ -92,7 +98,7 @@ exports.proxyRecordings = function() {
     },
     (req, res, next) => {
         processGetReply(req, res, clientSessions[req.connection.remoteAddress]);
-        const response = { id: "1"};
+        const response = { id: '1'};
         res.send(response);
         return next(false);
     });
@@ -104,12 +110,12 @@ exports.proxyRecordings = function() {
     (req, res, next) => {
         //validateHeaders(req);
         processPutReply(req, res, clientSessions[req.connection.remoteAddress], true);
-        const response = { id: "1"};
+        const response = { id: '1'};
         res.send(response);
         return next(false);
     });
 
-}
+};
 
 // Represents an active test session that's executing.
 // Stores how far we've progressed in the recordings.
@@ -119,16 +125,16 @@ class ProxySession {
         this.clientAddress = clientAddress;
         this.recordedActivities = null;
         this.activityIndex = 0;
-        this.reply_index = 0;
-        this.start_date = Date();
+        this.replyIndex = 0;
+        this.startDate = Date();
     }
 }
 
 function processPostReply(req, res, clientSession, session = false) {
     const recordedActivity = clientSession.recordedActivities[clientSession.activityIndex];
-    console.log(`Processing reply ${clientSession.reply_index + 1} of ${recordedActivity.replies.length}`);
-    const recordedReply = recordedActivity.replies[clientSession.reply_index];
-    const reply = recordedActivity.replies[clientSession.reply_index];
+    console.log(`Processing reply ${ clientSession.replyIndex + 1 } of ${ recordedActivity.replies.length }`);
+    const recordedReply = recordedActivity.replies[clientSession.replyIndex];
+    const reply = recordedActivity.replies[clientSession.replyIndex];
 
     if (session) {
         // Validating a session requires a little bit more finesse
@@ -141,25 +147,25 @@ function processPostReply(req, res, clientSession, session = false) {
 
 
     // Increment for next reply
-    clientSession.reply_index = clientSession.reply_index + 1;
+    clientSession.replyIndex = clientSession.replyIndex + 1;
 }
 
 function processGetReply(req, res, clientSession) {
     const recordedActivity = clientSession.recordedActivities[clientSession.activityIndex];
-    console.log(`Processing reply ${clientSession.reply_index + 1} of ${recordedActivity.replies.length}`);
-    const reply = recordedActivity.replies[clientSession.reply_index];
+    console.log(`Processing reply ${ clientSession.replyIndex + 1 } of ${ recordedActivity.replies.length }`);
+    const reply = recordedActivity.replies[clientSession.replyIndex];
 
     // Not much to validate here
     assert(reply.method.toLowerCase() == 'get');
 
     // Increment for next reply
-    clientSession.reply_index = clientSession.reply_index + 1;
+    clientSession.replyIndex = clientSession.replyIndex + 1;
 }
 
 function processPutReply(req, res, clientSession) {
     const recordedActivity = clientSession.recordedActivities[clientSession.activityIndex];
-    console.log(`Processing reply ${clientSession.reply_index + 1} of ${recordedActivity.replies.length}`);
-    const reply = recordedActivity.replies[clientSession.reply_index];
+    console.log(`Processing reply ${ clientSession.replyIndex + 1 } of ${ recordedActivity.replies.length }`);
+    const reply = recordedActivity.replies[clientSession.replyIndex];
 
     // Validate contents
     var recordedBody = Object.getOwnPropertyNames(reply.body);
@@ -172,7 +178,7 @@ function processPutReply(req, res, clientSession) {
     }
 
     // Increment for next reply
-    clientSession.reply_index = clientSession.reply_index + 1;
+    clientSession.replyIndex = clientSession.replyIndex + 1;
 }
 
 
@@ -181,21 +187,21 @@ function validatePostReply(req, replyFromRecording) {
     // console.log('VALIDATE REPLY: INCOMING REPLY: ' + JSON.stringify(req.body, null, 1) );
     // console.log('VALIDATE REPLY: RECORDING: ' + JSON.stringify(replyFromRecording.body, null, 1) );
     const reply = req.body;
-    const recorded_reply = replyFromRecording.body;
-    assert(reply.type == recorded_reply.type);
-    assert(reply.channelId == recorded_reply.channelId);
-    assert(reply.from.id == recorded_reply.from.id);
-    assert(reply.from.name == recorded_reply.from.name);
-    assert(reply.conversation.isGroup == recorded_reply.conversation.isGroup);
-    assert(reply.conversation.conversationType == recorded_reply.conversation.conversationType);
-    assert(reply.conversation.id == recorded_reply.conversation.id);
-    assert(reply.conversation.tenantId == recorded_reply.conversation.tenantId);
-    assert(reply.recipient.id == recorded_reply.recipient.id);
-    assert(reply.recipient.name == recorded_reply.recipient.name);
-    assert(reply.recipient.aadObjectId == recorded_reply.recipient.aadObjectId);
-    assert(reply.text == recorded_reply.text);
-    assert(reply.inputHint == recorded_reply.inputHint);
-    assert(reply.replyToId == recorded_reply.replyToId);
+    const recordedReply = replyFromRecording.body;
+    assert(reply.type == recordedReply.type);
+    assert(reply.channelId == recordedReply.channelId);
+    assert(reply.from.id == recordedReply.from.id);
+    assert(reply.from.name == recordedReply.from.name);
+    assert(reply.conversation.isGroup == recordedReply.conversation.isGroup);
+    assert(reply.conversation.conversationType == recordedReply.conversation.conversationType);
+    assert(reply.conversation.id == recordedReply.conversation.id);
+    assert(reply.conversation.tenantId == recordedReply.conversation.tenantId);
+    assert(reply.recipient.id == recordedReply.recipient.id);
+    assert(reply.recipient.name == recordedReply.recipient.name);
+    assert(reply.recipient.aadObjectId == recordedReply.recipient.aadObjectId);
+    assert(reply.text == recordedReply.text);
+    assert(reply.inputHint == recordedReply.inputHint);
+    assert(reply.replyToId == recordedReply.replyToId);
 }
 
 
@@ -208,7 +214,7 @@ async function processHostRecordings(clientSession) {
     await sleep(1000); // Give client time to set up.
 
     for (const recordedActivity of recordedActivities) {
-        console.log(`\n - Processing Activity (${clientSession.clientAddress}) # ${clientSession.activityIndex+1} of ${recordedActivities.length} ---------\n`);
+        console.log(`\n - Processing Activity (${ clientSession.clientAddress }) # ${ clientSession.activityIndex+1 } of ${ recordedActivities.length } ---------\n`);
 
         const requestUrl = 'http://' + clientSession.clientAddress + ':3978/api/messages';
         console.log('Invoking: ' + requestUrl);
@@ -218,19 +224,20 @@ async function processHostRecordings(clientSession) {
         tweakedActivity.serviceUrl = 'http://localhost:3979';
 
         // Reset reply index for this request
-        clientSession.reply_index = 0;
+        clientSession.replyIndex = 0;
 
-        const res = await fetch(requestUrl, {
+        res = await fetch(requestUrl, {
             method: 'POST',
             headers: {'content-type': 'application/json'},
             body: JSON.stringify(tweakedActivity),
         })
-        .then(async response => {
-            // Bundle complete - make sure we processed all the replies.
-            assert(recordedActivity.replies.length == clientSession.reply_index);
-            console.log('SUCCESS: Activity Request and replies validated.' );
-        })
-        .catch(err => console.log(`FAIL: ${err}`, null, 1));
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            .then(async response => {
+                // Bundle complete - make sure we processed all the replies.
+                assert(recordedActivity.replies.length == clientSession.replyIndex);
+                console.log('SUCCESS: Activity Request and replies validated.' );
+            })
+            .catch(err => console.log(`FAIL: ${ err }`, null, 1));
 
         // Bump to process the next activity in the recorded activities.
         clientSession.activityIndex = clientSession.activityIndex + 1;

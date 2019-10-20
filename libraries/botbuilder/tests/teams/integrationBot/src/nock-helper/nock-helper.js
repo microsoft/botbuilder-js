@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable @typescript-eslint/no-var-requires */
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
@@ -10,10 +12,11 @@
 //
 // The bottom of this file contains some common helper functions/class.
 //
+
 var https = require('https');
 var http = require('http');
 var nock = require('nock');
-var fs = require('fs')
+var fs = require('fs');
 var OriginalClientRequest = http.ClientRequest; // HTTP ClientRequest before mocking by Nock
 var OriginalHttpsRequest = https.request;
 var OriginalHttpRequest = http.request;
@@ -35,17 +38,17 @@ exports.processRecordings = play.processRecordings;
 // $env:AZURE_NOCK_RECORD="true"
 exports.isRecording = function() {
     return process.env.TEST_MODE === 'RECORD' ? true : false;
-}
+};
 
 exports.isPlaying = function() {
     return process.env.TEST_MODE === 'PLAY' ? true : false;
-}
+};
 exports.isProxyHost = function() {
     return process.env.TEST_MODE === 'PROXY_HOST' ? true : false;
-}
+};
 exports.isProxyPlay = function() {
     return process.env.TEST_MODE === 'PROXY_PLAY' ? true : false;
-}
+};
 
 function fileName(reqType, testName) {
     var utcDate = new Date();
@@ -60,9 +63,9 @@ function validateTestMode() {
     testMode = process.env.TEST_MODE;
     if (testMode) {
         if (!TEST_MODES.includes(testMode.toUpperCase())) {
-            console.log(`ERROR: ${testMode} is not a valid TEST_MODE.`);
-            console.log(`'   Valid modes: ${TEST_MODES}.`);
-            throw "Invalid mode set.";
+            console.log(`ERROR: ${ testMode } is not a valid TEST_MODE.`);
+            console.log(`'   Valid modes: ${ TEST_MODES }.`);
+            throw 'Invalid mode set.';
         }
     }
     else {
@@ -70,7 +73,7 @@ function validateTestMode() {
         testMode = 'RECORD';
         process.env.TEST_MODE = testMode;
     }
-    console.log(`TEST_MODE: ${testMode}`)
+    console.log(`TEST_MODE: ${ testMode }`);
 }
 
 exports.nockHttp = function(testNameDefault, recordingsPathRoot = './recordings') {
@@ -86,13 +89,13 @@ exports.nockHttp = function(testNameDefault, recordingsPathRoot = './recordings'
     // https://github.com/microsoft/botbuilder-js/blob/master/tools/framework/suite-base.js#L66
     if (exports.isRecording()) { 
         const nock_output_recording = content => {
-            const filter_scopes = ['https://login.microsoftonline.com:443', 'https://login.botframework.com:443'];
+            const filterScopes = ['https://login.microsoftonline.com:443', 'https://login.botframework.com:443'];
             //const filter_scopes = [];
-            if (filter_scopes.indexOf(content.scope) > -1) {
+            if (filterScopes.indexOf(content.scope) > -1) {
                 return;
             }
             fs.appendFileSync(recordingsPathRoot + '/' + fileName('reply', testName), JSON.stringify(content) );
-        }
+        };
 
         nock.recorder.rec({output_objects: true,            
             dont_print: false,
@@ -127,13 +130,13 @@ exports.unNockHttp = function() {
 
 // Parse all the sorted files and bundle them into Request/Replies
 // Used in proxy and local playback..
-exports.parseActivityBundles = function () {
-    const sortedRecordings = fs.readdirSync("./recordings", "utf8")
-                                .map(item => {
-                                    const path = `./recordings/${item}`;
-                                    return { name: item, path: path, };
-                                })
-                                .sort((a, b) => a.name > b.name ? 1 : -1);
+exports.parseActivityBundles = function() {
+    const sortedRecordings = fs.readdirSync('./recordings', 'utf8')
+        .map(item => {
+            const path = `./recordings/${ item }`;
+            return { name: item, path: path, };
+        })
+        .sort((a, b) => a.name > b.name ? 1 : -1);
     var isFirstActivity = true;
     var currentActivity = null;
     var replies = [];
@@ -169,7 +172,7 @@ exports.parseActivityBundles = function () {
         await processFile(data, index);
     });
     return activities;
-}
+};
 
 // Adapter which disables authentication.  
 // Used in proxy and local playback..
@@ -178,11 +181,12 @@ exports.AdapterDisableAuth = class AdapterDisableAuth extends botbuilder.BotFram
         super(settings);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     authenticateRequest(request, authHeader) {
         // Skip authentication
         return true;
     }
-}
+};
 
 
 exports.unNockHttp(); // Revert the nock change so that tests by default run with the original, unmocked http request objects

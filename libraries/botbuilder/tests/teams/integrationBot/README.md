@@ -153,7 +153,31 @@ npm start
    5. Under "Channel name" rename the channel.
    6. Validate: A message should be posted to the "General" channel with "Channel Renamed" message
 
-5. 
+5. Add Channel Event
+
+   1. On a Team where the bot is registered, click on the ". . ." menu next to the name -> "Add Channel".
+   2. Under "Channel name" type a new channel.
+   3. Validate: A message should be posted to the "General" channel with "Channel Created" message
+
+6. Delete channel Event
+
+   1. On a Team Channel where the bot is registered, click on the ". . ." menu next to the name -> "Delete this channel".
+   2. Click on Delete.
+   3. Validate: A message should be posted to the "General" channel with "Channel Deleted" message
+
+7. Add member to Group Chat
+
+   1. On a Teams Group Chat, add a member (click on the icon with people and plus sign towards the top left of the UI)
+   2. Add a new user.
+   3. Validate: A message should be posted to the group chat with "Member Added" message.
+
+8. Remove member from Group Chat
+
+   1. On a Teams Group Chat, click on the icon with people and plus sign towards the top left of the UI.
+   2. Click the "X" to the right of a user to remove the user.
+   3. Validate: A message should be posted to the group chat with "Member Removed" message.
+
+   
 
 ## Prerequisites
 
