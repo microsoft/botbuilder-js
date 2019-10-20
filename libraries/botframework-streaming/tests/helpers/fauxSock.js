@@ -18,9 +18,32 @@ class FauxSock {
         this.onmessage = undefined;
         this.onerror = undefined;
         this.onclose = undefined;
+
+        // `ws` specific check in WebSocketServer.completeUpgrade
+        this.readable = true;
+        this.writable = true;
     }
 
-    isConnected() {
+    /* Start of `ws` specific methods. */
+    removeListener(event, handler) {
+        switch (event) {
+            case 'error':
+                return;
+            default:
+                console.error(`FauxSock.removeListener(): Reached default case: ${event}`);
+        }
+    }
+
+    setTimeout(value) {
+        this.timeoutValue = value;
+        return;
+    }
+
+    setNoDelay() {
+    }
+    /* End of `ws` specific methods. */
+
+    get isConnected() {
         return this.connected;
     }
 
@@ -75,14 +98,24 @@ class FauxSock {
         if (action === 'close') {
             this.closeHandler = handler;
         }
+        if (action === 'end') {
+            this.endHandler = handler;
+        }
+        // Required for `watershed` WebSockets
         if (action === 'text') {
             this.textHandler = handler;
         }
+        // Required for `watershed` WebSockets
         if (action === 'binary') {
             this.binaryHandler = handler;
         }
-        if (action === 'end') {
-            this.endHandler = handler;
+        // Required for `ws` WebSockets
+        if (action === 'data') {
+            this.dataHandler = handler;
+        }
+        // Required for `ws` WebSockets
+        if (action === 'message') {
+            this._messageHandler = handler;
         }
     };
 

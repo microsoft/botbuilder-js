@@ -10,6 +10,7 @@
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/node": "^10.12.18",
+    "@types/ws": "^6.0.3",
     "chai": "^4.2.0",
     "mocha": "^6.2.0",
     "nyc": "^14.1.1",
@@ -22,7 +23,8 @@
   "dependencies": {
     "promise.prototype.finally": "^3.1.0",
     "uuid": "^3.3.2",
-    "watershed": "^0.4.0"
+    "watershed": "^0.4.0",
+    "ws": "^7.1.2"
   },
   "engines": {
     "node": ">12.3"

@@ -19,7 +19,7 @@ describe('NodeSocket', () => {
 
     it('starts out connected', () => {
         const ns = new NodeWebSocket(new FauxSock);
-        expect(ns.isConnected()).to.be.true;
+        expect(ns.isConnected).to.be.true;
     });
 
     it('writes to the socket', () => {
