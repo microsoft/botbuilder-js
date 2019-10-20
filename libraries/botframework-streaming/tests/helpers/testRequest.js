@@ -8,11 +8,17 @@ class TestRequest {
         let headers = [];
     }
 
+    setMethod(verb) {
+        this.method = 'GET';
+    }
+
     isUpgradeRequest() {
         return this.upgradeRequestVal;
     }
 
     setIsUpgradeRequest(value) {
+        // `ws` specific check
+        this.method = 'GET';
         this.upgradeRequestVal = value;
     }
 

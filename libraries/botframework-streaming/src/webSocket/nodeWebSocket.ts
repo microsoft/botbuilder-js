@@ -41,7 +41,7 @@ export class NodeWebSocket implements ISocket {
     /**
      * True if the socket is currently connected.
      */
-    public isConnected(): boolean {
+    public get isConnected(): boolean {
         return this.connected;
     }
 

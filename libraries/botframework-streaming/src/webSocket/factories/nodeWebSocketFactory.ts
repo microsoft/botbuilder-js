@@ -16,7 +16,7 @@ export class NodeWebSocketFactory extends NodeWebSocketFactoryBase {
     constructor() {
         super();
     }
-    
+
     /**
      * Creates a NodeWebSocket instance.
      * @param req 
@@ -26,7 +26,7 @@ export class NodeWebSocketFactory extends NodeWebSocketFactoryBase {
     public createWebSocket(req: IncomingMessage, socket: Socket, head: Buffer): NodeWebSocket {
         const s = new NodeWebSocket();
         s.create(req, socket, head);
-        
+
         return s;
     }
 }

@@ -8,3 +8,4 @@
 
 export * from './nodeWebSocketFactory';
 export * from './nodeWebSocketFactoryBase';
+export * from './wsNodeWebSocketFactory';

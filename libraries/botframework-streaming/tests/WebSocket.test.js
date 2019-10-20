@@ -231,7 +231,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
         it('knows its connected', () => {
             let bs = new ws.BrowserWebSocket( new FauxSock());
             bs.connect('fakeUrl');
-            expect(bs.isConnected()).to.be.true;
+            expect(bs.isConnected).to.be.true;
         });
 
         it('writes to the socket', () => {
