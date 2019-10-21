@@ -770,11 +770,15 @@ export class IntegrationBot extends TeamsActivityHandler {
                     // NOTE: MessageFactory.Attachment with multiple attachments will default to AttachmentLayoutTypes.List
                     reply = MessageFactory.list([this.getHeroCard(), this.getHeroCard(), this.getHeroCard()]);
                     break;
-
+                case "o365":
+                    await this.sendO365CardAttachment(context);
+                    break;
+                case "file":
+                    await this.sendFileCard(context);
+                    break;
                 case "show members":
                     await this.showMembers(context);
                     break;
-
                 case "show channels":
                     await this.showChannels(context);
                     break;
@@ -840,7 +844,13 @@ export class IntegrationBot extends TeamsActivityHandler {
         fs.createReadStream(filePath).pipe(request.put(fileConsentCardResponse.uploadInfo.uploadUrl));
     }
 
-    private async sendFileCard(context: TurnContext, filename: string, filesize: number): Promise<void> {
+    private async sendFileCard(context: TurnContext): Promise<void> {
+        let filename = "teams-logo.png";
+        let fs = require('fs'); 
+        let path = require('path');
+        let stats = fs.statSync(path.join('files', filename));
+        let fileSizeInBytes = stats['size'];    
+
         let fileContext = {
             filename: filename
         };
@@ -848,7 +858,7 @@ export class IntegrationBot extends TeamsActivityHandler {
         let attachment = {
             content: <FileConsentCard>{
                 description: 'This is the file I want to send you',
-                fileSizeInBytes: filesize,
+                fileSizeInBytes: fileSizeInBytes,
                 acceptContext: fileContext,
                 declineContext: fileContext
             },
@@ -858,7 +868,7 @@ export class IntegrationBot extends TeamsActivityHandler {
 
         var replyActivity = this.createReply(context.activity);
         replyActivity.attachments = [ attachment ];
-
+        console.log("REPLY ACTIVITY\n" + JSON.stringify(replyActivity));
         await context.sendActivity(replyActivity);
     }
 
