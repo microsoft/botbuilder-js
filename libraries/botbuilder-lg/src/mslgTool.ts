@@ -63,13 +63,15 @@ export class MSLGTool {
             for (const template of this.CollatedTemplates) {
                 result += '# ' + template[0] + '\n';
                 if (template[1] instanceof Array) {
-                    (template[1] as string[]).forEach(templateStr => {
+                    const templateStrs: string[] = template[1] as string[];
+                    for (const templateStr of templateStrs) {
                         if (templateStr.startsWith('-')) {
                             result += templateStr.slice(0, 1) + ' ' + templateStr.slice(1) + '\n';
                         } else {
                             result += templateStr + '\n';
+                            break;
                         }
-                    });
+                    }
                 } else if (template[1] instanceof Map) {
                     for (const condition of (template[1] as Map<string, string[]>)) {
                         const conditionStr = condition[0];
