@@ -7,7 +7,7 @@
  */
 
 import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
-import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
+import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
 import { IncomingMessage } from 'http';
 import * as os from 'os';
 import { TokenResolver } from './tokenResolver';
@@ -151,6 +151,22 @@ export interface BotFrameworkAdapterSettings {
      * Optional. Used to pass in a NodeWebSocketFactoryBase instance. Allows bot to accept WebSocket connections.
      */
     webSocketFactory?: NodeWebSocketFactoryBase;
+    
+    /**
+     * Optional. Whether to use certificate based authentication. If set to true, we'll use the certificateThumbprint and 
+     * certificateKey fields to authenticate the appId against AAD instead of the appPassword.
+     */
+    useCertificateAuthentication?: boolean;
+
+    /**
+     * Optional. Certificate thumbprint to authenticate the appId against AAD.
+     */
+    certificateThumbprint?: string;
+
+    /**
+     * Optional. Certificate key to authenticate the appId against AAD.
+     */
+    certificateKey?: string;
 }
 
 /**
@@ -226,7 +242,7 @@ const POST:string = 'POST';
  * ```
  */
 export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvider {
-    protected readonly credentials: MicrosoftAppCredentials;
+    protected readonly credentials: AppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
     protected readonly settings: BotFrameworkAdapterSettings;
 
@@ -254,8 +270,15 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
         super();
         this.settings = { appId: '', appPassword: '', ...settings };
-        this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '', this.settings.channelAuthTenant);
-        this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
+        
+        // If settings.useCertificateAuthentication is null, undefined or false, use app + password authentication
+        if (!settings.useCertificateAuthentication) {
+            this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '', this.settings.channelAuthTenant);
+        } else {
+            this.credentials = new CertificateAppCredentials(this.settings.appId, settings.certificateThumbprint, settings.certificateKey, this.settings.channelAuthTenant);
+        }
+        
+        this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.settings.appPassword || '');
         this.isEmulatingOAuthCards = false;
 
         // If the developer wants to use WebSockets, but didn't provide a WebSocketFactory,
@@ -638,7 +661,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const state: any = {
             ConnectionName: connectionName,
             Conversation: conversation,
-            MsAppId: (client.credentials as MicrosoftAppCredentials).appId
+            MsAppId: (client.credentials as AppCredentials).appId
         };
 
         const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
@@ -705,7 +728,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     public async emulateOAuthCards(contextOrServiceUrl: TurnContext | string, emulate: boolean): Promise<void> {
         this.isEmulatingOAuthCards = emulate;
         const url: string = this.oauthApiUrl(contextOrServiceUrl);
-        await EmulatorApiClient.emulateOAuthCards(this.credentials as MicrosoftAppCredentials,  url, emulate);
+        await EmulatorApiClient.emulateOAuthCards(this.credentials as AppCredentials,  url, emulate);
     }
 
     /**
@@ -1117,7 +1140,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     protected checkEmulatingOAuthCards(context: TurnContext): void {
         if (!this.isEmulatingOAuthCards &&
             context.activity.channelId === 'emulator' &&
-            (!this.credentials.appId || !this.credentials.appPassword)) {
+            (!this.credentials.appId)) {
             this.isEmulatingOAuthCards = true;
         }
     }
