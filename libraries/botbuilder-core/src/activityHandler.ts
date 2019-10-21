@@ -6,7 +6,7 @@ import { ChannelAccount, MessageReaction, TurnContext } from '.';
 import { ActivityHandlerBase } from './activityHandlerBase';
 
 /**
- * Describes an activity event handler, for use with an [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+ * Describes a bot activity event handler, for use with an [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
  * 
  * @remarks
  * **Parameters**
@@ -22,6 +22,8 @@ import { ActivityHandlerBase } from './activityHandlerBase';
  * 
  * The incoming activity is contained in the `context` object's [activity](xref:botbuilder-core.TurnContext.activity) property.
  * Call the `next` function to continue the processing of activity events. Not doing so will stop propagation of events for this activity.
+ * 
+ * A bot activity handler can return a value, to support _invoke_ activities.
  */
 export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Promise<any>;
 
@@ -316,7 +318,7 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * Initiates the event emission process.
+     * Called to initiate the event emission process.
      * 
      * @param context The context object for the current turn.
      *
@@ -348,8 +350,10 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      * 
      * @remarks
-     * Overwrite this method to use custom logic for emitting events. The default logic is defined by
-     * [ActivityHandlerBase.onTurnActivity](xref:botbuilder-core.ActivityHandlerBase.onTurnActivity).
+     * Overwrite this method to use custom logic for emitting events.
+     * 
+     * The default logic is to call any handlers registered via [onTurn](xref:botbuilder-core.ActivityHandler.onTurn),
+     * and then continue by calling [ActivityHandlerBase.onTurnActivity](xref:botbuilder-core.ActivityHandlerBase.onTurnActivity).
      */
     protected async onTurnActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'Turn', async () => {
@@ -358,41 +362,49 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * Runs all registered message handlers before calling
-     * [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
+     * Runs all registered _message_ handlers and then continues the event emission process.
+     * 
+     * @param context The context object for the current turn.
      * 
      * @remarks
-     * Developers may overwrite this method when having supporting multiple channels to have a
-     * channel-tailored experience.
-     * @remarks
-     * The default logic is below:
-     * ```ts
-     *  await await this.handle(context, 'Message', this.defaultNextEvent(context));
-     * ```
-     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * 
+     * The default logic is to call any handlers registered via
+     * [onMessage](xref:botbuilder-core.ActivityHandler.onMessage),
+     * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
      */
     protected async onMessageActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'Message', this.defaultNextEvent(context));
     }
 
     /**
-     * Runs all `onUnrecognizedActivityType()` handlers before calling `ActivityHandler.dispatchConversationUpdateActivity()`.
-     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     * Runs all registered _unrecognized activity type_ handlers and then continues the event emission process.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * 
+     * The default logic is to call any handlers registered via
+     * [onUnrecognizedActivityType](xref:botbuilder-core.ActivityHandler.onUnrecognizedActivityType),
+     * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
      */
     protected async onUnrecognizedActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'UnrecognizedActivityType', this.defaultNextEvent(context));
     }
 
     /**
-     * Runs all `onConversationUpdate()` handlers before calling `ActivityHandler.dispatchConversationUpdateActivity()`.
+     * Runs all registered _conversation update_ handlers and then continues the event emission process.
+     * 
+     * @param context The context object for the current turn.
+     * 
      * @remarks
-     * The default logic is below:
-     * ```ts
-     *  await this.handle(context, 'ConversationUpdate', async () => {
-     *      await this.dispatchConversationUpdateActivity(context);
-     *  });
-     * ```
-     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * 
+     * The default logic is to call any handlers registered via
+     * [onConversationUpdate](xref:botbuilder-core.ActivityHandler.onConversationUpdate),
+     * and then continue by calling
+     * [dispatchConversationUpdateActivity](xref:botbuilder-core.ActivityHandler.dispatchConversationUpdateActivity).
      */
     protected async onConversationUpdateActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'ConversationUpdate', async () => {
@@ -401,19 +413,18 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * Override this method when dispatching off of a `'ConversationUpdate'` event to trigger other sub-events.
+     * Runs the _conversation update_ sub-type handlers, as appropriate, and then continues the event emission process.
+     * 
+     * @param context The context object for the current turn.
+     * 
      * @remarks
-     * The default logic is below:
-     * ```ts
-     *  if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
-     *      await this.handle(context, 'MembersAdded', this.defaultNextEvent(context));
-     *  } else if (context.activity.membersRemoved && context.activity.membersRemoved.length > 0) {
-     *      await this.handle(context, 'MembersRemoved', this.defaultNextEvent(context));
-     *  } else {
-     *      await this.defaultNextEvent(context)();
-     *  }
-     * ```
-     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     * Overwrite this method to support channel-specific behavior across multiple channels or to add
+     * custom conversation update sub-type events.
+     * 
+     * The default logic is:
+     * - If any members were added, call handlers registered via [onMembersAdded](xref:botbuilder-core.ActivityHandler.onMembersAdded).
+     * - If any members were removed, call handlers registered via [onMembersRemoved](xref:botbuilder-core.ActivityHandler.onMembersRemoved).
+     * - Continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
      */
     protected async dispatchConversationUpdateActivity(context: TurnContext): Promise<void> {
         if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
@@ -426,15 +437,17 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * Runs all `onMessageReaction()` handlers before calling `ActivityHandler.dispatchMessageReactionActivity()`.
+     * Runs all registered _message reaction_ handlers and then continues the event emission process.
+     * 
+     * @param context The context object for the current turn.
+     * 
      * @remarks
-     * The default logic is below:
-     * ```ts
-     *  await this.handle(context, 'MessageReaction', async () => {
-     *      await this.dispatchMessageReactionActivity(context);
-     *  });
-     * ```
-     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * 
+     * The default logic is to call any handlers registered via
+     * [onMessageReaction](xref:botbuilder-core.ActivityHandler.onMessageReaction),
+     * and then continue by calling
+     * [dispatchMessageReactionActivity](xref:botbuilder-core.ActivityHandler.dispatchMessageReactionActivity).
      */
     protected async onMessageReactionActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'MessageReaction', async () => {
@@ -443,40 +456,52 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
+     * Runs all registered _reactions added_ handlers and then continues the event emission process.
      * 
-     * @param reactionsAdded The list of reactions added
-     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     * @param reactionsAdded The list of reactions added.
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * 
+     * The default logic is to call any handlers registered via
+     * [onReactionsAdded](xref:botbuilder-core.ActivityHandler.onReactionsAdded),
+     * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
      */
     protected async onReactionsAddedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void> {
         await this.handle(context, 'ReactionsAdded', this.defaultNextEvent(context));
     }
 
     /**
+     * Runs all registered _reactions removed_ handlers and then continues the event emission process.
      * 
-     * @param reactionsRemoved The list of reactions removed
-     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     * @param reactionsRemoved The list of reactions removed.
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * 
+     * The default logic is to call any handlers registered via
+     * [onReactionsRemoved](xref:botbuilder-core.ActivityHandler.onReactionsRemoved),
+     * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
      */
     protected async onReactionsRemovedActivity(reactionsRemoved: MessageReaction[], context: TurnContext): Promise<void> {
         await this.handle(context, 'ReactionsRemoved', this.defaultNextEvent(context));
     }
 
     /**
-     * Override this method when dispatching off of a `'MessageReaction'` event to trigger other sub-events.
-     * @remarks
-     * If there are no reactionsAdded or reactionsRemoved on the incoming activity, it will call `this.defaultNextEvent`
-     * which emits the `'Dialog'` event by default.
-     * The default logic is below:
-     * ```ts
-     *  if (context.activity.reactionsAdded || context.activity.reactionsRemoved) {
-     *      super.onMessageReactionActivity(context);
-     *  } else {
-     *      await this.defaultNextEvent(context)();
-     *  }
-     * ```
-     * `super.onMessageReactionActivity()` will dispatch to `onReactionsAddedActivity()`
-     * or `onReactionsRemovedActivity()`.
+     * Runs the _message reaction_ sub-type handlers, as appropriate, and then continues the event emission process.
      * 
-     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels or to add
+     * custom message reaction sub-type events.
+     * 
+     * The default logic is:
+     * - If reactions were added, call handlers registered via [onReactionsAdded](xref:botbuilder-core.ActivityHandler.onReactionsAdded).
+     * - If reactions were removed, call handlers registered via [onMembersRemoved](xref:botbuilder-core.ActivityHandler.onMembersRemoved).
+     * - Continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
      */
     protected async dispatchMessageReactionActivity(context: TurnContext): Promise<void> {
         if (context.activity.reactionsAdded || context.activity.reactionsRemoved) {
@@ -487,15 +512,17 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * Runs all `onEvent()` handlers before calling `ActivityHandler.dispatchEventActivity()`.
+     * Runs all registered event_ handlers and then continues the event emission process.
+     * 
+     * @param context The context object for the current turn.
+     * 
      * @remarks
-     * The default logic is below:
-     * ```ts
-     *  await this.handle(context, 'Event', async () => {
-     *      await this.dispatchEventActivity(context);
-     *  });
-     * ```
-     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * 
+     * The default logic is to call any handlers registered via
+     * [onEvent](xref:botbuilder-core.ActivityHandler.onEvent),
+     * and then continue by calling
+     * [dispatchEventActivity](xref:botbuilder-core.ActivityHandler.dispatchEventActivity).
      */
     protected async onEventActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'Event', async () => {
@@ -504,21 +531,18 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
     
     /**
-     * Override this method when dispatching off of a `'Event'` event to trigger other sub-events.
-     * @remarks
-     * For certain channels (e.g. Web Chat, custom Direct Line clients), developers can emit
-     * custom `'event'`-type activities from the client. Developers should then overwrite this method
-     * to support their custom `'event'` activities.
+     * Runs the _event_ sub-type handlers, as appropriate, and then continues the event emission process.
      * 
-     * The default logic is below:
-     * ```ts
-     *  if (context.activity.name === 'tokens/response') {
-     *      await this.handle(context, 'TokenResponseEvent', this.defaultNextEvent(context));
-     *  } else {
-     *      await this.defaultNextEvent(context)();
-     *  }
-     * ```
-     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels or to add custom event sub-type events.
+     * For certain channels, such as  Web Chat and custom Direct Line clients, developers can emit custom event activities from the client.
+     * 
+     * The default logic is:
+     * - If the activity is a 'tokens/response' event, call handlers registered via
+     *   [onTokenResponseEvent](xref:botbuilder-core.ActivityHandler.onTokenResponseEvent).
+     * - Continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
      */
     protected async dispatchEventActivity(context: TurnContext): Promise<void> {
         if (context.activity.name === 'tokens/response') {
@@ -529,10 +553,15 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * Returns an async function that emits the `'Dialog'` event when called.
-     * Overwrite this function to emit a different default event once all relevant
-     * events are emitted.
-     * @param context TurnContext A TurnContext representing an incoming Activity from an Adapter
+     * Called at the end of the event emission process.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to use custom logic for emitting events.
+     * 
+     * The default logic is to call any handlers registered via [onDialog](xref:botbuilder-core.ActivityHandler.onDialog),
+     * and then complete the event emission process.
      */
     protected defaultNextEvent(context: TurnContext): () => Promise<void> {
         const runDialogs = async (): Promise<void> => {
@@ -543,11 +572,14 @@ export class ActivityHandler extends ActivityHandlerBase {
         return runDialogs;
     }
 
-
     /**
-     * Used to bind handlers to events by name
-     * @param type string
-     * @param handler BotHandler
+     * Registers a bot event handler to receive a specific event.
+     * 
+     * @param type The identifier for the event type.
+     * @param handler The event handler to register.
+     * 
+     * @remarks
+     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      */
     protected on(type: string, handler: BotHandler) {
         if (!this.handlers[type]) {
@@ -559,9 +591,17 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * Used to fire events and execute any bound handlers
-     * @param type string
-     * @param handler BotHandler
+     * Emits an event and executes any registered handlers.
+     * 
+     * @param context The context object for the current turn.
+     * @param type The identifier for the event type.
+     * @param onNext The continuation function to call after all registered handlers for this event complete.
+     * 
+     * @remarks
+     * Runs any registered handlers for this event type and then calls the continuation function.
+     * 
+     * This optionally produces a return value, to support _invoke_ activities. If multiple handlers
+     * produce a return value, the first one produced is returned.
      */
     protected async handle(context: TurnContext, type: string,  onNext: () => Promise<void>): Promise<any> {
         let returnValue: any = null;
