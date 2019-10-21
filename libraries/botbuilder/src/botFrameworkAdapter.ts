@@ -1003,11 +1003,24 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             response.statusCode = StatusCodes.BAD_REQUEST;
             response.setBody(`Request missing verb and/or path. Verb: ${ request.verb }. Path: ${ request.path }`);
             return response;
-        } 
+        }
 
         if (request.verb.toLocaleUpperCase() === GET && request.path.toLocaleLowerCase() === VERSION_PATH) {
             response.statusCode = StatusCodes.OK;
-            response.setBody({UserAgent: USER_AGENT});
+
+            if (!this.credentials.appId || !this.credentials.appPassword) {
+                response.setBody({UserAgent: USER_AGENT});
+                return response;
+            }
+
+            try {
+                response.setBody({UserAgent: USER_AGENT, Token: await this.credentials.getToken()});
+            } catch (err) {
+                // If the MicrosoftAppCredentials.getToken() fails, not sending the UserAgent in this
+                // request will result in the connection being destroyed by the channel.
+                response.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
+                response.setBody(err.message);
+            }
 
             return response;
         }
@@ -1156,19 +1169,20 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         return serviceUrl && !serviceUrl.toLowerCase().startsWith('http');
      }
 
-    private async authenticateConnection(req: WebRequest, appId?: string, appPassword?: string, channelService?: string): Promise<boolean> {
-        if (!appId || !appPassword) {
+    private async authenticateConnection(req: WebRequest, channelService?: string): Promise<void> {
+        if (!this.credentials.appId || !this.credentials.appPassword) {
             // auth is disabled
-            return true;
+            return;
         }
 
-        let authHeader: string = req.headers.authorization || req.headers.Authorization || '';
-        let channelIdHeader: string = req.headers.channelid || req.headers.ChannelId || req.headers.ChannelID || '';
-        let credentials = new MicrosoftAppCredentials(appId, appPassword);
-        let credentialProvider = new SimpleCredentialProvider(credentials.appId, credentials.appPassword);
-        let claims = await JwtTokenValidation.validateAuthHeader(authHeader, credentialProvider, channelService, channelIdHeader);
+        const authHeader: string = req.headers.authorization || req.headers.Authorization || '';
+        const channelIdHeader: string = req.headers.channelid || req.headers.ChannelId || req.headers.ChannelID || '';
+        // Validate the received Upgrade request from the channel.
+        const claims = await JwtTokenValidation.validateAuthHeader(authHeader, this.credentialsProvider, channelService, channelIdHeader);
+        // Confirm the bot is able to fetch a token which is required to send Activities.
+        await this.credentials.getToken();
 
-        return claims.isAuthenticated;
+        if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
     }
 
     /**
@@ -1176,7 +1190,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * @param pipeName The name of the named pipe to use when creating the server.
      * @param logic The logic that will handle incoming requests.
      */
-    private async useNamedPipe(pipeName: string = defaultPipeName, logic: (context: TurnContext) => Promise<any>): Promise<void>{
+    public async useNamedPipe(pipeName: string = defaultPipeName, logic: (context: TurnContext) => Promise<any>): Promise<void>{
         if (!logic) {
             throw new Error('Bot logic needs to be provided to `useNamedPipe`');
         }
@@ -1209,10 +1223,12 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             throw new Error("ClaimUpgrade is required for creating WebSocket connection.");
         }
 
-        const authenticated = await this.authenticateConnection(req, this.settings.appId, this.settings.appPassword, this.settings.channelService);
-        if (!authenticated) {
+        try {
+            await this.authenticateConnection(req, this.settings.channelService);
+        } catch (err) {
             res.status(StatusCodes.UNAUTHORIZED);
-            return Promise.resolve();
+            res.send(err.message);
+            return;
         }
         
         const upgrade = (res as any).claimUpgrade();
