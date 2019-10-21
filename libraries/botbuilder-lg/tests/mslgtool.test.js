@@ -42,7 +42,7 @@ describe('MSLGTool', function () {
         assert.strictEqual(mslgTool.CollatedTemplates.get('Greeting').length, 3);
         assert.strictEqual(mslgTool.CollatedTemplates.get('TimeOfDayWithCondition').size, 3);
         assert.strictEqual(mslgTool.CollatedTemplates.get('TimeOfDay').length, 3);
-        assert.strictEqual(mslgTool.CollatedTemplates.get('ST2')[0], '[MyStruct\r\n    Speak = bar\r\n    Text = zoo\r\n]');
+        assert.strictEqual(mslgTool.CollatedTemplates.get('ST2')[0].replace("\r\n", "\n"), '[MyStruct\n    Speak = bar\n    Text = zoo\n]');
     });
 
     it('TestExpandTemplate', function () {
