@@ -73,8 +73,7 @@ export class IntegrationBot extends TeamsActivityHandler {
 
     
     /*
-     * After installing this bot you will need to click on the 3 dots to pull up the extension menu to select the bot. Once you do you do
-     * see the extension pop a task module.
+     * See README.md on what this bot supports.
      */
     constructor(public userState: BotState, activityIds: string[], activityLog: ActivityLog) {
         super();

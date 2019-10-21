@@ -36,30 +36,45 @@ function setupInterceptorReplies(replies) {
         
 
         // Set up interceptor with some validation on properties.
-        if ('content-length' in item.reqheaders) {
-            code += `  .matchHeader('content-length', '${ item.reqheaders['content-length'] }')\n`;
-        }
-
         code += `  .matchHeader('content-type', '${ item.reqheaders['content-type'] }')\n`;
         if ('content-length' in item.reqheaders) {
             code += `  .matchHeader('accept', '${ item.reqheaders.accept }')\n`;
         }
 
         // Prepare URL
-        //    ie, `/amer/v3/conversations/../1569442142365`
-        // Last token (1569442142365) is variable, must be pulled off.
-        const lastToken = item.path.substring(item.path.lastIndexOf('/'));
-        const truncateLastToken = (/^\d+$/.test(lastToken) && lastToken.length == 13);
-        const pathNoLastElement = truncateLastToken ? item.path.substring(0, item.path.lastIndexOf('/')) : item.path;
+        code = prepareUrl(item, code);
 
-        if (truncateLastToken) {
-            code += `  .${ item.method.toLowerCase() }(uri => uri.includes('${ pathNoLastElement }'),\n`;
-        }
-        else {
-            code += `  .${ item.method.toLowerCase() }('${ pathNoLastElement }'`;
-        }
-
-        if (item.method.toLowerCase() == 'post') {
+        if (item.method.toLowerCase() == 'put') {
+            code += `,\n    function(body) {\n`;
+            // Validate contents
+            var recordedBody = Object.getOwnPropertyNames(item.body);
+            
+            //console.log('ALL PROPERTIES: ' + JSON.stringify(recordedBody, null, 1));
+            var excludedProperties = ['serviceUrl', 'replyToId']; // Filter proxy-altered properties
+            recordedBody.forEach(function(prop) {
+                if (excludedProperties.includes(prop)) {
+                    return;
+                }
+                
+                if (typeof item.body[prop] == 'string') {
+                    //console.log('ALL PROPERTIES: PROCESSING: ' + prop + ' - \n' + item.body[prop]);
+                    code += `      console.log('PROCESSING ${ prop }.');\n`;
+                    code += `      if (${ JSON.stringify(item.body[prop]) } != body.${ prop }) {\n`;
+                }
+                else {
+                    console.log('ALL PROPERTIES: PROCESSING: ' + prop + ' - \n' + JSON.stringify(item.body[prop]));
+                    code += `      if ('${ JSON.stringify(item.body[prop]) }' != JSON.stringify(body.${ prop })) {\n`;
+                }
+                code += `        console.error('Body ${ prop } does not match ${ JSON.stringify(item.body[prop]) } != ' + JSON.stringify(body.${ prop }));\n`;
+                code += `        return false;\n`;
+                code += `      }\n`;
+                
+            });
+            code += `      console.log('DONE PROCESSING PROPERTIES!');\n`;
+            code += `      return true;\n`;
+            code += `    })\n`;
+            code += `  .reply(${ item.status }, ${ JSON.stringify(item.response) }, ${ formatHeaders(item.rawHeaders) });\n`;
+        } else if (item.method.toLowerCase() == 'post') {
             code += `,\n    function(body) {\n`;
             // code += `       console.log('INSIDE BODY EVALUATION!!');\n`;
 
@@ -89,7 +104,7 @@ function setupInterceptorReplies(replies) {
             if (item.body.hasOwnProperty('channelData') && item.body.channelData.hasOwnProperty('channel') 
                 && item.body.channelData.channel.hasOwnProperty('id')) { 
                 code += `      if ('${ item.body.channelData.channel.id }' != body.channelData.channel.id) {\n`;
-                code += `        console.log('Channel data/channel id does not match ${ JSON.stringify(item.body.channelData) } != ' + JSON.stringify(body.channelData));\n`;
+                code += `        console.error('Channel data/channel id does not match ${ JSON.stringify(item.body.channelData) } != ' + JSON.stringify(body.channelData));\n`;
                 code += `        return false;\n`;
                 code += `      }\n`;
             }
@@ -97,7 +112,7 @@ function setupInterceptorReplies(replies) {
             // Validate from.name 
             if (item.body.hasOwnProperty('from') && item.body.from.hasOwnProperty('name')) { 
                 code += `      if ('${ item.body.from.name }' != body.from.name) {\n`;
-                code += `        console.log('From name does not match');\n`;
+                code += `        console.error('From name does not match');\n`;
                 code += `        return false;\n`;
                 code += `      }\n`;
             }
@@ -111,8 +126,19 @@ function setupInterceptorReplies(replies) {
         }
         
         // Uncomment to see generated Interceptor code.
-        //console.log('NOCK INTERCEPTOR CODE (replies count = ' + replies.length + '):\n' + code);
-        var interceptor = new Function('nock', code);
+        if (item.method.toLowerCase() == 'put') {
+            console.log('NOCK INTERCEPTOR CODE (replies count = ' + replies.length + '):\n' + code);
+        }
+        var interceptor = null;
+        try {
+            interceptor = new Function('nock', code);
+        }
+        catch(ex) {
+            console.error('NOCK INTERCEPTOR CODE (replies count = ' + replies.length + '):\n' + code);
+            console.error(JSON.stringify(ex, null, 1));
+            
+            throw ex;
+        }
         response.push(interceptor(nock));
     });
     return response;
@@ -121,9 +147,14 @@ function setupInterceptorReplies(replies) {
 // Process invoking bot locally.
 // First sets up all the anticipated external calls (interceptors)
 // and then calls the adapter to invoke the bot.
-async function playRecordings(activity, replies, adapter, myBot) { 
+async function playRecordings(activityBundle, adapter, myBot) { 
     // eslint-disable-next-line @typescript-eslint/camelcase
-    nock_interceptors = setupInterceptorReplies(replies);
+    //await sleep(1000);
+    const activityRecordingPth = activityBundle.activityPath;
+    //console.log('****PLAY RECORDINGS - activity contains ' + activityBundle.replies.length + ' replies. - ' + activityRecordingPth);
+    nock_interceptors = setupInterceptorReplies(activityBundle.replies);
+    const activity = activityBundle.activity;
+    
     
     // Call bot
     var request  = httpMocks.createRequest({
@@ -138,21 +169,74 @@ async function playRecordings(activity, replies, adapter, myBot) {
     await adapt.processActivity(request, response, async (context) => {
         // Route to main dialog.
         await myBot.run(context);
+
     });
+    //await sleep(1000);
+
+    //console.log('****PLAY RECORDINGS - complete! - ' + activityRecordingPth);
 }
+
 
 
 // Parse all recordings (bundled up in activity/replies)
 // and the play each bot invocation.
 exports.processRecordings = function(testName, adapter = null, myBot = null) {
     const activityBundles = nockhelper.parseActivityBundles();
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    activityBundles.forEach(async (activityBundle, index) => {
-        await playRecordings(activityBundle.activity, activityBundle.replies, adapter, myBot);
+    activityBundles.forEach(async (activityBundle) =>  {
+        await playRecordings(activityBundle, adapter, myBot, activityBundle.activityPath);
+        await sleep(500);
     });
-    console.log('Process Recordings complete!');
+    sleep(1500)
+        .then(console.log('Process Recordings complete!'));
 };
 
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function prepareUrl(item, code) {
+    const method = item.method.toLowerCase();
+    switch(method) {
+        case 'post':
+            //  Handle post token
+            //    ie, `/amer/v3/conversations/../1569442142365`
+            // Last token (1569442142365) is variable, must be pulled off.
+            const lastToken = item.path.substring(item.path.lastIndexOf('/'));
+            const truncateLastToken = (/^\d+$/.test(lastToken) && lastToken.length == 13);
+            const pathNoLastElement = truncateLastToken ? item.path.substring(0, item.path.lastIndexOf('/')) : item.path;
+
+            if (truncateLastToken) {
+                code += `  .${ method }(uri => uri.includes('${ pathNoLastElement }'),\n`;
+            }
+            else {
+                code += `  .${ method }('${ pathNoLastElement }'`;
+            }
+            break;
+
+        case 'get':
+            code += `  .${ method }('${ item.path }'`;
+            break;
+
+        case 'put':
+            // /amer/v3/conversations/19%3A097e6717fd7245bdbeba6baa13840db8%40thread.skype%3Bmessageid%3D1571537152320/activities/1%3A1Zu8wK3u9-8LohH10diLSicoeHNSBwMtz2VNKrDCqPQc
+            const levels = item.path.split('/');
+            var path = item.path;
+            if (levels.length == 7 && levels[5] == 'activities') {
+                levels[4] = '*';
+                path = levels.join('/');
+            }
+            code += `  .${ method }('${ path }'`;
+            break;
+
+        default:
+            throw new Exception('ERROR unsupported HTTP verb : ' + method);
+    }
+
+    return code;
+
+}
 // Format headers from recordings
 function formatHeaders(rawHeaders) {
     var headers = '{';

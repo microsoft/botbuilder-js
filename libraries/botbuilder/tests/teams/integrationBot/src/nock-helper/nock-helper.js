@@ -137,22 +137,24 @@ exports.parseActivityBundles = function() {
         .sort((a, b) => a.name > b.name ? 1 : -1);
     var isFirstActivity = true;
     var currentActivity = null;
+    var activityPath = null; // The file path of the current Activity
     var replies = [];
     var activities = [];
     
-    async function processFile(data, index) {
+    async function processFile(data, index, recordingPath) {
         const req = JSON.parse(data);
         // Handle main activities coming into the bot (from Teams service)
         if (isIncomingActivityRequest(req)) {
             if (isFirstActivity == false) {
                 // Process previous activity.
-                activities.push({activity: currentActivity, replies: replies});
+                activities.push({activity: currentActivity, replies: replies, activityPath: recordingPath});
             }
             else {
                 isFirstActivity = false;
             }
             currentActivity = req;
             replies = [];
+            activityPath = recordingPath;
         }
         // Handle replies from the bot back to the Teams service
         else {
@@ -161,13 +163,13 @@ exports.parseActivityBundles = function() {
         }
         // If last request or reply, then drain.
         if (index >= sortedRecordings.length - 1 ) {
-            activities.push({activity: currentActivity, replies: replies});
+            activities.push({activity: currentActivity, replies: replies, activityPath: activityPath});
         }
     }
 
     sortedRecordings.forEach(async (item, index) => {
         data = fs.readFileSync(item.path, 'utf8');
-        await processFile(data, index);
+        await processFile(data, index, item.path);
     });
     return activities;
 };

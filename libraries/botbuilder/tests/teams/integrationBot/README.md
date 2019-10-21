@@ -183,7 +183,64 @@ npm start
   - Click the "X" to the right of a user to remove the user.
   - **Validate**: A message should be posted to the group chat with "Member Removed" message.
 
+- Adaptive card "1"
+
+  - On a Teams channel or General channel with the bot installed, type "@IntegrationBot1".  The "1" is the command sent to the bot.
+
+  - Validate: A card should appear that says "Bot Builder actions" and contains four buttons:
+
+    - imBack: Click this and it should add a message that references the bot and adds "text".
+    - message back: The bot should respond with "text" / "App sent a message with empty text but with value {"key":"value}.
+    - message back local echo: Click this and it should send a message from you that says 'display text message back'.
+    - invoke: Click this and see the bot should send a message that states: "text received by bots" / "handleTeamsCardActionInvoke value: {"key":"value"}"
+
+- Adaptive card "2"
+
+  - On a Teams channel or General channel with the bot installed, type "@IntegrationBot2".  The "2" is the command sent to the bot.
+
+  - Validate: A card should appear that says "Task Module Adaptive Card" and contains one button:
+
+    - Launch Task Module: Click this and it should add a message that references the bot and adds "text".
+    - Type a message and submit.
+    - It should show "Thanks"
+    - Click X to dismiss the modal dialog.
+
+- Adaptive card "3"
   
+  - On a Teams channel or General channel with the bot installed, type "@IntegrationBot3".  The "3" is the command sent to the bot.
+  - Validate: A card should appear that says "Bot Builder actions" with an edit control and button labeled "Action.Submit".
+  - Validate: Type some text and click "Action.Submit".  You should receive a message `App sent a message with empty text but with valid {"key":"value", "x":"<your text>"}`
+  
+- "Hero" card
+  - On a Teams channel or General channel with the bot installed, type "@IntegrationBothero".  The "hero" is the command sent to the bot.
+  - The bot should respond with a hero card and button "Get Started"
+- "Thumbnail" card
+  - On a Teams channel or General channel with the bot installed, type "@IntegrationBotthumbnail".  The "thumbnail" is the command sent to the bot.
+  - The bot should respond with a thumbnail card and button "Get Started"
+- "Receipt" card
+  - On a Teams channel or General channel with the bot installed, type "@IntegrationBotreceipt".  The "receipt" is the command sent to the bot.
+  - The bot should respond with a receipt card and button "More information"
+- "Signin" card
+  - On a Teams channel or General channel with the bot installed, type "@IntegrationBotsignin".  The "signin" is the command sent to the bot.
+  - The bot should respond with a Sign-In card and button "BotFramework Sign-in Card"
+- "Carousel" card
+  - On a Teams channel or General channel with the bot installed, type "@IntegrationBotcarousel".  The "carousel" is the command sent to the bot.
+  - The bot should respond with a carousel card with three cards.
+- "List" card
+  - On a Teams channel or General channel with the bot installed, type "@IntegrationBotlist".  The "list" is the command sent to the bot.
+  - The bot should respond with a list of two cards.
+- "show members"
+  - On a Teams channel or General channel with the bot installed, type "@IntegrationBotshow members".  The "show members" is the command sent to the bot.
+  - The bot should respond with a list of members currently in the team.
+- "show channels"
+  - On a Teams channel or General channel with the bot installed, type "@IntegrationBotshow channels".  The "show channels" is the command sent to the bot.
+  - The bot should respond with a list of channels..
+- "show details"
+  - On a Teams channel or General channel with the bot installed, type "@IntegrationBotshow details".  The "show details" is the command sent to the bot.
+  - The bot should respond with team name, team ID and AAD GroupID.
+- "updatetext"
+  - On a Teams channel or General channel with the bot installed, type "@IntegrationBotupdatetext".  The "updatetext" (or anything that isn't a command listed above)  is the command sent to the bot.
+  - The bot should respond with "You said..." and then upate the message with "updatetext" or whatever you typed.
 
 ## Prerequisites
 
