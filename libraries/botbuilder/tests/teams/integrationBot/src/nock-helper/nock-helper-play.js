@@ -50,7 +50,7 @@ function setupInterceptorReplies(replies) {
             var recordedBody = Object.getOwnPropertyNames(item.body);
             
             //console.log('ALL PROPERTIES: ' + JSON.stringify(recordedBody, null, 1));
-            var excludedProperties = ['serviceUrl', 'replyToId']; // Filter proxy-altered properties
+            var excludedProperties = ['serviceUrl', 'replyToId', 'id', 'text']; // Filter proxy-altered properties
             recordedBody.forEach(function(prop) {
                 if (excludedProperties.includes(prop)) {
                     return;
@@ -60,15 +60,10 @@ function setupInterceptorReplies(replies) {
                     //console.log('ALL PROPERTIES: PROCESSING: ' + prop + ' - \n' + item.body[prop]);
                     code += `      console.log('PROCESSING ${ prop }.');\n`;
                     code += `      if (${ JSON.stringify(item.body[prop]) } != body.${ prop }) {\n`;
+                    code += `        console.error('Body ${ prop } does not match ${ JSON.stringify(item.body[prop]) } != ' + JSON.stringify(body.${ prop }));\n`;
+                    code += `        return false;\n`;
+                    code += `      }\n`;
                 }
-                else {
-                    console.log('ALL PROPERTIES: PROCESSING: ' + prop + ' - \n' + JSON.stringify(item.body[prop]));
-                    code += `      if ('${ JSON.stringify(item.body[prop]) }' != JSON.stringify(body.${ prop })) {\n`;
-                }
-                code += `        console.error('Body ${ prop } does not match ${ JSON.stringify(item.body[prop]) } != ' + JSON.stringify(body.${ prop }));\n`;
-                code += `        return false;\n`;
-                code += `      }\n`;
-                
             });
             code += `      console.log('DONE PROCESSING PROPERTIES!');\n`;
             code += `      return true;\n`;
@@ -151,10 +146,10 @@ async function playRecordings(activityBundle, adapter, myBot) {
     // eslint-disable-next-line @typescript-eslint/camelcase
     //await sleep(1000);
     const activityRecordingPth = activityBundle.activityPath;
-    //console.log('****PLAY RECORDINGS - activity contains ' + activityBundle.replies.length + ' replies. - ' + activityRecordingPth);
+    console.log('****PLAY RECORDINGS - activity contains ' + activityBundle.replies.length + ' replies. - ' + activityRecordingPth);
     nock_interceptors = setupInterceptorReplies(activityBundle.replies);
     const activity = activityBundle.activity;
-    
+    console.error('CURRENT INTERCEPTORS : ' + JSON.stringify(nock.pendingMocks(), null, 1));
     
     // Call bot
     var request  = httpMocks.createRequest({
@@ -164,32 +159,40 @@ async function playRecordings(activityBundle, adapter, myBot) {
         body: activity.body,
     });   
     var response = httpMocks.createResponse();
-
+    await sleep(1000);
     var adapt = new nockhelper.AdapterDisableAuth();
     await adapt.processActivity(request, response, async (context) => {
         // Route to main dialog.
         await myBot.run(context);
 
     });
-    //await sleep(1000);
-
-    //console.log('****PLAY RECORDINGS - complete! - ' + activityRecordingPth);
+    // Tear down interceptors
+    
+    
+    await sleep(5000);
+    if(!nock.isDone()) {
+        
+        console.error('NOT ALL NOCK INTERCEPTORS USED : ' + JSON.stringify(nock.pendingMocks()));
+    }
+    nock.cleanAll();
+    console.log('****PLAY RECORDINGS - complete! - ' + activityRecordingPth);
+    
 }
 
 
 
 // Parse all recordings (bundled up in activity/replies)
 // and the play each bot invocation.
-exports.processRecordings = function(testName, adapter = null, myBot = null) {
+exports.processRecordings = async function(testName, adapter = null, myBot = null) {
     const activityBundles = nockhelper.parseActivityBundles();
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     activityBundles.forEach(async (activityBundle) =>  {
         await playRecordings(activityBundle, adapter, myBot, activityBundle.activityPath);
-        await sleep(500);
     });
-    sleep(1500)
-        .then(console.log('Process Recordings complete!'));
+    await sleep(10000);
+    return 'Completed processing recordings.';
+       
 };
 
 function sleep(ms) {
@@ -224,10 +227,11 @@ function prepareUrl(item, code) {
             const levels = item.path.split('/');
             var path = item.path;
             if (levels.length == 7 && levels[5] == 'activities') {
-                levels[4] = '*';
-                path = levels.join('/');
+                //levels[4] = '*';
+                //path = RegExp('\/amer\/v3\/conversations\/.*\/activities\/.*$', 'g');
+                //path = /amer\/v3\/conversations\/.*\/activities\/.*$/;
             }
-            code += `  .${ method }('${ path }'`;
+            code += `  .${ method }(/amer\\/v3\\/conversations\\/.*\\/activities\\/.*$/g`;
             break;
 
         default:

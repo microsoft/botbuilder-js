@@ -89,7 +89,11 @@ if (nockHelper.isRecording()) {
     });
 }
 else if (nockHelper.isPlaying()) {
-    nockHelper.processRecordings('integrationBot', adapter, myBot);
+    nockHelper.processRecordings('integrationBot', adapter, myBot)
+        .then(result => console.log(result))
+        .catch(err => {
+            console.error(JSON.stringify(err));
+        });
 }
 else if (nockHelper.isProxyHost()) {
     // Create HTTP proxy server.
