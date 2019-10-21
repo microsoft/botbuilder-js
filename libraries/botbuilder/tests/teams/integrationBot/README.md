@@ -265,8 +265,10 @@ npm start
 - File upload "file"
   - Works in personal chat only
   - On a Teams channel or General channel with the bot installed, type "@IntegrationBotfile".  The "file" is the command sent to the bot.
-  - The bot should respond with team name, team ID and AAD GroupID.
-
+  - The bot should respond with a file consent card with the 'Allow' and 'Decline' buttons
+- If 'Allow' button is clicked, bot will respond with "File is uploaded.  Your file teams-logo.png is ready to download".
+  - If 'Decline' button is clicked, bot will respond with "Declined.  We won't upload file teams-logo.png".
+  
 - O365 card "o365" 
   - Works in personal, group chat and teams
   - On a Teams channel, group chat or personal chat with the bot installed, type "@IntegrationBoto365".  The "0365" is the command sent to the bot.

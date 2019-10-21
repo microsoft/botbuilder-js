@@ -172,5 +172,8 @@
     "permissions": [
         "identity",
         "messageTeamMembers"
+    ],
+    "validDomains": [
+        "*.azurewebsites.net"
     ]
 }
