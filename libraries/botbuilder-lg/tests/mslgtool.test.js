@@ -34,15 +34,27 @@ describe('MSLGTool', function () {
         assert.strictEqual(errors.length, 0);
         errors = GetErrors(mslgTool, 'CollateFile3.lg');
         assert.strictEqual(errors.length, 0);
-        errors = GetErrors(mslgTool, 'CollateFile4.lg'); 
-        assert.strictEqual(errors.length, 0);
         assert.strictEqual(mslgTool.CollationMessages.length, 0);
         assert.strictEqual(mslgTool.NameCollisions.length, 3);
-        assert.strictEqual(mslgTool.CollatedTemplates.size, 6);
+        assert.strictEqual(mslgTool.CollatedTemplates.size, 5);
         assert.strictEqual(mslgTool.CollatedTemplates.get('Greeting').length, 3);
         assert.strictEqual(mslgTool.CollatedTemplates.get('TimeOfDayWithCondition').size, 3);
         assert.strictEqual(mslgTool.CollatedTemplates.get('TimeOfDay').length, 3);
-        assert.strictEqual(mslgTool.CollatedTemplates.get('ST2')[0].replace("\r\n", "\n"), '[MyStruct\n    Speak = bar\n    Text = zoo\n]');
+    });
+
+    it('TestCollateTemplatesOfStructuredLG', function () {
+        const mslgTool = new MSLGTool();
+        errors = GetErrors(mslgTool, 'CollateFile4.lg'); 
+        assert.strictEqual(errors.length, 0);
+        errors = GetErrors(mslgTool, 'CollateFile5.lg'); 
+        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(mslgTool.CollationMessages.length, 0);
+        assert.strictEqual(mslgTool.NameCollisions.length, 1);
+        assert.strictEqual(mslgTool.CollatedTemplates.size, 1);
+        assert.strictEqual(mslgTool.CollatedTemplates.get('ST2')[0].replace(/\r\n/g, '\n'), '[MyStruct\n    Speak = bar\n    Text = zoo\n]');
+        assert.strictEqual(mslgTool.CollatedTemplates.get('ST2')[1].replace(/\r\n/g, '\n'), '[MyStruct\n    Speak = hello\n    Text = world\n]');
+        let result = mslgTool.CollateTemplates();
+        assert.strictEqual(result.replace(/\r\n/g, '\n'), '# ST2\n[MyStruct\n    Speak = bar\n    Text = zoo\n]\n\n');
     });
 
     it('TestExpandTemplate', function () {
