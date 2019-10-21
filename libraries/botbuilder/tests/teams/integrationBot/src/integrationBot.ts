@@ -868,7 +868,6 @@ export class IntegrationBot extends TeamsActivityHandler {
 
         var replyActivity = this.createReply(context.activity);
         replyActivity.attachments = [ attachment ];
-        console.log("REPLY ACTIVITY\n" + JSON.stringify(replyActivity));
         await context.sendActivity(replyActivity);
     }
 
