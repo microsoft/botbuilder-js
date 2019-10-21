@@ -184,6 +184,7 @@ npm start
   - **Validate**: A message should be posted to the group chat with "Member Removed" message.
 
 - Adaptive card "1"
+  - Works in personal, group chat and teams
 
   - On a Teams channel or General channel with the bot installed, type "@IntegrationBot1".  The "1" is the command sent to the bot.
 
@@ -195,7 +196,7 @@ npm start
     - invoke: Click this and see the bot should send a message that states: "text received by bots" / "handleTeamsCardActionInvoke value: {"key":"value"}"
 
 - Adaptive card "2"
-
+  - Works in personal, group chat and teams
   - On a Teams channel or General channel with the bot installed, type "@IntegrationBot2".  The "2" is the command sent to the bot.
 
   - Validate: A card should appear that says "Task Module Adaptive Card" and contains one button:
@@ -206,41 +207,71 @@ npm start
     - Click X to dismiss the modal dialog.
 
 - Adaptive card "3"
-  
+  - Works in personal, group chat and teams  
   - On a Teams channel or General channel with the bot installed, type "@IntegrationBot3".  The "3" is the command sent to the bot.
   - Validate: A card should appear that says "Bot Builder actions" with an edit control and button labeled "Action.Submit".
   - Validate: Type some text and click "Action.Submit".  You should receive a message `App sent a message with empty text but with valid {"key":"value", "x":"<your text>"}`
   
 - "Hero" card
+  - Works in personal, group chat and teams
   - On a Teams channel or General channel with the bot installed, type "@IntegrationBothero".  The "hero" is the command sent to the bot.
   - The bot should respond with a hero card and button "Get Started"
+  
 - "Thumbnail" card
+  - Works in personal, group chat and teams
   - On a Teams channel or General channel with the bot installed, type "@IntegrationBotthumbnail".  The "thumbnail" is the command sent to the bot.
   - The bot should respond with a thumbnail card and button "Get Started"
+  
 - "Receipt" card
+  - Works in personal, group chat and teams
   - On a Teams channel or General channel with the bot installed, type "@IntegrationBotreceipt".  The "receipt" is the command sent to the bot.
   - The bot should respond with a receipt card and button "More information"
+  
 - "Signin" card
+  - Works in personal, group chat and teams
   - On a Teams channel or General channel with the bot installed, type "@IntegrationBotsignin".  The "signin" is the command sent to the bot.
   - The bot should respond with a Sign-In card and button "BotFramework Sign-in Card"
+  
 - "Carousel" card
+  - Works in personal, group chat and teams
   - On a Teams channel or General channel with the bot installed, type "@IntegrationBotcarousel".  The "carousel" is the command sent to the bot.
   - The bot should respond with a carousel card with three cards.
+  
 - "List" card
+  - Works in personal, group chat and teams
   - On a Teams channel or General channel with the bot installed, type "@IntegrationBotlist".  The "list" is the command sent to the bot.
   - The bot should respond with a list of two cards.
+  
 - "show members"
+  - Works in personal, group chat and teams
   - On a Teams channel or General channel with the bot installed, type "@IntegrationBotshow members".  The "show members" is the command sent to the bot.
   - The bot should respond with a list of members currently in the team.
+  
 - "show channels"
+  - Works in personal, group chat and teams
   - On a Teams channel or General channel with the bot installed, type "@IntegrationBotshow channels".  The "show channels" is the command sent to the bot.
   - The bot should respond with a list of channels..
+  
 - "show details"
+  - Works in personal, group chat and teams
   - On a Teams channel or General channel with the bot installed, type "@IntegrationBotshow details".  The "show details" is the command sent to the bot.
   - The bot should respond with team name, team ID and AAD GroupID.
+  
 - "updatetext"
+  - Works in personal, group chat and teams
   - On a Teams channel or General channel with the bot installed, type "@IntegrationBotupdatetext".  The "updatetext" (or anything that isn't a command listed above)  is the command sent to the bot.
-  - The bot should respond with "You said..." and then upate the message with "updatetext" or whatever you typed.
+  - The bot should respond with "You said..." and then update the message with "updatetext" or whatever you typed.
+  
+- File upload "file"
+  - Works in personal chat only
+  - On a Teams channel or General channel with the bot installed, type "@IntegrationBotfile".  The "file" is the command sent to the bot.
+  - The bot should respond with team name, team ID and AAD GroupID.
+
+- O365 card "o365" 
+  - Works in personal, group chat and teams
+  - On a Teams channel, group chat or personal chat with the bot installed, type "@IntegrationBoto365".  The "0365" is the command sent to the bot.
+  - The bot should respond with Office 365 card with 'Multiple Choice', 'Text Input', 'Date Input', 'View Action', 'Open Uri' buttons at the bottom of the card
+  - Click on each of the button and add inputs.  With the exceptions of 'View Action' and 'Open Uri' buttons, bot should respond back with text containing input names/values and button name, ie 'O365ConnectorCardActionQuery event value: {"body":"{"date1":"2019-10-09T07:30:00.000Z", "date2":"2019-10-02T07:00:00.000Z"}","actionId":"card-3-btn-1"}'.
 
 ## Prerequisites
 
