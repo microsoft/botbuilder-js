@@ -11,7 +11,7 @@
  * with the WebSocket server or client.
  */
 export interface ISocket {
-    isConnected(): boolean;
+    isConnected: boolean;
     write(buffer: Buffer);
     connect(serverAddress: string): Promise<void>;
     close();

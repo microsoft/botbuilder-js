@@ -99,6 +99,7 @@ class TestAdapterSettings {
     constructor(appId = undefined, appPassword = undefined, channelAuthTenant, oAuthEndpoint, openIdMetadata, channelServce) {
         this.appId = appId;
         this.appPassword = appPassword;
+        this.enableWebSockets = true;
     }
 }
 
@@ -131,21 +132,35 @@ describe('BotFrameworkStreamingAdapter tests', () => {
         expect(handler.streamingServer.disconnect()).to.not.throw;
     });
 
-    it('starts and stops a websocket server', () => {
-        let bot = new ActivityHandler();
-        let handler = new BotFrameworkAdapter();
-        let request = new TestRequest();
-        let response = new TestResponse({ claimUpgrade: 'anything' });
+    it('starts and stops a websocket server', async () => {
+        const bot = new ActivityHandler();
+        const handler = new BotFrameworkAdapter(new TestAdapterSettings());
+        const request = new TestRequest();
+        request.setIsUpgradeRequest(true);
+        request.headers = [];
+        request.headers['upgrade'] = 'websocket';
+        request.headers['sec-websocket-key'] = 'BFlat';
+        request.headers['sec-websocket-version'] = '13';
+        request.headers['sec-websocket-protocol'] = '';
 
-        expect(handler.useWebSocket(request, response, async (context) => {
+        const response = new TestResponse({ claimUpgrade: 'anything' });
+        const fakeSocket = {
+            unshift: function () { return true; },
+            write: function (value) { },
+            on: function (value) { },
+            read: function () { return new Buffer.from('data', 'utf8'); },
+            end: function () { return; },
+        };
+        response.setClaimUpgrade({ socket: fakeSocket, head: 'websocket' });
+        await handler.useWebSocket(request, response, async (context) => {
             // Route to bot
             await bot.run(context);
-        })).to.not.throw;
+        });
     });
 
     it('returns a connector client', async () => {
         let bot = new ActivityHandler();
-        let handler = new BotFrameworkAdapter();
+        let handler = new BotFrameworkAdapter(new TestAdapterSettings());
         let request = new TestRequest();
         request.setIsUpgradeRequest(true);
         request.headers = [];
@@ -175,7 +190,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
     describe('useWebSocket()', () => {
         it('connects', async () => {
             let bot = new ActivityHandler();
-            let handler = new BotFrameworkAdapter();
+            let handler = new BotFrameworkAdapter(new TestAdapterSettings());
             let request = new TestRequest();
             request.setIsUpgradeRequest(true);
             request.headers = [];
@@ -424,7 +439,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
 
     it('sends a request', async () => {
         let bot = new ActivityHandler();
-        let handler = new BotFrameworkAdapter();
+        let handler = new BotFrameworkAdapter(new TestAdapterSettings());
         let request = new TestRequest();
         request.setIsUpgradeRequest(true);
         request.headers = [];

@@ -8,10 +8,19 @@
 
 import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
 import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
+import { IncomingMessage } from 'http';
 import * as os from 'os';
 import { TokenResolver } from './tokenResolver';
-import { IStreamingTransportServer, IReceiveRequest, StreamingResponse, NamedPipeServer, ISocket, WebSocketServer, NodeWebSocket } from 'botframework-streaming';
-import { Watershed } from 'watershed'; 
+import {
+    IReceiveRequest,
+    ISocket,
+    IStreamingTransportServer,
+    NamedPipeServer,
+    NodeWebSocketFactory,
+    NodeWebSocketFactoryBase,
+    StreamingResponse,
+    WebSocketServer,
+} from 'botframework-streaming';
 import { StreamingHttpClient } from './streamingHttpClient';
 
 export enum StatusCodes {
@@ -137,6 +146,11 @@ export interface BotFrameworkAdapterSettings {
      * Optional. The option to determine if this adapter accepts WebSocket connections
      */
     enableWebSockets?: boolean;
+
+    /**
+     * Optional. Used to pass in a NodeWebSocketFactoryBase instance. Allows bot to accept WebSocket connections.
+     */
+    webSocketFactory?: NodeWebSocketFactoryBase;
 }
 
 /**
@@ -218,8 +232,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
     private logic: (context: TurnContext) => Promise<void>;
     private streamingServer: IStreamingTransportServer;
-    private isEmulatingOAuthCards: boolean;    
-    
+    private isEmulatingOAuthCards: boolean;
+    private webSocketFactory: NodeWebSocketFactoryBase;
 
     /**
      * Creates a new instance of the [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) class.
@@ -243,6 +257,16 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '', this.settings.channelAuthTenant);
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
         this.isEmulatingOAuthCards = false;
+
+        // If the developer wants to use WebSockets, but didn't provide a WebSocketFactory,
+        // create a NodeWebSocketFactory.
+        if (this.settings.enableWebSockets && !this.settings.webSocketFactory) {
+            this.webSocketFactory = new NodeWebSocketFactory();
+        }
+
+        if (this.settings.webSocketFactory) {
+            this.webSocketFactory = this.settings.webSocketFactory;
+        }
 
         // If no channelService or openIdMetadata values were passed in the settings, check the process' Environment Variables for values.
         // These values may be set when a bot is provisioned on Azure and if so are required for the bot to properly work in Public Azure or a National Cloud.
@@ -1171,8 +1195,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             throw new Error('Streaming logic needs to be provided to `useWebSocket`');
         }
 
+        if (!this.webSocketFactory || !this.webSocketFactory.createWebSocket) {
+            throw new Error('BotFrameworkAdapter must have a WebSocketFactory in order to support streaming.');
+        }
+
         this.logic = logic;
 
+        // Restify-specific check.
         if (typeof((res as any).claimUpgrade) !== 'function') {
             throw new Error("ClaimUpgrade is required for creating WebSocket connection.");
         }
@@ -1184,10 +1213,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         }
         
         const upgrade = (res as any).claimUpgrade();
-        const ws = new Watershed();
-        const socket = ws.accept(req, upgrade.socket, upgrade.head);
+        const socket = this.webSocketFactory.createWebSocket(req as IncomingMessage, upgrade.socket, upgrade.head);
 
-        await this.startWebSocket(new NodeWebSocket(socket));
+        await this.startWebSocket(socket);
     }
 
     /**
