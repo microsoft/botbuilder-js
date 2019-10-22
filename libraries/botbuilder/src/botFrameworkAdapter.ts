@@ -1008,13 +1008,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         if (request.verb.toLocaleUpperCase() === GET && request.path.toLocaleLowerCase() === VERSION_PATH) {
             response.statusCode = StatusCodes.OK;
 
-            if (!this.credentials.appId || !this.credentials.appPassword) {
+            if (!this.credentials.appId) {
                 response.setBody({UserAgent: USER_AGENT});
                 return response;
             }
 
             try {
-                response.setBody({UserAgent: USER_AGENT, Token: await this.credentials.getToken()});
+                response.setBody({UserAgent: USER_AGENT, BotToken: await this.credentials.getToken()});
             } catch (err) {
                 // If the MicrosoftAppCredentials.getToken() fails, not sending the UserAgent in this
                 // request will result in the connection being destroyed by the channel.
@@ -1130,7 +1130,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     protected checkEmulatingOAuthCards(context: TurnContext): void {
         if (!this.isEmulatingOAuthCards &&
             context.activity.channelId === 'emulator' &&
-            (!this.credentials.appId || !this.credentials.appPassword)) {
+            (!this.credentials.appId)) {
             this.isEmulatingOAuthCards = true;
         }
     }
@@ -1170,7 +1170,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      }
 
     private async authenticateConnection(req: WebRequest, channelService?: string): Promise<void> {
-        if (!this.credentials.appId || !this.credentials.appPassword) {
+        if (!this.credentials.appId) {
             // auth is disabled
             return;
         }
@@ -1179,8 +1179,6 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const channelIdHeader: string = req.headers.channelid || req.headers.ChannelId || req.headers.ChannelID || '';
         // Validate the received Upgrade request from the channel.
         const claims = await JwtTokenValidation.validateAuthHeader(authHeader, this.credentialsProvider, channelService, channelIdHeader);
-        // Confirm the bot is able to fetch a token which is required to send Activities.
-        await this.credentials.getToken();
 
         if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
     }
@@ -1190,7 +1188,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * @param pipeName The name of the named pipe to use when creating the server.
      * @param logic The logic that will handle incoming requests.
      */
-    public async useNamedPipe(pipeName: string = defaultPipeName, logic: (context: TurnContext) => Promise<any>): Promise<void>{
+    private async useNamedPipe(pipeName: string = defaultPipeName, logic: (context: TurnContext) => Promise<any>): Promise<void>{
         if (!logic) {
             throw new Error('Bot logic needs to be provided to `useNamedPipe`');
         }
