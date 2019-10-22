@@ -60,8 +60,6 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
      * @param choiceDefaults (Optional) Overrides the dictionary of Bot Framework SDK-supported _choiceDefaults (for prompt localization).
      *  Must be passed in to each ConfirmPrompt that needs the custom choice defaults.
      */
-    public constructor(dialogId: string, validator?: PromptValidator<FoundChoice>, defaultLocale?: string);
-
     public constructor(dialogId: string, validator?: PromptValidator<FoundChoice>, defaultLocale?: string, choiceDefaults?: ChoiceDefaultsChoicePrompt) {
         super(dialogId, validator);
         this.style = ListStyle.auto;

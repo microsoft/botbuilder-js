@@ -59,8 +59,6 @@ export class ConfirmPrompt extends Prompt<boolean> {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
      */
-    public constructor(dialogId: string, validator?: PromptValidator<boolean>, defaultLocale?: string);
-
     public constructor(dialogId: string, validator?: PromptValidator<boolean>, defaultLocale?: string, choiceDefaults?: ChoiceDefaultsConfirmPrompt) {
         super(dialogId, validator);
         this.style = ListStyle.auto;
