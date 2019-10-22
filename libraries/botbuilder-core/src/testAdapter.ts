@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 // tslint:disable-next-line:no-require-imports
-import assert = require('assert');
+import assert from 'assert';
 import { Activity, ActivityTypes, ConversationReference, ResourceResponse, TokenResponse } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
 import { TurnContext } from './turnContext';
