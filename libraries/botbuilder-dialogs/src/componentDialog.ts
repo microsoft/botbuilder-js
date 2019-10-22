@@ -7,8 +7,8 @@
  */
 import { TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
-import { DialogContext, DialogState } from './dialogContext';
-import { DialogSet } from './dialogSet';
+import { DialogContext } from './dialogContext';
+import { DialogContainer } from './dialogContainer';
 
 const PERSISTED_DIALOG_STATE = 'dialogs';
 
@@ -68,7 +68,7 @@ const PERSISTED_DIALOG_STATE = 'dialogs';
  * ```
  * @param O (Optional) options that can be passed into the `DialogContext.beginDialog()` method.
  */
-export class ComponentDialog<O extends object = {}> extends Dialog<O> {
+export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * ID of the child dialog that should be started anytime the component is started.
@@ -77,7 +77,6 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
      * This defaults to the ID of the first child dialog added using [addDialog()](#adddialog).
      */
     protected initialDialogId: string;
-    private dialogs: DialogSet = new DialogSet(null);
 
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Start the inner dialog.
@@ -153,15 +152,6 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
         if (this.initialDialogId === undefined) { this.initialDialogId = dialog.id; }
 
         return this;
-    }
-
-    /**
-     * Finds a child dialog that was previously added to the component using
-     * [addDialog()](#adddialog).
-     * @param dialogId ID of the dialog or prompt to lookup.
-     */
-    public findDialog(dialogId: string): Dialog | undefined {
-        return this.dialogs.find(dialogId);
     }
 
     /**

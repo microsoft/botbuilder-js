@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 export * from './choices';
+export * from './memory';
 export * from './prompts';
-export * from './state';
 export * from './dialog';
 export * from './componentDialog';
 export * from './dialogContext';

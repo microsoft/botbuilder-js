@@ -10,7 +10,7 @@ import { Choice } from './choices';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
-import { DialogStateManager } from './state';
+import { DialogStateManager } from './memory';
 
 /**
  * State information persisted by a `DialogSet`.
