@@ -81,10 +81,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
 
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Start the inner dialog.
-        const dialogState: DialogState = { dialogStack: [] };
-        outerDC.activeDialog.state[PERSISTED_DIALOG_STATE] = dialogState;
-        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState);
-        innerDC.parent = outerDC;
+        const innerDC: DialogContext = this.createChildContext(outerDC)
         const turnResult: DialogTurnResult<any> = await this.onBeginDialog(innerDC, options);
 
         // Check for end of inner dialog
@@ -99,9 +96,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
 
     public async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
         // Continue execution of inner dialog.
-        const dialogState: any = outerDC.activeDialog.state[PERSISTED_DIALOG_STATE];
-        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState);
-        innerDC.parent = outerDC;
+        const innerDC: DialogContext = this.createChildContext(outerDC)
         const turnResult: DialogTurnResult<any> = await this.onContinueDialog(innerDC);
 
         // Check for end of inner dialog
@@ -127,8 +122,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
 
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Forward to inner dialogs
-        const dialogState: any = instance.state[PERSISTED_DIALOG_STATE];
-        const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
+        const innerDC: DialogContext = this.createInnerDC(context, instance);
         await innerDC.repromptDialog();
 
         // Notify component.
@@ -138,8 +132,7 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // Forward cancel to inner dialogs
         if (reason === DialogReason.cancelCalled) {
-            const dialogState: any = instance.state[PERSISTED_DIALOG_STATE];
-            const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
+            const innerDC: DialogContext = this.createInnerDC(context, instance);
             await innerDC.cancelAllDialogs();
         }
 
@@ -169,6 +162,17 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
      */
     public findDialog(dialogId: string): Dialog | undefined {
         return this.dialogs.find(dialogId);
+    }
+
+    /**
+     * Creates the inner dialog context
+     * @param outerDC the outer dialog context
+     */
+    public createChildContext(outerDC: DialogContext) {
+        const innerDC = this.createInnerDC(outerDC.context, outerDC.activeDialog);
+        innerDC.parent = outerDC;
+
+        return innerDC;
     }
 
     /**
@@ -235,6 +239,14 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
      */
     protected endComponent(outerDC: DialogContext, result: any): Promise<DialogTurnResult> {
         return outerDC.endDialog(result);
+    }
+
+    private createInnerDC(context: TurnContext, instance: DialogInstance) {
+        const dialogState = instance.state[PERSISTED_DIALOG_STATE] || { dialogStack: [] };
+        instance.state[PERSISTED_DIALOG_STATE] = dialogState
+        const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
+
+        return innerDC
     }
 
     /**
