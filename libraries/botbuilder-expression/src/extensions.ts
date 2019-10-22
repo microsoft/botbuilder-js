@@ -120,9 +120,8 @@ export class Extensions {
         // todo, Is there a better way to access value, or any case is not listed below?
         if (instance instanceof Map && <Map<string, any>>instance !== undefined) {
             const instanceMap: Map<string, any> = <Map<string, any>>instance;
-            if (instanceMap.has(property)) {
-                value = instanceMap.get(property);
-            } else {
+            value = instanceMap.get(property);
+            if (value === undefined) {
                 const prop: string = Array.from(instanceMap.keys()).find((k: string) => k.toLowerCase() === property.toLowerCase());
                 if (prop !== undefined) {
                     value = instanceMap.get(prop);

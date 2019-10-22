@@ -499,6 +499,22 @@ describe('LG', function () {
         assert.strictEqual(lgResource.Templates[0].Body.replace(/\r\n/g, '\n'), '- Hi\n- Hello\n- Hiya\n- Hi');
     });
 
+    it('TestMemoryScope', function () {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath("MemoryScope.lg"));
+        var evaled = engine.evaluateTemplate('T1', { turn: { name: 'Dong', count: 3 } });
+        assert.strictEqual(evaled, 'Hi Dong, welcome to Seattle, Seattle is a beautiful place, how many burgers do you want, 3?');
+
+        evaled = engine.evaluateTemplate('AskBread', {
+            schema: {
+                Bread: {
+                    enum: ['A', 'B']
+                }
+            }
+        });
+
+        assert.strictEqual(evaled, 'Which Bread, A or B do you want?');
+    })
+
     it('TestStructuredTemplate', function () {
         var engine = new TemplateEngine().addFile(GetExampleFilePath("StructuredTemplate.lg"));
 

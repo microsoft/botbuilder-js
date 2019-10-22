@@ -15,6 +15,7 @@ import { EvaluationTarget } from './evaluationTarget';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
+import { CustomizedMemoryScope } from './customizedMemoryScope';
 
 /**
  * Evaluation tuntime engine
@@ -201,10 +202,11 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
     public ConstructScope(templateName: string, args: any[]): any {
         const parameters: string[] = this.TemplateMap[templateName].Parameters;
+        const currentScope: any = this.currentTarget().Scope;
 
         if (args.length === 0) {
             // no args to construct, inherit from current scope
-            return this.currentTarget().Scope;
+            return currentScope;
         }
 
         if (parameters !== undefined && (args === undefined || parameters.length !== args.length)) {
@@ -214,7 +216,11 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         const newScope: any = {};
         parameters.map((e: string, i: number) => newScope[e] = args[i]);
 
-        return newScope;
+        if (currentScope instanceof CustomizedMemoryScope) {
+            return new CustomizedMemoryScope(newScope, (currentScope as CustomizedMemoryScope).globalScope);
+        } else {
+            return new CustomizedMemoryScope(newScope, currentScope);
+        }
     }
 
     public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): string {
