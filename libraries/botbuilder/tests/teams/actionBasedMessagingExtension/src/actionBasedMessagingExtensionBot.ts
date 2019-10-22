@@ -10,7 +10,8 @@ import {
     TaskModuleContinueResponse,
     TaskModuleMessageResponse,
     TaskModuleResponseBase,
-    TeamsActivityHandler
+    TeamsActivityHandler,
+    TurnContext
 } from 'botbuilder';
 
 export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
@@ -37,7 +38,7 @@ export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
         });
     }
 
-    protected async onTeamsMessagingExtensionSubmitAction(context, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+    protected async handleTeamsMessagingExtensionSubmitAction(context, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         const data = action.data;
         let body: MessagingExtensionActionResponse;
         if (data && data.done) {
@@ -81,13 +82,13 @@ export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
 
     // This method fires when an user uses an Action-based Messaging Extension from the Teams Client.
     // It should send back the tab or task module for the user to interact with.
-    protected async onTeamsMessagingExtensionFetchTask(context, query): Promise<MessagingExtensionActionResponse> {
+    protected async handleTeamsMessagingExtensionFetchTask(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         return {
-            task: this.taskModuleResponse(query, false)
+            task: this.taskModuleResponse(action, false)
         };
     }
 
-    protected async onTeamsBotMessagePreviewSend(context, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+    protected async handleTeamsMessagingExtensionBotMessagePreviewSend(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         let body: MessagingExtensionActionResponse;
         const card = this.getCardFromPreviewMessage(action);
         if (!card) {
@@ -105,7 +106,7 @@ export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
         return body;
     }
 
-    protected async onTeamsBotMessagePreviewEdit(context, value: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+    protected async handleTeamsMessagingExtensionBotMessagePreviewEdit(context, value: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         const card = this.getCardFromPreviewMessage(value);
         let body: MessagingExtensionActionResponse;
         if (!card) {

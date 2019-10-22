@@ -68,7 +68,7 @@ export class RosterBot extends TeamsActivityHandler {
     }
     
     private async showChannels(context: TurnContext): Promise<void> { 
-        let channels = await TeamsInfo.getChannels(context);
+        let channels = await TeamsInfo.getTeamChannels(context);
         await context.sendActivity(MessageFactory.text(`Total of ${channels.length} channels are currently in team`));
         let messages = channels.map(function(channel) {
             return `${channel.id} --> ${channel.name ? channel.name : 'General'}`;

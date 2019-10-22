@@ -1,13 +1,16 @@
 /**
+ * @module botbuilder
+ */
+/**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
-import { InvokeResponse } from './botFrameworkAdapter';
+import { InvokeResponse, INVOKE_RESPONSE_KEY } from './botFrameworkAdapter';
 
 import {
-    ActivityTypes,
     ActivityHandler,
+    ActivityTypes,
     AppBasedLinkQuery,
     ChannelAccount,
     ChannelInfo,
@@ -37,7 +40,8 @@ export class TeamsActivityHandler extends ActivityHandler {
         switch (context.activity.type) {
             case ActivityTypes.Invoke:
                 const invokeResponse = await this.onInvokeActivity(context);
-                if (invokeResponse) {
+                // If onInvokeActivity has already sent an InvokeResponse, do not send another one.
+                if (invokeResponse && !context.turnState.get(INVOKE_RESPONSE_KEY)) {
                     await context.sendActivity({ value: invokeResponse, type: 'invokeResponse' });
                 }
                 break;
@@ -54,55 +58,51 @@ export class TeamsActivityHandler extends ActivityHandler {
     protected async onInvokeActivity(context: TurnContext): Promise<InvokeResponse> {
         try {
             if (!context.activity.name && context.activity.channelId === 'msteams') {
-                return await this.onTeamsCardActionInvoke(context);
+                return await this.handleTeamsCardActionInvoke(context);
             } else {
                 switch (context.activity.name) {
                     case 'signin/verifyState':
-                        return await this.onTeamsSigninVerifyState(context, context.activity.value);
+                        await this.handleTeamsSigninVerifyState(context, context.activity.value);
+                        return TeamsActivityHandler.createInvokeResponse();
 
                     case 'fileConsent/invoke':
-                        return TeamsActivityHandler.createInvokeResponse(await this.onTeamsFileConsent(context, context.activity.value));
+                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsFileConsent(context, context.activity.value));
 
                     case 'actionableMessage/executeAction':
-                        await this.onTeamsO365ConnectorCardAction(context, context.activity.value);
+                        await this.handleTeamsO365ConnectorCardAction(context, context.activity.value);
                         return TeamsActivityHandler.createInvokeResponse();
 
                     case 'composeExtension/queryLink':
-                        return TeamsActivityHandler.createInvokeResponse(await this.onTeamsAppBasedLinkQuery(context, context.activity.value));
+                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsAppBasedLinkQuery(context, context.activity.value));
 
                     case 'composeExtension/query':
-                        return TeamsActivityHandler.createInvokeResponse(await this.onTeamsMessagingExtensionQuery(context, context.activity.value));
+                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsMessagingExtensionQuery(context, context.activity.value));
 
                     case 'composeExtension/selectItem':
-                        return TeamsActivityHandler.createInvokeResponse(await this.onTeamsMessagingExtensionSelectItem(context, context.activity.value));
+                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsMessagingExtensionSelectItem(context, context.activity.value));
 
                     case 'composeExtension/submitAction':
-                        return TeamsActivityHandler.createInvokeResponse(await this.onTeamsMessagingExtensionSubmitActionDispatch(context, context.activity.value));
+                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsMessagingExtensionSubmitActionDispatch(context, context.activity.value));
 
                     case 'composeExtension/fetchTask':
-                        return TeamsActivityHandler.createInvokeResponse(await this.onTeamsMessagingExtensionFetchTask(context, context.activity.value));
+                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsMessagingExtensionFetchTask(context, context.activity.value));
 
                     case 'composeExtension/querySettingUrl':
-                        return TeamsActivityHandler.createInvokeResponse(await this.onTeamsMessagingExtensionConfigurationQuerySettingUrl(context, context.activity.value));
+                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsMessagingExtensionConfigurationQuerySettingUrl(context, context.activity.value));
 
                     case 'composeExtension/setting':
-                        await this.onTeamsMessagingExtensionConfigurationSetting(context, context.activity.value);
+                        await this.handleTeamsMessagingExtensionConfigurationSetting(context, context.activity.value);
                         return TeamsActivityHandler.createInvokeResponse();
 
                     case 'composeExtension/onCardButtonClicked':
-                        await this.onTeamsMessagingExtensionCardButtonClicked(context, context.activity.value);
+                        await this.handleTeamsMessagingExtensionCardButtonClicked(context, context.activity.value);
                         return TeamsActivityHandler.createInvokeResponse();
 
                     case 'task/fetch':
-                        const fetchResponse = await this.onTeamsTaskModuleFetch(context, context.activity.value);
-                        const taskModuleContineResponse = { type: 'continue', value: fetchResponse };
-                        const taskModuleResponse = { task: taskModuleContineResponse };
-                        return TeamsActivityHandler.createInvokeResponse(taskModuleResponse);
+                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsTaskModuleFetch(context, context.activity.value));
 
                     case 'task/submit':
-                        const submitResponseBase = await this.onTeamsTaskModuleSubmit(context, context.activity.value);
-                        const taskModuleResponse_submit = { task: submitResponseBase };
-                        return TeamsActivityHandler.createInvokeResponse(taskModuleResponse_submit);
+                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsTaskModuleSubmit(context, context.activity.value));
 
                     default:
                         throw new Error('NotImplemented');
@@ -122,28 +122,24 @@ export class TeamsActivityHandler extends ActivityHandler {
      * 
      * @param context 
      */
-    protected async onTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse> {
+    protected async handleTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse> {
         throw new Error('NotImplemented');
     }
 
     /**
      * Receives invoke activities with Activity name of 'fileConsent/invoke'. Handlers registered here run before
-     * `onTeamsFileConsentAccept` and `onTeamsFileConsentDecline`.
-     * Developers are not passed a pointer to the next `onTeamsFileConsent` handler because the _wrapper_ around
-     * the handler will call `onDialogs` handlers after delegating to `onTeamsFileConsentAccept` or `onTeamsFileConsentDecline`.
-     * @remarks
-     * It is important that only ONE onTeamsFileConsent handler is registered, otherwise the handlers for
-     * onTeamsFileConsentAccept and onTeamsFileConsentDecline will run more than once.
-     * This method wraps the given handler and sends an InvokeResponse on behalf of the user.
+     * `handleTeamsFileConsentAccept` and `handleTeamsFileConsentDecline`.
+     * Developers are not passed a pointer to the next `handleTeamsFileConsent` handler because the _wrapper_ around
+     * the handler will call `onDialogs` handlers after delegating to `handleTeamsFileConsentAccept` or `handleTeamsFileConsentDecline`.
      * @param context
      * @param fileConsentCardResponse
      */
-    protected async onTeamsFileConsent(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
+    protected async handleTeamsFileConsent(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
         switch (fileConsentCardResponse.action) {
             case 'accept':
-                return await this.onTeamsFileConsentAccept(context, fileConsentCardResponse);
+                return await this.handleTeamsFileConsentAccept(context, fileConsentCardResponse);
             case 'decline':
-                return await this.onTeamsFileConsentDecline(context, fileConsentCardResponse);
+                return await this.handleTeamsFileConsentDecline(context, fileConsentCardResponse);
             default:
                 throw new Error('BadRequest');
         }
@@ -156,7 +152,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param fileConsentCardResponse
      */
-    protected async onTeamsFileConsentAccept(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
+    protected async handleTeamsFileConsentAccept(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
         throw new Error('NotImplemented');
     }
 
@@ -167,14 +163,14 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param fileConsentCardResponse
      */
-    protected async onTeamsFileConsentDecline(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
+    protected async handleTeamsFileConsentDecline(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
         throw new Error('NotImplemented');
     }
 
     /**
      * Receives invoke activities with Activity name of 'actionableMessage/executeAction'
      */
-    protected async onTeamsO365ConnectorCardAction(context: TurnContext, query: O365ConnectorCardActionQuery): Promise<void> {
+    protected async handleTeamsO365ConnectorCardAction(context: TurnContext, query: O365ConnectorCardActionQuery): Promise<void> {
         throw new Error('NotImplemented');
     }
 
@@ -183,16 +179,16 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param action
      */
-    protected async onTeamsSigninVerifyState(context: TurnContext, query: SigninStateVerificationQuery): Promise<InvokeResponse> {
+    protected async handleTeamsSigninVerifyState(context: TurnContext, query: SigninStateVerificationQuery): Promise<void> {
         throw new Error('NotImplemented');
     }
 
     /**
-     * 
+     * Receives invoke activities with Activity name of 'composeExtension/onCardButtonClicked'
      * @param context 
      * @param cardData 
      */
-    protected async onTeamsMessagingExtensionCardButtonClicked(context: TurnContext, cardData: any): Promise<void> {
+    protected async handleTeamsMessagingExtensionCardButtonClicked(context: TurnContext, cardData: any): Promise<void> {
         throw new Error('NotImplemented');
     }
 
@@ -201,7 +197,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param taskModuleRequest
      */
-    protected async onTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleTaskInfo> {
+    protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -210,7 +206,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param taskModuleRequest
      */
-    protected async onTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponseBase | void> {
+    protected async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -221,7 +217,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param query
      */
-    protected async onTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse> {
+    protected async handleTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -232,7 +228,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param action
      */
-    protected async onTeamsMessagingExtensionQuery(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionResponse> {
+    protected async handleTeamsMessagingExtensionQuery(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -243,31 +239,31 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param action
      */
-    protected async onTeamsMessagingExtensionSelectItem(context: TurnContext, query: any): Promise<MessagingExtensionResponse> {
+    protected async handleTeamsMessagingExtensionSelectItem(context: TurnContext, query: any): Promise<MessagingExtensionResponse> {
         throw new Error('NotImplemented');
     }
 
     /**
-     * Receives invoke activities with the name 'composeExtension/submitAction' and is called before the next appropriate handler is called.
+     * Receives invoke activities with the name 'composeExtension/submitAction' and dispatches to botMessagePreview-flows as applicable.
      * @remarks
-     * A handler registered through this method does not dispatch to the next handler (either `onTeamsMessagingExtensionSubmitAction`, `onTeamsBotMessagePreviewEdit`, or `onTeamsBotMessagePreviewSend`).
+     * A handler registered through this method does not dispatch to the next handler (either `handleTeamsMessagingExtensionSubmitAction`, `handleTeamsMessagingExtensionBotMessagePreviewEdit`, or `handleTeamsMessagingExtensionBotMessagePreviewSend`).
      * This method exists for developers to optionally add more logic before the TeamsActivityHandler routes the activity to one of the
      * previously mentioned handlers.
      * @param context
      * @param action
      */
-    protected async onTeamsMessagingExtensionSubmitActionDispatch(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+    protected async handleTeamsMessagingExtensionSubmitActionDispatch(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         if (action.botMessagePreviewAction) {
             switch (action.botMessagePreviewAction) {
                 case 'edit':
-                    return await this.onTeamsMessagingExtensionBotMessagePreviewEdit(context, action);
+                    return await this.handleTeamsMessagingExtensionBotMessagePreviewEdit(context, action);
                 case 'send':
-                    return await this.onTeamsMessagingExtensionBotMessagePreviewSend(context, action);
+                    return await this.handleTeamsMessagingExtensionBotMessagePreviewSend(context, action);
                 default:
                     throw new Error('BadRequest');
             }
         } else {
-            return await this.onTeamsMessagingExtensionSubmitAction(context, action);
+            return await this.handleTeamsMessagingExtensionSubmitAction(context, action);
         }
     }
 
@@ -278,7 +274,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param action
      */
-    protected async onTeamsMessagingExtensionSubmitAction(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+    protected async handleTeamsMessagingExtensionSubmitAction(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -290,7 +286,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param action
      */
-    protected async onTeamsMessagingExtensionBotMessagePreviewEdit(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+    protected async handleTeamsMessagingExtensionBotMessagePreviewEdit(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -302,7 +298,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param action
      */
-    protected async onTeamsMessagingExtensionBotMessagePreviewSend(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
+    protected async handleTeamsMessagingExtensionBotMessagePreviewSend(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -311,7 +307,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param action
      */
-    protected async onTeamsMessagingExtensionFetchTask(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionActionResponse> {
+    protected async handleTeamsMessagingExtensionFetchTask(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -320,7 +316,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param query
      */
-    protected async onTeamsMessagingExtensionConfigurationQuerySettingUrl(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionResponse> {
+    protected async handleTeamsMessagingExtensionConfigurationQuerySettingUrl(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -329,7 +325,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context
      * @param query
      */
-    protected onTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings: any): Promise<void> {
+    protected handleTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings: any): Promise<void> {
         throw new Error('NotImplemented');
     }
 
