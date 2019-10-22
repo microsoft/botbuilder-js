@@ -20,12 +20,14 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@microsoft/recognizers-text-choice": "1.1.2",
-    "@microsoft/recognizers-text-date-time": "1.1.2",
-    "@microsoft/recognizers-text-number": "1.1.2",
-    "@microsoft/recognizers-text-suite": "1.1.2",
+    "@microsoft/recognizers-text-choice": "1.1.4",
+    "@microsoft/recognizers-text-date-time": "1.1.4",
+    "@microsoft/recognizers-text-number": "1.1.4",
+    "@microsoft/recognizers-text-suite": "1.1.4",
     "@types/node": "^10.12.18",
-    "botbuilder-core": "4.1.6"
+    "botbuilder-core": "4.1.6",
+    "cldr-data": "^35.1.0",
+    "globalize": "^1.4.2"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
@@ -44,6 +46,6 @@
   },
   "files": [
     "/lib",
-    "/src"   
+    "/src"
   ]
 }

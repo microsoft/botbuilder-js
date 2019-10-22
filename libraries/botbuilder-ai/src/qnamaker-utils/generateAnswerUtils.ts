@@ -9,9 +9,11 @@
 import { TurnContext } from 'botbuilder-core';
 
 import { QnAMakerResult } from '../qnamaker-interfaces/qnamakerResult';
+import { QnAMakerResults } from '../qnamaker-interfaces/qnamakerResults';
 import { QnAMakerEndpoint } from '../qnamaker-interfaces/qnamakerEndpoint';
 import { QnAMakerOptions } from '../qnamaker-interfaces/qnamakerOptions';
 import { QnAMakerTraceInfo } from '../qnamaker-interfaces/qnamakerTraceInfo';
+import { QnARequestContext } from '../qnamaker-interfaces/qnaRequestContext';
 import { HttpRequestUtils } from './httpRequestUtils';
 
 import { QNAMAKER_TRACE_TYPE, QNAMAKER_TRACE_LABEL, QNAMAKER_TRACE_NAME } from '..';
@@ -43,6 +45,18 @@ export class GenerateAnswerUtils {
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
     public async queryQnaService(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResult[]> {
+        var result = await this.queryQnaServiceRaw(endpoint, question, options);
+        
+        return result.answers;
+    }
+
+    /**
+     * Called internally to query the QnA Maker service.
+     * @param endpoint The endpoint of the knowledge base to query.
+     * @param question Question which need to be queried.
+     * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     */
+    public async queryQnaServiceRaw(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResults> {
         const url: string = `${ endpoint.host }/knowledgebases/${ endpoint.knowledgeBaseId }/generateanswer`;
         const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
 
@@ -61,25 +75,27 @@ export class GenerateAnswerUtils {
     /**
      * Emits a trace event detailing a QnA Maker call and its results.
      *
-     * @param context Context for the current turn of conversation with the user.
+     * @param turnContext Turn Context for the current turn of conversation with the user.
      * @param answers Answers returned by QnA Maker.
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
-    public async emitTraceInfo(context: TurnContext, answers: QnAMakerResult[], queryOptions?: QnAMakerOptions): Promise<any> {
+    public async emitTraceInfo(turnContext: TurnContext, answers: QnAMakerResult[], queryOptions?: QnAMakerOptions): Promise<any> {
         const requestOptions: QnAMakerOptions = { ...this._options, ...queryOptions };
-        const { scoreThreshold, top, strictFilters, metadataBoost } = requestOptions;
+        const { scoreThreshold, top, strictFilters, metadataBoost, context, qnaId } = requestOptions;
 
         const traceInfo: QnAMakerTraceInfo = {
-            message: context.activity,
+            message: turnContext.activity,
             queryResults: answers,
             knowledgeBaseId: this.endpoint.knowledgeBaseId,
             scoreThreshold,
             top,
             strictFilters,
-            metadataBoost
+            metadataBoost,
+            context,
+            qnaId,
         };
 
-        return context.sendActivity({
+        return turnContext.sendActivity({
             type: 'trace',
             valueType: QNAMAKER_TRACE_TYPE,
             name: QNAMAKER_TRACE_NAME,
@@ -119,8 +135,8 @@ export class GenerateAnswerUtils {
             .sort((a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score);
     }
     
-    private formatQnaResult(qnaResult: any): QnAMakerResult[] {
-        return qnaResult.answers.map((ans: any) => {
+    private formatQnaResult(qnaResult: any): QnAMakerResults {
+        qnaResult.answers = qnaResult.answers.map((ans: any) => {
             ans.score = ans.score / 100;
 
             if (ans.qnaId) {
@@ -130,6 +146,10 @@ export class GenerateAnswerUtils {
 
             return ans as QnAMakerResult;
         });
+
+        qnaResult.activeLearningEnabled = (qnaResult.activeLearningEnabled != null) ? qnaResult.activeLearningEnabled : true;
+
+        return qnaResult;
     }
 
     private validateScoreThreshold(scoreThreshold: number): void {

@@ -49,7 +49,28 @@ export class TranscriptLoggerMiddleware implements Middleware {
         context.onSendActivities(async (ctx: TurnContext, activities: Partial<Activity>[], next2: () => Promise<ResourceResponse[]>) => {
             // run full pipeline
             const responses: ResourceResponse[] = await next2();
-            activities.forEach((a: ResourceResponse) => this.logActivity(transcript, this.cloneActivity(a)));
+
+            activities.map((a: Partial<Activity>, index: number) => {
+                const clonedActivity = this.cloneActivity(a);
+                if (index < responses.length) {
+                    if (!clonedActivity.id) {
+                        clonedActivity.id = responses[index].id;
+
+                        // For certain channels, a ResourceResponse with an id is not always sent to the bot.
+                        // This fix uses the timestamp on the activity to populate its id for logging the transcript.
+                        // If there is no outgoing timestamp, the current time for the bot is used for the activity.id.
+                        // See https://github.com/microsoft/botbuilder-js/issues/1122
+                        if (!clonedActivity.id) {
+                            if (clonedActivity.timestamp) {
+                                clonedActivity.id = new Date(clonedActivity.timestamp).getTime().toString();
+                            } else {
+                                clonedActivity.id = Date.now().toString();
+                            }
+                        }
+                    }
+                }
+                this.logActivity(transcript, clonedActivity);
+            });
 
             return responses;
         });
@@ -138,13 +159,13 @@ export class TranscriptLoggerMiddleware implements Middleware {
      * Error logging helper function.
      * @param err Error or object to console.error out.
      */
-    private transcriptLoggerErrorHandler(err: Error|any): void {
+    private transcriptLoggerErrorHandler(err: Error | any): void {
         // tslint:disable:no-console
         if (err instanceof Error) {
-            console.error(`TranscriptLoggerMiddleware logActivity failed: "${ err.message }"`);
+            console.error(`TranscriptLoggerMiddleware logActivity failed: "${err.message}"`);
             console.error(err.stack);
         } else {
-            console.error(`TranscriptLoggerMiddleware logActivity failed: "${ JSON.stringify(err) }"`);
+            console.error(`TranscriptLoggerMiddleware logActivity failed: "${JSON.stringify(err)}"`);
         }
         // tslint:enable:no-console
     }

@@ -181,6 +181,18 @@ describe('QnAMaker', function () {
 
         });
 
+        it('should return answer and active learning flag', async function() {
+            const noOptionsQnA = new QnAMaker(endpoint);
+            const noOptionsContext = new TestContext({ text: 'where are the unicorns?' })
+            const defaultNumberOfAnswers = 1;
+
+            const results = await noOptionsQnA.getAnswersRaw(noOptionsContext);
+            const numberOfResults = results.answers.length;
+
+            assert.strictEqual(numberOfResults, defaultNumberOfAnswers, 'Should return only 1 answer with default settings (i.e. no options specified) for question with answer.');
+            assert.strictEqual(results.activeLearningEnabled, false, 'Should return false for active learning flag.');
+        });
+
         it('should sort the answers in the qna results from highest to lowest score', async function() {
             const qna = new QnAMaker(endpoint);
             const context = new TestContext({ text: "what's your favorite animal?" });
@@ -190,6 +202,54 @@ describe('QnAMaker', function () {
             const descendingQnaResults = qnaResults.sort((a, b) => b.score - a.score);
             
             assert.strictEqual(qnaResults, descendingQnaResults, 'answers should be sorted from greatest to least score');
+        });
+
+        it('should return answer with prompts', async function() {
+            const qna = new QnAMaker(endpoint);
+            const context = new TestContext({ text: "how do I clean the stove?" });
+            const options = { top: 2 };
+            
+            const qnaResults = await qna.getAnswers(context, options);
+
+            assert.strictEqual(qnaResults.length, 1, 'one answer should be returned');
+            assert.strictEqual(qnaResults[0].context.prompts.length > 0, true, 'One or more prompts should be present');
+        });
+
+        it('should return answer with high score provided context', async function() {
+            const qna = new QnAMaker(endpoint);
+            const turnContext = new TestContext({ text: "where can I buy?" });
+            
+            const context = { previousQnAId: 5, previousUserQuery: "how do I clean the stove?"};
+            const options = { top: 2, context: context };
+            
+            const qnaResults = await qna.getAnswers(turnContext, options);
+
+            assert.strictEqual(qnaResults.length, 1, 'one answer should be returned');
+            assert.strictEqual(qnaResults[0].score, 1, 'score should be high');
+        });
+
+        it('should return answer with high score provided id', async function() {
+            const qna = new QnAMaker(endpoint);
+            const turnContext = new TestContext({ text: "where can I buy?" });
+            
+            const options = { top: 2, qnaId: 55 };
+            
+            const qnaResults = await qna.getAnswers(turnContext, options);
+
+            assert.strictEqual(qnaResults.length, 1, 'one answer should be returned');
+            assert.strictEqual(qnaResults[0].score, 1, 'score should be high');
+        });
+
+        it('should return answer with low score not provided context', async function() {
+            const qna = new QnAMaker(endpoint);
+            const turnContext = new TestContext({ text: "where can I buy?" });
+            
+            const options = { top: 2, context: null };
+            
+            const qnaResults = await qna.getAnswers(turnContext, options);
+
+            assert.strictEqual(qnaResults.length, 2, 'one answer should be returned');
+            assert.strictEqual(qnaResults[0].score < 1, true, 'score should be low');
         });
 
         it('should return answer with timeout option specified', async function() {

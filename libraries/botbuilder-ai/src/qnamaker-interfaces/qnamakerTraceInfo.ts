@@ -8,6 +8,7 @@
 
 import { Activity } from 'botbuilder-core';
 import { QnAMakerResult } from './qnamakerResult';
+import { QnARequestContext } from './qnaRequestContext';
 
 /**
  * Trace info that we collect and emit from a QnA Maker query
@@ -47,4 +48,14 @@ export interface QnAMakerTraceInfo {
      * Metadata related to query. Not used in JavaScript SDK v4 yet.
      */
     metadataBoost: any[];
+
+    /**
+     * The context for multi-turn responses.
+     */
+    context?: QnARequestContext;
+
+    /**
+     * Id of the current question asked.
+     */
+    qnaId?: number;
 }

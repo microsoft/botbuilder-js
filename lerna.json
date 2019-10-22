@@ -13,6 +13,7 @@
     "libraries/botframework-schema",
     "libraries/functional-tests",
     "libraries/testbot",
+    "libraries/botframework-streaming",
     "transcripts"
   ],
   "version": "independent",
