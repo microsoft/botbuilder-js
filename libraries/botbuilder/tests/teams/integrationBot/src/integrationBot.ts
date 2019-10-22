@@ -87,7 +87,7 @@ export class IntegrationBot extends TeamsActivityHandler {
             let text = context.activity.text;
             if (text && text.length > 0) {
                 text = text.trim();
-                await this.handleNonEmptyMessage(text, context, next);
+                await this.handleBotCommand(text, context, next);
             }
             else {
                 await context.sendActivity('App sent a message with empty text');
@@ -131,7 +131,6 @@ export class IntegrationBot extends TeamsActivityHandler {
 
         this.onTeamsMembersAddedEvent(async (membersAdded: ChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>): Promise<void> => {
             var newMembers: string = '';
-            console.log(JSON.stringify(membersAdded));
             membersAdded.forEach((account) => {
                 newMembers.concat(account.id,' ');
             });
@@ -143,7 +142,6 @@ export class IntegrationBot extends TeamsActivityHandler {
 
         this.onTeamsMembersRemovedEvent(async (membersRemoved: ChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>): Promise<void> => {
             var removedMembers: string = '';
-            console.log(JSON.stringify(membersRemoved));
             membersRemoved.forEach((account) => {
                 removedMembers += account.id + ' ';
             });
@@ -366,6 +364,8 @@ export class IntegrationBot extends TeamsActivityHandler {
     }
     
     protected async handleTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>{
+        console.log("HANDLETEAMSAPPBASEDLINKQUERY\nCONTEXT:\n" + JSON.stringify(context) + '\nQUERY:\n' + JSON.stringify(query));
+        
         const accessor = this.userState.createProperty<{ useHeroCard: boolean }>(RICH_CARD_PROPERTY);
         const config = await accessor.get(context, { useHeroCard: true });
 
@@ -408,6 +408,8 @@ export class IntegrationBot extends TeamsActivityHandler {
     }
 
     protected async handleTeamsMessagingExtensionConfigurationQuerySettingUrl(context: TurnContext, query: MessagingExtensionQuery){
+        console.log("HANDLETEAMSMESSAGINGEXTENSIONCONFIGURATIONQUERYSETTINGURL\nCONTEXT:\n" + JSON.stringify(context) + '\nQUERY:\n' + JSON.stringify(query));
+        
         return <MessagingExtensionActionResponse>
         {
             composeExtension: <MessagingExtensionResult> {
@@ -423,25 +425,11 @@ export class IntegrationBot extends TeamsActivityHandler {
                 }
             }
         }
-        /*
-        return <MessagingExtensionActionResponse>
-        {
-            composeExtension: <MessagingExtensionResult> {
-                type: 'config',
-                suggestedActions: <MessagingExtensionSuggestedAction> { 
-                    actions: [
-                        {
-                            type: ActionTypes.OpenUrl,
-                            value: 'https://teamssettingspagescenario.azurewebsites.net',
-                        },
-                    ]
-                    }
-            }
-        }
-        */
     }
 
     protected async handleTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings: MessagingExtensionQuery){
+        console.log("HANDLETEAMSMESSAGINGEXTENSIONCONFIGURATIONSETTING\nCONTEXT:\n" + JSON.stringify(context) + '\nSETTINGS:\n' + JSON.stringify(settings));
+        
         // This event is fired when the settings page is submitted
         const accessor = this.userState.createProperty<{ useHeroCard: boolean }>(RICH_CARD_PROPERTY);
         const config = await accessor.get(context, { useHeroCard: true });
@@ -727,7 +715,7 @@ export class IntegrationBot extends TeamsActivityHandler {
         await context.sendActivity(MessageFactory.attachment(card));
     }
 
-    private async handleNonEmptyMessage(text, context, next) : Promise<void> {
+    private async handleBotCommand(text, context, next) : Promise<void> {
         if (text === 'delete') {
             for (const activityId of this.activityIds) {
                 await context.deleteActivity(activityId);
@@ -785,6 +773,10 @@ export class IntegrationBot extends TeamsActivityHandler {
 
                 case "show details":
                     await this.showDetails(context);
+                    break;
+
+                case "task module":
+                    await context.sendActivity(MessageFactory.attachment(this.getTaskModuleHeroCard()));
                     break;
     
                 default:

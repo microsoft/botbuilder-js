@@ -275,6 +275,13 @@ npm start
   - The bot should respond with Office 365 card with 'Multiple Choice', 'Text Input', 'Date Input', 'View Action', 'Open Uri' buttons at the bottom of the card
   - Click on each of the button and add inputs.  With the exceptions of 'View Action' and 'Open Uri' buttons, bot should respond back with text containing input names/values and button name, ie 'O365ConnectorCardActionQuery event value: {"body":"{"date1":"2019-10-09T07:30:00.000Z", "date2":"2019-10-02T07:00:00.000Z"}","actionId":"card-3-btn-1"}'.
 
+- Task Module "task module" 
+
+- Works in personal, group chat and teams
+- On a Teams channel, group chat or personal chat with the bot installed, type "@IntegrationBottask module".  The "task module" is the command sent to the bot.
+- The bot should respond with Task Module Invocation Hero Card.
+- Click on the Adaptive Card button.  A task module popup shows up, type some text and click on Submit button.  Bot should reply with 'Thanks' inside the popup and also with something like 'handleTeamsTaskModuleFetchAsync Value: {"data":{"usertext":"<<USER TEXT>>"},"context":{"theme":"dark"}}'.
+
 ## Prerequisites
 
 This sample **requires** prerequisites in order to run.
