@@ -420,7 +420,7 @@ export class TurnContext {
             const o: Partial<Activity> = TurnContext.applyConversationReference({...a}, ref);
             if (!o.type) { o.type = ActivityTypes.Message; }
             if (o.type !== ActivityTypes.Trace) { sentNonTraceActivity = true; }
-
+            if (o.id) { delete o.id; }
             return o;
         });
 
@@ -429,6 +429,13 @@ export class TurnContext {
                 .then((responses: ResourceResponse[]) => {
                     // Set responded flag
                     if (sentNonTraceActivity) { this.responded = true; }
+                    if(responses) {
+                        output.map((a: Partial<Activity>, index: number) => {
+                            if (index < responses.length) {
+                                a.id = responses[index].id;
+                            }
+                        });
+                    }
 
                     return responses;
                 });
