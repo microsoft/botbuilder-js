@@ -8,8 +8,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { BuiltInFunctions, Constant, Expression, ExpressionEvaluator, ReturnType, EvaluatorLookup } from 'botbuilder-expression';
-import { ExpressionEngine} from 'botbuilder-expression-parser';
+import { BuiltInFunctions, Constant, Expression, ExpressionEvaluator, ReturnType, EvaluatorLookup, ExpressionEngine } from 'botframework-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
 import * as lp from './generated/LGFileParser';

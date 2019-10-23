@@ -8,8 +8,7 @@
 // tslint:disable-next-line: no-submodule-imports
 import { ParserRuleContext } from 'antlr4ts';
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { IExpressionParser } from 'botbuilder-expression';
-import { ExpressionEngine } from 'botbuilder-expression-parser';
+import { IExpressionParser, ExpressionEngine } from 'botframework-expressions';
 import * as fs from 'fs';
 import { keyBy } from 'lodash';
 import * as path from 'path';
