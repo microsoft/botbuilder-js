@@ -388,10 +388,10 @@ export class TeamsActivityHandler extends ActivityHandler {
     protected async onTeamsMembersAdded(context: TurnContext): Promise<void> {
         if ('TeamsMembersAdded' in this.handlers && this.handlers['TeamsMembersAdded'].length > 0) {
 
-            var teamsChannelAccountLookup = null;
+            let teamsChannelAccountLookup = null;
 
-            for (var i=0; i<context.activity.membersAdded.length; i++) {
-                var channelAccount = context.activity.membersAdded[i];
+            for (let i=0; i<context.activity.membersAdded.length; i++) {
+                const channelAccount = context.activity.membersAdded[i];
 
                 // check whether we have a TeamChannelAccount
                 if ('givenName' in channelAccount ||
@@ -404,15 +404,15 @@ export class TeamsActivityHandler extends ActivityHandler {
                 }
 
                 // (lazily) build a lookup table of TeamsChannelAccounts
-                if (teamsChannelAccountLookup == null) {
-                    var teamsChannelAccounts = await TeamsInfo.getMembers(context);
+                if (teamsChannelAccountLookup === null) {
+                    const teamsChannelAccounts = await TeamsInfo.getMembers(context);
                     teamsChannelAccountLookup = {};
                     teamsChannelAccounts.forEach((teamChannelAccount) => teamsChannelAccountLookup[teamChannelAccount.id] = teamChannelAccount);
                 }
 
                 // if we have the TeamsChannelAccount in our lookup table then overwrite the ChannelAccount with it
-                var teamsChannelAccount = teamsChannelAccountLookup[channelAccount.id];
-                if (teamsChannelAccount != undefined) {
+                const teamsChannelAccount = teamsChannelAccountLookup[channelAccount.id];
+                if (teamsChannelAccount !== undefined) {
                     context.activity.membersAdded[i] = teamsChannelAccount;
                 }
             }

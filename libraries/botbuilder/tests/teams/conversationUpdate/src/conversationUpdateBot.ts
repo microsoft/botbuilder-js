@@ -47,25 +47,24 @@ export class ConversationUpdateBot  extends TeamsActivityHandler {
             await next();
         });
         this.onTeamsMembersAddedEvent(async (membersAdded: ChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>): Promise<void> => {
-            var newMembers: string = '';
+            let newMembers: string = '';
             console.log(JSON.stringify(membersAdded));
             membersAdded.forEach((account) => {
                 newMembers += account.id + ' ';
             });
-
-            var name = (teamInfo == undefined) ? 'not in team' : teamInfo.name;
-
+            const name = !teamInfo ? 'not in team' : teamInfo.name;
             const card = CardFactory.heroCard('Account Added', `${newMembers} joined ${name}.`);
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);
             await next();
         });
         this.onTeamsMembersRemovedEvent(async (membersRemoved: ChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>): Promise<void> => {
-            var removedMembers: string = '';
-            //console.log(JSON.stringify(membersRemoved));
+            let removedMembers: string = '';
+            console.log(JSON.stringify(membersRemoved));
             membersRemoved.forEach((account) => {
                 removedMembers += account.id + ' ';
             });
+            const name = !teamInfo ? 'not in team' : teamInfo.name;
             const card = CardFactory.heroCard('Account Removed', `${removedMembers} removed from ${teamInfo.name}.`);
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);
