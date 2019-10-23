@@ -161,11 +161,15 @@ export class CardFactory {
         text?: any,
         images?: any,
         buttons?: any,
-        other?: Partial<HeroCard>
+        other?: Partial<HeroCard>,
+        tap?: CardAction
     ): Attachment {
         const a: Attachment = CardFactory.thumbnailCard(title, text, images, buttons, other);
         a.contentType = CardFactory.contentTypes.heroCard;
-
+        if (tap) {
+            const card: Partial<HeroCard> = a.content;
+            card.tap = tap;
+        }
         return a;
     }
 
