@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Extensions } from 'botbuilder-expression';
+import { Extensions } from 'botframework-expressions';
 
 export class CustomizedMemoryScope extends Map {
     private localScope: any;
