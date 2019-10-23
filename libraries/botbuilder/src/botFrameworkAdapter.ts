@@ -186,10 +186,10 @@ const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
 // This key is exported internally so that the TeamsActivityHandler will not overwrite any already set InvokeResponses.
 export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 const defaultPipeName = 'bfv4.pipes';
-const VERSION_PATH:string = '/api/version';
-const MESSAGES_PATH:string = '/api/messages';
-const GET:string = 'GET';
-const POST:string = 'POST';
+const VERSION_PATH: string = '/api/version';
+const MESSAGES_PATH: string = '/api/messages';
+const GET: string = 'GET';
+const POST: string = 'POST';
 
 /**
  * A [BotAdapter](xref:botbuilder-core.BotAdapter) that can connect a bot to a service endpoint.
@@ -1005,39 +1005,23 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             return response;
         }
 
-        if (request.verb.toLocaleUpperCase() === GET && request.path.toLocaleLowerCase() === VERSION_PATH) {
-            response.statusCode = StatusCodes.OK;
-
-            if (!this.credentials.appId) {
-                response.setBody({UserAgent: USER_AGENT});
-                return response;
-            }
-
-            try {
-                response.setBody({UserAgent: USER_AGENT, BotToken: await this.credentials.getToken()});
-            } catch (err) {
-                // If the MicrosoftAppCredentials.getToken() fails, not sending the UserAgent in this
-                // request will result in the connection being destroyed by the channel.
-                response.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
-                response.setBody(err.message);
-            }
-
-            return response;
+        if (request.verb.toLocaleUpperCase() !== POST && request.verb.toLocaleUpperCase() !== GET) {
+            response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
+            response.setBody(`Invalid verb received. Only GET and POST are accepted. Verb: ${ request.verb }`);
         }
 
+        if (request.path.toLocaleLowerCase() === VERSION_PATH) {
+            return await this.handleVersionRequest(request, response);
+        }
+
+        // Convert the StreamingRequest into an activity the Adapter can understand.
         let body: Activity;
         try {
             body = await this.readRequestBodyAsString(request);
 
         } catch (error) {
             response.statusCode = StatusCodes.BAD_REQUEST;
-            response.setBody(`Unable to read request body. Error: ${ error }`);
-            return response;
-        }
-
-        if (request.verb.toLocaleUpperCase() !== POST) {
-            response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
-            response.setBody(`Method ${ request.verb.toLocaleUpperCase() } not allowed. Expected POST.`);
+            response.setBody(`Request body missing or malformed: ${ error }`);
             return response;
         }
 
@@ -1047,7 +1031,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             return response;
         }
 
-        try {           
+        if (request.verb.toLocaleUpperCase() !== POST) {
+            response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
+            response.setBody(`Invalid verb received for ${ request.verb.toLocaleLowerCase() }. Only GET and POST are accepted. Verb: ${ request.verb }`);
+            return response;
+        }
+
+        try {
             let context = new TurnContext(this, body);
             await this.runMiddleware(context, this.logic);
 
@@ -1068,6 +1058,39 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             response.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
             response.setBody(error);
             return response;
+        }
+
+        return response;
+    }
+
+    private async handleVersionRequest(request: IReceiveRequest, response: StreamingResponse): Promise<StreamingResponse> {
+        if (request.verb.toLocaleUpperCase() === GET) {
+            response.statusCode = StatusCodes.OK;
+
+            if (!this.credentials.appId) {
+                response.setBody({ UserAgent: USER_AGENT });
+                return response;
+            }
+            
+            let token = '';
+            try {
+                token = await this.credentials.getToken();
+
+            } catch (err) {
+                /**
+                 * In reality a missing BotToken will cause the channel to close the connection,
+                 * but we still send the response and allow the channel to make that decision
+                 * instead of proactively disconnecting. This allows the channel to know why
+                 * the connection has been closed and make the choice not to make endless reconnection
+                 * attempts that will end up right back here.
+                 */
+                console.error(err.message);
+            }
+            response.setBody({ UserAgent: USER_AGENT, BotToken: token });
+
+        } else {
+            response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
+            response.setBody(`Invalid verb received for path: ${ request.path }. Only GET is accepted. Verb: ${ request.verb }`);
         }
 
         return response;
@@ -1180,6 +1203,10 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         // Validate the received Upgrade request from the channel.
         const claims = await JwtTokenValidation.validateAuthHeader(authHeader, this.credentialsProvider, channelService, channelIdHeader);
 
+        // Add serviceUrl from claim to static cache to trigger token refreshes.
+        const serviceUrl = claims.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
+        MicrosoftAppCredentials.trustServiceUrl(serviceUrl);
+
         if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
     }
 
@@ -1218,17 +1245,19 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
         // Restify-specific check.
         if (typeof((res as any).claimUpgrade) !== 'function') {
-            throw new Error("ClaimUpgrade is required for creating WebSocket connection.");
+            throw new Error('ClaimUpgrade is required for creating WebSocket connection.');
         }
 
         try {
             await this.authenticateConnection(req, this.settings.channelService);
         } catch (err) {
+            // Set the correct status code for the socket to send back to the channel.
             res.status(StatusCodes.UNAUTHORIZED);
             res.send(err.message);
-            return;
+            // Re-throw the error so the developer will know what occurred.
+            throw err;
         }
-        
+
         const upgrade = (res as any).claimUpgrade();
         const socket = this.webSocketFactory.createWebSocket(req as IncomingMessage, upgrade.socket, upgrade.head);
 
@@ -1244,13 +1273,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         await this.streamingServer.start();
     }
 
-    private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {            
-        try {
-            let contentStream =  request.streams[0];
-            return await contentStream.readAsJson<Activity>();
-        } catch (error) {
-            return Promise.reject(error);
-        }
+    private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {
+        const contentStream = request.streams[0];
+        return await contentStream.readAsJson<Activity>();
     }
 }
 
