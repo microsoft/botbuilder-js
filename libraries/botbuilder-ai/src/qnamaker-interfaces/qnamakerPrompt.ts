@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
  /**
- * Prompt Object.
+ * QnAMaker Prompt Object.
  */
-export interface Prompt {
+export interface QnAMakerPrompt {
     
     /**
      * Display Order - index of the prompt - used in ordering of the prompts.

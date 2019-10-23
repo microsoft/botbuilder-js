@@ -2,7 +2,6 @@ const assert = require('assert');
 const { TurnContext } = require('botbuilder-core');
 const connector = require('botframework-connector');
 const { BotFrameworkAdapter } = require('../');
-const os = require('os');
 
 const reference = {
     activityId: '1234',
