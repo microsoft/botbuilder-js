@@ -48,7 +48,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
      * @param buffer The buffered data to send out over the connection.
      */
     public send(buffer: Buffer): number {
-        if (this._socket && this._socket.isConnected()) {
+        if (this._socket && this._socket.isConnected) {
             this._socket.write(buffer);
 
             return buffer.length;
@@ -61,14 +61,14 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
      * Returns true if the transport is connected to a socket.
      */
     public isConnected(): boolean {
-        return this._socket.isConnected();
+        return this._socket.isConnected;
     }
 
     /**
      * Close the socket this transport is connected to.
      */
     public close(): void {
-        if (this._socket && this._socket.isConnected()) {
+        if (this._socket && this._socket.isConnected) {
             this._socket.close();
         }
     }

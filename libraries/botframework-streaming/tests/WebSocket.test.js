@@ -2,97 +2,8 @@ const ws = require('../lib');
 const protocol = require('../lib');
 const wst = require('../lib/webSocket/webSocketTransport');
 const  chai  = require('chai');
+const { FauxSock } = require('./helpers');
 var expect = chai.expect;
-
-class FauxSock{
-    constructor(contentString){
-        if(contentString){
-            this.contentString = contentString;
-            this.position = 0;
-        }
-        this.connecting = false;
-        this.connected = true;
-        this.readyState = 1;
-        this.exists = true;
-
-        this.onmessage = undefined;
-        this.onerror = undefined;
-        this.onclose = undefined;
-    }
-
-    isConnected(){
-        return this.connected;
-    }
-
-
-    write(buffer){
-        this.buffer = buffer;
-    }
-
-    send(buffer){
-        return buffer.length;
-    };
-
-    receive(readLength){
-        if(this.contentString[this.position])
-        {
-            this.buff = Buffer.from(this.contentString[this.position]);
-            this.position++;
-
-            return this.buff.slice(0, readLength);
-        }
-
-        if(this.receiver.isConnected)
-            this.receiver.disconnect();
-    }
-    close(){};
-    close(){
-        this.connected = false;
-    };
-    end(){
-        this.exists = false;
-        return true;
-    };
-    destroyed(){
-        return this.exists;
-    };
-    on(action, handler){
-        if(action === 'error'){
-            this.errorHandler = handler;
-        }
-        if(action === 'data'){
-            this.messageHandler = handler;
-        }
-        if(action === 'close'){
-            this.closeHandler = handler;
-        }
-        if(action === 'text'){
-            this.textHandler = handler;
-        }
-        if(action === 'binary'){
-            this.binaryHandler = handler;
-        }
-        if(action === 'end'){
-            this.endHandler = handler;
-        }
-    };
-
-
-
-    setReceiver(receiver){
-        this.receiver = receiver;
-    }
-
-    setOnMessageHandler(handler){
-        this.messageHandler = handler;
-    };
-    setOnErrorHandler(handler){
-        this.errorHandler = handler;
-    };
-    setOnCloseHandler(handler){
-        this.closeHandler = handler;
-    };
-}
 
 describe('Streaming Extensions WebSocket Library Tests', () => {
     describe('WebSocket Transport Tests', () => {
@@ -320,7 +231,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
         it('knows its connected', () => {
             let bs = new ws.BrowserWebSocket( new FauxSock());
             bs.connect('fakeUrl');
-            expect(bs.isConnected()).to.be.true;
+            expect(bs.isConnected).to.be.true;
         });
 
         it('writes to the socket', () => {
@@ -376,66 +287,6 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             let spy = sinon.spy(sock, 'close');
             bs.close();
             expect(spy.called).to.be.true;
-        });
-    });
-
-    describe('NodeSocket Tests', () => {
-        it('creates a new NodeSocket', () => {
-            let ns = new ws.NodeWebSocket(new FauxSock);
-            expect(ns).to.be.instanceOf(ws.NodeWebSocket);
-            expect(ns.close()).to.not.be.undefined;
-        });
-
-        it('requires a valid URL', () => {
-            try {
-                let ns = new ws.NodeWebSocket(new FauxSock);
-            } catch (error) {
-                expect(error.message).to.equal('Invalid URL: fakeURL');
-            }
-        });
-
-        it('starts out connected', () => {
-            let ns = new ws.NodeWebSocket(new FauxSock);
-            expect(ns.isConnected()).to.be.true;
-        });
-
-        it('writes to the socket', () => {
-            let ns = new ws.NodeWebSocket(new FauxSock);
-            let buff = Buffer.from('hello');
-            expect(ns.write(buff)).to.not.throw;
-        });
-
-        it('attempts to open a connection', () => {
-            let ns = new ws.NodeWebSocket(new FauxSock);
-            expect(ns.connect().catch( (error) => {
-                expect(error.message).to.equal('connect ECONNREFUSED 127.0.0.1:8082');
-            }));
-        });
-
-        it('can set message handlers on the socket', () => {
-            let sock = new FauxSock();
-            let ns = new ws.NodeWebSocket( sock);
-            expect(sock.textHandler).to.be.undefined;
-            expect(sock.binaryHandler).to.be.undefined;
-            expect(ns.setOnMessageHandler(() => {})).to.not.throw;
-            expect(sock.textHandler).to.not.be.undefined;
-            expect(sock.binaryHandler).to.not.be.undefined;
-        });
-
-        it('can set error handler on the socket', () => {
-            let sock = new FauxSock();
-            let ns = new ws.NodeWebSocket( sock);
-            expect(sock.errorHandler).to.be.undefined;
-            expect(ns.setOnErrorHandler(() => {})).to.not.throw;
-            expect(sock.errorHandler).to.not.be.undefined;
-        });
-
-        it('can set end handler on the socket', () => {
-            let sock = new FauxSock();
-            let ns = new ws.NodeWebSocket( sock);
-            expect(sock.endHandler).to.be.undefined;
-            expect(ns.setOnCloseHandler(() => {})).to.not.throw;
-            expect(sock.endHandler).to.not.be.undefined;
         });
     });
 });

@@ -8,10 +8,19 @@
 
 import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
 import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
+import { IncomingMessage } from 'http';
 import * as os from 'os';
 import { TokenResolver } from './tokenResolver';
-import { IStreamingTransportServer, IReceiveRequest, StreamingResponse, NamedPipeServer, ISocket, WebSocketServer, NodeWebSocket } from 'botframework-streaming';
-import { Watershed } from 'watershed'; 
+import {
+    IReceiveRequest,
+    ISocket,
+    IStreamingTransportServer,
+    NamedPipeServer,
+    NodeWebSocketFactory,
+    NodeWebSocketFactoryBase,
+    StreamingResponse,
+    WebSocketServer,
+} from 'botframework-streaming';
 import { StreamingHttpClient } from './streamingHttpClient';
 
 export enum StatusCodes {
@@ -28,7 +37,7 @@ export enum StatusCodes {
 /**
  * Represents an Express or Restify request object.
  * 
- * > [!NOTE] This interface supports the framework and is not intended to be called directly for your code.
+ * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface WebRequest {
     /**
@@ -62,7 +71,7 @@ export interface WebRequest {
 /**
  * Represents an Express or Restify response object.
  * 
- * > [!NOTE] This interface supports the framework and is not intended to be called directly for your code.
+ * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface WebResponse {
     /**
@@ -124,7 +133,7 @@ export interface BotFrameworkAdapterSettings {
     oAuthEndpoint?: string;
 
     /**
-     * Optional. The Open ID Metadata endpoint for your bot to use.
+     * Optional. The OpenID Metadata endpoint for your bot to use.
      */
     openIdMetadata?: string;
 
@@ -137,12 +146,17 @@ export interface BotFrameworkAdapterSettings {
      * Optional. The option to determine if this adapter accepts WebSocket connections
      */
     enableWebSockets?: boolean;
+
+    /**
+     * Optional. Used to pass in a NodeWebSocketFactoryBase instance. Allows bot to accept WebSocket connections.
+     */
+    webSocketFactory?: NodeWebSocketFactoryBase;
 }
 
 /**
  * Represents a response returned by a bot when it receives an `invoke` activity.
  * 
- * > [!NOTE] This interface supports the framework and is not intended to be called directly for your code.
+ * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface InvokeResponse {
     /**
@@ -172,10 +186,10 @@ const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
 // This key is exported internally so that the TeamsActivityHandler will not overwrite any already set InvokeResponses.
 export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 const defaultPipeName = 'bfv4.pipes';
-const VERSION_PATH:string = '/api/version';
-const MESSAGES_PATH:string = '/api/messages';
-const GET:string = 'GET';
-const POST:string = 'POST';
+const VERSION_PATH: string = '/api/version';
+const MESSAGES_PATH: string = '/api/messages';
+const GET: string = 'GET';
+const POST: string = 'POST';
 
 /**
  * A [BotAdapter](xref:botbuilder-core.BotAdapter) that can connect a bot to a service endpoint.
@@ -218,8 +232,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
     private logic: (context: TurnContext) => Promise<void>;
     private streamingServer: IStreamingTransportServer;
-    private isEmulatingOAuthCards: boolean;    
-    
+    private isEmulatingOAuthCards: boolean;
+    private webSocketFactory: NodeWebSocketFactoryBase;
 
     /**
      * Creates a new instance of the [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) class.
@@ -243,6 +257,16 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '', this.settings.channelAuthTenant);
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
         this.isEmulatingOAuthCards = false;
+
+        // If the developer wants to use WebSockets, but didn't provide a WebSocketFactory,
+        // create a NodeWebSocketFactory.
+        if (this.settings.enableWebSockets && !this.settings.webSocketFactory) {
+            this.webSocketFactory = new NodeWebSocketFactory();
+        }
+
+        if (this.settings.webSocketFactory) {
+            this.webSocketFactory = this.settings.webSocketFactory;
+        }
 
         // If no channelService or openIdMetadata values were passed in the settings, check the process' Environment Variables for values.
         // These values may be set when a bot is provisioned on Azure and if so are required for the bot to properly work in Public Azure or a National Cloud.
@@ -271,7 +295,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that resumes a conversation with a user, possibly after some time has gone by.
+     * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
      *
      * @param reference A reference to the conversation to continue.
      * @param logic The asynchronous method to call after the adapter middleware runs.
@@ -327,7 +351,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that creates and starts a conversation with a user on a channel.
+     * Asynchronously creates and starts a conversation with a user on a channel.
      *
      * @param reference A reference for the conversation to create.
      * @param logic The asynchronous method to call after the adapter middleware runs. 
@@ -414,18 +438,17 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that deletes an existing activity.
+     * Asynchronously deletes an existing activity.
      * 
-     * > [!NOTE]
-     * > - This interface supports the framework and is not intended to be called directly for your code.
-     * > - Not all channels support this operation. For channels that don't, this call may throw an exception.
+     * This interface supports the framework and is not intended to be called directly for your code.
+     * Use [TurnContext.deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity) to delete
+     * an activity from your bot code.
      * 
      * @param context The context object for the turn.
      * @param reference Conversation reference information for the activity to delete.
      * 
      * @remarks
-     * Use [TurnContext.deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity) to delete
-     * an activity from your bot code.
+     * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
     public async deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
         if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing serviceUrl`); }
@@ -438,15 +461,15 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that removes a member from the current conversation.
-     *
-     * > [!NOTE] Not all channels support this operation. For channels that don't, this call may throw an exception.
+     * Asynchronously removes a member from the current conversation.
      * 
      * @param context The context object for the turn.
      * @param memberId The ID of the member to remove from the conversation.
      *
      * @remarks
      * Remove a member's identity information from the conversation.
+     * 
+     * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
     public async deleteConversationMember(context: TurnContext, memberId: string): Promise<void> {
         if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.deleteConversationMember(): missing serviceUrl`); }
@@ -460,7 +483,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that lists the members of a given activity.
+     * Asynchronously lists the members of a given activity.
      * 
      * @param context The context object for the turn.
      * @param activityId Optional. The ID of the activity to get the members of. If not specified, the current activity ID is used.
@@ -492,7 +515,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that lists the members of the current conversation.
+     * Asynchronously lists the members of the current conversation.
      * 
      * @param context The context object for the turn.
      *
@@ -519,7 +542,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that, for the specified channel, gets a page of the conversations in which this bot has participated.
+     * For the specified channel, asynchronously gets a page of the conversations in which this bot has participated.
      * 
      * @param contextOrServiceUrl The URL of the channel server to query or a
      * [TurnContext](xref:botbuilder-core.TurnContext) object from a conversation on the channel.
@@ -550,7 +573,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that attempts to retrieve the token for a user that's in a login flow.
+     * Asynchronously attempts to retrieve the token for a user that's in a login flow.
      * 
      * @param context The context object for the turn.
      * @param connectionName The name of the auth connection to use.
@@ -579,7 +602,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that signs out the user from the token server.
+     * Asynchronously signs out the user from the token server.
      * 
      * @param context The context object for the turn.
      * @param connectionName The name of the auth connection to use.
@@ -600,7 +623,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that gets a sign-in link from the token server that can be sent as part
+     * Asynchronously gets a sign-in link from the token server that can be sent as part
      * of a [SigninCard](xref:botframework-schema.SigninCard).
      * 
      * @param context The context object for the turn.
@@ -622,7 +645,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /** 
-     * An asynchronous method that retrieves the token status for each configured connection for the given user.
+     * Asynchronously retrieves the token status for each configured connection for the given user.
      * 
      * @param context The context object for the turn.
      * @param userId Optional. If present, the ID of the user to retrieve the token status for.
@@ -646,7 +669,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that signs out the user from the token server.
+     * Asynchronously signs out the user from the token server.
      * 
      * @param context The context object for the turn.
      * @param connectionName The name of the auth connection to use.
@@ -669,8 +692,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that sends an emulated OAuth card for a channel.
-     * > [!NOTE] This method supports the framework and is not intended to be called directly for your code.
+     * Asynchronously sends an emulated OAuth card for a channel.
+     * 
+     * This method supports the framework and is not intended to be called directly for your code.
      * 
      * @param contextOrServiceUrl The URL of the emulator.
      * @param emulate `true` to send an emulated OAuth card to the emulator; or `false` to not send the card.
@@ -685,7 +709,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that creates a turn context and runs the middleware pipeline for an incoming activity.
+     * Asynchronously creates a turn context and runs the middleware pipeline for an incoming activity.
      *
      * @param req An Express or Restify style request object.
      * @param res An Express or Restify style response object.
@@ -709,6 +733,11 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      *      Returning a promise (or providing an `async` handler) will cause the adapter to wait for any asynchronous operations to complete.
      *    - After the `logic` function completes, the promise chain set up by the middleware is resolved.
      *
+     * > [!TIP]
+     * > If you see the error `TypeError: Cannot perform 'set' on a proxy that has been revoked`
+     * > in your bot's console output, the likely cause is that an async function was used
+     * > without using the `await` keyword. Make sure all async functions use await!
+     *
      * Middleware can _short circuit_ a turn. When this happens, subsequent middleware and the
      * `logic` function is not called; however, all middleware prior to this point still run to completion.
      * For more information about the middleware pipeline, see the
@@ -728,11 +757,6 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      *    });
      * });
      * ```
-     *
-     * > [!TIP]
-     * > If you see the error `TypeError: Cannot perform 'set' on a proxy that has been revoked`
-     * > in your bot's console output, the likely cause is that an async function was used
-     * > without using the `await` keyword. Make sure all async functions use await!
      */
     public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
         if (this.settings.enableWebSockets && req.method === GET && (req.headers.Upgrade || req.headers.upgrade)) {
@@ -793,7 +817,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that creates a turn context and runs the middleware pipeline for an incoming activity.
+     * Asynchronously creates a turn context and runs the middleware pipeline for an incoming activity.
      *
      * @param activity The activity to process.
      * @param logic The function to call at the end of the middleware pipeline.
@@ -839,8 +863,11 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that sends a set of outgoing activities to a channel server.
-     * > [!NOTE] This method supports the framework and is not intended to be called directly for your code.
+     * Asynchronously sends a set of outgoing activities to a channel server.
+     * 
+     * This method supports the framework and is not intended to be called directly for your code.
+     * Use the turn context's [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) or
+     * [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) method from your bot code.
      *
      * @param context The context object for the turn.
      * @param activities The activities to send.
@@ -851,11 +878,6 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * The activities will be sent one after another in the order in which they're received. A
      * response object will be returned for each sent activity. For `message` activities this will
      * contain the ID of the delivered message.
-     *
-     * Use the turn context's [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) or
-     * [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) method, instead of directly
-     * calling this method. The [TurnContext](xref:botbuilder-core.TurnContext) ensures that outgoing
-     * activities are properly addressed and that all registered response event handlers are notified.
      */
     public async sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         const responses: ResourceResponse[] = [];
@@ -902,18 +924,17 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * An asynchronous method that replaces a previous activity with an updated version.
+     * Asynchronously replaces a previous activity with an updated version.
      * 
-     * > [!NOTE]
-     * > - This interface supports the framework and is not intended to be called directly for your code.
-     * > - Not all channels support this operation. For channels that don't, this call may throw an exception.
+     * This interface supports the framework and is not intended to be called directly for your code.
+     * Use [TurnContext.updateActivity](xref:botbuilder-core.TurnContext.updateActivity) to update
+     * an activity from your bot code.
      * 
      * @param context The context object for the turn.
      * @param activity The updated version of the activity to replace.
      * 
      * @remarks
-     * Use [TurnContext.updateActivity](xref:botbuilder-core.TurnContext.updateActivity) to update
-     * an activity from your bot code.
+     * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
     public async updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void> {
         if (!activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.updateActivity(): missing serviceUrl`); }
@@ -979,28 +1000,25 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             response.statusCode = StatusCodes.BAD_REQUEST;
             response.setBody(`Request missing verb and/or path. Verb: ${ request.verb }. Path: ${ request.path }`);
             return response;
-        } 
-
-        if (request.verb.toLocaleUpperCase() === GET && request.path.toLocaleLowerCase() === VERSION_PATH) {
-            response.statusCode = StatusCodes.OK;
-            response.setBody({UserAgent: USER_AGENT});
-
-            return response;
         }
 
+        if (request.verb.toLocaleUpperCase() !== POST && request.verb.toLocaleUpperCase() !== GET) {
+            response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
+            response.setBody(`Invalid verb received. Only GET and POST are accepted. Verb: ${ request.verb }`);
+        }
+
+        if (request.path.toLocaleLowerCase() === VERSION_PATH) {
+            return await this.handleVersionRequest(request, response);
+        }
+
+        // Convert the StreamingRequest into an activity the Adapter can understand.
         let body: Activity;
         try {
             body = await this.readRequestBodyAsString(request);
 
         } catch (error) {
             response.statusCode = StatusCodes.BAD_REQUEST;
-            response.setBody(`Unable to read request body. Error: ${ error }`);
-            return response;
-        }
-
-        if (request.verb.toLocaleUpperCase() !== POST) {
-            response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
-            response.setBody(`Method ${ request.verb.toLocaleUpperCase() } not allowed. Expected POST.`);
+            response.setBody(`Request body missing or malformed: ${ error }`);
             return response;
         }
 
@@ -1010,7 +1028,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             return response;
         }
 
-        try {           
+        if (request.verb.toLocaleUpperCase() !== POST) {
+            response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
+            response.setBody(`Invalid verb received for ${ request.verb.toLocaleLowerCase() }. Only GET and POST are accepted. Verb: ${ request.verb }`);
+            return response;
+        }
+
+        try {
             let context = new TurnContext(this, body);
             await this.runMiddleware(context, this.logic);
 
@@ -1031,6 +1055,39 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             response.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
             response.setBody(error);
             return response;
+        }
+
+        return response;
+    }
+
+    private async handleVersionRequest(request: IReceiveRequest, response: StreamingResponse): Promise<StreamingResponse> {
+        if (request.verb.toLocaleUpperCase() === GET) {
+            response.statusCode = StatusCodes.OK;
+
+            if (!this.credentials.appId) {
+                response.setBody({ UserAgent: USER_AGENT });
+                return response;
+            }
+            
+            let token = '';
+            try {
+                token = await this.credentials.getToken();
+
+            } catch (err) {
+                /**
+                 * In reality a missing BotToken will cause the channel to close the connection,
+                 * but we still send the response and allow the channel to make that decision
+                 * instead of proactively disconnecting. This allows the channel to know why
+                 * the connection has been closed and make the choice not to make endless reconnection
+                 * attempts that will end up right back here.
+                 */
+                console.error(err.message);
+            }
+            response.setBody({ UserAgent: USER_AGENT, BotToken: token });
+
+        } else {
+            response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
+            response.setBody(`Invalid verb received for path: ${ request.path }. Only GET is accepted. Verb: ${ request.verb }`);
         }
 
         return response;
@@ -1093,7 +1150,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     protected checkEmulatingOAuthCards(context: TurnContext): void {
         if (!this.isEmulatingOAuthCards &&
             context.activity.channelId === 'emulator' &&
-            (!this.credentials.appId || !this.credentials.appPassword)) {
+            (!this.credentials.appId)) {
             this.isEmulatingOAuthCards = true;
         }
     }
@@ -1132,19 +1189,22 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         return serviceUrl && !serviceUrl.toLowerCase().startsWith('http');
      }
 
-    private async authenticateConnection(req: WebRequest, appId?: string, appPassword?: string, channelService?: string): Promise<boolean> {
-        if (!appId || !appPassword) {
+    private async authenticateConnection(req: WebRequest, channelService?: string): Promise<void> {
+        if (!this.credentials.appId) {
             // auth is disabled
-            return true;
+            return;
         }
 
-        let authHeader: string = req.headers.authorization || req.headers.Authorization || '';
-        let channelIdHeader: string = req.headers.channelid || req.headers.ChannelId || req.headers.ChannelID || '';
-        let credentials = new MicrosoftAppCredentials(appId, appPassword);
-        let credentialProvider = new SimpleCredentialProvider(credentials.appId, credentials.appPassword);
-        let claims = await JwtTokenValidation.validateAuthHeader(authHeader, credentialProvider, channelService, channelIdHeader);
+        const authHeader: string = req.headers.authorization || req.headers.Authorization || '';
+        const channelIdHeader: string = req.headers.channelid || req.headers.ChannelId || req.headers.ChannelID || '';
+        // Validate the received Upgrade request from the channel.
+        const claims = await JwtTokenValidation.validateAuthHeader(authHeader, this.credentialsProvider, channelService, channelIdHeader);
 
-        return claims.isAuthenticated;
+        // Add serviceUrl from claim to static cache to trigger token refreshes.
+        const serviceUrl = claims.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
+        MicrosoftAppCredentials.trustServiceUrl(serviceUrl);
+
+        if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
     }
 
     /**
@@ -1174,23 +1234,31 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             throw new Error('Streaming logic needs to be provided to `useWebSocket`');
         }
 
+        if (!this.webSocketFactory || !this.webSocketFactory.createWebSocket) {
+            throw new Error('BotFrameworkAdapter must have a WebSocketFactory in order to support streaming.');
+        }
+
         this.logic = logic;
 
+        // Restify-specific check.
         if (typeof((res as any).claimUpgrade) !== 'function') {
-            throw new Error("ClaimUpgrade is required for creating WebSocket connection.");
+            throw new Error('ClaimUpgrade is required for creating WebSocket connection.');
         }
 
-        const authenticated = await this.authenticateConnection(req, this.settings.appId, this.settings.appPassword, this.settings.channelService);
-        if (!authenticated) {
+        try {
+            await this.authenticateConnection(req, this.settings.channelService);
+        } catch (err) {
+            // Set the correct status code for the socket to send back to the channel.
             res.status(StatusCodes.UNAUTHORIZED);
-            return Promise.resolve();
+            res.send(err.message);
+            // Re-throw the error so the developer will know what occurred.
+            throw err;
         }
-        
-        const upgrade = (res as any).claimUpgrade();
-        const ws = new Watershed();
-        const socket = ws.accept(req, upgrade.socket, upgrade.head);
 
-        await this.startWebSocket(new NodeWebSocket(socket));
+        const upgrade = (res as any).claimUpgrade();
+        const socket = this.webSocketFactory.createWebSocket(req as IncomingMessage, upgrade.socket, upgrade.head);
+
+        await this.startWebSocket(socket);
     }
 
     /**
@@ -1202,13 +1270,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         await this.streamingServer.start();
     }
 
-    private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {            
-        try {
-            let contentStream =  request.streams[0];
-            return await contentStream.readAsJson<Activity>();
-        } catch (error) {
-            return Promise.reject(error);
-        }
+    private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {
+        const contentStream = request.streams[0];
+        return await contentStream.readAsJson<Activity>();
     }
 }
 

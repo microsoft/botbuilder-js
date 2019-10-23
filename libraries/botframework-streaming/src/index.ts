@@ -7,10 +7,19 @@
  */
 export { ContentStream } from './contentStream';
 export { HttpContent } from './httpContentStream';
-export { IStreamingTransportServer, IStreamingTransportClient, ISocket, IReceiveRequest, IReceiveResponse } from './Interfaces'
+export { IStreamingTransportServer, IStreamingTransportClient, ISocket, IReceiveRequest, IReceiveResponse } from './interfaces';
 export { NamedPipeClient, NamedPipeServer } from './namedPipe';
 export { RequestHandler } from './requestHandler';
 export { StreamingRequest } from './streamingRequest';
 export { StreamingResponse } from './streamingResponse';
 export { SubscribableStream } from './subscribableStream';
-export { BrowserWebSocket, NodeWebSocket, WebSocketClient, WebSocketServer } from './webSocket';
+export {
+    BrowserWebSocket,
+    NodeWebSocket,
+    NodeWebSocketFactory,
+    NodeWebSocketFactoryBase,
+    WebSocketClient,
+    WebSocketServer,
+    WsNodeWebSocket,
+    WsNodeWebSocketFactory,
+} from './webSocket';
