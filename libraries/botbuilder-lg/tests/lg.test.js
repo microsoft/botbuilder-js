@@ -106,8 +106,11 @@ describe('LG', function () {
         let evaled = engine.evaluateTemplate('ShowAlarmsWithForeach', { alarms: alarms });
         assert.strictEqual(evaled === "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow", true, `Evaled is ${evaled}`);
 
-        // let evaled = engine.evaluateTemplate('ShowAlarmsWithMemberHumanize',{alarms:alarms});
-        // assert.strictEqual(evaled === "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow", true, `Evaled is ${evaled}`);
+        evaled = engine.evaluateTemplate("ShowAlarmsWithLgTemplate", { alarms: alarms });
+        assert.strictEqual(evaled === "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow", true, `Evaled is ${evaled}`);
+
+        evaled = engine.evaluateTemplate("ShowAlarmsWithDynamicLgTemplate", { alarms: alarms, templateName: "ShowAlarm" });
+        assert.strictEqual(evaled === "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow", true, `Evaled is ${evaled}`);
     });
 
     it('TestCaseInsensitive', function () {
