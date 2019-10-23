@@ -50,40 +50,23 @@ export class ConversationUpdateBot  extends TeamsActivityHandler {
             var newMembers: string = '';
             console.log(JSON.stringify(membersAdded));
             membersAdded.forEach((account) => {
-                newMembers.concat(account.id,' ');
+                newMembers += account.id + ' ';
             });
-            const card = CardFactory.heroCard('Account Added', `${newMembers} joined ${teamInfo.name}.`);
+
+            var name = (teamInfo == undefined) ? 'not in team' : teamInfo.name;
+
+            const card = CardFactory.heroCard('Account Added', `${newMembers} joined ${name}.`);
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);
             await next();
         });
         this.onTeamsMembersRemovedEvent(async (membersRemoved: ChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>): Promise<void> => {
             var removedMembers: string = '';
-            console.log(JSON.stringify(membersRemoved));
+            //console.log(JSON.stringify(membersRemoved));
             membersRemoved.forEach((account) => {
                 removedMembers += account.id + ' ';
             });
             const card = CardFactory.heroCard('Account Removed', `${removedMembers} removed from ${teamInfo.name}.`);
-            const message = MessageFactory.attachment(card);
-            await context.sendActivity(message);
-            await next();
-        });
-        this.onMembersAdded(async (context: TurnContext, next: () => Promise<void>): Promise<void> => {
-            var newMembers: string = '';
-            context.activity.membersAdded.forEach((account) => {
-                newMembers += account.id + ' ';
-            });
-            const card = CardFactory.heroCard('Member Added', `${newMembers} joined ${context.activity.conversation.conversationType}.`);
-            const message = MessageFactory.attachment(card);
-            await context.sendActivity(message);
-            await next();
-        });
-        this.onMembersRemoved(async (context: TurnContext, next: () => Promise<void>): Promise<void> => {
-            var removedMembers: string = '';
-            context.activity.membersRemoved.forEach((account) => {
-                removedMembers += account.id + ' ';
-            });
-            const card = CardFactory.heroCard('Member Removed', `${removedMembers} removed from ${context.activity.conversation.conversationType}.`);
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);
             await next();
