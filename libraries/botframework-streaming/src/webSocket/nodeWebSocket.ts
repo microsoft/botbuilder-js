@@ -11,11 +11,10 @@ import { Socket } from 'net';
 import { Watershed } from 'watershed';
 import { ISocket } from '../interfaces/ISocket';
 
-const SHED = new Watershed();
-
 export class NodeWebSocket implements ISocket {
     private waterShedSocket: any;
     private connected: boolean;
+    protected watershedShed: Watershed;
 
     /**
      * Creates a new instance of the [NodeWebSocket](xref:botframework-streaming.NodeWebSocket) class.
@@ -25,6 +24,7 @@ export class NodeWebSocket implements ISocket {
     public constructor(waterShedSocket?) {
         this.waterShedSocket = waterShedSocket;
         this.connected = !!waterShedSocket;
+        this.watershedShed = new Watershed();
     }
 
     /**
@@ -34,7 +34,7 @@ export class NodeWebSocket implements ISocket {
      * @param head Buffer
      */
     public create(req: IncomingMessage, socket: Socket, head: Buffer): void {
-        this.waterShedSocket = SHED.accept(req, socket, head);
+        this.waterShedSocket = this.watershedShed.accept(req, socket, head);
         this.connected = true;
     }
 
@@ -62,7 +62,7 @@ export class NodeWebSocket implements ISocket {
      */
     public async connect(serverAddress, port = 8082): Promise<void> {
         // Following template from https://github.com/joyent/node-watershed#readme
-        const wskey = SHED.generateKey();
+        const wskey = this.watershedShed.generateKey();
         const options = {
             port: port,
             hostname: serverAddress,
@@ -75,7 +75,7 @@ export class NodeWebSocket implements ISocket {
         const req = request(options);
         req.end();
         req.on('upgrade', function(res, socket, head): void {
-            SHED.connect(res, socket, head, wskey);
+            this.watershedShed.connect(res, socket, head, wskey);
         });
 
         this.connected = true;
