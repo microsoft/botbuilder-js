@@ -23,6 +23,8 @@
   "typings": "lib/index.d.js",
   "dependencies": {
     "@azure/ms-rest-js": "1.2.6",
+    "botbuilder": "4.1.6",
+    "botbuilder-core": "4.1.6",
     "uuid": "^3.3.2",
     "watershed": "^0.4.0",
     "ws": "^7.1.2"
