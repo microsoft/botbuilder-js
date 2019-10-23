@@ -69,7 +69,7 @@ const badExpressions =
   "countWord(one)",// should have string param
   "addOrdinal(one + 0.5)",// should have Integer param
   "addOrdinal(one, two)",// should have one param
-  "guid(one)",// should have no parameters
+  "newGuid(one)",// should have no parameters
   "indexOf(hello)",// should have two parameters
   "indexOf(hello, world, one)", // should have two parameters
   "indexOf(hello, one)", // both parameters should be string
@@ -299,6 +299,9 @@ const badExpressions =
   "subArray(hello, two)", // first param should be array
   "subArray(items, hello)", // second param should be integer
   "subArray(items, one, hello)", // third param should be integer
+  "sortBy(hello, 'x')", // first param should be list
+  "sortBy(createArray('H','e','l','l','o'), 1)", // second param should be string
+  "sortBy(createArray('H','e','l','l','o'), 'x', hi)", //second param should be string
 
   //uri parsing functions
   "uriHost(relativeUri)", 

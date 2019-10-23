@@ -57,7 +57,7 @@ export class ExpressionType {
     public static readonly StartsWith: string = 'startsWith';
     public static readonly CountWord: string = 'countWord';
     public static readonly AddOrdinal: string = 'addOrdinal';
-    public static readonly Guid: string = 'guid';
+    public static readonly NewGuid: string = 'newGuid';
     public static readonly IndexOf: string = 'indexOf';
     public static readonly LastIndexOf: string = 'lastIndexOf';
 
@@ -108,6 +108,8 @@ export class ExpressionType {
     public static readonly Accessor: string = 'Accessor';
     public static readonly Element: string = 'Element';
     public static readonly CreateArray: string = 'createArray';
+
+    // Collection
     public static readonly First: string = 'first';
     public static readonly Last: string = 'last';
     public static readonly Foreach: string = 'foreach';
@@ -119,6 +121,8 @@ export class ExpressionType {
     public static readonly Take: string = 'take';
     public static readonly FilterNotEqual: string = 'filterNotEqual';
     public static readonly SubArray: string = 'subArray';
+    public static readonly SortBy: string = 'sortBy';
+    public static readonly SortByDescending: string = 'sortByDescending';
 
     // Misc
     public static readonly Constant: string = 'Constant';

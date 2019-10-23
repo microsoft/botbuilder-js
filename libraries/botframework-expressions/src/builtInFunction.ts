@@ -8,6 +8,7 @@
  */
 import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
 import * as jsPath from 'jspath';
+import * as lodash from 'lodash';
 import * as moment from 'moment';
 import * as timezone from 'moment-timezone';
 import { Builder } from 'xml2js';
@@ -1295,6 +1296,45 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
+    private static SortBy(isDescending: boolean)
+        : EvaluateExpressionDelegate {
+        return (expression: Expression, state: any): { value: any; error: string } => {
+            let result: any;
+            let error: string;
+            let oriArr: any;
+            ({ value: oriArr, error } = expression.Children[0].tryEvaluate(state));
+            if (error === undefined) {
+                if (oriArr instanceof Array) {
+                    const arr: any = oriArr.slice(0);
+                    if (expression.Children.length === 1) {
+                        if (isDescending) {
+                            result = arr.sort().reverse();
+                        } else {
+                            result = arr.sort();
+                        }
+                    } else {
+                        let propertyName: string;
+                        ({value: propertyName, error} = expression.Children[1].tryEvaluate(state));
+
+                        if (error === undefined) {
+                            propertyName = propertyName === undefined ? '' : propertyName;
+                        }
+                        if (isDescending) {
+                            result = lodash.sortBy(arr, propertyName).reverse();
+                        } else {
+                            result = lodash.sortBy(arr, propertyName);
+                        }
+                    }
+                } else {
+                    error = `${expression.Children[0]} is not array`;
+                }
+
+            }
+
+            return { value: result, error };
+        };
+    }
+
     private static ToBinary(stringToConvert: string): string {
         let result: string = '';
         for (const element of stringToConvert) {
@@ -1780,6 +1820,18 @@ export class BuiltInFunctions {
                 ReturnType.Object,
                 (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.Number], ReturnType.Object, ReturnType.Number),
             ),
+            new ExpressionEvaluator(
+                ExpressionType.SortBy,
+                BuiltInFunctions.SortBy(false),
+                ReturnType.Object,
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.Object),
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.SortByDescending,
+                BuiltInFunctions.SortBy(true),
+                ReturnType.Object,
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.Object),
+            ),
             BuiltInFunctions.Comparison(
                 ExpressionType.LessThan,
                 (args: ReadonlyArray<any>) => args[0] < args[1], BuiltInFunctions.ValidateBinaryNumberOrString, BuiltInFunctions.VerifyNumberOrString),
@@ -1903,7 +1955,7 @@ export class BuiltInFunctions {
                 (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 1, 1, ReturnType.Number),
             ),
             new ExpressionEvaluator(
-                ExpressionType.Guid,
+                ExpressionType.NewGuid,
                 BuiltInFunctions.Apply(() => BuiltInFunctions.newGuid()),
                 ReturnType.String,
                 (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 0, 0),

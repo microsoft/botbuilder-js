@@ -554,6 +554,12 @@ describe('LG', function () {
 
         evaled = engine.evaluateTemplate('StructuredTemplateRef');
         assert.deepStrictEqual(evaled, JSON.parse("{\"$type\":\"MyStruct\",\"text\":\"hi\"}"));
+
+        evaled = engine.evaluateTemplate('MultiStructuredRef');
+        assert.deepStrictEqual(evaled, JSON.parse("{\"$type\":\"MyStruct\",\"list\":[{\"$type\":\"SubStruct\",\"text\":\"hello\"},{\"$type\":\"SubStruct\",\"text\":\"world\"}]}"));
+
+        evaled = engine.evaluateTemplate('templateWithSquareBrackets', {manufacturer: {Name : "Acme Co"}});
+        assert.deepStrictEqual(evaled, JSON.parse("{\"$type\":\"Struct\",\"text\":\"Acme Co\"}"));
     });
 
     it('TestEvaluateOnce', function () {

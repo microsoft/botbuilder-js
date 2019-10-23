@@ -113,13 +113,17 @@ const dataSource = [
   ["addOrdinal(11 + 12)", "23rd"],
   ["addOrdinal(11 + 13)", "24th"],
   ["addOrdinal(-1)", "-1"],//original string value
-  ["count(guid())", 36],
-  ["indexOf(guid(), '-')", 8],
-  ["indexOf(guid(), '-')", 8],
+  ["count(newGuid())", 36],
+  ["indexOf(newGuid(), '-')", 8],
+  ["indexOf(newGuid(), '-')", 8],
   ["indexOf(hello, '-')", -1],
-  ["lastIndexOf(guid(), '-')", 23],
-  ["lastIndexOf(guid(), '-')", 23],
+  ["lastIndexOf(newGuid(), '-')", 23],
+  ["lastIndexOf(newGuid(), '-')", 23],
   ["lastIndexOf(hello, '-')", -1],
+  ["sortBy(items)", ["one", "two", "zero"]],
+  ["sortBy(nestedItems, 'x')[0].x", 1],
+  ["sortByDescending(items)", ["zero", "two", "one"]],
+  ["sortByDescending(nestedItems, 'x')[0].x", 3],
 
   // Logical comparison functions tests
   ["and(1 == 1, 1 < 2, 1 > 2)", false],
