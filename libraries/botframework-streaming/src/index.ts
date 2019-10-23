@@ -5,6 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
+export { StreamingAdapter, StreamingHttpClient, TokenResolver } from './adapters';
 export { ContentStream } from './contentStream';
 export { HttpContent } from './httpContentStream';
 export { IStreamingTransportServer, IStreamingTransportClient, ISocket, IReceiveRequest, IReceiveResponse } from './interfaces';
