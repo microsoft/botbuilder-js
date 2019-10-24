@@ -59,7 +59,7 @@ export type SendActivitiesHandler = (
  * If a handler doesn’t call the `next` function, the adapter does not call any of the
  * subsequent handlers and does not attempt to update the activity.
  * 
- * The `activity` parameter's [id](xref:botframework-schema.Activity.id)] property indicates which activity
+ * The `activity` parameter's [id](xref:botframework-schema.Activity.id) property indicates which activity
  * in the conversation to replace.
  * 
  * **See also**
@@ -87,7 +87,7 @@ export type UpdateActivityHandler = (context: TurnContext, activity: Partial<Act
  * If a handler doesn’t call the `next` function, the adapter does not call any of the
  * subsequent handlers and does not attempt to delete the activity.
  * 
- * The `reference` parameter's [activityId](xref:botframework-schema.ConversationReference.activityId)] property indicates which activity
+ * The `reference` parameter's [activityId](xref:botframework-schema.ConversationReference.activityId) property indicates which activity
  * in the conversation to delete.
  * 
  * **See also**
