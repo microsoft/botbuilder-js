@@ -63,7 +63,6 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
 
     public visitStructuredBody(context: lp.StructuredBodyContext): Map<string, any> {
         const result: Map<string, any> = new Map<string, any>();
-        const rr = context.structuredTemplateBody().text;
         result.set(context.structuredTemplateBody().text, undefined);
 
         return result;

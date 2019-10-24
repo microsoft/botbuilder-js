@@ -104,7 +104,7 @@ export class Expression {
      */
     public static Lambda(func: (arg0: any) => any): Expression {
         return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda,
-            (expression: Expression, state: any): { value: any; error: string } => {
+                                                                             (_expression: Expression, state: any): { value: any; error: string } => {
                 let value: any;
                 let error: string;
                 try {
@@ -146,34 +146,9 @@ export class Expression {
     }
 
     /**
-    * Construct and validate an Constant expression.
-    * @param children Child clauses.
-    * @returns New expression.
-    */
-    /* deprecated
-     public static ConstantExpression(value: any): Expression {
-         // TODO this make Circular reference and could make error in typescript
-         return new Constant(value);
-         //return undefined;
-     }
- */
-    //Please direct use it
-    /**
-     * Construct and validate a property accessor.
-     * @param property Property to lookup.
-     * @param instance Expression to get instance that contains property or null for global state.
-     */
-    /*
-    public static Accessor(property: string, instance?: Expression): Expression {
-        return instance === undefined
-            ? Expression.MakeExpression(ExpressionType.Accessor, undefined, Expression.ConstantExpression(property))
-            : Expression.MakeExpression(ExpressionType.Accessor, undefined, Expression.ConstantExpression(property), instance);
-    }
-    */
-
-    /**
      * Validate immediate expression.
      */
+    // tslint:disable-next-line: no-void-expression
     public validate = (): void => this.Evaluator.ValidateExpression(this);
 
     /**

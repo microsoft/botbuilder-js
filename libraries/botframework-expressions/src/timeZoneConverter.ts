@@ -10,11 +10,11 @@
  * Convert TimeZone between Windows and Iana.
  */
 export class TimeZoneConverter {
-    private static ianaToWindows: Map<string, string> = new Map<string, string>();
-    private static windowsToIana: Map<string, string> = new Map<string, string>();
-    private static validTimezonStr: string [] = new Array<string>();
-    private static seperator: string = '    ';
-    private static mappingString: string = 'AUS Central Standard Time,001,Australia/Darwin\
+    private static readonly ianaToWindows: Map<string, string> = new Map<string, string>();
+    private static readonly windowsToIana: Map<string, string> = new Map<string, string>();
+    private static readonly validTimezonStr: string [] = [];
+    private static readonly seperator: string = '    ';
+    private static readonly mappingString: string = 'AUS Central Standard Time,001,Australia/Darwin\
     AUS Central Standard Time,AU,Australia/Darwin\
     AUS Eastern Standard Time,001,Australia/Sydney\
     AUS Eastern Standard Time,AU,Australia/Sydney Australia/Melbourne\

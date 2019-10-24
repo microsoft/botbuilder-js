@@ -8,7 +8,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, ParseTree, TerminalNode } from 'antlr4ts/tree';
-import { Constant, Expression, Extensions, IExpressionParser, ExpressionEngine } from 'botframework-expressions';
+import { Constant, Expression, ExpressionEngine, Extensions, IExpressionParser } from 'botframework-expressions';
 import { flatten, keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
@@ -44,7 +44,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     private readonly _expressionParser: IExpressionParser;
     private readonly escapeSeperatorRegex : RegExp = new RegExp(/\|(?!\\)/g);
     private readonly expressionRecognizeRegex: RegExp = new RegExp(/\}(?!\\).+?\{(?!\\)@?/g);
-    
+
     constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
         this.Templates = templates;
@@ -238,10 +238,10 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     private AnalyzeTextContainsExpression(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
         const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(this.expressionRecognizeRegex);
-        const expressionsRaw = reversedExps.map(e => e.split('').reverse().join('')).reverse();
-        const expressions = expressionsRaw.filter(e => e.length > 0);
-        expressions.forEach((exp: string) => result.union(this.AnalyzeExpression(exp)));
-        
+        const expressionsRaw: string[] = reversedExps.map((e: string) => e.split('').reverse().join('')).reverse();
+        const expressions: string[] = expressionsRaw.filter((e: string) => e.length > 0);
+        expressions.forEach((item: string) => result.union(this.AnalyzeExpression(item)));
+
         return result;
     }
 
@@ -270,7 +270,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     private AnalyzeMultiLineText(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
         exp = exp.substr(3, exp.length - 6);
-        const matches: string[] = exp.split('').reverse().join('').match(this.expressionRecognizeRegex).map(e => e.split('').reverse().join('')).reverse();
+        const matches: string[] = exp.split('').reverse().join('').match(this.expressionRecognizeRegex).map((e: string) => e.split('').reverse().join('')).reverse();
         for (const match of matches) {
             result.union(this.AnalyzeExpression(match));
         }

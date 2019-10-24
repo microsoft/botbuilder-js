@@ -56,6 +56,7 @@ export class ExpressionEvaluator {
         this.Type = type;
         this._evaluator = evaluator;
         this.ReturnType = returnType;
+        // tslint:disable-next-line: no-empty
         this._validator = validator === undefined ? ((expr: Expression): any => { }) : validator;
     }
 

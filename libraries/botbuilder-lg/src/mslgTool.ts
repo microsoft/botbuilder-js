@@ -74,9 +74,9 @@ export class MSLGTool {
                     }
                 } else if (template[1] instanceof Map) {
                     for (const condition of (template[1] as Map<string, string[]>)) {
-                        const conditionStr = condition[0];
+                        const conditionStr: string = condition[0];
                         result += '- ' + conditionStr + '\n';
-                        condition[1].forEach(templateStr => {
+                        condition[1].forEach((templateStr: string) => {
                             result += '   ' + templateStr.slice(0, 1) + ' ' + templateStr.slice(1) + '\n';
                         });
                     }

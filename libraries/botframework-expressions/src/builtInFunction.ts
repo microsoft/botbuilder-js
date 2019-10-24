@@ -456,7 +456,7 @@ export class BuiltInFunctions {
             return { value, error };
         };
     }
-    
+
     /**
      * Generate an expression delegate that applies function on the accumulated value after verifying all children.
      * @param func Function to apply.
@@ -489,7 +489,7 @@ export class BuiltInFunctions {
      */
     public static Numeric(type: string, func: (arg0: ReadonlyArray<any>) => any): ExpressionEvaluator {
         return new ExpressionEvaluator(type, BuiltInFunctions.ApplySequence(func, BuiltInFunctions.VerifyNumber),
-            ReturnType.Number, BuiltInFunctions.ValidateNumber);
+                                       ReturnType.Number, BuiltInFunctions.ValidateNumber);
     }
 
     /**
@@ -499,7 +499,7 @@ export class BuiltInFunctions {
      */
     public static MultivariateNumeric(type: string, func: (arg0: ReadonlyArray<any>) => any, verify?: VerifyExpression): ExpressionEvaluator {
         return new ExpressionEvaluator(type, BuiltInFunctions.ApplySequence(func, verify !== undefined ? verify : BuiltInFunctions.VerifyNumber),
-            ReturnType.Number, BuiltInFunctions.ValidateTwoOrMoreThanTwoNumbers);
+                                       ReturnType.Number, BuiltInFunctions.ValidateTwoOrMoreThanTwoNumbers);
     }
     /**
      * Comparison operators.
@@ -553,7 +553,7 @@ export class BuiltInFunctions {
      */
     public static StringTransform(type: string, func: (arg0: ReadonlyArray<any>) => any): ExpressionEvaluator {
         return new ExpressionEvaluator(type, BuiltInFunctions.Apply(func, BuiltInFunctions.VerifyString),
-            ReturnType.String, BuiltInFunctions.ValidateUnaryString);
+                                       ReturnType.String, BuiltInFunctions.ValidateUnaryString);
     }
 
     /**
@@ -589,6 +589,7 @@ export class BuiltInFunctions {
                 return { value: result, error };
             },
             ReturnType.String,
+            // tslint:disable-next-line: no-void-expression
             (expr: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expr, 2, 3, ReturnType.String, ReturnType.Number));
     }
 
@@ -669,7 +670,7 @@ export class BuiltInFunctions {
         return ordinalResult;
     }
 
-    private static newGuid() {
+    private static newGuid(): string{
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any) => {
             const r: number = Math.random() * 16 | 0;
             const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
@@ -779,14 +780,14 @@ export class BuiltInFunctions {
         let json: object;
         if (typeof jsonEntity === 'string') {
             try {
-                json =JSON.parse(jsonEntity)
+                json = JSON.parse(jsonEntity);
             } catch (e) {
                 error = `${jsonEntity} is not a valid json string`;
             }
         } else if (typeof jsonEntity === 'object') {
             json = jsonEntity;
         } else {
-            error = "the first parameter should be either an object or a string";
+            error = 'the first parameter should be either an object or a string';
         }
 
         if (error === undefined) {
@@ -797,7 +798,8 @@ export class BuiltInFunctions {
             }
         }
 
-        result = evaled;    
+        result = evaled;
+
         return {value: result, error};
     }
 
@@ -1021,6 +1023,7 @@ export class BuiltInFunctions {
 
         const second: Expression = expression.Children[1];
         if (second.ReturnType === ReturnType.String && second.Type === ExpressionType.Constant) {
+            // tslint:disable-next-line: restrict-plus-operands
             CommonRegex.CreateRegex((<Constant>second).Value + '');
         }
     }
@@ -1763,6 +1766,7 @@ export class BuiltInFunctions {
                             error = 'Second paramter must be more than zero';
                         }
 
+                        // tslint:disable-next-line: prefer-array-literal
                         const result: number[] = [...Array(args[1]).keys()].map((u: number) => u + Number(args[0]));
 
                         return { value: result, error };
@@ -1806,31 +1810,31 @@ export class BuiltInFunctions {
                 ExpressionType.Skip,
                 BuiltInFunctions.Skip,
                 ReturnType.Object,
-                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [], ReturnType.Object, ReturnType.Number),
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [], ReturnType.Object, ReturnType.Number)
             ),
             new ExpressionEvaluator(
                 ExpressionType.Take,
                 BuiltInFunctions.Take,
                 ReturnType.Object,
-                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [], ReturnType.Object, ReturnType.Number),
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [], ReturnType.Object, ReturnType.Number)
             ),
             new ExpressionEvaluator(
                 ExpressionType.SubArray,
                 BuiltInFunctions.SubArray,
                 ReturnType.Object,
-                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.Number], ReturnType.Object, ReturnType.Number),
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.Number], ReturnType.Object, ReturnType.Number)
             ),
             new ExpressionEvaluator(
                 ExpressionType.SortBy,
                 BuiltInFunctions.SortBy(false),
                 ReturnType.Object,
-                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.Object),
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.Object)
             ),
             new ExpressionEvaluator(
                 ExpressionType.SortByDescending,
                 BuiltInFunctions.SortBy(true),
                 ReturnType.Object,
-                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.Object),
+                (expression: Expression): void => BuiltInFunctions.ValidateOrder(expression, [ReturnType.String], ReturnType.Object)
             ),
             BuiltInFunctions.Comparison(
                 ExpressionType.LessThan,
@@ -1934,13 +1938,13 @@ export class BuiltInFunctions {
                 ExpressionType.StartsWith,
                 BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].startsWith(args[1]), BuiltInFunctions.VerifyString),
                 ReturnType.Boolean,
-                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String),
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String)
             ),
             new ExpressionEvaluator(
                 ExpressionType.EndsWith,
                 BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].endsWith(args[1]), BuiltInFunctions.VerifyString),
                 ReturnType.Boolean,
-                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String),
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String)
             ),
             new ExpressionEvaluator(
                 ExpressionType.CountWord,
@@ -1952,25 +1956,25 @@ export class BuiltInFunctions {
                 ExpressionType.AddOrdinal,
                 BuiltInFunctions.Apply((args: ReadonlyArray<any>) => this.AddOrdinal(args[0]), BuiltInFunctions.VerifyInteger),
                 ReturnType.String,
-                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 1, 1, ReturnType.Number),
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 1, 1, ReturnType.Number)
             ),
             new ExpressionEvaluator(
                 ExpressionType.NewGuid,
                 BuiltInFunctions.Apply(() => BuiltInFunctions.newGuid()),
                 ReturnType.String,
-                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 0, 0),
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 0, 0)
             ),
             new ExpressionEvaluator(
                 ExpressionType.IndexOf,
                 BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].indexOf(args[1]), BuiltInFunctions.VerifyString),
                 ReturnType.Number,
-                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String),
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String)
             ),
             new ExpressionEvaluator(
                 ExpressionType.LastIndexOf,
                 BuiltInFunctions.Apply((args: ReadonlyArray<any>) => args[0].lastIndexOf(args[1]), BuiltInFunctions.VerifyString),
                 ReturnType.Number,
-                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String),
+                (expression: Expression): void => BuiltInFunctions.ValidateArityAndAnyType(expression, 2, 2, ReturnType.String)
             ),
             new ExpressionEvaluator(
                 ExpressionType.Join,
@@ -2090,7 +2094,7 @@ export class BuiltInFunctions {
                                 error = `${args[2]} is not a valid time unit.`;
                             } else {
                                 const dur: any = duration;
-                                ({ value, error } = BuiltInFunctions.ParseTimestamp(args[0], dt => args.length === 4 ?
+                                ({ value, error } = BuiltInFunctions.ParseTimestamp(args[0], (dt: moment.Moment) => args.length === 4 ?
                                     dt.subtract(dur, tsStr).format(format) : dt.subtract(dur, tsStr).toISOString()));
                             }
                         } else {
@@ -2165,7 +2169,7 @@ export class BuiltInFunctions {
                                 error = `${args[2]} is not a valid time unit.`;
                             } else {
                                 const dur: any = duration;
-                                ({ value, error } = BuiltInFunctions.ParseTimestamp(new Date().toISOString(), dt => dt.add(dur, tsStr).format(format)));
+                                ({ value, error } = BuiltInFunctions.ParseTimestamp(new Date().toISOString(), (dt: moment.Moment) => dt.add(dur, tsStr).format(format)));
                             }
                         } else {
                             error = `${expr} can't evaluate.`;
@@ -2192,7 +2196,7 @@ export class BuiltInFunctions {
                                 error = `${args[2]} is not a valid time unit.`;
                             } else {
                                 const dur: any = duration;
-                                ({ value, error } = BuiltInFunctions.ParseTimestamp(new Date().toISOString(), dt => dt.subtract(dur, tsStr).format(format)));
+                                ({ value, error } = BuiltInFunctions.ParseTimestamp(new Date().toISOString(), (dt: moment.Moment) => dt.subtract(dur, tsStr).format(format)));
                             }
                         } else {
                             error = `${expr} can't evaluate.`;
@@ -2520,7 +2524,7 @@ export class BuiltInFunctions {
                 ExpressionType.Rand,
                 BuiltInFunctions.ApplyWithError(
                     (args: ReadonlyArray<any>) => {
-                        let error: string
+                        let error: string;
                         if (args[0] > args[1]) {
                             error = `Min value ${args[0]} cannot be greater than max value ${args[1]}.`;
                         }
@@ -2678,13 +2682,13 @@ export class BuiltInFunctions {
             new ExpressionEvaluator(ExpressionType.UriPathAndQuery,
                                     BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriPathAndQuery(args[0]), BuiltInFunctions.VerifyString),
                                     ReturnType.String, BuiltInFunctions.ValidateUnary),
-            new ExpressionEvaluator(ExpressionType.UriQuery, BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriQuery(args[0]), BuiltInFunctions.VerifyString), 
+            new ExpressionEvaluator(ExpressionType.UriQuery, BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriQuery(args[0]), BuiltInFunctions.VerifyString),
                                     ReturnType.String, BuiltInFunctions.ValidateUnary),
-            new ExpressionEvaluator(ExpressionType.UriPort, BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriPort(args[0]), BuiltInFunctions.VerifyString), 
+            new ExpressionEvaluator(ExpressionType.UriPort, BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriPort(args[0]), BuiltInFunctions.VerifyString),
                                     ReturnType.String, BuiltInFunctions.ValidateUnary),
-            new ExpressionEvaluator(ExpressionType.UriScheme, BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriScheme(args[0]), BuiltInFunctions.VerifyString), 
+            new ExpressionEvaluator(ExpressionType.UriScheme, BuiltInFunctions.ApplyWithError((args: Readonly<any>) => this.UriScheme(args[0]), BuiltInFunctions.VerifyString),
                                     ReturnType.String, BuiltInFunctions.ValidateUnary),
-        
+
             new ExpressionEvaluator(ExpressionType.Coalesce, BuiltInFunctions.Apply((args: ReadonlyArray<any>[]) => this.Coalesce(<object []>args)),
                                     ReturnType.Object, BuiltInFunctions.ValidateAtLeastOne),
             new ExpressionEvaluator(ExpressionType.XPath, BuiltInFunctions.ApplyWithError((args: ReadonlyArray<any>[]) => this.XPath(args[0].toString(), args[1].toString())),

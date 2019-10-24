@@ -8,13 +8,13 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { BuiltInFunctions, EvaluatorLookup, Expression, ExpressionEvaluator, ReturnType, ExpressionEngine, ExpressionType, Constant } from 'botframework-expressions';
+import { BuiltInFunctions, Constant, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ExpressionType, ReturnType } from 'botframework-expressions';
 import { keyBy } from 'lodash';
+import { CustomizedMemoryScope } from './customizedMemoryScope';
 import { EvaluationTarget } from './evaluationTarget';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
-import { CustomizedMemoryScope } from './customizedMemoryScope';
 
 /**
  * Evaluation tuntime engine
@@ -35,6 +35,10 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
         // generate a new customzied expression engine by injecting the template as functions
         this.ExpressionEngine = new ExpressionEngine(this.customizedEvaluatorLookup(expressionEngine.EvaluatorLookup));
+    }
+
+    public static wrappedRegExSplit(inputString: string, regex : RegExp): string[] {
+        return inputString.split('').reverse().join('').split(regex).map((e: string) => e.split('').reverse().join('')).reverse();
     }
 
     public EvaluateTemplate(templateName: string, scope: any): any {
@@ -201,7 +205,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
     public ConstructScope(templateName: string, args: any[]): any {
         if (this.TemplateMap[templateName] === undefined) {
-            throw new Error(`No such template ${templateName}`)
+            throw new Error(`No such template ${templateName}`);
         }
 
         const parameters: string[] = this.TemplateMap[templateName].Parameters;
@@ -220,7 +224,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         parameters.map((e: string, i: number) => newScope[e] = args[i]);
 
         if (currentScope instanceof CustomizedMemoryScope) {
-            return new CustomizedMemoryScope(newScope, (currentScope as CustomizedMemoryScope).globalScope);
+            return new CustomizedMemoryScope(newScope, currentScope.globalScope);
         } else {
             return new CustomizedMemoryScope(newScope, currentScope);
         }
@@ -257,6 +261,10 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         }
 
         return undefined;
+    }
+
+    public wrappedEvalTextContainsExpression(exp: string, regex: RegExp): string {
+        return (exp.split('').reverse().join('').replace(regex, (sub: string) => this.evalExpression(sub.split('').reverse().join('')).toString().split('').reverse().join(''))).split('').reverse().join('');
     }
 
     protected defaultResult(): string {
@@ -415,7 +423,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         const lgTemplate: string = 'lgTemplate';
 
         if (name === lgTemplate) {
-            return new ExpressionEvaluator(lgTemplate, BuiltInFunctions.Apply(this.lgTemplate()), ReturnType.Object, this.validateLgTemplate)
+            return new ExpressionEvaluator(lgTemplate, BuiltInFunctions.Apply(this.lgTemplate()), ReturnType.Object, this.validateLgTemplate);
         }
 
         return baseLookup(name);
@@ -424,16 +432,16 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     private readonly lgTemplate = (): any => (args: ReadonlyArray<any>): any => {
         const templateName: string = args[0];
         const newScope: any = this.ConstructScope(templateName, args.slice(1));
-        
+
         return this.EvaluateTemplate(templateName, newScope);
     }
 
-    private readonly validateLgTemplate = (expression: Expression) => {
+    private readonly validateLgTemplate = (expression: Expression): void => {
         if (expression.Children.length === 0) {
             throw new Error(`No template name is provided when calling lgTemplate, expected: lgTemplate(templateName, ...args)`);
         }
 
-        const children0 = expression.Children[0];
+        const children0: Expression = expression.Children[0];
 
         // Validate return type
         if (children0.ReturnType !== ReturnType.Object && children0.ReturnType !== ReturnType.String) {
@@ -475,13 +483,5 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         if (expectedArgsCount !== actualArgsCount) {
             throw new Error(`arguments mismatch for template ${templateName}, expect ${expectedArgsCount} actual ${actualArgsCount}`);
         }
-    }
-
-    public static wrappedRegExSplit(inputString: string, regex : RegExp): string[] {
-        return inputString.split('').reverse().join('').split(regex).map(e => e.split('').reverse().join('')).reverse()
-    }
-
-    public wrappedEvalTextContainsExpression(exp: string, regex: RegExp): string {
-        return (exp.split('').reverse().join('').replace(regex, (sub: string) => this.evalExpression(sub.split('').reverse().join('')).toString().split('').reverse().join(''))).split('').reverse().join('');
     }
 }

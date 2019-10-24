@@ -35,7 +35,7 @@ export class Constant extends Expression {
     private _value: any;
     public constructor(value: any) {
         super(ExpressionType.Constant, new ExpressionEvaluator(ExpressionType.Constant,
-            (expression: Expression, state: any): { value: any; error: string } => {
+                                                               (expression: Expression, state: any): { value: any; error: string } => {
                 return { value: (<Constant>expression).Value, error: undefined };
             }
         ));

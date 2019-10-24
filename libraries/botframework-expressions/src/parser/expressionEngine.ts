@@ -11,13 +11,13 @@ import { ANTLRInputStream, CommonTokenStream } from 'antlr4ts';
 import { AbstractParseTreeVisitor, ParseTree } from 'antlr4ts/tree';
 import { BuiltInFunctions } from '../builtInFunction';
 import { Constant } from '../constant';
-import { EvaluatorLookup } from '../expressionEvaluator';
 import { Expression } from '../expression';
-import { ExpressionType } from '../expressionType';
+import { EvaluatorLookup } from '../expressionEvaluator';
 import { IExpressionParser } from '../expressionParser';
-import { ParseErrorListener } from './parseErrorListener';
+import { ExpressionType } from '../expressionType';
 import { ExpressionLexer, ExpressionParser, ExpressionVisitor } from './generated';
 import * as ep from './generated/ExpressionParser';
+import { ParseErrorListener } from './parseErrorListener';
 import { Util } from './util';
 
 /**
