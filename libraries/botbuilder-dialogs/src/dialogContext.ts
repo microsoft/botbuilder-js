@@ -4,10 +4,17 @@
  */
 import { Activity, TurnContext } from 'botbuilder-core';
 import { Choice } from './choices';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
 import { DialogStateManager } from './memory';
+import { DialogContainer } from './dialogContainer';
+import { DialogEvents } from './dialogEvents';
+
+/**
+ * @private
+ */
+const ACTIVITY_RECEIVED_EMITTED = Symbol('ActivityReceivedEmitted');
 
 /**
  * Contains state information for the dialog stack (dialog state) for a specific [DialogSet](xref:botbuilder-dialogs.DialogSet).
@@ -93,6 +100,22 @@ export class DialogContext {
     }
 
     /**
+     * Returns dialog context for child if the active dialog is a container.
+     */
+    public get child(): DialogContext|undefined {
+        var instance = this.activeDialog;
+        if (instance != undefined) {
+            // Is active dialog a container?
+            const dialog = this.findDialog(instance.id);
+            if (dialog instanceof DialogContainer) {
+                return dialog.createChildContext(this);
+            }
+        }
+
+        return undefined;
+    }
+
+    /**
      * Starts a dialog instance and pushes it onto the dialog stack.
      *
      * @param dialogId ID of the dialog to start.
@@ -136,6 +159,10 @@ export class DialogContext {
 
     /**
      * Cancels all dialogs on the dialog stack, and clears stack.
+     * 
+     * @param cancelParents Optional. If `true` all parent dialogs will be cancelled as well.
+     * @param eventName Optional. Name of a custom event to raise as dialogs are cancelled. This defaults to [cancelDialog](xref:botbuilder-dialogs.DialogEvents.cancelDialog). 
+     * @param eventValue Optional. Value to pass along with custom cancellation event.
      *
      * @remarks
      * This calls each dialog's [endDialog](xref:botbuilder-dialogs.Dialog.endDialog) method before
@@ -154,10 +181,30 @@ export class DialogContext {
      * **See also**
      * - [endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
      */
-    public async cancelAllDialogs(): Promise<DialogTurnResult> {
-        if (this.stack.length > 0) {
-            while (this.stack.length > 0) {
-                await this.endActiveDialog(DialogReason.cancelCalled);
+    public async cancelAllDialogs(cancelParents = false, eventName?: string, eventValue?: any): Promise<DialogTurnResult> {
+        eventName = eventName || DialogEvents.cancelDialog;
+        if (this.stack.length > 0 || this.parent != undefined) {
+            // Cancel all local and parent dialogs while checking for interception
+            let notify = false;
+            let dc: DialogContext = this;
+            while (dc != undefined) {
+                if (dc.stack.length > 0) {
+                    // Check to see if the dialog wants to handle the event
+                    // - We skip notifying the first dialog which actually called cancelAllDialogs() 
+                    if (notify) {
+                        const handled = await dc.emitEvent(eventName, eventValue, false, false);
+                        if (handled) {
+                            break;
+                        }
+                    }
+
+                    // End the active dialog
+                    await dc.endActiveDialog(DialogReason.cancelCalled);
+                } else {
+                    dc = cancelParents ? dc.parent : null;
+                }
+
+                notify = true;
             }
 
             return { status: DialogTurnStatus.cancelled };
@@ -259,13 +306,23 @@ export class DialogContext {
      * - [Dialog.continueDialog](xref:botbuilder-dialogs.Dialog.continueDialog)
      */
     public async continueDialog(): Promise<DialogTurnResult> {
+        // if we are continuing and haven't emitted the activityReceived event, emit it
+        // NOTE: This is backward compatible way for activity received to be fired even if you have legacy dialog loop
+        if (!this.context.turnState.has(ACTIVITY_RECEIVED_EMITTED)) {
+            this.context.turnState.set(ACTIVITY_RECEIVED_EMITTED, true);
+
+            // Dispatch "activityReceived" event
+            // - This fired from teh leaf and will queue up any interruptions.
+            await this.emitEvent(DialogEvents.activityReceived, this.context.activity, true, true);
+        }
+
         // Check for a dialog on the stack
         const instance: DialogInstance<any> = this.activeDialog;
         if (instance) {
             // Lookup dialog
             const dialog: Dialog<{}> = this.findDialog(instance.id);
             if (!dialog) {
-                throw new Error(`DialogContext.continue(): Can't continue dialog. A dialog with an id of '${ instance.id }' wasn't found.`);
+                throw new Error(`DialogContext.continueDialog(): Can't continue dialog. A dialog with an id of '${ instance.id }' wasn't found.`);
             }
 
             // Continue execution of dialog
@@ -316,7 +373,7 @@ export class DialogContext {
             // Lookup dialog
             const dialog: Dialog<{}> = this.findDialog(instance.id);
             if (!dialog) {
-                throw new Error(`DialogContext.end(): Can't resume previous dialog. A dialog with an id of '${ instance.id }' wasn't found.`);
+                throw new Error(`DialogContext.endDialog(): Can't resume previous dialog. A dialog with an id of '${ instance.id }' wasn't found.`);
             }
 
             // Return result to previous dialog
@@ -386,18 +443,66 @@ export class DialogContext {
      * ```
      */
     public async repromptDialog(): Promise<void> {
-        // Check for a dialog on the stack
-        const instance: DialogInstance<any> = this.activeDialog;
-        if (instance) {
-            // Lookup dialog
-            const dialog: Dialog<{}> = this.findDialog(instance.id);
-            if (!dialog) {
-                throw new Error(`DialogSet.reprompt(): Can't find A dialog with an id of '${ instance.id }'.`);
-            }
+        // Try raising event first
+        const handled = await this.emitEvent(DialogEvents.repromptDialog, undefined, false, false);
+        if (!handled) {
+            // Check for a dialog on the stack
+            const instance: DialogInstance<any> = this.activeDialog;
+            if (instance) {
+                // Lookup dialog
+                const dialog: Dialog<{}> = this.findDialog(instance.id);
+                if (!dialog) {
+                    throw new Error(`DialogSet.reprompt(): Can't find A dialog with an id of '${ instance.id }'.`);
+                }
 
-            // Ask dialog to re-prompt if supported
-            await dialog.repromptDialog(this.context, instance);
+                // Ask dialog to re-prompt if supported
+                await dialog.repromptDialog(this.context, instance);
+            }
         }
+    }
+
+        /// <summary>
+    /// Searches for a dialog with a given ID.
+    /// Emits a named event for the current dialog, or someone who started it, to handle.
+    /// </summary>
+    /// <param name="name">Name of the event to raise.</param>
+    /// <param name="value">Value to send along with the event.</param>
+    /// <param name="bubble">Flag to control whether the event should be bubbled to its parent if not handled locally. Defaults to a value of `true`.</param>
+    /// <param name="fromLeaf">Whether the event is emitted from a leaf node.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>True if the event was handled.</returns>
+    public async emitEvent(name: string, value?: any, bubble = true, fromLeaf = false): Promise<boolean> {
+        // Initialize event
+        const dialogEvent: DialogEvent = {
+            bubble: bubble,
+            name: name,
+            value: value,
+        };
+
+        // Find starting dialog
+        let dc: DialogContext = this;
+        if (fromLeaf) {
+            while (true) {
+                const childDc = dc.child;
+                if (childDc != undefined) {
+                    dc = childDc;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        // Dispatch to active dialog first
+        // - The active dialog will decide if it should bubble the event to its parent.
+        const instance = dc.activeDialog;
+        if (instance != undefined) {
+            const dialog = dc.findDialog(instance.id);
+            if (dialog != undefined) {
+                return await dialog.onDialogEvent(dc, dialogEvent);
+            }
+        }
+
+        return false;
     }
 
     private async endActiveDialog(reason: DialogReason): Promise<void> {

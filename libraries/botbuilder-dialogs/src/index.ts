@@ -11,6 +11,7 @@ export * from './prompts';
 export * from './dialog';
 export * from './componentDialog';
 export * from './dialogContext';
+export * from './dialogEvents';
 export * from './dialogSet';
 export * from './waterfallDialog';
 export * from './waterfallStepContext';

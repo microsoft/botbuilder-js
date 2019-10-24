@@ -86,6 +86,24 @@ export enum DialogTurnStatus {
     cancelled = 'cancelled'
 }
 
+export interface DialogEvent {
+    /**
+     * Flag indicating whether the event will be bubbled to the parent `DialogContext`. 
+     */
+    bubble: boolean;
+
+    /**
+     * Name of the event being raised.
+     */
+    name: string;
+
+    /**
+     * (Optional) value associated with the event.
+     */
+    value?: any;
+}
+
+
 /**
  * Returned by `Dialog.continueDialog()` and `DialogContext.beginDialog()` to indicate whether a
  * dialog is still active after the turn has been processed by the dialog.
@@ -237,5 +255,58 @@ export abstract class Dialog<O extends object = {}> {
      */
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // No-op by default
+    }
+
+    /// <summary>
+    /// Called when an event has been raised, using `DialogContext.emitEvent()`, by either the current dialog or a dialog that the current dialog started.
+    /// </summary>
+    /// <param name="dc">The dialog context for the current turn of conversation.</param>
+    /// <param name="e">The event being raised.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>True if the event is handled by the current dialog and bubbling should stop.</returns>
+    public async onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+        // Before bubble
+        let handled = await this.onPreBubbleEventAsync(dc, e);
+
+        // Bubble as needed
+        if (!handled && e.bubble && dc.parent != undefined) {
+            handled = await dc.parent.emitEvent(e.name, e.value, true, false);
+        }
+
+        // Post bubble
+        if (!handled) {
+            handled = await this.onPostBubbleEventAsync(dc, e);
+        }
+
+        return handled;
+    }
+
+    /**
+     * Called before an event is bubbled to its parent.
+     * 
+     * @remarks
+     * This is a good place to perform interception of an event as returning `true` will prevent
+     * any further bubbling of the event to the dialogs parents and will also prevent any child
+     * dialogs from performing their default processing.
+     * @param dc The dialog context for the current turn of conversation.
+     * @param e The event being raised.
+     * @returns Whether the event is handled by the current dialog and further processing should stop.
+     */
+    protected async onPreBubbleEventAsync(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+        return false;
+    }
+
+    /**
+     * Called after an event was bubbled to all parents and wasn't handled.
+     * 
+     * @remarks
+     * This is a good place to perform default processing logic for an event. Returning `true` will
+     * prevent any processing of the event by child dialogs.
+     * @param dc The dialog context for the current turn of conversation.
+     * @param e The event being raised.
+     * @returns Whether the event is handled by the current dialog and further processing should stop.
+     */
+    protected async onPostBubbleEventAsync(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+        return false;
     }
 }
