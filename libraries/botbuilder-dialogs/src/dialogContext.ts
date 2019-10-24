@@ -9,10 +9,11 @@ import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
 
 /**
- * Contains state information for the dialog stack (dialog state) for a specific [DialogSet](xref:botbuilder-dialogs.DialogSet).
+ * Contains dialog state, information about the state of the dialog stack, for a specific [DialogSet](xref:botbuilder-dialogs.DialogSet).
  * 
  * @remarks
- * State is read from and saved to storage each turn, and the turn context maintains a state cache for the turn.
+ * State is read from and saved to storage each turn, and state cache for the turn is managed through
+ * the [TurnContext](xref:botbuilder-core.TurnContext).
  * 
  * For more information, see the articles on
  * [Managing state](https://docs.microsoft.com/azure/bot-service/bot-builder-concept-state) and
@@ -60,7 +61,7 @@ export class DialogContext {
      * The parent dialog context for this dialog context, or `undefined` if this context doesn't have a parent.
      * 
      * @remarks
-     * When it attempts to start a dialog, the dialog context searches for the [id](xref:botbuilder-dialogs.Dialog.id)
+     * When it attempts to start a dialog, the dialog context searches for the [Dialog.id](xref:botbuilder-dialogs.Dialog.id)
      * in its [dialogs](xref:botbuilder-dialogs.DialogContext.dialogs). If the dialog to start is not found
      * in this dialog context, it searches in its parent dialog context, and so on.
      */
@@ -89,10 +90,10 @@ export class DialogContext {
     }
 
     /**
-     * Starts a dialog instance and pushes it onto the dialog stack.
+     * Creates a new instance of the dialog and pushes it onto the stack.
      *
      * @param dialogId ID of the dialog to start.
-     * @param options Optional. Information to pass into the dialog when it starts.
+     * @param options Optional. Arguments to pass into the dialog when it starts.
      * 
      * @remarks
      * If there's already an active dialog on the stack, that dialog will be paused until
@@ -111,6 +112,7 @@ export class DialogContext {
      * 
      * **See also**
      * - [endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
+     * - [prompt](xref:botbuilder-dialogs.DialogContext.prompt)
      * - [replaceDialog](xref:botbuilder-dialogs.DialogContext.replaceDialog)
      * - [Dialog.beginDialog](xref:botbuilder-dialogs.Dialog.beginDialog)
      */
@@ -131,10 +133,10 @@ export class DialogContext {
     }
 
     /**
-     * Cancels all dialogs on the dialog stack, and clears stack.
+     * Cancels all dialogs on the dialog stack, and clears the stack.
      *
      * @remarks
-     * This calls each dialog's [endDialog](xref:botbuilder-dialogs.Dialog.endDialog) method before
+     * This calls each dialog's [Dialog.endDialog](xref:botbuilder-dialogs.Dialog.endDialog) method before
      * removing the dialog from the stack.
      * 
      * If there were any dialogs on the stack initially, the [status](xref:botbuilder-dialogs.DialogTurnResult.status)
@@ -171,11 +173,9 @@ export class DialogContext {
      * If the dialog to start is not found in the [DialogSet](xref:botbuilder-dialogs.DialogSet) associated
      * with this dialog context, it attempts to find the dialog in its parent dialog context.
      * 
-     * If the dialog cannot be found within the current `DialogSet`, the parent `DialogContext` 
-     * will be searched if there is one.
-     * 
      * **See also**
      * - [dialogs](xref:botbuilder-dialogs.DialogContext.dialogs)
+     * - [parent](xref:botbuilder-dialogs.DialogContext.parent)
      */
     public findDialog(dialogId: string): Dialog|undefined {
         let dialog = this.dialogs.find(dialogId);
@@ -250,9 +250,6 @@ export class DialogContext {
      *     await dc.context.sendActivity(`I'm sorry. I didn't understand.`);
      * }
      * ```
-     *
-     * **See also**
-     * - [Dialog.continueDialog](xref:botbuilder-dialogs.Dialog.continueDialog)
      */
     public async continueDialog(): Promise<DialogTurnResult> {
         // Check for a dialog on the stack
@@ -272,15 +269,14 @@ export class DialogContext {
     }
 
     /**
-     * Ends a dialog by popping it off the stack and returns an optional result to the dialog's
-     * parent.
+     * Ends a dialog and pops it off the stack. Returns an optional result to the dialog's parent.
      *
      * @param result Optional. A result to pass to the parent logic. This might be the next dialog
      *      on the stack, or it might be the bot's turn handler, if this was the last dialog on the stack.
      * 
      * @remarks
      * The _parent_ dialog is the next dialog on the dialog stack, if there is one. This method
-     * calls the parent dialog's [resumeDialog](xref:botbuilder-dialogs.Dialog.resumeDialog) method,
+     * calls the parent's [Dialog.resumeDialog](xref:botbuilder-dialogs.Dialog.resumeDialog) method,
      * passing the result returned by the ending dialog. If there is no parent dialog, the turn ends
      * and the result is available to the bot through the returned object's
      * [result](xref:botbuilder-dialogs.DialogTurnResult.result) property.
@@ -327,7 +323,7 @@ export class DialogContext {
      * Ends the active dialog and starts a new dialog in its place.
      *
      * @param dialogId ID of the dialog to start.
-     * @param options Optional. Information to pass into the dialog when it starts.
+     * @param options Optional. Arguments to pass into the new dialog when it starts.
      * 
      * @remarks
      * This is particularly useful for creating a loop or redirecting to another dialog.
@@ -338,26 +334,6 @@ export class DialogContext {
      * This method is similar to ending the current dialog and immediately beginning the new one.
      * However, the parent dialog is neither resumed nor otherwise notified.
      *
-     * For example:
-     * ```JavaScript
-     * this.addDialog(new WaterfallDialog('randomNumber', [
-     *     async (step) => {
-     *         const { min, max } = step.options;
-     *         const num = min + Math.floor((max - min) * Math.random());
-     *         return await step.prompt('continuePrompt', `Here's a number between ${min} and ${max}: ${num}. Should I pick another one?`);
-     *     },
-     *     async (step) {
-     *         if (step.result) {
-     *             return await step.replaceDialog(this.id, step.options);
-     *         } else {
-     *             return await step.endDialog();
-     *         }
-     *     }
-     * ]));
-     *
-     * this.addDialog(new ConfirmPrompt('continuePrompt'));
-     * ```
-     * 
      * **See also**
      * - [beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog)
      * - [endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
