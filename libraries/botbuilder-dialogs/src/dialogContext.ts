@@ -201,7 +201,7 @@ export class DialogContext {
                     // End the active dialog
                     await dc.endActiveDialog(DialogReason.cancelCalled);
                 } else {
-                    dc = cancelParents ? dc.parent : null;
+                    dc = cancelParents ? dc.parent : undefined;
                 }
 
                 notify = true;

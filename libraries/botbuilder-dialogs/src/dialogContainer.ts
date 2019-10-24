@@ -13,7 +13,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
     /**
      * The containers dialog set.
      */
-    protected readonly dialogs = new DialogSet(null);
+    protected readonly dialogs = new DialogSet(undefined);
 
     /**
      * Creates an inner dialog context for the containers active child.

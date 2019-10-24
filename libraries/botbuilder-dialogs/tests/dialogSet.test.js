@@ -8,12 +8,12 @@ const continueMessage = { text: `continue`, type: 'message' };
 describe('DialogSet', function () {
     this.timeout(5000);
 
-    it('should throw on createContext(null)', async function () {
+    it('should throw on createContext(undefined)', async function () {
         const convoState = new ConversationState(new MemoryStorage());
         const dialogSet = new DialogSet(convoState.createProperty('dialogState'));
         try {
-            await dialogSet.createContext(null);
-            assert.fail('should have thrown error on null');
+            await dialogSet.createContext(undefined);
+            assert.fail('should have thrown error on undefined');
         } catch (err) {
         }
     });

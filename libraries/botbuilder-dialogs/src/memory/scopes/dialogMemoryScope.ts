@@ -34,7 +34,7 @@ export class DialogMemoryScope extends MemoryScope {
 
     public setMemory(dc: DialogContext, memory: object): void {
         if (memory == undefined) {
-            throw new Error(`DialogMemoryScope.setMemory: null memory object passed in.`);
+            throw new Error(`DialogMemoryScope.setMemory: undefined memory object passed in.`);
         }
 
         // if active dialog is a container dialog then "dialog" binds to it

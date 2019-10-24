@@ -60,7 +60,7 @@ export class MemoryScope {
         }
 
         if (memory == undefined) {
-            throw new Error(`MemoryScope.setMemory: null memory object passed in.`);
+            throw new Error(`MemoryScope.setMemory: undefined memory object passed in.`);
         }
 
         const namedScopes = this.getScopesMemory(dc.context);

@@ -7,6 +7,7 @@
  */
 import { BotTelemetryClient, NullTelemetryClient, TurnContext } from 'botbuilder-core';
 import { DialogContext } from './dialogContext';
+import { Configurable } from './configurable';
 
 /**
  * Tracking information persisted for an instance of a dialog on the stack.
@@ -98,11 +99,22 @@ export interface DialogEvent {
     name: string;
 
     /**
-     * (Optional) value associated with the event.
+     * Optional. Value associated with the event.
      */
     value?: any;
 }
 
+export interface DialogConfiguration {
+    /**
+     * Static id of the dialog.
+     */
+    id?: string;
+
+    /**
+     * Telemetry client the dialog should use. 
+     */
+    telemetryClient?: BotTelemetryClient;
+}
 
 /**
  * Returned by `Dialog.continueDialog()` and `DialogContext.beginDialog()` to indicate whether a
@@ -148,16 +160,13 @@ export interface DialogTurnResult<T = any> {
 /**
  * Base class for all dialogs.
  */
-export abstract class Dialog<O extends object = {}> {
+export abstract class Dialog<O extends object = {}> extends Configurable {
+    private _id: string;
+
     /**
      * Signals the end of a turn by a dialog method or waterfall/sequence step.
      */
     public static EndOfTurn: DialogTurnResult = { status: DialogTurnStatus.waiting };
-
-    /**
-     * Unique ID of the dialog.
-     */
-    public readonly id: string;
 
     /**
      * The telemetry client for logging events.
@@ -167,12 +176,29 @@ export abstract class Dialog<O extends object = {}> {
 
     /**
      * Creates a new Dialog instance.
-     * @param dialogId Unique ID of the dialog.
+     * @param dialogId Optional. unique ID of the dialog.
      */
-    constructor(dialogId: string) {
+    constructor(dialogId?: string) {
+        super();
         this.id = dialogId;
     }
 
+    /**
+     * Unique ID of the dialog.
+     * 
+     * @remarks
+     * This will be automatically generated if not specified.
+     */
+   public get id(): string {
+       if (this._id === undefined) {
+           this._id = this.onComputeId();
+       }
+       return this._id;
+   }
+
+   public set id(value: string) {
+       this._id = value;
+   }
 
     /** 
      * Retrieve the telemetry client for this dialog.
@@ -309,4 +335,42 @@ export abstract class Dialog<O extends object = {}> {
     protected async onPostBubbleEventAsync(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         return false;
     }
+
+    /**
+     * Called when a unique ID needs to be computed for a dialog.
+     * 
+     * @remarks
+     * SHOULD be overridden to provide a more contextually relevant ID. The preferred pattern for 
+     * ID's is `<dialog type>(this.hashedLabel('<dialog args>'))`.
+     */    
+    protected onComputeId(): string {
+        throw new Error(`Dialog.onComputeId(): not implemented.`)
+    }
+
+    /**
+     * Aids with computing a unique ID for a dialog by computing a 32 bit hash for a string.
+     * 
+     * @remarks
+     * The source for this function was derived from the following article:
+     * 
+     * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+     * 
+     * @param label String to generate a hash for.
+     * @returns A string that is 15 characters or less in length.
+     */
+    protected hashedLabel(label: string): string {
+        const l = label.length;
+        if (label.length > 15)
+        {
+            let hash = 0;
+            for (let i = 0; i < l; i++) {
+                const chr = label.charCodeAt(i);
+                hash  = ((hash << 5) - hash) + chr;
+                hash |= 0; // Convert to 32 bit integer
+            }
+            label = `${label.substr(0, 5)}${hash.toString()}`;
+        }
+
+        return label;
+    }    
 }

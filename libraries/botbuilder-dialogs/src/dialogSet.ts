@@ -9,6 +9,13 @@ import { BotTelemetryClient, StatePropertyAccessor, TurnContext } from 'botbuild
 import { Dialog } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 
+export interface DialogDependencies {
+    /**
+     * Returns a dialogs child dialog dependencies so they can be added to a containers dialog set.
+     */
+    getDependencies(): Dialog[];
+}
+
 /**
  * A related set of dialogs that can all call each other.
  *
@@ -86,19 +93,33 @@ export class DialogSet {
      */
     public add<T extends Dialog>(dialog: T): this {
         if (!(dialog instanceof Dialog)) { throw new Error(`DialogSet.add(): Invalid dialog being added.`); }
-        if (typeof dialog.id !== 'string' || dialog.id.length === 0) {
-            throw new Error(`DialogSet.add(): Dialog being added is missing its 'id'.`);
-        }
+
+        // ENsure dialogs ID is unique.
         if (this.dialogs.hasOwnProperty(dialog.id)) {
-            throw new Error(`DialogSet.add(): A dialog with an id of '${ dialog.id }' already added.`);
+            let nextSuffix = 2;
+            while (true) {
+                const suffixId = dialog.id + nextSuffix.toString();
+                if (!this.hasOwnProperty(suffixId)) {
+                    dialog.id = suffixId;
+                    break;
+                } else {
+                    nextSuffix++;
+                }
+            }
         }
 
         // If a telemetry client has already been set on this dialogSet, also set it on new dialogs as they are added.
         if (this._telemetryClient) {
             dialog.telemetryClient = this._telemetryClient;
         }
-        
+
+        // Save dialog reference
         this.dialogs[dialog.id] = dialog;
+
+        // Automatically add any child dependencies the dialog might have
+        if (typeof ((dialog as any) as DialogDependencies).getDependencies == 'function') {
+            ((dialog as any) as DialogDependencies).getDependencies().forEach((child) => this.add(child));
+        }
 
         return this;
     }

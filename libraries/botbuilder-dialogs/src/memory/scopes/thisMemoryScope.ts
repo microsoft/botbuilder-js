@@ -24,7 +24,7 @@ export class ThisMemoryScope extends MemoryScope {
 
     public setMemory(dc: DialogContext, memory: object): void {
         if (memory == undefined) {
-            throw new Error(`ThisMemoryScope.setMemory: null memory object passed in.`);
+            throw new Error(`ThisMemoryScope.setMemory: undefined memory object passed in.`);
         }
 
         if (dc.activeDialog == undefined) {

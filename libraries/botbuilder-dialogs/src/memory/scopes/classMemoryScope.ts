@@ -26,6 +26,6 @@ export class ClassMemoryScope extends MemoryScope {
             }
         }
 
-        return null;
+        return undefined;
     }
 }
