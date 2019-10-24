@@ -8,9 +8,9 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { BuiltInFunctions, EvaluatorLookup, Expression, ExpressionEvaluator, ReturnType } from 'botbuilder-expression';
-import { ExpressionEngine } from 'botbuilder-expression-parser';
+import { BuiltInFunctions, Constant, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ExpressionType, ReturnType } from 'botframework-expressions';
 import { keyBy } from 'lodash';
+import { CustomizedMemoryScope } from './customizedMemoryScope';
 import { EvaluationTarget } from './evaluationTarget';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
@@ -35,6 +35,10 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
         // generate a new customzied expression engine by injecting the template as functions
         this.ExpressionEngine = new ExpressionEngine(this.customizedEvaluatorLookup(expressionEngine.EvaluatorLookup));
+    }
+
+    public static wrappedRegExSplit(inputString: string, regex : RegExp): string[] {
+        return inputString.split('').reverse().join('').split(regex).map((e: string) => e.split('').reverse().join('')).reverse();
     }
 
     public EvaluateTemplate(templateName: string, scope: any): any {
@@ -200,11 +204,16 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     public ConstructScope(templateName: string, args: any[]): any {
+        if (this.TemplateMap[templateName] === undefined) {
+            throw new Error(`No such template ${templateName}`);
+        }
+
         const parameters: string[] = this.TemplateMap[templateName].Parameters;
+        const currentScope: any = this.currentTarget().Scope;
 
         if (args.length === 0) {
             // no args to construct, inherit from current scope
-            return this.currentTarget().Scope;
+            return currentScope;
         }
 
         if (parameters !== undefined && (args === undefined || parameters.length !== args.length)) {
@@ -214,7 +223,11 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         const newScope: any = {};
         parameters.map((e: string, i: number) => newScope[e] = args[i]);
 
-        return newScope;
+        if (currentScope instanceof CustomizedMemoryScope) {
+            return new CustomizedMemoryScope(newScope, currentScope.globalScope);
+        } else {
+            return new CustomizedMemoryScope(newScope, currentScope);
+        }
     }
 
     public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): string {
@@ -248,6 +261,10 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         }
 
         return undefined;
+    }
+
+    public wrappedEvalTextContainsExpression(exp: string, regex: RegExp): string {
+        return (exp.split('').reverse().join('').replace(regex, (sub: string) => this.evalExpression(sub.split('').reverse().join('')).toString().split('').reverse().join(''))).split('').reverse().join('');
     }
 
     protected defaultResult(): string {
@@ -403,7 +420,48 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             return new ExpressionEvaluator(name, BuiltInFunctions.Apply(this.templateEvaluator(name)), ReturnType.Object, this.validTemplateReference);
         }
 
+        const lgTemplate: string = 'lgTemplate';
+
+        if (name === lgTemplate) {
+            return new ExpressionEvaluator(lgTemplate, BuiltInFunctions.Apply(this.lgTemplate()), ReturnType.Object, this.validateLgTemplate);
+        }
+
         return baseLookup(name);
+    }
+
+    private readonly lgTemplate = (): any => (args: ReadonlyArray<any>): any => {
+        const templateName: string = args[0];
+        const newScope: any = this.ConstructScope(templateName, args.slice(1));
+
+        return this.EvaluateTemplate(templateName, newScope);
+    }
+
+    private readonly validateLgTemplate = (expression: Expression): void => {
+        if (expression.Children.length === 0) {
+            throw new Error(`No template name is provided when calling lgTemplate, expected: lgTemplate(templateName, ...args)`);
+        }
+
+        const children0: Expression = expression.Children[0];
+
+        // Validate return type
+        if (children0.ReturnType !== ReturnType.Object && children0.ReturnType !== ReturnType.String) {
+            throw new Error(`${children0} can't be used as a template name, must be a string value`);
+        }
+
+        // Validate more if the name is string constant
+        if (children0.Type === ExpressionType.Constant) {
+            const templateName: string = (children0 as Constant).Value;
+            if (this.TemplateMap[templateName] === undefined) {
+                throw new Error(`No such template '${templateName}' to call in ${expression}`);
+            }
+
+            const expectedArgsCount: number = this.TemplateMap[templateName].Parameters.length;
+            const actualArgsCount: number = expression.Children.length - 1;
+
+            if (expectedArgsCount !== actualArgsCount) {
+                throw new Error(`Arguments mismatch for template ${templateName}, expect ${expectedArgsCount} actual ${actualArgsCount}`);
+            }
+        }
     }
 
     private readonly templateEvaluator = (templateName: string): any => (args: ReadonlyArray<any>): any => {
@@ -425,13 +483,5 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         if (expectedArgsCount !== actualArgsCount) {
             throw new Error(`arguments mismatch for template ${templateName}, expect ${expectedArgsCount} actual ${actualArgsCount}`);
         }
-    }
-
-    public static wrappedRegExSplit(inputString: string, regex : RegExp): string[] {
-        return inputString.split('').reverse().join('').split(regex).map(e => e.split('').reverse().join('')).reverse()
-    }
-
-    public wrappedEvalTextContainsExpression(exp: string, regex: RegExp): string {
-        return (exp.split('').reverse().join('').replace(regex, (sub: string) => this.evalExpression(sub.split('').reverse().join('')).toString().split('').reverse().join(''))).split('').reverse().join('');
     }
 }

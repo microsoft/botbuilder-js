@@ -106,8 +106,11 @@ describe('LG', function () {
         let evaled = engine.evaluateTemplate('ShowAlarmsWithForeach', { alarms: alarms });
         assert.strictEqual(evaled === "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow", true, `Evaled is ${evaled}`);
 
-        // let evaled = engine.evaluateTemplate('ShowAlarmsWithMemberHumanize',{alarms:alarms});
-        // assert.strictEqual(evaled === "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow", true, `Evaled is ${evaled}`);
+        evaled = engine.evaluateTemplate("ShowAlarmsWithLgTemplate", { alarms: alarms });
+        assert.strictEqual(evaled === "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow", true, `Evaled is ${evaled}`);
+
+        evaled = engine.evaluateTemplate("ShowAlarmsWithDynamicLgTemplate", { alarms: alarms, templateName: "ShowAlarm" });
+        assert.strictEqual(evaled === "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow", true, `Evaled is ${evaled}`);
     });
 
     it('TestCaseInsensitive', function () {
@@ -499,6 +502,22 @@ describe('LG', function () {
         assert.strictEqual(lgResource.Templates[0].Body.replace(/\r\n/g, '\n'), '- Hi\n- Hello\n- Hiya\n- Hi');
     });
 
+    it('TestMemoryScope', function () {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath("MemoryScope.lg"));
+        var evaled = engine.evaluateTemplate('T1', { turn: { name: 'Dong', count: 3 } });
+        assert.strictEqual(evaled, 'Hi Dong, welcome to Seattle, Seattle is a beautiful place, how many burgers do you want, 3?');
+
+        evaled = engine.evaluateTemplate('AskBread', {
+            schema: {
+                Bread: {
+                    enum: ['A', 'B']
+                }
+            }
+        });
+
+        assert.strictEqual(evaled, 'Which Bread, A or B do you want?');
+    })
+
     it('TestStructuredTemplate', function () {
         var engine = new TemplateEngine().addFile(GetExampleFilePath("StructuredTemplate.lg"));
 
@@ -535,6 +554,12 @@ describe('LG', function () {
 
         evaled = engine.evaluateTemplate('StructuredTemplateRef');
         assert.deepStrictEqual(evaled, JSON.parse("{\"$type\":\"MyStruct\",\"text\":\"hi\"}"));
+
+        evaled = engine.evaluateTemplate('MultiStructuredRef');
+        assert.deepStrictEqual(evaled, JSON.parse("{\"$type\":\"MyStruct\",\"list\":[{\"$type\":\"SubStruct\",\"text\":\"hello\"},{\"$type\":\"SubStruct\",\"text\":\"world\"}]}"));
+
+        evaled = engine.evaluateTemplate('templateWithSquareBrackets', {manufacturer: {Name : "Acme Co"}});
+        assert.deepStrictEqual(evaled, JSON.parse("{\"$type\":\"Struct\",\"text\":\"Acme Co\"}"));
     });
 
     it('TestEvaluateOnce', function () {

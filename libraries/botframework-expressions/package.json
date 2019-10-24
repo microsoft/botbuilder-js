@@ -1,0 +1,48 @@
+{
+  "name": "botframework-expressions",
+  "description": "Common Expression Language",
+  "version": "4.5.0",
+  "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "botframework",
+    "expression"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
+  "dependencies": {
+    "@microsoft/recognizers-text-data-types-timex-expression": "^1.1.4",
+    "antlr4ts": "0.5.0-alpha.1",
+    "jspath": "^0.4.0",
+    "lodash": "^4.17.15",
+    "lru-cache": "^5.1.1",
+    "moment": "2.24.0",
+    "moment-timezone": "^0.5.25",
+    "xml2js": "^0.4.19",
+    "xmldom": "^0.1.27",
+    "xpath": "0.0.27"
+  },
+  "devDependencies": {
+    "@types/jspath": "^0.4.0",
+    "@types/lru-cache": "^5.1.0",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.18",
+    "@types/xml2js": "^0.4.4",
+    "nyc": "^11.4.1",
+    "ts-node": "^4.1.0",
+    "typescript-tslint-plugin": "^0.3.1"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "tsc && nyc mocha tests/ --timeout 60000",
+    "clean": "erase /q /s .\\lib"
+  },
+  "files": [
+    "/lib",
+    "/src"
+  ]
+}

@@ -7,8 +7,7 @@
  * Licensed under the MIT License.
  */
 import { DialogContextVisibleState } from "botbuilder-dialogs";
-import { ExpressionEngine } from 'botbuilder-expression-parser';
-import { Expression } from 'botbuilder-expression';
+import { ExpressionEngine, Expression } from 'botframework-expressions';
 
 export type ExpressionDelegate<T> = (state: DialogContextVisibleState) => T;
 export type ExpressionPropertyValue<T> = string|Expression|ExpressionDelegate<T>;

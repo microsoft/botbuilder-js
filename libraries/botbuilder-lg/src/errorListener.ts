@@ -13,7 +13,7 @@ import { Range } from './range';
 
 // tslint:disable-next-line: completed-docs
 export class ErrorListener implements ANTLRErrorListener<any> {
-    private source: string;
+    private readonly source: string;
     public constructor(errorSource: string) {
         this.source = errorSource;
     }

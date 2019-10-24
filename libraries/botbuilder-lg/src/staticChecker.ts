@@ -8,8 +8,7 @@
 // tslint:disable-next-line: no-submodule-imports
 import { ParserRuleContext } from 'antlr4ts';
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { IExpressionParser } from 'botbuilder-expression';
-import { ExpressionEngine } from 'botbuilder-expression-parser';
+import { ExpressionEngine, IExpressionParser } from 'botframework-expressions';
 import * as fs from 'fs';
 import { keyBy } from 'lodash';
 import * as path from 'path';
@@ -166,7 +165,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         for (const key in grouped) {
             const group: LGTemplate[] = grouped[key];
             if (group.length > 1) {
-                const sources: string = group.map(x => x.Source).join(':');
+                const sources: string = group.map((x: LGTemplate) => x.Source).join(':');
                 result.push(this.BuildLGDiagnostic({ message: `Dup definitions found for template ${key} in ${sources}` }));
             }
         }
@@ -254,7 +253,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
             bodys = content.STRUCTURED_CONTENT();
         }
 
-        if (bodys === undefined || bodys.length === 0 || bodys.find(u => u !== undefined && u.text.trim().length !== 0) === undefined) {
+        if (bodys === undefined || bodys.length === 0 || bodys.find((u: TerminalNode) => u !== undefined && u.text.trim().length !== 0) === undefined) {
             result.push(this.BuildLGDiagnostic({
                 message: `Structured content is empty`,
                 context: content}));
@@ -562,7 +561,6 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
         return result;
     }
-
 
     private CheckExpression(exp: string, context: ParserRuleContext): Diagnostic[] {
         const result: Diagnostic[] = [];

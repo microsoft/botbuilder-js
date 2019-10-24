@@ -16,8 +16,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "antlr4ts": "0.5.0-alpha.1",
-    "botbuilder-expression": "4.5.0",
-    "botbuilder-expression-parser": "4.5.0",
+    "botframework-expressions": "4.5.0",
     "lodash": "^4.17.11",
     "uuid": "^3.3.3"
   },

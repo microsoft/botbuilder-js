@@ -8,15 +8,14 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { BuiltInFunctions, Constant, Expression, ExpressionEvaluator, ReturnType, EvaluatorLookup } from 'botbuilder-expression';
-import { ExpressionEngine} from 'botbuilder-expression-parser';
+import { BuiltInFunctions, Constant, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType } from 'botframework-expressions';
 import { keyBy } from 'lodash';
+import { v4 as uuid } from 'uuid';
 import { EvaluationTarget } from './evaluationTarget';
+import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
-import { v4 as uuid } from 'uuid';
-import { Evaluator } from './evaluator';
 
 // tslint:disable-next-line: max-classes-per-file
 export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFileParserVisitor<string[]> {
@@ -82,7 +81,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         return undefined;
     }
-    
+
     public visitNormalBody(ctx: lp.NormalBodyContext): string[] {
         return this.visit(ctx.normalTemplateBody());
     }
@@ -109,12 +108,12 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     public visitStructuredBody(ctx: lp.StructuredBodyContext): string[] {
-        let stb = ctx.structuredTemplateBody();
+        const stb: lp.StructuredTemplateBodyContext = ctx.structuredTemplateBody();
         const result: any = {};
         const typeName: string = stb.structuredBodyNameLine().STRUCTURED_CONTENT().text;
         result.$type = typeName;
 
-        const idToStringMap = new Map<string, string>();
+        const idToStringMap: Map<string, string> = new Map<string, string>();
         const bodys: TerminalNode[] = stb.structuredBodyContentLine().STRUCTURED_CONTENT();
         for (const body  of bodys) {
             const line: string = body.text.trim();
@@ -129,14 +128,14 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
                 const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, this.escapeSeperatorRegex);
                 if (valueArray.length === 1) {
-                    const id = uuid();
+                    const id: string = uuid();
                     result[property] = id;
                     idToStringMap.set(id, originValue);
                     //result[property] = this.evalText(originValue);
                 } else {
                     const valueList: any[] = [];
                     for (const item of valueArray) {
-                        const id = uuid();
+                        const id: string = uuid();
                         valueList.push(id);
                         idToStringMap.set(id, item.trim());
                         //valueList.push(this.evalText(item.trim()));
@@ -152,7 +151,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
                 // When the same property exists in both the calling template as well as callee,
                 //the content in caller will trump any content in the callee.
-                const id = uuid();
+                const id: string = uuid();
                 const propertyObject: any = id;
                 idToStringMap.set(id, line);
                 //const propertyObject: any = this.EvalExpression(line);
@@ -169,7 +168,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             }
         }
 
-        let exp = JSON.stringify(result);
+        const exp: string = JSON.stringify(result);
 
         const templateRefValues: Map<string, string[]> = new Map<string, string[]>();
         for (const idToString of idToStringMap) {
@@ -399,9 +398,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private EvalByExpressionEngine(exp: string, scope: any) : any {
-        let expanderExpression: Expression = this.expanderExpressionEngine.parse(exp);
-        let evaluatorExpression: Expression = this.evaluatorExpressionEngine.parse(exp);
-        let parse = this.ReconstructExpression(expanderExpression, evaluatorExpression, false);
+        const expanderExpression: Expression = this.expanderExpressionEngine.parse(exp);
+        const evaluatorExpression: Expression = this.evaluatorExpressionEngine.parse(exp);
+        const parse: Expression = this.ReconstructExpression(expanderExpression, evaluatorExpression, false);
 
         return parse.tryEvaluate(scope);
     }
@@ -418,7 +417,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     // Genearte a new lookup function based on one lookup function
-    private readonly CustomizedEvaluatorLookup = (baseLookup: EvaluatorLookup, isExpander: boolean) => (name: string) => {
+    private readonly CustomizedEvaluatorLookup = (baseLookup: EvaluatorLookup, isExpander: boolean) : any => (name: string) : ExpressionEvaluator => {
         const prebuiltPrefix: string = 'prebuilt.';
 
         if (name.startsWith(prebuiltPrefix)) {
@@ -434,9 +433,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         }
 
         return baseLookup(name);
-    };
+    }
 
-    private readonly TemplateEvaluator = (templateName: string) => (args: ReadonlyArray<any>) => {
+    private readonly TemplateEvaluator = (templateName: string) : any => (args: ReadonlyArray<any>): string => {
         const newScope: any = this.ConstructScope(templateName, Array.from(args));
 
         const value: string[] = this.ExpandTemplate(templateName, newScope);
@@ -445,13 +444,13 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         return value[randomNumber];
     }
 
-    private readonly TemplateExpander = (templateName: string) => (args: ReadonlyArray<any>) => {
+    private readonly TemplateExpander = (templateName: string): any => (args: ReadonlyArray<any>): string[] => {
         const newScope: any = this.ConstructScope(templateName, Array.from(args));
 
         return this.ExpandTemplate(templateName, newScope);
     }
 
-    private readonly ValidTemplateReference = (expression: Expression) => {
+    private readonly ValidTemplateReference = (expression: Expression): void => {
         const templateName: string = expression.Type;
 
         if (this.TemplateMap[templateName] === undefined) {
@@ -479,12 +478,12 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             expanderExpression.Children[i] = this.ReconstructExpression(expanderExpression.Children[i], evaluatorExpression.Children[i], foundPrebuiltFunction);
         }
 
-        return expanderExpression
+        return expanderExpression;
     }
 
     private evalTextContainsExpression(exp: string) : string[] {
         const templateRefValues: Map<string, string[]> = new Map<string, string[]>();
-        const matches: string[] = exp.split('').reverse().join('').match(this.expressionRecognizeRegex).map(e => e.split('').reverse().join('')).reverse();;
+        const matches: string[] = exp.split('').reverse().join('').match(this.expressionRecognizeRegex).map((e: string) => e.split('').reverse().join('')).reverse();
         if (matches !== null && matches !== undefined) {
             for (const match of matches) {
                 templateRefValues.set(match, this.EvalExpression(match));
@@ -515,7 +514,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         } else {
 
             // unescape \|
-            return this.evalTextContainsExpression(exp).map(x => x.replace(/\\\|/g, '|'));
+            return this.evalTextContainsExpression(exp).map((x: string) => x.replace(/\\\|/g, '|'));
         }
     }
 
@@ -532,6 +531,5 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         } else {
             return reversedExps[0].split('').reverse().join('') === exp;
         }
-        
     }
 }
