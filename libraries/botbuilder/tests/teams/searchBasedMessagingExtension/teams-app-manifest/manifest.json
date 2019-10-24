@@ -2,7 +2,7 @@
   "$schema": "https://github.com/OfficeDev/microsoft-teams-app-schema/blob/preview/DevPreview/MicrosoftTeams.schema.json",
   "manifestVersion": "1.5",
   "version": "1.0",
-  "id": "cd59cf47-aca1-41e0-8441-387faee8331e",
+  "id": "00000000-0000-0000-0000-000000000000",
   "packageName": "com.microsoft.teams.samples.searchExtension",
   "developer": {
     "name": "Microsoft Corp",
@@ -25,13 +25,13 @@
   "accentColor": "#abcdef",
   "bots": [
     {
-      "botId": "cd59cf47-aca1-41e0-8441-387faee8331e",
+      "botId": "00000000-0000-0000-0000-000000000000",
       "scopes": ["personal", "team"]
     }
   ],
   "composeExtensions": [
     {
-      "botId": "cd59cf47-aca1-41e0-8441-387faee8331e",
+      "botId": "00000000-0000-0000-0000-000000000000",
       "canUpdateConfiguration": true,
       "commands": [
         {
