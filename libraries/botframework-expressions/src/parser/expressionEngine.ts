@@ -199,7 +199,12 @@ export class ExpressionEngine implements IExpressionParser {
         parser.addErrorListener(ParseErrorListener.Instance);
         parser.buildParseTree = true;
 
-        return parser.expression();
+        const file: ep.FileContext = parser.file();
+        if (file !== undefined) {
+            return file.expression();
+        }
+
+        return undefined;
     }
 
     public parse(expression: string): Expression {

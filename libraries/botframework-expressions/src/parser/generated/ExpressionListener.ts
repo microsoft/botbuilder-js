@@ -15,6 +15,7 @@ import { ShorthandAtomContext } from "./ExpressionParser";
 import { UnaryOpExpContext } from "./ExpressionParser";
 import { BinaryOpExpContext } from "./ExpressionParser";
 import { PrimaryExpContext } from "./ExpressionParser";
+import { FileContext } from "./ExpressionParser";
 import { ExpressionContext } from "./ExpressionParser";
 import { PrimaryExpressionContext } from "./ExpressionParser";
 import { ArgsListContext } from "./ExpressionParser";
@@ -180,6 +181,17 @@ export interface ExpressionListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitPrimaryExp?: (ctx: PrimaryExpContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `ExpressionParser.file`.
+	 * @param ctx the parse tree
+	 */
+	enterFile?: (ctx: FileContext) => void;
+	/**
+	 * Exit a parse tree produced by `ExpressionParser.file`.
+	 * @param ctx the parse tree
+	 */
+	exitFile?: (ctx: FileContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `ExpressionParser.expression`.

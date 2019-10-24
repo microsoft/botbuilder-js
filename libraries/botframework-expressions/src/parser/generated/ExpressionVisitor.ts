@@ -15,6 +15,7 @@ import { ShorthandAtomContext } from "./ExpressionParser";
 import { UnaryOpExpContext } from "./ExpressionParser";
 import { BinaryOpExpContext } from "./ExpressionParser";
 import { PrimaryExpContext } from "./ExpressionParser";
+import { FileContext } from "./ExpressionParser";
 import { ExpressionContext } from "./ExpressionParser";
 import { PrimaryExpressionContext } from "./ExpressionParser";
 import { ArgsListContext } from "./ExpressionParser";
@@ -123,6 +124,13 @@ export interface ExpressionVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitPrimaryExp?: (ctx: PrimaryExpContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `ExpressionParser.file`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitFile?: (ctx: FileContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `ExpressionParser.expression`.

@@ -1,5 +1,7 @@
 grammar Expression;
 
+file: expression EOF;
+
 expression
     : ('!'|'-'|'+') expression                  #unaryOpExp
     | <assoc=right> expression '^' expression   #binaryOpExp 

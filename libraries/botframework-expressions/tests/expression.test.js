@@ -413,8 +413,8 @@ const dataSource = [
   // Dialog tests
   ["user.lists.todo[int(@ordinal[0]) - 1] != null", true],
   ["user.lists.todo[int(@ordinal[0]) + 3] != null", false],
-  ["count(user.lists.todo) > int(@ordinal[0]))", true],
-  ["count(user.lists.todo) >= int(@ordinal[0]))", true],
+  ["count(user.lists.todo) > int(@ordinal[0])", true],
+  ["count(user.lists.todo) >= int(@ordinal[0])", true],
   ["user.lists.todo[int(@ordinal[0]) - 1]", "todo1"],
   ["user.lists[user.listType][int(@ordinal[0]) - 1]", "todo1"],
 
