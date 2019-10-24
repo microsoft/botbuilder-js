@@ -32,8 +32,10 @@ export interface DialogState {
  * @remarks
  * This includes the turn context, information about the dialog set, and the state of the dialog stack.
  * 
- * Use a dialog set's [createContext](xref:botbuilder-dialogs.DialogSet.createContext) method to create the dialog context.
- * Use the methods of the dialog context to manage the progression of dialogs in the set.
+ * From code outside of a dialog in the set, use [DialogSet.createContext](xref:botbuilder-dialogs.DialogSet.createContext)
+ * to create the dialog context. Then use the methods of the dialog context to manage the progression of dialogs in the set.
+ * 
+ * When you implement a dialog, the dialog context is a parameter available to the various methods you override or implement.
  *
  * For example:
  * ```JavaScript
@@ -272,7 +274,8 @@ export class DialogContext {
      * Ends a dialog and pops it off the stack. Returns an optional result to the dialog's parent.
      *
      * @param result Optional. A result to pass to the parent logic. This might be the next dialog
-     *      on the stack, or it might be the bot's turn handler, if this was the last dialog on the stack.
+     *      on the stack, or if this was the last dialog on the stack, a parent dialog context or
+     *      the bot's turn handler.
      * 
      * @remarks
      * The _parent_ dialog is the next dialog on the dialog stack, if there is one. This method
