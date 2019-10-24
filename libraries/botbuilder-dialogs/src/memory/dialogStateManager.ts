@@ -51,11 +51,11 @@ export class DialogStateManager {
         }
 
         // Get path segments
-        const segments = this.normalizePath(this.transformPath(pathExpression)).split('.');
+        const segments = this.parsePath(this.transformPath(pathExpression));
         if (segments.length < 1) { return returnDefault() }
 
         // Get memory scope to search over
-        const scope = this.getMemoryScope(segments[0]);
+        const scope = this.getMemoryScope(segments[0].toString());
         if (scope == undefined) { throw new Error(`DialogStateManager.getValue: a scope of '${segments[0]}' wasn't found.`) }
         
         // Search over path
@@ -72,28 +72,30 @@ export class DialogStateManager {
      */
     public setValue(pathExpression: string, value: any): void {
         // Get path segments
-        const segments = this.normalizePath(this.transformPath(pathExpression)).split('.');
+        const segments = this.parsePath(this.transformPath(pathExpression));
         if (segments.length < 1) { return }
 
         // Get memory scope to update
-        const scope = this.getMemoryScope(segments[0]);
+        const scope = this.getMemoryScope(segments[0].toString());
         if (scope == undefined) { throw new Error(`DialogStateManager.setValue: a scope of '${segments[0]}' wasn't found.`) }
 
         // Update memory
         if (segments.length > 1) {
             // Find value up to last key
-            let key = segments.pop();
+            // - Missing paths will be populated as needed
             const memory = this.resolveSegments(scope.getMemory(this.dialogContext), segments, true);
 
             // Update value
-            if (Array.isArray(memory)) {
-                const index = parseInt(key);
-                if (index < 0) {
-                    memory.push(value);
-                } else {
-                    memory[index] = value;
+            let key = segments[segments.length - 1];
+            if (typeof key == 'number' && Array.isArray(memory)) {
+                // Expand array as needed and update array
+                const l = key + 1;
+                while (memory.length < l) {
+                    memory.push(undefined);
                 }
-            } else if (typeof memory == 'object') {
+                memory[key] = value;
+            } else if (typeof key == 'string' && key.length > 0 && typeof memory == 'object' && !Array.isArray(memory)) {
+                // Find key to use and update object
                 key = this.findObjectKey(memory, key) || key;
                 memory[key] = value;
             } else {
@@ -111,11 +113,11 @@ export class DialogStateManager {
      */
     public deleteValue(pathExpression: string): void {
         // Get path segments
-        const segments = this.normalizePath(this.transformPath(pathExpression)).split('.');
+        const segments = this.parsePath(this.transformPath(pathExpression));
         if (segments.length < 2) { throw new Error(`DialogStateManager.removeValue: invalid path of '${pathExpression}'.`) }
 
         // Get memory scope to update
-        const scope = this.getMemoryScope(segments[0]);
+        const scope = this.getMemoryScope(segments[0].toString());
         if (scope == undefined) { throw new Error(`DialogStateManager.removeValue: a scope of '${segments[0]}' wasn't found.`) }
 
         // Find value up to last key
@@ -123,14 +125,11 @@ export class DialogStateManager {
         const memory = this.resolveSegments(scope.getMemory(this.dialogContext), segments, false);
 
         // Update value
-        if (Array.isArray(memory)) {
-            const index = parseInt(key);
-            if (index < 0) {
-                memory.pop();
-            } else {
-                memory.splice(index, 1);
+        if (typeof key == 'number' && Array.isArray(memory)) {
+            if (key < memory.length) {
+                memory.splice(key, 1);
             }
-        } else if (typeof memory == 'object') {
+        } else if (typeof key == 'string' && key.length > 0 && typeof memory == 'object' && !Array.isArray(memory)) {
             const found = this.findObjectKey(memory, key);
             if (found) {
                 delete memory[found];
@@ -146,102 +145,100 @@ export class DialogStateManager {
      * @param pathExpression The path to normalize.
      * @returns The normalized path.
      */
-    public normalizePath(pathExpression: string): string {
-        function appendSegment() {
-            // Check for quotes
-            if ((segment.startsWith("'") && segment.endsWith("'")) || 
-                (segment.startsWith('"') && segment.endsWith('"'))) {
-                segment = segment.length > 2 ? segment.substr(1, segment.length - 2) : '';
-            }
-
-            // Append segment
-            if (segment.length > 0) {
-                if (output.length > 0) { output += '.' }
-                output += segment;
-                segment = '';
-            }
-        }
-
+    public parsePath(pathExpression: string): (string|number)[] {
         // Expand path segments
-        let output = '';
         let segment = '';
-        let inIndexer = false;
         let depth = 0;
-        let invalid = false;
+        let quote = '';
+        const output: (string|number)[] = [];
         for (let i = 0; i < pathExpression.length; i++) {
             const c = pathExpression[i];
-            if (depth == 0) {
-                switch (c) {
-                    case '{':
-                        if (!inIndexer) {
+            if (depth > 0) {
+                // We're in a set of brackets
+                if (quote.length) {
+                    // We're in a string
+                    switch (c) {
+                        case '\\':
+                            // Escape code detected
+                            i++;
+                            segment += pathExpression[i];
+                            break;
+                        default:
+                            segment += c;
+                            if (c == quote) {
+                                quote = '';
+                            }
+                            break;
+                    }
+                } else {
+                    // We're in a bracket 
+                    switch (c) {
+                        case '[':
                             depth++;
-                        } else {
-                            invalid = true;
-                        }
-                        break;
+                            segment += c;
+                            break;
+                        case ']':
+                            depth--;
+                            if (depth > 0) { segment += c }
+                            break;
+                        case "'":
+                        case '"':
+                            quote = c;
+                            segment += c;
+                            break;
+                        default:
+                            segment += c;
+                            break;
+                    }
 
-                    case '[':
-                        if (!inIndexer) {
-                            appendSegment();
-                            inIndexer = true;
+                    // Are we out of the brackets
+                    if (depth == 0) {
+                        if (isQuoted(segment)) {
+                            // Quoted segment
+                            output.push(segment.length > 2 ? segment.substr(1, segment.length - 2) : '');
+                        } else if (isIndex(segment)) {
+                            // Array index
+                            output.push(parseInt(segment));
                         } else {
-                            invalid = true;
+                            // Resolve nested value
+                            const val = this.getValue(segment);
+                            const t = typeof val;
+                            output.push(t == 'string' || t == 'number' ? t : '');
                         }
-                        break;
-    
-                    case ']':
-                        if (inIndexer) {
-                            inIndexer = false;
-                            appendSegment();
-                        } else {
-                            invalid = true;
-                        }
-                        break;
-    
-                    case '.':
-                        if (!inIndexer) {
-                            appendSegment();
-                        } else {
-                            invalid = true;
-                        }
-                        break;
-                    
-                    default:
-                        segment += c;
-                        break;
+                        segment = '';
+                    }
                 }
             } else {
-                // Check for change to expression depth
+                // We're parsing the outer path
                 switch (c) {
-                    case '{':
+                    case '[':
+                        if (segment.length > 0) {
+                            output.push(segment);
+                            segment = '';
+                        }
                         depth++;
                         break;
-
-                    case '}':
-                        depth--;
+                    case '.':
+                        if (segment.length > 0) {
+                            output.push(segment);
+                            segment = '';
+                        }
+                        break;
+                    default:
+                        if (isValidPathChar(c)) {
+                            segment += c;
+                        } else {
+                            throw new Error(`DialogStateManager.normalizePath: Invalid path detected - ${pathExpression}`);
+                        }
                         break;
                 }
-
-                // Append char if still in expression otherwise resolve the expressions value
-                if (depth > 0) {
-                    segment += c;
-                } else {
-                    const value = this.getValue(segment);
-                    const type = typeof value;
-                    segment = type == 'string' || type == 'number' ? value.toString() : '<undefined>';
-                    appendSegment();
-                }
-            }
-
-            // Is the path valid?
-            if (invalid) {
-                throw new Error(`DialogStateManager.normalizePath: Invalid path detected - ${pathExpression}`);
             }
         }
-        if (inIndexer || depth > 0) {
+        if (depth > 0) {
             throw new Error(`DialogStateManager.normalizePath: Invalid path detected - ${pathExpression}`);
+        } else if (segment.length > 0) {
+            output.push(segment);
         }
-        appendSegment();
 
         return output;
     }
@@ -276,40 +273,56 @@ export class DialogStateManager {
         return output;
     }
 
-
-    private resolveSegments(memory: object, segments: string[], ensurePath?: boolean): any {
+    private resolveSegments(memory: object, segments: (string|number)[], assignment?: boolean): any {
         let value: any = memory;
-        for (let i = 1; i < segments.length; i++) {
-            // Check for undefined key
+        const l = assignment ? segments.length - 1 : segments.length;
+        for (let i = 1; i < l && value != undefined; i++) {
             let key = segments[i];
-            if (key == '<undefined>') {
-                value = undefined;
-                break;
-            }
-
-            // Lookup key
-            if (Array.isArray(value)) {
-                value = value[parseInt(key)];
-            } else if (typeof value == 'object') {
-                // Case-insensitive search for prop
-                let found = this.findObjectKey(value, key);
-
-                // Ensure path exists as needed
-                if (ensurePath) {
-                    if (found && !(Array.isArray(value[found]) || typeof value[found] == 'object')) {
-                        // Path segment exists but isn't an Array or Object.
-                        value[found] = {};
-                    } else {
-                        // Path segment not found so add it as an empty Object.
-                        found = segments[i];
-                        value[found] = {};
-                    }
+            if (typeof key == 'number') {
+                // Key is an array index
+                if (Array.isArray(value)) {
+                    value = value[key];
+                } else {
+                    value = undefined;
                 }
+            } else if (typeof key == 'string' && key.length > 0) {
+                // Key is an object index
+                if (typeof value == 'object' && !Array.isArray(value)) {
+                    // Case-insensitive search for prop
+                    let found = this.findObjectKey(value, key);
 
-                value = found ? value[found] : undefined;
+                    // Ensure path exists as needed
+                    if (assignment) {
+                        const nextKey = segments[i + 1];
+                        if (typeof nextKey == 'number') {
+                            // Ensure prop contains an array
+                            if (found && !Array.isArray(value[found])) {
+                                value[found] = [];
+                            } else {
+                                found = key;
+                                value[found] = [];
+                            }
+                        } else if (typeof nextKey == 'string' && nextKey.length > 0) {
+                            // Ensure prop contains an object
+                            if (found && typeof value[found] != 'object') {
+                                value[found] = {};
+                            } else {
+                                found = key;
+                                value[found] = {};
+                            }
+                        } else {
+                            // We can't determine type so return undefined
+                            found = undefined;
+                        }
+                    }
+
+                    value = found ? value[found] : undefined;
+                } else {
+                    value = undefined;
+                }
             } else {
+                // Key is missing
                 value = undefined;
-                break;
             }
         }
     }
@@ -367,4 +380,37 @@ export class DialogStateManager {
 
         return undefined;
     }
+}
+
+/**
+ * @private
+ */
+function isIndex(segment: string): boolean {
+    const digits = '0123456789';
+    for (let i = 0; i < segment.length; i++) {
+        const c= segment[i];
+        if (digits.indexOf(c) < 0) {
+            // Check for negative sign 
+            if (c != '-' || i > 0 || segment.length < 2) {
+                return false;
+            }
+        }
+    }
+
+    return segment.length > 0;
+}
+
+/**
+ * @private
+ */
+function isQuoted(segment: string): boolean {
+    return segment.length > 1 && (segment.startsWith("'") && segment.endsWith("'")) || 
+    (segment.startsWith('"') && segment.endsWith('"'));
+}
+
+/**
+ * @private
+ */
+function isValidPathChar(c: string): boolean {
+    return '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-()'.indexOf(c) >= 0;
 }
