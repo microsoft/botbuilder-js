@@ -32,47 +32,6 @@ describe('DialogSet', function () {
         done();
     });
 
-    it('should throw an error if added dialog does not have an `id`', function (done) {
-        const convoState = new ConversationState(new MemoryStorage());
-
-        const dialogState = convoState.createProperty('dialogState');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new WaterfallDialog('a', [
-            async (step) => {
-                assert(step);
-            }
-        ]);
-        delete dialog.id;
-        try {
-            dialogs.add(dialog);
-        } catch (err) {
-            assert(err.message === `DialogSet.add(): Dialog being added is missing its 'id'.`, `unexpected error thrown: ${ err.message }`);
-            done();
-        }
-    });
-
-    it('should not add a waterfall to the dialog set if id already exists in set.', function (done) {
-        const convoState = new ConversationState(new MemoryStorage());
-
-        const dialogState = convoState.createProperty('dialogState');
-        const dialogs = new DialogSet(dialogState);
-        dialogs.add(new WaterfallDialog('a', [
-            function (step) {
-                assert(step);
-            }
-        ]));
-        try {
-            dialogs.add(new WaterfallDialog('a', [
-                function (step) {
-                    assert(step);
-                }
-            ]));
-        } catch (err) {
-            assert(err.message === `DialogSet.add(): A dialog with an id of 'a' already added.`, `unexpected error thrown: ${ err.message }`);
-            done();
-        }
-    });
-
     it('should throw an error if DialogSet.dialogState is falsey.', async function () {
         const dialogs = new DialogSet();
         try {
@@ -106,7 +65,7 @@ describe('DialogSet', function () {
     });
 
 
-    it('should throw an exception when trying to add the same dialog twice.', function (done) {
+    it('should increment the dialog ID when adding the same dialog twice.', function (done) {
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -115,14 +74,13 @@ describe('DialogSet', function () {
             function (step) { }
         ]));
 
-        try {
-            dialogs.add('a', [
-                function (step) { }
-            ]);
-        } catch (err) {
-            return done();
-        }
-        throw new Error('Should have thrown an error on adding dialogs with same ID.');
+        dialogs.add(new WaterfallDialog('a', [
+            function (step) { }
+        ]));
+
+        assert(dialogs.find('a'));
+        assert(dialogs.find('a2'), `second dialog didn't have ID incremented`);
+        done();
     });
 
     it('should find() a dialog that was added.', function (done) {
