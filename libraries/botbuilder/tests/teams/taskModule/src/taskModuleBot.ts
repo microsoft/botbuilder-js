@@ -22,7 +22,7 @@ export class TaskModuleBot  extends TeamsActivityHandler {
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
-            const card = this.GetTaskModuleHeroCard();
+            const card = this.getTaskModuleHeroCard();
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);
             await next();
@@ -37,7 +37,7 @@ export class TaskModuleBot  extends TeamsActivityHandler {
             task: { 
                 type: "continue", 
                 value: {
-                    card: this.GetTaskModuleAdaptiveCard(),
+                    card: this.getTaskModuleAdaptiveCard(),
                     height: 200,
                     width: 400,
                     title: "Adaptive Card: Inputs",
@@ -58,7 +58,7 @@ export class TaskModuleBot  extends TeamsActivityHandler {
         } as TaskModuleResponse;
     }
 
-    private GetTaskModuleHeroCard() : Attachment {
+    private getTaskModuleHeroCard() : Attachment {
         return CardFactory.heroCard("Task Module Invocation from Hero Card", 
             "This is a hero card with a Task Module Action button.  Click the button to show an Adaptive Card within a Task Module.",
             null, // No images
@@ -66,7 +66,7 @@ export class TaskModuleBot  extends TeamsActivityHandler {
             );
     }
 
-    private GetTaskModuleAdaptiveCard(): Attachment {
+    private getTaskModuleAdaptiveCard(): Attachment {
         return CardFactory.adaptiveCard({
             version: '1.0.0',
             type: 'AdaptiveCard',
