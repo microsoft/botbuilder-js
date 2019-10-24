@@ -172,15 +172,26 @@ describe('MSLGTool', function () {
         const mslgTool = new MSLGTool();
         let errors = GetErrors(mslgTool, 'StructuredLG.lg');
         assert.strictEqual(errors.length, 0);
-        let expandedTemplate = mslgTool.ExpandTemplate('AskForAge.prompt', undefined);
-        assert.strictEqual(expandedTemplate.length, 4);
-        const evalOptions = [
+        let expandedTemplates = mslgTool.ExpandTemplate('AskForAge.prompt');
+        assert.strictEqual(expandedTemplates.length, 4);
+        let evalOptions = [
             '{"$type":"Activity","text":"how old are you?","speak":"how old are you?"}',
             '{"$type":"Activity","text":"how old are you?","speak":"what\'s your age?"}',
             '{"$type":"Activity","text":"what\'s your age?","speak":"how old are you?"}',
             '{"$type":"Activity","text":"what\'s your age?","speak":"what\'s your age?"}'
         ]
         
-        evalOptions.forEach(evalOption => assert(expandedTemplate.includes(evalOption)));
+        evalOptions.forEach(evalOption => assert(expandedTemplates.includes(evalOption)));
+
+        expandedTemplates = mslgTool.ExpandTemplate('ExpanderT1');
+        assert.strictEqual(expandedTemplates.length, 4);
+        evalOptions = [
+            '{"$type":"MyStruct","text":"Hi","speak":"how old are you?"}',
+            '{"$type":"MyStruct","text":"Hi","speak":"what\'s your age?"}',
+            '{"$type":"MyStruct","text":"Hello","speak":"how old are you?"}',
+            '{"$type":"MyStruct","text":"Hello","speak":"what\'s your age?"}'
+        ]
+        
+        evalOptions.forEach(evalOption => assert(expandedTemplates.includes(evalOption)));
     })
 })
