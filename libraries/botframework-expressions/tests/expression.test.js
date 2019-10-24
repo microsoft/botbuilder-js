@@ -1,5 +1,4 @@
-const { ExpressionEngine } = require('../');
-const { Extensions } = require('../lib/extensions');
+const { ExpressionEngine, Extensions } = require('../');
 const assert = require('assert');
 const moment = require('moment');
 
