@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
   "manifestVersion": "1.5",
   "version": "1.0.0",
-  "id": "<<YOUR_GENERATED_APP_GUID>>",
+  "id": "00000000-0000-0000-0000-000000000000",
   "packageName": "com.teams.microsoft.bot.test",
   "developer": {
       "name": "Bot Framework Team",
@@ -25,7 +25,7 @@
   "accentColor": "#FFFFFF",
   "bots": [
       {
-          "botId": "<<YOUR_BOTS_MSA_APP_ID>>",
+          "botId": "00000000-0000-0000-0000-000000000000",
           "scopes": [
               "personal",
               "team",
