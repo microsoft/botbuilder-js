@@ -8,6 +8,7 @@
 
 export * from 'botframework-schema';
 export * from './activityHandler';
+export * from './activityHandlerBase';
 export * from './autoSaveStateMiddleware';
 export * from './botAdapter';
 export * from './botState';
@@ -33,3 +34,4 @@ export * from './transcriptLogger';
 export * from './turnContext';
 export * from './userState';
 export * from './userTokenProvider';
+export * from './userTokenSettings';

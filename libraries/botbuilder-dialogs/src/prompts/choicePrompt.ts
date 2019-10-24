@@ -8,7 +8,10 @@
 import { Activity, TurnContext } from 'botbuilder-core';
 import { ChoiceFactory, ChoiceFactoryOptions, FindChoicesOptions, FoundChoice, recognizeChoices } from '../choices';
 import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
-import { Culture } from '@microsoft/recognizers-text';
+import { PromptCultureModels } from './promptCultureModels';
+
+// Need ChoiceDefaultsProperty so we can set choiceDefaults dynamically with lambda
+interface ChoiceDefaultsChoicePrompt { [locale: string]: ChoiceFactoryOptions };
 
 /**
  * Prompts a user to select from a list of choices.
@@ -20,18 +23,10 @@ import { Culture } from '@microsoft/recognizers-text';
 export class ChoicePrompt extends Prompt<FoundChoice> {
 
     /**
-     * Default options for rendering the choices to the user based on locale.
+     * A dictionary of Default Choices based on [[PromptCultureModels.getSupportedCultures()]].
+     * Can be replaced by user using the constructor that contains choiceDefaults.
      */
-    private static defaultChoiceOptions: { [locale: string]: ChoiceFactoryOptions } = {
-        [Culture.Spanish]: { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true },
-        [Culture.Dutch]: { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true },
-        [Culture.English]: { inlineSeparator: ', ', inlineOr: ' or ', inlineOrMore: ', or ', includeNumbers: true },
-        [Culture.French]: { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true },
-        [Culture.German]: { inlineSeparator: ', ', inlineOr: ' oder ', inlineOrMore: ', oder ', includeNumbers: true },
-        [Culture.Japanese]: { inlineSeparator: '、 ', inlineOr: ' または ', inlineOrMore: '、 または ', includeNumbers: true },
-        [Culture.Portuguese]: { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true },
-        [Culture.Chinese]: { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true }
-    };
+    private choiceDefaults: ChoiceDefaultsChoicePrompt;
 
     /**
      * The prompts default locale that should be recognized.
@@ -62,17 +57,34 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
      * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
+     * @param choiceDefaults (Optional) Overrides the dictionary of Bot Framework SDK-supported _choiceDefaults (for prompt localization).
+     *  Must be passed in to each ConfirmPrompt that needs the custom choice defaults.
      */
-    constructor(dialogId: string, validator?: PromptValidator<FoundChoice>, defaultLocale?: string) {
+    public constructor(dialogId: string, validator?: PromptValidator<FoundChoice>, defaultLocale?: string, choiceDefaults?: ChoiceDefaultsChoicePrompt) {
         super(dialogId, validator);
         this.style = ListStyle.auto;
         this.defaultLocale = defaultLocale;
+        
+        if (choiceDefaults == null) {
+            const supported: ChoiceDefaultsChoicePrompt = {};
+            PromptCultureModels.getSupportedCultures().forEach((culture): void => {
+                supported[culture.locale] = {
+                    inlineSeparator: culture.separator,
+                    inlineOr: culture.inlineOr,
+                    inlineOrMore: culture.inlineOrMore,
+                    includeNumbers: true
+                };
+            });
+            this.choiceDefaults = supported;
+        } else {
+            this.choiceDefaults = choiceDefaults;
+        }
     }
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         // Determine locale
-        let locale: string = Culture.mapToNearestLanguage(context.activity.locale || this.defaultLocale);
-        if (!locale || !ChoicePrompt.defaultChoiceOptions.hasOwnProperty(locale)) {
+        let locale: string = PromptCultureModels.mapToNearestLanguage(context.activity.locale || this.defaultLocale);
+        if (!locale || !this.choiceDefaults.hasOwnProperty(locale)) {
             locale = 'en-us';
         }
 
@@ -80,7 +92,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         let prompt: Partial<Activity>;
         const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices) || [];
         const channelId: string = context.activity.channelId;
-        const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ChoicePrompt.defaultChoiceOptions[locale];
+        const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || this.choiceDefaults[locale];
         const choiceStyle: ListStyle = options.style || this.style;
         if (isRetry && options.retryPrompt) {
             prompt = this.appendChoices(options.retryPrompt, channelId, choices, choiceStyle, choiceOptions);
@@ -98,7 +110,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         const activity: Activity = context.activity;
         const utterance: string = activity.text;
         const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices)|| [];
-        const opt: FindChoicesOptions = this.recognizerOptions || {} as FindChoicesOptions;
+        const opt: FindChoicesOptions = this.recognizerOptions || {};
         opt.locale = activity.locale || opt.locale || this.defaultLocale || 'en-us';
         const results: any[]  = recognizeChoices(utterance, choices, opt);
         if (Array.isArray(results) && results.length > 0) {

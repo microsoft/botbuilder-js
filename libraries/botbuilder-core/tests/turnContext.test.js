@@ -1,5 +1,7 @@
 const assert = require('assert');
-const { BotAdapter, TurnContext } = require('../');
+const { BotAdapter, MessageFactory, TurnContext, ActivityTypes } = require('../');
+
+const activityId = `activity ID`;
 
 const testMessage = {
     type: 'message', 
@@ -162,7 +164,23 @@ describe(`TurnContext`, function () {
         });
         context.sendActivity('test', 'say test', 'ignoringInput').then(() => done());
     });
-    
+
+    it(`should send a trace activity.`, function (done) {
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        context.onSendActivities((ctx, activities, next) => {
+            assert(Array.isArray(activities), `activities not array.`);
+            assert(activities.length === 1, `invalid count of activities.`);
+            assert(activities[0].type === ActivityTypes.Trace, `type wrong.`);
+            assert(activities[0].name === 'name-text', `name wrong.`);
+            assert(activities[0].value === 'value-text', `value worng.`);
+            assert(activities[0].valueType === 'valueType-text', `valeuType wrong.`);
+            assert(activities[0].label === 'label-text', `label wrong.`);
+            return[];
+        });
+        context.sendTraceActivity('name-text', 'value-text', 'valueType-text', 'label-text').then(() => done());
+    });
+   
+
     it(`should send multiple activities via sendActivities().`, function (done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.sendActivities([testMessage, testMessage, testMessage]).then((responses) => {
@@ -211,6 +229,26 @@ describe(`TurnContext`, function () {
         });
         context.updateActivity(testMessage).then((responses) => {
             assert(called, `update hook not called.`);        
+            done();
+        });
+    });
+    
+    it(`should be able to update an activity with MessageFactory`, function (done) {
+        let called = false;
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        context.onUpdateActivity((ctx, activity, next) => {
+            assert(ctx, `context not passed to hook`);
+            assert(activity, `activity not passed to hook`);
+            assert(activity.id === activityId, `wrong activity passed to hook`);
+            assert(activity.conversation.id === testMessage.conversation.id, `conversation ID not applied to activity`);
+            assert(activity.serviceUrl === testMessage.serviceUrl, `service URL not applied to activity`);
+            called = true;
+            return next();
+        });
+        const message = MessageFactory.text(`test text`);
+        message.id = activityId;
+        context.updateActivity(message).then((responses) => {
+            assert(called, `update hook not called.`);
             done();
         });
     });

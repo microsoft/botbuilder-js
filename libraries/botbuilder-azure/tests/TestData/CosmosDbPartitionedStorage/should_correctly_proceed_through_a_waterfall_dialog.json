@@ -1,0 +1,1415 @@
+[
+    {
+        "scope": "https://localhost:8081",
+        "method": "GET",
+        "path": "/dbs/test-db/colls/bot-storage/docs/test*2fconversations*2fConvo1*2f",
+        "body": "",
+        "status": 404,
+        "response": {
+            "code": "NotFound",
+            "message": "Message: {\"Errors\":[\"Resource Not Found\"]}\r\nActivityId: 87f2ba9a-407d-44d9-b0ac-411ec842f570, Request URI: /apps/DocDbApp/services/DocDbServer15/partitions/a4cb495b-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, RequestStats: \r\nRequestStartTime: 2019-10-11T02:11:08.6615260Z, RequestEndTime: 2019-10-11T02:11:08.6625281Z, Number of regions attempted: 1\r\nResponseTime: 2019-10-11T02:11:08.6625281Z, StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10253/apps/DocDbApp/services/DocDbServer15/partitions/a4cb495b-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 1583, GlobalCommittedLsn: -1, PartitionKeyRangeId: 0, IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#1583, UsingLocalLSN: True, TransportException: null, ResourceType: Document, OperationType: Read\r\n, SDK: Microsoft.Azure.Documents.Common/2.4.0.0"
+        },
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://localhost:8081/dbs/test-db/colls/bot-storage/docs/test*2fconversations*2fConvo1*2f",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Wed, 09 Oct 2019 20:28:25.042 GMT",
+            "lsn",
+            "1583",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-quorum-acked-lsn",
+            "1583",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-transport-request-id",
+            "1734",
+            "x-ms-cosmos-llsn",
+            "1583",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "1583",
+            "x-ms-session-token",
+            "0:-1#1583",
+            "x-ms-request-charge",
+            "1",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "87f2ba9a-407d-44d9-b0ac-411ec842f570",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Fri, 11 Oct 2019 02:11:07 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "POST",
+        "path": "/dbs/test-db/colls/bot-storage/docs",
+        "body": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "fakeInstanceId"
+                                },
+                                "stepIndex": 0
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "status": 201,
+        "response": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "4e390d9e-268e-607c-babc-83ce311fbfe0"
+                                },
+                                "stepIndex": 0
+                            }
+                        }
+                    ]
+                }
+            },
+            "_rid": "Ep0pAI+J7qcHAAAAAAAAAA==",
+            "_self": "dbs/Ep0pAA==/colls/Ep0pAI+J7qc=/docs/Ep0pAI+J7qcHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7fd9-253d834501d5\"",
+            "_attachments": "attachments/",
+            "_ts": 1570759868
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Wed, 09 Oct 2019 20:28:25.042 GMT",
+            "etag",
+            "\"00000000-0000-0000-7fd9-253d834501d5\"",
+            "x-ms-resource-quota",
+            "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
+            "x-ms-resource-usage",
+            "documentSize=0;documentsSize=0;documentsCount=5;collectionSize=6;",
+            "lsn",
+            "1584",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-alt-content-path",
+            "dbs/test-db/colls/bot-storage",
+            "x-ms-content-path",
+            "Ep0pAI+J7qc=",
+            "x-ms-quorum-acked-lsn",
+            "1583",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-transport-request-id",
+            "1735",
+            "x-ms-cosmos-llsn",
+            "1584",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "1583",
+            "x-ms-session-token",
+            "0:-1#1584",
+            "x-ms-request-charge",
+            "8.38",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "479e5e78-d7c0-4a7a-8156-703302577123",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Fri, 11 Oct 2019 02:11:07 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "GET",
+        "path": "/dbs/test-db/colls/bot-storage/docs/test*2fconversations*2fConvo1*2f",
+        "body": "",
+        "status": 200,
+        "response": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "4e390d9e-268e-607c-babc-83ce311fbfe0"
+                                },
+                                "stepIndex": 0
+                            }
+                        }
+                    ]
+                }
+            },
+            "_rid": "Ep0pAI+J7qcHAAAAAAAAAA==",
+            "_self": "dbs/Ep0pAA==/colls/Ep0pAI+J7qc=/docs/Ep0pAI+J7qcHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7fd9-253d834501d5\"",
+            "_attachments": "attachments/",
+            "_ts": 1570759868
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://localhost:8081/dbs/test-db/colls/bot-storage/docs/test*2fconversations*2fConvo1*2f",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Wed, 09 Oct 2019 20:28:25.042 GMT",
+            "etag",
+            "\"00000000-0000-0000-7fd9-253d834501d5\"",
+            "x-ms-resource-quota",
+            "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
+            "x-ms-resource-usage",
+            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "lsn",
+            "1584",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-alt-content-path",
+            "dbs/test-db/colls/bot-storage",
+            "x-ms-content-path",
+            "Ep0pAI+J7qc=",
+            "x-ms-quorum-acked-lsn",
+            "1584",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-item-lsn",
+            "1584",
+            "x-ms-transport-request-id",
+            "1736",
+            "x-ms-cosmos-llsn",
+            "1584",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "1584",
+            "x-ms-cosmos-item-llsn",
+            "1584",
+            "x-ms-session-token",
+            "0:-1#1584",
+            "x-ms-request-charge",
+            "1",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "41aac739-6f6e-4038-9017-8c6d230c7a93",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Fri, 11 Oct 2019 02:11:07 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "POST",
+        "path": "/dbs/test-db/colls/bot-storage/docs",
+        "body": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "fakeInstanceId"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {}
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "status": 200,
+        "response": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "4e390d9e-268e-607c-babc-83ce311fbfe0"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {}
+                            }
+                        }
+                    ]
+                }
+            },
+            "_rid": "Ep0pAI+J7qcHAAAAAAAAAA==",
+            "_self": "dbs/Ep0pAA==/colls/Ep0pAI+J7qc=/docs/Ep0pAI+J7qcHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7fd9-2540258101d5\"",
+            "_attachments": "attachments/",
+            "_ts": 1570759868
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Wed, 09 Oct 2019 20:28:25.042 GMT",
+            "etag",
+            "\"00000000-0000-0000-7fd9-2540258101d5\"",
+            "x-ms-resource-quota",
+            "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
+            "x-ms-resource-usage",
+            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "lsn",
+            "1585",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-alt-content-path",
+            "dbs/test-db/colls/bot-storage",
+            "x-ms-content-path",
+            "Ep0pAI+J7qc=",
+            "x-ms-quorum-acked-lsn",
+            "1584",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-transport-request-id",
+            "1737",
+            "x-ms-cosmos-llsn",
+            "1585",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "1584",
+            "x-ms-session-token",
+            "0:-1#1585",
+            "x-ms-request-charge",
+            "12.38",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "cef0fef0-beed-4913-b047-a6a90d6c49e8",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Fri, 11 Oct 2019 02:11:07 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "GET",
+        "path": "/dbs/test-db/colls/bot-storage/docs/test*2fconversations*2fConvo1*2f",
+        "body": "",
+        "status": 200,
+        "response": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "4e390d9e-268e-607c-babc-83ce311fbfe0"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {}
+                            }
+                        }
+                    ]
+                }
+            },
+            "_rid": "Ep0pAI+J7qcHAAAAAAAAAA==",
+            "_self": "dbs/Ep0pAA==/colls/Ep0pAI+J7qc=/docs/Ep0pAI+J7qcHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7fd9-2540258101d5\"",
+            "_attachments": "attachments/",
+            "_ts": 1570759868
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://localhost:8081/dbs/test-db/colls/bot-storage/docs/test*2fconversations*2fConvo1*2f",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Wed, 09 Oct 2019 20:28:25.042 GMT",
+            "etag",
+            "\"00000000-0000-0000-7fd9-2540258101d5\"",
+            "x-ms-resource-quota",
+            "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
+            "x-ms-resource-usage",
+            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "lsn",
+            "1585",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-alt-content-path",
+            "dbs/test-db/colls/bot-storage",
+            "x-ms-content-path",
+            "Ep0pAI+J7qc=",
+            "x-ms-quorum-acked-lsn",
+            "1585",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-item-lsn",
+            "1585",
+            "x-ms-transport-request-id",
+            "1738",
+            "x-ms-cosmos-llsn",
+            "1585",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "1585",
+            "x-ms-cosmos-item-llsn",
+            "1585",
+            "x-ms-session-token",
+            "0:-1#1585",
+            "x-ms-request-charge",
+            "1",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "a88937ae-56a6-4aa4-80dc-7de260c983ac",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Fri, 11 Oct 2019 02:11:07 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "POST",
+        "path": "/dbs/test-db/colls/bot-storage/docs",
+        "body": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "fakeInstanceId"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 2
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "status": 200,
+        "response": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "4e390d9e-268e-607c-babc-83ce311fbfe0"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 2
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "_rid": "Ep0pAI+J7qcHAAAAAAAAAA==",
+            "_self": "dbs/Ep0pAA==/colls/Ep0pAI+J7qc=/docs/Ep0pAI+J7qcHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7fd9-2542bb6601d5\"",
+            "_attachments": "attachments/",
+            "_ts": 1570759868
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Wed, 09 Oct 2019 20:28:25.042 GMT",
+            "etag",
+            "\"00000000-0000-0000-7fd9-2542bb6601d5\"",
+            "x-ms-resource-quota",
+            "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
+            "x-ms-resource-usage",
+            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "lsn",
+            "1586",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-alt-content-path",
+            "dbs/test-db/colls/bot-storage",
+            "x-ms-content-path",
+            "Ep0pAI+J7qc=",
+            "x-ms-quorum-acked-lsn",
+            "1585",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-transport-request-id",
+            "1739",
+            "x-ms-cosmos-llsn",
+            "1586",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "1585",
+            "x-ms-session-token",
+            "0:-1#1586",
+            "x-ms-request-charge",
+            "10.67",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "b47f777c-6f46-41a9-8e35-b5487adc69a2",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Fri, 11 Oct 2019 02:11:07 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "GET",
+        "path": "/dbs/test-db/colls/bot-storage/docs/test*2fconversations*2fConvo1*2f",
+        "body": "",
+        "status": 200,
+        "response": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "4e390d9e-268e-607c-babc-83ce311fbfe0"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 2
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "_rid": "Ep0pAI+J7qcHAAAAAAAAAA==",
+            "_self": "dbs/Ep0pAA==/colls/Ep0pAI+J7qc=/docs/Ep0pAI+J7qcHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7fd9-2542bb6601d5\"",
+            "_attachments": "attachments/",
+            "_ts": 1570759868
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://localhost:8081/dbs/test-db/colls/bot-storage/docs/test*2fconversations*2fConvo1*2f",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Wed, 09 Oct 2019 20:28:25.042 GMT",
+            "etag",
+            "\"00000000-0000-0000-7fd9-2542bb6601d5\"",
+            "x-ms-resource-quota",
+            "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
+            "x-ms-resource-usage",
+            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "lsn",
+            "1586",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-alt-content-path",
+            "dbs/test-db/colls/bot-storage",
+            "x-ms-content-path",
+            "Ep0pAI+J7qc=",
+            "x-ms-quorum-acked-lsn",
+            "1586",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-item-lsn",
+            "1586",
+            "x-ms-transport-request-id",
+            "1740",
+            "x-ms-cosmos-llsn",
+            "1586",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "1586",
+            "x-ms-cosmos-item-llsn",
+            "1586",
+            "x-ms-session-token",
+            "0:-1#1586",
+            "x-ms-request-charge",
+            "1",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "db24dc61-2dc5-458e-b1a4-276006cf993b",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Fri, 11 Oct 2019 02:11:07 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "POST",
+        "path": "/dbs/test-db/colls/bot-storage/docs",
+        "body": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "fakeInstanceId"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 3
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "status": 200,
+        "response": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "4e390d9e-268e-607c-babc-83ce311fbfe0"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 3
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "_rid": "Ep0pAI+J7qcHAAAAAAAAAA==",
+            "_self": "dbs/Ep0pAA==/colls/Ep0pAI+J7qc=/docs/Ep0pAI+J7qcHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7fd9-25451a5b01d5\"",
+            "_attachments": "attachments/",
+            "_ts": 1570759868
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Wed, 09 Oct 2019 20:28:25.042 GMT",
+            "etag",
+            "\"00000000-0000-0000-7fd9-25451a5b01d5\"",
+            "x-ms-resource-quota",
+            "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
+            "x-ms-resource-usage",
+            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "lsn",
+            "1587",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-alt-content-path",
+            "dbs/test-db/colls/bot-storage",
+            "x-ms-content-path",
+            "Ep0pAI+J7qc=",
+            "x-ms-quorum-acked-lsn",
+            "1586",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-transport-request-id",
+            "1741",
+            "x-ms-cosmos-llsn",
+            "1587",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "1586",
+            "x-ms-session-token",
+            "0:-1#1587",
+            "x-ms-request-charge",
+            "10.67",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "ec6cc7d7-ffe0-4b70-ac1e-dc50515a8463",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Fri, 11 Oct 2019 02:11:07 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "GET",
+        "path": "/dbs/test-db/colls/bot-storage/docs/test*2fconversations*2fConvo1*2f",
+        "body": "",
+        "status": 200,
+        "response": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "4e390d9e-268e-607c-babc-83ce311fbfe0"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 3
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "_rid": "Ep0pAI+J7qcHAAAAAAAAAA==",
+            "_self": "dbs/Ep0pAA==/colls/Ep0pAI+J7qc=/docs/Ep0pAI+J7qcHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7fd9-25451a5b01d5\"",
+            "_attachments": "attachments/",
+            "_ts": 1570759868
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://localhost:8081/dbs/test-db/colls/bot-storage/docs/test*2fconversations*2fConvo1*2f",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Wed, 09 Oct 2019 20:28:25.042 GMT",
+            "etag",
+            "\"00000000-0000-0000-7fd9-25451a5b01d5\"",
+            "x-ms-resource-quota",
+            "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
+            "x-ms-resource-usage",
+            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "lsn",
+            "1587",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-alt-content-path",
+            "dbs/test-db/colls/bot-storage",
+            "x-ms-content-path",
+            "Ep0pAI+J7qc=",
+            "x-ms-quorum-acked-lsn",
+            "1587",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-item-lsn",
+            "1587",
+            "x-ms-transport-request-id",
+            "1742",
+            "x-ms-cosmos-llsn",
+            "1587",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "1587",
+            "x-ms-cosmos-item-llsn",
+            "1587",
+            "x-ms-session-token",
+            "0:-1#1587",
+            "x-ms-request-charge",
+            "1",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "0df6fefc-62b5-4b3e-8dd0-46b68156f13c",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Fri, 11 Oct 2019 02:11:07 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "POST",
+        "path": "/dbs/test-db/colls/bot-storage/docs",
+        "body": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "fakeInstanceId"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 4
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "status": 200,
+        "response": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "4e390d9e-268e-607c-babc-83ce311fbfe0"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 4
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "_rid": "Ep0pAI+J7qcHAAAAAAAAAA==",
+            "_self": "dbs/Ep0pAA==/colls/Ep0pAI+J7qc=/docs/Ep0pAI+J7qcHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7fd9-254863f601d5\"",
+            "_attachments": "attachments/",
+            "_ts": 1570759868
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Wed, 09 Oct 2019 20:28:25.042 GMT",
+            "etag",
+            "\"00000000-0000-0000-7fd9-254863f601d5\"",
+            "x-ms-resource-quota",
+            "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
+            "x-ms-resource-usage",
+            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "lsn",
+            "1588",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-alt-content-path",
+            "dbs/test-db/colls/bot-storage",
+            "x-ms-content-path",
+            "Ep0pAI+J7qc=",
+            "x-ms-quorum-acked-lsn",
+            "1587",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-transport-request-id",
+            "1743",
+            "x-ms-cosmos-llsn",
+            "1588",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "1587",
+            "x-ms-session-token",
+            "0:-1#1588",
+            "x-ms-request-charge",
+            "10.67",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "a0545497-ec3c-4025-9d3c-7526beba49f7",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Fri, 11 Oct 2019 02:11:07 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "GET",
+        "path": "/dbs/test-db/colls/bot-storage/docs/test*2fconversations*2fConvo1*2f",
+        "body": "",
+        "status": 200,
+        "response": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "4e390d9e-268e-607c-babc-83ce311fbfe0"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 4
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "_rid": "Ep0pAI+J7qcHAAAAAAAAAA==",
+            "_self": "dbs/Ep0pAA==/colls/Ep0pAI+J7qc=/docs/Ep0pAI+J7qcHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7fd9-254863f601d5\"",
+            "_attachments": "attachments/",
+            "_ts": 1570759868
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://localhost:8081/dbs/test-db/colls/bot-storage/docs/test*2fconversations*2fConvo1*2f",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Wed, 09 Oct 2019 20:28:25.042 GMT",
+            "etag",
+            "\"00000000-0000-0000-7fd9-254863f601d5\"",
+            "x-ms-resource-quota",
+            "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
+            "x-ms-resource-usage",
+            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "lsn",
+            "1588",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-alt-content-path",
+            "dbs/test-db/colls/bot-storage",
+            "x-ms-content-path",
+            "Ep0pAI+J7qc=",
+            "x-ms-quorum-acked-lsn",
+            "1588",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-item-lsn",
+            "1588",
+            "x-ms-transport-request-id",
+            "1744",
+            "x-ms-cosmos-llsn",
+            "1588",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "1588",
+            "x-ms-cosmos-item-llsn",
+            "1588",
+            "x-ms-session-token",
+            "0:-1#1588",
+            "x-ms-request-charge",
+            "1",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "43b215d9-6f23-4981-8c99-b1820318764b",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Fri, 11 Oct 2019 02:11:07 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "POST",
+        "path": "/dbs/test-db/colls/bot-storage/docs",
+        "body": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "fakeInstanceId"
+                                },
+                                "stepIndex": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "status": 200,
+        "response": {
+            "id": "test*2fconversations*2fConvo1*2f",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "4e390d9e-268e-607c-babc-83ce311fbfe0"
+                                },
+                                "stepIndex": 2
+                            }
+                        }
+                    ]
+                }
+            },
+            "_rid": "Ep0pAI+J7qcHAAAAAAAAAA==",
+            "_self": "dbs/Ep0pAA==/colls/Ep0pAI+J7qc=/docs/Ep0pAI+J7qcHAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-7fd9-254c631601d5\"",
+            "_attachments": "attachments/",
+            "_ts": 1570759868
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Wed, 09 Oct 2019 20:28:25.042 GMT",
+            "etag",
+            "\"00000000-0000-0000-7fd9-254c631601d5\"",
+            "x-ms-resource-quota",
+            "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
+            "x-ms-resource-usage",
+            "documentSize=0;documentsSize=0;documentsCount=6;collectionSize=6;",
+            "lsn",
+            "1589",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-alt-content-path",
+            "dbs/test-db/colls/bot-storage",
+            "x-ms-content-path",
+            "Ep0pAI+J7qc=",
+            "x-ms-quorum-acked-lsn",
+            "1588",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-transport-request-id",
+            "1745",
+            "x-ms-cosmos-llsn",
+            "1589",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "1588",
+            "x-ms-session-token",
+            "0:-1#1589",
+            "x-ms-request-charge",
+            "12.76",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "281bbc35-1c6a-49ac-9360-4aa2f589ac21",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Fri, 11 Oct 2019 02:11:07 GMT"
+        ]
+    }
+]

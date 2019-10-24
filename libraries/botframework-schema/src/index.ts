@@ -4,6 +4,9 @@
  */
 export * from './activityInterfaces';
 
+// The Teams schemas was manually added to this library. This file has been updated to export those schemas.
+export * from './teams';
+
 /**
  * Attachment View name and size
  */
@@ -160,7 +163,7 @@ export interface CardAction {
   /**
    * The type of action implemented by this button. Possible values include: 'openUrl', 'imBack',
    * 'postBack', 'playAudio', 'playVideo', 'showImage', 'downloadFile', 'signin', 'call',
-   * 'payment', 'messageBack'
+   * 'payment', 'messageBack', 'openApp'
    */
   type: ActionTypes | string;
   /**
@@ -1240,6 +1243,10 @@ export interface TokenResponse {
    * Expiration for the token, in ISO 8601 format (e.g. "2007-04-05T14:30Z")
    */
   expiration: string;
+  /**
+   * A collection of properties about this response, such as token polling parameters
+   */
+  properties?: { [propertyName: string]: any };
 }
 
 /**
@@ -1683,7 +1690,7 @@ export enum InputHints {
 /**
  * Defines values for ActionTypes.
  * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio', 'playVideo', 'showImage',
- * 'downloadFile', 'signin', 'call', 'payment', 'messageBack'
+ * 'downloadFile', 'signin', 'call', 'payment', 'messageBack', 'openApp'
  * @readonly
  * @enum {string}
  */
@@ -1699,6 +1706,7 @@ export enum ActionTypes {
   Call = 'call',
   Payment = 'payment',
   MessageBack = 'messageBack',
+  OpenApp = 'openApp',
 }
 
 /**
