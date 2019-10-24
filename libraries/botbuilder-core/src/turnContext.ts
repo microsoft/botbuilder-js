@@ -344,6 +344,38 @@ export class TurnContext {
     /**
      * Asynchronously sends an activity to the sender of the incoming activity.
      *
+     * @param name The activity or text to send.
+     * @param value Optional. The text to be spoken by your bot on a speech-enabled channel.
+     * @param valueType Optional. Indicates whether your bot is accepting, expecting, or ignoring user
+     * @param label Optional. Indicates whether your bot is accepting, expecting, or ignoring user
+     * 
+     * @remarks
+     * Creates and sends a Trace activity. Trace activities are only sent when the channel is the emulator.
+     *
+     * For example:
+     * ```JavaScript
+     * await context.sendTraceActivity(`The following exception was thrown ${msg}`);
+     * ```
+     * 
+     * **See also**
+     * 
+     * - [sendActivities](xref:botbuilder-core.TurnContext.sendActivities)
+     */
+    public sendTraceActivity(name: string, value?: any, valueType?: string, label?: string): Promise<ResourceResponse|undefined> {
+        const traceActivity: Partial<Activity> = {
+            type: ActivityTypes.Trace,
+            timestamp: new Date(),
+            name: name,
+            value: value,
+            valueType: valueType,
+            label: label
+        };
+        return this.sendActivity(traceActivity)
+    }
+
+    /**
+     * Asynchronously sends an activity to the sender of the incoming activity.
+     *
      * @param activityOrText The activity or text to send.
      * @param speak Optional. The text to be spoken by your bot on a speech-enabled channel.
      * @param inputHint Optional. Indicates whether your bot is accepting, expecting, or ignoring user
