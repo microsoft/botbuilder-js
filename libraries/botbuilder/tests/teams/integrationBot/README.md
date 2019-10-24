@@ -276,11 +276,17 @@ npm start
   - Click on each of the button and add inputs.  With the exceptions of 'View Action' and 'Open Uri' buttons, bot should respond back with text containing input names/values and button name, ie 'O365ConnectorCardActionQuery event value: {"body":"{"date1":"2019-10-09T07:30:00.000Z", "date2":"2019-10-02T07:00:00.000Z"}","actionId":"card-3-btn-1"}'.
 
 - Task Module "task module" 
+  - Works in personal, group chat and teams
+  - On a Teams channel, group chat or personal chat with the bot installed, type "@IntegrationBottask module".  The "task module" is the command sent to the bot.
+  - The bot should respond with Task Module Invocation Hero Card.
+  - Click on the Adaptive Card button.  A task module popup shows up, type some text and click on Submit button.  Bot should reply with 'Thanks' inside the popup and also with something like 'handleTeamsTaskModuleFetchAsync Value: {"data":{"usertext":"<<USER TEXT>>"},"context":{"theme":"dark"}}'.
 
-- Works in personal, group chat and teams
-- On a Teams channel, group chat or personal chat with the bot installed, type "@IntegrationBottask module".  The "task module" is the command sent to the bot.
-- The bot should respond with Task Module Invocation Hero Card.
-- Click on the Adaptive Card button.  A task module popup shows up, type some text and click on Submit button.  Bot should reply with 'Thanks' inside the popup and also with something like 'handleTeamsTaskModuleFetchAsync Value: {"data":{"usertext":"<<USER TEXT>>"},"context":{"theme":"dark"}}'.
+- Search Based Messaging Extension
+  - Type @IntegrationBothello on the search box and hit enter.  There should be three hero cards displayed.
+  - 1st card 'You searched for: You said "hello"'. Clicking on the card should display a card with bot name.
+  - 2nd card 'Learn more about Teams' with link to doc.  Clicking on the card should display a card with bot name.
+  - 3rd card 'You said "hello"'.  Clicking on this card will display card with text 'You selected a search result!' and 'You searched for "hello"'.
+
 
 ## Prerequisites
 
