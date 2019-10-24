@@ -2,20 +2,18 @@
 // Licensed under the MIT License.
 
 import {
-    ActionTypes,
-    CardFactory,
+    Attachment,
     BotState,
+    CardAction,
+    CardFactory,
+    HeroCard,
+    MessagingExtensionAttachment,
+    MessagingExtensionQuery,
     MessagingExtensionResponse,
     MessagingExtensionResult,
-    MessagingExtensionQuery,
     TeamsActivityHandler,
-    TurnContext,
-    MessagingExtensionSuggestedAction,
-    MessagingExtensionActionResponse,
-    AppBasedLinkQuery
+    TurnContext
 } from 'botbuilder';
-
-const RICH_CARD_PROPERTY = 'richCardConfig';
 
 export class TeamsSearchExtensionBot extends TeamsActivityHandler {
 
@@ -51,50 +49,94 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
     }
 
     protected async handleTeamsMessagingExtensionQuery(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionResponse>{
-        const accessor = this.userState.createProperty<{ useHeroCard: boolean }>(RICH_CARD_PROPERTY);
-        const config = await accessor.get(context, { useHeroCard: true });
-
         const searchQuery = query.parameters[0].value;
-        const cardText = `You said "${searchQuery}"`;
-        let composeExtensionResponse: MessagingExtensionResponse;
+        const composeExtension = this.createMessagingExtensionResult([
+            this.createSearchResultAttachment(searchQuery), 
+            this.createDummySearchResultAttachment(), 
+            this.createSelectItemsResultAttachment(searchQuery)
+        ]);
 
+        return <MessagingExtensionResponse> {
+            composeExtension: composeExtension
+        };
+    }
+
+    protected async handleTeamsMessagingExtensionSelectItem(context: TurnContext, query: any): Promise<MessagingExtensionResponse> {
+        const searchQuery = query.query;
+        const bfLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU";
+        const card = CardFactory.heroCard('You selected a search result!', `You searched for "${searchQuery}"`, [bfLogo]);
+
+        return <MessagingExtensionResponse> {
+            composeExtension: this.createMessagingExtensionResult([card])
+        };
+    }
+
+    private createMessagingExtensionResult(attachments: Attachment[]) : MessagingExtensionResult {   
+        return <MessagingExtensionResult> {
+            type: "result",
+            attachmentLayout: "list",
+            attachments: attachments
+        };
+    }
+
+    private createSearchResultAttachment(searchQuery: string) : MessagingExtensionAttachment {
+        const cardText = `You said \"${searchQuery}\"`;
+        const bfLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU";
+
+        const button = <CardAction> {
+            type: "openUrl",
+            title: "Click for more Information",
+            value: "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview"
+        };
+
+        const heroCard = CardFactory.heroCard("You searched for:", cardText, [bfLogo], [button]);
+        const preview = CardFactory.heroCard("You searched for:", cardText, [bfLogo]);
+
+        return <MessagingExtensionAttachment> {
+            contentType: CardFactory.contentTypes.heroCard,
+            content: heroCard,
+            preview: preview
+        };
+    }
+
+    private createDummySearchResultAttachment() : MessagingExtensionAttachment {
+        const cardText = "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview";
+        const bfLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU";
+
+        const button = <CardAction> {
+            type: "openUrl",
+            title: "Click for more Information",
+            value: "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview"
+        };
+
+        const heroCard = CardFactory.heroCard("Learn more about Teams:", cardText, [bfLogo], [button]);
+        const preview = CardFactory.heroCard("Learn more about Teams:", cardText, [bfLogo]);
+
+        return <MessagingExtensionAttachment> {
+            contentType: CardFactory.contentTypes.heroCard,
+            content: heroCard,
+            preview: preview
+        };
+    }
+
+    private createSelectItemsResultAttachment(searchQuery: string): MessagingExtensionAttachment {
         const bfLogo = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU';
-        const button = { type: 'openUrl', title: 'Click for more Information', value: "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview" };
+        const cardText = `You said: "${searchQuery}"`;
+        const heroCard = CardFactory.heroCard(cardText, cardText, [bfLogo]);
 
-        if (config.useHeroCard) {
-            const heroCard = CardFactory.heroCard('You searched for:', cardText, [bfLogo], [button]);
-            const preview = CardFactory.heroCard('You searched for:', cardText, [bfLogo]);
+        const selectItemTap = <CardAction> {
+            type: "invoke",
+            value: { query: searchQuery }
+        };
 
-            const secondPreview = CardFactory.heroCard('Learn more about Teams:', "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview", [bfLogo]);
-            const secondHeroCard = CardFactory.heroCard('Learn more about Teams:', "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview", [bfLogo], [button]);
-            composeExtensionResponse = {
-                composeExtension: {
-                    type: 'result',
-                    attachmentLayout: 'list',
-                    attachments: [
-                        { ...heroCard, preview },
-                        { ...secondHeroCard, preview: secondPreview }
-                    ]
-                }
-            }
-        } else {
-            const thumbnailCard = CardFactory.thumbnailCard('You searched for:', cardText, [bfLogo], [button]);
-            const preview = CardFactory.thumbnailCard('You searched for:', cardText, [bfLogo]);
+        const preview = CardFactory.heroCard(cardText, cardText, [bfLogo], null, null);
+        const card: Partial<HeroCard> = preview.content;
+        card.tap = selectItemTap;
 
-            const secondPreview = CardFactory.thumbnailCard('Learn more about Teams:', "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview", [bfLogo]);
-            const secondThumbnailCard = CardFactory.thumbnailCard('Learn more about Teams:', "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview", [bfLogo], [button]);
-            composeExtensionResponse = {
-                composeExtension: {
-                    type: 'result',
-                    attachmentLayout: 'list',
-                    attachments: [
-                        { ...thumbnailCard, preview },
-                        { ...secondThumbnailCard, preview: secondPreview }
-                    ]
-                }
-            }
-        }
-
-        return composeExtensionResponse;
+        return <MessagingExtensionAttachment> {
+            contentType: CardFactory.contentTypes.heroCard,
+            content: heroCard,
+            preview: preview,
+        };
     }
 }
