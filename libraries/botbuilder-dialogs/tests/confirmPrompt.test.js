@@ -403,6 +403,63 @@ describe('ConfirmPrompt', function () {
         }));       
     });
 
+    it('should accept and recognize custom locale dict', async function() {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', { prompt: 'Please confirm.' });
+            } else if (results.status === DialogTurnStatus.complete) {
+                const confirmed = results.result;
+                if (confirmed) {
+                    await turnContext.sendActivity('true');
+                } else {
+                    await turnContext.sendActivity('false');
+                }
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const culture = {
+            inlineOr: ' customOr ',
+            inlineOrMore: ' customOrMore ',
+            locale: 'custom-custom',
+            separator: 'customSeparator',
+            noInLanguage: 'customNo',
+            yesInLanguage: 'customYes'
+        };
+
+        const customDict = {
+            [culture.locale]: {
+                choices: [culture.yesInLanguage, culture.noInLanguage],
+                options: {
+                    inlineSeparator: culture.separator,
+                    inlineOr: culture.inlineOr,
+                    inlineOrMore: culture.inlineOrMore,
+                    includeNumbers: true
+                }
+            }
+        };
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const confirmPrompt = new ConfirmPrompt('prompt', async (prompt) => {
+            assert(prompt);
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('bad input.');
+            }
+            return prompt.recognized.succeeded;
+        }, culture.locale, customDict);
+        dialogs.add(confirmPrompt);
+
+        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: culture.locale })
+            .assertReply('Please confirm. (1) customYes customOr (2) customNo')
+            .send('customYes')
+            .assertReply('true');
+    });
+
     it('should recognize yes with no PromptOptions.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
