@@ -1,6 +1,7 @@
 const assert = require('assert');
 const { AutoSaveStateMiddleware, ConversationState, MessageFactory, TestAdapter } = require('../../botbuilder-core/lib');
 const { Dialog, DialogSet, TextPrompt, WaterfallDialog } = require('../../botbuilder-dialogs/lib');
+const { CosmosDbStorage } = require('../../botbuilder-azure/lib');
 
 /**
  * Base tests that all storage providers should implement in their own tests.
@@ -23,14 +24,24 @@ class StorageBaseTests {
         return true;
     }
 
-    static async throwWhenReadingNullKeys(storage) {
-        await assert.rejects(async () => await storage.read(null), ReferenceError(`Keys are required when reading.`));
+    static async handleNullKeysWhenReading(storage) {
+        if (storage instanceof CosmosDbStorage) {
+            const result = await storage.read(null);
+            assert.strictEqual(Object.keys(result).length, 0);
+        } else {
+            await assert.rejects(async () => await storage.read(null), ReferenceError(`Keys are required when reading.`));
+        }
 
         return true;
     }
 
-    static async throwWhenWritingNullKeys(storage) {
-        await assert.rejects(async () => await storage.write(null), ReferenceError(`Changes are required when writing.`));
+    static async handleNullKeysWhenWriting(storage) {
+        if (storage instanceof CosmosDbStorage) {
+            const result = await storage.write(null);
+            assert.strictEqual(result, undefined);
+        } else {
+            await assert.rejects(async () => await storage.write(null), ReferenceError(`Changes are required when writing.`));
+        }
 
         return true;
     }

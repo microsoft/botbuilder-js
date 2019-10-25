@@ -7,8 +7,6 @@ const nock = require('nock');
 const fs = require('fs');
 const https = require('https');
 
-// TODO: Write test that checks CosmosClientOptions gets passed appropriately
-
 /**
  * @param mode controls the nock mode used for the tests. Available options found in ./mockHelper.js.
  */
@@ -17,28 +15,23 @@ const mode = process.env.MOCK_MODE ? process.env.MOCK_MODE : MockMode.lockdown;
 const emulatorPath = 'C:/Program Files/Azure Cosmos DB Emulator/CosmosDB.Emulator.exe';
 
 // Endpoint and authKey for the CosmosDB Emulator running locally
-const cosmosDbEndpoint = 'https://localhost:8081';
-const authKey = 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==';
-const databaseId = 'test-db';
-const containerId = 'bot-storage';
+const getSettings = () => {
+    return {
+        cosmosDbEndpoint: 'https://localhost:8081',
+        authKey: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==',
+        databaseId: 'test-db',
+        containerId: 'bot-storage',
+        cosmosClientOptions: {
+            agent: new https.Agent({ rejectUnauthorized: false }) // rejectUnauthorized disables the SSL verification for the locally-hosted Emulator
+        }
+    };
+};
 
 const checkEmulator = () => {
     if (!fs.existsSync(emulatorPath)) {
         console.warn('This test requires CosmosDB Emulator! go to https://aka.ms/documentdb-emulator-docs to download and install.');
     }
     return true;
-};
-
-const getSettings = () => {
-    return {
-        cosmosDbEndpoint,
-        authKey,
-        databaseId,
-        containerId,
-        cosmosClientOptions: {
-            agent: new https.Agent({ rejectUnauthorized: false }) // rejectUnauthorized disables the SSL verification for the locally-hosted Emulator
-        }
-    };
 };
 
 const storage = new CosmosDbPartitionedStorage(getSettings());

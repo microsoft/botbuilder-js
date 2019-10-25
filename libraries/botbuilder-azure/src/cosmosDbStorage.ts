@@ -46,6 +46,7 @@ export interface CosmosDbStorageSettings {
     documentCollectionRequestOptions?: RequestOptions;
     /**
       * (Optional) partitionKey that are passed when the document CosmosDbStorage is created.
+      * @deprecated Please use [[CosmosDbPartitionedStorage]]. See https://github.com/microsoft/botframework-sdk/issues/5467
       */
     partitionKey?: string;
 }
