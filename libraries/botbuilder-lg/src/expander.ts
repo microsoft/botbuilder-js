@@ -8,7 +8,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { BuiltInFunctions, Constant, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType } from 'botframework-expressions';
+import { BuiltInFunctions, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType } from 'botframework-expressions';
 import { keyBy } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import { EvaluationTarget } from './evaluationTarget';
@@ -108,12 +108,12 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     public visitStructuredBody(ctx: lp.StructuredBodyContext): string[] {
+        const idToStringMap: Map<string, string> = new Map<string, string>();
         const stb: lp.StructuredTemplateBodyContext = ctx.structuredTemplateBody();
         const result: any = {};
         const typeName: string = stb.structuredBodyNameLine().STRUCTURED_CONTENT().text;
         result.$type = typeName;
-
-        const idToStringMap: Map<string, string> = new Map<string, string>();
+        let expandedResult: any[] = [result];
         const bodys: TerminalNode[] = stb.structuredBodyContentLine().STRUCTURED_CONTENT();
         for (const body  of bodys) {
             const line: string = body.text.trim();
@@ -129,19 +129,17 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, this.escapeSeperatorRegex);
                 if (valueArray.length === 1) {
                     const id: string = uuid();
-                    result[property] = id;
+                    expandedResult.forEach(x => x[property] = id);
                     idToStringMap.set(id, originValue);
-                    //result[property] = this.evalText(originValue);
                 } else {
                     const valueList: any[] = [];
                     for (const item of valueArray) {
                         const id: string = uuid();
                         valueList.push(id);
                         idToStringMap.set(id, item.trim());
-                        //valueList.push(this.evalText(item.trim()));
                     }
 
-                    result[property] = valueList;
+                    expandedResult.forEach(x => x[property] = valueList);
                 }
             } else if (this.isPureExpression(line)) {
                 // [MyStruct
@@ -151,25 +149,30 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
                 // When the same property exists in both the calling template as well as callee,
                 //the content in caller will trump any content in the callee.
-                const id: string = uuid();
-                const propertyObject: any = id;
-                idToStringMap.set(id, line);
-                //const propertyObject: any = this.EvalExpression(line);
+                const propertyObjects: any[] = this.EvalExpression(line).map(x => JSON.parse(x));
+                const tempResult: any[] = [];
+                for (const res of expandedResult) {
+                    for (const propertyObject of propertyObjects) {
+                        let tempRes = JSON.parse(JSON.stringify(res));
 
-                // Full reference to another structured template is limited to the structured template with same type
-                if (typeof propertyObject === 'object' && '$type' in propertyObject &&  propertyObject.$type.toString() === typeName) {
-                    for (const key of Object.keys(propertyObject)) {
-                        if (propertyObject.hasOwnProperty(key) && !(key in result)) {
-                            result[key] = propertyObject[key];
+                        // Full reference to another structured template is limited to the structured template with same type
+                        if (typeof propertyObject === 'object' && '$type' in propertyObject && propertyObject.$type.toString() === typeName) {
+                            for (const key of Object.keys(propertyObject)) {
+                                if (propertyObject.hasOwnProperty(key) && !(key in tempRes)) {
+                                    tempRes[key] = propertyObject[key];
+                                }
+                            }
                         }
+
+                        tempResult.push(tempRes);
                     }
                 }
 
+                expandedResult = tempResult;
             }
         }
 
-        const exp: string = JSON.stringify(result);
-
+        const exps: string[] = expandedResult.map(x => JSON.stringify(x));
         const templateRefValues: Map<string, string[]> = new Map<string, string[]>();
         for (const idToString of idToStringMap) {
             if ((idToString[1].startsWith('@') || idToString[1].startsWith('{')) && idToString[1].endsWith('}')) {
@@ -179,7 +182,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             }
         }
 
-        let finalResult: string[] = [exp];
+        let finalResult: string[] = exps;
         for (const templateRefValue of templateRefValues) {
             const tempRes: string[] = [];
             for (const res of finalResult) {
@@ -483,8 +486,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
     private evalTextContainsExpression(exp: string) : string[] {
         const templateRefValues: Map<string, string[]> = new Map<string, string[]>();
-        const matches: string[] = exp.split('').reverse().join('').match(this.expressionRecognizeRegex).map((e: string) => e.split('').reverse().join('')).reverse();
+        let matches: any = exp.split('').reverse().join('').match(this.expressionRecognizeRegex);
         if (matches !== null && matches !== undefined) {
+            matches = matches.map((e: string) => e.split('').reverse().join('')).reverse();
             for (const match of matches) {
                 templateRefValues.set(match, this.EvalExpression(match));
             }
