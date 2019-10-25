@@ -52,7 +52,8 @@ export class TranscriptLoggerMiddleware implements Middleware {
 
             activities.map((a: Partial<Activity>, index: number) => {
                 const clonedActivity = this.cloneActivity(a);
-                if (index < responses.length && !clonedActivity.id) {
+                // If present, set the id of the cloned activity to the id received from the server.
+                if (index < responses.length) {
                     clonedActivity.id = responses[index].id;
                 }
 
