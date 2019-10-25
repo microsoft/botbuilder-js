@@ -2,11 +2,17 @@
 // Licensed under the MIT License.
 
 import {
+    Activity,
     MessageFactory,
-    TeamsActivityHandler,
-    teamsCreateConversation,
-    teamsGetChannelId,
     BotFrameworkAdapter,
+    ChannelInfo,
+    ConversationParameters,
+    ConversationReference,
+    ConversationResourceResponse,
+    TeamsActivityHandler,
+    TeamsChannelData,
+    teamsGetChannelId,
+    TurnContext,
 } from 'botbuilder';
 import { basename } from 'path';
 
@@ -21,7 +27,7 @@ export class ReplyToChannelBot extends TeamsActivityHandler {
 
             const teamChannelId = teamsGetChannelId(context.activity);
             const message = MessageFactory.text("good morning");
-            const newConversation = await teamsCreateConversation(context, teamChannelId, message);
+            const newConversation = await this.teamsCreateConversation(context, teamChannelId, message);
 
             const adapter = context.adapter as BotFrameworkAdapter;
 
@@ -35,5 +41,36 @@ export class ReplyToChannelBot extends TeamsActivityHandler {
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
+    }
+
+    
+    private async teamsCreateConversation(context: TurnContext, teamsChannelId: string, message: Partial<Activity>): Promise<[ConversationReference, string]> {
+        if (!teamsChannelId) {
+            throw new Error('Missing valid teamsChannelId argument');
+        }
+    
+        if (!message) {
+            throw new Error('Missing valid message argument');
+        }
+    
+        const conversationParameters = <ConversationParameters>{
+            isGroup: true,
+            channelData: <TeamsChannelData>{
+                channel: <ChannelInfo>{
+                    id: teamsChannelId
+                }
+            },
+    
+            activity: message,
+        };
+
+        const adapter = <BotFrameworkAdapter>context.adapter;    
+        const connectorClient = adapter.createConnectorClient(context.activity.serviceUrl);
+
+        // This call does NOT send the outbound Activity is not being sent through the middleware stack.    
+        const conversationResourceResponse: ConversationResourceResponse = await connectorClient.conversations.createConversation(conversationParameters);
+        const conversationReference = <ConversationReference>TurnContext.getConversationReference(context.activity);
+        conversationReference.conversation.id = conversationResourceResponse.id;
+        return [conversationReference, conversationResourceResponse.activityId];
     }
 }
