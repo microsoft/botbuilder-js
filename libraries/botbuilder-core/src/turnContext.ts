@@ -452,7 +452,7 @@ export class TurnContext {
             const o: Partial<Activity> = TurnContext.applyConversationReference({...a}, ref);
             if (!o.type) { o.type = ActivityTypes.Message; }
             if (o.type !== ActivityTypes.Trace) { sentNonTraceActivity = true; }
-
+            if (o.id) { delete o.id; }
             return o;
         });
 
