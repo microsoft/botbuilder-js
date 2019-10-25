@@ -7,11 +7,15 @@ import {
     ActionTypes,
     AppBasedLinkQuery,
     Attachment,
+    BotFrameworkAdapter,
     BotState,
     CardAction,
     CardFactory,
     ChannelAccount,
     ChannelInfo,
+    ConversationParameters,
+    ConversationReference,
+    ConversationResourceResponse,
     FileInfoCard,
     FileConsentCard,
     FileConsentCardResponse,
@@ -42,9 +46,9 @@ import {
     TaskModuleRequest,
     TaskModuleResponse,
     TaskModuleTaskInfo,
-    TeamDetails,
     TeamsActivityHandler,
-    teamsCreateConversation,
+    TeamsChannelData,
+    TeamDetails,
     TeamInfo,
     TeamsInfo,
     TurnContext,
@@ -207,7 +211,7 @@ export class IntegrationBot extends TeamsActivityHandler {
 
         try {
             // Send to channel where messaging extension invoked.
-            let results = await teamsCreateConversation(context, context.activity.channelData.channel.id, responseActivity);
+            let results = await this.teamsCreateConversation(context, context.activity.channelData.channel.id, responseActivity);
         } catch(ex) {
             console.error('ERROR Sending to Channel:');
         }
@@ -215,7 +219,7 @@ export class IntegrationBot extends TeamsActivityHandler {
         try {
             // Send card to "General" channel.
             const teamDetails: TeamDetails = await TeamsInfo.getTeamDetails(context);
-            let results = await teamsCreateConversation(context, teamDetails.id, responseActivity);
+            let results = await this.teamsCreateConversation(context, teamDetails.id, responseActivity);
         } catch(ex) {
             console.error('ERROR Sending to General channel:' + JSON.stringify(ex));
         }
@@ -1182,5 +1186,35 @@ export class IntegrationBot extends TeamsActivityHandler {
             content: heroCard,
             preview: preview,
         };
+    }
+
+    private async teamsCreateConversation(context: TurnContext, teamsChannelId: string, message: Partial<Activity>): Promise<[ConversationReference, string]> {
+        if (!teamsChannelId) {
+            throw new Error('Missing valid teamsChannelId argument');
+        }
+    
+        if (!message) {
+            throw new Error('Missing valid message argument');
+        }
+    
+        const conversationParameters = <ConversationParameters>{
+            isGroup: true,
+            channelData: <TeamsChannelData>{
+                channel: <ChannelInfo>{
+                    id: teamsChannelId
+                }
+            },
+    
+            activity: message,
+        };
+
+        const adapter = <BotFrameworkAdapter>context.adapter;    
+        const connectorClient = adapter.createConnectorClient(context.activity.serviceUrl);
+
+        // This call does NOT send the outbound Activity is not being sent through the middleware stack.    
+        const conversationResourceResponse: ConversationResourceResponse = await connectorClient.conversations.createConversation(conversationParameters);
+        const conversationReference = <ConversationReference>TurnContext.getConversationReference(context.activity);
+        conversationReference.conversation.id = conversationResourceResponse.id;
+        return [conversationReference, conversationResourceResponse.activityId];
     }
 }
