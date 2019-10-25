@@ -3,11 +3,14 @@ const path = require('path');
 
 const nockBack = require('nock').back;
 
+/**
+ * https://github.com/nock/nock#modes
+ */
 const MockMode = Object.freeze({
-    'wild': 'wild',
-    'dryrun': 'dryrun',
-    'record': 'record',
-    'lockdown': 'lockdown'
+    wild: 'wild',
+    dryrun: 'dryrun',
+    record: 'record',
+    lockdown: 'lockdown'
 });
 
 function usingNock(test, mode, options = null) {
