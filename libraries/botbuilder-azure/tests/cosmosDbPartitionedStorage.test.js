@@ -5,13 +5,12 @@ const { CosmosClient } = require('@azure/cosmos');
 const { MockMode, usingNock } = require('./mockHelper');
 const nock = require('nock');
 const fs = require('fs');
+const https = require('https');
+
+// TODO: Write test that checks CosmosClientOptions gets passed appropriately
 
 /**
  * @param mode controls the nock mode used for the tests. Available options found in ./mockHelper.js.
- * Setting environment:
- *  PowerShell: $env:MOCK_MODE="<desiredMode>"
- *  Command Prompt: set MOCK_MODE=<desiredMode>
- *  VS Code's launch.json: "env": { "MOCK_MODE": "<desiredMode>" },
  */
 const mode = process.env.MOCK_MODE ? process.env.MOCK_MODE : MockMode.lockdown;
 
@@ -35,17 +34,14 @@ const getSettings = () => {
         cosmosDbEndpoint,
         authKey,
         databaseId,
-        containerId
+        containerId,
+        cosmosClientOptions: {
+            agent: new https.Agent({ rejectUnauthorized: false }) // rejectUnauthorized disables the SSL verification for the locally-hosted Emulator
+        }
     };
 };
 
 const storage = new CosmosDbPartitionedStorage(getSettings());
-
-// Disable certificate checking when running tests locally
-if (cosmosDbEndpoint.includes('localhost:8081')) {
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-    console.warn('WARNING: Disabling SSL Verification because we detected the emulator was being used');
-}
 
 // called before and after each test
 const reset = async () => {
@@ -54,7 +50,7 @@ const reset = async () => {
     if (mode !== MockMode.lockdown) {
         let settings = getSettings();
 
-        let client = new CosmosClient({ endpoint: settings.cosmosDbEndpoint, key: settings.authKey});
+        let client = new CosmosClient({ endpoint: settings.cosmosDbEndpoint, key: settings.authKey, agent: new https.Agent({ rejectUnauthorized: false }) });
         try {
             await client.database(settings.databaseId).delete();
         } catch (err) { }
@@ -93,6 +89,21 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', () => {
         const noContainerId = getSettings();
         noContainerId.containerId = null;
         assert.throws(() => new CosmosDbPartitionedStorage(noContainerId), ReferenceError('containerId for CosmosDB is required.'));
+    });
+
+    it('passes cosmosClientOptions to CosmosClient', async () => {
+        const settingsWithClientOptions = getSettings();
+        settingsWithClientOptions.cosmosClientOptions = {
+            agent: new https.Agent({ rejectUnauthorized: false }),
+            connectionPolicy: { requestTimeout: 999 },
+            userAgentSuffix: 'test', 
+        };
+        
+        const client = new CosmosDbPartitionedStorage(settingsWithClientOptions);
+        await client.initialize(); // Force client to go through initialization
+        
+        assert.strictEqual(client.client.clientContext.connectionPolicy.requestTimeout, 999);
+        assert.strictEqual(client.client.clientContext.cosmosClientOptions.userAgentSuffix, 'test');
     });
 });
 
