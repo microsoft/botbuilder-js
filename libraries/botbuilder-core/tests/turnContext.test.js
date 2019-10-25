@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { BotAdapter, MessageFactory, TurnContext } = require('../');
+const { BotAdapter, MessageFactory, TurnContext, ActivityTypes } = require('../');
 
 const activityId = `activity ID`;
 
@@ -186,7 +186,23 @@ describe(`TurnContext`, function () {
         });
         context.sendActivity('test', 'say test', 'ignoringInput').then(() => done());
     });
-    
+
+    it(`should send a trace activity.`, function (done) {
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        context.onSendActivities((ctx, activities, next) => {
+            assert(Array.isArray(activities), `activities not array.`);
+            assert(activities.length === 1, `invalid count of activities.`);
+            assert(activities[0].type === ActivityTypes.Trace, `type wrong.`);
+            assert(activities[0].name === 'name-text', `name wrong.`);
+            assert(activities[0].value === 'value-text', `value worng.`);
+            assert(activities[0].valueType === 'valueType-text', `valeuType wrong.`);
+            assert(activities[0].label === 'label-text', `label wrong.`);
+            return[];
+        });
+        context.sendTraceActivity('name-text', 'value-text', 'valueType-text', 'label-text').then(() => done());
+    });
+   
+
     it(`should send multiple activities via sendActivities().`, function (done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.sendActivities([testMessage, testMessage, testMessage]).then((responses) => {
