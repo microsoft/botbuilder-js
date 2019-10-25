@@ -74,6 +74,8 @@ const options = {
 const testStorage = () => {
 
     it('should throw on invalid options', async function() {
+        const { nockDone } = await usingNock(this.test, mode, options);
+
         // No options. Should throw.
         assert.throws(() => new CosmosDbPartitionedStorage(null), ReferenceError('CosmosDbPartitionedStorageOptions is required.'));
         
@@ -110,6 +112,8 @@ const testStorage = () => {
         
         assert.strictEqual(client.client.clientContext.connectionPolicy.requestTimeout, 999);
         assert.strictEqual(client.client.clientContext.cosmosClientOptions.userAgentSuffix, 'test');
+
+        return nockDone();
     });
 
     // NOTE: THESE TESTS REQUIRE THAT THE COSMOS DB EMULATOR IS INSTALLED AND STARTED !!!!!!!!!!!!!!!!!
