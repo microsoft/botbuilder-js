@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { AutoSaveStateMiddleware, ConversationState, MessageFactory, TestAdapter } = require('../../botbuilder-core/lib');
 const { Dialog, DialogSet, TextPrompt, WaterfallDialog } = require('../../botbuilder-dialogs/lib');
-const { CosmosDbStorage } = require('../../botbuilder-azure/lib');
+const { BlobStorage, CosmosDbStorage, CosmosDbPartitionedStorage } = require('../../botbuilder-azure/lib');
 
 /**
  * Base tests that all storage providers should implement in their own tests.
@@ -18,8 +18,13 @@ class StorageBaseTests {
     static async returnEmptyObjectWhenReadingUnknownKey(storage) {
         const result = await storage.read(['unknown']);
 
-        assert.notStrictEqual(result, null);
-        assert.strictEqual(Object.keys(result).length, 0);
+        if (storage instanceof BlobStorage) {
+            assert.ok(result.undefined);
+            assert.strictEqual(Object.keys(result.undefined).length, 0);
+        } else {
+            assert.notStrictEqual(result, null);
+            assert.strictEqual(Object.keys(result).length, 0);
+        }
 
         return true;
     }
@@ -28,8 +33,10 @@ class StorageBaseTests {
         if (storage instanceof CosmosDbStorage) {
             const result = await storage.read(null);
             assert.strictEqual(Object.keys(result).length, 0);
+        } else if (storage instanceof CosmosDbPartitionedStorage){
+            await assert.rejects(async () => await storage.read(null), ReferenceError('Keys are required when reading.'));
         } else {
-            await assert.rejects(async () => await storage.read(null), ReferenceError(`Keys are required when reading.`));
+            await assert.rejects(async () => await storage.read(null), Error('Please provide at least one key to read from storage.'));
         }
 
         return true;
@@ -39,8 +46,10 @@ class StorageBaseTests {
         if (storage instanceof CosmosDbStorage) {
             const result = await storage.write(null);
             assert.strictEqual(result, undefined);
+        } else if (storage instanceof CosmosDbPartitionedStorage){
+            await assert.rejects(async () => await storage.write(null), ReferenceError('Changes are required when writing.'));
         } else {
-            await assert.rejects(async () => await storage.write(null), ReferenceError(`Changes are required when writing.`));
+            await assert.rejects(async () => await storage.write(null), Error('Please provide a StoreItems with changes to persist.'));
         }
 
         return true;

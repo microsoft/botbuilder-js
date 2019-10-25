@@ -119,7 +119,7 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
         checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
-        const testRan = await StorageBaseTests.throwWhenReadingNullKeys(storage);
+        const testRan = await StorageBaseTests.handleNullKeysWhenReading(storage);
 
         assert.strictEqual(testRan, true);
         return nockDone();
@@ -129,7 +129,7 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
         checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
-        const testRan = await StorageBaseTests.throwWhenWritingNullKeys(storage);
+        const testRan = await StorageBaseTests.handleNullKeysWhenWriting(storage);
         
         assert.strictEqual(testRan, true);
         return nockDone();
