@@ -308,6 +308,4 @@ __pycache__/
 package-lock.json
 
 *.tsbuildinfo
-*.map
-*.js
-*.ts
+*.js.map
