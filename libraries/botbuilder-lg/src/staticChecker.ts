@@ -213,15 +213,6 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
             } else {
                 result = result.concat(this.visit(context.templateBody()));
             }
-
-            const parameters: lp.ParametersContext = context.templateNameLine().parameters();
-            if (parameters !== undefined) {
-                if (parameters.CLOSE_PARENTHESIS() === undefined || parameters.OPEN_PARENTHESIS() === undefined) {
-                    result.push(this.BuildLGDiagnostic({
-                        message: `parameters: ${parameters.text} format error`,
-                        context: context.templateNameLine()}));
-                }
-            }
         }
 
         return result;
