@@ -50,6 +50,28 @@ class SimpleAdapter extends BotAdapter {
     }
 }
 
+class SendAdapter extends BotAdapter {
+    sendActivities(context, activities) {
+        assert(context, `SendAdapter.sendActivities: missing context.`);
+        assert(activities, `SendAdapter.sendActivities: missing activities.`);
+        assert(Array.isArray(activities), `SendAdapter.sendActivities: activities not array.`);
+        assert(activities.length > 0, `SendAdapter.sendActivities: empty activities array.`);
+        return Promise.resolve(activities);
+    }
+
+    updateActivity(context, activity) {
+        assert(context, `SendAdapter.updateActivity: missing context.`);
+        assert(activity, `SendAdapter.updateActivity: missing activity.`);
+        return Promise.resolve();
+    }
+
+    deleteActivity(context, reference) {
+        assert(context, `SendAdapter.deleteActivity: missing context.`);
+        assert(reference, `SendAdapter.deleteActivity: missing reference.`);
+        return Promise.resolve();
+    }
+}
+
 describe(`TurnContext`, function () {
     this.timeout(5000);
 
@@ -393,5 +415,14 @@ describe(`TurnContext`, function () {
 
         assert(text,' test activity');
         assert(activity.text,' test activity');
+    });
+
+    it(`should clear existing activity.id in context.sendActivity().`, function (done) {
+        const context = new TurnContext(new SendAdapter(), testMessage);
+        context.sendActivity(testMessage).then((response) => {
+            assert(response, `response is missing.`);
+            assert(response.id === undefined, `invalid response id of "${response.id}" sent back. Should be 'undefined'`);
+            done();
+        });
     });
 });

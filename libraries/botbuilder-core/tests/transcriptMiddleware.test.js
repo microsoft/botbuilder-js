@@ -214,15 +214,15 @@ describe(`TranscriptLoggerMiddleware`, function () {
 
         adapter
             .send(fooActivity)
-            // sent activities not contain the id returned from the service, so it should NOT be undefined here
-            .assertReply(activity => assert.notEqual(activity.id, undefined) && assert.equal(activity.text, 'echo:foo')) 
+            // sent activities do not contain the id returned from the service, so it should be undefined here
+            .assertReply(activity => assert.equal(activity.id, undefined) && assert.equal(activity.text, 'echo:foo')) 
             .send('bar')
-            .assertReply(activity => assert.notEqual(activity.id, undefined) && assert.equal(activity.text, 'echo:bar')) 
+            .assertReply(activity => assert.equal(activity.id, undefined) && assert.equal(activity.text, 'echo:bar')) 
             .then(() => {
                 transcriptStore.getTranscriptActivities('test', conversationId).then(pagedResult => {
                     assert.equal(pagedResult.items.length, 4);
                     assert.equal(pagedResult.items[0].text, 'foo');
-                    // Transcript activities should have the id present on the activity when received (only because of the test adapter)
+                    // Transcript activities should have the id present on the activity when received
                     assert.equal(pagedResult.items[0].id, 'testFooId');
                     assert.equal(pagedResult.items[1].text, 'echo:foo');
                     // Sent Activities in the transcript store should have the Id returned from Resource Response 
@@ -237,6 +237,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
                     assert.equal(pagedResult.items[3].id, '2');
                     pagedResult.items.forEach(a => {
                         assert(a.timestamp);
+                        assert(a.id);
                     })
                     done();
                 });
@@ -276,7 +277,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
                 transcriptStore.getTranscriptActivities('test', conversationId).then(pagedResult => {
                     assert.equal(pagedResult.items.length, 2);
                     assert.equal(pagedResult.items[0].text, 'foo');
-                    // Transcript activities should have the id present on the activity when received (only because of the test adapter)
+                    // Transcript activities should have the id present on the activity when received
                     assert.equal(pagedResult.items[0].id, 'testFooId');
 
                     assert.equal(pagedResult.items[1].text, 'echo:foo');

@@ -55,6 +55,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
                 if (index < responses.length && !clonedActivity.id) {
                     clonedActivity.id = responses[index].id;
                 }
+
                 // For certain channels, a ResourceResponse with an id is not always sent to the bot.
                 // This fix uses the timestamp on the activity to populate its id for logging the transcript.
                 // If there is no outgoing timestamp, the current time for the bot is used for the activity.id.
@@ -64,9 +65,10 @@ export class TranscriptLoggerMiddleware implements Middleware {
                     if (clonedActivity.timestamp) {
                         clonedActivity.id = `${prefix}${new Date(clonedActivity.timestamp).getTime().toString()}`;
                     } else {
-                        clonedActivity.id = `${prefix}${Date.now().toString()}`;
+                        clonedActivity.id = `${prefix}${new Date().getTime().toString()}`;
                     }
                 }
+
                 this.logActivity(transcript, clonedActivity);
             });
 

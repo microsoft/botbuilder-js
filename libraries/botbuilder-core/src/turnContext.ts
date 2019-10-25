@@ -429,13 +429,6 @@ export class TurnContext {
                 .then((responses: ResourceResponse[]) => {
                     // Set responded flag
                     if (sentNonTraceActivity) { this.responded = true; }
-                    if(responses) {
-                        output.map((a: Partial<Activity>, index: number) => {
-                            if (index < responses.length) {
-                                a.id = responses[index].id;
-                            }
-                        });
-                    }
 
                     return responses;
                 });
