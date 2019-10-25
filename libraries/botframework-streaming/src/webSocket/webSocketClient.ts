@@ -12,7 +12,7 @@ import { RequestManager } from '../payloads';
 import {
     PayloadReceiver,
     PayloadSender,
-    TransportDisconnectedEventArgs
+    TransportDisconnectedEvent
 } from '../payloadTransport';
 import { BrowserWebSocket } from './BrowserWebSocket';
 import { NodeWebSocket } from './NodeWebSocket';
@@ -82,8 +82,8 @@ export class WebSocketClient implements IStreamingTransportClient {
      * Stop this client from listening.
      */
     public disconnect(): void {
-        this._sender.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
-        this._receiver.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
+        this._sender.disconnect(new TransportDisconnectedEvent('Disconnect was called.'));
+        this._receiver.disconnect(new TransportDisconnectedEvent('Disconnect was called.'));
     }
 
     /**
