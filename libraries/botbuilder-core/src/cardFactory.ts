@@ -165,7 +165,6 @@ export class CardFactory {
     ): Attachment {
         const a: Attachment = CardFactory.thumbnailCard(title, text, images, buttons, other);
         a.contentType = CardFactory.contentTypes.heroCard;
-
         return a;
     }
 

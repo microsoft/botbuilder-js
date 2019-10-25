@@ -4,7 +4,6 @@
 import {
     Activity,
     Attachment,
-    CardFactory,
     TeamsActivityHandler,
     TurnContext,
     FileInfoCard,
@@ -18,12 +17,7 @@ export class FileUploadBot extends TeamsActivityHandler {
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
-            let filename = "teams-logo.png";
-            let fs = require('fs'); 
-            let path = require('path');
-            let stats = fs.statSync(path.join('files', filename));
-            let fileSizeInBytes = stats['size'];    
-            await this.sendFileCard(context, filename, fileSizeInBytes);
+            await this.sendFileCard(context);
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
@@ -83,7 +77,13 @@ export class FileUploadBot extends TeamsActivityHandler {
         fs.createReadStream(filePath).pipe(request.put(fileConsentCardResponse.uploadInfo.uploadUrl));
     }
 
-    private async sendFileCard(context: TurnContext, filename: string, filesize: number): Promise<void> {
+    private async sendFileCard(context: TurnContext): Promise<void> {
+        let filename = "teams-logo.png";
+        let fs = require('fs'); 
+        let path = require('path');
+        let stats = fs.statSync(path.join('files', filename));
+        let fileSizeInBytes = stats['size'];    
+
         let fileContext = {
             filename: filename
         };
@@ -91,7 +91,7 @@ export class FileUploadBot extends TeamsActivityHandler {
         let attachment = {
             content: <FileConsentCard>{
                 description: 'This is the file I want to send you',
-                fileSizeInBytes: filesize,
+                fileSizeInBytes: fileSizeInBytes,
                 acceptContext: fileContext,
                 declineContext: fileContext
             },
@@ -101,7 +101,6 @@ export class FileUploadBot extends TeamsActivityHandler {
 
         var replyActivity = this.createReply(context.activity);
         replyActivity.attachments = [ attachment ];
-
         await context.sendActivity(replyActivity);
     }
 
