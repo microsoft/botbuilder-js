@@ -205,7 +205,7 @@ export class CosmosDbPartitionedStorage implements Storage {
                 this.client = new CosmosClient({
                     endpoint: this.cosmosDbStorageOptions.cosmosDbEndpoint,
                     key: this.cosmosDbStorageOptions.authKey,
-                    ...this.cosmosDbStorageOptions,
+                    ...this.cosmosDbStorageOptions.cosmosClientOptions,
                 });
             }
 
