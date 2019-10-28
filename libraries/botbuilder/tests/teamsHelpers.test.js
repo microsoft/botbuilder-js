@@ -4,15 +4,20 @@
  */
 
 const assert = require('assert');
-var sinon = require('sinon');
-const { teamsGetTeamId, teamsNotifyUser, teamsCreateConversation, BotFrameworkAdapter } = require('../');
-const { TestAdapter, TurnContext, Conversations } = require('botbuilder-core');
-const { ConnectorClient,  } = require('botframework-connector');
+const { TurnContext } = require('botbuilder-core');
+const sinon = require('sinon');
+
+const {
+    BotFrameworkAdapter,
+    teamsGetChannelId,
+    teamsGetTeamId,
+    teamsNotifyUser
+} = require('../');
 
 
 class TestContext extends TurnContext {
     constructor(request) {
-        var adapter = new BotFrameworkAdapter();
+        const adapter = new BotFrameworkAdapter();
         sinon.stub(adapter, 'createConnectorClient')
             .withArgs('http://foo.com/api/messages')
             .returns({ conversations: {
@@ -35,73 +40,94 @@ class TestContext extends TurnContext {
     }
 }
 
-describe('ActivityExtensions', function() {
+describe('TeamsActivityHelpers method', function() {
+    describe('teamsGetChannelId()', () => {
+        it('should return null if activity.channelData is falsey', () => {
+            const channelId = teamsGetChannelId(createActivityNoChannelData());
+            assert(channelId === null);
+        });
 
-    it('should get team id', async function() {
-        const activity = createActivityTeamId();
-        const id = teamsGetTeamId(activity);
-        assert(id === 'myId');
-    });
-    it('should get null with no team id', async function() {
-        const activity = createActivityNoId();
-        const id = teamsGetTeamId(activity);
-        assert(id === null);
-    });
-    it('should get null with no channelData', async function() {
-        const activity = createActivityNoChannelData();
-        const id = teamsGetTeamId(activity);
-        assert(id === null);
-    });
-    it('should add notify with no notification in channelData', async function() {
-        var activity = createActivityTeamId();
-        teamsNotifyUser(activity);
-        assert(activity.channelData.Notification.Alert === true);
-    });
-    it('should add notify with no channelData', async function() {
-        var activity = createActivityNoChannelData();
-        teamsNotifyUser(activity);
-        assert(activity.channelData.Notification.Alert === true);
-    });
-    it('should error with no teamsChannelId', async function() {
-        // Arrange
-        const context = new TestContext(createActivityNoId());
-        // Act
-        await teamsCreateConversation(context, null, createActivityNoId()).catch((error) => {
-            // Assert
-            assert(error.message == 'Missing valid teamsChannelId argument');
+        it('should return null if activity.channelData.channel is falsey', () => {
+            const activity = createActivityTeamId();
+            const channelId = teamsGetChannelId(activity);
+            assert(channelId === null);
+        });
+
+        it('should return null if activity.channelData.channel.id is falsey', () => {
+            const activity = createActivityTeamId();
+            activity.channelData.channel = {};
+            const channelId = teamsGetChannelId(activity);
+            assert(channelId === null);
+        });
+
+        it('should return channel id', () => {
+            const activity = createActivityTeamId();
+            activity.channelData.channel = { id: 'channelId' };
+            const channelId = teamsGetChannelId(activity);
+            assert.strictEqual(channelId, 'channelId');
+        });
+
+        it('should throw an error if no activity is passed in', () => {
+            try {
+                teamsGetChannelId(undefined);
+            } catch (err) {
+                assert.strictEqual(err.message, 'Missing activity parameter');
+            }
         });
     });
-    it('should error with no activity', async function() {
-        // Arrange
-        const context = new TestContext(createActivityNoId());
-        // Act
-        await teamsCreateConversation(context, "msteams", null).catch((error) => {
-            // Assert
-            assert(error.message == 'Missing valid message argument');
+
+    describe('teamsGetTeamId()', () => {
+        it('should return team id', async function() {
+            const activity = createActivityTeamId();
+            const id = teamsGetTeamId(activity);
+            assert(id === 'myId');
+        });
+
+        it('should return null with no team id', async function() {
+            const activity = createActivityNoTeamId();
+            const id = teamsGetTeamId(activity);
+            assert(id === null);
+        });
+
+        it('should return null with no channelData', async function() {
+            const activity = createActivityNoChannelData();
+            const id = teamsGetTeamId(activity);
+            assert(id === null);
+        });
+
+        it('should throw an error if no activity is passed in', () => {
+            try {
+                teamsGetTeamId(undefined);
+            } catch (err) {
+                assert.strictEqual(err.message, 'Missing activity parameter');
+            }
         });
     });
-    it('should get results from teamsCreateConversation', async function() {
-        // Arrange
-        const context = new TestContext(createActivityNoId());
 
-        // Act
-        const result = await teamsCreateConversation(context, "mycrazyteamschannel", createActivityNoId());
+    describe('teamsNotifyUser()', () => {
+        it('should add notify with no notification in channelData', async function() {
+            const activity = createActivityTeamId();
+            teamsNotifyUser(activity);
+            assert(activity.channelData.notification.alert === true);
+        });
 
-        // Assert
-        assert(result);
-        assert(result.length == 2);
-        assert(result[0]);
-        assert(result[1]);
-        assert(result[1] === "MYACTIVITYID");
-        assert(result[0].activityId == 1);
-        assert(result[0].conversation.id == 'MyCreationId');
-        assert(result[0].channelId == 'teams');
+        it('should add notify with no channelData', async function() {
+            const activity = createActivityNoChannelData();
+            teamsNotifyUser(activity);
+            assert(activity.channelData.notification.alert === true);
+        });
+
+        it('should throw an error if no activity is passed in', () => {
+            try {
+                teamsNotifyUser(undefined);
+            } catch (err) {
+                assert.strictEqual(err.message, 'Missing activity parameter');
+            }
+        });
     });
 });
 
-
-
-function createActivityNoId() {
+function createActivityNoTeamId() {
     return {
         type: 'message',
         timestamp: Date.now,

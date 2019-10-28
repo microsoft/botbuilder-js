@@ -217,14 +217,13 @@ describe(`TranscriptLoggerMiddleware`, function () {
             // sent activities do not contain the id returned from the service, so it should be undefined here
             .assertReply(activity => assert.equal(activity.id, undefined) && assert.equal(activity.text, 'echo:foo')) 
             .send('bar')
-            .assertReply(activity => assert.equal(activity.id, undefined) && assert.equal(activity.text, 'echo:bar'))
+            .assertReply(activity => assert.equal(activity.id, undefined) && assert.equal(activity.text, 'echo:bar')) 
             .then(() => {
                 transcriptStore.getTranscriptActivities('test', conversationId).then(pagedResult => {
                     assert.equal(pagedResult.items.length, 4);
                     assert.equal(pagedResult.items[0].text, 'foo');
                     // Transcript activities should have the id present on the activity when received
                     assert.equal(pagedResult.items[0].id, 'testFooId');
-
                     assert.equal(pagedResult.items[1].text, 'echo:foo');
                     // Sent Activities in the transcript store should have the Id returned from Resource Response 
                     // (the test adapter increments a number and uses this for the id)
@@ -238,13 +237,133 @@ describe(`TranscriptLoggerMiddleware`, function () {
                     assert.equal(pagedResult.items[3].id, '2');
                     pagedResult.items.forEach(a => {
                         assert(a.timestamp);
+                        assert(a.id);
                     })
                     done();
                 });
             });
     });
 
+    it(`should use outgoing activity's timestamp for activity id when activity id and resourceResponse is empty`, function(done) {
+        let conversationId, timestamp;
+        const transcriptStore = new MemoryTranscriptStore();
+
+        const adapter = createTestAdapterWithNoResourceResponseId(async (context) => {
+            conversationId = context.activity.conversation.id;
+
+            timestamp = new Date(Date.now());
+            await context.sendActivity({
+                text: `echo:${ context.activity.text }`,
+                timestamp: timestamp,
+                type: ActivityTypes.Message
+            });
+        }).use(new TranscriptLoggerMiddleware(transcriptStore));
+
+        const fooActivity = {
+            type: ActivityTypes.Message,
+            id: 'testFooId',
+            text: 'foo'
+        };
+
+        adapter
+            .send(fooActivity)
+            // sent activities do not contain the id returned from the service, so it should be undefined here
+            .assertReply(activity => {
+                assert.equal(activity.id, undefined);
+                assert.equal(activity.text, 'echo:foo');
+                assert.equal(activity.timestamp, timestamp);
+            }) 
+            .then(() => {
+                transcriptStore.getTranscriptActivities('test', conversationId).then(pagedResult => {
+                    assert.equal(pagedResult.items.length, 2);
+                    assert.equal(pagedResult.items[0].text, 'foo');
+                    // Transcript activities should have the id present on the activity when received
+                    assert.equal(pagedResult.items[0].id, 'testFooId');
+
+                    assert.equal(pagedResult.items[1].text, 'echo:foo');
+                    // Sent Activities in the transcript store should use the timestamp on the bot's outgoing activities
+                    // to log the activity when the following cases are true:
+                    // 1. The outgoing Activity.id is falsey
+                    // 2. The ResourceResponse.id is falsey (some channels may not emit a ResourceResponse with an id value)
+                    // 3. The outgoing Activity.timestamp exists
+                    // Activity.Id ends with Activity.Timestamp and generated id starts with 'g_'
+                    assert.ok(pagedResult.items[1].id.endsWith(timestamp.getTime().toString()));
+                    assert.ok(pagedResult.items[1].id.startsWith('g_'));
+                    //assert.equal(pagedResult.items[1].id, timestamp.getTime().toString());
+                    pagedResult.items.forEach(a => {
+                        assert(a.timestamp);
+                    });
+                    done();
+                });
+            });
+    });
+
+    it(`should use current server time for activity id when activity and resourceResponse id is empty and no activity timestamp exists`, function(done) {
+        let conversationId;
+        const transcriptStore = new MemoryTranscriptStore();
+
+        const adapter = createTestAdapterWithNoResourceResponseId(async (context) => {
+            conversationId = context.activity.conversation.id;
+
+            await context.sendActivity({
+                text: `echo:${ context.activity.text }`,
+                type: ActivityTypes.Message
+            });
+        }).use(new TranscriptLoggerMiddleware(transcriptStore));
+
+        const fooActivity = {
+            type: ActivityTypes.Message,
+            id: 'testFooId',
+            text: 'foo'
+        };
+
+        adapter
+            .send(fooActivity)
+            // sent activities do not contain the id returned from the service, so it should be undefined here
+            .assertReply(activity => {
+                assert.equal(activity.id, undefined);
+                assert.equal(activity.text, 'echo:foo');
+            }) 
+            .then(() => {
+                transcriptStore.getTranscriptActivities('test', conversationId).then(pagedResult => {
+                    assert.equal(pagedResult.items.length, 2);
+                    assert.equal(pagedResult.items[0].text, 'foo');
+                    // Transcript activities should have the id present on the activity when received
+                    assert.equal(pagedResult.items[0].id, 'testFooId');
+
+                    assert.equal(pagedResult.items[1].text, 'echo:foo');
+                    // Sent Activities in the transcript store should use the time the TranscriptLoggerMiddleware attempted 
+                    // to log the activity when the following cases are true:
+                    // 1. The outgoing Activity.id is falsey
+                    // 2. The ResourceResponse.id is falsey (some channels may not emit a ResourceResponse with an id value)
+                    // 3. The outgoing Activity.timestamp is falsey
+                    assert(pagedResult.items[1].id);
+                    pagedResult.items.forEach(a => {
+                        assert(a.timestamp);
+                    });
+                    done();
+                });
+            });
+    });
 });
+
+function createTestAdapterWithNoResourceResponseId(logic) {
+    const modifiedAdapter = new TestAdapter(logic);
+
+    function sendActivities(context, activities) {
+        const responses = activities
+            .filter((a) => this.sendTraceActivities || a.type !== 'trace')
+            .map((activity) => {
+                this.activityBuffer.push(activity);
+                return { };
+            });
+        
+        return Promise.resolve(responses);
+    }
+    modifiedAdapter.sendActivities = sendActivities.bind(modifiedAdapter);
+
+    return modifiedAdapter;
+}
 
 
 function createReply(activity, text, locale = null) {

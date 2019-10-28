@@ -250,7 +250,7 @@ export class OAuthPrompt extends Dialog {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.oauthCard);
             if (cards.length === 0) {
                 let link: string = undefined;
-                if (TurnContext.isFromStreamingConnection(context.activity)) {
+                if (OAuthPrompt.isFromStreamingConnection(context.activity)) {
                     link = await (context.adapter as any).getSignInLink(context, this.settings.connectionName);
                 }
                 // Append oauth card
@@ -312,11 +312,17 @@ export class OAuthPrompt extends Dialog {
         return token !== undefined ? { succeeded: true, value: token } : { succeeded: false };
     }
 
+    private static isFromStreamingConnection(activity: Activity): boolean {
+        return activity && activity.serviceUrl && !activity.serviceUrl.toLowerCase().startsWith('http');
+    }
+
     private isTokenResponseEvent(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
         return activity.type === ActivityTypes.Event && activity.name === 'tokens/response';
     }
+
+
 
     private isTeamsVerificationInvoke(context: TurnContext): boolean {
         const activity: Activity = context.activity;

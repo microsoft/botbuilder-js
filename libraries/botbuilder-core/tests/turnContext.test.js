@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { BotAdapter, MessageFactory, TurnContext } = require('../');
+const { BotAdapter, MessageFactory, TurnContext, ActivityTypes } = require('../');
 
 const activityId = `activity ID`;
 
@@ -46,6 +46,28 @@ class SimpleAdapter extends BotAdapter {
         assert(context, `SimpleAdapter.deleteActivity: missing context.`);
         assert(reference, `SimpleAdapter.deleteActivity: missing reference.`);
         assert(reference.activityId === '1234', `SimpleAdapter.deleteActivity: invalid activityId of "${reference.activityId}".`);
+        return Promise.resolve();
+    }
+}
+
+class SendAdapter extends BotAdapter {
+    sendActivities(context, activities) {
+        assert(context, `SendAdapter.sendActivities: missing context.`);
+        assert(activities, `SendAdapter.sendActivities: missing activities.`);
+        assert(Array.isArray(activities), `SendAdapter.sendActivities: activities not array.`);
+        assert(activities.length > 0, `SendAdapter.sendActivities: empty activities array.`);
+        return Promise.resolve(activities);
+    }
+
+    updateActivity(context, activity) {
+        assert(context, `SendAdapter.updateActivity: missing context.`);
+        assert(activity, `SendAdapter.updateActivity: missing activity.`);
+        return Promise.resolve();
+    }
+
+    deleteActivity(context, reference) {
+        assert(context, `SendAdapter.deleteActivity: missing context.`);
+        assert(reference, `SendAdapter.deleteActivity: missing reference.`);
         return Promise.resolve();
     }
 }
@@ -164,7 +186,23 @@ describe(`TurnContext`, function () {
         });
         context.sendActivity('test', 'say test', 'ignoringInput').then(() => done());
     });
-    
+
+    it(`should send a trace activity.`, function (done) {
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        context.onSendActivities((ctx, activities, next) => {
+            assert(Array.isArray(activities), `activities not array.`);
+            assert(activities.length === 1, `invalid count of activities.`);
+            assert(activities[0].type === ActivityTypes.Trace, `type wrong.`);
+            assert(activities[0].name === 'name-text', `name wrong.`);
+            assert(activities[0].value === 'value-text', `value worng.`);
+            assert(activities[0].valueType === 'valueType-text', `valeuType wrong.`);
+            assert(activities[0].label === 'label-text', `label wrong.`);
+            return[];
+        });
+        context.sendTraceActivity('name-text', 'value-text', 'valueType-text', 'label-text').then(() => done());
+    });
+   
+
     it(`should send multiple activities via sendActivities().`, function (done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.sendActivities([testMessage, testMessage, testMessage]).then((responses) => {
@@ -395,45 +433,12 @@ describe(`TurnContext`, function () {
         assert(activity.text,' test activity');
     });
 
-    it ('should identify streaming connections', function() {
-        let activity = {
-            type: 'message',
-            text: '<at>TestOAuth619</at> test activity',
-            recipient: { id: 'TestOAuth619' },
-        };
-
-        const streaming = [
-            'urn:botframework:WebSocket:wss://beep.com',
-            'urn:botframework:WebSocket:http://beep.com',
-            'URN:botframework:WebSocket:wss://beep.com',
-            'URN:botframework:WebSocket:http://beep.com',
-        ];
-
-        streaming.forEach(s =>
-        {
-            activity.serviceUrl = s;
-            assert(TurnContext.isFromStreamingConnection(activity), 'did not detect streaming');
-        });
-    });
-
-    it ('should identify http connections', function() {
-        let activity = {
-            type: 'message',
-            text: '<at>TestOAuth619</at> test activity',
-            recipient: { id: 'TestOAuth619' },
-        };
-
-        const streaming = [
-            'http://yayay.com',
-            'https://yayay.com',
-            'HTTP://yayay.com',
-            'HTTPS://yayay.com',
-        ];
-
-        streaming.forEach(s =>
-        {
-            activity.serviceUrl = s;
-            assert(!TurnContext.isFromStreamingConnection(activity), 'incorrectly detected streaming');
+    it(`should clear existing activity.id in context.sendActivity().`, function (done) {
+        const context = new TurnContext(new SendAdapter(), testMessage);
+        context.sendActivity(testMessage).then((response) => {
+            assert(response, `response is missing.`);
+            assert(response.id === undefined, `invalid response id of "${response.id}" sent back. Should be 'undefined'`);
+            done();
         });
     });
 });

@@ -46,7 +46,7 @@ export class Office365CardsBot extends TeamsActivityHandler {
         });
     }
 
-    protected async onTeamsO365ConnectorCardAction(context: TurnContext, query: O365ConnectorCardActionQuery): Promise<void> {
+    protected async handleTeamsO365ConnectorCardAction(context: TurnContext, query: O365ConnectorCardActionQuery): Promise<void> {
         await context.sendActivity(MessageFactory.text(`O365ConnectorCardActionQuery event value: ${JSON.stringify(query)}`));
     }
 

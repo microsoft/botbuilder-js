@@ -8,9 +8,10 @@ import {
     Attachment,
     CardFactory,
     MessageFactory,
+    TaskModuleContinueResponse,
     TaskModuleMessageResponse,
     TaskModuleRequest,
-    TaskModuleResponseBase,
+    TaskModuleResponse,
     TaskModuleTaskInfo,
     TurnContext,
 } from 'botbuilder-core';
@@ -21,32 +22,43 @@ export class TaskModuleBot  extends TeamsActivityHandler {
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
-            const card = this.GetTaskModuleHeroCard();
+            const card = this.getTaskModuleHeroCard();
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);
             await next();
         });
     }
 
-    protected async onTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleTaskInfo> {
-        var reply = MessageFactory.text("OnTeamsTaskModuleFetchAsync TaskModuleRequest" + JSON.stringify(taskModuleRequest));
+    protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
+        var reply = MessageFactory.text("handleTeamsTaskModuleFetchAsync TaskModuleRequest" + JSON.stringify(taskModuleRequest));
         await context.sendActivity(reply);
+
         return {
-            card: this.GetTaskModuleAdaptiveCard(),
-            height: 200,
-            width: 400,
-            title: "Adaptive Card: Inputs",
-        };
+            task: { 
+                type: "continue", 
+                value: {
+                    card: this.getTaskModuleAdaptiveCard(),
+                    height: 200,
+                    width: 400,
+                    title: "Adaptive Card: Inputs",
+                } as TaskModuleTaskInfo, 
+            } as TaskModuleContinueResponse
+        } as TaskModuleResponse;
     }
-    // TaskModuleResponseBase: type:
-    protected async onTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponseBase | void> {
-        var reply = MessageFactory.text("OnTeamsTaskModuleFetchAsync Value: " + JSON.stringify(taskModuleRequest));
+    
+    protected async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
+        var reply = MessageFactory.text("handleTeamsTaskModuleFetchAsync Value: " + JSON.stringify(taskModuleRequest));
         await context.sendActivity(reply);
-        var response : TaskModuleMessageResponse = { type: "message", value: "Hello", };
-        return <TaskModuleResponseBase> response ;
+
+        return {
+            task: { 
+                type: "message", 
+                value: "Hello", 
+            } as TaskModuleMessageResponse
+        } as TaskModuleResponse;
     }
 
-    private GetTaskModuleHeroCard() : Attachment {
+    private getTaskModuleHeroCard() : Attachment {
         return CardFactory.heroCard("Task Module Invocation from Hero Card", 
             "This is a hero card with a Task Module Action button.  Click the button to show an Adaptive Card within a Task Module.",
             null, // No images
@@ -54,7 +66,7 @@ export class TaskModuleBot  extends TeamsActivityHandler {
             );
     }
 
-    private GetTaskModuleAdaptiveCard(): Attachment {
+    private getTaskModuleAdaptiveCard(): Attachment {
         return CardFactory.adaptiveCard({
             version: '1.0.0',
             type: 'AdaptiveCard',
