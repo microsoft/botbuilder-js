@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { CosmosDbStorage } = require('../');
-const { StorageBaseTests } = require('../../botbuilder/tests/storageBaseTests');
+const { StorageBaseTests } = require('../../botbuilder-core/tests/storageBaseTests');
 const { DocumentClient, UriFactory } = require('documentdb');
 const { MockMode, usingNock } = require('./mockHelper');
 const nock = require('nock');

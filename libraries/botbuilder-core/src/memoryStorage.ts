@@ -38,6 +38,7 @@ export class MemoryStorage  implements Storage {
     }
 
     public read(keys: string[]): Promise<StoreItems> {
+        if (!keys) { throw new ReferenceError(`Keys are required when reading.`); }
         return new Promise<StoreItems>((resolve: any, reject: any): void => {
             const data: StoreItems = {};
             keys.forEach((key: string) => {
@@ -51,6 +52,7 @@ export class MemoryStorage  implements Storage {
     }
 
     public write(changes: StoreItems): Promise<void> {
+        if (!changes) { throw new ReferenceError(`Changes are required when writing.`); }
         const that: MemoryStorage = this;
         function saveItem(key: string, item: any): void {
             const clone: any = {...item};
@@ -66,7 +68,7 @@ export class MemoryStorage  implements Storage {
                     saveItem(key, newItem);
                 } else {
                     const oldItem: any = <any>JSON.parse(old);
-                    if (newItem.eTag === oldItem.eTag) {
+                    if (newItem.eTag === oldItem.eTag || !newItem.eTag) {
                         saveItem(key, newItem);
                     } else {
                         reject(new Error(`Storage: error writing "${ key }" due to eTag conflict.`));

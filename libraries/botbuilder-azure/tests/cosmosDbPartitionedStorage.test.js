@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { CosmosDbPartitionedStorage } = require('../lib');
-const { StorageBaseTests } = require('../../botbuilder/tests/storageBaseTests');
+const { StorageBaseTests } = require('../../botbuilder-core/tests/storageBaseTests');
 const { CosmosClient } = require('@azure/cosmos');
 const { MockMode, usingNock } = require('./mockHelper');
 const nock = require('nock');
