@@ -1,0 +1,1048 @@
+[
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": "",
+        "status": 404,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "a02d6c0b-7d10-4986-be24-9512dce7e0d8",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-error-code",
+            "BlobNotFound",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": {
+            "id": "test%2Fconversations%2FConvo1",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "fakeInstanceId"
+                                },
+                                "stepIndex": 0
+                            }
+                        }
+                    ]
+                },
+                "eTag": "*"
+            }
+        },
+        "status": 201,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-MD5",
+            "wH1L74RIyEyaqKh4lUKixA==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "ETag",
+            "\"0x8D75BC7EA6128B0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "86b83f5a-817d-477c-97b0-10d928fa73e2",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Content-Length",
+            "257",
+            "Content-Type",
+            "application/octet-stream",
+            "Content-MD5",
+            "wH1L74RIyEyaqKh4lUKixA==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D75BC7EA6128B0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "fbcc50ed-e7ba-4204-9baa-27f5de1a2033",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-creation-time",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1?comp=metadata",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "ETag",
+            "\"0x8D75BC7EA6128B0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "bade75c4-6dc4-464c-bbaf-0f70049b9345",
+            "x-ms-version",
+            "2018-03-28",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "GET",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": "",
+        "status": 200,
+        "response": {
+            "id": "test%2Fconversations%2FConvo1",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "a95381ab-3b15-e9a8-95d5-18e79c366151"
+                                },
+                                "stepIndex": 0
+                            }
+                        }
+                    ]
+                },
+                "eTag": "*"
+            }
+        },
+        "rawHeaders": [
+            "Content-Length",
+            "257",
+            "Content-Type",
+            "application/octet-stream",
+            "Content-MD5",
+            "wH1L74RIyEyaqKh4lUKixA==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D75BC7EA6128B0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "df151298-9c47-451e-be62-aef1e14f44cd",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-creation-time",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": {
+            "id": "test%2Fconversations%2FConvo1",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "fakeInstanceId"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {}
+                            }
+                        }
+                    ]
+                },
+                "eTag": "*"
+            }
+        },
+        "status": 201,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-MD5",
+            "zpCe9f4tmAHpPpIVvlt9fw==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "ETag",
+            "\"0x8D75BC7EA737830\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "13168618-d547-47b2-8103-7085105db11f",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Content-Length",
+            "399",
+            "Content-Type",
+            "application/octet-stream",
+            "Content-MD5",
+            "zpCe9f4tmAHpPpIVvlt9fw==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D75BC7EA737830\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "9d14e5c7-3ca0-480d-87f9-5768c6a67e19",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-creation-time",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1?comp=metadata",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "ETag",
+            "\"0x8D75BC7EA737830\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "f502f8e3-bb85-4697-be96-25b1a6cea05c",
+            "x-ms-version",
+            "2018-03-28",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "GET",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": "",
+        "status": 200,
+        "response": {
+            "id": "test%2Fconversations%2FConvo1",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "a95381ab-3b15-e9a8-95d5-18e79c366151"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {}
+                            }
+                        }
+                    ]
+                },
+                "eTag": "*"
+            }
+        },
+        "rawHeaders": [
+            "Content-Length",
+            "399",
+            "Content-Type",
+            "application/octet-stream",
+            "Content-MD5",
+            "zpCe9f4tmAHpPpIVvlt9fw==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D75BC7EA737830\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "a5443901-bf4c-4a06-9720-788cdfe6c828",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-creation-time",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": {
+            "id": "test%2Fconversations%2FConvo1",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "fakeInstanceId"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 2
+                                }
+                            }
+                        }
+                    ]
+                },
+                "eTag": "*"
+            }
+        },
+        "status": 201,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-MD5",
+            "ybm4ZUvuUUGp56agFD695g==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "ETag",
+            "\"0x8D75BC7EA81A900\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "708b809e-f5c2-4cda-8ea7-bb99cb760081",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Content-Length",
+            "415",
+            "Content-Type",
+            "application/octet-stream",
+            "Content-MD5",
+            "ybm4ZUvuUUGp56agFD695g==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D75BC7EA81A900\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "60c90574-7150-453e-9857-1b197699af8a",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-creation-time",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1?comp=metadata",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "ETag",
+            "\"0x8D75BC7EA81A900\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "c103ef2b-eb63-4f06-bc2e-1e26c8f038d2",
+            "x-ms-version",
+            "2018-03-28",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "GET",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": "",
+        "status": 200,
+        "response": {
+            "id": "test%2Fconversations%2FConvo1",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "a95381ab-3b15-e9a8-95d5-18e79c366151"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 2
+                                }
+                            }
+                        }
+                    ]
+                },
+                "eTag": "*"
+            }
+        },
+        "rawHeaders": [
+            "Content-Length",
+            "415",
+            "Content-Type",
+            "application/octet-stream",
+            "Content-MD5",
+            "ybm4ZUvuUUGp56agFD695g==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D75BC7EA81A900\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "c377f555-a1e9-452d-889b-5c6985b21f94",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-creation-time",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": {
+            "id": "test%2Fconversations%2FConvo1",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "fakeInstanceId"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 3
+                                }
+                            }
+                        }
+                    ]
+                },
+                "eTag": "*"
+            }
+        },
+        "status": 201,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-MD5",
+            "ByT9eecw8dPeonlurf1c8Q==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "ETag",
+            "\"0x8D75BC7EA8EEF70\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "7f5f418c-0f2b-4640-be31-1e2d9670edf7",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Content-Length",
+            "415",
+            "Content-Type",
+            "application/octet-stream",
+            "Content-MD5",
+            "ByT9eecw8dPeonlurf1c8Q==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D75BC7EA8EEF70\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "4101ec59-9f0c-4c85-a0a1-ea56d1245052",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-creation-time",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1?comp=metadata",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "ETag",
+            "\"0x8D75BC7EA8EEF70\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "99214c1c-3f7d-4d06-9c87-024cd913bda5",
+            "x-ms-version",
+            "2018-03-28",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "GET",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": "",
+        "status": 200,
+        "response": {
+            "id": "test%2Fconversations%2FConvo1",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "a95381ab-3b15-e9a8-95d5-18e79c366151"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 3
+                                }
+                            }
+                        }
+                    ]
+                },
+                "eTag": "*"
+            }
+        },
+        "rawHeaders": [
+            "Content-Length",
+            "415",
+            "Content-Type",
+            "application/octet-stream",
+            "Content-MD5",
+            "ByT9eecw8dPeonlurf1c8Q==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D75BC7EA8EEF70\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "4ad460f9-b71a-4bb5-9552-82282cfa13c2",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-creation-time",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": {
+            "id": "test%2Fconversations%2FConvo1",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "fakeInstanceId"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 4
+                                }
+                            }
+                        }
+                    ]
+                },
+                "eTag": "*"
+            }
+        },
+        "status": 201,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-MD5",
+            "k3YaEp2/2NFN4wocwnOqrQ==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "ETag",
+            "\"0x8D75BC7EA9E31B0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "9c99efa2-7fd2-43ed-b1cb-1793b59fba99",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Content-Length",
+            "415",
+            "Content-Type",
+            "application/octet-stream",
+            "Content-MD5",
+            "k3YaEp2/2NFN4wocwnOqrQ==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D75BC7EA9E31B0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "787fa58b-3c90-4d1f-aa67-f3d6e0280b14",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-creation-time",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1?comp=metadata",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "ETag",
+            "\"0x8D75BC7EA9E31B0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "1e1292ab-9fac-471a-9370-17fe3562af03",
+            "x-ms-version",
+            "2018-03-28",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:28 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "GET",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": "",
+        "status": 200,
+        "response": {
+            "id": "test%2Fconversations%2FConvo1",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "a95381ab-3b15-e9a8-95d5-18e79c366151"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 4
+                                }
+                            }
+                        }
+                    ]
+                },
+                "eTag": "*"
+            }
+        },
+        "rawHeaders": [
+            "Content-Length",
+            "415",
+            "Content-Type",
+            "application/octet-stream",
+            "Content-MD5",
+            "k3YaEp2/2NFN4wocwnOqrQ==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D75BC7EA9E31B0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "fd51b167-7e19-41db-922c-a24c791eff0c",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-creation-time",
+            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:29 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": {
+            "id": "test%2Fconversations%2FConvo1",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "fakeInstanceId"
+                                },
+                                "stepIndex": 2
+                            }
+                        }
+                    ]
+                },
+                "eTag": "*"
+            }
+        },
+        "status": 201,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-MD5",
+            "xaZ9bpM4v26Oinq8ff1Zag==",
+            "Last-Modified",
+            "Mon, 28 Oct 2019 16:57:29 GMT",
+            "ETag",
+            "\"0x8D75BC7EAB27D00\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "0d7f7bbd-885d-43c1-b377-8b9c5bbe3ae8",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:29 GMT"
+        ]
+    }
+]

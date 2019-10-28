@@ -1,0 +1,444 @@
+[
+    {
+        "scope": "https://localhost:8081",
+        "method": "GET",
+        "path": "/",
+        "body": "",
+        "status": 200,
+        "response": {
+            "_self": "",
+            "id": "localhost",
+            "_rid": "localhost",
+            "media": "//media/",
+            "addresses": "//addresses/",
+            "_dbs": "//dbs/",
+            "writableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "readableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "userReplicationPolicy": {
+                "asyncReplication": false,
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "userConsistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "systemReplicationPolicy": {
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "readPolicy": {
+                "primaryReadCoefficient": 1,
+                "secondaryReadCoefficient": 1
+            },
+            "queryEngineConfiguration": "{\"maxSqlQueryInputLength\":262144,\"maxJoinsPerSqlQuery\":5,\"maxLogicalAndPerSqlQuery\":500,\"maxLogicalOrPerSqlQuery\":500,\"maxUdfRefPerSqlQuery\":10,\"maxInExpressionItemsCount\":16000,\"queryMaxInMemorySortDocumentCount\":500,\"maxQueryRequestTimeoutFraction\":0.9,\"sqlAllowNonFiniteNumbers\":false,\"sqlAllowAggregateFunctions\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"allowNewKeywords\":true,\"sqlAllowLike\":false,\"sqlAllowGroupByClause\":false,\"maxSpatialQueryCells\":12,\"spatialMaxGeometryPointCount\":256,\"sqlAllowTop\":true,\"enableSpatialIndexing\":true}"
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://localhost:8081/",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-max-media-storage-usage-mb",
+            "10240",
+            "x-ms-media-storage-usage-mb",
+            "0",
+            "x-ms-databaseaccount-consumed-mb",
+            "0",
+            "x-ms-databaseaccount-reserved-mb",
+            "0",
+            "x-ms-databaseaccount-provisioned-mb",
+            "0",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:00 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "POST",
+        "path": "/dbs",
+        "body": {
+            "query": "SELECT r._self FROM root r WHERE r.id = @id",
+            "parameters": [
+                {
+                    "name": "@id",
+                    "value": "test-db"
+                }
+            ]
+        },
+        "status": 200,
+        "response": {
+            "_rid": "",
+            "Databases": [
+                {
+                    "_self": "dbs/DHx0AA==/"
+                }
+            ],
+            "_count": 1
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Mon, 28 Oct 2019 16:49:23.988 GMT",
+            "x-ms-resource-quota",
+            "databases=100;",
+            "x-ms-resource-usage",
+            "databases=1;",
+            "lsn",
+            "1474",
+            "x-ms-item-count",
+            "1",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-quorum-acked-lsn",
+            "1474",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-transport-request-id",
+            "139",
+            "x-ms-cosmos-llsn",
+            "1474",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "1474",
+            "x-ms-session-token",
+            "0:1474",
+            "x-ms-request-charge",
+            "5.66",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "d8c0db28-6818-43dd-b994-8c25a541e48e",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:00 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "POST",
+        "path": "/dbs/DHx0AA==/colls/",
+        "body": {
+            "query": "SELECT r._self FROM root r WHERE r.id=@id",
+            "parameters": [
+                {
+                    "name": "@id",
+                    "value": "bot-storage"
+                }
+            ]
+        },
+        "status": 200,
+        "response": {
+            "_rid": "DHx0AA==",
+            "DocumentCollections": [],
+            "_count": 0
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Mon, 28 Oct 2019 16:49:23.988 GMT",
+            "x-ms-resource-quota",
+            "collections=5000;",
+            "x-ms-resource-usage",
+            "collections=0;",
+            "collection-partition-index",
+            "0",
+            "collection-service-index",
+            "0",
+            "lsn",
+            "1474",
+            "x-ms-item-count",
+            "0",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-alt-content-path",
+            "dbs/test-db",
+            "x-ms-quorum-acked-lsn",
+            "1474",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-transport-request-id",
+            "141",
+            "x-ms-cosmos-llsn",
+            "1474",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "1474",
+            "x-ms-session-token",
+            "0:1474",
+            "x-ms-request-charge",
+            "5.58",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "98347bbd-6c1b-42b0-9741-b7086802b916",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:00 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "POST",
+        "path": "/dbs/DHx0AA==/colls/",
+        "body": {
+            "id": "bot-storage"
+        },
+        "status": 201,
+        "response": {
+            "id": "bot-storage",
+            "indexingPolicy": {
+                "indexingMode": "consistent",
+                "automatic": true,
+                "includedPaths": [
+                    {
+                        "path": "/*",
+                        "indexes": [
+                            {
+                                "kind": "Range",
+                                "dataType": "Number",
+                                "precision": -1
+                            },
+                            {
+                                "kind": "Range",
+                                "dataType": "String",
+                                "precision": -1
+                            }
+                        ]
+                    }
+                ],
+                "excludedPaths": [
+                    {
+                        "path": "/\"_etag\"/?"
+                    }
+                ]
+            },
+            "geospatialConfig": {
+                "type": "Geography"
+            },
+            "_rid": "DHx0ALNkoTM=",
+            "_ts": 1572281820,
+            "_self": "dbs/DHx0AA==/colls/DHx0ALNkoTM=/",
+            "_etag": "\"00000000-0000-0000-8db0-b72676e101d5\"",
+            "_docs": "docs/",
+            "_sprocs": "sprocs/",
+            "_triggers": "triggers/",
+            "_udfs": "udfs/",
+            "_conflicts": "conflicts/"
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Mon, 28 Oct 2019 16:49:38.201 GMT",
+            "etag",
+            "\"00000000-0000-0000-8db0-b72676e101d5\"",
+            "x-ms-resource-quota",
+            "functions=25;storedProcedures=100;triggers=25;documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
+            "x-ms-resource-usage",
+            "functions=0;storedProcedures=0;triggers=0;documentSize=0;documentsSize=0;documentsCount=0;collectionSize=0;",
+            "collection-partition-index",
+            "0",
+            "collection-service-index",
+            "0",
+            "lsn",
+            "2842",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-alt-content-path",
+            "dbs/test-db",
+            "x-ms-quorum-acked-lsn",
+            "2842",
+            "x-ms-documentdb-collection-index-transformation-progress",
+            "100",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-item-lsn",
+            "2842",
+            "x-ms-transport-request-id",
+            "74",
+            "x-ms-cosmos-llsn",
+            "2842",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "2842",
+            "x-ms-cosmos-item-llsn",
+            "2842",
+            "x-ms-session-token",
+            "0:2842",
+            "x-ms-request-charge",
+            "1",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "764cd5ca-7ef4-47b1-b4f9-6e5a124067f6",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:00 GMT"
+        ]
+    },
+    {
+        "scope": "https://localhost:8081",
+        "method": "POST",
+        "path": "/dbs/DHx0AA==/colls/DHx0ALNkoTM=/docs/",
+        "body": {
+            "query": "SELECT c.id, c.realId, c.document, c._etag FROM c WHERE c.id in (@id0)",
+            "parameters": [
+                {
+                    "name": "@id0",
+                    "value": "unknown"
+                }
+            ]
+        },
+        "status": 200,
+        "response": {
+            "_rid": "DHx0ALNkoTM=",
+            "Documents": [],
+            "_count": 0
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-last-state-change-utc",
+            "Mon, 28 Oct 2019 16:49:38.201 GMT",
+            "x-ms-resource-quota",
+            "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
+            "x-ms-resource-usage",
+            "documentSize=0;documentsSize=0;documentsCount=0;collectionSize=0;",
+            "lsn",
+            "2842",
+            "x-ms-item-count",
+            "0",
+            "x-ms-schemaversion",
+            "1.8",
+            "x-ms-alt-content-path",
+            "dbs/test-db/colls/bot-storage",
+            "x-ms-quorum-acked-lsn",
+            "2842",
+            "x-ms-current-write-quorum",
+            "1",
+            "x-ms-current-replica-set-size",
+            "1",
+            "x-ms-xp-role",
+            "0",
+            "x-ms-global-Committed-lsn",
+            "-1",
+            "x-ms-number-of-read-regions",
+            "0",
+            "x-ms-transport-request-id",
+            "75",
+            "x-ms-cosmos-llsn",
+            "2842",
+            "x-ms-cosmos-quorum-acked-llsn",
+            "2842",
+            "x-ms-session-token",
+            "0:2842",
+            "x-ms-request-charge",
+            "2.86",
+            "x-ms-serviceversion",
+            "version=2.4.0.0",
+            "x-ms-activity-id",
+            "7459fadf-63ef-4e59-a086-a797ecb67de6",
+            "x-ms-gatewayversion",
+            "version=2.4.0.0",
+            "Date",
+            "Mon, 28 Oct 2019 16:57:00 GMT"
+        ]
+    }
+]
