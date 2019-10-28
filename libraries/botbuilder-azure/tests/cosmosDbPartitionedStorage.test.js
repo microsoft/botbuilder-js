@@ -84,24 +84,24 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function() {
         assert.throws(() => new CosmosDbPartitionedStorage(noContainerId), ReferenceError('containerId for CosmosDB is required.'));
     });
 
-    // it('passes cosmosClientOptions to CosmosClient', async function() {
-    //     const { nockDone } = await usingNock(this.test, mode, options);
+    it('passes cosmosClientOptions to CosmosClient', async function() {
+        const { nockDone } = await usingNock(this.test, mode, options);
 
-    //     const settingsWithClientOptions = getSettings();
-    //     settingsWithClientOptions.cosmosClientOptions = {
-    //         agent: new https.Agent({ rejectUnauthorized: false }),
-    //         connectionPolicy: { requestTimeout: 999 },
-    //         userAgentSuffix: 'test', 
-    //     };
+        const settingsWithClientOptions = getSettings();
+        settingsWithClientOptions.cosmosClientOptions = {
+            agent: new https.Agent({ rejectUnauthorized: false }),
+            connectionPolicy: { requestTimeout: 999 },
+            userAgentSuffix: 'test', 
+        };
         
-    //     const client = new CosmosDbPartitionedStorage(settingsWithClientOptions);
-    //     await client.initialize(); // Force client to go through initialization
+        const client = new CosmosDbPartitionedStorage(settingsWithClientOptions);
+        await client.initialize(); // Force client to go through initialization
         
-    //     assert.strictEqual(client.client.clientContext.connectionPolicy.requestTimeout, 999);
-    //     assert.strictEqual(client.client.clientContext.cosmosClientOptions.userAgentSuffix, 'test');
+        assert.strictEqual(client.client.clientContext.connectionPolicy.requestTimeout, 999);
+        assert.strictEqual(client.client.clientContext.cosmosClientOptions.userAgentSuffix, 'test');
 
-    //     return nockDone();
-    // });
+        return nockDone();
+    });
 });
 
 describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
