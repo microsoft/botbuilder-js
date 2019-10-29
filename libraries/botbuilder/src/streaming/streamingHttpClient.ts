@@ -1,15 +1,13 @@
 /**
- * @module botframework-streaming
+ * @module botbuilder
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
-import { WebResource, HttpOperationResponse, HttpClient } from '@azure/ms-rest-js';
-
-import { IStreamingTransportServer } from '../interfaces';
-import { StreamingRequest } from '../streamingRequest';
+import { WebResource, HttpOperationResponse, HttpClient } from 'botframework-connector/node_modules/@azure/ms-rest-js';
+import { IStreamingTransportServer, StreamingRequest } from 'botframework-streaming';
 
 export class StreamingHttpClient implements HttpClient {
     private readonly server: IStreamingTransportServer;

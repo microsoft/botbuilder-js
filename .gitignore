@@ -309,4 +309,3 @@ package-lock.json
 
 *.tsbuildinfo
 *.map
-*.js

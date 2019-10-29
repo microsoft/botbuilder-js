@@ -1,8 +1,7 @@
-const { StreamingAdapter } = require('../');
-const { StatusCodes } = require('botbuilder');
+const { StatusCodes, StreamingAdapter } = require('../');
 const { ActivityHandler } = require('botbuilder-core');
 const chai = require('chai');
-var expect = chai.expect;
+const expect = chai.expect;
 
 class FauxSock {
     constructor(contentString) {

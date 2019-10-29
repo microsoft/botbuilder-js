@@ -23,6 +23,7 @@
     "@types/node": "^10.12.18",
     "botbuilder-core": "4.1.6",
     "botframework-connector": "4.1.6",
+    "botframework-streaming": "4.1.6",
     "filenamify": "^4.1.0",
     "fs-extra": "^7.0.1"
   },
