@@ -1,5 +1,5 @@
 /**
- * @module botframework-streaming
+ * @module botbuilder
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -14,21 +14,27 @@ import {
     StatusCodes,
     WebRequest,
     WebResponse
-} from 'botbuilder';
+} from '../botFrameworkAdapter';
 import {
     Activity, ActivityTypes, BotCallbackHandlerKey,
     IUserTokenProvider, ResourceResponse, TurnContext } from 'botbuilder-core';
-import { AuthenticationConstants, ChannelValidation, ConnectorClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider } from 'botbuilder/node_modules/botframework-connector';
+import {
+    AuthenticationConstants,
+    ChannelValidation,
+    ConnectorClient,
+    GovernmentConstants,
+    GovernmentChannelValidation,
+    JwtTokenValidation,
+    MicrosoftAppCredentials,
+    SimpleCredentialProvider
+} from 'botframework-connector';
 import { IncomingMessage } from 'http';
 import * as os from 'os';
 
 import { StreamingHttpClient } from './streamingHttpClient';
 import { TokenResolver } from './tokenResolver';
 
-import { IReceiveRequest, ISocket, IStreamingTransportServer } from '../interfaces';
-import { NamedPipeServer } from '../namedPipe';
-import { StreamingResponse } from '../streamingResponse';
-import { NodeWebSocketFactory, NodeWebSocketFactoryBase, WebSocketServer } from '../webSocket';
+import { IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
 // Retrieve additional information, i.e., host operating system, host OS release, architecture, Node.js version
 const ARCHITECTURE: any = os.arch();

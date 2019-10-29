@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
-export { StreamingAdapter, StreamingHttpClient, TokenResolver } from './adapters';
 export { ContentStream } from './contentStream';
 export { HttpContent } from './httpContentStream';
 export {
