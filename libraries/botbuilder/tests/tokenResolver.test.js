@@ -1,8 +1,8 @@
 const assert = require('assert');
-const { TurnContext, CardFactory, BotCallbackHandlerKey } = require('botbuilder-core');
-const { StreamingAdapter, TokenResolver } = require('../');
+const { BotCallbackHandlerKey, CardFactory, TurnContext } = require('botbuilder-core');
+const { BotFrameworkAdapter, TokenResolver } = require('../');
 
-class MockAdapter extends StreamingAdapter {
+class MockAdapter extends BotFrameworkAdapter {
     constructor(botLogic, getUserTokenCallback) {
         super(undefined);
 

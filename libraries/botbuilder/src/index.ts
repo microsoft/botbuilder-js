@@ -9,7 +9,7 @@
 export * from './botFrameworkAdapter';
 export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
-export { StreamingAdapter, StreamingHttpClient, TokenResolver } from './streaming';
+export * from './streaming';
 export * from './teamsActivityHandler';
 export * from './teamsActivityHelpers';
 export * from './teamsInfo';

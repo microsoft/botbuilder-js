@@ -1,6 +1,6 @@
-const { StatusCodes, StreamingAdapter } = require('../');
 const { ActivityHandler } = require('botbuilder-core');
 const chai = require('chai');
+const { BotFrameworkAdapter, StatusCodes } = require('../');
 const expect = chai.expect;
 
 class FauxSock {
@@ -103,7 +103,7 @@ class TestAdapterSettings {
     }
 }
 
-describe('BotFrameworkStreamingAdapter tests', () => {
+describe('BotFrameworkAdapter Streaming tests', () => {
 
     it('has the correct status codes', () => {
         expect(StatusCodes.OK).to.equal(200);
@@ -117,24 +117,23 @@ describe('BotFrameworkStreamingAdapter tests', () => {
     });
 
     it('gets constructed properly', () => {
-        let handler = new StreamingAdapter();
+        const adapter = new BotFrameworkAdapter();
 
-        expect(handler).to.be.instanceOf(StreamingAdapter);
+        expect(adapter).to.be.instanceOf(BotFrameworkAdapter);
     });
 
     it('starts and stops a namedpipe server', () => {
-        let handler = new StreamingAdapter();
+        const adapter = new BotFrameworkAdapter();
 
-        handler.useNamedPipe('PipeyMcPipeface', async (context) => {
-            // Route to bot
+        adapter.useNamedPipe('PipeyMcPipeface', async (context) => {
             await bot.run(context);
         });
-        expect(handler.streamingServer.disconnect()).to.not.throw;
+        expect(adapter.streamingServer.disconnect()).to.not.throw;
     });
 
     it('starts and stops a websocket server', async () => {
         const bot = new ActivityHandler();
-        const handler = new StreamingAdapter(new TestAdapterSettings());
+        const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
         const request = new TestRequest();
         request.setIsUpgradeRequest(true);
         request.headers = [];
@@ -152,15 +151,14 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             end: function () { return; },
         };
         response.setClaimUpgrade({ socket: fakeSocket, head: 'websocket' });
-        await handler.useWebSocket(request, response, async (context) => {
-            // Route to bot
+        await adapter.useWebSocket(request, response, async (context) => {
             await bot.run(context);
         });
     });
 
     it('returns a connector client', async () => {
-        let bot = new ActivityHandler();
-        let handler = new StreamingAdapter(new TestAdapterSettings());
+        const bot = new ActivityHandler();
+        const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
         let request = new TestRequest();
         request.setIsUpgradeRequest(true);
         request.headers = [];
@@ -179,18 +177,17 @@ describe('BotFrameworkStreamingAdapter tests', () => {
         response.socket = fakeSocket;
         response.setClaimUpgrade({ socket: fakeSocket, head: 'websocket' });
 
-        await handler.useWebSocket(request, response, async (context) => {
-            // Route to bot
+        await adapter.useWebSocket(request, response, async (context) => {
             await bot.run(context);
         });
-        const cc = handler.createConnectorClient('urn:test');
+        const cc = adapter.createConnectorClient('urn:test');
         expect(cc.baseUri).to.equal('urn:test');
     });
 
     describe('useWebSocket()', () => {
         it('connects', async () => {
-            let bot = new ActivityHandler();
-            let handler = new StreamingAdapter(new TestAdapterSettings());
+            const bot = new ActivityHandler();
+            const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
             let request = new TestRequest();
             request.setIsUpgradeRequest(true);
             request.headers = [];
@@ -209,23 +206,21 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             response.socket = fakeSocket;
             response.setClaimUpgrade({ socket: fakeSocket, head: 'websocket' });
 
-            await handler.useWebSocket(request, response, async (context) => {
-                // Route to bot
+            await adapter.useWebSocket(request, response, async (context) => {
                 await bot.run(context);
             });
         });
 
         it('returns status code 401 when request is not authorized', async () => {
-            let bot = new ActivityHandler();
+            const bot = new ActivityHandler();
             const settings = new TestAdapterSettings('appId', 'password');
-            let handler = new StreamingAdapter(settings);
+            const adapter = new BotFrameworkAdapter(settings);
             let request = new TestRequest();
             request.setIsUpgradeRequest(true);
             request.setHeaders({ channelid: 'fakechannel', authorization: 'donttrustme' });
             let response = new TestResponse();
 
-            await handler.useWebSocket(request, response, async (context) => {
-                // Route to bot
+            await adapter.useWebSocket(request, response, async (context) => {
                 await bot.run(context);
                 throw new Error('useWebSocket should have thrown an error');
             }).catch(err => {
@@ -236,7 +231,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
 
     describe('processRequest()', () => {
         it('returns a 400 when the request is missing verb', async () => {
-            let handler = new StreamingAdapter();
+            const adapter = new BotFrameworkAdapter();
             let request = new TestRequest();
             request.verb = undefined;
             request.path = '/api/messages';
@@ -245,12 +240,12 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             };
             request.streams[0] = fakeStream;
 
-            const response = await handler.processRequest(request);
+            const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(400);
         });
 
         it('returns a 400 when the request is missing path', async () => {
-            let handler = new StreamingAdapter();
+            const adapter = new BotFrameworkAdapter();
             let request = new TestRequest();
             request.verb = 'POST';
             request.path = undefined;
@@ -259,23 +254,23 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             };
             request.streams[0] = fakeStream;
 
-            const response = await handler.processRequest(request);
+            const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(400);
         });
 
         it('returns a 400 when the request body is missing', async () => {
-            let handler = new StreamingAdapter();
+            const adapter = new BotFrameworkAdapter();
             let request = new TestRequest('POST', '/api/messages');
             request.verb = 'POST';
             request.path = '/api/messages';
             request.streams = undefined;
 
-            const response = await handler.processRequest(request);
+            const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(400);
         });
 
         it('returns user agent information when a GET hits the version endpoint', async () => {
-            let handler = new StreamingAdapter();
+            const adapter = new BotFrameworkAdapter();
             let request = new TestRequest();
             request.verb = 'GET';
             request.path = '/api/version';
@@ -284,13 +279,13 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             };
             request.streams[0] = fakeStream;
 
-            const response = await handler.processRequest(request);
+            const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(200);
             expect(response.streams[0].content).to.not.be.undefined;
         });
 
         it('returns user agent information from cache when a GET hits the version endpoint more than once', async () => {
-            let handler = new StreamingAdapter();
+            const adapter = new BotFrameworkAdapter();
             let request = new TestRequest();
             request.verb = 'GET';
             request.path = '/api/version';
@@ -299,17 +294,17 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             };
             request.streams[0] = fakeStream;
 
-            const response = await handler.processRequest(request);
+            const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(200);
             expect(response.streams[0].content).to.not.be.undefined;
 
-            const response2 = await handler.processRequest(request);
+            const response2 = await adapter.processRequest(request);
             expect(response2.statusCode).to.equal(200);
             expect(response2.streams[0].content).to.not.be.undefined;
         });
 
         it('returns 405 for unsupported methods', async () => {
-            let handler = new StreamingAdapter();
+            const adapter = new BotFrameworkAdapter();
             let request = new TestRequest();
             request.verb = 'UPDATE';
             request.path = '/api/version';
@@ -318,12 +313,12 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             };
             request.streams[0] = fakeStream;
 
-            const response = await handler.processRequest(request);
+            const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(405);
         });
 
         it('returns 404 for unsupported paths', async () => {
-            let handler = new StreamingAdapter();
+            const adapter = new BotFrameworkAdapter();
             let request = new TestRequest();
             request.verb = 'POST';
             request.path = '/api/supersecretbackdoor';
@@ -332,13 +327,13 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             };
             request.streams[0] = fakeStream;
 
-            const response = await handler.processRequest(request);
+            const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(404);
         });
 
         it('processes a well formed request when there is no middleware with a non-Invoke activity type', async () => {
-            let bot = new ActivityHandler();
-            let handler = new StreamingAdapter();
+            const bot = new ActivityHandler();
+            const adapter = new BotFrameworkAdapter();
             let request = new TestRequest();
             request.verb = 'POST';
             request.path = '/api/messages';
@@ -347,18 +342,17 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             };
             request.streams[0] = fakeStream;
 
-            handler.logic = async (context) => {
-                // Route to bot
+            adapter.logic = async (context) => {
                 await bot.run(context);
             };
 
-            const response = await handler.processRequest(request);
+            const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(200);
         });
 
         it('returns a 501 when activity type is invoke, but the activity is invalid', async () => {
-            let bot = new ActivityHandler();
-            let handler = new StreamingAdapter();
+            const bot = new ActivityHandler();
+            const adapter = new BotFrameworkAdapter();
             let request = new TestRequest();
             request.verb = 'POST';
             request.path = '/api/messages';
@@ -367,18 +361,17 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             };
             request.streams[0] = fakeStream;
 
-            handler.logic = async (context) => {
-                // Route to bot
+            adapter.logic = async (context) => {
                 await bot.run(context);
             };
 
-            const response = await handler.processRequest(request);
+            const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(501);
         });
 
         it('returns a 500 when bot can not run', async () => {
             const MiddleWare = require('botbuilder-core');
-            let bot = {};
+            const bot = {};
             let mw = {
                 async onTurn(context, next) {
                     console.log('Middleware executed!');
@@ -387,7 +380,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             };
             let mwset = [];
             mwset.push(mw);
-            let handler = new StreamingAdapter({ bot: bot, middleWare: mwset });
+            const adapter = new BotFrameworkAdapter({ bot: bot, middleWare: mwset });
             let request = new TestRequest();
             request.verb = 'POST';
             request.path = '/api/messages';
@@ -396,16 +389,16 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             };
             request.streams[0] = fakeStream;
 
-            const response = await handler.processRequest(request);
+            const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(500);
         });
 
         it('executes middleware', async () => {
             var sinon = require('sinon');
-            let bot = new ActivityHandler();
+            const bot = new ActivityHandler();
             bot.run = function (turnContext) { return Promise.resolve(); };
 
-            let handler = new StreamingAdapter();
+            const adapter = new BotFrameworkAdapter();
             let middlewareCalled = false;
             const middleware = {
                 async onTurn(context, next) {
@@ -414,7 +407,7 @@ describe('BotFrameworkStreamingAdapter tests', () => {
                 }
             }
 
-            handler.use(middleware);
+            adapter.use(middleware);
 
             const runSpy = sinon.spy(bot, 'run');
             let request = new TestRequest();
@@ -425,12 +418,11 @@ describe('BotFrameworkStreamingAdapter tests', () => {
             };
             request.streams[0] = fakeStream;
 
-            handler.logic = async (context) => {
-                // Route to bot
+            adapter.logic = async (context) => {
                 await bot.run(context);
             };
 
-            const response = await handler.processRequest(request);
+            const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(501);
             expect(runSpy.called).to.be.true;
             expect(middlewareCalled).to.be.true;
@@ -438,8 +430,8 @@ describe('BotFrameworkStreamingAdapter tests', () => {
     });
 
     it('sends a request', async () => {
-        let bot = new ActivityHandler();
-        let handler = new StreamingAdapter(new TestAdapterSettings());
+        const bot = new ActivityHandler();
+        const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
         let request = new TestRequest();
         request.setIsUpgradeRequest(true);
         request.headers = [];
@@ -461,57 +453,38 @@ describe('BotFrameworkStreamingAdapter tests', () => {
         response.setClaimUpgrade({ socket: fakeSocket, head: 'websocket' });
 
         try {
-            await handler.useWebSocket(request, response, async (context) => {
-                // Route to bot
+            await adapter.useWebSocket(request, response, async (context) => {
                 await bot.run(context);
             })
         } catch (err) {
             throw err;
         }
 
-        let connection = handler.createConnectorClient('fakeUrl');
+        let connection = adapter.createConnectorClient('fakeUrl');
         connection.sendRequest({ method: 'POST', url: 'testResultDotCom', body: 'Test body!' });
         expect(spy.called).to.be.true;
     }).timeout(2000);
 
     describe('private methods', () => {
         it('should identify streaming connections', function () {
-            let activity = {
-                type: 'message',
-                text: '<at>TestOAuth619</at> test activity',
-                recipient: { id: 'TestOAuth619' },
-            };
-
-            const streaming = [
+            const serviceUrls = [
                 'urn:botframework:WebSocket:wss://beep.com',
-                'urn:botframework:WebSocket:http://beep.com',
-                'URN:botframework:WebSocket:wss://beep.com',
                 'URN:botframework:WebSocket:http://beep.com',
             ];
 
-            streaming.forEach(s => {
-                activity.serviceUrl = s;
-                expect(StreamingAdapter.isFromStreamingConnection(activity)).to.be.true;
+            serviceUrls.forEach(serviceUrl => {
+                expect(BotFrameworkAdapter.isStreamingServiceUrl(serviceUrl)).to.be.true;
             });
         });
 
         it('should identify http connections', function () {
-            let activity = {
-                type: 'message',
-                text: '<at>TestOAuth619</at> test activity',
-                recipient: { id: 'TestOAuth619' },
-            };
-
-            const streaming = [
+            const serviceUrls = [
                 'http://yayay.com',
-                'https://yayay.com',
-                'HTTP://yayay.com',
                 'HTTPS://yayay.com',
             ];
 
-            streaming.forEach(s => {
-                activity.serviceUrl = s;
-                expect(StreamingAdapter.isFromStreamingConnection(activity)).to.be.false;
+            serviceUrls.forEach(serviceUrl => {
+                expect(BotFrameworkAdapter.isStreamingServiceUrl(serviceUrl)).to.be.false;
             });
         });
     });

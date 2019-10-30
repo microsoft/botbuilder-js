@@ -6,6 +6,5 @@
  * Licensed under the MIT License.
  */
 
-export * from './streamingAdapter';
 export * from './streamingHttpClient';
 export * from './tokenResolver';
