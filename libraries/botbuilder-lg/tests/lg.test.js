@@ -486,20 +486,31 @@ describe('LG', function () {
         assert.strictEqual(lgResource.Templates[1].Parameters[1], 'name');
         assert.strictEqual(lgResource.Templates[1].Body, '- hi ');
 
-        lgResource = lgResource.updateTemplate('newtemplate', ['newage', 'newname'], '- new hi\r\n#hi');
-        assert.strictEqual(lgResource.Templates.length, 2);
+        lgResource = lgResource.addTemplate('newtemplate2', undefined, '- hi2 ');
+        assert.strictEqual(lgResource.Templates.length, 3);
+        assert.strictEqual(lgResource.Templates[2].Name, 'newtemplate2');
+        assert.strictEqual(lgResource.Templates[2].Body, '- hi2 ');
+
+        lgResource = lgResource.updateTemplate('newtemplate', 'newtemplateName', ['newage', 'newname'], '- new hi\r\n#hi');
+        assert.strictEqual(lgResource.Templates.length, 3);
         assert.strictEqual(lgResource.Imports.length, 0);
-        assert.strictEqual(lgResource.Templates[1].Name, 'newtemplate');
+        assert.strictEqual(lgResource.Templates[1].Name, 'newtemplateName');
         assert.strictEqual(lgResource.Templates[1].Parameters.length, 2);
         assert.strictEqual(lgResource.Templates[1].Parameters[0], 'newage');
         assert.strictEqual(lgResource.Templates[1].Parameters[1], 'newname');
         assert.strictEqual(lgResource.Templates[1].Body, '- new hi\r\n- #hi');
 
-        lgResource = lgResource.deleteTemplate('newtemplate');
-        assert.strictEqual(lgResource.Templates.length, 1);
+        lgResource = lgResource.updateTemplate('newtemplate2', 'newtemplateName2', ['newage2', 'newname2'], '- new hi\r\n#hi2');
+        assert.strictEqual(lgResource.Templates.length, 3);
         assert.strictEqual(lgResource.Imports.length, 0);
-        assert.strictEqual(lgResource.Templates[0].Name, 'wPhrase');
-        assert.strictEqual(lgResource.Templates[0].Body.replace(/\r\n/g, '\n'), '- Hi\n- Hello\n- Hiya\n- Hi');
+        assert.strictEqual(lgResource.Templates[2].Name, 'newtemplateName2');
+        assert.strictEqual(lgResource.Templates[2].Body, '- new hi\r\n- #hi2');
+
+        lgResource = lgResource.deleteTemplate('newtemplateName');
+        assert.strictEqual(lgResource.Templates.length, 2);
+
+        lgResource = lgResource.deleteTemplate('newtemplateName2');
+        assert.strictEqual(lgResource.Templates.length, 1);
     });
 
     it('TestMemoryScope', function () {
