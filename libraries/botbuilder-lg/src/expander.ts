@@ -111,7 +111,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         const idToStringMap: Map<string, string> = new Map<string, string>();
         const stb: lp.StructuredTemplateBodyContext = ctx.structuredTemplateBody();
         const result: any = {};
-        const typeName: string = stb.structuredBodyNameLine().STRUCTURED_CONTENT().text;
+        const typeName: string = stb.structuredBodyNameLine().STRUCTURED_CONTENT().text.trim();
         result.$type = typeName;
         let expandedResult: any[] = [result];
         const bodys: TerminalNode[] = stb.structuredBodyContentLine().STRUCTURED_CONTENT();

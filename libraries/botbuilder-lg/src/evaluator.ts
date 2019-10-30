@@ -79,7 +79,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
     public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): any {
         const result: any = {};
-        const typeName: string = ctx.structuredBodyNameLine().STRUCTURED_CONTENT().text;
+        const typeName: string = ctx.structuredBodyNameLine().STRUCTURED_CONTENT().text.trim();
         result.$type = typeName;
 
         const bodys: TerminalNode[] = ctx.structuredBodyContentLine().STRUCTURED_CONTENT();

@@ -134,6 +134,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     private _expressionParser: IExpressionParser;
     private readonly expressionRecognizeRegex: RegExp = new RegExp(/\}(?!\\).+?\{(?!\\)@?/g);
     private readonly escapeSeperatorRegex : RegExp = new RegExp(/\|(?!\\)/g);
+    private readonly structuredNameRegex : RegExp = new RegExp(/^[a-z0-9_][a-z0-9_\-\.]*$/i);
 
     constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -238,6 +239,14 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
     public visitStructuredTemplateBody(context: lp.StructuredTemplateBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
+
+        const typeName: string = context.structuredBodyNameLine().STRUCTURED_CONTENT().text.trim();
+        if (!this.structuredNameRegex.test(typeName)) {
+            result.push(this.BuildLGDiagnostic({
+                message: `Structured type ${typeName} is invalid. Letter, number, '_', '-' and '.' is allowed.`,
+                context: context.structuredBodyNameLine()}));
+        }
+
         const content: lp.StructuredBodyContentLineContext = context.structuredBodyContentLine();
         let bodys: TerminalNode[] = [];
         if (content !== undefined) {
