@@ -48,6 +48,7 @@ import {
     TaskModuleTaskInfo,
     TeamsActivityHandler,
     TeamsChannelData,
+    teamsGetChannelId,
     TeamDetails,
     TeamInfo,
     TeamsInfo,
@@ -209,17 +210,25 @@ export class IntegrationBot extends TeamsActivityHandler {
 
         const responseActivity = {type: 'message', attachments: [adaptiveCard] } as Activity;
 
-        try {
-            // Send to channel where messaging extension invoked.
-            let results = await this.teamsCreateConversation(context, context.activity.channelData.channel.id, responseActivity);
-        } catch(ex) {
-            console.error('ERROR Sending to Channel:');
-        }
+        // try {
+        //     // Send to channel where messaging extension invoked.
+        //     let results = await this.teamsCreateConversation(context, context.activity.channelData.channel.id, responseActivity);
+        // } catch(ex) {
+        //     console.error('ERROR Sending to Channel:');
+        // }
 
         try {
             // Send card to "General" channel.
-            const teamDetails: TeamDetails = await TeamsInfo.getTeamDetails(context);
-            let results = await this.teamsCreateConversation(context, teamDetails.id, responseActivity);
+            //const teamDetails: TeamDetails = await TeamsInfo.getTeamDetails(context);
+            const channelId = teamsGetChannelId(context.activity);
+            const adapter = <BotFrameworkAdapter>context.adapter;    
+            const connectorClient = adapter.createConnectorClient(context.activity.serviceUrl);
+            let results = await connectorClient.conversations.createConversation(
+            { 
+              isGroup: true, 
+              channelData: {channel: { id: channelId } as ChannelInfo } as TeamsChannelData,
+              activity: responseActivity
+            } as ConversationParameters);
         } catch(ex) {
             console.error('ERROR Sending to General channel:' + JSON.stringify(ex));
         }
@@ -389,7 +398,6 @@ export class IntegrationBot extends TeamsActivityHandler {
     }
 
     protected async handleTeamsMessagingExtensionConfigurationQuerySettingUrl(context: TurnContext, query: MessagingExtensionQuery){
-        console.log("HANDLETEAMSMESSAGINGEXTENSIONCONFIGURATIONQUERYSETTINGURL\nCONTEXT:\n" + JSON.stringify(context) + '\nQUERY:\n' + JSON.stringify(query));
         
         return <MessagingExtensionActionResponse>
         {
@@ -409,8 +417,6 @@ export class IntegrationBot extends TeamsActivityHandler {
     }
 
     protected async handleTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings: MessagingExtensionQuery){
-        console.log("HANDLETEAMSMESSAGINGEXTENSIONCONFIGURATIONSETTING\nCONTEXT:\n" + JSON.stringify(context) + '\nSETTINGS:\n' + JSON.stringify(settings));
-        
         // This event is fired when the settings page is submitted
         const accessor = this.userState.createProperty<{ useHeroCard: boolean }>(RICH_CARD_PROPERTY);
         const config = await accessor.get(context, { useHeroCard: true });
@@ -422,7 +428,7 @@ export class IntegrationBot extends TeamsActivityHandler {
             config.useHeroCard = false;
         }
         else {
-            await context.sendActivity(`onTeamsMessagingExtensionSettings event fired with ${ JSON.stringify(settings) }`);
+            await context.sendActivity(`handleTeamsMessagingExtensionSetting event fired with ${ JSON.stringify(settings) }`);
         }
 
         // We should save it after we send the message back to Teams.
@@ -697,80 +703,68 @@ export class IntegrationBot extends TeamsActivityHandler {
     }
 
     private async handleBotCommand(text, context, next) : Promise<void> {
-        if (text === 'delete') {
-            for (const activityId of this.activityIds) {
-                await context.deleteActivity(activityId);
-            }
+        switch (text.toLowerCase()) {
+            case "delete":
+                await this.handleDeleteActivities(context);
+                break;
+            case "update":
+                await this.handleUpdateActivities(context);
+                break;
 
-            this.activityIds = [];
-        } 
-        else {
-            let reply: Partial<Activity>;
-            switch (text.toLowerCase()) {
-                case '1':
-                    await this.sendAdaptiveCard1(context);
-                    break;
+            case '1':
+                await this.sendAdaptiveCard1(context);
+                break;
 
-                case '2':
-                    await this.sendAdaptiveCard2(context);
-                    break;
+            case '2':
+                await this.sendAdaptiveCard2(context);
+                break;
 
-                case '3':
-                    await this.sendAdaptiveCard3(context);
-                    break;
+            case '3':
+                await this.sendAdaptiveCard3(context);
+                break;
 
-                case HeroCard.toLowerCase():
-                    reply = MessageFactory.attachment(this.getHeroCard());
-                    break;
-                case ThumbnailCard.toLowerCase():
-                    reply = MessageFactory.attachment(this.getThumbnailCard());
-                    break;
-                case ReceiptCard.toLowerCase():
-                    reply = MessageFactory.attachment(this.getReceiptCard());
-                    break;
-                case SigninCard.toLowerCase():
-                    reply = MessageFactory.attachment(this.getSigninCard());
-                    break;
-                case Carousel.toLowerCase():
-                    // NOTE: if cards are NOT the same height in a carousel, Teams will instead display as AttachmentLayoutTypes.List
-                    reply = MessageFactory.carousel([this.getHeroCard(), this.getHeroCard(), this.getHeroCard()]);
-                    break;
-                case List.toLowerCase():
-                    // NOTE: MessageFactory.Attachment with multiple attachments will default to AttachmentLayoutTypes.List
-                    reply = MessageFactory.list([this.getHeroCard(), this.getHeroCard(), this.getHeroCard()]);
-                    break;
-                case "o365":
-                    await this.sendO365CardAttachment(context);
-                    break;
-                case "file":
-                    await this.sendFileCard(context);
-                    break;
-                case "show members":
-                    await this.showMembers(context);
-                    break;
-                case "show channels":
-                    await this.showChannels(context);
-                    break;
-
-                case "show details":
-                    await this.showDetails(context);
-                    break;
-
-                case "task module":
-                    await context.sendActivity(MessageFactory.attachment(this.getTaskModuleHeroCard()));
-                    break;
-    
-                default:
-                    await this.sendMessageAndLogActivityId(context, text);
-                    for (const id of this.activityIds) {
-                        await context.updateActivity({ id, text, type: ActivityTypes.Message });
-                    }
-            }
-            
-            if (reply) {
-                await context.sendActivity(reply);
-            }
-        }      
+            case HeroCard.toLowerCase():
+                await context.sendActivity(MessageFactory.attachment(this.getHeroCard()));
+                break;
+            case ThumbnailCard.toLowerCase():
+                await context.sendActivity(MessageFactory.attachment(this.getThumbnailCard()));
+                break;
+            case ReceiptCard.toLowerCase():
+                await context.sendActivity(MessageFactory.attachment(this.getReceiptCard()));
+                break;
+            case SigninCard.toLowerCase():
+                await context.sendActivity(MessageFactory.attachment(this.getSigninCard()));
+                break;
+            case Carousel.toLowerCase():
+                // NOTE: if cards are NOT the same height in a carousel, Teams will instead display as AttachmentLayoutTypes.List
+                await context.sendActivity(MessageFactory.carousel([this.getHeroCard(), this.getHeroCard(), this.getHeroCard()]));
+                break;
+            case List.toLowerCase():
+                // NOTE: MessageFactory.Attachment with multiple attachments will default to AttachmentLayoutTypes.List
+                await context.sendActivity(MessageFactory.list([this.getHeroCard(), this.getHeroCard(), this.getHeroCard()]));
+                break;
+            case "o365":
+                await this.sendO365CardAttachment(context);
+                break;
+            case "file":
+                await this.sendFileCard(context);
+                break;
+            case "show members":
+                await this.showMembers(context);
+                break;
+            case "show channels":
+                await this.showChannels(context);
+                break;
+            case "show details":
+                await this.showDetails(context);
+                break;
+            case "task module":
+                await context.sendActivity(MessageFactory.attachment(this.getTaskModuleHeroCard()));
+                break;
+            default:
+                await this.sendMessageAndLogActivityId(context, text);
+                break;
+        }
     }
 
     private getTaskModuleHeroCard() : Attachment {
@@ -952,6 +946,20 @@ export class IntegrationBot extends TeamsActivityHandler {
         await context.sendActivity(MessageFactory.attachment(card));
     }
 
+    private async handleDeleteActivities(context): Promise<void> {
+        for (const activityId of this.activityIds) {
+            await context.deleteActivity(activityId);
+        }
+
+        this.activityIds = [];
+    }
+
+    private async handleUpdateActivities(context: TurnContext): Promise<void> {
+        for (const id of this.activityIds) {
+            await context.updateActivity({ id, text: context.activity.text, type: ActivityTypes.Message });
+        }
+    }
+
     private async sendAdaptiveCard2(context: TurnContext): Promise<void> {
         /* tslint:disable:quotemark object-literal-key-quotes */
         const card = CardFactory.adaptiveCard({
@@ -1101,7 +1109,7 @@ export class IntegrationBot extends TeamsActivityHandler {
    
     private async showDetails(context: TurnContext): Promise<void> {
         let teamDetails = await TeamsInfo.getTeamDetails(context);
-        await context.sendActivity(MessageFactory.text(`The team name is ${teamDetails.name}. The team ID is ${teamDetails.id}. The AAD GroupID is ${teamDetails.aadGroupId}.`));
+        await this.sendMessageAndLogActivityId(context, `The team name is ${teamDetails.name}. The team ID is ${teamDetails.id}. The AAD GroupID is ${teamDetails.aadGroupId}.`);
     }
 
     private async sendInBatches(context: TurnContext, messages: string[]): Promise<void> {
@@ -1109,13 +1117,13 @@ export class IntegrationBot extends TeamsActivityHandler {
         messages.forEach(async (msg: string) => {
             batch.push(msg);
             if (batch.length == 10) {
-                await context.sendActivity(MessageFactory.text(batch.join('<br>')));
+                await this.sendMessageAndLogActivityId(context, batch.join('<br>'));
                 batch = [];
             }
         });
 
         if (batch.length > 0) {
-            await context.sendActivity(MessageFactory.text(batch.join('<br>')));
+            await this.sendMessageAndLogActivityId(context, batch.join('<br>'));
         }
     }
 
