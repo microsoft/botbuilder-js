@@ -59,7 +59,7 @@ export type SendActivitiesHandler = (
  * If a handler doesn’t call the `next` function, the adapter does not call any of the
  * subsequent handlers and does not attempt to update the activity.
  * 
- * The `activity` parameter's [id](xref:botframework-schema.Activity.id)] property indicates which activity
+ * The `activity` parameter's [id](xref:botframework-schema.Activity.id) property indicates which activity
  * in the conversation to replace.
  * 
  * **See also**
@@ -87,7 +87,7 @@ export type UpdateActivityHandler = (context: TurnContext, activity: Partial<Act
  * If a handler doesn’t call the `next` function, the adapter does not call any of the
  * subsequent handlers and does not attempt to delete the activity.
  * 
- * The `reference` parameter's [activityId](xref:botframework-schema.ConversationReference.activityId)] property indicates which activity
+ * The `reference` parameter's [activityId](xref:botframework-schema.ConversationReference.activityId) property indicates which activity
  * in the conversation to delete.
  * 
  * **See also**
@@ -344,6 +344,38 @@ export class TurnContext {
     /**
      * Asynchronously sends an activity to the sender of the incoming activity.
      *
+     * @param name The activity or text to send.
+     * @param value Optional. The text to be spoken by your bot on a speech-enabled channel.
+     * @param valueType Optional. Indicates whether your bot is accepting, expecting, or ignoring user
+     * @param label Optional. Indicates whether your bot is accepting, expecting, or ignoring user
+     * 
+     * @remarks
+     * Creates and sends a Trace activity. Trace activities are only sent when the channel is the emulator.
+     *
+     * For example:
+     * ```JavaScript
+     * await context.sendTraceActivity(`The following exception was thrown ${msg}`);
+     * ```
+     * 
+     * **See also**
+     * 
+     * - [sendActivities](xref:botbuilder-core.TurnContext.sendActivities)
+     */
+    public sendTraceActivity(name: string, value?: any, valueType?: string, label?: string): Promise<ResourceResponse|undefined> {
+        const traceActivity: Partial<Activity> = {
+            type: ActivityTypes.Trace,
+            timestamp: new Date(),
+            name: name,
+            value: value,
+            valueType: valueType,
+            label: label
+        };
+        return this.sendActivity(traceActivity)
+    }
+
+    /**
+     * Asynchronously sends an activity to the sender of the incoming activity.
+     *
      * @param activityOrText The activity or text to send.
      * @param speak Optional. The text to be spoken by your bot on a speech-enabled channel.
      * @param inputHint Optional. Indicates whether your bot is accepting, expecting, or ignoring user
@@ -420,7 +452,7 @@ export class TurnContext {
             const o: Partial<Activity> = TurnContext.applyConversationReference({...a}, ref);
             if (!o.type) { o.type = ActivityTypes.Message; }
             if (o.type !== ActivityTypes.Trace) { sentNonTraceActivity = true; }
-
+            if (o.id) { delete o.id; }
             return o;
         });
 
