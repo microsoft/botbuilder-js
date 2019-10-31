@@ -2,10 +2,10 @@
     "$schema": "../../app.schema",
     "$type": "Microsoft.AdaptiveDialog",
     "$id": "root",
-    "steps": [
+    "actions": [
         {
             "$type":"Microsoft.TextInput",
-            "prompt" : "Hello, what is your name?", 
+            "prompt" : "Hello, what is your name?",
             "property": "user.name"
         },
         {

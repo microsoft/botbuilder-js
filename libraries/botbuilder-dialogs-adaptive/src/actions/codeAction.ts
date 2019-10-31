@@ -8,14 +8,14 @@
 import { DialogTurnResult, DialogCommand, DialogContext } from 'botbuilder-dialogs';
 import { SequenceContext } from '../sequenceContext';
 
-export type CodeStepHandler<T extends DialogContext = SequenceContext> = (context: T, options?: object) => Promise<DialogTurnResult>;
+export type CodeActionHandler<T extends DialogContext = SequenceContext> = (context: T, options?: object) => Promise<DialogTurnResult>;
 
-export class CodeStep<T extends DialogContext = SequenceContext> extends DialogCommand {
-    private handler: CodeStepHandler<T>;
+export class CodeAction<T extends DialogContext = SequenceContext> extends DialogCommand {
+    private handler: CodeActionHandler<T>;
 
-    constructor(handler: CodeStepHandler<T>);
-    constructor(id: string, handler: CodeStepHandler<T>);
-    constructor(idOrHandler: string|CodeStepHandler<T>, handler?: CodeStepHandler<T>) {
+    constructor(handler: CodeActionHandler<T>);
+    constructor(id: string, handler: CodeActionHandler<T>);
+    constructor(idOrHandler: string|CodeActionHandler<T>, handler?: CodeActionHandler<T>) {
         if (typeof idOrHandler === 'function') {
             handler = idOrHandler;
             idOrHandler = undefined;
@@ -23,11 +23,11 @@ export class CodeStep<T extends DialogContext = SequenceContext> extends DialogC
         super(idOrHandler as string);
         this.handler = handler;
     }
-    
+
     protected onComputeID(): string {
-        return `codeStep[${this.hashedLabel(this.handler.toString())}]`;
+        return `codeAction[${this.hashedLabel(this.handler.toString())}]`;
     }
-    
+
     protected async onRunCommand(context: T, options: object): Promise<DialogTurnResult> {
         return await this.handler(context, options);
     }

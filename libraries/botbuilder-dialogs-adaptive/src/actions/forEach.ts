@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 import { DialogCommand, DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
-import { SequenceContext, StepChangeList, StepChangeType } from '../sequenceContext';
+import { SequenceContext, ActionChangeList, ActionChangeType } from '../sequenceContext';
 import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
 
 /**
- * Configuration info passed to a `ForEach` step.
+ * Configuration info passed to a `ForEach` action.
  */
 export interface ForEachConfiguration extends DialogConfiguration {
     /**
@@ -29,32 +29,32 @@ export interface ForEachConfiguration extends DialogConfiguration {
     valueProperty?: string;
 
     /**
-     * Steps to be run for each page of items.
+     * Actions to be run for each page of items.
      */
-    steps?: Dialog[];
+    actions?: Dialog[];
 }
 
 /**
- * Executes a set of steps once for each item in an in-memory list or collection.
- * 
+ * Executes a set of actions once for each item in an in-memory list or collection.
+ *
  * @remarks
- * Each iteration of the loop will store an item from the list or collection at [property](#property) 
- * to `dialog.item`. The loop can be exited early by including either a `EndDialog` or `GotoDialog` 
- * step.
+ * Each iteration of the loop will store an item from the list or collection at [property](#property)
+ * to `dialog.item`. The loop can be exited early by including either a `EndDialog` or `GotoDialog`
+ * action.
  */
 export class ForEach extends DialogCommand {
 
     /**
      * Creates a new `ForEach` instance.
      * @param list Expression used to compute the list that should be enumerated.
-     * @param steps Steps to be run for each page of items. 
+     * @param actions Actions to be run for each page of items.
      */
     constructor();
-    constructor(list: ExpressionPropertyValue<any[]|object>, steps: Dialog[]);
-    constructor(list?: ExpressionPropertyValue<any[]|object>, steps?: Dialog[]) {
+    constructor(list: ExpressionPropertyValue<any[]|object>, actions: Dialog[]);
+    constructor(list?: ExpressionPropertyValue<any[]|object>, actions?: Dialog[]) {
         super();
         if (list) { this.list = new ExpressionProperty(list) }
-        if (steps) { this.steps = steps } 
+        if (actions) { this.actions = actions }
     }
 
     protected onComputeID(): string {
@@ -78,9 +78,9 @@ export class ForEach extends DialogCommand {
     public valueProperty: string = 'dialog.value';
 
     /**
-     * Steps to be run for each page of items.
+     * Actions to be run for each page of items.
      */
-    public steps: Dialog[] = [];
+    public actions: Dialog[] = [];
 
     public configure(config: ForEachConfiguration): this {
         for (const key in config) {
@@ -101,7 +101,7 @@ export class ForEach extends DialogCommand {
     }
 
     public getDependencies(): Dialog[] {
-        return this.steps;
+        return this.actions;
     }
 
     protected async onRunCommand(sequence: SequenceContext, options: ForEachOptions): Promise<DialogTurnResult> {
@@ -121,18 +121,18 @@ export class ForEach extends DialogCommand {
         if (item !== undefined) {
             sequence.state.setValue(this.valueProperty, item);
             sequence.state.setValue(this.indexProperty, offset);
-            const changes: StepChangeList = {
-                changeType: StepChangeType.insertSteps,
-                steps: []
+            const changes: ActionChangeList = {
+                changeType: ActionChangeType.insertActions,
+                actions: []
             };
-            this.steps.forEach((step) => changes.steps.push({ dialogStack: [], dialogId: step.id }));
+            this.actions.forEach((action) => changes.actions.push({ dialogStack: [], dialogId: action.id }));
 
-            // Add a call back into forEachPage() at the end of repeated steps.
+            // Add a call back into forEachPage() at the end of repeated actions.
             // - A new offset is passed in which causes the next page of results to be returned.
-            changes.steps.push({ 
-                dialogStack: [], 
-                dialogId: this.id, 
-                options: { 
+            changes.actions.push({
+                dialogStack: [],
+                dialogId: this.id,
+                options: {
                     list: list,
                     offset: offset + 1
                 }

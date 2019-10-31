@@ -26,7 +26,7 @@ export interface DialogState {
 
     /**
      * (optional) values that are persisted for the lifetime of the conversation.
-     * 
+     *
      * @remarks
      * These values are intended to be transient and may automatically expire after some timeout
      * period.
@@ -44,8 +44,8 @@ export interface DialogState {
  *
  * @remarks
  * Every active DialogContainer instance has its own DialogContext which can be used to start and
- * stop dialogs within that container.  The [parent](#parent) and [child](#child) properties can 
- * be used to navigate the bots stack of active dialog containers. 
+ * stop dialogs within that container.  The [parent](#parent) and [child](#child) properties can
+ * be used to navigate the bots stack of active dialog containers.
  */
 export class DialogContext {
     /**
@@ -106,9 +106,9 @@ export class DialogContext {
         if (this.stack.length > 0) {
             // For DialogCommand instances we need to return the inherited state.
             const frame = this.stack[this.stack.length - 1];
-            instance = { 
+            instance = {
                 id: frame.id,
-                state: this.getActiveDialogState(this, frame.state) 
+                state: this.getActiveDialogState(this, frame.state)
             };
         }
         return instance;
@@ -116,7 +116,7 @@ export class DialogContext {
 
     /**
      * A DialogContext for manipulating the stack of current containers parent.
-     * 
+     *
      * @remarks
      * Returns `undefined` if the current container is the [rootParent](#rootparent).
      */
@@ -124,9 +124,9 @@ export class DialogContext {
 
     /**
      * A DialogContext for manipulating the stack of a child container.
-     * 
+     *
      * @remarks
-     * Returns `undefined` if the [activeDialog](#activedialog) isn't an instance of a 
+     * Returns `undefined` if the [activeDialog](#activedialog) isn't an instance of a
      * DialogContainer or the container has no active child dialogs.
      */
     public get child(): DialogContext|undefined {
@@ -145,7 +145,7 @@ export class DialogContext {
      * Pushes a new dialog onto the dialog stack.
      *
      * @remarks
-     * If there's already an active dialog on the stack, that dialog will be paused until the new 
+     * If there's already an active dialog on the stack, that dialog will be paused until the new
      * dialog calls [endDialog()](#enddialog).
      *
      * ```JavaScript
@@ -227,7 +227,7 @@ export class DialogContext {
                         // Event handled so stop canceling dialogs
                         break;
                     }
-    
+
                     // End the active dialog
                     await dc.endActiveDialog(DialogReason.cancelCalled);
                 } else {
@@ -235,7 +235,7 @@ export class DialogContext {
                 }
                 notify = true;
             }
-    
+
             return { status: DialogTurnStatus.cancelled };
         } else {
             // Stack was empty and no parent
@@ -286,10 +286,10 @@ export class DialogContext {
 
     /**
      * Searches for a dialog to begin or replace.
-     * 
+     *
      * @remarks
-     * If the dialog cannot be found within the current `DialogSet`, the parent `DialogContext` 
-     * will be searched as well. 
+     * If the dialog cannot be found within the current `DialogSet`, the parent `DialogContext`
+     * will be searched as well.
      * @param dialogId ID of the dialog to search for.
      */
     public findDialog(dialogId: string): Dialog|undefined {
@@ -332,11 +332,11 @@ export class DialogContext {
             options = { ...promptOrOptions as PromptOptions };
         }
 
-        if (choices) 
+        if (choices)
         {
             options.choices = choices;
         }
-        
+
         return this.beginDialog(dialogId, options);
     }
 
@@ -425,21 +425,21 @@ export class DialogContext {
      * This method is conceptually equivalent to calling [endDialog()](#enddialog) and then
      * immediately calling [beginDialog()](#begindialog). The difference is that the parent
      * dialog is not resumed or otherwise notified that the dialog it started has been replaced.
-     * 
+     *
      * This method is particularly useful for creating conversational loops within your bot:
      *
      * ```JavaScript
      * this.addDialog(new WaterfallDialog('randomNumber', [
-     *     async (step) => {
-     *         const { min, max } = step.options;
+     *     async (action) => {
+     *         const { min, max } = action.options;
      *         const num = min + Math.floor((max - min) * Math.random());
-     *         return await step.prompt('continuePrompt', `Here's a number between ${min} and ${max}: ${num}. Should I pick another one?`);
+     *         return await action.prompt('continuePrompt', `Here's a number between ${min} and ${max}: ${num}. Should I pick another one?`);
      *     },
-     *     async (step) {
-     *         if (step.result) {
-     *             return await step.replaceDialog(this.id, step.options);
+     *     async (action) {
+     *         if (action.result) {
+     *             return await action.replaceDialog(this.id, action.options);
      *         } else {
-     *             return await step.endDialog();
+     *             return await action.endDialog();
      *         }
      *     }
      * ]));

@@ -1,7 +1,7 @@
 {
     "$schema": "../../app.schema",
     "$type": "Microsoft.AdaptiveDialog",
-    "steps": [
+    "actions": [
         {
             "$type": "Microsoft.SendActivity",
             "activity": "What's up?"

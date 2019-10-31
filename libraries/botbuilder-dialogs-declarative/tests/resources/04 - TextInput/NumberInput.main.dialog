@@ -1,7 +1,7 @@
 {
     "$schema": "../../app.schema",
     "$type": "Microsoft.AdaptiveDialog",
-    "steps": [
+    "actions": [
         {
             "$type": "Microsoft.IntegerInput",
             "property": "user.age",
@@ -22,13 +22,13 @@
         {
             "$type": "Microsoft.IfCondition",
             "condition": "(user.result - 4.4) < 0.0000001",
-            "steps": [
+            "actions": [
                 {
                     "$type": "Microsoft.SendActivity",
                     "activity": "2 * 2.2 equals {user.result}, that's right!"
                 }
             ],
-            "elseSteps": [
+            "elseActions": [
                 {
                     "$type": "Microsoft.SendActivity",
                     "activity": "2 * 2.2 equals {user.result}, that's wrong!"

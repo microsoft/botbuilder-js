@@ -34,23 +34,23 @@ const PERSISTED_DIALOG_STATE = 'dialogs';
  *
  *         // Add control flow dialogs
  *         this.addDialog(new WaterfallDialog('start', [
- *             async (step) => {
+ *             async (action) => {
  *                 // Ask user their name
- *                 return await step.prompt('namePrompt', `What's your name?`);
+ *                 return await action.prompt('namePrompt', `What's your name?`);
  *             },
- *             async (step) => {
+ *             async (action) => {
  *                 // Remember the users answer
- *                 step.values['name'] = step.result;
+ *                 action.values['name'] = action.result;
  *
  *                 // Ask user their age.
- *                 return await step.prompt('agePrompt', `Hi ${step.values['name']}. How old are you?`);
+ *                 return await action.prompt('agePrompt', `Hi ${action.values['name']}. How old are you?`);
  *             },
- *             async (step) => {
+ *             async (action) => {
  *                 // Remember the users answer
- *                 step.values['age'] = step.result;
+ *                 action.values['age'] = action.result;
  *
  *                 // End the component and return the completed profile.
- *                 return await step.endDialog(step.values);
+ *                 return await action.endDialog(action.values);
  *             }
  *         ]));
  *
@@ -98,7 +98,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
             }
             // Return result to calling dialog
             return await this.endComponent(outerDC, turnResult.result);
-        } 
+        }
         // Just signal end of turn
         return Dialog.EndOfTurn;
     }

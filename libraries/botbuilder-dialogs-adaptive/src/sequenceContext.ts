@@ -10,24 +10,24 @@ import { DialogContext, DialogState, DialogSet } from 'botbuilder-dialogs';
 export interface AdaptiveDialogState<O extends Object> {
     options: O;
     result?: any;
-    steps?: StepState[];
+    actions?: ActionState[];
 }
 
-export interface StepState extends DialogState {
+export interface ActionState extends DialogState {
     dialogId: string;
     options?: object;
 }
 
-export interface StepChangeList {
-    changeType: StepChangeType;
-    steps?: StepState[];
+export interface ActionChangeList {
+    changeType: ActionChangeType;
+    actions?: ActionState[];
     tags?: string[];
 }
 
-export enum StepChangeType {
-    insertSteps = 'insertSteps',
-    insertStepsBeforeTags = 'insertStepsBeforeTags',
-    appendSteps = 'appendSteps',
+export enum ActionChangeType {
+    insertActions = 'insertActions',
+    insertActionsBeforeTags = 'insertActionsBeforeTags',
+    appendActions = 'appendActions',
     endSequence = 'endSequence',
     replaceSequence = 'replaceSequence'
 }
@@ -49,46 +49,46 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
     /**
      * Creates a new `SequenceContext` instance.
      */
-    constructor(dialogs: DialogSet, dc: DialogContext, state: DialogState, steps: StepState[], changeKey: symbol) {
+    constructor(dialogs: DialogSet, dc: DialogContext, state: DialogState, actions: ActionState[], changeKey: symbol) {
         super(dialogs, dc.context, state, dc.state.user, dc.state.conversation);
-        this.steps = steps;
+        this.actions = actions;
         this.changeKey = changeKey;
     }
 
     /**
-     * Array of changes that are queued to be applied 
+     * Array of changes that are queued to be applied
      */
-    public get changes(): StepChangeList[] {
+    public get changes(): ActionChangeList[] {
         return this.context.turnState.get(this.changeKey) || [];
     }
 
     /**
-     * Array of steps being executed.
+     * Array of actions being executed.
      */
-    public readonly steps: StepState[];
+    public readonly actions: ActionState[];
 
     /**
      * Queues up a set of changes that will be applied when [applyChanges()](#applychanges)
      * is called.
-     * @param changes Step changes to queue up. 
+     * @param changes Action changes to queue up.
      */
-    public queueChanges(changes: StepChangeList): void {
+    public queueChanges(changes: ActionChangeList): void {
         const queue = this.context.turnState.get(this.changeKey) || [];
         queue.push(changes);
-        this.context.turnState.set(this.changeKey, queue); 
+        this.context.turnState.set(this.changeKey, queue);
     }
 
     /**
      * Applies any queued up changes.
-     * 
+     *
      * @remarks
      * Applying a set of changes can result in additional plan changes being queued. The method
-     * will loop and apply any additional plan changes until there are no more changes left to 
+     * will loop and apply any additional plan changes until there are no more changes left to
      * apply.
-     * @returns true if there were any changes to apply. 
+     * @returns true if there were any changes to apply.
      */
     public async applyChanges(): Promise<boolean> {
-        const queue: StepChangeList[] = this.context.turnState.get(this.changeKey) || [];
+        const queue: ActionChangeList[] = this.context.turnState.get(this.changeKey) || [];
         if (Array.isArray(queue) && queue.length > 0) {
             this.context.turnState.delete(this.changeKey);
 
@@ -98,23 +98,23 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
                 // Apply plan changes
                 const change = queue[i];
                 switch (change.changeType) {
-                    case StepChangeType.insertSteps:
-                    case StepChangeType.insertStepsBeforeTags:
-                    case StepChangeType.appendSteps:
+                    case ActionChangeType.insertActions:
+                    case ActionChangeType.insertActionsBeforeTags:
+                    case ActionChangeType.appendActions:
                         await this.updateSequence(change);
                         break;
-                    case StepChangeType.endSequence:
-                        if (this.steps.length > 0) {
-                            this.steps.splice(0, this.steps.length);
+                    case ActionChangeType.endSequence:
+                        if (this.actions.length > 0) {
+                            this.actions.splice(0, this.actions.length);
                             await this.emitEvent(AdaptiveEventNames.sequenceEnded, undefined, false);
                         }
                         break;
-                    case StepChangeType.replaceSequence:
-                        if (this.steps.length > 0) {
-                            this.steps.splice(0, this.steps.length);
+                    case ActionChangeType.replaceSequence:
+                        if (this.actions.length > 0) {
+                            this.actions.splice(0, this.actions.length);
                         }
                         await this.updateSequence(change);
-                        break; 
+                        break;
                 }
             }
 
@@ -126,64 +126,64 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
         return false;
     }
 
-    public insertSteps(steps: StepState[]): this {
-        this.queueChanges({ changeType: StepChangeType.insertSteps, steps: steps });
+    public insertActions(actions: ActionState[]): this {
+        this.queueChanges({ changeType: ActionChangeType.insertActions, actions: actions });
         return this;
     }
 
-    public insertStepsBeforeTags(tags: string[], steps: StepState[]): this {
-        this.queueChanges({ changeType: StepChangeType.insertStepsBeforeTags, steps: steps, tags: tags });
+    public insertActionsBeforeTags(tags: string[], actions: ActionState[]): this {
+        this.queueChanges({ changeType: ActionChangeType.insertActionsBeforeTags, actions: actions, tags: tags });
         return this;
     }
 
-    public appendSteps(steps: StepState[]): this {
-        this.queueChanges({ changeType: StepChangeType.appendSteps, steps: steps });
+    public appendActions(actions: ActionState[]): this {
+        this.queueChanges({ changeType: ActionChangeType.appendActions, actions: actions });
         return this;
     }
 
     public endSequence(): this {
-        this.queueChanges({ changeType: StepChangeType.endSequence });
+        this.queueChanges({ changeType: ActionChangeType.endSequence });
         return this;
     }
 
-    public replaceSequence(steps: StepState[]): this {
-        this.queueChanges({ changeType: StepChangeType.replaceSequence, steps: steps });
+    public replaceSequence(actions: ActionState[]): this {
+        this.queueChanges({ changeType: ActionChangeType.replaceSequence, actions: actions });
         return this;
     }
 
-    private async updateSequence(change: StepChangeList): Promise<void> {
+    private async updateSequence(change: ActionChangeList): Promise<void> {
         // Initialize sequence if needed
-        const newSequence = this.steps.length == 0;
+        const newSequence = this.actions.length == 0;
 
         // Update sequence
         switch (change.changeType) {
-            case StepChangeType.insertSteps:
-                Array.prototype.unshift.apply(this.steps, change.steps);
+            case ActionChangeType.insertActions:
+                Array.prototype.unshift.apply(this.actions, change.actions);
                 break;
-            case StepChangeType.insertStepsBeforeTags:
+            case ActionChangeType.insertActionsBeforeTags:
                 let inserted = false;
                 if (Array.isArray(change.tags)) {
-                    // Walk list of steps to find point at which to insert new steps
-                    for (let i = 0; i < this.steps.length; i++) {
-                        // Does step have one of the tags we're looking for?
-                        if (this.stepHasTags(this.steps[i], change.tags)) {
-                            // Insert steps before the current step.
-                            const args = ([i, 0] as any[]).concat(change.steps);
-                            Array.prototype.splice.apply(this.steps, args);
+                    // Walk list of actions to find point at which to insert new actions
+                    for (let i = 0; i < this.actions.length; i++) {
+                        // Does action have one of the tags we're looking for?
+                        if (this.actionHasTags(this.actions[i], change.tags)) {
+                            // Insert actions before the current action.
+                            const args = ([i, 0] as any[]).concat(change.actions);
+                            Array.prototype.splice.apply(this.actions, args);
                             inserted = true;
                             break;
                         }
                     }
                 }
-                
+
                 // If we didn't find any of the tags we were looking for then just append
-                // the steps to the end of the current sequence.
+                // the actions to the end of the current sequence.
                 if (!inserted) {
-                    Array.prototype.push.apply(this.steps, change.steps);
+                    Array.prototype.push.apply(this.actions, change.actions);
                 }
                 break;
-            case StepChangeType.appendSteps:
-                Array.prototype.push.apply(this.steps, change.steps);
+            case ActionChangeType.appendActions:
+                Array.prototype.push.apply(this.actions, change.actions);
                 break;
         }
 
@@ -193,8 +193,8 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
         }
     }
 
-    private stepHasTags(step: StepState, tags: string[]): boolean {
-        const dialog = this.findDialog(step.dialogId);
+    private actionHasTags(action: ActionState, tags: string[]): boolean {
+        const dialog = this.findDialog(action.dialogId);
         if (dialog && dialog.tags.length > 0) {
             for (let i = 0; i < dialog.tags.length; i++) {
                 if (tags.indexOf(dialog.tags[i]) >= 0) {

@@ -9,11 +9,11 @@
             "CancelIntent": "(?i)cancel|never mind"
         }
     },
-    "steps": [
+    "actions": [
         {
             "$type": "Microsoft.IfCondition",
             "condition": "user.name == null",
-            "steps": [
+            "actions": [
                 {
                     "$type": "Microsoft.TextInput",
                     "property": "user.name",
@@ -34,7 +34,7 @@
         {
             "$type": "Microsoft.EventRule",
             "events": [ "cancelDialog" ],
-            "steps": [
+            "actions": [
                 {
                     "$type": "Microsoft.SendActivity",
                     "activity": "ok."
@@ -47,7 +47,7 @@
         {
             "$type": "Microsoft.IntentRule",
             "intent": "JokeIntent",
-            "steps": [
+            "actions": [
                 "EndDialog.TellJoke"
             ]
         }

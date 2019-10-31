@@ -7,7 +7,7 @@
             "CancelIntent": "(?i)cancel|never mind"
         }
     },
-    "steps": [
+    "actions": [
         {
             "$type": "Microsoft.SendActivity",
             "activity": "Why did the chicken cross the road?"
@@ -24,7 +24,7 @@
         {
             "$type": "Microsoft.IntentRule",
             "intent": "CancelIntent",
-            "steps": [
+            "actions": [
                 {
                     "$type": "Microsoft.CancelAllDialog"
                 }

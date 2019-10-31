@@ -9,7 +9,7 @@ import { DialogTurnResult, DialogConfiguration, DialogCommand, DialogContext } f
 import { format } from '../stringTemplate';
 import { Activity, ActivityTypes } from 'botbuilder-core';
 
-export interface LogStepConfiguration extends DialogConfiguration {
+export interface LogActionConfiguration extends DialogConfiguration {
     /**
      * The text template to log.
      */
@@ -22,21 +22,21 @@ export interface LogStepConfiguration extends DialogConfiguration {
     sendTrace?: boolean;
 }
 
-export class LogStep extends DialogCommand {
+export class LogAction extends DialogCommand {
     /**
-     * The text template to log. 
+     * The text template to log.
      */
     public template: string;
 
     /**
-     * If true, the message will both be logged to the console and sent as a trace activity. 
+     * If true, the message will both be logged to the console and sent as a trace activity.
      * Defaults to a value of false.
      */
     public sendTrace: boolean;
 
     /**
      * Creates a new `SendActivity` instance.
-     * @param template The text template to log.  
+     * @param template The text template to log.
      * @param sendTrace (Optional) If true, the message will both be logged to the console and sent as a trace activity.  Defaults to a value of false.
      */
     constructor();
@@ -48,15 +48,15 @@ export class LogStep extends DialogCommand {
     }
 
     protected onComputeID(): string {
-        return `logStep[${this.hashedLabel(this.template)}]`;
+        return `logAction[${this.hashedLabel(this.template)}]`;
     }
 
-    public configure(config: LogStepConfiguration): this {
+    public configure(config: LogActionConfiguration): this {
         return super.configure(config);
     }
-    
+
     protected async onRunCommand(dc: DialogContext, options: object): Promise<DialogTurnResult> {
-        if (!this.template) { throw new Error(`${this.id}: no 'message' specified.`) } 
+        if (!this.template) { throw new Error(`${this.id}: no 'message' specified.`) }
 
         // Format message
         const data = Object.assign({
@@ -69,7 +69,7 @@ export class LogStep extends DialogCommand {
         if (this.sendTrace) {
             const activity: Partial<Activity> = {
                 type: ActivityTypes.Trace,
-                name: 'LogStep',
+                name: 'LogAction',
                 valueType: 'string',
                 value: msg
             };

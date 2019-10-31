@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 import { DialogCommand, DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
-import { SequenceContext, StepChangeType, StepChangeList } from '../sequenceContext';
+import { SequenceContext, ActionChangeType, ActionChangeList } from '../sequenceContext';
 import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
 
 /**
- * Configuration info passed to a `ForEachPage` step.
+ * Configuration info passed to a `ForEachPage` action.
  */
 export interface ForEachPageConfiguration extends DialogConfiguration {
     /**
@@ -29,19 +29,19 @@ export interface ForEachPageConfiguration extends DialogConfiguration {
     valueProperty?: string;
 
     /**
-     * Steps to be run for each page of items.
+     * Actions to be run for each page of items.
      */
-    steps?: Dialog[];
+    actions?: Dialog[];
 }
 
 /**
- * Executes a set of steps once for each page of results in an in-memory list or collection.
- * 
+ * Executes a set of actions once for each page of results in an in-memory list or collection.
+ *
  * @remarks
  * The list or collection at [property](#property) will be broken up into pages and stored in
  * `dialog.page` for each iteration of the loop. The size of each page is determined by [maxSize](#maxsize)
  * and defaults to a size of 10. The loop can be exited early by including either a `EndDialog` or
- * `GotoDialog` step.
+ * `GotoDialog` action.
  */
 export class ForEachPage extends DialogCommand {
 
@@ -49,20 +49,20 @@ export class ForEachPage extends DialogCommand {
      * Creates a new `ForEachPage` instance.
      * @param list Expression used to compute the list that should be enumerated.
      * @param pageSize (Optional) number of items per page. Defaults to a value of 10.
-     * @param steps Steps to be run for each page of items. 
+     * @param actions Actions to be run for each page of items.
      */
     constructor();
-    constructor(list: ExpressionPropertyValue<any[]|object>, steps: Dialog[]);
-    constructor(list: ExpressionPropertyValue<any[]|object>, pageSize: ExpressionPropertyValue<number>, steps: Dialog[]);
-    constructor(list?: ExpressionPropertyValue<any[]|object>, pageSizeOrSteps?: ExpressionPropertyValue<number>|Dialog[], steps?: Dialog[]) {
+    constructor(list: ExpressionPropertyValue<any[]|object>, actions: Dialog[]);
+    constructor(list: ExpressionPropertyValue<any[]|object>, pageSize: ExpressionPropertyValue<number>, actions: Dialog[]);
+    constructor(list?: ExpressionPropertyValue<any[]|object>, pageSizeOrActions?: ExpressionPropertyValue<number>|Dialog[], actions?: Dialog[]) {
         super();
-        if (Array.isArray(pageSizeOrSteps)) {
-            steps = pageSizeOrSteps;
-            pageSizeOrSteps = undefined;
+        if (Array.isArray(pageSizeOrActions)) {
+            actions = pageSizeOrActions;
+            pageSizeOrActions = undefined;
         }
         if (list) { this.list = new ExpressionProperty(list) }
-        if (pageSizeOrSteps) { this.pageSize = new ExpressionProperty(pageSizeOrSteps as any) }
-        if (steps) { this.steps = steps } 
+        if (pageSizeOrActions) { this.pageSize = new ExpressionProperty(pageSizeOrActions as any) }
+        if (actions) { this.actions = actions }
     }
 
     protected onComputeID(): string {
@@ -86,9 +86,9 @@ export class ForEachPage extends DialogCommand {
     public valueProperty: string = 'dialog.value';
 
     /**
-     * Steps to be run for each page of items.
+     * Actions to be run for each page of items.
      */
-    public steps: Dialog[] = [];
+    public actions: Dialog[] = [];
 
     public configure(config: ForEachPageConfiguration): this {
         for (const key in config) {
@@ -109,7 +109,7 @@ export class ForEachPage extends DialogCommand {
     }
 
     public getDependencies(): Dialog[] {
-        return this.steps;
+        return this.actions;
     }
 
     protected async onRunCommand(sequence: SequenceContext, options: ForEachPageOptions): Promise<DialogTurnResult> {
@@ -131,17 +131,17 @@ export class ForEachPage extends DialogCommand {
         // Update current plan
         if (page.length > 0) {
             sequence.state.setValue(this.valueProperty, page);
-            const changes: StepChangeList = {
-                changeType: StepChangeType.insertSteps,
-                steps: []
+            const changes: ActionChangeList = {
+                changeType: ActionChangeType.insertActions,
+                actions: []
             };
-            this.steps.forEach((step) => changes.steps.push({ dialogStack: [], dialogId: step.id }));
+            this.actions.forEach((action) => changes.actions.push({ dialogStack: [], dialogId: action.id }));
             if (page.length == pageSize) {
-                // Add a call back into forEachPage() at the end of repeated steps.
+                // Add a call back into forEachPage() at the end of repeated actions.
                 // - A new offset is passed in which causes the next page of results to be returned.
-                changes.steps.push({ 
-                    dialogStack: [], 
-                    dialogId: this.id, 
+                changes.actions.push({
+                    dialogStack: [],
+                    dialogId: this.id,
                     options: {
                         list: list,
                         offset: offset + pageSize,

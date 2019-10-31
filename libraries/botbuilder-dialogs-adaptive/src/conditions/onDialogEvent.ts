@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogEvent } from 'botbuilder-dialogs';
-import { SequenceContext, StepChangeList, StepChangeType, StepState } from '../sequenceContext';
+import { SequenceContext, ActionChangeList, ActionChangeType, ActionState } from '../sequenceContext';
 import { OnCondition } from './onCondition';
 
 /**
@@ -38,7 +38,7 @@ export class OnDialogEvent implements OnCondition {
         this.preBubble = preBubble !== undefined ? preBubble : true;
     }
 
-    public evaluate(sequence: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<StepChangeList[]|undefined> {
+    public evaluate(sequence: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<ActionChangeList[]|undefined> {
         // Limit evaluation to only supported events
         if (preBubble == this.preBubble && this.events.indexOf(event.name) >= 0) {
             return this.onEvaluate(sequence, event);
@@ -47,7 +47,7 @@ export class OnDialogEvent implements OnCondition {
         }
     }
 
-    protected async onEvaluate(sequence: SequenceContext, event: DialogEvent): Promise<StepChangeList[]|undefined> {
+    protected async onEvaluate(sequence: SequenceContext, event: DialogEvent): Promise<ActionChangeList[]|undefined> {
         if (await this.onIsTriggered(sequence, event)) {
             return [this.onCreateChangeList(sequence, event)];
         }
@@ -57,14 +57,14 @@ export class OnDialogEvent implements OnCondition {
         return true;
     }
 
-    protected onCreateChangeList(sequence: SequenceContext, event: DialogEvent, dialogOptions?: any): StepChangeList {
-        const changeList: StepChangeList = { changeType: StepChangeType.insertSteps, steps: [] };
-        this.actions.forEach((step) => {
-            const stepState: StepState = { dialogStack: [], dialogId: step.id };
+    protected onCreateChangeList(sequence: SequenceContext, event: DialogEvent, dialogOptions?: any): ActionChangeList {
+        const changeList: ActionChangeList = { changeType: ActionChangeType.insertActions, actions: [] };
+        this.actions.forEach((action) => {
+            const actionState: ActionState = { dialogStack: [], dialogId: action.id };
             if (dialogOptions !== undefined) {
-                stepState.options = dialogOptions;
+                actionState.options = dialogOptions;
             }
-            changeList.steps.push(stepState);
+            changeList.actions.push(actionState);
         });
 
         return changeList;

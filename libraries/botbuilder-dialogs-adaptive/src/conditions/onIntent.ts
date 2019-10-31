@@ -7,7 +7,7 @@
  */
 import { RecognizerResult } from 'botbuilder-core';
 import { OnDialogEvent } from './onDialogEvent';
-import { AdaptiveEventNames, SequenceContext , StepChangeList } from '../sequenceContext';
+import { AdaptiveEventNames, SequenceContext } from '../sequenceContext';
 import { DialogEvent, Dialog, DialogContextState } from 'botbuilder-dialogs';
 
 /**

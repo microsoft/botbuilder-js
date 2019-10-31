@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogCommand, DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
-import { SequenceContext, StepState, StepChangeType } from '../sequenceContext';
+import { SequenceContext, ActionState, ActionChangeType } from '../sequenceContext';
 import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
 
 export interface IfConditionConfiguration extends DialogConfiguration {
@@ -14,16 +14,16 @@ export interface IfConditionConfiguration extends DialogConfiguration {
      * The conditional expression to evaluate.
      */
     condition?: ExpressionPropertyValue<boolean>;
-    
-    /**
-     * The steps to run if [condition](#condition) returns true.
-     */
-    steps?: Dialog[];
 
     /**
-     * The steps to run if [condition](#condition) returns false.
+     * The actions to run if [condition](#condition) returns true.
      */
-    elseSteps?: Dialog[];
+    actions?: Dialog[];
+
+    /**
+     * The actions to run if [condition](#condition) returns false.
+     */
+    elseActions?: Dialog[];
 }
 
 export class IfCondition extends DialogCommand {
@@ -33,24 +33,24 @@ export class IfCondition extends DialogCommand {
     public condition: ExpressionProperty<boolean>;
 
     /**
-     * The steps to run if [condition](#condition) returns true.
+     * The actions to run if [condition](#condition) returns true.
      */
-    public steps: Dialog[] = [];
+    public actions: Dialog[] = [];
 
     /**
-     * The steps to run if [condition](#condition) returns false.
+     * The actions to run if [condition](#condition) returns false.
      */
-    public elseSteps: Dialog[] = [];
+    public elseActions: Dialog[] = [];
 
     /**
      * Creates a new `IfCondition` instance.
      * @param condition The conditional expression to evaluate.
-     * @param steps The steps to run if the condition returns true. 
+     * @param actions The actions to run if the condition returns true.
      */
-    constructor(condition?: ExpressionPropertyValue<boolean>, steps?: Dialog[]) {
+    constructor(condition?: ExpressionPropertyValue<boolean>, actions?: Dialog[]) {
         super();
         if (condition) { this.condition = new ExpressionProperty(condition) }
-        if (Array.isArray(steps)) { this.steps = steps }
+        if (Array.isArray(actions)) { this.actions = actions }
     }
 
     protected onComputeID(): string {
@@ -77,11 +77,11 @@ export class IfCondition extends DialogCommand {
     }
 
     public getDependencies(): Dialog[] {
-        return this.steps.concat(this.elseSteps);
+        return this.actions.concat(this.elseActions);
     }
 
-    public else(steps: Dialog[]): this {
-        this.elseSteps = steps;
+    public else(actions: Dialog[]): this {
+        this.elseActions = actions;
         return this;
     }
 
@@ -95,19 +95,19 @@ export class IfCondition extends DialogCommand {
         const value = this.condition.evaluate(this.id, memory);
 
         // Check for truthy returned value
-        const triggered = value ? this.steps : this.elseSteps;
+        const triggered = value ? this.actions : this.elseActions;
 
-        // Queue up steps that should run after current step
+        // Queue up actions that should run after current action
         if (triggered.length > 0) {
-            const steps = triggered.map((step) => {
+            const actions = triggered.map((action) => {
                 return {
                     dialogStack: [],
-                    dialogId: step.id,
+                    dialogId: action.id,
                     options: options
-                } as StepState
+                } as ActionState
             });
-            await sequence.queueChanges({ changeType: StepChangeType.insertSteps, steps: steps });
-        } 
+            await sequence.queueChanges({ changeType: ActionChangeType.insertActions, actions: actions });
+        }
 
         return await sequence.endDialog();
     }

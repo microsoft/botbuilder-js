@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-dialogs
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +7,8 @@
  */
 export * from './input';
 export * from './recognizers';
+export * from './actions';
 export * from './conditions';
-export * from './steps';
 export * from './activityProperty';
 export * from './adaptiveDialog';
 export * from './expressionProperty';

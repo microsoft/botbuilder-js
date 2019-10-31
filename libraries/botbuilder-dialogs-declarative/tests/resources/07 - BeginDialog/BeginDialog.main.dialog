@@ -9,11 +9,11 @@
             "FortuneTellerIntent": "fortune|future"
         }
     },
-    "steps": [
+    "actions": [
         {
             "$type": "Microsoft.IfCondition",
             "condition": "user.name == null",
-            "steps": [
+            "actions": [
                 {
                     "$type": "Microsoft.TextInput",
                     "valueProperty": "user.name",
@@ -30,14 +30,14 @@
         {
             "$type": "Microsoft.IntentRule",
             "intent": "#JokeIntent",
-            "steps": [
+            "actions": [
                 "BeginDialog.TellJokeDialog"
             ]
         },
         {
             "$type": "Microsoft.IntentRule",
             "intent": "#FortuneTellerIntent",
-            "steps": [
+            "actions": [
                 "BeginDialog.FortuneTellerDialog"
             ]
         }
