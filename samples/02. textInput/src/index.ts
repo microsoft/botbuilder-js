@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { AdaptiveDialog, UnknownIntentRule, SendActivity, TextInput, SetProperty } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, OnUnknownIntent, SendActivity, TextInput, SetProperty } from 'botbuilder-dialogs-adaptive';
 import { DialogManager } from 'botbuilder-dialogs';
 
 // Create HTTP server.
@@ -38,7 +38,7 @@ const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
 // Handle unknown intents
-dialogs.addRule(new UnknownIntentRule([
+dialogs.addRule(new OnUnknownIntent([
     new SetProperty('user.name', 'null'),
     new TextInput('user.name', `Hi! what's your name?`),
     new SendActivity(`Hi {user.name}. It's nice to meet you.`)

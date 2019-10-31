@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { AdaptiveDialog, SendActivity, IntentRule, EventRule, UnknownIntentRule, IfCondition, SetProperty  } from "botbuilder-dialogs-adaptive";
+import { AdaptiveDialog, SendActivity, OnIntent, OnDialogEvent, OnUnknownIntent, IfCondition, SetProperty  } from "botbuilder-dialogs-adaptive";
 import { getRecognizer } from "../recognizer";
 import { AddToDo } from "../addToDo";
 import { DeleteToDo } from "../deleteToDo";
@@ -16,23 +16,23 @@ export class RootDialog extends AdaptiveDialog {
         this.recognizer = getRecognizer();
 
         // Handle recognized intents
-        this.addRule(new IntentRule('#AddToDo', [
+        this.addRule(new OnIntent('#AddToDo', [
             new AddToDo()
         ]));
 
-        this.addRule(new IntentRule('#DeleteToDo', [
+        this.addRule(new OnIntent('#DeleteToDo', [
             new DeleteToDo()
         ]));
 
-        this.addRule(new IntentRule('#ClearToDos', [
+        this.addRule(new OnIntent('#ClearToDos', [
             new ClearToDos()
         ]));
 
-        this.addRule(new IntentRule('#ShowToDos', [
+        this.addRule(new OnIntent('#ShowToDos', [
             new ShowToDos()
         ]));
 
-        this.addRule(new UnknownIntentRule([
+        this.addRule(new OnUnknownIntent([
             new IfCondition(`user.greeted != true`, [
                 new SendActivity(`Hi! I'm a ToDo bot. Say "add a todo named first one" to get started.`),
                 new SetProperty(`user.greeted`, `true`)
@@ -42,16 +42,16 @@ export class RootDialog extends AdaptiveDialog {
         ]));
 
         // Define rules to handle cancel events
-        this.addRule(new EventRule('cancelAdd', [
+        this.addRule(new OnDialogEvent('cancelAdd', [
             new SendActivity(`Ok... Cancelled adding new todo.`)
         ]));
 
-        this.addRule(new EventRule('cancelDelete', [
+        this.addRule(new OnDialogEvent('cancelDelete', [
             new SendActivity(`Ok...`)
         ]));
 
         // Define rules for handling errors
-        this.addRule(new EventRule('error', [
+        this.addRule(new OnDialogEvent('error', [
             new SendActivity(`Oops. An error occurred: {message}`)
         ]));
     }

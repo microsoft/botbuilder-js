@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-export * from './eventRule';
-export * from './rule';
-export * from './intentRule';
-export * from './unknownIntentRule';
+export * from './onDialogEvent';
+export * from './onCondition';
+export * from './onIntent';
+export * from './onUnknownIntent';
 

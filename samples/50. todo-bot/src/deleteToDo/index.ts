@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { AdaptiveDialog, IntentRule, CancelAllDialogs, EditArray, ArrayChangeType, SendActivity, IfCondition, ChoiceInput, LogStep, SetProperty } from "botbuilder-dialogs-adaptive";
+import { AdaptiveDialog, OnIntent, CancelAllDialogs, EditArray, ArrayChangeType, SendActivity, IfCondition, ChoiceInput, LogStep, SetProperty } from "botbuilder-dialogs-adaptive";
 import { getRecognizer } from "../recognizer";
 
 export class DeleteToDo extends AdaptiveDialog {
@@ -26,7 +26,7 @@ export class DeleteToDo extends AdaptiveDialog {
         this.recognizer = getRecognizer();
 
         // Add interruption rules
-        this.addRule(new IntentRule('#Cancel', [
+        this.addRule(new OnIntent('#Cancel', [
             new CancelAllDialogs('cancelDelete')
         ]));
     }

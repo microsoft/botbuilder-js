@@ -7,7 +7,7 @@
  */
 
 import { Configurable, TextPrompt } from 'botbuilder-dialogs';
-import { AdaptiveDialog, BeginDialog, SendActivity, TextInput, ConfirmInput, NumberInput, ChoiceInput, EndTurn, IfCondition, RegExpRecognizer, IntentRule, UnknownIntentRule, CancelAllDialogs, DeleteProperty, EditArray, EditSteps, EmitEvent, EndDialog, ForEach, ForEachPage, LogStep, RepeatDialog, ReplaceDialog, SendList, SetProperty } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, BeginDialog, SendActivity, TextInput, ConfirmInput, NumberInput, ChoiceInput, EndTurn, IfCondition, RegExpRecognizer, OnIntent, OnUnknownIntent, CancelAllDialogs, DeleteProperty, EditArray, EditSteps, EmitEvent, EndDialog, ForEach, ForEachPage, LogStep, RepeatDialog, ReplaceDialog, SendList, SetProperty } from 'botbuilder-dialogs-adaptive';
 import { ConfigurableTypeBuilder } from './configurableTypeBuilder';
 import { DefaultTypeBuilder } from './defaultTypeBuilder';
 import { ITypeBuilder } from './typeBuilder';
@@ -89,10 +89,10 @@ import { CustomTypeBuilder } from './customTypeBuilder';
         // Dialogs
         this.register('Microsoft.AdaptiveDialog', new ConfigurableTypeBuilder(AdaptiveDialog));
 
-        // Rules
-        this.register('Microsoft.UnknownIntentRule', new DefaultTypeBuilder(UnknownIntentRule));
+        // Conditions
+        this.register('Microsoft.UnknownIntentRule', new DefaultTypeBuilder(OnUnknownIntent));
         this.register('Microsoft.IntentRule', new CustomTypeBuilder((config) => {
-            let intentRule = new IntentRule();
+            let intentRule = new OnIntent();
             
             if(config && config['intent']) {
                 intentRule.matches.push(config['intent']);

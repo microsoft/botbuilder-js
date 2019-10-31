@@ -8,11 +8,11 @@
 import { Dialog, DialogEvent } from 'botbuilder-dialogs';
 import { SequenceContext, StepChangeList } from '../sequenceContext';
  
-export interface Rule {
+export interface OnCondition {
     /**
-     * Array of steps that should be registered with the `PlanningDialog` when the rule is added.
+     * Array of actions that should be registered with the `PlanningDialog` when the rule is added.
      */
-    readonly steps: Dialog[];
+    readonly actions: Dialog[];
 
     /**
      * Evaluates the rule and returns a predicted set of changes that should be applied to the 

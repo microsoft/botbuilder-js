@@ -7,7 +7,7 @@
  */
 export * from './input';
 export * from './recognizers';
-export * from './rules';
+export * from './conditions';
 export * from './steps';
 export * from './activityProperty';
 export * from './adaptiveDialog';

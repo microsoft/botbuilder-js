@@ -16,14 +16,14 @@ import {
 import { 
     AdaptiveEventNames, SequenceContext, StepChangeList, StepChangeType, AdaptiveDialogState 
 } from './sequenceContext';
-import { Rule } from './rules';
+import { OnCondition } from './conditions';
 import { Recognizer } from './recognizers';
 
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     /**
-     * (Optional) planning rules to evaluate for each conversational turn.
+     * (Optional) planning triggers to evaluate for each conversational turn.
      */
-    rules?: Rule[];
+    triggers?: OnCondition[];
 
     /**
      * (Optional) recognizer used to analyze any message utterances.
@@ -52,9 +52,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     /**
-     * Planning rules to evaluate for each conversational turn.
+     * Planning triggers to evaluate for each conversational turn.
      */
-    public readonly rules: Rule[] = [];
+    public readonly triggers: OnCondition[] = [];
 
     /**
      * Steps to initialize the dialogs plan with.
@@ -77,8 +77,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         this.dialogs.telemetryClient = client;
     }
 
-    public addRule(rule: Rule): this {
-        this.rules.push(rule);
+    public addRule(rule: OnCondition): this {
+        this.triggers.push(rule);
         return this;
     }
 
@@ -86,9 +86,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         // Install any steps
         this.steps.forEach((step) => this.dialogs.add(step));
 
-        // Install each rules steps
-        this.rules.forEach((rule) => {
-            rule.steps.forEach((step) => this.dialogs.add(step));
+        // Install each trigger actions
+        this.triggers.forEach((trigger) => {
+            trigger.actions.forEach((action) => this.dialogs.add(action));
         });
     }
 
@@ -326,8 +326,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     private async queueFirstMatch(sequence: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<boolean> {
-        for (let i = 0; i < this.rules.length; i++) {
-            const changes = await this.rules[i].evaluate(sequence, event, preBubble);
+        for (let i = 0; i < this.triggers.length; i++) {
+            const changes = await this.triggers[i].evaluate(sequence, event, preBubble);
             if (changes && changes.length > 0) {
                 sequence.queueChanges(changes[0]);
                 return true;

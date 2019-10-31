@@ -37,11 +37,11 @@ bot.rootDialog = dialogs;
 //=================================================================================================
 dialogs.recognizer = new botbuilder_dialogs_adaptive_1.RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
 // Tell the user a joke
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.IntentRule('#JokeIntent', [
+dialogs.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#JokeIntent', [
     new botbuilder_dialogs_adaptive_1.BeginDialog('TellJokeDialog')
 ]));
 // Handle unknown intents
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.UnknownIntentRule([
+dialogs.addRule(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
     new botbuilder_dialogs_adaptive_1.BeginDialog('AskNameDialog')
 ]));
 //=================================================================================================

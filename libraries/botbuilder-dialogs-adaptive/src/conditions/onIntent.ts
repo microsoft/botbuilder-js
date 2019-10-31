@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { RecognizerResult } from 'botbuilder-core';
-import { EventRule } from './eventRule';
+import { OnDialogEvent } from './onDialogEvent';
 import { AdaptiveEventNames, SequenceContext , StepChangeList } from '../sequenceContext';
 import { DialogEvent, Dialog, DialogContextState } from 'botbuilder-dialogs';
 
@@ -14,7 +14,7 @@ import { DialogEvent, Dialog, DialogContextState } from 'botbuilder-dialogs';
  * This rule is triggered when a message is received and the recognized intents & entities match a
  * specified list of intent & entity filters.
  */
-export class IntentRule extends EventRule {
+export class OnIntent extends OnDialogEvent {
 
     /**
      * List of intents, entities, and properties to filter to.
@@ -22,12 +22,12 @@ export class IntentRule extends EventRule {
     public readonly matches: string[];
 
     /**
-     * Creates a new `IntentRule` instance.
+     * Creates a new `OnIntent` instance.
      * @param matches (Optional) list of intents, entities, and properties to filter to.
-     * @param steps (Optional) list of steps to update the plan with when triggered.
+     * @param actions (Optional) list of actions to update the plan with when triggered.
      */
-    constructor(matches?: string|string[], steps?: Dialog[]) {
-        super(AdaptiveEventNames.recognizedIntent, steps, true);
+    constructor(matches?: string|string[], actions?: Dialog[]) {
+        super(AdaptiveEventNames.recognizedIntent, actions, true);
         this.matches = Array.isArray(matches) ? matches : (matches !== undefined ? [matches] : []);
     }
 
