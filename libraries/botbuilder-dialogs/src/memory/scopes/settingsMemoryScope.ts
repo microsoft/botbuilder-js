@@ -14,16 +14,18 @@ import { DialogContext } from "../../dialogContext";
  */
 export class SettingsMemoryScope extends MemoryScope {
     constructor() {
-        super(ScopePath.SETTINGS, true);
+        super(ScopePath.SETTINGS, false);
     }
 
     public getMemory(dc: DialogContext): object {
-        // Clone process.env on first access
-        const memoryScopes = this.getScopesMemory(dc.context);
-        if (!memoryScopes.hasOwnProperty(this.name)) {
-            memoryScopes[this.name] = Object.assign({}, process.env);
+        // Clone strings from env
+        const settings: object = {};
+        for (const key in process.env) {
+            if (typeof process.env[key] == 'string') {
+                settings[key] = process.env[key];
+            }
         }
 
-        return memoryScopes[this.name];
+        return settings;
     }
 }

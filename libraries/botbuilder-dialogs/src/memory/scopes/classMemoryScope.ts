@@ -14,7 +14,7 @@ import { DialogContext } from "../../dialogContext";
  */
 export class ClassMemoryScope extends MemoryScope {
     constructor() {
-        super(ScopePath.CLASS, true);
+        super(ScopePath.CLASS, false);
     }
 
     public getMemory(dc: DialogContext): object {
@@ -22,7 +22,15 @@ export class ClassMemoryScope extends MemoryScope {
         if (dc.activeDialog) {
             var dialog = dc.findDialog(dc.activeDialog.id);
             if (dialog != undefined) {
-                return dialog;
+                // Clone properties
+                const clone: object = {};
+                for (const key in dialog) {
+                    if (dialog.hasOwnProperty(key) && typeof dialog[key] != 'function') {
+                        clone[key] = dialog[key];
+                    }
+                }
+
+                return clone;
             }
         }
 

@@ -8,6 +8,22 @@
 import { PathResolver, DollarPathResolver, HashPathResolver, AtAtPathResolver, AtPathResolver, PercentPathResolver } from './pathResolvers';
 import { MemoryScope, ScopePath, SettingsMemoryScope, DialogMemoryScope, ClassMemoryScope, ThisMemoryScope } from './scopes';
 import { DialogContext } from '../dialogContext';
+import { ConversationState, UserState } from 'botbuilder-core';
+import { ConversationMemoryScope } from './scopes/conversationMemoryScope';
+import { TurnMemoryScope } from './scopes/turnMemoryScope';
+import { UserMemoryScope } from './scopes/userMemoryScope';
+
+export interface DialogStateManagerConfiguration {
+    /**
+     * List of path resolvers used to evaluate memory paths.
+     */
+    readonly pathResolvers: PathResolver[];
+
+    /**
+     * List of the supported memory scopes.
+     */
+    readonly memoryScopes: MemoryScope[];
+}
 
 /**
  * The DialogStateManager manages memory scopes and path resolvers.
@@ -19,20 +35,38 @@ import { DialogContext } from '../dialogContext';
  */
 export class DialogStateManager {
     private readonly dialogContext: DialogContext;
+    private _config: DialogStateManagerConfiguration;
 
-    /**
-     * List of path resolvers used to evaluate memory paths.
-     */
-    static readonly pathResolvers: PathResolver[] = [];
-
-    /**
-     * List of the supported memory scopes.
-     */
-    static readonly memoryScopes: MemoryScope[] = [];
-
-    constructor(dc: DialogContext)
-    {
+    constructor(dc: DialogContext) {
         this.dialogContext = dc;
+    }
+
+    /**
+     * Gets or sets the configured path resolvers and memory scopes for the dialog state manager.
+     * 
+     * @remarks
+     * There is a single set of configuration information for a given chain of dialog contexts. 
+     * Assigning a new configuration to any DialogStateManager within the chain will update the
+     * configuration for the entire chain.
+     */
+    public get configuration(): DialogStateManagerConfiguration {
+        if (this.dialogContext.parent) {
+            return this.dialogContext.parent.state.configuration;
+        } else {
+            if (this._config == undefined) {
+                this._config = DialogStateManager.createStandardConfiguration();
+            }
+
+            return this._config;
+        }
+    }
+
+    public set configuration(value: DialogStateManagerConfiguration) {
+        if (this.dialogContext.parent) {
+            this.dialogContext.parent.state.configuration = value;
+        } else {
+            this._config = value;
+        }
     }
 
     /**
@@ -133,6 +167,47 @@ export class DialogStateManager {
             const found = this.findObjectKey(memory, key);
             if (found) {
                 delete memory[found];
+            }
+        }
+    }
+
+    /**
+     * Ensures that all memory scopes have been loaded for the current turn.
+     * 
+     * @remarks
+     * This should be called at the beginning of the turn.
+     */
+    public async loadAllScopes(): Promise<void> {
+        const scopes = this.configuration.memoryScopes;
+        for (let i = 0; i < scopes.length; i++) {
+            await scopes[i].load(this.dialogContext);
+        }
+    }
+
+    /**
+     * Saves any changes made to memory scopes.
+     * 
+     * @remarks
+     * This should be called at the end of the turn.
+     */
+    public async saveAllChanges(): Promise<void> {
+        const scopes = this.configuration.memoryScopes;
+        for (let i = 0; i < scopes.length; i++) {
+            await scopes[i].load(this.dialogContext);
+        }
+    }
+
+    /**
+     * Deletes all of the backing memory for a given scope.
+     */
+    public async deleteScopesMemory(name: string): Promise<void> {
+        name = name.toLowerCase();
+        const scopes = this.configuration.memoryScopes;
+        for (let i = 0; i < scopes.length; i++) {
+            const scope = scopes[i];
+            if (scope.name.toLowerCase() == name) {
+                await scope.delete(this.dialogContext);
+                break;
             }
         }
     }
@@ -250,7 +325,7 @@ export class DialogStateManager {
      */
     public transformPath(pathExpression: string): string {
         // Run path through registered resolvers.
-        const resolvers = this.getPathResolvers();
+        const resolvers = this.configuration.pathResolvers;
         for (let i = 0; i < resolvers.length; i++) {
             pathExpression = resolvers[i].transformPath(pathExpression);
         }
@@ -264,8 +339,8 @@ export class DialogStateManager {
      */
     public getMemorySnapshot(): object {
         const output = {};
-        this.getMemoryScopes().forEach((scope) => {
-            if (!scope.isReadOnly) {
+        this.configuration.memoryScopes.forEach((scope) => {
+            if (scope.includeInSnapshot) {
                 output[scope.name] = scope.getMemory(this.dialogContext);
             }
         });
@@ -338,39 +413,9 @@ export class DialogStateManager {
         return undefined;
     }
 
-    private getPathResolvers(): PathResolver[] {
-        if (DialogStateManager.pathResolvers.length == 0) {
-            DialogStateManager.pathResolvers.push(
-                new DollarPathResolver(),
-                new HashPathResolver(),
-                new AtAtPathResolver(),
-                new AtPathResolver(),
-                new PercentPathResolver()
-            );
-        }
-
-        return DialogStateManager.pathResolvers;
-    }
-
-    private getMemoryScopes(): MemoryScope[] {
-        if (DialogStateManager.memoryScopes.length == 0) {
-            DialogStateManager.memoryScopes.push(
-                new MemoryScope(ScopePath.USER),
-                new MemoryScope(ScopePath.CONVERSATION),
-                new MemoryScope(ScopePath.TURN),
-                new SettingsMemoryScope(),
-                new DialogMemoryScope(),
-                new ClassMemoryScope(),
-                new ThisMemoryScope()
-            );
-        }
-
-        return DialogStateManager.memoryScopes;
-    }
-
     private getMemoryScope(name: string): MemoryScope | undefined {
         const key = name.toLowerCase();
-        const scopes = this.getMemoryScopes();
+        const scopes = this.configuration.memoryScopes;
         for (let i = 0; i < scopes.length; i++) {
             const scope = scopes[i];
             if (scope.name.toLowerCase() == key) {
@@ -379,6 +424,35 @@ export class DialogStateManager {
         }
 
         return undefined;
+    }
+
+    static createStandardConfiguration(conversationState?: ConversationState, userState?: UserState): DialogStateManagerConfiguration {
+        const config: DialogStateManagerConfiguration = { 
+            pathResolvers: [
+                new DollarPathResolver(),
+                new HashPathResolver(),
+                new AtAtPathResolver(),
+                new AtPathResolver(),
+                new PercentPathResolver()
+            ],
+            memoryScopes: [
+                new TurnMemoryScope(),
+                new SettingsMemoryScope(),
+                new DialogMemoryScope(),
+                new ClassMemoryScope(),
+                new ThisMemoryScope()
+            ]
+        };
+
+        // Add optional scopes
+        if (conversationState) {
+            config.memoryScopes.push(new ConversationMemoryScope(conversationState));
+        }
+        if (userState) {
+            config.memoryScopes.push(new UserMemoryScope(userState));
+        }
+
+        return config;
     }
 }
 

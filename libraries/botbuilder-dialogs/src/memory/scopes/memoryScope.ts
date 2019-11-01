@@ -6,48 +6,33 @@
  * Licensed under the MIT License.
  */
 import { DialogContext } from "../../dialogContext";
-import { TurnContext } from "botbuilder-core";
 
 /**
- * MemoryScope represents a named memory scope stored in `TurnContext.turnState`.
- * 
- * @remarks
- * It is responsible for using the DialogContext to bind to the object for it. 
- * The default MemoryScope is stored in `TurnState[MemoryScope.MEMORYSCOPESKEY][Name]`
- * Example: User memory scope is tracked in `dc.context.TurnState[MemoryScope.MEMORYSCOPEKEY].User`
+ * Abstract base class for all memory scopes.
  */
-export class MemoryScope {
-
-    constructor(name: string, isReadOnly = false)
+export abstract class MemoryScope {
+    constructor(name: string, includeInSnapshot = true)
     {
-        this.isReadOnly = isReadOnly;
+        this.includeInSnapshot = includeInSnapshot;
         this.name = name;
     }
 
     /**
      * Gets or sets name of the scope
      */
-    public name: string;
+    public readonly name: string;
 
     /**
-     * Gets or sets a value indicating whether this memory scope mutable.
+     * Gets a value indicating whether this memory should be included in snapshot.
      */
-    public isReadOnly: boolean;
+    public readonly includeInSnapshot: boolean;
 
     /**
      * Get the backing memory for this scope
      * @param dc Current dialog context.
      * @returns memory for the scope
      */
-    public getMemory(dc: DialogContext): object {
-        const scopesMemory = this.getScopesMemory(dc.context);
-        if (!scopesMemory.hasOwnProperty(this.name)) {
-            // Initialize memory
-            scopesMemory[this.name] = {};
-        }
-
-        return scopesMemory[this.name];
-    }
+    public abstract getMemory(dc: DialogContext): object;
 
     /**
      * Changes the backing object for the memory scope.
@@ -55,34 +40,30 @@ export class MemoryScope {
      * @param memory memory to assign
      */
     public setMemory(dc: DialogContext, memory: object): void {
-        if (this.isReadOnly) {
-            throw new Error(`MemoryScope.setMemory: You cannot set the memory for a readonly memory scope`);
-        }
-
-        if (memory == undefined) {
-            throw new Error(`MemoryScope.setMemory: undefined memory object passed in.`);
-        }
-
-        const namedScopes = this.getScopesMemory(dc.context);
-        namedScopes[this.name] = memory;
+        throw new Error(`MemoryScope.setMemory: The '${this.name}' memory scope is read-only.`);
     }
 
     /**
-     * Get map of scopes cached on turn context.
-     * @param context Current turn context.
-     * @returns map of cached scopes.
+     * Loads a scopes backing memory at the start of a turn. 
+     * @param dc Current dialog context.
      */
-    protected getScopesMemory(context: TurnContext): { [name: string]: object; } {
-        if (!context.turnState.has(MEMORYSCOPEKEY)) {
-            context.turnState.set(MEMORYSCOPEKEY, {});
-        }
+    public async load(dc: DialogContext): Promise<void> {
+        // No initialization by default.
+    }
 
-        return context.turnState.get(MEMORYSCOPEKEY);
+    /**
+     * Saves a scopes backing memory at the end of a turn. 
+     * @param dc Current dialog context.
+     */
+    public async saveChanges(dc: DialogContext): Promise<void> {
+        // No initialization by default.
+    }
+
+    /**
+     * Deletes the backing memory for a scope.
+     * @param dc Current dialog context.
+     */
+    public async delete(dc: DialogContext): Promise<void> {
+        throw new Error(`MemoryScope.delete: The '${this.name}' memory scope can't be deleted.`);
     }
 }
-
-/**
- * @private
- */
-const MEMORYSCOPEKEY = Symbol('MemoryScopes');
-

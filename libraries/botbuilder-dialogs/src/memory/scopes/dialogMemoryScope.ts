@@ -19,17 +19,18 @@ export class DialogMemoryScope extends MemoryScope {
     }
 
     public getMemory(dc: DialogContext): object {
-        // if active dialog is a container dialog then "dialog" binds to it
-        if (dc.activeDialog != undefined) {
-            var dialog = dc.findDialog(dc.activeDialog.id);
-            if (dialog instanceof DialogContainer) {
-                return dc.activeDialog.state;
-            }
+        // If active dialog is a container dialog then "dialog" binds to it.
+        // Otherwise the "dialog" will bind to the dialogs parent assuming it 
+        // is a container.
+        let parent: DialogContext = dc;
+        if (!this.isContainer(parent) && this.isContainer(parent.parent)) {
+            parent = parent.parent;
         }
 
-        // Otherwise we always bind to parent, or if there is no parent the active dialog
-        const parent = dc.parent || dc;
-        return parent.activeDialog ? parent.activeDialog.state : undefined;
+        // If there's no active dialog then throw an error.
+        if (!parent.activeDialog) { throw new Error(`DialogMemoryScope.getMemory: no active dialog found.`) }
+
+        return parent.activeDialog.state;
     }
 
     public setMemory(dc: DialogContext, memory: object): void {
@@ -37,18 +38,28 @@ export class DialogMemoryScope extends MemoryScope {
             throw new Error(`DialogMemoryScope.setMemory: undefined memory object passed in.`);
         }
 
-        // if active dialog is a container dialog then "dialog" binds to it
-        if (dc.activeDialog) {
+        // If active dialog is a container dialog then "dialog" binds to it.
+        // Otherwise the "dialog" will bind to the dialogs parent assuming it 
+        // is a container.
+        let parent: DialogContext = dc;
+        if (!this.isContainer(parent) && this.isContainer(parent.parent)) {
+            parent = parent.parent;
+        }
+
+        // If there's no active dialog then throw an error.
+        if (!parent.activeDialog) { throw new Error(`DialogMemoryScope.setMemory: no active dialog found.`) }
+
+        parent.activeDialog.state = memory;
+    }
+
+    private isContainer(dc: DialogContext): boolean {
+        if (dc != undefined && dc.activeDialog != undefined) {
             var dialog = dc.findDialog(dc.activeDialog.id);
             if (dialog instanceof DialogContainer) {
-                dc.activeDialog.state = memory;
+                return true;
             }
-        } else if (dc.parent && dc.parent.activeDialog) {
-            dc.parent.activeDialog.state = memory;
-        } else if (dc.activeDialog) {
-            dc.activeDialog.state = memory;
-        } else {
-            throw new Error(`DialogMemoryScope.setMemory: Can't update memory. There is no active dialog dialog or parent dialog in the context`);
         }
+
+        return false;
     }
 }

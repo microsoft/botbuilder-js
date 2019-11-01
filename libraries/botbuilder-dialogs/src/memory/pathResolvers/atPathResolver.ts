@@ -13,7 +13,7 @@ import { AliasPathResolver } from './aliasPathResolver';
 export class AtPathResolver extends AliasPathResolver {
 
     constructor() {
-        super('@', 'turn.recognized.entities.', '[0]');
+        super('@', 'turn.recognized.entities.', '.first()');
     }
 
     public transformPath(path: string): string {

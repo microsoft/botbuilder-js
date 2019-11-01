@@ -8,7 +8,6 @@
 import { MemoryScope } from "./memoryScope";
 import { ScopePath } from "./scopePath";
 import { DialogContext } from "../../dialogContext";
-import { DialogContainer } from "../../dialogContainer";
 
 /**
  * ThisMemoryScope maps "this" -> dc.activeDialog.state
@@ -19,7 +18,8 @@ export class ThisMemoryScope extends MemoryScope {
     }
 
     public getMemory(dc: DialogContext): object {
-        return dc.activeDialog ? dc.activeDialog.state : undefined;
+        if (!dc.activeDialog) { throw new Error(`ThisMemoryScope.getMemory: no active dialog found.`) }
+        return dc.activeDialog.state;
     }
 
     public setMemory(dc: DialogContext, memory: object): void {
@@ -27,9 +27,7 @@ export class ThisMemoryScope extends MemoryScope {
             throw new Error(`ThisMemoryScope.setMemory: undefined memory object passed in.`);
         }
 
-        if (dc.activeDialog == undefined) {
-            throw new Error(`ThisMemoryScope.setMemory: Can't update memory. There is no active dialog.`);
-        }
+        if (!dc.activeDialog) { throw new Error(`ThisMemoryScope.setMemory: no active dialog found.`) }
 
         dc.activeDialog.state = memory;
     }
