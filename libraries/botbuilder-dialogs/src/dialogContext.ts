@@ -430,16 +430,16 @@ export class DialogContext {
      *
      * ```JavaScript
      * this.addDialog(new WaterfallDialog('randomNumber', [
-     *     async (action) => {
-     *         const { min, max } = action.options;
+     *     async (step) => {
+     *         const { min, max } = step.options;
      *         const num = min + Math.floor((max - min) * Math.random());
-     *         return await action.prompt('continuePrompt', `Here's a number between ${min} and ${max}: ${num}. Should I pick another one?`);
+     *         return await step.prompt('continuePrompt', `Here's a number between ${min} and ${max}: ${num}. Should I pick another one?`);
      *     },
-     *     async (action) {
-     *         if (action.result) {
-     *             return await action.replaceDialog(this.id, action.options);
+     *     async (step) {
+     *         if (step.result) {
+     *             return await step.replaceDialog(this.id, step.options);
      *         } else {
-     *             return await action.endDialog();
+     *             return await step.endDialog();
      *         }
      *     }
      * ]));

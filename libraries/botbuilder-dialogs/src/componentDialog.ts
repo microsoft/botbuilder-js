@@ -34,23 +34,23 @@ const PERSISTED_DIALOG_STATE = 'dialogs';
  *
  *         // Add control flow dialogs
  *         this.addDialog(new WaterfallDialog('start', [
- *             async (action) => {
+ *             async (step) => {
  *                 // Ask user their name
- *                 return await action.prompt('namePrompt', `What's your name?`);
+ *                 return await step.prompt('namePrompt', `What's your name?`);
  *             },
- *             async (action) => {
+ *             async (step) => {
  *                 // Remember the users answer
- *                 action.values['name'] = action.result;
+ *                 step.values['name'] = step.result;
  *
  *                 // Ask user their age.
- *                 return await action.prompt('agePrompt', `Hi ${action.values['name']}. How old are you?`);
+ *                 return await step.prompt('agePrompt', `Hi ${step.values['name']}. How old are you?`);
  *             },
- *             async (action) => {
+ *             async (step) => {
  *                 // Remember the users answer
- *                 action.values['age'] = action.result;
+ *                 step.values['age'] = step.result;
  *
  *                 // End the component and return the completed profile.
- *                 return await action.endDialog(action.values);
+ *                 return await step.endDialog(step.values);
  *             }
  *         ]));
  *
