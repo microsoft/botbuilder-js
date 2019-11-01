@@ -2,7 +2,7 @@
     "$schema": "../../app.schema",
     "$type": "Microsoft.AdaptiveDialog",
     "$id": "root",
-    "steps": [
+    "actions": [
         {
             "$type": "Microsoft.TextInput",
             "prompt": "Welcome! Here is a http request sample, please enter a name for you visual pet.",

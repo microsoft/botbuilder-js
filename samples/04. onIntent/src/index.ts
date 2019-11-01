@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { AdaptiveDialog, UnknownIntentRule, SendActivity, TextInput, IfCondition, RegExpRecognizer, IntentRule, EndTurn } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, OnUnknownIntent, SendActivity, TextInput, IfCondition, RegExpRecognizer, OnIntent, EndTurn } from 'botbuilder-dialogs-adaptive';
 import { DialogManager } from 'botbuilder-dialogs';
 
 // Create adapter.
@@ -41,14 +41,14 @@ bot.rootDialog = dialogs;
 dialogs.recognizer = new RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
 
 // Tell the user a joke
-dialogs.addRule(new IntentRule('#JokeIntent', [
+dialogs.addRule(new OnIntent('#JokeIntent', [
     new SendActivity(`Why did the 🐔 cross the 🛣️?`),
     new EndTurn(),
     new SendActivity(`To get to the other side...`)
 ]));
 
 // Handle unknown intents
-dialogs.addRule(new UnknownIntentRule([
+dialogs.addRule(new OnUnknownIntent([
     new IfCondition('user.name == null', [
         new TextInput('user.name', `Hi! what's your name?`)
     ]),

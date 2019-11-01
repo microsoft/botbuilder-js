@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { AdaptiveDialog, UnknownIntentRule, SendActivity, CodeStep } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, OnUnknownIntent, SendActivity, CodeAction } from 'botbuilder-dialogs-adaptive';
 import { DialogManager } from 'botbuilder-dialogs';
 
 // Create HTTP server.
@@ -38,8 +38,8 @@ const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
 // Add a default rule for handling incoming messages
-dialogs.addRule(new UnknownIntentRule([
-    new CodeStep(async (dc) => {
+dialogs.addRule(new OnUnknownIntent([
+    new CodeAction(async (dc) => {
         const count = dc.state.getValue('conversation.count') || 0;
         dc.state.setValue('conversation.count', count + 1);
         return await dc.endDialog();

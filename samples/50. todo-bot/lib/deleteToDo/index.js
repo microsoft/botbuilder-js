@@ -7,9 +7,9 @@ const recognizer_1 = require("../recognizer");
 class DeleteToDo extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
     constructor() {
         super('DeleteToDo', [
-            new botbuilder_dialogs_adaptive_1.LogStep(`DeleteToDo: todos = {user.todos}`),
+            new botbuilder_dialogs_adaptive_1.LogAction(`DeleteToDo: todos = {user.todos}`),
             new botbuilder_dialogs_adaptive_1.IfCondition(`user.todos != null`, [
-                new botbuilder_dialogs_adaptive_1.SaveEntity('$title', '@title'),
+                new botbuilder_dialogs_adaptive_1.SetProperty('$title', '@title'),
                 new botbuilder_dialogs_adaptive_1.ChoiceInput('$title', `Which todo would you like to remove?`, 'user.todos'),
                 new botbuilder_dialogs_adaptive_1.EditArray(botbuilder_dialogs_adaptive_1.ArrayChangeType.remove, 'user.todos', '$title'),
                 new botbuilder_dialogs_adaptive_1.SendActivity(`Deleted the todo named "{$title}".`),
@@ -24,8 +24,8 @@ class DeleteToDo extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
         // Use parents recognizer
         this.recognizer = recognizer_1.getRecognizer();
         // Add interruption rules
-        this.addRule(new botbuilder_dialogs_adaptive_1.IntentRule('#Cancel', [
-            new botbuilder_dialogs_adaptive_1.CancelDialog('cancelDelete')
+        this.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#Cancel', [
+            new botbuilder_dialogs_adaptive_1.CancelAllDialogs('cancelDelete')
         ]));
     }
 }

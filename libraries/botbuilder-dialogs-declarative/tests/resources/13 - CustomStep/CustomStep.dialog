@@ -1,7 +1,7 @@
 {
     "$schema": "../../app.schema",
     "$type": "Microsoft.AdaptiveDialog",
-    "steps": [
+    "actions": [
         {
             "$type": "Microsoft.IntegerInput",
             "alwaysPrompt": true,
@@ -13,8 +13,8 @@
             "activity": "Your age is: {user.age}"
         },
         {
-            "$type": "Testbot.JavascriptStep",
-            "script": "Samples/13 - CustomStep/dogyears.js",
+            "$type": "Testbot.JavascriptAction",
+            "script": "Samples/13 - CustomAction/dogyears.js",
             "property": "user.dogyears"
         },
         {
@@ -22,8 +22,8 @@
             "activity": "Your age in dog years is: {user.dogyears}"
         },
         {
-            "$type": "Testbot.CSharpStep",
-            "script": "Samples/13 - CustomStep/catyears.csx",
+            "$type": "Testbot.CSharpAction",
+            "script": "Samples/13 - CustomAction/catyears.csx",
             "outputProperty": "user.catyears"
         },
         {

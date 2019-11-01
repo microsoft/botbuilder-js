@@ -9,11 +9,11 @@
             "FortuneTellerIntent": "fortune"
         }
     },
-    "steps": [
+    "actions": [
         {
             "$type": "Microsoft.IfCondition",
             "condition": "user.name == null",
-            "steps": [
+            "actions": [
                 {
                     "$type": "Microsoft.TextInput",
                     "valueProperty": "user.name",
@@ -30,7 +30,7 @@
         {
             "$type": "Microsoft.IntentRule",
             "intent": "JokeIntent",
-            "steps": [
+            "actions": [
                 {
                     "$type": "Microsoft.SendActivity",
                     "activity": "Why did the chicken cross the road?"
@@ -47,7 +47,7 @@
         {
             "$type": "Microsoft.IntentRule",
             "intent": "FortuneTellerIntent",
-            "steps": [
+            "actions": [
                 {
                     "$type": "Microsoft.SendActivity",
                     "activity": "Seeing into the future..."

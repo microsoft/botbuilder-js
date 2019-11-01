@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { SendActivity, StateMachineDialog, RegExpRecognizer, EmitEvent, ConfirmInput, IfCondition, IntentRule } from 'botbuilder-dialogs-adaptive';
+import { SendActivity, StateMachineDialog, RegExpRecognizer, EmitEvent, ConfirmInput, IfCondition, OnIntent } from 'botbuilder-dialogs-adaptive';
 import { DialogManager } from 'botbuilder-dialogs';
 
 // Create HTTP server.
@@ -45,7 +45,7 @@ const offHook = dialogs.addState('offHook', [
 ]);
 offHook.permit('callDialed', 'ringing');
 offHook.recognizer = new RegExpRecognizer().addIntent('PlaceCallIntent', /place .*call/i);
-offHook.addRule(new IntentRule('PlaceCallIntent', [
+offHook.addRule(new OnIntent('PlaceCallIntent', [
     new EmitEvent('callDialed')
 ]));
 

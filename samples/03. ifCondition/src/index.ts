@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { AdaptiveDialog, UnknownIntentRule, SendActivity, TextInput, IfCondition } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, OnUnknownIntent, SendActivity, TextInput, IfCondition } from 'botbuilder-dialogs-adaptive';
 import { DialogManager } from 'botbuilder-dialogs';
 
 // Create adapter.
@@ -38,7 +38,7 @@ const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
 // Handle unknown intents
-dialogs.addRule(new UnknownIntentRule([
+dialogs.addRule(new OnUnknownIntent([
     new IfCondition('user.name == null', [
         new TextInput('user.name', `Hi! what's your name?`),
     ]),

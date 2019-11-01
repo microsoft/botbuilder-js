@@ -3,7 +3,7 @@
 
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
-import { AdaptiveDialog, UnknownIntentRule, SendActivity } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, OnUnknownIntent, SendActivity } from 'botbuilder-dialogs-adaptive';
 import { DialogManager } from 'botbuilder-dialogs';
 
 // Create HTTP server.
@@ -38,6 +38,6 @@ const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
 // Handle unknown intents
-dialogs.addRule(new UnknownIntentRule([
+dialogs.addRule(new OnUnknownIntent([
     new SendActivity('Hello World!')
 ]));
