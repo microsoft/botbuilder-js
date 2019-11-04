@@ -5,14 +5,14 @@ import { Diagnostic } from './diagnostic';
  */
 export class LGException  extends Error {
 
-    private Diagnostics: Diagnostic[];
+    private diagnostics: Diagnostic[];
     constructor(m: string, diagnostics: Diagnostic[]) {
         super(m);
-        this.Diagnostics = diagnostics;
+        this.diagnostics = diagnostics;
         Object.setPrototypeOf(this, LGException .prototype);
     }
 
     public getDiagnostic(): Diagnostic[] {
-        return this.Diagnostics;
+        return this.diagnostics;
     }
 }

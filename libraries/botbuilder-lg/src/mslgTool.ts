@@ -19,48 +19,48 @@ import { StaticChecker } from './staticChecker';
 
 // tslint:disable-next-line: completed-docs
 export class MSLGTool {
-    public CollationMessages: string[] = [];
-    public CollatedTemplates: Map<string, any> = new Map<string, any>();
-    public NameCollisions: string[] = [];
+    public collationMessages: string[] = [];
+    public collatedTemplates: Map<string, any> = new Map<string, any>();
+    public nameCollisions: string[] = [];
 
-    private Templates: LGTemplate[];
+    private templates: LGTemplate[];
     private readonly expressionEngine: ExpressionEngine;
 
     constructor(expressionEngine?: ExpressionEngine) {
         this.expressionEngine = expressionEngine !== undefined ? expressionEngine : new ExpressionEngine();
     }
 
-    public ValidateFile(lgFileContent: string, id?: string): string[] {
+    public validateFile(lgFileContent: string, id?: string): string[] {
         const diagnostic: Diagnostic[] = new StaticChecker().checkText(lgFileContent, id, ImportResolver.fileResolver);
         if (diagnostic.length !== 0) {
             return diagnostic.map((error: Diagnostic) => error.toString());
         }
 
         // extract templates
-        this.Templates = LGParser.parse(lgFileContent).Templates;
-        if (this.Templates !== undefined && this.Templates.length > 0) {
-            this.RunTemplateExtractor(this.Templates);
+        this.templates = LGParser.parse(lgFileContent).templates;
+        if (this.templates !== undefined && this.templates.length > 0) {
+            this.runTemplateExtractor(this.templates);
         }
 
         return [];
     }
 
-    public GetTemplateVariables(templateName: string): string[] {
-        const analyzer: Analyzer = new Analyzer(this.Templates, this.expressionEngine);
+    public getTemplateVariables(templateName: string): string[] {
+        const analyzer: Analyzer = new Analyzer(this.templates, this.expressionEngine);
 
-        return analyzer.AnalyzeTemplate(templateName).Variables;
+        return analyzer.analyzeTemplate(templateName).Variables;
     }
 
-    public ExpandTemplate(templateName: string, scope?: any): string[] {
-        const expander: Expander = new Expander(this.Templates, this.expressionEngine);
+    public expandTemplate(templateName: string, scope?: any): string[] {
+        const expander: Expander = new Expander(this.templates, this.expressionEngine);
 
-        return expander.ExpandTemplate(templateName, scope);
+        return expander.expandTemplate(templateName, scope);
     }
 
-    public CollateTemplates(): string {
+    public collateTemplates(): string {
         let result: string = '';
-        if (this.CollationMessages === undefined || this.CollationMessages.length === 0) {
-            for (const template of this.CollatedTemplates) {
+        if (this.collationMessages === undefined || this.collationMessages.length === 0) {
+            for (const template of this.collatedTemplates) {
                 result += '# ' + template[0] + '\n';
                 if (template[1] instanceof Array) {
                     const templateStrs: string[] = template[1] as string[];
@@ -91,35 +91,35 @@ export class MSLGTool {
         return result;
     }
 
-    private RunTemplateExtractor(lgtemplates: LGTemplate[]): void {
+    private runTemplateExtractor(lgtemplates: LGTemplate[]): void {
         const extractor: Extractor = new Extractor(lgtemplates);
-        const templates: Map<string, any>[] = extractor.Extract();
+        const templates: Map<string, any>[] = extractor.extract();
         for (const item of templates) {
             const template: any = item.entries().next().value;
-            if (this.CollatedTemplates.has(template[0])) {
-                this.NameCollisions.push(template[0]);
-                if (this.CollatedTemplates.get(template[0]) instanceof Map && template[1] instanceof Map) {
+            if (this.collatedTemplates.has(template[0])) {
+                this.nameCollisions.push(template[0]);
+                if (this.collatedTemplates.get(template[0]) instanceof Map && template[1] instanceof Map) {
                     for (const condition of (template[1] as Map<string, string[]>)) {
-                        const mergedCondtions: Map<string, string[]>  = this.CollatedTemplates.get(template[0]) as Map<string, string[]>;
+                        const mergedCondtions: Map<string, string[]>  = this.collatedTemplates.get(template[0]) as Map<string, string[]>;
                         if (mergedCondtions.has(condition[0])) {
                             // tslint:disable-next-line: max-line-length
-                            this.CollatedTemplates.set(template[0], this.CollatedTemplates.get(template[0]).set(condition[0], Array.from(new Set(mergedCondtions.get(condition[0]).concat(condition[1])))));
+                            this.collatedTemplates.set(template[0], this.collatedTemplates.get(template[0]).set(condition[0], Array.from(new Set(mergedCondtions.get(condition[0]).concat(condition[1])))));
                         } else {
                             // tslint:disable-next-line: max-line-length
-                            this.CollatedTemplates.set(template[0], this.CollatedTemplates.get(template[0]).set(condition[0], condition[1]));
+                            this.collatedTemplates.set(template[0], this.collatedTemplates.get(template[0]).set(condition[0], condition[1]));
                         }
                     }
-                } else if (this.CollatedTemplates.get(template[0]) instanceof Array && template[1] instanceof Array) {
+                } else if (this.collatedTemplates.get(template[0]) instanceof Array && template[1] instanceof Array) {
                     // tslint:disable-next-line: max-line-length
-                    this.CollatedTemplates.set(template[0], Array.from(new Set(this.CollatedTemplates.get(template[0]).concat(template[1]))));
+                    this.collatedTemplates.set(template[0], Array.from(new Set(this.collatedTemplates.get(template[0]).concat(template[1]))));
                 } else {
                     const range: Range = new Range(new Position(0, 0), new Position(0, 0));
                     // tslint:disable-next-line: max-line-length
                     const mergeError: Diagnostic = new Diagnostic(range, `Template ${template[0]} occurred in both normal and condition templates`);
-                    this.CollationMessages.push(mergeError.toString());
+                    this.collationMessages.push(mergeError.toString());
                 }
             } else {
-                this.CollatedTemplates.set(template[0], template[1]);
+                this.collatedTemplates.set(template[0], template[1]);
             }
         }
     }

@@ -21,55 +21,55 @@ import { LGTemplate } from './lgTemplate';
  */
 // tslint:disable-next-line: max-classes-per-file
 export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFileParserVisitor<any> {
-    public readonly Templates: LGTemplate[];
-    public readonly ExpressionEngine: ExpressionEngine;
-    public readonly TemplateMap: { [name: string]: LGTemplate };
+    public readonly templates: LGTemplate[];
+    public readonly expressionEngine: ExpressionEngine;
+    public readonly templateMap: { [name: string]: LGTemplate };
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly expressionRecognizeRegex: RegExp = new RegExp(/\}(?!\\).+?\{(?!\\)@?/g);
     private readonly escapeSeperatorRegex : RegExp = new RegExp(/\|(?!\\)/g);
 
     constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
-        this.Templates = templates;
-        this.TemplateMap = keyBy(templates, (t: LGTemplate) => t.Name);
+        this.templates = templates;
+        this.templateMap = keyBy(templates, (t: LGTemplate) => t.name);
 
         // generate a new customzied expression engine by injecting the template as functions
-        this.ExpressionEngine = new ExpressionEngine(this.customizedEvaluatorLookup(expressionEngine.EvaluatorLookup));
+        this.expressionEngine = new ExpressionEngine(this.customizedEvaluatorLookup(expressionEngine.EvaluatorLookup));
     }
 
     public static wrappedRegExSplit(inputString: string, regex : RegExp): string[] {
         return inputString.split('').reverse().join('').split(regex).map((e: string) => e.split('').reverse().join('')).reverse();
     }
 
-    public EvaluateTemplate(templateName: string, scope: any): any {
-        if (!(templateName in this.TemplateMap)) {
+    public evaluateTemplate(templateName: string, scope: any): any {
+        if (!(templateName in this.templateMap)) {
             throw new Error(`No such template: ${templateName}`);
         }
 
-        if (this.evalutationTargetStack.find((u: EvaluationTarget) => u.TemplateName === templateName) !== undefined) {
+        if (this.evalutationTargetStack.find((u: EvaluationTarget) => u.templateName === templateName) !== undefined) {
             throw new Error(`Loop deteced: ${this.evalutationTargetStack.reverse()
-                .map((u: EvaluationTarget) => u.TemplateName)
+                .map((u: EvaluationTarget) => u.templateName)
                 .join(' => ')}`);
         }
 
         const templateTarget: EvaluationTarget = new EvaluationTarget(templateName, scope);
-        const currentEvulateId: string = templateTarget.GetId();
+        const currentEvulateId: string = templateTarget.getId();
 
         let previousEvaluateTarget: EvaluationTarget;
 
         if (this.evalutationTargetStack.length !== 0) {
             previousEvaluateTarget = this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
-            if (previousEvaluateTarget.EvaluatedChildren.has(currentEvulateId)) {
-                return previousEvaluateTarget.EvaluatedChildren.get(currentEvulateId);
+            if (previousEvaluateTarget.evaluatedChildren.has(currentEvulateId)) {
+                return previousEvaluateTarget.evaluatedChildren.get(currentEvulateId);
             }
         }
 
         // Using a stack to track the evalution trace
         this.evalutationTargetStack.push(templateTarget);
-        const result: string = this.visit(this.TemplateMap[templateName].ParseTree);
+        const result: string = this.visit(this.templateMap[templateName].parseTree);
 
         if (previousEvaluateTarget !== undefined) {
-            previousEvaluateTarget.EvaluatedChildren.set(currentEvulateId, result);
+            previousEvaluateTarget.evaluatedChildren.set(currentEvulateId, result);
         }
 
         this.evalutationTargetStack.pop();
@@ -132,7 +132,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
     public visitTemplateDefinition(ctx: lp.TemplateDefinitionContext): any {
         const templateNameContext: lp.TemplateNameLineContext = ctx.templateNameLine();
-        if (templateNameContext.templateName().text === this.currentTarget().TemplateName) {
+        if (templateNameContext.templateName().text === this.currentTarget().templateName) {
             return this.visit(ctx.templateBody());
         }
 
@@ -203,13 +203,13 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         }).join('');
     }
 
-    public ConstructScope(templateName: string, args: any[]): any {
-        if (this.TemplateMap[templateName] === undefined) {
+    public constructScope(templateName: string, args: any[]): any {
+        if (this.templateMap[templateName] === undefined) {
             throw new Error(`No such template ${templateName}`);
         }
 
-        const parameters: string[] = this.TemplateMap[templateName].Parameters;
-        const currentScope: any = this.currentTarget().Scope;
+        const parameters: string[] = this.templateMap[templateName].parameters;
+        const currentScope: any = this.currentTarget().scope;
 
         if (args.length === 0) {
             // no args to construct, inherit from current scope
@@ -313,7 +313,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
 
-            const { value: result, error }: { value: any; error: string } = this.evalByExpressionEngine(exp, this.currentTarget().Scope);
+            const { value: result, error }: { value: any; error: string } = this.evalByExpressionEngine(exp, this.currentTarget().scope);
             if (error !== undefined
                 || result === undefined
                 || typeof result === 'boolean' && !Boolean(result)
@@ -332,7 +332,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             .replace(/(^{*)/g, '')
             .replace(/(}*$)/g, '');
 
-        const { value: result, error }: { value: any; error: string } = this.evalByExpressionEngine(exp, this.currentTarget().Scope);
+        const { value: result, error }: { value: any; error: string } = this.evalByExpressionEngine(exp, this.currentTarget().scope);
         if (error !== undefined) {
             throw new Error(`Error occurs when evaluating expression ${exp}: ${error}`);
         }
@@ -348,9 +348,9 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             .replace(/(\]*$)/g, '');
 
         if (exp.indexOf('(') < 0) {
-            if (exp in this.TemplateMap) {
+            if (exp in this.templateMap) {
                 exp = exp.concat('(')
-                    .concat(this.TemplateMap[exp].Parameters.join())
+                    .concat(this.templateMap[exp].parameters.join())
                     .concat(')');
             } else {
                 exp = exp.concat('()');
@@ -402,7 +402,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     private evalByExpressionEngine(exp: string, scope: any): { value: any; error: string } {
-        const parse: Expression = this.ExpressionEngine.parse(exp);
+        const parse: Expression = this.expressionEngine.parse(exp);
 
         return parse.tryEvaluate(scope);
     }
@@ -415,15 +415,15 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             return baseLookup(name.substring(prebuiltPrefix.length));
         }
 
-        if (this.TemplateMap[name] !== undefined) {
+        if (this.templateMap[name] !== undefined) {
             // tslint:disable-next-line: max-line-length
-            return new ExpressionEvaluator(name, BuiltInFunctions.Apply(this.templateEvaluator(name)), ReturnType.Object, this.validTemplateReference);
+            return new ExpressionEvaluator(name, BuiltInFunctions.apply(this.templateEvaluator(name)), ReturnType.Object, this.validTemplateReference);
         }
 
         const lgTemplate: string = 'lgTemplate';
 
         if (name === lgTemplate) {
-            return new ExpressionEvaluator(lgTemplate, BuiltInFunctions.Apply(this.lgTemplate()), ReturnType.Object, this.validateLgTemplate);
+            return new ExpressionEvaluator(lgTemplate, BuiltInFunctions.apply(this.lgTemplate()), ReturnType.Object, this.validateLgTemplate);
         }
 
         return baseLookup(name);
@@ -431,32 +431,32 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
     private readonly lgTemplate = (): any => (args: ReadonlyArray<any>): any => {
         const templateName: string = args[0];
-        const newScope: any = this.ConstructScope(templateName, args.slice(1));
+        const newScope: any = this.constructScope(templateName, args.slice(1));
 
-        return this.EvaluateTemplate(templateName, newScope);
+        return this.evaluateTemplate(templateName, newScope);
     }
 
     private readonly validateLgTemplate = (expression: Expression): void => {
-        if (expression.Children.length === 0) {
+        if (expression.children.length === 0) {
             throw new Error(`No template name is provided when calling lgTemplate, expected: lgTemplate(templateName, ...args)`);
         }
 
-        const children0: Expression = expression.Children[0];
+        const children0: Expression = expression.children[0];
 
         // Validate return type
-        if (children0.ReturnType !== ReturnType.Object && children0.ReturnType !== ReturnType.String) {
+        if (children0.returnType !== ReturnType.Object && children0.returnType !== ReturnType.String) {
             throw new Error(`${children0} can't be used as a template name, must be a string value`);
         }
 
         // Validate more if the name is string constant
-        if (children0.Type === ExpressionType.Constant) {
-            const templateName: string = (children0 as Constant).Value;
-            if (this.TemplateMap[templateName] === undefined) {
+        if (children0.type === ExpressionType.Constant) {
+            const templateName: string = (children0 as Constant).value;
+            if (this.templateMap[templateName] === undefined) {
                 throw new Error(`No such template '${templateName}' to call in ${expression}`);
             }
 
-            const expectedArgsCount: number = this.TemplateMap[templateName].Parameters.length;
-            const actualArgsCount: number = expression.Children.length - 1;
+            const expectedArgsCount: number = this.templateMap[templateName].parameters.length;
+            const actualArgsCount: number = expression.children.length - 1;
 
             if (expectedArgsCount !== actualArgsCount) {
                 throw new Error(`Arguments mismatch for template ${templateName}, expect ${expectedArgsCount} actual ${actualArgsCount}`);
@@ -465,20 +465,20 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     private readonly templateEvaluator = (templateName: string): any => (args: ReadonlyArray<any>): any => {
-        const newScope: any = this.ConstructScope(templateName, Array.from(args));
+        const newScope: any = this.constructScope(templateName, Array.from(args));
 
-        return this.EvaluateTemplate(templateName, newScope);
+        return this.evaluateTemplate(templateName, newScope);
     }
 
     private readonly validTemplateReference = (expression: Expression): void => {
-        const templateName: string = expression.Type;
+        const templateName: string = expression.type;
 
-        if (this.TemplateMap[templateName] === undefined) {
+        if (this.templateMap[templateName] === undefined) {
             throw new Error(`no such template '${templateName}' to call in ${expression}`);
         }
 
-        const expectedArgsCount: number = this.TemplateMap[templateName].Parameters.length;
-        const actualArgsCount: number = expression.Children.length;
+        const expectedArgsCount: number = this.templateMap[templateName].parameters.length;
+        const actualArgsCount: number = expression.children.length;
 
         if (expectedArgsCount !== actualArgsCount) {
             throw new Error(`arguments mismatch for template ${templateName}, expect ${expectedArgsCount} actual ${actualArgsCount}`);

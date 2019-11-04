@@ -15,8 +15,9 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@types/lru-cache": "^5.1.0",
     "@microsoft/recognizers-text-data-types-timex-expression": "^1.1.4",
+    "@types/moment-timezone": "^0.5.12",
+    "@types/xmldom": "^0.1.29",
     "antlr4ts": "0.5.0-alpha.1",
     "jspath": "^0.4.0",
     "lodash": "^4.17.15",

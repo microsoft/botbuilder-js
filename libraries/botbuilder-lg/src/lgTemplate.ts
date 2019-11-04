@@ -17,34 +17,34 @@ export class LGTemplate {
     /**
      * Name of the template, what's followed by '#' in a LG file
      */
-    public Name: string;
+    public name: string;
     /**
      * Parameter list of this template
      */
-    public Parameters: string[];
+    public parameters: string[];
     /**
      * Source of this template, source file path if it's from a certain file
      */
-    public Source: string;
+    public source: string;
     /**
      * Text format of Body of this template. All content except Name and Parameters.
      */
-    public Body: string;
+    public body: string;
     /**
      * The parse tree of this template
      */
-    public ParseTree: TemplateDefinitionContext;
+    public parseTree: TemplateDefinitionContext;
 
     constructor(parseTree: TemplateDefinitionContext, lgfileContent: string, source: string = '') {
-        this.ParseTree = parseTree;
-        this.Source = source;
+        this.parseTree = parseTree;
+        this.source = source;
 
-        this.Name = this.ExtractName(parseTree);
-        this.Parameters = this.ExtractParameters(parseTree);
-        this.Body = this.ExtractBody(parseTree, lgfileContent);
+        this.name = this.extractName(parseTree);
+        this.parameters = this.extractParameters(parseTree);
+        this.body = this.extractBody(parseTree, lgfileContent);
     }
 
-    private readonly ExtractName = (parseTree: TemplateDefinitionContext): string => {
+    private readonly extractName = (parseTree: TemplateDefinitionContext): string => {
         // tslint:disable-next-line: newline-per-chained-call
         const nameContext: TemplateNameContext = parseTree.templateNameLine().templateName();
         if (nameContext === undefined || nameContext.text === undefined) {
@@ -54,7 +54,7 @@ export class LGTemplate {
         return  nameContext.text;
     }
 
-    private readonly ExtractParameters = (parseTree: TemplateDefinitionContext): string[] => {
+    private readonly extractParameters = (parseTree: TemplateDefinitionContext): string[] => {
         // tslint:disable-next-line: newline-per-chained-call
         const parameters: ParametersContext = parseTree.templateNameLine().parameters();
         if (parameters !== undefined) {
@@ -65,7 +65,7 @@ export class LGTemplate {
         return [];
     }
 
-    private readonly ExtractBody = (parseTree: TemplateDefinitionContext, lgfileContent: string): string => {
+    private readonly extractBody = (parseTree: TemplateDefinitionContext, lgfileContent: string): string => {
        const templateBody: TemplateBodyContext = parseTree.templateBody();
        if (templateBody === undefined) {
            return '';

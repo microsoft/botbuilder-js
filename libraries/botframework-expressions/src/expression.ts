@@ -46,23 +46,23 @@ export class Expression {
     /**
      * Expected result of evaluating expression.
      */
-    public get ReturnType(): ReturnType {
-        return this.Evaluator.ReturnType;
+    public get returnType(): ReturnType {
+        return this.evaluator.returnType;
     }
 
     /**
      * Type of expression.
      */
-    public get Type(): string {
-        return this.Evaluator.Type;
+    public get type(): string {
+        return this.evaluator.type;
     }
 
     /**
      * Children expressions.
      */
-    public Children: Expression[];
+    public children: Expression[];
 
-    protected readonly Evaluator: ExpressionEvaluator;
+    protected readonly evaluator: ExpressionEvaluator;
 
     /**
      * xpression constructor.
@@ -71,8 +71,8 @@ export class Expression {
      * @param children Child expressions.
      */
     public constructor(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]) {
-        this.Evaluator = evaluator === undefined ? BuiltInFunctions.Lookup(type) : evaluator;
-        this.Children = children;
+        this.evaluator = evaluator === undefined ? BuiltInFunctions.lookup(type) : evaluator;
+        this.children = children;
     }
 
     /**
@@ -81,7 +81,7 @@ export class Expression {
      * @param evaluator Information about how to validate and evaluate expression.
      * @param children Child expressions.
      */
-    public static MakeExpression(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]): Expression {
+    public static makeExpression(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]): Expression {
         const expr: Expression = new Expression(type, evaluator, ...children);
         expr.validate();
 
@@ -89,74 +89,17 @@ export class Expression {
     }
 
     /**
-     * Construct an expression from a EvaluateExpressionDelegate
-     * @param func Function to create an expression from.
-     */
-    public static LambaExpression(func: EvaluateExpressionDelegate): Expression {
-        return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda, func));
-    }
-
-    /**
-     * Construct an expression from a lamba expression over the state.
-     * Exceptions will be caught and surfaced as an error string.
-     * @param func ambda expression to evaluate.
-     * @returns New expression.
-     */
-    public static Lambda(func: (arg0: any) => any): Expression {
-        return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda,
-                                                                             (_expression: Expression, state: any): { value: any; error: string } => {
-                let value: any;
-                let error: string;
-                try {
-                    value = func(state);
-                } catch (funcError) {
-                    error = funcError;
-                }
-
-                return { value, error };
-            }
-        ));
-    }
-
-    /**
-     * Construct and validate an And expression.
-     * @param children Child clauses.
-     * @returns New expression.
-     */
-    public static AndExpression(...children: Expression[]): Expression {
-        return Expression.MakeExpression(ExpressionType.And, undefined, ...children);
-    }
-
-    /**
-     * Construct and validate an Or expression.
-     * @param children Child clauses.
-     * @returns New expression.
-     */
-    public static OrExpression(...children: Expression[]): Expression {
-        return Expression.MakeExpression(ExpressionType.Or, undefined, ...children);
-    }
-
-    /**
-     * Construct and validate an Not expression.
-     * @param children Child clauses.
-     * @returns New expression.
-     */
-    public static NotExpression(child: Expression): Expression {
-        return Expression.MakeExpression(ExpressionType.Not, undefined, child);
-    }
-
-    /**
      * Validate immediate expression.
      */
     // tslint:disable-next-line: no-void-expression
-    public validate = (): void => this.Evaluator.ValidateExpression(this);
+    public validate = (): void => this.evaluator.validateExpression(this);
 
     /**
      * Recursively validate the expression tree.
      */
     public validateTree(): void {
         this.validate();
-        for (const child of this.Children) {
+        for (const child of this.children) {
             child.validateTree();
         }
     }
@@ -167,48 +110,44 @@ export class Expression {
      * @param state
      */
     public tryEvaluate(state: any): { value: any; error: string } {
-        return this.Evaluator.TryEvaluate(this, state);
+        return this.evaluator.tryEvaluate(this, state);
     }
 
     public toString(): string {
-        return this.ToString(this.Type);
-    }
-
-    protected ToString(name: string): string {
         let builder: string = '';
         let valid: boolean = false;
         // Special support for memory paths
-        if (this.Type === ExpressionType.Accessor && this.Children.length >= 1) {
-            if (this.Children[0] instanceof Constant) {
-                const prop: any = (<Constant>(this.Children[0])).Value;
+        if (this.type === ExpressionType.Accessor && this.children.length >= 1) {
+            if (this.children[0] instanceof Constant) {
+                const prop: any = (<Constant>(this.children[0])).value;
                 if (typeof prop === 'string') {
-                    if (this.Children.length === 1) {
+                    if (this.children.length === 1) {
                         valid = true;
                         builder = builder.concat(prop);
-                    } else if (this.Children.length === 2) {
+                    } else if (this.children.length === 2) {
                         valid = true;
-                        builder = builder.concat(this.Children[1].toString(), '.', prop);
+                        builder = builder.concat(this.children[1].toString(), '.', prop);
                     }
                 }
             }
-        } else if (this.Type === ExpressionType.Element && this.Children.length === 2) {
+        } else if (this.type === ExpressionType.Element && this.children.length === 2) {
             valid = true;
-            builder = builder.concat(this.Children[0].toString(), '[', this.Children[1].toString(), ']');
+            builder = builder.concat(this.children[0].toString(), '[', this.children[1].toString(), ']');
         }
 
         if (!valid) {
-            const infix: boolean = this.Type.length > 0 && !new RegExp(/[a-z]/i).test(this.Type[0]) && this.Children.length >= 2;
+            const infix: boolean = this.type.length > 0 && !new RegExp(/[a-z]/i).test(this.type[0]) && this.children.length >= 2;
             if (!infix) {
-                builder = builder.concat(this.Type);
+                builder = builder.concat(this.type);
             }
             builder = builder.concat('(');
             let first: boolean = true;
-            for (const child of this.Children) {
+            for (const child of this.children) {
                 if (first) {
                     first = false;
                 } else {
                     if (infix) {
-                        builder = builder.concat(' ', this.Type, ' ');
+                        builder = builder.concat(' ', this.type, ' ');
                     } else {
                         builder = builder.concat(', ');
                     }

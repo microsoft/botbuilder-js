@@ -16,19 +16,19 @@ import { LGTemplate } from './lgTemplate';
  */
 export class LGResource {
 
-   public Id: string;
+   public id: string;
 
-   public Templates: LGTemplate[];
+   public templates: LGTemplate[];
 
-   public Imports: LGImport[];
+   public imports: LGImport[];
 
-   public Content: string;
+   public content: string;
 
    constructor(templates: LGTemplate[], imports: LGImport[], content: string, id: string = '') {
-      this.Templates = templates;
-      this.Imports = imports;
-      this.Id = id;
-      this.Content = content;
+      this.templates = templates;
+      this.imports = imports;
+      this.id = id;
+      this.content = content;
    }
 
    public discoverLGResources(importResolver: ImportResolverDelegate) : LGResource[] {
@@ -48,7 +48,7 @@ export class LGResource {
     * @returns new LG resource.
     */
    public updateTemplate(templateName: string, newTemplateName: string, parameters: string[], templateBody: string): LGResource {
-      const template: LGTemplate = this.Templates.find((u: LGTemplate) => u.Name === templateName);
+      const template: LGTemplate = this.templates.find((u: LGTemplate) => u.name === templateName);
       if (template === undefined) {
          return this;
       }
@@ -56,12 +56,12 @@ export class LGResource {
       const templateNameLine: string = this.buildTemplateNameLine(newTemplateName, parameters);
       const newTemplateBody: string = this.convertTemplateBody(templateBody);
       const content: string = `${templateNameLine}\r\n${newTemplateBody}`;
-      const startLine: number = template.ParseTree.start.line - 1;
-      const stopLine: number = template.ParseTree.stop.line - 1;
+      const startLine: number = template.parseTree.start.line - 1;
+      const stopLine: number = template.parseTree.stop.line - 1;
 
-      const newContent: string = this.replaceRangeContent(this.Content, startLine, stopLine, content);
+      const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, content);
 
-      return LGParser.parse(newContent, this.Id);
+      return LGParser.parse(newContent, this.id);
    }
 
    /**
@@ -72,16 +72,16 @@ export class LGResource {
     * @returns new lg resource.
     */
    public addTemplate(templateName: string, parameters: string[], templateBody: string): LGResource {
-      const template: LGTemplate = this.Templates.find((u: LGTemplate) => u.Name === templateName);
+      const template: LGTemplate = this.templates.find((u: LGTemplate) => u.name === templateName);
       if (template !== undefined) {
          throw new Error(`template ${templateName} already exists.`);
       }
 
       const templateNameLine: string = this.buildTemplateNameLine(templateName, parameters);
       const newTemplateBody: string = this.convertTemplateBody(templateBody);
-      const newContent: string = `${this.Content}\r\n${templateNameLine}\r\n${newTemplateBody}`;
+      const newContent: string = `${this.content}\r\n${templateNameLine}\r\n${newTemplateBody}`;
 
-      return LGParser.parse(newContent, this.Id);
+      return LGParser.parse(newContent, this.id);
    }
 
    /**
@@ -90,21 +90,21 @@ export class LGResource {
     * @returns return the new lg resource.
     */
    public deleteTemplate(templateName: string): LGResource {
-      const template: LGTemplate = this.Templates.find((u: LGTemplate) => u.Name === templateName);
+      const template: LGTemplate = this.templates.find((u: LGTemplate) => u.name === templateName);
       if (template === undefined) {
          return this;
       }
 
-      const startLine: number = template.ParseTree.start.line - 1;
-      const stopLine: number = template.ParseTree.stop.line - 1;
+      const startLine: number = template.parseTree.start.line - 1;
+      const stopLine: number = template.parseTree.stop.line - 1;
 
-      const newContent: string = this.replaceRangeContent(this.Content, startLine, stopLine, undefined);
+      const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, undefined);
 
-      return LGParser.parse(newContent, this.Id);
+      return LGParser.parse(newContent, this.id);
    }
 
    public toString() : string {
-      return this.Content;
+      return this.content;
    }
 
    private replaceRangeContent(originString: string, startLine: number, stopLine: number, replaceString: string): string {
@@ -171,15 +171,15 @@ export class LGResource {
    }
 
    private resolveImportResources(start: LGResource, importResolver: ImportResolverDelegate, resourcesFound: LGResource[]): void {
-      const resourceIds: string[] = start.Imports.map((lg: LGImport) => lg.Id);
+      const resourceIds: string[] = start.imports.map((lg: LGImport) => lg.id);
       resourcesFound.push(start);
 
       resourceIds.forEach((resourceId: string) => {
          try {
-            const { content, id } = importResolver(start.Id, resourceId);
+            const { content, id } = importResolver(start.id, resourceId);
             const childResource: LGResource = LGParser.parse(content, id);
 
-            if (!(resourcesFound.some((x: LGResource) => x.Id === childResource.Id))) {
+            if (!(resourcesFound.some((x: LGResource) => x.id === childResource.id))) {
                   this.resolveImportResources(childResource, importResolver, resourcesFound);
             }
          } catch (e) {

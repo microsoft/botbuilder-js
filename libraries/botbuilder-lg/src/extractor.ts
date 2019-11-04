@@ -15,18 +15,18 @@ import { LGTemplate } from './lgTemplate';
 
 // tslint:disable-next-line: completed-docs
 export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGFileParserVisitor<Map<string, any>> {
-    public readonly Templates: LGTemplate[];
-    public readonly TemplateMap: {[name: string]: LGTemplate};
+    public readonly templates: LGTemplate[];
+    public readonly templateMap: {[name: string]: LGTemplate};
     constructor(templates: LGTemplate[]) {
         super();
-        this.Templates = templates;
-        this.TemplateMap = keyBy(templates, (t: LGTemplate) => t.Name);
+        this.templates = templates;
+        this.templateMap = keyBy(templates, (t: LGTemplate) => t.name);
     }
 
-    public Extract(): Map<string, any>[] {
+    public extract(): Map<string, any>[] {
         const result: Map<string, any>[] = [];
-        this.Templates.forEach((template: LGTemplate) => {
-            result.push(this.visit(template.ParseTree));
+        this.templates.forEach((template: LGTemplate) => {
+            result.push(this.visit(template.parseTree));
         });
 
         return result;

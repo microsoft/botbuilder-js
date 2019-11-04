@@ -12,19 +12,19 @@ import { Position } from './position';
  * Range class
  */
 export class Range {
-    public Start: Position;
-    public End: Position;
+    public start: Position;
+    public end: Position;
 
     constructor(start: Position, end: Position) {
-        this.Start = start;
-        this.End = end;
+        this.start = start;
+        this.end = end;
     }
 
     public toString = (): string => {
-        let result: string = this.Start.toString();
-        if (this.Start.Line <= this.End.Line && this.Start.Character < this.End.Character) {
+        let result: string = this.start.toString();
+        if (this.start.line <= this.end.line && this.start.character < this.end.character) {
             result += ' - ';
-            result += this.End.toString();
+            result += this.end.toString();
         }
 
         return result;

@@ -53,12 +53,12 @@ export class TemplateEngine {
         // Remove duplicated lg files by id
         const deduplicatedLGResources: LGResource[] = totalLGResources.filter((resource: LGResource, index: number, self: LGResource[]) =>
             index === self.findIndex((t: LGResource) => (
-                t.Id === resource.Id
+                t.id === resource.id
             ))
         );
 
         const lgTemplates: LGTemplate[] = deduplicatedLGResources.reduce((acc: LGTemplate[], x: LGResource) =>
-            acc = acc.concat(x.Templates),                               []
+            acc = acc.concat(x.templates),                               []
         );
 
         this.templates = this.templates.concat(lgTemplates);
@@ -88,7 +88,7 @@ export class TemplateEngine {
         const rootResource: LGResource = LGParser.parse(content, id);
         const lgResources: LGResource[] = rootResource.discoverLGResources(importResolver);
         const lgTemplates: LGTemplate[] = lgResources.reduce((acc: LGTemplate[], x: LGResource) =>
-            acc = acc.concat(x.Templates),                   []
+            acc = acc.concat(x.templates),                   []
         );
 
         this.templates = this.templates.concat(lgTemplates);
@@ -100,19 +100,19 @@ export class TemplateEngine {
     public evaluateTemplate(templateName: string, scope?: any) : any {
         const evalutor: Evaluator = new Evaluator(this.templates, this.expressionEngine);
 
-        return evalutor.EvaluateTemplate(templateName, scope);
+        return evalutor.evaluateTemplate(templateName, scope);
     }
 
     public expandTemplate(templateName: string, scope?: any) : string[] {
         const expander: Expander = new Expander(this.templates, this.expressionEngine);
 
-        return expander.ExpandTemplate(templateName, scope);
+        return expander.expandTemplate(templateName, scope);
     }
 
     public analyzeTemplate(templateName: string): AnalyzerResult {
         const analyzer: Analyzer = new Analyzer(this.templates, this.expressionEngine);
 
-        return analyzer.AnalyzeTemplate(templateName);
+        return analyzer.analyzeTemplate(templateName);
     }
 
     public evaluate(inlineStr: string, scope?: any): any {
@@ -122,18 +122,18 @@ export class TemplateEngine {
                    ? '```'.concat(inlineStr).concat('```') : inlineStr;
         const wrappedStr: string = `# ${fakeTemplateId} \r\n - ${inlineStr}`;
         const lgResource: LGResource = LGParser.parse(wrappedStr, 'inline');
-        const mergedTemplates: LGTemplate[] = this.templates.concat(lgResource.Templates);
+        const mergedTemplates: LGTemplate[] = this.templates.concat(lgResource.templates);
         this.runStaticCheck(mergedTemplates);
         const evalutor: Evaluator = new Evaluator(mergedTemplates, this.expressionEngine);
 
-        return evalutor.EvaluateTemplate(fakeTemplateId, scope);
+        return evalutor.evaluateTemplate(fakeTemplateId, scope);
     }
 
     private readonly runStaticCheck = (templates: LGTemplate[]): void => {
         const templatesToCheck: LGTemplate[] = templates === undefined ? this.templates : templates;
         const diagnostics: Diagnostic[] = new StaticChecker(this.expressionEngine).checkTemplates(templatesToCheck);
 
-        const errors: Diagnostic[] = diagnostics.filter((u: Diagnostic) => u.Severity === DiagnosticSeverity.Error);
+        const errors: Diagnostic[] = diagnostics.filter((u: Diagnostic) => u.severity === DiagnosticSeverity.Error);
         if (errors.length > 0) {
             throw new Error(errors.map((error: Diagnostic) => error.toString()).join('\n'));
         }

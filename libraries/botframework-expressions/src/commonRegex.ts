@@ -20,18 +20,18 @@ export class CommonRegex {
         if (pattern !== undefined && pattern !== '' && this.regexCache.has(pattern)) {
             result = this.regexCache.get(pattern);
         } else {
-            if (pattern === undefined || pattern === '' || !this.IsCommonRegex(pattern)) {
+            if (pattern === undefined || pattern === '' || !this.isCommonRegex(pattern)) {
                 throw new Error(`A regular expression parsing error occurred.`);
             }
 
-            result = this.GetRegExpFromString(pattern);
+            result = this.getRegExpFromString(pattern);
             this.regexCache.set(pattern, result);
         }
 
         return result;
     }
 
-    private static GetRegExpFromString(pattern: string): RegExp {
+    private static getRegExpFromString(pattern: string): RegExp {
         const flags: string[] = ['(?i)', '(?m)', '(?s)'];
         let flag: string = '';
         flags.forEach((e: string) => {
@@ -51,9 +51,9 @@ export class CommonRegex {
         return regexp;
     }
 
-    private static IsCommonRegex(pattern: string): boolean {
+    private static isCommonRegex(pattern: string): boolean {
         try {
-            this.AntlrParse(pattern);
+            this.antlrParse(pattern);
         } catch (Exception) {
             return false;
         }
@@ -61,12 +61,13 @@ export class CommonRegex {
         return true;
     }
 
-    private static AntlrParse(pattern: string): ParseTree {
+    private static antlrParse(pattern: string): ParseTree {
         const inputStream: ANTLRInputStream = new ANTLRInputStream(pattern);
         const lexer: CommonRegexLexer = new CommonRegexLexer(inputStream);
         const tokenStream: CommonTokenStream = new CommonTokenStream(lexer);
         const parser: CommonRegexParser = new CommonRegexParser(tokenStream);
         parser.removeErrorListeners();
+        // tslint:disable-next-line: no-use-before-declare
         parser.addErrorListener(ErrorListener.Instance);
         parser.buildParseTree = true;
 

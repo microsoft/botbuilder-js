@@ -8,7 +8,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, ParseTree, TerminalNode } from 'antlr4ts/tree';
-import { Constant, Expression, ExpressionEngine, Extensions, IExpressionParser } from 'botframework-expressions';
+import { Constant, Expression, ExpressionEngine, ExpressionParserInterface, Extensions } from 'botframework-expressions';
 import { flatten, keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
@@ -16,6 +16,7 @@ import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
 
+// tslint:disable-next-line: completed-docs
 export class AnalyzerResult {
     public Variables: string[];
     public TemplateReferences: string[];
@@ -38,31 +39,31 @@ export class AnalyzerResult {
  * Analyzer engine. To analyse which variable may be used
  */
 export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implements LGFileParserVisitor<AnalyzerResult> {
-    public readonly Templates: LGTemplate[];
-    public readonly TemplateMap: {[name: string]: LGTemplate};
+    public readonly templates: LGTemplate[];
+    public readonly templateMap: {[name: string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
-    private readonly _expressionParser: IExpressionParser;
+    private readonly _expressionParser: ExpressionParserInterface;
     private readonly escapeSeperatorRegex : RegExp = new RegExp(/\|(?!\\)/g);
     private readonly expressionRecognizeRegex: RegExp = new RegExp(/\}(?!\\).+?\{(?!\\)@?/g);
 
     constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
-        this.Templates = templates;
-        this.TemplateMap = keyBy(templates, (t: LGTemplate) => t.Name);
+        this.templates = templates;
+        this.templateMap = keyBy(templates, (t: LGTemplate) => t.name);
 
         // create an evaluator to leverage it's customized function look up for checking
-        const evaluator: Evaluator = new Evaluator(this.Templates, expressionEngine);
-        this._expressionParser = evaluator.ExpressionEngine;
+        const evaluator: Evaluator = new Evaluator(this.templates, expressionEngine);
+        this._expressionParser = evaluator.expressionEngine;
     }
 
-    public AnalyzeTemplate(templateName: string): AnalyzerResult {
-        if (!(templateName in this.TemplateMap)) {
+    public analyzeTemplate(templateName: string): AnalyzerResult {
+        if (!(templateName in this.templateMap)) {
             throw new Error(`No such template: ${templateName}`);
         }
 
-        if (this.evalutationTargetStack.find((u: EvaluationTarget) => u.TemplateName === templateName) !== undefined) {
+        if (this.evalutationTargetStack.find((u: EvaluationTarget) => u.templateName === templateName) !== undefined) {
             throw new Error(`Loop deteced: ${this.evalutationTargetStack.reverse()
-                .map((u: EvaluationTarget) => u.TemplateName)
+                .map((u: EvaluationTarget) => u.templateName)
                 .join(' => ')}`);
         }
 
@@ -73,7 +74,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         // because given we don't track down for templates have parameters
         // the only scenario that we are still analyzing an parameterized template is
         // this template is root template to anaylze, in this we also don't have exclude parameters
-        const dependencies: AnalyzerResult = this.visit(this.TemplateMap[templateName].ParseTree);
+        const dependencies: AnalyzerResult = this.visit(this.templateMap[templateName].parseTree);
         this.evalutationTargetStack.pop();
 
         return dependencies;
@@ -81,7 +82,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     public visitTemplateDefinition(ctx: lp.TemplateDefinitionContext): AnalyzerResult {
         const templateNameContext: lp.TemplateNameLineContext = ctx.templateNameLine();
-        if (templateNameContext.templateName().text === this.currentTarget().TemplateName) {
+        if (templateNameContext.templateName().text === this.currentTarget().templateName) {
             if (ctx.templateBody() !== undefined) {
                 return this.visit(ctx.templateBody());
             }
@@ -119,17 +120,17 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
                 const originValue: string = line.substr(start + 1).trim();
                 const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, this.escapeSeperatorRegex);
                 if (valueArray.length === 1) {
-                    result.union(this.AnalyzeText(originValue));
+                    result.union(this.analyzeText(originValue));
                 } else {
                     const valueList: any[] = [];
                     for (const item of valueArray) {
-                        result.union(this.AnalyzeText(item.trim()));
+                        result.union(this.analyzeText(item.trim()));
                     }
 
                     result[property] = valueList;
                 }
             } else if (this.isPureExpression(line)) {
-                result.union(this.AnalyzeExpression(line));
+                result.union(this.analyzeExpression(line));
             }
         }
 
@@ -143,7 +144,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         for (const ifRule of ifRules) {
             const expressions: TerminalNode[] = ifRule.ifCondition().EXPRESSION();
             if (expressions !== undefined && expressions.length > 0) {
-                result.union(this.AnalyzeExpression(expressions[0].text));
+                result.union(this.analyzeExpression(expressions[0].text));
             }
             if (ifRule.normalTemplateBody() !== undefined) {
                 result.union(this.visit(ifRule.normalTemplateBody()));
@@ -159,7 +160,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         for (const iterNode of switchCaseNodes) {
             const expressions: TerminalNode[] = iterNode.switchCaseStat().EXPRESSION();
             if (expressions.length > 0) {
-                result.union(this.AnalyzeExpression(expressions[0].text));
+                result.union(this.analyzeExpression(expressions[0].text));
             }
             if (iterNode.normalTemplateBody() !== undefined) {
                 result.union(this.visit(iterNode.normalTemplateBody()));
@@ -176,15 +177,15 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
             switch (innerNode.symbol.type) {
                 case lp.LGFileParser.DASH: break;
                 case lp.LGFileParser.EXPRESSION: {
-                    result.union(this.AnalyzeExpression(innerNode.text));
+                    result.union(this.analyzeExpression(innerNode.text));
                     break;
                 }
                 case lp.LGFileParser.TEMPLATE_REF: {
-                    result.union(this.AnalyzeTemplateRef(innerNode.text));
+                    result.union(this.analyzeTemplateRef(innerNode.text));
                     break;
                 }
                 case lp.LGFileParser.MULTI_LINE_TEXT: {
-                    result.union(this.AnalyzeMultiLineText(innerNode.text));
+                    result.union(this.analyzeMultiLineText(innerNode.text));
                     break;
                 }
                 default: {
@@ -200,79 +201,79 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return new AnalyzerResult();
     }
 
-    private AnalyzeExpressionDirectly(exp: Expression): AnalyzerResult {
+    private analyzeExpressionDirectly(exp: Expression): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
 
-        if (exp.Type in this.TemplateMap) {
-            const templateName: string = exp.Type;
+        if (exp.type in this.templateMap) {
+            const templateName: string = exp.type;
             result.union(new AnalyzerResult([], [templateName]));
 
-            if (this.TemplateMap[templateName].Parameters === undefined || this.TemplateMap[templateName].Parameters.length === 0) {
-                result.union(this.AnalyzeTemplate(templateName));
+            if (this.templateMap[templateName].parameters === undefined || this.templateMap[templateName].parameters.length === 0) {
+                result.union(this.analyzeTemplate(templateName));
             } else {
                 // if template has params, just get the templateref without variables.
-                result.union(new AnalyzerResult([], this.AnalyzeTemplate(templateName).TemplateReferences));
+                result.union(new AnalyzerResult([], this.analyzeTemplate(templateName).TemplateReferences));
             }
         }
 
-        if (exp.Children !== undefined) {
-            exp.Children.forEach((e: Expression) => result.union(this.AnalyzeExpressionDirectly(e)));
+        if (exp.children !== undefined) {
+            exp.children.forEach((e: Expression) => result.union(this.analyzeExpressionDirectly(e)));
         }
 
         return result;
     }
 
-    private AnalyzeText(exp: string): AnalyzerResult {
+    private analyzeText(exp: string): AnalyzerResult {
         if (exp === undefined || exp.length === 0) {
             return new AnalyzerResult();
         }
 
         if (this.isPureExpression(exp)) {
-            return this.AnalyzeExpression(exp);
+            return this.analyzeExpression(exp);
         } else {
             // unescape \|
-            return this.AnalyzeTextContainsExpression(exp);
+            return this.analyzeTextContainsExpression(exp);
         }
     }
 
-    private AnalyzeTextContainsExpression(exp: string): AnalyzerResult {
+    private analyzeTextContainsExpression(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
         const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(this.expressionRecognizeRegex);
         const expressionsRaw: string[] = reversedExps.map((e: string) => e.split('').reverse().join('')).reverse();
         const expressions: string[] = expressionsRaw.filter((e: string) => e.length > 0);
-        expressions.forEach((item: string) => result.union(this.AnalyzeExpression(item)));
+        expressions.forEach((item: string) => result.union(this.analyzeExpression(item)));
 
         return result;
     }
 
-    private AnalyzeExpression(exp: string): AnalyzerResult {
+    private analyzeExpression(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
         exp = exp.replace(/(^@*)/g, '')
                 .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
         const parsed: Expression = this._expressionParser.parse(exp);
 
-        const references: ReadonlyArray<string> = Extensions.References(parsed);
+        const references: ReadonlyArray<string> = Extensions.references(parsed);
         result.union(new AnalyzerResult(references.slice(), []));
-        result.union(this.AnalyzeExpressionDirectly(parsed));
+        result.union(this.analyzeExpressionDirectly(parsed));
 
         return  result;
     }
 
-    private AnalyzeTemplateRef(exp: string): AnalyzerResult {
+    private analyzeTemplateRef(exp: string): AnalyzerResult {
         exp = exp.replace(/(^\[*)/g, '')
                 .replace(/(\]*$)/g, '');
         exp = exp.indexOf('(') < 0 ? exp.concat('()') : exp;
 
-        return this.AnalyzeExpression(exp);
+        return this.analyzeExpression(exp);
     }
 
-    private AnalyzeMultiLineText(exp: string): AnalyzerResult {
+    private analyzeMultiLineText(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
         exp = exp.substr(3, exp.length - 6);
         const matches: string[] = exp.split('').reverse().join('').match(this.expressionRecognizeRegex).map((e: string) => e.split('').reverse().join('')).reverse();
         for (const match of matches) {
-            result.union(this.AnalyzeExpression(match));
+            result.union(this.analyzeExpression(match));
         }
 
         return result;

@@ -27,6 +27,7 @@ export class ErrorListener implements ANTLRErrorListener<any> {
         e: RecognitionException | undefined): void {
             const startPosition: Position = new Position(line, charPositionInLine);
             // tslint:disable-next-line: max-line-length
+            // tslint:disable-next-line: restrict-plus-operands
             const stopPosition: Position = new Position(line, charPositionInLine + offendingSymbol.stopIndex - offendingSymbol.startIndex + 1);
             const range: Range = new Range(startPosition, stopPosition);
             msg = `syntax error message: ${msg}`;

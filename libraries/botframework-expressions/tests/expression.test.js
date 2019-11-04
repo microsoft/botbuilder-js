@@ -560,7 +560,7 @@ describe('expression functional test', () => {
 
       //Assert Object Equals
       if (actual instanceof Array && expected instanceof Array) {
-        const [isSuccess, errorMessage] = IsArraySame(actual, expected);
+        const [isSuccess, errorMessage] = isArraySame(actual, expected);
         if (!isSuccess) {
           assert.fail(errorMessage);
         }
@@ -573,8 +573,8 @@ describe('expression functional test', () => {
 
       //Assert ExpectedRefs
       if (data.length === 3) {
-        const actualRefs = Extensions.References(parsed);
-        const [isSuccess, errorMessage] = IsArraySame(actualRefs.sort(), data[2].sort());
+        const actualRefs = Extensions.references(parsed);
+        const [isSuccess, errorMessage] = isArraySame(actualRefs.sort(), data[2].sort());
         if (!isSuccess) {
           assert.fail(errorMessage);
         }
@@ -583,7 +583,7 @@ describe('expression functional test', () => {
   });
 });
 
-var IsArraySame = (actual, expected) => { //return [isSuccess, errorMessage]
+var isArraySame = (actual, expected) => { //return [isSuccess, errorMessage]
   if (actual.length !== expected.length) return [false, `expected length: ${expected.length}, actual length: ${actual.length}`];
 
   for (let i = 0; i < actual.length; i++) {

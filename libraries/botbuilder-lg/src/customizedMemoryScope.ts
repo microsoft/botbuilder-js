@@ -25,12 +25,12 @@ export class CustomizedMemoryScope extends Map {
     public get(key: any): any {
         let value: any;
         let error: string;
-        ({ value, error } = Extensions.AccessProperty(this.localScope, key));
+        ({ value, error } = Extensions.accessProperty(this.localScope, key));
         if (value !== undefined && error === undefined) {
             return value;
         }
 
-        ({ value, error } = Extensions.AccessProperty(this.globalScope, key));
+        ({ value, error } = Extensions.accessProperty(this.globalScope, key));
         if (value !== undefined && error === undefined) {
             return value;
         }

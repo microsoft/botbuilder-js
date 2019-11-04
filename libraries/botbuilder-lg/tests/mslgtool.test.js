@@ -5,7 +5,7 @@ const fs = require('fs');
 function GetErrors(mslgtool, fileName){
     const path = `${ __dirname }/testData/mslgTool/`+ fileName;
     const text = fs.readFileSync(path, 'utf-8');
-    return mslgtool.ValidateFile(text, path);
+    return mslgtool.validateFile(text, path);
   
 }
 
@@ -34,12 +34,12 @@ describe('MSLGTool', function () {
         assert.strictEqual(errors.length, 0);
         errors = GetErrors(mslgTool, 'CollateFile3.lg');
         assert.strictEqual(errors.length, 0);
-        assert.strictEqual(mslgTool.CollationMessages.length, 0);
-        assert.strictEqual(mslgTool.NameCollisions.length, 3);
-        assert.strictEqual(mslgTool.CollatedTemplates.size, 5);
-        assert.strictEqual(mslgTool.CollatedTemplates.get('Greeting').length, 3);
-        assert.strictEqual(mslgTool.CollatedTemplates.get('TimeOfDayWithCondition').size, 3);
-        assert.strictEqual(mslgTool.CollatedTemplates.get('TimeOfDay').length, 3);
+        assert.strictEqual(mslgTool.collationMessages.length, 0);
+        assert.strictEqual(mslgTool.nameCollisions.length, 3);
+        assert.strictEqual(mslgTool.collatedTemplates.size, 5);
+        assert.strictEqual(mslgTool.collatedTemplates.get('Greeting').length, 3);
+        assert.strictEqual(mslgTool.collatedTemplates.get('TimeOfDayWithCondition').size, 3);
+        assert.strictEqual(mslgTool.collatedTemplates.get('TimeOfDay').length, 3);
     });
 
     it('TestCollateTemplatesOfStructuredLG', function () {
@@ -48,12 +48,12 @@ describe('MSLGTool', function () {
         assert.strictEqual(errors.length, 0);
         errors = GetErrors(mslgTool, 'CollateFile5.lg'); 
         assert.strictEqual(errors.length, 0);
-        assert.strictEqual(mslgTool.CollationMessages.length, 0);
-        assert.strictEqual(mslgTool.NameCollisions.length, 1);
-        assert.strictEqual(mslgTool.CollatedTemplates.size, 1);
-        assert.strictEqual(mslgTool.CollatedTemplates.get('ST2')[0].replace(/\r\n/g, '\n'), '[MyStruct\n    Speak = bar\n    Text = zoo\n]');
-        assert.strictEqual(mslgTool.CollatedTemplates.get('ST2')[1].replace(/\r\n/g, '\n'), '[MyStruct\n    Speak = hello\n    Text = world\n]');
-        let result = mslgTool.CollateTemplates();
+        assert.strictEqual(mslgTool.collationMessages.length, 0);
+        assert.strictEqual(mslgTool.nameCollisions.length, 1);
+        assert.strictEqual(mslgTool.collatedTemplates.size, 1);
+        assert.strictEqual(mslgTool.collatedTemplates.get('ST2')[0].replace(/\r\n/g, '\n'), '[MyStruct\n    Speak = bar\n    Text = zoo\n]');
+        assert.strictEqual(mslgTool.collatedTemplates.get('ST2')[1].replace(/\r\n/g, '\n'), '[MyStruct\n    Speak = hello\n    Text = world\n]');
+        let result = mslgTool.collateTemplates();
         assert.strictEqual(result.replace(/\r\n/g, '\n'), '# ST2\n[MyStruct\n    Speak = bar\n    Text = zoo\n]\n\n');
     });
 
@@ -61,7 +61,7 @@ describe('MSLGTool', function () {
         const mslgTool = new MSLGTool();
         let errors = GetErrors(mslgTool, 'CollateFile1.lg');
         assert.strictEqual(errors.length, 0);
-        let expandedTemplate = mslgTool.ExpandTemplate('FinalGreeting', undefined);
+        let expandedTemplate = mslgTool.expandTemplate('FinalGreeting', undefined);
         assert.strictEqual(expandedTemplate.length, 4);
         let expectedResults = ['Hi Morning', 'Hi Evening', 'Hello Morning', 'Hello Evening'];
         expectedResults.forEach(element => {
@@ -73,13 +73,13 @@ describe('MSLGTool', function () {
         const mslgTool = new MSLGTool();
         let errors = GetErrors(mslgTool, 'CollateFile3.lg');
         assert.strictEqual(errors.length, 0);
-        let expandedTemplate = mslgTool.ExpandTemplate('TimeOfDayWithCondition', { time: 'evening' });
+        let expandedTemplate = mslgTool.expandTemplate('TimeOfDayWithCondition', { time: 'evening' });
         assert.strictEqual(expandedTemplate.length, 2);
         let expectedResults = ['Hi Evening', 'Hey Evening'];
         expectedResults.forEach(element => {
             assert.strictEqual(expandedTemplate.includes(element), true);
         });
-        let expandedTemplate2 = mslgTool.ExpandTemplate('greetInAWeek', { day: 'Sunday' });
+        let expandedTemplate2 = mslgTool.expandTemplate('greetInAWeek', { day: 'Sunday' });
         assert.strictEqual(expandedTemplate.length, 2);
         let expected2Results = ['Nice Sunday!', 'Happy Sunday!'];
         expected2Results.forEach(element => {
@@ -102,7 +102,7 @@ describe('MSLGTool', function () {
                 date :"tomorrow"
             }
         ];
-        let expandedTemplate = mslgTool.ExpandTemplate('ShowAlarmsWithLgTemplate', {alarms: alarms});
+        let expandedTemplate = mslgTool.expandTemplate('ShowAlarmsWithLgTemplate', {alarms: alarms});
         assert.strictEqual(expandedTemplate.length, 2);
         assert.strictEqual(expandedTemplate[0], "You have 2 alarms, they are 8 pm at tomorrow");
         assert.strictEqual(expandedTemplate[1], "You have 2 alarms, they are 8 pm of tomorrow");
@@ -122,7 +122,7 @@ describe('MSLGTool', function () {
                 date :"tomorrow"
             }
         ];
-        let evaled = mslgTool.ExpandTemplate('ShowAlarmsWithForeach', {alarms: alarms});
+        let evaled = mslgTool.expandTemplate('ShowAlarmsWithForeach', {alarms: alarms});
         const evalOptions = [
             "You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow",
             "You have 2 alarms, 7 am at tomorrow and 8 pm of tomorrow",
@@ -133,15 +133,15 @@ describe('MSLGTool', function () {
         assert.strictEqual(evaled.length, 1);
         assert.strictEqual(evalOptions.includes(evaled[0]), true);
 
-        evaled = mslgTool.ExpandTemplate('T2');
+        evaled = mslgTool.expandTemplate('T2');
         assert.strictEqual(evaled.length, 1);
         assert.strictEqual(evaled[0] === "3" || evaled[0] === "5", true);
 
-        evaled = mslgTool.ExpandTemplate('T3');
+        evaled = mslgTool.expandTemplate('T3');
         assert.strictEqual(evaled.length, 1);
         assert.strictEqual(evaled[0] === "3" || evaled[0] === "5", true);
 
-        evaled = mslgTool.ExpandTemplate('T4');
+        evaled = mslgTool.expandTemplate('T4');
         assert.strictEqual(evaled.length, 1);
         assert.strictEqual(evaled[0] === "ey" || evaled[0] === "el", true);
     })
@@ -160,7 +160,7 @@ describe('MSLGTool', function () {
                 date :"tomorrow"
             }
         ];
-        let expandedTemplate = mslgTool.ExpandTemplate('ShowAlarmsWithMultiLine', {alarms: alarms});
+        let expandedTemplate = mslgTool.expandTemplate('ShowAlarmsWithMultiLine', {alarms: alarms});
         assert.strictEqual(expandedTemplate.length, 2);
         const eval1Options = ["\r\nYou have 2 alarms.\r\nThey are 8 pm at tomorrow\r\n", "\nYou have 2 alarms.\nThey are 8 pm at tomorrow\n"];
         const eval2Options = ["\r\nYou have 2 alarms.\r\nThey are 8 pm of tomorrow\r\n", "\nYou have 2 alarms.\nThey are 8 pm of tomorrow\n"]
@@ -172,7 +172,7 @@ describe('MSLGTool', function () {
         const mslgTool = new MSLGTool();
         let errors = GetErrors(mslgTool, 'StructuredLG.lg');
         assert.strictEqual(errors.length, 0);
-        let expandedTemplates = mslgTool.ExpandTemplate('AskForAge.prompt');
+        let expandedTemplates = mslgTool.expandTemplate('AskForAge.prompt');
         assert.strictEqual(expandedTemplates.length, 4);
         let evalOptions = [
             '{"$type":"Activity","text":"how old are you?","speak":"how old are you?"}',
@@ -183,7 +183,7 @@ describe('MSLGTool', function () {
         
         evalOptions.forEach(evalOption => assert(expandedTemplates.includes(evalOption)));
 
-        expandedTemplates = mslgTool.ExpandTemplate('ExpanderT1');
+        expandedTemplates = mslgTool.expandTemplate('ExpanderT1');
         assert.strictEqual(expandedTemplates.length, 4);
         evalOptions = [
             '{"$type":"MyStruct","text":"Hi","speak":"how old are you?"}',
