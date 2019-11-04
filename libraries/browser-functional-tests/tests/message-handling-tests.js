@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 var botPage;
 module.exports = {
     botPage: {},
@@ -9,16 +14,16 @@ module.exports = {
         botPage.end();
     },
     'Echo bot webchat is loaded': function(browser) {
-        // Navigate to Echo Bot page
-        // This step is made in the first test since navigation can't be done in the 'before' hook
+        // Navigate to the Echo Bot page
+        // This step is performed made in the first test since navigation can't be done in the 'before' hook
         botPage.navigate();
 
         // Check Webchat container is initialized and is present in the page
         botPage
             .assert.elementPresent('@webchatContainer');
     },
-    'Echo bot webchat sends messages': async function(browser) {
-        // Type 'Hello' in webchat input box and send it to the bot
+    'Echo bot webchat sends messages': function(browser) {
+        // Type 'Hello' in the webchat input box and send it to the bot
         botPage
             .setValue('@webchatMessageInput', 'Hello')
             .click('@webchatMessageInputSubtmitButton', function(result) {
