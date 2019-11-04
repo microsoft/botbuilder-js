@@ -154,9 +154,9 @@ export class LGResource {
 
    private wrapTemplateBodyString(replaceItem: string): string {
       // tslint:disable-next-line: newline-per-chained-call
-      const isStartWithHash: boolean = replaceItem.trimStart().startsWith('#');
+      const isStartWithHash: boolean = replaceItem.trimLeft().startsWith('#');
       if (isStartWithHash) {
-         return `- ${replaceItem.trimStart()}`;
+         return `- ${replaceItem.trimLeft()}`;
       } else {
          return replaceItem;
       }

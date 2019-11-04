@@ -45,10 +45,10 @@ export class ImportResolver {
     public static normalizePath(ambiguousPath: string): string {
         if (process.platform === 'win32') {
              // map linux/mac sep -> windows
-            return ambiguousPath.replace('/', '\\');
+            return ambiguousPath.replace(/\//g, '\\');
         } else {
             // map windows sep -> linux/mac
-            return ambiguousPath.replace('\\', '/');
+            return ambiguousPath.replace(/\\/g, '/');
         }
     }
 }
