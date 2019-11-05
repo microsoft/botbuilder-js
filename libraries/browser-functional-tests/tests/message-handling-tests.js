@@ -22,7 +22,7 @@ module.exports = {
         botPage
             .assert.elementPresent('@webchatContainer');
     },
-    'Echo bot webchat sends messages': function(browser) {
+    'Echo bot webchat sends messages': async function(browser) {
         // Type 'Hello' in the webchat input box and send it to the bot
         botPage
             .setValue('@webchatMessageInput', 'Hello')
