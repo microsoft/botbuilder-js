@@ -215,7 +215,6 @@ const dataSource = [
   ["base64ToBinary(base64(hello))", '0110000101000111010101100111001101100010010001110011100000111101'],
   ["base64ToString(base64(hello))", 'hello'],
   ["uriComponent('http://contoso.com')", 'http%3A%2F%2Fcontoso.com'],
-  ["xml('{\"person\": {\"name\": \"Sophia Owen\", \"city\": \"Seattle\"}}')", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<person>\n  <name>Sophia Owen</name>\n  <city>Seattle</city>\n</person>'],
 
   // Math functions tests
   ["add(1, 2, 3)", 6],
@@ -366,8 +365,6 @@ const dataSource = [
   ["string(setProperty(json('{\"key1\":\"value1\"}'), 'key1','value2'))", "{\"key1\":\"value2\"}"],
   ["string(removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), 'key2'))", "{\"key1\":\"value1\"}"],
   ["coalesce(nullObj,'hello',nullObj)", "hello"],
-  ["xPath(xmlStr,'sum(/produce/item/count)')", 30],
-  ["xPath(xmlStr,'/produce/item/name')",  ["<name>Gala</name>", "<name>Honeycrisp</name>"]],
   ["jPath(jsonStr, pathStr )", ['Jazz', 'Accord']],
   ["jPath(jsonStr, '.automobiles[0].maker' )", ['Nissan']],
 
@@ -493,7 +490,6 @@ const scope = {
   notISOTimestamp: "2018-03-15T13:00:00Z",
   timestampObj: new Date("2018-03-15T13:00:00.000Z"),
   unixTimestamp: 1521118800,
-  xmlStr: "<?xml version='1.0'?> <produce> <item> <name>Gala</name> <type>apple</type> <count>20</count> </item> <item> <name>Honeycrisp</name> <type>apple</type> <count>10</count> </item> </produce>",
   user: 
   {
     lists:

@@ -102,8 +102,6 @@ export class ExpressionType {
     public static readonly Base64ToBinary: string = 'base64ToBinary';
     public static readonly Base64ToString: string = 'base64ToString';
     public static readonly UriComponent: string = 'uriComponent';
-    public static readonly Xml: string = 'xml';
-
     // Memory
     public static readonly Accessor: string = 'Accessor';
     public static readonly Element: string = 'Element';
@@ -137,7 +135,6 @@ export class ExpressionType {
     public static readonly SetProperty: string = 'setProperty';
     public static readonly GetProperty: string = 'getProperty';
     public static readonly Coalesce: string = 'coalesce';
-    public static readonly XPath: string = 'xPath';
     public static readonly JPath: string = 'jPath';
     public static readonly SetPathToValue: string = 'setPathToValue';
 
