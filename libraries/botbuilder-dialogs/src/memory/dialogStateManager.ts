@@ -117,10 +117,12 @@ export class DialogStateManager {
         if (segments.length > 1) {
             // Find value up to last key
             // - Missing paths will be populated as needed
-            const memory = this.resolveSegments(scope.getMemory(this.dialogContext), segments, true);
+            let memory = scope.getMemory(this.dialogContext);
+            memory = this.resolveSegments(memory, segments, true);
 
             // Update value
             let key = segments[segments.length - 1];
+            if (key === 'first()') { key = 0 };
             if (typeof key == 'number' && Array.isArray(memory)) {
                 // Expand array as needed and update array
                 const l = key + 1;
@@ -193,7 +195,7 @@ export class DialogStateManager {
     public async saveAllChanges(): Promise<void> {
         const scopes = this.configuration.memoryScopes;
         for (let i = 0; i < scopes.length; i++) {
-            await scopes[i].load(this.dialogContext);
+            await scopes[i].saveChanges(this.dialogContext);
         }
     }
 
@@ -360,6 +362,21 @@ export class DialogStateManager {
                 } else {
                     value = undefined;
                 }
+            } else if (key === 'first()') {
+                // Special case returning the first entity in an array of entities.
+                if (Array.isArray(value) && value.length > 0) {
+                    value = value[0];
+                    if (Array.isArray(value)) {
+                        // Nested array detected
+                        if (value.length > 0) {
+                            value = value[0];
+                        } else {
+                            value = undefined;
+                        }
+                    }
+                } else {
+                    value = undefined;
+                }
             } else if (typeof key == 'string' && key.length > 0) {
                 // Key is an object index
                 if (typeof value == 'object' && !Array.isArray(value)) {
@@ -369,18 +386,22 @@ export class DialogStateManager {
                     // Ensure path exists as needed
                     if (assignment) {
                         const nextKey = segments[i + 1];
-                        if (typeof nextKey == 'number') {
+                        if (typeof nextKey == 'number' || nextKey === 'first()') {
                             // Ensure prop contains an array
-                            if (found && !Array.isArray(value[found])) {
-                                value[found] = [];
+                            if (found) {
+                                if (!Array.isArray(value[found])) {
+                                    value[found] = [];
+                                }
                             } else {
                                 found = key;
                                 value[found] = [];
                             }
                         } else if (typeof nextKey == 'string' && nextKey.length > 0) {
                             // Ensure prop contains an object
-                            if (found && typeof value[found] != 'object') {
-                                value[found] = {};
+                            if (found) {
+                                if (typeof value[found] != 'object') {
+                                    value[found] = {};
+                                }
                             } else {
                                 found = key;
                                 value[found] = {};
@@ -400,6 +421,8 @@ export class DialogStateManager {
                 value = undefined;
             }
         }
+
+        return value;
     }
 
     private findObjectKey(obj: object, key: string): string|undefined {
