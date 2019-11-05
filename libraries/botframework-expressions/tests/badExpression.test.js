@@ -132,9 +132,6 @@ const badExpressions =
   "uriComponent()", // should have 1 param
   "uriComponent(hello, world)", // should have 1 param
   "uriComponent(false)", // param should be string
-  "xml()", // should have 1 param
-  "xml(hello, world)", // should have 1 param
-  "xml(false)", // param should be string
 
   // Math functions test
   "max(hello, one)", // param should be number
@@ -323,9 +320,6 @@ const badExpressions =
   "removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), 1))",// second param should be string
   "removeProperty(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), '1', '2'))",// should have 2 parameter
   "coalesce()", // should have at least 1 parameter
-  "xPath(invalidXml, ''sum(/produce/item/count)')", //not valid xml
-  "xPath(xmlStr)", // should have two params
-  "xPath(xmlStr, 'getTotal')", // invalid xpath query
   "jPath(hello)",// should have two params
   "jPath(hello, '.key')", //bad json
   "jPath(json('{\"key1\":\"value1\",\"key2\":\"value2\"}'), 'getTotal')", //bad path

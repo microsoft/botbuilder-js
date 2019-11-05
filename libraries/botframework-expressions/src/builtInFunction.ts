@@ -11,9 +11,6 @@ import * as jsPath from 'jspath';
 import * as lodash from 'lodash';
 import * as moment from 'moment';
 import * as timezone from 'moment-timezone';
-import { Builder } from 'xml2js';
-import * as xmldom from 'xmldom';
-import * as xpathEval from 'xpath';
 import { CommonRegex } from './commonRegex';
 import { Constant } from './constant';
 import { Expression, ReturnType } from './expression';
@@ -743,37 +740,6 @@ export class BuiltInFunctions {
         return undefined;
     }
 
-    private static xPath(xmlStr: string, xpath: string): {value: any; error: string} {
-        let result: any;
-        let error: string;
-        let xmlDoc: any;
-        const parser: any = new xmldom.DOMParser();
-        let xPathResult: any;
-        try {
-            xmlDoc = parser.parseFromString(xmlStr);
-        } catch (e) {
-            error = `${xmlStr} is not valid xml`;
-        }
-
-        if (error === undefined) {
-            try {
-                xPathResult = xpathEval.select(xpath, xmlDoc);
-            } catch (e) {
-                error = `${xpath} is not an valid expression`;
-            }
-        }
-
-        if (error === undefined) {
-            if (typeof xPathResult === 'string' || typeof xPathResult === 'number' || typeof xPathResult === 'boolean') {
-                result = xPathResult;
-            } else if (xPathResult.length > 0) {
-                result = xPathResult.toString().split(',');
-            }
-        }
-
-        return {value: result, error};
-        }
-
     private static jPath(jsonEntity: object | string, path: string): {value: any; error: string} {
         let result: any;
         let error: string;
@@ -1348,19 +1314,6 @@ export class BuiltInFunctions {
         }
 
         return result;
-    }
-
-    private static toXml(contentToConvert: any): { value: any; error: string } {
-        let result: string;
-        let error: string;
-        try {
-            const jsonObj: any = typeof contentToConvert === 'string' ? JSON.parse(contentToConvert) : contentToConvert;
-            result = new Builder().buildObject(jsonObj);
-        } catch (e) {
-            error = 'Invalid json';
-        }
-
-        return { value: result, error };
     }
 
     // DateTime Functions
@@ -2593,11 +2546,6 @@ export class BuiltInFunctions {
                 ReturnType.String,
                 BuiltInFunctions.validateUnary),
             new ExpressionEvaluator(
-                ExpressionType.Xml,
-                BuiltInFunctions.applyWithError((args: Readonly<any>) => this.toXml(args[0]), BuiltInFunctions.verifyString),
-                ReturnType.String,
-                BuiltInFunctions.validateUnary),
-            new ExpressionEvaluator(
                 ExpressionType.First,
                 BuiltInFunctions.apply(
                     (args: ReadonlyArray<any>) => {
@@ -2695,8 +2643,6 @@ export class BuiltInFunctions {
 
             new ExpressionEvaluator(ExpressionType.Coalesce, BuiltInFunctions.apply((args: ReadonlyArray<any>[]) => this.coalesce(<object []>args)),
                                     ReturnType.Object, BuiltInFunctions.validateAtLeastOne),
-            new ExpressionEvaluator(ExpressionType.XPath, BuiltInFunctions.applyWithError((args: ReadonlyArray<any>[]) => this.xPath(args[0].toString(), args[1].toString())),
-                                    ReturnType.Object, (expr: Expression): void => BuiltInFunctions.validateOrder(expr, undefined, ReturnType.String, ReturnType.String)),
             new ExpressionEvaluator(ExpressionType.JPath, BuiltInFunctions.applyWithError((args: ReadonlyArray<any>[]) => this.jPath(args[0], args[1].toString())),
                                     ReturnType.Object, (expr: Expression): void => BuiltInFunctions.validateOrder(expr, undefined, ReturnType.Object, ReturnType.String)),
 
