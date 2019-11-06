@@ -174,6 +174,26 @@ describe('Memory - Dialog State Manager', function() {
         assert(userScopeFound, `no user scope added`);
     });
 
+    it('Should configure its parent when a child DC is configured.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        const convoState = new ConversationState(storage);
+        const userState = new UserState(storage);
+        const dc = await createTestDc(convoState);
+
+        // Run test
+        let convoScopeFound = false;
+        let userScopeFound = false;
+        dc.child.state.configuration = DialogStateManager.createStandardConfiguration(convoState, userState);
+        const config = dc.state.configuration;
+        config.memoryScopes.forEach(scope => {
+            if (scope instanceof ConversationMemoryScope) { convoScopeFound = true }
+            if (scope instanceof UserMemoryScope) { userScopeFound = true }
+        });
+        assert(convoScopeFound, `no conversation scope added`);
+        assert(userScopeFound, `no user scope added`);
+    });
+
     it('Should read & write values to TURN memory scope.', async function () {
         // Create test dc
         const dc = await createConfiguredTestDc();
@@ -255,9 +275,9 @@ describe('Memory - Dialog State Manager', function() {
         const dc = await createConfiguredTestDc();
 
         // Run test
-        dc.state.setValue('$.foo', 'bar');
+        dc.state.setValue('$foo', 'bar');
         assert(dc.state.getValue('dialog.foo') == 'bar', `setValue() failed to use alias.`);
-        assert(dc.state.getValue('$.foo') == 'bar', `getValue() failed to use alias.`);
+        assert(dc.state.getValue('$foo') == 'bar', `getValue() failed to use alias.`);
     });
 
     it('Should read & write values using # alias.', async function () {
@@ -265,9 +285,9 @@ describe('Memory - Dialog State Manager', function() {
         const dc = await createConfiguredTestDc();
 
         // Run test
-        dc.state.setValue('#.foo', 'bar');
+        dc.state.setValue('#foo', 'bar');
         assert(dc.state.getValue('turn.recognized.intents.foo') == 'bar', `setValue() failed to use alias.`);
-        assert(dc.state.getValue('#.foo') == 'bar', `getValue() failed to use alias.`);
+        assert(dc.state.getValue('#foo') == 'bar', `getValue() failed to use alias.`);
     });
 
     it('Should read & write values using @@ alias.', async function () {
@@ -275,7 +295,7 @@ describe('Memory - Dialog State Manager', function() {
         const dc = await createConfiguredTestDc();
 
         // Run test
-        dc.state.setValue('@@.foo', ['bar']);
+        dc.state.setValue('@@foo', ['bar']);
         const value = dc.state.getValue('turn.recognized.entities.foo'); 
         assert(Array.isArray(value) && value.length == 1, `setValue() failed to use alias.`);
         assert(value[0] == 'bar');
@@ -360,5 +380,415 @@ describe('Memory - Dialog State Manager', function() {
         assert(dc.state.getValue('conversation.foo') == undefined, `conversation state deletion not persisted`);
     });
 
-    // TODO: add more path unit tests...
+    it('Should return default value when getValue() called with empty path.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        assert(dc.state.getValue('', 'default') == 'default');
+    });
+
+    it('Should support passing a function to getValue() for the default.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        assert(dc.state.getValue('', () => 'default') == 'default');
+    });
+
+    it('Should raise an error if getValue() called with an invalid scope.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        let = error = false;
+        try {
+            dc.state.getValue('foo.bar');
+        } catch (err) {
+            error = true;
+        }
+        assert(error);
+    });
+
+    it('Should raise an error if getValue() called with an invalid scope.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        let = error = false;
+        try {
+            dc.state.getValue('foo.bar');
+        } catch (err) {
+            error = true;
+        }
+        assert(error);
+    });
+
+    it('Should raise an error if setValue() called with missing path.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        let = error = false;
+        try {
+            dc.state.setValue('', 'bar');
+        } catch (err) {
+            error = true;
+        }
+        assert(error);
+    });
+
+    it('Should raise an error if setValue() called with an invalid scope.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        let = error = false;
+        try {
+            dc.state.setValue('foo', 'bar');
+        } catch (err) {
+            error = true;
+        }
+        assert(error);
+    });
+
+    it('Should overwrite memory when setValue() called with just a scope.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        dc.state.setValue('turn',  { foo: 'bar' });
+        assert(dc.state.getValue('turn.foo') == 'bar');
+    });
+
+    it('Should raise an error if deleteValue() called with < 2 path path.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        let = error = false;
+        try {
+            dc.state.deleteValue('conversation');
+        } catch (err) {
+            error = true;
+        }
+        assert(error);
+    });
+
+    it('Should raise an error if deleteValue() called with an invalid scope.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        let = error = false;
+        try {
+            dc.state.deleteValue('foo.bar');
+        } catch (err) {
+            error = true;
+        }
+        assert(error);
+    });
+
+    it('Should read & write array values.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        dc.state.setValue('turn.foo',  ['bar']);
+        assert(dc.state.getValue('turn.foo[0]') == 'bar');
+    });
+
+    it('Should delete array values by index.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        dc.state.setValue('turn.test',  ['foo', 'bar']);
+        dc.state.deleteValue('turn.test[0]')
+        assert(dc.state.getValue('turn.test[0]') == 'bar');
+    });
+
+    it('Should ignore array deletions that are out of range.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        dc.state.setValue('turn.test', []);
+        dc.state.deleteValue('turn.test[0]')
+        assert(dc.state.getValue('turn.test').length == 0);
+    });
+
+    it('Should ignore property deletions off non-object properties.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        dc.state.setValue('turn.foo', []);
+        dc.state.deleteValue('turn.foo.bar');
+        assert(dc.state.getValue('turn.foo').length == 0);
+        dc.state.setValue('turn.bar', 'test');
+        dc.state.deleteValue('turn.bar.foo');
+        assert(dc.state.getValue('turn.bar') == 'test');
+    });
+
+    it('Should ignore property deletions of missing object properties.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        dc.state.setValue('turn.foo', { 'test': 'test' });
+        dc.state.deleteValue('turn.foo.bar');
+        let count = 0;
+        const value = dc.state.getValue('turn.foo');
+        for (const key in value) {
+            count++;
+        }
+        assert(count == 1);
+    });
+
+    it('Should resolve nested expressions.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        dc.state.setValue('turn.addresses', { 
+            'work': { 
+                street: 'one microsoft way', 
+                city: 'Redmond',
+                state: 'wa',
+                zip: '98052' 
+            } 
+        });
+        dc.state.setValue('turn.addressKeys', ['work'])
+        dc.state.setValue('turn.preferredAddress', 0);
+        const value = dc.state.getValue('turn.addresses[turn.addressKeys[turn.preferredAddress]].zip');
+        assert(value == '98052');
+    });
+
+    it('Should find a property quoted with single quotes.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        dc.state.setValue('turn.addresses', { 
+            'work': { 
+                street: 'one microsoft way', 
+                city: 'Redmond',
+                state: 'wa',
+                zip: '98052' 
+            } 
+        });
+        const value = dc.state.getValue(`turn.addresses['work'].zip`);
+        assert(value == '98052');
+    });
+
+    it('Should find a property quoted with double quotes.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        dc.state.setValue('turn.addresses', { 
+            'work': { 
+                street: 'one microsoft way', 
+                city: 'Redmond',
+                state: 'wa',
+                zip: '98052' 
+            } 
+        });
+        const value = dc.state.getValue(`turn.addresses["work"].zip`);
+        assert(value == '98052');
+    });
+
+    it('Should find a property containing embedded quotes.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        dc.state.setValue('turn.addresses', { 
+            '"work"': { 
+                street: 'one microsoft way', 
+                city: 'Redmond',
+                state: 'wa',
+                zip: '98052' 
+            } 
+        });
+        const value = dc.state.getValue(`turn.addresses['\\"work\\"'].zip`);
+        assert(value == '98052');
+    });
+
+    it('Should raise an error for paths with miss-matched quotes.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        let error = false;
+        try {
+            dc.state.setValue('turn.addresses', { 
+                'work': { 
+                    street: 'one microsoft way', 
+                    city: 'Redmond',
+                    state: 'wa',
+                    zip: '98052' 
+                } 
+            });
+            dc.state.getValue(`turn.addresses['work"].zip`);
+        } catch (err) {
+            error = true;
+        }
+        assert(error);
+    });
+
+    it('Should raise an error for segments with invalid path chars.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        let error = false;
+        try {
+            dc.state.setValue('turn.addresses', { 
+                '~work': { 
+                    street: 'one microsoft way', 
+                    city: 'Redmond',
+                    state: 'wa',
+                    zip: '98052' 
+                } 
+            });
+            dc.state.getValue(`turn.addresses.~work.zip`);
+        } catch (err) {
+            error = true;
+        }
+        assert(error);
+    });
+
+    it('Should raise an error for assignments to a negative array index.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        let error = false;
+        try {
+            dc.state.setValue(`turn.foo[-1]`, 'test');
+        } catch (err) {
+            error = true;
+        }
+        assert(error);
+    });
+
+    it('Should raise an error for array assignments to non-array values.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        let error = false;
+        try {
+            dc.state.setValue('turn.foo', 'bar');
+            dc.state.setValue(`turn.foo[3]`, 'test');
+        } catch (err) {
+            error = true;
+        }
+        assert(error);
+    });
+
+    it('Should raise an error for un-matched brackets.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        let error = false;
+        try {
+            dc.state.setValue(`turn.foo[0`, 'test');
+        } catch (err) {
+            error = true;
+        }
+        assert(error);
+    });
+
+    it('Should alow indexer based path lookups.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        dc.state.setValue('turn.foo', 'bar');
+        const value = dc.state.getValue('["turn"].["foo"]');
+        assert(value == 'bar');
+    });
+
+    it('Should return "undefined" for index lookups again non-arrays.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        dc.state.setValue('turn.foo', 'bar');
+        assert(dc.state.getValue('turn.foo[2]') == undefined);
+    });
+
+    it('Should return "undefined" when first() called for empty array.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        dc.state.setValue('turn.foo', []);
+        assert(dc.state.getValue('turn.foo.first()') == undefined);
+    });
+
+    it('Should return "undefined" when first() called for empty nested array.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        dc.state.setValue('turn.foo', [[]]);
+        assert(dc.state.getValue('turn.foo.first()') == undefined);
+    });
+
+    it('Should return "undefined" for a missing segment.', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        dc.state.setValue('turn.foo', 'bar');
+        const value = dc.state.getValue('turn..foo');
+        assert(value == undefined);
+    });
+
+    it('Should raise an error for paths starting with a ".".', async function () {
+        // Create test dc
+        const storage = new MemoryStorage();
+        let dc = await createConfiguredTestDc(storage);
+
+        // Run test
+        let error = false;
+        try {
+            dc.state.setValue('.turn.foo', 'bar');
+        } catch (err) {
+            error = true;
+        }
+        assert(error);
+    });
+
 });
