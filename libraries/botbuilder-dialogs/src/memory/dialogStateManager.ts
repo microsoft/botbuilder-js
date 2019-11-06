@@ -107,7 +107,7 @@ export class DialogStateManager {
     public setValue(pathExpression: string, value: any): void {
         // Get path segments
         const segments = this.parsePath(this.transformPath(pathExpression));
-        if (segments.length < 1) { return }
+        if (segments.length < 1) { throw new Error(`DialogStateManager.setValue: path wasn't specified.`) }
 
         // Get memory scope to update
         const scope = this.getMemoryScope(segments[0].toString());
@@ -124,6 +124,9 @@ export class DialogStateManager {
             let key = segments[segments.length - 1];
             if (key === 'first()') { key = 0 };
             if (typeof key == 'number' && Array.isArray(memory)) {
+                // Only allow positive indexes
+                if (key < 0) { throw new Error(`DialogStateManager.setValue: unable to update value for '${pathExpression}'. Negative indexes aren't allowed.`) } 
+                
                 // Expand array as needed and update array
                 const l = key + 1;
                 while (memory.length < l) {
@@ -150,11 +153,11 @@ export class DialogStateManager {
     public deleteValue(pathExpression: string): void {
         // Get path segments
         const segments = this.parsePath(this.transformPath(pathExpression));
-        if (segments.length < 2) { throw new Error(`DialogStateManager.removeValue: invalid path of '${pathExpression}'.`) }
+        if (segments.length < 2) { throw new Error(`DialogStateManager.deleteValue: invalid path of '${pathExpression}'.`) }
 
         // Get memory scope to update
         const scope = this.getMemoryScope(segments[0].toString());
-        if (scope == undefined) { throw new Error(`DialogStateManager.removeValue: a scope of '${segments[0]}' wasn't found.`) }
+        if (scope == undefined) { throw new Error(`DialogStateManager.deleteValue: a scope of '${segments[0]}' wasn't found.`) }
 
         // Find value up to last key
         let key = segments.pop();
@@ -280,7 +283,7 @@ export class DialogStateManager {
                             // Resolve nested value
                             const val = this.getValue(segment);
                             const t = typeof val;
-                            output.push(t == 'string' || t == 'number' ? t : '');
+                            output.push(t == 'string' || t == 'number' ? val : '');
                         }
                         segment = '';
                     }
@@ -299,6 +302,12 @@ export class DialogStateManager {
                         if (segment.length > 0) {
                             output.push(segment);
                             segment = '';
+                        } else if (i == 0 || i == (pathExpression.length - 1)) {
+                            // Special case a "." at beginning or end of path
+                            output.push('');
+                        } else if (pathExpression[i - 1] == '.') {
+                            // Special case ".."
+                            output.push('');
                         }
                         break;
                     default:
@@ -389,7 +398,7 @@ export class DialogStateManager {
                         if (typeof nextKey == 'number' || nextKey === 'first()') {
                             // Ensure prop contains an array
                             if (found) {
-                                if (!Array.isArray(value[found])) {
+                                if (value[found] == undefined) {
                                     value[found] = [];
                                 }
                             } else {
@@ -399,7 +408,7 @@ export class DialogStateManager {
                         } else if (typeof nextKey == 'string' && nextKey.length > 0) {
                             // Ensure prop contains an object
                             if (found) {
-                                if (typeof value[found] != 'object') {
+                                if (value[found] == undefined) {
                                     value[found] = {};
                                 }
                             } else {

@@ -11,7 +11,6 @@ import { DialogState, DialogContext } from './dialogContext';
 import { DialogTurnResult, Dialog, DialogTurnStatus } from './dialog';
 import { Configurable } from './configurable';
 import { DialogSet } from './dialogSet';
-import { StateMap } from './stateMap';
 
 export interface PersistedState {
     userState: {
