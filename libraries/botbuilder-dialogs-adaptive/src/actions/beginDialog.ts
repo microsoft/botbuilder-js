@@ -27,6 +27,7 @@ export class BeginDialog<O extends object = {}> extends Dialog<O> {
      * @param options (Optional) static options to pass the called dialog.
      */
     constructor();
+    constructor(dialogIdToCall: string, options?: O);
     constructor(dialogIdToCall?: string, options?: O) {
         super();
         if (dialogIdToCall) { this.dialogIdToCall = dialogIdToCall }

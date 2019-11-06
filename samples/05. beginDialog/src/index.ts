@@ -65,7 +65,7 @@ const askNameDialog = new AdaptiveDialog('AskNameDialog', [
     new SendActivity(`Hi {user.name}. It's nice to meet you.`),
     new EndDialog()
 ]);
-dialogs.addDialog(askNameDialog)
+dialogs.actions.push(askNameDialog);
 
 const tellJokeDialog = new AdaptiveDialog('TellJokeDialog',[
     new SendActivity(`Why did the 🐔 cross the 🛣️?`),
@@ -73,4 +73,4 @@ const tellJokeDialog = new AdaptiveDialog('TellJokeDialog',[
     new SendActivity(`To get to the other side...`),
     new EndDialog()
 ]);
-dialogs.addDialog(tellJokeDialog);
+dialogs.actions.push(tellJokeDialog);

@@ -37,6 +37,7 @@ export class EditActions extends DialogCommand {
      * @param actions The actions to update the dialog with.
      */
     constructor();
+    constructor(changeType: ActionChangeType, actions: Dialog[]);
     constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
         super();
         if (changeType !== undefined) { this.changeType = changeType }
