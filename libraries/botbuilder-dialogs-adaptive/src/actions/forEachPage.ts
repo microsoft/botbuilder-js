@@ -65,7 +65,7 @@ export class ForEachPage extends DialogCommand {
         if (actions) { this.actions = actions }
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         const label = this.list ? this.list.toString() : '';
         return `ForEachPage[${label}]`;
     }

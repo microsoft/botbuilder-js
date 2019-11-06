@@ -44,7 +44,7 @@ export class SetProperty<O extends object = {}> extends DialogCommand<O> {
         if (value) { this.value = new ExpressionProperty(value) }
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         const label = this.value ? this.value.toString() : '';
         return `SetProperty[${label}]`;
     }

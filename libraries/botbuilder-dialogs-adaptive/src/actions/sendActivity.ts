@@ -43,7 +43,7 @@ export class SendActivity extends DialogCommand {
         this.activityProperty.inputHint = inputHint || InputHints.AcceptingInput;
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `SendActivity[${this.activityProperty.displayLabel}]`;
     }
 

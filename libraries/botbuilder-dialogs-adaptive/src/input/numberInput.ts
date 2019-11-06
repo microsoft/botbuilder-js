@@ -50,7 +50,7 @@ export class NumberInput extends InputDialog<InputDialogOptions> {
         return super.configure(config);
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `NumberInput[]`;
     }
     

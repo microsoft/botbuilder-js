@@ -20,7 +20,7 @@ export abstract class DialogCommand<O extends object = {}> extends Dialog<O> imp
         return [];
     }
 
-    public onComputeId(): string {
+    protected onComputeId(): string {
         return `${typeof(this)}[${this.id}]`;
     }
     

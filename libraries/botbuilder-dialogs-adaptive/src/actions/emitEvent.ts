@@ -25,7 +25,7 @@ export class EmitEvent extends DialogCommand {
         this.bubbleEvent = bubbleEvent;
     }
     
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `EmitEvent[${this.eventName || ''}]`;
     }
 

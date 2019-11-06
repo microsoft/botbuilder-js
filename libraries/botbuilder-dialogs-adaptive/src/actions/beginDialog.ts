@@ -33,7 +33,7 @@ export class BeginDialog<O extends object = {}> extends Dialog<O> {
         if (options) { this.options = options }
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `BeginDialog[${this.dialogIdToCall}]`;
     }
 

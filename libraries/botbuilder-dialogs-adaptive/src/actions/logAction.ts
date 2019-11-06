@@ -47,7 +47,7 @@ export class LogAction extends DialogCommand {
         this.sendTrace = sendTrace;
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `LogAction[${this.template}]`;
     }
 

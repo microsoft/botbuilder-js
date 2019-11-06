@@ -43,7 +43,7 @@ export class EditActions extends DialogCommand {
         if (Array.isArray(actions)) { this.actions = actions }
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         const idList = this.actions.map(action => action.id);
         return `EditActions[${this.changeType}|${idList.join(',')}]`;
     }

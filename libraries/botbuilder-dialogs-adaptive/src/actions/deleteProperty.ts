@@ -29,7 +29,7 @@ export class DeleteProperty<O extends object = {}> extends DialogCommand<O> {
         if (property) { this.property = property }
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `DeleteProperty[${this.property}]`;
     }
 

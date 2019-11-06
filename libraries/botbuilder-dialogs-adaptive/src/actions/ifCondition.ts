@@ -53,7 +53,7 @@ export class IfCondition extends DialogCommand {
         if (Array.isArray(actions)) { this.actions = actions }
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         const label = this.condition ? this.condition.toString() : '';
         return `If[${label}]`;
     }

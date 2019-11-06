@@ -29,7 +29,7 @@ export class RepeatDialog extends DialogCommand {
         if (options) { this.options = options }
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `RepeatDialog[]`;
     }
 

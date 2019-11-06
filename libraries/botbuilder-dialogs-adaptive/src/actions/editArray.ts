@@ -34,7 +34,7 @@ export class EditArray extends DialogCommand {
         if (itemProperty) { this.itemProperty = itemProperty }
     }
     
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `EditArray[${this.changeType}: ${this.arrayProperty}]`;
     }
 

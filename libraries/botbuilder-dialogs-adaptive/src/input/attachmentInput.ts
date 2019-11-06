@@ -43,7 +43,7 @@ export class AttachmentInput extends InputDialog<InputDialogOptions> {
         return super.configure(config);
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `AttachmentInput[]`;
     }
 

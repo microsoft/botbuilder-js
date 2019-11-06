@@ -44,7 +44,7 @@ export class SendList extends DialogCommand {
         if (itemTemplate) { this.itemTemplate = itemTemplate }
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `SendList[]`;
     }
 

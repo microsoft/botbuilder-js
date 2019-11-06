@@ -10,7 +10,7 @@ import { ActivityTypes } from 'botbuilder-core';
 
 export class EndTurn extends Dialog {
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `EndTurn[]`;
     }
 

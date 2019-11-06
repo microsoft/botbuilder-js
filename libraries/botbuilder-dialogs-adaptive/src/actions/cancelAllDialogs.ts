@@ -23,7 +23,7 @@ export class CancelAllDialogs extends DialogCommand {
         this.eventValue = eventValue
     }
     
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `CancelAllDialogs[${this.eventName || ''}]`;
     }
 

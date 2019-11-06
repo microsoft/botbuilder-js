@@ -96,7 +96,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     // Base Dialog Overrides
     //---------------------------------------------------------------------------------------------
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `AdaptiveDialog[]`;
     }
 

@@ -24,7 +24,7 @@ export class CodeAction<T extends DialogContext = SequenceContext> extends Dialo
         this.handler = handler;
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `CodeAction[${this.handler.toString()}]`;
     }
 

@@ -117,7 +117,7 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
         return this;
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `ChoiceInput[]`;
     }
 

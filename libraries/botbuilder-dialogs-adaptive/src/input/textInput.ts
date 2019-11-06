@@ -44,7 +44,7 @@ export class TextInput extends InputDialog<InputDialogOptions> {
         return super.configure(config);
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         return `TextInput[]`;
     }
     
