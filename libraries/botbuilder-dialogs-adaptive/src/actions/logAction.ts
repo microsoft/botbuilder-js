@@ -48,7 +48,7 @@ export class LogAction extends DialogCommand {
     }
 
     protected onComputeID(): string {
-        return `logAction[${this.hashedLabel(this.template)}]`;
+        return `LogAction[${this.template}]`;
     }
 
     public configure(config: LogActionConfiguration): this {
@@ -61,7 +61,7 @@ export class LogAction extends DialogCommand {
         // Format message
         const data = Object.assign({
             utterance: dc.context.activity.text || ''
-        }, dc.state.toJSON(), options);
+        }, dc.state, options);
         const msg = format(this.template, data);
 
         // Log to console and send trace if needed

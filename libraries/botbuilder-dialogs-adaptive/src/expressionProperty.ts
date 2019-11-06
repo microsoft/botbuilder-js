@@ -6,7 +6,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogContextVisibleState } from "botbuilder-dialogs";
+import { DialogContextVisibleState, DialogStateManager } from "botbuilder-dialogs";
 import { ExpressionEngine, Expression } from 'botframework-expressions';
 
 export type ExpressionDelegate<T> = (state: DialogContextVisibleState) => T;
@@ -54,7 +54,7 @@ export class ExpressionProperty<T> {
         return this._expression;
     }
 
-    public evaluate(stepId: string, state: DialogContextVisibleState): T {
+    public evaluate(stepId: string, state: DialogStateManager): T {
         // Parse expression
         let expression: Expression;
         try {

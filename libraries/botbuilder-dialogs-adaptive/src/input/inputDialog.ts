@@ -63,9 +63,6 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
     constructor() {
         super();
 
-        // Inherit parents state
-        this.inheritState = true;
-
         // Initialize input hints
         this.prompt.inputHint = InputHints.ExpectingInput;
         this.unrecognizedPrompt.inputHint = InputHints.ExpectingInput;
@@ -80,6 +77,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
      * options and will be accessible within the dialog via `dialog.options.value`. The result
      * returned from the called dialog will then be copied to the bound property.
      */
+    /*
     public set valueProperty(value: string) {
         this.inputProperties['value'] = value;
         this.outputProperty = value;
@@ -88,6 +86,8 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
     public get valueProperty(): string {
        return this.outputProperty; 
     }
+    */
+    public valueProperty: string;
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Initialize and persist options
@@ -139,7 +139,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
             return await this.promptUser(dc, state);
         } else {
             // Return default value
-            const result = this.defaultValue ? this.defaultValue.evaluate(this.id, dc.state.toJSON()) : undefined;
+            const result = this.defaultValue ? this.defaultValue.evaluate(this.id, dc.state) : undefined;
             return await dc.endDialog(result);
         }
     }
@@ -299,7 +299,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         // Check for named entity first
         let input: any;
         if (this.value) {
-            input = this.value.evaluate(this.id, dc.state.toJSON());
+            input = this.value.evaluate(this.id, dc.state);
         }
 
         // Use utterance or value passed in
@@ -319,7 +319,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
             const state = await this.onRecognizeInput(dc, consultation);
             if (state == InputState.valid) {
                 // Run through validations
-                const memory = dc.state.toJSON();
+                const memory = dc.state;
                 for (let i = 0; i < this.validations.length; i++) {
                     const value = this.validations[i].evaluate(this.id, memory);
                     if (!value) {

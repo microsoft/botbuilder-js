@@ -9,6 +9,21 @@ import * as Recognizers from '@microsoft/recognizers-text-number';
 import { Activity, InputHints, TurnContext } from 'botbuilder-core';
 import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
+import * as Chinese from 'cldr-data/main/zh/numbers.json';
+import * as English from 'cldr-data/main/en/numbers.json';
+import * as Dutch from 'cldr-data/main/nl/numbers.json';
+import * as German from 'cldr-data/main/de/numbers.json';
+import * as Japanese from 'cldr-data/main/ja/numbers.json';
+import * as LikelySubtags from 'cldr-data/supplemental/likelySubtags.json';
+import * as NumberingSystem from 'cldr-data/supplemental/numberingSystems.json';
+import * as Portuguese from 'cldr-data/main/pt/numbers.json';
+import * as Spanish from 'cldr-data/main/es/numbers.json';
+
+import * as Globalize from 'globalize';
+Globalize.load(
+    Chinese, English, Dutch, German, Japanese, LikelySubtags, NumberingSystem, Portuguese, Spanish    
+);
+
 /**
  * Prompts a user to enter a number.
  *
@@ -33,10 +48,6 @@ export class NumberPrompt extends Prompt<number> {
         this.defaultLocale = defaultLocale;
     }
 
-    protected onComputeID(): string {
-        return `numberPrompt[${this.bindingPath()}]`;
-    }
-
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         if (isRetry && options.retryPrompt) {
             await context.sendActivity(options.retryPrompt, undefined, InputHints.ExpectingInput);
@@ -53,9 +64,23 @@ export class NumberPrompt extends Prompt<number> {
         const results: any = Recognizers.recognizeNumber(utterance, locale);
         if (results.length > 0 && results[0].resolution) {
             result.succeeded = true;
-            result.value = parseFloat(results[0].resolution.value);
+
+            const culture = this.getCultureFormattedForGlobalize(locale);
+            const parser = Globalize(culture).numberParser();
+            result.value = parser(results[0].resolution.value);
         }
 
         return result;
+    }
+
+    private getCultureFormattedForGlobalize(culture: string) {
+        // The portions of the Globalize parsing library we use
+        // only need the first 2 letters for internationalization culture
+        const formattedCulture = culture.replace(
+            culture,
+            `${culture[0]}${culture[1]}`
+        );
+        
+        return formattedCulture.toLowerCase();
     }
 }

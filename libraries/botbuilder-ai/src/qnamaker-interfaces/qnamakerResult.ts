@@ -6,6 +6,8 @@
  * Licensed under the MIT License.
  */
 
+import { QnAResponseContext } from './qnaResponseContext';
+
  /**
  * An individual answer returned by a call to the QnA Maker Service.
  */
@@ -39,4 +41,9 @@ export interface QnAMakerResult {
      * The index of the answer in the knowledge base. V3 uses 'qnaId', V4 uses 'id'. (If any)
      */
     id?: number;
+
+    /**
+     * Context for multi-turn responses.
+     */
+    context?: QnAResponseContext; 
 }

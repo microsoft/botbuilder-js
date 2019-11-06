@@ -9,6 +9,10 @@ import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { Activity, TurnContext } from 'botbuilder-core';
 import { Choice, ChoiceFactoryOptions, recognizeChoices } from '../choices';
 import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
+import { PromptCultureModels } from './promptCultureModels';
+
+// Need ChoiceDefaultsProperty so we can set choiceDefaults dynamically with lambda
+interface ChoiceDefaultsConfirmPrompt { [locale: string]: { choices: (string|Choice)[]; options: ChoiceFactoryOptions }};
 
 /**
  * Prompts a user to confirm something with a "yes" or "no" response.
@@ -20,33 +24,11 @@ import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidat
 export class ConfirmPrompt extends Prompt<boolean> {
 
     /**
-     * Default confirm choices for a range of locales.
-     * @deprecated since version 4.3
+     * A dictionary of Default Choices based on [[PromptCultureModels.getSupportedCultures()]].
+     * Can be replaced by user using the constructor that contains choiceDefaults.
+     * This is initially set in the constructor.
      */
-    private static defaultConfirmChoices: { [locale: string]: (string | Choice)[] } = {
-        'es-es': ['Sí', 'No'],
-        'nl-nl': ['Ja', 'Nee'],
-        'en-us': ['Yes', 'No'],
-        'fr-fr': ['Oui', 'Non'],
-        'de-de': ['Ja', 'Nein'],
-        'ja-jp': ['はい', 'いいえ'],
-        'pt-br': ['Sim', 'Não'],
-        'zh-cn': ['是的', '不']
-    };
-
-    /**
-     * Default options for rendering the choices to the user based on locale.
-     */
-    private static defaultChoiceOptions: { [locale: string]: { choices: (string|Choice)[]; options: ChoiceFactoryOptions }} = {
-        'es-es': { choices: ['Sí', 'No'], options: { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true }},
-        'nl-nl': { choices: ['Ja', 'Nee'], options: { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true }},
-        'en-us': { choices: ['Yes', 'No'], options: { inlineSeparator: ', ', inlineOr: ' or ', inlineOrMore: ', or ', includeNumbers: true }},
-        'fr-fr': { choices: ['Oui', 'Non'], options: { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true }},
-        'de-de': { choices: ['Ja', 'Nein'], options: { inlineSeparator: ', ', inlineOr: ' oder ', inlineOrMore: ', oder ', includeNumbers: true }},
-        'ja-jp': { choices: ['はい', 'いいえ'], options: { inlineSeparator: '、 ', inlineOr: ' または ', inlineOrMore: '、 または ', includeNumbers: true }},
-        'pt-br': { choices: ['Sim', 'Não'], options: { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true }},
-        'zh-cn': { choices: ['是的', '不'], options: { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true }}
-    };
+    private choiceDefaults: ChoiceDefaultsConfirmPrompt;
     /**
      * The prompts default locale that should be recognized.
      */
@@ -77,14 +59,28 @@ export class ConfirmPrompt extends Prompt<boolean> {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
      */
-    constructor(dialogId?: string, validator?: PromptValidator<boolean>, defaultLocale?: string) {
+    public constructor(dialogId: string, validator?: PromptValidator<boolean>, defaultLocale?: string, choiceDefaults?: ChoiceDefaultsConfirmPrompt) {
         super(dialogId, validator);
         this.style = ListStyle.auto;
         this.defaultLocale = defaultLocale;
-    }
 
-    protected onComputeID(): string {
-        return `confirmPrompt[${this.bindingPath()}]`;
+        if (choiceDefaults == undefined) {
+            const supported: ChoiceDefaultsConfirmPrompt = {};
+            PromptCultureModels.getSupportedCultures().forEach((culture): void => {
+                supported[culture.locale] = {
+                    choices: [culture.yesInLanguage, culture.noInLanguage],
+                    options: {
+                        inlineSeparator: culture.separator,
+                        inlineOr: culture.inlineOr,
+                        inlineOrMore: culture.inlineOrMore,
+                        includeNumbers: true
+                    }
+                };
+            });
+            this.choiceDefaults = supported;
+        } else {
+            this.choiceDefaults = choiceDefaults;
+        }
     }
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
@@ -93,8 +89,8 @@ export class ConfirmPrompt extends Prompt<boolean> {
         let prompt: Partial<Activity>;
         const channelId: string = context.activity.channelId;
         const culture: string = this.determineCulture(context.activity);
-        const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ConfirmPrompt.defaultChoiceOptions[culture].options;
-        const choices: any[] = this.confirmChoices || ConfirmPrompt.defaultChoiceOptions[culture].choices;
+        const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || this.choiceDefaults[culture].options;
+        const choices: any[] = this.confirmChoices || this.choiceDefaults[culture].choices;
         if (isRetry && options.retryPrompt) {
             prompt = this.appendChoices(options.retryPrompt, channelId, choices, this.style, choiceOptions);
         } else {
@@ -116,10 +112,10 @@ export class ConfirmPrompt extends Prompt<boolean> {
             result.value = results[0].resolution.value;
         } else {
             // If the prompt text was sent to the user with numbers, the prompt should recognize number choices.
-            const choiceOptions = this.choiceOptions || ConfirmPrompt.defaultChoiceOptions[culture].options;
+            const choiceOptions = this.choiceOptions || this.choiceDefaults[culture].options;
 
             if (typeof choiceOptions.includeNumbers !== 'boolean' || choiceOptions.includeNumbers) {
-                const confirmChoices = this.confirmChoices || ConfirmPrompt.defaultChoiceOptions[culture].choices;
+                const confirmChoices = this.confirmChoices || this.choiceDefaults[culture].choices;
                 const choices = [confirmChoices[0], confirmChoices[1]];
                 const secondOrMoreAttemptResults = recognizeChoices(utterance, choices);
                 if (secondOrMoreAttemptResults.length > 0) {
@@ -133,8 +129,8 @@ export class ConfirmPrompt extends Prompt<boolean> {
     }
 
     private determineCulture(activity: Activity): string {
-        let culture: string = activity.locale || this.defaultLocale;
-        if (!culture || !ConfirmPrompt.defaultChoiceOptions.hasOwnProperty(culture)) {
+        let culture: string = PromptCultureModels.mapToNearestLanguage(activity.locale || this.defaultLocale);
+        if (!culture || !this.choiceDefaults.hasOwnProperty(culture)) {
             culture = 'en-us';
         }
         return culture;

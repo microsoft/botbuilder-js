@@ -55,7 +55,7 @@ export class IfCondition extends DialogCommand {
 
     protected onComputeID(): string {
         const label = this.condition ? this.condition.toString() : '';
-        return `if[${this.hashedLabel(label)}]`;
+        return `If[${label}]`;
     }
 
     public configure(config: IfConditionConfiguration): this {
@@ -91,7 +91,7 @@ export class IfCondition extends DialogCommand {
         if (!this.condition) { throw new Error(`${this.id}: no conditional expression specified.`) }
 
         // Evaluate expression
-        const memory = sequence.state.toJSON();
+        const memory = sequence.state;
         const value = this.condition.evaluate(this.id, memory);
 
         // Check for truthy returned value

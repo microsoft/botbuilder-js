@@ -80,7 +80,7 @@ export class ConfirmInput extends InputDialog<InputDialogOptions> {
     }
 
     protected onComputeID(): string {
-        return `ConfirmInput[${this.bindingPath()}]`;
+        return `ConfirmInput[]`;
     }
     
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {

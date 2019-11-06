@@ -59,7 +59,7 @@ export class ForEach extends DialogCommand {
 
     protected onComputeID(): string {
         const label = this.list ? this.list.toString() : '';
-        return `forEach[${this.hashedLabel(label)}]`;
+        return `ForEach[${label}]`;
     }
 
     /**
@@ -111,7 +111,7 @@ export class ForEach extends DialogCommand {
 
         // Unpack options
         let { list, offset } = options;
-        if (list == undefined) { list = this.list.evaluate(this.id, sequence.state.toJSON()) }
+        if (list == undefined) { list = this.list.evaluate(this.id, sequence.state) }
         if (offset == undefined) { offset = 0 }
 
         // Get next page of items

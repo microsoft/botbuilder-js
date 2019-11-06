@@ -11,7 +11,7 @@ import {
 } from 'botbuilder-core';
 import {
     Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent,
-    DialogContext, StateMap, DialogConfiguration, DialogContainer
+    DialogContext, DialogConfiguration, DialogContainer
 } from 'botbuilder-dialogs';
 import {
     AdaptiveEventNames, SequenceContext, ActionChangeList, ActionChangeType, AdaptiveDialogState
@@ -97,7 +97,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     //---------------------------------------------------------------------------------------------
 
     protected onComputeID(): string {
-        return `adaptive[${this.bindingPath()}]`;
+        return `AdaptiveDialog[]`;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
@@ -161,7 +161,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         const state = instance.state as AdaptiveDialogState<O>;
         if (state.actions && state.actions.length > 0) {
             // We need to mockup a DialogContext so that we can call repromptDialog() for the active action
-            const actionDC: DialogContext = new DialogContext(this.dialogs, context, state.actions[0], new StateMap({}), new StateMap({}));
+            const actionDC: DialogContext = new DialogContext(this.dialogs, context, state.actions[0]);
             await actionDC.repromptDialog();
         }
     }

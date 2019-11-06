@@ -26,7 +26,6 @@ export interface ActionChangeList {
 
 export enum ActionChangeType {
     insertActions = 'insertActions',
-    insertActionsBeforeTags = 'insertActionsBeforeTags',
     appendActions = 'appendActions',
     endSequence = 'endSequence',
     replaceSequence = 'replaceSequence'
@@ -50,7 +49,7 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
      * Creates a new `SequenceContext` instance.
      */
     constructor(dialogs: DialogSet, dc: DialogContext, state: DialogState, actions: ActionState[], changeKey: symbol) {
-        super(dialogs, dc.context, state, dc.state.user, dc.state.conversation);
+        super(dialogs, dc.context, state);
         this.actions = actions;
         this.changeKey = changeKey;
     }
@@ -99,7 +98,6 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
                 const change = queue[i];
                 switch (change.changeType) {
                     case ActionChangeType.insertActions:
-                    case ActionChangeType.insertActionsBeforeTags:
                     case ActionChangeType.appendActions:
                         await this.updateSequence(change);
                         break;
@@ -131,11 +129,6 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
         return this;
     }
 
-    public insertActionsBeforeTags(tags: string[], actions: ActionState[]): this {
-        this.queueChanges({ changeType: ActionChangeType.insertActionsBeforeTags, actions: actions, tags: tags });
-        return this;
-    }
-
     public appendActions(actions: ActionState[]): this {
         this.queueChanges({ changeType: ActionChangeType.appendActions, actions: actions });
         return this;
@@ -160,28 +153,6 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
             case ActionChangeType.insertActions:
                 Array.prototype.unshift.apply(this.actions, change.actions);
                 break;
-            case ActionChangeType.insertActionsBeforeTags:
-                let inserted = false;
-                if (Array.isArray(change.tags)) {
-                    // Walk list of actions to find point at which to insert new actions
-                    for (let i = 0; i < this.actions.length; i++) {
-                        // Does action have one of the tags we're looking for?
-                        if (this.actionHasTags(this.actions[i], change.tags)) {
-                            // Insert actions before the current action.
-                            const args = ([i, 0] as any[]).concat(change.actions);
-                            Array.prototype.splice.apply(this.actions, args);
-                            inserted = true;
-                            break;
-                        }
-                    }
-                }
-
-                // If we didn't find any of the tags we were looking for then just append
-                // the actions to the end of the current sequence.
-                if (!inserted) {
-                    Array.prototype.push.apply(this.actions, change.actions);
-                }
-                break;
             case ActionChangeType.appendActions:
                 Array.prototype.push.apply(this.actions, change.actions);
                 break;
@@ -191,18 +162,5 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
         if (newSequence) {
             await this.emitEvent(AdaptiveEventNames.sequenceStarted, undefined, false);
         }
-    }
-
-    private actionHasTags(action: ActionState, tags: string[]): boolean {
-        const dialog = this.findDialog(action.dialogId);
-        if (dialog && dialog.tags.length > 0) {
-            for (let i = 0; i < dialog.tags.length; i++) {
-                if (tags.indexOf(dialog.tags[i]) >= 0) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 }

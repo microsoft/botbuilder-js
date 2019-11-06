@@ -8,12 +8,12 @@ const continueMessage = { text: `continue`, type: 'message' };
 describe('DialogSet', function () {
     this.timeout(5000);
 
-    it('should throw on createContext(null)', async function () {
+    it('should throw on createContext(undefined)', async function () {
         const convoState = new ConversationState(new MemoryStorage());
         const dialogSet = new DialogSet(convoState.createProperty('dialogState'));
         try {
-            await dialogSet.createContext(null);
-            assert.fail('should have thrown error on null');
+            await dialogSet.createContext(undefined);
+            assert.fail('should have thrown error on undefined');
         } catch (err) {
         }
     });
@@ -61,6 +61,25 @@ describe('DialogSet', function () {
         assert(dialogs.find('A'), `dialog A not found.`);
         assert(dialogs.find('B'), `dialog B not found.`);
 
+        done();
+    });
+
+
+    it('should increment the dialog ID when adding the same dialog twice.', function (done) {
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new WaterfallDialog('a', [
+            function (step) { }
+        ]));
+
+        dialogs.add(new WaterfallDialog('a', [
+            function (step) { }
+        ]));
+
+        assert(dialogs.find('a'));
+        assert(dialogs.find('a2'), `second dialog didn't have ID incremented`);
         done();
     });
 

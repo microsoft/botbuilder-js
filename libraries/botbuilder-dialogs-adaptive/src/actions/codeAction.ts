@@ -25,7 +25,7 @@ export class CodeAction<T extends DialogContext = SequenceContext> extends Dialo
     }
 
     protected onComputeID(): string {
-        return `codeAction[${this.hashedLabel(this.handler.toString())}]`;
+        return `CodeAction[${this.handler.toString()}]`;
     }
 
     protected async onRunCommand(context: T, options: object): Promise<DialogTurnResult> {

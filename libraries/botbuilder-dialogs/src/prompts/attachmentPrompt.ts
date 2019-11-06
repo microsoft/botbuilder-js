@@ -25,10 +25,6 @@ export class AttachmentPrompt extends Prompt<Attachment[]> {
         super(dialogId, validator);
     }
 
-    protected onComputeID(): string {
-        return `attachmentPrompt[${this.bindingPath()}]`;
-    }
-
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         if (isRetry && options.retryPrompt) {
             await context.sendActivity(options.retryPrompt, undefined, InputHints.ExpectingInput);

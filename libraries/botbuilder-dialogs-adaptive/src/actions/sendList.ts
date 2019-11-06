@@ -45,7 +45,7 @@ export class SendList extends DialogCommand {
     }
 
     protected onComputeID(): string {
-        return `sendList[${this.bindingPath()}]`;
+        return `SendList[]`;
     }
 
     /**

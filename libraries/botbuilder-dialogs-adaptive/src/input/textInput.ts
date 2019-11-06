@@ -45,7 +45,7 @@ export class TextInput extends InputDialog<InputDialogOptions> {
     }
 
     protected onComputeID(): string {
-        return `textInput[${this.bindingPath()}]`;
+        return `TextInput[]`;
     }
     
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {

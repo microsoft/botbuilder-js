@@ -20,7 +20,7 @@ export function shallowCopy<T>(value: T): T {
  */
 export function makeRevocable<T extends Record<string, any>>(target: T, handler?: ProxyHandler<T>): { proxy: T; revoke(): void } {
     // Ensure proxy supported (some browsers don't)
-    if (Proxy && Proxy.revocable) {
+    if (typeof Proxy !== 'undefined' && Proxy.revocable) {
         return Proxy.revocable(target, handler || {});
     } else {
         return { proxy: target, revoke: (): void => {

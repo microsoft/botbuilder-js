@@ -1,5 +1,7 @@
 const assert = require('assert');
-const { BotAdapter, TurnContext } = require('../');
+const { BotAdapter, MessageFactory, TurnContext, ActivityTypes } = require('../');
+
+const activityId = `activity ID`;
 
 const testMessage = {
     type: 'message', 
@@ -44,6 +46,28 @@ class SimpleAdapter extends BotAdapter {
         assert(context, `SimpleAdapter.deleteActivity: missing context.`);
         assert(reference, `SimpleAdapter.deleteActivity: missing reference.`);
         assert(reference.activityId === '1234', `SimpleAdapter.deleteActivity: invalid activityId of "${reference.activityId}".`);
+        return Promise.resolve();
+    }
+}
+
+class SendAdapter extends BotAdapter {
+    sendActivities(context, activities) {
+        assert(context, `SendAdapter.sendActivities: missing context.`);
+        assert(activities, `SendAdapter.sendActivities: missing activities.`);
+        assert(Array.isArray(activities), `SendAdapter.sendActivities: activities not array.`);
+        assert(activities.length > 0, `SendAdapter.sendActivities: empty activities array.`);
+        return Promise.resolve(activities);
+    }
+
+    updateActivity(context, activity) {
+        assert(context, `SendAdapter.updateActivity: missing context.`);
+        assert(activity, `SendAdapter.updateActivity: missing activity.`);
+        return Promise.resolve();
+    }
+
+    deleteActivity(context, reference) {
+        assert(context, `SendAdapter.deleteActivity: missing context.`);
+        assert(reference, `SendAdapter.deleteActivity: missing reference.`);
         return Promise.resolve();
     }
 }
@@ -162,7 +186,23 @@ describe(`TurnContext`, function () {
         });
         context.sendActivity('test', 'say test', 'ignoringInput').then(() => done());
     });
-    
+
+    it(`should send a trace activity.`, function (done) {
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        context.onSendActivities((ctx, activities, next) => {
+            assert(Array.isArray(activities), `activities not array.`);
+            assert(activities.length === 1, `invalid count of activities.`);
+            assert(activities[0].type === ActivityTypes.Trace, `type wrong.`);
+            assert(activities[0].name === 'name-text', `name wrong.`);
+            assert(activities[0].value === 'value-text', `value worng.`);
+            assert(activities[0].valueType === 'valueType-text', `valeuType wrong.`);
+            assert(activities[0].label === 'label-text', `label wrong.`);
+            return[];
+        });
+        context.sendTraceActivity('name-text', 'value-text', 'valueType-text', 'label-text').then(() => done());
+    });
+   
+
     it(`should send multiple activities via sendActivities().`, function (done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.sendActivities([testMessage, testMessage, testMessage]).then((responses) => {
@@ -211,6 +251,26 @@ describe(`TurnContext`, function () {
         });
         context.updateActivity(testMessage).then((responses) => {
             assert(called, `update hook not called.`);        
+            done();
+        });
+    });
+    
+    it(`should be able to update an activity with MessageFactory`, function (done) {
+        let called = false;
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        context.onUpdateActivity((ctx, activity, next) => {
+            assert(ctx, `context not passed to hook`);
+            assert(activity, `activity not passed to hook`);
+            assert(activity.id === activityId, `wrong activity passed to hook`);
+            assert(activity.conversation.id === testMessage.conversation.id, `conversation ID not applied to activity`);
+            assert(activity.serviceUrl === testMessage.serviceUrl, `service URL not applied to activity`);
+            called = true;
+            return next();
+        });
+        const message = MessageFactory.text(`test text`);
+        message.id = activityId;
+        context.updateActivity(message).then((responses) => {
+            assert(called, `update hook not called.`);
             done();
         });
     });
@@ -371,5 +431,14 @@ describe(`TurnContext`, function () {
 
         assert(text,' test activity');
         assert(activity.text,' test activity');
+    });
+
+    it(`should clear existing activity.id in context.sendActivity().`, function (done) {
+        const context = new TurnContext(new SendAdapter(), testMessage);
+        context.sendActivity(testMessage).then((response) => {
+            assert(response, `response is missing.`);
+            assert(response.id === undefined, `invalid response id of "${response.id}" sent back. Should be 'undefined'`);
+            done();
+        });
     });
 });

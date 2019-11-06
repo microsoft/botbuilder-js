@@ -263,7 +263,7 @@ describe('DialogContext', function() {
             }
             catch (err) {
                 assert(err, `Error not found.`);
-                assert.strictEqual(err.message, `DialogContext.continue(): Can't continue dialog. A dialog with an id of 'b' wasn't found.`, `unexpected error message thrown: "${err.message}"`);
+                assert.strictEqual(err.message, `DialogContext.continueDialog(): Can't continue dialog. A dialog with an id of 'b' wasn't found.`, `unexpected error message thrown: "${err.message}"`);
                 return done();
             }
             if (results.status === DialogTurnStatus.empty) {

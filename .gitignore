@@ -3,6 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Blanket ignore zip files
+# Related to Teams Scenarios work
+*.zip
+*.vscode
+
 # User-specific files
 *.suo
 *.user
@@ -287,7 +292,12 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 /**/node_modules
-/**/.vscode
+
+# Exception for including the ESLint extension in vscode
+!.vscode/
+.vscode/*
+!.vscode/extensions.json
+
 /**/*.VC.db
 #coverage
 /**/coverage
@@ -295,4 +305,7 @@ __pycache__/
 
 #derived
 /test-runner/out
+package-lock.json
 
+*.tsbuildinfo
+*.js.map

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, Dialog, DialogCommand, DialogContext } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogCommand, DialogContext } from 'botbuilder-dialogs';
 import { Activity, InputHints } from 'botbuilder-core';
 import { ActivityProperty } from '../activityProperty';
 
@@ -24,14 +24,6 @@ export interface SendActivityConfiguration extends DialogConfiguration {
      * (Optional) input hint for the message. Defaults to a value of `InputHints.acceptingInput`.
      */
     inputHint?: InputHints;
-
-    /**
-     * (Optional) in-memory state property that the result of the send should be saved to.
-     *
-     * @remarks
-     * This is just a convenience property for setting the dialogs [outputBinding](#outputbinding).
-     */
-    resultProperty?: string;
 }
 
 export class SendActivity extends DialogCommand {
@@ -52,7 +44,7 @@ export class SendActivity extends DialogCommand {
     }
 
     protected onComputeID(): string {
-        return `send[${this.hashedLabel(this.activityProperty.displayLabel)}]`;
+        return `SendActivity[${this.activityProperty.displayLabel}]`;
     }
 
     /**
@@ -77,13 +69,6 @@ export class SendActivity extends DialogCommand {
      * @remarks
      * This is just a convenience property for setting the dialogs [outputBinding](#outputbinding).
      */
-    public set resultProperty(value: string) {
-        this.outputProperty = value;
-    }
-
-    public get resultProperty(): string {
-        return this.outputProperty;
-    }
 
     public configure(config: SendActivityConfiguration): this {
         return super.configure(config);
@@ -91,15 +76,14 @@ export class SendActivity extends DialogCommand {
 
     protected async onRunCommand(dc: DialogContext, options: object): Promise<DialogTurnResult> {
         if (!this.activityProperty.hasValue()) {
-            throw new Error(`SendActivity: no activity assigned for action '${this.id}'.`)
+            // throw new Error(`SendActivity: no activity assigned for action '${this.id}'.`)
+            throw new Error(`SendActivity: no activity assigned for action.`)
         }
 
         // Send activity and return result
-        // - If `resultProperty` has been set, the returned result will be saved to the requested
-        //   memory location.
         const data = Object.assign({
             utterance: dc.context.activity.text || ''
-        }, dc.state.toJSON(),  options);
+        }, dc.state,  options);
         const activity = this.activityProperty.format(dc, data);
         const result = await dc.context.sendActivity(activity);
         return await dc.endDialog(result);

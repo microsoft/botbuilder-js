@@ -11,7 +11,7 @@ import { ActivityTypes } from 'botbuilder-core';
 export class EndTurn extends Dialog {
 
     protected onComputeID(): string {
-        return `endTurn[]`;
+        return `EndTurn[]`;
     }
 
     public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {

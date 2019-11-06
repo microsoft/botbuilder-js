@@ -9,9 +9,14 @@ import { BotState } from './botState';
 import { TurnContext } from './turnContext';
 
 /**
- * An interface components can use to read and write individual properties to the bot's state
- * management system.
- * @param T (Optional) type of property being persisted. Defaults to `any` type.
+ * Defines methods for accessing a state property created in a
+ * [BotState](xref:botbuilder-core.BotState) object.
+ * 
+ * @typeparam T Optional. The type of the state property to access. Default type is `any`.
+ * 
+ * @remarks
+ * To create a state property in a state management objet, use the
+ * [createProperty\<T>](xref:botbuilder-core.BotState.createProperty) method.
  */
 export interface StatePropertyAccessor<T = any> {
     /**

@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
-    "plugins": [
-      { "name": "typescript-tslint-plugin" }
-    ],
-    "target": "ESNext",
+    "target": "es6",
+    "lib": ["es2015"],
     "module": "commonjs",
     "declaration": true,
     "sourceMap": true,

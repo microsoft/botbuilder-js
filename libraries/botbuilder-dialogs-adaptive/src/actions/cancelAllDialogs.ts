@@ -16,32 +16,20 @@ export interface CancelAllDialogsConfiguration extends DialogConfiguration {
 export class CancelAllDialogs extends DialogCommand {
 
     constructor();
-    constructor(eventName: string, eventValue?: string|object);
-    constructor(eventName?: string, eventValue?: string|object) {
+    constructor(eventName: string, eventValue?: string);
+    constructor(eventName?: string, eventValue?: string) {
         super();
         this.eventName = eventName;
-        if (typeof eventValue == 'string') {
-            this.eventValueProperty = eventValue;
-        } else {
-            this.eventValue = eventValue
-        }
+        this.eventValue = eventValue
     }
     
     protected onComputeID(): string {
-        return `cancelAllDialogs[${this.hashedLabel(this.eventName || '')}]`;
+        return `CancelAllDialogs[${this.eventName || ''}]`;
     }
 
     public eventName: string;
 
-    public eventValue: object;
-
-    public set eventValueProperty(value: string) {
-        this.inputProperties['eventValue'] = value;
-    }
-
-    public get eventValueProperty(): string {
-        return this.inputProperties['eventValue'];
-    }
+    public eventValue: string;
 
     public configure(config: CancelAllDialogsConfiguration): this {
         return super.configure(config);
@@ -52,6 +40,6 @@ export class CancelAllDialogs extends DialogCommand {
             eventName: this.eventName,
             eventValue: this.eventValue
         }, options);
-        return await dc.cancelAllDialogs(opt.eventName, opt.eventValue);
+        return await dc.cancelAllDialogs(true, opt.eventName, opt.eventValue);
     }
 }

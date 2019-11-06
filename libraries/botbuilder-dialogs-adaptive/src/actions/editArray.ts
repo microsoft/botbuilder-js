@@ -35,7 +35,7 @@ export class EditArray extends DialogCommand {
     }
     
     protected onComputeID(): string {
-        return `array[${this.hashedLabel(this.changeType + ': ' + this.arrayProperty)}]`;
+        return `EditArray[${this.changeType}: ${this.arrayProperty}]`;
     }
 
     public changeType: ArrayChangeType;

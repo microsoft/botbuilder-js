@@ -14,11 +14,14 @@ export abstract class DialogCommand<O extends object = {}> extends Dialog<O> imp
 
     constructor(dialogId?: string) {
         super(dialogId);
-        this.inheritState = true;
     }
     
     public getDependencies(): Dialog[] {
         return [];
+    }
+
+    public onComputeId(): string {
+        return `${typeof(this)}[${this.id}]`;
     }
     
     public beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

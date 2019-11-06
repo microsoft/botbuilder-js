@@ -30,7 +30,7 @@ export class DeleteProperty<O extends object = {}> extends DialogCommand<O> {
     }
 
     protected onComputeID(): string {
-        return `delete[${this.hashedLabel(this.property)}]`;
+        return `DeleteProperty[${this.property}]`;
     }
 
     public configure(config: DeletePropertyConfiguration): this {

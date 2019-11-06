@@ -8,6 +8,7 @@
 
 export * from 'botframework-schema';
 export * from './activityHandler';
+export * from './activityHandlerBase';
 export * from './autoSaveStateMiddleware';
 export * from './botAdapter';
 export * from './botAdapterSet';
@@ -26,6 +27,7 @@ export * from './privateConversationState';
 export * from './propertyManager';
 export * from './recognizerResult';
 export * from './showTypingMiddleware';
+export * from './skypeMentionNormalizeMiddleware';
 export * from './storage';
 export * from './telemetryLoggerMiddleware';
 export * from './testAdapter';
@@ -33,3 +35,4 @@ export * from './transcriptLogger';
 export * from './turnContext';
 export * from './userState';
 export * from './userTokenProvider';
+export * from './userTokenSettings';

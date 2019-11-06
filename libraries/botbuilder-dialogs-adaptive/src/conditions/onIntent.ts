@@ -31,10 +31,10 @@ export class OnIntent extends OnDialogEvent {
         this.matches = Array.isArray(matches) ? matches : (matches !== undefined ? [matches] : []);
     }
 
-    protected async onIsTriggered(sequence: SequenceContext, event: DialogEvent<RecognizerResult>): Promise<boolean> {
+    protected async onIsTriggered(sequence: SequenceContext, event: DialogEvent): Promise<boolean> {
 
         // Ensure all intents, entities, and properties exist.
-        const memory = sequence.state.toJSON();
+        const memory = sequence.state;
         for(let i = 0; i < this.matches.length; i++) {
             const value = DialogContextState.queryMemory(memory, this.matches[i], 1);
             if (!Array.isArray(value) || value.length == 0 || value[0] == undefined) {

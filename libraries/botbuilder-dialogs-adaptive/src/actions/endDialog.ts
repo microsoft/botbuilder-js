@@ -31,7 +31,7 @@ export class EndDialog extends DialogCommand {
     }
 
     protected onComputeID(): string {
-        return `end[${this.hashedLabel(this.resultProperty || '')}]`;
+        return `EndDialog[${this.resultProperty || ''}]`;
     }
 
     /**
