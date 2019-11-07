@@ -214,7 +214,7 @@ describe('Memory - Dialog State Manager', function() {
             const expected = process.env[key];
             if (typeof expected == 'string') {
                 count++
-                const value = dc.state.getValue(`settings.${key}`);
+                const value = dc.state.getValue(`settings["${key}"]`);
                 assert (value == expected, `Value returned for "${key}": ${value}`);
             }
         }
