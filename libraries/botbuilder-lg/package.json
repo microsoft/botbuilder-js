@@ -24,8 +24,7 @@
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.18",
     "nyc": "^11.4.1",
-    "ts-node": "^4.1.0",
-    "typescript-tslint-plugin": "^0.3.1"
+    "ts-node": "^4.1.0"
   },
   "scripts": {
     "build": "tsc",
