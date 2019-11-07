@@ -32,20 +32,6 @@ export interface DialogState {
      * Contains state information for each [Dialog](xref:botbuilder-dialogs.Dialog) on the stack.
      */
     dialogStack: DialogInstance[];
-
-    /**
-     * (optional) values that are persisted for the lifetime of the conversation.
-     *
-     * @remarks
-     * These values are intended to be transient and may automatically expire after some timeout
-     * period.
-     */
-    conversationState?: object;
-
-    /**
-     * (Optional) values that are persisted across all interactions with the current user.
-     */
-    userState?: object;
 }
 
 /**
@@ -111,16 +97,7 @@ export class DialogContext {
      * the stack is empty.
      */
     public get activeDialog(): DialogInstance|undefined {
-        let instance: DialogInstance;
-        if (this.stack.length > 0) {
-            // For DialogCommand instances we need to return the inherited state.
-            const frame = this.stack[this.stack.length - 1];
-            instance = {
-                id: frame.id,
-                state: this.getActiveDialogState(this, frame.state)
-            };
-        }
-        return instance;
+        return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
     }
 
     /**
@@ -173,7 +150,7 @@ export class DialogContext {
         if (!dialog) { throw new Error(`DialogContext.beginDialog(): A dialog with an id of '${ dialogId }' wasn't found.`); }
 
         // Push new instance onto stack.
-        const instance: DialogInstance = {
+        const instance: DialogInstance<any> = {
             id: dialogId,
             state: {}
         };
@@ -235,7 +212,6 @@ export class DialogContext {
 
             return { status: DialogTurnStatus.cancelled };
         } else {
-            // Stack was empty and no parent
             return { status: DialogTurnStatus.empty };
         }
     }
@@ -339,7 +315,7 @@ export class DialogContext {
         }
 
         // Check for a dialog on the stack
-        const instance: DialogInstance = this.activeDialog;
+        const instance: DialogInstance<any> = this.activeDialog;
         if (instance) {
             // Lookup dialog
             const dialog: Dialog<{}> = this.findDialog(instance.id);
@@ -386,10 +362,10 @@ export class DialogContext {
      */
     public async endDialog(result?: any): Promise<DialogTurnResult> {
         // End the active dialog
-        await this.endActiveDialog(DialogReason.endCalled, result);
+        await this.endActiveDialog(DialogReason.endCalled);
 
         // Resume parent dialog
-        const instance: DialogInstance = this.activeDialog;
+        const instance: DialogInstance<any> = this.activeDialog;
         if (instance) {
             // Lookup dialog
             const dialog: Dialog<{}> = this.findDialog(instance.id);
@@ -506,8 +482,8 @@ export class DialogContext {
         return false;
     }
 
-    private async endActiveDialog(reason: DialogReason, result?: any): Promise<void> {
-        const instance: DialogInstance = this.activeDialog;
+    private async endActiveDialog(reason: DialogReason): Promise<void> {
+        const instance: DialogInstance<any> = this.activeDialog;
         if (instance) {
             // Lookup dialog
             const dialog: Dialog<{}> = this.findDialog(instance.id);
@@ -518,27 +494,6 @@ export class DialogContext {
 
             // Pop dialog off stack
             this.stack.pop();
-        }
-    }
-
-    private getActiveDialogState(dc: DialogContext, state: object|number): object {
-        if (typeof state === 'number') {
-            // Positive values are indexes within the current DC and negative values are indexes in
-            // the parent DC.
-            if (state >= 0) {
-                if (state < dc.stack.length) {
-                    return this.getActiveDialogState(dc, dc.stack[state].state);
-                } else {
-                    throw new Error(`DialogContext.activeDialog: Can't find inherited state. Index out of range.`);
-                }
-            } else if (dc.parent) {
-                // Parent stack index of 0 is encoded as -1 so we need to make positive and then subtract 1
-                return this.getActiveDialogState(dc.parent, (0 - state) - 1);
-            } else {
-                throw new Error(`DialogContext.activeDialog: Can't find inherited state. No parent DialogContext.`);
-            }
-        } else {
-            return state;
         }
     }
 }
