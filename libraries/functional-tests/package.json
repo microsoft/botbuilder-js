@@ -9,8 +9,6 @@
   "directories": {
     "test": "tests"
   },
-  "scripts": {
-  },
   "keywords": [],
   "author": "",
   "license": "MIT"
