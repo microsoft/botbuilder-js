@@ -2112,12 +2112,11 @@ export class BuiltInFunctions {
                     (args: ReadonlyArray<any>) => {
                         let value: any;
                         let error: string;
-                        const dateFormat: string = 'YYYY-MM-DD';
                         ({ value, error } = BuiltInFunctions.ParseTimestamp(args[0]));
                         if (error === undefined) {
-                            const timestamp1: Date = new Date(value.format(dateFormat));
+                            const timestamp1: Date = value.startOf('day').toDate();
                             ({ value, error } = BuiltInFunctions.ParseTimestamp(args[1]));
-                            const timestamp2: string = value.format(dateFormat);
+                            const timestamp2: string = value.startOf('day').local().format('YYYY-MM-DD');
                             const timex: TimexProperty = new TimexProperty(timestamp2);
 
                             return { value: timex.toNaturalLanguage(timestamp1), error };
