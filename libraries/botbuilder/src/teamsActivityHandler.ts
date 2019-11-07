@@ -46,7 +46,7 @@ export class TeamsActivityHandler extends ActivityHandler {
                 if (invokeResponse && !context.turnState.get(INVOKE_RESPONSE_KEY)) {
                     await context.sendActivity({ value: invokeResponse, type: 'invokeResponse' });
                 }
-                await this.defaultNextEvent(context);
+                await this.defaultNextEvent(context)();
                 break;
             default:
                 await super.onTurnActivity(context);
