@@ -1178,7 +1178,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         }
 
         const upgrade = (res as any).claimUpgrade();
-        const socket = this.webSocketFactory.createWebSocket(req as IncomingMessage, upgrade.socket, upgrade.head);
+        const socket = await this.webSocketFactory.createWebSocket(req as IncomingMessage, upgrade.socket, upgrade.head);
 
         await this.startWebSocket(socket);
     }

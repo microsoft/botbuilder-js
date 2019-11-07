@@ -26,7 +26,5 @@ export {
     NodeWebSocketFactory,
     NodeWebSocketFactoryBase,
     WebSocketClient,
-    WebSocketServer,
-    WsNodeWebSocket,
-    WsNodeWebSocketFactory,
+    WebSocketServer
 } from './webSocket';

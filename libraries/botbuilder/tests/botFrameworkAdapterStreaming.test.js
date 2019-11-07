@@ -1,36 +1,34 @@
+const { BotFrameworkAdapter, StatusCodes } = require('../');
 const { ActivityHandler } = require('botbuilder-core');
 const chai = require('chai');
-const { BotFrameworkAdapter, StatusCodes } = require('../');
+const { randomBytes } = require('crypto');
+const { Socket } = require('net');
+const sinon = require('sinon');
 const expect = chai.expect;
 
-class FauxSock {
-    constructor(contentString) {
-        if (contentString) {
-            this.contentString = contentString;
-            this.position = 0;
-        }
-        this.connected = true;
+function createNetSocket(readable = true, writable = true) {
+    return new Socket({ readable, writable });
+}
+
+// Mock of botframework-streaming/src/interfaces/IReceiveRequest
+class MockedReceiveRequest {
+    constructor(options = {}) {
+        const config = Object.assign({
+            verb: 'POST',
+            path: '/api/messages',
+            streams: []
+        }, options);
+
+        this.verb = config.verb;
+        this.path = config.path;
+        this.streams = config.streams;
     }
-    isConnected() { return this.connected; }
-    write(buffer) { return; }
-    connect(serverAddress) { return new Promise(); }
-    close() { this.connected = false; return; }
-    setOnMessageHandler(handler) { return; } //(x: any) => void);
-    setOnErrorHandler(handler) { return; }
-    setOnCloseHandler(handler) { return; }
 }
 
 class TestRequest {
-    constructor() {
+    constructor(method = 'GET',) {
+        this.method = method;
         let headers = [];
-    }
-
-    isUpgradeRequest() {
-        return this.upgradeRequestVal;
-    }
-
-    setIsUpgradeRequest(value) {
-        this.upgradeRequestVal = value;
     }
 
     status() {
@@ -41,21 +39,21 @@ class TestRequest {
         this.statusVal = value;
     }
 
-    path(value) {
-        this.pathVal = value;
-    }
+    // path(value) {
+    //     this.pathVal = value;
+    // }
 
-    path() {
-        return this.pathVal;
-    }
+    // path() {
+    //     return this.pathVal;
+    // }
 
-    verb(value) {
-        this.verbVal = value;
-    }
+    // verb(value) {
+    //     this.verbVal = value;
+    // }
 
-    verb() {
-        return this.verbVal;
-    }
+    // verb() {
+    //     return this.verbVal;
+    // }
 
     streams(value) {
         this.streamsVal = value;
@@ -135,22 +133,18 @@ describe('BotFrameworkAdapter Streaming tests', () => {
         const bot = new ActivityHandler();
         const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
         const request = new TestRequest();
-        request.setIsUpgradeRequest(true);
+        
         request.headers = [];
         request.headers['upgrade'] = 'websocket';
-        request.headers['sec-websocket-key'] = 'BFlat';
+        request.headers['sec-websocket-key'] = randomBytes(16).toString('base64');
         request.headers['sec-websocket-version'] = '13';
         request.headers['sec-websocket-protocol'] = '';
 
         const response = new TestResponse({ claimUpgrade: 'anything' });
-        const fakeSocket = {
-            unshift: function () { return true; },
-            write: function (value) { },
-            on: function (value) { },
-            read: function () { return new Buffer.from('data', 'utf8'); },
-            end: function () { return; },
-        };
-        response.setClaimUpgrade({ socket: fakeSocket, head: 'websocket' });
+        const mockedSocket = new createNetSocket();
+
+        response.socket = mockedSocket;
+        response.setClaimUpgrade({ socket: mockedSocket, head: 'websocket' });
         await adapter.useWebSocket(request, response, async (context) => {
             await bot.run(context);
         });
@@ -160,22 +154,17 @@ describe('BotFrameworkAdapter Streaming tests', () => {
         const bot = new ActivityHandler();
         const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
         let request = new TestRequest();
-        request.setIsUpgradeRequest(true);
+        
         request.headers = [];
         request.headers['upgrade'] = 'websocket';
-        request.headers['sec-websocket-key'] = 'BFlat';
+        request.headers['sec-websocket-key'] = randomBytes(16).toString('base64');
         request.headers['sec-websocket-version'] = '13';
         request.headers['sec-websocket-protocol'] = '';
         let response = new TestResponse();
-        let fakeSocket = {
-            unshift: function () { return true; },
-            write: function (value) { },
-            on: function (value) { },
-            read: function () { return new Buffer.from('data', 'utf8'); },
-            end: function () { return; },
-        };
-        response.socket = fakeSocket;
-        response.setClaimUpgrade({ socket: fakeSocket, head: 'websocket' });
+        const mockedSocket = new createNetSocket();
+
+        response.socket = mockedSocket;
+        response.setClaimUpgrade({ socket: mockedSocket, head: 'websocket' });
 
         await adapter.useWebSocket(request, response, async (context) => {
             await bot.run(context);
@@ -189,22 +178,17 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             const bot = new ActivityHandler();
             const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
             let request = new TestRequest();
-            request.setIsUpgradeRequest(true);
+            
             request.headers = [];
             request.headers['upgrade'] = 'websocket';
-            request.headers['sec-websocket-key'] = 'BFlat';
+            request.headers['sec-websocket-key'] = randomBytes(16).toString('base64');
             request.headers['sec-websocket-version'] = '13';
             request.headers['sec-websocket-protocol'] = '';
             let response = new TestResponse();
-            let fakeSocket = {
-                unshift: function () { return true; },
-                write: function (value) { },
-                on: function (value) { },
-                read: function () { return new Buffer.from('data', 'utf8'); },
-                end: function () { return; },
-            };
-            response.socket = fakeSocket;
-            response.setClaimUpgrade({ socket: fakeSocket, head: 'websocket' });
+            const mockedSocket = new createNetSocket();
+
+            response.socket = mockedSocket;
+            response.setClaimUpgrade({ socket: mockedSocket, head: 'websocket' });
 
             await adapter.useWebSocket(request, response, async (context) => {
                 await bot.run(context);
@@ -216,7 +200,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             const settings = new TestAdapterSettings('appId', 'password');
             const adapter = new BotFrameworkAdapter(settings);
             let request = new TestRequest();
-            request.setIsUpgradeRequest(true);
+            
             request.setHeaders({ channelid: 'fakechannel', authorization: 'donttrustme' });
             let response = new TestResponse();
 
@@ -394,7 +378,6 @@ describe('BotFrameworkAdapter Streaming tests', () => {
         });
 
         it('executes middleware', async () => {
-            var sinon = require('sinon');
             const bot = new ActivityHandler();
             bot.run = function (turnContext) { return Promise.resolve(); };
 
@@ -433,24 +416,19 @@ describe('BotFrameworkAdapter Streaming tests', () => {
         const bot = new ActivityHandler();
         const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
         let request = new TestRequest();
-        request.setIsUpgradeRequest(true);
+        
         request.headers = [];
         request.headers['upgrade'] = 'websocket';
-        request.headers['sec-websocket-key'] = 'BFlat';
+        request.headers['sec-websocket-key'] = randomBytes(16).toString('base64');
         request.headers['sec-websocket-version'] = '13';
         request.headers['sec-websocket-protocol'] = '';
         let response = new TestResponse();
-        let fakeSocket = {
-            unshift: function () { return true; },
-            write: function () { return Promise.resolve; },
-            on: function () { return; },
-            read: function () { return new Buffer.from('data', 'utf8'); },
-            end: function () { return Promise.resolve; },
-        };
-        response.socket = fakeSocket;
-        const sinon = require('sinon');
-        const spy = sinon.spy(fakeSocket, "write");
-        response.setClaimUpgrade({ socket: fakeSocket, head: 'websocket' });
+
+        const mockedSocket = new createNetSocket();
+
+        response.socket = mockedSocket;
+        const spy = sinon.spy(mockedSocket, "write");
+        response.setClaimUpgrade({ socket: mockedSocket, head: 'websocket' });
 
         try {
             await adapter.useWebSocket(request, response, async (context) => {

@@ -12,4 +12,3 @@ export * from './nodeWebSocket';
 export * from './webSocketClient';
 export * from './webSocketServer';
 export * from './webSocketTransport';
-export * from './wsNodeWebSocket';

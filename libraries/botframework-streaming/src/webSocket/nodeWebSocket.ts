@@ -6,36 +6,48 @@
  * Licensed under the MIT License.
  */
 
+import * as crypto from 'crypto';
 import { IncomingMessage, request } from 'http';
 import { Socket } from 'net';
-import { Watershed } from 'watershed';
-import { ISocket } from '../interfaces/ISocket';
+import * as WebSocket from 'ws';
+
+import { ISocket } from '../interfaces';
+const NONCE_LENGTH = 16;
 
 export class NodeWebSocket implements ISocket {
-    private waterShedSocket: any;
+    private wsSocket: WebSocket;
     private connected: boolean;
-    protected watershedShed: Watershed;
+    protected wsServer: WebSocket.Server;
 
     /**
      * Creates a new instance of the [NodeWebSocket](xref:botframework-streaming.NodeWebSocket) class.
      *
-     * @param socket The WaterShed socket object to build this connection on.
+     * @param socket The `ws` WebSocket instance to build this connection on.
      */
-    public constructor(waterShedSocket?) {
-        this.waterShedSocket = waterShedSocket;
-        this.connected = !!waterShedSocket;
-        this.watershedShed = new Watershed();
+    public constructor(wsSocket?: WebSocket) {
+        this.wsSocket = wsSocket;
+        this.connected = !!wsSocket;
+        this.wsServer = new WebSocket.Server({ noServer: true });
     }
 
     /**
-     * Create and set a WaterShed WebSocket with an HTTP Request, Socket and Buffer.
+     * Create and set a `ws` WebSocket with an HTTP Request, Socket and Buffer.
      * @param req IncomingMessage
      * @param socket Socket
      * @param head Buffer
      */
-    public create(req: IncomingMessage, socket: Socket, head: Buffer): void {
-        this.waterShedSocket = this.watershedShed.accept(req, socket, head);
-        this.connected = true;
+    public async create(req: IncomingMessage, socket: Socket, head: Buffer): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            try {
+                this.wsServer.handleUpgrade(req, socket, head, (websocket) => {
+                    this.wsSocket = websocket;
+                    this.connected = true;
+                    resolve();
+                });
+            } catch (err) {
+                reject(err);
+            }
+        });
     }
 
     /**
@@ -51,7 +63,7 @@ export class NodeWebSocket implements ISocket {
      * @param buffer The buffer of data to send across the connection.
      */
     public write(buffer: Buffer): void {
-        this.waterShedSocket.send(buffer);
+        this.wsSocket.send(buffer);
     }
 
     /**
@@ -61,8 +73,8 @@ export class NodeWebSocket implements ISocket {
      * @param port The port the server is listening on, defaults to 8082.
      */
     public async connect(serverAddress, port = 8082): Promise<void> {
-        // Following template from https://github.com/joyent/node-watershed#readme
-        const wskey = this.watershedShed.generateKey();
+        // Key generation per https://tools.ietf.org/html/rfc6455#section-1.3 (pg. 7)
+        const wskey = crypto.randomBytes(NONCE_LENGTH).toString('base64');
         const options = {
             port: port,
             hostname: serverAddress,
@@ -74,11 +86,14 @@ export class NodeWebSocket implements ISocket {
         };
         const req = request(options);
         req.end();
-        req.on('upgrade', function(res, socket, head): void {
-            this.watershedShed.connect(res, socket, head, wskey);
+        req.on('upgrade', (res, socket, head): void => {
+            // @types/ws does not contain the signature for completeUpgrade
+            // https://github.com/websockets/ws/blob/0a612364e69fc07624b8010c6873f7766743a8e3/lib/websocket-server.js#L269
+            (this.wsServer as any).completeUpgrade(wskey, undefined, res, socket, head, (websocket): void => {
+                this.wsSocket = websocket;
+                this.connected = true;
+            });
         });
-
-        this.connected = true;
 
         return new Promise<void>((resolve, reject): void => {
             req.on('close', resolve);
@@ -87,33 +102,37 @@ export class NodeWebSocket implements ISocket {
     }
 
     /**
-     * Set the handler for text and binary messages received on the socket.
+     * Set the handler for `'data'` and `'message'` events received on the socket.
      */
     public setOnMessageHandler(handler: (x: any) => void): void {
-        this.waterShedSocket.on('text', handler);
-        this.waterShedSocket.on('binary', handler);
+        this.wsSocket.on('data', handler);
+        this.wsSocket.on('message', handler);
     }
 
     /**
      * Close the socket.
+     * @remarks
+     * Optionally pass in a status code and string explaining why the connection is closing.
+     * @param code
+     * @param data
      */
-    public close(): any {
+    public close(code?: number, data?: string): void {
         this.connected = false;
 
-        return this.waterShedSocket.end();
+        return this.wsSocket.close(code, data);
     }
 
     /**
      * Set the callback to call when encountering socket closures.
      */
     public setOnCloseHandler(handler: (x: any) => void): void {
-        this.waterShedSocket.on('end', handler);
+        this.wsSocket.on('close', handler);
     }
 
     /**
      * Set the callback to call when encountering errors.
      */
     public setOnErrorHandler(handler: (x: any) => void): void {
-        this.waterShedSocket.on('error', (error): void => { if (error) { handler(error); } });
+        this.wsSocket.on('error', (error): void => { if (error) { handler(error); } });
     }
 }

@@ -23,10 +23,10 @@ export class NodeWebSocketFactory extends NodeWebSocketFactoryBase {
      * @param socket 
      * @param head 
      */
-    public createWebSocket(req: IncomingMessage, socket: Socket, head: Buffer): NodeWebSocket {
+    public async createWebSocket(req: IncomingMessage, socket: Socket, head: Buffer): Promise<NodeWebSocket> {
         const s = new NodeWebSocket();
-        s.create(req, socket, head);
-
+        await s.create(req, socket, head);
+        
         return s;
     }
 }

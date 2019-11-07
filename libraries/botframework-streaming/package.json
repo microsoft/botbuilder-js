@@ -23,7 +23,6 @@
   "typings": "lib/index.d.js",
   "dependencies": {
     "uuid": "^3.3.2",
-    "watershed": "^0.4.0",
     "ws": "^7.1.2"
   },
   "devDependencies": {
