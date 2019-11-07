@@ -40,7 +40,9 @@ const badExpressions =
   "replace(one, 'l', 'k')", // replace only accept string parameter
   "replace('hi', 1, 'k')", // replace only accept string parameter
   "replace('hi', 'l', 1)", // replace only accept string parameter
+  "replace('hi', nullObj, 'k')", // replace oldValue must string length not less than 1
   "replaceIgnoreCase(hello)", // replaceIgnoreCase need three parameters
+  "replaceIgnoreCase('HI', nullObj, 'k')", // replaceIgnoreCase oldValue must string length not less than 1
   "replaceIgnoreCase(one, 'l', 'k')", // replaceIgnoreCase only accept string parameter
   "replaceIgnoreCase('hi', 1, 'k')", // replaceIgnoreCase only accept string parameter
   "replaceIgnoreCase('hi', 'l', 1)", // replaceIgnoreCase only accept string parameter

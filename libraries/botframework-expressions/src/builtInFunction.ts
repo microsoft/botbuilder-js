@@ -303,6 +303,15 @@ export class BuiltInFunctions {
         return error;
     }
 
+    public static verifyStringOrNull(value: any, expression: Expression, _: number): string {
+        let error: string;
+        if (typeof value !== 'string' && value !== undefined) {
+            error = `${expression} is neither a string nor a null object.`;
+        }
+
+        return error;
+    }
+
     /**
      * Verify value is a number or string.
      * @param value alue to check.
@@ -549,7 +558,7 @@ export class BuiltInFunctions {
      * @param func Function to apply.
      */
     public static stringTransform(type: string, func: (arg0: ReadonlyArray<any>) => any): ExpressionEvaluator {
-        return new ExpressionEvaluator(type, BuiltInFunctions.apply(func, BuiltInFunctions.verifyString),
+        return new ExpressionEvaluator(type, BuiltInFunctions.apply(func, BuiltInFunctions.verifyStringOrNull),
                                        ReturnType.String, BuiltInFunctions.validateUnaryString);
     }
 
@@ -675,6 +684,14 @@ export class BuiltInFunctions {
 
             return v.toString(16);
         });
+    }
+
+    private static parseStringOrNull(input: string | undefined): string {
+        if (typeof input === "string") {
+            return input;
+        } else {
+            return "";
+        }
     }
 
     private static validateAccessor(expression: Expression): void {
@@ -1160,8 +1177,10 @@ export class BuiltInFunctions {
                         result = str.substr(start, length);
                     }
                 }
+            } else if (str === undefined) {
+                result = "";
             } else {
-                error = `${expression.children[0]} is not a string.`;
+                error = `${expression.children[0]} is neither a string nor a null object.`;
             }
         }
 
@@ -1858,27 +1877,55 @@ export class BuiltInFunctions {
                 BuiltInFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.Concat,
-                BuiltInFunctions.apply((args: ReadonlyArray<any>) => ''.concat(...args), BuiltInFunctions.verifyString),
+                BuiltInFunctions.apply((args: ReadonlyArray<any>) => ''.concat(...args.map(arg => BuiltInFunctions.parseStringOrNull(arg))), BuiltInFunctions.verifyStringOrNull),
                 ReturnType.String,
                 BuiltInFunctions.validateString),
             new ExpressionEvaluator(
                 ExpressionType.Length,
-                BuiltInFunctions.apply((args: ReadonlyArray<any>) => args[0].length, BuiltInFunctions.verifyString),
+                BuiltInFunctions.apply((args: ReadonlyArray<any>) => (BuiltInFunctions.parseStringOrNull(args[0])).length, BuiltInFunctions.verifyStringOrNull),
                 ReturnType.Number,
                 BuiltInFunctions.validateUnaryString),
             new ExpressionEvaluator(
                 ExpressionType.Replace,
-                BuiltInFunctions.apply((args: ReadonlyArray<any>) => args[0].split(args[1]).join(args[2]), BuiltInFunctions.verifyString),
+                BuiltInFunctions.applyWithError((
+                    args: ReadonlyArray<any>) => 
+                        {
+                            let error = undefined;1
+                            let result = undefined;
+                            if (BuiltInFunctions.parseStringOrNull(args[1]).length === 0) {
+                                error = `${args[1]} should be a string with length at least 1`;
+                            }
+
+                            if (error === undefined) {
+                                result = BuiltInFunctions.parseStringOrNull(args[0]).split(BuiltInFunctions.parseStringOrNull(args[1])).join(BuiltInFunctions.parseStringOrNull(args[2]))
+                            }
+
+                            return {value: result, error};
+                        }, BuiltInFunctions.verifyStringOrNull),
                 ReturnType.String,
                 (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 3, 3, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.ReplaceIgnoreCase,
-                BuiltInFunctions.apply((args: ReadonlyArray<any>) => args[0].replace(new RegExp(args[1], 'gi'), args[2]), BuiltInFunctions.verifyString),
+                BuiltInFunctions.applyWithError((
+                    args: ReadonlyArray<any>) => 
+                        {
+                            let error = undefined;1
+                            let result = undefined;
+                            if (BuiltInFunctions.parseStringOrNull(args[1]).length === 0) {
+                                error = `${args[1]} should be a string with length at least 1`;
+                            }
+
+                            if (error === undefined) {
+                            result = BuiltInFunctions.parseStringOrNull(args[0]).replace(new RegExp(BuiltInFunctions.parseStringOrNull(args[1]), 'gi'), BuiltInFunctions.parseStringOrNull(args[2]));
+                            }
+
+                            return {value: result, error};
+                        }, BuiltInFunctions.verifyStringOrNull),
                 ReturnType.String,
                 (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 3, 3, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.Split,
-                BuiltInFunctions.apply((args: ReadonlyArray<any>) => args[0].split(args[1]), BuiltInFunctions.verifyString),
+                BuiltInFunctions.apply((args: ReadonlyArray<any>) => BuiltInFunctions.parseStringOrNull(args[0]).split(BuiltInFunctions.parseStringOrNull(args[1])), BuiltInFunctions.verifyStringOrNull),
                 ReturnType.Object,
                 (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String)),
             new ExpressionEvaluator(
@@ -1886,24 +1933,24 @@ export class BuiltInFunctions {
                 BuiltInFunctions.substring,
                 ReturnType.String,
                 (expression: Expression): void => BuiltInFunctions.validateOrder(expression, [ReturnType.Number], ReturnType.String, ReturnType.Number)),
-            BuiltInFunctions.stringTransform(ExpressionType.ToLower, (args: ReadonlyArray<any>) => String(args[0]).toLowerCase()),
-            BuiltInFunctions.stringTransform(ExpressionType.ToUpper, (args: ReadonlyArray<any>) => String(args[0]).toUpperCase()),
-            BuiltInFunctions.stringTransform(ExpressionType.Trim, (args: ReadonlyArray<any>) => String(args[0]).trim()),
+            BuiltInFunctions.stringTransform(ExpressionType.ToLower, (args: ReadonlyArray<any>) => String(BuiltInFunctions.parseStringOrNull(args[0])).toLowerCase()),
+            BuiltInFunctions.stringTransform(ExpressionType.ToUpper, (args: ReadonlyArray<any>) => String(BuiltInFunctions.parseStringOrNull(args[0])).toUpperCase()),
+            BuiltInFunctions.stringTransform(ExpressionType.Trim, (args: ReadonlyArray<any>) => String(BuiltInFunctions.parseStringOrNull(args[0])).trim()),
             new ExpressionEvaluator(
                 ExpressionType.StartsWith,
-                BuiltInFunctions.apply((args: ReadonlyArray<any>) => args[0].startsWith(args[1]), BuiltInFunctions.verifyString),
+                BuiltInFunctions.apply((args: ReadonlyArray<any>) => BuiltInFunctions.parseStringOrNull(args[0]).startsWith(BuiltInFunctions.parseStringOrNull(args[1])), BuiltInFunctions.verifyStringOrNull),
                 ReturnType.Boolean,
                 (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String)
             ),
             new ExpressionEvaluator(
                 ExpressionType.EndsWith,
-                BuiltInFunctions.apply((args: ReadonlyArray<any>) => args[0].endsWith(args[1]), BuiltInFunctions.verifyString),
+                BuiltInFunctions.apply((args: ReadonlyArray<any>) => BuiltInFunctions.parseStringOrNull(args[0]).endsWith(BuiltInFunctions.parseStringOrNull(args[1])), BuiltInFunctions.verifyStringOrNull),
                 ReturnType.Boolean,
                 (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String)
             ),
             new ExpressionEvaluator(
                 ExpressionType.CountWord,
-                BuiltInFunctions.apply((args: ReadonlyArray<any>) => args[0].trim().split(/\s+/).length, BuiltInFunctions.verifyString),
+                BuiltInFunctions.apply((args: ReadonlyArray<any>) => BuiltInFunctions.parseStringOrNull(args[0]).trim().split(/\s+/).length, BuiltInFunctions.verifyStringOrNull),
                 ReturnType.Number,
                 BuiltInFunctions.validateUnaryString
             ),
@@ -1921,13 +1968,13 @@ export class BuiltInFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.IndexOf,
-                BuiltInFunctions.apply((args: ReadonlyArray<any>) => args[0].indexOf(args[1]), BuiltInFunctions.verifyString),
+                BuiltInFunctions.apply((args: ReadonlyArray<any>) => BuiltInFunctions.parseStringOrNull(args[0]).indexOf(BuiltInFunctions.parseStringOrNull(args[1])), BuiltInFunctions.verifyStringOrNull),
                 ReturnType.Number,
                 (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String)
             ),
             new ExpressionEvaluator(
                 ExpressionType.LastIndexOf,
-                BuiltInFunctions.apply((args: ReadonlyArray<any>) => args[0].lastIndexOf(args[1]), BuiltInFunctions.verifyString),
+                BuiltInFunctions.apply((args: ReadonlyArray<any>) => BuiltInFunctions.parseStringOrNull(args[0]).lastIndexOf(BuiltInFunctions.parseStringOrNull(args[1])), BuiltInFunctions.verifyStringOrNull),
                 ReturnType.Number,
                 (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String)
             ),
