@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-expression-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +15,7 @@ export class Range {
     public start: Position;
     public end: Position;
 
-    constructor(start: Position, end: Position) {
+    public constructor(start: Position, end: Position) {
         this.start = start;
         this.end = end;
     }

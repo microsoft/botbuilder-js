@@ -33,8 +33,8 @@ export class CommonRegex {
 
     private static getRegExpFromString(pattern: string): RegExp {
         const flags: string[] = ['(?i)', '(?m)', '(?s)'];
-        let flag: string = '';
-        flags.forEach((e: string) => {
+        let flag = '';
+        flags.forEach((e: string): void => {
             if (pattern.includes(e)) {
                 flag += e.substr(2, 1);
                 pattern = pattern.replace(e, '');
@@ -43,9 +43,9 @@ export class CommonRegex {
 
         let regexp: RegExp;
         if (flag !== '') {
-            regexp = new RegExp(`${pattern}`, flag);
+            regexp = new RegExp(`${ pattern }`, flag);
         } else {
-            regexp = new RegExp(`${pattern}`);
+            regexp = new RegExp(`${ pattern }`);
         }
 
         return regexp;
@@ -73,19 +73,19 @@ export class CommonRegex {
 
         return parser.parse();
     }
- }
+}
 
- // tslint:disable-next-line: completed-docs
+// tslint:disable-next-line: completed-docs
 export class ErrorListener implements ANTLRErrorListener<any> {
-     public static readonly Instance: ErrorListener = new ErrorListener();
+    public static readonly Instance: ErrorListener = new ErrorListener();
 
-     public syntaxError<T>(
+    public syntaxError<T>(
         _recognizer: Recognizer<T, any>,
         _offendingSymbol: T,
         line: number,
         charPositionInLine: number,
         msg: string,
         _e: RecognitionException | undefined): void {
-             throw Error(`Regular expression is invalid.`);
-     }
- }
+        throw Error(`Regular expression is invalid.`);
+    }
+}

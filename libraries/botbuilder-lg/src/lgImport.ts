@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-expression-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -21,7 +21,7 @@ export class LGImport {
 
     public parseTree: ImportDefinitionContext;
 
-    constructor(parseTree: ImportDefinitionContext, source: string = '') {
+    public constructor(parseTree: ImportDefinitionContext, source: string = '') {
         this.parseTree = parseTree;
         this.source = source;
         this.description = this.extractDescription(parseTree);

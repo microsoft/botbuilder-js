@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-expression-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,7 +35,7 @@ export class LGTemplate {
      */
     public parseTree: TemplateDefinitionContext;
 
-    constructor(parseTree: TemplateDefinitionContext, lgfileContent: string, source: string = '') {
+    public constructor(parseTree: TemplateDefinitionContext, lgfileContent: string, source: string = '') {
         this.parseTree = parseTree;
         this.source = source;
 
@@ -59,25 +59,25 @@ export class LGTemplate {
         const parameters: ParametersContext = parseTree.templateNameLine().parameters();
         if (parameters !== undefined) {
             // tslint:disable-next-line: newline-per-chained-call
-            return parameters.IDENTIFIER().map((x: TerminalNode) => x.text);
+            return parameters.IDENTIFIER().map((x: TerminalNode): string => x.text);
         }
 
         return [];
     }
 
     private readonly extractBody = (parseTree: TemplateDefinitionContext, lgfileContent: string): string => {
-       const templateBody: TemplateBodyContext = parseTree.templateBody();
-       if (templateBody === undefined) {
-           return '';
-       }
+        const templateBody: TemplateBodyContext = parseTree.templateBody();
+        if (templateBody === undefined) {
+            return '';
+        }
 
-       const startLine: number = templateBody.start.line - 1;
-       const stopLine: number = templateBody.stop.line - 1;
+        const startLine: number = templateBody.start.line - 1;
+        const stopLine: number = templateBody.stop.line - 1;
 
-       return this.getRangeContent(lgfileContent, startLine, stopLine);
+        return this.getRangeContent(lgfileContent, startLine, stopLine);
     }
 
-    private getRangeContent(originString: string, startLine: number, stopLine: number) : string {
+    private getRangeContent(originString: string, startLine: number, stopLine: number): string {
         const originList: string[] = originString.split('\n');
         if (startLine < 0 || startLine > stopLine || stopLine >= originList.length) {
             throw new Error(`index out of range.`);

@@ -8,7 +8,7 @@
  */
 import { BuiltInFunctions } from './builtInFunction';
 import { Constant } from './constant';
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from './expressionEvaluator';
+import { ExpressionEvaluator } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
 
 /**
@@ -114,12 +114,12 @@ export class Expression {
     }
 
     public toString(): string {
-        let builder: string = '';
-        let valid: boolean = false;
+        let builder = '';
+        let valid = false;
         // Special support for memory paths
         if (this.type === ExpressionType.Accessor && this.children.length >= 1) {
             if (this.children[0] instanceof Constant) {
-                const prop: any = (<Constant>(this.children[0])).value;
+                const prop: any = (this.children[0] as Constant).value;
                 if (typeof prop === 'string') {
                     if (this.children.length === 1) {
                         valid = true;
@@ -141,7 +141,7 @@ export class Expression {
                 builder = builder.concat(this.type);
             }
             builder = builder.concat('(');
-            let first: boolean = true;
+            let first = true;
             for (const child of this.children) {
                 if (first) {
                     first = false;

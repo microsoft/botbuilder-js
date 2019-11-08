@@ -1,17 +1,17 @@
 /**
- * @module botbuilder-expression-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
- import { Range } from './range';
+import { Range } from './range';
 
 /**
  * DiagnosticSeverity enum
  */
- export enum DiagnosticSeverity {
+export enum DiagnosticSeverity {
     Error,
     Warning,
     Information,
@@ -21,14 +21,14 @@
 /**
  * Diagnostic class
  */
- export class Diagnostic {
+export class Diagnostic {
     public code: string;
     public range: Range;
     public severity: DiagnosticSeverity;
     public source: string;
     public message: string;
 
-    constructor(
+    public constructor(
         range: Range,
         message: string,
         severity: DiagnosticSeverity = DiagnosticSeverity.Error) {
@@ -41,9 +41,9 @@
 
         // ignore error range if source is "inline"
         if (this.source === 'inline') {
-            return `[${DiagnosticSeverity[this.severity]}] ${this.message.toString()}`;
+            return `[${ DiagnosticSeverity[this.severity] }] ${ this.message.toString() }`;
         } else {
-            return `[${DiagnosticSeverity[this.severity]}] ${this.range.toString()}: ${this.message.toString()}`;
+            return `[${ DiagnosticSeverity[this.severity] }] ${ this.range.toString() }: ${ this.message.toString() }`;
         }
     }
 }

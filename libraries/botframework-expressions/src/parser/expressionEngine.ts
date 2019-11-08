@@ -28,7 +28,7 @@ export class ExpressionEngine implements ExpressionParserInterface {
 
     // tslint:disable-next-line: typedef
     private readonly ExpressionTransformer = class extends AbstractParseTreeVisitor<Expression> implements ExpressionVisitor<Expression> {
-        private readonly ShorthandPrefixMap : Map<string, string> = new Map<string, string>([
+        private readonly ShorthandPrefixMap: Map<string, string> = new Map<string, string>([
             ['#', 'turn.recognized.intents'],
             ['@', 'turn.recognized.entities'],
             ['@@', 'turn.recognized.entities'],
@@ -66,11 +66,11 @@ export class ExpressionEngine implements ExpressionParserInterface {
 
         public visitShorthandAccessorExp(context: ep.ShorthandAccessorExpContext): Expression {
             if (context.primaryExpression() instanceof ep.ShorthandAtomContext) {
-                const shorthandAtom: ep.ShorthandAtomContext = <ep.ShorthandAtomContext>(context.primaryExpression());
+                const shorthandAtom: ep.ShorthandAtomContext = context.primaryExpression() as ep.ShorthandAtomContext;
                 const shorthandMark: string = shorthandAtom.text;
 
                 if (!this.ShorthandPrefixMap.has(shorthandMark)) {
-                    throw new Error(`${shorthandMark} is not a shorthand`);
+                    throw new Error(`${ shorthandMark } is not a shorthand`);
                 }
 
                 const property: Constant = new Constant(context.IDENTIFIER().text);
@@ -117,11 +117,11 @@ export class ExpressionEngine implements ExpressionParserInterface {
             const property: Expression = this.visit(context.expression());
 
             if (context.primaryExpression() instanceof ep.ShorthandAtomContext) {
-                const shorthandAtom: ep.ShorthandAtomContext = <ep.ShorthandAtomContext>(context.primaryExpression());
+                const shorthandAtom: ep.ShorthandAtomContext = context.primaryExpression() as ep.ShorthandAtomContext;
                 const shorthandMark: string = shorthandAtom.text;
 
                 if (!this.ShorthandPrefixMap.has(shorthandMark)) {
-                    throw new Error(`${shorthandMark} is not a shorthand`);
+                    throw new Error(`${ shorthandMark } is not a shorthand`);
                 }
 
                 if (shorthandMark === '^') {
@@ -142,7 +142,7 @@ export class ExpressionEngine implements ExpressionParserInterface {
         public visitMemberAccessExp(context: ep.MemberAccessExpContext): Expression {
             const property: string = context.IDENTIFIER().text;
             if (context.primaryExpression() instanceof ep.ShorthandAtomContext) {
-                throw new Error(`${context.text} is not a valid shorthand. Maybe you mean '${context.primaryExpression().text}${property}'?`);
+                throw new Error(`${ context.text } is not a valid shorthand. Maybe you mean '${ context.primaryExpression().text }${ property }'?`);
             }
             const instance: Expression = this.visit(context.primaryExpression());
 
@@ -155,7 +155,7 @@ export class ExpressionEngine implements ExpressionParserInterface {
                 return new Constant(numberValue);
             }
 
-            throw Error(`${context.text} is not a number.`);
+            throw Error(`${ context.text } is not a number.`);
         }
 
         public visitParenthesisExp = (context: ep.ParenthesisExpContext): Expression => this.visit(context.expression());

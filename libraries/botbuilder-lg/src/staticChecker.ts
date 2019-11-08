@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-expression-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,18 +30,18 @@ import { Range } from './range';
 export class StaticChecker {
     private readonly expressionEngine: ExpressionEngine;
 
-    constructor(expressionEngine?: ExpressionEngine) {
+    public constructor(expressionEngine?: ExpressionEngine) {
         this.expressionEngine = expressionEngine !== undefined ? expressionEngine : new ExpressionEngine();
     }
 
     public checkFiles(filePaths: string[], importResolver?: ImportResolverDelegate): Diagnostic[] {
         let result: Diagnostic[] = [];
         let templates: LGTemplate[] = [];
-        let isParseSuccess: boolean = true;
+        let isParseSuccess = true;
 
         try {
             let totalLGResources: LGResource[] = [];
-            filePaths.forEach((filePath: string) => {
+            filePaths.forEach((filePath: string): void => {
                 importResolver = importResolver !== undefined ? importResolver : ImportResolver.fileResolver;
 
                 filePath = path.normalize(ImportResolver.normalizePath(filePath));
@@ -52,13 +52,13 @@ export class StaticChecker {
 
             // Remove duplicated lg files by id
             // tslint:disable-next-line: max-line-length
-            const deduplicatedLGResources: LGResource[] = totalLGResources.filter((resource: LGResource, index: number, self: LGResource[]) =>
-                index === self.findIndex((t: LGResource) => (
+            const deduplicatedLGResources: LGResource[] = totalLGResources.filter((resource: LGResource, index: number, self: LGResource[]): boolean =>
+                index === self.findIndex((t: LGResource): boolean => (
                     t.id === resource.id
                 ))
             );
 
-            templates = deduplicatedLGResources.reduce((acc: LGTemplate[], x: LGResource) =>
+            templates = deduplicatedLGResources.reduce((acc: LGTemplate[], x: LGResource): any =>
                 acc = acc.concat(x.templates),         []
             );
         } catch (e) {
@@ -92,13 +92,13 @@ export class StaticChecker {
 
         let result: Diagnostic[] = [];
         let templates: LGTemplate[] = [];
-        let isParseSuccess: boolean = true;
+        let isParseSuccess = true;
 
         try {
             const rootResource: LGResource = LGParser.parse(content, id);
             const resources: LGResource[] = rootResource.discoverLGResources(importResolver);
 
-            templates = resources.reduce((acc: LGTemplate[], x: LGResource) =>
+            templates = resources.reduce((acc: LGTemplate[], x: LGResource): any =>
                 // tslint:disable-next-line: align
                 acc = acc.concat(x.templates), []
             );
@@ -133,10 +133,10 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     private readonly baseExpressionEngine: ExpressionEngine;
     private _expressionParser: ExpressionParserInterface;
     private readonly expressionRecognizeRegex: RegExp = new RegExp(/\}(?!\\).+?\{(?!\\)@?/g);
-    private readonly escapeSeperatorRegex : RegExp = new RegExp(/\|(?!\\)/g);
-    private readonly structuredNameRegex : RegExp = new RegExp(/^[a-z0-9_][a-z0-9_\-\.]*$/i);
+    private readonly escapeSeperatorRegex: RegExp = new RegExp(/\|(?!\\)/g);
+    private readonly structuredNameRegex: RegExp = new RegExp(/^[a-z0-9_][a-z0-9_\-\.]*$/i);
 
-    constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
+    public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
         this.Templates = templates;
         this.baseExpressionEngine = expressionEngine;
@@ -156,7 +156,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
         // check dup, before we build up TemplateMap
         const grouped: {[name: string]: LGTemplate[]} = {};
-        this.Templates.forEach((t: LGTemplate) => {
+        this.Templates.forEach((t: LGTemplate): void => {
             if (!(t.name in grouped)) {
                 grouped[t.name] = [];
             }
@@ -166,8 +166,8 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         for (const key of Object.keys(grouped)) {
             const group: LGTemplate[] = grouped[key];
             if (group.length > 1) {
-                const sources: string = group.map((x: LGTemplate) => x.source).join(':');
-                result.push(this.buildLGDiagnostic({ message: `Dup definitions found for template ${key} in ${sources}` }));
+                const sources: string = group.map((x: LGTemplate): string => x.source).join(':');
+                result.push(this.buildLGDiagnostic({ message: `Dup definitions found for template ${ key } in ${ sources }` }));
             }
         }
 
@@ -177,7 +177,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         }
 
         // we can safely convert now, because we know there is no dup
-        this.TemplateMap = keyBy(this.Templates, (t: LGTemplate) => t.name);
+        this.TemplateMap = keyBy(this.Templates, (t: LGTemplate): string => t.name);
 
         if (this.Templates.length <= 0) {
             result.push(this.buildLGDiagnostic({
@@ -186,7 +186,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
             }));
         }
 
-        this.Templates.forEach((template: LGTemplate) => {
+        this.Templates.forEach((template: LGTemplate): void => {
             this.currentSource = template.source;
             result = result.concat(this.visit(template.parseTree));
         });
@@ -207,7 +207,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
             const templateName: string = context.templateNameLine().templateName().text;
             if (context.templateBody() === undefined) {
                 result.push(this.buildLGDiagnostic({
-                    message: `There is no template body in template ${templateName}`,
+                    message: `There is no template body in template ${ templateName }`,
                     context: context.templateNameLine(),
                     severity: DiagnosticSeverity.Warning
                 }));
@@ -243,7 +243,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         const typeName: string = context.structuredBodyNameLine().STRUCTURED_CONTENT().text.trim();
         if (!this.structuredNameRegex.test(typeName)) {
             result.push(this.buildLGDiagnostic({
-                message: `Structured type ${typeName} is invalid. Letter, number, '_', '-' and '.' is allowed.`,
+                message: `Structured type ${ typeName } is invalid. Letter, number, '_', '-' and '.' is allowed.`,
                 context: context.structuredBodyNameLine()}));
         }
 
@@ -253,7 +253,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
             bodys = content.STRUCTURED_CONTENT();
         }
 
-        if (bodys === undefined || bodys.length === 0 || bodys.find((u: TerminalNode) => u !== undefined && u.text.trim().length !== 0) === undefined) {
+        if (bodys === undefined || bodys.length === 0 || bodys.find((u: TerminalNode): boolean => u !== undefined && u.text.trim().length !== 0) === undefined) {
             result.push(this.buildLGDiagnostic({
                 message: `Structured content is empty`,
                 context: content}));
@@ -291,16 +291,16 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         let result: Diagnostic[] = [];
         const ifRules: lp.IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
 
-        let idx: number = 0;
+        let idx = 0;
         for (const ifRule of ifRules) {
-            const  conditionNode : lp.IfConditionContext = ifRule.ifCondition();
-            const ifExpr : boolean = conditionNode.IF() !== undefined;
-            const elseIfExpr : boolean = conditionNode.ELSEIF() !== undefined;
-            const elseExpr : boolean = conditionNode.ELSE() !== undefined;
+            const  conditionNode: lp.IfConditionContext = ifRule.ifCondition();
+            const ifExpr: boolean = conditionNode.IF() !== undefined;
+            const elseIfExpr: boolean = conditionNode.ELSEIF() !== undefined;
+            const elseExpr: boolean = conditionNode.ELSE() !== undefined;
 
-            const node : TerminalNode = ifExpr ? conditionNode.IF() :
-                         elseIfExpr ? conditionNode.ELSEIF() :
-                         conditionNode.ELSE();
+            const node: TerminalNode = ifExpr ? conditionNode.IF() :
+                elseIfExpr ? conditionNode.ELSEIF() :
+                    conditionNode.ELSE();
 
             if (node.text.split(' ').length - 1 > 1) {
                 result.push(this.buildLGDiagnostic({
@@ -376,7 +376,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
-        let idx: number = 0;
+        let idx = 0;
         const length: number = switchCaseNodes.length;
 
         for (const iterNode of switchCaseNodes) {
@@ -385,8 +385,8 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
             const caseExpr: boolean = switchCaseStat.CASE() !== undefined;
             const defaultExpr: boolean = switchCaseStat.DEFAULT() !== undefined;
             const node: TerminalNode = switchExpr ? switchCaseStat.SWITCH() :
-                        caseExpr ? switchCaseStat.CASE() :
-                        switchCaseStat.DEFAULT();
+                caseExpr ? switchCaseStat.CASE() :
+                    switchCaseStat.DEFAULT();
             if (node.text.split(' ').length - 1 > 1) {
                 result.push(this.buildLGDiagnostic({
                     // tslint:disable-next-line: max-line-length
@@ -502,8 +502,8 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     private checkTemplateRef(exp: string, context: ParserRuleContext): Diagnostic[] {
         const result: Diagnostic[] = [];
         exp = exp.replace(/(^\[*)/g, '')
-                .replace(/(\]*$)/g, '')
-                .trim();
+            .replace(/(\]*$)/g, '')
+            .trim();
 
         let expression: string = exp;
         if (exp.indexOf('(') < 0) {
@@ -520,7 +520,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
             this.expressionParser.parse(expression);
         } catch (e) {
             result.push(this.buildLGDiagnostic({
-                message: e.message.concat(` in template reference '${exp}'`),
+                message: e.message.concat(` in template reference '${ exp }'`),
                 context: context
             }));
 
@@ -536,7 +536,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         return this.checkText(exp, context, true);
     }
 
-    private checkText(exp: string, context: ParserRuleContext, isMultiLineText : boolean = false): Diagnostic[] {
+    private checkText(exp: string, context: ParserRuleContext, isMultiLineText: boolean = false): Diagnostic[] {
         let result: Diagnostic[] = [];
         const reg: RegExp = isMultiLineText ? /@\{[^{}]+\}/g : /@?\{[^{}]+\}/g;
         const matches: string[] = exp.match(reg);
@@ -565,15 +565,15 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     private checkExpression(exp: string, context: ParserRuleContext): Diagnostic[] {
         const result: Diagnostic[] = [];
         exp = exp.replace(/(^@*)/g, '')
-                .replace(/(^{*)/g, '')
-                .replace(/(}*$)/g, '')
-                .trim();
+            .replace(/(^{*)/g, '')
+            .replace(/(}*$)/g, '')
+            .trim();
 
         try {
             this.expressionParser.parse(exp);
         } catch (e) {
             result.push(this.buildLGDiagnostic({
-                message: e.message.concat(` in expression '${exp}'`),
+                message: e.message.concat(` in expression '${ exp }'`),
                 context: context
             }));
 
@@ -592,9 +592,9 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         // tslint:disable-next-line: max-line-length
         const stopPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
         const range: Range = new Range(startPosition, stopPosition);
-        message = `error message: ${message}`;
+        message = `error message: ${ message }`;
         if (this.currentSource !== undefined && this.currentSource !== '') {
-            message = `source: ${this.currentSource}. ${message}`;
+            message = `source: ${ this.currentSource }. ${ message }`;
         }
 
         return new Diagnostic(range, message, severity);

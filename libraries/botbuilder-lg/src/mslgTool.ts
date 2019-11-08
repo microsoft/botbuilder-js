@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-expression-lg
+ * @module bbotbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -26,14 +26,14 @@ export class MSLGTool {
     private templates: LGTemplate[];
     private readonly expressionEngine: ExpressionEngine;
 
-    constructor(expressionEngine?: ExpressionEngine) {
+    public constructor(expressionEngine?: ExpressionEngine) {
         this.expressionEngine = expressionEngine !== undefined ? expressionEngine : new ExpressionEngine();
     }
 
     public validateFile(lgFileContent: string, id?: string): string[] {
         const diagnostic: Diagnostic[] = new StaticChecker().checkText(lgFileContent, id, ImportResolver.fileResolver);
         if (diagnostic.length !== 0) {
-            return diagnostic.map((error: Diagnostic) => error.toString());
+            return diagnostic.map((error: Diagnostic): string => error.toString());
         }
 
         // extract templates
@@ -58,7 +58,7 @@ export class MSLGTool {
     }
 
     public collateTemplates(): string {
-        let result: string = '';
+        let result = '';
         if (this.collationMessages === undefined || this.collationMessages.length === 0) {
             for (const template of this.collatedTemplates) {
                 result += '# ' + template[0] + '\n';
@@ -76,7 +76,7 @@ export class MSLGTool {
                     for (const condition of (template[1] as Map<string, string[]>)) {
                         const conditionStr: string = condition[0];
                         result += '- ' + conditionStr + '\n';
-                        condition[1].forEach((templateStr: string) => {
+                        condition[1].forEach((templateStr: string): any => {
                             result += '   ' + templateStr.slice(0, 1) + ' ' + templateStr.slice(1) + '\n';
                         });
                     }
@@ -115,7 +115,7 @@ export class MSLGTool {
                 } else {
                     const range: Range = new Range(new Position(0, 0), new Position(0, 0));
                     // tslint:disable-next-line: max-line-length
-                    const mergeError: Diagnostic = new Diagnostic(range, `Template ${template[0]} occurred in both normal and condition templates`);
+                    const mergeError: Diagnostic = new Diagnostic(range, `Template ${ template[0] } occurred in both normal and condition templates`);
                     this.collationMessages.push(mergeError.toString());
                 }
             } else {

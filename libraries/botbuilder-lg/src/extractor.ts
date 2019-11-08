@@ -1,6 +1,6 @@
 
 /**
- * @module botbuilder-expression-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -17,15 +17,15 @@ import { LGTemplate } from './lgTemplate';
 export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGFileParserVisitor<Map<string, any>> {
     public readonly templates: LGTemplate[];
     public readonly templateMap: {[name: string]: LGTemplate};
-    constructor(templates: LGTemplate[]) {
+    public constructor(templates: LGTemplate[]) {
         super();
         this.templates = templates;
-        this.templateMap = keyBy(templates, (t: LGTemplate) => t.name);
+        this.templateMap = keyBy(templates, (t: LGTemplate): string => t.name);
     }
 
     public extract(): Map<string, any>[] {
         const result: Map<string, any>[] = [];
-        this.templates.forEach((template: LGTemplate) => {
+        this.templates.forEach((template: LGTemplate): any => {
             result.push(this.visit(template.parseTree));
         });
 
@@ -36,8 +36,8 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         const result: Map<string, any> = new Map<string, any>();
         const templateName: string = context.templateNameLine().templateName().text;
         const templateBodies: Map<string, any> = this.visit(context.templateBody());
-        let isNormalTemplate: boolean = true;
-        templateBodies.forEach((templateBody: Map<string, any>) => isNormalTemplate = isNormalTemplate && (templateBody === undefined));
+        let isNormalTemplate = true;
+        templateBodies.forEach((templateBody: Map<string, any>): any => isNormalTemplate = isNormalTemplate && (templateBody === undefined));
 
         if (isNormalTemplate) {
             const templates: string[] = [];
@@ -73,14 +73,13 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         const ifRules: lp.IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             const expressions: TerminalNode[] = ifRule.ifCondition().EXPRESSION();
-            const  conditionNode : lp.IfConditionContext = ifRule.ifCondition();
-            const ifExpr : boolean = conditionNode.IF() !== undefined;
-            const elseIfExpr : boolean = conditionNode.ELSEIF() !== undefined;
-            const elseExpr : boolean = conditionNode.ELSE() !== undefined;
+            const  conditionNode: lp.IfConditionContext = ifRule.ifCondition();
+            const ifExpr: boolean = conditionNode.IF() !== undefined;
+            const elseIfExpr: boolean = conditionNode.ELSEIF() !== undefined;
 
-            const node : TerminalNode = ifExpr ? conditionNode.IF() :
-                         elseIfExpr ? conditionNode.ELSEIF() :
-                         conditionNode.ELSE();
+            const node: TerminalNode = ifExpr ? conditionNode.IF() :
+                elseIfExpr ? conditionNode.ELSEIF() :
+                    conditionNode.ELSE();
             const conditionLabel: string = node.text.toLowerCase();
             const childTemplateBodyResult: string[] = [];
             const templateBodies: Map<string, any> = this.visit(ifRule.normalTemplateBody());
@@ -109,10 +108,10 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
             const switchCaseStat: lp.SwitchCaseStatContext = iterNode.switchCaseStat();
             const switchExpr: boolean = switchCaseStat.SWITCH() !== undefined;
             const caseExpr: boolean = switchCaseStat.CASE() !== undefined;
-            const defaultExpr: boolean = switchCaseStat.DEFAULT() !== undefined;
+
             const node: TerminalNode = switchExpr ? switchCaseStat.SWITCH() :
-                        caseExpr ? switchCaseStat.CASE() :
-                        switchCaseStat.DEFAULT();
+                caseExpr ? switchCaseStat.CASE() :
+                    switchCaseStat.DEFAULT();
             if (switchExpr) {
                 continue;
             }
@@ -124,7 +123,7 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
             }
 
             if (caseExpr) {
-                    result.set(conditionLabel.toUpperCase().concat(' ') + expressions[0].text, childTemplateBodyResult);
+                result.set(conditionLabel.toUpperCase().concat(' ') + expressions[0].text, childTemplateBodyResult);
             } else {
                 // tslint:disable-next-line: no-backbone-get-set-outside-model
                 result.set('DEFALUT:', childTemplateBodyResult);

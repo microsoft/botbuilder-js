@@ -1,6 +1,6 @@
 
 /**
- * @module botbuilder-expression-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -18,21 +18,21 @@ export declare type ImportResolverDelegate = (source: string, resourceId: string
  * import resolver util
  */
 export class ImportResolver {
-    public static fileResolver: ImportResolverDelegate = (filePath: string, id: string) => {
+    public static fileResolver: ImportResolverDelegate = (filePath: string, id: string): any => {
         // import paths are in resource files which can be executed on multiple OS environments
-            // Call GetOsPath() to map / & \ in importPath -> OSPath
-            let importPath: string = ImportResolver.normalizePath(id);
-            if (!path.isAbsolute(importPath)) {
-                // get full path for importPath relative to path which is doing the import.
-                importPath = path.normalize(path.join(path.dirname(filePath), importPath));
-            }
+        // Call GetOsPath() to map / & \ in importPath -> OSPath
+        let importPath: string = ImportResolver.normalizePath(id);
+        if (!path.isAbsolute(importPath)) {
+            // get full path for importPath relative to path which is doing the import.
+            importPath = path.normalize(path.join(path.dirname(filePath), importPath));
+        }
 
-            const content: string = fs.readFileSync(importPath, 'utf-8');
+        const content: string = fs.readFileSync(importPath, 'utf-8');
 
-            return { content, id: importPath };
+        return { content, id: importPath };
     }
 
-     /// <summary>
+    /// <summary>
     /// Normalize authored path to os path.
     /// </summary>
     /// <remarks>
@@ -44,7 +44,7 @@ export class ImportResolver {
     /// <returns>path expressed as OS path.</returns>
     public static normalizePath(ambiguousPath: string): string {
         if (process.platform === 'win32') {
-             // map linux/mac sep -> windows
+            // map linux/mac sep -> windows
             return ambiguousPath.replace(/\//g, '\\');
         } else {
             // map windows sep -> linux/mac

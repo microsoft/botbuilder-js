@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-expression-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,11 +13,11 @@ export class Position {
     public line: number;
     public character: number;
 
-    constructor(line: number, character: number) {
+    public constructor(line: number, character: number) {
         this.line = line;
         this.character = character;
     }
 
     public test = (): string => 'Hello';
-    public toString = (): string => `line ${this.line}:${this.character}`;
+    public toString = (): string => `line ${ this.line }:${ this.character }`;
 }

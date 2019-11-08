@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-expression-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,7 +13,7 @@
 export class EvaluationTarget {
     public templateName: string;
     public scope: any;
-    public  evaluatedChildren : Map<string, any>;
+    public  evaluatedChildren: Map<string, any>;
     public constructor(templateName: string, scope: any) {
         this.templateName = templateName;
         this.scope = scope;

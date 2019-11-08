@@ -26,7 +26,7 @@ export class Constant extends Expression {
         this.evaluator.returnType =
             typeof theValue === 'string' ? ReturnType.String
                 : typeof theValue === 'boolean' ? ReturnType.Boolean
-                : typeof theValue === 'number' && !Number.isNaN(theValue) ? ReturnType.Number
+                    : typeof theValue === 'number' && !Number.isNaN(theValue) ? ReturnType.Number
                         : ReturnType.Object;
 
         this._value = theValue;
@@ -35,8 +35,8 @@ export class Constant extends Expression {
     private _value: any;
     public constructor(value: any) {
         super(ExpressionType.Constant, new ExpressionEvaluator(ExpressionType.Constant,
-                                                               (expression: Expression, state: any): { value: any; error: string } => {
-                return { value: (<Constant>expression).value, error: undefined };
+            (expression: Expression): { value: any; error: string } => {
+                return { value: (expression as Constant).value, error: undefined };
             }
         ));
         this.value = value;
@@ -48,7 +48,7 @@ export class Constant extends Expression {
         }
 
         if (typeof this.value === 'string') {
-            return `'${this.value}'`;
+            return `'${ this.value }'`;
         }
 
         return this.value === undefined ? undefined : this.value.toString();

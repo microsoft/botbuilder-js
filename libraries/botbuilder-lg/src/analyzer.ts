@@ -1,15 +1,15 @@
 
 /**
- * @module botbuilder-expression-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 // tslint:disable-next-line: no-submodule-imports
-import { AbstractParseTreeVisitor, ParseTree, TerminalNode } from 'antlr4ts/tree';
-import { Constant, Expression, ExpressionEngine, ExpressionParserInterface, Extensions } from 'botframework-expressions';
-import { flatten, keyBy } from 'lodash';
+import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
+import { Expression, ExpressionEngine, ExpressionParserInterface, Extensions } from 'botframework-expressions';
+import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
@@ -43,13 +43,13 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     public readonly templateMap: {[name: string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly _expressionParser: ExpressionParserInterface;
-    private readonly escapeSeperatorRegex : RegExp = new RegExp(/\|(?!\\)/g);
+    private readonly escapeSeperatorRegex: RegExp = new RegExp(/\|(?!\\)/g);
     private readonly expressionRecognizeRegex: RegExp = new RegExp(/\}(?!\\).+?\{(?!\\)@?/g);
 
-    constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
+    public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
         this.templates = templates;
-        this.templateMap = keyBy(templates, (t: LGTemplate) => t.name);
+        this.templateMap = keyBy(templates, (t: LGTemplate): string => t.name);
 
         // create an evaluator to leverage it's customized function look up for checking
         const evaluator: Evaluator = new Evaluator(this.templates, expressionEngine);
@@ -58,13 +58,13 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     public analyzeTemplate(templateName: string): AnalyzerResult {
         if (!(templateName in this.templateMap)) {
-            throw new Error(`No such template: ${templateName}`);
+            throw new Error(`No such template: ${ templateName }`);
         }
 
-        if (this.evalutationTargetStack.find((u: EvaluationTarget) => u.templateName === templateName) !== undefined) {
-            throw new Error(`Loop deteced: ${this.evalutationTargetStack.reverse()
-                .map((u: EvaluationTarget) => u.templateName)
-                .join(' => ')}`);
+        if (this.evalutationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName) !== undefined) {
+            throw new Error(`Loop deteced: ${ this.evalutationTargetStack.reverse()
+                .map((u: EvaluationTarget): string => u.templateName)
+                .join(' => ') }`);
         }
 
         // Using a stack to track the evalution trace
@@ -95,7 +95,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return this.visit(ctx.normalTemplateBody());
     }
 
-    public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext) : AnalyzerResult {
+    public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
         for (const templateStr of ctx.templateString()) {
             result.union(this.visit(templateStr.normalTemplateString()));
@@ -217,7 +217,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         }
 
         if (exp.children !== undefined) {
-            exp.children.forEach((e: Expression) => result.union(this.analyzeExpressionDirectly(e)));
+            exp.children.forEach((e: Expression): AnalyzerResult => result.union(this.analyzeExpressionDirectly(e)));
         }
 
         return result;
@@ -239,9 +239,9 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     private analyzeTextContainsExpression(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
         const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(this.expressionRecognizeRegex);
-        const expressionsRaw: string[] = reversedExps.map((e: string) => e.split('').reverse().join('')).reverse();
-        const expressions: string[] = expressionsRaw.filter((e: string) => e.length > 0);
-        expressions.forEach((item: string) => result.union(this.analyzeExpression(item)));
+        const expressionsRaw: string[] = reversedExps.map((e: string): string => e.split('').reverse().join('')).reverse();
+        const expressions: string[] = expressionsRaw.filter((e: string): boolean => e.length > 0);
+        expressions.forEach((item: string): AnalyzerResult => result.union(this.analyzeExpression(item)));
 
         return result;
     }
@@ -249,11 +249,11 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     private analyzeExpression(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
         exp = exp.replace(/(^@*)/g, '')
-                .replace(/(^{*)/g, '')
-                .replace(/(}*$)/g, '');
+            .replace(/(^{*)/g, '')
+            .replace(/(}*$)/g, '');
         const parsed: Expression = this._expressionParser.parse(exp);
 
-        const references: ReadonlyArray<string> = Extensions.references(parsed);
+        const references: readonly string[] = Extensions.references(parsed);
         result.union(new AnalyzerResult(references.slice(), []));
         result.union(this.analyzeExpressionDirectly(parsed));
 
@@ -262,7 +262,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     private analyzeTemplateRef(exp: string): AnalyzerResult {
         exp = exp.replace(/(^\[*)/g, '')
-                .replace(/(\]*$)/g, '');
+            .replace(/(\]*$)/g, '');
         exp = exp.indexOf('(') < 0 ? exp.concat('()') : exp;
 
         return this.analyzeExpression(exp);
@@ -271,7 +271,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     private analyzeMultiLineText(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
         exp = exp.substr(3, exp.length - 6);
-        const matches: string[] = exp.split('').reverse().join('').match(this.expressionRecognizeRegex).map((e: string) => e.split('').reverse().join('')).reverse();
+        const matches: string[] = exp.split('').reverse().join('').match(this.expressionRecognizeRegex).map((e: string): string => e.split('').reverse().join('')).reverse();
         for (const match of matches) {
             result.union(this.analyzeExpression(match));
         }

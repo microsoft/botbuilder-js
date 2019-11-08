@@ -535,8 +535,8 @@ export class TimeZoneConverter {
 
     public static windowsToIana(windowsTimeZoneId: string): string {
         this.loadData();
-        if (this.windowsToIanaMap.has(`001|${windowsTimeZoneId}`)) {
-            return this.windowsToIanaMap.get(`001|${windowsTimeZoneId}`);
+        if (this.windowsToIanaMap.has(`001|${ windowsTimeZoneId }`)) {
+            return this.windowsToIanaMap.get(`001|${ windowsTimeZoneId }`);
         }
 
         return windowsTimeZoneId;
@@ -566,8 +566,8 @@ export class TimeZoneConverter {
                 }
             }
 
-            if (!this.windowsToIanaMap.has(`${territory}|${windowsID}`)) {
-                this.windowsToIanaMap.set(`${territory}|${windowsID}`, ianaIDs[0]);
+            if (!this.windowsToIanaMap.has(`${ territory }|${ windowsID }`)) {
+                this.windowsToIanaMap.set(`${ territory }|${ windowsID }`, ianaIDs[0]);
             }
 
             if (!this.validTimezonStr.includes(windowsID)) {

@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-expression-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +16,7 @@ import { Extensions } from 'botframework-expressions';
 export class CustomizedMemoryScope extends Map {
     public globalScope: any;
     private readonly localScope: any;
-    constructor(localScope: any, globalScope: any) {
+    public constructor(localScope: any, globalScope: any) {
         super();
         this.localScope = localScope;
         this.globalScope = globalScope;
