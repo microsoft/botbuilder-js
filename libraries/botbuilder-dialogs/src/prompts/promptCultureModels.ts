@@ -115,12 +115,35 @@ export class PromptCultureModels {
         noInLanguage: 'No',
     }
 
+    private static getSupportedCultureCodes(): string[] {
+        return this.getSupportedCultures().map((c): string => c.locale);
+    }
+
     /**
      * Use Recognizers-Text to normalize various potential Locale strings to a standard.
+     * @remarks This is mostly a copy/paste from https://github.com/microsoft/Recognizers-Text/blob/master/JavaScript/packages/recognizers-text/src/culture.ts#L39
+     *          This doesn't directly use Recognizers-Text's MapToNearestLanguage because if they add language support before we do, it will break our prompts.
      * @param cultureCode Represents locale. Examples: "en-US, en-us, EN".
      * @returns Normalized locale.
      */
-    public static mapToNearestLanguage = (cultureCode: string): string => Culture.mapToNearestLanguage(cultureCode);
+    public static mapToNearestLanguage(cultureCode: string): string {
+        if (cultureCode !== undefined) {
+            cultureCode = cultureCode.toLowerCase();
+            let supportedCultureCodes = this.getSupportedCultureCodes();
+    
+            if (supportedCultureCodes.indexOf(cultureCode) < 0) {
+                let culturePrefix = cultureCode.split('-')[0].trim();
+    
+                supportedCultureCodes.forEach(function(supportedCultureCode): void {
+                    if (supportedCultureCode.startsWith(culturePrefix)) {
+                        cultureCode = supportedCultureCode;
+                    }
+                });
+            }
+        }
+    
+        return cultureCode;
+    }
 
     public static getSupportedCultures = (): PromptCultureModel[] => 
         [
