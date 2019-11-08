@@ -39,6 +39,7 @@
   "nyc": {
     "exclude": [
       "**/botframework*/**/generated/**",
+      "**/botbuilder*/**/generated/**",
       "**/botframework-luis/**",
       "**/tests/**",
       "**/tools/**",
