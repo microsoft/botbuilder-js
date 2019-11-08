@@ -5,7 +5,6 @@ const restify = require('restify');
 const path = require('path');
 
 const { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState, InspectionState, InspectionMiddleware } = require('botbuilder');
-const { MicrosoftAppCredentials } = require('botframework-connector');
 const { MyBot } = require('./bots/myBot')
 
 const ENV_FILE = path.join(__dirname, '.env');
@@ -22,7 +21,7 @@ var inspectionState = new InspectionState(memoryStorage);
 var userState = new UserState(memoryStorage);
 var conversationState = new ConversationState(memoryStorage);
 
-adapter.use(new InspectionMiddleware(inspectionState, userState, conversationState, new MicrosoftAppCredentials(process.env.MicrosoftAppId, process.env.MicrosoftAppPassword)));
+adapter.use(new InspectionMiddleware(inspectionState, userState, conversationState, { appId: process.env.MicrosoftAppId, appPassword: process.env.MicrosoftAppPassword }));
 
 adapter.onTurnError = async (context, error) => {
     console.error(`\n [onTurnError]: ${ error }`);

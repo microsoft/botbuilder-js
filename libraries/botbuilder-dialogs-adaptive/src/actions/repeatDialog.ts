@@ -29,8 +29,8 @@ export class RepeatDialog extends DialogCommand {
         if (options) { this.options = options }
     }
 
-    protected onComputeID(): string {
-        return `repeat[${this.bindingPath()}]`;
+    protected onComputeId(): string {
+        return `RepeatDialog[]`;
     }
 
     /**
@@ -47,7 +47,7 @@ export class RepeatDialog extends DialogCommand {
     }
 
     protected async onRunCommand(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
-        const originalOptions = dc.state.dialog.get('options');
+        const originalOptions = dc.state.getValue<object>('options');
         options = Object.assign({}, originalOptions, options, this.options);
         return await this.repeatParentDialog(dc, options);
     }

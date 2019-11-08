@@ -11,7 +11,7 @@ describe('FileResourceProvider', function () {
 
     it('FileResourceProvider load multi-level directory, get by id', async () => {
         let resourceProvider = new FileResourceProvider();
-        resourceProvider.registerDirectory('libraries/botbuilder-dialogs-declarative/tests/resources');
+        resourceProvider.registerDirectory(`${__dirname}/resources`);
 
         let simplePromptResource = await resourceProvider.getResource('SimplePrompt.main.dialog');
         assert.equal(simplePromptResource.id(), 'SimplePrompt.main.dialog');
@@ -22,7 +22,7 @@ describe('FileResourceProvider', function () {
 
     it('FileResourceProvider load single-level directory, get by id', async () => {
         let resourceProvider = new FileResourceProvider();
-        resourceProvider.registerDirectory('libraries/botbuilder-dialogs-declarative/tests/resources/07 - BeginDialog');
+        resourceProvider.registerDirectory(`${__dirname}/resources/07 - BeginDialog`);
         let simplePromptResource = await resourceProvider.getResource('BeginDialog.main.dialog');
 
         assert.equal(simplePromptResource.id(), 'BeginDialog.main.dialog');
@@ -33,7 +33,7 @@ describe('FileResourceProvider', function () {
 
     it('FileResourceProvider load multi-level directory, get by type', async () => {
         let resourceProvider = new FileResourceProvider();
-        resourceProvider.registerDirectory('libraries/botbuilder-dialogs-declarative/tests/resources');
+        resourceProvider.registerDirectory(`${__dirname}/resources`);
 
         let dialogResources = await resourceProvider.getResources('dialog');
 

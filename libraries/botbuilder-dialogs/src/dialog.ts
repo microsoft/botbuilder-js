@@ -12,7 +12,7 @@ import { Configurable } from './configurable';
 /**
  * Tracking information persisted for an instance of a dialog on the stack.
  */
-export interface DialogInstance {
+export interface DialogInstance<T = any> {
     /**
      * ID of the dialog this instance is for.
      */
@@ -25,7 +25,7 @@ export interface DialogInstance {
      * When the dialog referenced by [id](#id) derives from `DialogCommand`, the state field will 
      * contain the stack index of the state object that should be inherited by the command.  
      */
-    state: any;
+    state: T;
 }
 
 /**
@@ -90,6 +90,35 @@ export enum DialogTurnStatus {
     cancelled = 'cancelled'
 }
 
+export interface DialogEvent {
+    /**
+     * Flag indicating whether the event will be bubbled to the parent `DialogContext`. 
+     */
+    bubble: boolean;
+
+    /**
+     * Name of the event being raised.
+     */
+    name: string;
+
+    /**
+     * Optional. Value associated with the event.
+     */
+    value?: any;
+}
+
+export interface DialogConfiguration {
+    /**
+     * Static id of the dialog.
+     */
+    id?: string;
+
+    /**
+     * Telemetry client the dialog should use. 
+     */
+    telemetryClient?: BotTelemetryClient;
+}
+
 /**
  * Returned by `Dialog.continueDialog()` and `DialogContext.beginDialog()` to indicate whether a
  * dialog is still active after the turn has been processed by the dialog.
@@ -137,7 +166,7 @@ export interface DialogTurnResult<T = any> {
     parentEnded?: boolean;
 }
 
-export interface DialogEvent<T = any> {
+export interface DialogEvent {
     /**
      * If `true` the event will be bubbled to the parent `DialogContext` if not handled by the 
      * current dialog.
@@ -152,7 +181,7 @@ export interface DialogEvent<T = any> {
     /**
      * (Optional) value associated with the event.
      */
-    value?: T;
+    value?: any;
 }
 
 export interface DialogConfiguration {
@@ -160,7 +189,7 @@ export interface DialogConfiguration {
 
     tags?: string[];
 
-    inputBindings?: { [option:string]: string; };
+    inputBindings?: { [option: string]: string; };
 
     outputBinding?: string;
 
@@ -179,40 +208,18 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     public static EndOfTurn: DialogTurnResult = { status: DialogTurnStatus.waiting };
 
     /**
-     * (Optional) set of tags assigned to the dialog.
-     */
-    public readonly tags: string[] = [];
-
-    /**
-     * (Optional) if true, the dialog will inherit its parents state.
-     */
-    public inheritState = false;
-
-    /**
-     * (Optional) JSONPath expression for the memory slots to bind the dialogs options to on a 
-     * call to `beginDialog()`. 
-     */
-    public readonly inputProperties: { [option:string]: string; } = {};
-
-    /**
-     * (Optional) JSONPath expression for the memory slot to bind the dialogs result to when 
-     * `endDialog()` is called.
-     */
-    public outputProperty: string;
-
-    /**
      * The telemetry client for logging events.
      * Default this to the NullTelemetryClient, which does nothing.
      */
-    protected _telemetryClient: BotTelemetryClient =  new NullTelemetryClient();
+    protected _telemetryClient: BotTelemetryClient = new NullTelemetryClient();
 
     /**
      * Creates a new Dialog instance.
-     * @param dialogId (Optional) unique ID to assign to the dialog.
+     * @param dialogId Optional. unique ID of the dialog.
      */
     constructor(dialogId?: string) {
         super();
-        this._id = dialogId;
+        this.id = dialogId;
     }
 
     /**
@@ -223,7 +230,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      */
     public get id(): string {
         if (this._id === undefined) {
-            this._id = this.onComputeID();
+            this._id = this.onComputeId();
         }
         return this._id;
     }
@@ -295,34 +302,6 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     }
 
     /**
-     * Called when an event has been raised, using `DialogContext.emitEvent()`.
-     * 
-     * @remarks
-     * The dialog is responsible for bubbling the event up to its parent dialog. In most cases
-     * developers should override `onPreBubbleEvent()` or `onPostBubbleEvent()` versus 
-     * overriding `onDialogEvent()` directly.
-     * @param dc The dialog context for the current turn of conversation.
-     * @param event The event being raised.
-     * @returns `true` if the event is handled by the current dialog and bubbling should stop.
-     */
-    public async onDialogEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
-        // Before bubble
-        let handled = await this.onPreBubbleEvent(dc, event);
-        
-        // Bubble as needed
-        if (!handled && event.bubble && dc.parent) {
-            handled = await dc.parent.emitEvent(event.name, event.value, true);
-        }
-        
-        // Post bubble
-        if (!handled) {
-            handled = await this.onPostBubbleEvent(dc, event);
-        }
-
-        return handled;
-    }
-
-    /**
      * Called when the dialog has been requested to re-prompt the user for input.
      *
      * @remarks
@@ -349,15 +328,28 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         // No-op by default
     }
 
-    /**
-     * Called when a unique ID needs to be computed for a dialog.
-     * 
-     * @remarks
-     * SHOULD be overridden to provide a more contextually relevant ID. The default implementation 
-     * returns `dialog[${this.bindingPath()}]`. 
-     */
-    protected onComputeID(): string {
-        return `dialog[${this.bindingPath()}]`;
+    /// <summary>
+    /// Called when an event has been raised, using `DialogContext.emitEvent()`, by either the current dialog or a dialog that the current dialog started.
+    /// </summary>
+    /// <param name="dc">The dialog context for the current turn of conversation.</param>
+    /// <param name="e">The event being raised.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>True if the event is handled by the current dialog and bubbling should stop.</returns>
+    public async onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+        // Before bubble
+        let handled = await this.onPreBubbleEventAsync(dc, e);
+
+        // Bubble as needed
+        if (!handled && e.bubble && dc.parent != undefined) {
+            handled = await dc.parent.emitEvent(e.name, e.value, true, false);
+        }
+
+        // Post bubble
+        if (!handled) {
+            handled = await this.onPostBubbleEventAsync(dc, e);
+        }
+
+        return handled;
     }
 
     /**
@@ -368,10 +360,10 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * any further bubbling of the event to the dialogs parents and will also prevent any child
      * dialogs from performing their default processing.
      * @param dc The dialog context for the current turn of conversation.
-     * @param event The event being raised.
-     * @returns `true` if the event is handled by the current dialog and further processing should stop.
+     * @param e The event being raised.
+     * @returns Whether the event is handled by the current dialog and further processing should stop.
      */
-    protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
+    protected async onPreBubbleEventAsync(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         return false;
     }
 
@@ -382,27 +374,22 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * This is a good place to perform default processing logic for an event. Returning `true` will
      * prevent any processing of the event by child dialogs.
      * @param dc The dialog context for the current turn of conversation.
-     * @param event The event being raised.
-     * @returns `true` if the event is handled by the current dialog and further processing should stop.
+     * @param e The event being raised.
+     * @returns Whether the event is handled by the current dialog and further processing should stop.
      */
-    protected async onPostBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
+    protected async onPostBubbleEventAsync(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         return false;
     }
 
     /**
-     * Aids in computing a unique ID for a dialog by returning the current input or output property
-     * the dialog is bound to.
-     * @param hashOutput (Optional) if true the output will be hashed to less than 15 characters before returning.
+     * Called when a unique ID needs to be computed for a dialog.
+     * 
+     * @remarks
+     * SHOULD be overridden to provide a more contextually relevant ID. The preferred pattern for 
+     * ID's is `<dialog type>(this.hashedLabel('<dialog args>'))`.
      */
-    protected bindingPath(hashOutput = true): string {
-        let output = '';
-        if (this.inputProperties.hasOwnProperty('value') && this.inputProperties['value']) {
-            output = this.inputProperties['value'];
-        } else if (this.outputProperty && this.outputProperty.length) {
-            output = this.outputProperty;
-        }
-
-        return hashOutput ? this.hashedLabel(output) : output;
+    protected onComputeId(): string {
+        throw new Error(`Dialog.onComputeId(): not implemented.`)
     }
 
     /**
@@ -418,12 +405,11 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      */
     protected hashedLabel(label: string): string {
         const l = label.length;
-        if (label.length > 15)
-        {
+        if (label.length > 15) {
             let hash = 0;
             for (let i = 0; i < l; i++) {
                 const chr = label.charCodeAt(i);
-                hash  = ((hash << 5) - hash) + chr;
+                hash = ((hash << 5) - hash) + chr;
                 hash |= 0; // Convert to 32 bit integer
             }
             label = `${label.substr(0, 5)}${hash.toString()}`;

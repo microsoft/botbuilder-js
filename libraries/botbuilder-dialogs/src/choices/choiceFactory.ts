@@ -135,15 +135,15 @@ export class ChoiceFactory {
         }
     }
 
-    public static heroCard(choices: Choice[] = [], text = '', speak = ''): Activity {
-        const buttons: CardAction[] = choices.map(choice => ({
+    public static heroCard(choices: (string | Choice)[] = [], text = '', speak = ''): Activity {
+        const buttons: CardAction[] = ChoiceFactory.toChoices(choices).map(choice => ({
             title: choice.value,
             type: ActionTypes.ImBack,
             value: choice.value
         } as CardAction));
-        const attachment = CardFactory.heroCard(null, text, null, buttons);
+        const attachment = CardFactory.heroCard(undefined, text, undefined, buttons);
 
-        return MessageFactory.attachment(attachment, null, speak, InputHints.ExpectingInput) as Activity;
+        return MessageFactory.attachment(attachment, undefined, speak, InputHints.ExpectingInput) as Activity;
     }
 
 

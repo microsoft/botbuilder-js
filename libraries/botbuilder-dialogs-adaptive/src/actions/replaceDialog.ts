@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, Dialog, DialogCommand, DialogContext } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogCommand, DialogContext } from 'botbuilder-dialogs';
 
 export interface ReplaceDialogConfiguration extends DialogConfiguration {
     /**
@@ -38,8 +38,8 @@ export class ReplaceDialog extends DialogCommand {
         if (options) { this.options = options }
     }
 
-    protected onComputeID(): string {
-        return `replace[${this.hashedLabel(this.dialogId)}]`;
+    protected onComputeId(): string {
+        return `ReplaceDialog[${this.dialogId}]`;
     }
 
     /**

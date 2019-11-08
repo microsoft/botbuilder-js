@@ -34,8 +34,8 @@ export class EditArray extends DialogCommand {
         if (itemProperty) { this.itemProperty = itemProperty }
     }
     
-    protected onComputeID(): string {
-        return `array[${this.hashedLabel(this.changeType + ': ' + this.arrayProperty)}]`;
+    protected onComputeId(): string {
+        return `EditArray[${this.changeType}: ${this.arrayProperty}]`;
     }
 
     public changeType: ArrayChangeType;

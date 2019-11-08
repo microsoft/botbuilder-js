@@ -11,7 +11,6 @@ import { DialogState, DialogContext } from './dialogContext';
 import { DialogTurnResult, Dialog, DialogTurnStatus } from './dialog';
 import { Configurable } from './configurable';
 import { DialogSet } from './dialogSet';
-import { StateMap } from './stateMap';
 
 export interface PersistedState {
     userState: {
@@ -123,9 +122,7 @@ export class DialogManager extends Configurable  {
         }
 
         // Create DialogContext
-        const userState = new StateMap(newState.userState);
-        const conversationState = new StateMap(newState.conversationState);
-        const dc = new DialogContext(this.main, context, newState.conversationState._dialogs, userState, conversationState);
+        const dc = new DialogContext(this.main, context, newState.conversationState._dialogs);
 
         // Dispatch "activityReceived" event
         // - This will queue up any interruptions.

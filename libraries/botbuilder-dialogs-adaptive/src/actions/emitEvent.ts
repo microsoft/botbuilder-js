@@ -10,7 +10,6 @@ import { DialogTurnResult, DialogCommand, DialogContext, DialogConfiguration, Di
 export interface EmitEventConfiguration extends DialogConfiguration {
     eventName?: string;
     eventValue?: string;
-    eventValueProperty?: string;
     bubbleEvent?: boolean;
     resultProperty?: string;
 }
@@ -18,43 +17,23 @@ export interface EmitEventConfiguration extends DialogConfiguration {
 export class EmitEvent extends DialogCommand {
 
     constructor();
-    constructor(eventName: string, eventValue?: string|object, bubbleEvent?: boolean);
-    constructor(eventName?: string, eventValue?: string|object, bubbleEvent = true) {
+    constructor(eventName: string, eventValue?: string, bubbleEvent?: boolean);
+    constructor(eventName?: string, eventValue?: string, bubbleEvent = true) {
         super();
         this.eventName = eventName;
-        if (typeof eventValue == 'string') {
-            this.eventValueProperty = eventValue;
-        } else {
-            this.eventValue = eventValue
-        }
+        this.eventValue = eventValue;
         this.bubbleEvent = bubbleEvent;
     }
     
-    protected onComputeID(): string {
-        return `emitEvent[${this.hashedLabel(this.eventName || '')}]`;
+    protected onComputeId(): string {
+        return `EmitEvent[${this.eventName || ''}]`;
     }
 
     public eventName: string;
 
-    public eventValue: object;
+    public eventValue: string;
 
     public bubbleEvent: boolean;
-
-    public set eventValueProperty(value: string) {
-        this.inputProperties['eventValue'] = value;
-    }
-
-    public get eventValueProperty(): string {
-        return this.inputProperties['eventValue'];
-    }
-
-    public set resultProperty(value: string) {
-        this.outputProperty = value;
-    }
-
-    public get resultProperty(): string {
-        return this.outputProperty;
-    }
 
     public configure(config: EmitEventConfiguration): this {
         return super.configure(config);

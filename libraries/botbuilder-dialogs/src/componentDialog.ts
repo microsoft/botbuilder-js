@@ -7,10 +7,8 @@
  */
 import { TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
-import { DialogContext, DialogState } from './dialogContext';
-import { DialogSet } from './dialogSet';
+import { DialogContext } from './dialogContext';
 import { DialogContainer } from './dialogContainer';
-import { StateMap } from './stateMap';
 
 const PERSISTED_DIALOG_STATE = 'dialogs';
 
@@ -80,13 +78,9 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      */
     protected initialDialogId: string;
 
-    protected onComputeID(): string {
-        return `component[${this.bindingPath()}]`;
-    }
-
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Start the inner dialog.
-        const innerDC = this.createChildContext(outerDC);
+        const innerDC: DialogContext = this.createChildContext(outerDC)
         const turnResult: DialogTurnResult<any> = await this.onBeginDialog(innerDC, options);
 
         // Check for end of inner dialog
@@ -105,22 +99,17 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     public async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
         // Continue execution of inner dialog.
-        const innerDC = this.createChildContext(outerDC);
+        const innerDC: DialogContext = this.createChildContext(outerDC)
         const turnResult: DialogTurnResult<any> = await this.onContinueDialog(innerDC);
 
         // Check for end of inner dialog
         if (turnResult.status !== DialogTurnStatus.waiting) {
-            if (turnResult.status === DialogTurnStatus.cancelled) {
-                await this.endComponent(outerDC, turnResult.result);
-                const cancelledTurnResult: DialogTurnResult = { status: DialogTurnStatus.cancelled, result: turnResult.result }
-                return cancelledTurnResult;
-            }
             // Return result to calling dialog
             return await this.endComponent(outerDC, turnResult.result);
-        } else {
-            // Just signal end of turn
-            return Dialog.EndOfTurn;
         }
+
+        // Just signal end of turn
+        return Dialog.EndOfTurn;
     }
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
@@ -136,7 +125,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Forward to inner dialogs
-        const innerDC = this.createInnerDC(context, instance);
+        const innerDC: DialogContext = this.createInnerDC(context, instance);
         await innerDC.repromptDialog();
 
         // Notify component.
@@ -146,18 +135,12 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // Forward cancel to inner dialogs
         if (reason === DialogReason.cancelCalled) {
-            const innerDC = this.createInnerDC(context, instance);
+            const innerDC: DialogContext = this.createInnerDC(context, instance);
             await innerDC.cancelAllDialogs();
         }
 
         // Notify component
         await this.onEndDialog(context, instance, reason);
-    }
-
-    public createChildContext(dc: DialogContext): DialogContext | undefined {
-        const childDC = this.createInnerDC(dc.context, dc.activeDialog, dc.state.user, dc.state.conversation);
-        childDC.parent = dc;
-        return childDC.stack.length > 0 ? childDC : undefined;
     }
 
     /**
@@ -169,10 +152,21 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * @param dialog The child dialog or prompt to add.
      */
     public addDialog(dialog: Dialog): this {
-        super.addDialog(dialog);
+        this.dialogs.add(dialog);
         if (this.initialDialogId === undefined) { this.initialDialogId = dialog.id; }
 
         return this;
+    }
+
+    /**
+     * Creates the inner dialog context
+     * @param outerDC the outer dialog context
+     */
+    public createChildContext(outerDC: DialogContext) {
+        const innerDC = this.createInnerDC(outerDC.context, outerDC.activeDialog);
+        innerDC.parent = outerDC;
+
+        return innerDC;
     }
 
     /**
@@ -241,6 +235,14 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         return outerDC.endDialog(result);
     }
 
+    private createInnerDC(context: TurnContext, instance: DialogInstance) {
+        const dialogState = instance.state[PERSISTED_DIALOG_STATE] || { dialogStack: [] };
+        instance.state[PERSISTED_DIALOG_STATE] = dialogState
+        const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
+
+        return innerDC
+    }
+
     /**
      * Set the telemetry client, and also apply it to all child dialogs.
      * Future dialogs added to the component will also inherit this client.
@@ -255,12 +257,5 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      */
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
-    }
-
-    private createInnerDC(context: TurnContext, instance: DialogInstance, userState?: StateMap, conversationState?: StateMap): DialogContext {
-        const state: DialogState = instance.state[PERSISTED_DIALOG_STATE];
-        if (!Array.isArray(state.dialogStack)) { state.dialogStack = [] }
-        const innerDC: DialogContext = new DialogContext(this.dialogs, context, state, userState || new StateMap({}), conversationState || new StateMap({}));
-        return innerDC;
     }
 }

@@ -30,8 +30,8 @@ export class EndDialog extends DialogCommand {
         return super.configure(config);
     }
 
-    protected onComputeID(): string {
-        return `end[${this.hashedLabel(this.resultProperty || '')}]`;
+    protected onComputeId(): string {
+        return `EndDialog[${this.resultProperty || ''}]`;
     }
 
     /**

@@ -8,9 +8,15 @@
 import { BotTelemetryClient, StatePropertyAccessor, TurnContext } from 'botbuilder-core';
 import { Dialog } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
-import { StateMap } from './stateMap';
 
 export interface DialogDependencies {
+    getDependencies(): Dialog[];
+}
+
+export interface DialogDependencies {
+    /**
+     * Returns a dialogs child dialog dependencies so they can be added to a containers dialog set.
+     */
     getDependencies(): Dialog[];
 }
 
@@ -95,12 +101,13 @@ export class DialogSet {
     public add<T extends Dialog>(dialog: T): this {
         if (!(dialog instanceof Dialog)) { throw new Error(`DialogSet.add(): Invalid dialog being added.`); }
 
-        // Ensure dialog has a unique ID.
+        // ENsure dialogs ID is unique.
         if (this.dialogs.hasOwnProperty(dialog.id)) {
             let nextSuffix = 2;
             while (true) {
-                if (!this.dialogs.hasOwnProperty(dialog.id + nextSuffix.toString())) {
-                    dialog.id = dialog.id + nextSuffix.toString();
+                const suffixId = dialog.id + nextSuffix.toString();
+                if (!this.hasOwnProperty(suffixId)) {
+                    dialog.id = suffixId;
                     break;
                 } else {
                     nextSuffix++;
@@ -112,16 +119,15 @@ export class DialogSet {
         if (this._telemetryClient) {
             dialog.telemetryClient = this._telemetryClient;
         }
-        
+
+        // Save dialog reference
         this.dialogs[dialog.id] = dialog;
 
-        // Automatically add any dependencies the dialog might have.
-        if (typeof (dialog as any).getDependencies == 'function') {
-            const dependencies = (dialog as any).getDependencies();
-            if (Array.isArray(dependencies)) {
-                dependencies.forEach((dialog) => this.add(dialog));
-            }
+        // Automatically add any child dependencies the dialog might have
+        if (typeof ((dialog as any) as DialogDependencies).getDependencies == 'function') {
+            ((dialog as any) as DialogDependencies).getDependencies().forEach((child) => this.add(child));
         }
+
         return this;
     }
 
@@ -129,15 +135,13 @@ export class DialogSet {
      * Creates a dialog context which can be used to work with the dialogs in the set.
      * @param context Context for the current turn of conversation with the user.
      */
-    public async createContext(context: TurnContext, conversationState?: object, userState?: object): Promise<DialogContext> {
+    public async createContext(context: TurnContext): Promise<DialogContext> {
         if (!this.dialogState) {
             throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`);
         }
         const state: DialogState = await this.dialogState.get(context, { dialogStack: [] } as DialogState);
-        const conversation = conversationState ? new StateMap(conversationState) : undefined;
-        const user = userState ? new StateMap(userState) : undefined;
 
-        return new DialogContext(this, context, state, conversation, user);
+        return new DialogContext(this, context, state);
     }
 
     /**

@@ -18,11 +18,6 @@ export interface EditActionsConfiguration extends DialogConfiguration {
      * The actions to update the dialog with.
      */
     actions?: Dialog[];
-
-    /**
-     * Tags to insert actions before when [changeType](#changetype) is `ActionChangeType.insertActionsBeforeTags`.
-     */
-    tags?: string[];
 }
 
 export class EditActions extends DialogCommand {
@@ -37,26 +32,21 @@ export class EditActions extends DialogCommand {
     public actions: Dialog[];
 
     /**
-     * Tags to insert actions before when [changeType](#changetype) is `PlanChangeType.doActionsBeforeTags`.
-     */
-    public tags: string[];
-
-    /**
      * Creates a new `EditActions` instance.
      * @param changeType The type of change to make to the dialogs list of actions.
      * @param actions The actions to update the dialog with.
      */
     constructor();
-    constructor(changeType: ActionChangeType, actions: Dialog[], tags?: string[]);
-    constructor(changeType?: ActionChangeType, actions?: Dialog[], tags?: string[]) {
+    constructor(changeType: ActionChangeType, actions: Dialog[]);
+    constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
         super();
         if (changeType !== undefined) { this.changeType = changeType }
         if (Array.isArray(actions)) { this.actions = actions }
-        if (Array.isArray(tags)) { this.tags = tags }
     }
 
-    protected onComputeID(): string {
-        return `editActions[${this.hashedLabel(this.changeType)}]`;
+    protected onComputeId(): string {
+        const idList = this.actions.map(action => action.id);
+        return `EditActions[${this.changeType}|${idList.join(',')}]`;
     }
 
     public configure(config: EditActionsConfiguration): this {
@@ -69,8 +59,8 @@ export class EditActions extends DialogCommand {
 
     protected async onRunCommand(sequence: SequenceContext, options: object): Promise<DialogTurnResult> {
         // Ensure planning context and condition
-        if (!(sequence instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within a planning or sequence dialog.`) }
-        if (this.changeType == undefined) { throw new Error(`${this.id}: no 'changeType' specified.`) }
+        if (!(sequence instanceof SequenceContext)) { throw new Error(`EditAction should only be used in the context of an adaptive dialog.`) }
+        if (this.changeType == undefined) { throw new Error(`No 'changeType' specified.`) }
 
         // Queue changes
         const changes: ActionChangeList = {
@@ -79,9 +69,6 @@ export class EditActions extends DialogCommand {
                 return { dialogId: action.id, dialogStack: [] } as ActionState
             })
         };
-        if (this.changeType == ActionChangeType.insertActionsBeforeTags) {
-            changes.tags = this.tags;
-        }
         sequence.queueChanges(changes);
 
         return await sequence.endDialog();

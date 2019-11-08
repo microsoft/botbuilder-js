@@ -27,10 +27,6 @@ export class TextPrompt extends Prompt<string> {
         super(dialogId, validator);
     }
 
-    protected onComputeID(): string {
-        return `textPrompt[${this.bindingPath()}]`;
-    }
-
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         if (isRetry && options.retryPrompt) {
             await context.sendActivity(options.retryPrompt, undefined, InputHints.ExpectingInput);

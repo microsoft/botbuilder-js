@@ -5,9 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
+import { TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 
-import { constants } from 'http2';
 import { QnATelemetryConstants } from './qnaTelemetryConstants';
 import { QnAMakerEndpoint } from './qnamaker-interfaces/qnamakerEndpoint';
 import { QnAMakerMetadata } from './qnamaker-interfaces/qnamakerMetadata';
@@ -18,6 +17,7 @@ import { FeedbackRecords } from './qnamaker-interfaces/feedbackRecords';
 import { GenerateAnswerUtils } from './qnamaker-utils/generateAnswerUtils';
 import { ActiveLearningUtils } from './qnamaker-utils/activeLearningUtils';
 import { TrainUtils } from './qnamaker-utils/trainUtils';
+import { QnAMakerResults } from './qnamaker-interfaces/qnamakerResults';
 
 export const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
 export const QNAMAKER_TRACE_NAME = 'QnAMaker';
@@ -132,17 +132,37 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             throw new TypeError('QnAMaker.getAnswers() requires a TurnContext.');
         }
 
+        var response = await this.getAnswersRaw(context, options, telemetryProperties, telemetryMetrics);
+
+        if (!response) {
+            return [];
+        }
+
+        return response.answers;
+    }
+
+    public async getAnswersRaw(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number} ): Promise<QnAMakerResults> {
+        if (!context) {
+            throw new TypeError('QnAMaker.getAnswers() requires a TurnContext.');
+        }
+
         const queryResult: QnAMakerResult[] = [] as QnAMakerResult[];
         const question: string = this.getTrimmedMessageText(context);
         const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
 
         this.generateAnswerUtils.validateOptions(queryOptions);
 
-        if (question.length > 0) {
-            const answers: QnAMakerResult[] = await this.generateAnswerUtils.queryQnaService(this.endpoint, question, queryOptions);
-            const sortedQnaAnswers: QnAMakerResult[] = GenerateAnswerUtils.sortAnswersWithinThreshold(answers, queryOptions);
+        var result: QnAMakerResults;
 
+        if (question.length > 0) {
+            result = await this.generateAnswerUtils.queryQnaServiceRaw(this.endpoint, question, queryOptions);
+            
+            const sortedQnaAnswers: QnAMakerResult[] = GenerateAnswerUtils.sortAnswersWithinThreshold(result.answers, queryOptions);
             queryResult.push(...sortedQnaAnswers);
+        }
+
+        if (!result) {
+            return result;
         }
 
         // Log telemetry
@@ -150,7 +170,12 @@ export class QnAMaker implements QnAMakerTelemetryClient {
 
         await this.generateAnswerUtils.emitTraceInfo(context, queryResult, queryOptions);
 
-        return queryResult;
+        const qnaResponse: QnAMakerResults = {
+            activeLearningEnabled: result.activeLearningEnabled,
+            answers: queryResult
+        }
+
+        return qnaResponse;
     }
 
     /**
@@ -198,10 +223,10 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         const trimmedAnswer: string = question ? question.trim() : '';
 
         if (trimmedAnswer.length > 0) {
-            const answers: QnAMakerResult[] = await this.callService(this.endpoint, question, typeof top === 'number' ? top : 1);
+            const result: QnAMakerResults = await this.callService(this.endpoint, question, typeof top === 'number' ? top : 1);
             const minScore: number = typeof scoreThreshold === 'number' ? scoreThreshold : 0.001;
 
-            return answers.filter(
+            return result.answers.filter(
                 (ans: QnAMakerResult) => ans.score >= minScore)
                 .sort((a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score);
         }
@@ -236,8 +261,8 @@ export class QnAMaker implements QnAMakerTelemetryClient {
      * @remarks
      * This is exposed to enable better unit testing of the service.
      */
-    protected async callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResult[]> {
-        return this.generateAnswerUtils.queryQnaService(endpoint, question, { top } as QnAMakerOptions);
+    protected async callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResults> {
+        return this.generateAnswerUtils.queryQnaServiceRaw(endpoint, question, { top } as QnAMakerOptions);
     }
 
     /**

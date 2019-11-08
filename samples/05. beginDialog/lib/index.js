@@ -54,12 +54,12 @@ const askNameDialog = new botbuilder_dialogs_adaptive_1.AdaptiveDialog('AskNameD
     new botbuilder_dialogs_adaptive_1.SendActivity(`Hi {user.name}. It's nice to meet you.`),
     new botbuilder_dialogs_adaptive_1.EndDialog()
 ]);
-dialogs.addDialog(askNameDialog);
+dialogs.actions.push(askNameDialog);
 const tellJokeDialog = new botbuilder_dialogs_adaptive_1.AdaptiveDialog('TellJokeDialog', [
     new botbuilder_dialogs_adaptive_1.SendActivity(`Why did the 🐔 cross the 🛣️?`),
     new botbuilder_dialogs_adaptive_1.EndTurn(),
     new botbuilder_dialogs_adaptive_1.SendActivity(`To get to the other side...`),
     new botbuilder_dialogs_adaptive_1.EndDialog()
 ]);
-dialogs.addDialog(tellJokeDialog);
+dialogs.actions.push(tellJokeDialog);
 //# sourceMappingURL=index.js.map

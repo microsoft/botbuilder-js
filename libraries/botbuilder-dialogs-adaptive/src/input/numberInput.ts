@@ -50,8 +50,8 @@ export class NumberInput extends InputDialog<InputDialogOptions> {
         return super.configure(config);
     }
 
-    protected onComputeID(): string {
-        return `NumberInput[${this.bindingPath()}]`;
+    protected onComputeId(): string {
+        return `NumberInput[]`;
     }
     
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {

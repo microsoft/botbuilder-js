@@ -79,7 +79,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             {
                 fromid: activity.from.id,
                 recipientid: activity.recipient.id,
-                timestamp: activity.timestamp.getTime().toString()
+                timestamp: activity.timestamp.toJSON()
             }
         );
 
@@ -205,8 +205,8 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
     ): Promise<azure.BlobService.BlobResult[]> {
     	const listBlobResult = await this.client.listBlobsSegmentedWithPrefixAsync(container, prefix, token, { include: 'metadata' });
         listBlobResult.entries.some(blob => {
-            const timestamp: number = parseInt(blob.metadata.timestamp, 10);
-            if (timestamp >= startDate.getTime()) {
+            const timestamp: Date = new Date(blob.metadata.timestamp);
+            if (timestamp >= startDate) {
                 if (continuationToken) {
                     if (blob.name === continuationToken) {
                         continuationToken = null;
@@ -335,7 +335,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         ).withFilter(new azure.LinearRetryPolicyFilter(5, 500));
 
         // The perfect use case for a Proxy
-        return new Proxy({}, {
+        return new Proxy(<BlobServiceAsync>{}, {
             get(target: azure.services.blob.blobservice.BlobService, p: PropertyKey): Promise<any> {
 				const prop = p.toString().endsWith('Async') ? p.toString().replace('Async', '') :p;
                 return target[p] || (target[p] = denodeify(blobService, blobService[prop]));

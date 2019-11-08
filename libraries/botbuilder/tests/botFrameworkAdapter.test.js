@@ -2,7 +2,6 @@ const assert = require('assert');
 const { TurnContext } = require('botbuilder-core');
 const connector = require('botframework-connector');
 const { BotFrameworkAdapter } = require('../');
-const os = require('os');
 
 const reference = {
     activityId: '1234',
@@ -403,6 +402,23 @@ describe(`BotFrameworkAdapter`, function () {
         }, (err) => {
             assert(err, `error not returned.`);
             done();
+        });
+    });
+
+    it(`should createConversation() for Teams.`, function (done) {
+        const adapter = new AdapterUnderTest();
+        adapter.createConversation(reference, (context) => {
+            try{
+                assert(context, `context not passed.`);
+                assert(context.activity, `context has no request.`);
+                assert(context.activity.conversation, `request has invalid conversation.`);
+                assert.strictEqual(context.activity.conversation.id, 'convo2', `request has invalid conversation.id.`);
+                assert.strictEqual(context.activity.conversation.tenantId, reference.conversation.tenantId, `request has invalid tenantId on conversation.`);
+                assert.strictEqual(context.activity.channelData.tenant.id, reference.conversation.tenantId, `request has invalid tenantId in channelData.`);
+                done();
+            } catch(err) {
+                done(err);
+            }
         });
     });
 

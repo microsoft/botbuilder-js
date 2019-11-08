@@ -79,8 +79,8 @@ export class ConfirmInput extends InputDialog<InputDialogOptions> {
         return super.configure(config);
     }
 
-    protected onComputeID(): string {
-        return `ConfirmInput[${this.bindingPath()}]`;
+    protected onComputeId(): string {
+        return `ConfirmInput[]`;
     }
     
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {

@@ -43,8 +43,8 @@ export class AttachmentInput extends InputDialog<InputDialogOptions> {
         return super.configure(config);
     }
 
-    protected onComputeID(): string {
-        return `textInput[${this.bindingPath()}]`;
+    protected onComputeId(): string {
+        return `AttachmentInput[]`;
     }
 
     protected getDefaultInput(dc: DialogContext): any {

@@ -65,9 +65,9 @@ export class ForEachPage extends DialogCommand {
         if (actions) { this.actions = actions }
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         const label = this.list ? this.list.toString() : '';
-        return `forEachPage[${this.hashedLabel(label)}]`;
+        return `ForEachPage[${label}]`;
     }
 
     /**
@@ -120,7 +120,7 @@ export class ForEachPage extends DialogCommand {
 
         // Unpack options
         let { list, offset, pageSize } = options;
-        const memory = sequence.state.toJSON();
+        const memory = sequence.state;
         if (list == undefined) { list = this.list.evaluate(this.id, memory) }
         if (pageSize == undefined) { pageSize = this.pageSize.evaluate(this.id, memory) }
         if (offset == undefined) { offset = 0 }

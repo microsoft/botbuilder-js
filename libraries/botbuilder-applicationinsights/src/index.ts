@@ -6,3 +6,4 @@
  * Licensed under the MIT License.
  */
 export * from './applicationInsightsTelemetryClient';
+export * from './telemetryInitializerMiddleware';

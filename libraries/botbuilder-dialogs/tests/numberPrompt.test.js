@@ -1,11 +1,10 @@
-const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
 const { DialogSet, NumberPrompt, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
 describe('NumberPrompt', function () {
     this.timeout(5000);
     it('should call NumberPrompt using dc.prompt().', async function () {
-        // Initialize Testawait adapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -249,4 +248,89 @@ describe('NumberPrompt', function () {
             .send('0')
             .assertReply('ok')
     });
+
+    it('should consider culture specified in constructor', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', 'Please send a number.');
+            } else if (results.status === DialogTurnStatus.complete) {
+                const reply = results.result;
+                assert.strictEqual(reply, 3.14);
+                
+                await turnContext.sendActivity(reply);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and NumberPrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new NumberPrompt('prompt', undefined, 'es-es'));
+
+        await adapter.send('Hello')
+            .assertReply('Please send a number.')
+            .send('3,14')
+    });
+
+    it('should consider culture specified in activity', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', 'Please send a number.');
+            } else if (results.status === DialogTurnStatus.complete) {
+                const reply = results.result;
+                assert.strictEqual(reply, 3.14);
+                
+                await turnContext.sendActivity(reply);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and NumberPrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new NumberPrompt('prompt', undefined, 'en-us'));
+
+        await adapter.send('Hello')
+            .assertReply('Please send a number.')
+            .send({ type: ActivityTypes.Message, text: "3,14", locale: 'es-es'})
+    });
+
+    it('should consider default to en-us culture when no culture is specified', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', 'Please send a number.');
+            } else if (results.status === DialogTurnStatus.complete) {
+                const reply = results.result;
+                assert.strictEqual(reply, 1500.25);
+                
+                await turnContext.sendActivity(reply);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and NumberPrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new NumberPrompt('prompt', undefined));
+
+        await adapter.send('Hello')
+            .assertReply('Please send a number.')
+            .send('1,500.25')
+    });
+
 });

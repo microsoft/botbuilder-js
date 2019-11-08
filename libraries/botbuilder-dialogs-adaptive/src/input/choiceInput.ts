@@ -117,15 +117,15 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
         return this;
     }
 
-    protected onComputeID(): string {
-        return `choiceInput[${this.bindingPath()}]`;
+    protected onComputeId(): string {
+        return `ChoiceInput[]`;
     }
 
     protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): ChoiceInputOptions {
         if (!Array.isArray(options.choices)) {
             if (this.choices) {
                 // Compute list of choices
-                const memory = dc.state.toJSON();
+                const memory = dc.state;
                 const value = this.choices.evaluate(this.id, memory);
                 if (Array.isArray(value)) {
                     options.choices = value;

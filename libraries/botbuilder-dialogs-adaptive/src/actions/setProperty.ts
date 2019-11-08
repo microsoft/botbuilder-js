@@ -44,9 +44,9 @@ export class SetProperty<O extends object = {}> extends DialogCommand<O> {
         if (value) { this.value = new ExpressionProperty(value) }
     }
 
-    protected onComputeID(): string {
+    protected onComputeId(): string {
         const label = this.value ? this.value.toString() : '';
-        return `setProperty[${this.hashedLabel(label)}]`;
+        return `SetProperty[${label}]`;
     }
 
     public configure(config: SetPropertyConfiguration): this {
@@ -74,7 +74,7 @@ export class SetProperty<O extends object = {}> extends DialogCommand<O> {
         if (!this.value) { throw new Error(`${this.id}: no 'value' expression specified.`) }
 
         // Evaluate expression and save value
-        const memory = dc.state.toJSON();
+        const memory = dc.state;
         const value = this.value.evaluate(this.id, memory);
         dc.state.setValue(this.property, value);
 
