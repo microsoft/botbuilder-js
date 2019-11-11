@@ -145,13 +145,3 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
         return AppCredentials.isTrustedServiceUrl(webResource.url);
     }
 }
-
-/**
- * Member variables to this class follow the RFC Naming conventions, rather than C# naming conventions.
- */
-interface OAuthResponse {
-    token_type: string;
-    expires_in: number;
-    access_token: string;
-    expiration_time: number;
-}

@@ -272,7 +272,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         this.settings = { appId: '', appPassword: '', ...settings };
         
         // If settings.useCertificateAuthentication is null, undefined or false, use app + password authentication
-        if (!settings || !settings.useCertificateAuthentication) {
+        if (!this.settings.useCertificateAuthentication) {
             this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '', this.settings.channelAuthTenant);
         } else {
             this.credentials = new CertificateAppCredentials(this.settings.appId, settings.certificateThumbprint, settings.certificateKey, this.settings.channelAuthTenant);
