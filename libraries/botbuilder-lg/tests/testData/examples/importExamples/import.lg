@@ -1,0 +1,14 @@
+# basicTemplate
+- Hi
+- Hello
+- [wPhrase]
+
+[import](../6.lg)
+[import](.\..\6.lg)
+[import](1.lg)
+[import](import.lg)
+[import](import/import3.lg)
+
+# basicTemplate2
+- Hi 2
+- Hello 2

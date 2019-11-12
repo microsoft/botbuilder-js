@@ -8,6 +8,8 @@
     "libraries/botbuilder-core",
     "libraries/botbuilder-dialogs",
     "libraries/botbuilder-testing",
+    "libraries/botbuilder-lg",
+    "libraries/botframework-expressions",
     "libraries/botframework-config",
     "libraries/botframework-connector",
     "libraries/botframework-schema",
