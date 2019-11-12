@@ -83,10 +83,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         // Determine locale
-        let locale: string = PromptCultureModels.mapToNearestLanguage(context.activity.locale || this.defaultLocale);
-        if (!locale || !this.choiceDefaults.hasOwnProperty(locale)) {
-            locale = 'en-us';
-        }
+        const locale = this.determineCulture(context.activity);
 
         // Format prompt to send
         let prompt: Partial<Activity>;
@@ -111,7 +108,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         const utterance: string = activity.text;
         const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices)|| [];
         const opt: FindChoicesOptions = this.recognizerOptions || {};
-        opt.locale = activity.locale || opt.locale || this.defaultLocale || 'en-us';
+        opt.locale = this.determineCulture(activity, opt);
         const results: any[]  = recognizeChoices(utterance, choices, opt);
         if (Array.isArray(results) && results.length > 0) {
             result.succeeded = true;
@@ -119,5 +116,16 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         }
 
         return result;
+    }
+
+    private determineCulture(activity: Activity, opt: FindChoicesOptions = null): string {
+        const optLocale = opt && opt.locale ? opt.locale : null;
+        let culture = PromptCultureModels.mapToNearestLanguage(activity.locale || optLocale || this.defaultLocale || PromptCultureModels.English.locale);
+        if (!culture || !this.choiceDefaults[culture])
+        {
+            culture = PromptCultureModels.English.locale;
+        }
+
+        return culture;
     }
 }
