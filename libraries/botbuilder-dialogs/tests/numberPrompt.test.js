@@ -270,7 +270,7 @@ describe('NumberPrompt', function () {
         // Create a DialogState property, DialogSet and NumberPrompt.
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new NumberPrompt('prompt', null, 'es-es'));
+        dialogs.add(new NumberPrompt('prompt', undefined, 'es-es'));
 
         await adapter.send('Hello')
             .assertReply('Please send a number.')
@@ -298,7 +298,7 @@ describe('NumberPrompt', function () {
         // Create a DialogState property, DialogSet and NumberPrompt.
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new NumberPrompt('prompt', null, 'en-us'));
+        dialogs.add(new NumberPrompt('prompt', undefined, 'en-us'));
 
         await adapter.send('Hello')
             .assertReply('Please send a number.')
@@ -326,7 +326,7 @@ describe('NumberPrompt', function () {
         // Create a DialogState property, DialogSet and NumberPrompt.
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new NumberPrompt('prompt', null));
+        dialogs.add(new NumberPrompt('prompt', undefined));
 
         await adapter.send('Hello')
             .assertReply('Please send a number.')
