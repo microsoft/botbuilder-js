@@ -12,10 +12,10 @@ import { QnAMakerResult } from '../qnamaker-interfaces/qnamakerResult';
 const MinimumScoreForLowScoreVariation = 20;
 
 // Previous Low Score Variation Multiplier
-const PreviousLowScoreVariationMultiplier = 1.4;
+const PreviousLowScoreVariationMultiplier = 0.7;
 
 // Max Low Score Variation Multiplier
-const MaxLowScoreVariationMultiplier = 2.0;
+const MaxLowScoreVariationMultiplier = 1.0;
 
 // Maximum Score For Low Score Variation
 const MaximumScoreForLowScoreVariation = 95.0;
