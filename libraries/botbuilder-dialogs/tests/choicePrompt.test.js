@@ -1,5 +1,6 @@
 const { ActivityTypes, CardFactory, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
 const { ChoicePrompt, ChoiceFactory, DialogSet, ListStyle, DialogTurnStatus } = require('../');
+const { PromptCultureModels } = require('../');
 const assert = require('assert');
 
 const answerMessage = { text: `red`, type: 'message' };
@@ -259,13 +260,13 @@ describe('ChoicePrompt', function () {
         }, 'es-es');
         dialogs.add(choicePrompt);
 
-        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: null })
+        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: undefined })
             .assertReply((activity) => {
                 assert('Please choose a color. (1) red, (2) green, o (3) blue');
             })
             .send(invalidMessage)
             .assertReply('bad input.')
-            .send({ text: 'red', type: ActivityTypes.Message, locale: null })
+            .send({ text: 'red', type: ActivityTypes.Message, locale: undefined })
             .assertReply('red');
     });
 
@@ -418,6 +419,50 @@ describe('ChoicePrompt', function () {
         }));      
     });
 
+    it('should default to english locale', async function () {
+        const locales = [
+            null,
+            '',
+            'not-supported'
+        ];
+        await Promise.all(locales.map(async (testLocale) => {
+            const adapter = new TestAdapter(async (turnContext) => {
+                const dc = await dialogs.createContext(turnContext);
+    
+                const results = await dc.continueDialog();
+                if (results.status === DialogTurnStatus.empty) {
+                    await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
+                } else if (results.status === DialogTurnStatus.complete) {
+                    const selectedChoice = results.result;
+                    await turnContext.sendActivity(selectedChoice.value);
+                }
+                await convoState.saveChanges(turnContext);
+            });
+            const convoState = new ConversationState(new MemoryStorage());
+    
+            const dialogState = convoState.createProperty('dialogState');
+            const dialogs = new DialogSet(dialogState);
+            const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
+                assert(prompt);
+                if (!prompt.recognized.succeeded) {
+                    await prompt.context.sendActivity('bad input.');
+                }
+                return prompt.recognized.succeeded;
+            }, null);
+            dialogs.add(choicePrompt);
+    
+            await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: testLocale })
+                .assertReply((activity) => {
+                    const expectedChoices = ChoiceFactory.inline(stringChoices, null, null, {
+                        inlineOr: PromptCultureModels.English.inlineOr,
+                        inlineOrMore: PromptCultureModels.English.inlineOrMore,
+                        inlineSeparator: PromptCultureModels.English.separator,
+                    }).text;
+                    assert.strictEqual(activity.text, `Please choose a color.${ expectedChoices }`);
+                });
+        }));   
+    });
+
     it('should accept and recognize custom locale dict', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -464,7 +509,7 @@ describe('ChoicePrompt', function () {
 
         await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: culture.locale })
             .assertReply((activity) => {
-                const expectedChoices = ChoiceFactory.inline(stringChoices, null, null, {
+                const expectedChoices = ChoiceFactory.inline(stringChoices, undefined, undefined, {
                     inlineOr: culture.inlineOr,
                     inlineOrMore: culture.inlineOrMore,
                     inlineSeparator: culture.separator

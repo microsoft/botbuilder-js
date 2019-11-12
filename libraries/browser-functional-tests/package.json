@@ -1,0 +1,18 @@
+{
+  "name": "browser-functional-tests",
+  "version": "1.0.0",
+  "description": "Test to check browser compatibility",
+  "main": "",
+  "devDependencies": {
+    "nightwatch": "^1.2.4",
+    "chromedriver": "^77.0.0",
+    "dotenv": "^8.0.0"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}

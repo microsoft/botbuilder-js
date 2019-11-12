@@ -521,6 +521,41 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'true'.`);
     });
 
+    it('should recogize valid number and default to en if locale is null.', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+
+            turnContext.activity.locale = null;
+
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', {
+                    prompt: { text: 'Please confirm.', type: ActivityTypes.Message },
+                    retryPrompt: { text: 'Please confirm, say "yes" or "no" or something like that.', type: ActivityTypes.Message }
+                });
+            } else if (results.status === DialogTurnStatus.complete) {
+                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const prompt = new ConfirmPrompt('prompt');
+        prompt.choiceOptions = { includeNumbers: true };
+        dialogs.add(prompt);
+
+        await adapter.send('Hello')
+            .assertReply('Please confirm. (1) Yes or (2) No')
+            .send('lala')
+            .assertReply('Please confirm, say "yes" or "no" or something like that. (1) Yes or (2) No')
+            .send('1')
+            .assertReply(`The result found is 'true'.`);
+    });
+
     it('should recogize valid number and default to en if locale invalid string.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
 
