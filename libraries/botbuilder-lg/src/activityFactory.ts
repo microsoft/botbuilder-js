@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import {Activity, SuggestedActions, Attachment, ActivityTypes, ActionTypes, CardAction} from 'botframework-schema';
-import {MessageFactory, CardFactory} from 'botbuilder-core';
+import { Activity, SuggestedActions, Attachment, ActivityTypes, ActionTypes, CardAction } from 'botframework-schema';
+import { MessageFactory, CardFactory } from 'botbuilder-core';
 
 export class ActivityFactory {
     private static GenericCardTypeMapping: Map<string, string> = new Map<string, string>
