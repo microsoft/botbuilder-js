@@ -1,0 +1,3 @@
+# template
+- IF: {foo == 'bar'}
+   - ok

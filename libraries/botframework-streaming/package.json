@@ -39,11 +39,7 @@
     "sinon": "^7.4.1",
     "ts-node": "^4.1.0",
     "tslint": "^5.16.0",
-    "tslint-microsoft-contrib": "^5.2.1",
-    "typescript": "3.1.1"
-  },
-  "engines": {
-    "node": ">10.14"
+    "tslint-microsoft-contrib": "^5.2.1"
   },
   "scripts": {
     "test": "tsc && nyc mocha tests/",
