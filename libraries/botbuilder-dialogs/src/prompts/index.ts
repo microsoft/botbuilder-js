@@ -14,3 +14,4 @@ export * from './numberPrompt';
 export * from './oauthPrompt';
 export * from './prompt';
 export * from './textPrompt';
+export * from './promptCultureModels';

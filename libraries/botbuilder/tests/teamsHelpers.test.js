@@ -9,11 +9,9 @@ const sinon = require('sinon');
 
 const {
     BotFrameworkAdapter,
-    teamsCreateConversation,
     teamsGetChannelId,
     teamsGetTeamId,
-    teamsNotifyUser,
-    teamsSendToGeneralChannel
+    teamsNotifyUser
 } = require('../');
 
 
@@ -128,90 +126,6 @@ describe('TeamsActivityHelpers method', function() {
         });
     });
 });
-
-describe('TeamsTurnContextHelpers method', () => {
-    describe('teamsCreateConversation()', () => {
-        it('should error with no teamsChannelId', function(done) {
-            const context = new TestContext(createActivityNoTeamId());
-
-            teamsCreateConversation(context, null, createActivityNoTeamId())
-            .then(result => {
-                done(new Error('teamsCreateConversation() should have thrown an error'));
-            })
-            .catch((error) => {
-                assert.strictEqual(error.message, 'Missing valid teamsChannelId argument');
-                done();
-            });
-        });
-
-        it('should error with no activity', function(done) {
-            const context = new TestContext(createActivityNoTeamId());
-
-            teamsCreateConversation(context, 'msteams', null)
-            .then(result => {
-                done(new Error('teamsCreateConversation() should have thrown an error'));
-            })
-            .catch((error) => {
-                assert.strictEqual(error.message, 'Missing valid message argument');
-                done();
-            });
-        });
-
-        it('should get results from teamsCreateConversation', async function() {
-            const context = new TestContext(createActivityNoTeamId());
-    
-            const result = await teamsCreateConversation(context, 'mycrazyteamschannel', createActivityNoTeamId());
-    
-            assert(result);
-            assert.strictEqual(result.length, 2);
-            assert(result[0]);
-            assert(result[1]);
-            assert.strictEqual(result[1], 'MYACTIVITYID');
-            assert.strictEqual(result[0].activityId, 1);
-            assert.strictEqual(result[0].conversation.id, 'MyCreationId');
-            assert.strictEqual(result[0].channelId, 'teams');
-        });
-    });
-
-    describe('teamsSendToGeneralChannel()', () => {
-        it('should error with no teamId', function(done) {
-            const context = new TestContext(createActivityNoTeamId());
-
-            teamsSendToGeneralChannel(context, null, createActivityNoTeamId())
-            .then(result => {
-                done(new Error('teamsSendToGeneralChannel() should have thrown an error'));
-            })
-            .catch(error => {
-                assert.strictEqual(error.message, 'The current Activity was not sent from a Teams Team.');
-                done();
-            });
-        });
-
-        it('should error with no activity', async function() {
-            const context = new TestContext(createActivityNoTeamId());
-
-            await teamsSendToGeneralChannel(context, 'msteams', null).catch((error) => {
-                assert.strictEqual(error.message, 'The current Activity was not sent from a Teams Team.');
-            });
-        });
-
-        it('should get results', async function() {
-            const context = new TestContext(createActivityTeamId());
-    
-            const result = await teamsSendToGeneralChannel(context, 'mycrazyteamschannel', createActivityTeamId());
-    
-            assert(result);
-            assert.strictEqual(result.length, 2);
-            assert(result[0]);
-            assert(result[1]);
-            assert.strictEqual(result[1], 'MYACTIVITYID');
-            assert.strictEqual(result[0].activityId, 1);
-            assert.strictEqual(result[0].conversation.id, 'MyCreationId');
-            assert.strictEqual(result[0].channelId, 'teams');
-        });
-    });
-})
-
 
 function createActivityNoTeamId() {
     return {

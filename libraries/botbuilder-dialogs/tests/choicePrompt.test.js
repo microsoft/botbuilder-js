@@ -1,5 +1,5 @@
 const { ActivityTypes, CardFactory, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { ChoicePrompt, DialogSet, ListStyle, DialogTurnStatus } = require('../');
+const { ChoicePrompt, ChoiceFactory, DialogSet, ListStyle, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
 const answerMessage = { text: `red`, type: 'message' };
@@ -136,6 +136,39 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
+    it('should appropriately apply ListStyle.none when set via PromptOptions', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', {
+                    prompt: 'Please choose a color.',
+                    choices: stringChoices,
+                    style: ListStyle.none
+                });
+            } else if (results.status === DialogTurnStatus.complete) {
+                const selectedChoice = results.result;
+                await turnContext.sendActivity(selectedChoice.value);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and ChoicePrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const choicePrompt = new ChoicePrompt('prompt');
+
+        dialogs.add(choicePrompt);
+
+        await adapter.send('Hello')
+            .assertReply('Please choose a color.')
+            .send(answerMessage)
+            .assertReply('red');
+    });
+
     it('should send custom retryPrompt.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -226,11 +259,13 @@ describe('ChoicePrompt', function () {
         }, 'es-es');
         dialogs.add(choicePrompt);
 
-        await adapter.send({ text: 'Hello', type: ActivityTypes.Message })
-            .assertReply('Please choose a color. (1) red, (2) green, o (3) blue')
+        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: null })
+            .assertReply((activity) => {
+                assert('Please choose a color. (1) red, (2) green, o (3) blue');
+            })
             .send(invalidMessage)
             .assertReply('bad input.')
-            .send({ text: 'red', type: ActivityTypes.Message })
+            .send({ text: 'red', type: ActivityTypes.Message, locale: null })
             .assertReply('red');
     });
 
@@ -380,7 +415,62 @@ describe('ChoicePrompt', function () {
                         assert.strictEqual(activity.text, expectedAnswer);
                     });
             }));
-        }));       
+        }));      
+    });
+
+    it('should accept and recognize custom locale dict', async function() {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
+            } else if (results.status === DialogTurnStatus.complete) {
+                const selectedChoice = results.result;
+                await turnContext.sendActivity(selectedChoice.value);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const culture = {
+            inlineOr: ' customOr ',
+            inlineOrMore: ' customOrMore ',
+            locale: 'custom-custom',
+            separator: 'customSeparator',
+            noInLanguage: 'customNo',
+            yesInLanguage: 'customYes'
+        };
+
+        const customDict = {
+            [culture.locale]: {
+                inlineOr: culture.inlineOr,
+                inlineOrMore: culture.inlineOrMore,
+                inlineSeparator: culture.separator,
+                includeNumbers: true,
+            }
+        };
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
+            assert(prompt);
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('bad input.');
+            }
+            return prompt.recognized.succeeded;
+        }, culture.locale, customDict);
+        dialogs.add(choicePrompt);
+
+        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: culture.locale })
+            .assertReply((activity) => {
+                const expectedChoices = ChoiceFactory.inline(stringChoices, null, null, {
+                    inlineOr: culture.inlineOr,
+                    inlineOrMore: culture.inlineOrMore,
+                    inlineSeparator: culture.separator
+                }).text;
+                assert.strictEqual(activity.text, `Please choose a color.${ expectedChoices }`);
+            });
     });
 
     it('should not render choices and not blow up if choices aren\'t passed in', async function () {
@@ -696,7 +786,7 @@ describe('ChoicePrompt', function () {
                 assert(response.attachments[0].contentType === CardFactory.contentTypes.adaptiveCard);
                 assert(response.attachments[1].contentType === CardFactory.contentTypes.heroCard);
             });
-        done()
+        done();
     });
 
 

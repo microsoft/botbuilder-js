@@ -1,21 +1,18 @@
 /**
- * @module botbuilder
- */
-/**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { ActionTypes, AnimationCard, Attachment, AudioCard, CardAction, CardImage, HeroCard, MediaUrl, OAuthCard, O365ConnectorCard, ReceiptCard, SigninCard, ThumbnailCard, VideoCard } from 'botframework-schema';
 
 /**
- * A set of utility functions designed to assist with the formatting of the various card types a
- * bot can return.
+ * Provides methods for formatting the various card types a bot can return.
  *
  * @remarks
- * All of these functions return an `Attachment` which can be added to an `Activity` directly or
- * passed as input to a `MessageFactory` method.
+ * All of these functions return an [Attachment](xref:botframework-schema.Attachment) object,
+ * which can be added to an existing activity's [attachments](xref:botframework-schema.Activity.attachments) collection directly or
+ * passed as input to one of the [MessageFactory](xref:botbuilder-core.MessageFactory) methods to generate a new activity.
  *
- * The following example shows sending a message containing a single hero card:
+ * This example sends a message that contains a single hero card.
  *
  * ```javascript
  * const { MessageFactory, CardFactory } = require('botbuilder');
@@ -31,7 +28,7 @@ import { ActionTypes, AnimationCard, Attachment, AudioCard, CardAction, CardImag
  */
 export class CardFactory {
     /**
-     * List of content types for each card style.
+     * Lists the content type schema for each card style.
      */
     public static contentTypes: any = {
         adaptiveCard: 'application/vnd.microsoft.card.adaptive',
@@ -47,18 +44,21 @@ export class CardFactory {
     };
 
     /**
-     * Returns an attachment for an adaptive card.
+     * Returns an attachment for an Adaptive Card.
      *
+     * @param card A description of the Adaptive Card to return.
+     * 
      * @remarks
-     * Adaptive Cards are a new way for bots to send interactive and immersive card content to
-     * users. For channels that don't yet support Adaptive Cards natively, the Bot Framework will
-     * down render the card to an image that's been styled to look good on the target channel. For
+     * Adaptive Cards are an open card exchange format enabling developers to exchange UI content in a common and consistent way.
+     * For channels that don't yet support Adaptive Cards natively, the Bot Framework will
+     * down-render the card to an image that's been styled to look good on the target channel. For
      * channels that support [hero cards](#herocards) you can continue to include Adaptive Card
      * actions and they will be sent as buttons along with the rendered version of the card.
      *
      * For more information about Adaptive Cards and to download the latest SDK, visit
      * [adaptivecards.io](http://adaptivecards.io/).
      *
+     * For example:
      * ```JavaScript
      * const card = CardFactory.adaptiveCard({
      *   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
@@ -78,7 +78,6 @@ export class CardFactory {
      *   ]
      * });
      * ```
-     * @param card The adaptive card to return as an attachment.
      */
     public static adaptiveCard(card: any): Attachment {
         return { contentType: CardFactory.contentTypes.adaptiveCard, content: card };
@@ -86,10 +85,12 @@ export class CardFactory {
 
     /**
      * Returns an attachment for an animation card.
-     * @param title The cards title.
-     * @param media Media URL's for the card.
-     * @param buttons (Optional) set of buttons to include on the card.
-     * @param other (Optional) additional properties to include on the card.
+     * 
+     * @param title The card title.
+     * @param media The media URLs for the card.
+     * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
+     *      is converted to an `imBack` button with a title and value set to the value of the string.
+     * @param other Optional. Any additional properties to include on the card.
      */
     public static animationCard(
         title: string,
@@ -102,10 +103,12 @@ export class CardFactory {
 
     /**
      * Returns an attachment for an audio card.
-     * @param title The cards title.
-     * @param media Media URL's for the card.
-     * @param buttons (Optional) set of buttons to include on the card.
-     * @param other (Optional) additional properties to include on the card.
+     * 
+     * @param title The card title.
+     * @param media The media URL for the card.
+     * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
+     *      is converted to an `imBack` button with a title and value set to the value of the string.
+     * @param other Optional. Any additional properties to include on the card.
      */
     public static audioCard(
         title: string,
@@ -119,10 +122,19 @@ export class CardFactory {
     /**
      * Returns an attachment for a hero card.
      *
+     * @param title The card title.
+     * @param text Optional. The card text.
+     * @param images Optional. The array of images to include on the card. Each element can be a
+     *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
+     * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
+     *      is converted to an `imBack` button with a title and value set to the value of the string.
+     * @param other Optional. Any additional properties to include on the card.
+     * 
      * @remarks
-     * Hero cards tend to have one dominant full width image and the cards text & buttons can
-     * usually be found below the image.
-     *
+     * Hero cards tend to have one dominant, full-width image.
+     * Channels typically render the card's text and buttons below the image.
+     * 
+     * For example:
      * ```javascript
      * const card = CardFactory.heroCard(
      *      'White T-Shirt',
@@ -130,11 +142,6 @@ export class CardFactory {
      *      ['buy']
      * );
      * ```
-     * @param title The cards title.
-     * @param text (Optional) text field for the card.
-     * @param images (Optional) set of images to include on the card.
-     * @param buttons (Optional) set of buttons to include on the card.
-     * @param other (Optional) additional properties to include on the card.
      */
     public static heroCard(
         title: string,
@@ -158,17 +165,19 @@ export class CardFactory {
     ): Attachment {
         const a: Attachment = CardFactory.thumbnailCard(title, text, images, buttons, other);
         a.contentType = CardFactory.contentTypes.heroCard;
-
         return a;
     }
 
     /**
-     * Returns an attachment for an OAuth card used by the Bot Frameworks Single Sign On (SSO)
-     * service.
+     * Returns an attachment for an OAuth card.
+     * 
      * @param connectionName The name of the OAuth connection to use.
-     * @param title Title of the cards signin button.
-     * @param text (Optional) additional text to include on the card.
-     * @param link (Optional) the sign in link to follow
+     * @param title The title for the card's sign-in button.
+     * @param text Optional. Additional text to include on the card.
+     * @param link Optional. The sign-in link to use.
+     * 
+     * @remarks
+     * OAuth cards support the Bot Framework's single sign on (SSO) service.
      */
     public static oauthCard(connectionName: string, title: string, text?: string, link?: string): Attachment {
         const card: Partial<OAuthCard> = {
@@ -184,9 +193,12 @@ export class CardFactory {
 
 
     /**
-    * Returns an attachment for an 0365Connector card.
+    * Returns an attachment for an Office 365 connector card.
     *
+    * @param card a description of the Office 365 connector card to return.
+    * 
     * @remarks
+    * For example:
     * ```JavaScript
     * const card = CardFactory.o365ConnectorCard({
     *   "title": "card title",
@@ -202,7 +214,6 @@ export class CardFactory {
     *   ]
     * });
     * ```
-    * @param card The o365Connector card to return as an attachment.
     */
     public static o365ConnectorCard(card: O365ConnectorCard): Attachment {
         return { contentType: CardFactory.contentTypes.o365ConnectorCard, content: card };
@@ -210,21 +221,22 @@ export class CardFactory {
 
     /**
      * Returns an attachment for a receipt card.
-     * @param card The adaptive card to return as an attachment.
+     * 
+     * @param card A description of the receipt card to return.
      */
     public static receiptCard(card: ReceiptCard): Attachment {
         return { contentType: CardFactory.contentTypes.receiptCard, content: card };
     }
 
     /**
-     * Returns an attachment for a signin card.
+     * Returns an attachment for a sign-in card.
      *
+     * @param title The title for the card's sign-in button.
+     * @param url The URL of the sign-in page to use.
+     * @param text Optional. Additional text to include on the card.
+     * 
      * @remarks
-     * For channels that don't natively support signin cards an alternative message will be
-     * rendered.
-     * @param title Title of the cards signin button.
-     * @param url The link to the signin page the user needs to visit.
-     * @param text (Optional) additional text to include on the card.
+     * For channels that don't natively support sign-in cards, an alternative message is rendered.
      */
     public static signinCard(title: string, url: string, text?: string): Attachment {
         const card: SigninCard = { buttons: [{ type: ActionTypes.Signin, title: title, value: url, channelData: undefined }] };
@@ -236,16 +248,19 @@ export class CardFactory {
     /**
      * Returns an attachment for a thumbnail card.
      *
+     * @param title The card title.
+     * @param text Optional. The card text.
+     * @param images Optional. The array of images to include on the card. Each element can be a
+     *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
+     * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
+     *      is converted to an `imBack` button with a title and value set to the value of the string.
+     * @param other Optional. Any additional properties to include on the card.
+     * 
      * @remarks
-     * Thumbnail cards are similar to [hero cards](#herocard) but instead of a full width image,
-     * they're typically rendered with a smaller thumbnail version of the image on either side
-     * and the text will be rendered in column next to the image. Any buttons will typically
-     * show up under the card.
-     * @param title The cards title.
-     * @param text (Optional) text field for the card.
-     * @param images (Optional) set of images to include on the card.
-     * @param buttons (Optional) set of buttons to include on the card.
-     * @param other (Optional) additional properties to include on the card.
+     * Thumbnail cards are similar to hero cards but instead of a full width image,
+     * they're typically rendered with a smaller thumbnail version of the image.
+     * Channels typically render the card's text to one side of the image,
+     * with any buttons displayed below the card.
      */
     public static thumbnailCard(
         title: string,
@@ -284,10 +299,12 @@ export class CardFactory {
 
     /**
      * Returns an attachment for a video card.
-     * @param title The cards title.
-     * @param media Media URLs for the card.
-     * @param buttons (Optional) set of buttons to include on the card.
-     * @param other (Optional) additional properties to include on the card.
+     * 
+     * @param title The card title.
+     * @param media The media URLs for the card.
+     * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
+     *      is converted to an `imBack` button with a title and value set to the value of the string.
+     * @param other Optional. Any additional properties to include on the card.
      */
     public static videoCard(
         title: string,
@@ -301,10 +318,8 @@ export class CardFactory {
     /**
      * Returns a properly formatted array of actions.
      *
-     * @remarks
-     * Supports converting strings to `messageBack` actions (note: using 'imBack' for now as
-     * 'messageBack' doesn't work properly in emulator.)
-     * @param actions Array of card actions or strings. Strings will be converted to `messageBack` actions.
+     * @param actions The array of action to include on the card. Each `string` in the array
+     *      is converted to an `imBack` button with a title and value set to the value of the string.
      */
     public static actions(actions: (CardAction | string)[] | undefined): CardAction[] {
         const list: CardAction[] = [];
@@ -321,7 +336,9 @@ export class CardFactory {
 
     /**
      * Returns a properly formatted array of card images.
-     * @param images Array of card images or strings. Strings will be converted to card images.
+     * 
+     * @param images The array of images to include on the card. Each element can be a
+     *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
      */
     public static images(images: (CardImage | string)[] | undefined): CardImage[] {
         const list: CardImage[] = [];
@@ -337,8 +354,9 @@ export class CardFactory {
     }
 
     /**
-     * Returns a properly formatted array of media url objects.
-     * @param links Array of media url objects or strings. Strings will be converted to a media url object.
+     * Returns a properly formatted array of media URL objects.
+     * 
+     * @param links The media URLs. Each `string` is converted to a media URL object.
      */
     public static media(links: (MediaUrl | string)[] | undefined): MediaUrl[] {
         const list: MediaUrl[] = [];

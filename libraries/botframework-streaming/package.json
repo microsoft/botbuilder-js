@@ -1,12 +1,34 @@
 {
   "name": "botframework-streaming",
+  "author": "Microsoft Corp.",
+  "description": "Streaming library for the Microsoft Bot Framework",
   "version": "4.1.6",
-  "description": "",
+  "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "botframework",
+    "bots",
+    "chatbots",
+    "websockets",
+    "streaming"
+  ],
+  "bugs": {
+    "url": "https://github.com/microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/botbuilder-js.git"
+  },
   "main": "lib/index.js",
   "typings": "lib/index.d.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "dependencies": {
+    "@azure/ms-rest-js": "1.2.6",
+    "botbuilder": "4.1.6",
+    "botbuilder-core": "4.1.6",
+    "uuid": "^3.3.2",
+    "watershed": "^0.4.0",
+    "ws": "^7.1.2"
+  },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/node": "^10.12.18",
@@ -17,17 +39,7 @@
     "sinon": "^7.4.1",
     "ts-node": "^4.1.0",
     "tslint": "^5.16.0",
-    "tslint-microsoft-contrib": "^5.2.1",
-    "typescript": "3.1.1"
-  },
-  "dependencies": {
-    "promise.prototype.finally": "^3.1.0",
-    "uuid": "^3.3.2",
-    "watershed": "^0.4.0",
-    "ws": "^7.1.2"
-  },
-  "engines": {
-    "node": ">12.3"
+    "tslint-microsoft-contrib": "^5.2.1"
   },
   "scripts": {
     "test": "tsc && nyc mocha tests/",

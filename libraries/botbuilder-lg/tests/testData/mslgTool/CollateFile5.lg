@@ -1,0 +1,5 @@
+# ST2
+[MyStruct
+    Speak = hello
+    Text = world
+]
