@@ -136,6 +136,52 @@ describe(`TranscriptLoggerMiddleware`, function () {
             })
     });
 
+    it(`should not error for sent activities if no ResourceResponses are received`, async () => {
+        class NoResourceResponseAdapter extends TestAdapter {
+            constructor(logic) {
+                super(logic);
+            }
+
+            // Send activities but don't pass the ResourceResponses to the TranscriptLoggerMiddleware
+            async sendActivities(context, activities) {
+                await super.sendActivities(context, activities);
+            }
+        }
+
+        let conversationId = null;
+        const transcriptStore = new MemoryTranscriptStore();
+        const adapter = new NoResourceResponseAdapter(async (context) => {
+            conversationId = context.activity.conversation.id;
+            const typingActivity = {
+                type: ActivityTypes.Typing,
+                relatesTo: context.activity.relatesTo
+            };
+
+            await context.sendActivity(typingActivity);
+            await context.sendActivity(`echo:${context.activity.text}`);
+
+        }).use(new TranscriptLoggerMiddleware(transcriptStore));
+
+        await adapter.send('foo')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:foo')
+            .send('bar')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:bar');
+
+        const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
+        assert.equal(pagedResult.items.length, 6);
+        assert.equal(pagedResult.items[0].text, 'foo');
+        assert.equal(pagedResult.items[1].type, ActivityTypes.Typing);
+        assert.equal(pagedResult.items[2].text, 'echo:foo');
+        assert.equal(pagedResult.items[3].text, 'bar');
+        assert.equal(pagedResult.items[4].type, ActivityTypes.Typing);
+        assert.equal(pagedResult.items[5].text, 'echo:bar');
+        pagedResult.items.forEach(a => {
+            assert(a.timestamp);
+        });
+    });
+
     describe('\'s error handling', function () {
         const originalConsoleError = console.error;
 
