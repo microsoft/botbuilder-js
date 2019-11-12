@@ -182,6 +182,59 @@ describe(`TranscriptLoggerMiddleware`, function () {
         });
     });
 
+    it(`should not error for sent activities if another handler does not return next()`, async () => {
+        class NoResourceResponseMiddleware {
+            async onTurn(context, next) {
+                context.onSendActivities(async (context, activities, next) => {
+                    // In SendActivitiesHandlers developers are supposed to call:
+                    //      return next();
+                    // If this is not returned, then the next handler will not have the ResourceResponses[].
+                    const responses = await next();
+                });
+
+                // Run the bot's application logic.
+                await next();
+            }
+        }
+
+        let conversationId = null;
+        const transcriptStore = new MemoryTranscriptStore();
+        const adapter = new TestAdapter(async (context) => {
+            conversationId = context.activity.conversation.id;
+            const typingActivity = {
+                type: ActivityTypes.Typing,
+                relatesTo: context.activity.relatesTo
+            };
+
+            await context.sendActivity(typingActivity);
+            await context.sendActivity(`echo:${context.activity.text}`);
+
+        });
+
+        // Register both middleware
+        adapter.use(new TranscriptLoggerMiddleware(transcriptStore));
+        adapter.use(new NoResourceResponseMiddleware());
+
+        await adapter.send('foo')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:foo')
+            .send('bar')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:bar');
+
+        const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
+        assert.equal(pagedResult.items.length, 6);
+        assert.equal(pagedResult.items[0].text, 'foo');
+        assert.equal(pagedResult.items[1].type, ActivityTypes.Typing);
+        assert.equal(pagedResult.items[2].text, 'echo:foo');
+        assert.equal(pagedResult.items[3].text, 'bar');
+        assert.equal(pagedResult.items[4].type, ActivityTypes.Typing);
+        assert.equal(pagedResult.items[5].text, 'echo:bar');
+        pagedResult.items.forEach(a => {
+            assert(a.timestamp);
+        });
+    });
+
     describe('\'s error handling', function () {
         const originalConsoleError = console.error;
 
