@@ -137,6 +137,39 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
+    it('should appropriately apply ListStyle.none when set via PromptOptions', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', {
+                    prompt: 'Please choose a color.',
+                    choices: stringChoices,
+                    style: ListStyle.none
+                });
+            } else if (results.status === DialogTurnStatus.complete) {
+                const selectedChoice = results.result;
+                await turnContext.sendActivity(selectedChoice.value);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and ChoicePrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const choicePrompt = new ChoicePrompt('prompt');
+
+        dialogs.add(choicePrompt);
+
+        await adapter.send('Hello')
+            .assertReply('Please choose a color.')
+            .send(answerMessage)
+            .assertReply('red');
+    });
+
     it('should send custom retryPrompt.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);

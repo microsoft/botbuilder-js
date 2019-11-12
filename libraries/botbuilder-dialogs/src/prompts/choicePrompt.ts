@@ -90,7 +90,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices) || [];
         const channelId: string = context.activity.channelId;
         const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || this.choiceDefaults[locale];
-        const choiceStyle: ListStyle = options.style || this.style;
+        const choiceStyle: ListStyle = options.style === 0 ? 0 : options.style || this.style;
         if (isRetry && options.retryPrompt) {
             prompt = this.appendChoices(options.retryPrompt, channelId, choices, choiceStyle, choiceOptions);
         } else {
