@@ -63,7 +63,7 @@ export class DialogStateManager {
 
     public set configuration(value: DialogStateManagerConfiguration) {
         if (this.dialogContext.parent) {
-            this.dialogContext.parent.state.configuration = value;
+            throw new Error(`DialogStateManager.configuration: configuration should only be assigned to root dialog context.`);
         } else {
             this._config = value;
         }

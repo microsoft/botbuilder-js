@@ -174,7 +174,7 @@ describe('Memory - Dialog State Manager', function() {
         assert(userScopeFound, `no user scope added`);
     });
 
-    it('Should configure its parent when a child DC is configured.', async function () {
+    it('Should raise an error when a child DC is configured.', async function () {
         // Create test dc
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -182,16 +182,13 @@ describe('Memory - Dialog State Manager', function() {
         const dc = await createTestDc(convoState);
 
         // Run test
-        let convoScopeFound = false;
-        let userScopeFound = false;
-        dc.child.state.configuration = DialogStateManager.createStandardConfiguration(convoState, userState);
-        const config = dc.state.configuration;
-        config.memoryScopes.forEach(scope => {
-            if (scope instanceof ConversationMemoryScope) { convoScopeFound = true }
-            if (scope instanceof UserMemoryScope) { userScopeFound = true }
-        });
-        assert(convoScopeFound, `no conversation scope added`);
-        assert(userScopeFound, `no user scope added`);
+        let error = false;
+        try {
+            dc.child.state.configuration = DialogStateManager.createStandardConfiguration(convoState, userState);
+        } catch (err) {
+            error = true;
+        }
+        assert(error);
     });
 
     it('Should read & write values to TURN memory scope.', async function () {
