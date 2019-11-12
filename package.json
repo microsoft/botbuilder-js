@@ -13,7 +13,7 @@
     "build-docs": "lerna run build-docs",
     "eslint": "eslint  ./libraries/*/src/*.ts ./libraries/*/src/**/*.ts",
     "eslint-fix": "eslint  ./libraries/*/src/*.ts ./libraries/*/src/**/*.ts --fix",
-    "set-dependency-versions": "node tools/util/updateDependenciesInPackageJsons.js ./libraries ^${Version} botframework-streaming botbuilder botbuilder-choices botbuilder-dialogs botbuilder-core botbuilder-prompts botbuilder-testing botframework-connector botframework-config botframework-schema testbot && node tools/util/updateDependenciesInPackageJsons.js ./transcripts ^${Version} botframework-streaming botbuilder botbuilder-ai botbuilder-dialogs botbuilder-testing",
+    "set-dependency-versions": "node tools/util/updateDependenciesInPackageJsons.js ./libraries ^${Version} botbuilder-lg botframework-streaming botbuilder botbuilder-choices botbuilder-dialogs botbuilder-core botbuilder-prompts botbuilder-testing botframework-connector botframework-config botframework-schema testbot && node tools/util/updateDependenciesInPackageJsons.js ./transcripts ^${Version} botframework-streaming botbuilder botbuilder-ai botbuilder-dialogs botbuilder-testing",
     "update-versions": "lerna run set-version && npm run set-dependency-versions"
   },
   "dependencies": {
