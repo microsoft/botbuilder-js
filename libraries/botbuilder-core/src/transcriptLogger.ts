@@ -47,48 +47,32 @@ export class TranscriptLoggerMiddleware implements Middleware {
 
         // hook up onSend pipeline
         context.onSendActivities(async (ctx: TurnContext, activities: Partial<Activity>[], next2: () => Promise<ResourceResponse[]>) => {
-            // Run full pipeline and create a pointer to the return value from the pipeline.
-            let nextValue: ResourceResponse[] = await next2();
-            let responses: ResourceResponse[] = nextValue;
-
-            // If the return value from the pipeline is not an Array, point `responses` to an array of empty ResourceResponses.
-            // This allows for the following:
-            //      1. Allows the transcript logging to progress and not error out.
-            //         See https://github.com/microsoft/botbuilder-js/issues/1404
-            //      1. This prevents TranscriptLoggers from throwing an error if no activity.id is set.
-            //         See https://github.com/microsoft/botbuilder-js/issues/1122
-            //      2. By mocking an array of ResourceResponses, we still return the value from `next2()`.
-            //         This prevents any pre-4.6.0 bots with multiple SendActivityHandlers that rely
-            //         on values that are not an array of ResourceResponses.
-            if (!Array.isArray(responses)) {
-                responses = activities.map(() => {
-                    return {} as ResourceResponse;
-                });
-            }
+            // Run full pipeline.
+            const responses: ResourceResponse[] = await next2();
 
             activities.map((a: Partial<Activity>, index: number) => {
                 const clonedActivity = this.cloneActivity(a);
-                if (index < responses.length) {
-                    if (!clonedActivity.id) {
-                        clonedActivity.id = responses[index].id;
+                if (!clonedActivity.id) {
+                    clonedActivity.id = responses && responses[index] ?
+                        responses[index].id :
+                        undefined;
+                }
 
-                        // For certain channels, a ResourceResponse with an id is not always sent to the bot.
-                        // This fix uses the timestamp on the activity to populate its id for logging the transcript.
-                        // If there is no outgoing timestamp, the current time for the bot is used for the activity.id.
-                        // See https://github.com/microsoft/botbuilder-js/issues/1122
-                        if (!clonedActivity.id) {
-                            if (clonedActivity.timestamp) {
-                                clonedActivity.id = new Date(clonedActivity.timestamp).getTime().toString();
-                            } else {
-                                clonedActivity.id = Date.now().toString();
-                            }
-                        }
+                // For certain channels, a ResourceResponse with an id is not always sent to the bot.
+                // This fix uses the timestamp on the activity to populate its id for logging the transcript.
+                // If there is no outgoing timestamp, the current time for the bot is used for the activity.id.
+                // See https://github.com/microsoft/botbuilder-js/issues/1122
+                if (!clonedActivity.id) {
+                    if (clonedActivity.timestamp) {
+                        clonedActivity.id = new Date(clonedActivity.timestamp).getTime().toString();
+                    } else {
+                        clonedActivity.id = Date.now().toString();
                     }
                 }
                 this.logActivity(transcript, clonedActivity);
             });
 
-            return nextValue;
+            return responses;
         });
 
         // hook up update activity pipeline
