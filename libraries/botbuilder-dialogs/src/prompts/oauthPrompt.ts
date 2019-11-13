@@ -5,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Token } from '@microsoft/recognizers-text-date-time';
 import { Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider,  } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';

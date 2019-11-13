@@ -64,7 +64,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
         this.style = ListStyle.auto;
         this.defaultLocale = defaultLocale;
 
-        if (choiceDefaults == null) {
+        if (choiceDefaults == undefined) {
             const supported: ChoiceDefaultsConfirmPrompt = {};
             PromptCultureModels.getSupportedCultures().forEach((culture): void => {
                 supported[culture.locale] = {

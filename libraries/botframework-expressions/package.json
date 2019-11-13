@@ -1,5 +1,6 @@
 {
   "name": "botframework-expressions",
+  "author": "Microsoft Corp.",
   "description": "Common Expression Language",
   "version": "4.1.6",
   "license": "MIT",
@@ -8,6 +9,9 @@
     "botframework",
     "expression"
   ],
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Microsoft/botbuilder-js.git"
@@ -37,6 +41,7 @@
     "build": "tsc",
     "test": "tsc && nyc mocha tests/ --timeout 60000",
     "clean": "erase /q /s .\\lib",
+    "build-docs": "typedoc --theme markdown --entryPoint botframework-expressions --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botframework-expressions .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Expression\" --readme none",
     "set-version": "npm version --allow-same-version ${Version}"
   },
   "files": [
