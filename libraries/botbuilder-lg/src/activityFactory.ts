@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, SuggestedActions, Attachment, ActivityTypes, ActionTypes, CardAction, AttachmentLayoutTypes } from 'botframework-schema';
+import { Activity, SuggestedActions, Attachment, ActivityTypes, ActionTypes, CardAction } from 'botframework-schema';
 import { MessageFactory, CardFactory } from 'botbuilder-core';
 
 export class ActivityFactory {
