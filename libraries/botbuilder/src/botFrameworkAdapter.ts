@@ -7,7 +7,6 @@
  */
 
 import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
-import { IncomingMessage } from 'http';
 import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
 import * as os from 'os';
 
@@ -129,16 +128,6 @@ export interface BotFrameworkAdapterSettings {
      * Optional. The channel service option for this bot to validate connections from Azure or other channel locations.
      */
     channelService?: string;
-
-    /**
-     * Optional. The option to determine if this adapter accepts WebSocket connections
-     */
-    enableWebSockets?: boolean;
-
-    /**
-     * Optional. Used to pass in a NodeWebSocketFactoryBase instance. Allows bot to accept WebSocket connections.
-     */
-    webSocketFactory?: NodeWebSocketFactoryBase;
     
     /**
      * Optional. Whether to use certificate based authentication. If set to true, we'll use the certificateThumbprint and 
