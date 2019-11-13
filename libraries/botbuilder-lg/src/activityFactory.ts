@@ -29,7 +29,7 @@ export class ActivityFactory {
      * Generate the activity.
      * @param lgResult string result from languageGenerator.
      */
-    public static CreateActivity(lgResult: string): Partial<Activity> {
+    public static CreateActivity(lgResult: any): Partial<Activity> {
         if (typeof lgResult === 'string') {
             return this.buildActivityFromText(lgResult.trim());
         }
