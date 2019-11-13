@@ -8,7 +8,7 @@ function getTemplateEngine(){
 
 function getActivity(templateName, data){
     const engine = getTemplateEngine();
-    const lgResult = JSON.stringify(engine.evaluateTemplate(templateName, data));
+    const lgResult = engine.evaluateTemplate(templateName, data);
     return ActivityFactory.CreateActivity(lgResult);
 }
 
@@ -171,11 +171,11 @@ function assertSuggestedActionsReferenceActivity(activity) {
     assert.strictEqual(activity.type, 'message');
     assert.strictEqual(activity.text, 'textContent');
     assert.strictEqual(activity.suggestedActions.actions.length, 5);
-    assert.strictEqual(activity.suggestedActions.actions[0].text, 'Add todo');
-    assert.strictEqual(activity.suggestedActions.actions[1].text, 'View Todo');
-    assert.strictEqual(activity.suggestedActions.actions[2].text, 'Remove Todo');
-    assert.strictEqual(activity.suggestedActions.actions[3].text, 'Cancel');
-    assert.strictEqual(activity.suggestedActions.actions[4].text, 'Help');
+    assert.strictEqual(activity.suggestedActions.actions[0].value, 'Add todo');
+    assert.strictEqual(activity.suggestedActions.actions[1].value, 'View Todo');
+    assert.strictEqual(activity.suggestedActions.actions[2].value, 'Remove Todo');
+    assert.strictEqual(activity.suggestedActions.actions[3].value, 'Cancel');
+    assert.strictEqual(activity.suggestedActions.actions[4].value, 'Help');
 }
 
 function assertOAuthCardActivity(activity) {
@@ -300,30 +300,24 @@ function assertActivityWithMultiStringSuggestionActions(activity) {
     assert.strictEqual(activity.type, 'message');
     assert.strictEqual(activity.text, 'textContent');
     assert.strictEqual(activity.suggestedActions.actions.length, 3);
-    assert.strictEqual(activity.suggestedActions.actions[0].displayText, 'first suggestion');
     assert.strictEqual(activity.suggestedActions.actions[0].title, 'first suggestion');
-    assert.strictEqual(activity.suggestedActions.actions[0].text, 'first suggestion');
-    assert.strictEqual(activity.suggestedActions.actions[1].displayText, 'second suggestion');
+    assert.strictEqual(activity.suggestedActions.actions[0].value, 'first suggestion');
     assert.strictEqual(activity.suggestedActions.actions[1].title, 'second suggestion');
-    assert.strictEqual(activity.suggestedActions.actions[1].text, 'second suggestion');
-    assert.strictEqual(activity.suggestedActions.actions[2].displayText, 'third suggestion');
+    assert.strictEqual(activity.suggestedActions.actions[1].value, 'second suggestion');
     assert.strictEqual(activity.suggestedActions.actions[2].title, 'third suggestion');
-    assert.strictEqual(activity.suggestedActions.actions[2].text, 'third suggestion');
+    assert.strictEqual(activity.suggestedActions.actions[2].value, 'third suggestion');
 }
 
 function assertActivityWithMultiStructuredSuggestionActions(activity) {
     assert.strictEqual(activity.type, 'message');
     assert.strictEqual(activity.text, 'textContent');
     assert.strictEqual(activity.suggestedActions.actions.length, 3);
-    assert.strictEqual(activity.suggestedActions.actions[0].value, 'first suggestion');
     assert.strictEqual(activity.suggestedActions.actions[0].title, 'first suggestion');
-    assert.strictEqual(activity.suggestedActions.actions[0].text, 'first suggestion');
-    assert.strictEqual(activity.suggestedActions.actions[1].value, 'second suggestion');
+    assert.strictEqual(activity.suggestedActions.actions[0].value, 'first suggestion');
     assert.strictEqual(activity.suggestedActions.actions[1].title, 'second suggestion');
-    assert.strictEqual(activity.suggestedActions.actions[1].text, 'second suggestion');
-    assert.strictEqual(activity.suggestedActions.actions[2].value, 'third suggestion');
+    assert.strictEqual(activity.suggestedActions.actions[1].value, 'second suggestion');
     assert.strictEqual(activity.suggestedActions.actions[2].title, 'third suggestion');
-    assert.strictEqual(activity.suggestedActions.actions[2].text, 'third suggestion');
+    assert.strictEqual(activity.suggestedActions.actions[2].value, 'third suggestion');
 }
 
 function assertMessageActivityAll(activity) {
@@ -343,9 +337,8 @@ function assertMessageActivityAll(activity) {
     assert.strictEqual(button.title, 'titleContent');
     assert.strictEqual(button.value, 'textContent');
     assert.strictEqual(activity.suggestedActions.actions.length, 2);
-    assert.strictEqual(activity.suggestedActions.actions[0].displayText, 'firstItem');
     assert.strictEqual(activity.suggestedActions.actions[0].title, 'firstItem');
-    assert.strictEqual(activity.suggestedActions.actions[0].text, 'firstItem');
+    assert.strictEqual(activity.suggestedActions.actions[0].value, 'firstItem');
     assert.strictEqual(activity.suggestedActions.actions[1].title, 'titleContent');
     assert.strictEqual(activity.suggestedActions.actions[1].value, 'textContent');
 }
@@ -354,9 +347,8 @@ function assertActivityWithSuggestionActions(activity) {
     assert.strictEqual(activity.type, 'message');
     assert.strictEqual(activity.text, 'textContent');
     assert.strictEqual(activity.suggestedActions.actions.length, 2);
-    assert.strictEqual(activity.suggestedActions.actions[0].displayText, 'firstItem');
     assert.strictEqual(activity.suggestedActions.actions[0].title, 'firstItem');
-    assert.strictEqual(activity.suggestedActions.actions[0].text, 'firstItem');
+    assert.strictEqual(activity.suggestedActions.actions[0].value, 'firstItem');
     assert.strictEqual(activity.suggestedActions.actions[1].title, 'titleContent');
     assert.strictEqual(activity.suggestedActions.actions[1].value, 'textContent');
 }

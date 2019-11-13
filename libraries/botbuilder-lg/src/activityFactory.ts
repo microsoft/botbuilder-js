@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, SuggestedActions, Attachment, ActivityTypes, ActionTypes, CardAction } from 'botframework-schema';
+import { Activity, SuggestedActions, Attachment, ActivityTypes, ActionTypes, CardAction, AttachmentLayoutTypes } from 'botframework-schema';
 import { MessageFactory, CardFactory } from 'botbuilder-core';
 
 export class ActivityFactory {
-    private static GenericCardTypeMapping: Map<string, string> = new Map<string, string>
+    private static genericCardTypeMapping: Map<string, string> = new Map<string, string>
     ([
         [ 'herocard', CardFactory.contentTypes.heroCard ],
         [ 'thumbnailcard', CardFactory.contentTypes.thumbnailCard ],
@@ -21,32 +21,31 @@ export class ActivityFactory {
         [ 'oauthcard', CardFactory.contentTypes.oauthCard ],
     ]);
 
-    public static CreateActivity(lgStringResult: string): Activity {
-        let lgStructuredResult: any;
-        try {
-            lgStructuredResult = JSON.parse(lgStringResult);
-        } catch (error) {
-            return this.buildActivityFromText(lgStructuredResult.trim());
+    public static CreateActivity(lgResult: string): Partial<Activity> {
+        if (typeof lgResult === 'string') {
+            return this.buildActivityFromText(lgResult.trim());
         }
 
-        return this.buildActivityFromLGStructuredResult(lgStructuredResult);
+        return this.buildActivityFromLGStructuredResult(lgResult);
     }
 
-    private static buildActivityFromText(text: string): Activity {
-        return MessageFactory.text(text, text) as Activity;
+    private static buildActivityFromText(text: string): Partial<Activity> {
+        return MessageFactory.text(text, text);
     }
 
-    private static buildActivityFromLGStructuredResult(lgJObj: any): Activity {
-        let activity: any = {};
+    private static buildActivityFromLGStructuredResult(lgValue: any): Partial<Activity> {
+        let activity: Partial<Activity> = {};
 
-        const type: string = this.getStructureType(lgJObj);
-        if (ActivityFactory.GenericCardTypeMapping.has(type)) {
-            const attachment: Attachment = this.getAttachment(lgJObj);
+        const type: string = this.getStructureType(lgValue);
+        if (ActivityFactory.genericCardTypeMapping.has(type)) {
+            const attachment: Attachment = this.getAttachment(lgValue);
             if (attachment !== undefined) {
                 activity = MessageFactory.attachment(attachment);
+            } else {
+                throw new Error(`'${ lgValue }' is not a attachment format.`);
             }
         } else if (type === 'activity') {
-            activity = this.buildActivityFromObject(lgJObj);
+            activity = this.buildActivityFromObject(lgValue);
         } else {
             throw new Error(`type ${ type } is not support currently.`);
         }
@@ -54,23 +53,23 @@ export class ActivityFactory {
         return activity;
     }
 
-    private static buildActivityFromObject(lgJObj: any): Activity {
-        let activity: any = {};
+    private static buildActivityFromObject(activityValue: any): Partial<Activity> {
+        let activity: Partial<Activity> = {};
 
-        if ('type' in lgJObj && lgJObj.type === 'event') {
-            activity = this.buildEventActivity(lgJObj);
+        if ('type' in activityValue && activityValue.type === 'event') {
+            activity = this.buildEventActivity(activityValue);
         } else {
-            activity = this.buildMessageActivity(lgJObj);
+            activity = this.buildMessageActivity(activityValue);
         }
 
         return activity;
     }
 
-    private static buildEventActivity(lgJObj: any): Activity {
-        let activity: any = { type: ActivityTypes.Event };
-        for (const item of Object.keys(lgJObj)) {
+    private static buildEventActivity(eventValue: any): Partial<Activity> {
+        let activity: Partial<Activity> = { type: ActivityTypes.Event };
+        for (const item of Object.keys(eventValue)) {
             const property: string = item.trim();
-            const value: any = lgJObj[item];
+            const value: any = eventValue[item];
             switch (property.toLowerCase()) {
                 case '$type':
                     break;
@@ -81,7 +80,7 @@ export class ActivityFactory {
                     activity.value = value.toString();
                     break;
                 default:
-                    console.log(`Skipping unknown activity property ${ property }`);
+                    activity[property] = value;
                     break;
             }
         }
@@ -89,11 +88,11 @@ export class ActivityFactory {
         return activity;
     }
 
-    private static buildMessageActivity(lgJObj: any): Activity {
-        let activity: any = { type: ActivityTypes.Message };
-        for (const key of Object.keys(lgJObj)) {
+    private static buildMessageActivity(messageValue: any): Partial<Activity> {
+        let activity: Partial<Activity> = { type: ActivityTypes.Message };
+        for (const key of Object.keys(messageValue)) {
             const property: string = key.trim();
-            const value: any = lgJObj[key];
+            const value: any = messageValue[key];
 
             switch (property.toLowerCase()) {
                 case '$type':
@@ -114,9 +113,9 @@ export class ActivityFactory {
                     activity.suggestedActions = this.getSuggestions(value);
                     break;
                 case 'attachmentlayout':
-                    activity.AttachmentLayout = value.toString();
+                    activity.attachmentLayout = value.toString();
                 default:
-                    console.log(`Skipping unknown activity property ${ property }`);
+                    activity[property] = value;
                     break;
             }
         }
@@ -124,84 +123,53 @@ export class ActivityFactory {
         return activity;
     }
 
-    private static getSuggestions(value: any): SuggestedActions {
+    private static getSuggestions(suggestionsValue: any): SuggestedActions {
+        let actions: any[] = this.normalizedToList(suggestionsValue);
+
         let suggestedActions: SuggestedActions = {
-            actions : [],
+            actions : this.getCardActions(actions),
             to: []
         };
-
-        let actions: any[] = this.normalizedToList(value);
-
-        for (const action of actions) {
-            if (typeof action === 'string') {
-                const actionStr: string = action.trim();
-                suggestedActions.actions.push({
-                    type: ActionTypes.MessageBack,
-                    title: actionStr,
-                    displayText: actionStr,
-                    text: actionStr,
-                    value: actionStr
-                });
-            } else {
-                const cardAction: CardAction = this.getCardAction('', action);
-                if (cardAction !== undefined) {
-                    suggestedActions.actions.push(cardAction);
-                }
-            }
-        }
 
         return suggestedActions;
     }
 
-    private static getButtons(cardType: string, value: any): CardAction[] {
-        let buttons: any[] = [];
-        let actions: any[] = this.normalizedToList(value);
+    private static getButtons(buttonsValue: any): CardAction[] {
+        let actions: any[] = this.normalizedToList(buttonsValue);
+        return this.getCardActions(actions);
+    }
 
+    private static getCardActions(actions: any[]): CardAction[] {
+        let cardActions: (string|CardAction)[] = [];
         for (const action of actions) {
             if (typeof action === 'string') {
-                const actionStr = action.trim();
-                if (cardType === CardFactory.contentTypes.signinCard ||cardType === CardFactory.contentTypes.oauthCard ) {
-                    buttons.push({
-                        type: ActionTypes.Signin,
-                        title: actionStr,
-                        value: actionStr
-                    });
-                } else {
-                    buttons.push({
-                        type: ActionTypes.ImBack,
-                        title: actionStr,
-                        value: actionStr
-                    });
-                }
-                
+                cardActions.push(action.trim());
             } else {
-                const cardAction: CardAction = this.getCardAction(cardType, action);
+                const cardAction: CardAction = this.getCardAction(action);
                 if (cardAction !== undefined) {
-                    buttons.push(cardAction);
+                    cardActions.push(cardAction);
                 }
             }
         }
 
-        return buttons;
+        return CardFactory.actions(cardActions);
     }
 
-    private static getCardAction(cardType: string, cardActionJObj: any): CardAction {
-        const type: string = this.getStructureType(cardActionJObj);
-        let cardAction: any = {};
-
-        if (cardType === CardFactory.contentTypes.signinCard || cardType === CardFactory.contentTypes.oauthCard) {
-            cardAction.type = ActionTypes.Signin;
-        } else {
-            cardAction.type = ActionTypes.ImBack;
-        }
+    private static getCardAction(cardActionValue: any): CardAction {
+        const type: string = this.getStructureType(cardActionValue);
+        let cardAction: CardAction = {
+            type: ActionTypes.ImBack,
+            title: '',
+            value: ''
+        };
 
         if(type !== 'cardaction') {
             return undefined;
         }
 
-        for (const key of Object.keys(cardActionJObj)) {
+        for (const key of Object.keys(cardActionValue)) {
             const property: string = key.trim();
-            const value: any = cardActionJObj[key];
+            const value: any = cardActionValue[key];
 
             switch (property.toLowerCase()) {
                 case 'type':
@@ -223,65 +191,70 @@ export class ActivityFactory {
                     cardAction.image = value.toString();
                     break;
                 default:
-                    console.log(`Skipping unknown activity property ${ property }`);
+                    cardAction[property] = value;
                     break;
             }
         }
 
-        return cardAction as CardAction;
+        return cardAction;
     }
 
-    private static getStructureType(jObj: any): string {
+    private static getStructureType(input: any): string {
         let result = '';
 
-        if (jObj !== undefined) {
-            if ('$type' in jObj) {
-                result = jObj['$type'].toString();
-            } else if ('type' in jObj) {
-                result = jObj['type'].toString();
+        if (input !== undefined) {
+            if ('$type' in input) {
+                result = input['$type'].toString();
+            } else if ('type' in input) {
+                result = input['type'].toString();
             }
         }
 
         return result.trim().toLowerCase();
     }
 
-    private static getAttachments(value: any): Attachment[] {
-        let attachments = [];
-        let attachmentsJsonList: any[] = this.normalizedToList(value);
+    private static getAttachments(input: any): Attachment[] {
+        let attachments: Attachment[] = [];
+        let attachmentsJsonList: any[] = this.normalizedToList(input);
 
         for (const attachmentsJson of attachmentsJsonList) {
             if (typeof attachmentsJson === 'object') {
                 const attachment = this.getAttachment(attachmentsJson);
                 if (attachment !== undefined) {
                     attachments.push(attachment);
+                } else {
+                    throw new Error(`'${ attachmentsJson }' is not a attachment format.`);
                 }
+            } else {
+                throw new Error(`'${ attachmentsJson }' is not a attachment format.`);
             }
         }
 
         return attachments;
     }
 
-    private static getAttachment(lgJObj: any): Attachment {
-        let attachment: any = {};
-        const type: string = this.getStructureType(lgJObj);
-        if (ActivityFactory.GenericCardTypeMapping.has(type)) {
-            attachment = this.getCardAttachment(ActivityFactory.GenericCardTypeMapping.get(type), lgJObj);
+    private static getAttachment(input: any): Attachment {
+        let attachment: Attachment = {
+            contentType: ''
+        };
+        const type: string = this.getStructureType(input);
+        if (ActivityFactory.genericCardTypeMapping.has(type)) {
+            attachment = this.getCardAttachment(ActivityFactory.genericCardTypeMapping.get(type), input);
         } else if(type === 'adaptivecard') {
-            attachment.contentType = CardFactory.contentTypes.adaptiveCard;
-            attachment.content = lgJObj;
+            attachment = CardFactory.adaptiveCard(input);
         } else {
             attachment = undefined;
         }
 
-        return attachment as Attachment;
+        return attachment;
     }
 
-    private static getCardAttachment(type: string, lgJObj: any): Attachment {
+    private static getCardAttachment(type: string, input: any): Attachment {
         let card: any = {};
 
-        for (const key in lgJObj) {
+        for (const key in input) {
             const property: string = key.trim().toLowerCase();
-            const value: any = lgJObj[key];
+            const value: any = input[key];
 
             switch (property) {
                 case 'title':
@@ -321,7 +294,7 @@ export class ActivityFactory {
                         card['buttons'] = [];
                     }
 
-                    let buttons: any[] = this.getButtons(type, value);
+                    let buttons: any[] = this.getButtons(value);
                     buttons.forEach( (u): any => card[property].push(u));
                     break;
                 case 'autostart':
@@ -332,26 +305,25 @@ export class ActivityFactory {
                     } else if (value.toString().toLowerCase() === 'false') {
                         card[property] = false;
                     }
-
-                    break;
-                case '':
                     break;
                 default:
-                    console.log(`Skipping unknown activity property ${ property }`);
+                    card[property] = value;
                     break;
             }
         }
 
-        return {
+        const attachment: Attachment = {
             contentType: type,
             content: card
         };
+
+        return attachment;
     }
 
     private static normalizedToList(item: any): any[] {
         if (item === undefined) {
             return [];
-        } else if (item instanceof Array){
+        } else if (Array.isArray(item)){
             return item;
         } else {
             return [item];
