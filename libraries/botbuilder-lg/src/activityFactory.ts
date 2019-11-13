@@ -42,7 +42,7 @@ export class ActivityFactory {
             if (attachment !== undefined) {
                 activity = MessageFactory.attachment(attachment);
             } else {
-                throw new Error(`'${ lgValue }' is not a attachment format.`);
+                throw new Error(`'${ lgValue }' is not an attachment format.`);
             }
         } else if (type === 'activity') {
             activity = this.buildActivityFromObject(lgValue);
@@ -223,10 +223,10 @@ export class ActivityFactory {
                 if (attachment !== undefined) {
                     attachments.push(attachment);
                 } else {
-                    throw new Error(`'${ attachmentsJson }' is not a attachment format.`);
+                    throw new Error(`'${ attachmentsJson }' is not an attachment format.`);
                 }
             } else {
-                throw new Error(`'${ attachmentsJson }' is not a attachment format.`);
+                throw new Error(`'${ attachmentsJson }' is not an attachment format.`);
             }
         }
 
