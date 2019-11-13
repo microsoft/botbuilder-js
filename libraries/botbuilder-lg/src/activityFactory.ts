@@ -9,6 +9,10 @@
 import { Activity, SuggestedActions, Attachment, ActivityTypes, ActionTypes, CardAction } from 'botframework-schema';
 import { MessageFactory, CardFactory } from 'botbuilder-core';
 
+/**
+ * The ActivityFactory
+ * to generate text and then uses simple markdown semantics like chatdown to create Activity.
+ */
 export class ActivityFactory {
     private static genericCardTypeMapping: Map<string, string> = new Map<string, string>
     ([
@@ -21,6 +25,10 @@ export class ActivityFactory {
         [ 'oauthcard', CardFactory.contentTypes.oauthCard ],
     ]);
 
+    /**
+     * Generate the activity.
+     * @param lgResult string result from languageGenerator.
+     */
     public static CreateActivity(lgResult: string): Partial<Activity> {
         if (typeof lgResult === 'string') {
             return this.buildActivityFromText(lgResult.trim());
@@ -29,10 +37,18 @@ export class ActivityFactory {
         return this.buildActivityFromLGStructuredResult(lgResult);
     }
 
+    /**
+     * Given a lg result, create a text activity. This method will create a MessageActivity from text.
+     * @param text lg text output.
+     */
     private static buildActivityFromText(text: string): Partial<Activity> {
         return MessageFactory.text(text, text);
     }
 
+    /**
+     * Given a structured lg result, create an activity. This method will create an MessageActivity from object
+     * @param lgValue lg output.
+     */
     private static buildActivityFromLGStructuredResult(lgValue: any): Partial<Activity> {
         let activity: Partial<Activity> = {};
 
@@ -71,8 +87,6 @@ export class ActivityFactory {
             const property: string = item.trim();
             const value: any = eventValue[item];
             switch (property.toLowerCase()) {
-                case '$type':
-                    break;
                 case 'name':
                     activity.name = value.toString();
                     break;
@@ -95,8 +109,6 @@ export class ActivityFactory {
             const value: any = messageValue[key];
 
             switch (property.toLowerCase()) {
-                case '$type':
-                    break;
                 case 'text':
                     activity.text = value.toString();
                     break;
@@ -300,10 +312,9 @@ export class ActivityFactory {
                 case 'autostart':
                 case 'shareable':
                 case 'autoloop':
-                    if (value.toString().toLowerCase() === 'true') {
-                        card[property] = true;
-                    } else if (value.toString().toLowerCase() === 'false') {
-                        card[property] = false;
+                    const boolValue: boolean = this.getValidBooleanValue(value.toString());
+                    if (boolValue !== undefined) {
+                        card[property] = boolValue;
                     }
                     break;
                 default:
@@ -318,6 +329,19 @@ export class ActivityFactory {
         };
 
         return attachment;
+    }
+
+    private static getValidBooleanValue(boolValue: string): boolean{
+        if (boolValue.toLowerCase() == 'true')
+        {
+            return true;
+        }
+        else if (boolValue.toLowerCase() == 'false')
+        {
+            return false;
+        }
+
+        return undefined;
     }
 
     private static normalizedToList(item: any): any[] {
