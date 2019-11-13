@@ -47,8 +47,24 @@ export class TranscriptLoggerMiddleware implements Middleware {
 
         // hook up onSend pipeline
         context.onSendActivities(async (ctx: TurnContext, activities: Partial<Activity>[], next2: () => Promise<ResourceResponse[]>) => {
-            // run full pipeline
-            const responses: ResourceResponse[] = await next2();
+            // Run full pipeline and create a pointer to the return value from the pipeline.
+            let nextValue: ResourceResponse[] = await next2();
+            let responses: ResourceResponse[] = nextValue;
+
+            // If the return value from the pipeline is not an Array, point `responses` to an array of empty ResourceResponses.
+            // This allows for the following:
+            //      1. Allows the transcript logging to progress and not error out.
+            //         See https://github.com/microsoft/botbuilder-js/issues/1404
+            //      1. This prevents TranscriptLoggers from throwing an error if no activity.id is set.
+            //         See https://github.com/microsoft/botbuilder-js/issues/1122
+            //      2. By mocking an array of ResourceResponses, we still return the value from `next2()`.
+            //         This prevents any pre-4.6.0 bots with multiple SendActivityHandlers that rely
+            //         on values that are not an array of ResourceResponses.
+            if (!Array.isArray(responses)) {
+                responses = activities.map(() => {
+                    return {} as ResourceResponse;
+                });
+            }
 
             activities.map((a: Partial<Activity>, index: number) => {
                 const clonedActivity = this.cloneActivity(a);
@@ -72,7 +88,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
                 this.logActivity(transcript, clonedActivity);
             });
 
-            return responses;
+            return nextValue;
         });
 
         // hook up update activity pipeline
