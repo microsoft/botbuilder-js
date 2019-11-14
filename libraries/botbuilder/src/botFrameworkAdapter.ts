@@ -1179,9 +1179,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
         const upgrade = (res as any).claimUpgrade();
         const socket = this.webSocketFactory.createWebSocket(req as IncomingMessage, upgrade.socket, upgrade.head);
-        this.startWebSocket(socket);
 
-        return;
+        await this.startWebSocket(socket);
     }
 
     private async authenticateConnection(req: WebRequest, channelService?: string): Promise<void> {
@@ -1206,9 +1205,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * Connects the handler to a WebSocket server and begins listening for incoming requests.
      * @param socket The socket to use when creating the server.
      */
-    private startWebSocket(socket: ISocket): void{
+    private async startWebSocket(socket: ISocket): Promise<void>{
         this.streamingServer = new WebSocketServer(socket, this);
-        this.streamingServer.start();
+        await this.streamingServer.start();
     }
 
     private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {
