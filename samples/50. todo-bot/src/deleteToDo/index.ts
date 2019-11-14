@@ -26,7 +26,7 @@ export class DeleteToDo extends AdaptiveDialog {
         this.recognizer = getRecognizer();
 
         // Add interruption rules
-        this.addRule(new OnIntent('#Cancel', [
+        this.addRule(new OnIntent('#Cancel', null, [
             new CancelAllDialogs('cancelDelete')
         ]));
     }

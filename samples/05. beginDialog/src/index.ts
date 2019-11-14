@@ -45,7 +45,7 @@ bot.rootDialog = dialogs;
 dialogs.recognizer = new RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
 
 // Tell the user a joke
-dialogs.addRule(new OnIntent('#JokeIntent', [
+dialogs.addRule(new OnIntent('#JokeIntent', null, [
     new BeginDialog('TellJokeDialog')
 ]));
 

@@ -6,41 +6,56 @@
  * Licensed under the MIT License.
  */
 import { OnDialogEvent } from './onDialogEvent';
-import { AdaptiveEventNames, SequenceContext } from '../sequenceContext';
-import { DialogEvent, Dialog  } from 'botbuilder-dialogs';
+import { AdaptiveEventNames } from '../sequenceContext';
+import { Dialog } from 'botbuilder-dialogs';
+import { ExpressionParserInterface, Expression, ExpressionType } from 'botframework-expressions';
 
 /**
- * This rule is triggered when a message is received and the recognized intents & entities match a
- * specified list of intent & entity filters.
+ * Actions triggered when an Activity has been received and the recognized intents and entities match specified list of intent and entity filters.
  */
 export class OnIntent extends OnDialogEvent {
 
     /**
-     * List of intents, entities, and properties to filter to.
+     * Gets or sets intent to match on.
      */
-    public readonly matches: string[];
+    public intent: string;
+
+    /**
+     * Gets or sets entities which must be recognized for this rule to trigger.
+     */
+    public entities: string[];
 
     /**
      * Creates a new `OnIntent` instance.
-     * @param matches (Optional) list of intents, entities, and properties to filter to.
-     * @param actions (Optional) list of actions to update the plan with when triggered.
+     * @param intent (Optional) Intent to match on.
+     * @param entities (Optional) Entities which must be recognized for this rule to trigger.
+     * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
+     * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      */
-    constructor(matches?: string|string[], actions?: Dialog[]) {
-        super(AdaptiveEventNames.recognizedIntent, actions, true);
-        this.matches = Array.isArray(matches) ? matches : (matches !== undefined ? [matches] : []);
+    constructor(intent: string = null, entities: string[] = [], actions: Dialog[] = null, condition: string = null) {
+        super(AdaptiveEventNames.recognizedIntent, actions, condition);
+        this.intent = intent;
+        this.entities = entities;
     }
 
-    protected async onIsTriggered(sequence: SequenceContext, event: DialogEvent): Promise<boolean> {
-
-        // Ensure all intents, entities, and properties exist.
-        const memory = sequence.state;
-        for(let i = 0; i < this.matches.length; i++) {
-            const value = sequence.state.getValue(this.matches[i]);
-            if (!Array.isArray(value) || value.length == 0 || value[0] == undefined) {
-                return false;
-            }
+    public getExpression(parser: ExpressionParserInterface): Expression {
+        if (!this.intent) {
+            throw new Error('Intent cannot be null.');
         }
 
-        return true;
+        const trimmedIntent = this.intent.startsWith('#') ? this.intent.substring(1) : this.intent;
+        let intentExpression = parser.parse(`turn.recognized.intent == '${trimmedIntent}'`)
+
+        if (this.entities.length > 0) {
+            intentExpression = Expression.makeExpression(ExpressionType.And, undefined, intentExpression,
+                Expression.makeExpression(ExpressionType.And, undefined, ...this.entities.map(entity => {
+                    if (entity.startsWith('@') || entity.startsWith('turn.recognized')) {
+                        return parser.parse(`exists(${entity})`);
+                    }
+                    return parser.parse(`exists(@${entity})`);
+                })));
+        }
+
+        return Expression.makeExpression(ExpressionType.And, undefined, intentExpression, super.getExpression(parser));
     }
 }

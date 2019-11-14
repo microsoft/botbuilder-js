@@ -24,7 +24,7 @@ class DeleteToDo extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
         // Use parents recognizer
         this.recognizer = recognizer_1.getRecognizer();
         // Add interruption rules
-        this.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#Cancel', [
+        this.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#Cancel', null, [
             new botbuilder_dialogs_adaptive_1.CancelAllDialogs('cancelDelete')
         ]));
     }

@@ -16,19 +16,19 @@ export class RootDialog extends AdaptiveDialog {
         this.recognizer = getRecognizer();
 
         // Handle recognized intents
-        this.addRule(new OnIntent('#AddToDo', [
+        this.addRule(new OnIntent('#AddToDo', null, [
             new AddToDo()
         ]));
 
-        this.addRule(new OnIntent('#DeleteToDo', [
+        this.addRule(new OnIntent('#DeleteToDo', null, [
             new DeleteToDo()
         ]));
 
-        this.addRule(new OnIntent('#ClearToDos', [
+        this.addRule(new OnIntent('#ClearToDos', null, [
             new ClearToDos()
         ]));
 
-        this.addRule(new OnIntent('#ShowToDos', [
+        this.addRule(new OnIntent('#ShowToDos', null, [
             new ShowToDos()
         ]));
 

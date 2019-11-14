@@ -38,7 +38,7 @@ bot.rootDialog = dialogs;
 //=================================================================================================
 dialogs.recognizer = new botbuilder_dialogs_adaptive_1.RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
 // Tell the user a joke
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#JokeIntent', [
+dialogs.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#JokeIntent', null, [
     new botbuilder_dialogs_adaptive_1.BeginDialog('TellJokeDialog')
 ]));
 // Handle unknown intents

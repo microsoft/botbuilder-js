@@ -14,16 +14,16 @@ class RootDialog extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
         // Bind to production/development recognizer
         this.recognizer = recognizer_1.getRecognizer();
         // Handle recognized intents
-        this.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#AddToDo', [
+        this.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#AddToDo', null, [
             new addToDo_1.AddToDo()
         ]));
-        this.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#DeleteToDo', [
+        this.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#DeleteToDo', null, [
             new deleteToDo_1.DeleteToDo()
         ]));
-        this.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#ClearToDos', [
+        this.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#ClearToDos', null, [
             new clearToDos_1.ClearToDos()
         ]));
-        this.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#ShowToDos', [
+        this.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#ShowToDos', null, [
             new showToDos_1.ShowToDos()
         ]));
         this.addRule(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([

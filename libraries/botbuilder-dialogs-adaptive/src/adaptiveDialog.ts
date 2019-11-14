@@ -18,6 +18,8 @@ import {
 } from './sequenceContext';
 import { OnCondition } from './conditions';
 import { Recognizer } from './recognizers';
+import { TriggerSelector } from './triggerSelector';
+import { FirstSelector } from './selectors';
 
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     /**
@@ -72,6 +74,11 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
      */
     public autoEndDialog?: boolean;
 
+    /**
+     * (Optional) The selector for picking the possible events to execute.
+     */
+    public selector: TriggerSelector;
+
     public set telemetryClient(client: BotTelemetryClient) {
         super.telemetryClient = client ? client : new NullTelemetryClient();
         this.dialogs.telemetryClient = client;
@@ -90,6 +97,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         this.triggers.forEach((trigger) => {
             trigger.actions.forEach((action) => this.dialogs.add(action));
         });
+
+        if (!this.selector) {
+            // Defaul to first selector
+            this.selector = new FirstSelector();
+        }
+        this.selector.initialize(this.triggers, true);
     }
 
     //---------------------------------------------------------------------------------------------
@@ -195,77 +208,77 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         // Perform default processing
         if (preBubble) {
             switch (event.name) {
-            case AdaptiveEventNames.beginDialog:
-                if (this.actions.length > 0) {
-                    // Initialize plan with actions
-                    const changes: ActionChangeList = {
-                        changeType: ActionChangeType.insertActions,
-                        actions: []
-                    };
-                    this.actions.forEach((action) => {
-                        changes.actions.push({
-                            dialogId: action.id,
-                            dialogStack: []
+                case AdaptiveEventNames.beginDialog:
+                    if (this.actions.length > 0) {
+                        // Initialize plan with actions
+                        const changes: ActionChangeList = {
+                            changeType: ActionChangeType.insertActions,
+                            actions: []
+                        };
+                        this.actions.forEach((action) => {
+                            changes.actions.push({
+                                dialogId: action.id,
+                                dialogStack: []
+                            });
                         });
-                    });
-                    sequence.queueChanges(changes);
-                    handled = true;
-                } else {
-                    // Emit leading ActivityReceived event
-                    handled = await this.processEvent(sequence, { name: AdaptiveEventNames.activityReceived, bubble: false }, true);
-                }
-                break;
-            case AdaptiveEventNames.activityReceived:
-                const activity = sequence.context.activity;
-                if (activity.type === ActivityTypes.Message) {
-                    // Recognize utterance
-                    const recognized = await this.onRecognize(sequence.context);
-                    sequence.state.setValue('turn.recognized', recognized);
-
-                    // Emit leading RecognizedIntent event
-                    handled = await this.processEvent(sequence, { name: AdaptiveEventNames.recognizedIntent, value: recognized, bubble: false }, true);
-                } else if (activity.type === ActivityTypes.Event) {
-                    // Emit leading edge named event that was received
-                    handled = await this.processEvent(sequence, { name: activity.name, value: activity.value, bubble: false }, true);
-                } else if (activity.type === ActivityTypes.ConversationUpdate && Array.isArray(activity.membersAdded)) {
-                    // Filter members added
-                    const membersAdded = activity.membersAdded.filter((value) => value.id !== activity.recipient.id);
-                    if (membersAdded.length > 0) {
-                        // Emit leading ConversationMembersAdded event
-                        sequence.state.setValue('turn.membersAdded', membersAdded);
-                        handled = await this.processEvent(sequence, { name: AdaptiveEventNames.conversationMembersAdded, value: membersAdded, bubble: false}, true);
+                        sequence.queueChanges(changes);
+                        handled = true;
+                    } else {
+                        // Emit leading ActivityReceived event
+                        handled = await this.processEvent(sequence, { name: AdaptiveEventNames.activityReceived, bubble: false }, true);
                     }
-                }
-                break;
+                    break;
+                case AdaptiveEventNames.activityReceived:
+                    const activity = sequence.context.activity;
+                    if (activity.type === ActivityTypes.Message) {
+                        // Recognize utterance
+                        const recognized = await this.onRecognize(sequence.context);
+                        sequence.state.setValue('turn.recognized', recognized);
+
+                        // Emit leading RecognizedIntent event
+                        handled = await this.processEvent(sequence, { name: AdaptiveEventNames.recognizedIntent, value: recognized, bubble: false }, true);
+                    } else if (activity.type === ActivityTypes.Event) {
+                        // Emit leading edge named event that was received
+                        handled = await this.processEvent(sequence, { name: activity.name, value: activity.value, bubble: false }, true);
+                    } else if (activity.type === ActivityTypes.ConversationUpdate && Array.isArray(activity.membersAdded)) {
+                        // Filter members added
+                        const membersAdded = activity.membersAdded.filter((value) => value.id !== activity.recipient.id);
+                        if (membersAdded.length > 0) {
+                            // Emit leading ConversationMembersAdded event
+                            sequence.state.setValue('turn.membersAdded', membersAdded);
+                            handled = await this.processEvent(sequence, { name: AdaptiveEventNames.conversationMembersAdded, value: membersAdded, bubble: false }, true);
+                        }
+                    }
+                    break;
             }
         } else {
             switch (event.name) {
-            case AdaptiveEventNames.beginDialog:
-                // Emit trailing ActivityReceived event
-                handled = await this.processEvent(sequence, { name: AdaptiveEventNames.activityReceived, bubble: false }, false);
-                break;
-            case AdaptiveEventNames.activityReceived:
-                const activity = sequence.context.activity;
-                const membersAdded = sequence.state.getValue('turn.membersAdded');
-                if (activity.type === ActivityTypes.Message) {
-                    // Clear any recognizer results
-                    sequence.state.setValue('turn.recognized', undefined);
+                case AdaptiveEventNames.beginDialog:
+                    // Emit trailing ActivityReceived event
+                    handled = await this.processEvent(sequence, { name: AdaptiveEventNames.activityReceived, bubble: false }, false);
+                    break;
+                case AdaptiveEventNames.activityReceived:
+                    const activity = sequence.context.activity;
+                    const membersAdded = sequence.state.getValue('turn.membersAdded');
+                    if (activity.type === ActivityTypes.Message) {
+                        // Clear any recognizer results
+                        sequence.state.setValue('turn.recognized', undefined);
 
-                    // Do we have an empty sequence?
-                    if (sequence.actions.length == 0) {
-                        // Emit trailing UnknownIntent event
-                        handled = await this.processEvent(sequence, { name: AdaptiveEventNames.unknownIntent, bubble: false }, false);
-                    } else {
-                        handled = false;
+                        // Do we have an empty sequence?
+                        if (sequence.actions.length == 0) {
+                            // Emit trailing UnknownIntent event
+                            handled = await this.processEvent(sequence, { name: AdaptiveEventNames.unknownIntent, bubble: false }, false);
+                        } else {
+                            handled = false;
+                        }
+                    } else if (activity.type === ActivityTypes.Event) {
+                        // Emit trailing edge of named event that was received
+                        handled = await this.processEvent(sequence, { name: activity.name, value: activity.value, bubble: false }, false);
+                    } else if (activity.type === ActivityTypes.ConversationUpdate && Array.isArray(membersAdded)) {
+                        // Emit trailing ConversationMembersAdded event
+                        handled = await this.processEvent(sequence, { name: AdaptiveEventNames.conversationMembersAdded, value: membersAdded, bubble: false }, false);
                     }
-                } else if (activity.type === ActivityTypes.Event) {
-                    // Emit trailing edge of named event that was received
-                    handled = await this.processEvent(sequence, { name: activity.name, value: activity.value, bubble: false }, false);
-                } else if (activity.type === ActivityTypes.ConversationUpdate && Array.isArray(membersAdded)) {
-                    // Emit trailing ConversationMembersAdded event
-                    handled = await this.processEvent(sequence, { name: AdaptiveEventNames.conversationMembersAdded, value: membersAdded, bubble: false}, false);
-                }
-                break;
+                    break;
             }
         }
 
@@ -325,11 +338,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
     }
 
-    private async queueFirstMatch(sequence: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<boolean> {
-        for (let i = 0; i < this.triggers.length; i++) {
-            const changes = await this.triggers[i].evaluate(sequence, event, preBubble);
-            if (changes && changes.length > 0) {
-                sequence.queueChanges(changes[0]);
+    private async queueFirstMatch(sequenceContext: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<boolean> {
+        const selection = await this.selector.select(sequenceContext);
+        if (selection.length > 0) {
+            const evt = this.triggers[selection[0]];
+            const changes = await evt.executeAsync(sequenceContext);
+            if (changes != null && changes.length > 0) {
+                sequenceContext.queueChanges(changes[0]);
                 return true;
             }
         }

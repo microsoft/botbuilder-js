@@ -5,39 +5,37 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogEvent } from 'botbuilder-dialogs';
-import { SequenceContext, ActionChangeList, ActionChangeType, ActionState } from '../sequenceContext';
+import { Dialog } from 'botbuilder-dialogs';
 import { OnCondition } from './onCondition';
+import { ExpressionParserInterface, Expression, ExpressionType } from 'botframework-expressions';
 
 /**
- * This rule is triggered when a dialog event matching a list of event names is emitted.
+ * Actions triggered when a dialog event is emitted.
  */
-export class OnDialogEvent implements OnCondition {
-    // If `true`, the rule should be triggered on the leading edge of the event. 
-    public readonly preBubble: boolean;
-
+export class OnDialogEvent extends OnCondition {
     /**
-     * List of events to filter to.
+     * Gets or sets the event to fire on.
      */
-    public readonly events: string[];
-
-    /**
-     * List of actions to update the plan with when triggered.
-     */
-    public readonly actions: Dialog[];
+    public event: string;
 
     /**
      * Creates a new `OnDialogEvent` instance.
-     * @param events (Optional) list of events to filter to.
-     * @param actions (Optional) list of actions to update the plan with when triggered.
-     * @param preBubble (Optional) flag controlling whether the rule triggers on the leading or trailing edge of the event. Defaults to a value of `true`.
+     * @param event (Optional) The event to fire on.
+     * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
+     * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      */
-    constructor(events?: string|string[], actions?: Dialog[], preBubble?: boolean) {
-        this.events = Array.isArray(events) ? events : (events !== undefined ? [events] : []);
-        this.actions = actions || [];
-        this.preBubble = preBubble !== undefined ? preBubble : true;
+    constructor(event: string = null, actions: Dialog[] = [], condition: string = null) {
+        super(condition, actions);
+        this.event = event;
     }
 
+    public getExpression(parser: ExpressionParserInterface): Expression {
+        return Expression.makeExpression(ExpressionType.And, undefined,
+            parser.parse(`turn.dialogEvent.name == '${this.event}'`),
+            super.getExpression(parser));
+    }
+
+    /*
     public evaluate(sequence: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<ActionChangeList[]|undefined> {
         // Limit evaluation to only supported events
         if (preBubble == this.preBubble && this.events.indexOf(event.name) >= 0) {
@@ -69,4 +67,5 @@ export class OnDialogEvent implements OnCondition {
 
         return changeList;
     }
+    */
 }
