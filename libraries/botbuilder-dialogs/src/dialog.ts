@@ -20,10 +20,10 @@ export interface DialogInstance<T = any> {
 
     /**
      * The instances persisted state or the index of the state object to use.
-     * 
+     *
      * @remarks
-     * When the dialog referenced by [id](#id) derives from `DialogCommand`, the state field will 
-     * contain the stack index of the state object that should be inherited by the command.  
+     * When the dialog referenced by [id](#id) derives from `DialogCommand`, the state field will
+     * contain the stack index of the state object that should be inherited by the command.
      */
     state: T;
 }
@@ -92,7 +92,7 @@ export enum DialogTurnStatus {
 
 export interface DialogEvent {
     /**
-     * Flag indicating whether the event will be bubbled to the parent `DialogContext`. 
+     * Flag indicating whether the event will be bubbled to the parent `DialogContext`.
      */
     bubble: boolean;
 
@@ -114,7 +114,7 @@ export interface DialogConfiguration {
     id?: string;
 
     /**
-     * Telemetry client the dialog should use. 
+     * Telemetry client the dialog should use.
      */
     telemetryClient?: BotTelemetryClient;
 }
@@ -160,7 +160,7 @@ export interface DialogTurnResult<T = any> {
     result?: T;
 
     /**
-     * If true, a `DialogCommand` has ended its parent container and the parent should not perform 
+     * If true, a `DialogCommand` has ended its parent container and the parent should not perform
      * any further processing.
      */
     parentEnded?: boolean;
@@ -168,7 +168,7 @@ export interface DialogTurnResult<T = any> {
 
 export interface DialogEvent {
     /**
-     * If `true` the event will be bubbled to the parent `DialogContext` if not handled by the 
+     * If `true` the event will be bubbled to the parent `DialogContext` if not handled by the
      * current dialog.
      */
     bubble: boolean;
@@ -224,7 +224,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
     /**
      * Unique ID of the dialog.
-     * 
+     *
      * @remarks
      * This will be automatically generated if not specified.
      */
@@ -239,14 +239,14 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         this._id = value;
     }
 
-    /** 
+    /**
      * Retrieve the telemetry client for this dialog.
      */
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
 
-    /** 
+    /**
      * Set the telemetry client for this dialog.
      */
     public set telemetryClient(client: BotTelemetryClient) {
@@ -254,8 +254,8 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     }
 
     /**
-     * Fluent method for configuring the dialogs properties. 
-     * @param config Configuration properties to apply. 
+     * Fluent method for configuring the dialogs properties.
+     * @param config Configuration properties to apply.
      */
     public configure(config: DialogConfiguration): this {
         return super.configure(config);
@@ -354,7 +354,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
     /**
      * Called before an event is bubbled to its parent.
-     * 
+     *
      * @remarks
      * This is a good place to perform interception of an event as returning `true` will prevent
      * any further bubbling of the event to the dialogs parents and will also prevent any child
@@ -369,7 +369,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
     /**
      * Called after an event was bubbled to all parents and wasn't handled.
-     * 
+     *
      * @remarks
      * This is a good place to perform default processing logic for an event. Returning `true` will
      * prevent any processing of the event by child dialogs.
@@ -383,9 +383,9 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
     /**
      * Called when a unique ID needs to be computed for a dialog.
-     * 
+     *
      * @remarks
-     * SHOULD be overridden to provide a more contextually relevant ID. The preferred pattern for 
+     * SHOULD be overridden to provide a more contextually relevant ID. The preferred pattern for
      * ID's is `<dialog type>(this.hashedLabel('<dialog args>'))`.
      */
     protected onComputeId(): string {
@@ -394,12 +394,12 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
     /**
      * Aids with computing a unique ID for a dialog by computing a 32 bit hash for a string.
-     * 
+     *
      * @remarks
      * The source for this function was derived from the following article:
-     * 
+     *
      * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
-     * 
+     *
      * @param label String to generate a hash for.
      * @returns A string that is 15 characters or less in length.
      */
@@ -416,5 +416,64 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         }
 
         return label;
+    }
+
+    protected async endParentDialog(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
+        this.popCommands(dc);
+        if (dc.stack.length > 0 || !dc.parent) {
+            return await dc.endDialog(result);
+        } else {
+            const turnResult = await dc.parent.endDialog(result);
+            turnResult.parentEnded = true;
+            return turnResult;
+         }
+    }
+
+    protected async replaceParentDialog(dc: DialogContext, dialogId: string, options?: object): Promise<DialogTurnResult> {
+        this.popCommands(dc);
+        if (dc.stack.length > 0 || !dc.parent) {
+            return await dc.replaceDialog(dialogId, options);
+        } else {
+            const turnResult = await dc.parent.replaceDialog(dialogId, options);
+            turnResult.parentEnded = true;
+            return turnResult;
+         }
+    }
+
+    protected async repeatParentDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
+        this.popCommands(dc);
+        if (dc.stack.length > 0 || !dc.parent) {
+            return await dc.replaceDialog(dc.activeDialog.id, options);
+        } else {
+            const turnsResult = await dc.parent.replaceDialog(dc.parent.activeDialog.id, options);
+            turnsResult.parentEnded = true;
+            return turnsResult;
+         }
+    }
+
+    protected async cancelAllParentDialogs(dc: DialogContext): Promise<DialogTurnResult> {
+        this.popCommands(dc);
+        if (dc.stack.length > 0 || !dc.parent) {
+            return await dc.cancelAllDialogs();
+        } else {
+           const turnResult = await dc.parent.cancelAllDialogs();
+           turnResult.parentEnded = true;
+           return turnResult;
+        }
+    }
+
+    private popCommands(dc: DialogContext): void {
+        // Pop all commands off the stack.
+        let i = dc.stack.length - 1;
+        while (i >= 0) {
+            // Commands store the index of the state they're inheriting so we can tell a command
+            // by looking to see if its state is of type 'number'.
+            if (typeof dc.stack[i].state === 'number') {
+                dc.stack.pop();
+                i--;
+            } else {
+                break;
+            }
+        }
     }
 }

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogCommand, DialogContext } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogCommand, DialogContext, Dialog } from 'botbuilder-dialogs';
 
 export interface ReplaceDialogConfiguration extends DialogConfiguration {
     /**
@@ -15,15 +15,15 @@ export interface ReplaceDialogConfiguration extends DialogConfiguration {
 
     /**
      * (Optional) static options to pass to the goto dialog.
-     * 
+     *
      * @remarks
-     * These options will be merged with any dynamic options configured as 
+     * These options will be merged with any dynamic options configured as
      * [inputProperties](#inputproperties).
      */
     options?: object;
 }
 
-export class ReplaceDialog extends DialogCommand {
+export class ReplaceDialog extends Dialog {
 
     /**
      * Creates a new `ReplaceWithDialog` instance.
@@ -49,9 +49,9 @@ export class ReplaceDialog extends DialogCommand {
 
     /**
      * (Optional) static options to pass to the goto dialog.
-     * 
+     *
      * @remarks
-     * These options will be merged with any dynamic options configured as 
+     * These options will be merged with any dynamic options configured as
      * [inputProperties](#inputproperties).
      */
     public options?: object;
@@ -60,7 +60,7 @@ export class ReplaceDialog extends DialogCommand {
         return super.configure(config);
     }
 
-    protected async onRunCommand(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
+    public async beginDialog (dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         options = Object.assign({}, options, this.options);
         return await this.replaceParentDialog(dc, this.dialogId, options);
     }

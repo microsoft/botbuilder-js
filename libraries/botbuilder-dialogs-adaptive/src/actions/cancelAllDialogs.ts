@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogCommand, DialogContext, DialogConfiguration } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogCommand, DialogContext, DialogConfiguration, Dialog } from 'botbuilder-dialogs';
 
 export interface CancelAllDialogsConfiguration extends DialogConfiguration {
     eventName?: string;
@@ -13,7 +13,7 @@ export interface CancelAllDialogsConfiguration extends DialogConfiguration {
     eventValueProperty?: string;
 }
 
-export class CancelAllDialogs extends DialogCommand {
+export class CancelAllDialogs<O extends object = {}> extends Dialog<O> {
 
     constructor();
     constructor(eventName: string, eventValue?: string);
@@ -22,7 +22,7 @@ export class CancelAllDialogs extends DialogCommand {
         this.eventName = eventName;
         this.eventValue = eventValue
     }
-    
+
     protected onComputeId(): string {
         return `CancelAllDialogs[${this.eventName || ''}]`;
     }
@@ -34,8 +34,8 @@ export class CancelAllDialogs extends DialogCommand {
     public configure(config: CancelAllDialogsConfiguration): this {
         return super.configure(config);
     }
-    
-    protected async onRunCommand(dc: DialogContext, options: object): Promise<DialogTurnResult> {
+
+    public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
         const opt = Object.assign({
             eventName: this.eventName,
             eventValue: this.eventValue

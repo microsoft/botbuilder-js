@@ -1,4 +1,3 @@
-
 /**
  * @module botframework-expressions
  */
@@ -104,7 +103,7 @@ export class Expression {
      */
     public static Lambda(func: (arg0: any) => any): Expression {
         return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda,
-                                                                             (_expression: Expression, state: any): { value: any; error: string } => {
+            (_expression: Expression, state: any): { value: any; error: string } => {
                 let value: any;
                 let error: string;
                 try {
@@ -116,6 +115,15 @@ export class Expression {
                 return { value, error };
             }
         ));
+    }
+
+    /**
+     * Construct and validate an Equal expression.
+     * @param children Child clauses.
+     * @returns New expression.
+     */
+    public static EqualsExpression(...children: Expression[]): Expression {
+        return Expression.MakeExpression(ExpressionType.Equal, undefined, ...children);
     }
 
     /**
@@ -143,6 +151,15 @@ export class Expression {
      */
     public static NotExpression(child: Expression): Expression {
         return Expression.MakeExpression(ExpressionType.Not, undefined, child);
+    }
+
+    /**
+     * Construct a constant expression.
+     * @param value Constant Value
+     * @returns New expression.
+     */
+    public static ConstantExpression(value: Object) {
+        return new Constant(value);
     }
 
     /**

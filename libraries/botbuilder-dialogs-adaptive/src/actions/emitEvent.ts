@@ -14,7 +14,7 @@ export interface EmitEventConfiguration extends DialogConfiguration {
     resultProperty?: string;
 }
 
-export class EmitEvent extends DialogCommand {
+export class EmitEvent<O extends object = {}> extends Dialog<O> {
 
     constructor();
     constructor(eventName: string, eventValue?: string, bubbleEvent?: boolean);
@@ -24,7 +24,7 @@ export class EmitEvent extends DialogCommand {
         this.eventValue = eventValue;
         this.bubbleEvent = bubbleEvent;
     }
-    
+
     protected onComputeId(): string {
         return `EmitEvent[${this.eventName || ''}]`;
     }
@@ -38,8 +38,8 @@ export class EmitEvent extends DialogCommand {
     public configure(config: EmitEventConfiguration): this {
         return super.configure(config);
     }
-    
-    protected async onRunCommand(dc: DialogContext, options: object): Promise<DialogTurnResult> {
+
+    public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
         const opt = Object.assign({
             eventName: this.eventName,
             eventValue: this.eventValue,

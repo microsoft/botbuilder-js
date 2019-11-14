@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, DialogCommand } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogContext, DialogCommand, Dialog } from 'botbuilder-dialogs';
 import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
 
 export interface SetPropertyConfiguration extends DialogConfiguration {
@@ -20,7 +20,7 @@ export interface SetPropertyConfiguration extends DialogConfiguration {
     value?: ExpressionPropertyValue<any>;
 }
 
-export class SetProperty<O extends object = {}> extends DialogCommand<O> {
+export class SetProperty<O extends object = {}> extends Dialog<O> {
     /**
      * The in-memory property to set.
      */
@@ -61,14 +61,14 @@ export class SetProperty<O extends object = {}> extends DialogCommand<O> {
                         super.configure({ [key]: value });
                         break;
                 }
-    
+
             }
         }
 
         return this;
     }
 
-    public async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Ensure planning context and condition
         if (!this.property) { throw new Error(`${this.id}: no 'property' specified.`) }
         if (!this.value) { throw new Error(`${this.id}: no 'value' expression specified.`) }
