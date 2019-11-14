@@ -5,10 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { RecognizerResult } from 'botbuilder-core';
 import { OnDialogEvent } from './onDialogEvent';
 import { AdaptiveEventNames, SequenceContext } from '../sequenceContext';
-import { DialogEvent, Dialog, DialogContextState } from 'botbuilder-dialogs';
+import { DialogEvent, Dialog  } from 'botbuilder-dialogs';
 
 /**
  * This rule is triggered when a message is received and the recognized intents & entities match a
@@ -36,7 +35,7 @@ export class OnIntent extends OnDialogEvent {
         // Ensure all intents, entities, and properties exist.
         const memory = sequence.state;
         for(let i = 0; i < this.matches.length; i++) {
-            const value = DialogContextState.queryMemory(memory, this.matches[i], 1);
+            const value = sequence.state.getValue(this.matches[i]);
             if (!Array.isArray(value) || value.length == 0 || value[0] == undefined) {
                 return false;
             }

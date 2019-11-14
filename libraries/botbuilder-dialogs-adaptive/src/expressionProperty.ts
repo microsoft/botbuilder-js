@@ -6,10 +6,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogContextVisibleState, DialogStateManager } from "botbuilder-dialogs";
+import { DialogStateManager } from "botbuilder-dialogs";
 import { ExpressionEngine, Expression } from 'botframework-expressions';
 
-export type ExpressionDelegate<T> = (state: DialogContextVisibleState) => T;
+export type ExpressionDelegate<T> = (state: object) => T;
 export type ExpressionPropertyValue<T> = string|Expression|ExpressionDelegate<T>;
 
 export class ExpressionProperty<T> {
@@ -40,7 +40,7 @@ export class ExpressionProperty<T> {
                         this._expression = engine.parse(this._value);
                         break; 
                     case 'function':
-                        this._expression = Expression.Lambda(this._value);
+                        //this._expression = Expression.Lambda(this._value);
                         break;
                     default:
                         this._expression = this._value;

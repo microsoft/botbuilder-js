@@ -62,7 +62,7 @@ export class LogAction extends DialogCommand {
         const data = Object.assign({
             utterance: dc.context.activity.text || ''
         }, dc.state, options);
-        const msg = format(this.template, data);
+        const msg = format(this.template, dc);
 
         // Log to console and send trace if needed
         console.log(msg);
