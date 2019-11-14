@@ -5,18 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IExpressionParser, ExpressionEngine } from "botframework-expressions";
-import { ITriggerSelector } from "../triggerSelector";
+import { ExpressionParserInterface, ExpressionEngine } from "botframework-expressions";
+import { TriggerSelector } from "../triggerSelector";
 import { OnCondition } from "../conditions";
 import { SequenceContext } from "../sequenceContext";
 
 /**
  * Select all rules which evaluate to true.
  */
-export class TrueSelector implements ITriggerSelector {
+export class TrueSelector implements TriggerSelector {
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
-    private _parser: IExpressionParser = new ExpressionEngine();
+    private _parser: ExpressionParserInterface = new ExpressionEngine();
 
     initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;

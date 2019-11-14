@@ -8,12 +8,12 @@
 import { ExpressionEngine } from "botframework-expressions";
 import { OnCondition } from "../conditions/onCondition";
 import { SequenceContext } from "../sequenceContext";
-import { ITriggerSelector } from "../triggerSelector";
+import { TriggerSelector } from "../triggerSelector";
 
 /**
- * Select the first true rule implementation of ITriggerSelector
+ * Select the first true rule implementation of TriggerSelector
  */
-export class FirstSelector implements ITriggerSelector {
+export class FirstSelector implements TriggerSelector {
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
     private readonly _parser: ExpressionEngine = new ExpressionEngine();

@@ -7,6 +7,7 @@
  */
 import { Dialog, DialogEvent } from 'botbuilder-dialogs';
 import { SequenceContext, ActionChangeList } from '../sequenceContext';
+import { Expression, IExpressionParser } from 'botframework-expressions';
 
 export interface OnCondition {
     /**
@@ -22,4 +23,6 @@ export interface OnCondition {
      * @param preBubble If `true`, the leading edge of the event is being evaluated.
      */
     evaluate(planning: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<ActionChangeList[]|undefined>;
+
+    getExpression(parser: IExpressionParser): Expression;
 }

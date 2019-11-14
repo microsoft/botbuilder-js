@@ -7,13 +7,13 @@
  */
 import { Expression, ExpressionEngine } from "botframework-expressions";
 import { OnCondition } from "../conditions/onCondition";
-import { ITriggerSelector } from "../triggerSelector";
+import { TriggerSelector } from "../triggerSelector";
 import { SequenceContext } from "../sequenceContext";
 
 /**
  * Select between two rule selectors based on a condition.
  */
-export class ConditionalSelector implements ITriggerSelector {
+export class ConditionalSelector implements TriggerSelector {
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
     private _condition: Expression;
@@ -27,12 +27,12 @@ export class ConditionalSelector implements ITriggerSelector {
     /**
      * Gets or sets selector if condition is true.
      */
-    public ifTrue: ITriggerSelector;
+    public ifTrue: TriggerSelector;
 
     /**
      * Gets or sets selector if condition is false.
      */
-    public ifFalse: ITriggerSelector;
+    public ifFalse: TriggerSelector;
 
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;
@@ -41,7 +41,7 @@ export class ConditionalSelector implements ITriggerSelector {
 
     public select(context: SequenceContext): Promise<number[]> {
         const { value, error } = this._condition.tryEvaluate(context.state);
-        let selector: ITriggerSelector;
+        let selector: TriggerSelector;
         if (value && error == null) {
             selector = this.ifTrue;
             this.ifTrue.initialize(this._conditionals, this._evaluate);

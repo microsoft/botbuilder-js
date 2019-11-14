@@ -11,7 +11,7 @@ import { SequenceContext } from "./sequenceContext";
 /**
  * Select the trigger to execute in a given state.
  */
-export interface ITriggerSelector {
+export interface TriggerSelector {
     /**
      * Initialize the selector with the set of rules.
      * @param conditionals Possible rules to match.
