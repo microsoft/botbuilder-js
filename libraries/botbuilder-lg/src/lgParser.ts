@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-expression-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -53,10 +53,10 @@ export class LGParser {
         }
 
         const templates: TemplateDefinitionContext[] = file.paragraph()
-            .map((x: ParagraphContext) => x.templateDefinition())
-            .filter((x: TemplateDefinitionContext) => x !== undefined);
+            .map((x: ParagraphContext): TemplateDefinitionContext => x.templateDefinition())
+            .filter((x: TemplateDefinitionContext): boolean => x !== undefined);
 
-        return templates.map((x: TemplateDefinitionContext) => new LGTemplate(x, lgfileContent, source));
+        return templates.map((x: TemplateDefinitionContext): LGTemplate => new LGTemplate(x, lgfileContent, source));
     }
 
     private static extractLGImports(file: FileContext, source: string = ''): LGImport[] {
@@ -66,9 +66,9 @@ export class LGParser {
         }
 
         const imports: ImportDefinitionContext[] = file.paragraph()
-            .map((x: ParagraphContext) => x.importDefinition())
-            .filter((x: ImportDefinitionContext) => x !== undefined);
+            .map((x: ParagraphContext): ImportDefinitionContext => x.importDefinition())
+            .filter((x: ImportDefinitionContext): boolean => x !== undefined);
 
-        return imports.map((x: ImportDefinitionContext) => new LGImport(x, source));
+        return imports.map((x: ImportDefinitionContext): LGImport => new LGImport(x, source));
     }
 }

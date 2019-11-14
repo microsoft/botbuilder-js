@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-expression-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11,20 +11,20 @@
  */
 
 export class EvaluationTarget {
-    public TemplateName: string;
-    public Scope: any;
-    public  EvaluatedChildren : Map<string, any>;
+    public templateName: string;
+    public scope: any;
+    public  evaluatedChildren: Map<string, any>;
     public constructor(templateName: string, scope: any) {
-        this.TemplateName = templateName;
-        this.Scope = scope;
-        this.EvaluatedChildren = new Map<string, any>();
+        this.templateName = templateName;
+        this.scope = scope;
+        this.evaluatedChildren = new Map<string, any>();
     }
 
-    public GetId(): string {
-        if (this.Scope !== undefined && this.Scope !== null) {
-            return this.TemplateName + JSON.stringify(this.Scope);
+    public getId(): string {
+        if (this.scope !== undefined && this.scope !== null) {
+            return this.templateName + JSON.stringify(this.scope);
         }
 
-        return this.TemplateName;
+        return this.templateName;
     }
 }

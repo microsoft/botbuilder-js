@@ -1,13 +1,17 @@
 {
   "name": "botbuilder-lg",
-  "description": "Typescript version of Microsoft.Expression from C# version (https://github.com/Microsoft/botbuilder-dotnet/tree/ComposableDialog/libraries/Microsoft.CommonExpressions) ",
-  "version": "4.5.0",
+  "author": "Microsoft Corp.",
+  "description": "Bot Builder Language Generation is a library to help build sophisticated bot responses with multiple phrases and context-based expressions.",
+  "version": "4.1.6",
   "license": "MIT",
   "keywords": [
     "botbuilder",
     "botframework",
-    "expression"
+    "language generation"
   ],
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Microsoft/botbuilder-js.git"
@@ -16,7 +20,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "antlr4ts": "0.5.0-alpha.1",
-    "botframework-expressions": "4.5.0",
+    "botframework-expressions": "4.1.6",
     "lodash": "^4.17.11",
     "uuid": "^3.3.3"
   },
@@ -24,13 +28,14 @@
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.18",
     "nyc": "^11.4.1",
-    "ts-node": "^4.1.0",
-    "typescript-tslint-plugin": "^0.3.1"
+    "ts-node": "^4.1.0"
   },
   "scripts": {
-    "build": "tsc",
     "test": "tsc && nyc mocha tests/ --timeout 60000",
-    "clean": "erase /q /s .\\lib"
+    "build": "tsc",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-lg --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-lg .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - LG\" --readme none",
+    "clean": "erase /q /s .\\lib",
+    "set-version": "npm version --allow-same-version ${Version}"
   },
   "files": [
     "/lib",

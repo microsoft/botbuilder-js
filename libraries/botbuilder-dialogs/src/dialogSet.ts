@@ -10,10 +10,6 @@ import { Dialog } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 
 export interface DialogDependencies {
-    getDependencies(): Dialog[];
-}
-
-export interface DialogDependencies {
     /**
      * Returns a dialogs child dialog dependencies so they can be added to a containers dialog set.
      */

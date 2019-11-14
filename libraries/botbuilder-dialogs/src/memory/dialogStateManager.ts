@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { PathResolver, DollarPathResolver, HashPathResolver, AtAtPathResolver, AtPathResolver, PercentPathResolver } from './pathResolvers';
-import { MemoryScope, ScopePath, SettingsMemoryScope, DialogMemoryScope, ClassMemoryScope, ThisMemoryScope } from './scopes';
+import { MemoryScope, SettingsMemoryScope, DialogMemoryScope, ClassMemoryScope, ThisMemoryScope } from './scopes';
 import { DialogContext } from '../dialogContext';
 import { ConversationState, UserState } from 'botbuilder-core';
 import { ConversationMemoryScope } from './scopes/conversationMemoryScope';
@@ -63,7 +63,7 @@ export class DialogStateManager {
 
     public set configuration(value: DialogStateManagerConfiguration) {
         if (this.dialogContext.parent) {
-            this.dialogContext.parent.state.configuration = value;
+            throw new Error(`DialogStateManager.configuration: configuration should only be assigned to root dialog context.`);
         } else {
             this._config = value;
         }

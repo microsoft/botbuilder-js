@@ -10,8 +10,8 @@
  * Convert TimeZone between Windows and Iana.
  */
 export class TimeZoneConverter {
-    private static readonly ianaToWindows: Map<string, string> = new Map<string, string>();
-    private static readonly windowsToIana: Map<string, string> = new Map<string, string>();
+    private static readonly ianaToWindowsMap: Map<string, string> = new Map<string, string>();
+    private static readonly windowsToIanaMap: Map<string, string> = new Map<string, string>();
     private static readonly validTimezonStr: string [] = [];
     private static readonly seperator: string = '    ';
     private static readonly mappingString: string = 'AUS Central Standard Time,001,Australia/Darwin\
@@ -524,31 +524,31 @@ export class TimeZoneConverter {
     Yakutsk Standard Time,001,Asia/Yakutsk\
     Yakutsk Standard Time,RU,Asia/Yakutsk Asia/Khandyga';
 
-    public static InnaToWindows(ianaTimeZoneId: string): string {
-        this.LoadData();
-        if (this.ianaToWindows.has(ianaTimeZoneId)) {
-            return this.ianaToWindows.get(ianaTimeZoneId);
+    public static ianaToWindows(ianaTimeZoneId: string): string {
+        this.loadData();
+        if (this.ianaToWindowsMap.has(ianaTimeZoneId)) {
+            return this.ianaToWindowsMap.get(ianaTimeZoneId);
         }
 
         return ianaTimeZoneId;
     }
 
-    public static WindowsToIana(windowsTimeZoneId: string): string {
-        this.LoadData();
-        if (this.windowsToIana.has(`001|${windowsTimeZoneId}`)) {
-            return this.windowsToIana.get(`001|${windowsTimeZoneId}`);
+    public static windowsToIana(windowsTimeZoneId: string): string {
+        this.loadData();
+        if (this.windowsToIanaMap.has(`001|${ windowsTimeZoneId }`)) {
+            return this.windowsToIanaMap.get(`001|${ windowsTimeZoneId }`);
         }
 
         return windowsTimeZoneId;
     }
 
-    public static VerifyTimeZoneStr(timezoneStr: string): boolean {
-        this.LoadData();
+    public static verifyTimeZoneStr(timezoneStr: string): boolean {
+        this.loadData();
 
         return this.validTimezonStr.includes(timezoneStr);
     }
 
-    private static LoadData(): void {
+    private static loadData(): void {
         const data: string = this.mappingString;
         const lines: string [] = data.split(this.seperator);
         for (const line of lines) {
@@ -557,8 +557,8 @@ export class TimeZoneConverter {
             const territory: string = tokens[1];
             const ianaIDs: string[] = tokens[2].split(' ');
             for (const ianaID of ianaIDs) {
-                if (!this.ianaToWindows.has(ianaID)) {
-                    this.ianaToWindows.set(ianaID, windowsID);
+                if (!this.ianaToWindowsMap.has(ianaID)) {
+                    this.ianaToWindowsMap.set(ianaID, windowsID);
                 }
 
                 if (!this.validTimezonStr.includes(ianaID)) {
@@ -566,8 +566,8 @@ export class TimeZoneConverter {
                 }
             }
 
-            if (!this.windowsToIana.has(`${territory}|${windowsID}`)) {
-                this.windowsToIana.set(`${territory}|${windowsID}`, ianaIDs[0]);
+            if (!this.windowsToIanaMap.has(`${ territory }|${ windowsID }`)) {
+                this.windowsToIanaMap.set(`${ territory }|${ windowsID }`, ianaIDs[0]);
             }
 
             if (!this.validTimezonStr.includes(windowsID)) {

@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-expression-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,22 +13,22 @@ import { ImportDefinitionContext } from './generated/LGFileParser';
  */
 export class LGImport {
 
-    public Description: string;
+    public description: string;
 
-    public Id: string;
+    public id: string;
 
-    public Source: string;
+    public source: string;
 
-    public ParseTree: ImportDefinitionContext;
+    public parseTree: ImportDefinitionContext;
 
-    constructor(parseTree: ImportDefinitionContext, source: string = '') {
-        this.ParseTree = parseTree;
-        this.Source = source;
-        this.Description = this.ExtractDescription(parseTree);
-        this.Id = this.ExtractId(parseTree);
+    public constructor(parseTree: ImportDefinitionContext, source: string = '') {
+        this.parseTree = parseTree;
+        this.source = source;
+        this.description = this.extractDescription(parseTree);
+        this.id = this.extractId(parseTree);
     }
 
-    private readonly ExtractDescription = (parseTree: ImportDefinitionContext): string => parseTree.IMPORT_DESC().text.replace('[', '').replace(']', '');
+    private readonly extractDescription = (parseTree: ImportDefinitionContext): string => parseTree.IMPORT_DESC().text.replace('[', '').replace(']', '');
 
-    private readonly ExtractId = (parseTree: ImportDefinitionContext): string => parseTree.IMPORT_PATH().text.replace('(', '').replace(')', '');
+    private readonly extractId = (parseTree: ImportDefinitionContext): string => parseTree.IMPORT_PATH().text.replace('(', '').replace(')', '');
 }

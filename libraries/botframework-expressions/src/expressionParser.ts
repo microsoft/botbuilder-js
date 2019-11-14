@@ -11,7 +11,7 @@ import { Expression } from './expression';
 /**
  * Interface to parse a string into an Expression
  */
-export interface IExpressionParser {
+export interface ExpressionParserInterface {
     /**
      * Parse a string into an Expression
      * @param expression Expression to parse.
