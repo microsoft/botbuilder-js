@@ -64,11 +64,11 @@ export class MemoryStorage  implements Storage {
             Object.keys(changes).forEach((key: any) => {
                 const newItem: any = changes[key];
                 const old: string = this.memory[key];
-                if (!old || newItem.eTag === '*') {
+                if (!old || newItem.eTag === '*' || !newItem.eTag) {
                     saveItem(key, newItem);
                 } else {
                     const oldItem: any = <any>JSON.parse(old);
-                    if (newItem.eTag === oldItem.eTag || !newItem.eTag) {
+                    if (newItem.eTag === oldItem.eTag) {
                         saveItem(key, newItem);
                     } else {
                         reject(new Error(`Storage: error writing "${ key }" due to eTag conflict.`));
