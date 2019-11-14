@@ -5,8 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as jsonpath from 'jsonpath';
-import { DialogContextState } from 'botbuilder-dialogs';
+import { DialogContext } from 'botbuilder-dialogs';
 
 /**
  * @private
@@ -17,9 +16,9 @@ import { DialogContextState } from 'botbuilder-dialogs';
  * any valid JSONPath expression.
  * @param template String template to compile.
  */
-export function compile(template: string): (data: object) => string {
+export function compile(template: string): (dc: DialogContext) => string {
     // Break template into chunks.
-    const chunks: ((data: object) => string)[] = [];
+    const chunks: ((dc: DialogContext) => string)[] = [];
     let buffer = '';
     let inSlot = false;
     for (let i = 0; i < template.length; i++) {
@@ -57,9 +56,9 @@ export function compile(template: string): (data: object) => string {
     }
 
     // Return stitching function
-    return (data: object) => {
+    return (dc: DialogContext) => {
         let output = '';
-        chunks.forEach((fn) => output += fn(data));
+        chunks.forEach((fn) => output += fn(dc));
         return output; 
     };
 }
@@ -74,18 +73,17 @@ export function compile(template: string): (data: object) => string {
  * @param template String template to compile.
  * @param data The data used to fill the template slots.
  */
-export function format(template: string, data: object): string {
-    return compile(template)(data);
+export function format(template: string, dc: DialogContext): string {
+    return compile(template)(dc);
 }
 
-function textLiteral(buffer: string): (data: object) => string {
-    return (data) => buffer;
+function textLiteral(buffer: string): (dc: DialogContext) => string {
+    return (dc) => buffer;
 }
 
-function textSlot(path: string): (data: object) => string {
-    path = DialogContextState.resolvePath(path);
-    return (data) => {
-        const value = jsonpath.value(data, path);
+function textSlot(path: string): (dc: DialogContext) => string {
+    return (dc) => {
+        const value = dc.state.getValue(path);
         switch (typeof value) {
             case 'object':
                 return JSON.stringify(value);

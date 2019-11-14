@@ -1,3 +1,10 @@
+/**
+ * @module botbuilder-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { Diagnostic } from './diagnostic';
 
 /**
@@ -5,14 +12,14 @@ import { Diagnostic } from './diagnostic';
  */
 export class LGException  extends Error {
 
-    private Diagnostics: Diagnostic[];
-    constructor(m: string, diagnostics: Diagnostic[]) {
+    private diagnostics: Diagnostic[];
+    public constructor(m: string, diagnostics: Diagnostic[]) {
         super(m);
-        this.Diagnostics = diagnostics;
+        this.diagnostics = diagnostics;
         Object.setPrototypeOf(this, LGException .prototype);
     }
 
     public getDiagnostic(): Diagnostic[] {
-        return this.Diagnostics;
+        return this.diagnostics;
     }
 }

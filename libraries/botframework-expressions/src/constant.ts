@@ -18,15 +18,15 @@ export class Constant extends Expression {
     /**
      * Constant value.
      */
-    public get Value(): any {
+    public get value(): any {
         return this._value;
     }
 
-    public set Value(theValue: any) {
-        this.Evaluator.ReturnType =
+    public set value(theValue: any) {
+        this.evaluator.returnType =
             typeof theValue === 'string' ? ReturnType.String
                 : typeof theValue === 'boolean' ? ReturnType.Boolean
-                : typeof theValue === 'number' && !Number.isNaN(theValue) ? ReturnType.Number
+                    : typeof theValue === 'number' && !Number.isNaN(theValue) ? ReturnType.Number
                         : ReturnType.Object;
 
         this._value = theValue;
@@ -35,22 +35,22 @@ export class Constant extends Expression {
     private _value: any;
     public constructor(value: any) {
         super(ExpressionType.Constant, new ExpressionEvaluator(ExpressionType.Constant,
-                                                               (expression: Expression, state: any): { value: any; error: string } => {
-                return { value: (<Constant>expression).Value, error: undefined };
+            (expression: Expression): { value: any; error: string } => {
+                return { value: (expression as Constant).value, error: undefined };
             }
         ));
-        this.Value = value;
+        this.value = value;
     }
 
     public toString(): string {
-        if (this.Value === undefined) {
+        if (this.value === undefined) {
             return 'null';
         }
 
-        if (typeof this.Value === 'string') {
-            return `'${this.Value}'`;
+        if (typeof this.value === 'string') {
+            return `'${ this.value }'`;
         }
 
-        return this.Value === undefined ? undefined : this.Value.toString();
+        return this.value === undefined ? undefined : this.value.toString();
     }
 }

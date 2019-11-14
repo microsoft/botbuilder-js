@@ -11,9 +11,9 @@ import * as stringTemplate from './stringTemplate';
 
 export class ActivityProperty {
     private _value: Partial<Activity>|string;
-    private _textTemplate: (data: object) => string;
+    private _textTemplate: (dc: DialogContext) => string;
     private _speak: string;
-    private _speakTemplate: (data: object) => string;
+    private _speakTemplate: (dc: DialogContext) => string;
 
     public get displayLabel(): string {
         if (typeof this._value === 'object') {
@@ -65,19 +65,18 @@ export class ActivityProperty {
 
     public format(dc: DialogContext, extraData?: object, override?: Partial<Activity>|string): Partial<Activity> {
         // Format basic activity
-        const data = Object.assign({}, dc.state, extraData);
         let activity: Partial<Activity>;
         if (override) {
-            activity = this.formatOverride(override, data);
+            activity = this.formatOverride(override, dc);
         } else if (typeof this._value === 'string') {
             activity = {
                 type: ActivityTypes.Message,
-                text: this._textTemplate(data)
+                text: this._textTemplate(dc)
             }
         } else if (typeof this._value === 'object') {
             if (this._value.type === ActivityTypes.Message && this._textTemplate) {
                 activity = Object.assign({}, this._value, {
-                    text: this._textTemplate(data)
+                    text: this._textTemplate(dc)
                 });
             } else {
                 activity = this._value;
@@ -89,9 +88,9 @@ export class ActivityProperty {
         // Apply speak and inputHints
         if (activity.type === ActivityTypes.Message) {
             if (activity.speak) {
-                activity.speak = stringTemplate.format(activity.speak, data);
+                activity.speak = stringTemplate.format(activity.speak, dc);
             } else if (this._speakTemplate) {
-                activity.speak = this._speakTemplate(data);
+                activity.speak = this._speakTemplate(dc);
             }
             if (this.inputHint && !activity.inputHint) {
                 activity.inputHint = this.inputHint;
@@ -101,15 +100,15 @@ export class ActivityProperty {
         return activity;
     }
 
-    private formatOverride(override: Partial<Activity>|string, data: object): Partial<Activity> {
+    private formatOverride(override: Partial<Activity>|string, dc: DialogContext): Partial<Activity> {
         if (typeof override === 'string') {
             return {
                 type: ActivityTypes.Message,
-                text: stringTemplate.format(override, data)
+                text: stringTemplate.format(override, dc)
             };
         } else if (override.type === ActivityTypes.Message && override.text) {
             return Object.assign({}, override, {
-                text: stringTemplate.format(override.text, data)
+                text: stringTemplate.format(override.text, dc)
             });
         } else {
             return override;
