@@ -55,7 +55,7 @@ export class LGResource {
 
         const templateNameLine: string = this.buildTemplateNameLine(newTemplateName, parameters);
         const newTemplateBody: string = this.convertTemplateBody(templateBody);
-        const content = `${ templateNameLine }\r\n${ newTemplateBody }`;
+        const content = `${ templateNameLine }\r\n${ newTemplateBody }\r\n`;
         const startLine: number = template.parseTree.start.line - 1;
         const stopLine: number = template.parseTree.stop.line - 1;
 
@@ -79,7 +79,7 @@ export class LGResource {
 
         const templateNameLine: string = this.buildTemplateNameLine(templateName, parameters);
         const newTemplateBody: string = this.convertTemplateBody(templateBody);
-        const newContent = `${ this.content }\r\n${ templateNameLine }\r\n${ newTemplateBody }`;
+        const newContent = `${ this.content.trimRight() }\r\n\r\n${ templateNameLine }\r\n${ newTemplateBody }\r\n`;
 
         return LGParser.parse(newContent, this.id);
     }
@@ -115,15 +115,55 @@ export class LGResource {
             throw new Error(`index out of range.`);
         }
 
-        destList.push(...originList.slice(0, startLine));
+        destList.push(...this.trimList(originList.slice(0, startLine)));
 
-        if (replaceString !== undefined && replaceString.length > 0) {
-            destList.push(replaceString);
+        if (stopLine < originList.length - 1) {
+            // insert at the middle of the content
+            destList.push('\r\n');
+            if (replaceString !== undefined && replaceString.length > 0){
+                destList.push(replaceString);
+                destList.push('\r\n');
+            }
+
+            destList.push(...this.trimList(originList.slice(stopLine + 1)));
+        } else {
+            // insert at the tail of the content
+            if (replaceString !== undefined && replaceString.length > 0){
+                destList.push('\r\n');
+                destList.push(replaceString);
+            }
         }
 
-        destList.push(...originList.slice(stopLine + 1));
+        return this.buildNewLGContent(this.trimList(destList));
+    }
 
-        return this.buildNewLGContent(destList);
+    /**
+     * trim the newlines at the beginning or at the tail of the array
+     * @param input input array
+     */
+    private trimList(input: string[]): string[] {
+        if (input === undefined) {
+            return undefined;
+        }
+
+        let startIndex = 0;
+        let endIndex = input.length;
+
+        for(let i = 0; i< input.length; i++) {
+            if (input[i].trim() !== '') {
+                startIndex = i;
+                break;
+            }
+        }
+
+        for(let i = input.length - 1; i >= 0; i--) {
+            if (input[i].trim() !== '') {
+                endIndex = i + 1;
+                break;
+            }
+        }
+
+        return input.slice(startIndex, endIndex);
     }
 
     private buildNewLGContent(destList: string[]): string {
@@ -133,7 +173,7 @@ export class LGResource {
             result = result.concat(currentItem);
             if (currentItem.endsWith('\r')) {
                 result = result.concat('\n');
-            } else if (i < destList.length - 1) {
+            } else if (i < destList.length - 1 && !currentItem.endsWith('\r\n')) {
                 result = result.concat('\r\n');
             }
         }
