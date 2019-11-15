@@ -38,8 +38,8 @@ export class MemoryStorage  implements Storage {
     }
 
     public read(keys: string[]): Promise<StoreItems> {
-        if (!keys) { throw new ReferenceError(`Keys are required when reading.`); }
         return new Promise<StoreItems>((resolve: any, reject: any): void => {
+            if (!keys) { throw new ReferenceError(`Keys are required when reading.`); }
             const data: StoreItems = {};
             keys.forEach((key: string) => {
                 const item: string = this.memory[key];
@@ -52,9 +52,9 @@ export class MemoryStorage  implements Storage {
     }
 
     public write(changes: StoreItems): Promise<void> {
-        if (!changes) { throw new ReferenceError(`Changes are required when writing.`); }
         const that: MemoryStorage = this;
         function saveItem(key: string, item: any): void {
+            if (!changes) { throw new ReferenceError(`Changes are required when writing.`); }
             const clone: any = {...item};
             clone.eTag = (that.etag++).toString();
             that.memory[key] = JSON.stringify(clone);
