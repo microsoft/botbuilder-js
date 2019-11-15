@@ -54,13 +54,13 @@ export class MemoryStorage  implements Storage {
     public write(changes: StoreItems): Promise<void> {
         const that: MemoryStorage = this;
         function saveItem(key: string, item: any): void {
-            if (!changes) { throw new ReferenceError(`Changes are required when writing.`); }
             const clone: any = {...item};
             clone.eTag = (that.etag++).toString();
             that.memory[key] = JSON.stringify(clone);
         }
 
         return new Promise<void>((resolve: any, reject: any): void => {
+            if (!changes) { throw new ReferenceError(`Changes are required when writing.`); }
             Object.keys(changes).forEach((key: any) => {
                 const newItem: any = changes[key];
                 const old: string = this.memory[key];
