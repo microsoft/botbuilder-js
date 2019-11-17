@@ -518,6 +518,15 @@ describe('TeamsActivityHandler', () => {
             return activity;
         }
 
+        function createSignInVerifyState(channelData) {
+            const activity = {
+                type: ActivityTypes.Invoke,
+                name: 'signin/verifyState',
+                channelData
+            };
+            return activity;
+        }
+
         let onConversationUpdateCalled = false;
         let onDialogCalled = false;
 
@@ -764,9 +773,9 @@ describe('TeamsActivityHandler', () => {
         
         it('onTeamsTeamRenamed routed activity', () => {
             const bot = new TeamsActivityHandler();
-    
+
             let onTeamsTeamRenamedEventCalled = false;
-    
+
             const team = { id: 'team' };
             const activity = createConvUpdateActivity({ team, eventType: 'teamRenamed' });
 
@@ -792,17 +801,51 @@ describe('TeamsActivityHandler', () => {
                 onDialogCalled = true;
                 await next();
             });
-    
+
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
             });
-    
+
             adapter.send(activity)
                 .then(() => {
                     assert(onTeamsTeamRenamedEventCalled, 'onTeamsTeamRenamedEvent handler not called');
                     assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
                 });
+        });
+
+        it('signin/verifyState routed activity', async () => {
+            onDialogCalled = false;
+            handleTeamsSigninVerifyStateCalled = false;
+
+            class InvokeHandler extends TeamsActivityHandler {
+                constructor() {
+                    super();
+                    
+                    this.onDialog(async (context, next) => {
+                        assert(context, 'context not found');
+                        onDialogCalled = true;
+                        await next();
+                    });
+                }
+
+                async handleTeamsSigninVerifyState(context) {
+                    assert(context, 'context not found');
+                    handleTeamsSigninVerifyStateCalled = true;
+                }
+            }
+    
+            const bot = new InvokeHandler();
+            const team = { id: 'team' };
+            const activity = createSignInVerifyState({ team, channelId: 'msteams' });
+            
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            await adapter.send(activity);
+            assert(onDialogCalled, 'onDialog handler not called'); 
+            assert(handleTeamsSigninVerifyStateCalled, 'handleTeamsSigninVerifyState handler not called'); 
         });
     });
 });
