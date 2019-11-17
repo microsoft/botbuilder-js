@@ -10,11 +10,11 @@ import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
 
 /**
-  * Middleware that will send a typing indicator autmatically for each message.
+  * Middleware that will send a typing indicator automatically for each message.
   *
   * @remarks
   * When added, this middleware will send typing activities back to the user when a Message activity
-  * is receieved to let them know that the bot has received the message and is working on the response.
+  * is received to let them know that the bot has received the message and is working on the response.
   * You can specify a delay in milliseconds before the first typing activity is sent and then a frequency,
   * also in milliseconds which determines how often another typing activity is sent. Typing activities
   * will continue to be sent until your bot sends another message back to the user
@@ -67,7 +67,7 @@ export class ShowTypingMiddleware implements Middleware {
                         };
 
                         // Sending the Activity directly via the Adapter avoids other middleware and avoids setting the
-                        // responded flag. However this also requires tha tthe conversation reference details are explicitly added.
+                        // responded flag. However this also requires that the conversation reference details are explicitly added.
                         const conversationReference: Partial<ConversationReference> =
                                 TurnContext.getConversationReference(context.activity);
                         typingActivity = TurnContext.applyConversationReference(typingActivity, conversationReference);
@@ -109,7 +109,7 @@ export class ShowTypingMiddleware implements Middleware {
         };
 
         // Sending the Activity directly via the Adapter avoids other middleware and avoids setting the
-        // responded flag. However this also requires tha tthe conversation reference details are explicitly added.
+        // responded flag. However this also requires that the conversation reference details are explicitly added.
         const conversationReference: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
         typingActivity = TurnContext.applyConversationReference(typingActivity, conversationReference);
 
