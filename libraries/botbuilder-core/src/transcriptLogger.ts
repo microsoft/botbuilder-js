@@ -47,14 +47,15 @@ export class TranscriptLoggerMiddleware implements Middleware {
 
         // hook up onSend pipeline
         context.onSendActivities(async (ctx: TurnContext, activities: Partial<Activity>[], next2: () => Promise<ResourceResponse[]>) => {
-            // run full pipeline
+            // Run full pipeline.
             const responses: ResourceResponse[] = await next2();
 
             activities.map((a: Partial<Activity>, index: number) => {
                 const clonedActivity = this.cloneActivity(a);
-                // If present, set the id of the cloned activity to the id received from the server.
-                if (index < responses.length) {
-                    clonedActivity.id = responses[index].id;
+                if (!clonedActivity.id) {
+                    clonedActivity.id = responses && responses[index] ?
+                        responses[index].id :
+                        undefined;
                 }
 
                 // For certain channels, a ResourceResponse with an id is not always sent to the bot.
@@ -62,11 +63,10 @@ export class TranscriptLoggerMiddleware implements Middleware {
                 // If there is no outgoing timestamp, the current time for the bot is used for the activity.id.
                 // See https://github.com/microsoft/botbuilder-js/issues/1122
                 if (!clonedActivity.id) {
-                    const prefix = `g_${Math.random().toString(36).slice(2,8)}`;
                     if (clonedActivity.timestamp) {
-                        clonedActivity.id = `${prefix}${new Date(clonedActivity.timestamp).getTime().toString()}`;
+                        clonedActivity.id = new Date(clonedActivity.timestamp).getTime().toString();
                     } else {
-                        clonedActivity.id = `${prefix}${new Date().getTime().toString()}`;
+                        clonedActivity.id = Date.now().toString();
                     }
                 }
 
