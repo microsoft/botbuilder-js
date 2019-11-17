@@ -355,7 +355,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         const action = this.createChildContext(sequence) as SequenceContext;
         if (action) {
             // Continue current action
-            console.log(`running action: ${action.actions[0].dialogId}`);
+            // console.log(`running action: ${action.actions[0].dialogId}`);
             let result = await action.continueDialog();
 
             // Start action if not continued

@@ -16,6 +16,7 @@ export * from './forEachPage';
 export * from './emitEvent';
 export * from './endDialog';
 export * from './endTurn';
+export * from './expectMessage';
 export * from './ifCondition';
 export * from './logAction';
 export * from './repeatDialog';

@@ -337,7 +337,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     /// <returns>True if the event is handled by the current dialog and bubbling should stop.</returns>
     public async onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         // Before bubble
-        let handled = await this.onPreBubbleEventAsync(dc, e);
+        let handled = await this.onPreBubbleEvent(dc, e);
 
         // Bubble as needed
         if (!handled && e.bubble && dc.parent != undefined) {
@@ -346,7 +346,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
         // Post bubble
         if (!handled) {
-            handled = await this.onPostBubbleEventAsync(dc, e);
+            handled = await this.onPostBubbleEvent(dc, e);
         }
 
         return handled;
@@ -363,7 +363,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * @param e The event being raised.
      * @returns Whether the event is handled by the current dialog and further processing should stop.
      */
-    protected async onPreBubbleEventAsync(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+    protected async onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         return false;
     }
 
@@ -377,7 +377,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * @param e The event being raised.
      * @returns Whether the event is handled by the current dialog and further processing should stop.
      */
-    protected async onPostBubbleEventAsync(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+    protected async onPostBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         return false;
     }
 
