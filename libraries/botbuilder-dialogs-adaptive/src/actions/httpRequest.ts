@@ -28,43 +28,84 @@ export interface HttpRequestConfiguration extends DialogConfiguration {
 }
 
 export enum ResponsesTypes {
+    /**
+     * No response expected
+     */
     None,
+
+    /**
+     * Plain JSON response
+     */
     Json,
+
+    /**
+     * JSON Activity object to send to the user
+     */
     Activity,
+
+    /**
+     * Json Array of activity objects to send to the user
+     */
     Activities
 }
 
 export enum HttpMethod {
+    /**
+     * Http GET
+     */
     GET,
+
+    /**
+     * Http POST
+     */
     POST,
+
+    /**
+     * Http PATCH
+     */
     PATCH,
+
+    /**
+     * Http PUT
+     */
     PUT,
+
+    /**
+     * Http DELETE
+     */
     DELETE
 }
 
-// export class Result {
-//     constructor();
-//     constructor(headers: object) {
-
-//     }
-
-//     public statusCode: number;
-
-//     public re
-// }
-
 export class HttpRequest<O extends object = {}> extends Dialog<O> {
 
+    /**
+     * Http Method
+     */
     public method?: HttpMethod;
 
+    /**
+     * Http Url
+     */
     public url?: ExpressionProperty<string>;
 
+    /**
+     * Http Headers
+     */
     public headers?: ExpressionProperty<any>;
 
+    /**
+     * Http Body
+     */
     public body?: ExpressionProperty<any>;
 
+    /**
+     * The response type of the response
+     */
     public responseType?: ResponsesTypes;
 
+    /**
+     * Gets or sets the property expression to store the HTTP response in.
+     */
     public resultProperty?: string;
 
     constructor();
@@ -95,12 +136,13 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
 
         const url = this.url.evaluate(this.id, dc.state);
         const body = this.body.evaluate(this.id, dc.state);
-        const headers = this.body.evaluate(this.id, dc.state);
+        const headers = this.headers.evaluate(this.id, dc.state);
 
         var options = {
             method: this.method.toString(),
             uri: url,
             body: body,
+            headers: headers,
             json: true
         };
 
