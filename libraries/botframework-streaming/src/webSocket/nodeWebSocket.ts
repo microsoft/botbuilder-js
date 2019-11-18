@@ -16,7 +16,6 @@ const NONCE_LENGTH = 16;
 
 export class NodeWebSocket implements ISocket {
     private wsSocket: WebSocket;
-    private connected: boolean;
     protected wsServer: WebSocket.Server;
 
     /**
@@ -26,8 +25,6 @@ export class NodeWebSocket implements ISocket {
      */
     public constructor(wsSocket?: WebSocket) {
         this.wsSocket = wsSocket;
-        this.connected = !!wsSocket;
-        this.wsServer = new WebSocket.Server({ noServer: true });
     }
 
     /**
@@ -37,11 +34,11 @@ export class NodeWebSocket implements ISocket {
      * @param head Buffer
      */
     public async create(req: IncomingMessage, socket: Socket, head: Buffer): Promise<void> {
+        this.wsServer = new WebSocket.Server({ noServer: true });
         return new Promise<void>((resolve, reject) => {
             try {
                 this.wsServer.handleUpgrade(req, socket, head, (websocket) => {
                     this.wsSocket = websocket;
-                    this.connected = true;
                     resolve();
                 });
             } catch (err) {
@@ -51,10 +48,10 @@ export class NodeWebSocket implements ISocket {
     }
 
     /**
-     * True if the socket is currently connected.
+     * True if the 'ws' WebSocket is currently connected.
      */
     public get isConnected(): boolean {
-        return this.connected;
+        return this.wsSocket && this.wsSocket.readyState === WebSocket.OPEN;
     }
 
     /**
@@ -73,6 +70,7 @@ export class NodeWebSocket implements ISocket {
      * @param port The port the server is listening on, defaults to 8082.
      */
     public async connect(serverAddress, port = 8082): Promise<void> {
+        this.wsServer = new WebSocket.Server({ noServer: true });
         // Key generation per https://tools.ietf.org/html/rfc6455#section-1.3 (pg. 7)
         const wskey = crypto.randomBytes(NONCE_LENGTH).toString('base64');
         const options = {
@@ -91,7 +89,6 @@ export class NodeWebSocket implements ISocket {
             // https://github.com/websockets/ws/blob/0a612364e69fc07624b8010c6873f7766743a8e3/lib/websocket-server.js#L269
             (this.wsServer as any).completeUpgrade(wskey, undefined, res, socket, head, (websocket): void => {
                 this.wsSocket = websocket;
-                this.connected = true;
             });
         });
 
@@ -117,8 +114,6 @@ export class NodeWebSocket implements ISocket {
      * @param data
      */
     public close(code?: number, data?: string): void {
-        this.connected = false;
-
         return this.wsSocket.close(code, data);
     }
 
