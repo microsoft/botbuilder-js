@@ -14,9 +14,9 @@ import {
     PayloadSender,
     TransportDisconnectedEvent
 } from '../payloadTransport';
-import { BrowserWebSocket } from './BrowserWebSocket';
+import { BrowserWebSocket } from './browserWebSocket';
 import { NodeWebSocket } from './nodeWebSocket';
-import { WebSocketTransport } from './WebSocketTransport';
+import { WebSocketTransport } from './webSocketTransport';
 import { IStreamingTransportClient, IReceiveResponse } from '../interfaces';
 
 /**
