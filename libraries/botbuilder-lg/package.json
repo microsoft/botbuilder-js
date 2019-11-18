@@ -22,7 +22,8 @@
     "antlr4ts": "0.5.0-alpha.1",
     "botframework-expressions": "4.1.6",
     "lodash": "^4.17.11",
-    "uuid": "^3.3.3"
+    "uuid": "^3.3.3",
+    "botbuilder-core": "4.1.6"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.5",
