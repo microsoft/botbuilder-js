@@ -301,11 +301,11 @@ export abstract class Prompt<T> extends Dialog {
         let msg: Partial<Activity>;
         switch (style) {
             case ListStyle.inline:
-                msg = ChoiceFactory.inline(choices, text, null, options);
+                msg = ChoiceFactory.inline(choices, text, undefined, options);
                 break;
 
             case ListStyle.list:
-                msg = ChoiceFactory.list(choices, text, null, options);
+                msg = ChoiceFactory.list(choices, text, undefined, options);
                 break;
 
             case ListStyle.suggestedAction:
@@ -321,7 +321,7 @@ export abstract class Prompt<T> extends Dialog {
                 break;
 
             default:
-                msg = ChoiceFactory.forChannel(channelId, choices, text, null, options);
+                msg = ChoiceFactory.forChannel(channelId, choices, text, undefined, options);
                 break;
         }
 

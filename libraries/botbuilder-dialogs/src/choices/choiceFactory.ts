@@ -141,9 +141,9 @@ export class ChoiceFactory {
             type: ActionTypes.ImBack,
             value: choice.value
         } as CardAction));
-        const attachment = CardFactory.heroCard(null, text, null, buttons);
+        const attachment = CardFactory.heroCard(undefined, text, undefined, buttons);
 
-        return MessageFactory.attachment(attachment, null, speak, InputHints.ExpectingInput) as Activity;
+        return MessageFactory.attachment(attachment, undefined, speak, InputHints.ExpectingInput) as Activity;
     }
 
 
