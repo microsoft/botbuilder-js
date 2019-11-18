@@ -8,9 +8,9 @@ import { InputHints, TurnContext, Activity, Attachment } from '../../../botbuild
  */
 export interface AdaptiveCardPromptSettings {
     /**
-     * An Adaptive Card. Can be input here or in constructor
+     * An Adaptive Card. Required.
      */
-    card?: Attachment;
+    card: Attachment;
 
     /**
      * Array of strings matching IDs of required input fields
@@ -58,10 +58,9 @@ export enum AdaptiveCardInputPromptErrors {
  */
 export class AdaptiveCardPrompt extends Dialog {
     private validator: PromptValidator<object>;
-    private _requiredInputIds: string[];
-    private _promptId: string;
-    private usesCustomPromptId: boolean = false;
-    private _card: Attachment;
+    private requiredInputIds: string[];
+    private promptId: string;
+    private card: Attachment;
 
     /**
      * Creates a new AdaptiveCardPrompt instance
@@ -69,47 +68,19 @@ export class AdaptiveCardPrompt extends Dialog {
      * @param validator (optional) Validator that will be called each time a new activity is received. Validator should handle error messages on failures.
      * @param settings (optional) Additional options for AdaptiveCardPrompt behavior
      */
-    public constructor(dialogId: string, validator?: PromptValidator<object>, settings?: AdaptiveCardPromptSettings) {
+    public constructor(dialogId: string, settings: AdaptiveCardPromptSettings, validator?: PromptValidator<object>) {
         super(dialogId);
-
-        // Necessary for when this compiles to js since strictPropertyInitialization is false/unset in tsconfig
-        settings = typeof(settings) === 'object' ? settings : {};
+        if (!settings.card) {
+            throw new Error('AdaptiveCardPrompt requires a card in `AdaptiveCardPromptSettings.card`');
+        }
 
         this.validator = validator;
 
-        this._requiredInputIds = settings.requiredInputIds || [];
+        this.requiredInputIds = settings.requiredInputIds || [];
 
-        this._card = settings.card;
+        this.card = settings.card;
 
-        if (settings.promptId) {
-            this._promptId = settings.promptId;
-            this.usesCustomPromptId = true;
-        }
-    }
-
-    public get requiredInputIds(): string[] {
-        return this._requiredInputIds;
-    }
-
-    public set requiredInputIds(ids: string[]) {
-        this._requiredInputIds = ids;
-    }
-
-    public get promptId(): string {
-        return this._promptId;
-    }
-
-    public set promptId(id: string) {
-        this.usesCustomPromptId = !!id; // true if id is truthy, false if id is null, etc.
-        this._promptId = id;
-    }
-
-    public get card(): Attachment {
-        return this._card;
-    }
-
-    public set card(card: Attachment) {
-        this._card = card;
+        this.promptId = settings.promptId;
     }
 
     public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
@@ -125,10 +96,6 @@ export class AdaptiveCardPrompt extends Dialog {
     }
 
     protected async onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void> {
-        // Should use GUID for C# -- it isn't native to Node, so this keeps dependencies down
-        // Only the most recently-prompted card submission is accepted
-        this._promptId = this.usesCustomPromptId ? this._promptId : `${ Math.random() }`;
-
         let prompt = isRetry && options.retryPrompt ? (options.retryPrompt as Partial<Activity>) : (options.prompt as Partial<Activity>);
 
         // Create a prompt if user didn't pass it in through PromptOptions
@@ -140,7 +107,7 @@ export class AdaptiveCardPrompt extends Dialog {
         }
 
         // Use card passed in PromptOptions or if it doesn't exist, use the one passed in from the constructor
-        const card = prompt.attachments && prompt.attachments[0] ? prompt.attachments[0] : this._card;
+        const card = prompt.attachments && prompt.attachments[0] ? prompt.attachments[0] : this.card;
 
         this.validateIsCard(card, isRetry);
 
@@ -191,12 +158,12 @@ export class AdaptiveCardPrompt extends Dialog {
         // Ignore user input that doesn't come from adaptive card
         if (!context.activity.text && context.activity.value) {
             // Validate it comes from the correct card - This is only a worry while the prompt/dialog has not ended
-            if (context.activity.value && context.activity.value['promptId'] != this._promptId) {
+            if (this.promptId && context.activity.value && context.activity.value['promptId'] != this.promptId) {
                 return { succeeded: false, value: { error: AdaptiveCardInputPromptErrors.UserInputDoesNotMatchCardId }};
             }
             // Check for required input data, if specified in AdaptiveCardPromptSettings
             let missingIds = [];
-            this._requiredInputIds.forEach((id): void => {
+            this.requiredInputIds.forEach((id): void => {
                 if (!context.activity.value[id] || !context.activity.value[id].trim()) {
                     missingIds.push(id);
                 }
