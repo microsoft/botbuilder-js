@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,11 +13,11 @@ export interface Recognizer {
 
 export interface IntentMap {
     [name: string]: { score: number; };
-} 
+}
 
 export function createRecognizerResult(text: string, intents?: IntentMap, entities?: object ): RecognizerResult {
     if (!intents) {
-        intents = { 'None': { score: 0.0 } }; 
+        intents = { 'None': { score: 0.0 } };
     }
     if (!entities) {
         entities = {};

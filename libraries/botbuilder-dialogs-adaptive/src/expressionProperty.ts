@@ -1,6 +1,6 @@
 
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -38,7 +38,7 @@ export class ExpressionProperty<T> {
                 switch (typeof this._value) {
                     case 'string':
                         this._expression = engine.parse(this._value);
-                        break; 
+                        break;
                     case 'function':
                         this._expression = Expression.Lambda(this._value);
                         break;

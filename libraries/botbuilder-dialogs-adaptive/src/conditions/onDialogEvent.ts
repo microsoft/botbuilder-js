@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,7 +13,7 @@ import { OnCondition } from './onCondition';
  * This rule is triggered when a dialog event matching a list of event names is emitted.
  */
 export class OnDialogEvent implements OnCondition {
-    // If `true`, the rule should be triggered on the leading edge of the event. 
+    // If `true`, the rule should be triggered on the leading edge of the event.
     public readonly preBubble: boolean;
 
     /**

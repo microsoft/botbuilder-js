@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,7 +13,7 @@ import { Dialog } from 'botbuilder-dialogs';
  * This rule is triggered when a message is received and is not handled by an OnIntent.
  *
  * @remarks
- * A message is considered unhandled if there were no other conditions triggered by the message and 
+ * A message is considered unhandled if there were no other conditions triggered by the message and
  * there is no active plan being executed.
  */
 export class OnUnknownIntent extends OnDialogEvent {

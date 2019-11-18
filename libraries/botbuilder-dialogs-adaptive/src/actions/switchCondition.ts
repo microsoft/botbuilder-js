@@ -1,6 +1,6 @@
 import { ActionState, SequenceContext, ActionChangeType, ActionChangeList } from '../sequenceContext';
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.

@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11,7 +11,7 @@ import { DialogContextState } from 'botbuilder-dialogs';
 /**
  * @private
  * Pre-parses a string template and returns a function for rendering the compiled template.
- * 
+ *
  * @remarks
  * The format of the template is expected to be "Hello {user.name}" where the template arge can be
  * any valid JSONPath expression.
@@ -52,7 +52,7 @@ export function compile(template: string): (data: object) => string {
             buffer += chr;
         }
     }
-    if (buffer.length > 0) { 
+    if (buffer.length > 0) {
         chunks.push(textLiteral((inSlot ? '{' : '') + buffer));
     }
 
@@ -60,14 +60,14 @@ export function compile(template: string): (data: object) => string {
     return (data: object) => {
         let output = '';
         chunks.forEach((fn) => output += fn(data));
-        return output; 
+        return output;
     };
 }
 
 /**
  * @private
  * Compiles and renders a string template.
- * 
+ *
  * @remarks
  * The format of the template is expected to be "Hello {user.name}" where the template arge can be
  * any valid JSONPath expression.
