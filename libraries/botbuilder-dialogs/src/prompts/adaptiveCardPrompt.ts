@@ -102,8 +102,8 @@ export class AdaptiveCardPrompt extends Dialog {
     protected async onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void> {
         // Clone the prompt so we can manipulate it without affecting the prompt from PromptOptions that is stored in state
         let prompt = isRetry && options.retryPrompt ? 
-            JSON.parse(JSON.stringify(options.retryPrompt as Partial<Activity>)) : 
-            JSON.parse(JSON.stringify(options.prompt as Partial<Activity>));
+            JSON.parse(JSON.stringify(options.retryPrompt as Partial<Activity> || {})) : 
+            JSON.parse(JSON.stringify(options.prompt as Partial<Activity> || {}));
 
         // Create a prompt if user didn't pass it in through PromptOptions or if they passed in a string
         if (!prompt || typeof(prompt) != 'object' || Object.keys(prompt).length === 0) {
