@@ -37,10 +37,9 @@ export enum InputState {
 }
 
 export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O> {
-    static OPTIONS_PROPERTY = 'dialog._input';
-    static INITIAL_VALUE_PROPERTY = 'dialog._input.value';
-    static TURN_COUNT_PROPERTY = 'dialog._input.turnCount';
-    static INPUT_PROPERTY = 'turn._input';
+    static OPTIONS_PROPERTY = 'this.options';
+    static VALUE_PROPERTY = 'this.value';
+    static TURN_COUNT_PROPERTY = 'this.turnCount';
 
     public allowInterruptions = true;
 
@@ -77,16 +76,6 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
      * options and will be accessible within the dialog via `dialog.options.value`. The result
      * returned from the called dialog will then be copied to the bound property.
      */
-    /*
-    public set valueProperty(value: string) {
-        this.inputProperties['value'] = value;
-        this.outputProperty = value;
-    }
-
-    public get valueProperty(): string {
-       return this.outputProperty; 
-    }
-    */
     public valueProperty: string;
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
@@ -96,14 +85,17 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
 
         // Initialize turn count & input
         dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, 0);
-        dc.state.setValue(InputDialog.INPUT_PROPERTY, undefined);
+        if (this.valueProperty) {
+            dc.state.setValue(InputDialog.VALUE_PROPERTY, dc.state.getValue(this.valueProperty));
+        }
 
         // Recognize input
         const state = this.alwaysPrompt ? InputState.missing : await this.recognizeInput(dc, false);
         if (state == InputState.valid) {
             // Return input
-            const input = dc.state.getValue(InputDialog.INPUT_PROPERTY);
-            return await dc.endDialog(input);
+            const value = dc.state.getValue(InputDialog.VALUE_PROPERTY);
+            if (this.valueProperty) { dc.state.setValue(this.valueProperty, value) }
+            return await dc.endDialog(value);
         } else {
             // Prompt user
             return await this.promptUser(dc, state);
@@ -132,8 +124,9 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         const state = await this.recognizeInput(dc, false);
         if (state == InputState.valid) {
             // Return input
-            const input = dc.state.getValue(InputDialog.INPUT_PROPERTY);
-            return await dc.endDialog(input);
+            const value = dc.state.getValue(InputDialog.VALUE_PROPERTY);
+            if (this.valueProperty) { dc.state.setValue(this.valueProperty, value) }
+            return await dc.endDialog(value);
         } else if (this.maxTurnCount == undefined || turnCount < this.maxTurnCount) {
             // Prompt user
             return await this.promptUser(dc, state);
@@ -306,14 +299,14 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         if (input == undefined) {
             const turnCount = dc.state.getValue(InputDialog.TURN_COUNT_PROPERTY);
             if (turnCount == 0) {
-                input = dc.state.getValue(InputDialog.INITIAL_VALUE_PROPERTY);
+                input = dc.state.getValue(InputDialog.VALUE_PROPERTY);
             } else {
                 input = this.getDefaultInput(dc);
             }
         }
 
         // Save input to memory
-        dc.state.setValue(InputDialog.INPUT_PROPERTY, input);
+        dc.state.setValue(InputDialog.VALUE_PROPERTY, input);
         if (input != undefined) {
             // Recognize input
             const state = await this.onRecognizeInput(dc, consultation);

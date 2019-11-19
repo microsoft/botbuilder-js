@@ -54,7 +54,7 @@ export class AttachmentInput extends InputDialog<InputDialogOptions> {
     
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
         // Recognize input and filter out non-attachments
-        let input: Attachment|Attachment[] = dc.state.getValue(InputDialog.INPUT_PROPERTY);
+        let input: Attachment|Attachment[] = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         const attachments = Array.isArray(input) ? input : [input];
         const first = attachments.length > 0 ? attachments[0] : undefined;
         if (typeof first != 'object' || (!first.contentUrl && !first.content)) {
@@ -64,10 +64,10 @@ export class AttachmentInput extends InputDialog<InputDialogOptions> {
         // Format output and return success
         switch (this.outputFormat) {
             case AttachmentOutputFormat.all:
-                dc.state.setValue(InputDialog.INPUT_PROPERTY, attachments);
+                dc.state.setValue(InputDialog.VALUE_PROPERTY, attachments);
                 break;
             case AttachmentOutputFormat.first:
-                dc.state.setValue(InputDialog.INPUT_PROPERTY, first);
+                dc.state.setValue(InputDialog.VALUE_PROPERTY, first);
                 break;
         }
 

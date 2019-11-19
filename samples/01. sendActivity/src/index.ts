@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import * as restify from 'restify';
-import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
+import { BotFrameworkAdapter, MemoryStorage, ConversationState } from 'botbuilder';
 import { AdaptiveDialog, OnUnknownIntent, SendActivity } from 'botbuilder-dialogs-adaptive';
 import { DialogManager } from 'botbuilder-dialogs';
 
@@ -23,7 +23,7 @@ const adapter = new BotFrameworkAdapter({
 
 // Create bots DialogManager and bind to state storage
 const bot = new DialogManager();
-bot.storage = new MemoryStorage();
+bot.conversationState = new ConversationState(new MemoryStorage());
 
 // Listen for incoming activities.
 server.post('/api/messages', (req, res) => {

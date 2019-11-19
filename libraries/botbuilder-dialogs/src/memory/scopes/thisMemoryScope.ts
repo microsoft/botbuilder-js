@@ -18,8 +18,7 @@ export class ThisMemoryScope extends MemoryScope {
     }
 
     public getMemory(dc: DialogContext): object {
-        if (!dc.activeDialog) { throw new Error(`ThisMemoryScope.getMemory: no active dialog found.`) }
-        return dc.activeDialog.state;
+        return dc.activeDialog ? dc.activeDialog.state : undefined;
     }
 
     public setMemory(dc: DialogContext, memory: object): void {
