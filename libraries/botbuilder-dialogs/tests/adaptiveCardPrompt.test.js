@@ -9,9 +9,32 @@ const assertActivityHasCard = (activity) => {
     assert.strictEqual(activity.attachments[0].contentType, 'application/vnd.microsoft.card.adaptive');
 };
 
-describe('AdaptiveCardPrompt', function() {
+describe('AdaptiveCardPrompt - Constructor and Settings', function() {
     this.timeout(5000);
 
+    it('should throw if no attachment passed in through AdaptiveCardPromptSettings', async function() {
+        assert.throws(() => new AdaptiveCardPrompt('prompt'), new Error('AdaptiveCardPrompt requires a card in `AdaptiveCardPromptSettings.card`'));
+        assert.throws(() => new AdaptiveCardPrompt('prompt', { }), new Error('AdaptiveCardPrompt requires a card in `AdaptiveCardPromptSettings.card`'));
+    });
+
+    it('should throw if card is not a valid adaptive card', async function() {
+        assert.throws(() => new AdaptiveCardPrompt('prompt', { card: '' }),
+            'No Adaptive Card provided. Include in the constructor or PromptOptions.prompt.attachments');
+        assert.throws(() => new AdaptiveCardPrompt('prompt', { card: { content: cardJson, contentType: 'invalidCard' } }),
+            `Attachment is not a valid Adaptive Card.\n`+
+            `Ensure card.contentType is application/vnd.microsoft.card.adaptive\n`+
+            `and card.content contains the card json`);
+    });
+
+    it('should throw if promptId is defined but falsy', async function() {
+        const cardJson = JSON.parse(JSON.stringify(require('./adaptiveCard.json')));
+        const card = CardFactory.adaptiveCard(cardJson);
+        assert.throws(() => new AdaptiveCardPrompt('prompt', { card, promptId: '' }), new Error('AdaptiveCardPromptSettings.promptId cannot be a falsy string'));
+        assert.doesNotThrow(() => new AdaptiveCardPrompt('prompt', { card, promptId: 'notFalsy' }));
+    });
+});
+    
+describe('AdaptiveCardPrompt - Handle Known Errors', function() {
     let cardJson;
     let card;
 
@@ -30,15 +53,6 @@ describe('AdaptiveCardPrompt', function() {
                 SteakTemp: 'rare',
             }
         };
-    });
-
-    it('should throw if no attachment passed in through AdaptiveCardPromptSettings', async function() {
-        assert.throws(() => new AdaptiveCardPrompt('prompt'));
-        assert.throws(() => new AdaptiveCardPrompt('prompt', { }));
-    });
-
-    it('should throw if card is not a valid adaptive card', async function() {
-        assert.throws(() => new AdaptiveCardPrompt('prompt', { card: { content: cardJson, contentType: 'invalidCard' } }));
     });
 
     it('should call AdaptiveCardPrompt using dc.prompt().', async function() {

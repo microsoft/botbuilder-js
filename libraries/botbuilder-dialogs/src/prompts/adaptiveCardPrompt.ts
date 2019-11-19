@@ -101,6 +101,10 @@ export class AdaptiveCardPrompt extends Dialog {
         this.throwIfNotAdaptiveCard(settings.card);
         this.card = settings.card;
 
+        // Don't allow promptId to be something falsy
+        if (settings.promptId !== undefined && !settings.promptId) {
+            throw new Error('AdaptiveCardPromptSettings.promptId cannot be a falsy string');
+        }
         this.promptId = settings.promptId;
     }
 
@@ -209,7 +213,7 @@ export class AdaptiveCardPrompt extends Dialog {
         const adaptiveCardType = 'application/vnd.microsoft.card.adaptive';
 
         if (!cardAttachment || !cardAttachment.content) {
-            throw new Error(`No Adaptive Card provided. Include in the constructor or PromptOptions.prompt.attachments`);
+            throw new Error('No Adaptive Card provided. Include in the constructor or PromptOptions.prompt.attachments');
         } else if (!cardAttachment.contentType || cardAttachment.contentType !== adaptiveCardType) {
             throw new Error(`Attachment is not a valid Adaptive Card.\n`+
             `Ensure card.contentType is '${ adaptiveCardType }'\n`+
