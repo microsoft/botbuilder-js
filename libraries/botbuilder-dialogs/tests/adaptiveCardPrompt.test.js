@@ -4,7 +4,6 @@ const { CardFactory } = require('botbuilder');
 const assert = require('assert');
 
 const CUSTOM_PROMPT_ID = 'custom';
-
 const assertActivityHasCard = (activity) => {
     assert.strictEqual(activity.attachments[0].contentType, 'application/vnd.microsoft.card.adaptive');
 };
@@ -34,7 +33,7 @@ describe('AdaptiveCardPrompt - Constructor and Settings', function() {
     });
 });
     
-describe('AdaptiveCardPrompt - Handle Known Errors', function() {
+describe('AdaptiveCardPrompt - Common User Error Detection', function() {
     let cardJson;
     let card;
 
@@ -55,8 +54,97 @@ describe('AdaptiveCardPrompt - Handle Known Errors', function() {
         };
     });
 
-    it('should call AdaptiveCardPrompt using dc.prompt().', async function() {
-        const prompt = new AdaptiveCardPrompt('prompt', { card });
+    it('should successfully recognize input while using custom promptId when input contains correct promptId', async function() {
+        let usedValidator = false;
+        const prompt = new AdaptiveCardPrompt('prompt', {
+            promptId: CUSTOM_PROMPT_ID,
+            card
+        }, (context) => {
+            assert.strictEqual(context.recognized.succeeded, true);
+            assert.strictEqual(context.recognized.value['error'], undefined);
+            usedValidator = true;
+            return context.recognized.succeeded;
+        });
+
+        const adapter = new TestAdapter(async turnContext => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt');
+            } else if (results.status === DialogTurnStatus.complete) {
+                const reply = results.result;
+                await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and TextPrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(prompt);
+
+        simulatedInput.value.promptId = CUSTOM_PROMPT_ID;
+
+        await adapter.send('Hello')
+            .assertReply((activity) => assert.strictEqual(activity.attachments[0].content.selectAction.data.promptId, CUSTOM_PROMPT_ID))
+            .send(simulatedInput);
+        assert.strictEqual(usedValidator, true);
+    });
+
+    it('should present promptId error while using custom promptId when input contains incorrect promptId', async function() {
+        let usedValidator = false;
+        const prompt = new AdaptiveCardPrompt('prompt', {
+            promptId: CUSTOM_PROMPT_ID,
+            card
+        }, (context) => {
+            assert.strictEqual(context.recognized.succeeded, false);
+            assert.strictEqual(context.recognized.error, AdaptiveCardPromptErrors.userInputDoesNotMatchCardId);
+            usedValidator = true;
+            return context.recognized.succeeded;
+        });
+
+        const adapter = new TestAdapter(async turnContext => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt');
+            } else if (results.status === DialogTurnStatus.complete) {
+                const reply = results.result;
+                await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and TextPrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(prompt);
+
+        simulatedInput.value.promptId = 'not a valid id';
+
+        await adapter.send('Hello')
+            .assertReply((activity) => assert.strictEqual(activity.attachments[0].content.selectAction.data.promptId, CUSTOM_PROMPT_ID))
+            .send(simulatedInput)
+            .assertReply((activity) => assert.strictEqual(activity.attachments[0].content.selectAction.data.promptId, CUSTOM_PROMPT_ID))
+        assert.strictEqual(usedValidator, true);
+    });
+
+    it('should successfully recognize if all required ids supplied', async function() {
+        let usedValidator;
+        const prompt = new AdaptiveCardPrompt('prompt', {
+            requiredInputIds: Object.keys(simulatedInput.value),
+            card
+        }, async (context) => {
+            assert(context.recognized && context.recognized.succeeded);
+            usedValidator = true;
+            return context.recognized.succeeded;
+        });
 
         const adapter = new TestAdapter(async turnContext => {
             const dc = await dialogs.createContext(turnContext);
@@ -84,9 +172,144 @@ describe('AdaptiveCardPrompt - Handle Known Errors', function() {
             })
             .send(simulatedInput)
             .assertReply(`You said ${ JSON.stringify(simulatedInput.value) }`);
+        assert.strictEqual(usedValidator, true);
     });
 
-    it('should call AdaptiveCardPrompt using dc.beginDialog().', async function() {
+    it('should present missingIds error when input does not contain all required input ids', async function() {
+        let usedValidator = false;
+        const prompt = new AdaptiveCardPrompt('prompt', {
+            requiredInputIds: ['test1', 'test2', 'test3'],
+            card
+        }, async (context) => {
+            assert.strictEqual(context.recognized.succeeded, false);
+            assert.strictEqual(context.recognized.error, AdaptiveCardPromptErrors.missingRequiredIds);
+            await context.context.sendActivity(`test inputs missing: ${ context.recognized.missingIds.join(', ') }`);
+            usedValidator = true;
+            return false;
+        });
+
+        const adapter = new TestAdapter(async turnContext => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt');
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and TextPrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(prompt);
+
+        await adapter.send('Hello')
+            .assertReply((activity) => { assertActivityHasCard(activity); })
+            .send(simulatedInput)
+            .assertReply('test inputs missing: test1, test2, test3');
+        assert.strictEqual(usedValidator, true);
+    });
+
+    it('should recognize valid card input', async function() {
+        let usedValidator = false;
+        const prompt = new AdaptiveCardPrompt('prompt', { card }, async (context) => {
+            assert.strictEqual(context.recognized.succeeded, true);
+            usedValidator = true;
+            return true;
+        });
+
+        const adapter = new TestAdapter(async turnContext => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt');
+            } else if (results.status === DialogTurnStatus.complete) {
+                const reply = results.result;
+                await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and TextPrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(prompt);
+
+        assert(simulatedInput.value && !simulatedInput.text);
+
+        await adapter.send('Hello')
+            .assertReply((activity) => { assertActivityHasCard(activity); })
+            .send(simulatedInput)
+            .assertReply(`You said ${ JSON.stringify(simulatedInput.value) }`);
+        assert.strictEqual(usedValidator, true);
+    });
+
+    it('should present text input error when invalid text input while waiting for card input', async function() {
+        let usedValidator = false;
+        const prompt = new AdaptiveCardPrompt('prompt', { card }, async (context) => {
+            assert.strictEqual(context.recognized.succeeded, false);
+            assert.strictEqual(context.recognized.error, AdaptiveCardPromptErrors.userUsedTextInput);
+            usedValidator = true;
+            return false;
+        });
+
+        const adapter = new TestAdapter(async turnContext => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt');
+            } else if (results.status === DialogTurnStatus.complete) {
+                const reply = results.result;
+                await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and TextPrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(prompt);
+
+        assert(simulatedInput.value && !simulatedInput.text);
+
+        await adapter.send('Hello')
+            .assertReply((activity) => { assertActivityHasCard(activity); })
+            .send('this is not valid card input')
+            .assertReply((activity) => { assertActivityHasCard(activity); });
+        assert.strictEqual(usedValidator, true);
+    });
+});
+
+describe('AdaptiveCardPrompt - Prompt Behavior', function() {
+    let cardJson;
+    let card;
+
+    let simulatedInput;
+
+    this.beforeEach(() => {
+        // Must be JSON deep-cloned or it changes persist between tests
+        cardJson = JSON.parse(JSON.stringify(require('./adaptiveCard.json')));
+        card = CardFactory.adaptiveCard(cardJson);
+
+        simulatedInput = {
+            type: 'message',
+            value: {
+                FoodChoice: 'Steak',
+                SteakOther: 'some details',
+                SteakTemp: 'rare',
+            }
+        };
+    });
+
+    it('should call AdaptiveCardPrompt using dc.beginDialog()', async function() {
         const prompt = new AdaptiveCardPrompt('prompt', { card });
 
         const adapter = new TestAdapter(async turnContext => {
@@ -110,9 +333,36 @@ describe('AdaptiveCardPrompt - Handle Known Errors', function() {
         dialogs.add(prompt);
 
         await adapter.send('Hello')
-            .assertReply((activity) => {
-                assertActivityHasCard(activity);
-            })
+            .assertReply((activity) => { assertActivityHasCard(activity); })
+            .send(simulatedInput)
+            .assertReply(`You said ${ JSON.stringify(simulatedInput.value) }`);
+    });
+
+    it('should call AdaptiveCardPrompt using dc.prompt()', async function() {
+        const prompt = new AdaptiveCardPrompt('prompt', { card });
+
+        const adapter = new TestAdapter(async turnContext => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt');
+            } else if (results.status === DialogTurnStatus.complete) {
+                const reply = results.result;
+                await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and TextPrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(prompt);
+
+        await adapter.send('Hello')
+            .assertReply((activity) => { assertActivityHasCard(activity); })
             .send(simulatedInput)
             .assertReply(`You said ${ JSON.stringify(simulatedInput.value) }`);
     });
@@ -145,18 +395,21 @@ describe('AdaptiveCardPrompt - Handle Known Errors', function() {
             .assertReply('RETRY');
     });
 
-    it('should allow for custom promptId that doesn\'t change on reprompt', async function() {
-        const prompt = new AdaptiveCardPrompt('prompt', {
-            promptId: CUSTOM_PROMPT_ID,
-            card
-        });
+    it('should not overwrite developer-provided attachments and should add card to end of existing attachments array', async function() {
+        const prompt = new AdaptiveCardPrompt('prompt', { card });
 
         const adapter = new TestAdapter(async turnContext => {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt');
+                await dc.prompt('prompt', {
+                    attachments: [
+                        { content: 'a' },
+                        { content: 'b' },
+                        { content: 'c' },
+                    ]
+                });
             } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result;
                 await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
@@ -172,88 +425,15 @@ describe('AdaptiveCardPrompt - Handle Known Errors', function() {
         dialogs.add(prompt);
 
         await adapter.send('Hello')
-            .assertReply((activity) => assert.strictEqual(activity.attachments[0].content.selectAction.data.promptId, CUSTOM_PROMPT_ID))
-            .send(simulatedInput)
-            .assertReply((activity) => assert.strictEqual(activity.attachments[0].content.selectAction.data.promptId, CUSTOM_PROMPT_ID));
-    });
+            .assertReply((activity) => { 
+                assert.strictEqual(activity.attachments[0].content, 'a');
+                assert.strictEqual(activity.attachments[1].content, 'b');
+                assert.strictEqual(activity.attachments[2].content, 'c');
+                assert.strictEqual(activity.attachments[3].contentType, 'application/vnd.microsoft.card.adaptive');
 
-    it('should accept a custom validator that handles valid scenario', async function() {
-        let usedValidator = false;
-        const prompt = new AdaptiveCardPrompt('prompt', { card }, async (context) => {
-            assert(context && context.attemptCount == 1);
-            assert(context.recognized && context.recognized.succeeded);
-            assert(context.recognized.value && context.recognized.value.FoodChoice && context.recognized.value.SteakOther && context.recognized.value.SteakTemp);
-            usedValidator = true;
-            return true;
-        });
-
-        const adapter = new TestAdapter(async turnContext => {
-            const dc = await dialogs.createContext(turnContext);
-
-            const results = await dc.continueDialog();
-            if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt');
-            } else if (results.status === DialogTurnStatus.complete) {
-                const reply = results.result;
-                await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
-            }
-            await convoState.saveChanges(turnContext);
-        });
-        // Create new ConversationState with MemoryStorage and register the state as middleware.
-        const convoState = new ConversationState(new MemoryStorage());
-
-        // Create a DialogState property, DialogSet and TextPrompt.
-        const dialogState = convoState.createProperty('dialogState');
-        const dialogs = new DialogSet(dialogState);
-        dialogs.add(prompt);
-
-        await adapter.send('Hello')
-            .assertReply((activity) => {
-                assertActivityHasCard(activity);
             })
             .send(simulatedInput)
             .assertReply(`You said ${ JSON.stringify(simulatedInput.value) }`);
-        assert.strictEqual(usedValidator, true);
-    });
-
-    it('should accept a custom validator that handles invalid scenario', async function() {
-        let usedValidator = false;
-        const prompt = new AdaptiveCardPrompt('prompt', { card }, async (context) => {
-            assert(context && context.attemptCount == 1);
-            assert(context.recognized && context.recognized.succeeded);
-            assert(context.recognized.value && context.recognized.value.FoodChoice && context.recognized.value.SteakOther && context.recognized.value.SteakTemp);
-            usedValidator = true;
-            await context.context.sendActivity('FAILED');
-            return false;
-        });
-
-        const adapter = new TestAdapter(async turnContext => {
-            const dc = await dialogs.createContext(turnContext);
-
-            const results = await dc.continueDialog();
-            if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt');
-            } else if (results.status === DialogTurnStatus.complete) {
-                const reply = results.result;
-                await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
-            }
-            await convoState.saveChanges(turnContext);
-        });
-        // Create new ConversationState with MemoryStorage and register the state as middleware.
-        const convoState = new ConversationState(new MemoryStorage());
-
-        // Create a DialogState property, DialogSet and TextPrompt.
-        const dialogState = convoState.createProperty('dialogState');
-        const dialogs = new DialogSet(dialogState);
-        dialogs.add(prompt);
-
-        await adapter.send('Hello')
-            .assertReply((activity) => {
-                assertActivityHasCard(activity);
-            })
-            .send(simulatedInput)
-            .assertReply('FAILED');
-        assert.strictEqual(usedValidator, true);
     });
 
     it('should track the number of attempts', async function() {
@@ -296,10 +476,10 @@ describe('AdaptiveCardPrompt - Handle Known Errors', function() {
         assert.strictEqual(attempts, 3);
     });
 
-    it('should recognize card input', async function() {
+    it('should accept a custom validator and call it if recognized.succeeded', async function() {
         let usedValidator = false;
         const prompt = new AdaptiveCardPrompt('prompt', { card }, async (context) => {
-            assert.strictEqual(context.recognized.succeeded, true);
+            assert(context.recognized && context.recognized.succeeded);
             usedValidator = true;
             return true;
         });
@@ -324,106 +504,18 @@ describe('AdaptiveCardPrompt - Handle Known Errors', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(prompt);
 
-        assert(simulatedInput.value && !simulatedInput.text);
-
         await adapter.send('Hello')
-            .assertReply((activity) => {
-                assertActivityHasCard(activity);
-            })
-            .send(simulatedInput)
-            .assertReply(`You said ${ JSON.stringify(simulatedInput.value) }`);
-        assert.strictEqual(usedValidator, true);
-    });
-
-    it('should not successfully recognize if input comes from card with wrong id', async function() {
-        simulatedInput.value.promptId = 'wrongId';
-        let usedValidator = false;
-        const prompt = new AdaptiveCardPrompt('prompt', { card, promptId: CUSTOM_PROMPT_ID }, async (context) => {
-            assert.strictEqual(context.recognized.succeeded, false);
-            assert.strictEqual(context.recognized.value['error'], AdaptiveCardPromptErrors.userInputDoesNotMatchCardId);
-            usedValidator = true;
-            return false;
-        });
-
-        const adapter = new TestAdapter(async turnContext => {
-            const dc = await dialogs.createContext(turnContext);
-
-            const results = await dc.continueDialog();
-            if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt');
-            } else if (results.status === DialogTurnStatus.complete) {
-                const reply = results.result;
-                await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
-            }
-            await convoState.saveChanges(turnContext);
-        });
-        // Create new ConversationState with MemoryStorage and register the state as middleware.
-        const convoState = new ConversationState(new MemoryStorage());
-
-        // Create a DialogState property, DialogSet and TextPrompt.
-        const dialogState = convoState.createProperty('dialogState');
-        const dialogs = new DialogSet(dialogState);
-        dialogs.add(prompt);
-
-        assert(simulatedInput.value && !simulatedInput.text);
-
-        await adapter.send('Hello')
-            .assertReply((activity) => {
-                assertActivityHasCard(activity);
-            })
+            .assertReply((activity) => { assertActivityHasCard(activity); })
             .send(simulatedInput);
         assert.strictEqual(usedValidator, true);
     });
 
-    it('should not successfully recognize with missing required ids', async function() {
+    it('should accept a custom validator and call it if not recognized.succeeded', async function() {
         let usedValidator = false;
-        const prompt = new AdaptiveCardPrompt('prompt', {
-            requiredInputIds: ['test1', 'test2', 'test3'],
-            card
-        }, async (context) => {
-            assert.strictEqual(context.recognized.succeeded, false);
-            assert.strictEqual(context.recognized.value['error'], AdaptiveCardPromptErrors.missingRequiredIds);
-            await context.context.sendActivity(`test inputs missing: ${ context.recognized.value['missingIds'].join(', ') }`);
+        const prompt = new AdaptiveCardPrompt('prompt', { card }, async (context) => {
+            assert(context.recognized && !context.recognized.succeeded);
             usedValidator = true;
-            return false;
-        });
-
-        const adapter = new TestAdapter(async turnContext => {
-            const dc = await dialogs.createContext(turnContext);
-
-            const results = await dc.continueDialog();
-            if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt');
-            }
-            await convoState.saveChanges(turnContext);
-        });
-        // Create new ConversationState with MemoryStorage and register the state as middleware.
-        const convoState = new ConversationState(new MemoryStorage());
-
-        // Create a DialogState property, DialogSet and TextPrompt.
-        const dialogState = convoState.createProperty('dialogState');
-        const dialogs = new DialogSet(dialogState);
-        dialogs.add(prompt);
-
-        await adapter.send('Hello')
-            .assertReply((activity) => {
-                assertActivityHasCard(activity);
-                simulatedInput.value.promptId = prompt.promptId;
-            })
-            .send(simulatedInput)
-            .assertReply('test inputs missing: test1, test2, test3');
-        assert.strictEqual(usedValidator, true);
-    });
-
-    it('should successfully recognize if all required ids supplied', async function() {
-        let usedValidator;
-        const prompt = new AdaptiveCardPrompt('prompt', {
-            requiredInputIds: Object.keys(simulatedInput.value),
-            card
-        }, async (context) => {
-            assert(context.recognized && context.recognized.succeeded);
-            usedValidator = true;
-            return context.recognized.succeeded;
+            return true;
         });
 
         const adapter = new TestAdapter(async turnContext => {
@@ -447,13 +539,43 @@ describe('AdaptiveCardPrompt - Handle Known Errors', function() {
         dialogs.add(prompt);
 
         await adapter.send('Hello')
-            .assertReply((activity) => {
-                assertActivityHasCard(activity);
-                simulatedInput.value.promptId = prompt.promptId;
-            })
-            .send(simulatedInput)
-            // Must be lambda due to updating simulatedInput.value.promptId in async test flow
-            .assertReply(() => `You said ${ JSON.stringify(simulatedInput.value) }`);
+            .assertReply((activity) => { assertActivityHasCard(activity); })
+            .send('this is not valid input');
+        assert.strictEqual(usedValidator, true);
+    });
+
+    it('should not reprompt if not recognized.succeeded, but validator returns true', async function() {
+        let usedValidator = false;
+        const prompt = new AdaptiveCardPrompt('prompt', { card }, async (context) => {
+            assert(context.recognized && !context.recognized.succeeded);
+            usedValidator = true;
+            return true;
+        });
+
+        const adapter = new TestAdapter(async turnContext => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt');
+            } else if (results.status === DialogTurnStatus.complete) {
+                const reply = results.result;
+                await turnContext.sendActivity('Validator passed');
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and TextPrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(prompt);
+
+        await adapter.send('Hello')
+            .assertReply((activity) => { assertActivityHasCard(activity); })
+            .send('this is invalid card input')
+            .assertReply('Validator passed');
         assert.strictEqual(usedValidator, true);
     });
 });
