@@ -57,7 +57,7 @@ export class TextInput extends InputDialog<InputDialogOptions> {
         }
 
         // Treat input as a string
-        let input: string = dc.state.getValue(InputDialog.INPUT_PROPERTY).toString();
+        let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
 
         // Format output
         switch (this.outputFormat) {
@@ -73,7 +73,7 @@ export class TextInput extends InputDialog<InputDialogOptions> {
         }
 
         // Save formated value and ensure length > 0
-        dc.state.setValue(InputDialog.INPUT_PROPERTY, input);
+        dc.state.setValue(InputDialog.VALUE_PROPERTY, input);
         return input.length > 0 ? InputState.valid : InputState.unrecognized;
     }
 }

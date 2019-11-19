@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Storage, TurnContext, BotState, ConversationState, BotStatePropertyAccessor, UserState, ActivityTypes } from 'botbuilder-core';
+import { TurnContext, BotState, ConversationState, UserState, ActivityTypes } from 'botbuilder-core';
 import { DialogContext, DialogState } from './dialogContext';
 import { DialogTurnResult, Dialog, DialogTurnStatus } from './dialog';
 import { Configurable } from './configurable';
