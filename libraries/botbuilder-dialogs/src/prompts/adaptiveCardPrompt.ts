@@ -86,8 +86,9 @@ export enum AdaptiveCardPromptErrors {
  * 
  * @remarks
  * This prompt is similar to ActivityPrompt but provides features specific to Adaptive Cards:
- *   * Includes validation for specified required input fields
- *   * Ensures input is only valid if it comes from the appropriate card (not one shown previous to prompt)
+ *   * Optionally allow specified input fields to be required
+ *   * Optionally ensures input is only valid if it comes from the appropriate card (not one shown previous to prompt)
+ *   * Provides ability to handle variety of common user errors related to Adaptive Cards 
  * DO NOT USE WITH CHANNELS THAT DON'T SUPPORT ADAPTIVE CARDS
  */
 export class AdaptiveCardPrompt extends Dialog {
@@ -99,8 +100,8 @@ export class AdaptiveCardPrompt extends Dialog {
     /**
      * Creates a new AdaptiveCardPrompt instance
      * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
-     * @param validator (optional) Validator that will be called each time a new activity is received. Validator should handle error messages on failures.
      * @param settings (optional) Additional options for AdaptiveCardPrompt behavior
+     * @param validator (optional) Validator that will be called each time a new activity is received. Validator should handle error messages on failures.
      */
     public constructor(dialogId: string, settings: AdaptiveCardPromptSettings, validator?: PromptValidator<object>) {
         super(dialogId);
@@ -144,7 +145,7 @@ export class AdaptiveCardPrompt extends Dialog {
             prompt = {};
         }
         
-        // Clone the correct prompt
+        // Clone the correct prompt so that we don't affect the one saved in state
         let clonedPrompt = JSON.parse(JSON.stringify(prompt));
 
         // Create a prompt if user didn't pass it in through PromptOptions or if they passed in a string
