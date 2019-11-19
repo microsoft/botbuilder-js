@@ -43,10 +43,27 @@ export interface AdaptiveCardPromptSettings {
     promptId?: string;
 }
 
-// TODO: Add comments
+/**
+ * AdaptiveCardPrompt catches certain common errors that are passed to validator, if present
+ * This allows developers to handle these specific errors as they choose
+ * These are given in validator context.recognized.value.error
+ */
 export enum AdaptiveCardPromptErrors {
+    /**
+     * Error presented if developer specifies AdaptiveCardPromptSettings.promptId,
+     *  but user submits adaptive card input on a card where the ID does not match.
+     * This error will also be present if developer AdaptiveCardPromptSettings.promptId,
+     *  but forgets to add the promptId to every <submit>.data.promptId in your Adaptive Card.
+     */
     userInputDoesNotMatchCardId,
+    /**
+     * Error presented if developer specifies AdaptiveCardPromptSettings.requiredIds,
+     * but user does not submit input for all required input id's on the adaptive card
+     */
     missingRequiredIds,
+    /**
+     * Error presented if user enters plain text instead of using Adaptive Card's input fields
+     */
     userUsedTextInput
 }
 
