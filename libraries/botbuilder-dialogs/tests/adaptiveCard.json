@@ -2,7 +2,10 @@
     "type": "AdaptiveCard",
     "selectAction": {
         "type": "Action.Submit",
-        "title": "Test"
+        "title": "Test",
+        "data": {
+            "promptId": "custom"
+        }
     },
     "body": [
         {
@@ -40,7 +43,10 @@
     "actions": [
         {
             "type": "Action.Submit",
-            "title": "Submit"
+            "title": "Submit",
+            "data": {
+                "promptId": "custom"
+            }
         },
         {
             "type": "Action.ShowCard",
@@ -85,7 +91,8 @@
                         "type": "Action.Submit",
                         "title": "OK",
                         "data": {
-                            "FoodChoice": "Steak"
+                            "FoodChoice": "Steak",
+                            "promptId": "custom"
                         }
                     }
                 ],
@@ -128,7 +135,8 @@
                         "type": "Action.Submit",
                         "title": "OK",
                         "data": {
-                            "FoodChoice": "Chicken"
+                            "FoodChoice": "Chicken",
+                            "promptId": "custom"
                         }
                     }
                 ],
@@ -167,7 +175,8 @@
                         "type": "Action.Submit",
                         "title": "OK",
                         "data": {
-                            "FoodChoice": "Vegetarian"
+                            "FoodChoice": "Vegetarian",
+                            "promptId": "custom"
                         }
                     }
                 ],

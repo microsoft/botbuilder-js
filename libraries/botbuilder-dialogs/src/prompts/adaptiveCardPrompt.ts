@@ -73,7 +73,7 @@ export class AdaptiveCardPrompt extends Dialog {
      */
     public constructor(dialogId: string, settings: AdaptiveCardPromptSettings, validator?: PromptValidator<object>) {
         super(dialogId);
-        if (!settings.card) {
+        if (!settings || !settings.card) {
             throw new Error('AdaptiveCardPrompt requires a card in `AdaptiveCardPromptSettings.card`');
         }
 
@@ -138,19 +138,16 @@ export class AdaptiveCardPrompt extends Dialog {
         }
 
         let isValid = false;
-
-        if (recognized.succeeded) {
-            if (this.validator) {
-                isValid = await this.validator({
-                    context: dc.context,
-                    recognized: recognized,
-                    state: state.state,
-                    options: state.options,
-                    attemptCount: state.state['attemptCount']
-                });
-            } else {
-                isValid = true;
-            }
+        if (this.validator) {
+            isValid = await this.validator({
+                context: dc.context,
+                recognized: recognized,
+                state: state.state,
+                options: state.options,
+                attemptCount: state.state['attemptCount']
+            });
+        } else if (recognized.succeeded) {
+            isValid = true;
         }
 
         // Return recognized value or re-prompt
@@ -158,7 +155,10 @@ export class AdaptiveCardPrompt extends Dialog {
             return await dc.endDialog(recognized.value);
         } else {
             // Re-prompt
-            await this.onPrompt(dc.context, state.state, state.options, true);
+            if (!dc.context.responded) {
+                await this.onPrompt(dc.context, state.state, state.options, true);
+            }
+            
             return Dialog.EndOfTurn;
         }
     }
