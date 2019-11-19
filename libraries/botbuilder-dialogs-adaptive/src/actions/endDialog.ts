@@ -42,6 +42,6 @@ export class EndDialog extends DialogCommand {
 
     protected async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
         const result = this.resultProperty ? dc.state.getValue(this.resultProperty) : undefined;
-        return await this.endParentDialog(dc, result);
+        return dc.parent ? await dc.parent.endDialog(result) : await dc.endDialog(result);
     }
 }

@@ -56,7 +56,7 @@ export class NumberInput extends InputDialog<InputDialogOptions> {
     
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
         // Recognize input if needed
-        let input: any = dc.state.getValue(InputDialog.INPUT_PROPERTY);
+        let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         if (typeof input !== 'number') {
             // Find locale to use
             const activity: Activity = dc.context.activity;
@@ -75,10 +75,10 @@ export class NumberInput extends InputDialog<InputDialogOptions> {
         switch (this.outputFormat) {
             case NumberOutputFormat.float:
             default:
-                dc.state.setValue(InputDialog.INPUT_PROPERTY, input);
+                dc.state.setValue(InputDialog.VALUE_PROPERTY, input);
                 break;
             case NumberOutputFormat.integer:
-                dc.state.setValue(InputDialog.INPUT_PROPERTY, Math.floor(input));
+                dc.state.setValue(InputDialog.VALUE_PROPERTY, Math.floor(input));
                 break;
         }
         
