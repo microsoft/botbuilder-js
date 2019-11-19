@@ -6,7 +6,7 @@ import { InputHints, TurnContext, Activity, Attachment } from '../../../botbuild
 /**
  * Settings to control the behavior of AdaptiveCardPrompt
  */
-export interface AdaptiveCardInputPromptSettings {
+export interface AdaptiveCardPromptSettings {
     /**
      * An Adaptive Card. Required.
      * @remarks
@@ -43,10 +43,11 @@ export interface AdaptiveCardInputPromptSettings {
     promptId?: string;
 }
 
-export enum AdaptiveCardInputPromptErrors {
-    UserInputDoesNotMatchCardId = 'userInputDoesNotMatchCardId',
-    MissingRequiredIds = 'missingRequiredIds',
-    UserUsedTextInput = 'userUsedTextInput'
+// TODO: Add comments
+export enum AdaptiveCardPromptErrors {
+    userInputDoesNotMatchCardId,
+    missingRequiredIds,
+    userUsedTextInput
 }
 
 /**
@@ -58,7 +59,7 @@ export enum AdaptiveCardInputPromptErrors {
  *   * Ensures input is only valid if it comes from the appropriate card (not one shown previous to prompt)
  * DO NOT USE WITH CHANNELS THAT DON'T SUPPORT ADAPTIVE CARDS
  */
-export class AdaptiveCardInputPrompt extends Dialog {
+export class AdaptiveCardPrompt extends Dialog {
     private validator: PromptValidator<object>;
     private requiredInputIds: string[];
     private promptId: string;
@@ -70,7 +71,7 @@ export class AdaptiveCardInputPrompt extends Dialog {
      * @param validator (optional) Validator that will be called each time a new activity is received. Validator should handle error messages on failures.
      * @param settings (optional) Additional options for AdaptiveCardPrompt behavior
      */
-    public constructor(dialogId: string, settings: AdaptiveCardInputPromptSettings, validator?: PromptValidator<object>) {
+    public constructor(dialogId: string, settings: AdaptiveCardPromptSettings, validator?: PromptValidator<object>) {
         super(dialogId);
         if (!settings.card) {
             throw new Error('AdaptiveCardPrompt requires a card in `AdaptiveCardPromptSettings.card`');
@@ -160,7 +161,7 @@ export class AdaptiveCardInputPrompt extends Dialog {
         if (!context.activity.text && context.activity.value) {
             // Validate it comes from the correct card - This is only a worry while the prompt/dialog has not ended
             if (this.promptId && context.activity.value && context.activity.value['promptId'] != this.promptId) {
-                return { succeeded: false, value: { error: AdaptiveCardInputPromptErrors.UserInputDoesNotMatchCardId }};
+                return { succeeded: false, value: { error: AdaptiveCardPromptErrors.userInputDoesNotMatchCardId }};
             }
             // Check for required input data, if specified in AdaptiveCardPromptSettings
             const missingIds = [];
@@ -171,12 +172,12 @@ export class AdaptiveCardInputPrompt extends Dialog {
             });
             // User did not submit inputs that were required
             if (missingIds.length > 0) {
-                return { succeeded: false, value: { error: AdaptiveCardInputPromptErrors.MissingRequiredIds, missingIds } };
+                return { succeeded: false, value: { error: AdaptiveCardPromptErrors.missingRequiredIds, missingIds } };
             }
             return { succeeded: true, value: context.activity.value };
         } else {
             // User used text input instead of card input
-            return { succeeded: false, value: { error: AdaptiveCardInputPromptErrors.UserUsedTextInput } };
+            return { succeeded: false, value: { error: AdaptiveCardPromptErrors.userUsedTextInput } };
         }
     }
 
