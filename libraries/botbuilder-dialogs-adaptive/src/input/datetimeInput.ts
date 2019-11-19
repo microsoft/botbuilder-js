@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState, PromptType } from "./inputDialog";
+import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState } from "./inputDialog";
 import { DialogContext } from "botbuilder-dialogs";
 import * as Recognizers from '@microsoft/recognizers-text-date-time';
 
