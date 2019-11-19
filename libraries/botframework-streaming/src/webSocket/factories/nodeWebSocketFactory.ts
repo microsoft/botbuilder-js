@@ -19,14 +19,16 @@ export class NodeWebSocketFactory extends NodeWebSocketFactoryBase {
 
     /**
      * Creates a NodeWebSocket instance.
-     * @param req 
-     * @param socket 
-     * @param head 
+     * @remarks
+     * The parameters for this method should be associated with an 'upgrade' event off of a Node.js HTTP Server.
+     * @param req An IncomingMessage from the 'http' module in Node.js.
+     * @param socket The Socket connecting the bot and the server, from the 'net' module in Node.js.
+     * @param head The first packet of the upgraded stream which may be empty per https://nodejs.org/api/http.html#http_event_upgrade_1.
      */
-    public createWebSocket(req: IncomingMessage, socket: Socket, head: Buffer): NodeWebSocket {
+    public async createWebSocket(req: IncomingMessage, socket: Socket, head: Buffer): Promise<NodeWebSocket> {
         const s = new NodeWebSocket();
-        s.create(req, socket, head);
-
+        await s.create(req, socket, head);
+        
         return s;
     }
 }

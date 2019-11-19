@@ -14,9 +14,9 @@ import {
     PayloadSender,
     TransportDisconnectedEvent
 } from '../payloadTransport';
-import { BrowserWebSocket } from './BrowserWebSocket';
-import { NodeWebSocket } from './NodeWebSocket';
-import { WebSocketTransport } from './WebSocketTransport';
+import { BrowserWebSocket } from './browserWebSocket';
+import { NodeWebSocket } from './nodeWebSocket';
+import { WebSocketTransport } from './webSocketTransport';
 import { IStreamingTransportClient, IReceiveResponse } from '../interfaces';
 
 /**
@@ -98,7 +98,7 @@ export class WebSocketClient implements IStreamingTransportClient {
 
     private onConnectionDisconnected(sender: object, args: any): void {
         if (this._disconnectionHandler != null) {
-            this._disconnectionHandler("Disconnected");
+            this._disconnectionHandler('Disconnected');
             return;
         }
 
