@@ -21,7 +21,8 @@ const adapter = new botbuilder_1.BotFrameworkAdapter({
 });
 // Create bots DialogManager and bind to state storage
 const bot = new botbuilder_dialogs_1.DialogManager();
-bot.storage = new botbuilder_1.MemoryStorage();
+bot.conversationState = new botbuilder_1.ConversationState(new botbuilder_1.MemoryStorage());
+bot.userState = new botbuilder_1.UserState(new botbuilder_1.MemoryStorage());
 bot.rootDialog = new rootDialog_1.RootDialog();
 // Listen for incoming activities.
 server.post('/api/messages', (req, res) => {
