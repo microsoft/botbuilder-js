@@ -1,21 +1,23 @@
 import { PromptValidator, PromptOptions,  PromptRecognizerResult } from './prompt';
 import { DialogTurnResult, Dialog } from '../dialog';
 import { DialogContext } from '../dialogContext';
-import { InputHints, TurnContext, Activity, Attachment } from '../../../botbuilder';
+import { InputHints, TurnContext, Activity, Attachment } from '../../../botbuilder/lib';
 
 /**
  * Settings to control the behavior of AdaptiveCardPrompt
  */
-export interface AdaptiveCardPromptSettings {
+export interface AdaptiveCardInputPromptSettings {
     /**
      * An Adaptive Card. Required.
+     * @remarks
+     * Add the card here. Do not pass it in to `Prompt.Attachments` or it will show twice.
      */
     card: Attachment;
 
     /**
      * Array of strings matching IDs of required input fields
      * 
-     * @remarks
+     * @example
      * The ID strings must exactly match those used in the Adaptive Card JSON Input IDs
      * For JSON:
      * ```json
@@ -30,6 +32,8 @@ export interface AdaptiveCardPromptSettings {
 
     /**
      * ID specific to this prompt.
+     * @requires
+     * If used, you MUST add this promptId to every <submit>.data.promptId in your Adaptive Card.
      * 
      * @remarks
      * Card input is only accepted if SubmitAction.data.promptId matches the promptId.
@@ -50,13 +54,11 @@ export enum AdaptiveCardInputPromptErrors {
  * 
  * @remarks
  * This prompt is similar to ActivityPrompt but provides features specific to Adaptive Cards:
- *   * Card can be passed in constructor or as prompt/reprompt activity attachment 
  *   * Includes validation for specified required input fields
- *   * Displays custom message if user replies via text and not card input
  *   * Ensures input is only valid if it comes from the appropriate card (not one shown previous to prompt)
  * DO NOT USE WITH CHANNELS THAT DON'T SUPPORT ADAPTIVE CARDS
  */
-export class AdaptiveCardPrompt extends Dialog {
+export class AdaptiveCardInputPrompt extends Dialog {
     private validator: PromptValidator<object>;
     private requiredInputIds: string[];
     private promptId: string;
@@ -68,7 +70,7 @@ export class AdaptiveCardPrompt extends Dialog {
      * @param validator (optional) Validator that will be called each time a new activity is received. Validator should handle error messages on failures.
      * @param settings (optional) Additional options for AdaptiveCardPrompt behavior
      */
-    public constructor(dialogId: string, settings: AdaptiveCardPromptSettings, validator?: PromptValidator<object>) {
+    public constructor(dialogId: string, settings: AdaptiveCardInputPromptSettings, validator?: PromptValidator<object>) {
         super(dialogId);
         if (!settings.card) {
             throw new Error('AdaptiveCardPrompt requires a card in `AdaptiveCardPromptSettings.card`');
@@ -78,6 +80,7 @@ export class AdaptiveCardPrompt extends Dialog {
 
         this.requiredInputIds = settings.requiredInputIds || [];
 
+        this.throwIfNotAdaptiveCard(settings.card);
         this.card = settings.card;
 
         this.promptId = settings.promptId;
@@ -96,22 +99,20 @@ export class AdaptiveCardPrompt extends Dialog {
     }
 
     protected async onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void> {
-        let prompt = isRetry && options.retryPrompt ? (options.retryPrompt as Partial<Activity>) : (options.prompt as Partial<Activity>);
+        // Clone the prompt so we can manipulate it without affecting the prompt from PromptOptions that is stored in state
+        let prompt = isRetry && options.retryPrompt ? 
+            JSON.parse(JSON.stringify(options.retryPrompt as Partial<Activity>)) : 
+            JSON.parse(JSON.stringify(options.prompt as Partial<Activity>));
 
-        // Create a prompt if user didn't pass it in through PromptOptions
-        if (!prompt || Object.keys(prompt).length === 0 || typeof(prompt) != 'object' || !prompt.attachments || prompt.attachments.length === 0) {
+        // Create a prompt if user didn't pass it in through PromptOptions or if they passed in a string
+        if (!prompt || typeof(prompt) != 'object' || Object.keys(prompt).length === 0) {
             prompt = {
-                attachments: [],
                 text: typeof(prompt) === 'string' ? prompt : undefined,
             };
         }
 
-        // Use card passed in PromptOptions or if it doesn't exist, use the one passed in from the constructor
-        const card = prompt.attachments && prompt.attachments[0] ? prompt.attachments[0] : this.card;
-
-        this.validateIsCard(card, isRetry);
-
-        prompt.attachments = [card];
+        // Add Adaptive Card as last attachment (user input should go last), keeping any others
+        prompt.attachments = prompt.attachments ? [...prompt.attachments, this.card] : [this.card];
 
         await context.sendActivity(prompt, undefined, InputHints.ExpectingInput);
     }
@@ -162,7 +163,7 @@ export class AdaptiveCardPrompt extends Dialog {
                 return { succeeded: false, value: { error: AdaptiveCardInputPromptErrors.UserInputDoesNotMatchCardId }};
             }
             // Check for required input data, if specified in AdaptiveCardPromptSettings
-            let missingIds = [];
+            const missingIds = [];
             this.requiredInputIds.forEach((id): void => {
                 if (!context.activity.value[id] || !context.activity.value[id].trim()) {
                     missingIds.push(id);
@@ -179,12 +180,11 @@ export class AdaptiveCardPrompt extends Dialog {
         }
     }
 
-    private validateIsCard(cardAttachment: Attachment, isRetry: boolean): void {
+    private throwIfNotAdaptiveCard(cardAttachment: Attachment): void {
         const adaptiveCardType = 'application/vnd.microsoft.card.adaptive';
-        const cardLocation = isRetry ? 'retryPrompt' : 'prompt';
 
         if (!cardAttachment || !cardAttachment.content) {
-            throw new Error(`No Adaptive Card provided. Include in the constructor or PromptOptions.${ cardLocation }.attachments[0]`);
+            throw new Error(`No Adaptive Card provided. Include in the constructor or PromptOptions.prompt.attachments`);
         } else if (!cardAttachment.contentType || cardAttachment.contentType !== adaptiveCardType) {
             throw new Error(`Attachment is not a valid Adaptive Card.\n`+
             `Ensure card.contentType is '${ adaptiveCardType }'\n`+

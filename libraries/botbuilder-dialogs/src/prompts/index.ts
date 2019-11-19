@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 export * from './activityPrompt';
-export * from './adaptiveCardPrompt';
+export * from './adaptiveCardInputPrompt';
 export * from './attachmentPrompt';
 export * from './choicePrompt';
 export * from './confirmPrompt';
