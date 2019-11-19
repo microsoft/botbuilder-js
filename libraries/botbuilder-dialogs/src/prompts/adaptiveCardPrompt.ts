@@ -100,22 +100,29 @@ export class AdaptiveCardPrompt extends Dialog {
     }
 
     protected async onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void> {
-        // Clone the prompt so we can manipulate it without affecting the prompt from PromptOptions that is stored in state
-        let prompt = isRetry && options.retryPrompt ? 
-            JSON.parse(JSON.stringify(options.retryPrompt as Partial<Activity> || {})) : 
-            JSON.parse(JSON.stringify(options.prompt as Partial<Activity> || {}));
+        // Since card is passed in via AdaptiveCardPromptSettings, PromptOptions may not be used.
+        // Ensure we're working with RetryPrompt, as applicable
+        let prompt: Partial<Activity> | string;
+        if (options) {
+            prompt = isRetry && options.retryPrompt ? options.retryPrompt || {} : options.prompt || {};
+        } else {
+            prompt = {};
+        }
+        
+        // Clone the correct prompt
+        let clonedPrompt = JSON.parse(JSON.stringify(prompt));
 
         // Create a prompt if user didn't pass it in through PromptOptions or if they passed in a string
-        if (!prompt || typeof(prompt) != 'object' || Object.keys(prompt).length === 0) {
-            prompt = {
+        if (!clonedPrompt || typeof(prompt) != 'object' || Object.keys(prompt).length === 0) {
+            clonedPrompt = {
                 text: typeof(prompt) === 'string' ? prompt : undefined,
             };
         }
 
         // Add Adaptive Card as last attachment (user input should go last), keeping any others
-        prompt.attachments = prompt.attachments ? [...prompt.attachments, this.card] : [this.card];
+        clonedPrompt.attachments = clonedPrompt.attachments ? [...clonedPrompt.attachments, this.card] : [this.card];
 
-        await context.sendActivity(prompt, undefined, InputHints.ExpectingInput);
+        await context.sendActivity(clonedPrompt, undefined, InputHints.ExpectingInput);
     }
 
     // Override continueDialog so that we can catch activity.value (which is ignored, by default)
