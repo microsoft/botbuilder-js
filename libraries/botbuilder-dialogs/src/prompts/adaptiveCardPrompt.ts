@@ -1,7 +1,7 @@
 import { PromptValidator, PromptOptions,  PromptRecognizerResult } from './prompt';
 import { DialogTurnResult, Dialog } from '../dialog';
 import { DialogContext } from '../dialogContext';
-import { InputHints, TurnContext, Activity, Attachment } from '../../../botbuilder/lib';
+import { InputHints, TurnContext, Activity, Attachment } from 'botbuilder-core';
 
 /**
  * Settings to control the behavior of AdaptiveCardPrompt
