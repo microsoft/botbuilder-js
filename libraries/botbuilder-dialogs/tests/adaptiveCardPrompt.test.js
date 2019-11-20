@@ -61,7 +61,7 @@ describe('AdaptiveCardPrompt - Common User Error Detection', function() {
             card
         }, (context) => {
             assert.strictEqual(context.recognized.succeeded, true);
-            assert.strictEqual(context.recognized.value['error'], undefined);
+            assert.strictEqual(context.recognized.error, undefined);
             usedValidator = true;
             return context.recognized.succeeded;
         });
