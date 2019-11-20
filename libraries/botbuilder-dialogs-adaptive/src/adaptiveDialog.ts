@@ -19,7 +19,7 @@ import {
 import { OnCondition } from './conditions';
 import { Recognizer } from './recognizers';
 import { TriggerSelector } from './triggerSelector';
-import { FirstSelector, TrueSelector } from './selectors';
+import { RandomSelector } from './selectors';
 
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     /**
@@ -99,8 +99,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         });
 
         if (!this.selector) {
-            // Defaul to first selector
-            this.selector = new FirstSelector();
+            // Default to random selector
+            this.selector = new RandomSelector();
         }
         this.selector.initialize(this.triggers, true);
     }
@@ -199,6 +199,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     //---------------------------------------------------------------------------------------------
 
     protected async processEvent(sequence: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<boolean> {
+        sequence.state.setValue('turn.dialogEvent', event);
+
         // Look for triggered rule
         let handled = await this.queueFirstMatch(sequence, event, preBubble);
         if (handled) {
