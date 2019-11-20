@@ -45,7 +45,11 @@ export interface AdaptiveCardPromptSettings {
 /**
  * Additional items to include on PromptRecognizerResult, as necessary
  */
-export interface AdaptiveCardPromptRecognizerResult<T> extends PromptRecognizerResult<T> {
+export interface AdaptiveCardPromptResult {
+    /**
+     * The value of the user's input from the Adaptive Card.
+     */
+    data?: object;
     /**
      * If not recognized.succeeded, include reason why, if known
      */
@@ -166,7 +170,7 @@ export class AdaptiveCardPrompt extends Dialog {
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Perform base recognition
         const state: AdaptiveCardPromptState = dc.activeDialog.state;
-        const recognized: AdaptiveCardPromptRecognizerResult<object> = await this.onRecognize(dc.context);
+        const recognized: PromptRecognizerResult<AdaptiveCardPromptResult> = await this.onRecognize(dc.context);
 
         if (state.state['attemptCount'] === undefined) {
             state.state['attemptCount'] = 1;
@@ -200,13 +204,13 @@ export class AdaptiveCardPrompt extends Dialog {
         }
     }
 
-    protected async onRecognize(context: TurnContext): Promise<AdaptiveCardPromptRecognizerResult<object>> {
+    protected async onRecognize(context: TurnContext): Promise<PromptRecognizerResult<AdaptiveCardPromptResult>> {
         // Ignore user input that doesn't come from adaptive card
         if (!context.activity.text && context.activity.value) {
             const value = context.activity.value;
             // Validate it comes from the correct card - This is only a worry while the prompt/dialog has not ended
             if (this.promptId && context.activity.value && context.activity.value['promptId'] != this.promptId) {
-                return { succeeded: false, value, error: AdaptiveCardPromptErrors.userInputDoesNotMatchCardId };
+                return { succeeded: false, value: { data: value, error: AdaptiveCardPromptErrors.userInputDoesNotMatchCardId }};
             }
             // Check for required input data, if specified in AdaptiveCardPromptSettings
             const missingIds = [];
@@ -217,12 +221,12 @@ export class AdaptiveCardPrompt extends Dialog {
             });
             // User did not submit inputs that were required
             if (missingIds.length > 0) {
-                return { succeeded: false, value, missingIds, error: AdaptiveCardPromptErrors.missingRequiredIds };
+                return { succeeded: false, value: { data: value, missingIds, error: AdaptiveCardPromptErrors.missingRequiredIds}};
             }
             return { succeeded: true, value };
         } else {
             // User used text input instead of card input
-            return { succeeded: false, error: AdaptiveCardPromptErrors.userUsedTextInput };
+            return { succeeded: false, value: { error: AdaptiveCardPromptErrors.userUsedTextInput }};
         }
     }
 

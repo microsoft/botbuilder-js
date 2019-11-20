@@ -61,7 +61,7 @@ describe('AdaptiveCardPrompt - Common User Error Detection', function() {
             card
         }, (context) => {
             assert.strictEqual(context.recognized.succeeded, true);
-            assert.strictEqual(context.recognized.error, undefined);
+            assert.strictEqual(context.recognized.value.error, undefined);
             usedValidator = true;
             return context.recognized.succeeded;
         });
@@ -101,7 +101,7 @@ describe('AdaptiveCardPrompt - Common User Error Detection', function() {
             card
         }, (context) => {
             assert.strictEqual(context.recognized.succeeded, false);
-            assert.strictEqual(context.recognized.error, AdaptiveCardPromptErrors.userInputDoesNotMatchCardId);
+            assert.strictEqual(context.recognized.value.error, AdaptiveCardPromptErrors.userInputDoesNotMatchCardId);
             usedValidator = true;
             return context.recognized.succeeded;
         });
@@ -182,8 +182,8 @@ describe('AdaptiveCardPrompt - Common User Error Detection', function() {
             card
         }, async (context) => {
             assert.strictEqual(context.recognized.succeeded, false);
-            assert.strictEqual(context.recognized.error, AdaptiveCardPromptErrors.missingRequiredIds);
-            await context.context.sendActivity(`test inputs missing: ${ context.recognized.missingIds.join(', ') }`);
+            assert.strictEqual(context.recognized.value.error, AdaptiveCardPromptErrors.missingRequiredIds);
+            await context.context.sendActivity(`test inputs missing: ${ context.recognized.value.missingIds.join(', ') }`);
             usedValidator = true;
             return false;
         });
@@ -253,7 +253,7 @@ describe('AdaptiveCardPrompt - Common User Error Detection', function() {
         let usedValidator = false;
         const prompt = new AdaptiveCardPrompt('prompt', { card }, async (context) => {
             assert.strictEqual(context.recognized.succeeded, false);
-            assert.strictEqual(context.recognized.error, AdaptiveCardPromptErrors.userUsedTextInput);
+            assert.strictEqual(context.recognized.value.error, AdaptiveCardPromptErrors.userUsedTextInput);
             usedValidator = true;
             return false;
         });
