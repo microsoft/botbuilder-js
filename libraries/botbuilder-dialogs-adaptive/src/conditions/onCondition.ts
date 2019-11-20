@@ -38,7 +38,7 @@ export class OnCondition {
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      */
-    constructor(condition: string = null, actions: Dialog[] = null) {
+    constructor(condition: string = null, actions: Dialog[] = []) {
         this.condition = condition;
         this.actions = actions;
     }

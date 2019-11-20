@@ -34,38 +34,4 @@ export class OnDialogEvent extends OnCondition {
             parser.parse(`turn.dialogEvent.name == '${this.event}'`),
             super.getExpression(parser));
     }
-
-    /*
-    public evaluate(sequence: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<ActionChangeList[]|undefined> {
-        // Limit evaluation to only supported events
-        if (preBubble == this.preBubble && this.events.indexOf(event.name) >= 0) {
-            return this.onEvaluate(sequence, event);
-        } else {
-            return undefined;
-        }
-    }
-
-    protected async onEvaluate(sequence: SequenceContext, event: DialogEvent): Promise<ActionChangeList[]|undefined> {
-        if (await this.onIsTriggered(sequence, event)) {
-            return [this.onCreateChangeList(sequence, event)];
-        }
-    }
-
-    protected async onIsTriggered(sequence: SequenceContext, event: DialogEvent): Promise<boolean> {
-        return true;
-    }
-
-    protected onCreateChangeList(sequence: SequenceContext, event: DialogEvent, dialogOptions?: any): ActionChangeList {
-        const changeList: ActionChangeList = { changeType: ActionChangeType.insertActions, actions: [] };
-        this.actions.forEach((action) => {
-            const actionState: ActionState = { dialogStack: [], dialogId: action.id };
-            if (dialogOptions !== undefined) {
-                actionState.options = dialogOptions;
-            }
-            changeList.actions.push(actionState);
-        });
-
-        return changeList;
-    }
-    */
 }

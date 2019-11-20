@@ -19,7 +19,7 @@ import {
 import { OnCondition } from './conditions';
 import { Recognizer } from './recognizers';
 import { TriggerSelector } from './triggerSelector';
-import { FirstSelector } from './selectors';
+import { FirstSelector, TrueSelector } from './selectors';
 
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     /**
@@ -191,7 +191,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     public configure(config: AdaptiveDialogConfiguration): this {
-        return super.configure(this);
+        return super.configure(config);
     }
 
     //---------------------------------------------------------------------------------------------
