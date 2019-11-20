@@ -67,6 +67,10 @@ export interface AdaptiveCardPromptResult {
  */
 export enum AdaptiveCardPromptErrors {
     /**
+     * No known user errors.
+     */
+    none,
+    /**
      * Error presented if developer specifies AdaptiveCardPromptSettings.promptId,
      *  but user submits adaptive card input on a card where the ID does not match.
      * This error will also be present if developer AdaptiveCardPromptSettings.promptId,
