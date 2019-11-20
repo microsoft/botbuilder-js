@@ -73,7 +73,7 @@ describe('AdaptiveCardPrompt - Common User Error Detection', function() {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
-                const reply = results.result;
+                const reply = results.result.data;
                 await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
             }
             await convoState.saveChanges(turnContext);
@@ -113,7 +113,7 @@ describe('AdaptiveCardPrompt - Common User Error Detection', function() {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
-                const reply = results.result;
+                const reply = results.result.data;
                 await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
             }
             await convoState.saveChanges(turnContext);
@@ -153,7 +153,7 @@ describe('AdaptiveCardPrompt - Common User Error Detection', function() {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
-                const reply = results.result;
+                const reply = results.result.data;
                 await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
             }
             await convoState.saveChanges(turnContext);
@@ -227,7 +227,7 @@ describe('AdaptiveCardPrompt - Common User Error Detection', function() {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
-                const reply = results.result;
+                const reply = results.result.data;
                 await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
             }
             await convoState.saveChanges(turnContext);
@@ -265,7 +265,7 @@ describe('AdaptiveCardPrompt - Common User Error Detection', function() {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
-                const reply = results.result;
+                const reply = results.result.data;
                 await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
             }
             await convoState.saveChanges(turnContext);
@@ -319,7 +319,7 @@ describe('AdaptiveCardPrompt - Prompt Behavior', function() {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.beginDialog('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
-                const reply = results.result;
+                const reply = results.result.data;
                 await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
             }
             await convoState.saveChanges(turnContext);
@@ -348,7 +348,7 @@ describe('AdaptiveCardPrompt - Prompt Behavior', function() {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
-                const reply = results.result;
+                const reply = results.result.data;
                 await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
             }
             await convoState.saveChanges(turnContext);
@@ -411,7 +411,7 @@ describe('AdaptiveCardPrompt - Prompt Behavior', function() {
                     ]
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                const reply = results.result;
+                const reply = results.result.data;
                 await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
             }
             await convoState.saveChanges(turnContext);
@@ -491,7 +491,7 @@ describe('AdaptiveCardPrompt - Prompt Behavior', function() {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
-                const reply = results.result;
+                const reply = results.result.data;
                 await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
             }
             await convoState.saveChanges(turnContext);
@@ -525,7 +525,7 @@ describe('AdaptiveCardPrompt - Prompt Behavior', function() {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
-                const reply = results.result;
+                const reply = results.result.data;
                 await turnContext.sendActivity(`You said ${ JSON.stringify(reply) }`);
             }
             await convoState.saveChanges(turnContext);
@@ -559,7 +559,7 @@ describe('AdaptiveCardPrompt - Prompt Behavior', function() {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
-                const reply = results.result;
+                const reply = results.result.data;
                 await turnContext.sendActivity('Validator passed');
             }
             await convoState.saveChanges(turnContext);
