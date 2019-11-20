@@ -37,8 +37,7 @@ export interface AdaptiveCardPromptSettings {
      * 
      * @remarks
      * Card input is only accepted if SubmitAction.data.promptId matches the promptId.
-     * This is set to a random string<number> and randomizes again on reprompts by default.
-     *   If set manually, will not change between reprompts.
+     * Does not change between reprompts.
      */
     promptId?: string;
 }
