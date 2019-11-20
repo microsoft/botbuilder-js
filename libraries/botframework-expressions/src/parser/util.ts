@@ -10,7 +10,7 @@
  * util class
  */
 export class Util {
-    public static Trim(str: string, char: string): string {
+    public static trim(str: string, char: string): string {
         if (char !== undefined) {
             return str.replace(new RegExp(''.concat('^\\', char, '+|\\', char, '+$'), 'g'), '');
         }
@@ -18,14 +18,14 @@ export class Util {
         return str.trim();
     }
 
-    public static Unescape(str: string): string {
+    public static unescape(str: string): string {
         if (str !== undefined) {
             str = str.replace(/\\\\/g, '\\')
-                    .replace(/\\n/g, '\n')
-                    .replace(/\\r/g, '\r')
-                    .replace(/\\t/g, '\t')
-                    .replace(/\\"/g, '"')
-                    .replace(/\\'/g, '\'');
+                .replace(/\\n/g, '\n')
+                .replace(/\\r/g, '\r')
+                .replace(/\\t/g, '\t')
+                .replace(/\\"/g, '"')
+                .replace(/\\'/g, '\'');
         }
 
         return str;

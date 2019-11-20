@@ -337,7 +337,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     /// <returns>True if the event is handled by the current dialog and bubbling should stop.</returns>
     public async onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         // Before bubble
-        let handled = await this.onPreBubbleEventAsync(dc, e);
+        let handled = await this.onPreBubbleEvent(dc, e);
 
         // Bubble as needed
         if (!handled && e.bubble && dc.parent != undefined) {
@@ -346,7 +346,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
         // Post bubble
         if (!handled) {
-            handled = await this.onPostBubbleEventAsync(dc, e);
+            handled = await this.onPostBubbleEvent(dc, e);
         }
 
         return handled;
@@ -363,7 +363,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * @param e The event being raised.
      * @returns Whether the event is handled by the current dialog and further processing should stop.
      */
-    protected async onPreBubbleEventAsync(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+    protected async onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         return false;
     }
 
@@ -377,7 +377,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * @param e The event being raised.
      * @returns Whether the event is handled by the current dialog and further processing should stop.
      */
-    protected async onPostBubbleEventAsync(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+    protected async onPostBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         return false;
     }
 
@@ -387,7 +387,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * @remarks
      * SHOULD be overridden to provide a more contextually relevant ID. The preferred pattern for
      * ID's is `<dialog type>(this.hashedLabel('<dialog args>'))`.
-     */
+     */    
     protected onComputeId(): string {
         throw new Error(`Dialog.onComputeId(): not implemented.`)
     }
@@ -405,11 +405,12 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      */
     protected hashedLabel(label: string): string {
         const l = label.length;
-        if (label.length > 15) {
+        if (label.length > 15)
+        {
             let hash = 0;
             for (let i = 0; i < l; i++) {
                 const chr = label.charCodeAt(i);
-                hash = ((hash << 5) - hash) + chr;
+                hash  = ((hash << 5) - hash) + chr;
                 hash |= 0; // Convert to 32 bit integer
             }
             label = `${label.substr(0, 5)}${hash.toString()}`;

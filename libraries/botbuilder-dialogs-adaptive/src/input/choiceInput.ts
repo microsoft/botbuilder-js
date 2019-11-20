@@ -141,7 +141,7 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
     
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
         // Get input and options
-        let input: string = dc.state.getValue(InputDialog.INPUT_PROPERTY).toString();
+        let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
         const options: ChoiceInputOptions = dc.state.getValue(InputDialog.OPTIONS_PROPERTY);
 
         // Format choices
@@ -163,10 +163,10 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
         switch (this.outputFormat) {
             case ChoiceOutputFormat.value:
             default:
-                dc.state.setValue(InputDialog.INPUT_PROPERTY, foundChoice.value);
+                dc.state.setValue(InputDialog.VALUE_PROPERTY, foundChoice.value);
                 break;
             case ChoiceOutputFormat.index:
-                dc.state.setValue(InputDialog.INPUT_PROPERTY, foundChoice.index);
+                dc.state.setValue(InputDialog.VALUE_PROPERTY, foundChoice.index);
                 break;
         }
 

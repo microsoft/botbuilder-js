@@ -12,12 +12,12 @@ export class ParseErrorListener implements ANTLRErrorListener<any> {
     public static readonly Instance: ParseErrorListener = new ParseErrorListener();
 
     public syntaxError<T>(
-       _recognizer: Recognizer<T, any>,
-       _offendingSymbol: T,
-       line: number,
-       charPositionInLine: number,
-       msg: string,
-       _e: RecognitionException | undefined): void {
-            throw Error(`syntax error at line ${line}:${charPositionInLine} ${msg}`);
+        _recognizer: Recognizer<T, any>,
+        _offendingSymbol: T,
+        line: number,
+        charPositionInLine: number,
+        msg: string,
+        _e: RecognitionException | undefined): void {
+        throw Error(`syntax error at line ${ line }:${ charPositionInLine } ${ msg }`);
     }
 }

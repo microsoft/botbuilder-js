@@ -20,21 +20,21 @@ export class CommonRegex {
         if (pattern !== undefined && pattern !== '' && this.regexCache.has(pattern)) {
             result = this.regexCache.get(pattern);
         } else {
-            if (pattern === undefined || pattern === '' || !this.IsCommonRegex(pattern)) {
+            if (pattern === undefined || pattern === '' || !this.isCommonRegex(pattern)) {
                 throw new Error(`A regular expression parsing error occurred.`);
             }
 
-            result = this.GetRegExpFromString(pattern);
+            result = this.getRegExpFromString(pattern);
             this.regexCache.set(pattern, result);
         }
 
         return result;
     }
 
-    private static GetRegExpFromString(pattern: string): RegExp {
+    private static getRegExpFromString(pattern: string): RegExp {
         const flags: string[] = ['(?i)', '(?m)', '(?s)'];
-        let flag: string = '';
-        flags.forEach((e: string) => {
+        let flag = '';
+        flags.forEach((e: string): void => {
             if (pattern.includes(e)) {
                 flag += e.substr(2, 1);
                 pattern = pattern.replace(e, '');
@@ -43,17 +43,17 @@ export class CommonRegex {
 
         let regexp: RegExp;
         if (flag !== '') {
-            regexp = new RegExp(`${pattern}`, flag);
+            regexp = new RegExp(`${ pattern }`, flag);
         } else {
-            regexp = new RegExp(`${pattern}`);
+            regexp = new RegExp(`${ pattern }`);
         }
 
         return regexp;
     }
 
-    private static IsCommonRegex(pattern: string): boolean {
+    private static isCommonRegex(pattern: string): boolean {
         try {
-            this.AntlrParse(pattern);
+            this.antlrParse(pattern);
         } catch (Exception) {
             return false;
         }
@@ -61,30 +61,31 @@ export class CommonRegex {
         return true;
     }
 
-    private static AntlrParse(pattern: string): ParseTree {
+    private static antlrParse(pattern: string): ParseTree {
         const inputStream: ANTLRInputStream = new ANTLRInputStream(pattern);
         const lexer: CommonRegexLexer = new CommonRegexLexer(inputStream);
         const tokenStream: CommonTokenStream = new CommonTokenStream(lexer);
         const parser: CommonRegexParser = new CommonRegexParser(tokenStream);
         parser.removeErrorListeners();
+        // tslint:disable-next-line: no-use-before-declare
         parser.addErrorListener(ErrorListener.Instance);
         parser.buildParseTree = true;
 
         return parser.parse();
     }
- }
+}
 
- // tslint:disable-next-line: completed-docs
+// tslint:disable-next-line: completed-docs
 export class ErrorListener implements ANTLRErrorListener<any> {
-     public static readonly Instance: ErrorListener = new ErrorListener();
+    public static readonly Instance: ErrorListener = new ErrorListener();
 
-     public syntaxError<T>(
+    public syntaxError<T>(
         _recognizer: Recognizer<T, any>,
         _offendingSymbol: T,
         line: number,
         charPositionInLine: number,
         msg: string,
         _e: RecognitionException | undefined): void {
-             throw Error(`Regular expression is invalid.`);
-     }
- }
+        throw Error(`Regular expression is invalid.`);
+    }
+}

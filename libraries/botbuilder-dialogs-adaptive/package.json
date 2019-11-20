@@ -31,6 +31,7 @@
     "@types/node-fetch": "^2.5.3",
     "botbuilder-core": "~4.1.6",
     "botbuilder-dialogs": "~4.1.6",
+    "botframework-expressions": "~4.1.6",
     "botframework-connector": "~4.1.6",
     "botframework-expressions": "~4.5.0",
     "botframework-schema": "~4.1.6",

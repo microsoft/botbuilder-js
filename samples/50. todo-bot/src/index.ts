@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import * as restify from 'restify';
-import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
+import { BotFrameworkAdapter, MemoryStorage, ConversationState, UserState } from 'botbuilder';
 import { DialogManager } from 'botbuilder-dialogs';
 import { RootDialog } from './rootDialog';
 
@@ -23,7 +23,8 @@ const adapter = new BotFrameworkAdapter({
 
 // Create bots DialogManager and bind to state storage
 const bot = new DialogManager();
-bot.storage = new MemoryStorage();
+bot.conversationState = new ConversationState(new MemoryStorage());
+bot.userState = new UserState(new MemoryStorage());
 bot.rootDialog = new RootDialog();
 
 // Listen for incoming activities.

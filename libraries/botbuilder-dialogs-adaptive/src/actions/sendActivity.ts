@@ -69,7 +69,6 @@ export class SendActivity extends Dialog {
      * @remarks
      * This is just a convenience property for setting the dialogs [outputBinding](#outputbinding).
      */
-
     public configure(config: SendActivityConfiguration): this {
         return super.configure(config);
     }
