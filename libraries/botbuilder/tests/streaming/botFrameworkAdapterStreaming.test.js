@@ -1,67 +1,19 @@
-const { MockContentStream, MockStreamingRequest } = require('./mockStreamingRequest');
-const { BotFrameworkAdapter, StatusCodes } = require('../../');
-const { ActivityHandler, ActivityTypes } = require('botbuilder-core');
-const chai = require('chai');
-const { randomBytes } = require('crypto');
 const { Socket } = require('net');
-const sinon = require('sinon');
-const expect = chai.expect;
+
+const { expect } = require('chai');
+const { spy } = require('sinon');
+const { ActivityHandler, ActivityTypes } = require('botbuilder-core');
+
+const { BotFrameworkAdapter, StatusCodes } = require('../../');
+
+// Import Helper Classes
+const { MockHttpRequest } = require('./mockHttpRequest');
+const { MockNetSocket } = require('./mockNetSocket');
+const { MockContentStream, MockStreamingRequest } = require('./mockStreamingRequest');
 
 const createNetSocket = (readable = true, writable = true) => {
     return new Socket({ readable, writable });
 };
-
-class TestRequest {
-    constructor(method = 'GET',) {
-        this.method = method;
-        let headers = [];
-    }
-
-    status() {
-        return this.statusVal;
-    }
-
-    status(value) {
-        this.statusVal = value;
-    }
-
-    streams(value) {
-        this.streamsVal = value;
-    }
-
-    streams() {
-        return this.streamsVal;
-    }
-
-    setHeaders() {
-        return this.headersVal;
-    }
-
-    setHeaders(value) {
-        this.headers = value;
-    }
-
-}
-
-class TestResponse {
-    send(value) {
-        this.sendVal = value;
-        return this.sendVal;
-    }
-
-    status(value) {
-        this.statusVal = value;
-        return this.statusVal;
-    }
-
-    setClaimUpgrade(value) {
-        this.claimUpgradeVal = value;
-    }
-
-    claimUpgrade() {
-        return this.claimUpgradeVal;
-    }
-}
 
 class TestAdapterSettings {
     constructor(appId = undefined, appPassword = undefined, channelAuthTenant, oAuthEndpoint, openIdMetadata, channelServce) {
@@ -102,20 +54,10 @@ describe('BotFrameworkAdapter Streaming tests', () => {
     it('starts and stops a websocket server', async () => {
         const bot = new ActivityHandler();
         const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
-        const request = new TestRequest();
-        
-        request.headers = [];
-        request.headers['upgrade'] = 'websocket';
-        request.headers['sec-websocket-key'] = randomBytes(16).toString('base64');
-        request.headers['sec-websocket-version'] = '13';
-        request.headers['sec-websocket-protocol'] = '';
+        const request = new MockHttpRequest();
+        const realSocket = createNetSocket();
 
-        const response = new TestResponse({ claimUpgrade: 'anything' });
-        const mockedSocket = createNetSocket();
-
-        response.socket = mockedSocket;
-        response.setClaimUpgrade({ socket: mockedSocket, head: 'websocket' });
-        await adapter.useWebSocket(request, response, async (context) => {
+        await adapter.useWebSocket(request, realSocket, Buffer.from([]), async (context) => {
             await bot.run(context);
         });
     });
@@ -123,20 +65,10 @@ describe('BotFrameworkAdapter Streaming tests', () => {
     it('returns a connector client', async () => {
         const bot = new ActivityHandler();
         const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
-        let request = new TestRequest();
-        
-        request.headers = [];
-        request.headers['upgrade'] = 'websocket';
-        request.headers['sec-websocket-key'] = randomBytes(16).toString('base64');
-        request.headers['sec-websocket-version'] = '13';
-        request.headers['sec-websocket-protocol'] = '';
-        let response = new TestResponse();
-        const mockedSocket = createNetSocket();
+        const request = new MockHttpRequest();
+        const realSocket = createNetSocket();
 
-        response.socket = mockedSocket;
-        response.setClaimUpgrade({ socket: mockedSocket, head: 'websocket' });
-
-        await adapter.useWebSocket(request, response, async (context) => {
+        await adapter.useWebSocket(request, realSocket, Buffer.from([]), async (context) => {
             await bot.run(context);
         });
         const cc = adapter.createConnectorClient('urn:test');
@@ -147,38 +79,36 @@ describe('BotFrameworkAdapter Streaming tests', () => {
         it('connects', async () => {
             const bot = new ActivityHandler();
             const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
-            let request = new TestRequest();
-            
-            request.headers = [];
-            request.headers['upgrade'] = 'websocket';
-            request.headers['sec-websocket-key'] = randomBytes(16).toString('base64');
-            request.headers['sec-websocket-version'] = '13';
-            request.headers['sec-websocket-protocol'] = '';
-            let response = new TestResponse();
-            const mockedSocket = createNetSocket();
+            const request = new MockHttpRequest();
+            const realSocket = createNetSocket();
 
-            response.socket = mockedSocket;
-            response.setClaimUpgrade({ socket: mockedSocket, head: 'websocket' });
-
-            await adapter.useWebSocket(request, response, async (context) => {
+            const writeSpy = spy(realSocket, 'write');
+            await adapter.useWebSocket(request, realSocket, Buffer.from([]), async (context) => {
                 await bot.run(context);
             });
+            expect(writeSpy.called).to.be.true;
         });
 
         it('returns status code 401 when request is not authorized', async () => {
             const bot = new ActivityHandler();
             const settings = new TestAdapterSettings('appId', 'password');
             const adapter = new BotFrameworkAdapter(settings);
-            let request = new TestRequest();
-            
-            request.setHeaders({ channelid: 'fakechannel', authorization: 'donttrustme' });
-            let response = new TestResponse();
+            const request = new MockHttpRequest();
+            request.setHeader('authorization', 'donttustme');
 
-            await adapter.useWebSocket(request, response, async (context) => {
+            const socket = new MockNetSocket();
+            const writeSpy = spy(socket, 'write');
+            const destroySpy = spy(socket, 'destroy');
+            
+            await adapter.useWebSocket(request, socket, Buffer.from([]), async (context) => {
                 await bot.run(context);
                 throw new Error('useWebSocket should have thrown an error');
             }).catch(err => {
                 expect(err.message).to.equal('Unauthorized. Is not authenticated');
+                const socketResponse = MockNetSocket.createNonSuccessResponse(401);
+                expect(writeSpy.called).to.be.true;
+                expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
+                expect(destroySpy.calledOnceWithExactly()).to.be.true;
             });
         });
     });
@@ -282,13 +212,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
         it('returns a 501 when activity type is invoke, but the activity is invalid', async () => {
             const bot = new ActivityHandler();
             const adapter = new BotFrameworkAdapter();
-            let request = new TestRequest();
-            request.verb = 'POST';
-            request.path = '/api/messages';
-            let fakeStream = {
-                readAsJson: function () { return { type: 'invoke', serviceUrl: 'somewhere/', channelId: 'test' }; },
-            };
-            request.streams[0] = fakeStream;
+            const request = new MockStreamingRequest();
 
             adapter.logic = async (context) => {
                 await bot.run(context);
@@ -298,53 +222,48 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             expect(response.statusCode).to.equal(501);
         });
 
-        it('returns a 500 when bot can not run', async () => {
-            const MiddleWare = require('botbuilder-core');
-            const bot = {};
-            let mw = {
-                async onTurn(context, next) {
-                    console.log('Middleware executed!');
-                    await next();
-                }
-            };
-            let mwset = [];
-            mwset.push(mw);
-            const adapter = new BotFrameworkAdapter({ bot: bot, middleWare: mwset });
-            let request = new TestRequest();
-            request.verb = 'POST';
-            request.path = '/api/messages';
-            let fakeStream = {
-                readAsJson: function () { return { type: 'invoke', serviceUrl: 'somewhere/', channelId: 'test' }; },
-            };
-            request.streams[0] = fakeStream;
+        it('returns a 500 when BotFrameworkAdapter.logic is not callable', async () => {
+            const adapter = new BotFrameworkAdapter();
+            const request = new MockStreamingRequest();
 
             const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(500);
         });
 
-        it('executes middleware', async () => {
-            const bot = new ActivityHandler();
-            bot.run = function (turnContext) { return Promise.resolve(); };
+        it('returns a 500 and calls middleware when BotFrameworkAdapter.logic is not callable', async () => {
+            let middlewareCalled = false;
+            const middleware = {
+                async onTurn(context, next) {
+                    middlewareCalled = true;
+                    await next();
+                }
+            };
 
             const adapter = new BotFrameworkAdapter();
+            adapter.use(middleware);
+            const request = new MockStreamingRequest();
+
+            const response = await adapter.processRequest(request);
+            expect(response.statusCode).to.equal(500);
+            expect(middlewareCalled).to.be.true;
+        });
+
+        it('executes middleware', async () => {
+            const bot = new ActivityHandler();
+            const adapter = new BotFrameworkAdapter();
+
             let middlewareCalled = false;
             const middleware = {
                 async onTurn(context, next) {
                     middlewareCalled = true;
                     return next();
                 }
-            }
+            };
 
             adapter.use(middleware);
 
-            const runSpy = sinon.spy(bot, 'run');
-            let request = new TestRequest();
-            request.verb = 'POST';
-            request.path = '/api/messages';
-            let fakeStream = {
-                readAsJson: function () { return { type: 'invoke', serviceUrl: 'somewhere/', channelId: 'test' }; },
-            };
-            request.streams[0] = fakeStream;
+            const runSpy = spy(bot, 'run');
+            const request = new MockStreamingRequest();
 
             adapter.logic = async (context) => {
                 await bot.run(context);
@@ -360,32 +279,18 @@ describe('BotFrameworkAdapter Streaming tests', () => {
     it('sends a request', async () => {
         const bot = new ActivityHandler();
         const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
-        let request = new TestRequest();
-        
-        request.headers = [];
-        request.headers['upgrade'] = 'websocket';
-        request.headers['sec-websocket-key'] = randomBytes(16).toString('base64');
-        request.headers['sec-websocket-version'] = '13';
-        request.headers['sec-websocket-protocol'] = '';
-        let response = new TestResponse();
+        const request = new MockHttpRequest();
+        const realSocket = createNetSocket();
 
-        const mockedSocket = createNetSocket();
+        const writeSpy = spy(realSocket, 'write');
 
-        response.socket = mockedSocket;
-        const spy = sinon.spy(mockedSocket, "write");
-        response.setClaimUpgrade({ socket: mockedSocket, head: 'websocket' });
+        await adapter.useWebSocket(request, realSocket, Buffer.from([]), async (context) => {
+            await bot.run(context);
+        });
 
-        try {
-            await adapter.useWebSocket(request, response, async (context) => {
-                await bot.run(context);
-            })
-        } catch (err) {
-            throw err;
-        }
-
-        let connection = adapter.createConnectorClient('fakeUrl');
+        const connection = adapter.createConnectorClient('fakeUrl');
         connection.sendRequest({ method: 'POST', url: 'testResultDotCom', body: 'Test body!' });
-        expect(spy.called).to.be.true;
+        expect(writeSpy.called).to.be.true;
     }).timeout(2000);
 
     describe('private methods', () => {

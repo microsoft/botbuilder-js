@@ -6,7 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { IncomingMessage } from 'http';
+import { IncomingMessage, STATUS_CODES } from 'http';
+import { Socket } from 'net';
 import * as os from 'os';
 
 import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
@@ -755,9 +756,6 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * ```
      */
     public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
-        if (this.settings.enableWebSockets && req.method === GET && (req.headers.Upgrade || req.headers.upgrade)) {
-            return this.useWebSocket(req, res, logic);
-        }
         
         let body: any;
         let status: number;
@@ -1151,36 +1149,37 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * @param res The response sent on error or connection termination.
      * @param logic The logic that will handle incoming requests.
      */
-    public async useWebSocket(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {   
-        if (!logic) {
-            throw new Error('Streaming logic needs to be provided to `useWebSocket`');
-        }
-
+    public async useWebSocket(req: IncomingMessage, socket: Socket, head: Buffer, logic: (context: TurnContext) => Promise<any>): Promise<void> {   
         if (!this.webSocketFactory || !this.webSocketFactory.createWebSocket) {
             throw new Error('BotFrameworkAdapter must have a WebSocketFactory in order to support streaming.');
         }
 
-        this.logic = logic;
-
-        // Restify-specific check.
-        if (typeof((res as any).claimUpgrade) !== 'function') {
-            throw new Error('ClaimUpgrade is required for creating WebSocket connection.');
+        if (!logic) {
+            throw new Error('Streaming logic needs to be provided to `useWebSocket`');
         }
+
+        this.logic = logic;
 
         try {
             await this.authenticateConnection(req, this.settings.channelService);
         } catch (err) {
-            // Set the correct status code for the socket to send back to the channel.
-            res.status(StatusCodes.UNAUTHORIZED);
-            res.send(err.message);
+            // If the authenticateConnection call fails, send back the correct error code and close
+            // the connection.
+            if (typeof(err.message) === 'string' && err.message.toLowerCase().startsWith('unauthorized')) {
+                abortWebSocketUpgrade(socket, 401);
+            } else if (typeof(err.message) === 'string' && err.message.toLowerCase().startsWith(`'authheader'`)) {
+                abortWebSocketUpgrade(socket, 400);
+            } else {
+                abortWebSocketUpgrade(socket, 500);
+            }
+
             // Re-throw the error so the developer will know what occurred.
             throw err;
         }
 
-        const upgrade = (res as any).claimUpgrade();
-        const socket = await this.webSocketFactory.createWebSocket(req as IncomingMessage, upgrade.socket, upgrade.head);
+        const nodeWebSocket = await this.webSocketFactory.createWebSocket(req, socket, head);
 
-        await this.startWebSocket(socket);
+        await this.startWebSocket(nodeWebSocket);
     }
 
     private async authenticateConnection(req: WebRequest, channelService?: string): Promise<void> {
@@ -1303,4 +1302,13 @@ function delay(timeout: number): Promise<void> {
     return new Promise((resolve) => {
         setTimeout(resolve, timeout);
     });
+}
+
+function abortWebSocketUpgrade(socket: Socket, code: number) {
+    if (socket.writable) {
+        const connectionHeader = `Connection: 'close'\r\n`;
+        socket.write(`HTTP/1.1 ${code} ${STATUS_CODES[code]}\r\n${connectionHeader}\r\n`);
+    }
+
+    socket.destroy();
 }
