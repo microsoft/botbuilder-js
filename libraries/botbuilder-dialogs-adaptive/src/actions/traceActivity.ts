@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, DialogCommand, Dialog } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
 
 export interface TraceActivityConfiguration extends DialogConfiguration {

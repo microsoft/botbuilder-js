@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogCommand, DialogContext, DialogConfiguration, Dialog } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogContext, DialogConfiguration, Dialog } from 'botbuilder-dialogs';
 
 export interface CancelAllDialogsConfiguration extends DialogConfiguration {
     eventName?: string;

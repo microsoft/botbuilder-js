@@ -1,4 +1,3 @@
-import { ActionState, SequenceContext, ActionChangeType, ActionChangeList } from '../sequenceContext';
 /**
  * @module botbuilder-dialogs-adaptive
  */
@@ -6,10 +5,11 @@ import { ActionState, SequenceContext, ActionChangeType, ActionChangeList } from
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, DialogCommand, DialogInstance } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
 import { Case } from './case';
 import { Dialog } from 'botbuilder-dialogs';
 import { Expression, ExpressionType } from 'botframework-expressions';
+import { ActionState, SequenceContext, ActionChangeType, ActionChangeList } from '../sequenceContext';
 
 export interface SwitchConditionConfiguration extends DialogConfiguration {
     /**
@@ -55,7 +55,9 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> {
             if (this.caseExpresssions === null) {
                 this.caseExpresssions = {};
                 this.cases.forEach(c => {
-                    const caseCondition = Expression.MakeExpression(ExpressionType.Equal, undefined, c.CreateValueExpression());
+                    const expr = new Expression(ExpressionType.Equal, undefined, c.CreateValueExpression());
+                    expr.validate();
+                    const caseCondition = expr;
                     this.caseExpresssions[c.value] = caseCondition;
                 });
             }

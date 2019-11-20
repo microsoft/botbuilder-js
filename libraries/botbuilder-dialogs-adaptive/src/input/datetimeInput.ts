@@ -37,13 +37,13 @@ export class DatetimeInput extends InputDialog<InputDialogOptions> {
 
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
         // Recognize input and filter out non-attachments
-        const input: object = dc.state.getValue(InputDialog.INPUT_PROPERTY);
+        const input: object = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         const utterance: string = dc.context.activity.text;
         const locale: string = dc.context.activity.locale || this.defaultLocale || "en-us";
         const results: any[] = Recognizers.recognizeDateTime(utterance, locale);
 
         if (results.length > 0 && results[0].resolution) {
-            dc.state.setValue(InputDialog.INPUT_PROPERTY, results[0].resolution.values);
+            dc.state.setValue(InputDialog.VALUE_PROPERTY, results[0].resolution.values);
         } else {
             return InputState.unrecognized;
         }

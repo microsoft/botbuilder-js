@@ -51,4 +51,31 @@ export class RepeatDialog extends Dialog {
         options = Object.assign({}, originalOptions, options, this.options);
         return await this.repeatParentDialog(dc, options);
     }
+
+    protected async repeatParentDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
+        this.popCommands(dc);
+        if (dc.stack.length > 0 || !dc.parent) {
+            return await dc.replaceDialog(dc.activeDialog.id, options);
+        } else {
+            const turnsResult = await dc.parent.replaceDialog(dc.parent.activeDialog.id, options);
+            turnsResult.parentEnded = true;
+            return turnsResult;
+        }
+    }
+
+
+    private popCommands(dc: DialogContext): void {
+        // Pop all commands off the stack.
+        let i = dc.stack.length - 1;
+        while (i >= 0) {
+            // Commands store the index of the state they're inheriting so we can tell a command
+            // by looking to see if its state is of type 'number'.
+            if (typeof dc.stack[i].state === 'number') {
+                dc.stack.pop();
+                i--;
+            } else {
+                break;
+            }
+        }
+    }
 }

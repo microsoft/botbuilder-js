@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogCommand, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { SequenceContext } from '../sequenceContext';
 
 export type CodeActionHandler<T extends DialogContext = SequenceContext> = (context: T, options?: object) => Promise<DialogTurnResult>;
