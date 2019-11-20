@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, DialogCommand, Dialog } from 'botbuilder-dialogs';
-import { Activity } from 'botbuilder-core';
+import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { ExpressionProperty, ExpressionPropertyValue } from '../expressionProperty';
-import * as rp from 'request-promise-native';
+import fetch, * as request from "node-fetch";
+import { Activity } from 'botbuilder-core';
 
 export interface HttpRequestConfiguration extends DialogConfiguration {
 
@@ -134,20 +134,58 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
 
     public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
 
+        /**
+         * TODO: replace the key value pair in json recursively
+         */
         const url = this.url.evaluate(this.id, dc.state);
         const body = this.body.evaluate(this.id, dc.state);
         const headers = this.headers.evaluate(this.id, dc.state);
 
-        var options = {
+        const response = await fetch(url, {
             method: this.method.toString(),
-            uri: url,
-            body: body,
             headers: headers,
-            json: true
+            body: body
+        });
+
+        const jsonResult = await response.json();
+
+        let result: Result = {
+            headers: this.headers,
+            statusCode: response.status,
+            reasonPhrase: response.statusText
         };
 
-        var response = rp(url, options).promise;
+        switch (this.responseType) {
+            case ResponsesTypes.Activity:
+                result.content = jsonResult;
+                dc.context.sendActivity(jsonResult as Activity);
+                break;
+            case ResponsesTypes.Activities:
+                result.content = jsonResult;
+                dc.context.sendActivities(jsonResult as Activity[]);
+                break;
+            case ResponsesTypes.Json:
+                result.content = jsonResult;
+                break;
+            case ResponsesTypes.None:
+            default:
+                break;
+        }
 
-        return await dc.endDialog(response);
+        if (this.resultProperty) {
+            dc.state.setValue(this.resultProperty, jsonResult);
+        }
+
+        return await dc.endDialog(jsonResult);
     }
+}
+
+export class Result {
+    public statusCode?: Number;
+
+    public reasonPhrase?: string;
+
+    public headers?: any;
+
+    public content?: object;
 }

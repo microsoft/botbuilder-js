@@ -26,7 +26,7 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> {
      */
     constructor(property?: string) {
         super();
-        if (property) { this.property = property }
+        if (property) { this.property = property; }
     }
 
     protected onComputeId(): string {
