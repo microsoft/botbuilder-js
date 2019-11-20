@@ -50,7 +50,7 @@ export class AutoSaveStateMiddleware implements Middleware {
      */
     public botStateSet: BotStateSet;
     /**
-     * Creates a new AutoSaveStateiMiddleware instance.
+     * Creates a new AutoSaveStateMiddleware instance.
      * @param botStates One or more BotState plugins to automatically save at the end of the turn.
      */
     constructor(...botStates: BotState[]) {
