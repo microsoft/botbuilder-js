@@ -7,12 +7,6 @@
  */
 import { DialogContext, DialogState, DialogSet } from 'botbuilder-dialogs';
 
-export interface AdaptiveDialogState<O extends Object> {
-    options: O;
-    result?: any;
-    actions?: ActionState[];
-}
-
 export interface ActionState extends DialogState {
     dialogId: string;
     options?: object;
