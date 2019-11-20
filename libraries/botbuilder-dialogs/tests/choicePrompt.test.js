@@ -260,13 +260,13 @@ describe('ChoicePrompt', function () {
         }, 'es-es');
         dialogs.add(choicePrompt);
 
-        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: null })
+        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: undefined })
             .assertReply((activity) => {
                 assert('Please choose a color. (1) red, (2) green, o (3) blue');
             })
             .send(invalidMessage)
             .assertReply('bad input.')
-            .send({ text: 'red', type: ActivityTypes.Message, locale: null })
+            .send({ text: 'red', type: ActivityTypes.Message, locale: undefined })
             .assertReply('red');
     });
 
@@ -509,7 +509,7 @@ describe('ChoicePrompt', function () {
 
         await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: culture.locale })
             .assertReply((activity) => {
-                const expectedChoices = ChoiceFactory.inline(stringChoices, null, null, {
+                const expectedChoices = ChoiceFactory.inline(stringChoices, undefined, undefined, {
                     inlineOr: culture.inlineOr,
                     inlineOrMore: culture.inlineOrMore,
                     inlineSeparator: culture.separator

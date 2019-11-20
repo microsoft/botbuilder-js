@@ -1,12 +1,22 @@
 {
   "name": "botframework-schema",
-  "version": "4.1.6",
+  "author": "Microsoft Corp.",
   "description": "Activity schema for the Microsoft Bot Framework.",
+  "version": "4.1.6",
+  "license": "MIT",
   "keywords": [
     "botconnector",
     "bots",
     "chatbots"
   ],
+  "homepage": "http://github.com/Microsoft/botbuilder-js",
+  "bugs": {
+    "url": "http://github.com/Microsoft/botbuilder-js/issues"
+  },  
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Microsoft/botbuilder-js.git"
+  },
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {},
@@ -15,14 +25,6 @@
     "build": "tsc",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}"
-  },
-  "homepage": "http://github.com/Microsoft/botbuilder-js",
-  "bugs": {
-    "url": "http://github.com/Microsoft/botbuilder-js/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:Microsoft/botbuilder-js.git"
   },
   "files": [
     "/lib",

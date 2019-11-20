@@ -9,7 +9,9 @@
     "**/node_modules/**",
     "**/tests/**",
     "**/coverage/**",
-    "**/*.d.ts"
+    "**/*.d.ts",
+    "lib/choices/modelResult.js",
+    "lib/memory/pathResolvers/pathResolver.js"
   ],
   "reporter": [
     "html"

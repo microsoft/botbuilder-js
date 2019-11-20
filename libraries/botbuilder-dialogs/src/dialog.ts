@@ -4,6 +4,7 @@
  */
 import { BotTelemetryClient, NullTelemetryClient, TurnContext } from 'botbuilder-core';
 import { DialogContext } from './dialogContext';
+import { Configurable } from './configurable';
 
 /**
  * Contains state information for an instance of a dialog on the stack.
@@ -132,6 +133,35 @@ export enum DialogTurnStatus {
     cancelled = 'cancelled'
 }
 
+export interface DialogEvent {
+    /**
+     * Flag indicating whether the event will be bubbled to the parent `DialogContext`. 
+     */
+    bubble: boolean;
+
+    /**
+     * Name of the event being raised.
+     */
+    name: string;
+
+    /**
+     * Optional. Value associated with the event.
+     */
+    value?: any;
+}
+
+export interface DialogConfiguration {
+    /**
+     * Static id of the dialog.
+     */
+    id?: string;
+
+    /**
+     * Telemetry client the dialog should use. 
+     */
+    telemetryClient?: BotTelemetryClient;
+}
+
 /**
  * Represents the result of a dialog context's attempt to begin, continue,
  * or otherwise manipulate one or more dialogs.
@@ -181,7 +211,9 @@ export interface DialogTurnResult<T = any> {
 /**
  * Defines the core behavior for all dialogs.
  */
-export abstract class Dialog<O extends object = {}> {
+export abstract class Dialog<O extends object = {}> extends Configurable {
+    private _id: string;
+
     /**
      * Gets a default end-of-turn result.
      * 
@@ -192,16 +224,6 @@ export abstract class Dialog<O extends object = {}> {
     public static EndOfTurn: DialogTurnResult = { status: DialogTurnStatus.waiting };
 
     /**
-     * Gets the ID assigned to this dialog instance.
-     * 
-     * @remarks
-     * This ID is relative to a [DialogSet](xref:botbuilder-dialogs.DialogSet)
-     * and and must be unique within that set. Use [DialogSet.add](botbuilder-dialogs.DialogSet.add)
-     * to add a dialog instance to a set.
-     */
-    public readonly id: string;
-
-    /**
      * The telemetry client for logging events.
      * Default this to the NullTelemetryClient, which does nothing.
      */
@@ -210,11 +232,29 @@ export abstract class Dialog<O extends object = {}> {
     /**
      * Creates a new instance of the [Dialog](xref:botbuilder-dialogs.Dialog) class.
      * 
-     * @param dialogId The ID to assign to the new dialog instance.
+     * @param dialogId Optional. unique ID of the dialog.
      */
-    constructor(dialogId: string) {
+    constructor(dialogId?: string) {
+        super();
         this.id = dialogId;
     }
+
+    /**
+     * Unique ID of the dialog.
+     * 
+     * @remarks
+     * This will be automatically generated if not specified.
+     */
+   public get id(): string {
+       if (this._id === undefined) {
+           this._id = this.onComputeId();
+       }
+       return this._id;
+   }
+
+   public set id(value: string) {
+       this._id = value;
+   }
 
     /** 
      * Gets the telemetry client for this dialog.
@@ -348,4 +388,95 @@ export abstract class Dialog<O extends object = {}> {
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // No-op by default
     }
+
+    /// <summary>
+    /// Called when an event has been raised, using `DialogContext.emitEvent()`, by either the current dialog or a dialog that the current dialog started.
+    /// </summary>
+    /// <param name="dc">The dialog context for the current turn of conversation.</param>
+    /// <param name="e">The event being raised.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>True if the event is handled by the current dialog and bubbling should stop.</returns>
+    public async onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+        // Before bubble
+        let handled = await this.onPreBubbleEventAsync(dc, e);
+
+        // Bubble as needed
+        if (!handled && e.bubble && dc.parent != undefined) {
+            handled = await dc.parent.emitEvent(e.name, e.value, true, false);
+        }
+
+        // Post bubble
+        if (!handled) {
+            handled = await this.onPostBubbleEventAsync(dc, e);
+        }
+
+        return handled;
+    }
+
+    /**
+     * Called before an event is bubbled to its parent.
+     * 
+     * @remarks
+     * This is a good place to perform interception of an event as returning `true` will prevent
+     * any further bubbling of the event to the dialogs parents and will also prevent any child
+     * dialogs from performing their default processing.
+     * @param dc The dialog context for the current turn of conversation.
+     * @param e The event being raised.
+     * @returns Whether the event is handled by the current dialog and further processing should stop.
+     */
+    protected async onPreBubbleEventAsync(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+        return false;
+    }
+
+    /**
+     * Called after an event was bubbled to all parents and wasn't handled.
+     * 
+     * @remarks
+     * This is a good place to perform default processing logic for an event. Returning `true` will
+     * prevent any processing of the event by child dialogs.
+     * @param dc The dialog context for the current turn of conversation.
+     * @param e The event being raised.
+     * @returns Whether the event is handled by the current dialog and further processing should stop.
+     */
+    protected async onPostBubbleEventAsync(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+        return false;
+    }
+
+    /**
+     * Called when a unique ID needs to be computed for a dialog.
+     * 
+     * @remarks
+     * SHOULD be overridden to provide a more contextually relevant ID. The preferred pattern for 
+     * ID's is `<dialog type>(this.hashedLabel('<dialog args>'))`.
+     */    
+    protected onComputeId(): string {
+        throw new Error(`Dialog.onComputeId(): not implemented.`)
+    }
+
+    /**
+     * Aids with computing a unique ID for a dialog by computing a 32 bit hash for a string.
+     * 
+     * @remarks
+     * The source for this function was derived from the following article:
+     * 
+     * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+     * 
+     * @param label String to generate a hash for.
+     * @returns A string that is 15 characters or less in length.
+     */
+    protected hashedLabel(label: string): string {
+        const l = label.length;
+        if (label.length > 15)
+        {
+            let hash = 0;
+            for (let i = 0; i < l; i++) {
+                const chr = label.charCodeAt(i);
+                hash  = ((hash << 5) - hash) + chr;
+                hash |= 0; // Convert to 32 bit integer
+            }
+            label = `${label.substr(0, 5)}${hash.toString()}`;
+        }
+
+        return label;
+    }    
 }
