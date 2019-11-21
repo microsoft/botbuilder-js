@@ -141,7 +141,7 @@ class StorageBaseTests {
         try {
             updatePocoStoreItem.count = 123;
 
-            await storage.write({ pocoStoreItem, updatePocoStoreItem });
+            await storage.write({ pocoStoreItem: updatePocoStoreItem });
             assert.fail('Should have thrown exception on write with store item because of old eTag');
         } catch(err) { }
 
