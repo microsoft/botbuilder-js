@@ -7,6 +7,7 @@
  */
 import { MicrosoftAppCredentials, ConnectorClient } from 'botframework-connector';
 import { Activity, ActivityTypes, Middleware, TurnContext, BotState, ConversationReference, StatePropertyAccessor, UserState, ConversationState, Storage } from 'botbuilder-core';
+import { teamsGetTeamId } from './teamsActivityHelpers';
 
 /** @private */
 class TraceActivity {
@@ -279,8 +280,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     private async processAttachCommand(turnContext: TurnContext, sessionId: string): Promise<any> {
         var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
-
-        if (this.attachCommand(turnContext.activity.conversation.id, sessions, sessionId)) {
+        if (this.attachComamnd(this.getAttachId(turnContext.activity), sessions, sessionId)) {
             await turnContext.sendActivity('Attached to session, all traffic is being replicated for inspection.');
         }
         else {
@@ -306,22 +306,20 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         return sessionId;
     }
 
-    private attachCommand(conversationId: string, sessions: InspectionSessionsByStatus, sessionId: string): boolean {
-
+    private attachComamnd(attachId: string, sessions: InspectionSessionsByStatus, sessionId: string): boolean {
         var inspectionSessionState = sessions.openedSessions[sessionId];
         if (inspectionSessionState !== undefined) {
-            sessions.attachedSessions[conversationId] = inspectionSessionState;
+            sessions.attachedSessions[attachId] = inspectionSessionState;
             delete sessions.openedSessions[sessionId];
             return true;
         }
-
         return false;
     }
 
     private async findSession(turnContext: TurnContext): Promise<any> {
         var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
 
-        var conversationReference = sessions.attachedSessions[turnContext.activity.conversation.id];
+        var conversationReference = sessions.attachedSessions[this.getAttachId(turnContext.activity)];
         if (conversationReference !== undefined) {
             return new InspectionSession(conversationReference, this.credentials);
         }
@@ -342,8 +340,15 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     private async cleanUpSession(turnContext: TurnContext): Promise<any> {
         var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
 
-        delete sessions.attachedSessions[turnContext.activity.conversation.id];
+        delete sessions.attachedSessions[this.getAttachId(turnContext.activity)];
         await this.inspectionState.saveChanges(turnContext, false);
+    }
+
+    private getAttachId(activity: Activity) : string {
+        // If we are running in a Microsoft Teams Team the conversation Id will reflect a particular thread the bot is in.
+        // So if we are in a Team then we will associate the "attach" with the Team Id rather than the more restrictive conversation Id.
+        const teamId = teamsGetTeamId(activity);
+        return teamId ? teamId : activity.conversation.id;
     }
 }
 
