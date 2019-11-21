@@ -31,6 +31,7 @@
   "dependencies": {
     "fs-extra": "^7.0.0",
     "read-text-file": "^1.1.0",
+    "typescript": "3.5.2",
     "uuid": "^3.3.2"
   },
   "scripts": {
