@@ -5,7 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, Middleware, TurnContext } from 'botbuilder-core';
+import { Activity } from 'botframework-schema';
+import { Middleware } from './middlewareSet';
+import { TurnContext } from './turnContext';
 
 
 /**

@@ -26,7 +26,8 @@
   },
   "devDependencies": {
     "@types/uuid": "^3.4.3",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "typescript": "3.5.3"
   },
   "dependencies": {
     "fs-extra": "^7.0.0",
