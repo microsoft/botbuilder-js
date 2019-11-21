@@ -45,7 +45,7 @@ bot.rootDialog = dialogs;
 dialogs.recognizer = new RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
 
 // Tell the user a joke
-dialogs.addRule(new OnIntent('#JokeIntent', null, [
+dialogs.addRule(new OnIntent('#JokeIntent', [], [
     new BeginDialog('TellJokeDialog')
 ]));
 
@@ -60,10 +60,10 @@ dialogs.addRule(new OnUnknownIntent([
 //=================================================================================================
 
 const askNameDialog = new AdaptiveDialog('AskNameDialog', [
-    new IfCondition('user.name == null', [
-        new TextInput('user.name', `Hi! what's your name?`)
+    new IfCondition('dialog.username == null', [
+        new TextInput('dialog.username', `Hi! what's your name?`)
     ]),
-    new SendActivity(`Hi {user.name}. It's nice to meet you.`),
+    new SendActivity(`Hi {dialog.username}. It's nice to meet you.`),
     new EndDialog()
 ]);
 dialogs.actions.push(askNameDialog);

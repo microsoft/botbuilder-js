@@ -45,7 +45,7 @@ const offHook = dialogs.addState('offHook', [
 ]);
 offHook.permit('callDialed', 'ringing');
 offHook.recognizer = new RegExpRecognizer().addIntent('PlaceCallIntent', /place .*call/i);
-offHook.addRule(new OnIntent('PlaceCallIntent', [
+offHook.addRule(new OnIntent('PlaceCallIntent', [], [
     new EmitEvent('callDialed')
 ]));
 
