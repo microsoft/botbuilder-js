@@ -65,7 +65,7 @@ export class OnCondition {
 
             if (allExpressions.length > 1) {
                 return Expression.makeExpression(ExpressionType.And, undefined, ...allExpressions);
-            } else if (allExpressions.length == 0) {
+            } else if (allExpressions.length == 1) {
                 return allExpressions[0];
             } else {
                 return new Constant(true);
