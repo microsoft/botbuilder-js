@@ -41,14 +41,13 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
      */
     public value?: string;
 
-
     constructor();
     constructor(name: string, valueType: string, value: string);
     constructor(name?: string, valueType?: string, value?: string) {
         super();
-        if (name) { this.name = name }
-        if (valueType) { this.valueType = valueType }
-        if (value) { this.value = value }
+        if (name) { this.name = name; }
+        if (valueType) { this.valueType = valueType; }
+        if (value) { this.value = value; }
     }
 
     protected onComputeId(): string {
@@ -66,12 +65,11 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
 
         if (this.value) {
             value = dc.state.getValue(this.value);
-        }
-        else {
+        } else {
             value = dc.state.getMemorySnapshot();
         }
 
-        var traceActivity = {
+        var traceActivity: Activity = {
             name: "Trace",
             valueType: this.valueType ? this.valueType : "State",
             value: value

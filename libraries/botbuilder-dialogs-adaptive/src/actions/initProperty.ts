@@ -40,13 +40,12 @@ export class InitProperty extends Dialog {
     constructor(property: string, type: string);
     constructor(property?: string, type?: string) {
         super();
-        if (property) { this.property = property }
-        if (type) { this.type = type }
+        if (property) { this.property = property; }
+        if (type) { this.type = type; }
     }
 
     protected onComputeId(): string {
-        const label = this.property ? this.property : '';
-        return `InitProperty[${label}]`;
+        return `InitProperty[${this.property}]`;
     }
 
     public configure(config: InitPropertyConfiguration): this {
@@ -55,17 +54,17 @@ export class InitProperty extends Dialog {
 
     public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Ensure planning context and condition
-        if (!(dc instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within an AdaptiveDialog.`) }
+        if (!(dc instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within an AdaptiveDialog.`); }
 
-        if (!this.property) { throw new Error(`${this.id}: no 'property' specified.`) }
-        if (!this.type) { throw new Error(`${this.id}: no 'type' specified.`) }
+        if (!this.property) { throw new Error(`${this.id}: no 'property' specified.`); }
+        if (!this.type) { throw new Error(`${this.id}: no 'type' specified.`); }
 
         switch (this.type.toLowerCase()) {
             case "array":
-                dc.state.setValue(this.property, [])
+                dc.state.setValue(this.property, []);
                 break;
             case "object":
-                dc.state.setValue(this.property, {})
+                dc.state.setValue(this.property, {});
                 break;
         }
 
