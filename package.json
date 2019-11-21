@@ -33,8 +33,7 @@
     "sinon": "^7.3.2",
     "typedoc": "^0.15.0",
     "typedoc-plugin-external-module-name": "^2.1.0",
-    "typedoc-plugin-markdown": "^2.2.10",
-    "typescript": "^3.5.2"
+    "typedoc-plugin-markdown": "^2.2.10"
   },
   "nyc": {
     "exclude": [
