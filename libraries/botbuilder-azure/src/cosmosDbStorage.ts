@@ -87,7 +87,7 @@ export class CosmosDbStorage implements Storage {
     private databaseCreationRequestOption: RequestOptions;
 
     /**
-     * Creates a new ConsmosDbStorage instance.
+     * Creates a new CosmosDbStorage instance.
      *
      * @param settings Setting to configure the provider.
      * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies. More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
