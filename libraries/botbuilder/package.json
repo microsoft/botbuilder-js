@@ -35,7 +35,7 @@
     "nyc": "^11.4.1",
     "source-map-support": "^0.5.3",
     "ts-node": "^4.1.0",
-    "typescript": "3.5.2",
+    "typescript": "3.5.3",
     "uuid": "^3.3.2"
   },
   "scripts": {

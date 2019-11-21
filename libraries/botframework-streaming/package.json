@@ -40,7 +40,7 @@
     "ts-node": "^4.1.0",
     "tslint": "^5.16.0",
     "tslint-microsoft-contrib": "^5.2.1",
-    "typescript": "3.5.2"
+    "typescript": "3.5.3"
   },
   "scripts": {
     "test": "tsc && nyc mocha tests/",
