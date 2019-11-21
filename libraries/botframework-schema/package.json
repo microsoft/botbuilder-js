@@ -9,8 +9,9 @@
   ],
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
-  "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "typescript": "3.5.3"
+  },
   "scripts": {
     "build": "tsc",
     "clean": "erase /q /s .\\lib",
@@ -26,6 +27,6 @@
   },
   "files": [
     "/lib",
-    "/src"   
+    "/src"
   ]
 }
