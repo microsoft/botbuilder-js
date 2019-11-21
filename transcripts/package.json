@@ -10,9 +10,9 @@
     "dependencies": {
         "@types/node": "^10.12.18",
         "@types/restify": "^7.2.1",
-        "botbuilder": "^4.2.1",
-        "botbuilder-ai": "^4.2.1",
-        "botbuilder-dialogs": "^4.2.1"
+        "botbuilder": "4.1.6",
+        "botbuilder-ai": "4.1.6",
+        "botbuilder-dialogs": "4.1.6"
     },
     "devDependencies": {
         "mocha": "^5.2.0",
