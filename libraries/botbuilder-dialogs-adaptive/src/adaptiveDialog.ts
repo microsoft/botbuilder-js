@@ -379,7 +379,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         const selection = await this.selector.select(sequenceContext);
         if (selection.length > 0) {
             const evt = this.triggers[selection[0]];
-            const changes = await evt.executeAsync(sequenceContext);
+            const changes = await evt.execute(sequenceContext);
             if (changes != null && changes.length > 0) {
                 sequenceContext.queueChanges(changes[0]);
                 return true;

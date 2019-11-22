@@ -96,7 +96,7 @@ export class OnCondition {
      * @param planningContext Context.
      * @returns A promise with plan change list.
      */
-    public async executeAsync(planningContext: SequenceContext): Promise<ActionChangeList[]> {
+    public async execute(planningContext: SequenceContext): Promise<ActionChangeList[]> {
         return Promise.resolve([this.onCreateChangeList(planningContext)]);
     }
 
