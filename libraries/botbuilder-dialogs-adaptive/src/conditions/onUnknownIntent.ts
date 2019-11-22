@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12,7 +12,7 @@ import { Dialog } from 'botbuilder-dialogs';
 /**
  * Actions triggered when a UnknownIntent event has been emitted by the recognizer.
  * @remarks
- * A message is considered unhandled if there were no other conditions triggered by the message and 
+ * A message is considered unhandled if there were no other conditions triggered by the message and
  * there is no active plan being executed.
  * This trigger is run when the utterance is not recognized and the fallback consultation is happening 
  * It will only trigger if and when 

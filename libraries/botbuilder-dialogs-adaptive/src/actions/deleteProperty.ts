@@ -1,11 +1,11 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, DialogCommand } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
 
 export interface DeletePropertyConfiguration extends DialogConfiguration {
     /**
@@ -14,7 +14,7 @@ export interface DeletePropertyConfiguration extends DialogConfiguration {
     property?: string;
 }
 
-export class DeleteProperty<O extends object = {}> extends DialogCommand<O> {
+export class DeleteProperty<O extends object = {}> extends Dialog<O> {
     /**
      * The property to delete.
      */
@@ -26,7 +26,7 @@ export class DeleteProperty<O extends object = {}> extends DialogCommand<O> {
      */
     constructor(property?: string) {
         super();
-        if (property) { this.property = property }
+        if (property) { this.property = property; }
     }
 
     protected onComputeId(): string {
@@ -37,7 +37,7 @@ export class DeleteProperty<O extends object = {}> extends DialogCommand<O> {
         return super.configure(config);
     }
 
-    public async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
         dc.state.setValue(this.property, undefined);
         return await dc.endDialog();
     }

@@ -1,11 +1,11 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogCommand, DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
+import { DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
 import { ActionChangeType, SequenceContext, ActionChangeList, ActionState } from '../sequenceContext';
 
 export interface EditActionsConfiguration extends DialogConfiguration {
@@ -20,7 +20,7 @@ export interface EditActionsConfiguration extends DialogConfiguration {
     actions?: Dialog[];
 }
 
-export class EditActions extends DialogCommand {
+export class EditActions<O extends object = {}> extends Dialog<O> {
     /**
      * The type of change to make to the dialogs list of actions.
      */
@@ -57,7 +57,7 @@ export class EditActions extends DialogCommand {
         return this.actions;
     }
 
-    protected async onRunCommand(sequence: SequenceContext, options: object): Promise<DialogTurnResult> {
+    public async beginDialog(sequence: SequenceContext, options: O): Promise<DialogTurnResult> {
         // Ensure planning context and condition
         if (!(sequence instanceof SequenceContext)) { throw new Error(`EditAction should only be used in the context of an adaptive dialog.`) }
         if (this.changeType == undefined) { throw new Error(`No 'changeType' specified.`) }

@@ -1,11 +1,11 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogCommand, DialogContext } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { format } from '../stringTemplate';
 import { Activity, ActivityTypes } from 'botbuilder-core';
 
@@ -22,7 +22,7 @@ export interface LogActionConfiguration extends DialogConfiguration {
     sendTrace?: boolean;
 }
 
-export class LogAction extends DialogCommand {
+export class LogAction extends Dialog {
     /**
      * The text template to log.
      */
@@ -55,7 +55,7 @@ export class LogAction extends DialogCommand {
         return super.configure(config);
     }
 
-    protected async onRunCommand(dc: DialogContext, options: object): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options: object): Promise<DialogTurnResult> {
         if (!this.template) { throw new Error(`${this.id}: no 'message' specified.`) }
 
         // Format message

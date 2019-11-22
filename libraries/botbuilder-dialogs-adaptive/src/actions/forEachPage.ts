@@ -1,11 +1,11 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogCommand, DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
+import { DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
 import { SequenceContext, ActionChangeType, ActionChangeList } from '../sequenceContext';
 import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
 
@@ -43,7 +43,7 @@ export interface ForEachPageConfiguration extends DialogConfiguration {
  * and defaults to a size of 10. The loop can be exited early by including either a `EndDialog` or
  * `GotoDialog` action.
  */
-export class ForEachPage extends DialogCommand {
+export class ForEachPage extends Dialog {
 
     /**
      * Creates a new `ForEachPage` instance.
@@ -112,7 +112,7 @@ export class ForEachPage extends DialogCommand {
         return this.actions;
     }
 
-    protected async onRunCommand(sequence: SequenceContext, options: ForEachPageOptions): Promise<DialogTurnResult> {
+    public async beginDialog(sequence: SequenceContext, options: ForEachPageOptions): Promise<DialogTurnResult> {
         // Ensure planning context
         if (!(sequence instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within an AdaptiveDialog.`) }
         if (!this.list) { throw new Error(`${this.id}: no list expression specified.`) }

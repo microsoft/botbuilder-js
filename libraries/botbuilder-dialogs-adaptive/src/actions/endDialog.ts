@@ -1,11 +1,11 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogCommand, DialogContext } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
 
 export interface EndDialogConfiguration extends DialogConfiguration {
     /**
@@ -15,7 +15,7 @@ export interface EndDialogConfiguration extends DialogConfiguration {
     resultProperty?: string;
 }
 
-export class EndDialog extends DialogCommand {
+export class EndDialog<O extends object = {}> extends Dialog<O> {
 
     /**
      * Creates a new `EndDialog` instance.
@@ -40,7 +40,7 @@ export class EndDialog extends DialogCommand {
      */
     public resultProperty: string;
 
-    protected async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
         const result = this.resultProperty ? dc.state.getValue(this.resultProperty) : undefined;
         return dc.parent ? await dc.parent.endDialog(result) : await dc.endDialog(result);
     }

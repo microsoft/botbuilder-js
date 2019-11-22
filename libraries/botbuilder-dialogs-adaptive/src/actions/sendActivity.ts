@@ -1,11 +1,11 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogCommand, DialogContext } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { Activity, InputHints } from 'botbuilder-core';
 import { ActivityProperty } from '../activityProperty';
 
@@ -26,7 +26,7 @@ export interface SendActivityConfiguration extends DialogConfiguration {
     inputHint?: InputHints;
 }
 
-export class SendActivity extends DialogCommand {
+export class SendActivity extends Dialog {
 
     /**
      * Creates a new `SendActivity` instance.
@@ -73,7 +73,7 @@ export class SendActivity extends DialogCommand {
         return super.configure(config);
     }
 
-    protected async onRunCommand(dc: DialogContext, options: object): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options: object): Promise<DialogTurnResult> {
         if (!this.activityProperty.hasValue()) {
             // throw new Error(`SendActivity: no activity assigned for action '${this.id}'.`)
             throw new Error(`SendActivity: no activity assigned for action.`)

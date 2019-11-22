@@ -1,16 +1,16 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, Dialog, DialogCommand, DialogContext } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, Dialog, DialogContext } from 'botbuilder-dialogs';
 
 export interface RepeatDialogConfiguration extends DialogConfiguration {
     /**
      * (Optional) static options to pass into the dialog when it's repeated.
-     * 
+     *
      * @remarks
      * These options will be merged with any options that were originally passed into the dialog
      * or options that were dynamically configured using [inputBindings](#inputbindings).
@@ -18,7 +18,7 @@ export interface RepeatDialogConfiguration extends DialogConfiguration {
     options?: object;
 }
 
-export class RepeatDialog extends DialogCommand {
+export class RepeatDialog extends Dialog {
 
     /**
      * Creates a new `RepeatDialog` instance.
@@ -35,7 +35,7 @@ export class RepeatDialog extends DialogCommand {
 
     /**
      * (Optional) static options to pass into the dialog when it's repeated.
-     * 
+     *
      * @remarks
      * These options will be merged with any options that were originally passed into the dialog
      * or options that were dynamically configured using [inputBindings](#inputbindings).
@@ -46,9 +46,36 @@ export class RepeatDialog extends DialogCommand {
         return super.configure(config);
     }
 
-    protected async onRunCommand(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         const originalOptions = dc.state.getValue<object>('options');
         options = Object.assign({}, originalOptions, options, this.options);
         return await this.repeatParentDialog(dc, options);
+    }
+
+    protected async repeatParentDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
+        this.popCommands(dc);
+        if (dc.stack.length > 0 || !dc.parent) {
+            return await dc.replaceDialog(dc.activeDialog.id, options);
+        } else {
+            const turnsResult = await dc.parent.replaceDialog(dc.parent.activeDialog.id, options);
+            turnsResult.parentEnded = true;
+            return turnsResult;
+        }
+    }
+
+
+    private popCommands(dc: DialogContext): void {
+        // Pop all commands off the stack.
+        let i = dc.stack.length - 1;
+        while (i >= 0) {
+            // Commands store the index of the state they're inheriting so we can tell a command
+            // by looking to see if its state is of type 'number'.
+            if (typeof dc.stack[i].state === 'number') {
+                dc.stack.pop();
+                i--;
+            } else {
+                break;
+            }
+        }
     }
 }

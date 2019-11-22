@@ -1,11 +1,11 @@
 /**
- * @module botbuilder-planning
+ * @module botbuilder-dialogs-adaptive
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogCommand, DialogContext } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { ActivityProperty } from '../activityProperty';
 
 export interface SendListConfiguration extends DialogConfiguration {
@@ -25,7 +25,7 @@ export interface SendListConfiguration extends DialogConfiguration {
     itemTemplate?: string;
 }
 
-export class SendList extends DialogCommand {
+export class SendList extends Dialog {
     private readonly _messageTemplate = new ActivityProperty();
     private readonly _itemTemplate = new ActivityProperty();
 
@@ -79,7 +79,7 @@ export class SendList extends DialogCommand {
         return super.configure(config);
     }
 
-    protected async onRunCommand(dc: DialogContext): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Ensure templates configured
         if (!this.messageTemplate) {
             this.messageTemplate = '{list}';
