@@ -14,7 +14,7 @@ import {
     DialogContext, DialogConfiguration, DialogContainer
 } from 'botbuilder-dialogs';
 import {
-    AdaptiveEventNames, SequenceContext, ActionChangeList, ActionChangeType, AdaptiveDialogState
+    AdaptiveEventNames, SequenceContext, ActionChangeList, ActionChangeType, AdaptiveDialogState, ActionState
 } from './sequenceContext';
 import { OnCondition } from './conditions';
 import { Recognizer } from './recognizers';
@@ -158,20 +158,19 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Forward to current sequence action
-        const state = instance.state as AdaptiveDialogState<O>;
-        if (state.actions && state.actions.length > 0) {
+        const actions = this.getActions(instance);
+        if (actions.length > 0) {
             // We need to mockup a DialogContext so that we can call repromptDialog() for the active action
-            const actionDC: DialogContext = new DialogContext(this.dialogs, context, state.actions[0]);
+            const actionDC: DialogContext = new DialogContext(this.dialogs, context, actions[0]);
             await actionDC.repromptDialog();
         }
     }
 
-    public createChildContext(dc: DialogContext): DialogContext | undefined {
-        const state: AdaptiveDialogState<O> = dc.activeDialog.state;
-        if (Array.isArray(state.actions) && state.actions.length > 0) {
-            const action = new SequenceContext(this.dialogs, dc, state.actions[0], state.actions, this.changeKey);
-            action.parent = dc;
-            return action;
+    public createChildContext(parent: DialogContext): DialogContext | undefined {
+        const actions = this.getActions(parent.activeDialog);
+        if (actions.length > 0) {
+            if (!Array.isArray(actions[0].dialogStack)) { actions[0].dialogStack = [] }
+            return SequenceContext.create(parent, this.dialogs, actions[0].dialogStack, actions, this.changeKey);
         } else {
             return undefined;
         }
@@ -429,10 +428,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     private toSequenceContext(dc: DialogContext): SequenceContext<O> {
-        const state: AdaptiveDialogState<O> = dc.activeDialog.state;
-        if (!Array.isArray(state.actions)) { state.actions = [] }
-        const sequence = new SequenceContext(dc.dialogs, dc, { dialogStack: dc.stack }, state.actions, this.changeKey);
-        sequence.parent = dc.parent;
-        return sequence;
+        return SequenceContext.clone(dc, this.getActions(dc.activeDialog), this.changeKey);
+    }
+
+    private getActions(instance: DialogInstance): ActionState[] {
+        const state: AdaptiveDialogState<O> = instance.state;
+        if (!state._adaptive) { state._adaptive = {} }
+        if (!Array.isArray(state._adaptive.actions)) { state._adaptive.actions = [] }
+        return state._adaptive.actions;
     }
 }
