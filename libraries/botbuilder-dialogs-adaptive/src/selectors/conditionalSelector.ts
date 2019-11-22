@@ -22,7 +22,7 @@ export class ConditionalSelector implements TriggerSelector {
      * Gets or sets expression that determines which selector to use.
      */
     public get condition(): string { return this._condition.toString() }
-    public set condition(value: string) { this._condition = (value != null) ? new ExpressionEngine().parse(value) : null }
+    public set condition(value: string) { this._condition = value ? new ExpressionEngine().parse(value) : undefined }
 
     /**
      * Gets or sets selector if condition is true.
@@ -43,7 +43,7 @@ export class ConditionalSelector implements TriggerSelector {
         const snapshot = context.state.getMemorySnapshot();
         const { value, error } = this._condition.tryEvaluate(snapshot);
         let selector: TriggerSelector;
-        if (value && error == null) {
+        if (value && !error) {
             selector = this.ifTrue;
             this.ifTrue.initialize(this._conditionals, this._evaluate);
         } else {

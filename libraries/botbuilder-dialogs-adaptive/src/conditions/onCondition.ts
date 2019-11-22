@@ -20,7 +20,7 @@ export class OnCondition {
     // evaluate(planning: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<ActionChangeList[] | undefined>;
 
     private _extraConstraints: Expression[] = [];
-    private _fullConstraint: Expression = null;
+    private _fullConstraint: Expression;
 
 
     /**
@@ -38,7 +38,7 @@ export class OnCondition {
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      */
-    constructor(condition: string = null, actions: Dialog[] = []) {
+    constructor(condition?: string, actions: Dialog[] = []) {
         this.condition = condition;
         this.actions = actions;
     }
@@ -49,7 +49,7 @@ export class OnCondition {
      * @returns Expression which will be cached and used to evaluate this condition.
      */
     public getExpression(parser: ExpressionParserInterface): Expression {
-        if (this._fullConstraint == null) {
+        if (!this._fullConstraint) {
             const allExpressions: Expression[] = [];
             if (this.condition) {
                 try {
@@ -84,7 +84,7 @@ export class OnCondition {
             try {
                 const parser = new ExpressionEngine();
                 this._extraConstraints.push(parser.parse(condition));
-                this._fullConstraint = null;
+                this._fullConstraint = undefined;
             } catch (err) {
                 throw Error(`Invalid constraint expression: ${condition}, ${err.toString()}`);
             }
@@ -100,7 +100,7 @@ export class OnCondition {
         return Promise.resolve([this.onCreateChangeList(planningContext)]);
     }
 
-    protected onCreateChangeList(planningContext: SequenceContext, dialogOptions: any = null): ActionChangeList {
+    protected onCreateChangeList(planningContext: SequenceContext, dialogOptions?: any): ActionChangeList {
         const actionChangeList: ActionChangeList = {
             changeType: ActionChangeType.insertActions,
             actions: []
@@ -113,7 +113,7 @@ export class OnCondition {
                 dialogStack: []
             };
 
-            if (dialogOptions != null) {
+            if (dialogOptions) {
                 actionState.options = dialogOptions
             }
 

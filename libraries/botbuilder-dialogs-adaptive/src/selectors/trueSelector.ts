@@ -31,7 +31,7 @@ export class TrueSelector implements TriggerSelector {
                 const conditional = this._conditionals[i];
                 const expression = conditional.getExpression(this._parser);
                 const { value, error } = expression.tryEvaluate(context.state);
-                if (value && error == null) {
+                if (value && !error) {
                     candidates.push(i);
                 }
             } else {

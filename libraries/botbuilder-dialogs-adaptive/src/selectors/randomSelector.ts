@@ -31,7 +31,7 @@ export class RandomSelector implements TriggerSelector {
                 const expression = conditional.getExpression(this._parser);
                 const snapshot = context.state.getMemorySnapshot();
                 const { value, error } = expression.tryEvaluate(snapshot);
-                if (value && error == null) {
+                if (value && !error) {
                     candidates.push(i);
                 }
             } else {

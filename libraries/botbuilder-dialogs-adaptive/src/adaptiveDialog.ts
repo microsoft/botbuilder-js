@@ -190,7 +190,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         const activeDialogState = dc.activeDialog.state;
         let state = activeDialogState[this.adaptiveKey] as AdaptiveDialogState;
 
-        if (state == null) {
+        if (!state) {
             state = { actions: [] };
             activeDialogState[this.adaptiveKey] = state;
         }
@@ -201,7 +201,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             return ctx;
         }
 
-        return null;
+        return undefined;
     }
 
     public configure(config: AdaptiveDialogConfiguration): this {
@@ -380,7 +380,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         if (selection.length > 0) {
             const evt = this.triggers[selection[0]];
             const changes = await evt.execute(sequenceContext);
-            if (changes != null && changes.length > 0) {
+            if (changes && changes.length > 0) {
                 sequenceContext.queueChanges(changes[0]);
                 return true;
             }
@@ -473,7 +473,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     private shouldEnd(dc: DialogContext): boolean {
         if (this.autoEndDialog == undefined) {
-            return (dc.parent != null);
+            return !!(dc.parent);
         } else {
             return this.autoEndDialog;
         }
@@ -483,7 +483,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         const activeDialogState = dc.activeDialog.state;
         let state = activeDialogState[this.adaptiveKey] as AdaptiveDialogState;
 
-        if (state == null) {
+        if (!state) {
             state = { actions: [] };
             activeDialogState[this.adaptiveKey] = state;
         }

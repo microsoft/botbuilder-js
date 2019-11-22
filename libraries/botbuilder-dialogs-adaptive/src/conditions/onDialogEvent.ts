@@ -24,7 +24,7 @@ export class OnDialogEvent extends OnCondition {
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      */
-    constructor(event: string = null, actions: Dialog[] = [], condition: string = null) {
+    constructor(event?: string, actions: Dialog[] = [], condition?: string) {
         super(condition, actions);
         this.event = event;
     }
