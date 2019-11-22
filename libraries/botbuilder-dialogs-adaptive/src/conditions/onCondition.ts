@@ -19,7 +19,7 @@ export class OnCondition {
      */
     // evaluate(planning: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<ActionChangeList[] | undefined>;
 
-    private _extraConstraints: Expression[] = [];
+    private readonly _extraConstraints: Expression[] = [];
     private _fullConstraint: Expression;
 
 
@@ -97,7 +97,7 @@ export class OnCondition {
      * @returns A promise with plan change list.
      */
     public async execute(planningContext: SequenceContext): Promise<ActionChangeList[]> {
-        return Promise.resolve([this.onCreateChangeList(planningContext)]);
+        return [this.onCreateChangeList(planningContext)];
     }
 
     protected onCreateChangeList(planningContext: SequenceContext, dialogOptions?: any): ActionChangeList {
