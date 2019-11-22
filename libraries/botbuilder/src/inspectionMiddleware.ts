@@ -280,7 +280,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     private async processAttachCommand(turnContext: TurnContext, sessionId: string): Promise<any> {
         var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
 
-        if (this.attachComamnd(turnContext.activity.conversation.id, sessions, sessionId)) {
+        if (this.attachCommand(turnContext.activity.conversation.id, sessions, sessionId)) {
             await turnContext.sendActivity('Attached to session, all traffic is being replicated for inspection.');
         }
         else {
@@ -306,7 +306,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         return sessionId;
     }
 
-    private attachComamnd(conversationId: string, sessions: InspectionSessionsByStatus, sessionId: string): boolean {
+    private attachCommand(conversationId: string, sessions: InspectionSessionsByStatus, sessionId: string): boolean {
 
         var inspectionSessionState = sessions.openedSessions[sessionId];
         if (inspectionSessionState !== undefined) {
