@@ -7,15 +7,15 @@ import { getRecognizer } from "../recognizer";
 export class DeleteToDo extends AdaptiveDialog {
     constructor() {
         super('DeleteToDo', [
-            new LogAction(`DeleteToDo: todos = {dialog.todos}`),
-            new IfCondition(`dialog.todos != null`, [
+            new LogAction(`DeleteToDo: todos = {user.todos}`),
+            new IfCondition(`user.todos != null`, [
                 new SetProperty('$title', '@title'),
-                new ChoiceInput('$title', `Which todo would you like to remove?`, 'dialog.todos'),
-                new EditArray(ArrayChangeType.remove, 'dialog.todos', '$title'),
+                new ChoiceInput('$title', `Which todo would you like to remove?`, 'user.todos'),
+                new EditArray(ArrayChangeType.remove, 'user.todos', '$title'),
                 new SendActivity(`Deleted the todo named "{$title}".`),
-                new IfCondition(`dialog.tips.clearToDos != true`, [
+                new IfCondition(`user.tips.clearToDos != true`, [
                     new SendActivity(`You can delete all your todos by saying "delete all todos".`),
-                    new SetProperty('dialog.tips.clearToDos', 'true')
+                    new SetProperty('user.tips.clearToDos', 'true')
                 ])
             ]).else([
                 new SendActivity(`No todos to delete.`)

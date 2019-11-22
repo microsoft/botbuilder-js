@@ -33,9 +33,9 @@ export class RootDialog extends AdaptiveDialog {
         ]));
 
         this.addRule(new OnUnknownIntent([
-            new IfCondition(`dialog.greeted != true`, [
+            new IfCondition(`user.greeted != true`, [
                 new SendActivity(`Hi! I'm a ToDo bot. Say "add a todo named first one" to get started.`),
-                new SetProperty(`dialog.greeted`, `true`)
+                new SetProperty(`user.greeted`, `true`)
             ]).else([
                 new SendActivity(`Say "add a todo named first one" to get started.`)
             ])

@@ -50,9 +50,9 @@ dialogs.addRule(new OnIntent('#JokeIntent', [], [
 
 // Handle unknown intents
 dialogs.addRule(new OnUnknownIntent([
-    new IfCondition('dialog.username == null', [
-        new TextInput('dialog.username', `Hi! what's your name?`)
+    new IfCondition('user.name == null', [
+        new TextInput('user.name', `Hi! what's your name?`)
     ]),
-    new SendActivity(`Hi {dialog.username}. It's nice to meet you.`)
+    new SendActivity(`Hi {user.name}. It's nice to meet you.`)
 ]));
 

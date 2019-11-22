@@ -7,9 +7,9 @@ import { getRecognizer } from "../recognizer";
 export class ClearToDos extends AdaptiveDialog {
     constructor() {
         super('ClearToDos', [
-            new LogAction(`ClearToDos: todos = {dialog.todos}`),
-            new IfCondition(`dialog.todos != null`, [
-                new EditArray(ArrayChangeType.clear, 'dialog.todos'),
+            new LogAction(`ClearToDos: todos = {user.todos}`),
+            new IfCondition(`user.todos != null`, [
+                new EditArray(ArrayChangeType.clear, 'user.todos'),
                 new SendActivity(`All todos removed.`)
             ]).else([
                 new SendActivity(`No todos to clear.`)

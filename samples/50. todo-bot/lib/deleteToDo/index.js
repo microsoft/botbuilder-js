@@ -7,15 +7,15 @@ const recognizer_1 = require("../recognizer");
 class DeleteToDo extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
     constructor() {
         super('DeleteToDo', [
-            new botbuilder_dialogs_adaptive_1.LogAction(`DeleteToDo: todos = {dialog.todos}`),
-            new botbuilder_dialogs_adaptive_1.IfCondition(`dialog.todos != null`, [
+            new botbuilder_dialogs_adaptive_1.LogAction(`DeleteToDo: todos = {user.todos}`),
+            new botbuilder_dialogs_adaptive_1.IfCondition(`user.todos != null`, [
                 new botbuilder_dialogs_adaptive_1.SetProperty('$title', '@title'),
-                new botbuilder_dialogs_adaptive_1.ChoiceInput('$title', `Which todo would you like to remove?`, 'dialog.todos'),
-                new botbuilder_dialogs_adaptive_1.EditArray(botbuilder_dialogs_adaptive_1.ArrayChangeType.remove, 'dialog.todos', '$title'),
+                new botbuilder_dialogs_adaptive_1.ChoiceInput('$title', `Which todo would you like to remove?`, 'user.todos'),
+                new botbuilder_dialogs_adaptive_1.EditArray(botbuilder_dialogs_adaptive_1.ArrayChangeType.remove, 'user.todos', '$title'),
                 new botbuilder_dialogs_adaptive_1.SendActivity(`Deleted the todo named "{$title}".`),
-                new botbuilder_dialogs_adaptive_1.IfCondition(`dialog.tips.clearToDos != true`, [
+                new botbuilder_dialogs_adaptive_1.IfCondition(`user.tips.clearToDos != true`, [
                     new botbuilder_dialogs_adaptive_1.SendActivity(`You can delete all your todos by saying "delete all todos".`),
-                    new botbuilder_dialogs_adaptive_1.SetProperty('dialog.tips.clearToDos', 'true')
+                    new botbuilder_dialogs_adaptive_1.SetProperty('user.tips.clearToDos', 'true')
                 ])
             ]).else([
                 new botbuilder_dialogs_adaptive_1.SendActivity(`No todos to delete.`)

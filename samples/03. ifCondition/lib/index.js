@@ -35,9 +35,9 @@ const dialogs = new botbuilder_dialogs_adaptive_1.AdaptiveDialog();
 bot.rootDialog = dialogs;
 // Handle unknown intents
 dialogs.addRule(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
-    new botbuilder_dialogs_adaptive_1.IfCondition('dialog.username == null', [
-        new botbuilder_dialogs_adaptive_1.TextInput('dialog.username', `Hi! what's your name?`),
+    new botbuilder_dialogs_adaptive_1.IfCondition('user.name == null', [
+        new botbuilder_dialogs_adaptive_1.TextInput('user.name', `Hi! what's your name?`),
     ]),
-    new botbuilder_dialogs_adaptive_1.SendActivity(`Hi {dialog.username}. It's nice to meet you.`)
+    new botbuilder_dialogs_adaptive_1.SendActivity(`Hi {user.name}. It's nice to meet you.`)
 ]));
 //# sourceMappingURL=index.js.map
