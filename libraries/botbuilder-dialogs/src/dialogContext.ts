@@ -79,17 +79,30 @@ export class DialogContext {
 
     /**
       * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
-      *
+      * 
+      * @remarks
+      * Passing in a dialog context instance will clone the dialog context.
       * @param dialogs The dialog set for which to create the dialog context.
       * @param context The context object for the current turn of the bot.
       * @param state The state object to use to read and write dialog state to storage.
+      * @param dialogContext The dialog context to clone.
       */
-    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState) {
-        if (!Array.isArray(state.dialogStack)) { state.dialogStack = []; }
-        this.dialogs = dialogs;
-        this.context = context;
-        this.stack = state.dialogStack;
-        this.state = new DialogStateManager(this);
+     constructor(dialogContext: DialogContext);
+     constructor(dialogs: DialogSet, context: TurnContext, state: DialogState);
+     constructor(dialogsOrDC: DialogSet|DialogContext, context?: TurnContext, state?: DialogState) {
+        if (dialogsOrDC instanceof DialogContext) {
+            this.dialogs = dialogsOrDC.dialogs;
+            this.context = dialogsOrDC.context;
+            this.stack = dialogsOrDC.stack;
+            this.state = dialogsOrDC.state;
+            this.parent = dialogsOrDC.parent;
+        } else {
+            if (!Array.isArray(state.dialogStack)) { state.dialogStack = []; }
+            this.dialogs = dialogsOrDC;
+            this.context = context;
+            this.stack = state.dialogStack;
+            this.state = new DialogStateManager(this);
+        }
     }
 
     /**
