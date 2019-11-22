@@ -13,8 +13,7 @@ import {
     Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent,
     DialogContext, DialogConfiguration, DialogContainer
 } from 'botbuilder-dialogs';
-import { AdaptiveEventNames, SequenceContext } from './sequenceContext';
-import { AdaptiveDialogState } from './adaptiveDialogState';
+import { AdaptiveDialogState, AdaptiveEventNames, SequenceContext } from './sequenceContext';
 import { OnCondition } from './conditions';
 import { Recognizer } from './recognizers';
 import { TriggerSelector } from './triggerSelector';
@@ -129,7 +128,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         this.ensureDependenciesInstalled();
 
         const activeDialogState = dc.activeDialog.state;
-        activeDialogState[this.adaptiveKey] = new AdaptiveDialogState();
+        const adaptiveDialogState: AdaptiveDialogState = {
+            actions: []
+        };
+        activeDialogState[this.adaptiveKey] = adaptiveDialogState;
 
         // Persist options to dialog state
         dc.state.setValue('this.options', options);
@@ -189,7 +191,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         let state = activeDialogState[this.adaptiveKey] as AdaptiveDialogState;
 
         if (state == null) {
-            state = new AdaptiveDialogState();
+            state = { actions: [] };
             activeDialogState[this.adaptiveKey] = state;
         }
 
@@ -482,7 +484,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         let state = activeDialogState[this.adaptiveKey] as AdaptiveDialogState;
 
         if (state == null) {
-            state = new AdaptiveDialogState();
+            state = { actions: [] };
             activeDialogState[this.adaptiveKey] = state;
         }
 

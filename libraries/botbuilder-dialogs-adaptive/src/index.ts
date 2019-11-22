@@ -12,7 +12,6 @@ export * from './conditions';
 export * from './selectors';
 export * from './activityProperty';
 export * from './adaptiveDialog';
-export * from './adaptiveDialogState';
 export * from './expressionProperty';
 export * from './sequenceContext';
 export * from './stringTemplate';
