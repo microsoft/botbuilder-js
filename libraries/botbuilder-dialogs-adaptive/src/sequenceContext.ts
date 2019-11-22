@@ -5,10 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogContext, DialogState, DialogSet } from 'botbuilder-dialogs';
+import { DialogContext, DialogState, DialogSet, DialogInstance } from 'botbuilder-dialogs';
 
-export interface AdaptiveDialogState {
-    actions?: ActionState[];
+export interface AdaptiveDialogState<O extends Object> {
+    options: O;
+    _adaptive: {
+        actions?: ActionState[];
+    };
+    result?: any;
 }
 
 export interface ActionState extends DialogState {
@@ -42,28 +46,43 @@ export enum AdaptiveEventNames {
 }
 
 export class SequenceContext<O extends object = {}> extends DialogContext {
-    private readonly changeKey: symbol;
+    private _actions: ActionState[];
+    private _changeKey: symbol;
 
     /**
-     * Creates a new `SequenceContext` instance.
+     * Clones an existing `DialogContext` instance into being a `SequenceContext`.
      */
-    constructor(dialogs: DialogSet, dc: DialogContext, state: DialogState, actions: ActionState[], changeKey: symbol) {
-        super(dialogs, dc.context, state);
-        this.actions = actions;
-        this.changeKey = changeKey;
+    static clone(dc: DialogContext, actions: ActionState[], changeKey: symbol): SequenceContext {
+        const context = new SequenceContext(dc);
+        context._actions = actions;
+        context._changeKey = changeKey;
+        return context;
+    }
+
+    /**
+     * Creates a new `SequenceContext` instance for a child action.
+     */
+    static create(parent: DialogContext, dialogs: DialogSet, stack: DialogInstance<any>[], actions: ActionState[], changeKey: symbol): SequenceContext {
+        const context = new SequenceContext(dialogs, parent.context, { dialogStack: stack });
+        context._actions = actions;
+        context._changeKey = changeKey;
+        context.parent = parent;
+        return context;
     }
 
     /**
      * Array of changes that are queued to be applied
      */
     public get changes(): ActionChangeList[] {
-        return this.context.turnState.get(this.changeKey) || [];
+        return this.context.turnState.get(this._changeKey) || [];
     }
 
     /**
      * Array of actions being executed.
      */
-    public readonly actions: ActionState[];
+    public get actions(): ActionState[] {
+        return this._actions;
+    }
 
     /**
      * Queues up a set of changes that will be applied when [applyChanges()](#applychanges)
@@ -71,9 +90,9 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
      * @param changes Action changes to queue up.
      */
     public queueChanges(changes: ActionChangeList): void {
-        const queue = this.context.turnState.get(this.changeKey) || [];
+        const queue = this.context.turnState.get(this._changeKey) || [];
         queue.push(changes);
-        this.context.turnState.set(this.changeKey, queue);
+        this.context.turnState.set(this._changeKey, queue);
     }
 
     /**
@@ -86,9 +105,9 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
      * @returns true if there were any changes to apply.
      */
     public async applyChanges(): Promise<boolean> {
-        const queue: ActionChangeList[] = this.context.turnState.get(this.changeKey) || [];
+        const queue: ActionChangeList[] = this.context.turnState.get(this._changeKey) || [];
         if (Array.isArray(queue) && queue.length > 0) {
-            this.context.turnState.delete(this.changeKey);
+            this.context.turnState.delete(this._changeKey);
 
             // Apply each queued set of changes
             for (let i = 0; i < queue.length; i++) {
