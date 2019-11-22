@@ -36,6 +36,7 @@ export enum ActionChangeType {
 export enum AdaptiveEventNames {
     beginDialog = 'beginDialog',
     activityReceived = 'activityReceived',
+    recognizeUtterance = 'recognizeUtterance',
     recognizedIntent = 'recognizedIntent',
     unknownIntent = 'unknownIntent',
     conversationMembersAdded = 'conversationMembersAdded',

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { AdaptiveDialog, SendActivity, OnIntent, OnDialogEvent, OnUnknownIntent, IfCondition, SetProperty  } from "botbuilder-dialogs-adaptive";
+import { AdaptiveDialog, SendActivity, OnIntent, OnDialogEvent, OnUnknownIntent, IfCondition, SetProperty } from "botbuilder-dialogs-adaptive";
 import { getRecognizer } from "../recognizer";
 import { AddToDo } from "../addToDo";
 import { DeleteToDo } from "../deleteToDo";
@@ -16,19 +16,19 @@ export class RootDialog extends AdaptiveDialog {
         this.recognizer = getRecognizer();
 
         // Handle recognized intents
-        this.addRule(new OnIntent('#AddToDo', [
+        this.addRule(new OnIntent('#AddToDo', [], [
             new AddToDo()
         ]));
 
-        this.addRule(new OnIntent('#DeleteToDo', [
+        this.addRule(new OnIntent('#DeleteToDo', [], [
             new DeleteToDo()
         ]));
 
-        this.addRule(new OnIntent('#ClearToDos', [
+        this.addRule(new OnIntent('#ClearToDos', [], [
             new ClearToDos()
         ]));
 
-        this.addRule(new OnIntent('#ShowToDos', [
+        this.addRule(new OnIntent('#ShowToDos', [], [
             new ShowToDos()
         ]));
 

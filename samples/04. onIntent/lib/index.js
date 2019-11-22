@@ -36,7 +36,7 @@ bot.rootDialog = dialogs;
 // Create recognizer
 dialogs.recognizer = new botbuilder_dialogs_adaptive_1.RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
 // Tell the user a joke
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#JokeIntent', [
+dialogs.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#JokeIntent', [], [
     new botbuilder_dialogs_adaptive_1.SendActivity(`Why did the 🐔 cross the 🛣️?`),
     new botbuilder_dialogs_adaptive_1.EndTurn(),
     new botbuilder_dialogs_adaptive_1.SendActivity(`To get to the other side...`)

@@ -9,6 +9,7 @@ export * from './input';
 export * from './recognizers';
 export * from './actions';
 export * from './conditions';
+export * from './selectors';
 export * from './activityProperty';
 export * from './adaptiveDialog';
 export * from './expressionProperty';
