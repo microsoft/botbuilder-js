@@ -20,7 +20,7 @@ export class AddToDo extends AdaptiveDialog {
         this.recognizer = getRecognizer();
 
         // Add interruption rules
-        this.addRule(new OnIntent('#Cancel', [
+        this.addRule(new OnIntent('#Cancel', [], [
             new CancelAllDialogs('cancelAdd')
         ]));
     }

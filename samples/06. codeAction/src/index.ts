@@ -45,5 +45,5 @@ dialogs.addRule(new OnUnknownIntent([
         dc.state.setValue('conversation.count', count + 1);
         return await dc.endDialog();
     }),
-    new SendActivity('{conversation.count}: You said: {utterance}')
+    new SendActivity('{conversation.count}')
 ]));

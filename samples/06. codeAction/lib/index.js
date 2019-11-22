@@ -40,6 +40,6 @@ dialogs.addRule(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
         dc.state.setValue('conversation.count', count + 1);
         return await dc.endDialog();
     }),
-    new botbuilder_dialogs_adaptive_1.SendActivity('{conversation.count}: You said: {utterance}')
+    new botbuilder_dialogs_adaptive_1.SendActivity('{conversation.count}')
 ]));
 //# sourceMappingURL=index.js.map

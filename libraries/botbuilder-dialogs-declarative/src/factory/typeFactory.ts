@@ -95,7 +95,7 @@ import { CustomTypeBuilder } from './customTypeBuilder';
             let condition = new OnIntent();
             
             if(config && config['intent']) {
-                condition.matches.push(config['intent']);
+                condition.intent = config['intent'];
             }
             return condition;
         }));
