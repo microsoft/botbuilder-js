@@ -16,10 +16,9 @@ const createNetSocket = (readable = true, writable = true) => {
 };
 
 class TestAdapterSettings {
-    constructor(appId = undefined, appPassword = undefined, channelAuthTenant, oAuthEndpoint, openIdMetadata, channelServce) {
+    constructor(appId, appPassword) {
         this.appId = appId;
         this.appPassword = appPassword;
-        this.enableWebSockets = true;
     }
 }
 
