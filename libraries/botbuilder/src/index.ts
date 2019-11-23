@@ -6,7 +6,15 @@
  * Licensed under the MIT License.
  */
 
-export * from './botFrameworkAdapter';
+export {
+    BotFrameworkAdapter,
+    BotFrameworkAdapterSettings,
+    InvokeResponse,
+    INVOKE_RESPONSE_KEY,
+    StatusCodes,
+    WebRequest,
+    WebResponse
+} from './botFrameworkAdapter';
 export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
 export * from './teamsActivityHandler';
