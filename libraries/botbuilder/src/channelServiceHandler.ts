@@ -31,11 +31,6 @@ export class ChannelServiceHandler {
     private readonly _channelProvider: string; // IChannelProvider
     private readonly _credentialProvider: ICredentialProvider;
 
-    /// <remarks>Use a <see cref="MiddlewareSet"/> object to add multiple middleware
-    /// components in the constructor. Use the Use(<see cref="IMiddleware"/>) method to
-    /// add additional middleware to the adapter after construction.
-    /// </remarks>
-
     /**
      * Initializes a new instance of the ChannelServiceHandler class, using a credential provider.
      * @param credentialProvider The credential provider.
@@ -166,94 +161,73 @@ export class ChannelServiceHandler {
         throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
-
-    /// UpdateActivity() API for Skill.
-
-    /// <remarks>
-    /// Edit an existing activity.
-    ///
-    /// Some channels allow you to edit an existing activity to reflect the new
-    /// state of a bot conversation.
-    ///
-    /// For example, you can remove buttons after someone has clicked "Approve"
-    /// button.
-    /// </remarks>
-    /// @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
-    /// @param conversationId'>Conversation ID.
-    /// @param activityId'>activityId to update.
-    /// @param activity'>replacement Activity.
-
-    /// <returns>task for a resource response.</returns>
+    /**
+     * UpdateActivity() API for Skill.
+     * @remarks
+     * Edit an existing activity.
+     * 
+     * Some channels allow you to edit an existing activity to reflect the new
+     * state of a bot conversation.
+     * 
+     * For example, you can remove buttons after someone has clicked "Approve" button.
+     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param conversationId Conversation ID.
+     * @param activityId activityId to update.
+     * @param activity replacement Activity.
+     */
     protected async onUpdateActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse> {
         throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
-
-    /// DeleteActivity() API for Skill.
-
-    /// <remarks>
-    /// Delete an existing activity.
-    ///
-    /// Some channels allow you to delete an existing activity, and if successful
-    /// this method will remove the specified activity.
-    /// </remarks>
-    /// @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
-    /// @param conversationId'>Conversation ID.
-    /// @param activityId'>activityId to delete.
-
-    /// <returns>task for a resource response.</returns>
+    /**
+     * DeleteActivity() API for Skill.
+     * @remarks
+     * Delete an existing activity.
+     * 
+     * Some channels allow you to delete an existing activity, and if successful
+     * this method will remove the specified activity.
+     * 
+     * 
+     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param conversationId Conversation ID.
+     * @param activityId activityId to delete.
+     */
     protected async onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void> {
         throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
-
-    /// GetActivityMembers() API for Skill.
-
-    /// <remarks>
-    /// Enumerate the members of an activity.
-    ///
-    /// This REST API takes a ConversationId and a ActivityId, returning an array
-    /// of ChannelAccount objects representing the members of the particular
-    /// activity in the conversation.
-    /// </remarks>
-    /// @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
-    /// @param conversationId'>Conversation ID.
-    /// @param activityId'>Activity ID.
-
-    /// <returns>task with result.</returns>
+    /**
+     * GetActivityMembers() API for Skill.
+     * @remarks
+     * Enumerate the members of an activity.
+     * 
+     * This REST API takes a ConversationId and a ActivityId, returning an array
+     * of ChannelAccount objects representing the members of the particular
+     * activity in the conversation.
+     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param conversationId Conversation ID.
+     * @param activityId Activity ID.
+     */
     protected async onGetActivityMembers(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<ChannelAccount[]>
     {
         throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
-
-    /// CreateConversation() API for Skill.
-
-    /// <remarks>
-    /// Create a new Conversation.
-    ///
-    /// POST to this method with a
-    /// * Bot being the bot creating the conversation
-    /// * IsGroup set to true if this is not a direct message (default is false)
-    /// * Array containing the members to include in the conversation
-    ///
-    /// The return value is a ResourceResponse which contains a conversation id
-    /// which is suitable for use
-    /// in the message payload and REST API uris.
-    ///
-    /// Most channels only support the semantics of bots initiating a direct
-    /// message conversation.  An example of how to do that would be:
-    ///
-    /// var resource = await connector.conversations.CreateConversation(new
-    /// ConversationParameters(){ Bot = bot, members = new ChannelAccount[] { new
-    /// ChannelAccount("user1") } );
-    /// await connect.Conversations.onSendToConversation(resource.Id, new
-    /// Activity() ... ) ;
-    ///
-    /// end.
-
     /**
+     * CreateConversation() API for Skill.
+     * @remarks
+     * Create a new Conversation.
      * 
+     * POST to this method with a
+     * * Bot being the bot creating the conversation
+     * * IsGroup set to true if this is not a direct message (default is false)
+     * * Array containing the members to include in the conversation
+     * 
+     * The return value is a ResourceResponse which contains a conversation id
+     * which is suitable for use in the message payload and REST API uris.
+     * 
+     * Most channels only support the semantics of bots initiating a direct
+     * message conversation.
      * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
      * @param conversationId Conversation ID.
      * @param parameters Parameters to create the conversation from.
@@ -262,22 +236,20 @@ export class ChannelServiceHandler {
         throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
-    /// onGetConversations() API for Skill.
-    /// <remarks>
-    /// List the Conversations in which this bot has participated.
-    /// 
-    /// GET from this method with a skip token
-    /// 
-    /// The return value is a ConversationsResult, which contains an array of
-    /// ConversationMembers and a skip token.  If the skip token is not empty, then
-    /// there are further values to be returned. Call this method again with the
-    /// returned token to get more values.
-    /// 
-    /// Each ConversationMembers object contains the ID of the conversation and an
-    /// array of ChannelAccounts that describe the members of the conversation.
-
     /**
+     * onGetConversations() API for Skill.
+     * @remarks
+     * List the Conversations in which this bot has participated.
      * 
+     * GET from this method with a skip token
+     * 
+     * The return value is a ConversationsResult, which contains an array of
+     * ConversationMembers and a skip token.  If the skip token is not empty, then
+     * there are further values to be returned. Call this method again with the
+     * returned token to get more values.
+     * 
+     * Each ConversationMembers object contains the ID of the conversation and an
+     * array of ChannelAccounts that describe the members of the conversation.
      * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
      * @param conversationId Conversation ID.
      * @param continuationToken Skip or continuation token.
@@ -286,15 +258,13 @@ export class ChannelServiceHandler {
         throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
-    /// GetConversationMembers() API for Skill.
-    /// <remarks>
-    /// Enumerate the members of a conversation.
-    ///
-    /// This REST API takes a ConversationId and returns an array of ChannelAccount
-    /// objects representing the members of the conversation.
-
     /**
+     * getConversationMembers() API for Skill.
+     * @remarks
+     * Enumerate the members of a conversation.
      * 
+     * This REST API takes a ConversationId and returns an array of ChannelAccount
+     * objects representing the members of the conversation.
      * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
      * @param conversationId Conversation ID.
      */
@@ -302,31 +272,26 @@ export class ChannelServiceHandler {
         throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
-
-    /// GetConversationPagedMembers() API for Skill.
-
-    /// <remarks>
-    /// Enumerate the members of a conversation one page at a time.
-    ///
-    /// This REST API takes a ConversationId. Optionally a pageSize and/or
-    /// continuationToken can be provided. It returns a PagedMembersResult, which
-    /// contains an array
-    /// of ChannelAccounts representing the members of the conversation and a
-    /// continuation token that can be used to get more values.
-    ///
-    /// One page of ChannelAccounts records are returned with each call. The number
-    /// of records in a page may vary between channels and calls. The pageSize
-    /// parameter can be used as
-    /// a suggestion. If there are no additional results the response will not
-    /// contain a continuation token. If there are no members in the conversation
-    /// the Members will be empty or not present in the response.
-    ///
-    /// A response to a request that has a continuation token from a prior request
-    /// may rarely return members from a previous request.
-    /// </remarks>
-
     /**
+     * getConversationPagedMembers() API for Skill.
+     * @remarks
+     * Enumerate the members of a conversation one page at a time.
      * 
+     * This REST API takes a ConversationId. Optionally a pageSize and/or
+     * continuationToken can be provided. It returns a PagedMembersResult, which
+     * contains an array
+     * of ChannelAccounts representing the members of the conversation and a
+     * continuation token that can be used to get more values.
+     * 
+     * One page of ChannelAccounts records are returned with each call. The number
+     * of records in a page may vary between channels and calls. The pageSize
+     * parameter can be used as
+     * a suggestion. If there are no additional results the response will not
+     * contain a continuation token. If there are no members in the conversation
+     * the Members will be empty or not present in the response.
+     * 
+     * A response to a request that has a continuation token from a prior request
+     * may rarely return members from a previous request.
      * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
      * @param conversationId Conversation ID.
      * @param pageSize Suggested page size.
@@ -337,19 +302,14 @@ export class ChannelServiceHandler {
         throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
-
-    /// DeleteConversationMember() API for Skill.
-
-    /// <remarks>
-    /// Deletes a member from a conversation.
-    ///
-    /// This REST API takes a ConversationId and a memberId (of type string) and
-    /// removes that member from the conversation. If that member was the last
-    /// member
-    /// of the conversation, the conversation will also be deleted.
-
     /**
+     * DeleteConversationMember() API for Skill.
+     * @remarks
+     * Deletes a member from a conversation.
      * 
+     * This REST API takes a ConversationId and a memberId (of type string) and
+     * removes that member from the conversation. If that member was the last member
+     * of the conversation, the conversation will also be deleted.
      * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
      * @param conversationId Conversation ID.
      * @param memberId ID of the member to delete from this conversation.
@@ -395,7 +355,7 @@ export class ChannelServiceHandler {
     }
 
     private async authenticate(authHeader: string): Promise<ClaimsIdentity> {
-        return await JwtTokenValidation.validateAuthHeader(authHeader, this.credentialProvider, this.channelProvider, 'unknown', this.authConfiguration);
+        return await JwtTokenValidation.validateAuthHeader(authHeader, this.credentialProvider, this.channelProvider, 'unknown', this.authConfig);
     }
 }
 
