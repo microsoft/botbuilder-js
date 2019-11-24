@@ -5,14 +5,29 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
-import { SequenceContext, ActionChangeList, ActionChangeType } from '../sequenceContext';
+import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
+import { ActionScope, ActionScopeConfiguration } from './actionScope';
+
+/**
+ * @private
+ */
+const LIST_KEY: string = 'this.list';
+
+/**
+ * @private
+ */
+const COUNT_KEY: string = 'this.count';
+
+/**
+ * @private
+ */
+const ITERATOR_KEY: string = 'this.iterator';
 
 /**
  * Configuration info passed to a `ForEach` action.
  */
-export interface ForEachConfiguration extends DialogConfiguration {
+export interface ForEachConfiguration extends ActionScopeConfiguration {
     /**
      * Expression used to compute the list that should be enumerated.
      */
@@ -27,11 +42,6 @@ export interface ForEachConfiguration extends DialogConfiguration {
      * In-memory property that will contain the current items value. Defaults to `dialog.value`.
      */
     valueProperty?: string;
-
-    /**
-     * Actions to be run for each page of items.
-     */
-    actions?: Dialog[];
 }
 
 /**
@@ -42,7 +52,7 @@ export interface ForEachConfiguration extends DialogConfiguration {
  * to `dialog.item`. The loop can be exited early by including either a `EndDialog` or `GotoDialog`
  * action.
  */
-export class ForEach<O extends object = {}> extends Dialog<O> {
+export class ForEach<O extends object = {}> extends ActionScope<O> {
 
     /**
      * Creates a new `ForEach` instance.
@@ -52,9 +62,8 @@ export class ForEach<O extends object = {}> extends Dialog<O> {
     constructor();
     constructor(list: ExpressionPropertyValue<any[]|object>, actions: Dialog[]);
     constructor(list?: ExpressionPropertyValue<any[]|object>, actions?: Dialog[]) {
-        super();
+        super(actions);
         if (list) { this.list = new ExpressionProperty(list) }
-        if (actions) { this.actions = actions }
     }
 
     protected onComputeId(): string {
@@ -77,11 +86,6 @@ export class ForEach<O extends object = {}> extends Dialog<O> {
      */
     public valueProperty: string = 'dialog.value';
 
-    /**
-     * Actions to be run for each page of items.
-     */
-    public actions: Dialog[] = [];
-
     public configure(config: ForEachConfiguration): this {
         for (const key in config) {
             if (config.hasOwnProperty(key)) {
@@ -100,70 +104,88 @@ export class ForEach<O extends object = {}> extends Dialog<O> {
         return this;
     }
 
-    public getDependencies(): Dialog[] {
-        return this.actions;
-    }
-
-    public async beginDialog(sequence: SequenceContext, options: ForEachOptions): Promise<DialogTurnResult> {
-        // Ensure planning context
-        if (!(sequence instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within an AdaptiveDialog.`) }
+    public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
+        // Evaluate list
         if (!this.list) { throw new Error(`${this.id}: no list expression specified.`) }
+        const list = this.list.evaluate(this.id, dc.state);
 
-        // Unpack options
-        let { list, offset } = options;
-        if (list == undefined) { list = this.list.evaluate(this.id, sequence.state) }
-        if (offset == undefined) { offset = 0 }
-
-        // Get next page of items
-        const item = this.getItem(list, offset);
-
-        // Update current plan
-        if (item !== undefined) {
-            sequence.state.setValue(this.valueProperty, item);
-            sequence.state.setValue(this.indexProperty, offset);
-            const changes: ActionChangeList = {
-                changeType: ActionChangeType.insertActions,
-                actions: []
-            };
-            this.actions.forEach((action) => changes.actions.push({ dialogStack: [], dialogId: action.id }));
-
-            // Add a call back into forEachPage() at the end of repeated actions.
-            // - A new offset is passed in which causes the next page of results to be returned.
-            changes.actions.push({
-                dialogStack: [],
-                dialogId: this.id,
-                options: {
-                    list: list,
-                    offset: offset + 1
-                }
-            });
-            sequence.queueChanges(changes);
-        }
-
-        return await sequence.endDialog();
-    }
-
-    private getItem(list: any[]|object, index: number): any {
+        // Count list items
+        let count: number = 0;
         if (Array.isArray(list)) {
-            if (index < list.length) {
-                return list[index];
-            }
-        } else if (typeof list === 'object') {
-            let i = 0;
+            count = list.length;
+        } else if (typeof list == 'object') {
             for (const key in list) {
                 if (list.hasOwnProperty(key)) {
-                    if (i == index) {
-                        return list[key];
-                    }
-                    i++;
+                    count++;
                 }
             }
         }
-        return undefined;
+
+        // Initialize persisted state
+        dc.state.setValue(LIST_KEY, list);
+        dc.state.setValue(COUNT_KEY, count);
+        dc.state.setValue(ITERATOR_KEY, -1);
+        dc.state.setValue(this.indexProperty, undefined);
+        dc.state.setValue(this.valueProperty, undefined);
+
+        // Start loop for first item
+        return await this.nextItem(dc);
+    }
+
+    protected async onBreak(dc: DialogContext): Promise<DialogTurnResult> {
+        return await dc.endDialog();
+    }
+
+    protected async onContinue(dc: DialogContext): Promise<DialogTurnResult> {
+        return await this.nextItem(dc);
+    }
+
+    protected async onEndOfActions(dc: DialogContext): Promise<DialogTurnResult> {
+        return await this.nextItem(dc);
+    }
+
+    private async nextItem(dc: DialogContext): Promise<DialogTurnResult> {
+        // Get list information
+        const list: any[]|object = dc.state.getValue(LIST_KEY);
+        const count: number = dc.state.getValue(COUNT_KEY);
+        let iterator: number = dc.state.getValue(ITERATOR_KEY);
+
+        // Next item
+        if (++iterator < count) {
+            // Persist index and value
+            const { index, value } = this.getItem(list, iterator); 
+            dc.state.setValue(this.indexProperty, index);
+            dc.state.setValue(this.valueProperty, value);
+
+            // Start loop
+            return await this.beginAction(dc, 0);
+        } else {
+            // End of list has been reached
+            return await dc.endDialog();
+        }
+    }
+
+    private getItem(list: any[]|object, iterator: number): ItemPair {
+        if (Array.isArray(list)) {
+            return { index: iterator, value: list[iterator] };
+        } else {
+            let i = 0;
+            const result = {} as ItemPair;
+            for (const key in list) {
+                if (list.hasOwnProperty(key)) {
+                    if (i++ == iterator) {
+                        result.index = key;
+                        result.value = list[key];
+                    }
+                }
+            }
+
+            return result;
+        }
     }
 }
 
-interface ForEachOptions {
-    list?: any[]|object;
-    offset?: number;
+interface ItemPair {
+    index: string|number;
+    value: any;
 }

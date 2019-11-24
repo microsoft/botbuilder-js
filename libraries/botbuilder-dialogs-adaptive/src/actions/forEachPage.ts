@@ -5,14 +5,35 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
-import { SequenceContext, ActionChangeType, ActionChangeList } from '../sequenceContext';
+import { DialogTurnResult, Dialog, DialogConfiguration, DialogContext } from 'botbuilder-dialogs';
+import { ActionChangeType, ActionChangeList } from '../sequenceContext';
 import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
+import { ActionScopeConfiguration, ActionScope } from './actionScope';
+
+/**
+ * @private
+ */
+const LIST_KEY: string = 'this.list';
+
+/**
+ * @private
+ */
+const SKIP_KEY: string = 'this.skip';
+
+/**
+ * @private
+ */
+const COUNT_KEY: string = 'this.count';
+
+/**
+ * @private
+ */
+const ITERATOR_KEY: string = 'this.iterator';
 
 /**
  * Configuration info passed to a `ForEachPage` action.
  */
-export interface ForEachPageConfiguration extends DialogConfiguration {
+export interface ForEachPageConfiguration extends ActionScopeConfiguration {
     /**
      * Expression used to compute the list that should be enumerated.
      */
@@ -27,11 +48,6 @@ export interface ForEachPageConfiguration extends DialogConfiguration {
      * In-memory property that will contain the current items value. Defaults to `dialog.value`.
      */
     valueProperty?: string;
-
-    /**
-     * Actions to be run for each page of items.
-     */
-    actions?: Dialog[];
 }
 
 /**
@@ -43,7 +59,7 @@ export interface ForEachPageConfiguration extends DialogConfiguration {
  * and defaults to a size of 10. The loop can be exited early by including either a `EndDialog` or
  * `GotoDialog` action.
  */
-export class ForEachPage extends Dialog {
+export class ForEachPage<O extends object = {}> extends ActionScope<O> {
 
     /**
      * Creates a new `ForEachPage` instance.
@@ -55,7 +71,7 @@ export class ForEachPage extends Dialog {
     constructor(list: ExpressionPropertyValue<any[]|object>, actions: Dialog[]);
     constructor(list: ExpressionPropertyValue<any[]|object>, pageSize: ExpressionPropertyValue<number>, actions: Dialog[]);
     constructor(list?: ExpressionPropertyValue<any[]|object>, pageSizeOrActions?: ExpressionPropertyValue<number>|Dialog[], actions?: Dialog[]) {
-        super();
+        super()
         if (Array.isArray(pageSizeOrActions)) {
             actions = pageSizeOrActions;
             pageSizeOrActions = undefined;
@@ -112,73 +128,92 @@ export class ForEachPage extends Dialog {
         return this.actions;
     }
 
-    public async beginDialog(sequence: SequenceContext, options: ForEachPageOptions): Promise<DialogTurnResult> {
-        // Ensure planning context
-        if (!(sequence instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within an AdaptiveDialog.`) }
+    public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
+        // Evaluate list
         if (!this.list) { throw new Error(`${this.id}: no list expression specified.`) }
-        if (!this.pageSize) { throw new Error(`${this.id}: no pageSize expression specified.`) }
+        const list = this.list.evaluate(this.id, dc.state);
 
-        // Unpack options
-        let { list, offset, pageSize } = options;
-        const memory = sequence.state;
-        if (list == undefined) { list = this.list.evaluate(this.id, memory) }
-        if (pageSize == undefined) { pageSize = this.pageSize.evaluate(this.id, memory) }
-        if (offset == undefined) { offset = 0 }
-
-        // Get next page of items
-        const page = this.getPage(list, offset, pageSize);
-
-        // Update current plan
-        if (page.length > 0) {
-            sequence.state.setValue(this.valueProperty, page);
-            const changes: ActionChangeList = {
-                changeType: ActionChangeType.insertActions,
-                actions: []
-            };
-            this.actions.forEach((action) => changes.actions.push({ dialogStack: [], dialogId: action.id }));
-            if (page.length == pageSize) {
-                // Add a call back into forEachPage() at the end of repeated actions.
-                // - A new offset is passed in which causes the next page of results to be returned.
-                changes.actions.push({
-                    dialogStack: [],
-                    dialogId: this.id,
-                    options: {
-                        list: list,
-                        offset: offset + pageSize,
-                        pageSize: pageSize
-                    }
-                });
+        // Count list items
+        let count: number = 0;
+        if (Array.isArray(list)) {
+            count = list.length;
+        } else if (typeof list == 'object') {
+            for (const key in list) {
+                if (list.hasOwnProperty(key)) {
+                    count++;
+                }
             }
-            sequence.queueChanges(changes);
         }
 
-        return await sequence.endDialog();
+        // Get page size
+        if (!this.pageSize) { throw new Error(`${this.id}: no pageSize expression specified.`) }
+        const skip = this.pageSize.evaluate(this.id, dc.state);
+        if (typeof skip != 'number' || skip < 1) { throw new Error(`${this.id}: invalid pageSize of '${skip}'.`) }
+
+        // Initialize persisted state
+        dc.state.setValue(LIST_KEY, list);
+        dc.state.setValue(SKIP_KEY, skip);
+        dc.state.setValue(COUNT_KEY, count);
+        dc.state.setValue(ITERATOR_KEY, -skip);
+        dc.state.setValue(this.valueProperty, undefined);
+
+        // Start loop for first page
+        return await this.nextPage(dc);
     }
 
-    private getPage(list: any[]|object, offset: number, pageSize: number): any[] {
+    protected async onBreak(dc: DialogContext): Promise<DialogTurnResult> {
+        return await dc.endDialog();
+    }
+
+    protected async onContinue(dc: DialogContext): Promise<DialogTurnResult> {
+        return await this.nextPage(dc);
+    }
+
+    protected async onEndOfActions(dc: DialogContext): Promise<DialogTurnResult> {
+        return await this.nextPage(dc);
+    }
+
+    private async nextPage(dc: DialogContext): Promise<DialogTurnResult> {
+        // Get list information
+        const list: any[]|object = dc.state.getValue(LIST_KEY);
+        const skip: number = dc.state.getValue(SKIP_KEY);
+        const count: number = dc.state.getValue(COUNT_KEY);
+        let iterator: number = dc.state.getValue(ITERATOR_KEY);
+
+        // Next page
+        iterator += skip;
+        if (iterator < count) {
+            // Persist value
+            const page = this.getPage(list, iterator, skip); 
+            dc.state.setValue(this.valueProperty, page);
+
+            // Start loop
+            return await this.beginAction(dc, 0);
+        } else {
+            // End of list has been reached
+            return await dc.endDialog();
+        }
+    }
+  
+    private getPage(list: any[]|object, iterator: number, skip: number): any[] {
         const page: any[] = [];
-        const end = offset + pageSize;
+        const end = iterator + skip;
         if (Array.isArray(list)) {
-            for (let i = offset; i >= offset && i < end; i++) {
+            for (let i = iterator; i >= iterator && i < end; i++) {
                 page.push(list[i]);
             }
         } else if (typeof list === 'object') {
             let i = 0;
             for (const key in list) {
                 if (list.hasOwnProperty(key)) {
-                    if (i >= offset && i < end) {
+                    if (i >= iterator && i < end) {
                         page.push(list[key]);
                     }
                     i++;
                 }
             }
         }
+
         return page;
     }
-}
-
-interface ForEachPageOptions {
-    list: any[]|object;
-    offset?: number;
-    pageSize?: number;
 }
