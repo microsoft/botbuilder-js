@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
-import { SequenceContext, ActionState, ActionChangeType } from '../sequenceContext';
+import { DialogTurnResult, Dialog, DialogConfiguration, DialogContext } from 'botbuilder-dialogs';
 import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
+import { ActionScope } from './actionScope';
 
 export interface IfConditionConfiguration extends DialogConfiguration {
     /**
@@ -27,6 +27,9 @@ export interface IfConditionConfiguration extends DialogConfiguration {
 }
 
 export class IfCondition extends Dialog {
+    private ifScope: ActionScope;
+    private elseScope: ActionScope;
+
     /**
      * The conditional expression to evaluate.
      */
@@ -77,7 +80,18 @@ export class IfCondition extends Dialog {
     }
 
     public getDependencies(): Dialog[] {
-        return this.actions.concat(this.elseActions);
+        const actions = this.actions.concat(this.elseActions);
+        if (this.actions.length > 0) {
+            this.ifScope = new ActionScope(this.actions);
+            this.ifScope.id = 'True' + this.ifScope.id;
+            actions.push(this.ifScope);
+        }
+        if (this.elseActions.length > 0) {
+            this.elseScope = new ActionScope(this.elseActions);
+            this.elseScope.id = 'False' + this.elseScope.id;
+            actions.push(this.elseScope);
+        }
+        return actions;
     }
 
     public else(actions: Dialog[]): this {
@@ -85,30 +99,19 @@ export class IfCondition extends Dialog {
         return this;
     }
 
-    public async beginDialog(sequence: SequenceContext, options: object): Promise<DialogTurnResult> {
-        // Ensure planning context and condition
-        if (!(sequence instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within an AdaptiveDialog.`) }
+    public async beginDialog(dc: DialogContext, options: object): Promise<DialogTurnResult> {
+        // Evaluate condition
         if (!this.condition) { throw new Error(`${this.id}: no conditional expression specified.`) }
-
-        // Evaluate expression
-        const memory = sequence.state;
-        const value = this.condition.evaluate(this.id, memory);
+        const value = this.condition.evaluate(this.id, dc.state);
 
         // Check for truthy returned value
-        const triggered = value ? this.actions : this.elseActions;
-
-        // Queue up actions that should run after current action
-        if (triggered.length > 0) {
-            const actions = triggered.map((action) => {
-                return {
-                    dialogStack: [],
-                    dialogId: action.id,
-                    options: options
-                } as ActionState
-            });
-            await sequence.queueChanges({ changeType: ActionChangeType.insertActions, actions: actions });
+        const triggered = value ? this.ifScope : this.elseScope;
+        if (triggered) {
+            // Redirect to triggered actions
+            return await dc.replaceDialog(triggered.id);
+        } else {
+            // End dialog since no triggered actions
+            return await dc.endDialog();
         }
-
-        return await sequence.endDialog();
     }
 }
