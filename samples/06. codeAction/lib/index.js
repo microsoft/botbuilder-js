@@ -34,7 +34,7 @@ server.post('/api/messages', (req, res) => {
 const dialogs = new botbuilder_dialogs_adaptive_1.AdaptiveDialog();
 bot.rootDialog = dialogs;
 // Add a default rule for handling incoming messages
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
+dialogs.triggers.push(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
     new botbuilder_dialogs_adaptive_1.CodeAction(async (dc) => {
         const count = dc.state.getValue('conversation.count') || 0;
         dc.state.setValue('conversation.count', count + 1);

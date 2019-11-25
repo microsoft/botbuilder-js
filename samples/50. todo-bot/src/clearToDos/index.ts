@@ -8,7 +8,7 @@ export class ClearToDos extends AdaptiveDialog {
     constructor() {
         super('ClearToDos');
 
-        this.addRule(new OnBeginDialog([
+        this.triggers.push(new OnBeginDialog([
             new LogAction(`ClearToDos: todos = {user.todos}`),
             new IfCondition(`user.todos != null`, [
                 new EditArray(ArrayChangeType.clear, 'user.todos'),

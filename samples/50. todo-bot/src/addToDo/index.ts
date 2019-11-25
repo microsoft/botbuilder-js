@@ -8,7 +8,7 @@ export class AddToDo extends AdaptiveDialog {
     constructor() {
         super('AddToDo');
 
-        this.addRule(new OnBeginDialog([
+        this.triggers.push(new OnBeginDialog([
             new TextInput('$title', '@title', `What would you like to call your new todo?`),
             new EditArray(ArrayChangeType.push, 'user.todos', '$title'),
             new SendActivity(`Added a todo named "{$title}". You can delete it by saying "delete todo named {$title}".`),
@@ -19,7 +19,7 @@ export class AddToDo extends AdaptiveDialog {
         ]))
 
         // Add interruption rules
-        this.addRule(new OnIntent('#Cancel', [], [
+        this.triggers.push(new OnIntent('#Cancel', [], [
             new CancelAllDialogs('cancelAdd')
         ]));
 

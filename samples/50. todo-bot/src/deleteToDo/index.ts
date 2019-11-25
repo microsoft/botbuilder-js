@@ -8,7 +8,7 @@ export class DeleteToDo extends AdaptiveDialog {
     constructor() {
         super('DeleteToDo');
 
-        this.addRule(new OnBeginDialog([
+        this.triggers.push(new OnBeginDialog([
             new LogAction(`DeleteToDo: todos = {user.todos}`),
             new IfCondition(`user.todos != null`, [
                 new SetProperty('$title', '@title'),
@@ -25,7 +25,7 @@ export class DeleteToDo extends AdaptiveDialog {
         ]));
 
         // Add interruption rules
-        this.addRule(new OnIntent('#Cancel', [], [
+        this.triggers.push(new OnIntent('#Cancel', [], [
             new CancelAllDialogs('cancelDelete')
         ]));
 

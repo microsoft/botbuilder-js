@@ -36,13 +36,13 @@ bot.rootDialog = dialogs;
 // Create recognizer
 dialogs.recognizer = new botbuilder_dialogs_adaptive_1.RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
 // Tell the user a joke
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#JokeIntent', [], [
+dialogs.triggers.push(new botbuilder_dialogs_adaptive_1.OnIntent('#JokeIntent', [], [
     new botbuilder_dialogs_adaptive_1.SendActivity(`Why did the 🐔 cross the 🛣️?`),
     new botbuilder_dialogs_adaptive_1.EndTurn(),
     new botbuilder_dialogs_adaptive_1.SendActivity(`To get to the other side...`)
 ]));
 // Handle unknown intents
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
+dialogs.triggers.push(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
     new botbuilder_dialogs_adaptive_1.IfCondition('user.name == null', [
         new botbuilder_dialogs_adaptive_1.TextInput('user.name', `Hi! what's your name?`)
     ]),

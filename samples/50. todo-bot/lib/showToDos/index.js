@@ -7,7 +7,7 @@ const recognizer_1 = require("../recognizer");
 class ShowToDos extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
     constructor() {
         super('ShowToDos');
-        this.addRule(new botbuilder_dialogs_adaptive_1.OnBeginDialog([
+        this.triggers.push(new botbuilder_dialogs_adaptive_1.OnBeginDialog([
             new botbuilder_dialogs_adaptive_1.LogAction(`ShowToDos: todos = {user.todos}`, true),
             new botbuilder_dialogs_adaptive_1.IfCondition(`user.todos != null`, [
                 new botbuilder_dialogs_adaptive_1.SendList(`user.todos`, `Here are your todos:`)

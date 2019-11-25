@@ -8,7 +8,7 @@ export class ShowToDos extends AdaptiveDialog {
     constructor() {
         super('ShowToDos');
 
-        this.addRule(new OnBeginDialog([
+        this.triggers.push(new OnBeginDialog([
             new LogAction(`ShowToDos: todos = {user.todos}`, true),
             new IfCondition(`user.todos != null`, [
                 new SendList(`user.todos`, `Here are your todos:`)

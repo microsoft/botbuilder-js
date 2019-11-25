@@ -7,7 +7,7 @@ const recognizer_1 = require("../recognizer");
 class ClearToDos extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
     constructor() {
         super('ClearToDos');
-        this.addRule(new botbuilder_dialogs_adaptive_1.OnBeginDialog([
+        this.triggers.push(new botbuilder_dialogs_adaptive_1.OnBeginDialog([
             new botbuilder_dialogs_adaptive_1.LogAction(`ClearToDos: todos = {user.todos}`),
             new botbuilder_dialogs_adaptive_1.IfCondition(`user.todos != null`, [
                 new botbuilder_dialogs_adaptive_1.EditArray(botbuilder_dialogs_adaptive_1.ArrayChangeType.clear, 'user.todos'),

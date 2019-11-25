@@ -42,14 +42,14 @@ bot.rootDialog = dialogs;
 dialogs.recognizer = new RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
 
 // Tell the user a joke
-dialogs.addRule(new OnIntent('#JokeIntent', [], [
+dialogs.triggers.push(new OnIntent('#JokeIntent', [], [
     new SendActivity(`Why did the 🐔 cross the 🛣️?`),
     new EndTurn(),
     new SendActivity(`To get to the other side...`)
 ]));
 
 // Handle unknown intents
-dialogs.addRule(new OnUnknownIntent([
+dialogs.triggers.push(new OnUnknownIntent([
     new IfCondition('user.name == null', [
         new TextInput('user.name', `Hi! what's your name?`)
     ]),

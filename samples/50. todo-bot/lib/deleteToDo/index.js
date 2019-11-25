@@ -7,7 +7,7 @@ const recognizer_1 = require("../recognizer");
 class DeleteToDo extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
     constructor() {
         super('DeleteToDo');
-        this.addRule(new botbuilder_dialogs_adaptive_1.OnBeginDialog([
+        this.triggers.push(new botbuilder_dialogs_adaptive_1.OnBeginDialog([
             new botbuilder_dialogs_adaptive_1.LogAction(`DeleteToDo: todos = {user.todos}`),
             new botbuilder_dialogs_adaptive_1.IfCondition(`user.todos != null`, [
                 new botbuilder_dialogs_adaptive_1.SetProperty('$title', '@title'),
@@ -23,7 +23,7 @@ class DeleteToDo extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
             ])
         ]));
         // Add interruption rules
-        this.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#Cancel', [], [
+        this.triggers.push(new botbuilder_dialogs_adaptive_1.OnIntent('#Cancel', [], [
             new botbuilder_dialogs_adaptive_1.CancelAllDialogs('cancelDelete')
         ]));
         // Use parents recognizer

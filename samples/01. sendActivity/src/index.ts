@@ -38,6 +38,6 @@ const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
 // Handle unknown intents
-dialogs.addRule(new OnUnknownIntent([
+dialogs.triggers.push(new OnUnknownIntent([
     new SendActivity('Hello World!')
 ]));

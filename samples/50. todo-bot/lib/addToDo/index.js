@@ -7,7 +7,7 @@ const recognizer_1 = require("../recognizer");
 class AddToDo extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
     constructor() {
         super('AddToDo');
-        this.addRule(new botbuilder_dialogs_adaptive_1.OnBeginDialog([
+        this.triggers.push(new botbuilder_dialogs_adaptive_1.OnBeginDialog([
             new botbuilder_dialogs_adaptive_1.TextInput('$title', '@title', `What would you like to call your new todo?`),
             new botbuilder_dialogs_adaptive_1.EditArray(botbuilder_dialogs_adaptive_1.ArrayChangeType.push, 'user.todos', '$title'),
             new botbuilder_dialogs_adaptive_1.SendActivity(`Added a todo named "{$title}". You can delete it by saying "delete todo named {$title}".`),
@@ -17,7 +17,7 @@ class AddToDo extends botbuilder_dialogs_adaptive_1.AdaptiveDialog {
             ])
         ]));
         // Add interruption rules
-        this.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#Cancel', [], [
+        this.triggers.push(new botbuilder_dialogs_adaptive_1.OnIntent('#Cancel', [], [
             new botbuilder_dialogs_adaptive_1.CancelAllDialogs('cancelAdd')
         ]));
         // Use parents recognizer

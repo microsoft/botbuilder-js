@@ -39,7 +39,7 @@ const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
 // Handle unknown intents
-dialogs.addRule(new OnUnknownIntent([
+dialogs.triggers.push(new OnUnknownIntent([
     new IfCondition('user.name == null', [
         new TextInput('user.name', `Hi! what's your name?`),
     ]),

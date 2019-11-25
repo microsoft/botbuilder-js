@@ -45,12 +45,12 @@ bot.rootDialog = dialogs;
 dialogs.recognizer = new RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
 
 // Tell the user a joke
-dialogs.addRule(new OnIntent('#JokeIntent', [], [
+dialogs.triggers.push(new OnIntent('#JokeIntent', [], [
     new BeginDialog('TellJokeDialog')
 ]));
 
 // Handle unknown intents
-dialogs.addRule(new OnUnknownIntent([
+dialogs.triggers.push(new OnUnknownIntent([
     new BeginDialog('AskNameDialog')
 ]));
 
@@ -59,19 +59,21 @@ dialogs.addRule(new OnUnknownIntent([
 // Child Dialogs
 //=================================================================================================
 
-const askNameDialog = new AdaptiveDialog('AskNameDialog', [
+const askNameDialog = new AdaptiveDialog('AskNameDialog')
+askNameDialog.triggers.push(new OnUnknownIntent([
     new IfCondition('user.name == null', [
         new TextInput('user.name', `Hi! what's your name?`)
     ]),
     new SendActivity(`Hi {user.name}. It's nice to meet you.`),
     new EndDialog()
-]);
+]));
 dialogs.actions.push(askNameDialog);
 
-const tellJokeDialog = new AdaptiveDialog('TellJokeDialog',[
+const tellJokeDialog = new AdaptiveDialog('TellJokeDialog')
+tellJokeDialog.triggers.push(new OnUnknownIntent([
     new SendActivity(`Why did the 🐔 cross the 🛣️?`),
     new EndTurn(),
     new SendActivity(`To get to the other side...`),
     new EndDialog()
-]);
+]));
 dialogs.actions.push(tellJokeDialog);
