@@ -133,7 +133,7 @@ export class ChannelServiceHandler {
      * @param activity 
      */
     protected async onSendToConversation(claimsIdentity: ClaimsIdentity, conversationId: string, activity: Activity): Promise<ResourceResponse> {
-        throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new Error(`ChannelServiceHandler.onSendToConversation(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -158,7 +158,7 @@ export class ChannelServiceHandler {
      * @param activity Activity to send.
      */
     protected async onReplyToActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse> {
-        throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new Error(`ChannelServiceHandler.onReplyToActivity(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -176,7 +176,7 @@ export class ChannelServiceHandler {
      * @param activity replacement Activity.
      */
     protected async onUpdateActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse> {
-        throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new Error(`ChannelServiceHandler.onUpdateActivity(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -193,7 +193,7 @@ export class ChannelServiceHandler {
      * @param activityId activityId to delete.
      */
     protected async onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void> {
-        throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new Error(`ChannelServiceHandler.onDeleteActivity(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -210,7 +210,7 @@ export class ChannelServiceHandler {
      */
     protected async onGetActivityMembers(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<ChannelAccount[]>
     {
-        throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new Error(`ChannelServiceHandler.onGetActivityMembers(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -233,7 +233,7 @@ export class ChannelServiceHandler {
      * @param parameters Parameters to create the conversation from.
      */
     protected async onCreateConversation(claimsIdentity: ClaimsIdentity, conversationId: string, parameters: ConversationParameters): Promise<ConversationResourceResponse> {
-        throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new Error(`ChannelServiceHandler.onCreateConversation(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -255,7 +255,7 @@ export class ChannelServiceHandler {
      * @param continuationToken Skip or continuation token.
      */
     protected async onGetConversations(claimsIdentity: ClaimsIdentity, conversationId: string, continuationToken?: string): Promise<ConversationsResult> {
-        throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new Error(`ChannelServiceHandler.onGetConversations(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -269,7 +269,7 @@ export class ChannelServiceHandler {
      * @param conversationId Conversation ID.
      */
     protected async onGetConversationMembers(claimsIdentity: ClaimsIdentity, conversationId: string): Promise<ChannelAccount[]> {
-        throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new Error(`ChannelServiceHandler.onGetConversationMembers(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -299,7 +299,7 @@ export class ChannelServiceHandler {
      */
     protected async onGetConversationPagedMembers(claimsIdentity: ClaimsIdentity, conversationId: string, pageSize: number = -1, continuationToken?: string): Promise<PagedMembersResult>
     {
-        throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new Error(`ChannelServiceHandler.onGetConversationPagedMembers(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -315,7 +315,7 @@ export class ChannelServiceHandler {
      * @param memberId ID of the member to delete from this conversation.
      */
     protected async onDeleteConversationMember(claimsIdentity: ClaimsIdentity, conversationId: string, memberId: string): Promise<void> {
-        throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new Error(`ChannelServiceHandler.onDeleteConversationMember(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -333,7 +333,7 @@ export class ChannelServiceHandler {
      * @param transcript Transcript of activities.
      */
     protected async onSendConversationHistory(claimsIdentity: ClaimsIdentity, conversationId: string, transcript: Transcript): Promise<ResourceResponse> {
-        throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new Error(`ChannelServiceHandler.onSendConversationHistory(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -351,7 +351,7 @@ export class ChannelServiceHandler {
      * @param attachmentUpload Attachment data.
      */
     protected async onUploadAttachment(claimsIdentity: ClaimsIdentity, conversationId: string, attachmentUpload: AttachmentData): Promise<ResourceResponse> {
-        throw new Error(`ChannelServiceHandler.METHOD_NAME(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new Error(`ChannelServiceHandler.onUploadAttachment(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     private async authenticate(authHeader: string): Promise<ClaimsIdentity> {
