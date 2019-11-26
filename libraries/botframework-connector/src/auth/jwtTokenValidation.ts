@@ -59,6 +59,9 @@ export namespace JwtTokenValidation {
         authConfig?: AuthenticationConfiguration
     ): Promise<ClaimsIdentity> {
         if (!authHeader.trim()) { throw new Error('\'authHeader\' required.'); }
+        if (!authConfig) {
+            authConfig = new AuthenticationConfiguration();
+        }
 
         const identity = await authenticateToken(authHeader, credentials, channelService, channelId, authConfig, serviceUrl);
 
@@ -116,7 +119,7 @@ export namespace JwtTokenValidation {
      * @param claims The list of claims to validate.
      */
     async function validateClaims(authConfig: AuthenticationConfiguration, claims: Claim[] = []): Promise<void> {
-        if (!authConfig.validateClaims) {
+        if (authConfig.validateClaims) {
             // Call the validation method if defined (it should throw an exception if the validation fails)
             await authConfig.validateClaims(claims);
         }
