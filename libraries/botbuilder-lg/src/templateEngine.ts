@@ -16,7 +16,9 @@ import { ImportResolver, ImportResolverDelegate } from './importResolver';
 import { LGParser } from './lgParser';
 import { LGResource } from './lgResource';
 import { LGTemplate } from './lgTemplate';
+import { MemoryInterface } from 'botframework-expressions';
 import { StaticChecker } from './staticChecker';
+import { CustomizedMemory } from './customizedMemory';
 
 /**
  * LG parser and evaluation engine
@@ -97,9 +99,11 @@ export class TemplateEngine {
         return this;
     }
 
-    public evaluateTemplate(templateName: string, scope?: any): any {
+    public evaluateTemplate(templateName: string, scope?: MemoryInterface | any): any {
         const evalutor: Evaluator = new Evaluator(this.templates, this.expressionEngine);
-
+        if (scope === undefined && scope as MemoryInterface === undefined) {
+            scope = new CustomizedMemory(scope);
+        }
         return evalutor.evaluateTemplate(templateName, scope);
     }
 

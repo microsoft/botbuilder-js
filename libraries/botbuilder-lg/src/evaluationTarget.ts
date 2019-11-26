@@ -1,3 +1,5 @@
+import { CustomizedMemory } from "./customizedMemory";
+
 /**
  * @module botbuilder-lg
  */
@@ -21,10 +23,24 @@ export class EvaluationTarget {
     }
 
     public getId(): string {
-        if (this.scope !== undefined && this.scope !== null) {
-            return this.templateName + JSON.stringify(this.scope);
+        const memory = this.scope as CustomizedMemory;
+        let result = this.templateName;
+        if (memory !== undefined) {
+            if (memory.globalMemory !== undefined){
+                const version = memory.globalMemory.version();
+                if (version !== undefined) {
+                    result = result.concat(version);
+                }
+            }
+
+            if (memory.localMemory !== undefined){
+                const localMemoryString = memory.localMemory.toString();
+                if (localMemoryString !== undefined) {
+                    result = result.concat(localMemoryString);
+                }
+            }
         }
 
-        return this.templateName;
+        return result;
     }
 }

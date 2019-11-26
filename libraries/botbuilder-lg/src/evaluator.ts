@@ -10,11 +10,15 @@
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { BuiltInFunctions, Constant, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ExpressionType, ReturnType } from 'botframework-expressions';
 import { keyBy } from 'lodash';
-import { CustomizedMemoryScope } from './customizedMemoryScope';
+import { CustomizedMemory } from './customizedMemory';
 import { EvaluationTarget } from './evaluationTarget';
+import { SimpleObjectMemory } from 'botframework-expressions';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
+import { ImportResolver } from './importResolver';
+import * as path from 'path';
+import * as fs from 'fs';
 
 /**
  * Evaluation tuntime engine
@@ -25,7 +29,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     public readonly expressionEngine: ExpressionEngine;
     public readonly templateMap: { [name: string]: LGTemplate };
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
-    private readonly expressionRecognizeRegex: RegExp = new RegExp(/\}(?!\\).+?\{(?!\\)@?/g);
+    private readonly expressionRecognizeRegex: RegExp = new RegExp(/\}(?!\\).+?\{(?!\\)@?(?!\\)/g);
     private readonly escapeSeperatorRegex: RegExp = new RegExp(/\|(?!\\)/g);
 
     public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
@@ -80,7 +84,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): any {
         const result: any = {};
         const typeName: string = ctx.structuredBodyNameLine().STRUCTURED_CONTENT().text.trim();
-        result.$type = typeName;
+        result.lgType = typeName;
 
         const bodys: TerminalNode[] = ctx.structuredBodyContentLine().STRUCTURED_CONTENT();
         for (const body  of bodys) {
@@ -116,7 +120,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 const propertyObject: any = this.evalExpression(line);
 
                 // Full reference to another structured template is limited to the structured template with same type
-                if (typeof propertyObject === 'object' && '$type' in propertyObject &&  propertyObject.$type.toString() === typeName) {
+                if (typeof propertyObject === 'object' && 'lgType' in propertyObject &&  propertyObject.lgType.toString() === typeName) {
                     for (const key of Object.keys(propertyObject)) {
                         if (propertyObject.hasOwnProperty(key) && !(key in result)) {
                             result[key] = propertyObject[key];
@@ -223,10 +227,13 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         const newScope: any = {};
         parameters.map((e: string, i: number): void => newScope[e] = args[i]);
 
-        if (currentScope instanceof CustomizedMemoryScope) {
-            return new CustomizedMemoryScope(newScope, currentScope.globalScope);
+        if (currentScope instanceof CustomizedMemory) {
+            //inherit current memory's global scope
+            var memory =  new CustomizedMemory();
+            memory.globalMemory = currentScope.globalMemory;
+            memory.localMemory = new SimpleObjectMemory(newScope);
         } else {
-            return new CustomizedMemoryScope(newScope, currentScope);
+            throw new Error(`Scope is a LG customized memory`);
         }
     }
 
@@ -420,23 +427,98 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             return new ExpressionEvaluator(name, BuiltInFunctions.apply(this.templateEvaluator(name)), ReturnType.Object, this.validTemplateReference);
         }
 
-        const lgTemplate = 'lgTemplate';
+        const template = 'template';
 
-        if (name === lgTemplate) {
-            return new ExpressionEvaluator(lgTemplate, BuiltInFunctions.apply(this.lgTemplate()), ReturnType.Object, this.validateLgTemplate);
+        if (name === template) {
+            return new ExpressionEvaluator(template, BuiltInFunctions.apply(this.templateFunction()), ReturnType.Object, this.validateTemplateFunction);
+        }
+
+        const fromFile = 'fromFile';
+
+        if (name === fromFile) {
+            return new ExpressionEvaluator(fromFile, BuiltInFunctions.apply(this.fromFile()), ReturnType.Object, this.validateFromFile);
+        }
+
+        const activityAttachment = 'ActivityAttachment';
+
+        if (name === activityAttachment) {
+            return new ExpressionEvaluator(activityAttachment, BuiltInFunctions.apply(this.activityAttachment()), ReturnType.Object, this.validateActivityAttachment);
         }
 
         return baseLookup(name);
     }
 
-    private readonly lgTemplate = (): any => (args: readonly any[]): any => {
+    private readonly fromFile = (): any => (args: readonly any[]): any => {
+        const filePath: string = path.normalize(ImportResolver.normalizePath(args[0].toString()));
+        const resourcePath: string = this.getResourcePath(filePath);
+        return this.evalText(fs.readFileSync(resourcePath, 'utf-8'));
+    }
+
+    private getResourcePath(filePath: string): string {
+        let resourcePath: string;
+        if (path.isAbsolute(filePath)) {
+            resourcePath = filePath;
+        } else {
+            const inBrowser: boolean = typeof window !== 'undefined';
+            if (inBrowser) {
+                throw new Error('relative path is not suitable in browser.');
+            }
+            const template: LGTemplate = this.templateMap[this.currentTarget().templateName];
+            const sourcePath: string = path.normalize(ImportResolver.normalizePath(template.source));
+            let baseFolder: string = __dirname;
+            if (path.isAbsolute(sourcePath)){
+                baseFolder = path.dirname(sourcePath);
+            }
+
+            resourcePath = path.join(baseFolder, filePath);
+        }
+
+        return resourcePath;
+    }
+
+    private readonly validateFromFile = (expression: Expression): void => {
+        if (expression.children.length !== 1) {
+            throw new Error(`fromFile should have one parameter`);
+        }
+
+        const children0: Expression = expression.children[0];
+        if (children0.returnType !== ReturnType.Object && children0.returnType !== ReturnType.String) {
+            throw new Error(`${ children0 } can't be used as a file path, must be a string value`);
+        }
+    }
+
+    private readonly activityAttachment = (): any => (args: readonly any[]): any => {
+        return {
+            lgType: 'attachment',
+            contenttype: args[1].toString(),
+            content: args[0]
+        };
+    }
+
+    private readonly validateActivityAttachment = (expression: Expression): void => {
+        if (expression.children.length !== 2) {
+            throw new Error(`ActivityAttachment should have two parameters`);
+        }
+
+        const children0: Expression = expression.children[0];
+        if (children0.returnType !== ReturnType.Object) {
+            throw new Error(`${ children0 } can't be used as a json file`);
+        }
+
+        const children1: Expression = expression.children[1];
+        if (children1.returnType !== ReturnType.Object && children1.returnType !== ReturnType.String) {
+            throw new Error(`${ children0 } can't be used as an attachment format, must be a string value`);
+        }
+    }
+
+    private readonly templateFunction = (): any => (args: readonly any[]): any => {
         const templateName: string = args[0];
         const newScope: any = this.constructScope(templateName, args.slice(1));
 
         return this.evaluateTemplate(templateName, newScope);
     }
 
-    private readonly validateLgTemplate = (expression: Expression): void => {
+    private readonly validateTemplateFunction = (expression: Expression): void => {
         if (expression.children.length === 0) {
             throw new Error(`No template name is provided when calling lgTemplate, expected: lgTemplate(templateName, ...args)`);
         }

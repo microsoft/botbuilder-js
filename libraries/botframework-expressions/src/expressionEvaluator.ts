@@ -7,6 +7,7 @@
  * Licensed under the MIT License.
  */
 import { Expression, ReturnType } from './expression';
+import { MemoryInterface } from './memory';
 
 /**
  * Delegate for doing static validation on an expression.
@@ -18,7 +19,7 @@ export type ValidateExpressionDelegate = (expression: Expression) => any;
  * Delegate to evaluate an expression.
  * Evaluators should verify runtime arguments when appropriate and return an error rather than throw exceptions if possible.
  */
-export type EvaluateExpressionDelegate = (expression: Expression, state: any) => { value: any; error: string };
+export type EvaluateExpressionDelegate = (expression: Expression, state: MemoryInterface) => { value: any; error: string };
 
 /**
  * Delegate to lookup function information from the type.
@@ -65,7 +66,7 @@ export class ExpressionEvaluator {
      * @param expression Expression to evaluate.
      * @param state Global state information.
      */
-    public tryEvaluate = (expression: Expression, state: any): { value: any; error: string } => this._evaluator(expression, state);
+    public tryEvaluate = (expression: Expression, state: MemoryInterface): { value: any; error: string } => this._evaluator(expression, state);
     /**
      * Validate an expression.
      * @param expression Expression to validate.

@@ -18,6 +18,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDele
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { TimeZoneConverter } from './timeZoneConverter';
+import { MemoryInterface, SimpleObjectMemory, ComposedMemory } from './memory';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -389,7 +390,7 @@ export class BuiltInFunctions {
      * @param verify Optional function to verify each child's result.
      * @returns List of child values or error message.
      */
-    public static evaluateChildren(expression: Expression, state: any, verify?: VerifyExpression): { args: any []; error: string } {
+    public static evaluateChildren(expression: Expression, state: MemoryInterface, verify?: VerifyExpression): { args: any []; error: string } {
         const args: any[] = [];
         let value: any;
         let error: string;
@@ -419,7 +420,7 @@ export class BuiltInFunctions {
      * @returns Delegate for evaluating an expression.
      */
     public static apply(func: (arg0: any []) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
-        return (expression: Expression, state: any): { value: any; error: string } => {
+        return (expression: Expression, state: MemoryInterface): { value: any; error: string } => {
             let value: any;
             let error: string;
             let args: any [];
@@ -443,7 +444,7 @@ export class BuiltInFunctions {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithError(func: (arg0: any []) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
-        return (expression: Expression, state: any): { value: any; error: string } => {
+        return (expression: Expression, state: MemoryInterface): { value: any; error: string } => {
             let value: any;
             let error: string;
             let args: any [];
@@ -515,7 +516,7 @@ export class BuiltInFunctions {
     public static comparison(type: string, func: (arg0: any []) => boolean, validator: ValidateExpressionDelegate, verify?: VerifyExpression): ExpressionEvaluator {
         return new ExpressionEvaluator(
             type,
-            (expression: Expression, state: any): { value: any; error: string } => {
+            (expression: Expression, state: MemoryInterface): { value: any; error: string } => {
                 let result = false;
                 let error: string;
                 let args: any [];
@@ -566,7 +567,7 @@ export class BuiltInFunctions {
     public static timeTransform(type: string, func: (timestamp: moment.Moment, numOfTransformation: any) => any): ExpressionEvaluator {
         return new ExpressionEvaluator(
             type,
-            (expression: Expression, state: any): { value: any; error: string } => {
+            (expression: Expression, state: MemoryInterface): { value: any; error: string } => {
                 let result: any;
                 let error: string;
                 let value: any;
@@ -705,25 +706,73 @@ export class BuiltInFunctions {
         }
     }
 
-    private static accessor(expression: Expression, state: any): { value: any; error: string } {
-        let value: any;
-        let error: string;
-        let instance: any;
-        const children: Expression[] = expression.children;
-        if (children.length === 2) {
-            ({ value: instance, error } = children[1].tryEvaluate(state));
-        } else {
-            instance = state;
+    /**
+     * Try to accumulate the path from an Accessor or Element, from right to left
+     * return the accumulated path and the expression left unable to accumulate
+     * @param expression 
+     * @param state 
+     */
+    private static tryAccumulatePath(expression: Expression, state: MemoryInterface): {path: string; left: Expression; error: string} {
+        let path = '';
+        let left = expression;
+        while (left !== undefined) {
+            if (left.type === ExpressionType.Accessor) {
+                path = (left.children[0] as Constant).value + '.' + path;
+                left = left.children.length === 2 ? left.children[1] : undefined;
+            } else if (left.type === ExpressionType.Element) {
+                let value: any;
+                let error: string;
+                ({value, error} = left.children[1].tryEvaluate(state));
+
+                if (error !== undefined) {
+                    return {path: undefined, left: undefined, error};
+                }
+
+                if (isNaN(parseInt(value)) && typeof value !== 'string') {
+                    return {path: undefined, left: undefined, error:`${ left.children[1].toString() } dones't return a int or string`};
+                }
+
+                path = `[${ value }].${ path }`;
+                left = left.children[0];
+            } else {
+                break;
+            }
         }
 
-        if (error === undefined && children[0] instanceof Constant && (children[0] as Constant).returnType === ReturnType.String) {
-            ({ value, error } = Extensions.accessProperty(instance, (children[0] as Constant).value.toString()));
+        // make sure we generated a valid path
+        path = path.replace(/(\.*$)/g, '').replace(/(\.\[)/g, '[');
+        if (path === '') {
+            path = undefined;
         }
 
-        return { value, error };
+        return {path, left, error:undefined};
     }
 
-    private static getProperty(expression: Expression, state: any): { value: any; error: string } {
+    private static accessor(expression: Expression, state: MemoryInterface): { value: any; error: string } {
+        let path: string;
+        let left: Expression;
+        let error: string;
+        ({path, left, error} = this.tryAccumulatePath(expression, state));
+        if (error !== undefined) {
+            return {value: undefined, error};
+        }
+
+        if (left == undefined) {
+            // fully converted to path, so we just delegate to memory scope
+            return state.getValue(path);
+        } else {
+            let newScope: any;
+            let err: string;
+            ({value: newScope, error: err} = left.tryEvaluate(state));
+            if (err !== undefined) {
+                return {value: undefined, error: err};
+            }
+
+            return new SimpleObjectMemory(newScope).getValue(path);
+        }
+    }
+
+    private static getProperty(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let value: any;
         let error: string;
         let instance: any;
@@ -735,7 +784,7 @@ export class BuiltInFunctions {
             ({ value: property, error } = children[1].tryEvaluate(state));
 
             if (error === undefined) {
-                ({ value, error } = Extensions.accessProperty(instance, property.toString()));
+                ({ value, error } = new SimpleObjectMemory(instance).getValue(property.toString()));
             }
         }
 
@@ -782,7 +831,7 @@ export class BuiltInFunctions {
         return {value: result, error};
     }
 
-    private static extractElement(expression: Expression, state: any): { value: any; error: string } {
+    private static extractElement(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let value: any;
         let error: string;
         const instance: Expression = expression.children[0];
@@ -824,85 +873,30 @@ export class BuiltInFunctions {
         return modifiable;
     }
 
-    private static trySetPathToValue(path: Expression, value: any, state: any, expected?: number): { instance: any; error: string } {
-        let result: any;
+    private static setPathToValue(expression: Expression, state: MemoryInterface): { value: any; error: string } {
+        let path: string;
+        let left: Expression;
         let error: string;
-        let instance: any;
-        let index: any;
-        const children: Expression[] = path.children;
-        if (path.type === ExpressionType.Accessor || path.type === ExpressionType.Element) {
-            ({ value: index, error } = children[path.type === ExpressionType.Accessor ? 0 : 1].tryEvaluate(state));
-            if (error === undefined) {
-                const iindex: number = index;
-                if (children.length === 2) {
-                    ({ instance, error } = this.trySetPathToValue(children[path.type === ExpressionType.Accessor ? 1 : 0], undefined, state, iindex));
-                } else {
-                    instance = state;
-                }
-
-                if (error === undefined) {
-                    if (typeof index === 'string') {
-                        const propName: string = index;
-                        if (value !== undefined) {
-                            result = Extensions.setProperty(instance, propName, value);
-                        } else {
-                            ({ value: result, error } = Extensions.accessProperty(instance, propName));
-                            if (error !== undefined || result === undefined || !this.canBeModified(result, propName, expected)) {
-                                // Create new value for parents to use
-                                if (expected !== undefined) {
-                                    result = Extensions.setProperty(instance, propName, [expected + 1]);
-                                } else {
-                                    result = Extensions.setProperty(instance, propName, new Map<string, any>());
-                                }
-                            }
-                        }
-                    } else if (iindex !== undefined) {
-                        // Child instance should be a list already because we passed down the iindex.
-                        if (instance instanceof Array) {
-                            const list: any[] = instance;
-                            if (list.length <= iindex) {
-                                while (list.length < iindex) {
-                                    // Extend list.
-                                    list.push(undefined);
-                                }
-                            }
-
-                            // Assign value or expected list size or object
-                            result = value !== undefined ? value : expected !== undefined ? [expected + 1] : new Map<string, any>();
-                            list[iindex] = result;
-                        } else {
-                            error = `${ children[0] } is not a list.`;
-                        }
-                    } else {
-                        error = `${ children[0] } is not a valid path.`;
-                    }
-                }
-            }
-        } else {
-            error = `${ path } is not a path that can be set to a value.`;
+        ({path, left, error} = this.tryAccumulatePath(expression.children[0], state));
+        if (error !== undefined) {
+            return {value: undefined, error};
         }
 
-        return { instance: result, error };
-    }
-
-    private static setPathToValue(expression: Expression, state: any): { value: any; error: string } {
+        if (left != undefined) {
+            // the expression can't be fully merged as a path
+            return {value: undefined, error:`${ expression.children[0].toString() } is not a valid path to set value`}
+        }  
         let value: any;
-        let error: string;
-        const path: Expression = expression.children[0];
-        const valueExpr: Expression = expression.children[1];
-        ({ value, error } = valueExpr.tryEvaluate(state));
-        if (error === undefined) {
-            let instance: any;
-            ({ instance, error } = BuiltInFunctions.trySetPathToValue(path, value, state));
-            if (error !== undefined) {
-                value = undefined;
-            }
+        let err: string;
+        ({value, error: err} = expression.children[1].tryEvaluate(state));
+        if (err !== undefined) {
+            return {value: undefined, error: err};
         }
 
-        return {value, error};
+        return state.setValue(path, value);
     }
 
-    private static foreach(expression: Expression, state: any): { value: any; error: string } {
+    private static foreach(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let result: any[];
         let error: string;
         let collection: any;
@@ -921,12 +915,12 @@ export class BuiltInFunctions {
                         [iteratorName, item]
                     ]);
 
-                    const newScope: Map<string, any> = new Map<string, any>([
+                    const newMemory: Map<string, any> = new Map<string, MemoryInterface>([
                         ['$global', state],
-                        ['$local', local]
+                        ['$local', new SimpleObjectMemory(local)]
                     ]);
 
-                    const { value: r, error: e } = expression.children[2].tryEvaluate(newScope);
+                    const { value: r, error: e } = expression.children[2].tryEvaluate(new ComposedMemory(newMemory));
                     if (e !== undefined) {
                         return { value: undefined, error: e };
                     }
@@ -938,7 +932,7 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
-    private static where(expression: Expression, state: any): { value: any; error: string } {
+    private static where(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let result: any[];
         let error: string;
         let collection: any;
@@ -956,12 +950,12 @@ export class BuiltInFunctions {
                         [iteratorName, item]
                     ]);
 
-                    const newScope: Map<string, any> = new Map<string, any>([
+                    const newMemory: Map<string, MemoryInterface> = new Map<string, MemoryInterface>([
                         ['$global', state],
-                        ['$local', local]
+                        ['$local', new SimpleObjectMemory(local)]
                     ]);
 
-                    const { value: r, error: e } = expression.children[2].tryEvaluate(newScope);
+                    const { value: r, error: e } = expression.children[2].tryEvaluate(new ComposedMemory(newMemory));
                     if (e !== undefined) {
                         return { value: undefined, error: e };
                     }
@@ -1070,7 +1064,7 @@ export class BuiltInFunctions {
         return result;
     }
 
-    private static _and(expression: Expression, state: any): { value: any; error: string } {
+    private static _and(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let result = false;
         let error: string;
         for (const child of expression.children) {
@@ -1092,7 +1086,7 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
-    private static _or(expression: Expression, state: any): { value: any; error: string } {
+    private static _or(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let result = false;
         let error: string;
         for (const child of expression.children) {
@@ -1110,7 +1104,7 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
-    private static _not(expression: Expression, state: any): { value: any; error: string } {
+    private static _not(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let result = false;
         let error: string;
         ({ value: result, error } = expression.children[0].tryEvaluate(state));
@@ -1124,7 +1118,7 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
-    private static _if(expression: Expression, state: any): { value: any; error: string } {
+    private static _if(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let result: any;
         let error: string;
         ({ value: result, error } = expression.children[0].tryEvaluate(state));
@@ -1137,7 +1131,7 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
-    private static substring(expression: Expression, state: any): { value: any; error: string } {
+    private static substring(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let result: any;
         let error: any;
         let str: string;
@@ -1856,17 +1850,17 @@ export class BuiltInFunctions {
                 BuiltInFunctions.verifyNumberOrString),
             new ExpressionEvaluator(
                 ExpressionType.And,
-                (expression: Expression, state: any): { value: any; error: string } => BuiltInFunctions._and(expression, state),
+                (expression: Expression, state: MemoryInterface): { value: any; error: string } => BuiltInFunctions._and(expression, state),
                 ReturnType.Boolean,
                 BuiltInFunctions.validateAtLeastOne),
             new ExpressionEvaluator(
                 ExpressionType.Or,
-                (expression: Expression, state: any): { value: any; error: string } => BuiltInFunctions._or(expression, state),
+                (expression: Expression, state: MemoryInterface): { value: any; error: string } => BuiltInFunctions._or(expression, state),
                 ReturnType.Boolean,
                 BuiltInFunctions.validateAtLeastOne),
             new ExpressionEvaluator(
                 ExpressionType.Not,
-                (expression: Expression, state: any): { value: any; error: string } => BuiltInFunctions._not(expression, state),
+                (expression: Expression, state: MemoryInterface): { value: any; error: string } => BuiltInFunctions._not(expression, state),
                 ReturnType.Boolean,
                 BuiltInFunctions.validateUnary),
             new ExpressionEvaluator(
@@ -1884,7 +1878,7 @@ export class BuiltInFunctions {
                 BuiltInFunctions.applyWithError((
                     args: any []): any => 
                 {
-                    let error = undefined;1;
+                    let error = undefined;
                     let result = undefined;
                     if (BuiltInFunctions.parseStringOrNull(args[1]).length === 0) {
                         error = `${ args[1] } should be a string with length at least 1`;
@@ -2513,7 +2507,7 @@ export class BuiltInFunctions {
                 (expression: Expression): void => BuiltInFunctions.validateOrder(expression, undefined, ReturnType.Object, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.If,
-                (expression: Expression, state: any): { value: any; error: string } => BuiltInFunctions._if(expression, state),
+                (expression: Expression, state: MemoryInterface): { value: any; error: string } => BuiltInFunctions._if(expression, state),
                 ReturnType.Object,
                 (expr: Expression): void => BuiltInFunctions.validateArityAndAnyType(expr, 3, 3)),
             new ExpressionEvaluator(

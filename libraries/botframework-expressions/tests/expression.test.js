@@ -469,17 +469,19 @@ const dataSource = [
     ['', ''],
 
     // SetPathToValue tests
-    ['setPathToValue(@@blah.woof, 1+2) + @@blah.woof', 6],
     ['setPathToValue(path.simple, 3) + path.simple', 6],
     ['setPathToValue(path.simple, 5) + path.simple', 10],
     ['setPathToValue(path.array[0], 7) + path.array[0]', 14],
     ['setPathToValue(path.array[1], 9) + path.array[1]', 18],
+    /*
     ['setPathToValue(path.darray[2][0], 11) + path.darray[2][0]', 22],
     ['setPathToValue(path.darray[2][3].foo, 13) + path.darray[2][3].foo', 26],
     ['setPathToValue(path.overwrite, 3) + setPathToValue(path.overwrite[0], 4) + path.overwrite[0]', 11],
     ['setPathToValue(path.overwrite[0], 3) + setPathToValue(path.overwrite, 4) + path.overwrite', 11],
     ['setPathToValue(path.overwrite.prop, 3) + setPathToValue(path.overwrite, 4) + path.overwrite', 11],
     ['setPathToValue(path.overwrite.prop, 3) + setPathToValue(path.overwrite[0], 4) + path.overwrite[0]', 11],
+    */
+    ['setPathToValue(path.x, null)', undefined],
 ];
 
 const scope = {

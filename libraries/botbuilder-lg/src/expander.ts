@@ -114,7 +114,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         const stb: lp.StructuredTemplateBodyContext = ctx.structuredTemplateBody();
         const result: any = {};
         const typeName: string = stb.structuredBodyNameLine().STRUCTURED_CONTENT().text.trim();
-        result.$type = typeName;
+        result.lgType = typeName;
         let expandedResult: any[] = [result];
         const bodys: TerminalNode[] = stb.structuredBodyContentLine().STRUCTURED_CONTENT();
         for (const body  of bodys) {
@@ -158,7 +158,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                         const tempRes: any = JSON.parse(JSON.stringify(res));
 
                         // Full reference to another structured template is limited to the structured template with same type
-                        if (typeof propertyObject === 'object' && '$type' in propertyObject && propertyObject.$type.toString() === typeName) {
+                        if (typeof propertyObject === 'object' && 'lgType' in propertyObject && propertyObject.lgType.toString() === typeName) {
                             for (const key of Object.keys(propertyObject)) {
                                 if (propertyObject.hasOwnProperty(key) && !(key in tempRes)) {
                                     tempRes[key] = propertyObject[key];
