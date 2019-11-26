@@ -7,20 +7,14 @@
  */
 
 import * as adal from 'adal-node'
-import { AuthenticationConstants } from './authenticationConstants';
 import { AppCredentials } from './appCredentials';
 
 /**
  * CertificateAppCredentials auth implementation
  */
 export class CertificateAppCredentials extends AppCredentials {
-
-    public appPassword: string;
     public certificateThumbprint: string;
     public certificatekey: string;
-
-    public oAuthEndpoint: string;
-    public oAuthScope: string = AuthenticationConstants.ToBotFromChannelTokenIssuer;
 
     constructor(appId: string, certificateThumbprint: string, certificatekey: string, channelAuthTenant?: string) {
         super(appId, channelAuthTenant);
