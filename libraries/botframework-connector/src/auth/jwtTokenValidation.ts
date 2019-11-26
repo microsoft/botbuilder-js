@@ -6,8 +6,10 @@
  * Licensed under the MIT License.
  */
 import { Activity } from 'botframework-schema';
+import { AuthenticationConfiguration } from './authenticationConfiguration';
+import { AuthenticationConstants } from './authenticationConstants';
 import { ChannelValidation } from './channelValidation';
-import { ClaimsIdentity } from './claimsIdentity';
+import { Claim, ClaimsIdentity } from './claimsIdentity';
 import { ICredentialProvider } from './credentialProvider';
 import { EmulatorValidation } from './emulatorValidation';
 import { EnterpriseChannelValidation } from './enterpriseChannelValidation';
@@ -53,49 +55,105 @@ export namespace JwtTokenValidation {
         credentials: ICredentialProvider,
         channelService: string,
         channelId: string,
-        serviceUrl: string = ''
+        serviceUrl: string = '',
+        authConfig?: AuthenticationConfiguration
     ): Promise<ClaimsIdentity> {
         if (!authHeader.trim()) { throw new Error('\'authHeader\' required.'); }
 
-        const usingEmulator: boolean = EmulatorValidation.isTokenFromEmulator(authHeader);
+        const identity = await authenticateToken(authHeader, credentials, channelService, channelId, authConfig, serviceUrl);
 
-        if (usingEmulator) {
-            return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelService, channelId);
-        }
+        await validateClaims(authConfig, identity.claims);
 
-        if (isPublicAzure(channelService)) {
-            if (serviceUrl.trim()) {
-                return await ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId);
+        return identity;
+    }
+
+    async function authenticateToken(
+        authHeader: string, credentials: ICredentialProvider, channelService: string, channelId: string, authConfig: AuthenticationConfiguration, serviceUrl: string): Promise<ClaimsIdentity> {
+            const usingEmulator: boolean = EmulatorValidation.isTokenFromEmulator(authHeader);
+
+            if (usingEmulator) {
+                return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelService, channelId);
             }
-
-            return await ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
-        }
-
-        if (isGovernment(channelService)) {
+    
+            if (isPublicAzure(channelService)) {
+                if (serviceUrl.trim()) {
+                    return await ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId);
+                }
+    
+                return await ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
+            }
+    
+            if (isGovernment(channelService)) {
+                if (serviceUrl.trim()) {
+                    return await GovernmentChannelValidation.authenticateChannelTokenWithServiceUrl(
+                        authHeader,
+                        credentials,
+                        serviceUrl,
+                        channelId
+                    );
+                }
+    
+                return await GovernmentChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
+            }
+    
+            // Otherwise use Enterprise Channel Validation
             if (serviceUrl.trim()) {
-                return await GovernmentChannelValidation.authenticateChannelTokenWithServiceUrl(
+                return await EnterpriseChannelValidation.authenticateChannelTokenWithServiceUrl(
                     authHeader,
                     credentials,
                     serviceUrl,
-                    channelId
+                    channelId,
+                    channelService
                 );
             }
+    
+            return await EnterpriseChannelValidation.authenticateChannelToken(authHeader, credentials, channelId, channelService);
+    }
 
-            return await GovernmentChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
+    /**
+     * Validates the identity claims against the ClaimsValidator in AuthenticationConfiguration if present. 
+     * @param authConfig 
+     * @param claims The list of claims to validate.
+     */
+    async function validateClaims(authConfig: AuthenticationConfiguration, claims: Claim[] = []): Promise<void> {
+        if (!authConfig.validateClaims) {
+            // Call the validation method if defined (it should throw an exception if the validation fails)
+            await authConfig.validateClaims(claims);
+        }
+    }
+
+    /**
+     * Gets the AppId from a claims list.
+     * @remarks
+     * In v1 tokens the AppId is in the "ver" AuthenticationConstants.AppIdClaim claim.
+     * In v2 tokens the AppId is in the "azp" AuthenticationConstants.AuthorizedParty claim.
+     * If the AuthenticationConstants.VersionClaim is not present, this method will attempt to
+     * obtain the attribute from the AuthenticationConstants.AppIdClaim or if present.
+     * 
+     * Throws a TypeError if claims is falsy.
+     * @param claims An Array of Claim instances.
+     */
+    export function getAppIdFromClaims(claims: Claim[]): string {
+        if (!claims) {
+            throw new TypeError(`JwtTokenValidation.getAppIdFromClaims(): missing claims.`);
+        }
+        let appId: string;
+
+        // Depending on Version, the AppId is either in the
+        // appid claim (Version 1) or the 'azp' claim (Version 2).
+        const { value: tokenVersion } = claims.find(claim => claim.type === AuthenticationConstants.VersionClaim);
+        if (!tokenVersion || tokenVersion === '1.0') {
+            // No version or a version of '1.0' means we should look for
+            // the claim in the 'appid' claim.
+            const { value: appIdClaim } = claims.find(claim => claim.type === AuthenticationConstants.AppIdClaim);
+            appId = appIdClaim;
+        } else if (tokenVersion === '2.0') {
+            // Version '2.0' puts the AppId in the 'azp' claim.
+            const { value: appZClaim } = claims.find(claim => claim.type === AuthenticationConstants.AuthorizedParty);
+            appId = appZClaim;
         }
 
-        // Otherwise use Enterprise Channel Validation
-        if (serviceUrl.trim()) {
-            return await EnterpriseChannelValidation.authenticateChannelTokenWithServiceUrl(
-                authHeader,
-                credentials,
-                serviceUrl,
-                channelId,
-                channelService
-            );
-        }
-
-        return await EnterpriseChannelValidation.authenticateChannelToken(authHeader, credentials, channelId, channelService);
+        return appId;
     }
 
     function isPublicAzure(channelService: string): boolean {
