@@ -1,6 +1,7 @@
 const assert = require('assert');
 const { TurnContext } = require('botbuilder-core');
 const connector = require('botframework-connector');
+const { CertificateAppCredentials } = require('botframework-connector');
 const { BotFrameworkAdapter } = require('../');
 
 const reference = {
@@ -138,40 +139,73 @@ function assertResponse(res, statusCode, hasBody) {
 describe(`BotFrameworkAdapter`, function () {
     this.timeout(5000);
 
-    it(`should read ChannelService and BotOpenIdMetadata env var if they exist`, function () {
-        process.env.ChannelService = 'https://botframework.azure.us';
-        process.env.BotOpenIdMetadata = 'https://someEndpoint.com';
-        const adapter = new AdapterUnderTest();
+    describe('constructor()', () => {
+        it(`should use CertificateAppCredentials when certificateThumbprint and certificatePrivateKey are provided`, () => {
+            const certificatePrivateKey = 'key';
+            const certificateThumbprint = 'thumbprint';
+            const appId = '11111111-7777-8888-9999-333333333333';
 
-        assert(adapter.settings.channelService === 'https://botframework.azure.us', `Adapter should have read process.env.ChannelService`);
-        assert(adapter.settings.openIdMetadata === 'https://someEndpoint.com', `Adapter should have read process.env.ChannelService`);
-        delete process.env.ChannelService;
-        delete process.env.BotOpenIdMetadata;
-    });
+            const adapter = new BotFrameworkAdapter({ appId, certificatePrivateKey, certificateThumbprint });
+            assert(adapter.credentials instanceof CertificateAppCredentials);
+            assert.strictEqual(adapter.credentials.appId, appId);
+            assert.strictEqual(adapter.credentials.certificatePrivateKey, certificatePrivateKey);
+            assert.strictEqual(adapter.credentials.certificateThumbprint, certificateThumbprint);
+
+            assert.strictEqual(adapter.settings.appId, appId);
+            assert.strictEqual(adapter.settings.appPassword, '');
+        });
+
+        it(`should use CertificateAppCredentials over MicrosoftAppCredentials when certificateThumbprint and certificatePrivateKey are provided`, () => {
+            const certificatePrivateKey = 'key';
+            const certificateThumbprint = 'thumbprint';
+            const appId = '11111111-7777-8888-9999-333333333333';
+            const appPassword = 'password';
     
-    it(`should return the status of every connection the user has`, async function () {
-        const adapter = new AdapterUnderTest();
-        const context = new TurnContext(adapter, incomingMessage);
-        adapter.getTokenStatus(context)
-        .then((responses) => {
-            assert(responses.length > 0);
+            const adapter = new BotFrameworkAdapter({
+                appId,
+                certificatePrivateKey,
+                certificateThumbprint,
+                appPassword
+            });
+
+            assert(adapter.credentials instanceof CertificateAppCredentials);
+            assert.strictEqual(adapter.credentials.appId, appId);
+            assert.strictEqual(adapter.credentials.certificatePrivateKey, certificatePrivateKey);
+            assert.strictEqual(adapter.credentials.certificateThumbprint, certificateThumbprint);
+            // adapter.credentialsProvider should have an empty string for a password.
+            assert.strictEqual(adapter.credentialsProvider.appPassword, '');
+            // appPassword should still be stored in BotFrameworkAdapter.settings through the spread syntax.
+            assert.strictEqual(adapter.settings.appPassword, appPassword);
+        });
+
+        it(`should read ChannelService and BotOpenIdMetadata env var if they exist`, function () {
+            process.env.ChannelService = 'https://botframework.azure.us';
+            process.env.BotOpenIdMetadata = 'https://someEndpoint.com';
+            const adapter = new AdapterUnderTest();
+    
+            assert(adapter.settings.channelService === 'https://botframework.azure.us', `Adapter should have read process.env.ChannelService`);
+            assert(adapter.settings.openIdMetadata === 'https://someEndpoint.com', `Adapter should have read process.env.ChannelService`);
+            delete process.env.ChannelService;
+            delete process.env.BotOpenIdMetadata;
         });
     });
 
-    it(`should authenticateRequest() if no appId or appPassword.`, function (done) {
-        const req = new MockRequest(incomingMessage);
-        const adapter = new AdapterUnderTest();
-        adapter.testAuthenticateRequest(req, '').then(() => done());
-    });
-
-    it(`should fail to authenticateRequest() if appId+appPassword and no headers.`, function (done) {
-        const req = new MockRequest(incomingMessage);
-        const adapter = new AdapterUnderTest({ appId: 'bogusApp', appPassword: 'bogusPassword' });
-        adapter.testAuthenticateRequest(req, '').then(() => {
-            assert(false, `shouldn't succeed.`);
-        }, (err) => {
-            assert(err, `error not returned.`);
-            done();
+    describe('authenticateRequest()', () => {
+        it(`should authenticateRequest() if no appId or appPassword.`, function (done) {
+            const req = new MockRequest(incomingMessage);
+            const adapter = new AdapterUnderTest();
+            adapter.testAuthenticateRequest(req, '').then(() => done());
+        });
+    
+        it(`should fail to authenticateRequest() if appId+appPassword and no headers.`, function (done) {
+            const req = new MockRequest(incomingMessage);
+            const adapter = new AdapterUnderTest({ appId: 'bogusApp', appPassword: 'bogusPassword' });
+            adapter.testAuthenticateRequest(req, '').then(() => {
+                assert(false, `shouldn't succeed.`);
+            }, (err) => {
+                assert(err, `error not returned.`);
+                done();
+            });
         });
     });
 
@@ -911,28 +945,37 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
-    it(`should throw error if missing from in getTokenStatus()`, async function () {
-        try {
+    describe('getTokenStatus()', () => {
+        xit(`should return the status of every connection the user has`, async () => {
             const adapter = new AdapterUnderTest();
+            const context = new TurnContext(adapter, incomingMessage);
+            const responses = await adapter.getTokenStatus(context);
+            assert(responses.length > 0);
+        });
 
-            await adapter.getTokenStatus({ activity: {} });
-        } catch (err) {
-            assert(err.message === 'BotFrameworkAdapter.getTokenStatus(): missing from or from.id',
-                `expected "BotFrameworkAdapter.getTokenStatus(): missing from or from.id" Error message, not "${ err.message }"`);
-            return;
-        }
-        assert(false, `should have thrown an error message`);
-    });
+        it(`should throw error if missing from in getTokenStatus()`, async function () {
+            try {
+                const adapter = new AdapterUnderTest();
+    
+                await adapter.getTokenStatus({ activity: {} });
+            } catch (err) {
+                assert(err.message === 'BotFrameworkAdapter.getTokenStatus(): missing from or from.id',
+                    `expected "BotFrameworkAdapter.getTokenStatus(): missing from or from.id" Error message, not "${ err.message }"`);
+                return;
+            }
+            assert(false, `should have thrown an error message`);
+        });
 
-    it(`should throw error if missing from.id in getTokenStatus()`, async function () {
-        try {
-            const adapter = new AdapterUnderTest();
-            await adapter.getTokenStatus({ activity: { from: {} } });
-        } catch (err) {
-            assert(err.message === 'BotFrameworkAdapter.getTokenStatus(): missing from or from.id',
-                `expected "BotFrameworkAdapter.getTokenStatus(): missing from or from.id" Error message, not "${ err.message }"`);
-            return;
-        }
-        assert(false, `should have thrown an error message`);
+        it(`should throw error if missing from.id in getTokenStatus()`, async function () {
+            try {
+                const adapter = new AdapterUnderTest();
+                await adapter.getTokenStatus({ activity: { from: {} } });
+            } catch (err) {
+                assert(err.message === 'BotFrameworkAdapter.getTokenStatus(): missing from or from.id',
+                    `expected "BotFrameworkAdapter.getTokenStatus(): missing from or from.id" Error message, not "${ err.message }"`);
+                return;
+            }
+            assert(false, `should have thrown an error message`);
+        });
     });
 });

@@ -128,12 +128,6 @@ export interface BotFrameworkAdapterSettings {
      * Optional. The channel service option for this bot to validate connections from Azure or other channel locations.
      */
     channelService?: string;
-    
-    /**
-     * Optional. Whether to use certificate based authentication. If set to true, we'll use the certificateThumbprint and 
-     * certificateKey fields to authenticate the appId against AAD instead of the appPassword.
-     */
-    useCertificateAuthentication?: boolean;
 
     /**
      * Optional. Certificate thumbprint to authenticate the appId against AAD.
@@ -143,7 +137,7 @@ export interface BotFrameworkAdapterSettings {
     /**
      * Optional. Certificate key to authenticate the appId against AAD.
      */
-    certificateKey?: string;
+    certificatePrivateKey?: string;
 }
 
 /**
@@ -240,14 +234,16 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         super();
         this.settings = { appId: '', appPassword: '', ...settings };
         
-        // If settings.useCertificateAuthentication is null, undefined or false, use app + password authentication
-        if (!this.settings.useCertificateAuthentication) {
-            this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '', this.settings.channelAuthTenant);
+        // If settings.certificateThumbprint & settings.certificatePrivateKey are provided,
+        // use CertificateAppCredentials.
+        if (this.settings.certificateThumbprint && this.settings.certificatePrivateKey) {
+            this.credentials = new CertificateAppCredentials(this.settings.appId, settings.certificateThumbprint, settings.certificatePrivateKey, this.settings.channelAuthTenant);
+            this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, '');
         } else {
-            this.credentials = new CertificateAppCredentials(this.settings.appId, settings.certificateThumbprint, settings.certificateKey, this.settings.channelAuthTenant);
+            this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '', this.settings.channelAuthTenant);
+            this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.settings.appPassword || '');
         }
         
-        this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.settings.appPassword || '');
         this.isEmulatingOAuthCards = false;
 
         // If no channelService or openIdMetadata values were passed in the settings, check the process' Environment Variables for values.
