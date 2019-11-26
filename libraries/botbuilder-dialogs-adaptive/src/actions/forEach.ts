@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
+import { DialogTurnResult, Dialog, DialogConfiguration, DialogDependencies } from 'botbuilder-dialogs';
 import { SequenceContext, ActionChangeList, ActionChangeType } from '../sequenceContext';
 import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
 
@@ -42,7 +42,7 @@ export interface ForEachConfiguration extends DialogConfiguration {
  * to `dialog.item`. The loop can be exited early by including either a `EndDialog` or `GotoDialog`
  * action.
  */
-export class ForEach<O extends object = {}> extends Dialog<O> {
+export class ForEach<O extends object = {}> extends Dialog<O> implements DialogDependencies {
 
     /**
      * Creates a new `ForEach` instance.

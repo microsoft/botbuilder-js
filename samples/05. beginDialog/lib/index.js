@@ -31,18 +31,18 @@ server.post('/api/messages', (req, res) => {
     });
 });
 // Initialize bots root dialog
-const dialogs = new botbuilder_dialogs_adaptive_1.AdaptiveDialog();
-bot.rootDialog = dialogs;
+const rootDialog = new botbuilder_dialogs_adaptive_1.AdaptiveDialog();
+bot.rootDialog = rootDialog;
 //=================================================================================================
 // Rules
 //=================================================================================================
-dialogs.recognizer = new botbuilder_dialogs_adaptive_1.RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
+rootDialog.recognizer = new botbuilder_dialogs_adaptive_1.RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
 // Tell the user a joke
-dialogs.triggers.push(new botbuilder_dialogs_adaptive_1.OnIntent('#JokeIntent', [], [
+rootDialog.triggers.push(new botbuilder_dialogs_adaptive_1.OnIntent('#JokeIntent', [], [
     new botbuilder_dialogs_adaptive_1.BeginDialog('TellJokeDialog')
 ]));
 // Handle unknown intents
-dialogs.triggers.push(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
+rootDialog.triggers.push(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
     new botbuilder_dialogs_adaptive_1.BeginDialog('AskNameDialog')
 ]));
 //=================================================================================================
@@ -56,7 +56,7 @@ askNameDialog.triggers.push(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
     new botbuilder_dialogs_adaptive_1.SendActivity(`Hi {user.name}. It's nice to meet you.`),
     new botbuilder_dialogs_adaptive_1.EndDialog()
 ]));
-dialogs.actions.push(askNameDialog);
+rootDialog.dialogs.add(askNameDialog);
 const tellJokeDialog = new botbuilder_dialogs_adaptive_1.AdaptiveDialog('TellJokeDialog');
 tellJokeDialog.triggers.push(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
     new botbuilder_dialogs_adaptive_1.SendActivity(`Why did the 🐔 cross the 🛣️?`),
@@ -64,5 +64,5 @@ tellJokeDialog.triggers.push(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
     new botbuilder_dialogs_adaptive_1.SendActivity(`To get to the other side...`),
     new botbuilder_dialogs_adaptive_1.EndDialog()
 ]));
-dialogs.actions.push(tellJokeDialog);
+rootDialog.dialogs.add(tellJokeDialog);
 //# sourceMappingURL=index.js.map

@@ -11,7 +11,7 @@ import {
 } from 'botbuilder-core';
 import {
     Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent,
-    DialogContext, DialogConfiguration, DialogContainer
+    DialogContext, DialogConfiguration, DialogContainer, DialogDependencies
 } from 'botbuilder-dialogs';
 import {
     AdaptiveEventNames, SequenceContext, AdaptiveDialogState, ActionState
@@ -31,11 +31,6 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
      * (Optional) recognizer used to analyze any message utterances.
      */
     recognizer?: Recognizer;
-
-    /**
-     * (Optional) actions to initialize the dialogs plan with.
-     */
-    actions?: Dialog[];
 }
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
@@ -46,22 +41,15 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     /**
      * Creates a new `AdaptiveDialog` instance.
      * @param dialogId (Optional) unique ID of the component within its parents dialog set.
-     * @param actions (Optional) actions to initialize the dialogs plan with.
      */
-    constructor(dialogId?: string, actions?: Dialog[]) {
+    constructor(dialogId?: string) {
         super(dialogId);
-        if (Array.isArray(actions)) { Array.prototype.push.apply(this.actions, actions) }
     }
 
     /**
      * Planning triggers to evaluate for each conversational turn.
      */
     public readonly triggers: OnCondition[] = [];
-
-    /**
-     * Actions to initialize the dialogs plan with.
-     */
-    public readonly actions: Dialog[] = [];
 
     /**
      * (Optional) recognizer used to analyze any message utterances.
@@ -90,13 +78,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
         this.installedDependencies = true;
 
-        // Install any actions
-        this.actions.forEach((action) => this.dialogs.add(action));
-
         // Install each trigger actions
-        this.triggers.forEach((trigger) => {
-            trigger.actions.forEach((action) => this.dialogs.add(action));
-        });
+        for (let i = 0; i < this.triggers.length; i++) {
+            const trigger = this.triggers[i];
+            if (typeof ((trigger as any) as DialogDependencies).getDependencies == 'function') {
+                ((trigger as any) as DialogDependencies).getDependencies().forEach((child) => this.dialogs.add(child));
+            }
+        }
 
         if (!this.selector) {
             // Default to random selector

@@ -35,22 +35,22 @@ server.post('/api/messages', (req, res) => {
 });
 
 // Initialize bots root dialog
-const dialogs = new AdaptiveDialog();
-bot.rootDialog = dialogs;
+const rootDialog = new AdaptiveDialog();
+bot.rootDialog = rootDialog;
 
 //=================================================================================================
 // Rules
 //=================================================================================================
 
-dialogs.recognizer = new RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
+rootDialog.recognizer = new RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
 
 // Tell the user a joke
-dialogs.triggers.push(new OnIntent('#JokeIntent', [], [
+rootDialog.triggers.push(new OnIntent('#JokeIntent', [], [
     new BeginDialog('TellJokeDialog')
 ]));
 
 // Handle unknown intents
-dialogs.triggers.push(new OnUnknownIntent([
+rootDialog.triggers.push(new OnUnknownIntent([
     new BeginDialog('AskNameDialog')
 ]));
 
@@ -67,7 +67,7 @@ askNameDialog.triggers.push(new OnUnknownIntent([
     new SendActivity(`Hi {user.name}. It's nice to meet you.`),
     new EndDialog()
 ]));
-dialogs.actions.push(askNameDialog);
+rootDialog.dialogs.add(askNameDialog);
 
 const tellJokeDialog = new AdaptiveDialog('TellJokeDialog')
 tellJokeDialog.triggers.push(new OnUnknownIntent([
@@ -76,4 +76,4 @@ tellJokeDialog.triggers.push(new OnUnknownIntent([
     new SendActivity(`To get to the other side...`),
     new EndDialog()
 ]));
-dialogs.actions.push(tellJokeDialog);
+rootDialog.dialogs.add(tellJokeDialog);
