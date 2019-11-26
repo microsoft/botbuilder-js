@@ -7,6 +7,8 @@
  */
 export * from './credentialProvider';
 export * from './microsoftAppCredentials';
+export * from './appCredentials';
+export * from './certificateAppCredentials';
 export * from './jwtTokenValidation';
 export * from './channelValidation';
 export * from './governmentChannelValidation';

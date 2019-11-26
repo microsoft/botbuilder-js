@@ -645,7 +645,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         entitiesAndMetadata: any,
         verbose: boolean
     ): LuisModels.EntityModel[] {
-        const childrenEntites: any = verbose ? { $instance: {} } : {};
+        const childrenEntities: any = verbose ? { $instance: {} } : {};
         let childrenEntitiesMetadata: any = {};
 
         // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
@@ -681,9 +681,9 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
 
                     let val = this.getEntityValue(entity);
                     if (val != null) {
-                        this.addProperty(childrenEntites, this.getNormalizedEntityName(entity), val);
+                        this.addProperty(childrenEntities, this.getNormalizedEntityName(entity), val);
                         if (verbose) {
-                            this.addProperty(childrenEntites.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
+                            this.addProperty(childrenEntities.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
                         }
                     }
                 }
@@ -697,7 +697,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
             }
         }
 
-        this.addProperty(entitiesAndMetadata, this.getNormalizedEntityName(compositeEntityMetadata), childrenEntites);
+        this.addProperty(entitiesAndMetadata, this.getNormalizedEntityName(compositeEntityMetadata), childrenEntities);
         if (verbose) {
             this.addProperty(entitiesAndMetadata.$instance, this.getNormalizedEntityName(compositeEntityMetadata), childrenEntitiesMetadata);
         }
