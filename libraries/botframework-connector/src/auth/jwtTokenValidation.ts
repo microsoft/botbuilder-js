@@ -13,7 +13,7 @@ import { EmulatorValidation } from './emulatorValidation';
 import { EnterpriseChannelValidation } from './enterpriseChannelValidation';
 import { GovernmentChannelValidation } from './governmentChannelValidation';
 import { GovernmentConstants } from './governmentConstants';
-import { MicrosoftAppCredentials } from './microsoftAppCredentials';
+import { AppCredentials } from './appCredentials';
 
 export namespace JwtTokenValidation {
 
@@ -43,7 +43,7 @@ export namespace JwtTokenValidation {
         const claimsIdentity: ClaimsIdentity =
             await validateAuthHeader(authHeader, credentials, channelService, activity.channelId, activity.serviceUrl);
 
-        MicrosoftAppCredentials.trustServiceUrl(activity.serviceUrl);
+        AppCredentials.trustServiceUrl(activity.serviceUrl);
 
         return claimsIdentity;
     }

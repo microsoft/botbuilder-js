@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
 /**
  * CredentialProvider interface. This interface allows Bots to provide their own
  * implementation of what is, and what is not, a valid appId and password. This is
@@ -61,7 +62,7 @@ export class SimpleCredentialProvider implements ICredentialProvider {
      * Validate AppId.
      *
      * This method is async to enable custom implementations
-     * that may need to call out to serviced to validate the appId / password pair.
+     * that may need to call out to service to validate the appId / password pair.
      * @param  {string} appId bot appid
      * @returns {Promise<boolean>} true if it is a valid AppId
      */

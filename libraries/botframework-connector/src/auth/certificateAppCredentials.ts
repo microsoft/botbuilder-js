@@ -10,20 +10,22 @@ import * as adal from 'adal-node'
 import { AppCredentials } from './appCredentials';
 
 /**
- * MicrosoftAppCredentials auth implementation
+ * CertificateAppCredentials auth implementation
  */
-export class MicrosoftAppCredentials extends AppCredentials {
-    public appPassword: string;
+export class CertificateAppCredentials extends AppCredentials {
+    public certificateThumbprint: string;
+    public certificatePrivateKey: string;
 
-    constructor(appId: string, appPassword: string, channelAuthTenant?: string) {
+    constructor(appId: string, certificateThumbprint: string, certificatePrivateKey: string, channelAuthTenant?: string) {
         super(appId, channelAuthTenant);
-        this.appPassword = appPassword;
+        this.certificateThumbprint = certificateThumbprint;
+        this.certificatePrivateKey = certificatePrivateKey;
     }
 
     protected async refreshToken(): Promise<adal.TokenResponse> {
         if (!this.refreshingToken) {
             this.refreshingToken = new Promise<adal.TokenResponse>((resolve, reject) => {
-                this.authenticationContext.acquireTokenWithClientCredentials(this.oAuthScope, this.appId, this.appPassword, function(err, tokenResponse) {
+                this.authenticationContext.acquireTokenWithClientCertificate(this.oAuthScope, this.appId, this.certificatePrivateKey, this.certificateThumbprint, function(err, tokenResponse) {
                     if (err) {
                         reject(err);
                     } else {
