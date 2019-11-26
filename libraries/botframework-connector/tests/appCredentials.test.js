@@ -3,7 +3,7 @@
  * CertificateAppCredentials & MicrosoftAppCredentials
  */
 
-const { strictEqual } = require('assert');
+const { fail, strictEqual } = require('assert');
 const { AuthenticationConstants, CertificateAppCredentials, MicrosoftAppCredentials } = require('../lib');
 
 const APP_ID = '2cd87869-38a0-4182-9251-d056e8f0ac24';
@@ -29,10 +29,24 @@ describe('AppCredentials', () => {
         const certCreds = new CertificateAppCredentials(APP_ID, CERT_THUMBPRINT, CERT_KEY);
         strictEqual(certCreds.appId, APP_ID);
         strictEqual(certCreds.certificateThumbprint, CERT_THUMBPRINT);
-        strictEqual(certCreds.certificatekey, CERT_KEY);
+        strictEqual(certCreds.certificatePrivateKey, CERT_KEY);
 
         const msAppCreds = new MicrosoftAppCredentials(APP_ID, APP_PASSWORD);
         strictEqual(msAppCreds.appId, '2cd87869-38a0-4182-9251-d056e8f0ac24');
         strictEqual(msAppCreds.appPassword, APP_PASSWORD);
+    });
+
+    describe('MicrosoftAppCredentials', () => {
+        it('should fail to get a token with an appId and no appPassword', async () => {
+            const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24');
+            try {
+                await tokenGenerator.getToken(true);
+                fail('Should not have successfully retrieved token.');
+            } catch (e) {
+                // e.message evaluation per adal-node@0.2.1:
+                // https://github.com/AzureAD/azure-activedirectory-library-for-nodejs/blob/eeff5215bd7a6629edbd1d71450a0db68f029838/lib/authentication-context.js#L277
+                strictEqual(e.message, 'The clientSecret parameter is required.');
+            }
+        });
     });
 });

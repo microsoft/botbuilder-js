@@ -14,18 +14,18 @@ import { AppCredentials } from './appCredentials';
  */
 export class CertificateAppCredentials extends AppCredentials {
     public certificateThumbprint: string;
-    public certificatekey: string;
+    public certificatePrivateKey: string;
 
-    constructor(appId: string, certificateThumbprint: string, certificatekey: string, channelAuthTenant?: string) {
+    constructor(appId: string, certificateThumbprint: string, certificatePrivateKey: string, channelAuthTenant?: string) {
         super(appId, channelAuthTenant);
         this.certificateThumbprint = certificateThumbprint;
-        this.certificatekey = certificatekey;
+        this.certificatePrivateKey = certificatePrivateKey;
     }
 
     protected async refreshToken(): Promise<adal.TokenResponse> {
         if (!this.refreshingToken) {
             this.refreshingToken = new Promise<adal.TokenResponse>((resolve, reject) => {
-                this.authenticationContext.acquireTokenWithClientCertificate(this.oAuthScope, this.appId, this.certificatekey, this.certificateThumbprint, function(err, tokenResponse) {
+                this.authenticationContext.acquireTokenWithClientCertificate(this.oAuthScope, this.appId, this.certificatePrivateKey, this.certificateThumbprint, function(err, tokenResponse) {
                     if (err) {
                         reject(err);
                     } else {
