@@ -28,6 +28,13 @@ export class ActivityFactory {
         [ 'receiptcard', CardFactory.contentTypes.receiptCard ],
     ]);
 
+    private static  activityProperties: string[] = ['type','id','timestamp','localTimestamp','localTimezone','callerId',
+        'serviceUrl','channelId','from','conversation','recipient','textFormat','attachmentLayout','membersAdded',
+        'membersRemoved','reactionsAdded','reactionsRemoved','topicName','historyDisclosed','locale','text','speak',
+        'inputHint','summary','suggestedActions','attachments','entities','channelData','action','replyToId','label',
+        'valueType','value','name','typrelatesToe','code','expiration','importance','deliveryMode','listenFor',
+        'textHighlights','semanticAction'];
+
     private static adaptiveCardType: string = CardFactory.contentTypes.adaptiveCard;
 
     /**
@@ -94,7 +101,14 @@ export class ActivityFactory {
                     activity.suggestedActions = this.getSuggestions(value);
                     break;
                 default:
-                    activity[property] = value;
+                    var properties = ActivityFactory.activityProperties.map((u: string): string => u.toLowerCase());
+                    if (properties.includes(property.toLowerCase()))
+                    {
+                        var realPropertyName = ActivityFactory.activityProperties[properties.indexOf(property.toLowerCase())];
+                        activity[realPropertyName] = value;
+                    } else {
+                        activity[property.toLowerCase()] = value;
+                    }
                     break;
             }
         }
@@ -137,7 +151,24 @@ export class ActivityFactory {
 
             if(type === 'cardaction') {
                 for (const key of Object.keys(action)) {
-                    cardAction[key.trim()] = action[key];
+                    const property: string = key.trim();
+                    if (property === 'lgType') {
+                        continue;
+                    }
+
+                    const value: any = action[key];
+
+                    switch (property.toLowerCase()) {
+                        case 'displaytext':
+                            cardAction.displayText = value;
+                            break;
+                        case 'channeldata':
+                            cardAction.channelData = value;
+                            break;
+                        default:
+                            cardAction[property.toLowerCase()] = value;
+                            break;
+                    }
                 }
             }
         }
@@ -210,8 +241,14 @@ export class ActivityFactory {
                         attachment.contentType = type;
                     }
                     break;
+                case 'contenturl':
+                    attachment.contentUrl = value;
+                    break;
+                case 'thumbnailurl':
+                    attachment.thumbnailUrl = value;
+                    break;
                 default:
-                    attachment[property] = value;
+                    attachment[property.toLowerCase()] = value;
                     break;
             }
         }
@@ -267,8 +304,11 @@ export class ActivityFactory {
                         card[property] = boolValue;
                     }
                     break;
+                case 'connectionname':
+                    card['connectionName'] = value;
+                    break;
                 default:
-                    card[property] = value;
+                    card[property.toLowerCase()] = value;
                     break;
             }
         }

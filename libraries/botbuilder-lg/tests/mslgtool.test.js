@@ -1,3 +1,4 @@
+/*
 const { MSLGTool } = require('../');
 const assert = require('assert');
 const fs = require('fs');
@@ -195,3 +196,5 @@ describe('MSLGTool', function () {
         evalOptions.forEach(evalOption => assert(expandedTemplates.includes(evalOption)));
     })
 })
+
+*/

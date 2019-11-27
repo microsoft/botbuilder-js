@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionEngine } from 'botframework-expressions';
+import { ExpressionEngine, Extensions } from 'botframework-expressions';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Analyzer, AnalyzerResult } from './analyzer';
@@ -100,10 +100,10 @@ export class TemplateEngine {
     }
 
     public evaluateTemplate(templateName: string, scope?: MemoryInterface | any): any {
-        const evalutor: Evaluator = new Evaluator(this.templates, this.expressionEngine);
-        if (scope === undefined && scope as MemoryInterface === undefined) {
+        if (scope === null || scope === undefined || !Extensions.isMemoryInterface(scope)) {
             scope = new CustomizedMemory(scope);
         }
+        const evalutor: Evaluator = new Evaluator(this.templates, this.expressionEngine);
         return evalutor.evaluateTemplate(templateName, scope);
     }
 

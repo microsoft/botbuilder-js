@@ -14,7 +14,7 @@ export class CustomizedMemory implements MemoryInterface {
     public localMemory: MemoryInterface;
 
     public constructor(scope?: any) {
-        this.globalMemory = scope === undefined ? undefined : SimpleObjectMemory.wrap(scope);
+        this.globalMemory = scope === undefined || scope === null ? undefined : SimpleObjectMemory.wrap(scope);
         this.localMemory = undefined;
     }
 
@@ -26,13 +26,13 @@ export class CustomizedMemory implements MemoryInterface {
             if (error === undefined && value !== undefined) {
                 return {value, error};
             }
-
-            if (this.globalMemory !== undefined) {
-                return this.globalMemory.getValue(path);
-            }
-
-            return {value, error};
         }
+
+        if (this.globalMemory !== undefined) {
+            return this.globalMemory.getValue(path);
+        }
+
+        return {value, error};
     }
 
     public setValue(_path: string, _value: any): { value: any; error: string } {

@@ -172,26 +172,9 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
-        for (const node of ctx.children) {
-            const innerNode: TerminalNode =  node as TerminalNode;
-            switch (innerNode.symbol.type) {
-                case lp.LGFileParser.DASH: break;
-                case lp.LGFileParser.EXPRESSION: {
-                    result.union(this.analyzeExpression(innerNode.text));
-                    break;
-                }
-                case lp.LGFileParser.TEMPLATE_REF: {
-                    result.union(this.analyzeTemplateRef(innerNode.text));
-                    break;
-                }
-                case lp.LGFileParser.MULTI_LINE_TEXT: {
-                    result.union(this.analyzeMultiLineText(innerNode.text));
-                    break;
-                }
-                default: {
-                    break;
-                }
-            }
+        
+        for (const expression of ctx.EXPRESSION()) {
+            result.union(this.analyzeExpression(expression.text));
         }
 
         return result;
@@ -258,25 +241,6 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         result.union(this.analyzeExpressionDirectly(parsed));
 
         return  result;
-    }
-
-    private analyzeTemplateRef(exp: string): AnalyzerResult {
-        exp = exp.replace(/(^\[*)/g, '')
-            .replace(/(\]*$)/g, '');
-        exp = exp.indexOf('(') < 0 ? exp.concat('()') : exp;
-
-        return this.analyzeExpression(exp);
-    }
-
-    private analyzeMultiLineText(exp: string): AnalyzerResult {
-        const result: AnalyzerResult =  new AnalyzerResult();
-        exp = exp.substr(3, exp.length - 6);
-        const matches: string[] = exp.split('').reverse().join('').match(this.expressionRecognizeRegex).map((e: string): string => e.split('').reverse().join('')).reverse();
-        for (const match of matches) {
-            result.union(this.analyzeExpression(match));
-        }
-
-        return result;
     }
 
     private currentTarget(): EvaluationTarget {

@@ -1,4 +1,5 @@
-const { TemplateEngine, LGParser, SimpleObjectMemory } = require('../');
+const { TemplateEngine, LGParser } = require('../');
+const { SimpleObjectMemory } = require('botframework-expressions');
 const assert = require('assert');
 const fs = require('fs');
 
@@ -150,9 +151,9 @@ describe('LG', function() {
         assert.strictEqual(emptyEngine.evaluate('Hi'), 'Hi', emptyEngine.evaluate('Hi'));
         assert.strictEqual(emptyEngine.evaluate('Hi', ''), 'Hi', emptyEngine.evaluate('Hi', ''));
 
-        assert.strictEqual(emptyEngine.evaluate('Hi {name}', { name: 'DL' }), 'Hi DL');
+        assert.strictEqual(emptyEngine.evaluate('Hi @{name}', { name: 'DL' }), 'Hi DL');
 
-        assert.strictEqual(emptyEngine.evaluate('Hi {name.FirstName}{name.LastName}', { name: { FirstName: 'D', LastName: 'L' } }), 'Hi DL');
+        assert.strictEqual(emptyEngine.evaluate('Hi @{name.FirstName}@{name.LastName}', { name: { FirstName: 'D', LastName: 'L' } }), 'Hi DL');
         assert.strictEqual(emptyEngine.evaluate('Hi \n Hello', ''), 'Hi \n Hello');
         assert.strictEqual(emptyEngine.evaluate('Hi \r\n Hello', ''), 'Hi \r\n Hello');
         assert.strictEqual(emptyEngine.evaluate('Hi \r\n @{name}', { name: 'DL' }), 'Hi \r\n DL');
@@ -164,11 +165,11 @@ describe('LG', function() {
         assert.strictEqual(emptyEngine.evaluate('Hi'), 'Hi', emptyEngine.evaluate('Hi'));
         assert.strictEqual(emptyEngine.evaluate('Hi', ''), 'Hi', emptyEngine.evaluate('Hi', ''));
 
-        assert.strictEqual(emptyEngine.evaluate('Hi {name}', { name: 'DL' }), 'Hi DL', emptyEngine.evaluate('Hi {name}', { name: 'DL' }));
+        assert.strictEqual(emptyEngine.evaluate('Hi @{name}', { name: 'DL' }), 'Hi DL', emptyEngine.evaluate('Hi @{name}', { name: 'DL' }));
 
-        assert.strictEqual(emptyEngine.evaluate('Hi {name.FirstName}{name.LastName} [RecentTasks]', { name: { FirstName: 'D', LastName: 'L' } }), 'Hi DL You don\'t have any tasks.', emptyEngine.evaluate('Hi {name.FirstName}{name.LastName} [RecentTasks]', { name: { FirstName: 'D', LastName: 'L' } }));
+        assert.strictEqual(emptyEngine.evaluate('Hi @{name.FirstName}@{name.LastName} @{RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' } }), 'Hi DL You don\'t have any tasks.', emptyEngine.evaluate('Hi @{name.FirstName}@{name.LastName} @{RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' } }));
 
-        assert.strictEqual(emptyEngine.evaluate('Hi {name.FirstName}{name.LastName} [RecentTasks]', { name: { FirstName: 'D', LastName: 'L' }, recentTasks: ['task1'] }), 'Hi DL Your most recent task is task1. You can let me know if you want to add or complete a task.', emptyEngine.evaluate('Hi {name.FirstName}{name.LastName} [RecentTasks]', { name: { FirstName: 'D', LastName: 'L' }, recentTasks: ['task1'] }));
+        assert.strictEqual(emptyEngine.evaluate('Hi @{name.FirstName}@{name.LastName} @{RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' }, recentTasks: ['task1'] }), 'Hi DL Your most recent task is task1. You can let me know if you want to add or complete a task.', emptyEngine.evaluate('Hi @{name.FirstName}@{name.LastName} @{RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' }, recentTasks: ['task1'] }));
 
     });
 
@@ -199,34 +200,34 @@ describe('LG', function() {
 
     it('TestEscapeCharacter', function() {
         var engine = new TemplateEngine().addFile(GetExampleFilePath('EscapeCharacter.lg'));
-        var evaled = engine.evaluateTemplate('wPhrase', null);
+        var evaled = engine.evaluateTemplate('wPhrase', undefined);
         assert.strictEqual(evaled, 'Hi \r\n\t[]{}\\', 'Happy path failed.');
 
-        evaled = engine.evaluateTemplate('otherEscape', null);
-        assert.strictEqual(evaled, 'Hi \\y \\', 'Happy path failed.');
+        evaled = engine.evaluateTemplate('otherEscape', undefined);
+        assert.strictEqual(evaled, 'Hi y ', 'Happy path failed.');
 
-        evaled = engine.evaluateTemplate('escapeInExpression', null);
+        evaled = engine.evaluateTemplate('escapeInExpression', undefined);
         assert.strictEqual(evaled, 'Hi hello\\\\');
 
-        evaled = engine.evaluateTemplate('escapeInExpression2', null);
+        evaled = engine.evaluateTemplate('escapeInExpression2', undefined);
         assert.strictEqual(evaled, 'Hi hello\'');
 
-        evaled = engine.evaluateTemplate('escapeInExpression3', null);
+        evaled = engine.evaluateTemplate('escapeInExpression3', undefined);
         assert.strictEqual(evaled, 'Hi hello"');
 
-        evaled = engine.evaluateTemplate('escapeInExpression4', null);
+        evaled = engine.evaluateTemplate('escapeInExpression4', undefined);
         assert.strictEqual(evaled, 'Hi hello"');
 
-        evaled = engine.evaluateTemplate('escapeInExpression5', null);
+        evaled = engine.evaluateTemplate('escapeInExpression5', undefined);
         assert.strictEqual(evaled, 'Hi hello\n');
 
-        evaled = engine.evaluateTemplate('escapeInExpression6', null);
+        evaled = engine.evaluateTemplate('escapeInExpression6', undefined);
         assert.strictEqual(evaled, 'Hi hello\n');
 
         evaled = engine.evaluateTemplate('showTodo', { todos: ['A', 'B', 'C'] });
         assert.strictEqual(evaled.replace(/\r\n/g, '\n'), '\n    Your most recent 3 tasks are\n    * A\n* B\n* C\n    ');
 
-        evaled = engine.evaluateTemplate('showTodo', null);
+        evaled = engine.evaluateTemplate('showTodo', undefined);
         assert.strictEqual(evaled.replace(/\r\n/g, '\n'), '\n    You don\'t have any "t\\\\odo\'".\n    ');
     });
 
@@ -446,15 +447,15 @@ describe('LG', function() {
         expectedResults.forEach(x => assert(evaled.includes(x)));
 
         // with scope
-        var evaled = engine.expandTemplate('TimeOfDayWithCondition', { time: 'evening'});
-        assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
-        let expectedResults = ['Hi Evening', 'Hello Evening'];
+        evaled = engine.expandTemplate('TimeOfDayWithCondition', { time: 'evening'});
+        assert.strictEqual(evaled.length, 2, `Evaled is ${ evaled }`);
+        expectedResults = ['Hi Evening', 'Hello Evening'];
         expectedResults.forEach(x => assert(evaled.includes(x)));
 
         // with scope
-        var evaled = engine.expandTemplate('greetInAWeek', {day:'Sunday'});
-        assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
-        let expectedResults = ['Nice Sunday!', 'Happy Sunday!'];
+        evaled = engine.expandTemplate('greetInAWeek', {day:'Sunday'});
+        assert.strictEqual(evaled.length, 2, `Evaled is ${ evaled }`);
+        expectedResults = ['Nice Sunday!', 'Happy Sunday!'];
         expectedResults.forEach(x => assert(evaled.includes(x)));
     });
 
@@ -611,13 +612,14 @@ describe('LG', function() {
         var evaled = engine.evaluateTemplate('T1', { turn: { name: 'Dong', count: 3 } });
         assert.strictEqual(evaled, 'Hi Dong, welcome to Seattle, Seattle is a beautiful place, how many burgers do you want, 3?');
 
-        var scope = new SimpleObjectMemory(new {
+        const objscope = {
             schema: {
                 Bread: {
                     enum: ['A', 'B']
                 }
             }
-        });
+        };
+        var scope = new SimpleObjectMemory(objscope);
         
         evaled = engine.evaluateTemplate('AskBread', scope);
         assert.strictEqual(evaled, 'Which Bread, A or B do you want?');
@@ -695,7 +697,7 @@ describe('LG', function() {
     it('TestExpandTemplateWithStructuredLG', function() {
         var engine = new TemplateEngine().addFile(GetExampleFilePath('StructuredTemplate.lg'));
 
-        var evaled = engine.evaluateTemplate('AskForAge.promp');
+        var evaled = engine.evaluateTemplate('AskForAge.prompt');
         assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
     
         let expectedResults = [

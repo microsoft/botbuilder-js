@@ -2590,7 +2590,7 @@ export class BuiltInFunctions {
             new ExpressionEvaluator(
                 ExpressionType.Json,
                 BuiltInFunctions.apply((args: any []): any => JSON.parse(args[0])),
-                ReturnType.String,
+                ReturnType.Object,
                 (expression: Expression): void => BuiltInFunctions.validateOrder(expression, undefined, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.AddProperty,

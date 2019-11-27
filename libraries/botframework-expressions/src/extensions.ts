@@ -44,8 +44,16 @@ export class Extensions {
         return Array.from(filteredReferences);
     }
 
-    public static isMemoryInterface(object: any): object is MemoryInterface {
-        return 'getValue' in object && 'getValue' in object && 'version' in object ;
+    public static isMemoryInterface(obj: any): boolean {
+        if (obj === undefined) {
+            return false;
+        }
+
+        if (typeof obj !== 'object') {
+            return false;
+        }
+        
+        return 'getValue' in obj && 'getValue' in obj && 'version' in obj;
     }
 
     /**

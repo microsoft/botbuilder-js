@@ -226,6 +226,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             var memory =  new CustomizedMemory();
             memory.globalMemory = currentScope.globalMemory;
             memory.localMemory = new SimpleObjectMemory(newScope);
+
+            return memory;
         } else {
             throw new Error(`Scope is a LG customized memory`);
         }

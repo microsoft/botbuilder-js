@@ -1,23 +1,15 @@
-# ShowList(list)
-- @{join(list, ' ')}
+> This is an example lg file showing you can use dot in template name def
 
-# Test2
-- @{ShowList(createArray('hello', 'world'))}
+# Hello.World
+- Hello World
 
-# Test3
-- @{ShowList(createArray('hello', 'world'))}
+> Ref such a template should work fine
+# Hello
+- @{Hello.World()}
 
-# Test4
-- ```
-  @{ShowList(createArray('hello', 'world'))}
-```
-
-# length(str)
-- calculate length of @{str} by user's template
-
-# dupNameWithTemplate
-- @{length('ms')}
-
-# dupNameWithBuiltinFunc
-- @{prebuilt.length('ms')}
+> But
+> if it's used as a lambda, it might have problems like
+>       {foreach(alrams, Hello.World, ",")}
+> because everything inside this {} would be analyzed with expression engine
+> and expression engine would treat Hello.World as an indentifier
 

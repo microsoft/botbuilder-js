@@ -82,7 +82,7 @@ export class ActivityChecker {
 
     private static checkActivityType(activityType: string): Diagnostic[] {
         if (activityType !== undefined) {
-            if (!(activityType.toLowerCase() in Object.values(ActivityTypes).map((u: string): string => u.toLowerCase()))) {
+            if (!Object.values(ActivityTypes).map((u: string): string => u.toLowerCase()).includes(activityType.toLowerCase())) {
                 return [this.buildDiagnostic(`'${ activityType }' is not a valid activity type.`)];
             }
         }
@@ -98,10 +98,10 @@ export class ActivityChecker {
             'textHighlights','semanticAction'];
         let invalidProperties: string[] = [];
         for (const property of Object.keys(input)) {
-            if (property.toLowerCase() === 'lgType') {
+            if (property === 'lgType') {
                 continue;
             }
-            if (property.toLowerCase() in activityProperties.map((u: string): string => u.toLowerCase())) {
+            if (!activityProperties.map((u: string): string => u.toLowerCase()).includes(property.toLowerCase())) {
                 invalidProperties.push(property);
             }
         }
@@ -145,7 +145,7 @@ export class ActivityChecker {
 
     private static checkCardActions(actions: any[]): Diagnostic[] {
         let result: Diagnostic[] = [];
-        actions.forEach((u: any): number => result.push(...this.checkCardAction(u)));
+        actions.forEach((u: any): void => { result.push(...this.checkCardAction(u)); });
         return result;
     }
 
@@ -168,6 +168,8 @@ export class ActivityChecker {
         } else {
             result.push(this.buildDiagnostic(`'${ value }' is not a valid card action format.`, false));
         }
+
+        return result;
     }
 
     
@@ -176,7 +178,7 @@ export class ActivityChecker {
 
         let invalidProperties: string[] = [];
         for (const property of Object.keys(input)) {
-            if (property.toLowerCase() === 'lgType') {
+            if (property === 'lgType') {
                 continue;
             }
             if (property.toLowerCase() in cardActionProperties.map((u: string): string => u.toLowerCase())) {
@@ -196,7 +198,7 @@ export class ActivityChecker {
             return result;
         }
 
-        if (!(cardActionType.toLowerCase() in Object.values(ActionTypes).map((u: string): string => u.toLowerCase()))) {
+        if (!Object.values(ActionTypes).map((u: string): string => u.toLowerCase()).includes(cardActionType.toLowerCase())) {
             return [this.buildDiagnostic(`'${ cardActionType }' is not a valid card action type.`)];
         }
 
@@ -209,7 +211,7 @@ export class ActivityChecker {
 
         for (const attachmentsJson of attachmentsJsonList) {
             if (typeof attachmentsJson === 'object') {
-                result.push(...this.checkAttachment(value));
+                result.push(...this.checkAttachment(attachmentsJson));
             }
         }
 
