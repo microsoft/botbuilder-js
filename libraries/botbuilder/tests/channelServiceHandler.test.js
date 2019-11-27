@@ -1,8 +1,7 @@
 const { fail, ok: assert, strictEqual } = require('assert');
-const { STATUS_CODES } = require('http');
 const { ActivityTypes } = require('botbuilder-core');
 const { AuthenticationConfiguration, ClaimsIdentity, SimpleCredentialProvider } = require('botframework-connector');
-const { ChannelServiceHandler, StatusCodes } = require('../');
+const { ChannelServiceHandler } = require('../');
 
 const AUTH_HEADER = 'Bearer HelloWorld';
 const AUTH_CONFIG = new AuthenticationConfiguration();
