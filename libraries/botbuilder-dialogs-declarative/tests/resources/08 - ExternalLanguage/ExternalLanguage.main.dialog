@@ -5,58 +5,51 @@
     "recognizer": {
         "$type": "Microsoft.RegexRecognizer",
         "intents": {
-            "HelpIntent": "(?i)help",
-            "GreetingIntent": "(?i)hi|hello|hiya|greetings",
-            "JokeIntent": "(?i)joke",
-            "FortuneTellerIntent": "(?i)fortune|future"
+            "JokeIntent": "joke",
+            "GreetingIntent": "hi|hello|hiya|greetings",
+            "FortuneTellerIntent": "fortune|future"
         }
     },
-    "actions": [
+    "triggers": [
         {
-            "$type": "Microsoft.SendActivity",
-            "activity": "[welcome]"
+            "$type": "Microsoft.OnUnknownIntent",
+            "actions": [
+                {
+                    "$type": "Microsoft.IfCondition",
+                    "condition": "user.name == null",
+                    "actions": [
+                        {
+                            "$type": "Microsoft.TextInput",
+                            "valueProperty": "user.name",
+                            "prompt": "Hello, I'm Zoidberg. What is your name?"
+                        }
+                    ]
+                },
+                {
+                    "$type": "Microsoft.SendActivity",
+                    "activity": "Hello {user.name}, nice to talk to you!"
+                }
+            ]
         },
-        "ExternalLanguage.Greeting"
-    ],
-    "rules": [
         {
-            "$type": "Microsoft.IntentRule",
-            "intent": "JokeIntent",
+            "$type": "Microsoft.OnIntent",
+            "intent": "#JokeIntent",
             "actions": [
                 "ExternalLanguage.TellJoke"
             ]
         },
         {
-            "$type": "Microsoft.IntentRule",
-            "intent": "FortuneTellerIntent",
+            "$type": "Microsoft.OnIntent",
+            "intent": "#FortuneTellerIntent",
             "actions": [
                 "ExternalLanguage.FortuneTeller"
             ]
         },
         {
-            "$type": "Microsoft.IntentRule",
-            "intent": "GreetingIntent",
+            "$type": "Microsoft.OnIntent",
+            "intent": "#GreetingIntent",
             "actions": [
                 "ExternalLanguage.Greeting"
-            ]
-        },
-        {
-            "$type": "Microsoft.IntentRule",
-            "intent": "HelpIntent",
-            "actions": [
-                {
-                    "$type": "Microsoft.SendActivity",
-                    "activity": "[help]"
-                }
-            ]
-        },
-        {
-            "$type": "Microsoft.UnknownIntentRule",
-            "actions": [
-                {
-                    "$type": "Microsoft.SendActivity",
-                    "activity": "[help]"
-                }
             ]
         }
     ]

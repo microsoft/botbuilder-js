@@ -9,33 +9,36 @@
             "FortuneTellerIntent": "fortune|future"
         }
     },
-    "actions": [
+    "triggers": [
         {
-            "$type": "Microsoft.IfCondition",
-            "condition": "user.name == null",
+            "$type": "Microsoft.OnUnknownIntent",
             "actions": [
                 {
-                    "$type": "Microsoft.TextInput",
-                    "valueProperty": "user.name",
-                    "prompt": "Hello, I'm Zoidberg. What is your name?"
+                    "$type": "Microsoft.IfCondition",
+                    "condition": "user.name == null",
+                    "actions": [
+                        {
+                            "$type": "Microsoft.TextInput",
+                            "valueProperty": "user.name",
+                            "prompt": "Hello, I'm Zoidberg. What is your name?"
+                        }
+                    ]
+                },
+                {
+                    "$type": "Microsoft.SendActivity",
+                    "activity": "Hello {user.name}, nice to talk to you!"
                 }
             ]
         },
         {
-            "$type": "Microsoft.SendActivity",
-            "activity": "Hello {user.name}, nice to talk to you!"
-        }
-    ],
-    "rules": [
-        {
-            "$type": "Microsoft.IntentRule",
+            "$type": "Microsoft.OnIntent",
             "intent": "#JokeIntent",
             "actions": [
                 "BeginDialog.TellJokeDialog"
             ]
         },
         {
-            "$type": "Microsoft.IntentRule",
+            "$type": "Microsoft.OnIntent",
             "intent": "#FortuneTellerIntent",
             "actions": [
                 "BeginDialog.FortuneTellerDialog"

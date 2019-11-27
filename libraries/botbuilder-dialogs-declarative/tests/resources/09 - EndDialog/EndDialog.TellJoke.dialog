@@ -4,29 +4,32 @@
     "recognizer": {
         "$type": "Microsoft.RegexRecognizer",
         "intents": {
-            "CancelIntent": "(?i)cancel|never mind"
+            "CancelIntent": "cancel|never mind"
         }
     },
-    "actions": [
+    "triggers": [
         {
-            "$type": "Microsoft.SendActivity",
-            "activity": "Why did the chicken cross the road?"
-        },
-        {
-            "$type": "Microsoft.EndTurn"
-        },
-        {
-            "$type": "Microsoft.SendActivity",
-            "activity": "To get to the other side"
-        }
-    ],
-    "rules": [
-        {
-            "$type": "Microsoft.IntentRule",
-            "intent": "CancelIntent",
+            "$type": "Microsoft.OnUnknownIntent",
             "actions": [
                 {
-                    "$type": "Microsoft.CancelAllDialog"
+                    "$type": "Microsoft.SendActivity",
+                    "activity": "Why did the chicken cross the road?"
+                },
+                {
+                    "$type": "Microsoft.EndTurn"
+                },
+                {
+                    "$type": "Microsoft.SendActivity",
+                    "activity": "To get to the other side"
+                }
+            ]
+        },
+        {
+            "$type": "Microsoft.OnIntent",
+            "intent": "#CancelIntent",
+            "actions": [
+                {
+                    "$type": "Microsoft.CancelAllDialogs"
                 }
             ]
         }
