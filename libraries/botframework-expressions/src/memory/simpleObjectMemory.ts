@@ -19,14 +19,14 @@ export class SimpleObjectMemory implements MemoryInterface {
     }
 
     public static wrap(obj: any): MemoryInterface {
-        if(obj as MemoryInterface !== undefined) {
+        if(Extensions.isMemoryInterface(obj)) {
             return obj;
         }
 
         return new SimpleObjectMemory(obj);
     }
 
-    public getValue(path: string): { value: string; error: string } {
+    public getValue(path: string): { value: any; error: string } {
         if (this.memory === undefined) {
             return {value: undefined, error: undefined};
         }
@@ -61,7 +61,8 @@ export class SimpleObjectMemory implements MemoryInterface {
      * because we can't and shouldn't smart create structure in the middle
      * you can implement a customzied Scope that support such behavior
      */
-    public setValue(path: string, value: any): { value: string; error: string } {
+    public setValue(path: string, input: any): { value: any; error: string } {
+        let value: any;
         if (this.memory === undefined) {
             return {value: undefined, error: `Can't set value with in a null memory`};
         }
@@ -79,7 +80,7 @@ export class SimpleObjectMemory implements MemoryInterface {
                 ({value: curScope, error} = Extensions.accessIndex(curScope, idx));
             } else {
                 curPath = `.${ parts[i] }`;
-                ({value, error} = Extensions.accessProperty(curScope, parts[i]));
+                ({value: curScope, error} = Extensions.accessProperty(curScope, parts[i]));
             }
 
             if (error !== undefined) {
@@ -99,9 +100,9 @@ export class SimpleObjectMemory implements MemoryInterface {
                 if (idx > curScope.length) {
                     error = `${ idx } index out of range`;
                 } else if(idx === curScope.length) {
-                    curScope.push(value);
+                    curScope.push(input);
                 } else {
-                    curScope[idx] = value;
+                    curScope[idx] = input;
                 }
             } else {
                 error = `set value for an index to a non-list object`;
@@ -112,14 +113,14 @@ export class SimpleObjectMemory implements MemoryInterface {
             }
         } else {
             let _: any;
-            ({value: _, error} = Extensions.setProperty(curScope,parts[parts.length - 1], value));
+            ({value: _, error} = Extensions.setProperty(curScope,parts[parts.length - 1], input));
             if (error !== undefined) {
                 return {value: undefined, error: `Can set value to path: '${ path }', reason: ${ error }`}
             }
         }
 
         this.versionNumber++;
-        return {value, error: undefined};
+        return {value: input, error: undefined};
     }
 
     public  version(): string {

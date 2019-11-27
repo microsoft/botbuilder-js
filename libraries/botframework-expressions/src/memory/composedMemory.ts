@@ -16,7 +16,7 @@ export class ComposedMemory implements MemoryInterface {
         this.memoryMap = memoryMap;
     }
 
-    public getValue(path: string): { value: string; error: string } {
+    public getValue(path: string): { value: any; error: string } {
         const prefix: string = path.split('.')[0];
         if (this.memoryMap.has(prefix)) {
             return this.memoryMap.get(prefix).getValue(path.substr(prefix.length + 1));
@@ -24,7 +24,7 @@ export class ComposedMemory implements MemoryInterface {
         return {value: undefined, error: `path not exists at ${ path }`};
     }
 
-    public setValue(_path: string, _value: any): { value: string; error: string } {
+    public setValue(_path: string, _value: any): { value: any; error: string } {
         throw new Error('Method not implemented.');
     }
 

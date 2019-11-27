@@ -352,7 +352,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             throw new Error(`Error occurs when evaluating expression '${ exp }': ${ exp } is evaluated to null`);
         }
 
-        if (result instanceof Array) {
+        if (Array.isArray(result)) {
             return result;
         } else {
             return [result.toString()];

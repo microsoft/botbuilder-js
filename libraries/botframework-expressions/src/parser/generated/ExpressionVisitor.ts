@@ -1,10 +1,3 @@
-/**
- * @module botframework-expressions
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
 // Generated from ../Expression.g4 by ANTLR 4.6-SNAPSHOT
 
 
@@ -12,13 +5,11 @@ import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
 import { FuncInvokeExpContext } from "./ExpressionParser";
 import { IdAtomContext } from "./ExpressionParser";
-import { ShorthandAccessorExpContext } from "./ExpressionParser";
 import { StringAtomContext } from "./ExpressionParser";
 import { IndexAccessExpContext } from "./ExpressionParser";
 import { MemberAccessExpContext } from "./ExpressionParser";
 import { ParenthesisExpContext } from "./ExpressionParser";
 import { NumericAtomContext } from "./ExpressionParser";
-import { ShorthandAtomContext } from "./ExpressionParser";
 import { UnaryOpExpContext } from "./ExpressionParser";
 import { BinaryOpExpContext } from "./ExpressionParser";
 import { PrimaryExpContext } from "./ExpressionParser";
@@ -51,14 +42,6 @@ export interface ExpressionVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitIdAtom?: (ctx: IdAtomContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `shorthandAccessorExp`
-	 * labeled alternative in `ExpressionParser.primaryExpression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitShorthandAccessorExp?: (ctx: ShorthandAccessorExpContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `stringAtom`
@@ -99,14 +82,6 @@ export interface ExpressionVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitNumericAtom?: (ctx: NumericAtomContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `shorthandAtom`
-	 * labeled alternative in `ExpressionParser.primaryExpression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitShorthandAtom?: (ctx: ShorthandAtomContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `unaryOpExp`

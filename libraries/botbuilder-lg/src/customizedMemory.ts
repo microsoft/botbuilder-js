@@ -18,7 +18,7 @@ export class CustomizedMemory implements MemoryInterface {
         this.localMemory = undefined;
     }
 
-    public getValue(path: string): { value: string; error: string } {
+    public getValue(path: string): { value: any; error: string } {
         let value: any;
         let error = '';
         if (this.localMemory !== undefined) {
@@ -35,7 +35,7 @@ export class CustomizedMemory implements MemoryInterface {
         }
     }
 
-    public setValue(_path: string, _value: any): { value: string; error: string } {
+    public setValue(_path: string, _value: any): { value: any; error: string } {
         return {value: undefined, error: `LG memory are readonly`};
     }
 

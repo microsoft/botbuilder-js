@@ -8,10 +8,9 @@ const invalidExpressions = [
     'a+b*',
     'fun(a, b, c',
     'func(A,b,b,)',
-    'a.#title',
     '"hello\'',
     'user.lists.{dialog.listName}',
-    'a===a'
+    '\'hello\'.length()'
 ];
 
 const badExpressions =
@@ -327,15 +326,8 @@ const badExpressions =
       'jPath(hello, \'.key\')', //bad json
       'jPath(json(\'{"key1":"value1","key2":"value2"}\'), \'getTotal\')', //bad path
 
-
-      // Short Hand Expression
-      '%.xxx', // not supported shorthand pattern
-      '@[city]', // city is not provided.
-      '@[0]', // entities is not a collection.
-
       // Memory access test
       'getProperty(bag, 1)',// second param should be string
-      'bag[1]',// first param should be string
       'Accessor(1)',// first param should be string
       'Accessor(bag, 1)', // second should be object
       'one[0]',  // one is not list
@@ -349,7 +341,6 @@ const badExpressions =
       'isMatch(\'abC\', \'^[a-z+$\')',// bad regular expression
 
       // SetPathToValue tests
-      'setPathToValue(@foo, 3)', // Cannot set simple entities
       'setPathToValue(2+3, 4)', // Not a real path
       'setPathToValue(a)' // Missing value
   ];

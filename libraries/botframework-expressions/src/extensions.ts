@@ -9,6 +9,7 @@
 import { Constant } from './constant';
 import { Expression, ReturnType } from './expression';
 import { ExpressionType } from './expressionType';
+import { MemoryInterface } from './memory';
 
 /**
  * Some util and extension functions
@@ -41,6 +42,10 @@ export class Extensions {
         });
 
         return Array.from(filteredReferences);
+    }
+
+    public static isMemoryInterface(object: any): object is MemoryInterface {
+        return 'getValue' in object && 'getValue' in object && 'version' in object ;
     }
 
     /**
@@ -143,7 +148,7 @@ export class Extensions {
      * @param value Value to set.
      * @returns set value.
      */
-    public static setProperty(instance: any, property: string, value: any): any {
+    public static setProperty(instance: any, property: string, value: any): { value: any; error: string } {
         const result: any = value;
         if (instance instanceof Map) {
             instance.set(property, value);
@@ -151,7 +156,7 @@ export class Extensions {
             instance[property] = value;
         }
 
-        return result;
+        return {value: result, error: undefined};
     }
 
     /**
@@ -170,7 +175,7 @@ export class Extensions {
         let error: string;
 
         let count = -1;
-        if (instance instanceof Array) {
+        if (Array.isArray(instance)) {
             count = (instance).length;
         } else if (instance instanceof Map) {
             count = (instance as Map<string, any>).size;

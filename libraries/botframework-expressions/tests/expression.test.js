@@ -144,10 +144,6 @@ const dataSource = [
     ['lastIndexOf(newGuid(), \'-\')', 23],
     ['lastIndexOf(newGuid(), \'-\')', 23],
     ['lastIndexOf(hello, \'-\')', -1],
-    ['sortBy(items)', ['one', 'two', 'zero']],
-    ['sortBy(nestedItems, \'x\')[0].x', 1],
-    ['sortByDescending(items)', ['zero', 'two', 'one']],
-    ['sortByDescending(nestedItems, \'x\')[0].x', 3],
 
     // Logical comparison functions tests
     ['and(1 == 1, 1 < 2, 1 > 2)', false],
@@ -384,6 +380,10 @@ const dataSource = [
     ['subArray(createArray(\'a\', \'b\', \'c\', \'d\'), 1)', ['b', 'c', 'd']],
     ['range(1, 4)', [1, 2, 3, 4]],
     ['range(-1, 3)', [-1, 0, 1]],
+    ['sortBy(items)', ['one', 'two', 'zero']],
+    ['sortBy(nestedItems, \'x\')[0].x', 1],
+    ['sortByDescending(items)', ['zero', 'two', 'one']],
+    ['sortByDescending(nestedItems, \'x\')[0].x', 3],
 
     // Object manipulation and construction functions tests
     ['string(addProperty(json(\'{"key1":"value1"}\'), \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
@@ -393,51 +393,16 @@ const dataSource = [
     ['jPath(jsonStr, pathStr )', ['Jazz', 'Accord']],
     ['jPath(jsonStr, \'.automobiles[0].maker\' )', ['Nissan']],
 
-    // Short hand expression tests
-    ['@city == \'Bellevue\'', false, ['turn.recognized.entities.city']],
-    ['@city', 'Seattle', ['turn.recognized.entities.city']],
-    ['@city == \'Seattle\'', true, ['turn.recognized.entities.city']],
-    ['@ordinal[1]', '2', ['turn.recognized.entities.ordinal']],
-    ['@[\'city\']', 'Seattle', ['turn.recognized.entities.city']],
-    ['@[concat(\'cit\', \'y\')]', 'Seattle', ['turn.recognized.entities']],
-    ['@[concat(cit, y)]', 'Seattle', ['turn.recognized.entities','cit','y']],
-    ['#BookFlight == \'BookFlight\'', true, ['turn.recognized.intents.BookFlight']],
-    ['#BookHotel[1].Where', 'Kirkland', ['turn.recognized.intents.BookHotel[1].Where']],
-    ['exists(#BookFlight)', true, ['turn.recognized.intents.BookFlight']],
-    ['$title', 'Dialog Title', ['dialog.title']],
-    ['$subTitle', 'Dialog Sub Title', ['dialog.subTitle']],
-    ['~xxx', 'instance', ['dialog.instance.xxx']],
-    ['~[\'yyy\'].instanceY', 'instanceY', ['dialog.instance.yyy.instanceY']],
-    ['%xxx', 'options', ['dialog.options.xxx']],
-    ['%[\'xxx\']', 'options', ['dialog.options.xxx']],
-    ['%yyy[1]', 'optionY2', ['dialog.options.yyy[1]']],
-    ['^x', 3],
-    ['^y', 2],
-    ['^z', 1],
-    ['count(@@CompositeList1) == 1 && count(@@CompositeList1[0]) == 1', true, ['turn.recognized.entities.CompositeList1', 'turn.recognized.entities.CompositeList1[0]']],
-    ['count(@CompositeList2) == 2 && (@CompositeList2)[0] == \'firstItem\'', true, ['turn.recognized.entities.CompositeList2']],
-
     // Memory access tests
     ['getProperty(bag, concat(\'na\',\'me\'))', 'mybag'],
-    ['getProperty(bag, \'Name\')', 'mybag'],
-    ['getProperty(bag.set, \'FOUR\')', 4.0],
     ['items[2]', 'two', ['items[2]']],
     ['bag.list[bag.index - 2]', 'blue', ['bag.list', 'bag.index']],
     ['items[nestedItems[1].x]', 'two', ['items', 'nestedItems[1].x']],
     ['bag[\'name\']', 'mybag'],
     ['bag[substring(concat(\'na\',\'me\',\'more\'), 0, length(\'name\'))]', 'mybag'],
-    ['bag[\'NAME\']', 'mybag'],
-    ['bag.set[concat(\'Fo\', \'UR\')]', 4.0],
+    ['items[1+1]', 'two'],
     ['getProperty(undefined, \'p\')', undefined],
     ['(getProperty(undefined, \'p\'))[1]', undefined],
-
-    // Dialog tests
-    ['user.lists.todo[int(@ordinal[0]) - 1] != null', true],
-    ['user.lists.todo[int(@ordinal[0]) + 3] != null', false],
-    ['count(user.lists.todo) > int(@ordinal[0])', true],
-    ['count(user.lists.todo) >= int(@ordinal[0])', true],
-    ['user.lists.todo[int(@ordinal[0]) - 1]', 'todo1'],
-    ['user.lists[user.listType][int(@ordinal[0]) - 1]', 'todo1'],
 
     // regex test
     ['isMatch(\'abc\', \'^[ab]+$\')', false], // simple character classes ([abc]), "+" (one or more)
@@ -485,6 +450,9 @@ const dataSource = [
 ];
 
 const scope = {
+    path: {
+        array: [1]
+    },
     one: 1.0,
     two: 2.0,
     hello: 'hello',
@@ -560,13 +528,7 @@ const scope = {
       options: { xxx: 'options',  yyy : ['optionY1', 'optionY2' ] },
       title: 'Dialog Title',
       subTitle: 'Dialog Sub Title'
-  },
-    callstack:
-  [
-      { x: 3 },
-      { x: 2, y: 2 },
-      { x: 1, y: 1, z: 1 }
-  ]
+  }
 };
 
 describe('expression functional test', () => {
@@ -582,7 +544,7 @@ describe('expression functional test', () => {
             const expected = data[1];
 
             //Assert Object Equals
-            if (actual instanceof Array && expected instanceof Array) {
+            if (Array.isArray(actual) && Array.isArray(expected)) {
                 const [isSuccess, errorMessage] = isArraySame(actual, expected);
                 if (!isSuccess) {
                     assert.fail(errorMessage);

@@ -752,7 +752,7 @@ export class BuiltInFunctions {
         let path: string;
         let left: Expression;
         let error: string;
-        ({path, left, error} = this.tryAccumulatePath(expression, state));
+        ({path, left, error} = BuiltInFunctions.tryAccumulatePath(expression, state));
         if (error !== undefined) {
             return {value: undefined, error};
         }
@@ -877,7 +877,7 @@ export class BuiltInFunctions {
         let path: string;
         let left: Expression;
         let error: string;
-        ({path, left, error} = this.tryAccumulatePath(expression.children[0], state));
+        ({path, left, error} = BuiltInFunctions.tryAccumulatePath(expression.children[0], state));
         if (error !== undefined) {
             return {value: undefined, error};
         }
@@ -1618,33 +1618,6 @@ export class BuiltInFunctions {
         }
 
         return {value: result, error};
-    }
-
-    private static callstack(expression: Expression, state: any): { value: any; error: string } {
-        let result: any =  state;
-        let error: string;
-
-        // get collection
-        ({ value: result, error} = Extensions.accessProperty(state, 'callstack'));
-        if (result !== undefined) {
-            const items: any[] = result as any[];
-            let property: any;
-            ({value: property, error} = expression.children[0].tryEvaluate(state));
-            if (property !== undefined && error === undefined) {
-                for (const item of items) {
-                    // get property off of item
-                    ({ value: result, error } = Extensions.accessProperty(item, property.toString()));
-
-                    // if not null
-                    if (error === undefined && result !== undefined) {
-                        // return it
-                        return { value: result, error };
-                    }
-                }
-            }
-        }
-
-        return { value: undefined, error };
     }
 
     // tslint:disable-next-line: max-func-body-length
@@ -2699,23 +2672,7 @@ export class BuiltInFunctions {
                         return {value, error};
                     }),
                 ReturnType.Boolean,
-                BuiltInFunctions.validateIsMatch),
-
-            // Shorthand functions
-            new ExpressionEvaluator(ExpressionType.Callstack, this.callstack, ReturnType.Object, this.validateUnary),
-            new ExpressionEvaluator(
-                ExpressionType.SimpleEntity,
-                BuiltInFunctions.apply(
-                    (args: any []): any => {
-                        let result: any = args[0];
-                        while (Array.isArray(result) && result.length === 1) {
-                            result = result[0];
-                        }
-
-                        return result;
-                    }),
-                ReturnType.Object,
-                this.validateUnary)
+                BuiltInFunctions.validateIsMatch)
         ];
 
         const lookup: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>();

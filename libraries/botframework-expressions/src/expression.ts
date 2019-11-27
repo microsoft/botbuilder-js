@@ -11,6 +11,7 @@ import { Constant } from './constant';
 import { ExpressionEvaluator } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
 import { SimpleObjectMemory, MemoryInterface } from './memory';
+import { Extensions } from './extensions';
 
 /**
  * Type expected from evalating an expression.
@@ -111,9 +112,8 @@ export class Expression {
      * @param state
      */
     public tryEvaluate(state: MemoryInterface | any): { value: any; error: string } {
-
-        if(state as MemoryInterface === undefined) {
-            return this.evaluator.tryEvaluate(this, SimpleObjectMemory.wrap(state));
+        if(!Extensions.isMemoryInterface(state)) {
+            state = SimpleObjectMemory.wrap(state);
         }
         return this.evaluator.tryEvaluate(this, state);
     }
