@@ -5,21 +5,22 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogConfiguration, Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory } from "botbuilder-dialogs";
+import { DialogConfiguration, Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, DialogEvents } from "botbuilder-dialogs";
 import { ActivityTypes, Activity, InputHints, MessageFactory } from "botbuilder-core";
 import { ActivityProperty } from "../activityProperty";
 import { ExpressionPropertyValue, ExpressionProperty } from "../expressionProperty";
+import { AdaptiveEventNames } from "../sequenceContext";
 
-export type PromptType = string|Partial<Activity>;
+export type PromptType = string | Partial<Activity>;
 
 export interface InputDialogConfiguration extends DialogConfiguration {
-    allowInterruptions?: boolean;
+    allowInterruptions?: ExpressionPropertyValue<any>;
     alwaysPrompt?: boolean;
     value?: ExpressionPropertyValue<any>;
     prompt?: PromptType;
     unrecognizedPrompt?: PromptType;
     invalidPrompt?: PromptType;
-    valueProperty?: string;
+    property?: string;
     validations?: ExpressionPropertyValue<boolean>[];
     maxTurnCount?: number;
     defaultValue?: ExpressionPropertyValue<any>;
@@ -41,7 +42,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
     static VALUE_PROPERTY = 'this.value';
     static TURN_COUNT_PROPERTY = 'this.turnCount';
 
-    public allowInterruptions = true;
+    public allowInterruptions?: ExpressionProperty<any>;
 
     public alwaysPrompt = false;
 
@@ -70,13 +71,13 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
 
     /**
      * (Optional) data binds the called dialogs input & output to the given property.
-     * 
+     *
      * @remarks
-     * The bound properties current value will be passed to the called dialog as part of its 
+     * The bound properties current value will be passed to the called dialog as part of its
      * options and will be accessible within the dialog via `dialog.options.value`. The result
      * returned from the called dialog will then be copied to the bound property.
      */
-    public valueProperty: string;
+    public property: string;
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Initialize and persist options
@@ -85,8 +86,8 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
 
         // Initialize turn count & input
         dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, 0);
-        if (this.valueProperty) {
-            dc.state.setValue(InputDialog.VALUE_PROPERTY, dc.state.getValue(this.valueProperty));
+        if (this.property) {
+            dc.state.setValue(InputDialog.VALUE_PROPERTY, dc.state.getValue(this.property));
         }
 
         // Recognize input
@@ -94,7 +95,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         if (state == InputState.valid) {
             // Return input
             const value = dc.state.getValue(InputDialog.VALUE_PROPERTY);
-            if (this.valueProperty) { dc.state.setValue(this.valueProperty, value) }
+            if (this.property) { dc.state.setValue(this.property, value) }
             return await dc.endDialog(value);
         } else {
             // Prompt user
@@ -125,7 +126,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         if (state == InputState.valid) {
             // Return input
             const value = dc.state.getValue(InputDialog.VALUE_PROPERTY);
-            if (this.valueProperty) { dc.state.setValue(this.valueProperty, value) }
+            if (this.property) { dc.state.setValue(this.property, value) }
             return await dc.endDialog(value);
         } else if (this.maxTurnCount == undefined || turnCount < this.maxTurnCount) {
             // Prompt user
@@ -148,7 +149,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
     }
 
     public configure(config: InputDialogConfiguration): this {
-        for(const key in config) {
+        for (const key in config) {
             if (config.hasOwnProperty(key)) {
                 const value = config[key];
                 switch (key) {
@@ -179,15 +180,14 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
     }
 
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
-        if (event.name == 'activityReceived' && dc.context.activity.type == ActivityTypes.Message) {
+        if (event.name === DialogEvents.activityReceived && dc.context.activity.type === ActivityTypes.Message) {
+            dc.parent.emitEvent(AdaptiveEventNames.recognizeUtterance, dc.context.activity, false);
+            let canInterrupt: boolean = true;
             if (this.allowInterruptions) {
-                // By default we'll intercept ActivityReceived if we recognize the users input.
-                const state = await this.recognizeInput(dc, true);
-                return state == InputState.valid;
-            } else {
-                // Stop propagation if we don't allow interruptions.
-                return true;
+                const { value, error } = this.allowInterruptions.evaluate(this.id, dc.state);
+                canInterrupt = error === null && value !== null && value as boolean;
             }
+            return !canInterrupt;
         }
 
         return false;
@@ -218,7 +218,7 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         }
 
         return this.prompt.format(dc);
-    } 
+    }
 
     protected getDefaultInput(dc: DialogContext): any {
         const text = dc.context.activity.text;
@@ -281,8 +281,8 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
             clone.attachments = msg.attachments;
         }
 
-        if (!clone.inputHint) { 
-            clone.inputHint = InputHints.ExpectingInput; 
+        if (!clone.inputHint) {
+            clone.inputHint = InputHints.ExpectingInput;
         }
 
         return clone;

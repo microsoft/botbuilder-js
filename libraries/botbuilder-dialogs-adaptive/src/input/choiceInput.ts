@@ -12,7 +12,7 @@ import { ExpressionPropertyValue, ExpressionProperty } from "../expressionProper
 
 export interface ChoiceInputConfiguration extends InputDialogConfiguration {
     outputFormat?: ChoiceOutputFormat;
-    choices?: ChoiceList|ExpressionPropertyValue<ChoiceList>;
+    choices?: ChoiceList | ExpressionPropertyValue<ChoiceList>;
     appendChoices?: boolean;
     defaultLocale?: string;
     style?: ListStyle;
@@ -29,7 +29,7 @@ export interface ChoiceInputOptions extends InputDialogOptions {
     choices: ChoiceList;
 }
 
-export type ChoiceList = (string|Choice)[];
+export type ChoiceList = (string | Choice)[];
 
 export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
     /**
@@ -75,19 +75,19 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
     public recognizerOptions?: FindChoicesOptions;
 
     constructor();
-    constructor(valueProperty: string, prompt: PromptType, choices: ChoiceList|ExpressionPropertyValue<ChoiceList>);
-    constructor(valueProperty: string, value: ExpressionPropertyValue<any>, prompt: PromptType, choices: ChoiceList|ExpressionPropertyValue<ChoiceList>);
-    constructor(valueProperty?: string, value?: ExpressionPropertyValue<any>|PromptType, prompt?: PromptType|ChoiceList|ExpressionPropertyValue<ChoiceList>, choices?: ChoiceList|ExpressionPropertyValue<ChoiceList>) {
+    constructor(property: string, prompt: PromptType, choices: ChoiceList | ExpressionPropertyValue<ChoiceList>);
+    constructor(property: string, value: ExpressionPropertyValue<any>, prompt: PromptType, choices: ChoiceList | ExpressionPropertyValue<ChoiceList>);
+    constructor(property?: string, value?: ExpressionPropertyValue<any> | PromptType, prompt?: PromptType | ChoiceList | ExpressionPropertyValue<ChoiceList>, choices?: ChoiceList | ExpressionPropertyValue<ChoiceList>) {
         super();
-        if (valueProperty) {
-            if(choices == undefined) {
-                choices = prompt as ChoiceList|ExpressionPropertyValue<any[]>;
+        if (property) {
+            if (choices == undefined) {
+                choices = prompt as ChoiceList | ExpressionPropertyValue<any[]>;
                 prompt = value;
                 value = undefined;
             }
 
             // Initialize properties
-            this.valueProperty = valueProperty;
+            this.property = property;
             if (value !== undefined) { this.value = new ExpressionProperty(value as any) }
             this.prompt.value = prompt as PromptType;
 
@@ -98,7 +98,7 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
     }
 
     public configure(config: ChoiceInputConfiguration): this {
-        for(const key in config) {
+        for (const key in config) {
             if (config.hasOwnProperty(key)) {
                 const value = config[key];
                 switch (key) {
@@ -138,7 +138,7 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
         }
         return super.onInitializeOptions(dc, options);
     }
-    
+
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
         // Get input and options
         let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();

@@ -22,18 +22,18 @@ export enum AttachmentOutputFormat {
 export class AttachmentInput extends InputDialog<InputDialogOptions> {
 
     public outputFormat = AttachmentOutputFormat.first;
-    
+
     constructor();
-    constructor(valueProperty: string, prompt: PromptType);
-    constructor(valueProperty: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
-    constructor(valueProperty?: string, value?: ExpressionPropertyValue<any>|PromptType, prompt?: PromptType) {
+    constructor(property: string, prompt: PromptType);
+    constructor(property: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
+    constructor(property?: string, value?: ExpressionPropertyValue<any> | PromptType, prompt?: PromptType) {
         super();
-        if (valueProperty) {
-            if(!prompt) {
+        if (property) {
+            if (!prompt) {
                 prompt = value as PromptType;
                 value = undefined;
             }
-            this.valueProperty = valueProperty;
+            this.property = property;
             if (value !== undefined) { this.value = new ExpressionProperty(value as any) }
             this.prompt.value = prompt;
         }
@@ -51,10 +51,10 @@ export class AttachmentInput extends InputDialog<InputDialogOptions> {
         const attachments = dc.context.activity.attachments;
         return Array.isArray(attachments) && attachments.length > 0 ? attachments : undefined;
     }
-    
+
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
         // Recognize input and filter out non-attachments
-        let input: Attachment|Attachment[] = dc.state.getValue(InputDialog.VALUE_PROPERTY);
+        let input: Attachment | Attachment[] = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         const attachments = Array.isArray(input) ? input : [input];
         const first = attachments.length > 0 ? attachments[0] : undefined;
         if (typeof first != 'object' || (!first.contentUrl && !first.content)) {
