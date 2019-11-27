@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 
 describe('TypeLoader', function () {
-    this.timeout(500000);
+    this.timeout(5000);
 
     it('TypeLoader TextPrompt: simple textprompt dialog should prompt for text', async function () {
         const adapter = await declarativeTestCase('00 - TextPrompt/SimplePrompt.main.dialog', null);
