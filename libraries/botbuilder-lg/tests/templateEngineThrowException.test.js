@@ -6,48 +6,49 @@ function GetExampleFilePath(fileName){
 }
 
 const StaticCheckExceptionData  = [
-    "ErrorTemplateParameters.lg",
-    "NoNormalTemplateBody.lg",
-    "ConditionFormatError.lg",
-    "NoTemplateRef.lg",
-    "TemplateParamsNotMatchArgsNum.lg",
-    "ErrorSeperateChar.lg",
-    "ErrorSeperateChar2.lg",
-    "MultilineVariation.lg",
-    "InvalidTemplateName.lg",
-    "InvalidTemplateName2.lg",
-    "DuplicatedTemplates.lg",
-    "LgTemplateFunctionError.lg",
-    "SwitchCaseFormatError.lg",
-    "InvalidLGFileImportPath.lg",
-    "DuplicatedTemplatesInImportFiles.lg",
-    "ErrorStructuredTemplate.lg"
-    ];
+    'MultilineVariation.lg',
+    'ErrorTemplateParameters.lg',
+    'NoNormalTemplateBody.lg',
+    'ConditionFormatError.lg',
+    'NoTemplateRef.lg',
+    'TemplateParamsNotMatchArgsNum.lg',
+    'ErrorSeperateChar.lg',
+    'ErrorSeperateChar2.lg',
+    'MultilineVariation.lg',
+    'InvalidTemplateName.lg',
+    'InvalidTemplateName2.lg',
+    'DuplicatedTemplates.lg',
+    'LgTemplateFunctionError.lg',
+    'SwitchCaseFormatError.lg',
+    'InvalidLGFileImportPath.lg',
+    'DuplicatedTemplatesInImportFiles.lg',
+    'ErrorStructuredTemplate.lg'
+];
 
 const StaticCheckWariningData  = [
-    "EmptyLGFile.lg",
-    "OnlyNoMatchRule.lg",
-    "NoMatchRule.lg",
-    "SwitchCaseWarning.lg",
-    "EmptyTemplate.lg",
+    'EmptyLGFile.lg',
+    'OnlyNoMatchRule.lg',
+    'NoMatchRule.lg',
+    'SwitchCaseWarning.lg',
+    'EmptyTemplate.lg',
 ];
 
 const AnalyzerExceptionData   = [
-    ["LoopDetected.lg","NotExistTemplateName"],
-    ["LoopDetected.lg","wPhrase"],
+    ['LoopDetected.lg','NotExistTemplateName'],
+    ['LoopDetected.lg','wPhrase'],
 ];
 
 
 const EvaluatorExceptionData    = [
-    ["ErrorExpression.lg","template1"],
-    ["LoopDetected.lg","wPhrase"],
-    ["LoopDetected.lg","NotExistTemplate"],
+    ['ErrorExpression.lg','template1'],
+    ['LoopDetected.lg','wPhrase'],
+    ['LoopDetected.lg','NotExistTemplate'],
 ];
 
 
-describe('LGExceptionTest', function () {
+describe('LGExceptionTest', function() {
     
-    it('WariningTest', function () {
+    it('WariningTest', function() {
         for (const testDateItem of StaticCheckWariningData ) {
             var engine = new TemplateEngine().addFile(GetExampleFilePath(testDateItem));
             var report = new StaticChecker().checkTemplates(engine.templates);
@@ -56,7 +57,7 @@ describe('LGExceptionTest', function () {
         }
     });
 
-    it('ThrowExceptionTest', function () {
+    it('ThrowExceptionTest', function() {
         for (const testDateItem of StaticCheckExceptionData ) {
             var isFail = false;
             try {
@@ -67,28 +68,28 @@ describe('LGExceptionTest', function () {
             }
 
             if (isFail) {
-                assert.fail("should throw error.");
+                assert.fail('should throw error.');
             }    
         }
     });
 
-    it('AnalyzerThrowExceptionTest', function () {
+    it('AnalyzerThrowExceptionTest', function() {
         for (const testDateItem of AnalyzerExceptionData ) {
             var isFail = false;
-            var errorMessage = "";
+            var errorMessage = '';
             var engine;
             try {
                 engine = new TemplateEngine().addFile(GetExampleFilePath(testDateItem[0]));
             } catch (e) {
                 isFail = true;
-                errorMessage = "error occurs when parsing file";
+                errorMessage = 'error occurs when parsing file';
             }
 
             if(!isFail) {
                 try {
                     engine.AnalyzeTemplate(testDateItem[1]);
                     isFail = true;
-                    errorMessage = "No exception is thrown.";
+                    errorMessage = 'No exception is thrown.';
                 } catch (e) {
                     errorMessage = e.message;
                 }
@@ -100,23 +101,23 @@ describe('LGExceptionTest', function () {
         }
     });
     
-    it('EvaluatorThrowExceptionTest', function () {
+    it('EvaluatorThrowExceptionTest', function() {
         for (const testDateItem of EvaluatorExceptionData ) {
             var isFail = false;
-            var errorMessage = "";
+            var errorMessage = '';
             var engine;
             try {
                 engine = new TemplateEngine().addFile(GetExampleFilePath(testDateItem[0]));
             } catch (e) {
                 isFail = true;
-                errorMessage = "error occurs when parsing file";
+                errorMessage = 'error occurs when parsing file';
             }
 
             if(!isFail) {
                 try {
                     engine.EvaluateTemplate(testDateItem[1]);
                     isFail = true;
-                    errorMessage = "No exception is thrown.";
+                    errorMessage = 'No exception is thrown.';
                 } catch (e) {
                     errorMessage = e.message;
                 }
@@ -129,6 +130,6 @@ describe('LGExceptionTest', function () {
     });
 
     it('AddTextWithWrongId', function() {
-        assert.throws(() => { new TemplateEngine().addText("# t \n - hi", "a.lg"); }, Error);
+        assert.throws(() => { new TemplateEngine().addText('# t \n - hi', 'a.lg'); }, Error);
     });
 });

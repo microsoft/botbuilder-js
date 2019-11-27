@@ -92,4 +92,8 @@ export class LGTemplate {
 
         return result;
     }
+
+    public toString(): string {
+        return `[${ this.name }(${ this.parameters.join(', ') })]"${ this.body }"`;
+    }
 }

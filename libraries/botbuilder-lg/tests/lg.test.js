@@ -70,9 +70,6 @@ describe('LG', function() {
         let evaled1 = engine.evaluateTemplate('greetInAWeek', { day: 'Saturday' });
         assert.strictEqual(evaled1 === 'Happy Saturday!', true, `Evaled is ${ evaled1 }`);
 
-        let evaled2 = engine.evaluateTemplate('greetInAWeek', { day: 'Sunday' });
-        assert.strictEqual(evaled2 === 'Happy Sunday!', true, `Evaled is ${ evaled2 }`);
-
         let evaled3 = engine.evaluateTemplate('greetInAWeek', { day: 'Monday' });
         assert.strictEqual(evaled3 === 'Work Hard!', true, `Evaled is ${ evaled3 }`);
     });
@@ -198,12 +195,6 @@ describe('LG', function() {
         var scope = { time: 'morning', name: 'Dong Lei' };
         var evaled1 = engine.evaluateTemplate('Hello', scope);
         assert.strictEqual(evaled1, 'Good morning Dong Lei', `Evaled is ${ evaled1 }`);
-
-        var evaled2 = engine.evaluateTemplate('Hello2', scope);
-        assert.strictEqual(evaled2, 'Good morning Dong Lei', `Evaled is ${ evaled2 }`);
-
-        var evaled3 = engine.evaluateTemplate('Hello3', scope);
-        assert.strictEqual(evaled3, 'Good morning Dong Lei', `Evaled is ${ evaled3 }`);
     });
 
     it('TestEscapeCharacter', function() {
@@ -288,6 +279,25 @@ describe('LG', function() {
         assert.strictEqual(options.includes(evaled), true);
     });
 
+    it('TestTemplateAsFunction', function() {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath('TemplateAsFunction.lg'));
+
+        var evaled = engine.evaluateTemplate('Test2');
+        assert.strictEqual(evaled, 'hello world', `Evaled is ${ evaled }`);
+
+        evaled = engine.evaluateTemplate('Test3');
+        assert.strictEqual(evaled, 'hello world', `Evaled is ${ evaled }`);
+
+        evaled = engine.evaluateTemplate('Test4');
+        assert.strictEqual(evaled.trim(), 'hello world', `Evaled is ${ evaled }`);
+
+        evaled = engine.evaluateTemplate('dupNameWithTemplate');
+        assert.strictEqual(evaled, 'calculate length of ms by user\'s template', `Evaled is ${ evaled }`);
+
+        evaled = engine.evaluateTemplate('dupNameWithBuiltinFunc');
+        assert.strictEqual(evaled, 2, `Evaled is ${ evaled }`);
+    });
+
     it('TestAnalyzelgTemplateFunction', function() {
         var engine = new TemplateEngine().addFile(GetExampleFilePath('lgTemplate.lg'));
         var evaled = engine.analyzeTemplate('TemplateD');
@@ -368,6 +378,18 @@ describe('LG', function() {
         assert.strictEqual(options3.includes(evaled), true, `Evaled is ${ evaled }`);
     });
 
+    it('TestRegex', function() {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath('Regex.lg'));
+        var evaled = engine.evaluateTemplate('wPhrase');
+        assert.strictEqual(evaled, 'Hi');
+
+        var evaled = engine.evaluateTemplate('wPhrase', {name: 'jack'});
+        assert.strictEqual(evaled, 'Hi jack');
+
+        var evaled = engine.evaluateTemplate('wPhrase', {name: 'morethanfive'});
+        assert.strictEqual(evaled, 'Hi');
+    });
+
     it('TestLgFileImportMultipleTimes', function() {
         let engine = new TemplateEngine().addFiles([GetExampleFilePath('importExamples/import.lg'), GetExampleFilePath('importExamples/import2.lg')]);
 
@@ -413,17 +435,106 @@ describe('LG', function() {
             assert.strictEqual(e.message.includes('Dup definitions found for template wPhrase'), true);
         }
     });
-    
-    it('TestRegex', function() {
-        var engine = new TemplateEngine().addFile(GetExampleFilePath('Regex.lg'));
-        var evaled = engine.evaluateTemplate('wPhrase');
-        assert.strictEqual(evaled, 'Hi');
 
-        var evaled = engine.evaluateTemplate('wPhrase', {name: 'jack'});
-        assert.strictEqual(evaled, 'Hi jack');
+    it('TestExpandTemplate', function() {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath('Expand.lg'));
+        
+        // without scope
+        var evaled = engine.expandTemplate('FinalGreeting');
+        assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
+        let expectedResults = ['Hi Morning', 'Hi Evening', 'Hello Morning', 'Hello Evening'];
+        expectedResults.forEach(x => assert(evaled.includes(x)));
 
-        var evaled = engine.evaluateTemplate('wPhrase', {name: 'morethanfive'});
-        assert.strictEqual(evaled, 'Hi');
+        // with scope
+        var evaled = engine.expandTemplate('TimeOfDayWithCondition', { time: 'evening'});
+        assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
+        let expectedResults = ['Hi Evening', 'Hello Evening'];
+        expectedResults.forEach(x => assert(evaled.includes(x)));
+
+        // with scope
+        var evaled = engine.expandTemplate('greetInAWeek', {day:'Sunday'});
+        assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
+        let expectedResults = ['Nice Sunday!', 'Happy Sunday!'];
+        expectedResults.forEach(x => assert(evaled.includes(x)));
+    });
+
+    it('TestExpandTemplateWithRef', function() {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath('Expand.lg'));
+        
+        const alarms = [
+            {
+                time: '7 am',
+                date: 'tomorrow'
+            },
+            {
+                time: '8 pm',
+                date: 'tomorrow'
+            }
+        ];
+        
+        var evaled = engine.expandTemplate('ShowAlarmsWithLgTemplate', {alarms});
+        assert.strictEqual(evaled.length, 2, `Evaled is ${ evaled }`);
+        assert.strictEqual(evaled[0], 'You have 2 alarms, they are 8 pm at tomorrow', `Evaled is ${ evaled }`);
+        assert.strictEqual(evaled[1], 'You have 2 alarms, they are 8 pm of tomorrow', `Evaled is ${ evaled }`);
+    });
+
+    it('TestExpandTemplateWithRefInMultiLine', function() {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath('Expand.lg'));
+        
+        const alarms = [
+            {
+                time: '7 am',
+                date: 'tomorrow'
+            },
+            {
+                time: '8 pm',
+                date: 'tomorrow'
+            }
+        ];
+        
+        var evaled = engine.expandTemplate('ShowAlarmsWithMultiLine', {alarms});
+        assert.strictEqual(evaled.length, 2, `Evaled is ${ evaled }`);
+        const eval1Options = ['\r\nYou have 2 alarms.\r\nThey are 8 pm at tomorrow\r\n', '\nYou have 2 alarms.\nThey are 8 pm at tomorrow\n'];
+        const eval2Options = ['\r\nYou have 2 alarms.\r\nThey are 8 pm of tomorrow\r\n', '\nYou have 2 alarms.\nThey are 8 pm of tomorrow\n'];
+        assert(eval1Options.includes(evaled[0]));
+        assert(eval2Options.includes(evaled[1]));
+    });
+
+    it('TestExpandTemplateWithFunction', function() {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath('Expand.lg'));
+        
+        const alarms = [
+            {
+                time: '7 am',
+                date: 'tomorrow'
+            },
+            {
+                time: '8 pm',
+                date: 'tomorrow'
+            }
+        ];
+        
+        var evaled = engine.expandTemplate('ShowAlarmsWithForeach', {alarms});
+        assert.strictEqual(evaled.length, 1, `Evaled is ${ evaled }`);
+        const evalOptions = [
+            'You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow',
+            'You have 2 alarms, 7 am at tomorrow and 8 pm of tomorrow',
+            'You have 2 alarms, 7 am of tomorrow and 8 pm at tomorrow',
+            'You have 2 alarms, 7 am of tomorrow and 8 pm of tomorrow'
+        ];
+        assert(evalOptions.includes(evaled[0]));
+
+        evaled = engine.expandTemplate('T2');
+        assert.strictEqual(evaled.length, 1, `Evaled is ${ evaled }`);
+        assert(evaled[0] === '3' || evaled[0] === '5');
+
+        evaled = engine.expandTemplate('T3');
+        assert.strictEqual(evaled.length, 1, `Evaled is ${ evaled }`);
+        assert(evaled[0] === '3' || evaled[0] === '5');
+
+        evaled = engine.expandTemplate('T4');
+        assert.strictEqual(evaled.length, 1, `Evaled is ${ evaled }`);
+        assert(evaled[0] === 'ey' || evaled[0] === 'el');
     });
 
     it('TestEvalExpression', function() {
@@ -450,24 +561,6 @@ describe('LG', function() {
         assert.strictEqual(evaled, 'goodmorning', `Evaled is ${ evaled }`);
     });
 
-    it('TestTemplateAsFunction', function() {
-        var engine = new TemplateEngine().addFile(GetExampleFilePath('TemplateAsFunction.lg'));
-
-        var evaled = engine.evaluateTemplate('Test2');
-        assert.strictEqual(evaled, 'hello world', `Evaled is ${ evaled }`);
-
-        evaled = engine.evaluateTemplate('Test3');
-        assert.strictEqual(evaled, 'hello world', `Evaled is ${ evaled }`);
-
-        evaled = engine.evaluateTemplate('Test4');
-        assert.strictEqual(evaled.trim(), 'hello world', `Evaled is ${ evaled }`);
-
-        evaled = engine.evaluateTemplate('dupNameWithTemplate');
-        assert.strictEqual(evaled, 'calculate length of ms by user\'s template', `Evaled is ${ evaled }`);
-
-        evaled = engine.evaluateTemplate('dupNameWithBuiltinFunc');
-        assert.strictEqual(evaled, 2, `Evaled is ${ evaled }`);
-    });
 
     it('TestLGResource', function() {
         var lgResource = LGParser.parse(fs.readFileSync(GetExampleFilePath('2.lg'), 'utf-8'));
@@ -538,34 +631,34 @@ describe('LG', function() {
 
         evaled = engine.evaluateTemplate('AskForAge.prompt2');
         if (evaled.text.includes('how old')){
-            assert.deepStrictEqual(evaled, JSON.parse('{"$type":"Activity","text":"how old are you?","suggestedactions":["10","20","30"]}'));
+            assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"how old are you?","suggestedactions":["10","20","30"]}'));
         } else {
-            assert.deepStrictEqual(evaled, JSON.parse('{"$type":"Activity","text":"what\'s your age?","suggestedactions":["10","20","30"]}'));
+            assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"what\'s your age?","suggestedactions":["10","20","30"]}'));
         }
 
         evaled = engine.evaluateTemplate('AskForAge.prompt3');
-        assert.deepStrictEqual(evaled, JSON.parse('{"$type":"Activity","text":"@{GetAge()}","suggestions":["10 | cards","20 | cards"]}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"@{GetAge()}","suggestions":["10 | cards","20 | cards"]}'));
 
         evaled = engine.evaluateTemplate('T1');
-        assert.deepStrictEqual(evaled, JSON.parse('{"$type":"Activity","text":"This is awesome","speak":"foo bar I can also speak!"}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"This is awesome","speak":"foo bar I can also speak!"}'));
 
         evaled = engine.evaluateTemplate('ST1');
-        assert.deepStrictEqual(evaled, JSON.parse('{"$type":"MyStruct","text":"foo","speak":"bar"}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"MyStruct","text":"foo","speak":"bar"}'));
 
         evaled = engine.evaluateTemplate('AskForColor');
-        assert.deepStrictEqual(evaled, JSON.parse('{"$type":"Activity","suggestedactions":[{"$type":"MyStruct","speak":"bar","text":"zoo"},{"$type":"Activity","speak":"I can also speak!"}]}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","suggestedactions":[{"lgType":"MyStruct","speak":"bar","text":"zoo"},{"lgType":"Activity","speak":"I can also speak!"}]}'));
 
         evaled = engine.evaluateTemplate('MultiExpression');
-        assert.equal(evaled, '{"$type":"Activity","speak":"I can also speak!"} {"$type":"MyStruct","text":"hi"}');
+        assert.equal(evaled, '{"lgType":"Activity","speak":"I can also speak!"} {"lgType":"MyStruct","text":"hi"}');
 
         evaled = engine.evaluateTemplate('StructuredTemplateRef');
-        assert.deepStrictEqual(evaled, JSON.parse('{"$type":"MyStruct","text":"hi"}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"MyStruct","text":"hi"}'));
 
         evaled = engine.evaluateTemplate('MultiStructuredRef');
-        assert.deepStrictEqual(evaled, JSON.parse('{"$type":"MyStruct","list":[{"$type":"SubStruct","text":"hello"},{"$type":"SubStruct","text":"world"}]}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"MyStruct","list":[{"lgType":"SubStruct","text":"hello"},{"lgType":"SubStruct","text":"world"}]}'));
 
         evaled = engine.evaluateTemplate('templateWithSquareBrackets', {manufacturer: {Name : 'Acme Co'}});
-        assert.deepStrictEqual(evaled, JSON.parse('{"$type":"Struct","text":"Acme Co"}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Struct","text":"Acme Co"}'));
     });
 
     it('TestEvaluateOnce', function() {
@@ -597,5 +690,67 @@ describe('LG', function() {
 
         evaled = engine.evaluateTemplate('conditionTemplate', { num: 4 });
         assert.equal(evaled, 'Your input is not one, two or three');
+    });
+
+    it('TestExpandTemplateWithStructuredLG', function() {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath('StructuredTemplate.lg'));
+
+        var evaled = engine.evaluateTemplate('AskForAge.promp');
+        assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
+    
+        let expectedResults = [
+            '{"lgType":"Activity","text":"how old are you?","speak":"how old are you?"}',
+            '{"lgType":"Activity","text":"how old are you?","speak":"what\'s your age?"}',
+            '{"lgType":"Activity","text":"what\'s your age?","speak":"how old are you?"}',
+            '{"lgType":"Activity","text":"what\'s your age?","speak":"what\'s your age?"}'
+        ];
+        expectedResults.forEach( u => assert(evaled.includes(u)));
+
+        evaled = engine.evaluateTemplate('ExpanderT1');
+        assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
+    
+        expectedResults = [
+            '{"lgType":"MyStruct","text":"Hi","speak":"how old are you?"}',
+            '{"lgType":"MyStruct","text":"Hi","speak":"what\'s your age?"}',
+            '{"lgType":"MyStruct","text":"Hello","speak":"how old are you?"}',
+            '{"lgType":"MyStruct","text":"Hello","speak":"what\'s your age?"}'
+        ];
+        expectedResults.forEach( u => assert(evaled.includes(u)));
+    });
+
+    it('TestExpressionextract', function() {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath('ExpressionExtract.lg'));
+
+        var evaled1 = engine.evaluateTemplate('templateWithBrackets');
+        var evaled2 = engine.evaluateTemplate('templateWithBrackets2');
+        var evaled3 = engine.evaluateTemplate('templateWithBrackets3').toString().trim();
+        let espectedResult = 'don\'t mix {} and \'{}\'';
+        assert.strictEqual(evaled1, espectedResult);
+        assert.strictEqual(evaled2, espectedResult);
+        assert.strictEqual(evaled3, espectedResult);
+
+        evaled1 = engine.evaluateTemplate('templateWithQuotationMarks');
+        evaled2 = engine.evaluateTemplate('templateWithQuotationMarks2');
+        evaled3 = engine.evaluateTemplate('templateWithQuotationMarks3').toString().trim();
+        espectedResult = 'don\'t mix {"} and ""\'"';
+        assert.strictEqual(evaled1, espectedResult);
+        assert.strictEqual(evaled2, espectedResult);
+        assert.strictEqual(evaled3, espectedResult);
+        
+        evaled1 = engine.evaluateTemplate('templateWithUnpairedBrackets1');
+        evaled2 = engine.evaluateTemplate('templateWithUnpairedBrackets12');
+        evaled3 = engine.evaluateTemplate('templateWithUnpairedBrackets13').toString().trim();
+        espectedResult = '{prefix 5 sufix';
+        assert.strictEqual(evaled1, espectedResult);
+        assert.strictEqual(evaled2, espectedResult);
+        assert.strictEqual(evaled3, espectedResult);
+
+        evaled1 = engine.evaluateTemplate('templateWithUnpairedBrackets2');
+        evaled2 = engine.evaluateTemplate('templateWithUnpairedBrackets22');
+        evaled3 = engine.evaluateTemplate('templateWithUnpairedBrackets23').toString().trim();
+        espectedResult = 'prefix 5 sufix}';
+        assert.strictEqual(evaled1, espectedResult);
+        assert.strictEqual(evaled2, espectedResult);
+        assert.strictEqual(evaled3, espectedResult);
     });
 });

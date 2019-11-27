@@ -110,7 +110,7 @@ export class TemplateEngine {
     public expandTemplate(templateName: string, scope?: any): string[] {
         const expander: Expander = new Expander(this.templates, this.expressionEngine);
 
-        return expander.expandTemplate(templateName, scope);
+        return expander.expandTemplate(templateName, new CustomizedMemory(scope));
     }
 
     public analyzeTemplate(templateName: string): AnalyzerResult {
@@ -130,7 +130,7 @@ export class TemplateEngine {
         this.runStaticCheck(mergedTemplates);
         const evalutor: Evaluator = new Evaluator(mergedTemplates, this.expressionEngine);
 
-        return evalutor.evaluateTemplate(fakeTemplateId, scope);
+        return evalutor.evaluateTemplate(fakeTemplateId, new CustomizedMemory(scope));
     }
 
     private readonly runStaticCheck = (templates: LGTemplate[]): void => {

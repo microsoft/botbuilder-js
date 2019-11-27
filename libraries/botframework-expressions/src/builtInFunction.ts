@@ -230,7 +230,7 @@ export class BuiltInFunctions {
      */
     public static verifyNumericList(value: any, expression: Expression, _: number): string {
         let error: string;
-        if (!(value instanceof Array)) {
+        if (!Array.isArray(value)) {
             error = `${ expression } is not a list.`;
         } else {
             for (const elt of value) {
@@ -252,7 +252,7 @@ export class BuiltInFunctions {
      */
     public static verifyContainer(value: any, expression: Expression, _: number): string {
         let error: string;
-        if (!(typeof value === 'string') && !(value instanceof Array) && !(value instanceof Map)) {
+        if (!(typeof value === 'string') && !Array.isArray(value) && !(value instanceof Map)) {
             error = `${ expression } must be a string or list or map.`;
         }
 
@@ -282,7 +282,7 @@ export class BuiltInFunctions {
      */
     public static verifyList(value: any, expression: Expression): string {
         let error: string;
-        if (!(value instanceof Array)) {
+        if (!Array.isArray(value)) {
             error = `${ expression } is not a list or array.`;
         }
 
@@ -859,7 +859,7 @@ export class BuiltInFunctions {
         let modifiable = false;
         if (expected !== undefined) {
             // Modifiable list
-            modifiable = value instanceof Array;
+            modifiable = Array.isArray(value);
         } else {
             // Modifiable object
             modifiable = value instanceof Map;
@@ -906,7 +906,7 @@ export class BuiltInFunctions {
         if (error === undefined) {
             // 2nd parameter has been rewrite to $local.item
             const iteratorName: string = (expression.children[1].children[0] as Constant).value as string;
-            if (!(collection instanceof Array)) {
+            if (!Array.isArray(collection)) {
                 error = `${ expression.children[0] } is not a collection to run foreach`;
             } else {
                 result = [];
@@ -941,7 +941,7 @@ export class BuiltInFunctions {
 
         if (error === undefined) {
             const iteratorName: string = (expression.children[1].children[0] as Constant).value as string;
-            if (!(collection instanceof Array)) {
+            if (!Array.isArray(collection)) {
                 error = `${ expression.children[0] } is not a collection to run where`;
             } else {
                 result = [];
@@ -1036,7 +1036,7 @@ export class BuiltInFunctions {
             result = true;
         } else if (typeof instance === 'string') {
             result = instance === '';
-        } else if (instance instanceof Array) {
+        } else if (Array.isArray(instance)) {
             result = instance.length === 0;
         } else if (instance instanceof Map) {
             result = instance.size === 0;
@@ -1183,7 +1183,7 @@ export class BuiltInFunctions {
         ({ value: arr, error } = expression.children[0].tryEvaluate(state));
 
         if (error === undefined) {
-            if (arr instanceof Array) {
+            if (Array.isArray(arr)) {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
@@ -1211,7 +1211,7 @@ export class BuiltInFunctions {
         ({ value: arr, error } = expression.children[0].tryEvaluate(state));
 
         if (error === undefined) {
-            if (arr instanceof Array || typeof arr === 'string') {
+            if (Array.isArray(arr) || typeof arr === 'string') {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
@@ -1239,7 +1239,7 @@ export class BuiltInFunctions {
         ({ value: arr, error } = expression.children[0].tryEvaluate(state));
 
         if (error === undefined) {
-            if (arr instanceof Array) {
+            if (Array.isArray(arr)) {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
@@ -1281,7 +1281,7 @@ export class BuiltInFunctions {
             let oriArr: any;
             ({ value: oriArr, error } = expression.children[0].tryEvaluate(state));
             if (error === undefined) {
-                if (oriArr instanceof Array) {
+                if (Array.isArray(oriArr)) {
                     const arr: any = oriArr.slice(0);
                     if (expression.children.length === 1) {
                         if (isDescending) {
@@ -1679,7 +1679,7 @@ export class BuiltInFunctions {
                 BuiltInFunctions.apply(
                     (args: any []): number => {
                         let count: number;
-                        if (typeof args[0] === 'string' || args[0] instanceof Array) {
+                        if (typeof args[0] === 'string' || Array.isArray(args[0])) {
                             count = args[0].length;
                         }
 
@@ -1801,7 +1801,7 @@ export class BuiltInFunctions {
                     ({ args, error } = BuiltInFunctions.evaluateChildren(expression, state));
 
                     if (error === undefined) {
-                        if (typeof args[0] === 'string' && typeof args[1] === 'string' || args[0] instanceof Array) {
+                        if (typeof args[0] === 'string' && typeof args[1] === 'string' || Array.isArray(args[0])) {
                             found = args[0].includes(args[1]);
                         } else if (args[0] instanceof Map) {
                             found = (args[0] as Map<string, any>).get(args[1]) !== undefined;
@@ -1947,7 +1947,7 @@ export class BuiltInFunctions {
                     let args: any [];
                     ({ args, error } = BuiltInFunctions.evaluateChildren(expression, state));
                     if (error === undefined) {
-                        if (!(args[0] instanceof Array)) {
+                        if (!Array.isArray(args[0])) {
                             error = `${ expression.children[0] } evaluates to ${ args[0] } which is not a list.`;
                         } else {
                             if (args.length === 2) {
@@ -2562,7 +2562,7 @@ export class BuiltInFunctions {
                             first = args[0][0];
                         }
 
-                        if (args[0] instanceof Array && args[0].length > 0) {
+                        if (Array.isArray(args[0]) && args[0].length > 0) {
                             first = Extensions.accessIndex(args[0], 0).value;
                         }
 
@@ -2579,7 +2579,7 @@ export class BuiltInFunctions {
                             last = args[0][args[0].length - 1];
                         }
 
-                        if (args[0] instanceof Array && args[0].length > 0) {
+                        if (Array.isArray(args[0]) && args[0].length > 0) {
                             last = Extensions.accessIndex(args[0], args[0].length - 1).value;
                         }
 

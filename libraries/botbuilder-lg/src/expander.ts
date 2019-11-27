@@ -25,8 +25,6 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly expanderExpressionEngine: ExpressionEngine;
     private readonly evaluatorExpressionEngine: ExpressionEngine;
-    private readonly expressionRecognizeRegex: RegExp = new RegExp(/\}(?!\\).+?\{(?!\\)@?/g);
-    private readonly escapeSeperatorRegex: RegExp = new RegExp(/\|(?!\\)/g);
 
     public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -128,7 +126,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 const property: string = line.substr(0, start).trim().toLowerCase();
                 const originValue: string = line.substr(start + 1).trim();
 
-                const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, this.escapeSeperatorRegex);
+                const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, Evaluator.escapeSeperatorRegex);
                 if (valueArray.length === 1) {
                     const id: string = uuid();
                     expandedResult.forEach((x: any): any => x[property] = id);
@@ -143,7 +141,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
                     expandedResult.forEach((x: any): any => x[property] = valueList);
                 }
-            } else if (this.isPureExpression(line)) {
+            } else if (Evaluator.isPureExpression(line)) {
                 // [MyStruct
                 // Text = foo
                 // {ST2()}
@@ -239,20 +237,15 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         for (const node of ctx.children) {
             const innerNode: TerminalNode =  node as TerminalNode;
             switch (innerNode.symbol.type) {
-                case lp.LGFileParser.DASH: break;
+                case lp.LGFileParser.MULTILINE_PREFIX:
+                case lp.LGFileParser.MULTILINE_SUFFIX:
+                case lp.LGFileParser.DASH:
+                    break;
                 case lp.LGFileParser.ESCAPE_CHARACTER:
-                    result = this.stringArrayConcat(result, [this.evalEscapeCharacter(innerNode.text)]);
+                    result = this.stringArrayConcat(result, [this.evalEscape(innerNode.text)]);
                     break;
                 case lp.LGFileParser.EXPRESSION: {
                     result = this.stringArrayConcat(result, this.evalExpression(innerNode.text));
-                    break;
-                }
-                case lp.LGFileParser.TEMPLATE_REF: {
-                    result = this.stringArrayConcat(result, this.evalTemplateRef(innerNode.text));
-                    break;
-                }
-                case lp.LGFileParser.MULTI_LINE_TEXT: {
-                    result = this.stringArrayConcat(result, this.evalMultiLineText(innerNode.text));
                     break;
                 }
                 default: {
@@ -291,19 +284,19 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         return this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
     }
 
-    private evalEscapeCharacter(exp: string): string {
+    private evalEscape(exp: string): string {
         const validCharactersDict: any = {
             '\\r': '\r',
             '\\n': '\n',
             '\\t': '\t',
             '\\\\': '\\',
-            '\\[': '[',
-            '\\]': ']',
-            '\\{': '{',
-            '\\}': '}'
         };
 
-        return validCharactersDict[exp];
+        if (exp in validCharactersDict) {
+            return validCharactersDict[exp];
+        } else {
+            return exp.substr(1);
+        }
     }
 
     private evalCondition(condition: lp.IfConditionContext): boolean {
@@ -357,49 +350,6 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         } else {
             return [result.toString()];
         }
-    }
-
-    private evalTemplateRef(exp: string): string[] {
-        exp = exp.replace(/(^\[*)/g, '')
-            .replace(/(\]*$)/g, '');
-
-        if (exp.indexOf('(') < 0) {
-            if (exp in this.templateMap) {
-                exp = exp.concat('(')
-                    .concat(this.templateMap[exp].parameters.join())
-                    .concat(')');
-            } else {
-                exp = exp.concat('()');
-            }
-        }
-
-        return this.evalExpression(exp);
-    }
-
-    private evalMultiLineText(exp: string): string[] {
-
-        exp = exp.substr(3, exp.length - 6);
-
-        const templateRefValues: Map<string, string[]> = new Map<string, string[]>();
-        const matches: string[] = exp.match(/@\{[^{}]+\}/g);
-        if (matches !== null && matches !== undefined) {
-            for (const match of matches) {
-                templateRefValues.set(match, this.evalExpression(match));
-            }
-        }
-
-        let result: string[] = [exp];
-        for (const templateRefValue of templateRefValues) {
-            const tempRes: string[] = [];
-            for (const res of result) {
-                for (const refValue of templateRefValue[1]) {
-                    tempRes.push(res.replace(/@\{[^{}]+\}/, refValue));
-                }
-            }
-            result = tempRes;
-        }
-
-        return result;
     }
 
     private evalByExpressionEngine(exp: string, scope: any): any {
@@ -489,7 +439,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
     private evalTextContainsExpression(exp: string): string[] {
         const templateRefValues: Map<string, string[]> = new Map<string, string[]>();
-        let matches: any = exp.split('').reverse().join('').match(this.expressionRecognizeRegex);
+        let matches: any = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeRegex);
         if (matches !== null && matches !== undefined) {
             matches = matches.map((e: string): string => e.split('').reverse().join('')).reverse();
             for (const match of matches) {
@@ -502,7 +452,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             const tempRes: string[] = [];
             for (const res of result) {
                 for (const refValue of templateRefValue[1]) {
-                    tempRes.push(res.replace(/@\{[^{}]+\}/, refValue));
+                    tempRes.push(res.replace(templateRefValue[0], refValue));
                 }
             }
             result = tempRes;
@@ -516,27 +466,12 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             return [exp];
         }
 
-        if (this.isPureExpression(exp)) {
+        if (Evaluator.isPureExpression(exp)) {
             return this.evalExpression(exp);
         } else {
 
             // unescape \|
             return this.evalTextContainsExpression(exp).map((x: string): string => x.replace(/\\\|/g, '|'));
-        }
-    }
-
-    private isPureExpression(exp: string): boolean {
-        if (exp === undefined || exp.length === 0) {
-            return false;
-        }
-
-        exp = exp.trim();
-        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(this.expressionRecognizeRegex);
-        // If there is no match, expressions could be null
-        if (reversedExps === null || reversedExps === undefined || reversedExps.length !== 1) {
-            return false;
-        } else {
-            return reversedExps[0].split('').reverse().join('') === exp;
         }
     }
 }

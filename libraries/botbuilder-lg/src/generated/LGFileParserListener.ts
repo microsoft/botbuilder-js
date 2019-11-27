@@ -1,10 +1,3 @@
-/**
- * @module botbuilder-lg
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
 // Generated from ../LGFileParser.g4 by ANTLR 4.6-SNAPSHOT
 
 
