@@ -64,7 +64,7 @@ export class ExpressionProperty<T> {
         }
 
         // Evaluate expression
-        const { value, error } = expression.tryEvaluate(state);
+        const { value, error } = expression.tryEvaluate(state.getMemorySnapshot());
         if (error) { throw new Error(`${stepId}: Error evaluating expression - ${error}`) }
 
         // Patch @entity
