@@ -30,9 +30,12 @@ export class BotFrameworkHttpClient {
 
     constructor(
         private readonly credentialProvider: ICredentialProvider,
+        private readonly channelService?: string,
         private readonly httpClient?: HttpClient,
-        private readonly channelService: string = process.env[AuthenticationConstants.ChannelService]
         ) {
+        if (!this.channelService) {
+            this.channelService = process.env[AuthenticationConstants.ChannelService];
+        }
         if (!this.httpClient) {
             throw new Error('BotFrameworkHttpClient(): missing httpClient');
         }

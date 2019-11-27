@@ -19,7 +19,13 @@ import {
     ResourceResponse,
     Transcript,
 } from 'botbuilder-core';
-import { ClaimsIdentity, ICredentialProvider, JwtTokenValidation } from 'botframework-connector';
+import {
+    AuthenticationConfiguration,
+    AuthenticationConstants,
+    ClaimsIdentity,
+    ICredentialProvider,
+    JwtTokenValidation
+} from 'botframework-connector';
 import { StatusCodes } from './botFrameworkAdapter';
 
 /**
@@ -27,20 +33,19 @@ import { StatusCodes } from './botFrameworkAdapter';
  * implements routing ChannelAPI calls from the Skill up through the bot/adapter.
  */
 export class ChannelServiceHandler {
-    private readonly _authConfiguration: any // AuthenticationConfiguration;
-    private readonly _channelProvider: string; // IChannelProvider
-    private readonly _credentialProvider: ICredentialProvider;
-
     /**
      * Initializes a new instance of the ChannelServiceHandler class, using a credential provider.
      * @param credentialProvider The credential provider.
      * @param authConfig The authentication configuration.
-     * @param channelProvider The channel provider.
+     * @param channelService A string representing the channel provider.
      */
     constructor(
         private readonly credentialProvider: ICredentialProvider,
-        private readonly authConfig: any, //AuthenticationConfiguration, // ???
-        private readonly channelProvider?: string) {
+        private readonly authConfig: AuthenticationConfiguration,
+        private readonly channelService?: string) {
+        if (!this.channelService) {
+            this.channelService = process.env[AuthenticationConstants.ChannelService];
+        }
         if (!this.credentialProvider) {
             throw new Error('BotFrameworkHttpClient(): missing credentialProvider');
         }
@@ -355,7 +360,7 @@ export class ChannelServiceHandler {
     }
 
     private async authenticate(authHeader: string): Promise<ClaimsIdentity> {
-        return await JwtTokenValidation.validateAuthHeader(authHeader, this.credentialProvider, this.channelProvider, 'unknown', this.authConfig);
+        return await JwtTokenValidation.validateAuthHeader(authHeader, this.credentialProvider, this.channelService, 'unknown', undefined, this.authConfig);
     }
 }
 
