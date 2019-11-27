@@ -22,6 +22,7 @@
     "@azure/ms-rest-js": "1.2.6",
     "@types/jsonwebtoken": "7.2.8",
     "@types/node": "^10.12.18",
+    "adal-node": "0.2.1",
     "base64url": "^3.0.0",
     "botframework-schema": "4.1.6",
     "form-data": "^2.3.3",
@@ -38,7 +39,8 @@
     "nyc": "^11.4.1",
     "should": "^13.2.3",
     "source-map-support": "^0.5.3",
-    "ts-node": "^4.1.0"
+    "ts-node": "^4.1.0",
+    "typescript": "3.5.3"
   },
   "scripts": {
     "build": "tsc",
