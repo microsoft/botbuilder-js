@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { ChannelValidation, ClaimsIdentity, EndorsementsValidator, EnterpriseChannelValidation,
+const { AuthenticationConstants, ChannelValidation, ClaimsIdentity, EndorsementsValidator, EnterpriseChannelValidation,
     GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider } = require('../lib');
 const Connector = require('../lib');
 
@@ -360,6 +360,32 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw err;
                 }
             });
+        });
+
+        it('should get appId from claims', () => {
+            const appId = 'uuid.uuid4()';
+            const v1Claims = [];
+            const v2Claims = [{ type: AuthenticationConstants.VersionClaim, value: '2.0' }];
+    
+    
+            // Empty array of Claims should yield undefined
+            assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v1Claims), undefined);
+    
+            // AppId exists, but there is no version (assumes v1)
+            v1Claims.unshift({ type: AuthenticationConstants.AppIdClaim, value: appId});
+            assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v1Claims), appId);
+    
+            // AppId exists with v1 version
+            v1Claims.unshift({ type: AuthenticationConstants.VersionClaim, value: '1.0' });
+            assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v1Claims), appId);
+    
+            // v2 version should yield undefined with no "azp" claim
+            v2Claims.unshift({ type: AuthenticationConstants.VersionClaim, value: '2.0' });
+            assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v2Claims), undefined);
+    
+            // v2 version with azp
+            v2Claims.unshift({ type: AuthenticationConstants.AuthorizedParty, value: appId});
+            assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v2Claims), appId);
         });
     });
 });

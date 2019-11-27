@@ -144,16 +144,17 @@ export namespace JwtTokenValidation {
 
         // Depending on Version, the AppId is either in the
         // appid claim (Version 1) or the 'azp' claim (Version 2).
-        const { value: tokenVersion } = claims.find(claim => claim.type === AuthenticationConstants.VersionClaim);
+        const tokenClaim = claims.find(claim => claim.type === AuthenticationConstants.VersionClaim);
+        const tokenVersion = tokenClaim && tokenClaim.value;
         if (!tokenVersion || tokenVersion === '1.0') {
             // No version or a version of '1.0' means we should look for
             // the claim in the 'appid' claim.
-            const { value: appIdClaim } = claims.find(claim => claim.type === AuthenticationConstants.AppIdClaim);
-            appId = appIdClaim;
+            const appIdClaim = claims.find(claim => claim.type === AuthenticationConstants.AppIdClaim);
+            appId = appIdClaim && appIdClaim.value;
         } else if (tokenVersion === '2.0') {
             // Version '2.0' puts the AppId in the 'azp' claim.
-            const { value: appZClaim } = claims.find(claim => claim.type === AuthenticationConstants.AuthorizedParty);
-            appId = appZClaim;
+            const appZClaim = claims.find(claim => claim.type === AuthenticationConstants.AuthorizedParty);
+            appId = appZClaim && appZClaim.value;
         }
 
         return appId;
