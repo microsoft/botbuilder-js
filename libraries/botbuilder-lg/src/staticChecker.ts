@@ -488,10 +488,11 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
     private checkText(exp: string, context: ParserRuleContext): Diagnostic[] {
         let result: Diagnostic[] = [];
-        const matches: string[] = exp.match(Evaluator.expressionRecognizeRegex);
+        const matches: string[] = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeRegex);
+
         if (matches !== null && matches !== undefined) {
             for (const match of matches) {
-                result = result.concat(this.checkExpression(match, context));
+                result = result.concat(this.checkExpression(match.split('').reverse().join(''), context));
             }
         }
 

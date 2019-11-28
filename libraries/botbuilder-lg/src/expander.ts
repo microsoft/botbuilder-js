@@ -46,27 +46,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
         }
-
-        const templateTarget: EvaluationTarget = new EvaluationTarget(templateName, scope);
-        const currentEvulateId: string = templateTarget.getId();
-
-        let previousEvaluateTarget: EvaluationTarget;
-
-        if (this.evalutationTargetStack.length !== 0) {
-            previousEvaluateTarget = this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
-            if (previousEvaluateTarget.evaluatedChildren.has(currentEvulateId)) {
-                return previousEvaluateTarget.evaluatedChildren.get(currentEvulateId);
-            }
-        }
-
         // Using a stack to track the evalution trace
-        this.evalutationTargetStack.push(templateTarget);
+        this.evalutationTargetStack.push(new EvaluationTarget(templateName, scope));
         const result: string[] = this.visit(this.templateMap[templateName].parseTree);
-
-        if (previousEvaluateTarget !== undefined) {
-            previousEvaluateTarget.evaluatedChildren.set(currentEvulateId, result);
-        }
-
         this.evalutationTargetStack.pop();
 
         return result;
@@ -469,9 +451,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         if (Evaluator.isPureExpression(exp)) {
             return this.evalExpression(exp);
         } else {
-
-            // unescape \|
-            return this.evalTextContainsExpression(exp).map((x: string): string => x.replace(/\\\|/g, '|'));
+            return this.evalTextContainsExpression(exp).map((x: string): string => x.replace(/\\(.)/g, '$1'));
         }
     }
 }

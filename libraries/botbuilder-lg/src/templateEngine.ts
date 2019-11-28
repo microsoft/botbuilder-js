@@ -100,9 +100,7 @@ export class TemplateEngine {
     }
 
     public evaluateTemplate(templateName: string, scope?: MemoryInterface | any): any {
-        if (scope === null || scope === undefined || !Extensions.isMemoryInterface(scope)) {
-            scope = new CustomizedMemory(scope);
-        }
+        scope = new CustomizedMemory(scope);
         const evalutor: Evaluator = new Evaluator(this.templates, this.expressionEngine);
         return evalutor.evaluateTemplate(templateName, scope);
     }

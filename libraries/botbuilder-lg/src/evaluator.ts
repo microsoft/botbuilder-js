@@ -29,7 +29,10 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     public readonly expressionEngine: ExpressionEngine;
     public readonly templateMap: { [name: string]: LGTemplate };
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
-    public static readonly expressionRecognizeRegex: RegExp = new RegExp(/\}(?!\\).+?\{(?!\\)@?(?!\\)/g);
+
+    // original:/(?<!\\)@\{((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|[^\r\n\{\}\'\"])*?\}/g;
+    public static readonly expressionRecognizeRegex: RegExp = new RegExp(/\}((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|([^\r\n\{\}\'\"]))*?\{@(?!\\)/g);
+    // original: /(?<!\\)\|/g
     public static readonly escapeSeperatorRegex: RegExp = new RegExp(/\|(?!\\)/g);
 
     public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
@@ -170,6 +173,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         const result: any[] = [];
         for (const node of ctx.children) {
             const innerNode: TerminalNode = node as TerminalNode;
+            var s = innerNode.text;
             switch (innerNode.symbol.type) {
                 case lp.LGFileParser.MULTILINE_SUFFIX:
                 case lp.LGFileParser.MULTILINE_PREFIX:
@@ -354,9 +358,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         if (Evaluator.isPureExpression(exp)) {
             return this.evalExpression(exp);
         } else {
-
-            // unescape \|
-            return this.wrappedEvalTextContainsExpression(exp, Evaluator.expressionRecognizeRegex).replace(/\\\|/g, '|');
+            return this.wrappedEvalTextContainsExpression(exp, Evaluator.expressionRecognizeRegex).replace(/\\(.)/g, '$1');
         }
     }
 

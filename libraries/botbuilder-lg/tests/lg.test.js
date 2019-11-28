@@ -523,6 +523,7 @@ describe('LG', function() {
             'You have 2 alarms, 7 am of tomorrow and 8 pm at tomorrow',
             'You have 2 alarms, 7 am of tomorrow and 8 pm of tomorrow'
         ];
+
         assert(evalOptions.includes(evaled[0]));
 
         evaled = engine.expandTemplate('T2');
@@ -620,7 +621,7 @@ describe('LG', function() {
             }
         };
         var scope = new SimpleObjectMemory(objscope);
-        
+         
         evaled = engine.evaluateTemplate('AskBread', scope);
         assert.strictEqual(evaled, 'Which Bread, A or B do you want?');
     });
@@ -697,7 +698,7 @@ describe('LG', function() {
     it('TestExpandTemplateWithStructuredLG', function() {
         var engine = new TemplateEngine().addFile(GetExampleFilePath('StructuredTemplate.lg'));
 
-        var evaled = engine.evaluateTemplate('AskForAge.prompt');
+        var evaled = engine.expandTemplate('AskForAge.prompt');
         assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
     
         let expectedResults = [
@@ -708,7 +709,7 @@ describe('LG', function() {
         ];
         expectedResults.forEach( u => assert(evaled.includes(u)));
 
-        evaled = engine.evaluateTemplate('ExpanderT1');
+        evaled = engine.expandTemplate('ExpanderT1');
         assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
     
         expectedResults = [

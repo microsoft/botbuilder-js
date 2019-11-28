@@ -1,4 +1,3 @@
-/*
 const { TemplateEngine, ActivityFactory } = require('../');
 const assert = require('assert');
 
@@ -571,5 +570,3 @@ function assertReceiptCardActivity(activity) {
     assert.strictEqual(items[1].quantity, '720');
 
 }
-
-*/

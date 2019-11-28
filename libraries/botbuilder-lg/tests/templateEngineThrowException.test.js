@@ -1,4 +1,3 @@
-/*
 const { TemplateEngine, StaticChecker, DiagnosticSeverity } = require('../');
 const assert = require('assert');
 
@@ -134,5 +133,3 @@ describe('LGExceptionTest', function() {
         assert.throws(() => { new TemplateEngine().addText('# t \n - hi', 'a.lg'); }, Error);
     });
 });
-
-*/

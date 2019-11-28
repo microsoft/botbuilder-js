@@ -43,8 +43,6 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     public readonly templateMap: {[name: string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly _expressionParser: ExpressionParserInterface;
-    private readonly escapeSeperatorRegex: RegExp = new RegExp(/\|(?!\\)/g);
-    private readonly expressionRecognizeRegex: RegExp = new RegExp(/\}(?!\\).+?\{(?!\\)@?/g);
 
     public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -118,7 +116,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
                 // make it insensitive
                 const property: string = line.substr(0, start).trim().toLowerCase();
                 const originValue: string = line.substr(start + 1).trim();
-                const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, this.escapeSeperatorRegex);
+                const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, Evaluator.escapeSeperatorRegex);
                 if (valueArray.length === 1) {
                     result.union(this.analyzeText(originValue));
                 } else {
@@ -221,7 +219,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     private analyzeTextContainsExpression(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
-        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(this.expressionRecognizeRegex);
+        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeRegex);
         const expressionsRaw: string[] = reversedExps.map((e: string): string => e.split('').reverse().join('')).reverse();
         const expressions: string[] = expressionsRaw.filter((e: string): boolean => e.length > 0);
         expressions.forEach((item: string): AnalyzerResult => result.union(this.analyzeExpression(item)));
@@ -253,7 +251,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         }
 
         exp = exp.trim();
-        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(this.expressionRecognizeRegex);
+        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeRegex);
         // If there is no match, expressions could be null
         if (reversedExps === null || reversedExps === undefined || reversedExps.length !== 1) {
             return false;
