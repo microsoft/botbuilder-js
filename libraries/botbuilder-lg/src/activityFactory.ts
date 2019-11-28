@@ -35,6 +35,8 @@ export class ActivityFactory {
         'valueType','value','name','typrelatesToe','code','expiration','importance','deliveryMode','listenFor',
         'textHighlights','semanticAction'];
 
+    private readonly lgType: string = 'lgType';
+
     private static adaptiveCardType: string = CardFactory.contentTypes.adaptiveCard;
 
     /**

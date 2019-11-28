@@ -1,4 +1,4 @@
-import { CustomizedMemory } from "./customizedMemory";
+import { CustomizedMemory } from './customizedMemory';
 
 /**
  * @module botbuilder-lg

@@ -1,4 +1,5 @@
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * @module botframework-expressions
  */
@@ -884,7 +885,7 @@ export class BuiltInFunctions {
 
         if (left != undefined) {
             // the expression can't be fully merged as a path
-            return {value: undefined, error:`${ expression.children[0].toString() } is not a valid path to set value`}
+            return {value: undefined, error:`${ expression.children[0].toString() } is not a valid path to set value`};
         }  
         let value: any;
         let err: string;

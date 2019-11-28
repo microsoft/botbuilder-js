@@ -108,7 +108,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 const property: string = line.substr(0, start).trim().toLowerCase();
                 const originValue: string = line.substr(start + 1).trim();
 
-                const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, Evaluator.escapeSeperatorRegex);
+                const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, Evaluator.escapeSeperatorReverseRegex);
                 if (valueArray.length === 1) {
                     const id: string = uuid();
                     expandedResult.forEach((x: any): any => x[property] = id);
@@ -421,7 +421,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
     private evalTextContainsExpression(exp: string): string[] {
         const templateRefValues: Map<string, string[]> = new Map<string, string[]>();
-        let matches: any = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeRegex);
+        let matches: any = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeReverseRegex);
         if (matches !== null && matches !== undefined) {
             matches = matches.map((e: string): string => e.split('').reverse().join('')).reverse();
             for (const match of matches) {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 /**
  * @module botbuilder-lg
  */
@@ -266,7 +267,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
                             context: content}));
                     } else if (start > 0) {
                         const originValue: string = line.substr(start + 1).trim();
-                        const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, Evaluator.escapeSeperatorRegex);
+                        const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, Evaluator.escapeSeperatorReverseRegex);
                         if (valueArray.length === 1) {
                             result = result.concat(this.checkText(originValue, context));
                         } else {
@@ -488,7 +489,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
     private checkText(exp: string, context: ParserRuleContext): Diagnostic[] {
         let result: Diagnostic[] = [];
-        const matches: string[] = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeRegex);
+        const matches: string[] = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeReverseRegex);
 
         if (matches !== null && matches !== undefined) {
             for (const match of matches) {

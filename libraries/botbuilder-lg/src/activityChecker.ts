@@ -58,7 +58,7 @@ export class ActivityChecker {
             result.push(...this.checkActivity(input));
         } else {
             const diagnosticMessage: string = (type === undefined || type === '') ? 
-                '\'lgType\' does not exist in lg output json object.'
+                `'lgType' does not exist in lg output json object.`
                 : `Type '${ type }' is not supported currently.`;
             result.push(this.buildDiagnostic(diagnosticMessage));
         }

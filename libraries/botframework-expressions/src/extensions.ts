@@ -9,7 +9,6 @@
 import { Constant } from './constant';
 import { Expression, ReturnType } from './expression';
 import { ExpressionType } from './expressionType';
-import { MemoryInterface } from './memory';
 
 /**
  * Some util and extension functions
@@ -44,6 +43,10 @@ export class Extensions {
         return Array.from(filteredReferences);
     }
 
+    /**
+     * Patch method
+     * To judge if an object is implements MemoryInterface. Same with 'is MemoryInterface' in C#
+     */
     public static isMemoryInterface(obj: any): boolean {
         if (obj === undefined) {
             return false;

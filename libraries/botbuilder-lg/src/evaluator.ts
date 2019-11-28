@@ -30,10 +30,11 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     public readonly templateMap: { [name: string]: LGTemplate };
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
 
+    // to support broswer, use look-ahead replace look-behind
     // original:/(?<!\\)@\{((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|[^\r\n\{\}\'\"])*?\}/g;
-    public static readonly expressionRecognizeRegex: RegExp = new RegExp(/\}((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|([^\r\n\{\}\'\"]))*?\{@(?!\\)/g);
+    public static readonly expressionRecognizeReverseRegex: RegExp = new RegExp(/\}((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|([^\r\n\{\}\'\"]))*?\{@(?!\\)/g);
     // original: /(?<!\\)\|/g
-    public static readonly escapeSeperatorRegex: RegExp = new RegExp(/\|(?!\\)/g);
+    public static readonly escapeSeperatorReverseRegex: RegExp = new RegExp(/\|(?!\\)/g);
 
     public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -101,7 +102,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 const property: string = line.substr(0, start).trim().toLowerCase();
                 const originValue: string = line.substr(start + 1).trim();
 
-                const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, Evaluator.escapeSeperatorRegex);
+                const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, Evaluator.escapeSeperatorReverseRegex);
                 if (valueArray.length === 1) {
                     result[property] = this.evalText(originValue);
                 } else {
@@ -173,7 +174,6 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         const result: any[] = [];
         for (const node of ctx.children) {
             const innerNode: TerminalNode = node as TerminalNode;
-            var s = innerNode.text;
             switch (innerNode.symbol.type) {
                 case lp.LGFileParser.MULTILINE_SUFFIX:
                 case lp.LGFileParser.MULTILINE_PREFIX:
@@ -358,7 +358,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         if (Evaluator.isPureExpression(exp)) {
             return this.evalExpression(exp);
         } else {
-            return this.wrappedEvalTextContainsExpression(exp, Evaluator.expressionRecognizeRegex).replace(/\\(.)/g, '$1');
+            return this.wrappedEvalTextContainsExpression(exp, Evaluator.expressionRecognizeReverseRegex).replace(/\\(.)/g, '$1');
         }
     }
 
@@ -368,7 +368,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         }
 
         exp = exp.trim();
-        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(this.expressionRecognizeRegex);
+        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(this.expressionRecognizeReverseRegex);
         // If there is no match, expressions could be null
         if (reversedExps === null || reversedExps === undefined || reversedExps.length !== 1) {
             return false;
@@ -429,9 +429,10 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         if (path.isAbsolute(filePath)) {
             resourcePath = filePath;
         } else {
+            // relative path is not support in broswer environment
             const inBrowser: boolean = typeof window !== 'undefined';
             if (inBrowser) {
-                throw new Error('relative path is not suitable in browser.');
+                throw new Error('relative path is not support in browser.');
             }
             const template: LGTemplate = this.templateMap[this.currentTarget().templateName];
             const sourcePath: string = path.normalize(ImportResolver.normalizePath(template.source));

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { MemoryInterface } from './memoryInterface';
 import { Extensions } from '../extensions';
 
@@ -115,7 +116,7 @@ export class SimpleObjectMemory implements MemoryInterface {
             let _: any;
             ({value: _, error} = Extensions.setProperty(curScope,parts[parts.length - 1], input));
             if (error !== undefined) {
-                return {value: undefined, error: `Can set value to path: '${ path }', reason: ${ error }`}
+                return {value: undefined, error: `Can set value to path: '${ path }', reason: ${ error }`};
             }
         }
 

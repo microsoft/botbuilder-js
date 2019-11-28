@@ -116,7 +116,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
                 // make it insensitive
                 const property: string = line.substr(0, start).trim().toLowerCase();
                 const originValue: string = line.substr(start + 1).trim();
-                const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, Evaluator.escapeSeperatorRegex);
+                const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, Evaluator.escapeSeperatorReverseRegex);
                 if (valueArray.length === 1) {
                     result.union(this.analyzeText(originValue));
                 } else {
@@ -219,7 +219,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     private analyzeTextContainsExpression(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
-        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeRegex);
+        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeReverseRegex);
         const expressionsRaw: string[] = reversedExps.map((e: string): string => e.split('').reverse().join('')).reverse();
         const expressions: string[] = expressionsRaw.filter((e: string): boolean => e.length > 0);
         expressions.forEach((item: string): AnalyzerResult => result.union(this.analyzeExpression(item)));
@@ -251,7 +251,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         }
 
         exp = exp.trim();
-        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeRegex);
+        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeReverseRegex);
         // If there is no match, expressions could be null
         if (reversedExps === null || reversedExps === undefined || reversedExps.length !== 1) {
             return false;

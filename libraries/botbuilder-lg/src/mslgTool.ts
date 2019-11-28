@@ -1,5 +1,5 @@
 /**
- * @module bbotbuilder-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
