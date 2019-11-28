@@ -1,6 +1,3 @@
-
-/* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * @module botframework-expressions
  */
@@ -12,6 +9,22 @@ import { ANTLRErrorListener, ANTLRInputStream, CommonTokenStream, RecognitionExc
 import { ParseTree } from 'antlr4ts/tree/ParseTree';
 import * as LRUCache from 'lru-cache';
 import { CommonRegexLexer, CommonRegexParser } from './generated';
+
+// tslint:disable-next-line: completed-docs
+export class ErrorListener implements ANTLRErrorListener<any> {
+    public static readonly Instance: ErrorListener = new ErrorListener();
+
+    public syntaxError<T>(
+        _recognizer: Recognizer<T, any>,// eslint-disable-line @typescript-eslint/no-unused-vars
+        _offendingSymbol: T,// eslint-disable-line @typescript-eslint/no-unused-vars
+        line: number,// eslint-disable-line @typescript-eslint/no-unused-vars
+        charPositionInLine: number,// eslint-disable-line @typescript-eslint/no-unused-vars
+        msg: string,// eslint-disable-line @typescript-eslint/no-unused-vars
+        _e: RecognitionException | undefined): void {// eslint-disable-line @typescript-eslint/no-unused-vars
+        
+        throw Error(`Regular expression is invalid.`);
+    }
+}
 
 // tslint:disable-next-line: completed-docs
 export class CommonRegex {
@@ -74,20 +87,5 @@ export class CommonRegex {
         parser.buildParseTree = true;
 
         return parser.parse();
-    }
-}
-
-// tslint:disable-next-line: completed-docs
-export class ErrorListener implements ANTLRErrorListener<any> {
-    public static readonly Instance: ErrorListener = new ErrorListener();
-
-    public syntaxError<T>(
-        _recognizer: Recognizer<T, any>,
-        _offendingSymbol: T,
-        line: number,
-        charPositionInLine: number,
-        msg: string,
-        _e: RecognitionException | undefined): void {
-        throw Error(`Regular expression is invalid.`);
     }
 }

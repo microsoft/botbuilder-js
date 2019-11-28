@@ -8,7 +8,7 @@
 > ---------------------Normal card samples-------------------------------
 > -----------------------------------------------------------------------
 
-﻿# HeroCardTemplate(type)
+# HeroCardTemplate(type)
 [HeroCard 
         title=Cheese gromit!
         subtitle=@{type}

@@ -1,4 +1,3 @@
-import { CustomizedMemory } from './customizedMemory';
 
 /**
  * @module botbuilder-lg
@@ -7,7 +6,7 @@ import { CustomizedMemory } from './customizedMemory';
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-
+import { CustomizedMemory } from './customizedMemory';
 /**
  * Runtime template context store
  */
@@ -25,17 +24,17 @@ export class EvaluationTarget {
     public getId(): string {
         const memory = this.scope as CustomizedMemory;
         let result = this.templateName;
-        if (memory !== undefined) {
-            if (memory.globalMemory !== undefined){
+        if (memory) {
+            if (memory.globalMemory){
                 const version = memory.globalMemory.version();
-                if (version !== undefined) {
+                if (version) {
                     result = result.concat(version);
                 }
             }
 
-            if (memory.localMemory !== undefined){
+            if (memory.localMemory){
                 const localMemoryString = memory.localMemory.toString();
-                if (localMemoryString !== undefined) {
+                if (localMemoryString) {
                     result = result.concat(localMemoryString);
                 }
             }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * @module botframework-expressions
  */
@@ -18,6 +17,7 @@ export class ParseErrorListener implements ANTLRErrorListener<any> {
         line: number,
         charPositionInLine: number,
         msg: string,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _e: RecognitionException | undefined): void {
         throw Error(`syntax error at line ${ line }:${ charPositionInLine } ${ msg }`);
     }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * @module botframework-expressions
  */
@@ -58,6 +57,7 @@ export class ExpressionEvaluator {
         this._evaluator = evaluator;
         this.returnType = returnType;
         // tslint:disable-next-line: no-empty
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         this._validator = validator === undefined ? ((expr: Expression): any => { }) : validator;
     }
 

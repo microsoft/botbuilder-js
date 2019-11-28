@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionEngine} from 'botframework-expressions';
+import { ExpressionEngine, MemoryInterface} from 'botframework-expressions';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Analyzer, AnalyzerResult } from './analyzer';
@@ -16,7 +16,6 @@ import { ImportResolver, ImportResolverDelegate } from './importResolver';
 import { LGParser } from './lgParser';
 import { LGResource } from './lgResource';
 import { LGTemplate } from './lgTemplate';
-import { MemoryInterface } from 'botframework-expressions';
 import { StaticChecker } from './staticChecker';
 import { CustomizedMemory } from './customizedMemory';
 

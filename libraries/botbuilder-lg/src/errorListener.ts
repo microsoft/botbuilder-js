@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * @module botbuilder-lg
  */
@@ -25,6 +24,7 @@ export class ErrorListener implements ANTLRErrorListener<any> {
         line: number,
         charPositionInLine: number,
         msg: string,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         e: RecognitionException | undefined): void {
         const startPosition: Position = new Position(line, charPositionInLine);
         // tslint:disable-next-line: max-line-length

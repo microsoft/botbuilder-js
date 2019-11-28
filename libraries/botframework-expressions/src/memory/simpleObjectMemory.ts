@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { MemoryInterface } from './memoryInterface';
 import { Extensions } from '../extensions';
 
@@ -63,7 +62,6 @@ export class SimpleObjectMemory implements MemoryInterface {
      * you can implement a customzied Scope that support such behavior
      */
     public setValue(path: string, input: any): { value: any; error: string } {
-        let value: any;
         if (this.memory === undefined) {
             return {value: undefined, error: `Can't set value with in a null memory`};
         }
@@ -113,8 +111,7 @@ export class SimpleObjectMemory implements MemoryInterface {
                 return {value: undefined, error};
             }
         } else {
-            let _: any;
-            ({value: _, error} = Extensions.setProperty(curScope,parts[parts.length - 1], input));
+            error = Extensions.setProperty(curScope,parts[parts.length - 1], input).error;
             if (error !== undefined) {
                 return {value: undefined, error: `Can set value to path: '${ path }', reason: ${ error }`};
             }

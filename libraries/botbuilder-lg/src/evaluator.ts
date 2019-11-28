@@ -36,6 +36,11 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     // original: /(?<!\\)\|/g
     public static readonly escapeSeperatorReverseRegex: RegExp = new RegExp(/\|(?!\\)/g);
 
+    public static readonly LGType = 'lgType';
+    public static readonly activityAttachmentFunctionName = 'ActivityAttachment';
+    public static readonly fromFileFunctionName = 'fromFile';
+    public static readonly templateFunctionName = 'template';
+
     public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
         this.templates = templates;
@@ -88,7 +93,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): any {
         const result: any = {};
         const typeName: string = ctx.structuredBodyNameLine().STRUCTURED_CONTENT().text.trim();
-        result.lgType = typeName;
+        result[Evaluator.LGType] = typeName;
 
         const bodys: TerminalNode[] = ctx.structuredBodyContentLine().STRUCTURED_CONTENT();
         for (const body  of bodys) {
@@ -124,14 +129,13 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 const propertyObject: any = this.evalExpression(line);
 
                 // Full reference to another structured template is limited to the structured template with same type
-                if (typeof propertyObject === 'object' && 'lgType' in propertyObject &&  propertyObject.lgType.toString() === typeName) {
+                if (typeof propertyObject === 'object' && Evaluator.LGType in propertyObject &&  propertyObject[Evaluator.LGType].toString() === typeName) {
                     for (const key of Object.keys(propertyObject)) {
                         if (propertyObject.hasOwnProperty(key) && !(key in result)) {
                             result[key] = propertyObject[key];
                         }
                     }
                 }
-
             }
         }
 
@@ -227,7 +231,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
         if (currentScope instanceof CustomizedMemory) {
             //inherit current memory's global scope
-            var memory =  new CustomizedMemory();
+            const memory =  new CustomizedMemory();
             memory.globalMemory = currentScope.globalMemory;
             memory.localMemory = new SimpleObjectMemory(newScope);
 
@@ -284,6 +288,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     private evalEscape(exp: string): string {
+
         const validCharactersDict: any = {
             '\\r': '\r',
             '\\n': '\n',
@@ -291,11 +296,13 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             '\\\\': '\\',
         };
 
-        if (exp in validCharactersDict) {
-            return validCharactersDict[exp];
-        } else {
-            return exp.substr(1);
-        }
+        return exp.replace(/\\[^\r\n]?/g, (sub: string): string => { 
+            if (sub in validCharactersDict) {
+                return validCharactersDict[sub];
+            } else {
+                return sub.substr(1);
+            }
+        });
     }
 
     private evalCondition(condition: lp.IfConditionContext): boolean {
@@ -358,7 +365,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         if (Evaluator.isPureExpression(exp)) {
             return this.evalExpression(exp);
         } else {
-            return this.wrappedEvalTextContainsExpression(exp, Evaluator.expressionRecognizeReverseRegex).replace(/\\(.)/g, '$1');
+            return this.evalEscape(this.wrappedEvalTextContainsExpression(exp, Evaluator.expressionRecognizeReverseRegex));
         }
     }
 
@@ -397,22 +404,16 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             return new ExpressionEvaluator(name, BuiltInFunctions.apply(this.templateEvaluator(name)), ReturnType.Object, this.validTemplateReference);
         }
 
-        const template = 'template';
-
-        if (name === template) {
-            return new ExpressionEvaluator(template, BuiltInFunctions.apply(this.templateFunction()), ReturnType.Object, this.validateTemplateFunction);
+        if (name === Evaluator.templateFunctionName) {
+            return new ExpressionEvaluator(Evaluator.templateFunctionName, BuiltInFunctions.apply(this.templateFunction()), ReturnType.Object, this.validateTemplateFunction);
         }
 
-        const fromFile = 'fromFile';
-
-        if (name === fromFile) {
-            return new ExpressionEvaluator(fromFile, BuiltInFunctions.apply(this.fromFile()), ReturnType.Object, this.validateFromFile);
+        if (name === Evaluator.fromFileFunctionName) {
+            return new ExpressionEvaluator(Evaluator.fromFileFunctionName, BuiltInFunctions.apply(this.fromFile()), ReturnType.Object, this.validateFromFile);
         }
 
-        const activityAttachment = 'ActivityAttachment';
-
-        if (name === activityAttachment) {
-            return new ExpressionEvaluator(activityAttachment, BuiltInFunctions.apply(this.activityAttachment()), ReturnType.Object, this.validateActivityAttachment);
+        if (name === Evaluator.activityAttachmentFunctionName) {
+            return new ExpressionEvaluator(Evaluator.activityAttachmentFunctionName, BuiltInFunctions.apply(this.activityAttachment()), ReturnType.Object, this.validateActivityAttachment);
         }
 
         return baseLookup(name);
@@ -460,7 +461,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
     private readonly activityAttachment = (): any => (args: readonly any[]): any => {
         return {
-            lgType: 'attachment',
+            [Evaluator.LGType]: 'attachment',
             contenttype: args[1].toString(),
             content: args[0]
         };

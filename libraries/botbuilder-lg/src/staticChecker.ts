@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 /**
  * @module botbuilder-lg
  */
@@ -25,106 +24,6 @@ import { LGTemplate } from './lgTemplate';
 import { Position } from './position';
 import { Range } from './range';
 
-/**
- * Static checker tool
- */
-export class StaticChecker {
-    private readonly expressionEngine: ExpressionEngine;
-
-    public constructor(expressionEngine?: ExpressionEngine) {
-        this.expressionEngine = expressionEngine !== undefined ? expressionEngine : new ExpressionEngine();
-    }
-
-    public checkFiles(filePaths: string[], importResolver?: ImportResolverDelegate): Diagnostic[] {
-        let result: Diagnostic[] = [];
-        let templates: LGTemplate[] = [];
-        let isParseSuccess = true;
-
-        try {
-            let totalLGResources: LGResource[] = [];
-            filePaths.forEach((filePath: string): void => {
-                importResolver = importResolver !== undefined ? importResolver : ImportResolver.fileResolver;
-
-                filePath = path.normalize(ImportResolver.normalizePath(filePath));
-                const rootResource: LGResource = LGParser.parse(fs.readFileSync(filePath, 'utf-8'), filePath);
-                const lgResources: LGResource[] = rootResource.discoverLGResources(importResolver);
-                totalLGResources = totalLGResources.concat(lgResources);
-            });
-
-            // Remove duplicated lg files by id
-            // tslint:disable-next-line: max-line-length
-            const deduplicatedLGResources: LGResource[] = totalLGResources.filter((resource: LGResource, index: number, self: LGResource[]): boolean =>
-                index === self.findIndex((t: LGResource): boolean => (
-                    t.id === resource.id
-                ))
-            );
-
-            templates = deduplicatedLGResources.reduce((acc: LGTemplate[], x: LGResource): any =>
-                acc = acc.concat(x.templates),         []
-            );
-        } catch (e) {
-            isParseSuccess = false;
-            if (e instanceof LGException) {
-                result = result.concat(e.getDiagnostic());
-            } else {
-                const diagnostic: Diagnostic = new Diagnostic(new Range(new Position(0, 0), new Position(0, 0)), e.message);
-                result.push(diagnostic);
-            }
-        }
-
-        if (isParseSuccess) {
-            result = result.concat(this.checkTemplates(templates));
-        }
-
-        return result;
-    }
-
-    public checkFile(filePath: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
-        return this.checkFiles([filePath], importResolver);
-    }
-
-    public checkText(content: string, id?: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
-        if (importResolver === undefined) {
-            const importPath: string = ImportResolver.normalizePath(id);
-            if (!path.isAbsolute(importPath)) {
-                throw new Error('[Error] id must be full path when importResolver is empty');
-            }
-        }
-
-        let result: Diagnostic[] = [];
-        let templates: LGTemplate[] = [];
-        let isParseSuccess = true;
-
-        try {
-            const rootResource: LGResource = LGParser.parse(content, id);
-            const resources: LGResource[] = rootResource.discoverLGResources(importResolver);
-
-            templates = resources.reduce((acc: LGTemplate[], x: LGResource): any =>
-                // tslint:disable-next-line: align
-                acc = acc.concat(x.templates), []
-            );
-        } catch (e) {
-            isParseSuccess = false;
-            if (e instanceof LGException) {
-                result = result.concat(e.getDiagnostic());
-            } else {
-                const diagnostic: Diagnostic = new Diagnostic(new Range(new Position(0, 0), new Position(0, 0)), e.message);
-                result.push(diagnostic);
-            }
-        }
-
-        if (isParseSuccess) {
-            result = result.concat(this.checkTemplates(templates));
-        }
-
-        return result;
-    }
-
-    public checkTemplates(templates: LGTemplate[]): Diagnostic[] {
-        // tslint:disable-next-line: no-use-before-declare
-        return new StaticCheckerInner(templates, this.expressionEngine).check();
-    }
-}
 
 // tslint:disable-next-line: completed-docs
 class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implements LGFileParserVisitor<Diagnostic[]> {
@@ -536,5 +435,106 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         }
 
         return new Diagnostic(range, message, severity);
+    }
+}
+
+/**
+ * Static checker tool
+ */
+export class StaticChecker {
+    private readonly expressionEngine: ExpressionEngine;
+
+    public constructor(expressionEngine?: ExpressionEngine) {
+        this.expressionEngine = expressionEngine !== undefined ? expressionEngine : new ExpressionEngine();
+    }
+
+    public checkFiles(filePaths: string[], importResolver?: ImportResolverDelegate): Diagnostic[] {
+        let result: Diagnostic[] = [];
+        let templates: LGTemplate[] = [];
+        let isParseSuccess = true;
+
+        try {
+            let totalLGResources: LGResource[] = [];
+            filePaths.forEach((filePath: string): void => {
+                importResolver = importResolver !== undefined ? importResolver : ImportResolver.fileResolver;
+
+                filePath = path.normalize(ImportResolver.normalizePath(filePath));
+                const rootResource: LGResource = LGParser.parse(fs.readFileSync(filePath, 'utf-8'), filePath);
+                const lgResources: LGResource[] = rootResource.discoverLGResources(importResolver);
+                totalLGResources = totalLGResources.concat(lgResources);
+            });
+
+            // Remove duplicated lg files by id
+            // tslint:disable-next-line: max-line-length
+            const deduplicatedLGResources: LGResource[] = totalLGResources.filter((resource: LGResource, index: number, self: LGResource[]): boolean =>
+                index === self.findIndex((t: LGResource): boolean => (
+                    t.id === resource.id
+                ))
+            );
+
+            templates = deduplicatedLGResources.reduce((acc: LGTemplate[], x: LGResource): any =>
+                acc = acc.concat(x.templates),         []
+            );
+        } catch (e) {
+            isParseSuccess = false;
+            if (e instanceof LGException) {
+                result = result.concat(e.getDiagnostic());
+            } else {
+                const diagnostic: Diagnostic = new Diagnostic(new Range(new Position(0, 0), new Position(0, 0)), e.message);
+                result.push(diagnostic);
+            }
+        }
+
+        if (isParseSuccess) {
+            result = result.concat(this.checkTemplates(templates));
+        }
+
+        return result;
+    }
+
+    public checkFile(filePath: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
+        return this.checkFiles([filePath], importResolver);
+    }
+
+    public checkText(content: string, id?: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
+        if (importResolver === undefined) {
+            const importPath: string = ImportResolver.normalizePath(id);
+            if (!path.isAbsolute(importPath)) {
+                throw new Error('[Error] id must be full path when importResolver is empty');
+            }
+        }
+
+        let result: Diagnostic[] = [];
+        let templates: LGTemplate[] = [];
+        let isParseSuccess = true;
+
+        try {
+            const rootResource: LGResource = LGParser.parse(content, id);
+            const resources: LGResource[] = rootResource.discoverLGResources(importResolver);
+
+            templates = resources.reduce((acc: LGTemplate[], x: LGResource): any =>
+                // tslint:disable-next-line: align
+                acc = acc.concat(x.templates), []
+            );
+        } catch (e) {
+            isParseSuccess = false;
+            if (e instanceof LGException) {
+                result = result.concat(e.getDiagnostic());
+            } else {
+                const diagnostic: Diagnostic = new Diagnostic(new Range(new Position(0, 0), new Position(0, 0)), e.message);
+                result.push(diagnostic);
+            }
+        }
+
+        if (isParseSuccess) {
+            result = result.concat(this.checkTemplates(templates));
+        }
+
+        return result;
+    }
+
+    public checkTemplates(templates: LGTemplate[]): Diagnostic[] {
+        // tslint:disable-next-line: no-use-before-declare
+        return new StaticCheckerInner(templates, this.expressionEngine).check();
     }
 }

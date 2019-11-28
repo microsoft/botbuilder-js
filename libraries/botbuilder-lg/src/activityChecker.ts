@@ -6,14 +6,15 @@
  * Licensed under the MIT License.
  */
 
-import { ActivityTypes, ActionTypes } from 'botframework-schema';
+import { ActivityTypes, ActionTypes } from 'botbuilder-core';
 import { CardFactory } from 'botbuilder-core';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Range } from './range';
 import { Position } from './position';
+import { Evaluator } from './evaluator';
 
 export class ActivityChecker {
-    private static genericCardTypeMapping: Map<string, string> = new Map<string, string>
+    public static readonly genericCardTypeMapping: Map<string, string> = new Map<string, string>
     ([
         [ 'herocard', CardFactory.contentTypes.heroCard ],
         [ 'thumbnailcard', CardFactory.contentTypes.thumbnailCard ],
@@ -24,6 +25,15 @@ export class ActivityChecker {
         [ 'oauthcard', CardFactory.contentTypes.oauthCard ],
         [ 'receiptcard', CardFactory.contentTypes.receiptCard ],
     ]);
+
+    public static readonly activityProperties: string[] = ['type','id','timestamp','localTimestamp','localTimezone','callerId',
+        'serviceUrl','channelId','from','conversation','recipient','textFormat','attachmentLayout','membersAdded',
+        'membersRemoved','reactionsAdded','reactionsRemoved','topicName','historyDisclosed','locale','text','speak',
+        'inputHint','summary','suggestedActions','attachments','entities','channelData','action','replyToId','label',
+        'valueType','value','name','typrelatesToe','code','expiration','importance','deliveryMode','listenFor',
+        'textHighlights','semanticAction'];
+
+    public static readonly cardActionProperties: string[] = ['type','title','image','text','displayText','value','channelData'];
 
     public static check(lgResult: any): Diagnostic[] {
         if (lgResult === undefined) {
@@ -50,7 +60,7 @@ export class ActivityChecker {
     }
 
     public static checkStructuredResult(input: any): Diagnostic[] {
-        let result: Diagnostic[] = [];
+        const result: Diagnostic[] = [];
         const type: string = this.getStructureType(input);
         if (ActivityChecker.genericCardTypeMapping.has(type) || type === 'attachment') {
             result.push(...this.checkAttachment(input));
@@ -58,7 +68,7 @@ export class ActivityChecker {
             result.push(...this.checkActivity(input));
         } else {
             const diagnosticMessage: string = (type === undefined || type === '') ? 
-                `'lgType' does not exist in lg output json object.`
+                `'${ Evaluator.LGType }' does not exist in lg output json object.`
                 : `Type '${ type }' is not supported currently.`;
             result.push(this.buildDiagnostic(diagnosticMessage));
         }
@@ -67,7 +77,7 @@ export class ActivityChecker {
     }
 
     private static checkActivity(input: any): Diagnostic[] {
-        let result: Diagnostic[] = [];
+        const result: Diagnostic[] = [];
         let activityType: string = undefined;
         if ('type' in input) {
             activityType = input['type'].toString().trim();
@@ -90,18 +100,12 @@ export class ActivityChecker {
     }
 
     private static checkActivityPropertyName(input: any): Diagnostic[] {
-        const activityProperties: string[] = ['type','id','timestamp','localTimestamp','localTimezone','callerId',
-            'serviceUrl','channelId','from','conversation','recipient','textFormat','attachmentLayout','membersAdded',
-            'membersRemoved','reactionsAdded','reactionsRemoved','topicName','historyDisclosed','locale','text','speak',
-            'inputHint','summary','suggestedActions','attachments','entities','channelData','action','replyToId','label',
-            'valueType','value','name','typrelatesToe','code','expiration','importance','deliveryMode','listenFor',
-            'textHighlights','semanticAction'];
-        let invalidProperties: string[] = [];
+        const invalidProperties: string[] = [];
         for (const property of Object.keys(input)) {
-            if (property === 'lgType') {
+            if (property === Evaluator.LGType) {
                 continue;
             }
-            if (!activityProperties.map((u: string): string => u.toLowerCase()).includes(property.toLowerCase())) {
+            if (!ActivityChecker.activityProperties.map((u: string): string => u.toLowerCase()).includes(property.toLowerCase())) {
                 invalidProperties.push(property);
             }
         }
@@ -113,7 +117,7 @@ export class ActivityChecker {
     }
 
     private static checkActivityProperties(input: any): Diagnostic[] {
-        let result: Diagnostic[] = [];
+        const result: Diagnostic[] = [];
         for (const key of Object.keys(input)) {
             const property: string = key.trim();
             const value: any = input[key];
@@ -144,13 +148,13 @@ export class ActivityChecker {
     }
 
     private static checkCardActions(actions: any[]): Diagnostic[] {
-        let result: Diagnostic[] = [];
+        const result: Diagnostic[] = [];
         actions.forEach((u: any): void => { result.push(...this.checkCardAction(u)); });
         return result;
     }
 
     private static checkCardAction(value: any): Diagnostic[] {
-        let result: Diagnostic[] = [];
+        const result: Diagnostic[] = [];
         if (typeof value === 'string') {
             return result;
         }
@@ -174,14 +178,12 @@ export class ActivityChecker {
 
     
     private static checkCardActionPropertyName(input: any): Diagnostic[] {
-        const cardActionProperties: string[] = ['type','title','image','text','displayText','value','channelData'];
-
-        let invalidProperties: string[] = [];
+        const invalidProperties: string[] = [];
         for (const property of Object.keys(input)) {
-            if (property === 'lgType') {
+            if (property === Evaluator.LGType) {
                 continue;
             }
-            if (property.toLowerCase() in cardActionProperties.map((u: string): string => u.toLowerCase())) {
+            if (!ActivityChecker.cardActionProperties.map((u: string): string => u.toLowerCase()).includes(property.toLowerCase())) {
                 invalidProperties.push(property);
             }
         }
@@ -193,7 +195,7 @@ export class ActivityChecker {
     }
 
     private static checkCardActionType(cardActionType: string): Diagnostic[] {
-        let result: Diagnostic[] = [];
+        const result: Diagnostic[] = [];
         if (cardActionType === undefined || cardActionType === '') {
             return result;
         }
@@ -206,7 +208,7 @@ export class ActivityChecker {
     }
 
     private static checkAttachments(value: any): Diagnostic[] {
-        let result: Diagnostic[] = [];
+        const result: Diagnostic[] = [];
         const attachmentsJsonList: any[] = this.normalizedToList(value);
 
         for (const attachmentsJson of attachmentsJsonList) {
@@ -219,7 +221,7 @@ export class ActivityChecker {
     }
 
     private static checkAttachment(value: any): Diagnostic[] {
-        let result: Diagnostic[] = [];
+        const result: Diagnostic[] = [];
         const type: string = this.getStructureType(value);
         if (ActivityChecker.genericCardTypeMapping.has(type)) {
             result.push(...this.checkCardAttachment(value));
@@ -237,7 +239,7 @@ export class ActivityChecker {
     }
 
     private static checkCardAttachment(input: any): Diagnostic[] {
-        let result: Diagnostic[] = [];
+        const result: Diagnostic[] = [];
         for (const key of Object.keys(input)) {
             const property: string = key.trim().toLowerCase();
             const value: any = input[key];
@@ -266,8 +268,8 @@ export class ActivityChecker {
         let result = '';
 
         if (input !== undefined) {
-            if ('lgType' in input) {
-                result = input['lgType'].toString();
+            if (Evaluator.LGType in input) {
+                result = input[Evaluator.LGType].toString();
             } else if ('type' in input) {
                 // Adaptive card type
                 result = input['type'].toString();

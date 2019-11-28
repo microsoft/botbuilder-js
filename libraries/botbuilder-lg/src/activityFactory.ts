@@ -10,33 +10,13 @@ import { Activity, SuggestedActions, Attachment, ActivityTypes, ActionTypes, Car
 import { MessageFactory, CardFactory } from 'botbuilder-core';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { ActivityChecker } from './activityChecker';
+import { Evaluator } from './evaluator';
 
 /**
  * The ActivityFactory
  * to generate text and then uses simple markdown semantics like chatdown to create Activity.
  */
 export class ActivityFactory {
-    private static genericCardTypeMapping: Map<string, string> = new Map<string, string>
-    ([
-        [ 'herocard', CardFactory.contentTypes.heroCard ],
-        [ 'thumbnailcard', CardFactory.contentTypes.thumbnailCard ],
-        [ 'audiocard', CardFactory.contentTypes.audioCard ],
-        [ 'videocard', CardFactory.contentTypes.videoCard ],
-        [ 'animationcard', CardFactory.contentTypes.animationCard ],
-        [ 'signincard', CardFactory.contentTypes.signinCard ],
-        [ 'oauthcard', CardFactory.contentTypes.oauthCard ],
-        [ 'receiptcard', CardFactory.contentTypes.receiptCard ],
-    ]);
-
-    private static  activityProperties: string[] = ['type','id','timestamp','localTimestamp','localTimezone','callerId',
-        'serviceUrl','channelId','from','conversation','recipient','textFormat','attachmentLayout','membersAdded',
-        'membersRemoved','reactionsAdded','reactionsRemoved','topicName','historyDisclosed','locale','text','speak',
-        'inputHint','summary','suggestedActions','attachments','entities','channelData','action','replyToId','label',
-        'valueType','value','name','typrelatesToe','code','expiration','importance','deliveryMode','listenFor',
-        'textHighlights','semanticAction'];
-
-    private readonly lgType: string = 'lgType';
-
     private static adaptiveCardType: string = CardFactory.contentTypes.adaptiveCard;
 
     /**
@@ -76,7 +56,7 @@ export class ActivityFactory {
         let activity: Partial<Activity> = {};
 
         const type: string = this.getStructureType(lgValue);
-        if (ActivityFactory.genericCardTypeMapping.has(type) || type === 'attachment') {
+        if (ActivityChecker.genericCardTypeMapping.has(type) || type === 'attachment') {
             activity = MessageFactory.attachment(this.getAttachment(lgValue));
         } else if (type === 'activity') {
             activity = this.buildActivity(lgValue);
@@ -89,7 +69,7 @@ export class ActivityFactory {
         let activity: Partial<Activity> = { type: ActivityTypes.Message };
         for (const key of Object.keys(messageValue)) {
             const property: string = key.trim();
-            if (property === 'lgType') {
+            if (property === Evaluator.LGType) {
                 continue;
             }
 
@@ -103,10 +83,10 @@ export class ActivityFactory {
                     activity.suggestedActions = this.getSuggestions(value);
                     break;
                 default:
-                    var properties = ActivityFactory.activityProperties.map((u: string): string => u.toLowerCase());
+                    var properties = ActivityChecker.activityProperties.map((u: string): string => u.toLowerCase());
                     if (properties.includes(property.toLowerCase()))
                     {
-                        var realPropertyName = ActivityFactory.activityProperties[properties.indexOf(property.toLowerCase())];
+                        var realPropertyName = ActivityChecker.activityProperties[properties.indexOf(property.toLowerCase())];
                         activity[realPropertyName] = value;
                     } else {
                         activity[property.toLowerCase()] = value;
@@ -119,9 +99,9 @@ export class ActivityFactory {
     }
 
     private static getSuggestions(suggestionsValue: any): SuggestedActions {
-        let actions: any[] = this.normalizedToList(suggestionsValue);
+        const actions: any[] = this.normalizedToList(suggestionsValue);
 
-        let suggestedActions: SuggestedActions = {
+        const suggestedActions: SuggestedActions = {
             actions : this.getCardActions(actions),
             to: []
         };
@@ -130,7 +110,7 @@ export class ActivityFactory {
     }
 
     private static getButtons(buttonsValue: any): CardAction[] {
-        let actions: any[] = this.normalizedToList(buttonsValue);
+        const actions: any[] = this.normalizedToList(buttonsValue);
         return this.getCardActions(actions);
     }
 
@@ -154,7 +134,7 @@ export class ActivityFactory {
             if(type === 'cardaction') {
                 for (const key of Object.keys(action)) {
                     const property: string = key.trim();
-                    if (property === 'lgType') {
+                    if (property === Evaluator.LGType) {
                         continue;
                     }
 
@@ -183,8 +163,8 @@ export class ActivityFactory {
         let result = '';
 
         if (input !== undefined) {
-            if ('lgType' in input) {
-                result = input['lgType'].toString();
+            if (Evaluator.LGType in input) {
+                result = input[Evaluator.LGType].toString();
             } else if ('type' in input) {
                 // Adaptive card type
                 result = input['type'].toString();
@@ -195,8 +175,8 @@ export class ActivityFactory {
     }
 
     private static getAttachments(input: any): Attachment[] {
-        let attachments: Attachment[] = [];
-        let attachmentsJsonList: any[] = this.normalizedToList(input);
+        const attachments: Attachment[] = [];
+        const attachmentsJsonList: any[] = this.normalizedToList(input);
 
         for (const attachmentsJson of attachmentsJsonList) {
             if (typeof attachmentsJson === 'object') {
@@ -212,8 +192,8 @@ export class ActivityFactory {
             contentType: ''
         };
         const type: string = this.getStructureType(input);
-        if (ActivityFactory.genericCardTypeMapping.has(type)) {
-            attachment = this.getCardAttachment(ActivityFactory.genericCardTypeMapping.get(type), input);
+        if (ActivityChecker.genericCardTypeMapping.has(type)) {
+            attachment = this.getCardAttachment(ActivityChecker.genericCardTypeMapping.get(type), input);
         } else if(type === 'adaptivecard') {
             attachment = CardFactory.adaptiveCard(input);
         } else if(type === 'attachment') {
@@ -226,7 +206,7 @@ export class ActivityFactory {
     }
 
     private static getNormalAttachment(input: any): Attachment {
-        let attachment: Attachment = {contentType:''};
+        const attachment: Attachment = {contentType:''};
 
         for (const key of Object.keys(input)) {
             const property: string = key.trim();
@@ -235,8 +215,8 @@ export class ActivityFactory {
             switch (property.toLowerCase()) {
                 case 'contenttype':
                     const type: string = value.toString().toLowerCase();
-                    if (ActivityFactory.genericCardTypeMapping.has(type)) {
-                        attachment.contentType = ActivityFactory.genericCardTypeMapping.get(type);
+                    if (ActivityChecker.genericCardTypeMapping.has(type)) {
+                        attachment.contentType = ActivityChecker.genericCardTypeMapping.get(type);
                     } else if (type === 'adaptivecard') {
                         attachment.contentType = this.adaptiveCardType;
                     } else {
@@ -259,7 +239,7 @@ export class ActivityFactory {
     }
 
     private static getCardAttachment(type: string, input: any): Attachment {
-        let card: any = {};
+        const card: any = {};
 
         for (const key of Object.keys(input)) {
             const property: string = key.trim().toLowerCase();
@@ -276,7 +256,7 @@ export class ActivityFactory {
                             card['images'] = [];
                         }
 
-                        let imageList: string[] = this.normalizedToList(value).map((u): string => u.toString());
+                        const imageList: string[] = this.normalizedToList(value).map((u): string => u.toString());
                         imageList.forEach( (u): any => card['images'].push({url : u}));
                     } else {
                         card['image'] = {url: value.toString()};
@@ -287,7 +267,7 @@ export class ActivityFactory {
                         card['media'] = [];
                     }
 
-                    let mediaList: string[] = this.normalizedToList(value).map((u): string => u.toString());
+                    const mediaList: string[] = this.normalizedToList(value).map((u): string => u.toString());
                     mediaList.forEach( (u): any => card['media'].push({url : u}));
                     break;
                 case 'buttons':
@@ -295,7 +275,7 @@ export class ActivityFactory {
                         card['buttons'] = [];
                     }
 
-                    let buttons: any[] = this.getButtons(value);
+                    const buttons: any[] = this.getButtons(value);
                     buttons.forEach( (u): any => card[property].push(u));
                     break;
                 case 'autostart':

@@ -138,7 +138,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                         const tempRes: any = JSON.parse(JSON.stringify(res));
 
                         // Full reference to another structured template is limited to the structured template with same type
-                        if (typeof propertyObject === 'object' && 'lgType' in propertyObject && propertyObject.lgType.toString() === typeName) {
+                        if (typeof propertyObject === 'object' && Evaluator.LGType in propertyObject && propertyObject[Evaluator.LGType].toString() === typeName) {
                             for (const key of Object.keys(propertyObject)) {
                                 if (propertyObject.hasOwnProperty(key) && !(key in tempRes)) {
                                     tempRes[key] = propertyObject[key];
@@ -157,7 +157,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         const exps: string[] = expandedResult.map((x: string): string => JSON.stringify(x));
         const templateRefValues: Map<string, string[]> = new Map<string, string[]>();
         for (const idToString of idToStringMap) {
-            if ((idToString[1].startsWith('@') || idToString[1].startsWith('{')) && idToString[1].endsWith('}')) {
+            if (idToString[1].startsWith('@{') && idToString[1].endsWith('}')) {
                 templateRefValues.set(idToString[0], this.evalExpression(idToString[1]));
             } else {
                 templateRefValues.set(idToString[0], this.evalText(idToString[1]));
