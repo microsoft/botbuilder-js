@@ -1,4 +1,4 @@
-const { TemplateEngine, ActivityFactory } = require('../');
+const { TemplateEngine, ActivityFactory } = require('../lib');
 const assert = require('assert');
 
 function getTemplateEngine(){

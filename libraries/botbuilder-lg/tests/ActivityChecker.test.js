@@ -1,4 +1,4 @@
-const { TemplateEngine, ActivityChecker } = require('../');
+const { TemplateEngine, ActivityChecker } = require('../lib');
 const assert = require('assert');
 
 function getTemplateEngine(){
