@@ -174,7 +174,7 @@ describe('OAuthPrompt', function () {
             .assertReply(activity => {
                 assert(activity.text === 'Logged in');
 
-                adapter.signOutUser(new TurnContext(adapter, { channelId: activity.channelId, recipient: activity.recipient }), connectionName);
+                adapter.signOutUser(new TurnContext(adapter, { channelId: activity.channelId, from: activity.recipient }), connectionName);
             })
             .send('Another!')
             .assertReply(activity => {
@@ -188,7 +188,9 @@ describe('OAuthPrompt', function () {
             .send('12345')
             .assertReply('attemptCount 2')
             .send('123456')
-            .assertReply('Failed');
+            .assertReply('attemptCount 3')
+            .send(magicCode)
+            .assertReply('Logged in');
     });
 
     it('should call OAuthPrompt for streaming connection', async function () {
