@@ -2,21 +2,26 @@
     "$schema": "../../app.schema",
     "$type": "Microsoft.AdaptiveDialog",
     "$id": "root",
-    "actions": [
+    "triggers": [
         {
-            "$type":"Microsoft.TextInput",
-            "prompt" : "Hello, what is your name?",
-            "property": "user.name"
-        },
-        {
-            "$type":"Microsoft.SendActivity",
-            "activity": "Hello {user.name}, nice to meet you!"
-        },
-        {
-            "$type":"Microsoft.EndTurn"
-        },
-        {
-            "$type":"Microsoft.RepeatDialog"
+            "$type": "Microsoft.OnUnknownIntent",
+            "actions": [
+                {
+                    "$type":"Microsoft.TextInput",
+                    "prompt" : "Hello, what is your name?",
+                    "valueProperty": "user.name"
+                },
+                {
+                    "$type":"Microsoft.SendActivity",
+                    "activity": "Hello {user.name}, nice to meet you!"
+                },
+                {
+                    "$type":"Microsoft.EndTurn"
+                },
+                {
+                    "$type":"Microsoft.RepeatDialog"
+                }
+        ]
         }
-   ]
+    ]
 }
