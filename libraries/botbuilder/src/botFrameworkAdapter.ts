@@ -6,13 +6,12 @@
  * Licensed under the MIT License.
  */
 
-import { IncomingMessage, STATUS_CODES } from 'http';
-import { Socket } from 'net';
+import { STATUS_CODES } from 'http';
 import * as os from 'os';
 
 import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
 import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
-import { IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
+import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
 import { StreamingHttpClient, TokenResolver } from './streaming';
 
@@ -1149,7 +1148,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * @param res The response sent on error or connection termination.
      * @param logic The logic that will handle incoming requests.
      */
-    public async useWebSocket(req: IncomingMessage, socket: Socket, head: Buffer, logic: (context: TurnContext) => Promise<any>): Promise<void> {   
+    public async useWebSocket(req: WebRequest, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<any>): Promise<void> {   
         if (!this.webSocketFactory || !this.webSocketFactory.createWebSocket) {
             throw new Error('BotFrameworkAdapter must have a WebSocketFactory in order to support streaming.');
         }
@@ -1304,7 +1303,7 @@ function delay(timeout: number): Promise<void> {
     });
 }
 
-function abortWebSocketUpgrade(socket: Socket, code: number) {
+function abortWebSocketUpgrade(socket: INodeSocket, code: number) {
     if (socket.writable) {
         const connectionHeader = `Connection: 'close'\r\n`;
         socket.write(`HTTP/1.1 ${code} ${STATUS_CODES[code]}\r\n${connectionHeader}\r\n`);

@@ -11,7 +11,7 @@ import { IncomingMessage, request } from 'http';
 import { Socket } from 'net';
 import * as WebSocket from 'ws';
 
-import { ISocket } from '../interfaces';
+import { INodeIncomingMessage, INodeBuffer, INodeSocket, ISocket } from '../interfaces';
 const NONCE_LENGTH = 16;
 
 export class NodeWebSocket implements ISocket {
@@ -29,15 +29,15 @@ export class NodeWebSocket implements ISocket {
 
     /**
      * Create and set a `ws` WebSocket with an HTTP Request, Socket and Buffer.
-     * @param req IncomingMessage
-     * @param socket Socket
-     * @param head Buffer
+     * @param req INodeIncomingMessage
+     * @param socket INodeSocket
+     * @param head INodeBuffer
      */
-    public async create(req: IncomingMessage, socket: Socket, head: Buffer): Promise<void> {
+    public async create(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<void> {
         this.wsServer = new WebSocket.Server({ noServer: true });
         return new Promise<void>((resolve, reject) => {
             try {
-                this.wsServer.handleUpgrade(req, socket, head, (websocket) => {
+                this.wsServer.handleUpgrade(req as IncomingMessage, socket as Socket, head as Buffer, (websocket) => {
                     this.wsSocket = websocket;
                     resolve();
                 });
@@ -59,7 +59,7 @@ export class NodeWebSocket implements ISocket {
      *
      * @param buffer The buffer of data to send across the connection.
      */
-    public write(buffer: Buffer): void {
+    public write(buffer: INodeBuffer): void {
         this.wsSocket.send(buffer);
     }
 
