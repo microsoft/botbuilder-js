@@ -135,12 +135,7 @@ export interface BotFrameworkAdapterSettings {
     channelService?: string;
 
     /**
-     * Optional. The option to determine if this adapter accepts WebSocket connections
-     */
-    enableWebSockets?: boolean;
-
-    /**
-     * Optional. Used to pass in a NodeWebSocketFactoryBase instance. Allows bot to accept WebSocket connections.
+     * Optional. Used to pass in a NodeWebSocketFactoryBase instance.
      */
     webSocketFactory?: NodeWebSocketFactoryBase;  
 }
@@ -268,12 +263,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             this.credentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
         }
 
-        // If the developer wants to use WebSockets, but didn't provide a WebSocketFactory,
-        // create a NodeWebSocketFactory.
-        if (this.settings.enableWebSockets && !this.settings.webSocketFactory) {
-            this.webSocketFactory = new NodeWebSocketFactory();
-        }
-
+        // If a NodeWebSocketFactoryBase was passed in, set it on the BotFrameworkAdapter.
         if (this.settings.webSocketFactory) {
             this.webSocketFactory = this.settings.webSocketFactory;
         }
@@ -1145,13 +1135,14 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     /**
      * Process the initial request to establish a long lived connection via a streaming server.
      * @param req The connection request.
-     * @param res The response sent on error or connection termination.
-     * @param logic The logic that will handle incoming requests.
+     * @param socket The raw socket connection between the bot (server) and channel/caller (client).
+     * @param head The first packet of the upgraded stream.
+     * @param logic The logic that handles incoming streaming requests for the lifetime of the WebSocket connection.
      */
     public async useWebSocket(req: WebRequest, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<any>): Promise<void> {   
-        if (!this.webSocketFactory || !this.webSocketFactory.createWebSocket) {
-            throw new Error('BotFrameworkAdapter must have a WebSocketFactory in order to support streaming.');
-        }
+        // Use the provided NodeWebSocketFactoryBase on BotFrameworkAdapter construction,
+        // otherwise create a new NodeWebSocketFactory.
+        const webSocketFactory = this.webSocketFactory || new NodeWebSocketFactory();
 
         if (!logic) {
             throw new Error('Streaming logic needs to be provided to `useWebSocket`');
@@ -1176,7 +1167,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             throw err;
         }
 
-        const nodeWebSocket = await this.webSocketFactory.createWebSocket(req, socket, head);
+        const nodeWebSocket = await webSocketFactory.createWebSocket(req, socket, head);
 
         await this.startWebSocket(nodeWebSocket);
     }
