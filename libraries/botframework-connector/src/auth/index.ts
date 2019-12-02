@@ -17,4 +17,5 @@ export * from './enterpriseChannelValidation';
 export * from './emulatorValidation';
 export * from './endorsementsValidator';
 export * from './claimsIdentity';
+export * from './authenticationConfiguration';
 export * from './authenticationConstants';
