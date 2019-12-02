@@ -6,12 +6,12 @@
  * Licensed under the MIT License.
  */
 
-import { IncomingMessage } from 'http';
+import { STATUS_CODES } from 'http';
 import * as os from 'os';
 
 import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
 import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
-import { IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
+import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
 import { StreamingHttpClient, TokenResolver } from './streaming';
 
@@ -135,12 +135,7 @@ export interface BotFrameworkAdapterSettings {
     channelService?: string;
 
     /**
-     * Optional. The option to determine if this adapter accepts WebSocket connections
-     */
-    enableWebSockets?: boolean;
-
-    /**
-     * Optional. Used to pass in a NodeWebSocketFactoryBase instance. Allows bot to accept WebSocket connections.
+     * Optional. Used to pass in a NodeWebSocketFactoryBase instance.
      */
     webSocketFactory?: NodeWebSocketFactoryBase;  
 }
@@ -268,12 +263,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             this.credentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
         }
 
-        // If the developer wants to use WebSockets, but didn't provide a WebSocketFactory,
-        // create a NodeWebSocketFactory.
-        if (this.settings.enableWebSockets && !this.settings.webSocketFactory) {
-            this.webSocketFactory = new NodeWebSocketFactory();
-        }
-
+        // If a NodeWebSocketFactoryBase was passed in, set it on the BotFrameworkAdapter.
         if (this.settings.webSocketFactory) {
             this.webSocketFactory = this.settings.webSocketFactory;
         }
@@ -755,9 +745,6 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * ```
      */
     public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
-        if (this.settings.enableWebSockets && req.method === GET && (req.headers.Upgrade || req.headers.upgrade)) {
-            return this.useWebSocket(req, res, logic);
-        }
         
         let body: any;
         let status: number;
@@ -1148,39 +1135,41 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     /**
      * Process the initial request to establish a long lived connection via a streaming server.
      * @param req The connection request.
-     * @param res The response sent on error or connection termination.
-     * @param logic The logic that will handle incoming requests.
+     * @param socket The raw socket connection between the bot (server) and channel/caller (client).
+     * @param head The first packet of the upgraded stream.
+     * @param logic The logic that handles incoming streaming requests for the lifetime of the WebSocket connection.
      */
-    public async useWebSocket(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {   
+    public async useWebSocket(req: WebRequest, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<any>): Promise<void> {   
+        // Use the provided NodeWebSocketFactoryBase on BotFrameworkAdapter construction,
+        // otherwise create a new NodeWebSocketFactory.
+        const webSocketFactory = this.webSocketFactory || new NodeWebSocketFactory();
+
         if (!logic) {
             throw new Error('Streaming logic needs to be provided to `useWebSocket`');
         }
 
-        if (!this.webSocketFactory || !this.webSocketFactory.createWebSocket) {
-            throw new Error('BotFrameworkAdapter must have a WebSocketFactory in order to support streaming.');
-        }
-
         this.logic = logic;
-
-        // Restify-specific check.
-        if (typeof((res as any).claimUpgrade) !== 'function') {
-            throw new Error('ClaimUpgrade is required for creating WebSocket connection.');
-        }
 
         try {
             await this.authenticateConnection(req, this.settings.channelService);
         } catch (err) {
-            // Set the correct status code for the socket to send back to the channel.
-            res.status(StatusCodes.UNAUTHORIZED);
-            res.send(err.message);
+            // If the authenticateConnection call fails, send back the correct error code and close
+            // the connection.
+            if (typeof(err.message) === 'string' && err.message.toLowerCase().startsWith('unauthorized')) {
+                abortWebSocketUpgrade(socket, 401);
+            } else if (typeof(err.message) === 'string' && err.message.toLowerCase().startsWith(`'authheader'`)) {
+                abortWebSocketUpgrade(socket, 400);
+            } else {
+                abortWebSocketUpgrade(socket, 500);
+            }
+
             // Re-throw the error so the developer will know what occurred.
             throw err;
         }
 
-        const upgrade = (res as any).claimUpgrade();
-        const socket = await this.webSocketFactory.createWebSocket(req as IncomingMessage, upgrade.socket, upgrade.head);
+        const nodeWebSocket = await webSocketFactory.createWebSocket(req, socket, head);
 
-        await this.startWebSocket(socket);
+        await this.startWebSocket(nodeWebSocket);
     }
 
     private async authenticateConnection(req: WebRequest, channelService?: string): Promise<void> {
@@ -1303,4 +1292,13 @@ function delay(timeout: number): Promise<void> {
     return new Promise((resolve) => {
         setTimeout(resolve, timeout);
     });
+}
+
+function abortWebSocketUpgrade(socket: INodeSocket, code: number) {
+    if (socket.writable) {
+        const connectionHeader = `Connection: 'close'\r\n`;
+        socket.write(`HTTP/1.1 ${code} ${STATUS_CODES[code]}\r\n${connectionHeader}\r\n`);
+    }
+
+    socket.destroy();
 }

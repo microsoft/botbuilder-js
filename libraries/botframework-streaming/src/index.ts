@@ -9,6 +9,9 @@
 export { ContentStream } from './contentStream';
 export { HttpContent } from './httpContentStream';
 export {
+    INodeBuffer,
+    INodeIncomingMessage,
+    INodeSocket,
     IReceiveRequest,
     IReceiveResponse,
     ISocket,
