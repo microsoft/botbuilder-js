@@ -1,4 +1,3 @@
-
 /**
  * @module botframework-expressions
  */
@@ -40,7 +39,6 @@ export class ExpressionType {
     public static readonly And: string = '&&';
     public static readonly Or: string = '||';
     public static readonly Not: string = '!';
-    public static readonly Optional: string = 'optional';
 
     // String
     public static readonly Concat: string = '&';
@@ -102,6 +100,9 @@ export class ExpressionType {
     public static readonly Base64ToBinary: string = 'base64ToBinary';
     public static readonly Base64ToString: string = 'base64ToString';
     public static readonly UriComponent: string = 'uriComponent';
+    // TODO
+    // xml
+
     // Memory
     public static readonly Accessor: string = 'Accessor';
     public static readonly Element: string = 'Element';
@@ -137,6 +138,10 @@ export class ExpressionType {
     public static readonly Coalesce: string = 'coalesce';
     public static readonly JPath: string = 'jPath';
     public static readonly SetPathToValue: string = 'setPathToValue';
+    
+    // TODO
+    // xPath
+    // jPath
 
     // URI parsing functions
     public static readonly UriHost: string = 'uriHost';
@@ -148,8 +153,4 @@ export class ExpressionType {
 
     // Regar expression
     public static readonly IsMatch: string = 'isMatch';
-
-    // Short hand functions
-    public static readonly SimpleEntity: string = 'simpleEntity';
-    public static readonly Callstack: string = 'callstack';
 }

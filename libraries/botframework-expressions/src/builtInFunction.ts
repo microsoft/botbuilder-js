@@ -1,4 +1,4 @@
-
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * @module botframework-expressions
  */
@@ -18,6 +18,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDele
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { TimeZoneConverter } from './timeZoneConverter';
+import { MemoryInterface, SimpleObjectMemory, ComposedMemory } from './memory';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -229,7 +230,7 @@ export class BuiltInFunctions {
      */
     public static verifyNumericList(value: any, expression: Expression, _: number): string {
         let error: string;
-        if (!(value instanceof Array)) {
+        if (!Array.isArray(value)) {
             error = `${ expression } is not a list.`;
         } else {
             for (const elt of value) {
@@ -251,7 +252,7 @@ export class BuiltInFunctions {
      */
     public static verifyContainer(value: any, expression: Expression, _: number): string {
         let error: string;
-        if (!(typeof value === 'string') && !(value instanceof Array) && !(value instanceof Map)) {
+        if (!(typeof value === 'string') && !Array.isArray(value) && !(value instanceof Map)) {
             error = `${ expression } must be a string or list or map.`;
         }
 
@@ -281,7 +282,7 @@ export class BuiltInFunctions {
      */
     public static verifyList(value: any, expression: Expression): string {
         let error: string;
-        if (!(value instanceof Array)) {
+        if (!Array.isArray(value)) {
             error = `${ expression } is not a list or array.`;
         }
 
@@ -389,20 +390,20 @@ export class BuiltInFunctions {
      * @param verify Optional function to verify each child's result.
      * @returns List of child values or error message.
      */
-    public static evaluateChildren(expression: Expression, state: any, verify?: VerifyExpression): { args: any []; error: string } {
+    public static evaluateChildren(expression: Expression, state: MemoryInterface, verify?: VerifyExpression): { args: any []; error: string } {
         const args: any[] = [];
         let value: any;
         let error: string;
         let pos = 0;
         for (const child of expression.children) {
             ({ value, error } = child.tryEvaluate(state));
-            if (error !== undefined) {
+            if (error) {
                 break;
             }
             if (verify !== undefined) {
                 error = verify(value, child, pos);
             }
-            if (error !== undefined) {
+            if (error) {
                 break;
             }
             args.push(value);
@@ -419,12 +420,12 @@ export class BuiltInFunctions {
      * @returns Delegate for evaluating an expression.
      */
     public static apply(func: (arg0: any []) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
-        return (expression: Expression, state: any): { value: any; error: string } => {
+        return (expression: Expression, state: MemoryInterface): { value: any; error: string } => {
             let value: any;
             let error: string;
             let args: any [];
             ({ args, error } = BuiltInFunctions.evaluateChildren(expression, state, verify));
-            if (error === undefined) {
+            if (!error) {
                 try {
                     value = func(args);
                 } catch (e) {
@@ -443,12 +444,12 @@ export class BuiltInFunctions {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithError(func: (arg0: any []) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
-        return (expression: Expression, state: any): { value: any; error: string } => {
+        return (expression: Expression, state: MemoryInterface): { value: any; error: string } => {
             let value: any;
             let error: string;
             let args: any [];
             ({ args, error } = BuiltInFunctions.evaluateChildren(expression, state, verify));
-            if (error === undefined) {
+            if (!error) {
                 try {
                     ({ value, error } = func(args));
                 } catch (e) {
@@ -515,21 +516,21 @@ export class BuiltInFunctions {
     public static comparison(type: string, func: (arg0: any []) => boolean, validator: ValidateExpressionDelegate, verify?: VerifyExpression): ExpressionEvaluator {
         return new ExpressionEvaluator(
             type,
-            (expression: Expression, state: any): { value: any; error: string } => {
+            (expression: Expression, state: MemoryInterface): { value: any; error: string } => {
                 let result = false;
                 let error: string;
                 let args: any [];
                 ({ args, error } = BuiltInFunctions.evaluateChildren(expression, state, verify));
-                if (error === undefined) {
-                    const isNumber: boolean = args !== undefined && args.length > 0 && typeof args[0] === 'number';
+                if (!error) {
+                    const isNumber: boolean = args && args.length > 0 && typeof args[0] === 'number';
                     for (const arg of args) {
-                        if (arg !== undefined && (typeof arg === 'number') !== isNumber) {
+                        if (arg && (typeof arg === 'number') !== isNumber) {
                             error = `Arguments must either all be numbers or strings in ${ expression }`;
                             break;
                         }
                     }
 
-                    if (error === undefined) {
+                    if (!error) {
                         try {
                             result = func(args);
                         } catch (e) {
@@ -566,16 +567,16 @@ export class BuiltInFunctions {
     public static timeTransform(type: string, func: (timestamp: moment.Moment, numOfTransformation: any) => any): ExpressionEvaluator {
         return new ExpressionEvaluator(
             type,
-            (expression: Expression, state: any): { value: any; error: string } => {
+            (expression: Expression, state: MemoryInterface): { value: any; error: string } => {
                 let result: any;
                 let error: string;
                 let value: any;
                 let args: any [];
                 ({ args, error } = BuiltInFunctions.evaluateChildren(expression, state));
-                if (error === undefined) {
+                if (!error) {
                     if (typeof args[0] === 'string' && typeof args[1] === 'number') {
                         ({ value, error } = BuiltInFunctions.parseTimestamp(args[0]));
-                        if (error === undefined) {
+                        if (!error) {
                             if (args.length === 3 && typeof args[2] === 'string') {
                                 result = func(value, args[1]).format(BuiltInFunctions.timestampFormatter(args[2]));
                             } else {
@@ -597,7 +598,7 @@ export class BuiltInFunctions {
     public static parseTimestamp(timeStamp: string, transform?: (arg0: moment.Moment) => any): { value: any; error: string } {
         let value: any;
         const error: string = this.verifyISOTimestamp(timeStamp);
-        if (error === undefined) {
+        if (!error) {
             const parsed: moment.Moment = moment(timeStamp).utc();
             value = transform !== undefined ? transform(parsed) : parsed;
         }
@@ -611,7 +612,7 @@ export class BuiltInFunctions {
      */
     public static lookup(type: string): ExpressionEvaluator {
         const evaluator: ExpressionEvaluator = BuiltInFunctions._functions.get(type);
-        if (evaluator === undefined) {
+        if (!evaluator) {
             throw new Error(`${ type } does not have an evaluator, it's not a built-in function or a customized function`);
         }
 
@@ -705,25 +706,73 @@ export class BuiltInFunctions {
         }
     }
 
-    private static accessor(expression: Expression, state: any): { value: any; error: string } {
-        let value: any;
-        let error: string;
-        let instance: any;
-        const children: Expression[] = expression.children;
-        if (children.length === 2) {
-            ({ value: instance, error } = children[1].tryEvaluate(state));
-        } else {
-            instance = state;
+    /**
+     * Try to accumulate the path from an Accessor or Element, from right to left
+     * return the accumulated path and the expression left unable to accumulate
+     * @param expression 
+     * @param state 
+     */
+    private static tryAccumulatePath(expression: Expression, state: MemoryInterface): {path: string; left: Expression; error: string} {
+        let path = '';
+        let left = expression;
+        while (left !== undefined) {
+            if (left.type === ExpressionType.Accessor) {
+                path = (left.children[0] as Constant).value + '.' + path;
+                left = left.children.length === 2 ? left.children[1] : undefined;
+            } else if (left.type === ExpressionType.Element) {
+                let value: any;
+                let error: string;
+                ({value, error} = left.children[1].tryEvaluate(state));
+
+                if (error !== undefined) {
+                    return {path: undefined, left: undefined, error};
+                }
+
+                if (isNaN(parseInt(value)) && typeof value !== 'string') {
+                    return {path: undefined, left: undefined, error:`${ left.children[1].toString() } dones't return a int or string`};
+                }
+
+                path = `[${ value }].${ path }`;
+                left = left.children[0];
+            } else {
+                break;
+            }
         }
 
-        if (error === undefined && children[0] instanceof Constant && (children[0] as Constant).returnType === ReturnType.String) {
-            ({ value, error } = Extensions.accessProperty(instance, (children[0] as Constant).value.toString()));
+        // make sure we generated a valid path
+        path = path.replace(/(\.*$)/g, '').replace(/(\.\[)/g, '[');
+        if (path === '') {
+            path = undefined;
         }
 
-        return { value, error };
+        return {path, left, error:undefined};
     }
 
-    private static getProperty(expression: Expression, state: any): { value: any; error: string } {
+    private static accessor(expression: Expression, state: MemoryInterface): { value: any; error: string } {
+        let path: string;
+        let left: Expression;
+        let error: string;
+        ({path, left, error} = BuiltInFunctions.tryAccumulatePath(expression, state));
+        if (error) {
+            return {value: undefined, error};
+        }
+
+        if (left == undefined) {
+            // fully converted to path, so we just delegate to memory scope
+            return state.getValue(path);
+        } else {
+            let newScope: any;
+            let err: string;
+            ({value: newScope, error: err} = left.tryEvaluate(state));
+            if (err) {
+                return {value: undefined, error: err};
+            }
+
+            return new SimpleObjectMemory(newScope).getValue(path);
+        }
+    }
+
+    private static getProperty(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let value: any;
         let error: string;
         let instance: any;
@@ -731,11 +780,11 @@ export class BuiltInFunctions {
 
         const children: Expression[] = expression.children;
         ({ value: instance, error } = children[0].tryEvaluate(state));
-        if (error === undefined) {
+        if (!error) {
             ({ value: property, error } = children[1].tryEvaluate(state));
 
-            if (error === undefined) {
-                ({ value, error } = Extensions.accessProperty(instance, property.toString()));
+            if (!error) {
+                ({ value, error } = new SimpleObjectMemory(instance).getValue(property.toString()));
             }
         }
 
@@ -744,7 +793,7 @@ export class BuiltInFunctions {
 
     private static coalesce(objetcList: object[]): any {
         for (const obj of objetcList) {
-            if (obj !== undefined) {
+            if (obj) {
                 return obj;
             }
         }
@@ -769,7 +818,7 @@ export class BuiltInFunctions {
             error = 'the first parameter should be either an object or a string';
         }
 
-        if (error === undefined) {
+        if (!error) {
             try {
                 evaled = jsPath.apply(path, json);
             } catch (e) {
@@ -782,17 +831,17 @@ export class BuiltInFunctions {
         return {value: result, error};
     }
 
-    private static extractElement(expression: Expression, state: any): { value: any; error: string } {
+    private static extractElement(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let value: any;
         let error: string;
         const instance: Expression = expression.children[0];
         const index: Expression = expression.children[1];
         let inst: any;
         ({ value: inst, error } = instance.tryEvaluate(state));
-        if (error === undefined) {
+        if (!error) {
             let idxValue: any;
             ({ value: idxValue, error } = index.tryEvaluate(state));
-            if (error === undefined) {
+            if (!error) {
                 if (Number.isInteger(idxValue)) {
                     ({ value, error } = Extensions.accessIndex(inst, Number(idxValue)));
                 } else if (typeof idxValue === 'string') {
@@ -810,7 +859,7 @@ export class BuiltInFunctions {
         let modifiable = false;
         if (expected !== undefined) {
             // Modifiable list
-            modifiable = value instanceof Array;
+            modifiable = Array.isArray(value);
         } else {
             // Modifiable object
             modifiable = value instanceof Map;
@@ -824,95 +873,40 @@ export class BuiltInFunctions {
         return modifiable;
     }
 
-    private static trySetPathToValue(path: Expression, value: any, state: any, expected?: number): { instance: any; error: string } {
-        let result: any;
+    private static setPathToValue(expression: Expression, state: MemoryInterface): { value: any; error: string } {
+        let path: string;
+        let left: Expression;
         let error: string;
-        let instance: any;
-        let index: any;
-        const children: Expression[] = path.children;
-        if (path.type === ExpressionType.Accessor || path.type === ExpressionType.Element) {
-            ({ value: index, error } = children[path.type === ExpressionType.Accessor ? 0 : 1].tryEvaluate(state));
-            if (error === undefined) {
-                const iindex: number = index;
-                if (children.length === 2) {
-                    ({ instance, error } = this.trySetPathToValue(children[path.type === ExpressionType.Accessor ? 1 : 0], undefined, state, iindex));
-                } else {
-                    instance = state;
-                }
-
-                if (error === undefined) {
-                    if (typeof index === 'string') {
-                        const propName: string = index;
-                        if (value !== undefined) {
-                            result = Extensions.setProperty(instance, propName, value);
-                        } else {
-                            ({ value: result, error } = Extensions.accessProperty(instance, propName));
-                            if (error !== undefined || result === undefined || !this.canBeModified(result, propName, expected)) {
-                                // Create new value for parents to use
-                                if (expected !== undefined) {
-                                    result = Extensions.setProperty(instance, propName, [expected + 1]);
-                                } else {
-                                    result = Extensions.setProperty(instance, propName, new Map<string, any>());
-                                }
-                            }
-                        }
-                    } else if (iindex !== undefined) {
-                        // Child instance should be a list already because we passed down the iindex.
-                        if (instance instanceof Array) {
-                            const list: any[] = instance;
-                            if (list.length <= iindex) {
-                                while (list.length < iindex) {
-                                    // Extend list.
-                                    list.push(undefined);
-                                }
-                            }
-
-                            // Assign value or expected list size or object
-                            result = value !== undefined ? value : expected !== undefined ? [expected + 1] : new Map<string, any>();
-                            list[iindex] = result;
-                        } else {
-                            error = `${ children[0] } is not a list.`;
-                        }
-                    } else {
-                        error = `${ children[0] } is not a valid path.`;
-                    }
-                }
-            }
-        } else {
-            error = `${ path } is not a path that can be set to a value.`;
+        ({path, left, error} = BuiltInFunctions.tryAccumulatePath(expression.children[0], state));
+        if (error !== undefined) {
+            return {value: undefined, error};
         }
 
-        return { instance: result, error };
-    }
-
-    private static setPathToValue(expression: Expression, state: any): { value: any; error: string } {
+        if (left) {
+            // the expression can't be fully merged as a path
+            return {value: undefined, error:`${ expression.children[0].toString() } is not a valid path to set value`};
+        }  
         let value: any;
-        let error: string;
-        const path: Expression = expression.children[0];
-        const valueExpr: Expression = expression.children[1];
-        ({ value, error } = valueExpr.tryEvaluate(state));
-        if (error === undefined) {
-            let instance: any;
-            ({ instance, error } = BuiltInFunctions.trySetPathToValue(path, value, state));
-            if (error !== undefined) {
-                value = undefined;
-            }
+        let err: string;
+        ({value, error: err} = expression.children[1].tryEvaluate(state));
+        if (err) {
+            return {value: undefined, error: err};
         }
 
-        return {value, error};
+        return state.setValue(path, value);
     }
 
-    private static foreach(expression: Expression, state: any): { value: any; error: string } {
+    private static foreach(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let result: any[];
         let error: string;
         let collection: any;
 
         ({ value: collection, error } = expression.children[0].tryEvaluate(state));
 
-        if (error === undefined) {
+        if (!error) {
             // 2nd parameter has been rewrite to $local.item
             const iteratorName: string = (expression.children[1].children[0] as Constant).value as string;
-            if (!(collection instanceof Array)) {
+            if (!Array.isArray(collection)) {
                 error = `${ expression.children[0] } is not a collection to run foreach`;
             } else {
                 result = [];
@@ -921,12 +915,12 @@ export class BuiltInFunctions {
                         [iteratorName, item]
                     ]);
 
-                    const newScope: Map<string, any> = new Map<string, any>([
+                    const newMemory: Map<string, any> = new Map<string, MemoryInterface>([
                         ['$global', state],
-                        ['$local', local]
+                        ['$local', new SimpleObjectMemory(local)]
                     ]);
 
-                    const { value: r, error: e } = expression.children[2].tryEvaluate(newScope);
+                    const { value: r, error: e } = expression.children[2].tryEvaluate(new ComposedMemory(newMemory));
                     if (e !== undefined) {
                         return { value: undefined, error: e };
                     }
@@ -938,16 +932,16 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
-    private static where(expression: Expression, state: any): { value: any; error: string } {
+    private static where(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let result: any[];
         let error: string;
         let collection: any;
 
         ({ value: collection, error } = expression.children[0].tryEvaluate(state));
 
-        if (error === undefined) {
+        if (!error) {
             const iteratorName: string = (expression.children[1].children[0] as Constant).value as string;
-            if (!(collection instanceof Array)) {
+            if (!Array.isArray(collection)) {
                 error = `${ expression.children[0] } is not a collection to run where`;
             } else {
                 result = [];
@@ -956,12 +950,12 @@ export class BuiltInFunctions {
                         [iteratorName, item]
                     ]);
 
-                    const newScope: Map<string, any> = new Map<string, any>([
+                    const newMemory: Map<string, MemoryInterface> = new Map<string, MemoryInterface>([
                         ['$global', state],
-                        ['$local', local]
+                        ['$local', new SimpleObjectMemory(local)]
                     ]);
 
-                    const { value: r, error: e } = expression.children[2].tryEvaluate(newScope);
+                    const { value: r, error: e } = expression.children[2].tryEvaluate(new ComposedMemory(newMemory));
                     if (e !== undefined) {
                         return { value: undefined, error: e };
                     }
@@ -1042,7 +1036,7 @@ export class BuiltInFunctions {
             result = true;
         } else if (typeof instance === 'string') {
             result = instance === '';
-        } else if (instance instanceof Array) {
+        } else if (Array.isArray(instance)) {
             result = instance.length === 0;
         } else if (instance instanceof Map) {
             result = instance.size === 0;
@@ -1063,19 +1057,19 @@ export class BuiltInFunctions {
 
         if (typeof instance === 'boolean') {
             result = instance;
-        } else if (instance === undefined) {
+        } else if (instance === undefined || instance === null) {
             result = false;
         }
 
         return result;
     }
 
-    private static _and(expression: Expression, state: any): { value: any; error: string } {
+    private static _and(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let result = false;
         let error: string;
         for (const child of expression.children) {
             ({ value: result, error } = child.tryEvaluate(state));
-            if (error === undefined) {
+            if (!error) {
                 if (this.isLogicTrue(result)) {
                     result = true;
                 } else {
@@ -1092,12 +1086,12 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
-    private static _or(expression: Expression, state: any): { value: any; error: string } {
+    private static _or(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let result = false;
         let error: string;
         for (const child of expression.children) {
             ({ value: result, error } = child.tryEvaluate(state));
-            if (error === undefined) {
+            if (!error) {
                 if (this.isLogicTrue(result)) {
                     result = true;
                     break;
@@ -1110,11 +1104,11 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
-    private static _not(expression: Expression, state: any): { value: any; error: string } {
+    private static _not(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let result = false;
         let error: string;
         ({ value: result, error } = expression.children[0].tryEvaluate(state));
-        if (error === undefined) {
+        if (!error) {
             result = !this.isLogicTrue(result);
         } else {
             error = undefined;
@@ -1124,11 +1118,11 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
-    private static _if(expression: Expression, state: any): { value: any; error: string } {
+    private static _if(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let result: any;
         let error: string;
         ({ value: result, error } = expression.children[0].tryEvaluate(state));
-        if (error === undefined && this.isLogicTrue(result)) {
+        if (!error && this.isLogicTrue(result)) {
             ({ value: result, error } = expression.children[1].tryEvaluate(state));
         } else {
             ({ value: result, error } = expression.children[2].tryEvaluate(state));
@@ -1137,24 +1131,24 @@ export class BuiltInFunctions {
         return { value: result, error };
     }
 
-    private static substring(expression: Expression, state: any): { value: any; error: string } {
+    private static substring(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let result: any;
         let error: any;
         let str: string;
         ({ value: str, error } = expression.children[0].tryEvaluate(state));
 
-        if (error === undefined) {
+        if (!error) {
             if (typeof str === 'string') {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
                 ({ value: start, error } = startExpr.tryEvaluate(state));
-                if (error === undefined && !Number.isInteger(start)) {
+                if (!error && !Number.isInteger(start)) {
                     error = `${ startExpr } is not an integer.`;
                 } else if (start < 0 || start >= str.length) {
                     error = `${ startExpr }=${ start } which is out of range for ${ str }`;
                 }
-                if (error === undefined) {
+                if (!error) {
                     let length: number;
                     if (expression.children.length === 2) {
                         // Without length, compute to end
@@ -1162,13 +1156,13 @@ export class BuiltInFunctions {
                     } else {
                         const lengthExpr: Expression = expression.children[2];
                         ({ value: length, error } = lengthExpr.tryEvaluate(state));
-                        if (error === undefined && !Number.isInteger(length)) {
+                        if (!error && !Number.isInteger(length)) {
                             error = `${ lengthExpr } is not an integer`;
                         } else if (length < 0 || Number(start) + Number(length) > str.length) {
                             error = `${ lengthExpr }=${ length } which is out of range for ${ str }`;
                         }
                     }
-                    if (error === undefined) {
+                    if (!error) {
                         result = str.substr(start, length);
                     }
                 }
@@ -1188,18 +1182,18 @@ export class BuiltInFunctions {
         let arr: any;
         ({ value: arr, error } = expression.children[0].tryEvaluate(state));
 
-        if (error === undefined) {
-            if (arr instanceof Array) {
+        if (!error) {
+            if (Array.isArray(arr)) {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
                 ({ value: start, error } = startExpr.tryEvaluate(state));
-                if (error === undefined && !Number.isInteger(start)) {
+                if (!error && !Number.isInteger(start)) {
                     error = `${ startExpr } is not an integer.`;
                 } else if (start < 0 || start >= arr.length) {
                     error = `${ startExpr }=${ start } which is out of range for ${ arr }`;
                 }
-                if (error === undefined) {
+                if (!error) {
                     result = arr.slice(start);
                 }
             } else {
@@ -1216,18 +1210,18 @@ export class BuiltInFunctions {
         let arr: any;
         ({ value: arr, error } = expression.children[0].tryEvaluate(state));
 
-        if (error === undefined) {
-            if (arr instanceof Array || typeof arr === 'string') {
+        if (!error) {
+            if (Array.isArray(arr) || typeof arr === 'string') {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
                 ({ value: start, error } = startExpr.tryEvaluate(state));
-                if (error === undefined && !Number.isInteger(start)) {
+                if (!error && !Number.isInteger(start)) {
                     error = `${ startExpr } is not an integer.`;
                 } else if (start < 0 || start >= arr.length) {
                     error = `${ startExpr }=${ start } which is out of range for ${ arr }`;
                 }
-                if (error === undefined) {
+                if (!error) {
                     result = arr.slice(0, start);
                 }
             } else {
@@ -1244,31 +1238,31 @@ export class BuiltInFunctions {
         let arr: any;
         ({ value: arr, error } = expression.children[0].tryEvaluate(state));
 
-        if (error === undefined) {
-            if (arr instanceof Array) {
+        if (!error) {
+            if (Array.isArray(arr)) {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
                 ({ value: start, error } = startExpr.tryEvaluate(state));
-                if (error === undefined && !Number.isInteger(start)) {
+                if (!error && !Number.isInteger(start)) {
                     error = `${ startExpr } is not an integer.`;
                 } else if (start < 0 || start >= arr.length) {
                     error = `${ startExpr }=${ start } which is out of range for ${ arr }`;
                 }
-                if (error === undefined) {
+                if (!error) {
                     let end: number;
                     if (expression.children.length === 2) {
                         end = arr.length;
                     } else {
                         const endExpr: Expression = expression.children[2];
                         ({ value: end, error } = endExpr.tryEvaluate(state));
-                        if (error === undefined && !Number.isInteger(end)) {
+                        if (!error && !Number.isInteger(end)) {
                             error = `${ endExpr } is not an integer`;
                         } else if (end < 0 || end > arr.length) {
                             error = `${ endExpr }=${ end } which is out of range for ${ arr }`;
                         }
                     }
-                    if (error === undefined) {
+                    if (!error) {
                         result = arr.slice(start, end);
                     }
                 }
@@ -1286,8 +1280,8 @@ export class BuiltInFunctions {
             let error: string;
             let oriArr: any;
             ({ value: oriArr, error } = expression.children[0].tryEvaluate(state));
-            if (error === undefined) {
-                if (oriArr instanceof Array) {
+            if (!error) {
+                if (Array.isArray(oriArr)) {
                     const arr: any = oriArr.slice(0);
                     if (expression.children.length === 1) {
                         if (isDescending) {
@@ -1299,7 +1293,7 @@ export class BuiltInFunctions {
                         let propertyName: string;
                         ({value: propertyName, error} = expression.children[1].tryEvaluate(state));
 
-                        if (error === undefined) {
+                        if (!error) {
                             propertyName = propertyName === undefined ? '' : propertyName;
                         }
                         if (isDescending) {
@@ -1335,7 +1329,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: any;
         ({value: parsed, error} = BuiltInFunctions.parseTimestamp(timeStamp));
-        if (error === undefined) {
+        if (!error) {
             let addedTime: moment.Moment = parsed;
             let timeUnitMark: string;
             switch (timeUnit) {
@@ -1380,7 +1374,7 @@ export class BuiltInFunctions {
                 }
             }
 
-            if (error === undefined) {
+            if (!error) {
                 addedTime = parsed.add(interval, timeUnitMark);
                 ({value: result, error} = this.returnFormattedTimeStampStr(addedTime, format));
             }
@@ -1410,7 +1404,7 @@ export class BuiltInFunctions {
             error = `${ destinationTimeZone } is not a valid timezone`;
         }
 
-        if (error === undefined) {
+        if (!error) {
             try {
                 result = timezone.tz(timeStamp, timeZone).format(format);
             } catch (e) {
@@ -1441,9 +1435,9 @@ export class BuiltInFunctions {
             error = `${ sourceTimezone } is not a valid timezone`;
         }
 
-        if (error === undefined) {
+        if (!error) {
             error = this.verifyTimeStamp(timeStamp);
-            if (error === undefined) {
+            if (!error) {
                 try {
                     const sourceTime: moment.Moment = timezone.tz(timeStamp, timeZone);
                     formattedSourceTime = sourceTime.format();
@@ -1451,7 +1445,7 @@ export class BuiltInFunctions {
                     error = `${ timeStamp } with ${ timeZone } is not a valid timestamp with specified timeZone:`;
                 }
 
-                if (error === undefined) {
+                if (!error) {
                     try {
                         result = timezone.tz(formattedSourceTime, 'Etc/UTC').format(format);
                     } catch (e) {
@@ -1469,7 +1463,7 @@ export class BuiltInFunctions {
         let result: number;
         let error: string;
         ({value: parsed, error} = BuiltInFunctions.parseTimestamp(timeStamp));
-        if (error === undefined) {
+        if (!error) {
             const unixMilliSec: number = parseInt(parsed.format('x'), 10);
             result = this.UnixMilliSecondToTicksConstant + unixMilliSec * 10000;
         }
@@ -1482,7 +1476,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: moment.Moment;
         ({value: parsed, error} = BuiltInFunctions.parseTimestamp(timeStamp));
-        if (error === undefined) {
+        if (!error) {
             const startOfDay: moment.Moment = parsed.hours(0).minutes(0).second(0).millisecond(0);
             ({value: result, error} =  BuiltInFunctions.returnFormattedTimeStampStr(startOfDay, format));
         }
@@ -1495,7 +1489,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: moment.Moment;
         ({value: parsed, error} = BuiltInFunctions.parseTimestamp(timeStamp));
-        if (error === undefined) {
+        if (!error) {
             const startofHour: moment.Moment = parsed.minutes(0).second(0).millisecond(0);
             ({value: result, error} =  BuiltInFunctions.returnFormattedTimeStampStr(startofHour, format));
         }
@@ -1508,7 +1502,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: moment.Moment;
         ({value: parsed, error} = BuiltInFunctions.parseTimestamp(timeStamp));
-        if (error === undefined) {
+        if (!error) {
             const startofMonth: moment.Moment = parsed.date(1).hours(0).minutes(0).second(0).millisecond(0);
             ({value: result, error} =  BuiltInFunctions.returnFormattedTimeStampStr(startofMonth, format));
         }
@@ -1534,7 +1528,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: URL;
         ({value: parsed, error} = this.parseUri(uri));
-        if (error === undefined) {
+        if (!error) {
             try {
                 result = parsed.hostname;
             } catch (e) {
@@ -1550,7 +1544,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: URL;
         ({value: parsed, error} = this.parseUri(uri));
-        if (error === undefined) {
+        if (!error) {
             try {
                 const uriObj: URL = new URL(uri);
                 result = uriObj.pathname;
@@ -1567,7 +1561,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: URL;
         ({value: parsed, error} = this.parseUri(uri));
-        if (error === undefined) {
+        if (!error) {
             try {
                 result = parsed.pathname + parsed.search;
             } catch (e) {
@@ -1583,7 +1577,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: URL;
         ({value: parsed, error} = this.parseUri(uri));
-        if (error === undefined) {
+        if (!error) {
             try {
                 result = parsed.port;
             } catch (e) {
@@ -1599,7 +1593,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: URL;
         ({value: parsed, error} = this.parseUri(uri));
-        if (error === undefined) {
+        if (!error) {
             try {
                 result = parsed.search;
             } catch (e) {
@@ -1615,7 +1609,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: URL;
         ({value: parsed, error} = this.parseUri(uri));
-        if (error === undefined) {
+        if (!error) {
             try {
                 result = parsed.protocol.replace(':', '');
             } catch (e) {
@@ -1624,33 +1618,6 @@ export class BuiltInFunctions {
         }
 
         return {value: result, error};
-    }
-
-    private static callstack(expression: Expression, state: any): { value: any; error: string } {
-        let result: any =  state;
-        let error: string;
-
-        // get collection
-        ({ value: result, error} = Extensions.accessProperty(state, 'callstack'));
-        if (result !== undefined) {
-            const items: any[] = result as any[];
-            let property: any;
-            ({value: property, error} = expression.children[0].tryEvaluate(state));
-            if (property !== undefined && error === undefined) {
-                for (const item of items) {
-                    // get property off of item
-                    ({ value: result, error } = Extensions.accessProperty(item, property.toString()));
-
-                    // if not null
-                    if (error === undefined && result !== undefined) {
-                        // return it
-                        return { value: result, error };
-                    }
-                }
-            }
-        }
-
-        return { value: undefined, error };
     }
 
     // tslint:disable-next-line: max-func-body-length
@@ -1667,7 +1634,7 @@ export class BuiltInFunctions {
                 (args: any []): number => Math.floor(Number(args[0]) / Number(args[1])),
                 (val: any, expression: Expression, pos: number): string => {
                     let error: string = this.verifyNumber(val, expression, pos);
-                    if (error === undefined && (pos > 0 && Number(val) === 0)) {
+                    if (!error && (pos > 0 && Number(val) === 0)) {
                         error = `Cannot divide by 0 from ${ expression }`;
                     }
 
@@ -1712,7 +1679,7 @@ export class BuiltInFunctions {
                 BuiltInFunctions.apply(
                     (args: any []): number => {
                         let count: number;
-                        if (typeof args[0] === 'string' || args[0] instanceof Array) {
+                        if (typeof args[0] === 'string' || Array.isArray(args[0])) {
                             count = args[0].length;
                         }
 
@@ -1833,15 +1800,15 @@ export class BuiltInFunctions {
                     let args: any [];
                     ({ args, error } = BuiltInFunctions.evaluateChildren(expression, state));
 
-                    if (error === undefined) {
-                        if (typeof args[0] === 'string' && typeof args[1] === 'string' || args[0] instanceof Array) {
+                    if (!error) {
+                        if (typeof args[0] === 'string' && typeof args[1] === 'string' || Array.isArray(args[0])) {
                             found = args[0].includes(args[1]);
                         } else if (args[0] instanceof Map) {
                             found = (args[0] as Map<string, any>).get(args[1]) !== undefined;
                         } else if (typeof args[1] === 'string') {
                             let value: any;
                             ({ value, error } = Extensions.accessProperty(args[0], args[1]));
-                            found = error === undefined && value !== undefined;
+                            found = !error && value !== undefined;
                         }
                     }
 
@@ -1856,17 +1823,17 @@ export class BuiltInFunctions {
                 BuiltInFunctions.verifyNumberOrString),
             new ExpressionEvaluator(
                 ExpressionType.And,
-                (expression: Expression, state: any): { value: any; error: string } => BuiltInFunctions._and(expression, state),
+                (expression: Expression, state: MemoryInterface): { value: any; error: string } => BuiltInFunctions._and(expression, state),
                 ReturnType.Boolean,
                 BuiltInFunctions.validateAtLeastOne),
             new ExpressionEvaluator(
                 ExpressionType.Or,
-                (expression: Expression, state: any): { value: any; error: string } => BuiltInFunctions._or(expression, state),
+                (expression: Expression, state: MemoryInterface): { value: any; error: string } => BuiltInFunctions._or(expression, state),
                 ReturnType.Boolean,
                 BuiltInFunctions.validateAtLeastOne),
             new ExpressionEvaluator(
                 ExpressionType.Not,
-                (expression: Expression, state: any): { value: any; error: string } => BuiltInFunctions._not(expression, state),
+                (expression: Expression, state: MemoryInterface): { value: any; error: string } => BuiltInFunctions._not(expression, state),
                 ReturnType.Boolean,
                 BuiltInFunctions.validateUnary),
             new ExpressionEvaluator(
@@ -1884,13 +1851,13 @@ export class BuiltInFunctions {
                 BuiltInFunctions.applyWithError((
                     args: any []): any => 
                 {
-                    let error = undefined;1;
+                    let error = undefined;
                     let result = undefined;
                     if (BuiltInFunctions.parseStringOrNull(args[1]).length === 0) {
                         error = `${ args[1] } should be a string with length at least 1`;
                     }
 
-                    if (error === undefined) {
+                    if (!error) {
                         result = BuiltInFunctions.parseStringOrNull(args[0]).split(BuiltInFunctions.parseStringOrNull(args[1])).join(BuiltInFunctions.parseStringOrNull(args[2]));
                     }
 
@@ -1909,7 +1876,7 @@ export class BuiltInFunctions {
                         error = `${ args[1] } should be a string with length at least 1`;
                     }
 
-                    if (error === undefined) {
+                    if (!error) {
                         result = BuiltInFunctions.parseStringOrNull(args[0]).replace(new RegExp(BuiltInFunctions.parseStringOrNull(args[1]), 'gi'), BuiltInFunctions.parseStringOrNull(args[2]));
                     }
 
@@ -1979,8 +1946,8 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({ args, error } = BuiltInFunctions.evaluateChildren(expression, state));
-                    if (error === undefined) {
-                        if (!(args[0] instanceof Array)) {
+                    if (!error) {
+                        if (!Array.isArray(args[0])) {
                             error = `${ expression.children[0] } evaluates to ${ args[0] } which is not a list.`;
                         } else {
                             if (args.length === 2) {
@@ -2066,7 +2033,7 @@ export class BuiltInFunctions {
                         }
 
                         let value: any;
-                        if (error === undefined) {
+                        if (!error) {
                             const dateString: string = new Date(arg).toISOString();
                             value = args.length === 2 ? moment(dateString).format(BuiltInFunctions.timestampFormatter(args[1])) : dateString;
                         }
@@ -2082,7 +2049,7 @@ export class BuiltInFunctions {
                     let error: any;
                     let args: any [];
                     ({ args, error } = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof args[0] === 'string' && Number.isInteger(args[1]) && typeof args[2] === 'string') {
                             const format: string = (args.length === 4 ? BuiltInFunctions.timestampFormatter(args[3]) : BuiltInFunctions.DefaultDateTimeFormat);
                             const { duration, tsStr } = BuiltInFunctions.timeUnitTransformer(args[1], args[2]);
@@ -2110,7 +2077,7 @@ export class BuiltInFunctions {
                         let error: string;
                         const dateFormat = 'YYYY-MM-DD';
                         ({ value, error } = BuiltInFunctions.parseTimestamp(args[0]));
-                        if (error === undefined) {
+                        if (!error) {
                             const timestamp1: Date = new Date(value.format(dateFormat));
                             ({ value, error } = BuiltInFunctions.parseTimestamp(args[1]));
                             const timestamp2: string = value.format(dateFormat);
@@ -2128,7 +2095,7 @@ export class BuiltInFunctions {
                     (args: any []): any => {
                         let value: any;
                         const error: string = BuiltInFunctions.verifyISOTimestamp(args[0]);
-                        if (error === undefined) {
+                        if (!error) {
                             const thisTime: number = moment.parseZone(args[0]).hour() * 100 + moment.parseZone(args[0]).minute();
                             if (thisTime === 0) {
                                 value = 'midnight';
@@ -2157,7 +2124,7 @@ export class BuiltInFunctions {
                     let error: any;
                     let args: any [];
                     ({ args, error } = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (Number.isInteger(args[0]) && typeof args[1] === 'string') {
                             const format: string = (args.length === 3 ? BuiltInFunctions.timestampFormatter(args[2]) : BuiltInFunctions.DefaultDateTimeFormat);
                             const { duration, tsStr } = BuiltInFunctions.timeUnitTransformer(args[0], args[1]);
@@ -2184,7 +2151,7 @@ export class BuiltInFunctions {
                     let error: any;
                     let args: any [];
                     ({ args, error } = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (Number.isInteger(args[0]) && typeof args[1] === 'string') {
                             const format: string = (args.length === 3 ? BuiltInFunctions.timestampFormatter(args[2]) : BuiltInFunctions.DefaultDateTimeFormat);
                             const { duration, tsStr } = BuiltInFunctions.timeUnitTransformer(args[0], args[1]);
@@ -2211,7 +2178,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         const format: string = (args.length === 3) ? BuiltInFunctions.timestampFormatter(args[2]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string' && typeof(args[1]) === 'string') {
                             ({value, error} = BuiltInFunctions.convertFromUTC(args[0], args[1], format));
@@ -2232,7 +2199,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         const format: string = (args.length === 3) ? BuiltInFunctions.timestampFormatter(args[2]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string' && typeof(args[1]) === 'string') {
                             ({value, error} = BuiltInFunctions.convertToUTC(args[0], args[1], format));
@@ -2253,7 +2220,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         const format: string = (args.length === 4) ? BuiltInFunctions.timestampFormatter(args[3]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string' && Number.isInteger(args[1]) && typeof(args[2]) === 'string') {
                             ({value, error} = BuiltInFunctions.addToTime(args[0], args[1], args[2], format));
@@ -2274,7 +2241,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         const format: string = (args.length === 2) ? BuiltInFunctions.timestampFormatter(args[1]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.startOfDay(args[0], format));
@@ -2295,7 +2262,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         const format: string = (args.length === 2) ? BuiltInFunctions.timestampFormatter(args[1]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.startOfHour(args[0], format));
@@ -2316,7 +2283,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         const format: string = (args.length === 2) ? BuiltInFunctions.timestampFormatter(args[1]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.startOfMonth(args[0], format));
@@ -2337,7 +2304,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.ticks(args[0]));
                         } else {
@@ -2356,7 +2323,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.uriHost(args[0]));
                         } else {
@@ -2375,7 +2342,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.uriPath(args[0]));
                         } else {
@@ -2394,7 +2361,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.uriPathAndQuery(args[0]));
                         } else {
@@ -2413,7 +2380,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.uriQuery(args[0]));
                         } else {
@@ -2432,7 +2399,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.uriPort(args[0]));
                         } else {
@@ -2451,7 +2418,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.uriScheme(args[0]));
                         } else {
@@ -2513,7 +2480,7 @@ export class BuiltInFunctions {
                 (expression: Expression): void => BuiltInFunctions.validateOrder(expression, undefined, ReturnType.Object, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.If,
-                (expression: Expression, state: any): { value: any; error: string } => BuiltInFunctions._if(expression, state),
+                (expression: Expression, state: MemoryInterface): { value: any; error: string } => BuiltInFunctions._if(expression, state),
                 ReturnType.Object,
                 (expr: Expression): void => BuiltInFunctions.validateArityAndAnyType(expr, 3, 3)),
             new ExpressionEvaluator(
@@ -2595,7 +2562,7 @@ export class BuiltInFunctions {
                             first = args[0][0];
                         }
 
-                        if (args[0] instanceof Array && args[0].length > 0) {
+                        if (Array.isArray(args[0]) && args[0].length > 0) {
                             first = Extensions.accessIndex(args[0], 0).value;
                         }
 
@@ -2612,7 +2579,7 @@ export class BuiltInFunctions {
                             last = args[0][args[0].length - 1];
                         }
 
-                        if (args[0] instanceof Array && args[0].length > 0) {
+                        if (Array.isArray(args[0]) && args[0].length > 0) {
                             last = Extensions.accessIndex(args[0], args[0].length - 1).value;
                         }
 
@@ -2623,7 +2590,7 @@ export class BuiltInFunctions {
             new ExpressionEvaluator(
                 ExpressionType.Json,
                 BuiltInFunctions.apply((args: any []): any => JSON.parse(args[0])),
-                ReturnType.String,
+                ReturnType.Object,
                 (expression: Expression): void => BuiltInFunctions.validateOrder(expression, undefined, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.AddProperty,
@@ -2705,23 +2672,7 @@ export class BuiltInFunctions {
                         return {value, error};
                     }),
                 ReturnType.Boolean,
-                BuiltInFunctions.validateIsMatch),
-
-            // Shorthand functions
-            new ExpressionEvaluator(ExpressionType.Callstack, this.callstack, ReturnType.Object, this.validateUnary),
-            new ExpressionEvaluator(
-                ExpressionType.SimpleEntity,
-                BuiltInFunctions.apply(
-                    (args: any []): any => {
-                        let result: any = args[0];
-                        while (Array.isArray(result) && result.length === 1) {
-                            result = result[0];
-                        }
-
-                        return result;
-                    }),
-                ReturnType.Object,
-                this.validateUnary)
+                BuiltInFunctions.validateIsMatch)
         ];
 
         const lookup: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>();
