@@ -33,7 +33,7 @@ export class LGResource {
 
     public discoverLGResources(importResolver: ImportResolverDelegate): LGResource[] {
         const resourcesFound: LGResource[] = [];
-        importResolver = importResolver === undefined ? ImportResolver.fileResolver : importResolver;
+        importResolver = importResolver ? importResolver : ImportResolver.fileResolver;
         this.resolveImportResources(this, importResolver, resourcesFound);
 
         return resourcesFound;
@@ -120,7 +120,7 @@ export class LGResource {
         if (stopLine < originList.length - 1) {
             // insert at the middle of the content
             destList.push('\r\n');
-            if (replaceString !== undefined && replaceString.length > 0){
+            if (replaceString){
                 destList.push(replaceString);
                 destList.push('\r\n');
             }
@@ -128,7 +128,7 @@ export class LGResource {
             destList.push(...this.trimList(originList.slice(stopLine + 1)));
         } else {
             // insert at the tail of the content
-            if (replaceString !== undefined && replaceString.length > 0){
+            if (replaceString){
                 destList.push('\r\n');
                 destList.push(replaceString);
             }
@@ -182,7 +182,7 @@ export class LGResource {
     }
 
     private convertTemplateBody(templateBody: string): string {
-        if (templateBody === undefined || templateBody.length === 0) {
+        if (!templateBody) {
             return '';
         }
 
