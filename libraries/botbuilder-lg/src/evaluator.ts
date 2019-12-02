@@ -81,7 +81,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         this.evalutationTargetStack.push(templateTarget);
         const result: string = this.visit(this.templateMap[templateName].parseTree);
 
-        if (previousEvaluateTarget !== undefined) {
+        if (previousEvaluateTarget) {
             previousEvaluateTarget.evaluatedChildren.set(currentEvulateId, result);
         }
 
@@ -210,7 +210,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     public constructScope(templateName: string, args: any[]): any {
-        if (this.templateMap[templateName] === undefined) {
+        if (!this.templateMap[templateName]) {
             throw new Error(`No such template ${ templateName }`);
         }
 
@@ -222,7 +222,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             return currentScope;
         }
 
-        if (parameters !== undefined && (args === undefined || parameters.length !== args.length)) {
+        if (parameters && (args === undefined || parameters.length !== args.length)) {
             throw new Error(`The length of required parameters does not match the length of provided parameters.`);
         }
 
@@ -358,7 +358,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     private evalText(exp: string): any {
-        if (exp === undefined || exp.length === 0) {
+        if (!exp) {
             return exp;
         }
 
@@ -370,14 +370,14 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     public static isPureExpression(exp: string): boolean {
-        if (exp === undefined || exp.length === 0) {
+        if (!exp) {
             return false;
         }
 
         exp = exp.trim();
         const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(this.expressionRecognizeReverseRegex);
         // If there is no match, expressions could be null
-        if (reversedExps === null || reversedExps === undefined || reversedExps.length !== 1) {
+        if (!reversedExps || reversedExps.length !== 1) {
             return false;
         } else {
             return reversedExps[0].split('').reverse().join('') === exp;
@@ -399,7 +399,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             return baseLookup(name.substring(prebuiltPrefix.length));
         }
 
-        if (this.templateMap[name] !== undefined) {
+        if (this.templateMap[name]) {
             // tslint:disable-next-line: max-line-length
             return new ExpressionEvaluator(name, BuiltInFunctions.apply(this.templateEvaluator(name)), ReturnType.Object, this.validTemplateReference);
         }
@@ -505,7 +505,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         // Validate more if the name is string constant
         if (children0.type === ExpressionType.Constant) {
             const templateName: string = (children0 as Constant).value;
-            if (this.templateMap[templateName] === undefined) {
+            if (!this.templateMap[templateName]) {
                 throw new Error(`No such template '${ templateName }' to call in ${ expression }`);
             }
 
@@ -527,7 +527,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     private readonly validTemplateReference = (expression: Expression): void => {
         const templateName: string = expression.type;
 
-        if (this.templateMap[templateName] === undefined) {
+        if (!this.templateMap[templateName]) {
             throw new Error(`no such template '${ templateName }' to call in ${ expression }`);
         }
 

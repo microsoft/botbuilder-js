@@ -32,10 +32,10 @@ export class CommonRegex {
     public static CreateRegex(pattern: string): RegExp {
 
         let result: RegExp;
-        if (pattern !== undefined && pattern !== '' && this.regexCache.has(pattern)) {
+        if (pattern && this.regexCache.has(pattern)) {
             result = this.regexCache.get(pattern);
         } else {
-            if (pattern === undefined || pattern === '' || !this.isCommonRegex(pattern)) {
+            if (!pattern || !this.isCommonRegex(pattern)) {
                 throw new Error(`A regular expression parsing error occurred.`);
             }
 
@@ -57,7 +57,7 @@ export class CommonRegex {
         });
 
         let regexp: RegExp;
-        if (flag !== '') {
+        if (flag) {
             regexp = new RegExp(`${ pattern }`, flag);
         } else {
             regexp = new RegExp(`${ pattern }`);

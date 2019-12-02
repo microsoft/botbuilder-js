@@ -44,7 +44,7 @@ export class SimpleObjectMemory implements MemoryInterface {
                 ({value, error} = Extensions.accessProperty(curScope, part));
             }
 
-            if (error !== undefined) {
+            if (error) {
                 return {value: undefined, error };
             }
 
@@ -82,7 +82,7 @@ export class SimpleObjectMemory implements MemoryInterface {
                 ({value: curScope, error} = Extensions.accessProperty(curScope, parts[i]));
             }
 
-            if (error !== undefined) {
+            if (error) {
                 return {value: undefined, error };
             }
 
@@ -107,12 +107,12 @@ export class SimpleObjectMemory implements MemoryInterface {
                 error = `set value for an index to a non-list object`;
             }
 
-            if (error !== undefined) {
+            if (error) {
                 return {value: undefined, error};
             }
         } else {
             error = Extensions.setProperty(curScope,parts[parts.length - 1], input).error;
-            if (error !== undefined) {
+            if (error) {
                 return {value: undefined, error: `Can set value to path: '${ path }', reason: ${ error }`};
             }
         }
@@ -131,7 +131,7 @@ export class SimpleObjectMemory implements MemoryInterface {
     private getCircularReplacer(): any {
         const seen = new WeakSet();
         return (_key: any, value: object): any => {
-            if (typeof value === 'object' && value !== null) {
+            if (typeof value === 'object' && value) {
                 if (seen.has(value)) {
                     return;
                 }

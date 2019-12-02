@@ -162,7 +162,7 @@ export class ActivityFactory {
     private static getStructureType(input: any): string {
         let result = '';
 
-        if (input !== undefined) {
+        if (input && typeof input === 'object') {
             if (Evaluator.LGType in input) {
                 result = input[Evaluator.LGType].toString();
             } else if ('type' in input) {

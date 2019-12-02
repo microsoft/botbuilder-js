@@ -96,14 +96,14 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         let result: Diagnostic[] = [];
         const templateNameLine: lp.TemplateNameLineContext = context.templateNameLine();
         const errorTemplateName: lp.ErrorTemplateNameContext = templateNameLine.errorTemplateName();
-        if (errorTemplateName !== undefined) {
+        if (errorTemplateName) {
             result.push(this.buildLGDiagnostic({
                 message: `Not a valid template name line`,
                 context: errorTemplateName
             }));
         } else {
             const templateName: string = context.templateNameLine().templateName().text;
-            if (context.templateBody() === undefined) {
+            if (!context.templateBody()) {
                 result.push(this.buildLGDiagnostic({
                     message: `There is no template body in template ${ templateName }`,
                     context: context.templateNameLine(),
@@ -122,7 +122,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         for (const templateStr of context.templateString()) {
             const errorTemplateStr: lp.ErrorTemplateStringContext = templateStr.errorTemplateString();
 
-            if (errorTemplateStr !== undefined) {
+            if (errorTemplateStr) {
                 result.push(this.buildLGDiagnostic({
                     message: `Invalid template body line, did you miss '-' at line begin`,
                     context: errorTemplateStr}));
@@ -146,7 +146,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
         const content: lp.StructuredBodyContentLineContext = context.structuredBodyContentLine();
         let bodys: TerminalNode[] = [];
-        if (content !== undefined) {
+        if (content) {
             bodys = content.STRUCTURED_CONTENT();
         }
 
@@ -348,7 +348,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
                 }
             }
             if (caseExpr || defaultExpr) {
-                if (iterNode.normalTemplateBody() !== undefined) {
+                if (iterNode.normalTemplateBody()) {
                     result = result.concat(this.visit(iterNode.normalTemplateBody()));
                 } else {
                     result.push(this.buildLGDiagnostic({
@@ -390,7 +390,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         let result: Diagnostic[] = [];
         const matches: string[] = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeReverseRegex);
 
-        if (matches !== null && matches !== undefined) {
+        if (matches) {
             for (const match of matches) {
                 result = result.concat(this.checkExpression(match.split('').reverse().join(''), context));
             }
@@ -425,9 +425,9 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         const severity: DiagnosticSeverity = parameters.severity === undefined ? DiagnosticSeverity.Error : parameters.severity;
         const context: ParserRuleContext = parameters.context;
         // tslint:disable-next-line: max-line-length
-        const startPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.start.line, context.start.charPositionInLine);
+        const startPosition: Position = !context ? new Position(0, 0) : new Position(context.start.line, context.start.charPositionInLine);
         // tslint:disable-next-line: max-line-length
-        const stopPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
+        const stopPosition: Position = !context ? new Position(0, 0) : new Position(context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
         const range: Range = new Range(startPosition, stopPosition);
         message = `error message: ${ message }`;
         if (this.currentSource !== undefined && this.currentSource !== '') {
@@ -445,7 +445,7 @@ export class StaticChecker {
     private readonly expressionEngine: ExpressionEngine;
 
     public constructor(expressionEngine?: ExpressionEngine) {
-        this.expressionEngine = expressionEngine !== undefined ? expressionEngine : new ExpressionEngine();
+        this.expressionEngine = expressionEngine ? expressionEngine : new ExpressionEngine();
     }
 
     public checkFiles(filePaths: string[], importResolver?: ImportResolverDelegate): Diagnostic[] {
@@ -456,7 +456,7 @@ export class StaticChecker {
         try {
             let totalLGResources: LGResource[] = [];
             filePaths.forEach((filePath: string): void => {
-                importResolver = importResolver !== undefined ? importResolver : ImportResolver.fileResolver;
+                importResolver = importResolver ? importResolver : ImportResolver.fileResolver;
 
                 filePath = path.normalize(ImportResolver.normalizePath(filePath));
                 const rootResource: LGResource = LGParser.parse(fs.readFileSync(filePath, 'utf-8'), filePath);
@@ -497,7 +497,7 @@ export class StaticChecker {
     }
 
     public checkText(content: string, id?: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
-        if (importResolver === undefined) {
+        if (!importResolver) {
             const importPath: string = ImportResolver.normalizePath(id);
             if (!path.isAbsolute(importPath)) {
                 throw new Error('[Error] id must be full path when importResolver is empty');

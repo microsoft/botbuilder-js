@@ -50,6 +50,6 @@ export class Constant extends Expression {
             return `'${ this.value }'`;
         }
 
-        return this.value === undefined ? undefined : this.value.toString();
+        return !this.value ? undefined : this.value.toString();
     }
 }

@@ -38,7 +38,7 @@ export class MSLGTool {
 
         // extract templates
         this.templates = LGParser.parse(lgFileContent).templates;
-        if (this.templates !== undefined && this.templates.length > 0) {
+        if (this.templates && this.templates.length > 0) {
             this.runTemplateExtractor(this.templates);
         }
 
@@ -59,7 +59,7 @@ export class MSLGTool {
 
     public collateTemplates(): string {
         let result = '';
-        if (this.collationMessages === undefined || this.collationMessages.length === 0) {
+        if (!this.collationMessages || this.collationMessages.length === 0) {
             for (const template of this.collatedTemplates) {
                 result += '# ' + template[0] + '\n';
                 if (Array.isArray(template[1])) {

@@ -47,7 +47,7 @@ export class LGTemplate {
     private readonly extractName = (parseTree: TemplateDefinitionContext): string => {
         // tslint:disable-next-line: newline-per-chained-call
         const nameContext: TemplateNameContext = parseTree.templateNameLine().templateName();
-        if (nameContext === undefined || nameContext.text === undefined) {
+        if (!nameContext || !nameContext.text) {
             return '';
         }
 
@@ -67,7 +67,7 @@ export class LGTemplate {
 
     private readonly extractBody = (parseTree: TemplateDefinitionContext, lgfileContent: string): string => {
         const templateBody: TemplateBodyContext = parseTree.templateBody();
-        if (templateBody === undefined) {
+        if (!templateBody) {
             return '';
         }
 

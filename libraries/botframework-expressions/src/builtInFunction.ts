@@ -397,13 +397,13 @@ export class BuiltInFunctions {
         let pos = 0;
         for (const child of expression.children) {
             ({ value, error } = child.tryEvaluate(state));
-            if (error !== undefined) {
+            if (error) {
                 break;
             }
             if (verify !== undefined) {
                 error = verify(value, child, pos);
             }
-            if (error !== undefined) {
+            if (error) {
                 break;
             }
             args.push(value);
@@ -425,7 +425,7 @@ export class BuiltInFunctions {
             let error: string;
             let args: any [];
             ({ args, error } = BuiltInFunctions.evaluateChildren(expression, state, verify));
-            if (error === undefined) {
+            if (!error) {
                 try {
                     value = func(args);
                 } catch (e) {
@@ -449,7 +449,7 @@ export class BuiltInFunctions {
             let error: string;
             let args: any [];
             ({ args, error } = BuiltInFunctions.evaluateChildren(expression, state, verify));
-            if (error === undefined) {
+            if (!error) {
                 try {
                     ({ value, error } = func(args));
                 } catch (e) {
@@ -521,16 +521,16 @@ export class BuiltInFunctions {
                 let error: string;
                 let args: any [];
                 ({ args, error } = BuiltInFunctions.evaluateChildren(expression, state, verify));
-                if (error === undefined) {
-                    const isNumber: boolean = args !== undefined && args.length > 0 && typeof args[0] === 'number';
+                if (!error) {
+                    const isNumber: boolean = args && args.length > 0 && typeof args[0] === 'number';
                     for (const arg of args) {
-                        if (arg !== undefined && (typeof arg === 'number') !== isNumber) {
+                        if (arg && (typeof arg === 'number') !== isNumber) {
                             error = `Arguments must either all be numbers or strings in ${ expression }`;
                             break;
                         }
                     }
 
-                    if (error === undefined) {
+                    if (!error) {
                         try {
                             result = func(args);
                         } catch (e) {
@@ -573,10 +573,10 @@ export class BuiltInFunctions {
                 let value: any;
                 let args: any [];
                 ({ args, error } = BuiltInFunctions.evaluateChildren(expression, state));
-                if (error === undefined) {
+                if (!error) {
                     if (typeof args[0] === 'string' && typeof args[1] === 'number') {
                         ({ value, error } = BuiltInFunctions.parseTimestamp(args[0]));
-                        if (error === undefined) {
+                        if (!error) {
                             if (args.length === 3 && typeof args[2] === 'string') {
                                 result = func(value, args[1]).format(BuiltInFunctions.timestampFormatter(args[2]));
                             } else {
@@ -598,7 +598,7 @@ export class BuiltInFunctions {
     public static parseTimestamp(timeStamp: string, transform?: (arg0: moment.Moment) => any): { value: any; error: string } {
         let value: any;
         const error: string = this.verifyISOTimestamp(timeStamp);
-        if (error === undefined) {
+        if (!error) {
             const parsed: moment.Moment = moment(timeStamp).utc();
             value = transform !== undefined ? transform(parsed) : parsed;
         }
@@ -612,7 +612,7 @@ export class BuiltInFunctions {
      */
     public static lookup(type: string): ExpressionEvaluator {
         const evaluator: ExpressionEvaluator = BuiltInFunctions._functions.get(type);
-        if (evaluator === undefined) {
+        if (!evaluator) {
             throw new Error(`${ type } does not have an evaluator, it's not a built-in function or a customized function`);
         }
 
@@ -753,7 +753,7 @@ export class BuiltInFunctions {
         let left: Expression;
         let error: string;
         ({path, left, error} = BuiltInFunctions.tryAccumulatePath(expression, state));
-        if (error !== undefined) {
+        if (error) {
             return {value: undefined, error};
         }
 
@@ -764,7 +764,7 @@ export class BuiltInFunctions {
             let newScope: any;
             let err: string;
             ({value: newScope, error: err} = left.tryEvaluate(state));
-            if (err !== undefined) {
+            if (err) {
                 return {value: undefined, error: err};
             }
 
@@ -780,10 +780,10 @@ export class BuiltInFunctions {
 
         const children: Expression[] = expression.children;
         ({ value: instance, error } = children[0].tryEvaluate(state));
-        if (error === undefined) {
+        if (!error) {
             ({ value: property, error } = children[1].tryEvaluate(state));
 
-            if (error === undefined) {
+            if (!error) {
                 ({ value, error } = new SimpleObjectMemory(instance).getValue(property.toString()));
             }
         }
@@ -793,7 +793,7 @@ export class BuiltInFunctions {
 
     private static coalesce(objetcList: object[]): any {
         for (const obj of objetcList) {
-            if (obj !== undefined) {
+            if (obj) {
                 return obj;
             }
         }
@@ -818,7 +818,7 @@ export class BuiltInFunctions {
             error = 'the first parameter should be either an object or a string';
         }
 
-        if (error === undefined) {
+        if (!error) {
             try {
                 evaled = jsPath.apply(path, json);
             } catch (e) {
@@ -838,10 +838,10 @@ export class BuiltInFunctions {
         const index: Expression = expression.children[1];
         let inst: any;
         ({ value: inst, error } = instance.tryEvaluate(state));
-        if (error === undefined) {
+        if (!error) {
             let idxValue: any;
             ({ value: idxValue, error } = index.tryEvaluate(state));
-            if (error === undefined) {
+            if (!error) {
                 if (Number.isInteger(idxValue)) {
                     ({ value, error } = Extensions.accessIndex(inst, Number(idxValue)));
                 } else if (typeof idxValue === 'string') {
@@ -882,14 +882,14 @@ export class BuiltInFunctions {
             return {value: undefined, error};
         }
 
-        if (left != undefined) {
+        if (left) {
             // the expression can't be fully merged as a path
             return {value: undefined, error:`${ expression.children[0].toString() } is not a valid path to set value`};
         }  
         let value: any;
         let err: string;
         ({value, error: err} = expression.children[1].tryEvaluate(state));
-        if (err !== undefined) {
+        if (err) {
             return {value: undefined, error: err};
         }
 
@@ -903,7 +903,7 @@ export class BuiltInFunctions {
 
         ({ value: collection, error } = expression.children[0].tryEvaluate(state));
 
-        if (error === undefined) {
+        if (!error) {
             // 2nd parameter has been rewrite to $local.item
             const iteratorName: string = (expression.children[1].children[0] as Constant).value as string;
             if (!Array.isArray(collection)) {
@@ -939,7 +939,7 @@ export class BuiltInFunctions {
 
         ({ value: collection, error } = expression.children[0].tryEvaluate(state));
 
-        if (error === undefined) {
+        if (!error) {
             const iteratorName: string = (expression.children[1].children[0] as Constant).value as string;
             if (!Array.isArray(collection)) {
                 error = `${ expression.children[0] } is not a collection to run where`;
@@ -1057,7 +1057,7 @@ export class BuiltInFunctions {
 
         if (typeof instance === 'boolean') {
             result = instance;
-        } else if (instance === undefined) {
+        } else if (instance === undefined || instance === null) {
             result = false;
         }
 
@@ -1069,7 +1069,7 @@ export class BuiltInFunctions {
         let error: string;
         for (const child of expression.children) {
             ({ value: result, error } = child.tryEvaluate(state));
-            if (error === undefined) {
+            if (!error) {
                 if (this.isLogicTrue(result)) {
                     result = true;
                 } else {
@@ -1091,7 +1091,7 @@ export class BuiltInFunctions {
         let error: string;
         for (const child of expression.children) {
             ({ value: result, error } = child.tryEvaluate(state));
-            if (error === undefined) {
+            if (!error) {
                 if (this.isLogicTrue(result)) {
                     result = true;
                     break;
@@ -1108,7 +1108,7 @@ export class BuiltInFunctions {
         let result = false;
         let error: string;
         ({ value: result, error } = expression.children[0].tryEvaluate(state));
-        if (error === undefined) {
+        if (!error) {
             result = !this.isLogicTrue(result);
         } else {
             error = undefined;
@@ -1122,7 +1122,7 @@ export class BuiltInFunctions {
         let result: any;
         let error: string;
         ({ value: result, error } = expression.children[0].tryEvaluate(state));
-        if (error === undefined && this.isLogicTrue(result)) {
+        if (!error && this.isLogicTrue(result)) {
             ({ value: result, error } = expression.children[1].tryEvaluate(state));
         } else {
             ({ value: result, error } = expression.children[2].tryEvaluate(state));
@@ -1137,18 +1137,18 @@ export class BuiltInFunctions {
         let str: string;
         ({ value: str, error } = expression.children[0].tryEvaluate(state));
 
-        if (error === undefined) {
+        if (!error) {
             if (typeof str === 'string') {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
                 ({ value: start, error } = startExpr.tryEvaluate(state));
-                if (error === undefined && !Number.isInteger(start)) {
+                if (!error && !Number.isInteger(start)) {
                     error = `${ startExpr } is not an integer.`;
                 } else if (start < 0 || start >= str.length) {
                     error = `${ startExpr }=${ start } which is out of range for ${ str }`;
                 }
-                if (error === undefined) {
+                if (!error) {
                     let length: number;
                     if (expression.children.length === 2) {
                         // Without length, compute to end
@@ -1156,13 +1156,13 @@ export class BuiltInFunctions {
                     } else {
                         const lengthExpr: Expression = expression.children[2];
                         ({ value: length, error } = lengthExpr.tryEvaluate(state));
-                        if (error === undefined && !Number.isInteger(length)) {
+                        if (!error && !Number.isInteger(length)) {
                             error = `${ lengthExpr } is not an integer`;
                         } else if (length < 0 || Number(start) + Number(length) > str.length) {
                             error = `${ lengthExpr }=${ length } which is out of range for ${ str }`;
                         }
                     }
-                    if (error === undefined) {
+                    if (!error) {
                         result = str.substr(start, length);
                     }
                 }
@@ -1182,18 +1182,18 @@ export class BuiltInFunctions {
         let arr: any;
         ({ value: arr, error } = expression.children[0].tryEvaluate(state));
 
-        if (error === undefined) {
+        if (!error) {
             if (Array.isArray(arr)) {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
                 ({ value: start, error } = startExpr.tryEvaluate(state));
-                if (error === undefined && !Number.isInteger(start)) {
+                if (!error && !Number.isInteger(start)) {
                     error = `${ startExpr } is not an integer.`;
                 } else if (start < 0 || start >= arr.length) {
                     error = `${ startExpr }=${ start } which is out of range for ${ arr }`;
                 }
-                if (error === undefined) {
+                if (!error) {
                     result = arr.slice(start);
                 }
             } else {
@@ -1210,18 +1210,18 @@ export class BuiltInFunctions {
         let arr: any;
         ({ value: arr, error } = expression.children[0].tryEvaluate(state));
 
-        if (error === undefined) {
+        if (!error) {
             if (Array.isArray(arr) || typeof arr === 'string') {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
                 ({ value: start, error } = startExpr.tryEvaluate(state));
-                if (error === undefined && !Number.isInteger(start)) {
+                if (!error && !Number.isInteger(start)) {
                     error = `${ startExpr } is not an integer.`;
                 } else if (start < 0 || start >= arr.length) {
                     error = `${ startExpr }=${ start } which is out of range for ${ arr }`;
                 }
-                if (error === undefined) {
+                if (!error) {
                     result = arr.slice(0, start);
                 }
             } else {
@@ -1238,31 +1238,31 @@ export class BuiltInFunctions {
         let arr: any;
         ({ value: arr, error } = expression.children[0].tryEvaluate(state));
 
-        if (error === undefined) {
+        if (!error) {
             if (Array.isArray(arr)) {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
                 ({ value: start, error } = startExpr.tryEvaluate(state));
-                if (error === undefined && !Number.isInteger(start)) {
+                if (!error && !Number.isInteger(start)) {
                     error = `${ startExpr } is not an integer.`;
                 } else if (start < 0 || start >= arr.length) {
                     error = `${ startExpr }=${ start } which is out of range for ${ arr }`;
                 }
-                if (error === undefined) {
+                if (!error) {
                     let end: number;
                     if (expression.children.length === 2) {
                         end = arr.length;
                     } else {
                         const endExpr: Expression = expression.children[2];
                         ({ value: end, error } = endExpr.tryEvaluate(state));
-                        if (error === undefined && !Number.isInteger(end)) {
+                        if (!error && !Number.isInteger(end)) {
                             error = `${ endExpr } is not an integer`;
                         } else if (end < 0 || end > arr.length) {
                             error = `${ endExpr }=${ end } which is out of range for ${ arr }`;
                         }
                     }
-                    if (error === undefined) {
+                    if (!error) {
                         result = arr.slice(start, end);
                     }
                 }
@@ -1280,7 +1280,7 @@ export class BuiltInFunctions {
             let error: string;
             let oriArr: any;
             ({ value: oriArr, error } = expression.children[0].tryEvaluate(state));
-            if (error === undefined) {
+            if (!error) {
                 if (Array.isArray(oriArr)) {
                     const arr: any = oriArr.slice(0);
                     if (expression.children.length === 1) {
@@ -1293,7 +1293,7 @@ export class BuiltInFunctions {
                         let propertyName: string;
                         ({value: propertyName, error} = expression.children[1].tryEvaluate(state));
 
-                        if (error === undefined) {
+                        if (!error) {
                             propertyName = propertyName === undefined ? '' : propertyName;
                         }
                         if (isDescending) {
@@ -1329,7 +1329,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: any;
         ({value: parsed, error} = BuiltInFunctions.parseTimestamp(timeStamp));
-        if (error === undefined) {
+        if (!error) {
             let addedTime: moment.Moment = parsed;
             let timeUnitMark: string;
             switch (timeUnit) {
@@ -1374,7 +1374,7 @@ export class BuiltInFunctions {
                 }
             }
 
-            if (error === undefined) {
+            if (!error) {
                 addedTime = parsed.add(interval, timeUnitMark);
                 ({value: result, error} = this.returnFormattedTimeStampStr(addedTime, format));
             }
@@ -1404,7 +1404,7 @@ export class BuiltInFunctions {
             error = `${ destinationTimeZone } is not a valid timezone`;
         }
 
-        if (error === undefined) {
+        if (!error) {
             try {
                 result = timezone.tz(timeStamp, timeZone).format(format);
             } catch (e) {
@@ -1435,9 +1435,9 @@ export class BuiltInFunctions {
             error = `${ sourceTimezone } is not a valid timezone`;
         }
 
-        if (error === undefined) {
+        if (!error) {
             error = this.verifyTimeStamp(timeStamp);
-            if (error === undefined) {
+            if (!error) {
                 try {
                     const sourceTime: moment.Moment = timezone.tz(timeStamp, timeZone);
                     formattedSourceTime = sourceTime.format();
@@ -1445,7 +1445,7 @@ export class BuiltInFunctions {
                     error = `${ timeStamp } with ${ timeZone } is not a valid timestamp with specified timeZone:`;
                 }
 
-                if (error === undefined) {
+                if (!error) {
                     try {
                         result = timezone.tz(formattedSourceTime, 'Etc/UTC').format(format);
                     } catch (e) {
@@ -1463,7 +1463,7 @@ export class BuiltInFunctions {
         let result: number;
         let error: string;
         ({value: parsed, error} = BuiltInFunctions.parseTimestamp(timeStamp));
-        if (error === undefined) {
+        if (!error) {
             const unixMilliSec: number = parseInt(parsed.format('x'), 10);
             result = this.UnixMilliSecondToTicksConstant + unixMilliSec * 10000;
         }
@@ -1476,7 +1476,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: moment.Moment;
         ({value: parsed, error} = BuiltInFunctions.parseTimestamp(timeStamp));
-        if (error === undefined) {
+        if (!error) {
             const startOfDay: moment.Moment = parsed.hours(0).minutes(0).second(0).millisecond(0);
             ({value: result, error} =  BuiltInFunctions.returnFormattedTimeStampStr(startOfDay, format));
         }
@@ -1489,7 +1489,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: moment.Moment;
         ({value: parsed, error} = BuiltInFunctions.parseTimestamp(timeStamp));
-        if (error === undefined) {
+        if (!error) {
             const startofHour: moment.Moment = parsed.minutes(0).second(0).millisecond(0);
             ({value: result, error} =  BuiltInFunctions.returnFormattedTimeStampStr(startofHour, format));
         }
@@ -1502,7 +1502,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: moment.Moment;
         ({value: parsed, error} = BuiltInFunctions.parseTimestamp(timeStamp));
-        if (error === undefined) {
+        if (!error) {
             const startofMonth: moment.Moment = parsed.date(1).hours(0).minutes(0).second(0).millisecond(0);
             ({value: result, error} =  BuiltInFunctions.returnFormattedTimeStampStr(startofMonth, format));
         }
@@ -1528,7 +1528,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: URL;
         ({value: parsed, error} = this.parseUri(uri));
-        if (error === undefined) {
+        if (!error) {
             try {
                 result = parsed.hostname;
             } catch (e) {
@@ -1544,7 +1544,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: URL;
         ({value: parsed, error} = this.parseUri(uri));
-        if (error === undefined) {
+        if (!error) {
             try {
                 const uriObj: URL = new URL(uri);
                 result = uriObj.pathname;
@@ -1561,7 +1561,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: URL;
         ({value: parsed, error} = this.parseUri(uri));
-        if (error === undefined) {
+        if (!error) {
             try {
                 result = parsed.pathname + parsed.search;
             } catch (e) {
@@ -1577,7 +1577,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: URL;
         ({value: parsed, error} = this.parseUri(uri));
-        if (error === undefined) {
+        if (!error) {
             try {
                 result = parsed.port;
             } catch (e) {
@@ -1593,7 +1593,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: URL;
         ({value: parsed, error} = this.parseUri(uri));
-        if (error === undefined) {
+        if (!error) {
             try {
                 result = parsed.search;
             } catch (e) {
@@ -1609,7 +1609,7 @@ export class BuiltInFunctions {
         let error: string;
         let parsed: URL;
         ({value: parsed, error} = this.parseUri(uri));
-        if (error === undefined) {
+        if (!error) {
             try {
                 result = parsed.protocol.replace(':', '');
             } catch (e) {
@@ -1634,7 +1634,7 @@ export class BuiltInFunctions {
                 (args: any []): number => Math.floor(Number(args[0]) / Number(args[1])),
                 (val: any, expression: Expression, pos: number): string => {
                     let error: string = this.verifyNumber(val, expression, pos);
-                    if (error === undefined && (pos > 0 && Number(val) === 0)) {
+                    if (!error && (pos > 0 && Number(val) === 0)) {
                         error = `Cannot divide by 0 from ${ expression }`;
                     }
 
@@ -1800,7 +1800,7 @@ export class BuiltInFunctions {
                     let args: any [];
                     ({ args, error } = BuiltInFunctions.evaluateChildren(expression, state));
 
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof args[0] === 'string' && typeof args[1] === 'string' || Array.isArray(args[0])) {
                             found = args[0].includes(args[1]);
                         } else if (args[0] instanceof Map) {
@@ -1808,7 +1808,7 @@ export class BuiltInFunctions {
                         } else if (typeof args[1] === 'string') {
                             let value: any;
                             ({ value, error } = Extensions.accessProperty(args[0], args[1]));
-                            found = error === undefined && value !== undefined;
+                            found = !error && value !== undefined;
                         }
                     }
 
@@ -1857,7 +1857,7 @@ export class BuiltInFunctions {
                         error = `${ args[1] } should be a string with length at least 1`;
                     }
 
-                    if (error === undefined) {
+                    if (!error) {
                         result = BuiltInFunctions.parseStringOrNull(args[0]).split(BuiltInFunctions.parseStringOrNull(args[1])).join(BuiltInFunctions.parseStringOrNull(args[2]));
                     }
 
@@ -1876,7 +1876,7 @@ export class BuiltInFunctions {
                         error = `${ args[1] } should be a string with length at least 1`;
                     }
 
-                    if (error === undefined) {
+                    if (!error) {
                         result = BuiltInFunctions.parseStringOrNull(args[0]).replace(new RegExp(BuiltInFunctions.parseStringOrNull(args[1]), 'gi'), BuiltInFunctions.parseStringOrNull(args[2]));
                     }
 
@@ -1946,7 +1946,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({ args, error } = BuiltInFunctions.evaluateChildren(expression, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (!Array.isArray(args[0])) {
                             error = `${ expression.children[0] } evaluates to ${ args[0] } which is not a list.`;
                         } else {
@@ -2033,7 +2033,7 @@ export class BuiltInFunctions {
                         }
 
                         let value: any;
-                        if (error === undefined) {
+                        if (!error) {
                             const dateString: string = new Date(arg).toISOString();
                             value = args.length === 2 ? moment(dateString).format(BuiltInFunctions.timestampFormatter(args[1])) : dateString;
                         }
@@ -2049,7 +2049,7 @@ export class BuiltInFunctions {
                     let error: any;
                     let args: any [];
                     ({ args, error } = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof args[0] === 'string' && Number.isInteger(args[1]) && typeof args[2] === 'string') {
                             const format: string = (args.length === 4 ? BuiltInFunctions.timestampFormatter(args[3]) : BuiltInFunctions.DefaultDateTimeFormat);
                             const { duration, tsStr } = BuiltInFunctions.timeUnitTransformer(args[1], args[2]);
@@ -2077,7 +2077,7 @@ export class BuiltInFunctions {
                         let error: string;
                         const dateFormat = 'YYYY-MM-DD';
                         ({ value, error } = BuiltInFunctions.parseTimestamp(args[0]));
-                        if (error === undefined) {
+                        if (!error) {
                             const timestamp1: Date = new Date(value.format(dateFormat));
                             ({ value, error } = BuiltInFunctions.parseTimestamp(args[1]));
                             const timestamp2: string = value.format(dateFormat);
@@ -2095,7 +2095,7 @@ export class BuiltInFunctions {
                     (args: any []): any => {
                         let value: any;
                         const error: string = BuiltInFunctions.verifyISOTimestamp(args[0]);
-                        if (error === undefined) {
+                        if (!error) {
                             const thisTime: number = moment.parseZone(args[0]).hour() * 100 + moment.parseZone(args[0]).minute();
                             if (thisTime === 0) {
                                 value = 'midnight';
@@ -2124,7 +2124,7 @@ export class BuiltInFunctions {
                     let error: any;
                     let args: any [];
                     ({ args, error } = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (Number.isInteger(args[0]) && typeof args[1] === 'string') {
                             const format: string = (args.length === 3 ? BuiltInFunctions.timestampFormatter(args[2]) : BuiltInFunctions.DefaultDateTimeFormat);
                             const { duration, tsStr } = BuiltInFunctions.timeUnitTransformer(args[0], args[1]);
@@ -2151,7 +2151,7 @@ export class BuiltInFunctions {
                     let error: any;
                     let args: any [];
                     ({ args, error } = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (Number.isInteger(args[0]) && typeof args[1] === 'string') {
                             const format: string = (args.length === 3 ? BuiltInFunctions.timestampFormatter(args[2]) : BuiltInFunctions.DefaultDateTimeFormat);
                             const { duration, tsStr } = BuiltInFunctions.timeUnitTransformer(args[0], args[1]);
@@ -2178,7 +2178,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         const format: string = (args.length === 3) ? BuiltInFunctions.timestampFormatter(args[2]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string' && typeof(args[1]) === 'string') {
                             ({value, error} = BuiltInFunctions.convertFromUTC(args[0], args[1], format));
@@ -2199,7 +2199,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         const format: string = (args.length === 3) ? BuiltInFunctions.timestampFormatter(args[2]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string' && typeof(args[1]) === 'string') {
                             ({value, error} = BuiltInFunctions.convertToUTC(args[0], args[1], format));
@@ -2220,7 +2220,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         const format: string = (args.length === 4) ? BuiltInFunctions.timestampFormatter(args[3]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string' && Number.isInteger(args[1]) && typeof(args[2]) === 'string') {
                             ({value, error} = BuiltInFunctions.addToTime(args[0], args[1], args[2], format));
@@ -2241,7 +2241,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         const format: string = (args.length === 2) ? BuiltInFunctions.timestampFormatter(args[1]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.startOfDay(args[0], format));
@@ -2262,7 +2262,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         const format: string = (args.length === 2) ? BuiltInFunctions.timestampFormatter(args[1]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.startOfHour(args[0], format));
@@ -2283,7 +2283,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         const format: string = (args.length === 2) ? BuiltInFunctions.timestampFormatter(args[1]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.startOfMonth(args[0], format));
@@ -2304,7 +2304,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.ticks(args[0]));
                         } else {
@@ -2323,7 +2323,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.uriHost(args[0]));
                         } else {
@@ -2342,7 +2342,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.uriPath(args[0]));
                         } else {
@@ -2361,7 +2361,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.uriPathAndQuery(args[0]));
                         } else {
@@ -2380,7 +2380,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.uriQuery(args[0]));
                         } else {
@@ -2399,7 +2399,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.uriPort(args[0]));
                         } else {
@@ -2418,7 +2418,7 @@ export class BuiltInFunctions {
                     let error: string;
                     let args: any [];
                     ({args, error} = BuiltInFunctions.evaluateChildren(expr, state));
-                    if (error === undefined) {
+                    if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = BuiltInFunctions.uriScheme(args[0]));
                         } else {

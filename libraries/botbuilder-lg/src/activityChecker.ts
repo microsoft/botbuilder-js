@@ -196,7 +196,7 @@ export class ActivityChecker {
 
     private static checkCardActionType(cardActionType: string): Diagnostic[] {
         const result: Diagnostic[] = [];
-        if (cardActionType === undefined || cardActionType === '') {
+        if (!cardActionType) {
             return result;
         }
 

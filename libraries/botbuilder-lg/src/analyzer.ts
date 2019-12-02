@@ -160,7 +160,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
             if (expressions.length > 0) {
                 result.union(this.analyzeExpression(expressions[0].text));
             }
-            if (iterNode.normalTemplateBody() !== undefined) {
+            if (iterNode.normalTemplateBody()) {
                 result.union(this.visit(iterNode.normalTemplateBody()));
             }
         }
@@ -246,14 +246,14 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     }
 
     private isPureExpression(exp: string): boolean {
-        if (exp === undefined || exp.length === 0) {
+        if (!exp) {
             return false;
         }
 
         exp = exp.trim();
         const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeReverseRegex);
         // If there is no match, expressions could be null
-        if (reversedExps === null || reversedExps === undefined || reversedExps.length !== 1) {
+        if (!reversedExps || reversedExps.length !== 1) {
             return false;
         } else {
             return reversedExps[0].split('').reverse().join('') === exp;

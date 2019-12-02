@@ -131,7 +131,7 @@ export class TemplateEngine {
     }
 
     private readonly runStaticCheck = (templates: LGTemplate[]): void => {
-        const templatesToCheck: LGTemplate[] = templates === undefined ? this.templates : templates;
+        const templatesToCheck: LGTemplate[] = !templates ? this.templates : templates;
         const diagnostics: Diagnostic[] = new StaticChecker(this.expressionEngine).checkTemplates(templatesToCheck);
 
         const errors: Diagnostic[] = diagnostics.filter((u: Diagnostic): boolean => u.severity === DiagnosticSeverity.Error);
