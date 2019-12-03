@@ -1,7 +1,6 @@
 const assert = require('assert');
 const { AuthenticationConstants, ChannelValidation, ClaimsIdentity, EndorsementsValidator, EnterpriseChannelValidation,
     GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider } = require('../lib');
-const Connector = require('../lib');
 
 describe('Bot Framework Connector - Auth Tests', function() {
 
@@ -361,31 +360,70 @@ describe('Bot Framework Connector - Auth Tests', function() {
                 }
             });
         });
+    });
 
-        it('should get appId from claims', () => {
-            const appId = 'uuid.uuid4()';
-            const v1Claims = [];
-            const v2Claims = [{ type: AuthenticationConstants.VersionClaim, value: '2.0' }];
+    describe('JwtTokenValidation', () => {
+        describe('getAppIdFromClaims()', () => {
+            it('should get appId from claims', () => {
+                const appId = 'uuid.uuid4()';
+                const v1Claims = {};
+                const v2Claims = { [AuthenticationConstants.VersionClaim]: '2.0' };
     
+                // Empty array of Claims should yield undefined
+                assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v1Claims), undefined);
+        
+                // AppId exists, but there is no version (assumes v1)
+                v1Claims[AuthenticationConstants.AppIdClaim] = appId;
+                assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v1Claims), appId);
+        
+                // AppId exists with v1 version
+                v1Claims[AuthenticationConstants.VersionClaim] = '1.0';
+                assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v1Claims), appId);
+        
+                // v2 version should yield undefined with no "azp" claim
+                v2Claims[AuthenticationConstants.VersionClaim] = '2.0';
+                assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v2Claims), undefined);
+        
+                // v2 version with azp
+                v2Claims[AuthenticationConstants.AuthorizedParty] = appId;
+                assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v2Claims), appId);
+            });
     
-            // Empty array of Claims should yield undefined
-            assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v1Claims), undefined);
-    
-            // AppId exists, but there is no version (assumes v1)
-            v1Claims.unshift({ type: AuthenticationConstants.AppIdClaim, value: appId});
-            assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v1Claims), appId);
-    
-            // AppId exists with v1 version
-            v1Claims.unshift({ type: AuthenticationConstants.VersionClaim, value: '1.0' });
-            assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v1Claims), appId);
-    
-            // v2 version should yield undefined with no "azp" claim
-            v2Claims.unshift({ type: AuthenticationConstants.VersionClaim, value: '2.0' });
-            assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v2Claims), undefined);
-    
-            // v2 version with azp
-            v2Claims.unshift({ type: AuthenticationConstants.AuthorizedParty, value: appId});
-            assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v2Claims), appId);
+            it('should throw an error if claims is falsey', () => {
+                try {
+                    JwtTokenValidation.getAppIdFromClaims();
+                } catch (e) {
+                    assert.strictEqual(e.message, 'JwtTokenValidation.getAppIdFromDecodedJwt(): missing claims.');
+                }
+            });
+        });
+   
+        describe('isValidTokenFormat()', () => {
+            it('should return false with a falsey authHeader', () => {
+                const isValid = JwtTokenValidation.isValidTokenFormat();
+                assert(!isValid);
+            });
+
+            it('should return false if authHeader.split(" ").length !== 2', () => {
+                let isValid = JwtTokenValidation.isValidTokenFormat('a');
+                assert(!isValid);
+
+                isValid = JwtTokenValidation.isValidTokenFormat('a ');
+                assert(!isValid);
+
+                isValid = JwtTokenValidation.isValidTokenFormat('a b c');
+                assert(!isValid);
+            });
+
+            it('should return false if parsed scheme is not "Bearer"', () => {
+                const isValid = JwtTokenValidation.isValidTokenFormat('NotBearer Token');
+                assert(!isValid);
+            });
+
+            it('should return true for a correct Auth Header', () => {
+                const isValid = JwtTokenValidation.isValidTokenFormat('Bearer Token');
+                assert(isValid);
+            });
         });
     });
 });
