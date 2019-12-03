@@ -114,7 +114,7 @@ export namespace SkillValidation {
             throw new Error('SkillValidation.authenticateChannelToken(): invalid authConfig parameter');
         }
 
-        const openIdMetadataUrl = channelService && channelService === GovernmentConstants.ChannelService && JwtTokenValidation.isGovernment(channelService) ?
+        const openIdMetadataUrl = JwtTokenValidation.isGovernment(channelService) ?
             GovernmentConstants.ToBotFromEmulatorOpenIdMetadataUrl : 
             AuthenticationConstants.ToBotFromEmulatorOpenIdMetadataUrl;
 

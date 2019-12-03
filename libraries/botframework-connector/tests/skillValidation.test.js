@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { AuthenticationConstants, ClaimsIdentity, SimpleCredentialProvider, SkillValidation } = require('../lib');
+const { AuthenticationConstants, SimpleCredentialProvider, SkillValidation } = require('../lib');
 
 describe('SkillValidation', function() {
     this.timeout(5000);
@@ -9,6 +9,14 @@ describe('SkillValidation', function() {
             const claims = {};
             const audience = uuid();
             const appId = uuid();
+
+            // No claims (falsey value)
+            try {
+                assert(!SkillValidation.isSkillClaim());
+                throw new Error('SkillValidation.isSkillClaim() should have failed with undefined parameter');
+            } catch (e) {
+                assert.strictEqual(e.message, 'SkillValidation.isSkillClaim(): missing claims.');
+            }
     
             // Empty list of claims
             assert(!SkillValidation.isSkillClaim(claims));
@@ -66,6 +74,16 @@ describe('SkillValidation', function() {
 
         it('should succeed for messages to skill using valid v2 token', () => {
             assert(SkillValidation.isSkillToken('Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImFQY3R3X29kdlJPb0VOZzNWb09sSWgydGlFcyJ9.eyJhdWQiOiI0YzAwMzllNS02ODE2LTQ4ZTgtYjMxMy1mNzc2OTFmZjFjNWUiLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vZDZkNDk0MjAtZjM5Yi00ZGY3LWExZGMtZDU5YTkzNTg3MWRiL3YyLjAiLCJpYXQiOjE1NzExODk3NTUsIm5iZiI6MTU3MTE4OTc1NSwiZXhwIjoxNTcxMTkzNjU1LCJhaW8iOiI0MlZnWUpnZDROZkZKeG1tMTdPaVMvUk8wZll2QUE9PSIsImF6cCI6IjRjMzNjNDIxLWY3ZDMtNGI2Yy05OTJiLTM2ZTdlNmRlODc2MSIsImF6cGFjciI6IjEiLCJ0aWQiOiJkNmQ0OTQyMC1mMzliLTRkZjctYTFkYy1kNTlhOTM1ODcxZGIiLCJ1dGkiOiJMc2ZQME9JVkNVS1JzZ1IyYlFBQkFBIiwidmVyIjoiMi4wIn0.SggsEbEyXDYcg6EdhK-RA1y6S97z4hwEccXc6a3ymnHP-78frZ3N8rPLsqLoK5QPGA_cqOXsX1zduA4vlFSy3MfTV_npPfsyWa1FIse96-2_3qa9DIP8bhvOHXEVZeq-r-0iF972waFyPPC_KVYWnIgAcunGhFWvLhhOUx9dPgq7824qTq45ma1rOqRoYbhhlRn6PJDymIin5LeOzDGJJ8YVLnFUgntc6_4z0P_fnuMktzar88CUTtGvR4P7XNJhS8v9EwYQujglsJNXg7LNcwV7qOxDYWJtT_UMuMAts9ctD6FkuTGX_-6FTqmdUPPUS4RWwm4kkl96F_dXnos9JA'));
+        });
+    });
+
+    describe('authenticateChannelToken()', () => {
+        it('should throw an error when missing authConfig', async () => {
+            try {
+                await SkillValidation.authenticateChannelToken('authHeader', new SimpleCredentialProvider('', ''), '', 'unknown');
+            } catch (e) {
+                assert.strictEqual(e.message, 'SkillValidation.authenticateChannelToken(): invalid authConfig parameter');
+            }
         });
     });
 });
