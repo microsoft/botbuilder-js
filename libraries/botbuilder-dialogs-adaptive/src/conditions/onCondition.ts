@@ -5,11 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog } from 'botbuilder-dialogs';
+import { Dialog, DialogDependencies } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface, ExpressionType, Constant, ExpressionEngine } from 'botframework-expressions';
-import { SequenceContext, ActionChangeList, ActionState, ActionChangeType } from '../sequenceContext';
+import { SequenceContext, ActionChangeList, ActionChangeType } from '../sequenceContext';
+import { ActionScope } from '../actions';
 
-export class OnCondition {
+export class OnCondition implements DialogDependencies {
     /**
      * Evaluates the rule and returns a predicted set of changes that should be applied to the
      * current plan.
@@ -22,7 +23,6 @@ export class OnCondition {
     private readonly _extraConstraints: Expression[] = [];
     private _fullConstraint: Expression;
 
-
     /**
      * Gets or sets the condition which needs to be met for the actions to be executed (OPTIONAL).
      */
@@ -34,6 +34,11 @@ export class OnCondition {
     public actions: Dialog[] = [];
 
     /**
+     * The block of actions executed when the rule is triggered.
+     */
+    protected readonly actionScope: Dialog;
+
+    /**
      * Create a new `OnCondition` instance.
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
@@ -41,6 +46,7 @@ export class OnCondition {
     constructor(condition?: string, actions: Dialog[] = []) {
         this.condition = condition;
         this.actions = actions;
+        this.actionScope = new ActionScope(this.actions);
     }
 
     /**
@@ -100,25 +106,18 @@ export class OnCondition {
         return [this.onCreateChangeList(planningContext)];
     }
 
+    public getDependencies(): Dialog[] {
+        return this.actions.concat([this.actionScope]);
+    }
+
     protected onCreateChangeList(planningContext: SequenceContext, dialogOptions?: any): ActionChangeList {
         const actionChangeList: ActionChangeList = {
             changeType: ActionChangeType.insertActions,
-            actions: []
-        };
-
-        for (let i = 0; i < this.actions.length; i++) {
-            const action = this.actions[i];
-            const actionState: ActionState = {
-                dialogId: action.id,
+            actions: [{
+                dialogId: this.actionScope.id,
                 dialogStack: []
-            };
-
-            if (dialogOptions) {
-                actionState.options = dialogOptions
-            }
-
-            actionChangeList.actions.push(actionState);
-        }
+            }]
+        };
 
         return actionChangeList;
     }

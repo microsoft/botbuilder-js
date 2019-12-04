@@ -100,7 +100,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
         // Install each trigger actions
         this.triggers.forEach((trigger) => {
-            trigger.actions.forEach((action) => this.dialogs.add(action));
+            trigger.getDependencies().forEach((action) => this.dialogs.add(action));
         });
 
         if (!this.selector) {

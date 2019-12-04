@@ -19,7 +19,7 @@ export enum ActionScopeCommands {
 }
 
 export interface ActionScopeResult {
-    actionBlockCommand: ActionScopeCommands;
+    actionScopeCommand: ActionScopeCommands;
     actionId?: string;
 }
 
@@ -63,11 +63,11 @@ export class ActionScope<O extends object = {}> extends Dialog<O> {
         }
     }
 
-    public async resumeDialog(dc: DialogContext, reason: DialogReason, result: any = null): Promise<DialogTurnResult> {
+    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // Check for action block command
         const nextOffset = dc.state.getValue(OFFSET_KEY) + 1;
-        if (typeof result == 'object' && (result as ActionScopeResult).actionBlockCommand) {
-            switch ((result as ActionScopeResult).actionBlockCommand) {
+        if (typeof result === 'object' && result.hasOwnProperty('actionScopeCommand')) {
+            switch ((result as ActionScopeResult).actionScopeCommand) {
                 case ActionScopeCommands.goto:
                     return await this.gotoAction(dc, (result as ActionScopeResult).actionId);
                 case ActionScopeCommands.continue:
@@ -120,7 +120,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> {
             return await this.beginAction(dc, offset);
         } else if (dc.stack.length > 1) {
             return await dc.endDialog({ 
-                actionBlockCommand: ActionScopeCommands.goto,
+                actionScopeCommand: ActionScopeCommands.goto,
                 actionId: actionId
             } as ActionScopeResult);
         } else {

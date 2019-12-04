@@ -62,7 +62,7 @@ export class BeginDialog<O extends object = {}> extends Dialog<O> {
         return await dc.beginDialog(this.dialogIdToCall, options);
     }
 
-    public async resumeDialog(dc: DialogContext, reason: DialogReason, result: any = null): Promise<DialogTurnResult> {
+    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         if (this.resultProperty != null) {
             dc.state.setValue(this.resultProperty, result);
         }
