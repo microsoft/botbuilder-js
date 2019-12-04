@@ -37,6 +37,11 @@ describe('AppCredentials', () => {
     });
 
     describe('MicrosoftAppCredentials', () => {
+        it('should set oAuthScope when passed in the constructor', () => {
+            const oAuthScope = 'oAuthScope';
+            const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', undefined, undefined, oAuthScope);
+            strictEqual(tokenGenerator.oAuthScope, oAuthScope);
+        });
         it('should fail to get a token with an appId and no appPassword', async () => {
             const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24');
             try {
