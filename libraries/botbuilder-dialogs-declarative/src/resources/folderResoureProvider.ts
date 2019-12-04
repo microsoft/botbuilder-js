@@ -3,6 +3,7 @@ import { normalize, extname } from "path";
 import { readdirSync } from "fs";
 import { IResource } from "./resource";
 import { IResourceProvider } from "./resourceProvider";
+import { PathUtil } from "../pathUtil";
 
 export class FolderResourceProvider implements IResourceProvider {
     private extensions: Set<string> = new Set<string>();
@@ -22,7 +23,7 @@ export class FolderResourceProvider implements IResourceProvider {
         this.IncludeSubFolders = includeSubFolders;
         folder = normalize(folder);
         this.Directory = folder;
-        const allFiles: string[] = readdirSync(folder)
+        const allFiles: string[] = PathUtil.GetAllFiles(folder);
         const allFilteredFiles: string[] = allFiles.filter(f => this.extensions.has(extname(f)));
 
         allFilteredFiles.forEach(f => {

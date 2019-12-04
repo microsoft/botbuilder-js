@@ -75,6 +75,6 @@ export class ResourceExplorer {
             }
         }
 
-        throw new Error(`Could not find resource '${id}'`);
+        return null;
     }
 }
