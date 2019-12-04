@@ -366,26 +366,25 @@ describe('Bot Framework Connector - Auth Tests', function() {
         describe('getAppIdFromClaims()', () => {
             it('should get appId from claims', () => {
                 const appId = 'uuid.uuid4()';
-                const v1Claims = {};
-                const v2Claims = { [AuthenticationConstants.VersionClaim]: '2.0' };
+                const v1Claims = [];
+                const v2Claims = [{ type: AuthenticationConstants.VersionClaim, value : '2.0' }];
     
                 // Empty array of Claims should yield undefined
                 assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v1Claims), undefined);
         
                 // AppId exists, but there is no version (assumes v1)
-                v1Claims[AuthenticationConstants.AppIdClaim] = appId;
+                v1Claims[0] = { type: AuthenticationConstants.AppIdClaim, value: appId };
                 assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v1Claims), appId);
         
                 // AppId exists with v1 version
-                v1Claims[AuthenticationConstants.VersionClaim] = '1.0';
+                v1Claims[1] = { type: AuthenticationConstants.VersionClaim, value: '1.0' };
                 assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v1Claims), appId);
         
                 // v2 version should yield undefined with no "azp" claim
-                v2Claims[AuthenticationConstants.VersionClaim] = '2.0';
                 assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v2Claims), undefined);
         
                 // v2 version with azp
-                v2Claims[AuthenticationConstants.AuthorizedParty] = appId;
+                v2Claims[1] = { type: AuthenticationConstants.AuthorizedParty, value: appId };
                 assert.strictEqual(JwtTokenValidation.getAppIdFromClaims(v2Claims), appId);
             });
     

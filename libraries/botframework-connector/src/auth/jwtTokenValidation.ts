@@ -148,7 +148,7 @@ export namespace JwtTokenValidation {
      * Throws a TypeError if claims is falsy.
      * @param claims An object containing claims types and their values.
      */
-    export function getAppIdFromClaims(claims: { [key: string]: any }): string {
+    export function getAppIdFromClaims(claims: Claim[]): string {
         if (!claims) {
             throw new TypeError(`JwtTokenValidation.getAppIdFromClaims(): missing claims.`);
         }
@@ -156,14 +156,17 @@ export namespace JwtTokenValidation {
 
         // Depending on Version, the AppId is either in the
         // appid claim (Version 1) or the 'azp' claim (Version 2).
-        const tokenClaim = claims[AuthenticationConstants.VersionClaim];
-        if (!tokenClaim || tokenClaim === '1.0') {
+        const versionClaim = claims.find(c => c.type === AuthenticationConstants.VersionClaim);
+        const versionValue = versionClaim && versionClaim.value;
+        if (!versionValue || versionValue === '1.0') {
             // No version or a version of '1.0' means we should look for
             // the claim in the 'appid' claim.
-            appId = claims[AuthenticationConstants.AppIdClaim];
-        } else if (tokenClaim === '2.0') {
+            const appIdClaim = claims.find(c => c.type === AuthenticationConstants.AppIdClaim);
+            appId = appIdClaim && appIdClaim.value;
+        } else if (versionValue === '2.0') {
             // Version '2.0' puts the AppId in the 'azp' claim.
-            appId = claims[AuthenticationConstants.AuthorizedParty];
+            const azpClaim = claims.find(c => c.type === AuthenticationConstants.AuthorizedParty);
+            appId = azpClaim && azpClaim.value;
         }
 
         return appId;

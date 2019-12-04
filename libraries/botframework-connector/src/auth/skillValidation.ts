@@ -11,9 +11,9 @@ import { AuthenticationConfiguration } from './authenticationConfiguration';
 import { AuthenticationConstants } from './authenticationConstants';
 import { Claim, ClaimsIdentity } from './claimsIdentity';
 import { ICredentialProvider } from './credentialProvider';
+import { GovernmentConstants } from './governmentConstants';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 import { JwtTokenValidation } from './jwtTokenValidation';
-import { GovernmentConstants } from './governmentConstants';
 
 /**
  * Validates JWT tokens sent to and from a Skill.
@@ -55,7 +55,16 @@ export namespace SkillValidation {
         // Parse the Big Long String into an actual token.
         const payload: any = decode(bearerToken);
 
-        return isSkillClaim(payload);
+        const claims: Claim[] = Object.keys(payload).reduce(
+            (acc: any, key: any) => {
+                acc.push({ type: key, value: payload[key] });
+
+                return acc;
+            },
+            <Claim[]>[]
+        );
+
+        return isSkillClaim(claims);
     }
 
     /**
@@ -70,19 +79,21 @@ export namespace SkillValidation {
      * @param claims An object of claims.
      * @returns {boolean} True if the object of claims is a skill claim, false if is not.
      */
-    export function isSkillClaim(claims: { [key: string]: any }): boolean {
+    export function isSkillClaim(claims: Claim[]): boolean {
         if (!claims) {
             throw new TypeError(`SkillValidation.isSkillClaim(): missing claims.`);
         }
 
-        const versionClaim = claims[AuthenticationConstants.VersionClaim];
+        const versionClaim = claims.find(c => c.type === AuthenticationConstants.VersionClaim);
+        const versionValue = versionClaim && versionClaim.value;
         if (!versionClaim) {
             // Must have a version claim.
             return false;
         }
 
-        const audClaim = claims[AuthenticationConstants.AudienceClaim];
-        if (!audClaim || AuthenticationConstants.ToBotFromChannelTokenIssuer === audClaim) {
+        const audClaim = claims.find(c => c.type === AuthenticationConstants.AudienceClaim);
+        const audienceValue = audClaim && audClaim.value;
+        if (!audClaim || AuthenticationConstants.ToBotFromChannelTokenIssuer === audienceValue || GovernmentConstants.ToBotFromChannelTokenIssuer === audienceValue) {
             // The audience is https://api.botframework.com and not an appId.
             return false;
         }
@@ -93,7 +104,7 @@ export namespace SkillValidation {
         }
 
         // Skill claims must contain and app ID and the AppID must be different than the audience.
-        return appId !== audClaim;
+        return appId !== audienceValue;
     }
 
     /**
@@ -132,7 +143,13 @@ export namespace SkillValidation {
         return identity;
     }
 
-    async function validateIdentity(identity: ClaimsIdentity, credentials: ICredentialProvider): Promise<void> {
+    /**
+     * @ignore
+     * @private
+     * @param identity 
+     * @param credentials 
+     */
+    export async function validateIdentity(identity: ClaimsIdentity, credentials: ICredentialProvider): Promise<void> {
         if (!identity) {
             // No valid identity. Not Authorized.
             throw new Error('SkillValidation.validateIdentity(): Invalid identity');
@@ -154,7 +171,7 @@ export namespace SkillValidation {
         const audienceClaim = identity.getClaimValue(AuthenticationConstants.AudienceClaim);
         if (!audienceClaim) {
             // Claim is not present or doesn't have a value. Not Authorized.
-            throw new Error(`'${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`);
+            throw new Error(`SkillValidation.validateIdentity(): '${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`);
         }
 
         if (!await credentials.isValidAppId(audienceClaim)) {

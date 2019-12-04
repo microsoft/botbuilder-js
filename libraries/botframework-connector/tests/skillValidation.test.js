@@ -1,12 +1,21 @@
 const assert = require('assert');
-const { AuthenticationConstants, SimpleCredentialProvider, SkillValidation } = require('../lib');
+const {
+    AuthenticationConstants,
+    ClaimsIdentity,
+    GovernmentConstants,
+    SimpleCredentialProvider,
+    SkillValidation
+} = require('../lib');
 
 describe('SkillValidation', function() {
     this.timeout(5000);
 
     describe('isSkillClaim()', () => {
         it('should return false for invalid claims and true for valid claims', () => {
-            const claims = {};
+            const versionClaim = {};
+            const audClaim = {};
+            const appIdClaim = {};
+            const claims = [versionClaim, audClaim, appIdClaim];
             const audience = uuid();
             const appId = uuid();
 
@@ -22,23 +31,30 @@ describe('SkillValidation', function() {
             assert(!SkillValidation.isSkillClaim(claims));
     
             // No Audience claim
-            claims[AuthenticationConstants.VersionClaim] = '1.0';
+            versionClaim.type = AuthenticationConstants.VersionClaim;
+            versionClaim.value = '1.0';
             assert(!SkillValidation.isSkillClaim(claims));
     
             // Emulator Audience claim
-            claims[AuthenticationConstants.AudienceClaim] = AuthenticationConstants.ToBotFromChannelTokenIssuer;
+            audClaim.type = AuthenticationConstants.AudienceClaim;
+            audClaim.value = AuthenticationConstants.ToBotFromChannelTokenIssuer;
             assert(!SkillValidation.isSkillClaim(claims));
     
+            // Government Audience claim
+            audClaim.value = GovernmentConstants.ToBotFromChannelTokenIssuer;
+            assert(!SkillValidation.isSkillClaim(claims));
+
             // No AppId claim
-            claims[AuthenticationConstants.AudienceClaim] = audience;
+            audClaim.value = audience;
             assert(!SkillValidation.isSkillClaim(claims));
     
-            // AppId != Audience
-            claims[AuthenticationConstants.AppIdClaim] = audience;
+            // If not AppId != Audience, should return false
+            appIdClaim.type = AuthenticationConstants.AppIdClaim;
+            appIdClaim.value = audience;
             assert(!SkillValidation.isSkillClaim(claims));
     
             // All checks pass, should be good now
-            claims[AuthenticationConstants.AudienceClaim] = appId;            
+            audClaim.value = appId;
             assert(SkillValidation.isSkillClaim(claims));
         });
     });
@@ -84,6 +100,94 @@ describe('SkillValidation', function() {
             } catch (e) {
                 assert.strictEqual(e.message, 'SkillValidation.authenticateChannelToken(): invalid authConfig parameter');
             }
+        });
+    });
+
+    describe('validateIdentity()', () => {
+        const audience = uuid();
+        const appId = uuid();
+        const credentials = new SimpleCredentialProvider(audience, '');
+
+        const appIdClaim = { type: AuthenticationConstants.AppIdClaim, value: appId };
+        const audClaim = { type: AuthenticationConstants.AudienceClaim, value: audience };
+        const verClaim = { type: AuthenticationConstants.VersionClaim, value: '1.0' };
+
+        const claims = [appIdClaim, audClaim, verClaim];
+        const identity = new ClaimsIdentity(claims);
+
+        afterEach(() => {
+            identity.isAuthenticated = true;
+
+            verClaim.type = AuthenticationConstants.VersionClaim;
+            verClaim.value = '1.0';
+            audClaim.type = AuthenticationConstants.AudienceClaim;
+            audClaim.value = audience;
+            appIdClaim.type = AuthenticationConstants.AppIdClaim;
+            appIdClaim.value = appId;
+        });
+
+        it('should fail with a falsey identity', async () => {
+            try {
+                await SkillValidation.validateIdentity(undefined, credentials);
+            } catch (e) {
+                assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Invalid identity');
+            }
+        });
+
+        it('should fail if ClaimsIdentity.isAuthenticated is false', async () => {
+            try {
+                identity.isAuthenticated = false;
+                await SkillValidation.validateIdentity(identity, credentials);
+            } catch (e) {
+                assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Token not authenticated');
+            }
+        });
+
+        it('should fail no version claim', async () => {
+            try {
+                verClaim.type = undefined;
+                await SkillValidation.validateIdentity(identity, credentials);
+            } catch (e) {
+                assert.strictEqual(e.message, `SkillValidation.validateIdentity(): '${ AuthenticationConstants.VersionClaim }' claim is required on skill Tokens.`);
+            }
+        });
+
+        it('should fail with no audience claim', async () => {
+            try {
+                audClaim.type = undefined;
+                await SkillValidation.validateIdentity(identity, credentials);
+            } catch (e) {
+                assert.strictEqual(e.message, `SkillValidation.validateIdentity(): '${ AuthenticationConstants.AudienceClaim }' claim is required on skill Tokens.`);
+            }
+        });
+
+        it('should fail if audience is not an appId', async () => {
+            audClaim.value = AuthenticationConstants.ToBotFromChannelTokenIssuer;
+            try {
+                await SkillValidation.validateIdentity(identity, credentials);
+            } catch (e) {
+                assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Invalid audience.');
+            }
+        });
+
+        it('should fail if appid claim is missing or falsey', async () => {
+            appIdClaim.type = undefined;
+            try {
+                await SkillValidation.validateIdentity(identity, credentials);
+            } catch (e) {
+                assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Invalid appId.');
+            }
+
+            appIdClaim.type = AuthenticationConstants.AppIdClaim;
+            try {
+                await SkillValidation.validateIdentity(identity, credentials);
+            } catch (e) {
+                assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Invalid appId.');
+            }
+        });
+
+        it('should succeed', async () => {
+            await SkillValidation.validateIdentity(identity, credentials);
         });
     });
 });
