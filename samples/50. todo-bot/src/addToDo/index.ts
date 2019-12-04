@@ -9,7 +9,7 @@ export class AddToDo extends AdaptiveDialog {
         super('AddToDo', [
             new TextInput('$title', '@title', `What would you like to call your new todo?`),
             new EditArray(ArrayChangeType.push, 'user.todos', '$title'),
-            new SendActivity(`Added a todo named "{$title}". You can delete it by saying "delete todo named {$title}".`),
+            new SendActivity(`Added a todo named "@{$title}". You can delete it by saying "delete todo named {$title}".`),
             new IfCondition(`user.tips.showToDos != true`, [
                 new SendActivity(`To view your todos just ask me to "show my todos".`),
                 new SetProperty('user.tips.showToDos', 'true')

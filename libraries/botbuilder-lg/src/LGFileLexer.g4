@@ -36,6 +36,8 @@ fragment U: 'u' | 'U';
 fragment W: 'w' | 'W';
 
 fragment STRING_LITERAL : ('\'' (~['\r\n])* '\'') | ('"' (~["\r\n])* '"');
+fragment EXPRESSION_FRAGMENT : '@' '{' (STRING_LITERAL| ~[\r\n{}'"] )*? '}';
+fragment ESCAPE_CHARACTER_FRAGMENT : '\\' ~[\r\n]?;
 
 COMMENTS
   : ('>'|'$') ~('\r'|'\n')+ NEWLINE? -> skip
@@ -60,6 +62,7 @@ DASH
 LEFT_SQUARE_BRACKET
   : '[' -> pushMode(STRUCTURED_TEMPLATE_BODY_MODE)
   ;
+
 RIGHT_SQUARE_BRACKET
   : ']'
   ;
@@ -121,6 +124,10 @@ WS_IN_BODY
   : WHITESPACE+  -> type(WS)
   ;
 
+MULTILINE_PREFIX
+  : '```' -> pushMode(MULTILINE)
+  ;
+
 NEWLINE_IN_BODY
   : '\r'? '\n' {this.ignoreWS = true;} -> type(NEWLINE), popMode
   ;
@@ -146,31 +153,19 @@ CASE
   ;
 
 DEFAULT
-  : D E F A U L T WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
-  ;
-
-MULTI_LINE_TEXT
-  : '```' .*? '```' { this.ignoreWS = false; this.expectKeywords = false;}
+  : D E F A U L T WHITESPACE* ':' {this.expectKeywords}? { this.ignoreWS = true;}
   ;
 
 ESCAPE_CHARACTER
-  : '\\{' | '\\[' | '\\\\' | '\\'[rtn\]}]  { this.ignoreWS = false; this.expectKeywords = false;}
+  : ESCAPE_CHARACTER_FRAGMENT  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 EXPRESSION
-  : '@'? '{' (~[\r\n{}'"] | STRING_LITERAL)*?  '}'  { this.ignoreWS = false; this.expectKeywords = false;}
-  ;
-
-TEMPLATE_REF
-  : '[' (~[\r\n[\]] | TEMPLATE_REF)* ']'  { this.ignoreWS = false; this.expectKeywords = false;}
-  ;
-
-TEXT_SEPARATOR
-  : [\t\r\n{}[\]()]  { this.ignoreWS = false; this.expectKeywords = false;}
+  : EXPRESSION_FRAGMENT  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 TEXT
-  : ~[\t\r\n{}[\]()]+?  { this.ignoreWS = false; this.expectKeywords = false;}
+  : ~[\r\n]+?  { this.ignoreWS = false; this.expectKeywords = false;}
   ;
 
 mode STRUCTURED_TEMPLATE_BODY_MODE;
@@ -190,7 +185,25 @@ STRUCTURED_NEWLINE
 STRUCTURED_TEMPLATE_BODY_END
   : WS_IN_STRUCTURED? RIGHT_SQUARE_BRACKET WS_IN_STRUCTURED? -> popMode
   ;
-  
+
 STRUCTURED_CONTENT
   : ~[\r\n]+
+  ;
+
+mode MULTILINE;
+
+MULTILINE_SUFFIX
+  : '```' -> popMode
+  ;
+
+MULTILINE_ESCAPE_CHARACTER
+  : ESCAPE_CHARACTER_FRAGMENT -> type(ESCAPE_CHARACTER)
+  ;
+
+MULTILINE_EXPRESSION
+  : EXPRESSION_FRAGMENT -> type(EXPRESSION)
+  ;
+
+MULTILINE_TEXT
+  : (('\r'? '\n') | ~[\r\n])+? -> type(TEXT)
   ;

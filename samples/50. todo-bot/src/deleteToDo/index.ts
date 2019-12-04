@@ -12,7 +12,7 @@ export class DeleteToDo extends AdaptiveDialog {
                 new SetProperty('$title', '@title'),
                 new ChoiceInput('$title', `Which todo would you like to remove?`, 'user.todos'),
                 new EditArray(ArrayChangeType.remove, 'user.todos', '$title'),
-                new SendActivity(`Deleted the todo named "{$title}".`),
+                new SendActivity(`Deleted the todo named "@{$title}".`),
                 new IfCondition(`user.tips.clearToDos != true`, [
                     new SendActivity(`You can delete all your todos by saying "delete all todos".`),
                     new SetProperty('user.tips.clearToDos', 'true')
