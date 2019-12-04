@@ -24,8 +24,8 @@ const adapter = new botbuilder_1.BotFrameworkAdapter({
 // const resourcesFolder = "../../libraries/botbuilder-dialogs-declarative/tests/resources/08 - ExternalLanguage"
 // const path = "../../libraries/botbuilder-dialogs-declarative/tests/resources/07 - BeginDialog/BeginDialog.main.dialog"
 // const resourcesFolder = "../../libraries/botbuilder-dialogs-declarative/tests/resources/07 - BeginDialog"
-const path = "../../libraries/botbuilder-dialogs-declarative/tests/resources/06 - DoSteps/DoSteps.main.dialog";
-const resourcesFolder = "../../libraries/botbuilder-dialogs-declarative/tests/resources/06 - DoSteps";
+const path = "./libraries/botbuilder-dialogs-declarative/tests/resources/06 - DoSteps/DoSteps.main.dialog";
+const resourcesFolder = "./libraries/botbuilder-dialogs-declarative/tests/resources/06 - DoSteps";
 // const path = "../../libraries/botbuilder-dialogs-declarative/tests/resources/04 - TextInput/NumberInput.main.dialog"
 // const resourcesFolder = "../../libraries/botbuilder-dialogs-declarative/tests/resources/04 - TextInput"
 function readPackageJson(path, done) {
@@ -50,9 +50,10 @@ async function LoadDialog(path, resourcesFolder) {
         // bind rootDialog
         let loader = new botbuilder_dialogs_declarative_1.TypeLoader();
         if (resourcesFolder) {
-            let resourceProvider = new botbuilder_dialogs_declarative_1.FileResourceProvider();
-            resourceProvider.registerDirectory(`../../libraries/botbuilder-dialogs-declarative/tests/resources`);
-            loader = new botbuilder_dialogs_declarative_1.TypeLoader(null, resourceProvider);
+            let resourceExplorer = new botbuilder_dialogs_declarative_1.ResourceExplorer();
+            // resourceExplorer.registerDirectory(`./libraries/botbuilder-dialogs-declarative/tests/resources`);
+            resourceExplorer.addFolder(`./libraries/botbuilder-dialogs-declarative/tests/resources`);
+            loader = new botbuilder_dialogs_declarative_1.TypeLoader(null, resourceExplorer);
         }
         const dialog = await loader.load(json);
         bot.rootDialog = dialog;

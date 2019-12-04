@@ -4,7 +4,7 @@
 import * as restify from 'restify';
 import { BotFrameworkAdapter, MemoryStorage, ConversationState, UserState } from 'botbuilder';
 import { DialogManager, Dialog } from 'botbuilder-dialogs';
-import { TypeLoader, FileResourceProvider} from 'botbuilder-dialogs-declarative';
+import { TypeLoader, FileResourceProvider, ResourceExplorer} from 'botbuilder-dialogs-declarative';
 import fs = require('fs');
 
 // Create HTTP server.
@@ -26,8 +26,8 @@ const adapter = new BotFrameworkAdapter({
 // const resourcesFolder = "../../libraries/botbuilder-dialogs-declarative/tests/resources/08 - ExternalLanguage"
 // const path = "../../libraries/botbuilder-dialogs-declarative/tests/resources/07 - BeginDialog/BeginDialog.main.dialog"
 // const resourcesFolder = "../../libraries/botbuilder-dialogs-declarative/tests/resources/07 - BeginDialog"
-const path = "../../libraries/botbuilder-dialogs-declarative/tests/resources/06 - DoSteps/DoSteps.main.dialog"
-const resourcesFolder = "../../libraries/botbuilder-dialogs-declarative/tests/resources/06 - DoSteps"
+const path = "./libraries/botbuilder-dialogs-declarative/tests/resources/06 - DoSteps/DoSteps.main.dialog";
+const resourcesFolder = "./libraries/botbuilder-dialogs-declarative/tests/resources/06 - DoSteps";
 // const path = "../../libraries/botbuilder-dialogs-declarative/tests/resources/04 - TextInput/NumberInput.main.dialog"
 // const resourcesFolder = "../../libraries/botbuilder-dialogs-declarative/tests/resources/04 - TextInput"
 
@@ -51,13 +51,14 @@ async function LoadDialog(path, resourcesFolder){
             const bot = new DialogManager();
             bot.conversationState = new ConversationState(new MemoryStorage());
             bot.userState = new UserState(new MemoryStorage());
-            
+
             // bind rootDialog
             let loader = new TypeLoader();
             if (resourcesFolder) {
-                let resourceProvider = new FileResourceProvider();
-                resourceProvider.registerDirectory(`../../libraries/botbuilder-dialogs-declarative/tests/resources`);
-                loader = new TypeLoader(null, resourceProvider)
+                let resourceExplorer = new ResourceExplorer();
+                // resourceExplorer.registerDirectory(`./libraries/botbuilder-dialogs-declarative/tests/resources`);
+                resourceExplorer.addFolder(`./libraries/botbuilder-dialogs-declarative/tests/resources`);
+                loader = new TypeLoader(null, resourceExplorer);
             }
             const dialog = await loader.load(json);
             bot.rootDialog = dialog as Dialog;
