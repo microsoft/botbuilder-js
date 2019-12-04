@@ -63,7 +63,7 @@ const askNameDialog = new AdaptiveDialog('AskNameDialog', [
     new IfCondition('user.name == null', [
         new TextInput('user.name', `Hi! what's your name?`)
     ]),
-    new SendActivity(`Hi {user.name}. It's nice to meet you.`),
+    new SendActivity(`Hi @{user.name}. It's nice to meet you.`),
     new EndDialog()
 ]);
 dialogs.actions.push(askNameDialog);

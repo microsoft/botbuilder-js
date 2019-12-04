@@ -10,7 +10,7 @@
         },
         {
             "$type": "Microsoft.SendActivity",
-            "activity": "Great! Your pet's name is {dialog.petname}"
+            "activity": "Great! Your pet's name is @{dialog.petname}"
         },
         {
             "$type": "Microsoft.TextInput",
@@ -27,12 +27,12 @@
             },
             "body": {
 
-                "id": "{dialog.petid}",
+                "id": "@{dialog.petid}",
                 "category": {
                     "id": 0,
                     "name": "string"
                 },
-                "name": "{dialog.petname}",
+                "name": "@{dialog.petname}",
                 "photoUrls": [ "string" ],
                 "tags": [
                     {
@@ -46,7 +46,7 @@
         },
         {
             "$type": "Microsoft.SendActivity",
-            "activity": "Done! You have added a pet named \"{dialog.postResponse.name}\" with id \"{dialog.postResponse.id}\""
+            "activity": "Done! You have added a pet named \"@{dialog.postResponse.name}\" with id \"@{dialog.postResponse.id}\""
         },
         {
             "$type": "Microsoft.TextInput",
