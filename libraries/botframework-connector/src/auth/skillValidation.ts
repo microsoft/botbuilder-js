@@ -59,15 +59,16 @@ export namespace SkillValidation {
     }
 
     /**
-     * Checks if the given list of claims represents a skill.
+     * Checks if the given object of claims represents a skill.
      * @remarks
      * A skill claim should contain:
      *     An "AuthenticationConstants.VersionClaim" claim.
      *     An "AuthenticationConstants.AudienceClaim" claim.
      *     An "AuthenticationConstants.AppIdClaim" claim (v1) or an a "AuthenticationConstants.AuthorizedParty" claim (v2).
      * And the appId claim should be different than the audience claim.
-     * @param claims An array of claims.
-     * @returns {boolean} True if the list of claims is a skill claim, false if is not.
+     * The audience claim should be a guid, indicating that it is from another bot/skill.
+     * @param claims An object of claims.
+     * @returns {boolean} True if the object of claims is a skill claim, false if is not.
      */
     export function isSkillClaim(claims: { [key: string]: any }): boolean {
         if (!claims) {

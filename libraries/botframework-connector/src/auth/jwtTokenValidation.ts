@@ -150,7 +150,7 @@ export namespace JwtTokenValidation {
      */
     export function getAppIdFromClaims(claims: { [key: string]: any }): string {
         if (!claims) {
-            throw new TypeError(`JwtTokenValidation.getAppIdFromDecodedJwt(): missing claims.`);
+            throw new TypeError(`JwtTokenValidation.getAppIdFromClaims(): missing claims.`);
         }
         let appId: string;
 

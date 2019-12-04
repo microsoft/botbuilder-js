@@ -393,7 +393,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                 try {
                     JwtTokenValidation.getAppIdFromClaims();
                 } catch (e) {
-                    assert.strictEqual(e.message, 'JwtTokenValidation.getAppIdFromDecodedJwt(): missing claims.');
+                    assert.strictEqual(e.message, 'JwtTokenValidation.getAppIdFromClaims(): missing claims.');
                 }
             });
         });
