@@ -208,7 +208,7 @@ export interface TranscriptStore extends TranscriptLogger {
      * Get activities for a conversation (Aka the transcript)
      * @param channelId Channel Id.
      * @param conversationId Conversation Id.
-     * @param continuationToken Continuatuation token to page through results.
+     * @param continuationToken Continuation token to page through results.
      * @param startDate Earliest time to include.
      */
     getTranscriptActivities(
@@ -221,7 +221,7 @@ export interface TranscriptStore extends TranscriptLogger {
     /**
      * List conversations in the channelId.
      * @param channelId Channel Id.
-     * @param continuationToken Continuatuation token to page through results.
+     * @param continuationToken Continuation token to page through results.
      */
     listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>>;
 

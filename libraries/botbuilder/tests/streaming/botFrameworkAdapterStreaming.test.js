@@ -103,7 +103,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
                 await bot.run(context);
                 throw new Error('useWebSocket should have thrown an error');
             }).catch(err => {
-                expect(err.message).to.equal('Unauthorized. Is not authenticated');
+                expect(err.message).to.equal('Unauthorized. No valid identity.');
                 const socketResponse = MockNetSocket.createNonSuccessResponse(401);
                 expect(writeSpy.called).to.be.true;
                 expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;

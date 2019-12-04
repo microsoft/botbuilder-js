@@ -79,10 +79,10 @@ exports.proxyRecordings = function() {
         contentType: 'application/json'
     },
     (req, res, next) => {
-        //validateHeaders(req);
-        processPostReply(req, res, clientSessions[req.connection.remoteAddress]);
-        const response = { id: '1'};
-        res.send(response);
+        const session = clientSessions[req.connection.remoteAddress];
+        const response = session.response();
+        processPostReply(req, res, session);
+        res.send(response); 
         return next(false);
     });
 
@@ -91,9 +91,9 @@ exports.proxyRecordings = function() {
         contentType: 'application/json; charset=utf-8'
     },
     (req, res, next) => {
-        //validateHeaders(req);
-        processPostReply(req, res, clientSessions[req.connection.remoteAddress], true);
-        const response = { id: '1'};
+        const session = clientSessions[req.connection.remoteAddress];
+        const response = session.response();
+        processPostReply(req, res, session, true);
         res.send(response);
         return next(false);
     });
@@ -103,20 +103,34 @@ exports.proxyRecordings = function() {
         contentType: 'application/json; charset=utf-8'
     },
     (req, res, next) => {
-        processGetReply(req, res, clientSessions[req.connection.remoteAddress]);
-        const response = { id: '1'};
+        const session = clientSessions[req.connection.remoteAddress];
+        const response = session.response();
+        processGetReply(req, res, session);
         res.send(response);
         return next(false);
     });
+
+    server.get({
+        path: '/v3/conversations/*',
+        contentType: 'application/json; charset=utf-8'
+    },
+    (req, res, next) => {
+        const session = clientSessions[req.connection.remoteAddress];
+        const response = session.response();
+        processGetConversationReply(req, res, session);
+        res.send(response);
+        return next(false);
+    });
+
 
     server.put({
         path: '/v3/conversations/*',
         contentType: 'application/json; charset=utf-8'
     },
     (req, res, next) => {
-        //validateHeaders(req);
-        processPutReply(req, res, clientSessions[req.connection.remoteAddress], true);
-        const response = { id: '1'};
+        const session = clientSessions[req.connection.remoteAddress];
+        const response = session.response();
+        processPutReply(req, res, session, true);
         res.send(response);
         return next(false);
     });
@@ -134,13 +148,25 @@ class ProxySession {
         this.replyIndex = 0;
         this.startDate = Date();
     }
+    response() {
+        const recordedActivity = this.recordedActivities[this.activityIndex];
+        const reply = recordedActivity.replies[this.replyIndex];
+        return reply.response;
+    }
+    reply() {
+        const recordedActivity = this.recordedActivities[this.activityIndex];
+        const reply = recordedActivity.replies[this.replyIndex];
+        return reply;
+    }
+    activity() {
+        return this.recordedActivities[this.activityIndex];
+    }
 }
 
 function processPostReply(req, res, clientSession, session = false) {
-    const recordedActivity = clientSession.recordedActivities[clientSession.activityIndex];
-    console.log(`Processing reply ${ clientSession.replyIndex + 1 } of ${ recordedActivity.replies.length }`);
-    const recordedReply = recordedActivity.replies[clientSession.replyIndex];
-    const reply = recordedActivity.replies[clientSession.replyIndex];
+    
+    console.log(`Processing reply ${ clientSession.replyIndex + 1 } of ${ clientSession.activity().replies.length }`);
+    const reply = clientSession.reply();
 
     if (session) {
         // Validating a session requires a little bit more finesse
@@ -148,7 +174,7 @@ function processPostReply(req, res, clientSession, session = false) {
     }
     else {
         const incomingReply = req.body;
-        assert(JSON.stringify(incomingReply), JSON.stringify(recordedReply));
+        assert(JSON.stringify(incomingReply), JSON.stringify(reply));
     }
 
 
@@ -157,12 +183,25 @@ function processPostReply(req, res, clientSession, session = false) {
 }
 
 function processGetReply(req, res, clientSession) {
+
+    console.log(`Processing reply ${ clientSession.replyIndex + 1 } of ${ clientSession.activity().replies.length }`);
+    const reply = clientSession.reply();
+
+    // Not much to validate here
+    assert(reply.method.toLowerCase() == 'get');
+
+    // Increment for next reply
+    clientSession.replyIndex = clientSession.replyIndex + 1;
+}
+
+function processGetConversationReply(req, res, clientSession) {
     const recordedActivity = clientSession.recordedActivities[clientSession.activityIndex];
     console.log(`Processing reply ${ clientSession.replyIndex + 1 } of ${ recordedActivity.replies.length }`);
     const reply = recordedActivity.replies[clientSession.replyIndex];
 
     // Not much to validate here
     assert(reply.method.toLowerCase() == 'get');
+
 
     // Increment for next reply
     clientSession.replyIndex = clientSession.replyIndex + 1;
@@ -205,6 +244,11 @@ function validatePostReply(req, replyFromRecording) {
     assert(reply.recipient.id == recordedReply.recipient.id);
     assert(reply.recipient.name == recordedReply.recipient.name);
     assert(reply.recipient.aadObjectId == recordedReply.recipient.aadObjectId);
+    if (reply.text != recordedReply.text) {
+        console.log('ERROR: Text does not match:');
+        console.log('   EXPECTED:' + recordedReply.text);
+        console.log('   OBSERVED:' + reply.text);
+    }
     assert(reply.text == recordedReply.text);
     assert(reply.inputHint == recordedReply.inputHint);
     assert(reply.replyToId == recordedReply.replyToId);
@@ -253,5 +297,3 @@ async function processHostRecordings(clientSession) {
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-
-
