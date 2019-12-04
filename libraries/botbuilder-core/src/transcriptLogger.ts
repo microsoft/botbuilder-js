@@ -52,21 +52,21 @@ export class TranscriptLoggerMiddleware implements Middleware {
 
             activities.map((a: Partial<Activity>, index: number) => {
                 const clonedActivity = this.cloneActivity(a);
-                if (!clonedActivity.id) {
-                    clonedActivity.id = responses && responses[index] ?
-                        responses[index].id :
-                        undefined;
-                }
+                clonedActivity.id = responses && responses[index] ?
+                    responses[index].id :
+                    clonedActivity.id;
+                
 
                 // For certain channels, a ResourceResponse with an id is not always sent to the bot.
                 // This fix uses the timestamp on the activity to populate its id for logging the transcript.
                 // If there is no outgoing timestamp, the current time for the bot is used for the activity.id.
                 // See https://github.com/microsoft/botbuilder-js/issues/1122
                 if (!clonedActivity.id) {
+                    const prefix = `g_${Math.random().toString(36).slice(2,8)}`;
                     if (clonedActivity.timestamp) {
-                        clonedActivity.id = new Date(clonedActivity.timestamp).getTime().toString();
+                        clonedActivity.id = `${prefix}${new Date(clonedActivity.timestamp).getTime().toString()}`;
                     } else {
-                        clonedActivity.id = Date.now().toString();
+                        clonedActivity.id = `${prefix}${new Date().getTime().toString()}`;
                     }
                 }
 

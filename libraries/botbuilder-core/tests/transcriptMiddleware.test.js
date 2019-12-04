@@ -479,7 +479,8 @@ describe(`TranscriptLoggerMiddleware`, function () {
         // 1. The outgoing Activity.id is falsey
         // 2. The ResourceResponse.id is falsey (some channels may not emit a ResourceResponse with an id value)
         // 3. The outgoing Activity.timestamp exists
-        assert.equal(pagedResult.items[1].id, timestamp.getTime().toString());
+        assert(pagedResult.items[1].id.indexOf(timestamp.getTime().toString()));
+        assert(pagedResult.items[1].id.startsWith('g_'));
         pagedResult.items.forEach(a => {
             assert(a.timestamp);
         });
