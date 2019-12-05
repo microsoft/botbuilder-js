@@ -6,22 +6,33 @@
  * Licensed under the MIT License.
  */
 
-import { AdaptiveDialog, SendActivity, TextInput, ConfirmInput, NumberInput, ChoiceInput, EndTurn, IfCondition, RegExpRecognizer, OnIntent, OnUnknownIntent, CancelAllDialogs, DeleteProperty, EditArray, EditActions, EmitEvent, EndDialog, ForEach, ForEachPage, LogAction, RepeatDialog, ReplaceDialog, SendList, SetProperty } from 'botbuilder-dialogs-adaptive';
+import {
+    AdaptiveDialog, SendActivity, TextInput, ConfirmInput, NumberInput,
+    ChoiceInput, EndTurn, IfCondition, RegExpRecognizer, OnIntent,
+    OnUnknownIntent, CancelAllDialogs, DeleteProperty, EditArray, EditActions,
+    EmitEvent, EndDialog, ForEach, ForEachPage, LogAction, RepeatDialog,
+    ReplaceDialog, SendList, SetProperty, OnBeginDialog, OnActivity,
+    OnCancelDialog, OnCondition, OnConversationUpdateActivity, OnCustomEvent,
+    OnDialogEvent, OnEndOfConversationActivity, OnError, OnEventActivity,
+    OnHandoffActivity, OnInvokeActivity, OnMessageActivity,
+    OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity,
+    OnRepromptDialog, OnTypingActivity
+} from 'botbuilder-dialogs-adaptive';
 
 import { ConfigurableTypeBuilder } from './configurableTypeBuilder';
 import { DefaultTypeBuilder } from './defaultTypeBuilder';
 import { ITypeBuilder } from './typeBuilder';
 import { CustomTypeBuilder } from './customTypeBuilder';
 
- /**
-  * Declarative type factory
-  */
- export class TypeFactory {
+/**
+ * Declarative type factory
+ */
+export class TypeFactory {
 
     /**
      * Internal type builder registry
      */
-    private readonly registrations: { [name: string] : ITypeBuilder } = {};
+    private readonly registrations: { [name: string]: ITypeBuilder } = {};
 
     constructor() {
         this.registerBuiltIns();
@@ -32,7 +43,7 @@ import { CustomTypeBuilder } from './customTypeBuilder';
      * @param name name under which to register the type
      * @param converter optional builder logic for the registered type. Will be invoked each time the type is built
      */
-    public register(name: string, builder?: ITypeBuilder) : void {
+    public register(name: string, builder?: ITypeBuilder): void {
 
         if (!name) {
             throw new Error(`TypeFactory: name must be provided to register in the factory`);
@@ -45,7 +56,7 @@ import { CustomTypeBuilder } from './customTypeBuilder';
         this.registrations[name] = builder;
     }
 
-    public build(name: string, config: object) : object {
+    public build(name: string, config: object): object {
 
         if (!name) {
             throw new Error(`TypeFactory: type name must be provided.`)
@@ -90,15 +101,26 @@ import { CustomTypeBuilder } from './customTypeBuilder';
         this.register('Microsoft.AdaptiveDialog', new ConfigurableTypeBuilder(AdaptiveDialog));
 
         // Conditions
+        this.register('Microsoft.OnActivity', new DefaultTypeBuilder(OnActivity));
+        this.register('Microsoft.OnBeginDialog', new DefaultTypeBuilder(OnBeginDialog));
+        this.register('Microsoft.OnCancelDialog', new DefaultTypeBuilder(OnCancelDialog));
+        this.register('Microsoft.OnCondition', new DefaultTypeBuilder(OnCondition));
+        this.register('Microsoft.OnConversationUpdateActivity', new DefaultTypeBuilder(OnConversationUpdateActivity));
+        this.register('Microsoft.OnCustomEvent', new DefaultTypeBuilder(OnCustomEvent));
+        this.register('Microsoft.OnDialogEvent', new DefaultTypeBuilder(OnDialogEvent));
+        this.register('Microsoft.OnEndOfConversationActivity', new DefaultTypeBuilder(OnEndOfConversationActivity));
+        this.register('Microsoft.OnError', new DefaultTypeBuilder(OnError));
+        this.register('Microsoft.OnEventActivity', new DefaultTypeBuilder(OnEventActivity));
+        this.register('Microsoft.OnHandoffActivity', new DefaultTypeBuilder(OnHandoffActivity));
+        this.register('Microsoft.OnIntent', new DefaultTypeBuilder(OnIntent));
+        this.register('Microsoft.OnInvokeActivity', new DefaultTypeBuilder(OnInvokeActivity));
+        this.register('Microsoft.OnMessageActivity', new DefaultTypeBuilder(OnMessageActivity));
+        this.register('Microsoft.OnMessageDeleteActivity', new DefaultTypeBuilder(OnMessageDeleteActivity));
+        this.register('Microsoft.OnMessageReactionActivity', new DefaultTypeBuilder(OnMessageReactionActivity));
+        this.register('Microsoft.OnMessageUpdateActivity', new DefaultTypeBuilder(OnMessageUpdateActivity));
+        this.register('Microsoft.OnRepromptDialog', new DefaultTypeBuilder(OnRepromptDialog));
+        this.register('Microsoft.OnTypingActivity', new DefaultTypeBuilder(OnTypingActivity));
         this.register('Microsoft.OnUnknownIntent', new DefaultTypeBuilder(OnUnknownIntent));
-        this.register('Microsoft.OnIntent', new CustomTypeBuilder((config) => {
-            let condition = new OnIntent();
-            
-            if(config && config['intent']) {
-                condition.intent = config['intent'];
-            }
-            return condition;
-        }));
 
         // Recognizers
         this.register('Microsoft.RegexRecognizer', new CustomTypeBuilder((config) => {
@@ -106,7 +128,7 @@ import { CustomTypeBuilder } from './customTypeBuilder';
 
             if (config && config['intents']) {
                 // The declarative format models intents and expressions as a dictionary
-                const intents: {[intent: string]: string} = <{[intent: string]: string}>config['intents'];
+                const intents: { [intent: string]: string } = <{ [intent: string]: string }>config['intents'];
 
                 if (intents) {
                     for (const [key, value] of Object.entries(intents)) {
@@ -118,4 +140,4 @@ import { CustomTypeBuilder } from './customTypeBuilder';
             return recognizer;
         }));
     }
- }
+}

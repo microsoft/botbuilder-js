@@ -1,0 +1,21 @@
+{
+  "name": "botbuilder-dialogs-adaptive-tests",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "tsc && nyc mocha tests/"
+  },
+  "dependencies": {
+    "botbuilder-core": "4.1.6",
+    "botbuilder-dialogs": "4.1.6",
+    "botbuilder-dialogs-adaptive": "4.1.6",
+    "botbuilder-dialogs-declarative": "4.1.6",
+    "fs": "0.0.1-security"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.47",
+    "mocha": "^5.2.0"
+  },
+  "author": "Microsoft",
+  "license": "MIT"
+}
