@@ -8,6 +8,7 @@
 import { decode, VerifyOptions } from 'jsonwebtoken';
 import { ClaimsIdentity } from './claimsIdentity';
 import { AuthenticationConstants } from './authenticationConstants';
+import { AuthenticationConfiguration } from './authenticationConfiguration';
 import { GovernmentConstants } from './governmentConstants';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
@@ -95,13 +96,16 @@ export namespace EmulatorValidation {
      * @param  {string} authHeader The raw HTTP header in the format: "Bearer [longString]"
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @param  {string} channelService The channelService value that distinguishes public Azure from US Government Azure.
+     * @param  {string} channelId
+     * @param  {AuthenticationConfiguration} authConfig
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
     export async function authenticateEmulatorToken(
         authHeader: string,
         credentials: ICredentialProvider,
         channelService: string,
-        channelId: string
+        channelId: string,
+        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
     ): Promise<ClaimsIdentity> {
         const openIdMetadataUrl = (channelService !== undefined && JwtTokenValidation.isGovernment(channelService)) ?
             GovernmentConstants.ToBotFromEmulatorOpenIdMetadataUrl :
@@ -112,7 +116,7 @@ export namespace EmulatorValidation {
             openIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms);
 
-        const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
+        const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId, authConfig.requiredEndorsements);
         if (!identity) {
             // No valid identity. Not Authorized.
             throw new Error('Unauthorized. No valid identity.');
