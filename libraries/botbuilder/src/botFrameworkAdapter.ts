@@ -21,6 +21,13 @@ export enum StatusCodes {
     NOT_IMPLEMENTED = 501,
 }
 
+export class StatusCodeError extends Error {
+    constructor(public readonly statusCode: StatusCodes, message?: string) {
+        super(message);
+        this.statusCode = statusCode;
+    }
+}
+
 /**
  * Represents an Express or Restify request object.
  * 

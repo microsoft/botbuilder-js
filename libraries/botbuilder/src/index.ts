@@ -12,11 +12,13 @@ export {
     InvokeResponse,
     INVOKE_RESPONSE_KEY,
     StatusCodes,
+    StatusCodeError,
     WebRequest,
     WebResponse
 } from './botFrameworkAdapter';
 export { BotFrameworkHttpClient } from './botFrameworkHttpClient';
 export { ChannelServiceHandler } from './channelServiceHandler';
+export { ChannelServiceRoutes } from './channelServiceRoutes';
 export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
 export * from './teamsActivityHandler';

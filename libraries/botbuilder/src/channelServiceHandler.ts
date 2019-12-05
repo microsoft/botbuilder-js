@@ -26,7 +26,7 @@ import {
     ICredentialProvider,
     JwtTokenValidation
 } from 'botframework-connector';
-import { StatusCodes } from './botFrameworkAdapter';
+import { StatusCodeError, StatusCodes } from './botFrameworkAdapter';
 
 /**
  * The ChannelServiceHandler implements API to forward activity to a skill and
@@ -79,9 +79,9 @@ export class ChannelServiceHandler {
         return await this.onGetActivityMembers(claimsIdentity, conversationId, activityId);
     }
 
-    public async handleCreateConversation(authHeader: string, conversationId: string, parameters: ConversationParameters): Promise<ConversationResourceResponse> {
+    public async handleCreateConversation(authHeader: string, parameters: ConversationParameters): Promise<ConversationResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
-        return await this.onCreateConversation(claimsIdentity, conversationId, parameters);
+        return await this.onCreateConversation(claimsIdentity, parameters);
     }
 
     public async handleGetConversations(authHeader: string, conversationId: string, continuationToken?: string /* some default */): Promise<ConversationsResult> {
@@ -163,7 +163,7 @@ export class ChannelServiceHandler {
      * @param activity Activity to send.
      */
     protected async onReplyToActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse> {
-        throw new Error(`ChannelServiceHandler.onReplyToActivity(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new StatusCodeError(StatusCodes.NOT_IMPLEMENTED, `ChannelServiceHandler.onReplyToActivity(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -181,7 +181,7 @@ export class ChannelServiceHandler {
      * @param activity replacement Activity.
      */
     protected async onUpdateActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse> {
-        throw new Error(`ChannelServiceHandler.onUpdateActivity(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new StatusCodeError(StatusCodes.NOT_IMPLEMENTED, `ChannelServiceHandler.onUpdateActivity(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -198,7 +198,7 @@ export class ChannelServiceHandler {
      * @param activityId activityId to delete.
      */
     protected async onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void> {
-        throw new Error(`ChannelServiceHandler.onDeleteActivity(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new StatusCodeError(StatusCodes.NOT_IMPLEMENTED, `ChannelServiceHandler.onDeleteActivity(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -213,9 +213,8 @@ export class ChannelServiceHandler {
      * @param conversationId Conversation ID.
      * @param activityId Activity ID.
      */
-    protected async onGetActivityMembers(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<ChannelAccount[]>
-    {
-        throw new Error(`ChannelServiceHandler.onGetActivityMembers(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+    protected async onGetActivityMembers(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<ChannelAccount[]> {
+        throw new StatusCodeError(StatusCodes.NOT_IMPLEMENTED, `ChannelServiceHandler.onGetActivityMembers(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -237,8 +236,8 @@ export class ChannelServiceHandler {
      * @param conversationId Conversation ID.
      * @param parameters Parameters to create the conversation from.
      */
-    protected async onCreateConversation(claimsIdentity: ClaimsIdentity, conversationId: string, parameters: ConversationParameters): Promise<ConversationResourceResponse> {
-        throw new Error(`ChannelServiceHandler.onCreateConversation(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+    protected async onCreateConversation(claimsIdentity: ClaimsIdentity, parameters: ConversationParameters): Promise<ConversationResourceResponse> {
+        throw new StatusCodeError(StatusCodes.NOT_IMPLEMENTED, `ChannelServiceHandler.onCreateConversation(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -260,7 +259,7 @@ export class ChannelServiceHandler {
      * @param continuationToken Skip or continuation token.
      */
     protected async onGetConversations(claimsIdentity: ClaimsIdentity, conversationId: string, continuationToken?: string): Promise<ConversationsResult> {
-        throw new Error(`ChannelServiceHandler.onGetConversations(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new StatusCodeError(StatusCodes.NOT_IMPLEMENTED, `ChannelServiceHandler.onGetConversations(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -274,7 +273,7 @@ export class ChannelServiceHandler {
      * @param conversationId Conversation ID.
      */
     protected async onGetConversationMembers(claimsIdentity: ClaimsIdentity, conversationId: string): Promise<ChannelAccount[]> {
-        throw new Error(`ChannelServiceHandler.onGetConversationMembers(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new StatusCodeError(StatusCodes.NOT_IMPLEMENTED, `ChannelServiceHandler.onGetConversationMembers(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -302,9 +301,8 @@ export class ChannelServiceHandler {
      * @param pageSize Suggested page size.
      * @param continuationToken Continuation Token.
      */
-    protected async onGetConversationPagedMembers(claimsIdentity: ClaimsIdentity, conversationId: string, pageSize: number = -1, continuationToken?: string): Promise<PagedMembersResult>
-    {
-        throw new Error(`ChannelServiceHandler.onGetConversationPagedMembers(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+    protected async onGetConversationPagedMembers(claimsIdentity: ClaimsIdentity, conversationId: string, pageSize: number = -1, continuationToken?: string): Promise<PagedMembersResult> {
+        throw new StatusCodeError(StatusCodes.NOT_IMPLEMENTED, `ChannelServiceHandler.onGetConversationPagedMembers(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -320,7 +318,7 @@ export class ChannelServiceHandler {
      * @param memberId ID of the member to delete from this conversation.
      */
     protected async onDeleteConversationMember(claimsIdentity: ClaimsIdentity, conversationId: string, memberId: string): Promise<void> {
-        throw new Error(`ChannelServiceHandler.onDeleteConversationMember(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new StatusCodeError(StatusCodes.NOT_IMPLEMENTED, `ChannelServiceHandler.onDeleteConversationMember(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -338,7 +336,7 @@ export class ChannelServiceHandler {
      * @param transcript Transcript of activities.
      */
     protected async onSendConversationHistory(claimsIdentity: ClaimsIdentity, conversationId: string, transcript: Transcript): Promise<ResourceResponse> {
-        throw new Error(`ChannelServiceHandler.onSendConversationHistory(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new StatusCodeError(StatusCodes.NOT_IMPLEMENTED, `ChannelServiceHandler.onSendConversationHistory(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     /**
@@ -356,22 +354,26 @@ export class ChannelServiceHandler {
      * @param attachmentUpload Attachment data.
      */
     protected async onUploadAttachment(claimsIdentity: ClaimsIdentity, conversationId: string, attachmentUpload: AttachmentData): Promise<ResourceResponse> {
-        throw new Error(`ChannelServiceHandler.onUploadAttachment(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
+        throw new StatusCodeError(StatusCodes.NOT_IMPLEMENTED, `ChannelServiceHandler.onUploadAttachment(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
     private async authenticate(authHeader: string): Promise<ClaimsIdentity> {
-
-        if (!authHeader) {
-            const isAuthDisable = this.credentialProvider.isAuthenticationDisabled()
-            if (isAuthDisable) {
-                    // In the scenario where Auth is disabled, we still want to have the
-                    // IsAuthenticated flag set in the ClaimsIdentity. To do this requires
-                    // adding in an empty claim.
-                    return new ClaimsIdentity([], false);
+        try {
+            if (!authHeader) {
+                const isAuthDisable = this.credentialProvider.isAuthenticationDisabled()
+                if (isAuthDisable) {
+                        // In the scenario where Auth is disabled, we still want to have the
+                        // IsAuthenticated flag set in the ClaimsIdentity. To do this requires
+                        // adding in an empty claim.
+                        return new ClaimsIdentity([], false);
+                }
             }
-        }
 
-        return await JwtTokenValidation.validateAuthHeader(authHeader, this.credentialProvider, this.channelService, 'unknown', undefined, this.authConfig);
+            return await JwtTokenValidation.validateAuthHeader(authHeader, this.credentialProvider, this.channelService, 'unknown', undefined, this.authConfig);
+        }
+        catch (err) {
+            throw new StatusCodeError(StatusCodes.UNAUTHORIZED);
+        }
     }
 }
 
