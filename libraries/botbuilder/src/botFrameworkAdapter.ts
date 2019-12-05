@@ -6,9 +6,14 @@
  * Licensed under the MIT License.
  */
 
+import { STATUS_CODES } from 'http';
+import * as os from 'os';
+
 import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
 import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
-import * as os from 'os';
+import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
+
+import { StreamingHttpClient, TokenResolver } from './streaming';
 
 export enum StatusCodes {
     OK = 200,
@@ -130,6 +135,11 @@ export interface BotFrameworkAdapterSettings {
     channelService?: string;
 
     /**
+     * Optional. Used to pass in a NodeWebSocketFactoryBase instance.
+     */
+    webSocketFactory?: NodeWebSocketFactoryBase;
+
+    /**
      * Optional. Certificate thumbprint to authenticate the appId against AAD.
      */
     certificateThumbprint?: string;
@@ -170,6 +180,13 @@ export const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${ pjso
 const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
 
+// Streaming-specific constants
+const defaultPipeName = 'bfv4.pipes';
+const VERSION_PATH: string = '/api/version';
+const MESSAGES_PATH: string = '/api/messages';
+const GET: string = 'GET';
+const POST: string = 'POST';
+
 // This key is exported internally so that the TeamsActivityHandler will not overwrite any already set InvokeResponses.
 export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 
@@ -207,12 +224,17 @@ export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
  * };
  * ```
  */
-export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvider {
+export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvider, RequestHandler {
     protected readonly credentials: AppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
     protected readonly settings: BotFrameworkAdapterSettings;
 
     private isEmulatingOAuthCards: boolean;
+
+    // Streaming-specific properties:
+    private logic: (context: TurnContext) => Promise<void>;
+    private streamingServer: IStreamingTransportServer;
+    private webSocketFactory: NodeWebSocketFactoryBase;
 
     /**
      * Creates a new instance of the [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) class.
@@ -258,6 +280,11 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
             this.credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
             this.credentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
+        }
+
+        // If a NodeWebSocketFactoryBase was passed in, set it on the BotFrameworkAdapter.
+        if (this.settings.webSocketFactory) {
+            this.webSocketFactory = this.settings.webSocketFactory;
         }
 
         // Relocate the tenantId field used by MS Teams to a new location (from channelData to conversation)
@@ -737,6 +764,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * ```
      */
     public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
+        
         let body: any;
         let status: number;
         let processError: Error;
@@ -872,6 +900,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
                     if (!activity.conversation || !activity.conversation.id) {
                         throw new Error(`BotFrameworkAdapter.sendActivity(): missing conversation id.`);
                     }
+                    if (activity && BotFrameworkAdapter.isStreamingServiceUrl(activity.serviceUrl)) {
+                        TokenResolver.checkForOAuthCards(this, context, activity as Activity);
+                    }
                     const client: ConnectorClient = this.createConnectorClient(activity.serviceUrl);
                     if (activity.type === 'trace' && activity.channelId !== 'emulator') {
                     // Just eat activity
@@ -930,6 +961,23 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * Override this in a derived class to create a mock connector client for unit testing.
      */
     public createConnectorClient(serviceUrl: string): ConnectorClient {
+        if (BotFrameworkAdapter.isStreamingServiceUrl(serviceUrl)) {
+
+            // Check if we have a streaming server. Otherwise, requesting a connector client
+            // for a non-existent streaming connection results in an error
+            if (!this.streamingServer) {
+                throw new Error(`Cannot create streaming connector client for serviceUrl ${serviceUrl} without a streaming connection. Call 'useWebSocket' or 'useNamedPipe' to start a streaming connection.`)
+            }
+
+            return new ConnectorClient(
+                this.credentials,
+                {
+                    baseUri: serviceUrl,
+                    userAgent: USER_AGENT,
+                    httpClient: new StreamingHttpClient(this.streamingServer)
+                });
+        }
+
         const client: ConnectorClient = new ConnectorClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
         return client;
     }
@@ -1007,6 +1055,217 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     protected createContext(request: Partial<Activity>): TurnContext {
         return new TurnContext(this as any, request);
     }
+
+    /**
+     * Checks the validity of the request and attempts to map it the correct virtual endpoint,
+     * then generates and returns a response if appropriate.
+     * @param request A ReceiveRequest from the connected channel.
+     * @returns A response created by the BotAdapter to be sent to the client that originated the request.
+     */
+    public async processRequest(request: IReceiveRequest): Promise<StreamingResponse> {
+        let response = new StreamingResponse();
+
+        if (!request) {
+            response.statusCode = StatusCodes.BAD_REQUEST;
+            response.setBody(`No request provided.`);
+            return response;
+        }
+
+        if (!request.verb || !request.path) {
+            response.statusCode = StatusCodes.BAD_REQUEST;
+            response.setBody(`Request missing verb and/or path. Verb: ${ request.verb }. Path: ${ request.path }`);
+            return response;
+        }
+
+        if (request.verb.toLocaleUpperCase() !== POST && request.verb.toLocaleUpperCase() !== GET) {
+            response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
+            response.setBody(`Invalid verb received. Only GET and POST are accepted. Verb: ${ request.verb }`);
+        }
+
+        if (request.path.toLocaleLowerCase() === VERSION_PATH) {
+            return await this.handleVersionRequest(request, response);
+        }
+
+        // Convert the StreamingRequest into an activity the Adapter can understand.
+        let body: Activity;
+        try {
+            body = await this.readRequestBodyAsString(request);
+
+        } catch (error) {
+            response.statusCode = StatusCodes.BAD_REQUEST;
+            response.setBody(`Request body missing or malformed: ${ error }`);
+            return response;
+        }
+
+        if (request.path.toLocaleLowerCase() !== MESSAGES_PATH) {
+            response.statusCode = StatusCodes.NOT_FOUND;
+            response.setBody(`Path ${ request.path.toLocaleLowerCase() } not not found. Expected ${ MESSAGES_PATH }}.`);
+            return response;
+        }
+
+        if (request.verb.toLocaleUpperCase() !== POST) {
+            response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
+            response.setBody(`Invalid verb received for ${ request.verb.toLocaleLowerCase() }. Only GET and POST are accepted. Verb: ${ request.verb }`);
+            return response;
+        }
+
+        try {
+            let context = new TurnContext(this, body);
+            await this.runMiddleware(context, this.logic);
+
+            if (body.type === ActivityTypes.Invoke) {
+                let invokeResponse: any = context.turnState.get(INVOKE_RESPONSE_KEY);
+
+                if (invokeResponse && invokeResponse.value) {
+                    const value: InvokeResponse = invokeResponse.value;
+                    response.statusCode = value.status;
+                    response.setBody(value.body);
+                } else {
+                    response.statusCode = StatusCodes.NOT_IMPLEMENTED;
+                }
+            } else {
+                response.statusCode = StatusCodes.OK;
+            }
+        } catch (error) {
+            response.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
+            response.setBody(error);
+            return response;
+        }
+
+        return response;
+    }
+
+    /**
+     * Connects the handler to a Named Pipe server and begins listening for incoming requests.
+     * @param pipeName The name of the named pipe to use when creating the server.
+     * @param logic The logic that will handle incoming requests.
+     */
+    public async useNamedPipe(logic: (context: TurnContext) => Promise<any>, pipeName: string = defaultPipeName): Promise<void> {
+        if (!logic) {
+            throw new Error('Bot logic needs to be provided to `useNamedPipe`');
+        }
+
+        this.logic = logic;
+
+        this.streamingServer = new NamedPipeServer(pipeName, this);
+        await this.streamingServer.start();
+    }
+
+    /**
+     * Process the initial request to establish a long lived connection via a streaming server.
+     * @param req The connection request.
+     * @param socket The raw socket connection between the bot (server) and channel/caller (client).
+     * @param head The first packet of the upgraded stream.
+     * @param logic The logic that handles incoming streaming requests for the lifetime of the WebSocket connection.
+     */
+    public async useWebSocket(req: WebRequest, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<any>): Promise<void> {   
+        // Use the provided NodeWebSocketFactoryBase on BotFrameworkAdapter construction,
+        // otherwise create a new NodeWebSocketFactory.
+        const webSocketFactory = this.webSocketFactory || new NodeWebSocketFactory();
+
+        if (!logic) {
+            throw new Error('Streaming logic needs to be provided to `useWebSocket`');
+        }
+
+        this.logic = logic;
+
+        try {
+            await this.authenticateConnection(req, this.settings.channelService);
+        } catch (err) {
+            // If the authenticateConnection call fails, send back the correct error code and close
+            // the connection.
+            if (typeof(err.message) === 'string' && err.message.toLowerCase().startsWith('unauthorized')) {
+                abortWebSocketUpgrade(socket, 401);
+            } else if (typeof(err.message) === 'string' && err.message.toLowerCase().startsWith(`'authheader'`)) {
+                abortWebSocketUpgrade(socket, 400);
+            } else {
+                abortWebSocketUpgrade(socket, 500);
+            }
+
+            // Re-throw the error so the developer will know what occurred.
+            throw err;
+        }
+
+        const nodeWebSocket = await webSocketFactory.createWebSocket(req, socket, head);
+
+        await this.startWebSocket(nodeWebSocket);
+    }
+
+    private async authenticateConnection(req: WebRequest, channelService?: string): Promise<void> {
+        if (!this.credentials.appId) {
+            // auth is disabled
+            return;
+        }
+
+        const authHeader: string = req.headers.authorization || req.headers.Authorization || '';
+        const channelIdHeader: string = req.headers.channelid || req.headers.ChannelId || req.headers.ChannelID || '';
+        // Validate the received Upgrade request from the channel.
+        const claims = await JwtTokenValidation.validateAuthHeader(authHeader, this.credentialsProvider, channelService, channelIdHeader);
+
+        // Add serviceUrl from claim to static cache to trigger token refreshes.
+        const serviceUrl = claims.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
+        MicrosoftAppCredentials.trustServiceUrl(serviceUrl);
+
+        if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
+    }
+
+    /**
+     * Connects the handler to a WebSocket server and begins listening for incoming requests.
+     * @param socket The socket to use when creating the server.
+     */
+    private async startWebSocket(socket: ISocket): Promise<void>{
+        this.streamingServer = new WebSocketServer(socket, this);
+        await this.streamingServer.start();
+    }
+
+    private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {
+        const contentStream = request.streams[0];
+        return await contentStream.readAsJson<Activity>();
+    }
+
+    private async handleVersionRequest(request: IReceiveRequest, response: StreamingResponse): Promise<StreamingResponse> {
+        if (request.verb.toLocaleUpperCase() === GET) {
+            response.statusCode = StatusCodes.OK;
+
+            if (!this.credentials.appId) {
+                response.setBody({ UserAgent: USER_AGENT });
+                return response;
+            }
+            
+            let token = '';
+            try {
+                token = await this.credentials.getToken();
+
+            } catch (err) {
+                /**
+                 * In reality a missing BotToken will cause the channel to close the connection,
+                 * but we still send the response and allow the channel to make that decision
+                 * instead of proactively disconnecting. This allows the channel to know why
+                 * the connection has been closed and make the choice not to make endless reconnection
+                 * attempts that will end up right back here.
+                 */
+                console.error(err.message);
+            }
+            response.setBody({ UserAgent: USER_AGENT, BotToken: token });
+
+        } else {
+            response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
+            response.setBody(`Invalid verb received for path: ${ request.path }. Only GET is accepted. Verb: ${ request.verb }`);
+        }
+
+        return response;
+    }
+
+    /**
+     * Determine if the serviceUrl was sent via an Http/Https connection or Streaming
+     * This can be determined by looking at the ServiceUrl property:
+     *   (1) All channels that send messages via http/https are not streaming
+     *   (2) Channels that send messages via streaming have a ServiceUrl that does not begin with http/https.
+     * @param serviceUrl the serviceUrl provided in the resquest. 
+     */
+    private static isStreamingServiceUrl(serviceUrl: string): boolean {
+        return serviceUrl && !serviceUrl.toLowerCase().startsWith('http');
+    }
 }
 
 /**
@@ -1052,4 +1311,13 @@ function delay(timeout: number): Promise<void> {
     return new Promise((resolve) => {
         setTimeout(resolve, timeout);
     });
+}
+
+function abortWebSocketUpgrade(socket: INodeSocket, code: number) {
+    if (socket.writable) {
+        const connectionHeader = `Connection: 'close'\r\n`;
+        socket.write(`HTTP/1.1 ${code} ${STATUS_CODES[code]}\r\n${connectionHeader}\r\n`);
+    }
+
+    socket.destroy();
 }

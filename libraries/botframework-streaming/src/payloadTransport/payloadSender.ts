@@ -9,7 +9,7 @@
 import { HeaderSerializer } from '../payloads/headerSerializer';
 import { SubscribableStream } from '../subscribableStream';
 import { PayloadConstants } from '../payloads/payloadConstants';
-import { TransportDisconnectedEventArgs } from './transportDisconnectedEventArgs';
+import { TransportDisconnectedEvent } from './transportDisconnectedEvent';
 import { TransportDisconnectedEventHandler } from './transportDisconnectedEventHandler';
 import { ITransportSender } from '../interfaces/ITransportSender';
 import { IHeader } from '../interfaces/IHeader';
@@ -57,13 +57,13 @@ export class PayloadSender {
      *
      * @param e The disconnected event arguments to include in the disconnected event broadcast.
      */
-    public disconnect(e?: TransportDisconnectedEventArgs): void {
+    public disconnect(e?: TransportDisconnectedEvent): void {
         if (this.isConnected) {
             this.sender.close();
             this.sender = null;
 
             if (this.disconnected) {
-                this.disconnected(this, e || TransportDisconnectedEventArgs.Empty);
+                this.disconnected(this, e || TransportDisconnectedEvent.Empty);
             }
         }
     }
@@ -87,7 +87,7 @@ export class PayloadSender {
                 }
             }
         } catch (e) {
-            this.disconnect(new TransportDisconnectedEventArgs(e.message));
+            this.disconnect(new TransportDisconnectedEvent(e.message));
         }
     }
 }

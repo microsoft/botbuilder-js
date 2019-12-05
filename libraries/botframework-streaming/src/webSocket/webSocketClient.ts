@@ -12,11 +12,11 @@ import { RequestManager } from '../payloads';
 import {
     PayloadReceiver,
     PayloadSender,
-    TransportDisconnectedEventArgs
+    TransportDisconnectedEvent
 } from '../payloadTransport';
-import { BrowserWebSocket } from './BrowserWebSocket';
-import { NodeWebSocket } from './NodeWebSocket';
-import { WebSocketTransport } from './WebSocketTransport';
+import { BrowserWebSocket } from './browserWebSocket';
+import { NodeWebSocket } from './nodeWebSocket';
+import { WebSocketTransport } from './webSocketTransport';
 import { IStreamingTransportClient, IReceiveResponse } from '../interfaces';
 
 /**
@@ -82,8 +82,8 @@ export class WebSocketClient implements IStreamingTransportClient {
      * Stop this client from listening.
      */
     public disconnect(): void {
-        this._sender.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
-        this._receiver.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
+        this._sender.disconnect(new TransportDisconnectedEvent('Disconnect was called.'));
+        this._receiver.disconnect(new TransportDisconnectedEvent('Disconnect was called.'));
     }
 
     /**
@@ -98,7 +98,7 @@ export class WebSocketClient implements IStreamingTransportClient {
 
     private onConnectionDisconnected(sender: object, args: any): void {
         if (this._disconnectionHandler != null) {
-            this._disconnectionHandler("Disconnected");
+            this._disconnectionHandler('Disconnected');
             return;
         }
 

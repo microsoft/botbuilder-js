@@ -19,6 +19,7 @@ export { BotFrameworkHttpClient } from './botFrameworkHttpClient';
 export { ChannelServiceHandler } from './channelServiceHandler';
 export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
+export * from './streaming';
 export * from './teamsActivityHandler';
 export * from './teamsActivityHelpers';
 export * from './teamsInfo';
