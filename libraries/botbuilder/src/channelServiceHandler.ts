@@ -89,7 +89,7 @@ export class ChannelServiceHandler {
         return await this.onGetConversations(claimsIdentity, conversationId, continuationToken);
     }
 
-    public async HandleGetConversationMembers(authHeader: string, conversationId: string): Promise<ChannelAccount[]> {
+    public async handleGetConversationMembers(authHeader: string, conversationId: string): Promise<ChannelAccount[]> {
         const claimsIdentity = await this.authenticate(authHeader);
         return await this.onGetConversationMembers(claimsIdentity, conversationId);
     }
@@ -360,6 +360,17 @@ export class ChannelServiceHandler {
     }
 
     private async authenticate(authHeader: string): Promise<ClaimsIdentity> {
+
+        if (!authHeader) {
+            const isAuthDisable = this.credentialProvider.isAuthenticationDisabled()
+            if (isAuthDisable) {
+                    // In the scenario where Auth is disabled, we still want to have the
+                    // IsAuthenticated flag set in the ClaimsIdentity. To do this requires
+                    // adding in an empty claim.
+                    return new ClaimsIdentity([], false);
+            }
+        }
+
         return await JwtTokenValidation.validateAuthHeader(authHeader, this.credentialProvider, this.channelService, 'unknown', undefined, this.authConfig);
     }
 }
