@@ -9,9 +9,9 @@
 import { Storage, StoreItems } from 'botbuilder';
 import { Container, CosmosClient, CosmosClientOptions } from '@azure/cosmos';
 import { CosmosDbKeyEscape } from './cosmosDbKeyEscape';
-import * as semaphore from 'semaphore';
+import { DoOnce } from './doOnce';
 
-const _semaphore: semaphore.Semaphore = semaphore(1);
+const _doOnce: DoOnce<Container> = new DoOnce<Container>();
 
 /**
  * Cosmos DB Partitioned Storage Options.
@@ -237,7 +237,6 @@ export class CosmosDbPartitionedStorage implements Storage {
      */
     public async initialize(): Promise<void> {
         if (!this.container) {
-
             if (!this.client) {
                 this.client = new CosmosClient({
                     endpoint: this.cosmosDbStorageOptions.cosmosDbEndpoint,
@@ -245,58 +244,49 @@ export class CosmosDbPartitionedStorage implements Storage {
                     ...this.cosmosDbStorageOptions.cosmosClientOptions,
                 });
             }
-
-            if (!this.container) {
-                this.container = await new Promise((resolve: Function, reject: Function): void => {
-                    _semaphore.take(async (): Promise<void> => {
-                        try {
-                            let createIfNotExists = !this.cosmosDbStorageOptions.compatibilityMode;
-                            let container;
-                            if(this.cosmosDbStorageOptions.compatibilityMode) {
-                                try {
-                                    container = await this.client
-                                                        .database(this.cosmosDbStorageOptions.databaseId)
-                                                        .container(this.cosmosDbStorageOptions.containerId);
-                                    const partitionKeyPath = await container.readPartitionKeyDefinition();
-                                    const paths = partitionKeyPath.resource.paths;
-                                    if(paths){
-                                        if (paths.indexOf('/_partitionKey') !== -1) {
-                                            this.compatabilityModePartitionKey = true;
-                                        }
-                                        else if (paths.indexOf(DocumentStoreItem.partitionKeyPath) === -1) {
-                                            reject(new Error(`Custom Partition Key Paths are not supported. ${this.cosmosDbStorageOptions.containerId} has a custom Partition Key Path of ${paths[0]}.`));
-                                        }
-                                    } else{
-                                        this.compatabilityModePartitionKey = true;
-                                    }
-                                } catch (err) {
-                                    createIfNotExists = true;
-                                }
-                            }
-
-                            if (createIfNotExists) {
-                                const result = await this.client
+            this.container = await _doOnce.waitFor(async ()=> await this.getOrCreateContainer());
+        }
+    }
+    
+    private async getOrCreateContainer(): Promise<Container> {
+        let createIfNotExists = !this.cosmosDbStorageOptions.compatibilityMode;
+        let container;
+        if(this.cosmosDbStorageOptions.compatibilityMode) {
+            try {
+                container = await this.client
                                     .database(this.cosmosDbStorageOptions.databaseId)
-                                    .containers.createIfNotExists({
-                                        id: this.cosmosDbStorageOptions.containerId,
-                                        partitionKey: {
-                                            paths: [DocumentStoreItem.partitionKeyPath]
-                                        },
-                                        throughput: this.cosmosDbStorageOptions.containerThroughput
-                                    });
-                                container = result.container;
-                            }
-                            resolve(container);
-                        }
-                        catch (err) {
-                            reject(err);
-                        }
-                        finally {
-                            _semaphore.leave();
-                        }
-                    });
-                });
+                                    .container(this.cosmosDbStorageOptions.containerId);
+                const partitionKeyPath = await container.readPartitionKeyDefinition();
+                const paths = partitionKeyPath.resource.paths;
+                if(paths) {
+                    // Containers created with CosmosDbStorage had no partition key set, so the default was '/_partitionKey'.
+                    if (paths.indexOf('/_partitionKey') !== -1) {
+                        this.compatabilityModePartitionKey = true;
+                    }
+                    else if (paths.indexOf(DocumentStoreItem.partitionKeyPath) === -1) {
+                        // We are not supporting custom Partition Key Paths.
+                        new Error(`Custom Partition Key Paths are not supported. ${this.cosmosDbStorageOptions.containerId} has a custom Partition Key Path of ${paths[0]}.`);
+                    }
+                } else {
+                    this.compatabilityModePartitionKey = true;
+                }
+                return container;
+            } catch (err) {
+                createIfNotExists = true;
             }
+        }
+
+        if (createIfNotExists) {
+            const result = await this.client
+                .database(this.cosmosDbStorageOptions.databaseId)
+                .containers.createIfNotExists({
+                    id: this.cosmosDbStorageOptions.containerId,
+                    partitionKey: {
+                        paths: [DocumentStoreItem.partitionKeyPath]
+                    },
+                    throughput: this.cosmosDbStorageOptions.containerThroughput
+                });
+            return result.container;
         }
     }
 
