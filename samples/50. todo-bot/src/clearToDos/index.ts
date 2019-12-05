@@ -9,7 +9,7 @@ export class ClearToDos extends AdaptiveDialog {
         super('ClearToDos');
 
         this.triggers.push(new OnBeginDialog([
-            new LogAction(`ClearToDos: todos = {user.todos}`),
+            new LogAction(`ClearToDos: todos = @{user.todos}`),
             new IfCondition(`user.todos != null`, [
                 new EditArray(ArrayChangeType.clear, 'user.todos'),
                 new SendActivity(`All todos removed.`)

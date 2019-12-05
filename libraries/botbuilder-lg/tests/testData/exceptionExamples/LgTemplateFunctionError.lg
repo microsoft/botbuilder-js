@@ -1,10 +1,10 @@
 > no such template
 # template3
-- {NotExistTemplate()}
+- @{NotExistTemplate()}
 
- > arguments mismatch
+> arguments mismatch
 # template4
-- {template5()}
+- @{template5()}
 
- # template5(param1)
- - hi 
+# template5(param1)
+ - hi
