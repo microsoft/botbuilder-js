@@ -1,0 +1,96 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+trigger:
+    - master
+
+pr:
+    - master
+
+pool:
+  vmImage: 'vs2017-win2016'
+
+variables:
+  TestResourceGroup: 'BrowserBotTest'
+  TestAppServicePlan: 'BrowserBotServicePlan'
+  TestWebApp: 'BrowserBotWebApp'
+  TESTURI: 'https://$(TestWebApp).azurewebsites.net/'
+
+steps:
+
+- task: NodeTool@0
+  displayName: 'Use Node 10.'
+  inputs:
+    versionSpec: 10.x
+
+- task: Npm@1
+  displayName: 'npm install bot dependencies'
+  inputs:
+    workingDir: 'libraries/browser-functional-tests/browser-echo-bot'
+    verbose: false
+
+- task: Npm@1
+  displayName: 'npm build bot '
+  inputs:
+    command: custom
+    workingDir: 'libraries/browser-functional-tests/browser-echo-bot'
+    verbose: false
+    customCommand: 'run build'
+
+- powershell: |
+   # Compress Bot Source Code
+   
+   cd $(System.DefaultWorkingDirectory)/libraries/browser-functional-tests/browser-echo-bot/dist
+   $DirToCompress = "$(System.DefaultWorkingDirectory)/libraries/browser-functional-tests/browser-echo-bot/dist"
+   $files = Get-ChildItem -Path $DirToCompress
+   $ZipFileResult="$(System.DefaultWorkingDirectory)/libraries/browser-functional-tests/browser-echo-bot/browser-echo-bot.zip"
+   Compress-Archive -Path $files -DestinationPath $ZipFileResult
+  displayName: 'Compress Bot Source Code'
+
+- task: AzureCLI@1
+  displayName: 'Deploy browser bot'
+  inputs:
+    azureSubscription: '$(AzureSubscription)'
+    scriptLocation: inlineScript
+    inlineScript: |
+     echo "# Create resource group"
+     call az group create -l westus -n "$(TestResourceGroup)"
+     
+     echo "# Create app service plan"
+     call az appservice plan create -g "$(TestResourceGroup)" -n "$(TestAppServicePlan)" --number-of-workers 4 --sku S1
+     
+     echo "# Create web app"
+     call az webapp create -g "$(TestResourceGroup)" -p "$(TestAppServicePlan)" -n "$(TestWebApp)"
+     
+     echo "# Deploy source code"
+     call az webapp deployment source config-zip --resource-group "$(TestResourceGroup)" --name "$(TestWebApp)" --src "$(System.DefaultWorkingDirectory)/libraries/browser-functional-tests/browser-echo-bot/browser-echo-bot.zip"
+
+- task: Npm@1
+  displayName: 'npm install tests dependecies'
+  inputs:
+    workingDir: 'libraries/browser-functional-tests'
+    verbose: false
+
+- task: Npm@1
+  displayName: 'run chrome tests'
+  inputs:
+    command: custom
+    workingDir: ''
+    verbose: false
+    customCommand: 'run browser-functional-test chrome'
+
+- task: Npm@1
+  displayName: 'run firefox tests'
+  inputs:
+    command: custom
+    workingDir: ''
+    verbose: false
+    customCommand: 'run browser-functional-test firefox'
+
+- task: AzureCLI@1
+  displayName: 'Delete Resource Group'
+  inputs:
+    azureSubscription: '$(AzureSubscription)'
+    scriptLocation: inlineScript
+    inlineScript: 'call az group delete -n BrowserBotTest --yes'
+  condition: succeededOrFailed()

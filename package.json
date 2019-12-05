@@ -6,7 +6,7 @@
     "build": "lerna run build",
     "clean": "lerna run clean",
     "functional-test": "lerna run build && nyc mocha \"libraries/functional-tests/tests/*.test.js\"",
-    "browser-functional-test": "cd libraries/browser-functional-tests && node nightwatch.js -e chrome",
+    "browser-functional-test": "cd libraries/browser-functional-tests && node nightwatch.js -e",
     "test": "lerna run build && nyc mocha \"libraries/bot*/tests/**/*.test.js\"",
     "test:coveralls": "lerna run build && nyc mocha \"libraries/bot*/tests/**/*.test.js\" && nyc report --reporter=text-lcov | coveralls",
     "test-coverage": "nyc mocha \"libraries/bot*/tests/**/*.test.js\"",
