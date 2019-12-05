@@ -15,9 +15,13 @@ import { AppCredentials } from './appCredentials';
 export class MicrosoftAppCredentials extends AppCredentials {
     public appPassword: string;
 
-    constructor(appId: string, appPassword: string, channelAuthTenant?: string) {
+    constructor(appId: string, appPassword: string, channelAuthTenant?: string, oAuthScope?: string) {
         super(appId, channelAuthTenant);
         this.appPassword = appPassword;
+
+        // AppCredentials.oAuthScope has an initial an initial value of AuthenticationConstants.ToBotFromChannelTokenIssuer,
+        // Only change it if there is an actual value provided in the constructor for MicrosoftAppCredentials.
+        this.oAuthScope = oAuthScope ? oAuthScope : this.oAuthScope;
     }
 
     protected async refreshToken(): Promise<adal.TokenResponse> {

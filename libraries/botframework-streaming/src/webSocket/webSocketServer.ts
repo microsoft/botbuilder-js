@@ -12,7 +12,7 @@ import { RequestManager } from '../payloads';
 import {
     PayloadReceiver,
     PayloadSender,
-    TransportDisconnectedEventArgs
+    TransportDisconnectedEvent
 } from '../payloadTransport';
 import { ISocket } from '../interfaces/ISocket';
 import { WebSocketTransport } from './WebSocketTransport';
@@ -79,11 +79,15 @@ export class WebSocketServer implements IStreamingTransportServer {
      * Stop this server.
      */
     public disconnect(): void {
-        this._sender.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
-        this._receiver.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
+        this._sender.disconnect(new TransportDisconnectedEvent('Disconnect was called.'));
+        this._receiver.disconnect(new TransportDisconnectedEvent('Disconnect was called.'));
     }
 
-    private onConnectionDisconnected(sender: PayloadReceiver | PayloadSender, e?: TransportDisconnectedEventArgs): void {
+    /**
+     * @param sender The PayloadReceiver or PayloadSender that triggered or received a disconnect.
+     * @param e TransportDisconnectedEvent
+     */
+    private onConnectionDisconnected(sender: PayloadReceiver | PayloadSender, e?: TransportDisconnectedEvent): void {
         if (this._closedSignal) {
             this._closedSignal('close');
             this._closedSignal = null;

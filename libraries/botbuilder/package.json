@@ -25,6 +25,7 @@
     "axios": "^0.19.0",
     "botbuilder-core": "4.1.6",
     "botframework-connector": "4.1.6",
+    "botframework-streaming": "4.1.6",
     "filenamify": "^4.1.0",
     "fs-extra": "^7.0.1"
   },
@@ -41,7 +42,7 @@
     "uuid": "^3.3.2"
   },
   "scripts": {
-    "test": "tsc && nyc mocha tests/",
+    "test": "tsc && nyc mocha --recursive \"tests/**/*.test.js\"",
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\index.d.ts ..\\botbuilder-core\\lib\\index.d.ts ..\\botframework-schema\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK\" --readme none",
     "clean": "erase /q /s .\\lib",

@@ -6,6 +6,8 @@
  * Licensed under the MIT License.
  */
 import { Activity } from 'botframework-schema';
+
+import { AppCredentials } from './appCredentials';
 import { AuthenticationConfiguration } from './authenticationConfiguration';
 import { AuthenticationConstants } from './authenticationConstants';
 import { ChannelValidation } from './channelValidation';
@@ -15,7 +17,7 @@ import { EmulatorValidation } from './emulatorValidation';
 import { EnterpriseChannelValidation } from './enterpriseChannelValidation';
 import { GovernmentChannelValidation } from './governmentChannelValidation';
 import { GovernmentConstants } from './governmentConstants';
-import { AppCredentials } from './appCredentials';
+import { SkillValidation } from './skillValidation';
 
 export namespace JwtTokenValidation {
 
@@ -30,8 +32,13 @@ export namespace JwtTokenValidation {
         activity: Activity,
         authHeader: string,
         credentials: ICredentialProvider,
-        channelService: string
+        channelService: string,
+        authConfig?: AuthenticationConfiguration
     ): Promise<ClaimsIdentity> {
+        if (!authConfig) {
+            authConfig = new AuthenticationConfiguration();
+        }
+
         if (!authHeader.trim()) {
             const isAuthDisabled: boolean = await credentials.isAuthenticationDisabled();
 
@@ -43,7 +50,7 @@ export namespace JwtTokenValidation {
         }
 
         const claimsIdentity: ClaimsIdentity =
-            await validateAuthHeader(authHeader, credentials, channelService, activity.channelId, activity.serviceUrl);
+            await validateAuthHeader(authHeader, credentials, channelService, activity.channelId, activity.serviceUrl, authConfig);
 
         AppCredentials.trustServiceUrl(activity.serviceUrl);
 
@@ -72,6 +79,11 @@ export namespace JwtTokenValidation {
 
     async function authenticateToken(
         authHeader: string, credentials: ICredentialProvider, channelService: string, channelId: string, authConfig: AuthenticationConfiguration, serviceUrl: string): Promise<ClaimsIdentity> {
+
+            if (SkillValidation.isSkillToken(authHeader)) {
+                return await SkillValidation.authenticateChannelToken(authHeader, credentials, channelService, channelId, authConfig);
+            }
+
             const usingEmulator: boolean = EmulatorValidation.isTokenFromEmulator(authHeader);
 
             if (usingEmulator) {
@@ -134,7 +146,7 @@ export namespace JwtTokenValidation {
      * obtain the attribute from the AuthenticationConstants.AppIdClaim or if present.
      * 
      * Throws a TypeError if claims is falsy.
-     * @param claims An Array of Claim instances.
+     * @param claims An object containing claims types and their values.
      */
     export function getAppIdFromClaims(claims: Claim[]): string {
         if (!claims) {
@@ -144,17 +156,17 @@ export namespace JwtTokenValidation {
 
         // Depending on Version, the AppId is either in the
         // appid claim (Version 1) or the 'azp' claim (Version 2).
-        const tokenClaim = claims.find(claim => claim.type === AuthenticationConstants.VersionClaim);
-        const tokenVersion = tokenClaim && tokenClaim.value;
-        if (!tokenVersion || tokenVersion === '1.0') {
+        const versionClaim = claims.find(c => c.type === AuthenticationConstants.VersionClaim);
+        const versionValue = versionClaim && versionClaim.value;
+        if (!versionValue || versionValue === '1.0') {
             // No version or a version of '1.0' means we should look for
             // the claim in the 'appid' claim.
-            const appIdClaim = claims.find(claim => claim.type === AuthenticationConstants.AppIdClaim);
+            const appIdClaim = claims.find(c => c.type === AuthenticationConstants.AppIdClaim);
             appId = appIdClaim && appIdClaim.value;
-        } else if (tokenVersion === '2.0') {
+        } else if (versionValue === '2.0') {
             // Version '2.0' puts the AppId in the 'azp' claim.
-            const appZClaim = claims.find(claim => claim.type === AuthenticationConstants.AuthorizedParty);
-            appId = appZClaim && appZClaim.value;
+            const azpClaim = claims.find(c => c.type === AuthenticationConstants.AuthorizedParty);
+            appId = azpClaim && azpClaim.value;
         }
 
         return appId;
@@ -166,5 +178,34 @@ export namespace JwtTokenValidation {
 
     export function isGovernment(channelService: string): boolean {
         return channelService && channelService.toLowerCase() === GovernmentConstants.ChannelService;
+    }
+
+    /**
+     * Internal helper to check if the token has the shape we expect "Bearer [big long string]".
+     * @param authHeader A string containing the token header.
+     * @returns {boolean} True if the token is valid, false if not.
+     */
+    export function isValidTokenFormat(authHeader: string): boolean {
+        if (!authHeader) {
+            // No token, not valid.
+            return false;
+        }
+
+        const parts: string[] = authHeader.trim().split(' ');
+        if (parts.length !== 2) {
+            // Tokens MUST have exactly 2 parts. If we don't have 2 parts, it's not a valid token
+            return false;
+        }
+
+        // We now have an array that should be:
+        // [0] = "Bearer"
+        // [1] = "[Big Long String]"
+        const authScheme: string = parts[0];
+        if (authScheme !== 'Bearer') {
+            // The scheme MUST be "Bearer"
+            return false;
+        }
+
+        return true;
     }
 }
