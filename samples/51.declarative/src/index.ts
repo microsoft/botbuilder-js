@@ -6,6 +6,7 @@ import { BotFrameworkAdapter, MemoryStorage, ConversationState, UserState } from
 import { DialogManager, Dialog } from 'botbuilder-dialogs';
 import { TypeLoader, FileResourceProvider, ResourceExplorer} from 'botbuilder-dialogs-declarative';
 import fs = require('fs');
+import { resolve } from 'path';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -31,6 +32,8 @@ const resourcesFolder = "./libraries/botbuilder-dialogs-declarative/tests/resour
 // const path = "../../libraries/botbuilder-dialogs-declarative/tests/resources/04 - TextInput/NumberInput.main.dialog"
 // const resourcesFolder = "../../libraries/botbuilder-dialogs-declarative/tests/resources/04 - TextInput"
 
+let dialogManager: DialogManager = null;
+
 function readPackageJson(path, done) {
     fs.readFile(path, function (err, buffer) {
       if (err) { return done(err); }
@@ -48,29 +51,33 @@ async function LoadDialog(path, resourcesFolder){
             }
 
             // Create bots DialogManager and bind to state storage
-            const bot = new DialogManager();
-            bot.conversationState = new ConversationState(new MemoryStorage());
-            bot.userState = new UserState(new MemoryStorage());
+            dialogManager =  new DialogManager();
+            dialogManager.conversationState = new ConversationState(new MemoryStorage());
+            dialogManager.userState = new UserState(new MemoryStorage());
 
             // bind rootDialog
             let loader = new TypeLoader();
             if (resourcesFolder) {
                 let resourceExplorer = new ResourceExplorer();
+                resourceExplorer.emitter.on("changed", (resource) => {
+                    LoadDialog(path, resourcesFolder);
+                });
                 // resourceExplorer.registerDirectory(`./libraries/botbuilder-dialogs-declarative/tests/resources`);
                 resourceExplorer.addFolder(`./libraries/botbuilder-dialogs-declarative/tests/resources`);
                 loader = new TypeLoader(null, resourceExplorer);
             }
             const dialog = await loader.load(json);
-            bot.rootDialog = dialog as Dialog;
+            dialogManager.rootDialog = dialog as Dialog;
 
-            // Listen for incoming activities.
-            server.post('/api/messages', (req, res) => {
-                adapter.processActivity(req, res, async (context) => {
-                    // Route activity to bot.
-                    await bot.onTurn(context);
-                });
-            });
+
     });
 }
 
-LoadDialog(path, resourcesFolder)
+server.post('/api/messages', (req, res) => {
+    adapter.processActivity(req, res, async (context) => {
+        // Route activity to bot.
+        await dialogManager.onTurn(context);
+    });
+});
+
+LoadDialog(path, resourcesFolder);

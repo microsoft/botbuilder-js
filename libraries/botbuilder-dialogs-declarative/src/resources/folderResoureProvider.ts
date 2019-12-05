@@ -4,9 +4,17 @@ import { readdirSync } from "fs";
 import { IResource } from "./resource";
 import { IResourceProvider } from "./resourceProvider";
 import { PathUtil } from "../pathUtil";
+import watch from "node-watch";
+import { EventEmitter } from "events";
 
 export class FolderResourceProvider implements IResourceProvider {
     private extensions: Set<string> = new Set<string>();
+
+    private _emitter: EventEmitter;
+
+    set emitter(e: EventEmitter) {
+        this._emitter = e;
+    }
 
     private resources: Map<string, FileResource> = new Map<string, FileResource>();
 
@@ -32,7 +40,9 @@ export class FolderResourceProvider implements IResourceProvider {
         });
 
         if (monitorChanges) {
-            // todo monitor changes
+            watch(folder, { recursive: true }, (type, filename) => {
+                this._emitter.emit("changed", new FileResource(filename));
+            });
         }
     }
 
@@ -61,4 +71,6 @@ export class FolderResourceProvider implements IResourceProvider {
     public id(): string {
         return this.Directory;
     }
+
+
 }

@@ -5,16 +5,22 @@ import { normalize, join, dirname } from "path";
 import { readdirSync, statSync } from "fs";
 import { FolderResourceProvider } from "./folderResoureProvider";
 import { IResource } from "./resource";
+import { EventEmitter } from "events";
 
 export class ResourceExplorer {
 
+    private _emitter: EventEmitter = new EventEmitter();
     private _resourceProviders: IResourceProvider[] = [];
 
     constructor() {
     }
 
     get resourceProviders(): IResourceProvider[] {
-        return this.resourceProviders;
+        return this._resourceProviders;
+    }
+
+    get emitter(): EventEmitter {
+        return this._emitter;
     }
 
     public static loadProject(projectFile: string, ignoreFolders: string[], monitorChanges: boolean) {
@@ -53,7 +59,9 @@ export class ResourceExplorer {
     }
 
     public addFolder(folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true) {
-        this.addResourceProvider(new FolderResourceProvider(folder, includeSubFolders, monitorChanges));
+        let folderResourceProvider: FolderResourceProvider = new FolderResourceProvider(folder, includeSubFolders, monitorChanges);
+        folderResourceProvider.emitter = this._emitter;
+        this.addResourceProvider(folderResourceProvider);
     }
 
     public async getResources(fileExtension: string): Promise<IResource[]> {
