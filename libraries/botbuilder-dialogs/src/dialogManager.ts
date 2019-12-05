@@ -46,7 +46,7 @@ export interface DialogManagerConfiguration {
     stateConfiguration?: DialogStateManagerConfiguration;
 }
 
-export class DialogManager extends Configurable  {
+export class DialogManager extends Configurable {
     private dialogSet: DialogSet = new DialogSet();
     private rootDialogId: string;
 
@@ -119,17 +119,23 @@ export class DialogManager extends Configurable  {
 
         // Create DialogContext
         const dc = new DialogContext(this.dialogSet, context, dialogState);
+        dc.state.setValue('turn.activity', context.activity);
 
         // Configure dialog state manager and load scopes
         const config = this.stateConfiguration ? this.stateConfiguration : DialogStateManager.createStandardConfiguration(this.conversationState, this.userState);
         dc.state.configuration = config;
         await dc.state.loadAllScopes();
 
-        // Continue dialog execution
-        // - This will apply any queued up interruptions and execute the current/next step(s).
-        let turnResult: DialogTurnResult = await dc.continueDialog();
-        if (turnResult.status == DialogTurnStatus.empty) {
-            // Begin root dialog
+        let turnResult: DialogTurnResult;
+        if (dc.activeDialog) {
+            // Continue dialog execution
+            // - This will apply any queued up interruptions and execute the current/next step(s).
+            turnResult = await dc.continueDialog();
+            if (turnResult.status == DialogTurnStatus.empty) {
+                // Begin root dialog
+                turnResult = await dc.beginDialog(this.rootDialogId);
+            }
+        } else {
             turnResult = await dc.beginDialog(this.rootDialogId);
         }
 
@@ -146,6 +152,6 @@ export class DialogManager extends Configurable  {
             label: 'Bot State'
         });
 
-        return { turnResult: turnResult };        
+        return { turnResult: turnResult };
     }
 }
