@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import { HttpClient, WebResource } from '@azure/ms-rest-js';
 import {
     AuthenticationConstants,
     GovernmentConstants,
@@ -14,6 +13,9 @@ import {
     JwtTokenValidation,
     MicrosoftAppCredentials
 } from 'botframework-connector';
+
+import axios from 'axios';
+
 import { Activity } from 'botbuilder-core';
 
 import { InvokeResponse, USER_AGENT } from './botFrameworkAdapter';
@@ -28,26 +30,18 @@ export class BotFrameworkHttpClient {
      */
     private static readonly appCredentialMapCache: Map<string, MicrosoftAppCredentials> = new Map<string, MicrosoftAppCredentials>();
 
-    constructor(
-        private readonly credentialProvider: ICredentialProvider,
-        private readonly channelService?: string,
-        private readonly httpClient?: HttpClient,
-        ) {
-        if (!this.channelService) {
-            this.channelService = process.env[AuthenticationConstants.ChannelService];
-        }
-        if (!this.httpClient) {
-            throw new Error('BotFrameworkHttpClient(): missing httpClient');
-        }
+    constructor(private readonly credentialProvider: ICredentialProvider, private readonly channelService?: string) {
         if (!this.credentialProvider) {
             throw new Error('BotFrameworkHttpClient(): missing credentialProvider');
+        }
+        if (!this.channelService) {
+            this.channelService = process.env[AuthenticationConstants.ChannelService];
         }
     }
 
     /**
-     * Forwards an activity to a skill (bot).
+     * Forwards an activity to a another bot.
      * @remarks
-     * NOTE: Forwarding an activity to a skill will flush UserState and ConversationState changes so that skill has accurate state.
      * 
      * @param fromBotId The MicrosoftAppId of the bot sending the activity.
      * @param toBotId The MicrosoftAppId of the bot receiving the activity.
@@ -59,11 +53,11 @@ export class BotFrameworkHttpClient {
     public async postActivity(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse> {
         const appCredentials = await this.getAppCredentials(fromBotId, toBotId);
         if (!appCredentials) {
-            throw new Error('Unable to get appCredentials to connect to the skill');
+            throw new Error('BotFrameworkHttpClient.postActivity(): Unable to get appCredentials to connect to the skill');
         }
 
         // Get token for the skill call
-        const token = await appCredentials.getToken();
+        const token = appCredentials.appId === '' && appCredentials.appPassword === '' ? null : await appCredentials.getToken();
 
         // Capture current activity settings before changing them.
         // TODO: DO we need to set the activity ID? (events that are created manually don't have it).
@@ -72,23 +66,21 @@ export class BotFrameworkHttpClient {
         try {
             activity.conversation.id = conversationId;
             activity.serviceUrl = serviceUrl;
-            const headers = {
-                Accept: 'application/json',
-                Authorization: `Bearer ${ token }`,
-                'Content-Type': 'application/json',
-                'User-Agent': USER_AGENT
+            const config = {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'User-Agent': USER_AGENT
+                }
             };
 
-            const request = new WebResource(
-                toUrl,
-                'POST',
-                activity,
-                undefined,
-                headers
-                );
+            if (token !== null) {
+                config.headers['Authorization'] = `Bearer ${ token }`;
+            }
             
-            const response = await this.httpClient.sendRequest(request);
-            const invokeResponse: InvokeResponse = { status: response.status, body: response.parsedBody };
+            const response = await axios.post(toUrl, activity, config);
+            
+            const invokeResponse: InvokeResponse = { status: response.status, body: response.data };
 
             return invokeResponse;
         } finally {
