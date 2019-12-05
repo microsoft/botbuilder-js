@@ -55,7 +55,6 @@ export class TranscriptLoggerMiddleware implements Middleware {
                 clonedActivity.id = responses && responses[index] ?
                     responses[index].id :
                     clonedActivity.id;
-                
 
                 // For certain channels, a ResourceResponse with an id is not always sent to the bot.
                 // This fix uses the timestamp on the activity to populate its id for logging the transcript.
