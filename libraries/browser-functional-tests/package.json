@@ -4,9 +4,11 @@
   "description": "Test to check browser compatibility",
   "main": "",
   "devDependencies": {
-    "nightwatch": "^1.2.4",
     "chromedriver": "^77.0.0",
-    "dotenv": "^8.0.0"
+    "dotenv": "^8.0.0",
+    "nightwatch": "^1.2.4",
+    "geckodriver": "^1.19.1",
+    "selenium-server": "^3.141.59"
   },
   "directories": {
     "test": "tests"

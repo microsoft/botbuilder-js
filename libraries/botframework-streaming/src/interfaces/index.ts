@@ -5,6 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
+export * from './INodeBuffer';
+export * from './INodeIncomingMessage';
+export * from './INodeSocket';
 export * from './IReceiveRequest';
 export * from './IReceiveResponse';
 export * from './ISocket';

@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 import { VerifyOptions } from 'jsonwebtoken';
-import { ClaimsIdentity } from './claimsIdentity';
 import { AuthenticationConstants } from './authenticationConstants';
+import { AuthenticationConfiguration } from './authenticationConfiguration';
+import { ClaimsIdentity } from './claimsIdentity';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 
@@ -31,16 +32,19 @@ export namespace ChannelValidation {
      * @param  {string} authHeader The raw HTTP header in the format: "Bearer [longString]"
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @param  {string} serviceUrl The ServiceUrl Claim value that must match in the identity.
+     * @param  {string} channelId
+     * @param  {AuthenticationConfiguration} authConfig
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
     export async function authenticateChannelTokenWithServiceUrl(
         authHeader: string,
         credentials: ICredentialProvider,
         serviceUrl: string,
-        channelId: string
+        channelId: string,
+        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
     ): Promise<ClaimsIdentity> {
 
-        const identity: ClaimsIdentity = await authenticateChannelToken(authHeader, credentials, channelId);
+        const identity: ClaimsIdentity = await authenticateChannelToken(authHeader, credentials, channelId, authConfig);
 
         const serviceUrlClaim: string = identity.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
         if (serviceUrlClaim !== serviceUrl) {
@@ -56,12 +60,15 @@ export namespace ChannelValidation {
      * A token issued by the Bot Framework emulator will FAIL this check.
      * @param  {string} authHeader The raw HTTP header in the format: "Bearer [longString]"
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
+     * @param  {string} channelId
+     * @param  {AuthenticationConfiguration} authConfig
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
     export async function authenticateChannelToken(
         authHeader: string,
         credentials: ICredentialProvider,
-        channelId: string
+        channelId: string,
+        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
     ): Promise<ClaimsIdentity> {
 
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
@@ -69,7 +76,7 @@ export namespace ChannelValidation {
             OpenIdMetadataEndpoint ? OpenIdMetadataEndpoint : AuthenticationConstants.ToBotFromChannelOpenIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms);
 
-        const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
+        const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId, authConfig.requiredEndorsements);
 
         return await validateIdentity(identity, credentials);
     }
