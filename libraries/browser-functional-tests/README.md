@@ -16,7 +16,7 @@ This command will start the browser bot using `webpack-dev-server`.
 
 3. In the `botbuilder-js` root directory, open a new terminal and run the following commands:
    * `npm install`
-   * `npm run browser-functional-test chrome,firefox,edge`
+   * `npm run browser-functional-test browser` where browser is _chrome_ or _firefox_
 
 4. Go to the `.env` file and set the **TestURI** variable with `http://localhost:8080/` value
 
