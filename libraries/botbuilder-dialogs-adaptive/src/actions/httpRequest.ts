@@ -10,8 +10,6 @@ import { ExpressionProperty, ExpressionPropertyValue } from '../expressionProper
 import fetch, * as request from "node-fetch";
 import { Activity } from 'botbuilder-core';
 import * as stringTemplate from '../stringTemplate';
-import { isString } from 'util';
-import { Expression } from 'botframework-expressions';
 
 export interface HttpRequestConfiguration extends DialogConfiguration {
 
