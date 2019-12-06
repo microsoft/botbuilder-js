@@ -1,0 +1,18 @@
+{
+  "name": "httpRequest-sample",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./lib/index.js",
+  "scripts": {
+    "start": "node ./lib/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^10.12.18",
+    "botbuilder": "^4.1.6",
+    "botbuilder-dialogs": "^4.1.6",
+    "botbuilder-dialogs-adaptive": "^4.1.6",
+    "restify": "^7.7.0"
+  }
+}

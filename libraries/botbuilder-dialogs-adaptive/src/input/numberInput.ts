@@ -29,18 +29,18 @@ export class NumberInput extends InputDialog<InputDialogOptions> {
      * The prompts default locale that should be recognized.
      */
     public defaultLocale?: string;
-    
+
     constructor();
-    constructor(valueProperty: string, prompt: PromptType);
-    constructor(valueProperty: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
-    constructor(valueProperty?: string, value?: ExpressionPropertyValue<any>|PromptType, prompt?: PromptType) {
+    constructor(property: string, prompt: PromptType);
+    constructor(property: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
+    constructor(property?: string, value?: ExpressionPropertyValue<any> | PromptType, prompt?: PromptType) {
         super();
-        if (valueProperty) {
-            if(!prompt) {
+        if (property) {
+            if (!prompt) {
                 prompt = value as PromptType;
                 value = undefined;
             }
-            this.valueProperty = valueProperty;
+            this.property = property;
             if (value !== undefined) { this.value = new ExpressionProperty(value as any) }
             this.prompt.value = prompt;
         }
@@ -53,7 +53,7 @@ export class NumberInput extends InputDialog<InputDialogOptions> {
     protected onComputeId(): string {
         return `NumberInput[]`;
     }
-    
+
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
         // Recognize input if needed
         let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY);
@@ -70,7 +70,7 @@ export class NumberInput extends InputDialog<InputDialogOptions> {
                 return InputState.unrecognized;
             }
         }
-    
+
         // Format output and return success
         switch (this.outputFormat) {
             case NumberOutputFormat.float:
@@ -81,7 +81,7 @@ export class NumberInput extends InputDialog<InputDialogOptions> {
                 dc.state.setValue(InputDialog.VALUE_PROPERTY, Math.floor(input));
                 break;
         }
-        
+
         return InputState.valid;
     }
 }

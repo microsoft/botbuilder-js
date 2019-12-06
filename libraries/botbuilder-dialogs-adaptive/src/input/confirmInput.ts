@@ -24,15 +24,15 @@ export class ConfirmInput extends InputDialog<InputDialogOptions> {
     /**
      * Default options for rendering the choices to the user based on locale.
      */
-    private static defaultChoiceOptions: { [locale: string]: { choices: (string|Choice)[], options: ChoiceFactoryOptions }} = {
-        'es-es': { choices: ['Sí', 'No'], options: { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true }},
-        'nl-nl': { choices: ['Ja', 'Nee'], options: { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true }},
-        'en-us': { choices: ['Yes', 'No'], options: { inlineSeparator: ', ', inlineOr: ' or ', inlineOrMore: ', or ', includeNumbers: true }},
-        'fr-fr': { choices: ['Oui', 'Non'], options: { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true }},
-        'de-de': { choices: ['Ja', 'Nein'], options: { inlineSeparator: ', ', inlineOr: ' oder ', inlineOrMore: ', oder ', includeNumbers: true }},
-        'ja-jp': { choices: ['はい', 'いいえ'], options: { inlineSeparator: '、 ', inlineOr: ' または ', inlineOrMore: '、 または ', includeNumbers: true }},
-        'pt-br': { choices: ['Sim', 'Não'], options: { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true }},
-        'zh-cn': { choices: ['是的', '不'], options: { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true }}
+    private static defaultChoiceOptions: { [locale: string]: { choices: (string | Choice)[], options: ChoiceFactoryOptions } } = {
+        'es-es': { choices: ['Sí', 'No'], options: { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true } },
+        'nl-nl': { choices: ['Ja', 'Nee'], options: { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true } },
+        'en-us': { choices: ['Yes', 'No'], options: { inlineSeparator: ', ', inlineOr: ' or ', inlineOrMore: ', or ', includeNumbers: true } },
+        'fr-fr': { choices: ['Oui', 'Non'], options: { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true } },
+        'de-de': { choices: ['Ja', 'Nein'], options: { inlineSeparator: ', ', inlineOr: ' oder ', inlineOrMore: ', oder ', includeNumbers: true } },
+        'ja-jp': { choices: ['はい', 'いいえ'], options: { inlineSeparator: '、 ', inlineOr: ' または ', inlineOrMore: '、 または ', includeNumbers: true } },
+        'pt-br': { choices: ['Sim', 'Não'], options: { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true } },
+        'zh-cn': { choices: ['是的', '不'], options: { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true } }
     };
 
     /**
@@ -60,16 +60,16 @@ export class ConfirmInput extends InputDialog<InputDialogOptions> {
     public confirmChoices?: ChoiceList;
 
     constructor();
-    constructor(valueProperty: string, prompt: PromptType);
-    constructor(valueProperty: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
-    constructor(valueProperty?: string, value?: ExpressionPropertyValue<any>|PromptType, prompt?: PromptType) {
+    constructor(property: string, prompt: PromptType);
+    constructor(property: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
+    constructor(property?: string, value?: ExpressionPropertyValue<any> | PromptType, prompt?: PromptType) {
         super();
-        if (valueProperty) {
-            if(!prompt) {
+        if (property) {
+            if (!prompt) {
                 prompt = value as PromptType;
                 value = undefined;
             }
-            this.valueProperty = valueProperty;
+            this.property = property;
             if (value !== undefined) { this.value = new ExpressionProperty(value as any) }
             this.prompt.value = prompt;
         }
@@ -82,7 +82,7 @@ export class ConfirmInput extends InputDialog<InputDialogOptions> {
     protected onComputeId(): string {
         return `ConfirmInput[]`;
     }
-    
+
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
         // Recognize input if needed
         let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY);

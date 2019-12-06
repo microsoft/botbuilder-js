@@ -38,7 +38,7 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> {
     }
 
     public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
-        dc.state.setValue(this.property, undefined);
+        dc.state.deleteValue(this.property);
         return await dc.endDialog();
     }
 }
