@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
+import { DialogTurnResult, Dialog, DialogConfiguration, DialogDependencies } from 'botbuilder-dialogs';
 import { SequenceContext, ActionChangeType, ActionChangeList } from '../sequenceContext';
 import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
 
@@ -43,7 +43,7 @@ export interface ForEachPageConfiguration extends DialogConfiguration {
  * and defaults to a size of 10. The loop can be exited early by including either a `EndDialog` or
  * `GotoDialog` action.
  */
-export class ForEachPage extends Dialog {
+export class ForEachPage extends Dialog implements DialogDependencies {
 
     /**
      * Creates a new `ForEachPage` instance.

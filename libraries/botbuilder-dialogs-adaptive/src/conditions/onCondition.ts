@@ -5,11 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog } from 'botbuilder-dialogs';
+import { Dialog, DialogDependencies } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface, ExpressionType, Constant, ExpressionEngine } from 'botframework-expressions';
 import { SequenceContext, ActionChangeList, ActionState, ActionChangeType } from '../sequenceContext';
 
-export class OnCondition {
+export class OnCondition implements DialogDependencies {
     /**
      * Evaluates the rule and returns a predicted set of changes that should be applied to the
      * current plan.
@@ -98,6 +98,25 @@ export class OnCondition {
      */
     public async execute(planningContext: SequenceContext): Promise<ActionChangeList[]> {
         return [this.onCreateChangeList(planningContext)];
+    }
+
+    /**
+     * Get child dialog dependencies so they can be added to the containers dialogset.
+     */
+    public getDependencies(): Dialog[] {
+        const dependencies: Dialog[] = [];
+
+        for (let i = 0; i < this.actions.length; i++) {
+            const action = this.actions[i];
+            dependencies.push(action);
+
+            // Automatically add any child dependencies the dialog might have
+            if (typeof ((action as any) as DialogDependencies).getDependencies == 'function') {
+                ((action as any) as DialogDependencies).getDependencies().forEach((child) => dependencies.push(child));
+            }
+        }
+
+        return dependencies;
     }
 
     protected onCreateChangeList(planningContext: SequenceContext, dialogOptions?: any): ActionChangeList {
