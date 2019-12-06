@@ -63,12 +63,9 @@ export namespace JwtTokenValidation {
         channelService: string,
         channelId: string,
         serviceUrl: string = '',
-        authConfig?: AuthenticationConfiguration
+        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
     ): Promise<ClaimsIdentity> {
         if (!authHeader.trim()) { throw new Error('\'authHeader\' required.'); }
-        if (!authConfig) {
-            authConfig = new AuthenticationConfiguration();
-        }
 
         const identity = await authenticateToken(authHeader, credentials, channelService, channelId, authConfig, serviceUrl);
 
