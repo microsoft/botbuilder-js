@@ -1241,12 +1241,12 @@ export type ActivityImageType = 'avatar' | 'article';
 export type Os = 'default' | 'iOS' | 'android' | 'windows';
 
 /**
- * Defines values for Type1.
+ * Defines values for O365ConnectorCardDateInput's type property.
  * Possible values include: 'textInput', 'dateInput', 'multichoiceInput'
  * @readonly
  * @enum {string}
  */
-export type Type1 = 'textInput' | 'dateInput' | 'multichoiceInput';
+export type O365ConnectorCardDateInputType = 'textInput' | 'dateInput' | 'multichoiceInput';
 
 /**
  * Defines values for Style.
@@ -1329,12 +1329,12 @@ export type CommandContext = 'message' | 'compose' | 'commandbox';
 export type BotMessagePreviewAction = 'edit' | 'send';
 
 /**
- * Defines values for Type2.
+ * Defines values for TaskModuleResponseBase's type property.
  * Possible values include: 'message', 'continue'
  * @readonly
  * @enum {string}
  */
-export type Type2 = 'message' | 'continue';
+export type TaskModuleResponseBaseType = 'message' | 'continue';
 
 /**
  * Defines values for AttachmentLayout.
@@ -1345,12 +1345,12 @@ export type Type2 = 'message' | 'continue';
 export type AttachmentLayout = 'list' | 'grid';
 
 /**
- * Defines values for Type3.
+ * Defines values for MessagingExtensionResult's type property.
  * Possible values include: 'result', 'auth', 'config', 'message', 'botMessagePreview'
  * @readonly
  * @enum {string}
  */
-export type Type3 = 'result' | 'auth' | 'config' | 'message' | 'botMessagePreview';
+export type MessagingExtensionResultType = 'result' | 'auth' | 'config' | 'message' | 'botMessagePreview';
 
 /**
  * Defines values for Action.
