@@ -521,7 +521,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'true'.`);
     });
 
-    it('should recogize valid number and default to en if locale is null.', async function () {
+    it('should recognize valid number and default to en if locale is null.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
 
             turnContext.activity.locale = null;

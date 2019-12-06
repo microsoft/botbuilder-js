@@ -136,6 +136,199 @@ describe(`TranscriptLoggerMiddleware`, function () {
             })
     });
 
+    it(`should not error for sent activities if no ResourceResponses are received`, async () => {
+        class NoResourceResponseAdapter extends TestAdapter {
+            constructor(logic) {
+                super(logic);
+            }
+
+            // Send activities but don't pass the ResourceResponses to the TranscriptLoggerMiddleware
+            async sendActivities(context, activities) {
+                await super.sendActivities(context, activities);
+            }
+        }
+
+        let conversationId = null;
+        const transcriptStore = new MemoryTranscriptStore();
+        const adapter = new NoResourceResponseAdapter(async (context) => {
+            conversationId = context.activity.conversation.id;
+            const typingActivity = {
+                type: ActivityTypes.Typing,
+                relatesTo: context.activity.relatesTo
+            };
+
+            await context.sendActivity(typingActivity);
+            await context.sendActivity(`echo:${context.activity.text}`);
+
+        }).use(new TranscriptLoggerMiddleware(transcriptStore));
+
+        await adapter.send('foo')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:foo')
+            .send('bar')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:bar');
+
+        const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
+        assert.equal(pagedResult.items.length, 6);
+        assert.equal(pagedResult.items[0].text, 'foo');
+        assert.equal(pagedResult.items[1].type, ActivityTypes.Typing);
+        assert.equal(pagedResult.items[2].text, 'echo:foo');
+        assert.equal(pagedResult.items[3].text, 'bar');
+        assert.equal(pagedResult.items[4].type, ActivityTypes.Typing);
+        assert.equal(pagedResult.items[5].text, 'echo:bar');
+        pagedResult.items.forEach(a => {
+            assert(a.timestamp);
+        });
+    });
+
+    it(`should not error for sent activities if another handler does not return next()`, async () => {
+        class NoResourceResponseMiddleware {
+            async onTurn(context, next) {
+                context.onSendActivities(async (context, activities, next) => {
+                    // In SendActivitiesHandlers developers are supposed to call:
+                    //      return next();
+                    // If this is not returned, then the next handler will not have the ResourceResponses[].
+                    const responses = await next();
+                });
+
+                // Run the bot's application logic.
+                await next();
+            }
+        }
+
+        let conversationId = null;
+        const transcriptStore = new MemoryTranscriptStore();
+        const adapter = new TestAdapter(async (context) => {
+            conversationId = context.activity.conversation.id;
+            const typingActivity = {
+                type: ActivityTypes.Typing,
+                relatesTo: context.activity.relatesTo
+            };
+
+            await context.sendActivity(typingActivity);
+            await context.sendActivity(`echo:${context.activity.text}`);
+
+        });
+
+        // Register both middleware
+        adapter.use(new TranscriptLoggerMiddleware(transcriptStore));
+        adapter.use(new NoResourceResponseMiddleware());
+
+        await adapter.send('foo')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:foo')
+            .send('bar')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:bar');
+
+        const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
+        assert.equal(pagedResult.items.length, 6);
+        assert.equal(pagedResult.items[0].text, 'foo');
+        assert.equal(pagedResult.items[1].type, ActivityTypes.Typing);
+        assert.equal(pagedResult.items[2].text, 'echo:foo');
+        assert.equal(pagedResult.items[3].text, 'bar');
+        assert.equal(pagedResult.items[4].type, ActivityTypes.Typing);
+        assert.equal(pagedResult.items[5].text, 'echo:bar');
+        pagedResult.items.forEach(a => {
+            assert(a.timestamp);
+        });
+    });
+
+    it(`should not error for sent activities if another handler does not return an array`, async () => {
+        class NoResourceResponseMiddleware {
+            async onTurn(context, next) {
+                context.onSendActivities(async (context, activities, next) => {
+                    // In SendActivitiesHandlers developers are supposed to call:
+                    //      return next();
+                    // If this is not returned, then the next handler will not have the ResourceResponses[].
+                    const responses = await next();
+
+                    return {};
+                });
+
+                // Run the bot's application logic.
+                await next();
+            }
+        }
+
+        let conversationId = null;
+        const transcriptStore = new MemoryTranscriptStore();
+        const adapter = new TestAdapter(async (context) => {
+            conversationId = context.activity.conversation.id;
+            await context.sendActivity(`echo:${context.activity.text}`);
+        });
+
+        // Register both middleware
+        adapter.use(new TranscriptLoggerMiddleware(transcriptStore));
+        adapter.use(new NoResourceResponseMiddleware());
+
+        await adapter.send('foo')
+            .assertReply('echo:foo');
+
+        const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
+        assert.equal(pagedResult.items.length, 2);
+        assert.equal(pagedResult.items[0].text, 'foo');
+        assert.equal(pagedResult.items[1].text, 'echo:foo');
+        pagedResult.items.forEach(a => {
+            assert(a.id);
+            assert(a.timestamp);
+        });
+    });
+
+    it(`should not error when logging sent activities and return the actual value from next()`, async () => {
+        // This middleware should receive 1 from `next()`
+        class AssertionMiddleware {
+            async onTurn(context, next) {
+                context.onSendActivities(async (context, activities, next) => {
+                    const notResourceResponses = await next();
+                    assert.strictEqual(notResourceResponses, 1);
+                });
+
+                await next();
+            }
+        }
+        // This middleware returns the value 1 from its registered SendActivitiesHandler.
+        // The TranscriptLoggerMiddleware should return this value to the next registered SendActivitiesHandler.
+        class Returns1Middleware {
+            async onTurn(context, next) {
+                context.onSendActivities(async (context, activities, next) => {
+                    // In SendActivitiesHandlers developers are supposed to call:
+                    //      return next();
+                    // If this is not returned, then the next handler will not have the ResourceResponses[].
+                    const responses = await next();
+
+                    return 1;
+                });
+
+                await next();
+            }
+        }
+
+        let conversationId = null;
+        const transcriptStore = new MemoryTranscriptStore();
+        const adapter = new TestAdapter(async (context) => {
+            conversationId = context.activity.conversation.id;
+            await context.sendActivity(`echo:${context.activity.text}`);
+        });
+
+        adapter.use(new AssertionMiddleware());
+        adapter.use(new TranscriptLoggerMiddleware(transcriptStore));
+        adapter.use(new Returns1Middleware());
+
+        await adapter.send('foo')
+            .assertReply('echo:foo');
+
+        const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
+        assert.equal(pagedResult.items.length, 2);
+        assert.equal(pagedResult.items[0].text, 'foo');
+        assert.equal(pagedResult.items[1].text, 'echo:foo');
+        pagedResult.items.forEach(a => {
+            assert(a.id);
+            assert(a.timestamp);
+        });
+    });
+
     describe('\'s error handling', function () {
         const originalConsoleError = console.error;
 
@@ -241,10 +434,11 @@ describe(`TranscriptLoggerMiddleware`, function () {
                     })
                     done();
                 });
-            });
+            })
+            .catch(err => done(err));
     });
 
-    it(`should use outgoing activity's timestamp for activity id when activity id and resourceResponse is empty`, function(done) {
+    it(`should use outgoing activity's timestamp for activity id when activity id and resourceResponse is empty`, async () => {
         let conversationId, timestamp;
         const transcriptStore = new MemoryTranscriptStore();
 
@@ -265,37 +459,31 @@ describe(`TranscriptLoggerMiddleware`, function () {
             text: 'foo'
         };
 
-        adapter
-            .send(fooActivity)
+        await adapter.send(fooActivity)
             // sent activities do not contain the id returned from the service, so it should be undefined here
             .assertReply(activity => {
                 assert.equal(activity.id, undefined);
                 assert.equal(activity.text, 'echo:foo');
                 assert.equal(activity.timestamp, timestamp);
-            }) 
-            .then(() => {
-                transcriptStore.getTranscriptActivities('test', conversationId).then(pagedResult => {
-                    assert.equal(pagedResult.items.length, 2);
-                    assert.equal(pagedResult.items[0].text, 'foo');
-                    // Transcript activities should have the id present on the activity when received
-                    assert.equal(pagedResult.items[0].id, 'testFooId');
-
-                    assert.equal(pagedResult.items[1].text, 'echo:foo');
-                    // Sent Activities in the transcript store should use the timestamp on the bot's outgoing activities
-                    // to log the activity when the following cases are true:
-                    // 1. The outgoing Activity.id is falsey
-                    // 2. The ResourceResponse.id is falsey (some channels may not emit a ResourceResponse with an id value)
-                    // 3. The outgoing Activity.timestamp exists
-                    // Activity.Id ends with Activity.Timestamp and generated id starts with 'g_'
-                    assert.ok(pagedResult.items[1].id.endsWith(timestamp.getTime().toString()));
-                    assert.ok(pagedResult.items[1].id.startsWith('g_'));
-                    //assert.equal(pagedResult.items[1].id, timestamp.getTime().toString());
-                    pagedResult.items.forEach(a => {
-                        assert(a.timestamp);
-                    });
-                    done();
-                });
             });
+        
+        const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
+        assert.equal(pagedResult.items.length, 2);
+        assert.equal(pagedResult.items[0].text, 'foo');
+        // Transcript activities should have the id present on the activity when received
+        assert.equal(pagedResult.items[0].id, 'testFooId');
+
+        assert.equal(pagedResult.items[1].text, 'echo:foo');
+        // Sent Activities in the transcript store should use the timestamp on the bot's outgoing activities
+        // to log the activity when the following cases are true:
+        // 1. The outgoing Activity.id is falsey
+        // 2. The ResourceResponse.id is falsey (some channels may not emit a ResourceResponse with an id value)
+        // 3. The outgoing Activity.timestamp exists
+        assert(pagedResult.items[1].id.indexOf(timestamp.getTime().toString()));
+        assert(pagedResult.items[1].id.startsWith('g_'));
+        pagedResult.items.forEach(a => {
+            assert(a.timestamp);
+        });
     });
 
     it(`should use current server time for activity id when activity and resourceResponse id is empty and no activity timestamp exists`, function(done) {
