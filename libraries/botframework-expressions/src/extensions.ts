@@ -1,4 +1,3 @@
-
 /**
  * @module botframework-expressions
  */
@@ -41,6 +40,24 @@ export class Extensions {
         });
 
         return Array.from(filteredReferences);
+    }
+
+    /**
+     * Patch method
+     * TODO: is there any better solution?
+     * To judge if an object is implements MemoryInterface. Same with 'is MemoryInterface' in C#
+     */
+    public static isMemoryInterface(obj: any): boolean {
+        if (obj === undefined) {
+            return false;
+        }
+
+        if (typeof obj !== 'object') {
+            return false;
+        }
+        
+        return 'getValue' in obj && 'setValue' in obj && 'version' in obj 
+                && typeof obj.getValue === 'function' && typeof obj.setValue === 'function' && typeof obj.version === 'function';
     }
 
     /**
@@ -109,7 +126,7 @@ export class Extensions {
      */
     public static accessProperty(instance: any, property: string): { value: any; error: string } {
         // NOTE: This returns null rather than an error if property is not present
-        if (instance === null || instance === undefined) {
+        if (!instance) {
             return { value: undefined, error: undefined };
         }
 
@@ -143,7 +160,7 @@ export class Extensions {
      * @param value Value to set.
      * @returns set value.
      */
-    public static setProperty(instance: any, property: string, value: any): any {
+    public static setProperty(instance: any, property: string, value: any): { value: any; error: string } {
         const result: any = value;
         if (instance instanceof Map) {
             instance.set(property, value);
@@ -151,7 +168,7 @@ export class Extensions {
             instance[property] = value;
         }
 
-        return result;
+        return {value: result, error: undefined};
     }
 
     /**
@@ -170,8 +187,8 @@ export class Extensions {
         let error: string;
 
         let count = -1;
-        if (instance instanceof Array) {
-            count = (instance).length;
+        if (Array.isArray(instance)) {
+            count = instance.length;
         } else if (instance instanceof Map) {
             count = (instance as Map<string, any>).size;
         }

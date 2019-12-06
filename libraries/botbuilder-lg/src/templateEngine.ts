@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionEngine } from 'botframework-expressions';
+import { ExpressionEngine, MemoryInterface} from 'botframework-expressions';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Analyzer, AnalyzerResult } from './analyzer';
@@ -17,6 +17,7 @@ import { LGParser } from './lgParser';
 import { LGResource } from './lgResource';
 import { LGTemplate } from './lgTemplate';
 import { StaticChecker } from './staticChecker';
+import { CustomizedMemory } from './customizedMemory';
 
 /**
  * LG parser and evaluation engine
@@ -97,16 +98,16 @@ export class TemplateEngine {
         return this;
     }
 
-    public evaluateTemplate(templateName: string, scope?: any): any {
+    public evaluateTemplate(templateName: string, scope?: MemoryInterface | any): any {
+        scope = new CustomizedMemory(scope);
         const evalutor: Evaluator = new Evaluator(this.templates, this.expressionEngine);
-
         return evalutor.evaluateTemplate(templateName, scope);
     }
 
     public expandTemplate(templateName: string, scope?: any): string[] {
         const expander: Expander = new Expander(this.templates, this.expressionEngine);
 
-        return expander.expandTemplate(templateName, scope);
+        return expander.expandTemplate(templateName, new CustomizedMemory(scope));
     }
 
     public analyzeTemplate(templateName: string): AnalyzerResult {
@@ -126,11 +127,11 @@ export class TemplateEngine {
         this.runStaticCheck(mergedTemplates);
         const evalutor: Evaluator = new Evaluator(mergedTemplates, this.expressionEngine);
 
-        return evalutor.evaluateTemplate(fakeTemplateId, scope);
+        return evalutor.evaluateTemplate(fakeTemplateId, new CustomizedMemory(scope));
     }
 
     private readonly runStaticCheck = (templates: LGTemplate[]): void => {
-        const templatesToCheck: LGTemplate[] = templates === undefined ? this.templates : templates;
+        const templatesToCheck: LGTemplate[] = !templates ? this.templates : templates;
         const diagnostics: Diagnostic[] = new StaticChecker(this.expressionEngine).checkTemplates(templatesToCheck);
 
         const errors: Diagnostic[] = diagnostics.filter((u: Diagnostic): boolean => u.severity === DiagnosticSeverity.Error);

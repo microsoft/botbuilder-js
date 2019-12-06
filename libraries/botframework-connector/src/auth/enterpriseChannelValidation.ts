@@ -6,9 +6,10 @@
  * Licensed under the MIT License.
  */
 import { VerifyOptions } from 'jsonwebtoken';
+import { AuthenticationConfiguration } from './authenticationConfiguration';
+import { AuthenticationConstants } from './authenticationConstants';
 import { ChannelValidation } from './channelValidation';
 import { ClaimsIdentity } from './claimsIdentity';
-import { AuthenticationConstants } from './authenticationConstants';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 
@@ -62,7 +63,8 @@ export namespace EnterpriseChannelValidation {
         authHeader: string,
         credentials: ICredentialProvider,
         channelId: string,
-        channelService: string
+        channelService: string,
+        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
     ): Promise<ClaimsIdentity> {
 
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
@@ -72,7 +74,7 @@ export namespace EnterpriseChannelValidation {
                 AuthenticationConstants.ToBotFromEnterpriseChannelOpenIdMetadataUrlFormat.replace('{channelService}', channelService),
             AuthenticationConstants.AllowedSigningAlgorithms);
 
-        const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
+        const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId, authConfig.requiredEndorsements);
 
         return await validateIdentity(identity, credentials);
     }
