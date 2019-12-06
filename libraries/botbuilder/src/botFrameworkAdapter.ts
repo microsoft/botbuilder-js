@@ -157,7 +157,7 @@ export interface BotFrameworkAdapterSettings {
     certificatePrivateKey?: string;
     
     /**
-     * Optional. Recommended for Skills
+     * Optional. Used to require specific endorsements and verify claims. Recommended for Skills.
      */
     authConfig?: AuthenticationConfiguration;
 }
@@ -250,6 +250,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     private streamingServer: IStreamingTransportServer;
     private webSocketFactory: NodeWebSocketFactoryBase;
 
+    private authConfiguration: AuthenticationConfiguration;
+
     /**
      * Creates a new instance of the [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) class.
      *
@@ -286,6 +288,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         // These values may be set when a bot is provisioned on Azure and if so are required for the bot to properly work in Public Azure or a National Cloud.
         this.settings.channelService = this.settings.channelService || process.env[AuthenticationConstants.ChannelService];
         this.settings.openIdMetadata = this.settings.openIdMetadata || process.env[AuthenticationConstants.BotOpenIdMetadataKey];
+
+        this.authConfiguration = this.settings.authConfig || new AuthenticationConfiguration();
 
         if (this.settings.openIdMetadata) {
             ChannelValidation.OpenIdMetadataEndpoint = this.settings.openIdMetadata;
@@ -1010,7 +1014,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             } else {
                 // Since the scope is different, we will create a new instance of the AppCredentials
                 // so this.credentials.oAuthScope isn't overridden.
-                credentials = await this.getAppCredentials(botAppId, scope);
+                credentials = await this.buildCredentials(botAppId, scope);
 
                 if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
                     credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
@@ -1050,12 +1054,12 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
-     * @private
+     * 
      * @remarks
      * @param appId 
      * @param oAuthScope 
      */
-    private async getAppCredentials(appId: string, oAuthScope: string = ''): Promise<AppCredentials> {
+    protected async buildCredentials(appId: string, oAuthScope: string = ''): Promise<AppCredentials> {
         // There is no cache for AppCredentials in JS as opposed to C#.
         // Instead of retrieving an AppCredentials from the Adapter instance, generate a new one
         const appPassword = await this.credentialsProvider.getAppPassword(appId);
@@ -1071,7 +1075,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * Override this in a derived class to create a mock OAuth API client for unit testing.
      */
     protected createTokenApiClient(serviceUrl: string): TokenApiClient {
-        const client = new TokenApiClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
+        const client = new TokenApiClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
         return client;
     }
 
@@ -1099,7 +1103,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         return JwtTokenValidation.authenticateRequest(
             request as Activity, authHeader,
             this.credentialsProvider,
-            this.settings.channelService
+            this.settings.channelService,
+            this.authConfiguration
         );
     }
 
