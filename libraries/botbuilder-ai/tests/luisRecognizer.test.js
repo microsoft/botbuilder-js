@@ -308,7 +308,7 @@ describe('LuisRecognizer', function () {
 
     it('should cache multiple calls to recognize()', done => {
         var expected = GetExpected(ExpectedPath("SingleIntent_SimplyEntity.json"));
-        var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
+        var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true, apiVersion: 'v2', includeAPIResults: true});
         var context = new TestContext({ text: expected.text });
         recognizer.recognize(context)
             .then(res => {
