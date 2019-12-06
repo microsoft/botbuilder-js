@@ -138,7 +138,7 @@ export class CosmosDbPartitionedStorage implements Storage {
             }
             // In order to reduce key complexity, we do not allow invalid characters in a KeySuffix
             // If the keySuffix has invalid characters, the escaped key will not match
-            var suffixEscaped = CosmosDbKeyEscape.escapeKey(cosmosDbStorageOptions.keySuffix);
+            const suffixEscaped = CosmosDbKeyEscape.escapeKey(cosmosDbStorageOptions.keySuffix);
             if (cosmosDbStorageOptions.keySuffix !== suffixEscaped) {
                 throw new ReferenceError(`Cannot use invalid Row Key characters: ${cosmosDbStorageOptions.keySuffix} in keySuffix`);
             }
