@@ -54,6 +54,16 @@ export interface WebRequest {
      */
     method?: any;
 
+    /***
+     * Optional. The request parameters from the url.
+     */
+    params?: any;
+
+    /***
+     * Optional. The values from the query string.
+     */
+    query?: any;
+
     /**
      * When implemented in a derived class, adds a listener for an event.
      * The framework uses this method to retrieve the request body when the

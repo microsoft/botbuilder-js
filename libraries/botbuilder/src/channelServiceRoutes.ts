@@ -8,7 +8,7 @@
 
 import { ChannelServiceHandler } from './channelServiceHandler';
 import { Activity, ConversationParameters, Transcript, AttachmentData } from 'botbuilder-core';
-import { WebRequest, WebResponse, StatusCodeError } from './botFrameworkAdapter';
+import { WebRequest, WebResponse, StatusCodeError, StatusCodes } from './botFrameworkAdapter';
 
 export class ChannelServiceRoutes {
 
@@ -31,7 +31,7 @@ export class ChannelServiceRoutes {
         server.post(baseAddress + '/v3/conversations/:conversationId/attachments', this.processUploadAttachment.bind(this));
     }
 
-    processSendToConversation(req, res) {
+    processSendToConversation(req: WebRequest, res: WebResponse) {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readActivity(req)
             .then((activity) => {
@@ -44,10 +44,11 @@ export class ChannelServiceRoutes {
                         res.end();
                     })
                     .catch(err => { ChannelServiceRoutes.handleError(err, res); })
-            });
+            })
+            .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
 
-    processReplyToActivity(req, res) {
+    processReplyToActivity(req: WebRequest, res: WebResponse) {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readActivity(req)
             .then((activity) => {
@@ -60,10 +61,11 @@ export class ChannelServiceRoutes {
                         res.end();
                     })
                     .catch(err => { ChannelServiceRoutes.handleError(err, res); })
-            });
+            })
+            .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
 
-    processUpdateActivity(req, res) {
+    processUpdateActivity(req: WebRequest, res: WebResponse) {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readActivity(req)
             .then((activity) => {
@@ -76,10 +78,11 @@ export class ChannelServiceRoutes {
                         res.end();
                     })
                     .catch(err => { ChannelServiceRoutes.handleError(err, res); })
-            });
+            })
+            .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
 
-    processDeleteActivity(req, res) {
+    processDeleteActivity(req: WebRequest, res: WebResponse) {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler.handleDeleteActivity(authHeader, req.params.conversationId, req.params.activityId)
             .then(() => {
@@ -87,9 +90,9 @@ export class ChannelServiceRoutes {
                 res.end();
             })
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
-        }
+    }
 
-    processGetActivityMembers(req, res) {
+    processGetActivityMembers(req: WebRequest, res: WebResponse) {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler.handleGetActivityMembers(authHeader, req.params.conversationId, req.params.activityId)
             .then((channelAccounts) => {
@@ -102,7 +105,7 @@ export class ChannelServiceRoutes {
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
 
-    processCreateConversation(req, res) {
+    processCreateConversation(req: WebRequest, res: WebResponse) {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readBody<ConversationParameters>(req)
             .then((conversationParameters) => {
@@ -118,7 +121,7 @@ export class ChannelServiceRoutes {
             });
     }
 
-    processGetConversations(req, res) {
+    processGetConversations(req: WebRequest, res: WebResponse) {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler.handleGetConversations(authHeader, req.params.conversationId, req.query.continuationToken)
             .then((conversationsResult) => {
@@ -131,7 +134,7 @@ export class ChannelServiceRoutes {
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
         }
 
-    processGetConversationMembers(req, res) {
+    processGetConversationMembers(req: WebRequest, res: WebResponse) {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler.handleGetConversationMembers(authHeader, req.params.conversationId)
             .then((channelAccounts) => {
@@ -144,7 +147,7 @@ export class ChannelServiceRoutes {
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
         }
 
-    processGetConversationPagedMembers(req, res) {
+    processGetConversationPagedMembers(req: WebRequest, res: WebResponse) {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         let pageSize = parseInt(req.query.pageSize);
         if (isNaN(pageSize))
@@ -166,7 +169,7 @@ export class ChannelServiceRoutes {
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
         }
 
-    processDeleteConversationMember(req, res) {
+    processDeleteConversationMember(req: WebRequest, res: WebResponse) {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler.handleDeleteConversationMember(authHeader, req.params.conversationId, req.params.memberId)
             .then((resourceResponse) => {
@@ -176,7 +179,7 @@ export class ChannelServiceRoutes {
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
         }
 
-    processSendConversationHistory(req, res) {
+    processSendConversationHistory(req: WebRequest, res: WebResponse) {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readBody<Transcript>(req)
             .then((transcript) => {
@@ -185,14 +188,15 @@ export class ChannelServiceRoutes {
                         if (resourceResponse) {
                             res.send(resourceResponse);
                         }
-                        res.status(201);
+                        res.status(200);
                         res.end();
                     })
                     .catch(err => { ChannelServiceRoutes.handleError(err, res); })
-            });
+            })
+            .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
 
-    processUploadAttachment(req, res) {
+    processUploadAttachment(req: WebRequest, res: WebResponse) {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readBody<AttachmentData>(req)
             .then((attachmentData) => {
@@ -201,18 +205,19 @@ export class ChannelServiceRoutes {
                         if (resourceResponse) {
                             res.send(resourceResponse);
                         }
-                        res.status(201);
+                        res.status(200);
                         res.end();
                     })
                     .catch(err => { ChannelServiceRoutes.handleError(err, res); })
-            });
+            })
+            .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
 
     static readActivity(req: WebRequest) : Promise<Activity> {
         return new Promise((resolve, reject) => {
             function returnActivity(activity) {
-                if (typeof activity !== 'object') { throw new Error(`BotFrameworkAdapter.parseRequest(): invalid request body.`); }
-                if (typeof activity.type !== 'string') { throw new Error(`BotFrameworkAdapter.parseRequest(): missing activity type.`); }
+                if (typeof activity !== 'object') { throw new Error(`Invalid request body.`); }
+                if (typeof activity.type !== 'string') { throw new Error(`Missing activity type.`); }
                 if (typeof activity.timestamp === 'string') { activity.timestamp = new Date(activity.timestamp); }
                 if (typeof activity.localTimestamp === 'string') { activity.localTimestamp = new Date(activity.localTimestamp); }
                 if (typeof activity.expiration === 'string') { activity.expiration = new Date(activity.expiration); }
@@ -223,7 +228,7 @@ export class ChannelServiceRoutes {
                 try {
                     returnActivity(req.body);
                 } catch (err) {
-                    reject(err);
+                    reject(new StatusCodeError(StatusCodes.BAD_REQUEST, err.message));
                 }
             } else {
                 let requestData = '';
@@ -235,7 +240,7 @@ export class ChannelServiceRoutes {
                         const body = JSON.parse(requestData);
                         returnActivity(body);
                     } catch (err) {
-                        reject(err);
+                        reject(new StatusCodeError(StatusCodes.BAD_REQUEST, err.message));
                     }
                 });
             }
@@ -248,7 +253,7 @@ export class ChannelServiceRoutes {
                 try {
                     resolve(req.body);
                 } catch (err) {
-                    reject(err);
+                    reject(new StatusCodeError(StatusCodes.BAD_REQUEST, err.message));
                 }
             } else {
                 let requestData = '';
@@ -260,7 +265,7 @@ export class ChannelServiceRoutes {
                         const body = JSON.parse(requestData);
                         resolve(body);
                     } catch (err) {
-                        reject(err);
+                        reject(new StatusCodeError(StatusCodes.BAD_REQUEST, err.message));
                     }
                 });
             }
@@ -269,6 +274,7 @@ export class ChannelServiceRoutes {
 
     static handleError(err: any, res: WebResponse) {
         if (err instanceof StatusCodeError) {
+            res.send(err.message);
             res.status(err.statusCode);
         } else {
             res.status(500);
