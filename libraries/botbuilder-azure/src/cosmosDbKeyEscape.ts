@@ -8,8 +8,10 @@
 var crypto = require('crypto');
 
 export namespace CosmosDbKeyEscape {
-    // Per the CosmosDB Docs, there is a max key length of 255. 
-    // https://docs.microsoft.com/en-us/azure/cosmos-db/faq#table
+    // Older libraries had a max key length of 255.
+    // The limit is now 1023. In this library, 255 remains the default for backwards compat.
+    // To override this behavior, and use the longer limit, set cosmosDbPartitionedStorageOptions.compatibilityMode to false.
+    // https://docs.microsoft.com/en-us/azure/cosmos-db/concepts-limits#per-item-limits
     const maxKeyLength = 255;
     const illegalKeys: string[] = ['\\', '?', '/', '#', '\t', '\n', '\r', '*'];
     const illegalKeyCharacterReplacementMap: Map<string, string> =
@@ -27,8 +29,11 @@ export namespace CosmosDbKeyEscape {
      * The following characters are restricted and cannot be used in the Id property: '/', '\', '?', '#'
      * More information at https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.documents.resource.id?view=azure-dotnet#remarks
       * @param key The provided key to be escaped.
+      * @param keySuffix The string to add a the end of all RowKeys.
+      * @param compatibilityMode True if keys should be truncated in order to support previous CosmosDb
+      * max key length of 255.  This behavior can be overridden by setting cosmosDbPartitionedStorageOptions.compatibilityMode to false.
       */
-    export function escapeKey(key: string): string {
+    export function escapeKey(key: string, keySuffix?: string, compatibilityMode?: boolean): string {
         if (!key) {
             throw new Error('The \'key\' parameter is required.');
         }
@@ -39,7 +44,7 @@ export namespace CosmosDbKeyEscape {
 
         // If there are no illegal characters return immediately and avoid any further processing/allocations
         if (firstIllegalCharIndex === -1) {
-            return truncateKey(key);
+            return truncateKey(`${key}${keySuffix || ''}`, compatibilityMode);
         }
 
         let sanitizedKey = keySplitted.reduce(
@@ -48,10 +53,14 @@ export namespace CosmosDbKeyEscape {
             ''
         );
 
-        return truncateKey(sanitizedKey);
+        return truncateKey(`${sanitizedKey}${keySuffix || ''}`, compatibilityMode);
     }
 
-    function truncateKey(key: string): string {
+    function truncateKey(key: string, truncateKeysForCompatibility?: boolean): string {
+        if (truncateKeysForCompatibility === false) {
+            return key;
+        }
+
         if (key.length > maxKeyLength) {
             const hash = crypto.createHash('sha256');
             hash.update(key);
