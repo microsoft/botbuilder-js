@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogConfiguration } from 'botbuilder-dialogs';
+import { DialogTurnResult, Dialog, DialogConfiguration, DialogDependencies } from 'botbuilder-dialogs';
 import { ActionChangeType, SequenceContext, ActionChangeList, ActionState } from '../sequenceContext';
 
 export interface EditActionsConfiguration extends DialogConfiguration {
@@ -20,7 +20,7 @@ export interface EditActionsConfiguration extends DialogConfiguration {
     actions?: Dialog[];
 }
 
-export class EditActions<O extends object = {}> extends Dialog<O> {
+export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     /**
      * The type of change to make to the dialogs list of actions.
      */

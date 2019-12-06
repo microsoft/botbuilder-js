@@ -39,11 +39,11 @@ const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
 // Add a default rule for handling incoming messages
-dialogs.addRule(new OnUnknownIntent([
+dialogs.triggers.push(new OnUnknownIntent([
     new CodeAction(async (dc) => {
         const count = dc.state.getValue('conversation.count') || 0;
         dc.state.setValue('conversation.count', count + 1);
         return await dc.endDialog();
     }),
-    new SendActivity('{conversation.count}')
+    new SendActivity('@{conversation.count}')
 ]));

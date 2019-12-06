@@ -31,36 +31,38 @@ server.post('/api/messages', (req, res) => {
     });
 });
 // Initialize bots root dialog
-const dialogs = new botbuilder_dialogs_adaptive_1.AdaptiveDialog();
-bot.rootDialog = dialogs;
+const rootDialog = new botbuilder_dialogs_adaptive_1.AdaptiveDialog();
+bot.rootDialog = rootDialog;
 //=================================================================================================
 // Rules
 //=================================================================================================
-dialogs.recognizer = new botbuilder_dialogs_adaptive_1.RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
+rootDialog.recognizer = new botbuilder_dialogs_adaptive_1.RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
 // Tell the user a joke
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.OnIntent('#JokeIntent', [], [
+rootDialog.triggers.push(new botbuilder_dialogs_adaptive_1.OnIntent('#JokeIntent', [], [
     new botbuilder_dialogs_adaptive_1.BeginDialog('TellJokeDialog')
 ]));
 // Handle unknown intents
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
+rootDialog.triggers.push(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
     new botbuilder_dialogs_adaptive_1.BeginDialog('AskNameDialog')
 ]));
 //=================================================================================================
 // Child Dialogs
 //=================================================================================================
-const askNameDialog = new botbuilder_dialogs_adaptive_1.AdaptiveDialog('AskNameDialog', [
+const askNameDialog = new botbuilder_dialogs_adaptive_1.AdaptiveDialog('AskNameDialog');
+askNameDialog.triggers.push(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
     new botbuilder_dialogs_adaptive_1.IfCondition('user.name == null', [
         new botbuilder_dialogs_adaptive_1.TextInput('user.name', `Hi! what's your name?`)
     ]),
     new botbuilder_dialogs_adaptive_1.SendActivity(`Hi {user.name}. It's nice to meet you.`),
     new botbuilder_dialogs_adaptive_1.EndDialog()
-]);
-dialogs.actions.push(askNameDialog);
-const tellJokeDialog = new botbuilder_dialogs_adaptive_1.AdaptiveDialog('TellJokeDialog', [
+]));
+rootDialog.dialogs.add(askNameDialog);
+const tellJokeDialog = new botbuilder_dialogs_adaptive_1.AdaptiveDialog('TellJokeDialog');
+tellJokeDialog.triggers.push(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
     new botbuilder_dialogs_adaptive_1.SendActivity(`Why did the 🐔 cross the 🛣️?`),
     new botbuilder_dialogs_adaptive_1.EndTurn(),
     new botbuilder_dialogs_adaptive_1.SendActivity(`To get to the other side...`),
     new botbuilder_dialogs_adaptive_1.EndDialog()
-]);
-dialogs.actions.push(tellJokeDialog);
+]));
+rootDialog.dialogs.add(tellJokeDialog);
 //# sourceMappingURL=index.js.map

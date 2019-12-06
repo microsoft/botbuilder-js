@@ -35,14 +35,16 @@ export enum ActionChangeType {
 
 export enum AdaptiveEventNames {
     beginDialog = 'beginDialog',
+    repromptDialog = 'repromptDialog',
+    cancelDialog = 'cancelDialog',
     activityReceived = 'activityReceived',
+    error = 'error',
     recognizeUtterance = 'recognizeUtterance',
     recognizedIntent = 'recognizedIntent',
     unknownIntent = 'unknownIntent',
     conversationMembersAdded = 'conversationMembersAdded',
     sequenceStarted = 'sequenceStarted',
-    sequenceEnded = 'sequenceEnded',
-    cancelDialog = 'cancelDialog'
+    sequenceEnded = 'sequenceEnded'
 }
 
 export class SequenceContext<O extends object = {}> extends DialogContext {

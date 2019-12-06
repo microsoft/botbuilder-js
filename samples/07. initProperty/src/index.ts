@@ -38,9 +38,9 @@ const dialogs = new AdaptiveDialog();
 bot.rootDialog = dialogs;
 
 // Handle unknown intents
-dialogs.addRule(new OnUnknownIntent([
+dialogs.triggers.push(new OnUnknownIntent([
     new InitProperty('dialog.list', 'array'),
     new TextInput("dialog.item", "What is your name?"),
     new EditArray(ArrayChangeType.push, 'dialog.list', 'dialog.item'),
-    new SendActivity('Your name in an array: {dialog.list}')
+    new SendActivity('Your name in an array: @{dialog.list}')
 ]));

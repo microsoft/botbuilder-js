@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogDependencies } from 'botbuilder-dialogs';
 import { Case } from './case';
 import { Dialog } from 'botbuilder-dialogs';
 import { Expression, ExpressionType } from 'botframework-expressions';
@@ -22,7 +22,7 @@ export interface SwitchConditionConfiguration extends DialogConfiguration {
 
 }
 
-export class SwitchCondition<O extends object = {}> extends Dialog<O> {
+export class SwitchCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
 
     private caseExpresssions = null;
 

@@ -34,7 +34,7 @@ server.post('/api/messages', (req, res) => {
 const dialogs = new botbuilder_dialogs_adaptive_1.AdaptiveDialog();
 bot.rootDialog = dialogs;
 // Handle unknown intents
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
+dialogs.triggers.push(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
     new botbuilder_dialogs_adaptive_1.IfCondition('user.name == null', [
         new botbuilder_dialogs_adaptive_1.TextInput('user.name', `Hi! what's your name?`),
     ]),

@@ -34,7 +34,7 @@ server.post('/api/messages', (req, res) => {
 const dialogs = new botbuilder_dialogs_adaptive_1.AdaptiveDialog();
 bot.rootDialog = dialogs;
 // Handle unknown intents
-dialogs.addRule(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
+dialogs.triggers.push(new botbuilder_dialogs_adaptive_1.OnUnknownIntent([
     new botbuilder_dialogs_adaptive_1.SetProperty('dialog.age', "'22'"),
     new botbuilder_dialogs_adaptive_1.SwitchCondition('dialog.age', null, [
         new case_1.Case("21", [

@@ -9,7 +9,7 @@ describe('Conditions', function () {
         const rootDialog = new AdaptiveDialog();
         rootDialog.autoEndDialog = false;
         rootDialog.recognizer = new RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
-        rootDialog.addRule(new OnIntent('#JokeIntent', [], [
+        rootDialog.triggers.push(new OnIntent('#JokeIntent', [], [
             new SendActivity('Why did the chicken cross the road?'),
             new EndTurn(),
             new SendActivity('To get to the other side.')
@@ -34,12 +34,12 @@ describe('Conditions', function () {
         const rootDialog = new AdaptiveDialog();
         rootDialog.autoEndDialog = false;
         rootDialog.recognizer = new RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
-        rootDialog.addRule(new OnIntent('#JokeIntent', [], [
+        rootDialog.triggers.push(new OnIntent('#JokeIntent', [], [
             new SendActivity('{dialog.username}, do you know why did the chicken cross the road?'),
             new EndTurn(),
             new SendActivity('To get to the other side.')
         ], 'dialog.username != null'));
-        rootDialog.addRule(new OnUnknownIntent([
+        rootDialog.triggers.push(new OnUnknownIntent([
             new IfCondition('dialog.username == null', [
                 new TextInput('dialog.username', `Hi! What's your name?`)
             ]),
@@ -69,12 +69,12 @@ describe('Conditions', function () {
         const rootDialog = new AdaptiveDialog();
         rootDialog.autoEndDialog = false;
         rootDialog.recognizer = new RegExpRecognizer().addIntent('JokeIntent', /tell .*joke/i);
-        rootDialog.addRule(new OnIntent('#JokeIntent', [], [
+        rootDialog.triggers.push(new OnIntent('#JokeIntent', [], [
             new SendActivity('Why did the chicken cross the road?'),
             new EndTurn(),
             new SendActivity('To get to the other side.')
         ]));
-        rootDialog.addRule(new OnUnknownIntent([
+        rootDialog.triggers.push(new OnUnknownIntent([
             new SendActivity('Hello.')
         ]));
 
@@ -94,11 +94,11 @@ describe('Conditions', function () {
     it('OnUnknownIntent with extra condition', async function () {
         const rootDialog = new AdaptiveDialog();
         rootDialog.autoEndDialog = false;
-        rootDialog.addRule(new OnUnknownIntent([
+        rootDialog.triggers.push(new OnUnknownIntent([
             new TextInput('dialog.username', `Hi! What's your name?`),
             new SendActivity(`Thanks {dialog.username}!`)
         ], 'dialog.username == null'));
-        rootDialog.addRule(new OnUnknownIntent([
+        rootDialog.triggers.push(new OnUnknownIntent([
             new SendActivity(`Hi {dialog.username}. It's nice to meet you.`)
         ], 'dialog.username != null'));
 
