@@ -1,49 +1,45 @@
 const chromedriver = require('chromedriver');
+const seleniumServer = require('selenium-server');
+const geckodriver = require('geckodriver');
 
 module.exports = {
     src_folders: ['tests'],
     page_objects_path: 'tests/tests_pages',
-    webdriver: {
-        start_process: true,
-        server_path: 'node_modules/.bin/chromedriver',
-        port: 9515
-    },
-
-    test_workers: {
-        enabled: false,
-        workers: 'auto'
-    },
     test_settings: {
-        default: {
-            webdriver: {
+        selenium: {
+            selenium: {
                 start_process: true,
-                server_path: chromedriver.path,
                 port: 9515,
-                cli_args: ['--port=9515']
+                server_path: seleniumServer.path,
+                cli_args: {
+                    'webdriver.gecko.driver': geckodriver.path,
+                    'webdriver.chrome.driver': chromedriver.path
+                }
             },
+            webdriver: {
+                start_process: false
+            }
+        },
+      
+        chrome: {
+            extends: 'selenium',
             desiredCapabilities: {
                 browserName: 'chrome',
                 javascriptEnabled: true,
                 acceptSslCerts: true,
-                chromeOptions: {
-                    args: ['headless', 'disable-gpu']
+                chromeOptions : {
+                    w3c: false
                 }
             }
         },
-        chrome: {
-            webdriver: {
-                start_process: true,
-                server_path: chromedriver.path,
-                port: 9515,
-                cli_args: ['--port=9515']
-            },
+      
+        firefox: {
+            extends: 'selenium',
+            silent: true,
             desiredCapabilities: {
-                browserName: 'chrome',
+                browserName: 'firefox',
                 javascriptEnabled: true,
-                acceptSslCerts: true,
-                chromeOptions: {
-                    args: ['headless', 'disable-gpu']
-                }
+                acceptSslCerts: true
             }
         }
     }

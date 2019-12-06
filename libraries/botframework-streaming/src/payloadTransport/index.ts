@@ -10,5 +10,5 @@ export * from './payloadReceiver';
 export * from './payloadSender';
 export * from './payloadReceiver';
 export * from './payloadSender';
-export * from './transportDisconnectedEventArgs';
+export * from './transportDisconnectedEvent';
 export * from './transportDisconnectedEventHandler';
