@@ -50,10 +50,7 @@ export class JwtTokenExtractor {
         return null;
     }
 
-    public async getIdentity(scheme: string, parameter: string, channelId: string, requiredEndorsements: string[]): Promise<ClaimsIdentity | null> {
-        if (!requiredEndorsements) {
-            throw new Error('JwtTokenExtractor.getIdentity() must be called valid a requiredEndorsements parameter');
-        }
+    public async getIdentity(scheme: string, parameter: string, channelId: string, requiredEndorsements: string[] = []): Promise<ClaimsIdentity | null> {
 
         // No header in correct scheme or no token
         if (scheme !== 'Bearer' || !parameter) {
