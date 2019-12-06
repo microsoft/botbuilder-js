@@ -19,7 +19,7 @@ describe('TypeLoader', function () {
 
     it('TypeLoader Steps: should be ran when no other rules', async function () {
         const adapter = await declarativeTestCase('01 - Steps/Steps.main.dialog', null);
-        
+
         await adapter.send('hi')
                 .assertReply('Action 1')
                 .assertReply('Action 2')
@@ -28,7 +28,7 @@ describe('TypeLoader', function () {
 
     it('TypeLoader EndTurn: end turn should wait for user input', async function () {
         const adapter = await declarativeTestCase('02 - EndTurn/EndTurn.main.dialog', null);
-        
+
         await adapter
             .send('hi')
                 .assertReply('What\'s up?')
@@ -38,7 +38,7 @@ describe('TypeLoader', function () {
 
     it('TypeLoader IfCondition: if name is null then ask, if not will say hi', async function () {
         const adapter = await declarativeTestCase('03 - IfCondition/IfCondition.main.dialog', null);
-        
+
         await adapter
             .send('hi')
                 .assertReply("Hello, I'm Zoidberg. What is your name?")
@@ -63,8 +63,8 @@ describe('TypeLoader', function () {
                 .assertReply('Hello, I\'m Zoidberg. What is your name?')
             .send('Rose')
                 .assertReply('Hello Rose, nice to talk to you!')
-            .send('joke') 
-                .assertReply('Why did the chicken cross the road?') 
+            .send('joke')
+                .assertReply('Why did the chicken cross the road?')
             .send('why')
                 .assertReply('To get to the other side')
             .send('fortune')
@@ -80,8 +80,8 @@ describe('TypeLoader', function () {
                 .assertReply('Hello, I\'m Zoidberg. What is your name?')
             .send('Bender')
                 .assertReply('Hello Bender, nice to talk to you!')
-            .send('tell me a joke') 
-                .assertReply('Why did the chicken cross the road?') 
+            .send('tell me a joke')
+                .assertReply('Why did the chicken cross the road?')
             .send('why?')
                 .assertReply('To get to the other side')
             .send('tell my fortune')
@@ -98,8 +98,8 @@ describe('TypeLoader', function () {
             .send('Alex')
                 .assertReply('Hello Alex, nice to talk to you!')
                 .assertReply("I'm a joke bot. To get started say \"joke\".")
-            .send('tell me a joke') 
-                .assertReply('Why did the chicken cross the road?') 
+            .send('tell me a joke')
+                .assertReply('Why did the chicken cross the road?')
             .send('why?')
                 .assertReply('To get to the other side')
             .send('cancel')
@@ -112,11 +112,11 @@ async function declarativeTestCase(path, resourcesFolder) {
     let loader = new TypeLoader();
 
     if (resourcesFolder) {
-        let resourceProvider = new FileResourceProvider();
-        resourceProvider.registerDirectory(`libraries/botbuilder-dialogs-declarative/tests/resources`);
-        loader = new TypeLoader(null, resourceProvider)
+        let resourceExplorer = new ResourceExplorer();
+        resourceExplorer.addFolder(`./libraries/botbuilder-dialogs-declarative/tests/resources`);
+        loader = new TypeLoader(null, resourceExplorer);
     }
-    
+
     const dialog = await loader.load(json);
 
     // Create bots DialogManager and bind to state storage
