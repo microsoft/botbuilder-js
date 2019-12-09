@@ -144,8 +144,11 @@ export class SkillHandler extends ChannelServiceHandler {
          *    ConversationIdFactory
          */
         const callback = async (context: TurnContext): Promise<void> => {
-            // Cache the ClaimsIdentity on the context so that it's available inside of the bot's logic.
-            context.turnState.set((context.adapter as BotFrameworkAdapter).BotIdentityKey, claimsIdentity);
+            const adapter: BotFrameworkAdapter = (context.adapter as BotFrameworkAdapter);
+            // Cache the ClaimsIdentity and ConnectorClient on the context so that it's available inside of the bot's logic.
+            context.turnState.set(adapter.BotIdentityKey, claimsIdentity);
+            const client = await adapter.createConnectorClientWithIdentity(activity.serviceUrl, claimsIdentity);
+            context.turnState.set(adapter.ConnectorClientKey, client);
 
             TurnContext.applyConversationReference(activity, conversationReference);
             context.activity.id = replyToActivityId;

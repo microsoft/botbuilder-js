@@ -383,6 +383,44 @@ describe('OAuthPrompt', function () {
                 const prompt = new OAuthPrompt('OAuthPrompt', { connectionName, title, text });
                 await prompt.sendOAuthCardAsync(context);
             });
+
+            it('should use the passed in activity as a base for the prompt', async () => {
+                const connectionName = 'connection';
+                const title = 'myTitle';
+                const text = 'Sign in here';
+                const signInLink = 'https://dev.botframework.com';
+                const adapter = new SendActivityAdapter({
+                    connectionName, signInLink,
+                    text, title,
+                });
+                const context = new TurnContext(adapter, {
+                    activity: {
+                        channelId: channels.webchat,
+                        serviceUrl: 'https://bing.com',
+                    }
+                });
+                context.turnState.set(adapter.BotIdentityKey, { 'azp': 'guid' });
+                // Override sendActivity
+                context.sendActivity = async function(activity) {
+                    assert.strictEqual(activity.value, 1);
+                    assert.strictEqual(activity.attachments.length, 1);
+                    const attachment = activity.attachments[0];
+                    assert.strictEqual(attachment.contentType, CardFactory.contentTypes.oauthCard);
+                    const card = attachment.content;
+                    assert.strictEqual(card.buttons.length, 1);
+                    assert.strictEqual(card.connectionName, connectionName);
+                    assert.strictEqual(card.text, text);
+                    const button = card.buttons[0];
+                    assert.strictEqual(button.type, ActionTypes.Signin);
+                    assert.strictEqual(button.title, title);
+                    // For non streaming activities where the channel supports OAuthCards,
+                    // no link should be set on button.value.
+                    assert.strictEqual(button.value, undefined);
+                }.bind(context);
+
+                const prompt = new OAuthPrompt('OAuthPrompt', { connectionName, title, text });
+                await prompt.sendOAuthCardAsync(context, { value: 1 });
+            });
         });
     });
 });

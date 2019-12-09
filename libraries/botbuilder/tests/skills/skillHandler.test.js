@@ -114,8 +114,8 @@ describe('SkillHandler', function() {
                 }
             });
 
-            const identity = { aud: 'audience' };
-            it('should cache the ClaimsIdentity on the turnState', async () => {
+            const identity =  new ClaimsIdentity([{ type: 'aud', value: 'audience' }]);
+            it('should cache the ClaimsIdentity and ConnectorClient on the turnState', async () => {
                 const adapter = new BotFrameworkAdapter({});
                 const bot = new ActivityHandler();
                 const factory = new ConvIdFactory();
@@ -131,6 +131,7 @@ describe('SkillHandler', function() {
                 bot.run = async (context) => {
                     assert(context);
                     strictEqual(context.turnState.get(context.adapter.BotIdentityKey), identity);
+                    assert(context.turnState.get(context.adapter.ConnectorClientKey));
                 };
                 const resourceResponse = await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
                 assert(resourceResponse);

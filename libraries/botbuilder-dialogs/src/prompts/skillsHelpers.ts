@@ -91,3 +91,19 @@ export function getAppIdFromClaims(claims: { [key: string]: any }): string {
 
     return appId;
 }
+
+/**
+ * Used to loosely check if an object is a ClaimsIdentity.
+ * Returns a boolean.
+ */
+export function isClaimsIdentity(claims: any) {
+    if (!claims) return false;
+    if (typeof claims !== 'object') return false;
+    if (!claims[AuthConstants.AudienceClaim]) {
+        return false;
+    }
+    if (!claims[AuthConstants.AppIdClaim] && !claims[AuthConstants.AuthorizedParty]) {
+        return false;
+    }
+    return true;
+}
