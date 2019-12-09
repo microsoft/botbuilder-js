@@ -140,6 +140,8 @@ describe('LuisRecognizer V3', function () {
 
     it('roles', done => TestJson("roles.json", res => throttle(done)));
 
+    it('NoEntitiesInstanceTrue', done => TestJson("NoEntitiesInstanceTrue.json", res => throttle(done)));
+
 })
 
 

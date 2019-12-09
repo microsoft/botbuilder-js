@@ -891,6 +891,42 @@ describe('LuisRecognizer', function () {
         throttle(done);
     });
 
+    it('should accept LuisRecognizerOptions passed into recognizer "recognize" method', done => {
+        const luisPredictionDefaultOptions = {
+            includeAllIntents: true,
+            includeInstanceData: true,
+            apiVersion: 'v3'
+        };
+        const luisPredictionUserOptions = {
+            includeAllIntents: false,
+            includeInstanceData: false,
+            apiVersion: 'v3'
+        };
+        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, luisPredictionDefaultOptions, true);
+        const mergedOptions = recognizer.buildRecognizer(luisPredictionUserOptions)
+        assert(mergedOptions.predictionOptions.includeAllIntents === false);
+        assert(mergedOptions.predictionOptions.includeInstanceData === false);
+        throttle(done);
+    });
+
+    it('should accept LuisRecognizerOptions passed into recognizer "recognize" method. v3 to v2', done => {
+        const luisPredictionDefaultOptions = {
+            includeAllIntents: true,
+            includeInstanceData: true,
+            apiVersion: 'v3'
+        };
+        const luisPredictionUserOptions = {
+            includeAllIntents: false,
+            includeInstanceData: false,
+            apiVersion: 'v2'
+        };
+        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, luisPredictionDefaultOptions, true);
+        const mergedOptions = recognizer.buildRecognizer(luisPredictionUserOptions)
+        assert(mergedOptions.options.includeAllIntents === false);
+        assert(mergedOptions.options.includeInstanceData === false);
+        throttle(done);
+    });
+
     it('should use default Luis prediction options if no user options passed in', done => {
         const luisPredictionDefaultOptions = {
             includeAllIntents: true,
@@ -903,7 +939,6 @@ describe('LuisRecognizer', function () {
         assert(mergedOptions.includeInstanceData === true);
         throttle(done);
     });
-
 });
 
 class telemetryOverrideRecognizer extends LuisRecognizer {
