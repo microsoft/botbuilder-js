@@ -10,6 +10,6 @@
  * Abstraction for a generic transport definition.
  */
 export interface ITransport {
-    isConnected(): boolean;
+    isConnected: boolean;
     close();
 }
