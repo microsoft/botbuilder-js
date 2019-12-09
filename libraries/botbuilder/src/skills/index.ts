@@ -8,3 +8,4 @@
 
 export * from './skillConversationIdFactoryBase';
 export * from './skillHandler';
+export * from './skillHttpClient';
