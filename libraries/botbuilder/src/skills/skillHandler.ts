@@ -24,6 +24,7 @@ import { BotFrameworkAdapter } from '../botFrameworkAdapter';
  * A Bot Framework Handler for skills.
  */
 export class SkillHandler extends ChannelServiceHandler {
+    public readonly SkillConversationReferenceKey: string = 'SkillConversationReference';
     /**
      * Initializes a new instance of the SkillHandler class.
      * @param adapter An instance of the BotAdapter that will handle the request.
@@ -130,10 +131,10 @@ export class SkillHandler extends ChannelServiceHandler {
 
     private async processActivity(claimsIdentity: ClaimsIdentity, conversationId: string, replyToActivityId: string, activity: Activity): Promise<ResourceResponse> {
         const conversationReference = await this.conversationIdFactory.getConversationReference(conversationId);
-
         if (!conversationReference) {
             throw new Error('conversationReference not found.');
         }
+        const skillConversationReference = TurnContext.getConversationReference(activity);
 
         /**
          * Callback passed to the BotFrameworkAdapter.createConversation() call.
@@ -149,6 +150,7 @@ export class SkillHandler extends ChannelServiceHandler {
             context.turnState.set(adapter.BotIdentityKey, claimsIdentity);
             const client = await adapter.createConnectorClientWithIdentity(activity.serviceUrl, claimsIdentity);
             context.turnState.set(adapter.ConnectorClientKey, client);
+            context.turnState.set(this.SkillConversationReferenceKey, skillConversationReference);
 
             TurnContext.applyConversationReference(activity, conversationReference);
             context.activity.id = replyToActivityId;

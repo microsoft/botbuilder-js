@@ -1,7 +1,8 @@
+const assert = require('assert');
 const { ActionTypes, ActivityTypes, CardFactory, ConversationState, InputHints, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
 const { OAuthPrompt, DialogSet, DialogTurnStatus, ListStyle } = require('../');
 const { channels } = require('../lib/choices/channel');
-const assert = require('assert');
+const { AuthConstants } = require('../lib/prompts/skillsHelpers');
 
 const beginMessage = { text: `begin`, type: 'message' };
 const answerMessage = { text: `yes`, type: 'message' };
@@ -328,7 +329,6 @@ describe('OAuthPrompt', function () {
                         serviceUrl: 'https://bing.com',
                     }
                 });
-                context.turnState.set(adapter.BotIdentityKey, { 'azp': 'guid' });
                 // Override sendActivity
                 context.sendActivity = async function(activity) {
                     assert.strictEqual(activity.attachments.length, 1);
@@ -344,6 +344,45 @@ describe('OAuthPrompt', function () {
                     // For non streaming activities where the channel supports OAuthCards,
                     // no link should be set on button.value.
                     assert.strictEqual(button.value, undefined);
+                }.bind(context);
+
+                const prompt = new OAuthPrompt('OAuthPrompt', { connectionName, title, text });
+                await prompt.sendOAuthCardAsync(context);
+            });
+            
+            it('should send a well-constructed OAuthCard for channels with OAuthCard support from a skill', async () => {
+                const connectionName = 'connection';
+                const title = 'myTitle';
+                const text = 'Sign in here';
+                const signInLink = 'https://dev.botframework.com';
+                const adapter = new SendActivityAdapter({
+                    connectionName, signInLink,
+                    text, title,
+                });
+                const context = new TurnContext(adapter, {
+                    activity: {
+                        channelId: channels.webchat,
+                        serviceUrl: 'https://bing.com',
+                    }
+                });
+                context.turnState.set(adapter.BotIdentityKey, new ClaimsIdentity([
+                    { type: 'azp', value: uuid() },
+                    { type: 'ver', value: '2.0' },
+                    { type: 'aud', value: uuid() }
+                ]));
+                // Override sendActivity
+                context.sendActivity = async function(activity) {
+                    assert.strictEqual(activity.attachments.length, 1);
+                    const attachment = activity.attachments[0];
+                    assert.strictEqual(attachment.contentType, CardFactory.contentTypes.oauthCard);
+                    const card = attachment.content;
+                    assert.strictEqual(card.buttons.length, 1);
+                    assert.strictEqual(card.connectionName, connectionName);
+                    assert.strictEqual(card.text, text);
+                    const button = card.buttons[0];
+                    assert.strictEqual(button.type, ActionTypes.OpenUrl);
+                    assert.strictEqual(button.title, title);
+                    assert.strictEqual(button.value, signInLink);
                 }.bind(context);
 
                 const prompt = new OAuthPrompt('OAuthPrompt', { connectionName, title, text });
@@ -399,7 +438,11 @@ describe('OAuthPrompt', function () {
                         serviceUrl: 'https://bing.com',
                     }
                 });
-                context.turnState.set(adapter.BotIdentityKey, { 'azp': 'guid' });
+                context.turnState.set(adapter.BotIdentityKey, new ClaimsIdentity([
+                    { type: 'azp', value: uuid() },
+                    { type: 'ver', value: '2.0' },
+                    { type: 'aud', value: AuthConstants.ToBotFromChannelTokenIssuer }
+                ]));
                 // Override sendActivity
                 context.sendActivity = async function(activity) {
                     assert.strictEqual(activity.value, 1);
@@ -435,4 +478,29 @@ function createReply(activity) {
         channelId: activity.channelId,
         conversation: { isGroup: activity.conversation.isGroup, id: activity.conversation.id, name: activity.conversation.name },
     };
+}
+
+class ClaimsIdentity {
+    /**
+     * Each claim should be { type: 'type', value: 'value' }
+     * @param {*} claims 
+     * @param {*} isAuthenticated 
+     */
+    constructor(claims = [], isAuthenticated= false) {
+        this.claims = claims;
+        this.isAuthenticated = isAuthenticated;
+    }
+
+    getClaimValue(claimType) {
+        const claim = this.claims.find((c) => c.type === claimType);
+
+        return claim ? claim.value : null;
+    }
+}
+
+function uuid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
 }
