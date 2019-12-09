@@ -10,7 +10,7 @@ import { STATUS_CODES } from 'http';
 import * as os from 'os';
 
 import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
-import { AuthenticationConstants, ChannelValidation, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels } from 'botframework-connector';
+import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SkillValidation } from 'botframework-connector';
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
 import { StreamingHttpClient, TokenResolver } from './streaming';
@@ -53,6 +53,16 @@ export interface WebRequest {
      * Optional. The request method.
      */
     method?: any;
+
+    /***
+     * Optional. The request parameters from the url.
+     */
+    params?: any;
+
+    /***
+     * Optional. The values from the query string.
+     */
+    query?: any;
 
     /**
      * When implemented in a derived class, adds a listener for an event.
@@ -155,6 +165,11 @@ export interface BotFrameworkAdapterSettings {
      * Optional. Certificate key to authenticate the appId against AAD.
      */
     certificatePrivateKey?: string;
+    
+    /**
+     * Optional. Used to require specific endorsements and verify claims. Recommended for Skills.
+     */
+    authConfig?: AuthenticationConfiguration;
 }
 
 /**
@@ -232,6 +247,12 @@ export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
  * ```
  */
 export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvider, RequestHandler {
+    // These keys are public to permit access to the keys from the adapter when it's a being
+    // from library that does not have access to static properties off of BotFrameworkAdapter.
+    // E.g. botbuilder-dialogs
+    public readonly BotIdentityKey: Symbol = Symbol('BotIdentity');
+    public readonly ConnectorClientKey: Symbol = Symbol('ConnectorClient');
+
     protected readonly credentials: AppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
     protected readonly settings: BotFrameworkAdapterSettings;
@@ -242,6 +263,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     private logic: (context: TurnContext) => Promise<void>;
     private streamingServer: IStreamingTransportServer;
     private webSocketFactory: NodeWebSocketFactoryBase;
+
+    private authConfiguration: AuthenticationConfiguration;
 
     /**
      * Creates a new instance of the [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) class.
@@ -279,6 +302,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         // These values may be set when a bot is provisioned on Azure and if so are required for the bot to properly work in Public Azure or a National Cloud.
         this.settings.channelService = this.settings.channelService || process.env[AuthenticationConstants.ChannelService];
         this.settings.openIdMetadata = this.settings.openIdMetadata || process.env[AuthenticationConstants.BotOpenIdMetadataKey];
+
+        this.authConfiguration = this.settings.authConfig || new AuthenticationConfiguration();
 
         if (this.settings.openIdMetadata) {
             ChannelValidation.OpenIdMetadataEndpoint = this.settings.openIdMetadata;
@@ -468,7 +493,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             throw new Error(`BotFrameworkAdapter.deleteActivity(): missing conversation or conversation.id`);
         }
         if (!reference.activityId) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing activityId`); }
-        const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
+        const client: ConnectorClient = this.getOrCreateConnectorClient(context, reference.serviceUrl, this.credentials);
         await client.conversations.deleteActivity(reference.conversation.id, reference.activityId);
     }
 
@@ -490,7 +515,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         }
         const serviceUrl: string = context.activity.serviceUrl;
         const conversationId: string = context.activity.conversation.id;
-        const client: ConnectorClient = this.createConnectorClient(serviceUrl);
+        const client: ConnectorClient = this.getOrCreateConnectorClient(context, serviceUrl, this.credentials);
         await client.conversations.deleteConversationMember(conversationId, memberId);
     }
 
@@ -521,7 +546,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         }
         const serviceUrl: string = context.activity.serviceUrl;
         const conversationId: string = context.activity.conversation.id;
-        const client: ConnectorClient = this.createConnectorClient(serviceUrl);
+        const client: ConnectorClient = this.getOrCreateConnectorClient(context, serviceUrl, this.credentials);
 
         return await client.conversations.getActivityMembers(conversationId, activityId);
     }
@@ -548,7 +573,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         }
         const serviceUrl: string = context.activity.serviceUrl;
         const conversationId: string = context.activity.conversation.id;
-        const client: ConnectorClient = this.createConnectorClient(serviceUrl);
+        const client: ConnectorClient = this.getOrCreateConnectorClient(context, serviceUrl, this.credentials);
 
         return await client.conversations.getConversationMembers(conversationId);
     }
@@ -578,8 +603,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * `contextOrServiceUrl`.[activity](xref:botbuilder-core.TurnContext.activity).[serviceUrl](xref:botframework-schema.Activity.serviceUrl).
      */
     public async getConversations(contextOrServiceUrl: TurnContext | string, continuationToken?: string): Promise<ConversationsResult> {
-        const url: string = typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl;
-        const client: ConnectorClient = this.createConnectorClient(url);
+        let client: ConnectorClient;
+        if (typeof contextOrServiceUrl === 'object') {
+            const context: TurnContext = contextOrServiceUrl as TurnContext;
+            client = this.getOrCreateConnectorClient(context, context.activity.serviceUrl, this.credentials);
+        } else {
+            client = this.createConnectorClient(contextOrServiceUrl as string);
+        }
 
         return await client.conversations.getConversations(continuationToken ? { continuationToken: continuationToken } : undefined);
     }
@@ -667,8 +697,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * 
      * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
      */
-    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string ): Promise<TokenStatus[]>
-    {
+    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string ): Promise<TokenStatus[]> {
         if (!userId && (!context.activity.from || !context.activity.from.id)) {
             throw new Error(`BotFrameworkAdapter.getTokenStatus(): missing from or from.id`);
         }
@@ -783,11 +812,16 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             // Authenticate the incoming request
             status = 401;
             const authHeader: string = req.headers.authorization || req.headers.Authorization || '';
-            await this.authenticateRequest(request, authHeader);
 
+            const identity = await this.authenticateRequestInternal(request, authHeader);
+            
             // Process received activity
             status = 500;
             const context: TurnContext = this.createContext(request);
+            context.turnState.set(this.BotIdentityKey, identity);
+            const connectorClient = await this.createConnectorClientWithIdentity(request.serviceUrl, identity);
+            context.turnState.set(this.ConnectorClientKey, connectorClient);
+
             context.turnState.set(BotCallbackHandlerKey, logic);
             await this.runMiddleware(context, logic);
 
@@ -910,7 +944,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
                     if (activity && BotFrameworkAdapter.isStreamingServiceUrl(activity.serviceUrl)) {
                         TokenResolver.checkForOAuthCards(this, context, activity as Activity);
                     }
-                    const client: ConnectorClient = this.createConnectorClient(activity.serviceUrl);
+                    const client = this.getOrCreateConnectorClient(context, activity.serviceUrl, this.credentials);
                     if (activity.type === 'trace' && activity.channelId !== 'emulator') {
                     // Just eat activity
                         responses.push({} as ResourceResponse);
@@ -951,7 +985,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             throw new Error(`BotFrameworkAdapter.updateActivity(): missing conversation or conversation.id`);
         }
         if (!activity.id) { throw new Error(`BotFrameworkAdapter.updateActivity(): missing activity.id`); }
-        const client: ConnectorClient = this.createConnectorClient(activity.serviceUrl);
+        const client: ConnectorClient = this.getOrCreateConnectorClient(context, activity.serviceUrl, this.credentials);
         await client.conversations.updateActivity(
             activity.conversation.id,
             activity.id,
@@ -968,8 +1002,58 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * Override this in a derived class to create a mock connector client for unit testing.
      */
     public createConnectorClient(serviceUrl: string): ConnectorClient {
-        if (BotFrameworkAdapter.isStreamingServiceUrl(serviceUrl)) {
+        return this.createConnectorClientInternal(serviceUrl, this.credentials);
+    }
 
+    /**
+     * Create a ConnectorClient with a ClaimsIdentity.
+     * @remarks
+     * If the ClaimsIdentity contains the claims for a Skills request, create a ConnectorClient for use with Skills.
+     * @param serviceUrl 
+     * @param identity ClaimsIdentity
+     */
+    public async createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity): Promise<ConnectorClient> {
+        if (!identity) {
+            throw new Error('BotFrameworkAdapter.createConnectorClientWithScope(): invalid identity parameter.');
+        }
+
+        const botAppId = identity.getClaimValue(AuthenticationConstants.AudienceClaim) ||
+            identity.getClaimValue(AuthenticationConstants.AppIdClaim);
+
+        // Anonymous claims and non-skill claims should fall through without modifying the scope.
+        let credentials: AppCredentials = this.credentials;
+
+        // If the request is for skills, we need to create an AppCredentials instance with
+        // the correct scope for communication between the caller and the skill.
+        if (botAppId && SkillValidation.isSkillClaim(identity.claims)) {
+            const scope = JwtTokenValidation.getAppIdFromClaims(identity.claims);
+            if (this.credentials.oAuthScope === scope) {
+                // Do nothing, the current credentials and its scope are valid for the skill.
+                // i.e. the adatper instance is pre-configured to talk with one skill.
+            } else {
+                // Since the scope is different, we will create a new instance of the AppCredentials
+                // so this.credentials.oAuthScope isn't overridden.
+                credentials = await this.buildCredentials(botAppId, scope);
+
+                if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
+                    credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
+                    // Not sure that this code is correct because the scope was set earlier.
+                    credentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
+                }
+            }
+        }
+
+        const client: ConnectorClient = this.createConnectorClientInternal(serviceUrl, credentials);
+        return client;
+    }
+
+    /**
+     * @private
+     * @param serviceUrl The client's service URL.
+     * @param credentials AppCredentials instance to construct the ConnectorClient with.
+     */
+    private createConnectorClientInternal(serviceUrl: string, credentials: AppCredentials): ConnectorClient {
+        if (BotFrameworkAdapter.isStreamingServiceUrl(serviceUrl)) {
             // Check if we have a streaming server. Otherwise, requesting a connector client
             // for a non-existent streaming connection results in an error
             if (!this.streamingServer) {
@@ -977,7 +1061,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             }
 
             return new ConnectorClient(
-                this.credentials,
+                credentials,
                 {
                     baseUri: serviceUrl,
                     userAgent: USER_AGENT,
@@ -985,8 +1069,40 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
                 });
         }
 
-        const client: ConnectorClient = new ConnectorClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
+        return new ConnectorClient(credentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
+    }
+
+    /**
+     * @private
+     * Retrieves the ConnectorClient from the TurnContext or creates a new ConnectorClient with the provided serviceUrl and credentials.
+     * @param context 
+     * @param serviceUrl 
+     * @param credentials 
+     */
+    private getOrCreateConnectorClient(context: TurnContext, serviceUrl: string, credentials: AppCredentials): ConnectorClient {
+        if (!context || !context.turnState) throw new Error('invalid context parameter');
+        if (!serviceUrl) throw new Error('invalid serviceUrl');
+        if (!credentials) throw new Error('invalid credentials');
+
+        let client: ConnectorClient = context.turnState.get(this.ConnectorClientKey);
+        if (!client) {
+            client = this.createConnectorClientInternal(serviceUrl, credentials);
+        }
+
         return client;
+    }
+
+    /**
+     * 
+     * @remarks
+     * @param appId 
+     * @param oAuthScope 
+     */
+    protected async buildCredentials(appId: string, oAuthScope: string = ''): Promise<AppCredentials> {
+        // There is no cache for AppCredentials in JS as opposed to C#.
+        // Instead of retrieving an AppCredentials from the Adapter instance, generate a new one
+        const appPassword = await this.credentialsProvider.getAppPassword(appId);
+        return new MicrosoftAppCredentials(appId, appPassword, undefined, oAuthScope);
     }
 
     /**
@@ -998,22 +1114,37 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * Override this in a derived class to create a mock OAuth API client for unit testing.
      */
     protected createTokenApiClient(serviceUrl: string): TokenApiClient {
-        const client = new TokenApiClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT} );
+        const client = new TokenApiClient(this.credentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
         return client;
     }
 
     /**
-     * Allows for the overriding of authentication in unit tests.
+    * Allows for the overriding of authentication in unit tests.
+    * @param request Received request.
+    * @param authHeader Received authentication header.
+    */
+    protected async authenticateRequest(request: Partial<Activity>, authHeader: string): Promise<void> {
+        const claims = await this.authenticateRequestInternal(request, authHeader);
+        if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
+    }
+
+    /**
+     * @ignore
+     * @private
+     * Returns the actual ClaimsIdentity from the JwtTokenValidation.authenticateRequest() call.
+     * @remarks
+     * This method is used instead of authenticateRequest() in processActivity() to obtain the ClaimsIdentity for caching in the TurnContext.turnState.
+     * 
      * @param request Received request.
      * @param authHeader Received authentication header.
      */
-    protected async authenticateRequest(request: Partial<Activity>, authHeader: string): Promise<void> {
-        const claims = await JwtTokenValidation.authenticateRequest(
+    private authenticateRequestInternal(request: Partial<Activity>, authHeader: string): Promise<ClaimsIdentity> {
+        return JwtTokenValidation.authenticateRequest(
             request as Activity, authHeader,
             this.credentialsProvider,
-            this.settings.channelService
+            this.settings.channelService,
+            this.authConfiguration
         );
-        if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
     }
 
     /**
