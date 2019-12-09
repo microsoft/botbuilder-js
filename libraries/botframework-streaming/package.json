@@ -22,31 +22,31 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.js",
   "dependencies": {
-    "@azure/ms-rest-js": "1.2.6",
-    "botbuilder": "4.1.6",
-    "botbuilder-core": "4.1.6",
     "uuid": "^3.3.2",
-    "watershed": "^0.4.0",
     "ws": "^7.1.2"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/node": "^10.12.18",
     "@types/ws": "^6.0.3",
+    "@typescript-eslint/eslint-plugin": "^1.10.2",
+    "@typescript-eslint/parser": "^1.10.2",
     "chai": "^4.2.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-only-warn": "^1.0.1",
     "mocha": "^6.2.0",
     "nyc": "^14.1.1",
     "sinon": "^7.4.1",
     "ts-node": "^4.1.0",
-    "tslint": "^5.16.0",
-    "tslint-microsoft-contrib": "^5.2.1",
     "typescript": "3.5.3"
   },
   "scripts": {
-    "test": "tsc && nyc mocha tests/",
     "build": "tsc",
     "clean": "erase /q /s .\\lib",
-    "set-version": "npm version --allow-same-version ${Version}"
+    "eslint": "eslint  ./src/*.ts ./src/**/*.ts",
+    "eslint-fix": "eslint  ./src/*.ts ./src/**/*.ts --fix",
+    "set-version": "npm version --allow-same-version ${Version}",
+    "test": "tsc && nyc mocha tests/"
   },
   "files": [
     "/lib",

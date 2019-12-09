@@ -29,9 +29,7 @@ export class LGParser {
     }
 
     private static getFileContentContext(text: string, source: string): FileContext {
-        if (text === undefined
-            || text === ''
-            || text === null) {
+        if (!text) {
             return undefined;
         }
 
@@ -47,8 +45,7 @@ export class LGParser {
     }
 
     private static extractLGTemplates(file: FileContext, lgfileContent: string, source: string = ''): LGTemplate[] {
-        if (file === undefined
-            || file === null) {
+        if (!file) {
             return [];
         }
 
@@ -60,8 +57,7 @@ export class LGParser {
     }
 
     private static extractLGImports(file: FileContext, source: string = ''): LGImport[] {
-        if (file === undefined
-            || file === null) {
+        if (!file) {
             return [];
         }
 

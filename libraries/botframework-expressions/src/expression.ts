@@ -1,4 +1,3 @@
-
 /**
  * @module botframework-expressions
  */
@@ -10,6 +9,8 @@ import { BuiltInFunctions } from './builtInFunction';
 import { Constant } from './constant';
 import { ExpressionEvaluator } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
+import { SimpleObjectMemory, MemoryInterface } from './memory';
+import { Extensions } from './extensions';
 
 /**
  * Type expected from evalating an expression.
@@ -109,7 +110,10 @@ export class Expression {
      * Global state to evaluate accessor expressions against.  Can Dictionary be otherwise reflection is used to access property and then indexer.
      * @param state
      */
-    public tryEvaluate(state: any): { value: any; error: string } {
+    public tryEvaluate(state: MemoryInterface | any): { value: any; error: string } {
+        if(!Extensions.isMemoryInterface(state)) {
+            state = SimpleObjectMemory.wrap(state);
+        }
         return this.evaluator.tryEvaluate(this, state);
     }
 

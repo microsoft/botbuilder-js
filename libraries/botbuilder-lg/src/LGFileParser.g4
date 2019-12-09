@@ -1,5 +1,4 @@
 parser grammar LGFileParser;
-
 options { tokenVocab=LGFileLexer; }
 
 file
@@ -41,11 +40,11 @@ parameters
     ;
 
 templateBody
-	: normalTemplateBody						#normalBody
-	| ifElseTemplateBody					    #ifElseBody
+    : normalTemplateBody                        #normalBody
+    | ifElseTemplateBody                        #ifElseBody
     | switchCaseTemplateBody                    #switchCaseBody
     | structuredTemplateBody                    #structuredBody
-	;
+    ;
 
 structuredTemplateBody
     : structuredBodyNameLine structuredBodyContentLine? structuredBodyEndLine
@@ -73,12 +72,12 @@ templateString
     ;
 
 normalTemplateString
-	: DASH (WS|TEXT|EXPRESSION|TEMPLATE_REF|TEXT_SEPARATOR|MULTI_LINE_TEXT|ESCAPE_CHARACTER)*
+	: DASH (WS|TEXT|EXPRESSION|ESCAPE_CHARACTER|MULTILINE_SUFFIX|MULTILINE_PREFIX)*
 	;
 
 errorTemplateString
-    : INVALID_TOKEN_DEFAULT_MODE+
-    ;
+	: INVALID_TOKEN_DEFAULT_MODE+
+	;
 
 ifElseTemplateBody
     : ifConditionRule+

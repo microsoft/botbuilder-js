@@ -41,8 +41,10 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
             ? channelAuthTenant
             : AuthenticationConstants.DefaultChannelAuthTenant;
         this.oAuthEndpoint = AuthenticationConstants.ToChannelFromBotLoginUrlPrefix + tenant;
-        this.tokenCacheKey = `${ appId }-cache`;
-        this.authenticationContext = new adal.AuthenticationContext(this.oAuthEndpoint);
+        this.tokenCacheKey = `${ appId }${ this.oAuthScope }-cache`;
+        // aadApiVersion is set to '1.5' to avoid the "spn:" concatenation on the audience claim
+        // For more info, see https://github.com/AzureAD/azure-activedirectory-library-for-nodejs/issues/128
+        this.authenticationContext = new adal.AuthenticationContext(this.oAuthEndpoint, true, undefined, '1.5');
     }
 
     /**

@@ -1,4 +1,4 @@
-const { ActivityTypes, CardFactory, ConversationState, InputHints, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ActivityTypes, CardFactory, ConversationState, InputHints, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
 const { OAuthPrompt, OAuthPromptSettings, DialogSet, DialogTurnStatus, ListStyle } = require('../');
 const assert = require('assert');
 
@@ -31,10 +31,10 @@ describe('OAuthPrompt', function () {
             await convoState.saveChanges(turnContext);
         });
 
-        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        // Create new ConversationState with MemoryStorage
         const convoState = new ConversationState(new MemoryStorage());
 
-        // Create a DialogState property, DialogSet and AttachmentPrompt.
+        // Create a DialogState property, DialogSet and OAuthPrompt
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new OAuthPrompt('prompt', {
@@ -92,10 +92,10 @@ describe('OAuthPrompt', function () {
             await convoState.saveChanges(turnContext);
         });
 
-        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        // Create new ConversationState with MemoryStorage
         const convoState = new ConversationState(new MemoryStorage());
 
-        // Create a DialogState property, DialogSet and AttachmentPrompt.
+        // Create a DialogState property, DialogSet and OAuthPrompt
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new OAuthPrompt('prompt', {
@@ -109,11 +109,88 @@ describe('OAuthPrompt', function () {
                 assert(activity.attachments.length === 1);
                 assert(activity.attachments[0].contentType === CardFactory.contentTypes.oauthCard);
 
-                // send a mock EventActivity back to the bot with the token
                 adapter.addUserToken(connectionName, activity.channelId, activity.recipient.id, token, magicCode);
             })
             .send(magicCode)
             .assertReply('Logged in.');
+    });
+
+    it('should see attemptCount increment', async function() {
+        var connectionName = 'myConnection';
+        var token = 'abc123';
+        var magicCode = '888999';
+
+        // Create new ConversationState with MemoryStorage
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and OAuthPrompt
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        
+        dialogs.add(new OAuthPrompt('prompt', {
+            connectionName,
+            title: 'Login',
+            timeout: 300000
+        }, async (prompt) => {
+            if (prompt.recognized.succeeded) {
+                return true;
+            }
+            prompt.context.sendActivity(`attemptCount ${ prompt.attemptCount }`);
+            return false;
+        }));
+
+        // Initialize TestAdapter.
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', { retryPrompt: 'Try again' });
+            } else if (results.status === DialogTurnStatus.complete) {
+                if (results.result.token) {
+                    await turnContext.sendActivity('Logged in');
+                }
+                else {
+                    await turnContext.sendActivity('Failed');
+                }
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        
+        await adapter.send('Hello')
+            .assertReply(activity => {
+                assert(activity.attachments.length === 1);
+                assert(activity.attachments[0].contentType === CardFactory.contentTypes.oauthCard);
+
+                adapter.addUserToken(connectionName, activity.channelId, activity.recipient.id, token, magicCode);
+            })
+            .send('1')
+            .assertReply('attemptCount 1')
+            .send('12')
+            .assertReply('attemptCount 2')
+            .send('123')
+            .assertReply('attemptCount 3')
+            .send(magicCode)
+            .assertReply(activity => {
+                assert(activity.text === 'Logged in');
+
+                adapter.signOutUser(new TurnContext(adapter, { channelId: activity.channelId, from: activity.recipient }), connectionName);
+            })
+            .send('Another!')
+            .assertReply(activity => {
+                assert(activity.attachments.length === 1);
+                assert(activity.attachments[0].contentType === CardFactory.contentTypes.oauthCard);
+
+                adapter.addUserToken(connectionName, activity.channelId, activity.recipient.id, token, magicCode);
+            })
+            .send('1234')
+            .assertReply('attemptCount 1')
+            .send('12345')
+            .assertReply('attemptCount 2')
+            .send('123456')
+            .assertReply('attemptCount 3')
+            .send(magicCode)
+            .assertReply('Logged in');
     });
 
     it('should call OAuthPrompt for streaming connection', async function () {
