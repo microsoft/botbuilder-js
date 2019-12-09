@@ -6,10 +6,18 @@
  * Licensed under the MIT License.
  */
 
-export { StreamingAdapter, StreamingHttpClient, TokenResolver } from './adapters';
 export { ContentStream } from './contentStream';
 export { HttpContent } from './httpContentStream';
-export { IStreamingTransportServer, IStreamingTransportClient, ISocket, IReceiveRequest, IReceiveResponse } from './interfaces';
+export {
+    INodeBuffer,
+    INodeIncomingMessage,
+    INodeSocket,
+    IReceiveRequest,
+    IReceiveResponse,
+    ISocket,
+    IStreamingTransportClient,
+    IStreamingTransportServer,
+} from './interfaces';
 export { NamedPipeClient, NamedPipeServer } from './namedPipe';
 export { RequestHandler } from './requestHandler';
 export { StreamingRequest } from './streamingRequest';
@@ -21,7 +29,5 @@ export {
     NodeWebSocketFactory,
     NodeWebSocketFactoryBase,
     WebSocketClient,
-    WebSocketServer,
-    WsNodeWebSocket,
-    WsNodeWebSocketFactory,
+    WebSocketServer
 } from './webSocket';

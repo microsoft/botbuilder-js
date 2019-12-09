@@ -1,5 +1,5 @@
 /**
- * @module bbotbuilder-lg
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -38,7 +38,7 @@ export class MSLGTool {
 
         // extract templates
         this.templates = LGParser.parse(lgFileContent).templates;
-        if (this.templates !== undefined && this.templates.length > 0) {
+        if (this.templates && this.templates.length > 0) {
             this.runTemplateExtractor(this.templates);
         }
 
@@ -59,10 +59,10 @@ export class MSLGTool {
 
     public collateTemplates(): string {
         let result = '';
-        if (this.collationMessages === undefined || this.collationMessages.length === 0) {
+        if (!this.collationMessages || this.collationMessages.length === 0) {
             for (const template of this.collatedTemplates) {
                 result += '# ' + template[0] + '\n';
-                if (template[1] instanceof Array) {
+                if (Array.isArray(template[1])) {
                     const templateStrs: string[] = template[1] as string[];
                     for (const templateStr of templateStrs) {
                         if (templateStr.startsWith('-')) {
@@ -109,7 +109,7 @@ export class MSLGTool {
                             this.collatedTemplates.set(template[0], this.collatedTemplates.get(template[0]).set(condition[0], condition[1]));
                         }
                     }
-                } else if (this.collatedTemplates.get(template[0]) instanceof Array && template[1] instanceof Array) {
+                } else if (Array.isArray(this.collatedTemplates.get(template[0])) && Array.isArray(template[1])) {
                     // tslint:disable-next-line: max-line-length
                     this.collatedTemplates.set(template[0], Array.from(new Set(this.collatedTemplates.get(template[0]).concat(template[1]))));
                 } else {

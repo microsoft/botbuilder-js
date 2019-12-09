@@ -1,12 +1,12 @@
 /**
- * @module botframework-streaming
+ * @module botbuilder
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
-import { BotFrameworkAdapter } from 'botbuilder';
+import { BotFrameworkAdapter } from '../botFrameworkAdapter';
 import {
     Activity,
     ActivityTypes,

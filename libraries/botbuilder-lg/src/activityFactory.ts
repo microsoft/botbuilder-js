@@ -8,30 +8,33 @@
 
 import { Activity, SuggestedActions, Attachment, ActivityTypes, ActionTypes, CardAction } from 'botframework-schema';
 import { MessageFactory, CardFactory } from 'botbuilder-core';
+import { Diagnostic, DiagnosticSeverity } from './diagnostic';
+import { ActivityChecker } from './activityChecker';
+import { Evaluator } from './evaluator';
 
 /**
  * The ActivityFactory
  * to generate text and then uses simple markdown semantics like chatdown to create Activity.
  */
 export class ActivityFactory {
-    private static genericCardTypeMapping: Map<string, string> = new Map<string, string>
-    ([
-        [ 'herocard', CardFactory.contentTypes.heroCard ],
-        [ 'thumbnailcard', CardFactory.contentTypes.thumbnailCard ],
-        [ 'audiocard', CardFactory.contentTypes.audioCard ],
-        [ 'videocard', CardFactory.contentTypes.videoCard ],
-        [ 'animationcard', CardFactory.contentTypes.animationCard ],
-        [ 'signincard', CardFactory.contentTypes.signinCard ],
-        [ 'oauthcard', CardFactory.contentTypes.oauthCard ],
-    ]);
+    private static adaptiveCardType: string = CardFactory.contentTypes.adaptiveCard;
 
     /**
      * Generate the activity.
      * @param lgResult string result from languageGenerator.
      */
-    public static CreateActivity(lgResult: any): Partial<Activity> {
+    public static createActivity(lgResult: any): Partial<Activity> {
+        const diagnostics: Diagnostic[] = ActivityChecker.check(lgResult);
+        const errors: Diagnostic[] = diagnostics.filter((u: Diagnostic): boolean => u.severity === DiagnosticSeverity.Error);
+        if (errors !== undefined && errors.length > 0) {
+            throw new Error(`${ errors.join('\n') }`);
+        }
+
         if (typeof lgResult === 'string') {
-            return this.buildActivityFromText(lgResult.trim());
+            const structuredLGResult: any = this.parseStructuredLGResult(lgResult.trim());
+            return structuredLGResult === undefined ?
+                this.buildActivityFromText(lgResult.trim())
+                :this.buildActivityFromLGStructuredResult(lgResult);
         }
 
         return this.buildActivityFromLGStructuredResult(lgResult);
@@ -53,81 +56,41 @@ export class ActivityFactory {
         let activity: Partial<Activity> = {};
 
         const type: string = this.getStructureType(lgValue);
-        if (ActivityFactory.genericCardTypeMapping.has(type)) {
-            const attachment: Attachment = this.getAttachment(lgValue);
-            if (attachment !== undefined) {
-                activity = MessageFactory.attachment(attachment);
-            } else {
-                throw new Error(`'${ lgValue }' is not an attachment format.`);
-            }
+        if (ActivityChecker.genericCardTypeMapping.has(type) || type === 'attachment') {
+            activity = MessageFactory.attachment(this.getAttachment(lgValue));
         } else if (type === 'activity') {
-            activity = this.buildActivityFromObject(lgValue);
-        } else {
-            throw new Error(`type ${ type } is not support currently.`);
+            activity = this.buildActivity(lgValue);
         }
 
         return activity;
     }
 
-    private static buildActivityFromObject(activityValue: any): Partial<Activity> {
-        let activity: Partial<Activity> = {};
-
-        if ('type' in activityValue && activityValue.type === 'event') {
-            activity = this.buildEventActivity(activityValue);
-        } else {
-            activity = this.buildMessageActivity(activityValue);
-        }
-
-        return activity;
-    }
-
-    private static buildEventActivity(eventValue: any): Partial<Activity> {
-        let activity: Partial<Activity> = { type: ActivityTypes.Event };
-        for (const item of Object.keys(eventValue)) {
-            const property: string = item.trim();
-            const value: any = eventValue[item];
-            switch (property.toLowerCase()) {
-                case 'name':
-                    activity.name = value.toString();
-                    break;
-                case 'value':
-                    activity.value = value.toString();
-                    break;
-                default:
-                    activity[property] = value;
-                    break;
-            }
-        }
-
-        return activity;
-    }
-
-    private static buildMessageActivity(messageValue: any): Partial<Activity> {
+    private static buildActivity(messageValue: any): Partial<Activity> {
         let activity: Partial<Activity> = { type: ActivityTypes.Message };
         for (const key of Object.keys(messageValue)) {
             const property: string = key.trim();
+            if (property === Evaluator.LGType) {
+                continue;
+            }
+
             const value: any = messageValue[key];
 
             switch (property.toLowerCase()) {
-                case 'text':
-                    activity.text = value.toString();
-                    break;
-                case 'speak':
-                    activity.speak = value.toString();
-                    break;
-                case 'inputhint':
-                    activity.inputHint = value.toString();
-                    break;
                 case 'attachments':
                     activity.attachments = this.getAttachments(value);
                     break;
                 case 'suggestedactions':
                     activity.suggestedActions = this.getSuggestions(value);
                     break;
-                case 'attachmentlayout':
-                    activity.attachmentLayout = value.toString();
                 default:
-                    activity[property] = value;
+                    var properties = ActivityChecker.activityProperties.map((u: string): string => u.toLowerCase());
+                    if (properties.includes(property.toLowerCase()))
+                    {
+                        var realPropertyName = ActivityChecker.activityProperties[properties.indexOf(property.toLowerCase())];
+                        activity[realPropertyName] = value;
+                    } else {
+                        activity[property.toLowerCase()] = value;
+                    }
                     break;
             }
         }
@@ -136,9 +99,9 @@ export class ActivityFactory {
     }
 
     private static getSuggestions(suggestionsValue: any): SuggestedActions {
-        let actions: any[] = this.normalizedToList(suggestionsValue);
+        const actions: any[] = this.normalizedToList(suggestionsValue);
 
-        let suggestedActions: SuggestedActions = {
+        const suggestedActions: SuggestedActions = {
             actions : this.getCardActions(actions),
             to: []
         };
@@ -147,77 +110,63 @@ export class ActivityFactory {
     }
 
     private static getButtons(buttonsValue: any): CardAction[] {
-        let actions: any[] = this.normalizedToList(buttonsValue);
+        const actions: any[] = this.normalizedToList(buttonsValue);
         return this.getCardActions(actions);
     }
 
     private static getCardActions(actions: any[]): CardAction[] {
-        let cardActions: (string|CardAction)[] = [];
-        for (const action of actions) {
-            if (typeof action === 'string') {
-                cardActions.push(action.trim());
-            } else {
-                const cardAction: CardAction = this.getCardAction(action);
-                if (cardAction !== undefined) {
-                    cardActions.push(cardAction);
-                }
-            }
-        }
-
-        return CardFactory.actions(cardActions);
+        return actions.map((u: any): CardAction => this.getCardAction(u));
     }
 
-    private static getCardAction(cardActionValue: any): CardAction {
-        const type: string = this.getStructureType(cardActionValue);
-        let cardAction: CardAction = {
-            type: ActionTypes.ImBack,
-            title: '',
-            value: ''
-        };
+    private static getCardAction(action: any): CardAction
+    {
+        let cardAction: CardAction;
+        if (typeof action === 'string') {
+            cardAction = { type: ActionTypes.ImBack, value: action, title: action, channelData: undefined };
+        } else {
+            const type: string = this.getStructureType(action);
+            cardAction = {
+                type: ActionTypes.ImBack,
+                title: '',
+                value: ''
+            };
 
-        if(type !== 'cardaction') {
-            return undefined;
-        }
+            if(type === 'cardaction') {
+                for (const key of Object.keys(action)) {
+                    const property: string = key.trim();
+                    if (property === Evaluator.LGType) {
+                        continue;
+                    }
 
-        for (const key of Object.keys(cardActionValue)) {
-            const property: string = key.trim();
-            const value: any = cardActionValue[key];
+                    const value: any = action[key];
 
-            switch (property.toLowerCase()) {
-                case 'type':
-                    cardAction.type = value.toString();
-                    break;
-                case 'title':
-                    cardAction.title = value.toString();
-                    break;
-                case 'value':
-                    cardAction.value = value.toString();
-                    break;
-                case 'displaytext':
-                    cardAction.displayText = value.toString();
-                    break;
-                case 'text':
-                    cardAction.text = value.toString();
-                    break;
-                case 'image':
-                    cardAction.image = value.toString();
-                    break;
-                default:
-                    cardAction[property] = value;
-                    break;
+                    switch (property.toLowerCase()) {
+                        case 'displaytext':
+                            cardAction.displayText = value;
+                            break;
+                        case 'channeldata':
+                            cardAction.channelData = value;
+                            break;
+                        default:
+                            cardAction[property.toLowerCase()] = value;
+                            break;
+                    }
+                }
             }
         }
 
         return cardAction;
     }
 
+
     private static getStructureType(input: any): string {
         let result = '';
 
-        if (input !== undefined) {
-            if ('$type' in input) {
-                result = input['$type'].toString();
+        if (input && typeof input === 'object') {
+            if (Evaluator.LGType in input) {
+                result = input[Evaluator.LGType].toString();
             } else if ('type' in input) {
+                // Adaptive card type
                 result = input['type'].toString();
             }
         }
@@ -226,19 +175,12 @@ export class ActivityFactory {
     }
 
     private static getAttachments(input: any): Attachment[] {
-        let attachments: Attachment[] = [];
-        let attachmentsJsonList: any[] = this.normalizedToList(input);
+        const attachments: Attachment[] = [];
+        const attachmentsJsonList: any[] = this.normalizedToList(input);
 
         for (const attachmentsJson of attachmentsJsonList) {
             if (typeof attachmentsJson === 'object') {
-                const attachment = this.getAttachment(attachmentsJson);
-                if (attachment !== undefined) {
-                    attachments.push(attachment);
-                } else {
-                    throw new Error(`'${ attachmentsJson }' is not an attachment format.`);
-                }
-            } else {
-                throw new Error(`'${ attachmentsJson }' is not an attachment format.`);
+                attachments.push(this.getAttachment(attachmentsJson));
             }
         }
 
@@ -250,36 +192,63 @@ export class ActivityFactory {
             contentType: ''
         };
         const type: string = this.getStructureType(input);
-        if (ActivityFactory.genericCardTypeMapping.has(type)) {
-            attachment = this.getCardAttachment(ActivityFactory.genericCardTypeMapping.get(type), input);
+        if (ActivityChecker.genericCardTypeMapping.has(type)) {
+            attachment = this.getCardAttachment(ActivityChecker.genericCardTypeMapping.get(type), input);
         } else if(type === 'adaptivecard') {
             attachment = CardFactory.adaptiveCard(input);
+        } else if(type === 'attachment') {
+            attachment = this.getNormalAttachment(input);
         } else {
-            attachment = undefined;
+            attachment = {contentType: type, content: input};
+        }
+
+        return attachment;
+    }
+
+    private static getNormalAttachment(input: any): Attachment {
+        const attachment: Attachment = {contentType:''};
+
+        for (const key of Object.keys(input)) {
+            const property: string = key.trim();
+            const value: any = input[key];
+
+            switch (property.toLowerCase()) {
+                case 'contenttype':
+                    const type: string = value.toString().toLowerCase();
+                    if (ActivityChecker.genericCardTypeMapping.has(type)) {
+                        attachment.contentType = ActivityChecker.genericCardTypeMapping.get(type);
+                    } else if (type === 'adaptivecard') {
+                        attachment.contentType = this.adaptiveCardType;
+                    } else {
+                        attachment.contentType = type;
+                    }
+                    break;
+                case 'contenturl':
+                    attachment.contentUrl = value;
+                    break;
+                case 'thumbnailurl':
+                    attachment.thumbnailUrl = value;
+                    break;
+                default:
+                    attachment[property.toLowerCase()] = value;
+                    break;
+            }
         }
 
         return attachment;
     }
 
     private static getCardAttachment(type: string, input: any): Attachment {
-        let card: any = {};
+        const card: any = {};
 
-        for (const key in input) {
+        for (const key of Object.keys(input)) {
             const property: string = key.trim().toLowerCase();
             const value: any = input[key];
 
             switch (property) {
-                case 'title':
-                case 'subtitle':
-                case 'text':
-                case 'aspect':
-                case 'value':
-                    card[property] = value;
+                case 'tap':
+                    card[property] = this.getCardAction(value);
                     break;
-                case 'connectionname':
-                    card['connectionName'] = value;
-                    break;
-                
                 case 'image':
                 case 'images':
                     if (type === CardFactory.contentTypes.heroCard || type === CardFactory.contentTypes.thumbnailCard) {
@@ -287,7 +256,7 @@ export class ActivityFactory {
                             card['images'] = [];
                         }
 
-                        let imageList: string[] = this.normalizedToList(value).map((u): string => u.toString());
+                        const imageList: string[] = this.normalizedToList(value).map((u): string => u.toString());
                         imageList.forEach( (u): any => card['images'].push({url : u}));
                     } else {
                         card['image'] = {url: value.toString()};
@@ -298,7 +267,7 @@ export class ActivityFactory {
                         card['media'] = [];
                     }
 
-                    let mediaList: string[] = this.normalizedToList(value).map((u): string => u.toString());
+                    const mediaList: string[] = this.normalizedToList(value).map((u): string => u.toString());
                     mediaList.forEach( (u): any => card['media'].push({url : u}));
                     break;
                 case 'buttons':
@@ -306,7 +275,7 @@ export class ActivityFactory {
                         card['buttons'] = [];
                     }
 
-                    let buttons: any[] = this.getButtons(value);
+                    const buttons: any[] = this.getButtons(value);
                     buttons.forEach( (u): any => card[property].push(u));
                     break;
                 case 'autostart':
@@ -317,8 +286,11 @@ export class ActivityFactory {
                         card[property] = boolValue;
                     }
                     break;
+                case 'connectionname':
+                    card['connectionName'] = value;
+                    break;
                 default:
-                    card[property] = value;
+                    card[property.toLowerCase()] = value;
                     break;
             }
         }
@@ -332,11 +304,11 @@ export class ActivityFactory {
     }
 
     private static getValidBooleanValue(boolValue: string): boolean{
-        if (boolValue.toLowerCase() == 'true')
+        if (boolValue.toLowerCase() === 'true')
         {
             return true;
         }
-        else if (boolValue.toLowerCase() == 'false')
+        else if (boolValue.toLowerCase() === 'false')
         {
             return false;
         }
@@ -354,4 +326,25 @@ export class ActivityFactory {
         }
     }
 
+    private static parseStructuredLGResult(lgStringResult: string): any
+    {
+        let lgStructuredResult: any = undefined;
+        if (lgStringResult === undefined || lgStringResult === '') {
+            return undefined;
+        }
+
+        lgStringResult = lgStringResult.trim();
+
+        if (lgStringResult === '' || !lgStringResult.startsWith('{') || !lgStringResult.endsWith('}')){
+            return undefined;
+        }
+
+        try {
+            lgStructuredResult = JSON.parse(lgStringResult);
+        } catch (error) {
+            return undefined;
+        }
+
+        return lgStructuredResult;
+    }
 }
