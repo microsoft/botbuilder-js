@@ -1,5 +1,6 @@
-const { ActivityTypes, CardFactory, ConversationState, InputHints, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
-const { OAuthPrompt, OAuthPromptSettings, DialogSet, DialogTurnStatus, ListStyle } = require('../');
+const { ActionTypes, ActivityTypes, CardFactory, ConversationState, InputHints, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
+const { OAuthPrompt, DialogSet, DialogTurnStatus, ListStyle } = require('../');
+const { channels } = require('../lib/choices/channel');
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
@@ -268,6 +269,104 @@ describe('OAuthPrompt', function () {
                 adapter.send(eventActivity);
             })
             .assertReply('Logged in.');
+    });
+
+    describe('private methods', () => {
+        describe('sendOAuthCardAsync()', () => {
+            class SendActivityAdapter {
+                constructor(settings = {}) {
+                    // Lazily and forcefully assign all properties and values to SendActivityAdapter instance.
+                    Object.assign(this, settings);
+                    this.BotIdentityKey = 'BotIdentityKey';
+                }
+
+                async getSignInLink(context, connectionName) {
+                    assert(context, 'context not passed in to getSignInLink call.');
+                    assert(connectionName, 'connectionName not passed in to getSignInLink call.');
+                    if (this.connectionName) {
+                        assert.strictEqual(connectionName, this.connectionName);
+                    }
+                    return this.signInLink;
+                }
+
+                async getUserToken(context, magicCode) {
+                    assert(context, 'context not passed in to getSignInLink call.');
+                    assert(magicCode, 'magicCode not passed in to getUserToken call');
+                    return 'token';
+                }
+            }
+
+            it('should send a well-constructed OAuthCard for channels with OAuthCard support', async () => {
+                const connectionName = 'connection';
+                const title = 'myTitle';
+                const text = 'Sign in here';
+                const signInLink = 'https://dev.botframework.com';
+                const adapter = new SendActivityAdapter({
+                    connectionName, signInLink,
+                    text, title,
+                });
+                const context = new TurnContext(adapter, {
+                    activity: {
+                        channelId: channels.webchat,
+                        serviceUrl: 'https://bing.com',
+                    }
+                });
+                context.turnState.set(adapter.BotIdentityKey, { 'azp': 'guid' });
+                // Override sendActivity
+                context.sendActivity = async function(activity) {
+                    assert.strictEqual(activity.attachments.length, 1);
+                    const attachment = activity.attachments[0];
+                    assert.strictEqual(attachment.contentType, CardFactory.contentTypes.oauthCard);
+                    const card = attachment.content;
+                    assert.strictEqual(card.buttons.length, 1);
+                    assert.strictEqual(card.connectionName, connectionName);
+                    assert.strictEqual(card.text, text);
+                    const button = card.buttons[0];
+                    assert.strictEqual(button.type, ActionTypes.Signin);
+                    assert.strictEqual(button.title, title);
+                    // For non streaming activities where the channel supports OAuthCards,
+                    // no link should be set on button.value.
+                    assert.strictEqual(button.value, undefined);
+                }.bind(context);
+
+                const prompt = new OAuthPrompt('OAuthPrompt', { connectionName, title, text });
+                await prompt.sendOAuthCardAsync(context);
+            });
+
+            it('should send a well-constructed OAuthCard for a streaming connection for channels with OAuthCard support', async () => {
+                const connectionName = 'connection';
+                const title = 'myTitle';
+                const text = 'Sign in here';
+                const signInLink = 'https://dev.botframework.com';
+                const adapter = new SendActivityAdapter({
+                    connectionName, signInLink,
+                    text, title,
+                });
+                const context = new TurnContext(adapter, {
+                    channelId: channels.webchat,
+                    serviceUrl: 'wss://bing.com',
+                });
+                // Override sendActivity
+                context.sendActivity = async function(activity) {
+                    assert.strictEqual(activity.attachments.length, 1);
+                    const attachment = activity.attachments[0];
+                    assert.strictEqual(attachment.contentType, CardFactory.contentTypes.oauthCard);
+                    const card = attachment.content;
+                    assert.strictEqual(card.buttons.length, 1);
+                    assert.strictEqual(card.connectionName, connectionName);
+                    assert.strictEqual(card.text, text);
+                    const button = card.buttons[0];
+                    assert.strictEqual(button.type, ActionTypes.Signin);
+                    assert.strictEqual(button.title, title);
+                    // For streaming activities where the channel supports OAuthCards,
+                    // a link should be set on button.value.
+                    assert.strictEqual(button.value, signInLink);
+                }.bind(context);
+
+                const prompt = new OAuthPrompt('OAuthPrompt', { connectionName, title, text });
+                await prompt.sendOAuthCardAsync(context);
+            });
+        });
     });
 });
 
