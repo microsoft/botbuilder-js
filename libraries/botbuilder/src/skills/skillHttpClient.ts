@@ -17,6 +17,9 @@ import { SkillConversationIdFactoryBase } from './skillConversationIdFactoryBase
 export class SkillHttpClient extends BotFrameworkHttpClient {
     constructor(credentialProvider: ICredentialProvider, private readonly conversationIdFactory: SkillConversationIdFactoryBase, channelService?: string) {
         super(credentialProvider, channelService);
+        if (!this.conversationIdFactory) {
+            throw new Error('conversationIdFactory missing');
+        }
     }
 
     public async postToSkill(fromBotId: string, toSkillId: string, toSkillUrl: string, serviceUrl: string, activity: Activity): Promise<InvokeResponse> {

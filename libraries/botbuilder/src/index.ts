@@ -18,7 +18,7 @@ export {
 } from './botFrameworkAdapter';
 export { BotFrameworkHttpClient } from './botFrameworkHttpClient';
 export { ChannelServiceHandler } from './channelServiceHandler';
-export { ChannelServiceRoutes } from './channelServiceRoutes';
+export { ChannelServiceRoutes, RouteHandler, WebServer } from './channelServiceRoutes';
 export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
 export * from './skills';
